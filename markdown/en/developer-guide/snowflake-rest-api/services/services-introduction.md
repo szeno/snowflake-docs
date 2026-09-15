@@ -1,0 +1,34 @@
+# Manage Snowflake Container Services
+
+Feature — Generally Available
+
+Not available in government regions.
+
+The Snowflake REST [Service API](/developer-guide/snowflake-rest-api/reference/service.html) provides the following endpoints to manage Snowflake services:
+
+**Snowflake REST Services API endpoints**
+
+| Endpoint | Description |
+| --- | --- |
+| `GET /api/v2/databases/database/schemas/` `schema/services` | Lists available services for the named database and schema. |
+| `POST /api/v2/databases/database/schemas/` `schema/services` | Creates a service. |
+| `POST /api/v2/databases/database/schemas/` `schema/services:execute-job` | Creates and executes a job service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name` | Fetches the named service. |
+| `PUT /api/v2/databases/database/schemas/` `schema/services/name` | Creates a new, or alter an existing, service. |
+| `DELETE /api/v2/databases/database/schemas/` `schema/services/name` | Deletes a named service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/logs` | Fetches the logs for a named service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/status` | Returns the status of a named service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/containers` | Lists all the containers of the specified service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/instances` | Lists all the instances of the specified service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/roles` | Lists all the service roles of the specified service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/service/roles/` `name/grants-of` | Lists all the grants of the specified service role. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/service/roles/` `name/grants` | Lists all the grants given to the specified service role. |
+| `POST /api/v2/databases/database/schemas/` `schema/services/name:resume` | Resumes a previously suspended service. |
+| `POST /api/v2/databases/database/schemas/` `schema/services/name:suspend` | Suspends a named service. |
+| `GET /api/v2/databases/database/schemas/` `schema/services/name/endpoints` | Lists the endpoints defined in the specified service. |
+
+Expand
+
+Show lessSee more
+
+For reference documentation, see [Snowflake Service API reference](/developer-guide/snowflake-rest-api/reference/service.html).

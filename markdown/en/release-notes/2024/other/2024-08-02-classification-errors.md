@@ -1,0 +1,18 @@
+# August 02, 2024 — ML Functions: Improved Error Messages in Classification
+
+We are pleased to announce improved error messages for the [Classification](/user-guide/ml-functions/classification)
+ML Function. These new messages more clearly communicate the cause of the error and better suggest how to address the core
+issue. The following table shows the most common error messages and their improved versions.
+
+| Previous message | New message |
+| --- | --- |
+| Error: Evaluation Data is Not Available. Please train with evaluation enabled. | Evaluation data is not available. Please create a new model with the EVALUATE parameter set to TRUE. Try adding the following line when calling the model: CONFIG\_OBJECT => {‘evaluate’: “TRUE”}. |
+| {col} has a different type from training. Make sure each column has the same SQL type between training and prediction. | Your column {col} has a different SQL type in this dataset than in your training dataset. Make sure each column in this dataset matches the corresponding column’s type from your training data. Try casting the column to the type it was in the training data. |
+| All values in the label column are NULL. | All values in your target column are NULL. The model requires non-NULL values in your target column to train successfully. Try picking a different target column. |
+| test\_fraction must be a number; test\_fraction must be greater than 0 and less than 1 | Your test\_fraction value is not valid. test\_fraction must be greater than 0 and less than 1. Try entering a decimal value between 0 and 1 (i.e. 0.2). |
+| evaluation test\_fraction is too large to generate an evaluation dataset | Your test\_fraction is too high. Try a smaller fraction. The test\_fraction is likely really close to 1. Try something lower (i.e. 0.2). |
+| Unable to create an evaluation dataset - only one class present in the evaluation training set. This may be because of a large class imbalance or because of test\_fraction is too large. | Evaluation data is not available. If one class (or category) significantly outweighs the rest, the model may not be able to complete training. Check that each distinct class in your target column appears many times. If the above is not an issue, try lowering your test\_fraction. |
+
+Expand
+
+Show lessSee more

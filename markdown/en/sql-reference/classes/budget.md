@@ -1,0 +1,62 @@
+# BUDGET (SNOWFLAKE.CORE)
+
+Budget commands enable you to manage [budgets](/user-guide/budgets) in your account.
+
+## Budget commands
+
+- [ALTER BUDGET](/sql-reference/classes/budget/commands/alter-budget)
+- [CREATE BUDGET](/sql-reference/classes/budget/commands/create-budget)
+- [DROP BUDGET](/sql-reference/classes/budget/commands/drop-budget)
+- [SHOW BUDGET](/sql-reference/classes/budget/commands/show-budget)
+
+## Budget functions
+
+- [SYSTEM$SHOW\_BUDGET\_SHARED\_RESOURCE\_CANDIDATES](/sql-reference/functions/system_show_budget_shared_resource_candidates)
+- [SYSTEM$SHOW\_BUDGETS\_IN\_ACCOUNT](/sql-reference/functions/system_show_budgets_in_account)
+
+## Budget methods
+
+- [account\_root\_budget!ACTIVATE](/sql-reference/classes/budget/methods/activate)
+- [<budget\_name>!ADD\_CUSTOM\_ACTION](/sql-reference/classes/budget/methods/add_custom_action)
+- [<budget\_name>!ADD\_NOTIFICATION\_INTEGRATION](/sql-reference/classes/budget/methods/add_notification_integration)
+- [<budget\_name>!ADD\_RESOURCE](/sql-reference/classes/budget/methods/add_resource)
+- [<budget\_name>!ADD\_RESOURCE\_TAG](/sql-reference/classes/budget/methods/add_resource_tag) (Deprecated)
+- [<budget\_name>!ADD\_SHARED\_RESOURCE](/sql-reference/classes/budget/methods/add_shared_resource)
+- [<budget\_name>!ADD\_TAG](/sql-reference/classes/budget/methods/add_tag) (Deprecated)
+- [<budget\_name>!CONFIRM\_CUSTOM\_ACTIONS\_ACCESS](/sql-reference/classes/budget/methods/confirm_custom_actions_access)
+- [account\_root\_budget!DEACTIVATE](/sql-reference/classes/budget/methods/deactivate)
+- [<budget\_name>!GET\_BUDGET\_SCOPE](/sql-reference/classes/budget/methods/get_budget_scope)
+- [<budget\_name>!GET\_CONFIG](/sql-reference/classes/budget/methods/get_config)
+- [<budget\_name>!GET\_CUSTOM\_ACTIONS](/sql-reference/classes/budget/methods/get_custom_actions)
+- [<budget\_name>!GET\_CYCLE\_START\_ACTION](/sql-reference/classes/budget/methods/get_cycle_start_action)
+- [<budget\_name>!GET\_LINKED\_RESOURCES](/sql-reference/classes/budget/methods/get_linked_resources)
+- [<budget\_name>!GET\_LINKED\_TAGS](/sql-reference/classes/budget/methods/get_linked_tags) (Deprecated)
+- [<budget\_name>!GET\_MEASUREMENT\_TABLE](/sql-reference/classes/budget/methods/get_measurement_table)
+- [<budget\_name>!GET\_NOTIFICATION\_EMAIL](/sql-reference/classes/budget/methods/get_notification_email)
+- [<budget\_name>!GET\_NOTIFICATION\_INTEGRATION\_NAME](/sql-reference/classes/budget/methods/get_notification_integration_name)
+- [<budget\_name>!GET\_NOTIFICATION\_INTEGRATIONS](/sql-reference/classes/budget/methods/get_notification_integrations)
+- [<budget\_name>!GET\_NOTIFICATION\_MUTE\_FLAG](/sql-reference/classes/budget/methods/get_notification_mute_flag)
+- [<budget\_name>!GET\_NOTIFICATION\_THRESHOLD](/sql-reference/classes/budget/methods/get_notification_threshold)
+- [<budget\_name>!GET\_REFRESH\_TIER](/sql-reference/classes/budget/methods/get_refresh_tier)
+- [<budget\_name>!GET\_RESOURCE\_TAGS](/sql-reference/classes/budget/methods/get_resource_tags) (Deprecated)
+- [<budget\_name>!GET\_SERVICE\_TYPE\_USAGE](/sql-reference/classes/budget/methods/get_service_type_usage) (Deprecated)
+- [<budget\_name>!GET\_SERVICE\_TYPE\_USAGE\_V2](/sql-reference/classes/budget/methods/get_service_type_usage_v2)
+- [<budget\_name>!GET\_SHARED\_RESOURCES](/sql-reference/classes/budget/methods/get_shared_resources)
+- [<budget\_name>!GET\_SPENDING\_HISTORY](/sql-reference/classes/budget/methods/get_spending_history)
+- [<budget\_name>!GET\_SPENDING\_LIMIT](/sql-reference/classes/budget/methods/get_spending_limit)
+- [<budget\_name>!REFRESH\_USAGE](/sql-reference/classes/budget/methods/refresh_usage)
+- [<budget\_name>!REMOVE\_CUSTOM\_ACTIONS](/sql-reference/classes/budget/methods/remove_custom_actions)
+- [<budget\_name>!REMOVE\_CYCLE\_START\_ACTION](/sql-reference/classes/budget/methods/remove_cycle_start_action)
+- [<budget\_name>!REMOVE\_NOTIFICATION\_INTEGRATION](/sql-reference/classes/budget/methods/remove_notification_integration)
+- [<budget\_name>!REMOVE\_RESOURCE](/sql-reference/classes/budget/methods/remove_resource)
+- [<budget\_name>!REMOVE\_RESOURCE\_TAG](/sql-reference/classes/budget/methods/remove_resource_tag) (Deprecated)
+- [<budget\_name>!REMOVE\_SHARED\_RESOURCE](/sql-reference/classes/budget/methods/remove_shared_resource)
+- [<budget\_name>!REMOVE\_TAG](/sql-reference/classes/budget/methods/remove_tag) (Deprecated)
+- [<budget\_name>!SET\_CYCLE\_START\_ACTION](/sql-reference/classes/budget/methods/set_cycle_start_action)
+- [<budget\_name>!SET\_EMAIL\_NOTIFICATIONS](/sql-reference/classes/budget/methods/set_email_notifications)
+- [<budget\_name>!SET\_NOTIFICATION\_MUTE\_FLAG](/sql-reference/classes/budget/methods/set_notification_mute_flag)
+- [<budget\_name>!SET\_NOTIFICATION\_THRESHOLD](/sql-reference/classes/budget/methods/set_notification_threshold)
+- [<budget\_name>!SET\_REFRESH\_TIER](/sql-reference/classes/budget/methods/set_refresh_tier)
+- [<budget\_name>!SET\_RESOURCE\_TAGS](/sql-reference/classes/budget/methods/set_resource_tags)
+- [<budget\_name>!SET\_SPENDING\_LIMIT](/sql-reference/classes/budget/methods/set_spending_limit)
+- [<budget\_name>!SET\_USER\_TAGS](/sql-reference/classes/budget/methods/set_user_tags)

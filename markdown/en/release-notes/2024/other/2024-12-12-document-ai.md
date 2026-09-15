@@ -1,0 +1,11 @@
+# December 12, 2024 — Document AI release notes
+
+With this release, we are pleased to announce the following improvements in Document AI:
+
+- Doubling the length limit of the answers provided by the model. The model can now return answers that are up to 512 tokens long (about 320 words) per question.
+- Re-ordering values and answers in the Document AI user interface by dragging them is now possible. This makes the evaluation process easier, as the defined values can follow a certain order.
+- Performance improvements.
+
+  For more information, see [2024 Performance Improvements](/release-notes/performance-improvements-2024).
+
+These improvements are available both to new Document AI model builds as well as the already existing ones.

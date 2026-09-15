@@ -1,0 +1,16 @@
+# May 31, 2024 — Snowflake ML Classification Update –— *Preview*
+
+With this release, we are pleased to announce that the Classification function, which builds models that sort data into
+classes using patterns detected in your training data, has been updated with significant new features.
+
+- Support for timestamp features. The model automatically derives features such as day-of-week and month from timestamps,
+  so classification can detect time-based cycles and use them to help classify new data.
+- Support for high-cardinality features and labels. These are short strings with more than about 100 values, such as
+  job titles or fruits.
+
+This change affects new classification models you create. Existing models continue to use the previous implementation.
+Due to the above improvements, a new model trained on the same data as an existing model will likely produce slightly
+different results than the existing model.
+
+For more information, see
+[Classification](/user-guide/ml-functions/classification).

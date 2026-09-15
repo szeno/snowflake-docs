@@ -1,0 +1,40 @@
+Schema:
+:   [ACCOUNT\_USAGE](/sql-reference/account-usage#label-account-usage-views)
+
+# STORAGE\_LIFECYCLE\_POLICY\_HISTORY view
+
+This Account Usage view provides the aggregated execution history of
+[storage lifecycle policies](/user-guide/storage-management/storage-lifecycle-policies) in your account.
+This view shows historical data from the past 12 months and only includes policy executions
+that have completed successfully or with failures. The view doesn’t include queued, currently executing, or cancelled
+policy executions.
+
+Each row in this view corresponds to a different storage lifecycle policy execution.
+
+## Columns
+
+| Column Name | Data Type | Description |
+| --- | --- | --- |
+| POLICY\_DB | VARCHAR | The name of the database that contains the storage lifecycle policy. |
+| POLICY\_SCHEMA | VARCHAR | The name of the schema that contains the storage lifecycle policy. |
+| POLICY\_NAME | VARCHAR | The name of the storage lifecycle policy. |
+| REF\_ENTITY\_DB | VARCHAR | The name of the database that contains the object that the storage lifecycle policy is attached to. |
+| REF\_ENTITY\_SCHEMA | VARCHAR | The name of the schema that contains the object that the storage lifecycle policy is attached to. |
+| REF\_ENTITY\_NAME | VARCHAR | The name of the object that the storage lifecycle policy is attached to. |
+| REF\_ENTITY\_DOMAIN | VARCHAR | The domain (type) of the object that the storage lifecycle policy is attached to; for example, Table. |
+| STATE | VARCHAR | The aggregated state of the storage lifecycle policy execution: SUCCEEDED or FAILED (completed executions only). |
+| START\_TIME | TIMESTAMP\_LTZ | Earliest timestamp of when any task in the storage lifecycle policy execution started. |
+| END\_TIME | TIMESTAMP\_LTZ | Latest timestamp of when any task in the storage lifecycle policy execution completed. |
+| EXECUTION\_RESULT | VARIANT | JSON object containing detailed results for each task type in the storage lifecycle policy execution. The object can be of type EXPIRE, ARCHIVE, or EXPIRE\_ARCHIVE ARCHIVE. Each nested object contains: start\_time, end\_time, state, and error details. |
+| POLICY\_BODY | VARCHAR | The body of the storage lifecycle policy. |
+
+Expand
+
+Show lessSee more
+
+## Usage notes
+
+- Latency for the view may be up to 120 minutes (2 hours).
+
+- The view contains historical data for the past 12 months (one year).
+- The view only shows completed policy executions. It doesn’t include queued, currently executing, or cancelled policy executions.

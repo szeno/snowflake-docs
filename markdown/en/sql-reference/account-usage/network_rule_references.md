@@ -1,0 +1,33 @@
+Schema:
+:   [ACCOUNT\_USAGE](/sql-reference/account-usage#label-account-usage-views)
+
+# NETWORK\_RULE\_REFERENCES view
+
+This Account Usage view returns one row for each network rule that is associated with an external access integration or a network policy.
+
+The view is complementary to the Information Schema table function [NETWORK\_RULE\_REFERENCES](/sql-reference/functions/network_rule_references).
+
+## Columns
+
+| Column | Data Type | Description |
+| --- | --- | --- |
+| `network_rule_db` | VARCHAR | Database name that contains the network rule. |
+| `network_rule_schema` | VARCHAR | Schema that contains the network rule. |
+| `network_rule_id` | NUMBER | Internal/system-defined identifier for the network rule. |
+| `network_rule_mode` | VARCHAR | Either: `ingress` or `egress`. |
+| `network_rule_type` | VARCHAR | Either: `AWSLinkId`, `AzureLinkId`, `HOST_PORT`, `IPV4`, or `IPV6` |
+| `network_rule_name` | VARCHAR | Name of the network rule. |
+| `container_id` | NUMBER | Internal system-defined identifier for the container. |
+| `container_name` | VARCHAR | Name of the external access integration or network policy with which the network rule is associated. |
+| `container_type` | VARCHAR | Either: `INTEGRATION` or `NETWORK_POLICY` |
+| `action_type` | VARCHAR | Either: `ALLOW` or `BLOCK` |
+
+Expand
+
+Show lessSee more
+
+## Usage notes
+
+- Latency for the view may be up to 120 minutes (2 hours).
+
+- The view only displays objects for which the current role for the session has been granted access privileges.

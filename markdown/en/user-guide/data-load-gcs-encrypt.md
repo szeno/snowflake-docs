@@ -1,0 +1,12 @@
+# Google Cloud Storage data file encryption
+
+Cloud Storage always encrypts your data on the server side by default. Snowflake handles the encrypted files correctly.
+
+In addition, Snowflake supports GCS buckets encrypted using a key stored in Cloud KMS on top of the default server-side encryption provided by GCS. The `GCS_SSE_KMS` encryption type accepts an optional `KMS_KEY_ID` value.
+
+For more information, see the Google Cloud documentation:
+
+- <https://cloud.google.com/storage/docs/encryption/customer-managed-keys>
+- <https://cloud.google.com/storage/docs/encryption/using-customer-managed-keys>
+
+**Next:** [Configure an integration for Google Cloud Storage](/user-guide/data-load-gcs-config)

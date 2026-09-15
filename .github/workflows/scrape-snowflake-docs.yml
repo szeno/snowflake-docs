@@ -1,0 +1,51 @@
+name: Scrape Snowflake Docs
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # daily at 06:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape-snowflake-docs
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Scrape docs.snowflake.com
+        # Non-zero exit only means a handful of pages failed (see html/_failed_urls.txt);
+        # don't fail the whole job, since most pages still downloaded successfully.
+        run: python scrape_snowflake_docs.py || true
+
+      - name: Convert HTML to Markdown
+        run: python convert_html_to_markdown.py --force || true
+
+      - name: Discard raw HTML
+        run: rm -rf html
+
+      - name: Commit and push markdown changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add markdown
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update Snowflake docs markdown mirror ($(date -u +'%Y-%m-%d'))"
+            git push
+          fi

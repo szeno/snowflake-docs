@@ -1,0 +1,66 @@
+Categories:
+:   [System functions](/sql-reference/functions-system) (System Control)
+
+# SYSTEM$BLOCK\_INTERNAL\_STAGES\_PUBLIC\_ACCESS
+
+[Business Critical Feature](/user-guide/intro-editions)
+
+This function requires Business Critical (or higher). To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+
+Prevents all public traffic from accessing the internal stage of the current Snowflake account on Microsoft Azure.
+
+This function uses settings for the internal stage’s Azure storage account to block public IP addresses. For details on which Azure settings
+are affected, refer to [Blocking public access — \*Recommended\*](/user-guide/private-internal-stages-azure#label-private-internal-stage-azure-block-public).
+
+Important
+
+Confirm that traffic via private connectivity is successfully reaching the internal stage before blocking public access. Blocking
+public access without configuring private connectivity can cause unintended disruptions, including interference with managed services like
+Azure Data Factory.
+
+See also:
+:   [SYSTEM$UNBLOCK\_INTERNAL\_STAGES\_PUBLIC\_ACCESS](/sql-reference/functions/system_unblock_internal_stages_public_access), [SYSTEM$INTERNAL\_STAGES\_PUBLIC\_ACCESS\_STATUS](/sql-reference/functions/system_internal_stages_public_access_status)
+
+## Syntax
+
+> Copy code
+>
+> ```
+> SYSTEM$BLOCK_INTERNAL_STAGES_PUBLIC_ACCESS()
+> ```
+
+## Arguments
+
+None.
+
+## Returns
+
+This function returns the following status messages:
+
+| Status Message | Description |
+| --- | --- |
+| Public Access to internal stages is blocked. Private link is required to connect to internal stages of this account. | Indicates that the function successfully blocked public access. |
+| Network config is not found, Please contact support | Indicates that there is a problem with the system parameters. |
+| Azure Error when attempting to block public access to internal stages. Please contact Snowflake support. | Indicates that the function was unable to change the Azure settings in order to block public access. |
+
+Expand
+
+Show lessSee more
+
+## Usage notes
+
+- Only account administrators (i.e. users with the ACCOUNTADMIN role) can execute this function.
+- This function can take a few minutes to finish executing.
+- This function can be used with Snowflake accounts on Azure only. AWS and Google Cloud are not supported.
+
+## Examples
+
+Block all public traffic trying to access the internal stage of an Azure account.
+
+> Copy code
+>
+> ```
+> USE ROLE accountadmin;
+>
+> SELECT SYSTEM$BLOCK_INTERNAL_STAGES_PUBLIC_ACCESS();
+> ```
