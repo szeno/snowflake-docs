@@ -54,6 +54,8 @@ DROP SCHEMA [ IF EXISTS ] <name> [ CASCADE | RESTRICT ]
   2. Use the [UNDROP SCHEMA](/sql-reference/sql/undrop-schema) command to restore the previous version.
 - In a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) that allows writes, this command
   simultaneously drops the schema from your catalog-linked database and its corresponding namespace from your remote catalog.
+  Dropping a nested namespace is supported only when the catalog-linked database uses a catalog integration for
+  a catalog that supports nested namespaces. For other REST catalogs, you can drop only top-level namespaces.
 - If a policy or tag is attached a table or view column, dropping the schema successfully requires the policy or tag to be self-contained
   within the database and schema. For example, `database_1` contains `policy_1` and `policy_1` is only used in `database_1`.
   Otherwise, a [dangling reference](/user-guide/database-replication-considerations#label-database-replication-dangling-references) occurs.

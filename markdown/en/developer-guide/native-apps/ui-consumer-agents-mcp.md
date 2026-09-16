@@ -33,8 +33,11 @@ follow these practices:
 - **Grant caller privileges based on the app’s trust boundary.** App-created
   agents are blocked from accessing consumer objects unless you explicitly
   grant caller access. Grant only the access that matches the app’s
-  intended and reviewed behavior. For more information about caller grants,
-  see [GRANT CALLER](/sql-reference/sql/grant-caller).
+  intended and reviewed behavior. For sandbox tools (`code_execution` and
+  `code_toolset_all`), also grant caller access on the consumer workspace
+  and on the data objects that the sandbox should access. See
+  [Provider: Add a Sandbox tool for Python or SQL execution](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-code-execution)
+  and [GRANT CALLER](/sql-reference/sql/grant-caller).
 - **Monitor agent activity.** Review conversation threads, tool invocations,
   and execution traces in your account.
 - **Use feature policies to control agent and MCP server creation.** If you

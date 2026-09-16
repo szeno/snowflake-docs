@@ -151,7 +151,7 @@ Upload using one of the following methods:
   PUT file://lal_train.py @<ml_code_db>.PUBLIC.ML_LAL_STAGE/lal_project/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
   PUT file://lal_score.py @<ml_code_db>.PUBLIC.ML_LAL_STAGE/lal_project/ AUTO_COMPRESS=FALSE OVERWRITE=TRUE;
   ```
-- **Snowsight UI:** Navigate to Data » Databases, find your stage, and drag and drop the files
+- **Snowsight UI:** Navigate to **Catalog** » **Explorer**, find your stage, and drag and drop the files
   into the stage directory.
 
 After uploading, refresh the stage directory:

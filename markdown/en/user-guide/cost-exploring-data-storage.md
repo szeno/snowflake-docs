@@ -51,7 +51,7 @@ schema/database:
 To view the size of a table:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Expand a database, then any schema in the database.
 4. Click on any table to view the table statistics, including its size.
 

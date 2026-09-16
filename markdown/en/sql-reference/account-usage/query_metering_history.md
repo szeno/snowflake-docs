@@ -3,10 +3,10 @@ Schemas:
 
 # QUERY\_METERING\_HISTORY view
 
-Feature — Generally Available
+[Enterprise Edition Feature](/user-guide/intro-editions)
 
-Available to all accounts in select Amazon Web Services (AWS) regions only. For details, see
-[Region availability](/user-guide/warehouses-adaptive#label-adaptive-warehouse-region-availability).
+Available to Adaptive Compute, which requires Enterprise Edition or higher. To inquire about
+upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 The query metering history view (`QUERY_METERING_HISTORY`) returns per-query credit usage for
 queries run on [Adaptive Warehouses](/user-guide/warehouses-adaptive) within the last 365 days

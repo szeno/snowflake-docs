@@ -100,6 +100,7 @@ and the privileges allowed for each object:
 
 | Object type | Transient | Persistent | Privileges allowed | Default privilege |
 | --- | --- | --- | --- | --- |
+| AI GATEWAY | ✔ |  | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  APPLYBUDGET, USAGE | USAGE |
 | API INTEGRATION |  | ✔ | USAGE | USAGE |
 | CATALOG INTEGRATION |  | ✔ | USAGE | USAGE |
 | COMPUTE POOL | ✔ |  | APPLYBUDGET |  |

@@ -40,7 +40,7 @@ Named file formats are optional, but are recommended when you plan to regularly 
 You can create a file format using either the web interface or SQL:
 
 > Snowsight:
-> :   In the navigation menu, select **Catalog** » **Database Explorer**. Then select the *<db\_name>* » **File Formats**.
+> :   In the navigation menu, select **Catalog** » **Explorer**. Then select the *<db\_name>* » **File Formats**.
 >
 > SQL:
 > :   [CREATE FILE FORMAT](/sql-reference/sql/create-file-format)

@@ -87,11 +87,11 @@ table is not an issue, it is more efficient to recreate the hybrid table and cre
 running an optimized bulk load. This method is more efficient than online index building with the CREATE INDEX
 command.
 
-Optimized bulk loading is supported for CTAS, COPY, and all variants of INSERT except INSERT ALL.
+Optimized bulk loading is supported for CTAS, `COPY`, and all variants of `INSERT`, including `INSERT ALL`.
 The same rules apply as in [Loading data](/user-guide/tables-hybrid-create#label-create-loading-data): when a hybrid table is empty, all of these
 methods use optimized bulk loading; when a hybrid table already contains data, optimized bulk loading
-is automatically used for COPY and for all variants of INSERT except INSERT ALL, depending on the size
-and number of rows being loaded.
+is automatically used for `COPY` and for all variants of `INSERT`, including `INSERT ALL`, depending on
+the size and number of rows being loaded.
 
 You can’t define a FOREIGN KEY constraint in a CTAS statement. The second table created in this
 example, `fk_hybrid_table`, would have to be bulk-loaded with COPY or INSERT INTO … SELECT.

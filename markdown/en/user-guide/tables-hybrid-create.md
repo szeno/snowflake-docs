@@ -67,8 +67,8 @@ achieves higher rates of compression. For details about storage costs, see
 
 You can bulk load data into hybrid tables by copying either from a data stage or from other tables.
 The optimized bulk loading path supports [CTAS](/sql-reference/sql/create-table#label-ctas-syntax) (for new tables),
-[COPY INTO <table>](/sql-reference/sql/copy-into-table), and all variants of [INSERT](/sql-reference/sql/insert)
-except INSERT ALL. It accelerates loading whether the hybrid table is empty or already contains data.
+[COPY INTO <table>](/sql-reference/sql/copy-into-table), and all variants of [INSERT](/sql-reference/sql/insert),
+including `INSERT ALL`. It accelerates loading whether the hybrid table is empty or already contains data.
 
 You can check the **Statistics** information in Snowsight query profiles to see whether the bulk-load
 fast path was used. **Number of rows inserted** is referred to as the **Number of rows bulk loaded** when the fast

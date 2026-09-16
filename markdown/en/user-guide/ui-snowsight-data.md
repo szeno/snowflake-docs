@@ -1,16 +1,16 @@
 # Explore and manage database objects in Snowsight
 
-You can explore and manage your database objects in Snowsight using the *database object explorer*. The database object
-explorer contains a hierarchical view of all databases in your account, the schemas for each database, and the objects contained
+You can explore and manage your database objects in Snowsight using the Horizon Catalog Explorer. The Horizon Catalog
+Explorer contains a hierarchical view of all databases in your account, the schemas for each database, and the objects contained
 in each database and schema, organized by type.
 
-![Snowsight database object explorer, rendered as a tree view, with expandable objects such as schemas, tables, views, stages, and more.](/static/images/snowsight/snowsight-data-database-object-explorer.png)
+![Snowsight Horizon Catalog Explorer, rendered as a tree view, with expandable objects such as schemas, tables, views, stages, and more.](/static/images/snowsight/snowsight-data-database-object-explorer.png)
 
-To open the database object explorer:
+To open the Horizon Catalog Explorer:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. Explore your database objects in the database object explorer.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. Explore your database objects in the Horizon Catalog Explorer.
 
 You can only see objects on which your active role has been granted, at a minimum, the USAGE privilege.
 For more information about object privileges, see [Access control privileges](/user-guide/security-access-control-privileges).
@@ -19,7 +19,7 @@ You can also explore database objects from the context of a worksheet. See [Refe
 
 ## Working with databases in Snowsight
 
-When you select a database in the database object explorer, you can view details about the database.
+When you select a database in the Horizon Catalog Explorer, you can view details about the database.
 
 You must have the relevant [database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to access and manage the database in Snowsight.
 
@@ -78,7 +78,7 @@ Select a schema in the table to open the **Schema Details** page. See [Explore s
 
 ## Explore schema details in Snowsight
 
-To view a schema, in the navigation menu, select **Catalog** » **Database Explorer**, and then search for or browse to the database
+To view a schema, in the navigation menu, select **Catalog** » **Explorer**, and then search for or browse to the database
 schema. Select the schema to explore details about the schema, the objects contained in the schema,
 and create objects in the schema.
 
@@ -111,7 +111,7 @@ You must use a role granted the relevant privileges to create objects in the sch
 See [Schema privileges](/user-guide/security-access-control-privileges#label-security-access-control-privileges-schema-privileges).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Locate and select the database schema in which you want to create an object.
 4. On the schema details page, select **Create** and then select the object that you want to create.
 

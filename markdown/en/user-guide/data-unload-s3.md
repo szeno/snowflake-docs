@@ -52,7 +52,7 @@ External stages are named database objects that provide the greatest degree of f
 You can create an external named stage using either Snowsight or SQL:
 
 > Snowsight:
-> :   In the navigation menu, select **Catalog** » **Database Explorer** » *<db\_name>* » **Stages** » **Create**
+> :   In the navigation menu, select **Catalog** » **Explorer** » *<db\_name>* » **Stages** » **Create**
 >
 > SQL:
 > :   [CREATE STAGE](/sql-reference/sql/create-stage)

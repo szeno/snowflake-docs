@@ -553,7 +553,7 @@ OpenTelemetry-compatible tools for visualization.
 List and inspect dynamic tablesView refresh history
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. Select **Catalog** » **Database Explorer**.
+2. Select **Catalog** » **Explorer**.
 3. Select a database and schema, then select the **Dynamic Tables** tab.
 4. Select a dynamic table to view its details:
    - **Table Details**: Scheduling state, last refresh status, current and target lag, refresh mode, tags, and

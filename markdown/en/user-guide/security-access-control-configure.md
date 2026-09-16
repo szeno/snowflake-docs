@@ -119,7 +119,7 @@ SQL:
 
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-    2. In the navigation menu, select **Catalog** » **Database Explorer**.
+    2. In the navigation menu, select **Catalog** » **Explorer**.
     3. For a specific database and schema, select a database object to which you want to grant privileges. For example, a database
        named `d1`.
     4. In the **Object Details**, locate the **Privileges** section.
@@ -492,7 +492,7 @@ the USAGE privilege on a view to the ACCOUNTADMIN role.
 To grant database object privileges to a role, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. For a specific database and schema, select a database object to which you want to grant privileges.
 4. In the **Object Details**, locate the **Privileges** section.
 5. Select **+ Privilege**.
@@ -507,7 +507,7 @@ To grant database object privileges to a role, do the following:
 To revoke database object privileges from a role, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. For a specific database and schema, select a database object from which you want to revoke privileges.
 4. In the **Object Details**, locate the **Privileges** section.
 5. For a specific role listed, select the **Edit Role** pencil icon that appears when you hover over the row.

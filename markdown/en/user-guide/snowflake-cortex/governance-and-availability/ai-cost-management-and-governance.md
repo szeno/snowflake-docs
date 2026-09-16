@@ -16,6 +16,7 @@ These views should be used when calculating AI usage and AI-related spend. Toget
 
 | Name | Available in | SERVICE\_TYPE | Time Zone | Units | DATES |
 | --- | --- | --- | --- | --- | --- |
+| [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/account-usage/ai_gateway_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/ai_gateway_usage_history) | AI\_INFERENCE | UTC Converted to local [1] | Tokens | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts. |
 | [CORTEX\_AGENT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_agent_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_agent_usage_history) | CORTEX\_AGENTS | UTC Converted to local [1] | Tokens, Tools | Data begins 11/10/2025 |
 | [CORTEX\_AI\_FUNCTIONS\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_ai_functions_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_ai_functions_usage_history) | AI\_FUNCTIONS | UTC Converted to local [1] | Tokens | Data begins 1/5/2026 |
 | [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_code_cli_usage_history) | CORTEX\_CODE\_CLI | UTC | Tokens, Tools | Data begins 2/16/2026 |
@@ -68,11 +69,16 @@ Snowflake budgets help organizations monitor credit usage and respond when spend
 
 ### Shared resource budgets for AI features
 
-A [shared resource budget](/user-guide/budgets/budget-shared-resources) lets you track and control credit consumption for AI features (such as AI Functions, Cortex Agents, Cortex Code, and Snowflake CoWork) broken down by the team or cost center consuming them. Instead of budgeting a resource that belongs to a single owner or with a single budget, this budget tracks AI features that are used by specific users. Those users are identified with tags, so you can group them into logical units like a cost center or team. For example, if both an engineering team and a finance team call the same AI function, you can set up separate budgets that each track only the credits consumed by their respective tagged users, even though both teams are using the same underlying AI feature.
+A [shared resource budget](/user-guide/budgets/budget-shared-resources) lets you track and control credit consumption for AI features (such as AI Functions, Cortex Agents, Cortex Code, Snowflake CoWork, and the AI Gateway) broken down by the team or cost center consuming them. Instead of budgeting a resource that belongs to a single owner or with a single budget, this budget tracks AI features that are used by specific users. Those users are identified with tags, so you can group them into logical units like a cost center or team. For example, if both an engineering team and a finance team call the same AI function, you can set up separate budgets that each track only the credits consumed by their respective tagged users, even though both teams are using the same underlying AI feature.
 
 ### Per-user quotas for AI features
 
-[Per-user quotas](/user-guide/budgets/per-user-quotas) let you set monthly and daily credit limits for individual users. Quotas can cover warehouse compute and AI domains, including AI Functions, Cortex Agents, Cortex Code, and Snowflake CoWork. For AI features, you can configure a quota to automatically block AI access for users who reach their limit and release the block when the cycle resets.
+A [per-user quota](/user-guide/budgets/per-user-quotas) sets monthly and daily credit limits that apply to each user individually and, unlike a budget, can block usage without any stored procedure of your own. Quotas can cover warehouse compute and AI domains, including AI Functions, Cortex Agents, Cortex Code, Cortex AI Gateway, and Snowflake CoWork. Quotas are the only AI cost control with built-in enforcement: blocks are applied within minutes of the limit being reached, rather than on the periodic budget evaluation cycle, and the block is released when the cycle resets.
+
+Two differences from budgets are worth keeping in mind when you choose between them:
+
+- **Limits are per user, never pooled.** A 100-credit quota across 10 users permits up to 1,000 credits in total. Use a budget when you need a single shared ceiling.
+- **Some overshoot is expected.** Because a block lands shortly after the spend event rather than at the instant the limit is crossed, usage can pass the limit before the block takes effect.
 
 ### Budget capability by feature
 
@@ -85,6 +91,7 @@ A [shared resource budget](/user-guide/budgets/budget-shared-resources) lets you
 | Cortex Code Desktop | [Shared resource budgets](/user-guide/budgets/budget-shared-resources), [daily credit usage limits](/user-guide/cortex-code/credit-usage-limit), [per-user quotas](/user-guide/budgets/per-user-quotas) |
 | Snowflake CoWork | [Resource budgets](/user-guide/snowflake-cortex/snowflake-cowork/cowork-resource-budgets), [shared resource budgets](/user-guide/budgets/budget-shared-resources), [per-user quotas](/user-guide/budgets/per-user-quotas) |
 | Cortex Search | [Resource budgets](/user-guide/snowflake-cortex/cortex-search/cortex-search-resource-budgets) |
+| AI Gateway | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  [Shared resource budgets](/user-guide/budgets/budget-shared-resources#label-budget-shared-resource-ai-gateway), [per-user quotas](/user-guide/budgets/per-user-quotas#label-per-user-quota-ai-gateway) |
 
 Expand
 

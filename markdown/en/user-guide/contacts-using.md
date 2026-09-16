@@ -14,7 +14,7 @@ one contact that grants access to the table and another contact that provides ge
 associated with an object, they see the purpose of each contact along with a communication method, so they know who to communicate with for
 a specific reason and how to reach them.
 
-Data users see these contacts when they are using the **Database Explorer** in Snowsight to navigate their databases, schemas, and
+Data users see these contacts when they are using the Horizon Catalog Explorer in Snowsight to navigate their databases, schemas, and
 table-like objects. Snowflake features that send notifications to users can use the contact associated with an object to communicate
 with the users.
 
@@ -85,7 +85,7 @@ Creating all contacts in a dedicated schema can be helpful.
 
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-    2. In the navigation menu, select **Catalog** » **Database Explorer**.
+    2. In the navigation menu, select **Catalog** » **Explorer**.
     3. Navigate to the schema where you want to create the contact.
     4. Select **Create** » **Contact**.
     5. Specify the name of the contact.
@@ -150,7 +150,7 @@ You can associate a contact and define its purpose when modifying an existing ob
 
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-    2. In the navigation menu, select **Catalog** » **Database Explorer**.
+    2. In the navigation menu, select **Catalog** » **Explorer**.
     3. Navigate to one of the [supported objects](#label-contacts-supported-objects).
     4. Select the **Details** tab.
     5. Find the **Assigned Contacts** section and select the **Edit** icon.
@@ -246,7 +246,7 @@ CREATE SCHEMA sch1 WITH CONTACT (STEWARD = data_stewards, ACCESS_APPROVAL = fina
 
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-    2. In the navigation menu, select **Catalog** » **Database Explorer**.
+    2. In the navigation menu, select **Catalog** » **Explorer**.
     3. Navigate to the object.
     4. Select the **Details** tab.
     5. Find the **Assigned Contacts** section and select the **Edit** icon.
@@ -311,7 +311,7 @@ Snowsight:
 :   To list the contacts that have been created in a schema and drill down into the details for a specific contact:
 
     1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-    2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the schema.
+    2. In the navigation menu, select **Catalog** » **Explorer**, and then select the schema.
     3. Select the **Contacts** tab.
     4. Select a contact if you want to view details about it, including the objects with which it is associated.
 

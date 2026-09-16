@@ -536,6 +536,9 @@ For general information about roles and privilege grants for performing SQL acti
     an Iceberg table to Open Catalog. Don’t specify column definitions in your CREATE ICEBERG TABLE statement.
   - If you use a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), you must specify column definitions when you create the table.
     Alternatively, you can write to Iceberg tables that Snowflake automatically discovers in your remote catalog.
+  - Creating a table in a nested namespace is supported only when the catalog-linked database uses a catalog integration for
+    a catalog that supports nested namespaces. The parent namespace must already exist before you create a table in a nested namespace. For more
+    information, see [Use CREATE SCHEMA to create namespaces in your external catalog](/user-guide/tables-iceberg-externally-managed-writes#label-tables-iceberg-externally-managed-writes-create-schema).
 - The TARGET\_FILE\_SIZE property is only supported for tables with [write support (preview)](/user-guide/tables-iceberg-externally-managed-writes).
 - Considerations for creating tables:
 
@@ -628,6 +631,32 @@ Copy code
 USE DATABASE my_catalog_linked_db;
 
 USE SCHEMA 'my_namespace';
+
+CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+  first_name string,
+  last_name string,
+  amount int,
+  create_date date
+);
+```
+
+### Create an Iceberg table in a nested namespace in a catalog-linked database
+
+The following example creates a writable Iceberg table in the nested namespace `namespace1-namespace1a`, where `namespace1` is an
+existing top-level namespace and `-` is the value of the NAMESPACE\_FLATTEN\_DELIMITER parameter for the catalog-linked database.
+Creating a table in a nested namespace is supported only when the catalog-linked database uses a catalog integration for
+a catalog that supports nested namespaces.
+
+As a best practice, use an underscore (`_`) or dollar sign (`$`) as the value of NAMESPACE\_FLATTEN\_DELIMITER when possible.
+These characters are valid in unquoted identifiers, so you can reference the resulting nested namespace without double-quoting
+it. For more information, see [Unquoted identifiers](/sql-reference/identifiers-syntax#label-unquoted-identifier).
+
+Copy code
+
+```
+USE DATABASE my_catalog_linked_db;
+
+USE SCHEMA "namespace1-namespace1a";
 
 CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
   first_name string,

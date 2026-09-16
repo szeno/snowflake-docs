@@ -837,7 +837,7 @@ tables, view, or columns quickly. You can also filter the table results manually
 - For tags, you can filter with tags, without tags, or by a specific tag.
 - For policies, you can filter with policies, without policies, or by a specific policy.
 
-When you select a row in the table, the **Table Details** or **Columns** tab in **Catalog** » **Database Explorer** opens. You can edit
+When you select a row in the table, the **Table Details** or **Columns** tab in **Catalog** » **Explorer** opens. You can edit
 the tag and policy assignments as needed.
 
 ## Audit row access policies

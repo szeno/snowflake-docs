@@ -76,7 +76,7 @@ Fetch\_size
      ```
    - Upload using Snowsight as described in the following steps.
 
-     1. In Snowsight, click on **Catalog** -> **Database Explorer**.
+     1. In Snowsight, click on **Catalog** -> **Explorer**.
      2. In the left search bar of databases, click on **[your database name]** -> **[your schema name]** -> **stages** -> **[your stage name]**.
      3. Click the **“+File”** button on the top right corner of the stage page.
 2. Configure the secret, network rule, and external access integration.
@@ -157,7 +157,7 @@ Fetch\_size
 
 1. Upload JDBC driver jar file to Snowflake stage using Snowsight
 
-   - In Snowsight, click on **Catalog** -> **Database Explorer**
+   - In Snowsight, click on **Catalog** -> **Explorer**
    - In the left search bar of databases, click **[your database name]** -> **[your schema name]** -> **stages** -> **[your stage name]**.
    - Click the **“+File”** button on the top right corner of the stage page.
 2. Configure secret, network rule, and external access integration.
@@ -256,7 +256,7 @@ Fetch\_size
 
 1. Upload JDBC driver jar file to Snowflake stage using Snowsight
 
-   - In Snowsight, click on **Catalog** -> **Database Explorer**
+   - In Snowsight, click on **Catalog** -> **Explorer**
    - In the left search bar of databases, click **[your database name]** -> **[your schema name]** -> **stages** -> **[your stage name]**.
    - Click the **“+File”** button on the top right corner of the stage page.
 2. Configure secret, network rule, and external access integration.

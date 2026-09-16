@@ -182,7 +182,7 @@ Show lessSee more
 Select the actions menu ([![Three vertical dots indicating more options](/static/images/icons/vertical-more-icon.png)](/static/images/icons/vertical-more-icon.png)) on a row to **view details**, **edit**, or **delete** the policy.
 
 After you create or update a policy, apply it to tables, views, or columns from the **Objects with policies** tab, from **Catalog** »
-**Database Explorer**, or by using SQL. For policy-specific behavior and examples, see the introduction topic for each
+**Explorer**, or by using SQL. For policy-specific behavior and examples, see the introduction topic for each
 [policy type](#label-data-protection-policies-intro).
 
 ## Objects with policies
@@ -211,7 +211,7 @@ Expand
 Show lessSee more
 
 Use this tab to verify that sensitive columns and tables have the expected policies and tags. Select a row to open the object in
-**Catalog** » **Database Explorer** for more detail.
+**Catalog** » **Explorer** for more detail.
 
 ## Create and apply policies with Cortex Code
 

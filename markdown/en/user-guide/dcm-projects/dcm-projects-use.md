@@ -719,7 +719,7 @@ SHOW GRANTS IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 SHOW FUTURE GRANTS IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 ```
 
-1. In the navigation menu, select **Catalog** » **Database Explorer**.
+1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Navigate to the schema that contains the DCM project object.
 3. Select the DCM project object to see its details.
 4. Select the **Objects** tab to see a list of all Snowflake objects currently managed by this project object, or select the **Grants** tab to see a list of all grants currently managed by this project object.
@@ -845,7 +845,7 @@ Copy code
 snow dcm drop my_project
 ```
 
-1. In the navigation menu, select **Catalog** » **Database Explorer**.
+1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Navigate to the schema that contains the DCM project.
 3. Select the DCM project to see its details page.
 4. Click the 3-dot menu in the top right and select **Drop**.

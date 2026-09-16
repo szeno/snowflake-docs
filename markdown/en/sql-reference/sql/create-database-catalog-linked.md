@@ -159,6 +159,9 @@ Where:
 
     Default: `IGNORE_NESTED_NAMESPACE`
 
+    `FLATTEN_NESTED_NAMESPACE` is supported only when your catalog integration uses a catalog that supports nested namespaces. For other REST catalogs,
+    setting this option returns an error.
+
 `NAMESPACE_FLATTEN_DELIMITER = 'string_literal'`
 :   Required if you set NAMESPACE\_MODE = FLATTEN\_NESTED\_NAMESPACE.
     Specifies a delimiter, which Snowflake uses to construct flattened namespaces for tables in your catalog.
@@ -168,7 +171,7 @@ Where:
     The character that you choose for a delimiter can’t appear in your remote namespaces. During the autodiscovery process,
     Snowflake skips any namespace that contains the delimiter and does not create a corresponding schema in your catalog-linked database.
 
-    Valid characters: Any characters allowed in [Snowflake identifiers](/sql-reference/identifiers-syntax).
+    Valid characters: One or more punctuation characters, symbols, or digits. Letters and whitespace aren’t allowed.
 
 `SYNC_INTERVAL_SECONDS = value`
 :   Specifies the time interval in seconds that Snowflake should use for automatically discovering schemas and tables in your remote catalog.
@@ -229,6 +232,8 @@ For general information about roles and privilege grants for performing SQL acti
     Snowflake skips any namespace that contains the delimiter, and doesn’t create a corresponding schema in your catalog-linked database.
   - If you specify anything other than `_`, `$`, or numbers for the NAMESPACE\_FLATTEN\_DELIMITER parameter,
     you must put the schema name in quotes when you query the table.
+  - To check whether a namespace is nested under another namespace, use the [SHOW SCHEMAS](/sql-reference/sql/show-schemas) command
+    and check the `is_nested` column in the output.
   - For databases linked to AWS Glue, you must use lowercase letters and surround the schema, table, and column names in double quotes.
     This is also required for other Iceberg REST catalogs that only support lowercase identifiers.
 
@@ -255,8 +260,10 @@ For general information about roles and privilege grants for performing SQL acti
     - Direct sharing is supported
 - For writing to tables in a catalog-linked database:
 
-  - Creating tables in nested namespaces isn’t currently supported.
-  - Writing to tables in nested namespaces isn’t currently supported.
+  - Creating and writing to tables in nested namespaces is supported only when your catalog integration uses a catalog that
+    supports nested namespaces. For other REST catalogs, creating and writing to tables in nested namespaces isn’t supported.
+  - Don’t use a period (`.`) in a namespace name unless period is the value you set for NAMESPACE\_FLATTEN\_DELIMITER and
+    NAMESPACE\_MODE is set to FLATTEN\_NESTED\_NAMESPACE. Otherwise, the namespace won’t be created.
   - Position [row-level deletes](https://iceberg.apache.org/spec/#row-level-deletes) are supported for tables stored
     on Amazon S3, Azure, or Google Cloud. Row-level deletes with equality delete files aren’t supported. For more information about row-level deletes,
     see [Use row-level deletes](/user-guide/tables-iceberg-manage#label-tables-iceberg-row-level-deletes). To turn off position deletes, which enable

@@ -24,7 +24,7 @@ The deployed dbt project object and its artifact files are part of the Snowflake
 You can open the project details page in Snowsight in the following ways:
 
 - **dbt Projects on Snowflake home page**: In the navigation menu, select **Transformations** » **dbt Projects**, then select a deployed dbt project object from the list.
-- **Object Explorer**: In the navigation menu, select **Databases** » your database » your schema » **dbt Projects**, then select your project.
+- **Horizon Catalog Explorer**: In the navigation menu, select **Catalog** » **Explorer** » your database » your schema » **dbt Projects**, then select your project.
 - **Workspace editor**: With a project open, select **Connect** » **View project**. For more information, see [Workspaces for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces).
 
 ## Browse the project DAG to see model lineage and dependencies

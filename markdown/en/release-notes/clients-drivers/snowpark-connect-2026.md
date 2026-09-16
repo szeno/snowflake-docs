@@ -5,6 +5,29 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.42.0 (September 10, 2026)
+
+### Snowpark Connect for Spark
+
+#### Bug fixes
+
+- Fix Iceberg branch-name quoting that caused SQL syntax errors on `CREATE`/`DROP BRANCH` and branch DML
+- Fix correlated subquery over a reused relation losing its correlation
+- Fix Iceberg `ALTER TABLE ... RENAME TO`
+- Reduce query size by reusing CTEs across sibling correlated subqueries
+
+#### New features
+
+- Support leftover text after the pattern in legacy `to_timestamp` parsing
+- Support Iceberg `CREATE BRANCH ... AS OF VERSION`
+- Support Iceberg `TABLE_PROPERTIES` on `CREATE`, `CREATE TABLE AS SELECT`, and `ALTER TABLE SET`/`UNSET`
+- Forward Iceberg write options to Snowflake
+- Support Iceberg incremental reads on catalog-linked databases
+
+#### Other updates
+
+- Bump Snowpark Python dependency
+
 ## 1.41.0 (September 3, 2026)
 
 ### Snowpark Connect for Spark

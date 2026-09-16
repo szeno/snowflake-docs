@@ -85,7 +85,7 @@ FROM raw,
 LATERAL FLATTEN(INPUT => json_data) f;
 ```
 
-## Create a Catalog-Linked Database
+## Create a catalog-linked database
 
 To mount a shared SAP® data product in Snowflake, create a catalog-linked database using the
 `LINKED_ZEROCOPY_CONNECTOR` clause. The role requires `CREATE DATABASE` on
@@ -106,7 +106,7 @@ CREATE DATABASE my_sales_order
 Note
 
 When a catalog-linked database is created, a read-only schema named
-`snowflake$` is automatically created within it. This schema contains
+`SNOWFLAKE$` is automatically created within it. This schema contains
 [Semantic Views](/user-guide/views-semantic/overview) generated
 from the SAP® Core Schema Notation (CSN). Semantic Views add business
 meaning to the incoming shared data by defining metrics, entities, and
@@ -131,7 +131,26 @@ Copy code
 SHOW DATABASES LIKE 'MY_SALES_ORDER%';
 ```
 
-## Explore the Data
+## PII tagging and masking
+
+Snowflake tags columns as personally identifiable information (PII) based on annotations in the SAP® Core Schema Notation (CSN) shared with the data product:
+
+- Columns identified as PII in the CSN metadata are tagged when the catalog-linked database is created.
+- A [masking policy](/user-guide/tag-based-masking-policies) is attached to the PII tag, so query results are masked by default for every role, including ACCOUNTADMIN and the database owner role.
+
+Important
+
+Only grant unmasking access to roles that are authorized to view PII.
+
+To unmask PII, the database owner role can set the `UNMASK_PII` tag in the catalog-linked database’s automatically created `SNOWFLAKE$` schema on the role that needs to see unmasked data:
+
+Copy code
+
+```
+ALTER ROLE my_role SET TAG my_sales_order."SNOWFLAKE$".UNMASK_PII = 'true';
+```
+
+## Explore the data
 
 List the schemas and tables available in the catalog-linked database:
 
@@ -171,7 +190,7 @@ ORDER BY s.totalnetamount DESC
 LIMIT 10;
 ```
 
-## Create Table As Select (CTAS)
+## Create table as select (CTAS)
 
 To persist query results as a native Snowflake table, use CREATE TABLE AS
 SELECT (CTAS). Create a new database to hold the results:
@@ -202,7 +221,7 @@ GROUP BY 1, 2, 3, 4, 5;
 SELECT * FROM top_customers_by_revenue LIMIT 10;
 ```
 
-## Drop a Catalog-Linked Database
+## Drop a catalog-linked database
 
 All catalog-linked databases must be dropped before you can disconnect or drop the connector.
 Catalog-linked databases do not support `UNDROP`.

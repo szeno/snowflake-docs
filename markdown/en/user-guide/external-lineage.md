@@ -58,7 +58,7 @@ If you want to test the external lineage endpoint before you configure a data to
 To view data lineage in Snowsight, complete the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) with the [necessary privileges](/user-guide/ui-snowsight-lineage#label-lineage-privileges).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select a [supported object](/user-guide/ui-snowsight-lineage#label-ui-lineage-supported-objects) such as a table or
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select a [supported object](/user-guide/ui-snowsight-lineage#label-ui-lineage-supported-objects) such as a table or
    view.
 3. Select the **Lineage** tab.
 

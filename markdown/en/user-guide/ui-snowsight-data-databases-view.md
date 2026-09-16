@@ -4,7 +4,7 @@ You can work with [views](/user-guide/views-introduction), [materialized views](
 [semantic views](/user-guide/views-semantic/overview) in SQL or in Snowsight.
 For details about the available SQL commands for working with views, see [Table, view, sequence, and user-defined type commands](/sql-reference/commands-table).
 
-In Snowsight, in the navigation menu, select **Catalog** » **Database Explorer**, and then search for or browse to the view.
+In Snowsight, in the navigation menu, select **Catalog** » **Explorer**, and then search for or browse to the view.
 Select the view to explore details about the view, the columns defined in the view, and preview the data in the view.
 
 You must have the relevant privileges to access and manage the [view](/user-guide/security-access-control-privileges#label-view-privileges),

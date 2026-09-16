@@ -26,7 +26,6 @@ Reach out to your account team if you have questions.
 - [DML commands](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-dml-commands)
 - [Higher-order functions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-functions)
 - [Native applications](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-native-apps)
-- [Optimized bulk loading](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-bulk-loading)
 - [Persisted query results](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-query-results)
 - [Quotas and throttling](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-ht-quotas-throttling)
 - [Secondary indexes](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-secondary-indexes)
@@ -108,10 +107,6 @@ Native applications
 
     You cannot create a hybrid table in a provider account, nor can you include
     that hybrid table in a view that is shared through the Native App.
-
-Optimized bulk loading
-:   INSERT ALL is not supported for bulk loading, but other variants of INSERT are. For more information,
-    see [Loading data](/user-guide/tables-hybrid-create#label-create-loading-data).
 
 Persisted query results
 :   Queries against hybrid tables do not use the results cache, as defined with the

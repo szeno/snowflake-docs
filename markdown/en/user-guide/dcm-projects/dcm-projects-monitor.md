@@ -134,7 +134,7 @@ FROM
 
 To see your deployment history in Snowsight:
 
-1. In the navigation menu, select **Catalog** » **Database Explorer**.
+1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Navigate to the schema that contains the DCM project.
 3. Select the DCM project object to see its details.
 4. Select the **Deployment History** tab to see a list of all deployments from this project object.

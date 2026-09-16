@@ -18,7 +18,7 @@ To monitor data quality health across all schemas and tables in your account fro
 To start gaining insights into the data quality of an object, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the object.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the object.
 3. Select the **Data Quality** tab.
 4. Select **Monitoring**.
 5. Do one of the following:

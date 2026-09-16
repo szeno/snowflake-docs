@@ -91,6 +91,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [AGGREGATE\_ACCESS\_HISTORY](/sql-reference/account-usage/aggregate_access_history) | Historical | 3 hours | Enterprise Edition (or higher) | Data retained for 1 year. |
 | [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) | Historical | 3 hours |  |  |
 | [AGGREGATION\_POLICIES](/sql-reference/account-usage/aggregation_policies) | Object | 2 hours |  |  |
+| [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/account-usage/ai_gateway_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [ALERT\_HISTORY](/sql-reference/account-usage/alert_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [ANOMALIES\_DAILY](/sql-reference/account-usage/anomalies_daily) | Historical | 3 hours |  | Data retained for 1 year. |
 | [APPLICATION\_CALLBACK\_HISTORY](/sql-reference/account-usage/application_callback_history) | Historical | 3 hours |  | Data retained for 1 year. |

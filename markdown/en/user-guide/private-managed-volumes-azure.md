@@ -6,20 +6,20 @@ Azure private endpoints. Snowflake-managed storage volumes are the storage locat
 
 ## Overview
 
-When you use an external query engine such as Apache Spark or Databricks to read from or write to an iceberg table that uses
-Snowflake-managed storage, the query engine communicates directly with the native iceberg volume hosted on Azure Storage. By
+When you use an external query engine such as Apache Spark or Databricks to read from or write to an Iceberg table that uses
+Snowflake-managed storage, the query engine communicates directly with the native Iceberg volume hosted on Azure Storage. By
 default, this traffic can traverse the public internet.
 
 [Azure private endpoints](https://docs.microsoft.com/en-us/azure/private-link/private-endpoint-overview) and
 [Azure Private Link](https://docs.microsoft.com/en-us/azure/private-link/private-link-overview) can be combined to provide
 secure connectivity to Snowflake-managed storage volumes. This setup ensures that read and write operations from your external
-query engine to the native iceberg volume use the Azure internal network instead of the public internet.
+query engine to the native Iceberg volume use the Azure internal network instead of the public internet.
 
 ## Benefits
 
 Implementing private endpoints to access Snowflake-managed storage volumes provides the following advantages:
 
-- Data doesn’t traverse the public internet when external query engines read from or write to the native iceberg volume.
+- Data doesn’t traverse the public internet when external query engines read from or write to the native Iceberg volume.
 - Administrators can implement consistent security and monitoring for how query engines connect to storage accounts.
 - Administrators aren’t required to modify firewall settings to access storage volume data.
 

@@ -103,11 +103,11 @@ To view or interact with scheduled runs, you must use a role with access to the 
 - **Open Run History:** Opens the notebook’s project object showing all past runs, including status, duration, results, source file, logs, and metrics.
   Selecting a run’s result opens the executed notebook with its output. For more information, see [Observability and logging for Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-observability-logging).
 
-**From Database Explorer**
+**From the Horizon Catalog Explorer**
 
 To view run history for any scheduled notebook (including those deployed via CI/CD):
 
-1. In the navigation menu, select **Catalog** » **Database Explorer**.
+1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Select the database and schema that contain the Notebook Project Object (NPO).
 3. Select the NPO.
 4. Select **Run history**.
@@ -135,14 +135,14 @@ After modifying code or cells, the icon indicates that there are undeployed chan
 
   Snowflake then updates the associated notebook project object, and all scheduled tasks for that notebook will use the newly deployed version for the next run.
 
-## Find a notebook project object (NPO) in the Object Explorer
+## Find a notebook project object (NPO) in the Horizon Catalog Explorer
 
 Each scheduled notebook automatically creates an NPO that stores its deployed code, execution history, and artifacts. You
-can locate these objects in the Object Explorer in Snowsight.
+can locate these objects in the Horizon Catalog Explorer in Snowsight.
 
 To locate an NPO in Snowsight, follow these steps:
 
-1. In the navigation menu, select **Catalog** » **Database Explorer**.
+1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Navigate to **Database** » **Schema** » **Notebook Project Objects** to view all NPOs in that schema.
 
 Alternatively, you can:

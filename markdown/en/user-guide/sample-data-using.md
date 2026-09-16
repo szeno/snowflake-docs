@@ -30,7 +30,7 @@ GRANT IMPORTED PRIVILEGES ON DATABASE SNOWFLAKE_SAMPLE_DATA TO ROLE PUBLIC;
 You can view the sample database and its contents either in Snowsight or using SQL:
 
 > Snowsight:
-> :   In the navigation menu, select **Catalog** » **Database Explorer** » **SNOWFLAKE\_SAMPLE\_DATA**.
+> :   In the navigation menu, select **Catalog** » **Explorer** » **SNOWFLAKE\_SAMPLE\_DATA**.
 >
 > SQL:
 > :   Execute a [SHOW DATABASES](/sql-reference/sql/show-databases) command.

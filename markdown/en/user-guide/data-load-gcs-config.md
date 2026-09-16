@@ -273,7 +273,7 @@ The Python API currently does not support the FILE\_FORMAT parameter of the [CRE
 To use Snowsight to create a named external stage, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Select the database and schema where you want to create a stage.
 4. Select **Create** » **Stage**.
 5. Select **Google Cloud Platform**.
@@ -308,7 +308,7 @@ ALTER STAGE my_gcs_stage
 ### Edit a stage using Snowsight
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Select the stage that you want to edit.
 4. Select [![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png) » **Edit**.
 5. Make your desired changes to the stage.

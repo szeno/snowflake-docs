@@ -456,6 +456,10 @@ For general information about roles and privilege grants for performing SQL acti
   - WITH MANAGED ACCESS
 
   The CREATE OR ALTER and CLONE variants aren’t supported.
+
+  Creating a nested namespace is supported only when the catalog-linked database uses a catalog integration for
+  a catalog that supports nested namespaces. For other REST catalogs, you can create only top-level namespaces. For more information, see
+  [Use CREATE SCHEMA to create namespaces in your external catalog](/user-guide/tables-iceberg-externally-managed-writes#label-tables-iceberg-externally-managed-writes-create-schema).
 - Regarding metadata:
 
   Attention

@@ -3,7 +3,7 @@
 You can work with [tables](/guides-overview-db) in SQL or using Snowsight.
 For details about the available SQL commands for working with tables, see [Table, view, & sequence DDL](/sql-reference/ddl-table)
 
-In Snowsight, in the navigation menu, select **Catalog** » **Database Explorer**, and then search for or browse to the table.
+In Snowsight, in the navigation menu, select **Catalog** » **Explorer**, and then search for or browse to the table.
 Select the table to do any of the following:
 
 - Explore details about the table and the columns defined in the table.

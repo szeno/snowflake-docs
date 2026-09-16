@@ -153,6 +153,9 @@ SHOW [ TERSE ] SCHEMAS
   | ... | LOCAL | ... | SNOWFLAKE | ... |
   +-----+-------+-----+-----------+-----+
   ```
+- The output includes an `is_nested` column for all schemas. For a schema in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database),
+  this column indicates whether the corresponding namespace is nested under another namespace in the remote catalog. For all other
+  schemas, this column returns `N`.
 
 - The command doesn’t require a running warehouse to execute.
 - The command only returns objects for which the current user’s current role has been granted at least one access privilege.
@@ -218,6 +221,24 @@ SHOW SCHEMAS HISTORY;
 | Wed, 25 Feb 2015 16:16:54 -0800 | PUBLIC             | N          | Y          | MYTESTDB      | PUBLIC |                                                           |         |              1 | NULL                            | ROLE            | NULL              |
 | Tue, 17 Mar 2015 16:42:29 -0700 | MYSCHEMA           | N          | N          | MYTESTDB      | PUBLIC |                                                           |         |              1 | Fri, 13 May 2016 17:25:32 -0700 | ROLE            | NULL              |
 +---------------------------------+--------------------+------------+------------+---------------+--------+-----------------------------------------------------------+---------+----------------+---------------------------------+-----------------+-------------------+
+```
+
+Show all schemas in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) named `my_db` and check the
+`is_nested` column. The `ns1-ns1a` schema corresponds to a namespace that’s nested under the top-level namespace `ns1`:
+
+Copy code
+
+```
+SHOW SCHEMAS IN DATABASE my_db;
+```
+
+```
++---------------------------------+----------+------------+------------+---------------+-------+---------+---------+----------------+-----------+
+| created_on                      | name     | is_default | is_current | database_name | owner | comment | options | retention_time | is_nested |
+|---------------------------------+----------+------------+------------+---------------+-------+---------+---------+----------------+-----------|
+| Mon, 27 Jul 2026 10:12:03 -0700 | NS1      | N          | N          | MY_DB         |       |         |         | 1              | N         |
+| Mon, 27 Jul 2026 10:12:05 -0700 | NS1-NS1A | N          | N          | MY_DB         |       |         |         | 1              | Y         |
++---------------------------------+----------+------------+------------+---------------+-------+---------+---------+----------------+-----------+
 ```
 
 Show all schemas in the current database that you have been granted the USAGE privilege on:

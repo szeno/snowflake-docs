@@ -85,6 +85,7 @@ service types in the Account Usage [METERING\_HISTORY view](/sql-reference/accou
 
 | Service | Account budget | Custom budget | Object |
 | --- | --- | --- | --- |
+| AI\_INFERENCE | ✔ | ✔ | Cortex AI Gateway (Preview) |
 | AI\_SERVICES | ✔ | ✔ | Snowflake CoWork, Cortex Agent |
 | AUTO\_CLUSTERING | ✔ | ✔ | Table |
 | COPY\_FILES | ✔ | ✔ | Database |

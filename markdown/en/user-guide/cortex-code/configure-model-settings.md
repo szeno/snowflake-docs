@@ -10,9 +10,31 @@ Before configuring default model settings, ensure the following:
 
 - You have the ACCOUNTADMIN role. This is required to create and modify agent objects in the `CORTEX_CODE` database.
 - Cross-region inference is enabled on your account. See [Enable cross-region inference](#enable-cross-region-inference).
-- The `CORTEX_CODE` database and `CONFIG` schema are available in your account.
 
-If you don’t see the `CORTEX_CODE` database or the `CORTEX_CODE.CONFIG` schema, it might not be provisioned yet on your account. Contact your Snowflake account admins to create this database and setup the right USAGE grants so that you can customize CoCo defaults for this account.
+## Create the database and schema
+
+The `CORTEX_CODE` database is not created automatically. Create it once per account using the
+`ACCOUNTADMIN` role:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+CREATE DATABASE IF NOT EXISTS CORTEX_CODE;
+CREATE SCHEMA IF NOT EXISTS CORTEX_CODE.CONFIG;
+```
+
+If the `CORTEX_CODE` database already exists in your account, skip this step.
+
+If you skip this step, creating the settings agent in the next section fails with the following error:
+
+Copy code
+
+```
+002003 (42S02): SQL compilation error:
+Database 'CORTEX_CODE' does not exist or not authorized.
+```
 
 ## Create the settings agent
 

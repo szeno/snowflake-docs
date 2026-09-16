@@ -64,7 +64,10 @@ Key points:
   chain makes the effective access stricter, never looser.
 - Owner’s rights agents aren’t supported. A provider can still surface an agent
   through an owner’s-rights code entity (for example, a Streamlit app or an
-  Snowpark Container Services service) that calls the agent using the app’s identity.
+  Snowpark Container Services service) that calls the agent using the app’s identity. Certain tools
+  aren’t usable in an owner’s-rights context, such as the `code_execution` and
+  `code_toolset_all` sandbox tools. See
+  [Provider: Add a Sandbox tool for Python or SQL execution](#label-native-apps-agent-code-execution).
 
 Snowflake-managed MCP servers created by an app are restricted to app-owned
 tools. They can’t expose tools that aren’t owned by the app, and they can’t
@@ -233,6 +236,88 @@ separate `COPY INTO` statement.
 For general skill authoring and stage layout, see
 [Agent skills](/user-guide/snowflake-cortex/cortex-agents-skills).
 
+### Provider: Add a Sandbox tool for Python or SQL execution
+
+App-created agents can use the same sandbox tools as standalone Cortex
+Agents. Configure the tool type, permission policy, workspace mounts, and
+skills as documented for standalone agents:
+
+- [Cortex Agent code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool)
+  (`code_execution`)
+- [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent)
+  (`code_toolset_all`)
+
+#### Choose a sandbox tool
+
+Both tool types run agent-generated code in a managed sandbox, and an agent
+can declare only one of them. Specifying both in one specification returns
+an error.
+
+| Tool type | What the sandbox provides | Use when |
+| --- | --- | --- |
+| `code_execution` | A single Python tool. It can’t run SQL from inside the sandbox. | The agent answers questions with other tools (Cortex Analyst, Cortex Search, or app procedures) and needs Python only for calculations, transformations, or plotting. To reach Snowflake data, the agent uses those other tools. |
+| `code_toolset_all` | The full Cortex Code toolset: bash, file read/write/edit, grep, glob, web search, `snowflake_sql_execute`, and skills. | The agent should write and run code, work with files in a mounted workspace, or run read-only SQL (`SELECT` and `SHOW`) from inside the sandbox. |
+
+Expand
+
+Show lessSee more
+
+#### Restrictions that apply to all agents
+
+These restrictions aren’t specific to Snowflake Native Apps. They apply wherever a
+Cortex Agent uses a sandbox tool:
+
+- **No owner’s rights.** When the agent is invoked from an owner’s-rights
+  stored procedure, Snowflake removes `code_execution` and
+  `code_toolset_all` from the request and doesn’t create a sandbox. Invoke
+  the agent with caller’s rights instead: the REST API, SQL
+  `DATA_AGENT_RUN`, Snowflake CoWork, or a restricted-caller’s-rights
+  procedure.
+- **Read-only SQL.** `snowflake_sql_execute` supports `SELECT` and `SHOW`.
+  It can’t run DML or DDL.
+
+#### Native App rules
+
+In a Snowflake Native App, restricted caller’s rights apply for the whole lifecycle
+of the sandbox, from the workspace it mounts to the data it reads through
+SQL. The sandbox never runs with the app’s owner’s-rights identity, so a
+provider can’t use owner’s rights to widen what the sandbox reaches.
+
+Without caller grants, the sandbox still starts, but it can’t mount the
+consumer’s workspace or read consumer data. The consumer user must also
+hold ordinary privileges on those objects. App-owned objects get implicit
+caller grants.
+
+To let the sandbox mount a consumer’s default workspace:
+
+Copy code
+
+```
+GRANT CALLER USAGE ON DATABASE "USER$<username>" TO APPLICATION my_app;
+GRANT CALLER USAGE ON SCHEMA "USER$<username>".PUBLIC TO APPLICATION my_app;
+GRANT CALLER READ ON WORKSPACE "USER$<username>".PUBLIC.DEFAULT$
+  TO APPLICATION my_app;
+GRANT CALLER WRITE ON WORKSPACE "USER$<username>".PUBLIC.DEFAULT$
+  TO APPLICATION my_app;
+```
+
+Omit `WRITE` for read-only access. Declaring `workspace_mounts` in the
+agent specification doesn’t bypass these grants. For more information about
+personal databases and workspace privileges, see
+[Personal Databases](/user-guide/personal-databases) and
+[Workspace operations using SQL](/user-guide/ui-snowsight/workspaces-sql).
+
+To let the sandbox read consumer data through `snowflake_sql_execute`,
+grant caller privileges at each object level the query needs:
+
+Copy code
+
+```
+GRANT CALLER USAGE ON DATABASE my_db TO APPLICATION my_app;
+GRANT CALLER USAGE ON SCHEMA my_db.my_schema TO APPLICATION my_app;
+GRANT CALLER SELECT ON TABLE my_db.my_schema.my_table TO APPLICATION my_app;
+```
+
 ### Provider: Create the tools and grant access
 
 The application also creates the tools that the agent uses and grants access
@@ -295,6 +380,10 @@ GRANT CALLER SELECT ON SEMANTIC VIEW my_db.my_schema.consumer_semantic_view
 GRANT CALLER SELECT ON TABLE my_db.my_schema.my_sv_underlying_table
   TO APPLICATION my_app;
 ```
+
+If the agent uses `code_execution` or `code_toolset_all`, also grant caller
+access on the consumer workspace and on the data objects that the sandbox
+should access. See [Provider: Add a Sandbox tool for Python or SQL execution](#label-native-apps-agent-code-execution).
 
 For more information about caller grants, see
 [GRANT CALLER](/sql-reference/sql/grant-caller).
@@ -610,10 +699,11 @@ practices:
   prevent it from exceeding its granted privileges on Snowflake objects.
   Don’t use prompt instructions, such as “do not reveal internal data,” as
   a security control.
-- **Use owner’s rights objects when needed.** Cortex Agents don’t run with
-  owner’s rights. If an agent needs access to internal app objects that
-  aren’t exposed to consumers, wrap the agent call in an owner’s-rights
-  stored procedure or Snowpark Container Services service.
+- **Use owner’s rights objects when needed, except for code execution.**
+  Cortex Agents don’t run with owner’s rights. For internal app objects,
+  wrap other tools (for example, an owner’s-rights stored procedure), not
+  the agent invocation. Invoking the agent from an owner’s-rights
+  procedure removes `code_execution` and `code_toolset_all`.
 - **Use event logging and event sharing for observability.** For more
   information, see [Logging messages from functions and procedures](/developer-guide/logging-tracing/logging) and
   [Use logging and event tracing for an app](/developer-guide/native-apps/event-about).

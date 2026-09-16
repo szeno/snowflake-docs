@@ -50,7 +50,7 @@ If you view the details of table `table1` in Snowsight, the **Lineage** tab disp
 To start using data lineage in Snowsight, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) with the [necessary privileges](#label-lineage-privileges).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select a [supported object](#label-ui-lineage-supported-objects) such as a table or
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select a [supported object](#label-ui-lineage-supported-objects) such as a table or
    view.
 3. Select the **Lineage** tab.
 

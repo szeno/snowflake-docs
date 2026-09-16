@@ -73,10 +73,11 @@ local (non-imported) databases, `resharing_settings` is NULL.
 
 ### Using Snowsight
 
-1. Sign in to Snowsight and select **Data** » **Databases**.
-2. In **Database Explorer**, locate the imported database.
-3. Hover over the database name to open its details card.
-4. On the **Details** tab, confirm that **Reshare** is set to **Allowed**.
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the Horizon Catalog Explorer, locate the imported database.
+4. Hover over the database name to open its details card.
+5. On the **Details** tab, confirm that **Reshare** is set to **Allowed**.
 
 ## Cross-region resharing
 

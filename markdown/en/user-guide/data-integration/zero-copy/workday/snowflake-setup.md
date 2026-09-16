@@ -91,7 +91,7 @@ CREATE SCHEMA  IF NOT EXISTS WORKDAY_LDQ_TEST.LIVEDATA;
 
 ### Using Snowsight
 
-1. Navigate to **Catalog** > **Database Explorer**.
+1. Navigate to **Catalog** > **Explorer**.
 2. Click **+ Database**, enter `WORKDAY_LDQ_TEST`, and click **Create**.
 3. Open the new database, click **+ Schema**, enter `LIVEDATA`, and click **Create**.
 
@@ -101,7 +101,7 @@ Create a Snowflake internal stage to store the wheel file so it can be installed
 
 ### Create the stage
 
-1. In Snowsight, navigate to **Catalog** > **Database Explorer**.
+1. In Snowsight, navigate to **Catalog** > **Explorer**.
 2. Search for `WORKDAY_LDQ_TEST` and click on it.
 3. Click **Schemas**, then **LIVEDATA**, then **Stages**.
 4. Click **+ Stage** > **Snowflake Managed**.

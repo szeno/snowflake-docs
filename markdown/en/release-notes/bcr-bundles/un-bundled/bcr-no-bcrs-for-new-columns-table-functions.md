@@ -1,4 +1,4 @@
-# New columns in table function output are no longer treated as behavior changes
+# New columns in built-in table function output are no longer treated as behavior changes
 
 Beginning September 4, 2026, new columns in the output of the built-in table functions in the
 [INFORMATION\_SCHEMA](/sql-reference/info-schema), [ACCOUNT\_USAGE](/sql-reference/account-usage),
@@ -18,6 +18,5 @@ If you depend on an exact column list, introducing a new column may cause unexpe
 these approaches:
 
 - As a workaround, you can [temporarily exclude that column](/release-notes/behavior-changes-new-columns) from the output of
-  the table function. This capability is available now, so you can set up column overrides before this change takes effect on
-  September 4, 2026.
+  the table function.
 - As a long term solution, update your scripts to select specific columns from the table function output.

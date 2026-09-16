@@ -166,6 +166,10 @@ ALTER DATABASE [ IF EXISTS ] <name> UNSET { BASE_LOCATION_PREFIX         |
           When your catalog-linked database has write permissions enabled, Snowflake propagates table drops to the remote catalog, which removes
           the table and data from both systems.
 
+          Creating and writing to tables in nested namespaces is supported only when the catalog-linked database uses a catalog
+          integration for a catalog that supports nested namespaces. For more information, see
+          [Use CREATE SCHEMA to create namespaces in your external catalog](/user-guide/tables-iceberg-externally-managed-writes#label-tables-iceberg-externally-managed-writes-create-schema).
+
         Default: `ALL`
 
 `SET ...`

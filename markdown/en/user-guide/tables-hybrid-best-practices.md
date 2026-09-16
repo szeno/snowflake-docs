@@ -202,9 +202,10 @@ You can use several optimizations and best practices for loading data into hybri
 - Prefer initial data loading as a single bulk transaction.
 
 Hybrid tables provide an optimized bulk loading path that delivers up to 10x faster loading performance than standard
-loading methods. When a hybrid table is empty, CTAS, COPY, and all variants of INSERT except INSERT ALL use
-optimized bulk loading. When a hybrid table already contains data, optimized bulk loading is automatically used
-for COPY and for all variants of INSERT except INSERT ALL, depending on the size and number of rows being loaded.
+loading methods. When a hybrid table is empty, CTAS, `COPY`, and all variants of `INSERT`, including `INSERT ALL`,
+use optimized bulk loading. When a hybrid table already contains data, optimized bulk loading is automatically used
+for `COPY` and for all variants of `INSERT`, including `INSERT ALL`, depending on the size and number of rows
+being loaded.
 
 You can verify that the optimization is being used by checking the statistics section of the query profile,
 where rows will be reported as `Number of rows bulk loaded` rather than `Number of rows inserted`.

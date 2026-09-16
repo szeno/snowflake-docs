@@ -42,7 +42,7 @@ This table outlines the new location of items in the navigation based on where t
 
 | Previous navigation | New navigation |
 | --- | --- |
-| Data » Databases | Catalog » Database Explorer |
+| Data » Databases | Catalog » Explorer |
 | Data » Add Data | Ingestion » Add data |
 | Data » Migrations | Ingestion » Migrations |
 | Data » Openflow | Ingestion » Openflow |

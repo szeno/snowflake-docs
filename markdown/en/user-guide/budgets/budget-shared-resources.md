@@ -1,6 +1,6 @@
 # Using budgets for AI features (shared resources)
 
-A shared resource is a Snowflake resource that is used by more than one business unit or team. AI features (such as AI Functions, Snowflake CoWork, Cortex Agents, and Cortex Code) are examples of shared resources. You can add these resources to a budget and configure the budget so that credits consumed by them count toward the budget’s spending limit only when selected users consume those credits. This enables tracking and controlling usage across different teams or cost centers.
+A shared resource is a Snowflake resource that is used by more than one business unit or team. AI features (such as AI Functions, Snowflake CoWork, Cortex Agents, Cortex Code, and the AI Gateway) are examples of shared resources. You can add these resources to a budget and configure the budget so that credits consumed by them count toward the budget’s spending limit only when selected users consume those credits. This enables tracking and controlling usage across different teams or cost centers.
 
 For example, suppose multiple teams use the same AI function. You can track consumption for each of the teams in separate budgets based
 on which users are calling the function — one budget for engineering users and another for finance users.
@@ -93,6 +93,11 @@ Supported AI feature domains include:
 - `CORTEX CODE` — Cortex Code workloads (CLI, Snowsight)
 - `CORTEX AGENT` — Cortex agent-based workflows
 - `SNOWFLAKE INTELLIGENCE` — Snowflake CoWork workloads
+- `AI GATEWAY` — Cortex AI Gateway
+
+  [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+  Available to all accounts.
 
 Tip
 
@@ -143,6 +148,21 @@ Note
 
 For the SNOWFLAKE INTELLIGENCE domain, specifying an explicit object reference in ADD\_SHARED\_RESOURCE is optional as there is only one Snowflake CoWork object per account.
 
+### Add the AI Gateway
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Add the AI Gateway by domain. Each account has a single gateway, named `SNOWFLAKE`, so the domain
+covers it.
+
+Copy code
+
+```
+CALL finance_budget!ADD_SHARED_RESOURCE('AI GATEWAY');
+```
+
 ## Creating a budget for AI workloads in Snowsight
 
 You can create and configure budgets for AI workloads directly in Snowsight using a guided user interface.
@@ -170,6 +190,11 @@ Using tags to define the scope of a budget is required for shared resources such
    - **AI Functions**
    - **Cortex Code**
    - **Cortex Agents**
+   - **AI Gateway**
+
+     [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+     Available to all accounts.
    - **Snowflake CoWork**
 8. Configure AI Functions.
 
@@ -181,19 +206,20 @@ Using tags to define the scope of a budget is required for shared resources such
    - You can also choose to select specific instances (for example, `CLI`, `Snowsight`).
 10. Configure Snowflake CoWork.
 
-- By default, all Snowflake CoWork workloads are automatically included.
-- You can also choose to select a specific Snowflake CoWork.
-
+    - By default, all Snowflake CoWork workloads are automatically included.
+    - You can also choose to select a specific Snowflake CoWork.
 11. Configure Cortex Agents.
 
-- By default, all Cortex Agents are automatically included.
-- You can also choose to select specific Cortex Agent.
+    - By default, all Cortex Agents are automatically included.
+    - You can also choose to select specific Cortex Agent.
+12. Configure AI Gateway.
 
-12. Review your selections.
+    - The account’s single gateway, `SNOWFLAKE`, is selected by default. There’s nothing to choose.
+13. Review your selections.
 
 Confirm that the correct resources are selected, ensure that any selected tags correctly reflect the intended scope.
 
-13. Complete the remaining configuration and click **Create**
+14. Complete the remaining configuration and click **Create**
 
 Note
 

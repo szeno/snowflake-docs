@@ -103,7 +103,7 @@ To migrate from dbt Core to dbt Fusion, use the following resources:
 
 - **Automated fixes with dbt-autofix:** Run `uvx dbt-autofix` in your local terminal to automatically resolve dbt Core deprecation warnings and check package compatibility before switching to Fusion. No installation is required. `uvx` runs the tool directly. For more information, see [dbt-labs/dbt-autofix](https://github.com/dbt-labs/dbt-autofix?tab=readme-ov-file#deprecations---the-main-one).
 - **Official upgrade guide:** The [Upgrading to the dbt Fusion engine](https://docs.getdbt.com/docs/dbt-versions/core-upgrade/upgrading-to-fusion?version=1.11) guide on the dbt Developer Hub covers the full migration process.
-- **AI-assisted migration:** The publicly available [dbt Core to Fusion migration skill](https://github.com/dbt-labs/dbt-agent-skills/blob/main/skills/dbt-migration/skills/migrating-dbt-core-to-fusion/SKILL.md) can be used by AI coding agents such as Cortex Code to guide migration work.
+- **AI-assisted migration:** The publicly available [dbt Core to Fusion migration skill](https://github.com/dbt-labs/dbt-agent-skills/blob/main/skills/dbt-migration/skills/migrating-dbt-core-to-v2/SKILL.md) can be used by AI coding agents such as Cortex Code to guide migration work.
 
 ## How deprecation and decommissioning work
 

@@ -248,6 +248,9 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
+- [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
+- [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
 - [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
 - [Sep 14, 2026: Zero-copy support for all table formats in interactive warehouses (General availability)](/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
@@ -272,6 +275,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Sep 02, 2026: Data lineage for Cortex Agents](/release-notes/2026/other/2026-09-02-cortex-agent-lineage)
 - [Sep 02, 2026: Data lineage for streams](/release-notes/2026/other/2026-09-02-lineage-streams)
 - [Sep 02, 2026: Openflow Connector for Jira Cloud: Core flow (General availability)](/release-notes/2026/other/2026-09-02-openflow-jira-core-ga)
+- [Sep 1, 2026: Snowflake Native Apps: Code execution tools for Cortex Agents](/release-notes/2026/other/2026-09-01-native-apps-agent-code-execution)
 - [Sep 01, 2026: Snowflake App Runtime (General availability)](/release-notes/2026/other/2026-09-01-snowflake-app-runtime-ga)
 - [August 31, 2026: app.yml for Snowflake App Runtime (Preview)](/release-notes/2026/other/2026-08-31-app-yml-v2)
 - [Aug 31, 2026: CoCo Desktop v1.21.2](/release-notes/2026/other/2026-08-31-coco-desktop-v1-21-2)

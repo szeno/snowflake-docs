@@ -304,12 +304,19 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `claude-opus-4-7` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-6` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
 | `claude-opus-4-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| `claude-fable-5-1` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-fable-5` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-sonnet-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
 | `claude-sonnet-4-6` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |
 | `claude-4-sonnet` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `openai-gpt-5.4` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
+| `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.4` | \* |  |  |  |  |  |  |  |  |  | \* | \* |  | \* |
 | `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
 | `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
 | `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
@@ -372,7 +379,9 @@ Expand
 
 Show lessSee more
 
-\* Indicates a preview function or model. Preview features are not suitable for production workloads.
+\* Indicates a public preview function or model. Public preview features aren’t suitable for production workloads.
+
+\*\* Indicates a private preview model. Private preview models are available only to accounts that Snowflake has explicitly enabled, and they aren’t suitable for production workloads.
 
 You can also use any [fine-tuned](/user-guide/snowflake-cortex/cortex-finetuning) model in any supported region.
 

@@ -100,7 +100,7 @@ You must use a role that is granted or inherits the USAGE privilege on the datab
 to perform these steps.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Select the database and schema that contain the stage.
 4. Select **Stages** and select the stage for which you want to view files.
 5. If prompted, select **Enable Directory Table** to enable a directory table for the stage so that you can see files.
@@ -135,7 +135,7 @@ You must use a role that is granted or inherits the USAGE privilege on the datab
 to perform these steps.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Select the database and schema that contain the stage.
 4. Select **Stages** and select the stage.
 5. Select **Stage Details**.

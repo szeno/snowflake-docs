@@ -9,7 +9,7 @@ tasks and task graphs and retry failed tasks.
 To view and manage a task in Snowsight, perform the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. For a specific database and schema, select **Tasks** and select the task you want to manage.
 
 When viewing the task in Snowsight, you can perform the following steps:
@@ -40,8 +40,8 @@ automatically suspended and resumed when you finish editing the task. For more i
 To view a task graph for a specific database schema, perform the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. Use the object explorer to locate the database and schema that contain the tasks that you want to view.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. Use the Horizon Catalog Explorer to locate the database and schema that contain the tasks that you want to view.
 4. For the selected schema, select **Tasks**.
 5. Select a specific task.
 
@@ -113,8 +113,8 @@ For each instance, you can view the following:
 To view the run history:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. In the right pane, using the object explorer, navigate to a database and schema.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the right pane, using the Horizon Catalog Explorer, navigate to a database and schema.
 4. For the selected schema, select and expand **Tasks**.
 5. Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
 6. Select the **Run History** tab.
@@ -188,8 +188,8 @@ Selecting a task graph always opens the details of the most recent run. If you w
 With this preview, you can also access the **Task Graph** page from a specific run history page if the task is part of a task graph.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. In the right pane, using the object explorer, navigate to a database and schema.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the right pane, using the Horizon Catalog Explorer, navigate to a database and schema.
 4. For the selected schema, select and expand **Tasks**.
 5. Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
 6. Select the **Run History** tab.
@@ -231,8 +231,8 @@ Note
 Take the following steps to manually retry failed and canceled tasks. The following steps work only when the [Viewing task graphs](#label-snowsight-task-graph-run-history) preview feature is enabled.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. In the right pane, using the object explorer, navigate to a database and schema.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the right pane, using the Horizon Catalog Explorer, navigate to a database and schema.
 4. For the selected schema, select and expand **Tasks**.
 5. Select a task. Task information is displayed, including **Task Details**, **Graph**, and **Run History** sub-tabs.
 6. Select the **Run History** tab.

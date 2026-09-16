@@ -31,6 +31,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [CONTACTS](/sql-reference/organization-usage/contacts) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CONTACT\_REFERENCES](/sql-reference/organization-usage/contact_references) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CONTRACT\_ITEMS](/sql-reference/organization-usage/contract_items) [2] | Historical | 24 hours |  |
+| [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/organization-usage/ai_gateway_usage_history) | Historical |  | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CORTEX\_AGENT\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_agent_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CORTEX\_AI\_FUNCTIONS\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_ai_functions_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_code_cli_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |

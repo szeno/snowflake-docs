@@ -63,7 +63,7 @@ Named file formats are optional, but are recommended when you plan to load simil
 You can create a file format using either Snowsight or SQL:
 
 > Snowsight:
-> :   1. In the navigation menu, select **Catalog** » **Database Explorer**.
+> :   1. In the navigation menu, select **Catalog** » **Explorer**.
 >     2. Locate a database and select the schema to which you want to add the file format.
 >     3. Select **Create** » **File Format**.
 >     4. Complete the SQL statement and select **Create File Format**.

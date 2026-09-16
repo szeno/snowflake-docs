@@ -300,7 +300,7 @@ For example, to detach an aggregation policy from view `v1`, execute:
 To determine whether a table or view has an aggregation policy, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the table or view.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the table or view.
 3. On the **Table Details** tab, find the **Policies** section and look for an aggregation policy.
 4. To determine the minimum group size of the aggregation policy, find the **Minimum Group Size** field. If the body of the policy is
    complex and has a different minimum group size under different conditions, `Case dependent` displays instead of a number. For a complex

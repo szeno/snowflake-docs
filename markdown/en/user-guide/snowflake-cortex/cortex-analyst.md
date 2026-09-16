@@ -379,7 +379,7 @@ GRANT READ ON STAGE sales TO ROLE sales_analyst;
 ```
 
 In Snowsight, you can refresh the page and find the newly created stages in the
-[database object explorer](/user-guide/ui-snowsight-data).
+[Horizon Catalog Explorer](/user-guide/ui-snowsight-data).
 You can open the stage page in a new tab and upload your YAML files in Snowsight.
 
 Alternatively, you can use the [Snowflake CLI client](/developer-guide/snowflake-cli/command-reference/stage-commands/copy)

@@ -91,7 +91,7 @@ In this step, the following objects are created for the tutorial to create, mana
    1. Create the database and schema in which to create the custom budget:
       1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
       2. Switch to the ACCOUNTADMIN role.
-      3. In the navigation menu, select **Catalog** » **Database Explorer**, and then select **+ Database**.
+      3. In the navigation menu, select **Catalog** » **Explorer**, and then select **+ Database**.
       4. In the **Name** field, enter `budgets_db`.
       5. Select **Create**.
       6. After the database is created, select the `budgets_db`.
@@ -327,12 +327,12 @@ step. You will be creating the following objects:
    > 1. Create a database:
    >
    >    1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-   >    2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select **+ Database**.
+   >    2. In the navigation menu, select **Catalog** » **Explorer**, and then select **+ Database**.
    >    3. In the **Name** field, enter `na_finance_db`.
    >    4. Select **Create**.
    > 2. Grant the APPLYBUDGET privilege on the database to role `budget_owner`:
    >
-   >    1. In the navigation menu, select **Catalog** » **Database Explorer**.
+   >    1. In the navigation menu, select **Catalog** » **Explorer**.
    >    2. Select the database you just created `na_finance_db`.
    >    3. In the **Privileges** tile, select **+ Privilege**.
    >    4. For the **Role**, select the `budget_owner` role.

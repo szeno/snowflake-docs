@@ -123,7 +123,7 @@ For more information, see [Data retention period and staleness](/user-guide/stre
 To view and manage a stream in Snowsight, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. For a specific database and schema, select **Streams** and select the stream you want to manage.
 
 When viewing the stream in Snowsight, you can do the following:

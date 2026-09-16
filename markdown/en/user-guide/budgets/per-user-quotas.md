@@ -122,6 +122,7 @@ and AI domains can’t be combined in the same quota.
 | SNOWFLAKE INTELLIGENCE | Credit usage for Snowflake CoWork (formerly Snowflake Intelligence) operations attributed to the user. |
 | CORTEX AGENT | Credit usage for Cortex Agents operations attributed to the user. |
 | CORTEX CODE | Credit usage for Snowflake CoCo (formerly Cortex Code) operations attributed to the user. Includes spend from Snowflake CoCo CLI, Snowflake CoCo in Snowsight, and Snowflake CoCo Desktop. |
+| AI GATEWAY | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  Credit usage for AI Gateway operations attributed to the user. |
 
 Expand
 
@@ -179,6 +180,21 @@ CALL my_quota!ADD_SHARED_RESOURCE(
 );
 ```
 
+### Add the AI Gateway
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Add the AI Gateway by domain. Each account has a single gateway, named `SNOWFLAKE`, so the domain
+covers it.
+
+Copy code
+
+```
+CALL my_quota!ADD_SHARED_RESOURCE('AI GATEWAY');
+```
+
 ## Limitations and considerations
 
 - Quotas operate on a monthly cycle aligned to the UTC calendar month. Custom quota cycles, such as weekly
@@ -199,7 +215,7 @@ CALL my_quota!ADD_SHARED_RESOURCE(
 
 The following limitations apply to [block enforcement](#label-per-user-quota-enforcement):
 
-- Block enforcement supports only the AI domains: AI functions, Cortex Agents, Snowflake CoWork, and Snowflake CoCo.
+- Block enforcement supports only the AI domains: AI functions, Cortex Agents, Snowflake CoWork, Snowflake CoCo, and the AI Gateway.
   Warehouse spend can be tracked in a separate quota, but block enforcement doesn’t apply to
   warehouses.
 - Because enforcement is evaluated within minutes of a spend event rather than at request time, a
@@ -414,7 +430,8 @@ The second argument determines whether end users should receive notifications on
 
 ### Enforceable domains
 
-Block enforcement supports the following AI domains: AI functions, Cortex Agents, Snowflake CoWork, and Snowflake CoCo.
+Block enforcement supports the following AI domains: AI functions, Cortex Agents, Snowflake CoWork,
+Snowflake CoCo, and the AI Gateway.
 Warehouse spend can be tracked in a separate quota, but block enforcement doesn’t apply to
 warehouses.
 
@@ -1072,8 +1089,8 @@ The **Quota scope** page determines which users and resources the quota monitors
   (through tags)** to scope by user tag. When you monitor all users, you can optionally exclude
   users that carry specific tags.
 - **Specify which resources to track**: Choose **AI-related features** to monitor AI functions,
-  Snowflake CoCo, Cortex Agents, and Snowflake CoWork (select all of them or specific resources
-  within each), or **Warehouses** to monitor warehouse compute.
+  Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway (select all of them or specific
+  resources within each), or **Warehouses** to monitor warehouse compute.
 
 #### Basic information
 
@@ -1168,7 +1185,7 @@ This view includes:
     `1 credit / month` and `1 credit / day`).
   - **Avg user spend** and **Highest spend** across in-scope users.
   - **Quota scope**: The users in scope (all users in the account, or the tag-based filters
-    applied) and the monitored domains, such as AI functions, Snowflake CoCo, Cortex Agents, and Snowflake CoWork.
+    applied) and the monitored domains, such as AI functions, Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway.
   - **Notifications**: The configured notification thresholds.
 - **User table**: A searchable, filterable list of every user in scope. For each user, the table
   shows **Utilization**, **Status**, **Spend**, **Enforcement status** (such as Blocked), and

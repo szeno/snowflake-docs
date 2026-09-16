@@ -5,8 +5,8 @@ interface endpoints.
 
 ## Overview
 
-When you use an external query engine such as Apache Spark to read from or write to an iceberg table that uses
-Snowflake-managed storage, the query engine communicates directly with the native iceberg volume hosted on Amazon S3. By default,
+When you use an external query engine such as Apache Spark to read from or write to an Iceberg table that uses
+Snowflake-managed storage, the query engine communicates directly with the native Iceberg volume hosted on Amazon S3. By default,
 this traffic can traverse the public internet.
 
 For information about using Snowflake-managed storage volumes with Apache Iceberg™ tables, see
@@ -14,7 +14,7 @@ For information about using Snowflake-managed storage volumes with Apache Iceber
 
 [AWS PrivateLink for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html) can
 be combined with VPC interface endpoints to provide secure connectivity to the managed storage volume. This setup ensures that
-read and write operations from your external query engine to the native iceberg volume use the AWS internal network instead of the
+read and write operations from your external query engine to the native Iceberg volume use the AWS internal network instead of the
 public internet.
 
 ### Benefits
@@ -94,7 +94,7 @@ Complete the following steps to configure and implement secure access to a Snowf
    once the endpoint is created.
 
    Example VPCE DNS Name: `*.vpce-000000000000a12-abc00ef0.s3.us-west-2.vpce.amazonaws.com`
-2. Configure your external query engine to use the VPCE DNS name directly. Replace the \*\*\* in the VPCE DNS name with *bucket*. For example, in Apache Spark:
+2. Configure your external query engine to use the VPCE DNS name directly. Replace the `*` in the VPCE DNS name with `bucket`. For example, in Apache Spark:
 
    ```
    .config("spark.sql.catalog.<catalog_name>.s3.endpoint",

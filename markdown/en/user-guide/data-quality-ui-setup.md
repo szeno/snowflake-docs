@@ -27,7 +27,7 @@ on the data that you can access.
 To use Cortex Data Quality to set up data quality checks, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the object.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the object.
 3. Select the **Data Quality** tab.
 4. Select **Monitoring**.
 5. Do one of the following:
@@ -45,7 +45,7 @@ For more information about Cortex Data Quality, see [More about Cortex Data Qual
 To create data quality checks based on your knowledge of your data, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the object.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the object.
 3. Select the **Data Quality** tab.
 4. Select **Monitoring**.
 5. Do one of the following:
@@ -72,7 +72,7 @@ You can’t use Snowsight to adjust the schedule until you have added at least o
 command to set the schedule for a table or view at any time.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the object.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the object.
 3. Select the **Data Quality** tab.
 4. Select **Monitoring**.
 5. Select **Settings**.

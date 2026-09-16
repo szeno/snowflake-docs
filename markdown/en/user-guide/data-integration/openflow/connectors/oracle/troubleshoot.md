@@ -128,7 +128,7 @@ Resolve the issue by one of the following:
   [Specify a logical key for a table](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-logical-key).
 
 After you make the change, restart replication for the affected table: see
-[Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+[Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 
 ## The CDC processor doesn’t start after editing Table Key Configuration JSON
 
@@ -160,7 +160,7 @@ schema.
    uses the current column names. Disable and re-enable the service for the change to
    take effect.
 2. Restart replication for the affected table: see
-   [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+   [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 
 ## A logical-key configuration references a column that doesn’t exist
 

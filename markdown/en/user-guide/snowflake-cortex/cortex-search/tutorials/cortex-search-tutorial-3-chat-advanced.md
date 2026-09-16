@@ -85,7 +85,7 @@ you can skip these configurations.
 Now upload the dataset. You can upload the dataset in Snowsight or using SQL. To upload in Snowsight:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Select your database `cortex_search_tutorial_db`.
 4. Select your schema `public`.
 5. Select **Stages** and select `fomc`.

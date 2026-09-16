@@ -54,7 +54,7 @@ You can use your `root` object to create a database, schema, and table in your S
 
    For more information, see [Managing Snowflake databases, schemas, tables, and views with Python](/developer-guide/snowflake-python-api/snowflake-python-managing-databases).
 2. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-3. In the navigation menu, select **Catalog** » **Database Explorer**. If your code was successful, the
+3. In the navigation menu, select **Catalog** » **Explorer**. If your code was successful, the
    `PYTHON_API_DB` database is listed.
 
    Tip

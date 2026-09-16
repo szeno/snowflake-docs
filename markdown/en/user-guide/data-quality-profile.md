@@ -23,7 +23,7 @@ The data profile includes the following statistics:
 To view the data profile of a table or view, complete the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then select the table or view.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then select the table or view.
 3. Select the **Data Quality** tab.
 4. Select **Data Profile**.
 

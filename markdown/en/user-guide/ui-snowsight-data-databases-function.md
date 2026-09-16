@@ -2,7 +2,7 @@
 
 You can work with user-defined functions (UDFs) in SQL or in Snowsight.
 
-In Snowsight, in the navigation menu, select **Catalog** » **Database Explorer**, and then search for or browse to the UDF.
+In Snowsight, in the navigation menu, select **Catalog** » **Explorer**, and then search for or browse to the UDF.
 Select the UDF to review details about and manage the function.
 
 You must have the [relevant privileges](/user-guide/security-access-control-privileges#label-udf-privileges) to access and manage the UDF in Snowsight.

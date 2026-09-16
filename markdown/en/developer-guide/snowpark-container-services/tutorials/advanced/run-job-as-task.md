@@ -391,8 +391,8 @@ op.run(dag)
 To view the job service details in task history, perform the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. In the object explorer, locate the database and schema that contain the tasks that you want to view.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the Horizon Catalog Explorer, locate the database and schema that contain the tasks that you want to view.
 4. For the selected schema, select **Tasks**.
 5. Select a specific task.
 

@@ -58,7 +58,7 @@ See [Snowflake Postgres networking](/user-guide/snowflake-postgres/postgres-netw
 Copy code
 
 ```
-CREATE POSTGRES INSTANCE <name>
+CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
   COMPUTE_FAMILY = '<compute_family>'
   STORAGE_SIZE_GB = <storage_gb>
   AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }
@@ -71,6 +71,11 @@ CREATE POSTGRES INSTANCE <name>
 
 For the command parameters:
 
+> `IF NOT EXISTS`
+> :   Creates the instance only if an instance with the same name does not already exist. If an instance
+>     with the same name already exists, the command does nothing and completes successfully. Useful for
+>     idempotent scripts and automation.
+>
 > `COMPUTE_FAMILY = compute_family`
 > :   Specifies the name of an instance size from the [Snowflake Postgres Instance Sizes](/user-guide/snowflake-postgres/postgres-instance-sizes) tables.
 >

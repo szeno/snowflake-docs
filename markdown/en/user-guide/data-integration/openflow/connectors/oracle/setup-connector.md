@@ -120,30 +120,6 @@ Expand
 
 Show lessSee more
 
-## Restart table replication
-
-A table in FAILED state — for example, due to a missing primary key or unsupported schema change — does not restart automatically. If a table enters a FAILED state or you need to restart replication from scratch, use the following procedure to remove and re-add the table to replication.
-
-Note
-
-If the failure was caused by an issue in the source table such as a missing primary key, resolve that issue in the source database before continuing.
-
-1. Remove the table from replication, using one of the following methods:
-
-   - Add the table to the **Re-snapshot Table Exclusions** parameter to temporarily exclude it from replication. This is convenient when the table is matched by an **Included Table Regex** that you don’t want to change.
-   - In the Ingestion Parameters context, either remove the table from **Included Table Names** or modify the **Included Table Regex** so the table is no longer matched.
-2. Verify the table has been removed:
-
-   1. In the Openflow runtime canvas, right-click a processor group and choose **Controller Services**.
-   2. In the table listing controller services, locate the **Table State Store** row, click the three vertical dots on the right side of the row, then choose **View State**.
-
-   Important
-
-   You must wait until the table’s state is fully removed from this list before proceeding. Do not continue until this configuration change has completed.
-3. Clean up the destination: Once the table’s state shows as fully removed, manually [DROP](/sql-reference/sql/drop-table) the destination table in Snowflake. Note that the connector will not overwrite an existing destination table during the snapshot phase; if the table still exists, replication will fail again. Optionally, the journal table and stream can also be removed if they are no longer needed.
-4. Re-add the table by reversing the change you made in the first step: either remove the table from **Re-snapshot Table Exclusions**, or add it back to **Included Table Names** or **Included Table Regex**. The connector then re-snapshots the table.
-5. Verify the restart: Check the **Table State Store** using the instructions given previously. The state of the table should appear with the status NEW, then transition to SNAPSHOT\_REPLICATION, and finally INCREMENTAL\_REPLICATION.
-
 ## Replicate a subset of columns in a table
 
 The connector can filter the data replicated per table to a subset of configured columns.

@@ -202,7 +202,7 @@ See [Grant access to a semantic view](/user-guide/views-semantic/semantic-studio
 
 ### Query the view
 
-If you are viewing a semantic view in the database object explorer, you can open a worksheet to construct a query for
+If you are viewing a semantic view in the Horizon Catalog Explorer, you can open a worksheet to construct a query for
 that view by selecting [![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png) » **Query with SQL**. For information on how to construct the query, see
 [Querying semantic views](/user-guide/views-semantic/querying).
 

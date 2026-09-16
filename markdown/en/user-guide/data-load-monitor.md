@@ -94,7 +94,7 @@ If you have a default warehouse for your user profile, Snowsight uses that wareh
 To review the copy history for a table, locate and open the table for which you want to review activity:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Locate and select the database with the table for which you want to review activity.
 4. Select the schema with the table for which you want to review activity.
 5. Select **Tables** and select the table.

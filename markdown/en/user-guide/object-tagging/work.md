@@ -180,7 +180,7 @@ You can set a tag on existing tables, views, and columns using Snowsight.
 
 There are several options to set a tag:
 
-- In the navigation menu, select **Catalog** » **Database Explorer**, and then navigate to the desired table, view, or column using the object explorer.
+- In the navigation menu, select **Catalog** » **Explorer**, and then navigate to the desired table, view, or column using the Horizon Catalog Explorer.
 
   Select the **More** menu (that is, `...`) » **Edit**, and then select **+ Tag**. Follow the prompts to manage the tag
   assignment.
@@ -189,7 +189,7 @@ There are several options to set a tag:
   - Select a tile, distribution percentage, and one of the most used tags or tables. When you select an item in the **Dashboard**,
     Snowsight redirects you to the **Tagged Objects** tab.
   - Modify the filters as needed. When you select an object or column, Snowsight redirects you to its location in the
-    object explorer. Update the tag assignment as needed.
+    Horizon Catalog Explorer. Update the tag assignment as needed.
 - Navigate to the **Tagged Objects** tab directly. Modify the filters, select an object or column, and manage the tag assignment.
 
 Note

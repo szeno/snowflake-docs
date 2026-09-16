@@ -12,7 +12,7 @@ Use Snowflake Datasets in the following situations:
 - You need to track the lineage used to create an ML model.
 
 Datasets are materialized data objects. You can use either Snowflake ML or SQL commands to interact with them.
-They don’t appear in the Snowsight database object explorer.
+They don’t appear in the Horizon Catalog Explorer in Snowsight.
 
 Note
 

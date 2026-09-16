@@ -47,7 +47,43 @@ The Openflow runtime canvas doesn’t display table status changes — only the 
 Replication state for table <database_name>.<schema_name>.<table_name> changed from <old_state> to <new_state>
 ```
 
-If a permanent failure prevents table replication, remove the table from replication. After you address the problem that caused the failure, you can add the table back to replication. For more information, see [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+If a permanent failure prevents table replication, remove the table from replication. After you address the problem that caused the failure, you can add the table back to replication. For more information, see [Restart table replication](#label-of-oracle-restart-table-replication).
+
+## Restart table replication
+
+Note
+
+This procedure re-snapshots the table in place. It requires connector version `0.49.0` or later (embedded license) / `0.48.0` or later (embedded license, public sector) / `0.48.0` or later (independent license), and runtime-extensions `2026.9.10.9` or later. On earlier versions, re-snapshotting a table that already exists in Snowflake fails instead of reloading in place. Upgrade the connector before you use this procedure.
+
+A table in a FAILED state (for example, due to a missing primary key or an unsupported schema change) does not restart automatically. If a table enters a FAILED state or you need to restart replication from scratch, use the following procedure to remove and re-add the table to replication.
+
+Note
+
+If the failure was caused by an issue in the source table such as a missing primary key, resolve that issue in the source database before continuing.
+
+1. Remove the table from replication, using one of the following methods:
+
+   - Add the table to the **Re-snapshot Table Exclusions** parameter to temporarily exclude it from replication. This approach is convenient when the table is matched by an **Included Table Regex** that you don’t want to change.
+   - In the **Ingestion Parameters** context, either remove the table from **Included Table Names** or modify the **Included Table Regex** so the table is no longer matched.
+2. Verify the table has been removed:
+
+   1. In the Openflow runtime canvas, right-click a processor group and choose **Controller Services**.
+   2. In the table listing controller services, locate the **Table State Store** row, click the three vertical dots on the right side of the row, then choose **View State**.
+
+   Important
+
+   You must wait until the table’s state is fully removed from this list before proceeding. Don’t continue until this configuration change has completed.
+3. Wait until all queues in the connector are empty before you re-add the table. When all FlowFiles have been processed, the **Queued** value on the connector’s processor group becomes zero.
+
+   Warning
+
+   Don’t re-add the table while change events that were captured before you removed it are still queued. When you re-add a table, the connector loads the new snapshot in append-only mode, so any leftover change event that merges into the table after the re-snapshot might create duplicate rows in the destination table.
+4. Re-add the table by reversing the change you made in the first step: either remove the table from **Re-snapshot Table Exclusions**, or add it back to **Included Table Names** or **Included Table Regex**.
+
+   You do not need to drop the destination table first. The connector re-snapshots the table in place: it makes a zero-copy [clone](/sql-reference/sql/create-clone) of the current destination table to an archive table named `<destination_table>_ARCHIVE_<timestamp>`, clears the destination table, and then loads the fresh snapshot into the same destination table. Because the destination table object is preserved, dependent objects such as streams remain attached and continue to work.
+
+   The archive table retains a copy of the destination table’s contents from immediately before the reload, as a safeguard. The connector does not read from or write to it again, so you can drop it at any time once the backup is no longer needed, typically after you confirm that the re-snapshot completed and the destination data is correct.
+5. Verify the restart: Check the **Table State Store** using the instructions given previously. The state of the table should appear with the status NEW, then transition to SNAPSHOT\_REPLICATION, and finally to INCREMENTAL\_REPLICATION.
 
 ## Increase the oversized value limit
 

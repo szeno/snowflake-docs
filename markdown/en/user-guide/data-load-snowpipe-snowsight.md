@@ -17,7 +17,7 @@ To view details about the pipe, you must use a role with the MONITOR or OWNERSHI
 To view pipe details in Snowsight, take the following steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Locate the database and schema that contain the pipe.
 
    ![Screenshot of where to find the Pipe Details page in Snowsight](/static/images/snowsight/ui-snowpipe-intro.png)

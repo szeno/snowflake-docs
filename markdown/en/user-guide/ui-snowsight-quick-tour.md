@@ -132,7 +132,7 @@ For more information, see:
 ### Catalog
 
 Discover database objects across your entire data estate with Universal Search and the Horizon Catalog. Explore databases, tables,
-functions, views, and more using the Database Explorer. Browse the Internal Marketplace to find data products shared within
+functions, views, and more using the Horizon Catalog Explorer. Browse the Internal Marketplace to find data products shared within
 your organization, and manage apps and native application packages.
 
 To learn more, see:

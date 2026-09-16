@@ -353,7 +353,7 @@ The following limitations apply to the Openflow Connector for Oracle:
   unique constraint, or unique index that it uses as the replication key. This limitation also
   applies to renaming a replication-key column. After any such change,
   restart replication for the affected table: see
-  [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+  [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 - When a logical-key value changes on the source, the connector doesn’t soft-delete
   the old row, which results in duplicate active rows in the destination. For more information,
   see [Limitation: Changes to a logical-key value](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-logical-key-value-change).
@@ -425,7 +425,7 @@ The connector doesn’t support the following schema changes. When one occurs, r
 - **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
 - **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`.
 
-To recover, restart replication for the affected table: see [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+To recover, restart replication for the affected table: see [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 
 Note
 
@@ -579,7 +579,7 @@ For details and instructions on enabling the 128 MB per-value limit, see [Increa
 
 An *invalid row* is a row that Snowflake rejects during ingestion because it can’t be written to the destination table, for example, a value that can’t be converted to the destination column’s type, or a missing required column. The **Error Handling Strategy** parameter controls what the connector does when it encounters an invalid row:
 
-- **Fail Table** (default): On the first invalid row, the connector marks the table as permanently failed and stops replicating it, preserving strict, all-or-nothing replication. After you fix the source data, resume replication as described in [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-of-oracle-restart-table-replication).
+- **Fail Table** (default): On the first invalid row, the connector marks the table as permanently failed and stops replicating it, preserving strict, all-or-nothing replication. After you fix the source data, resume replication as described in [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 - **Log Errors and Continue**: The connector keeps replicating the valid rows and records each rejected row, together with its original payload and error details, in the table’s *error table*. The table isn’t marked as failed.
 
 To change the strategy, set the **Error Handling Strategy** parameter. For more information, see [Snowflake Destination Parameters](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-snowflake-destination-parameters).

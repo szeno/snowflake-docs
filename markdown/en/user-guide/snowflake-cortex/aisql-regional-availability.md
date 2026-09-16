@@ -183,6 +183,8 @@ The following functions and models are available in any region via [cross-region
 | Function | Model | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region) | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | AI\_COMPLETE |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-fable-5` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
@@ -198,6 +200,12 @@ The following functions and models are available in any region via [cross-region
 | `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `llama3.3-70b` | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-1p-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.4` | \* |  |  |  |  |  |  |  |  | \* |  | \* |  |
 | `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
 | `openai-gpt-5.4-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
@@ -385,7 +393,9 @@ Expand
 
 Show lessSee more
 
-\* Indicates a preview function or model. Preview features are not suitable for production workloads.
+\* Indicates a public preview function or model. Public preview features aren’t suitable for production workloads.
+
+\*\* Indicates a private preview model. Private preview models are available only to accounts that Snowflake has explicitly enabled, and they aren’t suitable for production workloads.
 
 The following Snowflake Cortex AI functions and models are available in the following extended regions.
 

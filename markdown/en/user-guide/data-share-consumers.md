@@ -280,7 +280,7 @@ You can assign this role to other roles using either Snowsight or SQL:
 
 SnowsightSQL
 
-1. Select **Catalog** » **Database Explorer**.
+1. Select **Catalog** » **Explorer**.
 2. Select the database that you want to grant privileges to.
 3. In the **Privileges** section, select **+ Privileges**.
 4. Select a role and privilege to grant to that role.

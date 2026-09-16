@@ -652,7 +652,7 @@ Method 1: Snowsight UIMethod 2: REST APIMethod 3: SQL
 
 Note
 
-When reviewing agents from Snowsight, you can only view agents in the Agent Admin UI. You cannot view agents in the database object explorer.
+When reviewing agents from Snowsight, you can only view agents in the Agent Admin UI. You cannot view agents in the Horizon Catalog Explorer.
 
 1. In the navigation menu, select **AI & ML** » **Agents**.
 2. From the list of agents, select the agent that you want to view the details for. This opens a new page that gives an overview of the agent details.

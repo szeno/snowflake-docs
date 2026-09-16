@@ -23,6 +23,11 @@ Copy code
     - `CORTEX CODE`
     - `CORTEX AGENT`
     - `SNOWFLAKE INTELLIGENCE`
+    - `AI GATEWAY`
+
+      [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+      Available to all accounts.
 
     Unless you specify a second argument, the budget tracks consumption for all resources within the specified domain.
 
@@ -31,7 +36,7 @@ Copy code
 
     For domains that support instance-level selection (such as `AI FUNCTION` and `CORTEX CODE`), this argument allows you to track a specific function or interface.
 
-    For object-backed domains (`CORTEX AGENT` and `SNOWFLAKE INTELLIGENCE`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
+    For object-backed domains (`CORTEX AGENT`, `SNOWFLAKE INTELLIGENCE`, and `AI GATEWAY`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
 
     If you don’t specify a second argument, the budget tracks all instances within the domain.
 
@@ -143,3 +148,9 @@ CALL finance_budget!ADD_SHARED_RESOURCE(
   (SELECT SYSTEM$REFERENCE('SNOWFLAKE INTELLIGENCE', 'my_si'))
 );
 ```
+
+### AI Gateway resources
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.

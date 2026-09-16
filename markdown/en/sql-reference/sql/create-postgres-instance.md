@@ -15,7 +15,7 @@ See also:
 Copy code
 
 ```
-CREATE POSTGRES INSTANCE <name>
+CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
   COMPUTE_FAMILY = '<compute_family>'
   STORAGE_SIZE_GB = <storage_gb>
   AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }
@@ -36,7 +36,7 @@ full physical copy of the Postgres instance:
 Copy code
 
 ```
-CREATE POSTGRES INSTANCE <name>
+CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
   FORK <source_instance>
   [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> } ) ]
   [ COMPUTE_FAMILY = '<compute_family>' ]
@@ -93,6 +93,14 @@ CREATE POSTGRES INSTANCE <name>
     [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) for more details.
 
 ## Optional parameters
+
+`IF NOT EXISTS`
+:   Creates the Postgres instance only if an instance with the same name does not already exist. If an
+    instance with the same name already exists, the command does nothing and completes successfully
+    without creating a new instance.
+
+    Use this clause to run the command idempotently, for example when re-running a provisioning script
+    or a Terraform plan.
 
 `POSTGRES_VERSION = { 16 | 17 | 18 }`
 :   Specifies the major version of Postgres to use.
@@ -262,6 +270,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- If you specify `IF NOT EXISTS` and an instance with the same name already exists, the command
+  returns a success message with no output columns. It does not verify that the existing instance
+  has the same parameters as the ones you specified.
 - Creating a new instance takes some time to complete. The instance displays its current
   [state](#instance-states) while it’s being built. You can use the DESC POSTGRES INSTANCE
   command to track the status during the instance setup.
@@ -293,6 +304,17 @@ Copy code
 
 ```
 CREATE POSTGRES INSTANCE my_postgres
+  COMPUTE_FAMILY = 'STANDARD_S'
+  STORAGE_SIZE_GB = 50
+  AUTHENTICATION_AUTHORITY = POSTGRES;
+```
+
+Create a Postgres instance only if it does not already exist:
+
+Copy code
+
+```
+CREATE POSTGRES INSTANCE IF NOT EXISTS my_postgres
   COMPUTE_FAMILY = 'STANDARD_S'
   STORAGE_SIZE_GB = 50
   AUTHENTICATION_AUTHORITY = POSTGRES;

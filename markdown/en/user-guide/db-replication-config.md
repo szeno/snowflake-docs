@@ -32,7 +32,7 @@ Account administrators (users with the ACCOUNTADMIN role) can manage replication
 ### Snowsight
 
 Navigation:
-:   **Catalog** » **Database Explorer**
+:   **Catalog** » **Explorer**
 
 #### Manage primary databases
 
@@ -43,7 +43,7 @@ Only available to accounts using private connectivity. For all other accounts, s
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) to a Snowflake account that contains a primary database.
 2. To switch to the account administrator role, in the lower-left corner, select your name » **Switch role** » **ACCOUNTADMIN**.
-3. In the navigation menu, select **Catalog** » **Database Explorer**. Select a primary database in the database object explorer.
+3. In the navigation menu, select **Catalog** » **Explorer**. Select a primary database in the Horizon Catalog Explorer.
    The database details page opens.
 
    Alternatively, to view only databases that have been enabled for replication, use the **Replication Status** » **Primary**
@@ -79,7 +79,7 @@ Only available to accounts using private connectivity. For all other accounts, s
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) to a Snowflake account that contains a secondary database.
 2. Select the dropdown menu in the upper left (next to your login name) » **Switch Role** » `ACCOUNTADMIN`.
-3. In the navigation menu, select **Catalog** » **Database Explorer**.
+3. In the navigation menu, select **Catalog** » **Explorer**.
 
    The following actions are available from the actions (**…**) button in the upper-right corner of the page:
 
@@ -92,7 +92,7 @@ Only available to accounts using private connectivity. For all other accounts, s
      If a primary database in another account is enabled for replication to the current account, you can create a
      secondary database in the current account. To add additional target accounts, use the
      [ALTER DATABASE](/sql-reference/sql/alter-database) command in the source account to update the primary database.
-4. Select a secondary database in the database object explorer. The database details page opens.
+4. Select a secondary database in the Horizon Catalog Explorer. The database details page opens.
 5. Select the **Replication** tab.
 
    The following actions are available from the actions (**…**) button in the upper-right corner of the page:

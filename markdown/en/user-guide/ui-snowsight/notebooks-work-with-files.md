@@ -99,7 +99,7 @@ You can upload files from your local computer to be used in your Snowflake noteb
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Notebooks**.
-3. In the **Files** tab, next to the database object explorer, select the [![Add a dashboard tile](/static/images/snowsight/snowsight-dashboards-add-tile-icon.png)](/static/images/snowsight/snowsight-dashboards-add-tile-icon.png) icon to select files to upload.
+3. In the **Files** tab, next to the object explorer, select the [![Add a dashboard tile](/static/images/snowsight/snowsight-dashboards-add-tile-icon.png)](/static/images/snowsight/snowsight-dashboards-add-tile-icon.png) icon to select files to upload.
 4. Browse and select or drag and drop files into the dialog.
 5. Select **Upload** to upload your file.
 
@@ -191,7 +191,7 @@ To find the stage path associated with the files in your notebook stage using th
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Notebooks**.
-3. In the **Files** tab, next to the database object explorer, select the [![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png) icon next to the file you
+3. In the **Files** tab, next to the object explorer, select the [![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png) icon next to the file you
    want to get the path for.
 4. Select **Copy path**. This copies the path of the file to your clipboard.
 

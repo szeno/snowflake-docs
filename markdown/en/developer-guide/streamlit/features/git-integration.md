@@ -31,7 +31,7 @@ To connect a Streamlit app to a Git repository, you must use a role with the fol
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Streamlit**, and then open or create a Streamlit app.
-3. In the **Files** tab, next to the database object explorer, select **Connect Git Repository**.
+3. In the **Files** tab, next to the object explorer, select **Connect Git Repository**.
 4. For **File location in repository**, select the repository and the branch in the repository that you want to sync with the Streamlit app.
 5. Select **Select Folder**.
 6. When the prompt to commit your app to the Git repository appears, complete the commit steps outlined in [Push changes to a branch in a Git repository](#label-snowsight-streamlit-git-push-changes).
@@ -73,7 +73,7 @@ To sync a Streamlit app with a remote branch in a Git repository:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Streamlit**, and then open or create a Streamlit app.
-3. On the **Files** tab in the database object explorer, select **Pull**.
+3. On the **Files** tab in the object explorer, select **Pull**.
 
 Snowflake fetches any changes present on the remote repository branch and merges the contents with those changes.
 

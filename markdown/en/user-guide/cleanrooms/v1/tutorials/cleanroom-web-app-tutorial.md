@@ -460,7 +460,7 @@ SnowsightSQL
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) for the provider account. (Use the **Snowflake UI**, not the clean room UI.)
    environment.
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Navigate to `SAMOOHA_BY_SNOWFLAKE_LOCAL_DB` » `PUBLIC` » `Tables` » `PROVIDER_ACTIVATION_SUMMARY`.
 4. Select **Data Preview** to view the activation data.
 

@@ -34,11 +34,11 @@ Snowflake account. This table is present only if the previously listed prerequis
 To view results of security scans:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. Use the database object explorer in Snowsight or a SQL query to view the security scan results:
+2. Use the Horizon Catalog Explorer in Snowsight or a SQL query to view the security scan results:
 
    SnowsightSQL
 
-   1. In the navigation menu, select **Catalog** » **Database Explorer**.
+   1. In the navigation menu, select **Catalog** » **Explorer**.
    2. Navigate to `SAMOOHA_BY_SNOWFLAKE_LOCAL_DB` » `PUBLIC` » `Tables` » `TEMPLATE_SCANNER_RESULTS`.
    3. Select **Data Preview**.
 

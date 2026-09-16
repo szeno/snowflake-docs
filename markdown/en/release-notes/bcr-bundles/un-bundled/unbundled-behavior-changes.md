@@ -20,6 +20,7 @@ See also [Upcoming pending changes](#label-unbundled-changes-upcoming-pending-ch
 
 | Release Date | Functional Area | Implemented Behavior Change | Additional Notes |
 | --- | --- | --- | --- |
+| **September 4, 2026** | Behavior Changes | [New columns in table function output are no longer treated as behavior changes](/release-notes/bcr-bundles/un-bundled/bcr-no-bcrs-for-new-columns-table-functions) |  |
 | **August 20, 2026** | Cortex Agents — Managed MCP Server | [MCP: Streaming responses for tool calls (August 2026)](/release-notes/bcr-bundles/un-bundled/bcr-2405) | Managed MCP `tools/call` responses changed from a single JSON body to an SSE stream. Spec-compliant clients are unaffected. |
 | **August 12, 2026** | Cortex Model Updates for August | [Cortex model deprecations for August 2026](/release-notes/bcr-bundles/un-bundled/bcr-august-model-deprecations) | Listed models enter the legacy state. Accounts that already used a listed model can continue until each model’s end-of-life date; accounts that had not used it can’t start. |
 | **July 24-27, 2026** | Billing Entity Deprecation - Account Management SQL and Account View Changes | [Transition from Billing Entity to Contract Number](/release-notes/bcr-bundles/un-bundled/bcr-2399) |  |
@@ -27,6 +28,7 @@ See also [Upcoming pending changes](#label-unbundled-changes-upcoming-pending-ch
 | **June 30, 2026** | Cortex Model Updates for June | [Cortex model deprecations for July 2026](/release-notes/bcr-bundles/un-bundled/bcr-june-model-deprecations) | Some models will remain available through cross-region inference only after this date. |
 | **June 12-18, 2026** | Virtual Warehouses | [Warehouses: Enable QAS by default for newly created Gen2 and multi-cluster warehouses](/release-notes/bcr-bundles/un-bundled/bcr-2113) | This behavior change was originally in the 2025\_07 bundle. It was delivered through [Warehouses: Enable QAS by default for newly created Gen2 and multi-cluster warehouses](/release-notes/bcr-bundles/2026_03/bcr-2269) in the 2026\_03 behavior change bundle. |
 | **May 18, 2026** | Snowpark Container Services | [BIND SERVICE ENDPOINT granted to PUBLIC role](/release-notes/bcr-bundles/un-bundled/bcr-2321) |  |
+| **May 8-14, 2026** | Behavior Changes | [New columns in views and SHOW command output are no longer treated as behavior changes](/release-notes/bcr-bundles/un-bundled/bcr-no-bcrs-for-new-columns) |  |
 | **April 22, 2026** | Cortex Model Updates for April | [Cortex model deprecations for May 2026](/release-notes/bcr-bundles/un-bundled/bcr-may-model-deprecations) |  |
 | **April 1, 2026** | Cortex Model Updates for April | [Cortex model deprecations for April 2026](/release-notes/bcr-bundles/un-bundled/bcr-april-model-deprecations) |  |
 | **Week of March 16, 2026** | Document AI decommission | [Document AI decommission](/release-notes/bcr-bundles/un-bundled/bcr-2156) |  |
@@ -76,8 +78,6 @@ still in progress.
 | **April 24, 2026** | Cortex Agents, AI Observability | [Account Privilege READ UNREDACTED AI OBSERVABILITY EVENTS TABLE](/release-notes/bcr-bundles/un-bundled/bcr-read-unredacted-ai-observability-events) | The new **READ UNREDACTED AI OBSERVABILITY EVENTS TABLE** account privilege is off by default for all roles and impacts visibility of raw content in Cortex and External Agent observability data. |
 | **May 18, 2026** | Snowpark Python | [PYPI\_REPOSITORY\_USER database role granted to the PUBLIC role](/release-notes/bcr-bundles/un-bundled/bcr-2280) | This change will be rolled out gradually. |
 | To be determined | Data pipelines | [Completed rollout of BYTES\_BILLED column in history views (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2241) | None |
-| This change is planned to start with the 2026\_04 behavior change bundle, which is scheduled for May 8-14, 2026. | Behavior Changes | [New columns in views and SHOW command output are no longer treated as behavior changes](/release-notes/bcr-bundles/un-bundled/bcr-no-bcrs-for-new-columns) |  |
-| **September 4, 2026** | Behavior Changes | [New columns in table function output are no longer treated as behavior changes](/release-notes/bcr-bundles/un-bundled/bcr-no-bcrs-for-new-columns-table-functions) |  |
 | Most of this change will occur gradually across all regions in June - July 2026. | Security | [Wider variety of Certificate Authorities and shorter certificate lifetimes](/release-notes/bcr-bundles/un-bundled/bcr-2255) |  |
 | This change is planned for February 2026. | Network connectivity | [GCP PSC propagated connection limit set to 0](/release-notes/bcr-bundles/un-bundled/bcr-2193) |  |
 | This change is planned for September 2026. | SQL Changes - General | [SQL general: New default column sizes for string and binary data types (Postponed)](/release-notes/bcr-bundles/un-bundled/bcr-2118) |  |

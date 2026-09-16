@@ -401,7 +401,7 @@ For example, to remove the projection policy from the `account_number` column:
 To determine whether a column has a projection policy, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**, and then navigate to the table that contains the column.
+2. In the navigation menu, select **Catalog** » **Explorer**, and then navigate to the table that contains the column.
 3. Select the **Columns** tab.
 4. Use the **Policy** column to determine if the column has any data governance policies.
 5. Hover over each policy to determine whether it’s a projection policy.

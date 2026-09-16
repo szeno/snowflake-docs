@@ -163,7 +163,7 @@ $$;
 ## Limitations
 
 - Objects that are discoverable and not accessible are only displayed in [Universal Search](/user-guide/ui-snowsight-universal-search).
-  They are not visible in the [database object explorer](/user-guide/ui-snowsight-data) or SQL commands that show metadata (SHOW commands, etc.).
+  They are not visible in the [Horizon Catalog Explorer](/user-guide/ui-snowsight-data) or SQL commands that show metadata (SHOW commands, etc.).
 - For a schema, you can set the OBJECT\_VISIBILITY property to PRIVILEGED to override any broader visibility settings that may be inherited
   from the account or database level, ensuring the schema remains accessible only by the owner.
 - The OBJECT\_VISIBILITY property cannot be set or overridden below the schema level. At the schema level, users can either see all objects or none.

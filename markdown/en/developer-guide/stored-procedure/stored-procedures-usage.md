@@ -121,7 +121,7 @@ This subject is covered in [Understanding caller’s rights and owner’s rights
 
 You can work with stored procedures in SQL or in Snowsight.
 
-For any stored procedure in Snowflake, you can open **Catalog** » **Database Explorer** and search for or browse to the stored procedure.
+For any stored procedure in Snowflake, you can open **Catalog** » **Explorer** and search for or browse to the stored procedure.
 Select the stored procedure to review details and manage the procedure.
 
 You must have the [relevant privileges](#label-access-control-privileges-for-stored-procedures) to access and manage the

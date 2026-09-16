@@ -31,7 +31,7 @@ For more information, see [Exploring storage cost](/user-guide/cost-exploring-da
 Any user with the appropriate privileges can view data storage for individual tables. Snowflake provides the following methods for viewing table data storage:
 
 Snowsight:
-:   In the navigation menu, select **Catalog** » **Database Explorer**. Then select the *<db\_name>* » **Tables**.
+:   In the navigation menu, select **Catalog** » **Explorer**. Then select the *<db\_name>* » **Tables**.
 
 SQL:
 :   Execute a [SHOW TABLES](/sql-reference/sql/show-tables) command.

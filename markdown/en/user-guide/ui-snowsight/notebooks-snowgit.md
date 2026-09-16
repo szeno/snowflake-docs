@@ -39,7 +39,7 @@ To learn how to connect to your Git repository, see [Setting up Snowflake to use
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Notebooks**, and then open or create a notebook.
-3. In the **Files** tab, next to the database object explorer, select **Connect Git Repository**.
+3. In the **Files** tab, next to the object explorer, select **Connect Git Repository**.
 4. For **File location in repository**, select the repository and branch in the repository with which you want to sync the notebook.
 5. Select **Select Folder**.
 6. When you are prompted to commit and push your notebook to the Git repository, complete the Push to Git steps outlined in
@@ -81,7 +81,7 @@ After you connect your notebook to a branch in a Git repository, you can sync an
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Notebooks**, and then open or create a notebook.
-3. In the database object explorer, in the **Files** tab, select **Pull**.
+3. In the object explorer, in the **Files** tab, select **Pull**.
 
 Snowflake fetches any changes present on the remote repository branch and merges the notebook contents with those changes.
 

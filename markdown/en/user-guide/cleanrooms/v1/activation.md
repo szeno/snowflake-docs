@@ -401,7 +401,7 @@ LIMIT 20 ;
 **View the latest 10 result rows in Snowsight:**
 
 > 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-> 2. In the navigation menu, select **Catalog** » **Database Explorer**.
+> 2. In the navigation menu, select **Catalog** » **Explorer**.
 >
 >    - **For provider activation** navigate to `SAMOOHA_BY_SNOWFLAKE_LOCAL_DB` » `PUBLIC` » `Tables` »
 >      `PROVIDER_ACTIVATION_SUMMARY`.

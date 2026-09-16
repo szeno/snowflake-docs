@@ -237,7 +237,7 @@ For more information, see [Access control for dbt projects on Snowflake](/user-g
    - **LAST RUN PARAMETERS** - The dbt command-line arguments (ARGS) specified in the EXECUTE DBT PROJECT command for the last dbt project object execution.
 2. To inspect individual project runs, select a dbt project object from the list.
 
-   The dbt project object details page in the database object explorer opens for that dbt project object.
+   The dbt project object details page in the Horizon Catalog Explorer opens for that dbt project object.
 
    The **Run History** tab is selected by default, with the following information for each job run in the selected time period:
 

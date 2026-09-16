@@ -2,7 +2,31 @@
 
 This page documents notable changes to Cortex Code.
 
-## 1.1.78 (September 7, 2026)
+## 1.1.87 (Sep 14, 2026)
+
+### Added
+
+- Continue from a shared conversation: `cortex --fork <artifact-id>` and `/fork <share-url>` now work for everyone, so you can open a conversation someone shared with you and pick up where they left off. Previously this worked only for internal users, and the `--fork` command that `/share` prints returned “No conversations found” for the recipient.
+- Conversation recall: The agent can now find and reference your earlier conversations. When you ask about past work, it searches your prior sessions with `cortex conversations search`. To turn it off, set `CORTEX_CODE_EXPERIMENTAL_FEATURES={"conversationRecall":false}`.
+- Search past conversations by pattern: Added `--query-type` to `cortex conversations search` so you can choose fuzzy matching, which stays the default, or regular-expression matching with `--query-type=REGEX`.
+- `/stats` command: The `/stats` command is now available to everyone. Use it to view statistics about your current session.
+- `--mcp-wait` flag: Added the `--mcp-wait` flag, equivalent to `"mcpWait": true` in `settings.json`, so a session waits for MCP servers to finish starting before it begins. Cap the wait with `COCO_MCP_WAIT_TIMEOUT_MS`, which defaults to five minutes.
+- `--no-email` for automations: Added `--no-email` to `cortex automation create` so a single automation opts out of the report email it sends after each run, without changing your other automations.
+- Isolate plugins and skills for applications: Added the `--only-explicit-plugins` and `--only-explicit-skills` flags so an application loads only the plugins and skills you pass in and skips the ones configured elsewhere, matching the existing `--only-explicit-mcp-servers` flag.
+
+### Changed
+
+- Restricted session scope on by default: Restricted session scope, and its child-session support, are now enabled by default for everyone instead of only internal users, so your session runs with SQL guardrails applied automatically. To turn it off, set `CORTEX_CODE_EXPERIMENTAL_FEATURES={"restrictedSessionScope":false}`.
+- Conversation thread kept through summarization: When a long session is summarized to save context, Cortex Code now keeps your Snowflake conversation thread attached instead of detaching it, so your history and continuity are preserved. Using `/compact` still starts a fresh thread.
+
+### Fixed
+
+- PowerShell remote code execution on Windows: Fixed a security vulnerability where launching Cortex Code from an untrusted repository on Windows could run a malicious `powershell.exe`, `pwsh`, or `where.exe` placed in the working directory. The CLI now always runs these programs from their absolute system paths.
+- Model streaming behind a proxy: Fixed a regression that made every model and chat request fail with a `fetch failed` error within a second when a mandatory HTTP proxy was configured. Affected users no longer need to roll back to an earlier version.
+- Crash in unattended `cortex exec` runs: Fixed a crash where a long-running `cortex exec` session, such as a scheduled job, could exit with a “Couldn’t access platform storage” error when the operating system keychain handle expired mid-run. The CLI now falls back to its on-disk credential copy as intended.
+- MCP OAuth in editor sessions: Fixed OAuth-protected MCP servers being unusable under `cortex acp serve`, the mode the Snowflake Visual Studio Code extension uses. You can now complete the browser sign-in and connect these servers.
+
+## 1.1.78 (Sep 7, 2026)
 
 ### Added
 

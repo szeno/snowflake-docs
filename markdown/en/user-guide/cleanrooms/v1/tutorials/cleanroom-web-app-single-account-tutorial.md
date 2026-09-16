@@ -425,7 +425,7 @@ SnowsightSQL
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) with the same account where you ran the clean room. Use the Snowflake UI, not the clean
    rooms UI.
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
+2. In the navigation menu, select **Catalog** » **Explorer**.
 3. Search for `SAMOOHA_BY_SNOWFLAKE_LOCAL_DB`.
 4. Navigate to **PUBLIC** » **Tables** » **CONSUMER\_DIRECT\_ACTIVATION\_SUMMARY**.
 5. Select **Data Preview** to view the activation data.

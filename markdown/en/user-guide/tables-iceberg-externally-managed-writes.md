@@ -110,6 +110,26 @@ Note
 
 Schema names must be alphanumeric and can’t include delimiters.
 
+Note
+
+Creating a nested namespace with CREATE SCHEMA is supported only when your catalog-linked database uses a catalog integration for
+a catalog that supports nested namespaces. For other REST catalogs, you can create only top-level namespaces.
+
+The parent namespace must already exist before you create a nested namespace. Snowflake doesn’t automatically create parent namespaces.
+
+To create a nested namespace, set the NAMESPACE\_MODE parameter to FLATTEN\_NESTED\_NAMESPACE and specify a NAMESPACE\_FLATTEN\_DELIMITER
+for your catalog-linked database. Then, use the delimiter to construct the flattened namespace name. For example, the following command
+creates a namespace named `namespace1a`, nested under the existing top-level namespace `namespace1`, using a `-` delimiter:
+
+Copy code
+
+```
+CREATE SCHEMA "namespace1-namespace1a";
+```
+
+To check whether a namespace is nested, use the [SHOW SCHEMAS](/sql-reference/sql/show-schemas) command and check the `is_nested` column
+in the output.
+
 #### DROP SCHEMA
 
 You can also use the [DROP SCHEMA](/sql-reference/sql/drop-schema) command to simultaneously drop a
@@ -119,6 +139,14 @@ Copy code
 
 ```
 DROP SCHEMA 'my_namespace';
+```
+
+The same requirements for creating a nested namespace apply when you drop one. For example:
+
+Copy code
+
+```
+DROP SCHEMA "namespace1-namespace1a";
 ```
 
 ## Create an Iceberg table

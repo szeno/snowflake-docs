@@ -237,8 +237,8 @@ CREATE OR REPLACE GIT REPOSITORY snowflake_extensions
 ```
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Database Explorer**.
-3. In the object explorer, select the database and schema that you want to contain the Git repository clone you’re creating.
+2. In the navigation menu, select **Catalog** » **Explorer**.
+3. In the Horizon Catalog Explorer, select the database and schema that you want to contain the Git repository clone you’re creating.
 4. Select **Create** » **Git Repository**.
 5. In the **Create Git Repository** dialog, for **Repository Name**, enter a name that will uniquely identify this repository
    clone in the schema.

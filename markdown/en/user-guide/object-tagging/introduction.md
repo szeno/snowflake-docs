@@ -165,6 +165,7 @@ A tag can be set on a column using a CREATE TABLE, CREATE VIEW, ALTER TABLE … 
 | Database | Database role | Use an [ALTER DATABASE ROLE](/sql-reference/sql/alter-database-role) command to set a tag on a database role. |
 |  | Schema |  |
 | Schema | Aggregation policy |  |
+|  | AI gateway | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  Use an ALTER AI GATEWAY command to set a tag on a [Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway). |
 |  | Alert |  |
 |  | Backup set | For [WORM backups](/user-guide/backups). Contains a set of backups for a specific database, schema, or table. |
 |  | BUDGET instance | Use an [ALTER BUDGET](/sql-reference/classes/budget/commands/alter-budget) command to set a tag on an instance of the SNOWFLAKE.CORE.BUDGET class. |
