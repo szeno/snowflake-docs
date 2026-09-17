@@ -33,13 +33,13 @@ To get the endpoint for your account, use:
 Copy code
 
 ```
-SHOW AI GATEWAYS;
+DESCRIBE AI GATEWAY SNOWFLAKE;
 ```
 
 Note
 
 Accounts that use [private connectivity](/user-guide/private-connectivity-inbound) reach the gateway on a
-different host, so the endpoint won’t match the form above. Use `SHOW AI GATEWAYS` to get the endpoint in
+different host, so the endpoint won’t match the form above. Use `DESCRIBE AI GATEWAY SNOWFLAKE` to get the endpoint in
 that case: it returns the correct value either way.
 
 ## Pricing
@@ -78,7 +78,7 @@ format, choose Chat Completions or Messages.
 
 Before you begin, you need:
 
-1. Your **gateway endpoint**, from `SHOW AI GATEWAYS`. See
+1. Your **gateway endpoint**, from `DESCRIBE AI GATEWAY SNOWFLAKE`. See
    [Gateway endpoint](#label-cortex-ai-gateway-url-format).
 2. The **USAGE privilege** on the gateway. See
    [Access control](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-access-control).
@@ -259,7 +259,7 @@ Copy code
 
 Where:
 
-- `baseURL` is the gateway endpoint from `SHOW AI GATEWAYS` with `/v1` appended.
+- `baseURL` is the gateway endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE` with `/v1` appended.
 - `account` is the host part of that endpoint, without the path.
 - `model` and `small_model` are both qualified by the provider name, so they read
   `snowflake-cortex/<model>`. Setting `small_model` as well keeps OpenCode’s lightweight calls on the

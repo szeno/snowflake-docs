@@ -56,6 +56,7 @@ For specific syntax, usage notes, and examples, see:
 **Database Objects:**
 
 > - [CREATE OR ALTER APPLICATION ROLE](/sql-reference/sql/create-application-role#label-create-or-alter-app-role-syntax)
+> - [CREATE OR ALTER APPLICATION SERVICE](/sql-reference/sql/create-application-service#label-create-or-alter-application-service-syntax)
 > - [CREATE OR ALTER BACKUP POLICY](/sql-reference/sql/create-backup-policy#label-create-or-alter-backup-policy-syntax)
 > - [CREATE OR ALTER BACKUP SET](/sql-reference/sql/create-backup-set#label-create-or-alter-backup-set-syntax)
 > - [CREATE OR ALTER DATABASE ROLE](/sql-reference/sql/create-database-role#label-create-or-alter-db-role-syntax)

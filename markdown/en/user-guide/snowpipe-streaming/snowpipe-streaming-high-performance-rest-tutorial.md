@@ -1,10 +1,12 @@
-# Tutorial: Get started with Snowpipe Streaming REST API using cURL and a JWT
+# Tutorial: Get started with Named Channels using the REST API
 
 Note
 
-We recommend that you begin with the Snowpipe Streaming SDK over the REST API to benefit from the improved performance and getting-started experience.
+Where possible, use the Snowpipe Streaming SDK instead of the REST API to benefit from automatic batching and simpler integration. Use direct REST when an SDK isn’t suitable for your environment.
 
-This guide shows you how to stream data into Snowflake using the [Snowpipe Streaming REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api) and [a JSON Web Token (JWT) generated with SnowSQL](/developer-guide/sql-api/authenticating).
+This guide shows you how to stream data into Snowflake using the [Snowpipe Streaming REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api) and a JSON Web Token (JWT) generated with SnowSQL. It covers Named Channel REST ingestion for ordered, exactly-once workloads.
+
+For the Elastic Channel REST path (simpler, recommended for most new applications), see [Tutorial: Get started with Elastic Channels (REST)](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-rest-getting-started).
 
 ## Prerequisites
 
@@ -63,9 +65,9 @@ Caution
 
 Store your JWT securely. Avoid exposing it in logs or scripts.
 
-## Step-by-step instructions
+## Prerequisites and setup
 
-Complete the following steps to stream data into Snowflake.
+The following steps configure the environment variables, ingest host, and sample rows required for Named Channel REST ingestion.
 
 ### Step 1: Set environment variables
 
@@ -82,8 +84,7 @@ export ACCOUNT="<ACCOUNT_IDENTIFIER>" # For example, ab12345
 export USER="MY_USER"
 export DB="MY_DATABASE"
 export SCHEMA="MY_SCHEMA"
-export PIPE="MY_TABLE-STREAMING"
-export CHANNEL="MY_CHANNEL"
+export TABLE="MY_TABLE"
 
 # Replace ACCOUNT with your Account URL Host to form the control plane host:
 export CONTROL_HOST="${ACCOUNT}.snowflakecomputing.com"
@@ -143,9 +144,32 @@ export SCOPED_TOKEN=$(curl -sS -X POST "https://$CONTROL_HOST/oauth/token" \
 echo "Scoped Token obtained for ingest host"
 ```
 
-### Step 3: Open the channel
+### Step 3: Create sample rows
 
-Open a streaming channel to begin data ingestion:
+Create a batch in newline-delimited JSON (NDJSON) format:
+
+Copy code
+
+```
+export NOW_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+cat <<EOF > rows.ndjson
+{"id":1,"c1":$RANDOM,"ts":"$NOW_TS"}
+EOF
+```
+
+## Open and use a Named Channel
+
+Use a Named Channel when you require ordering or exactly-once recovery. Complete Steps 1 through 3 in [Prerequisites and setup](#named-channel-rest-setup), then set the Named Channel variables:
+
+Copy code
+
+```
+export PIPE="MY_TABLE-STREAMING"
+export CHANNEL="MY_CHANNEL"
+```
+
+### Step 4: Open the Named Channel
 
 Copy code
 
@@ -154,72 +178,29 @@ curl -sS -X PUT \
   -H "Authorization: Bearer $SCOPED_TOKEN" \
   -H "Content-Type: application/json" \
   "https://${INGEST_HOST}/v2/streaming/databases/$DB/schemas/$SCHEMA/pipes/$PIPE/channels/$CHANNEL" \
-  -d '{}' | tee open_resp.json | jq .
+  -d '{"offset_token":"0"}' | tee open_resp.json | jq .
 ```
 
-### Step 4: Append a row of data
+### Step 5: Append rows with offset and continuation tokens
 
-Append a single row of data to the open channel.
-
-#### 4.1 Extract continuation and offset tokens
-
-These tokens are crucial for maintaining the state of your streaming session.
+Use the continuation token returned by the open operation and an application-managed source offset:
 
 Copy code
 
 ```
 export CONT_TOKEN=$(jq -r '.next_continuation_token' open_resp.json)
-export OFFSET_TOKEN=$(jq -r '.channel_status.last_committed_offset_token' open_resp.json)
-export NEW_OFFSET=$((OFFSET_TOKEN + 1))
-```
+export OFFSET_TOKEN="1"
 
-#### 4.2 Create sample row
-
-Generate a sample data row in NDJSON format:
-
-Copy code
-
-```
-export NOW_TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-
-cat <<EOF > rows.ndjson
-{
-  "id": 1,
-  "c1": $RANDOM,
-  "ts": "$NOW_TS"
-}
-EOF
-```
-
-#### 4.3 Append row
-
-Send the sample row to the streaming channel:
-
-Copy code
-
-```
 curl -sS -X POST \
   -H "Authorization: Bearer $SCOPED_TOKEN" \
   -H "Content-Type: application/x-ndjson" \
-  -H "Content-Encoding: zstd" \
-  "https://${INGEST_HOST}/v2/streaming/data/databases/$DB/schemas/$SCHEMA/pipes/$PIPE/channels/$CHANNEL/rows?continuationToken=$CONT_TOKEN&offsetToken=$NEW_OFFSET" \
-  --data-binary @rows.ndjson | jq .
+  "https://${INGEST_HOST}/v2/streaming/data/databases/$DB/schemas/$SCHEMA/pipes/$PIPE/channels/$CHANNEL/rows?continuationToken=$CONT_TOKEN&startOffsetToken=$OFFSET_TOKEN&endOffsetToken=$OFFSET_TOKEN" \
+  --data-binary @rows.ndjson | tee append_resp.json | jq .
 ```
 
-Note
+Use the `next_continuation_token` from each append response in the next append request.
 
-This example includes the `Content-Encoding: zstd` header to demonstrate compression support. For this simple example with uncompressed data, you can omit this header. When you send compressed data, specify either `zstd` or `gzip` to match the compression format of your payload.
-
-Important
-
-- After each append operation, you must update the `continuationToken` for the next append call. The response from the append rows call contains a `next_continuation_token` field that you should use to make your updates.
-- The success of the append operation confirms only that the data was received by the service, not that it is persisted to the table. Take the next step to verify persistence before querying or moving to the next batch.
-
-#### 4.4 Verify data persistence and committed offset by using `getChannelStatus`
-
-Complete this critical step to ensure application reliability. Data isn’t guaranteed to be persistent until the `committedOffset` has advanced. To confirm that the rows that you just appended are successfully persisted, use `getChannelStatus`.
-
-Check the current status of your streaming channel:
+### Step 6: Verify committed progress
 
 Copy code
 
@@ -228,40 +209,35 @@ curl -sS -X POST \
   -H "Authorization: Bearer $SCOPED_TOKEN" \
   -H "Content-Type: application/json" \
   "https://${INGEST_HOST}/v2/streaming/databases/$DB/schemas/$SCHEMA/pipes/$PIPE:bulk-channel-status" \
-  -d "{\"channel_names\": [\"$CHANNEL\"]}" | jq ".channel_statuses.\"$CHANNEL\""
+  -d "{\"channel_names\":[\"$CHANNEL\"]}" | jq ".channel_statuses.\"$CHANNEL\""
 ```
 
-**Verification check**
+Wait until `last_committed_offset_token` is `1` before advancing the source offset.
 
-You must ensure that the `committedOffset` returned in the response is greater than or equal to the offset of the rows you just appended. Only after the `committedOffset` advances can you be certain that the data is safely available in the table.
+### Step 7: Verify the data
 
-#### 4.5 Query the table for persisted data
-
-After you confirm that the `committedOffset` has advanced in [the previous step (4.4)](#verify-data-persistence), you can query to confirm that the data is ingested into your Snowflake table.
-
-Run the following SQL query in Snowflake:
+After `last_committed_offset_token` advances, query the target table:
 
 Copy code
 
 ```
-SELECT * FROM MY_DATABASE.MY_SCHEMA.MY_TABLE WHERE id = 1;
+SELECT * FROM MY_DATABASE.MY_SCHEMA.MY_TABLE ORDER BY id;
 ```
 
-### (Optional) Step 5: Clean up
-
-Remove temporary files and unset environment variables:
+### (Optional) Step 8: Clean up
 
 Copy code
 
 ```
-rm -f rows.ndjson open_resp.json
-unset JWT_TOKEN SCOPED_TOKEN ACCOUNT USER DB SCHEMA PIPE CHANNEL CONTROL_HOST INGEST_HOST CONT_TOKEN OFFSET_TOKEN NEW_OFFSET NOW_TS
+rm -f rows.ndjson open_resp.json append_resp.json
+unset JWT_TOKEN SCOPED_TOKEN ACCOUNT USER DB SCHEMA TABLE PIPE CHANNEL CONTROL_HOST INGEST_HOST NOW_TS CONT_TOKEN OFFSET_TOKEN
 ```
 
 ## Troubleshooting
 
 - **HTTP 401 (Unauthorized):** Verify that your JWT token is valid and not expired. If needed, regenerate it.
-- **HTTP 404 (Not Found):** Double-check that the database, schema, pipe, and channel names are spelled correctly and exist in your Snowflake account.
+- **HTTP 404 (Not Found):** Double-check that the database, schema, table, or pipe names are spelled correctly and exist in your Snowflake account.
+- **HTTP 429 (Too Many Requests):** Retry using exponential backoff with random variation in retry delays (jitter). Don’t assume a fixed reserved request rate.
 - **No Ingest Host:** Ensure your control plane host URL is correct and accessible.
 
 ### Private connectivity troubleshooting

@@ -118,6 +118,12 @@ For general information about roles and privilege grants for performing SQL acti
   Snowflake runs one instance.
 - To change both values in one statement, include both in the same `SET`
   clause.
+- You can’t set a `SPECIFICATION` with `ALTER APPLICATION SERVICE ... SET`. To update
+  the specification of a service, use
+  [CREATE OR ALTER APPLICATION SERVICE](/sql-reference/sql/create-application-service#label-create-or-alter-application-service-syntax).
+  A specification is the full intended state of the service, so it resets any
+  property it doesn’t set. `ALTER APPLICATION SERVICE ... SET` remains the way to
+  change a single property in place.
 
 ## Examples
 

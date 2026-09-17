@@ -129,6 +129,8 @@ Objects that are *not* supported for replication are skipped during replication 
 | UDFs |  | ✔ | For more information, see [Replication of stored procedures and user-defined functions (UDFs)](/user-guide/account-replication-considerations#label-replication-stored-procedures-udfs). |
 | Policies | Aggregation policies | ✔ |  |
 |  | Authentication policies | ✔ |  |
+|  | Data movement policies | ✔ |  |
+|  | Data movement rules | ✔ |  |
 |  | Column-level Security (masking) | ✔ | For masking, row access, and tag-based masking policies, see [policy replication considerations](/user-guide/database-replication-considerations#label-database-replication-considerations-masking-row-policies). |
 |  | Join policies | ✔ |  |
 |  | Password policies | ✔ |  |

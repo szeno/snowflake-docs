@@ -6,11 +6,36 @@ This page documents notable changes to Cortex Code in Snowsight.
 
 | Date | Feature | Phase |
 | --- | --- | --- |
+| Sep 16 | Approval modes (Default approvals / Bypass approvals) | GA |
 | Sep 9 | Restrict this chat (restricted session scope) | GA |
 
 Expand
 
 Show lessSee more
+
+### Approval modes
+
+The CoCo side panel now includes an approval-mode selector next to the message
+box:
+
+- **Default approvals**: CoCo asks you to approve each tool call. You can allow
+  a single call, allow the tool for this chat, or always allow that tool.
+- **Bypass approvals**: CoCo runs tool calls without individual prompts. Your
+  Snowflake privileges and restricted session scopes still apply.
+
+New conversations start on **Default approvals**. If you choose **Bypass
+approvals**, Snowsight remembers that choice for later conversations in the
+same browser. The Home composer does not include this selector.
+
+To hide the selector for an account, set the
+`COCO__ENABLE_AUTO_APPROVE_SELECTOR` parameter to `FALSE`. This is a Snowsight
+dynamic parameter, not an `ALTER ACCOUNT` session parameter. Contact your
+Snowflake account team to apply it.
+
+This setting is independent of
+[COCO\_SNOWSIGHT\_ALLOW\_ALL\_PERMISSION\_OPTIONS\_DISABLED](/sql-reference/parameters#label-coco-snowsight-allow-all-permission-options-disabled),
+which only hides **Allow <tool> in this chat** and **Always allow <tool>**
+on individual consent prompts.
 
 ## August 2026
 

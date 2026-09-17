@@ -15,6 +15,7 @@ The following sections describe Snowflake Optima in more detail:
 - [Optima Indexing](#optima-indexing)
 - [Optima Metadata](#optima-metadata)
 - [Optima Planning](#optima-planning)
+- [Optima Clustering](#optima-clustering)
 - [Monitor Snowflake Optima use](#monitor-snowflake-optima-use)
 
 ## Optima Indexing
@@ -77,6 +78,33 @@ cardinality estimates can be inaccurate, leading to a suboptimal join order. Whe
 Optima Planning records information from query execution, and uses that information to optimize
 query plans. Workloads such as scheduled reports, ELT pipelines, and dashboard refreshes
 automatically benefit from improved performance.
+
+## Optima Clustering
+
+*Optima Clustering* is a Snowflake Optima feature that autonomously optimizes clustered tables for query
+performance. It’s the next-generation version of [Automatic Clustering](/user-guide/tables-auto-reclustering). You define a
+[clustering key](/user-guide/tables-clustering-keys), and Snowflake continuously reclusters the table in the
+background with no manual maintenance.
+
+Compared with Clustering Classic (the previous Automatic Clustering behavior), Optima Clustering offers the following
+advantages:
+
+- Faster time to cluster new data, which can improve query performance on clustered tables.
+- A smart clustering algorithm that prioritizes clustering the data that matters most for query performance.
+- Highly predictable billing based on uncompressed data volume ingested, not compute hours. For the current per
+  uncompressed GB billing rate, see the
+  [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+- Expanded clustering key length: Optima Clustering can use up to 1 KB total across all clustering key columns.
+  Clustering Classic uses only the first 5 bytes of each clustering key column.
+
+Starting September 1, 2026, newly clustered tables use Optima Clustering. Tables that are already clustered remain on
+Clustering Classic. You don’t need to take any action for the rollout.
+
+To determine whether a table uses Optima Clustering or Clustering Classic, call
+[SYSTEM$CLUSTERING\_INFORMATION](/sql-reference/functions/system_clustering_information).
+
+For more information, including costs, suspend and resume behavior, and how to identify each version, see
+[Automatic Clustering](/user-guide/tables-auto-reclustering).
 
 ## Monitor Snowflake Optima use
 

@@ -240,6 +240,249 @@ CALL SNOWFLAKE.POSTGRES.QUERY_ADMIN_LOG(
 If an apply task run fails, its error message is persisted on the mirror and surfaced by
 `describe_mirror` and `list_mirrors`. The next successful run clears the error.
 
+## Alert on mirror health
+
+`describe_mirror` and `list_mirrors` support `TABLE(...)` syntax, so a
+[Snowflake alert](https://docs.snowflake.com/en/user-guide/alerts) can watch them and notify you
+when a mirror stops replicating. The same queries work from a Snowflake task or dashboard.
+
+### Set up a mirror health alert
+
+#### Grant the required privileges
+
+The role that owns the alert must hold the `postgres_mirror_admin` application role and own the
+source Postgres instance. The procedures only see mirrors on instances the caller owns:
+`list_mirrors` silently returns nothing for other instances.
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+GRANT APPLICATION ROLE snowflake.postgres_mirror_admin TO ROLE mirror_ops;
+GRANT EXECUTE ALERT ON ACCOUNT TO ROLE mirror_ops;
+GRANT CREATE ALERT ON SCHEMA ops.public TO ROLE mirror_ops;
+GRANT USAGE ON WAREHOUSE ops_wh TO ROLE mirror_ops;
+```
+
+#### Create a notification integration
+
+Recipients must be verified email addresses of users in the account:
+
+Copy code
+
+```
+CREATE NOTIFICATION INTEGRATION mirror_alert_email
+  TYPE = EMAIL
+  ENABLED = TRUE
+  ALLOWED_RECIPIENTS = ('oncall@example.com');
+GRANT USAGE ON INTEGRATION mirror_alert_email TO ROLE mirror_ops;
+```
+
+#### Create the alert
+
+The condition fires when either of the following is true:
+
+- `status = 'SUSPENDED'`: the apply task was suspended by `suspend_mirror` or auto-suspended
+  after repeated failures.
+- `error_message IS NOT NULL` and nothing has been processed for over an hour.
+  Checking `last_operation_time` avoids firing for a transient error such as a lock timeout.
+
+Copy code
+
+```
+USE ROLE mirror_ops;
+
+CREATE OR REPLACE ALERT ops.public.mirror_health
+  WAREHOUSE = ops_wh
+  SCHEDULE = '10 MINUTE'
+  IF (EXISTS (
+      SELECT status, error_message, last_operation_time
+      FROM TABLE(snowflake.postgres.describe_mirror('orders_mirror'))
+      WHERE status = 'SUSPENDED'
+         OR (error_message IS NOT NULL
+             AND (last_operation_time IS NULL
+                  OR last_operation_time < DATEADD('hour', -1, SYSDATE())))
+  ))
+  THEN CALL SYSTEM$SEND_EMAIL(
+      'mirror_alert_email',
+      'oncall@example.com',
+      'Postgres mirror unhealthy',
+      'Run: SELECT * FROM TABLE(snowflake.postgres.describe_mirror(''orders_mirror''));'
+  );
+```
+
+#### Activate and verify the alert
+
+Alerts are created suspended. Resume it, then run it once — conditions are validated at run time,
+not at `CREATE ALERT`:
+
+Copy code
+
+```
+ALTER ALERT ops.public.mirror_health RESUME;
+EXECUTE ALERT ops.public.mirror_health;
+```
+
+Check what that run did:
+
+Copy code
+
+```
+SELECT name, scheduled_time, state, action_state, error_message
+FROM TABLE(INFORMATION_SCHEMA.ALERT_HISTORY(
+    SCHEDULED_TIME_RANGE_START => DATEADD('hour', -24, CURRENT_TIMESTAMP())
+))
+ORDER BY scheduled_time DESC;
+```
+
+### Watch all mirrors
+
+To watch every mirror instead of one, swap the `FROM` clause for
+`TABLE(snowflake.postgres.list_mirrors())` and add `mirror_name` to the `SELECT`. Calling
+`list_mirrors()` with no argument covers every mirror on every instance you own, including
+mirrors created after the alert. The predicates are unchanged:
+
+Copy code
+
+```
+SELECT mirror_name, status, error_message, last_operation_time
+FROM TABLE(snowflake.postgres.list_mirrors())
+WHERE status = 'SUSPENDED'
+   OR (error_message IS NOT NULL
+       AND (last_operation_time IS NULL
+            OR last_operation_time < DATEADD('hour', -1, SYSDATE())))
+```
+
+Note
+
+Don’t pass `NULL` to `list_mirrors` — an untyped `NULL` doesn’t resolve against the `STRING`
+parameter and errors out.
+
+### Tune the alert
+
+- **Match the staleness threshold to `refresh_interval`.** Both procedures return
+  `refresh_interval`, so you can derive the bound from it rather than hardcoding one value across
+  mirrors with different cadences. A few multiples of the configured interval is a reasonable
+  starting point.
+- **Exclude mirrors you suspend deliberately**, to avoid being alerted by your own maintenance.
+- **Don’t schedule the alert below `min(refresh_interval, 2 minutes)`.** That’s how often the
+  apply task runs, so below that threshold the alert re-reads the same state on every evaluation.
+
+### What the alert doesn’t check
+
+- **A non-`ACTIVE` status isn’t treated as a failure.** A failing mirror usually stays `ACTIVE`
+  while the apply task retries, so `status` alone isn’t a reliable failure signal. See
+  [Mirror auto-suspend after repeated failures](#label-mirror-auto-suspend).
+- **`STARTING` status.** A new mirror is legitimately `STARTING` until its first operation is
+  applied, so a bare `STARTING` test fires on every `create_mirror`.
+- **A missing apply task.** `status` is `NULL` when `describe_mirror` can’t find the mirror’s
+  apply task, and `= 'SUSPENDED'` doesn’t match `NULL`. `create_mirror` always creates the task,
+  so add `status IS NULL OR` to the `WHERE` clause only if you’ve seen one go missing.
+- **An initial copy that never finished.** `STARTING` means the mirror has processed nothing yet,
+  but neither procedure returns a creation timestamp. Record when the mirror first appeared and
+  alert once it’s been `STARTING` longer than a full copy should take. `list_mirrored_tables`
+  shows which table is holding up a slow initial copy.
+- **A stall with no error.** If the source stops delivering changes, `status` stays `ACTIVE` and
+  `error_message` stays `NULL`. Monitor `last_operation_time` and the lag figures in
+  `postgres_status`. See [Monitor the source side](#label-alert-source-side).
+- **`recent_query_durations` has a short window.** Its 20-slot history fills at the 2-minute
+  task cadence, covering roughly 40 minutes. Count runs where `state LIKE 'FAILED%'` rather than
+  looking for a streak — backoff-skipped runs are recorded as successes and break streaks up.
+
+### Suppress repeat notifications
+
+The alert fires on every evaluation where the condition matches, so a mirror broken for a day
+sends 144 identical emails. To suppress repeats, record what you’ve already notified about and
+exclude it from the condition.
+
+Create a table to track notifications:
+
+Copy code
+
+```
+CREATE TABLE ops.public.mirror_notified (
+    mirror_name STRING, breach_kind STRING,
+    first_seen  TIMESTAMP_NTZ, last_seen TIMESTAMP_NTZ
+);
+```
+
+Add a `NOT EXISTS` check to the condition’s `WHERE` clause, keeping the existing predicates in
+a group:
+
+Copy code
+
+```
+AND NOT EXISTS (
+    SELECT 1 FROM ops.public.mirror_notified n
+    WHERE n.mirror_name = 'orders_mirror' AND n.breach_kind = 'UNHEALTHY'
+)
+```
+
+On the `list_mirrors` variant, alias the procedure call and qualify both sides of the
+comparison:
+
+Copy code
+
+```
+AND NOT EXISTS (
+    SELECT 1 FROM ops.public.mirror_notified n
+    JOIN TABLE(snowflake.postgres.list_mirrors()) m ON n.mirror_name = m.mirror_name
+    WHERE n.breach_kind = 'UNHEALTHY'
+)
+```
+
+The action then has to both notify and record, so it becomes a procedure.
+`GET_CONDITION_QUERY_UUID()` gives it access to the row the condition matched:
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ops.public.notify_mirror_breaches()
+RETURNS STRING
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+BEGIN
+    LET condition_query STRING := SNOWFLAKE.ALERT.GET_CONDITION_QUERY_UUID();
+
+    LET body STRING := (SELECT 'status: '          || status ||
+                               ', last error: '     || COALESCE(error_message, 'none') ||
+                               ', last processed: ' || COALESCE(last_operation_time::STRING, 'never')
+                        FROM TABLE(RESULT_SCAN(:condition_query)));
+
+    CALL SYSTEM$SEND_EMAIL('mirror_alert_email', 'oncall@example.com',
+                           'Postgres mirror orders_mirror unhealthy', :body);
+
+    INSERT INTO ops.public.mirror_notified
+    VALUES ('orders_mirror', 'UNHEALTHY', SYSDATE(), SYSDATE());
+
+    RETURN 'notified';
+END;
+```
+
+Nothing clears those rows once a mirror recovers, so a second alert or a task has to remove
+them. When writing the clearing logic:
+
+- **Wait for more than one healthy observation before clearing.** A single evaluation that reads
+  the mirror as healthy mid-recovery would clear the suppression state and allow the next
+  evaluation to page for an outage that’s already being worked.
+- **Anchor on `last_operation_time`, not a trailing window of task runs.** Whether the oldest
+  run in a fixed lookback is older than some threshold depends on where the task’s schedule
+  lands and flips between evaluations.
+
+### Monitor the source side
+
+The columns described on this page report the Snowflake side: the apply task and what it has
+processed. A source-side problem shows up there only once it starves apply of work, which looks
+the same as an idle source.
+
+`describe_mirror` also returns `postgres_status`, read live from the source, so a condition can
+test the source side without a session on the Postgres instance. `slot_lag_bytes` grows when the
+CDC worker falls behind. It’s a subset of the `snowflake_cdc.publication_health` view, which has
+the rest: worker PID, error detail, and per-table snapshot state.
+
+For alert debugging, see [Troubleshoot mirrors](/user-guide/snowflake-postgres/postgres-data-mirroring-troubleshooting#label-alert-debug).
+
 ## Suspend and resume mirroring
 
 You have two options when suspending a Postgres instance that has active mirrors: leave the mirror

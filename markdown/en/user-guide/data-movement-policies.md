@@ -399,9 +399,9 @@ Tag-to-policy bindings are preserved during a clone. If the policy was in the sa
 - `SYS_CONTEXT('SNOWFLAKE$DATA_MOVEMENT', ...)` returns values for the statement’s primary movement type only; properties for other movement types behave as not applicable (see [Movement types and precedence](#movement-types-and-precedence) and [SYS\_CONTEXT in movement rules](#label-dmp-movement-context-syscontext)).
 - Row thresholds are evaluated per statement.
 - Monitoring and telemetry views can be delayed. Latency may be up to 2 hours.
-- Violation recording is best effort and not guaranteed to be complete. A missing violation record doesn’t mean enforcement didn’t occur; recording and enforcement are independent.
+- Violation records are generated for each event. However, in rare cases, such as during service interruptions or periods of excessive violations, a record may not be captured. Because enforcement and recording are independent, a missing record doesn’t indicate that enforcement didn’t occur.
 - Alert rules are not supported for `UI_DOWNLOAD` rules.
-- `UI_DOWNLOAD` violations are not included in the `DATA_MOVEMENT_VIOLATIONS` account usage view.
+- `UI_DOWNLOAD` violations are not included in the `DATA_MOVEMENT_VIOLATIONS` account usage view. Because UI\_DOWNLOAD enforcement works by disabling the download button rather than blocking a download request, no policy violation event occurs.
 
 ## Reference: SQL commands
 

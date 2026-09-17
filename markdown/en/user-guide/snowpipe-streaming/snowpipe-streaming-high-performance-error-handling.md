@@ -1,15 +1,17 @@
 # Error handling in Snowpipe Streaming high-performance architecture
 
-This topic outlines the error handling mechanisms available in the high-performance edition of Snowpipe Streaming. This enhanced approach provides detailed error information and improves the overall error handling process for a more robust and informative experience.
+This topic explains Named Channel error handling for Snowpipe Streaming with high-performance architecture. For Elastic Channel error handling, see [Error handling for Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-error-handling).
 
-## Key error handling features in the high-performance architecture
+## Named Channel error handling
+
+### Key error handling features
 
 - Enhanced channel status endpoint: This edition extends the channel status endpoint to provide more comprehensive error information.
 - Granular error details: The high-performance edition provides more detailed error information to help identify where it occurred and find the root causes of ingestion issues.
 - Improved client experience: The high-performance edition simplifies error handling for clients, reducing the complexity of error reasoning and recovery.
 - The channel history view: [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY view](/sql-reference/account-usage/snowpipe_streaming_channel_history) provides a historical record of channel activity to monitor and locate errors. This feature lets you track error trends and proactively address potential issues.
 
-## Channel status endpoint details
+### Channel status endpoint details
 
 The high-performance architecture includes a channel status endpoint to provide more detailed, point-in-time information about a channel.
 
@@ -25,12 +27,12 @@ In addition to the channel status information for the classic architecture, whic
 - `rows_inserted`: A count of the total number of data rows that have been successfully inserted into the target table through this streaming channel since its creation.
 - `rows_parsed`: A count of the total number of data rows that have been processed and parsed by the Snowpipe Streaming service for this channel. (but not necessarily inserted, for example, due to errors).
 - `rows_error_count`: A count of the total number of data rows that encountered errors during processing and were therefore rejected by the Snowpipe Streaming service for this channel.
-- `last_error_offset_upper_bound`: The upper bound of the offset token range of the last rowset that contained errors. This helps in identifying the approximate location of the most recent errors within the data stream.
+- `last_error_offset_upper_bound`: The upper bound of the offset token range of the last rowset (batch of rows) that contained errors. This helps in identifying the approximate location of the most recent errors within the data stream.
 - `last_error_message`: A human-readable message corresponding to the latest error code.
 - `last_error_timestamp`: The timestamp indicating when the most recent error occurred on this streaming channel.
 - `snowflake_avg_processing_latency_ms`: The average latency, in milliseconds, observed by the Snowflake service in processing rowsets received by this channel. This metric provides insight into the performance of the ingestion pipeline within Snowflake.
 
-## Error-handling flow in the high-performance architecture
+### Error-handling flow
 
 - Client sends data: The client application uses the Snowpipe Streaming SDK to send data to Snowflake through the `appendRow(s)` API.
 - Server processing: The Snowflake service processes the data. This involves:
@@ -59,11 +61,11 @@ In addition to the channel status information for the classic architecture, whic
     - Moving the erroneous data to a dead-letter queue.
     - Reopening channels.
 
-## Client-side error handling and required actions
+### Client-side error handling and required actions
 
 The Snowpipe Streaming SDK simplifies error handling by implementing internal retry logic for transient errors. However, for fatal channel errors and persistent authorization issues, you are required to take manual action.
 
-### SDK retry logic for transient errors
+#### SDK retry logic for transient errors
 
 The SDK automatically retries the request to send unflushed data in the channel to the server for the following HTTP status codes, as they typically indicate a temporary or transient service issue:
 
@@ -71,7 +73,7 @@ The SDK automatically retries the request to send unflushed data in the channel 
 - 429 (Too many requests)
 - 408 (Request timeout)
 
-### Channel errors that require a manual reopen
+#### Channel errors that require a manual reopen
 
 The Snowpipe Streaming SDK doesn’t automatically reopen the channel. When a channel enters a state that isn’t valid, you must explicitly close and reopen the channel to continue ingestion.
 
@@ -92,11 +94,11 @@ Expand
 
 Show lessSee more
 
-### Schema evolution failure and channel invalidation
+#### Schema evolution failure and channel invalidation
 
 When you use the Snowpipe Streaming high-performance architecture, it is important for you to understand a specific exception to the general `ON_ERROR=CONTINUE` behavior regarding schema evolution.
 
-#### Channel invalidation on schema errors
+##### Channel invalidation on schema errors
 
 Even if the `ON_ERROR=CONTINUE` option is configured for the load, the channel is invalidated if it encounters a schema evolution failure caused by user errors.
 
@@ -107,7 +109,7 @@ The following list includes common user errors that trigger channel invalidation
 
 This channel invalidation prevents the pipe from continuing to accept data that would cause persistent, non-recoverable schema issues. You can verify the invalidation status and reason for the channel failure by calling the `getChannelStatus()` method. For more information about the channel status fields, see [Channel status endpoint details](#channel-status-endpoint-details).
 
-### Authorization errors that require a configuration fix
+#### Authorization errors that require a configuration fix
 
 When an ingestion attempt results in an HTTP authorization error, you must correct the underlying permission or credential issue. Don’t reopen the channel for these errors because the new channel immediately encounters the same problem.
 
@@ -116,7 +118,7 @@ When an ingestion attempt results in an HTTP authorization error, you must corre
 
 For these errors, stop the ingestion, and then fix the client application’s security configuration — for example, pipe permissions, user role, authentication credentials — before you resume ingestion. After you fix the authorization issue, you can reopen the client to continue ingestion.
 
-## Handling SDK exceptions and HTTP status codes
+### Handling SDK exceptions and HTTP status codes
 
 When you use the Java SDK, methods such as `insertRows`, `getLatestCommittedOffsetToken`, and `getChannelStatus` might throw an `SFException`. To ensure resilient ingestion, applications must catch these exceptions, and then inspect `getHttpStatusCode()` to determine the required recovery action.
 
@@ -133,14 +135,14 @@ Expand
 
 Show lessSee more
 
-### Understanding invalidation levels
+#### Understanding invalidation levels
 
 It is critical to distinguish between a channel invalidation and a client invalidation:
 
 - **InvalidChannelException (HTTP 409)**: Only the specific channel is affected. Reopening the channel is sufficient.
 - **InvalidClientException**: The entire `SnowflakeStreamingIngestClient` is compromised. You must close the existing client, initialize a new one using the factory, and then reopen all associated channels.
 
-## Row-level error logging
+### Row-level error logging
 
 For row-level error debugging, turn on **error logging** on your target table. When turned on, rows that fail
 during server-side processing are automatically captured in a dedicated error table.

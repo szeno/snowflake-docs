@@ -73,7 +73,7 @@ the same work, including the steps it took between requests.
 
 The gateway accepts OTLP traces over `http/protobuf` or `http/json` at
 `<gateway-endpoint>/telemetry/v1/traces`, authenticated with the same programmatic access token you use
-for inference. Get the endpoint from `SHOW AI GATEWAYS`, as described in
+for inference. Get the endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE`, as described in
 [Gateway endpoint](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-url-format).
 
 Client-exported spans land in `AGENT_TRACE_TABLE` alongside the spans the gateway records, so a single

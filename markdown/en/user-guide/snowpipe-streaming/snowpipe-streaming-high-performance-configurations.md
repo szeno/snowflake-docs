@@ -118,7 +118,20 @@ Copy code
 
 The following examples show how to define client-side properties directly in code:
 
-PythonNode.js
+JavaPythonNode.js
+
+Copy code
+
+```
+Map<String, Object> config = new HashMap<>();
+config.put("authorization_type", "JWT");
+config.put("url", "https://<account_identifier>.snowflakecomputing.com");
+config.put("user", "MY_SNOWFLAKE_USER");
+config.put("account", "XY12345");
+config.put("private_key_file", "/path/to/rsa_key.p8");
+config.put("role", "MY_INGEST_ROLE");
+// ... code to initialize client with 'config'
+```
 
 Copy code
 

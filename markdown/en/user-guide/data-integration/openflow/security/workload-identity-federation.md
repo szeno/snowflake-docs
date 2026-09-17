@@ -353,6 +353,186 @@ Provider controller service. Enable all of the controller services.
    - **Vault URI**: the URI shown on the overview page of your Key Vault.
 4. Select **Verify** to confirm access to the secrets.
 
+## AWS through Microsoft Entra ID
+
+Use this alternative when your AWS account trusts Microsoft Entra ID as an OIDC identity provider and you can’t
+register Snowflake as another identity provider. Openflow chains the Snowflake identity through Entra: Snowflake issues
+a signed JWT, Entra exchanges the JWT for an access token, and AWS Security Token Service (STS) exchanges the Entra
+token for temporary AWS credentials.
+
+Important
+
+This procedure requires Openflow Runtime Extensions 2026.8.6.2 or later. On earlier versions, the JWT Bearer OAuth2
+Access Token Provider doesn’t include the external assertion properties required for this configuration.
+
+### Configure the Microsoft Entra application
+
+1. In Microsoft Entra ID, register a new application or select an existing application. Record the application’s
+   **Tenant ID** and **Client ID**.
+2. Go to **Expose an API** and set the **Application ID URI** to `api://<CLIENT_ID>`.
+
+   Set the Application ID URI
+
+   If you don’t set the Application ID URI, a request with the `api://<CLIENT_ID>/.default` scope fails with error
+   `AADSTS500011`.
+3. Go to **Certificates & secrets** » **Federated credentials**, select **Add credential**, and configure the
+   credential:
+
+   - For the scenario, select **Other issuer**.
+   - For **Issuer**, enter the `workload_identity_federation_issuer` value.
+   - For **Subject identifier**, enter the `workload_identity_federation_subject` value.
+   - For **Audience**, use `api://AzureADTokenExchange`.
+4. Go to **Enterprise applications**, select the application, and record the **Object ID** from the overview page. This
+   is the service principal Object ID that you use for the `sub` condition in the AWS trust policy.
+
+Use the Enterprise applications Object ID
+
+The Object ID under **Enterprise applications** is different from the Object ID under **App registrations**. If you use
+the App Registration Object ID for the AWS `sub` condition, AWS STS rejects the token.
+
+### Create the IAM identity provider
+
+1. In the AWS console, go to **IAM** » **Identity providers** and select **Add provider**.
+2. For **Provider type**, select **OpenID Connect**.
+3. For **Provider URL**, enter `https://login.microsoftonline.com/<TENANT_ID>/v2.0`.
+4. For **Audience**, enter the Entra Application ID URI, `api://<CLIENT_ID>`.
+5. Select **Add provider**.
+
+Use the application audience
+
+Don’t use `https://graph.microsoft.com` as the audience. The AWS identity provider audience must match the `aud` claim
+of the Entra token, which is `api://<CLIENT_ID>` for this configuration. Otherwise, AWS STS returns
+`InvalidIdentityToken`.
+
+### Create the IAM role
+
+Create an IAM role that trusts the identity provider, and attach the policies required for the AWS resources that the
+Openflow runtime accesses. The following trust policy restricts access to the Entra application:
+
+Copy code
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/login.microsoftonline.com/<TENANT_ID>/v2.0"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "login.microsoftonline.com/<TENANT_ID>/v2.0:sub": "<SERVICE_PRINCIPAL_OBJECT_ID>",
+          "login.microsoftonline.com/<TENANT_ID>/v2.0:aud": "api://<CLIENT_ID>"
+        }
+      }
+    }
+  ]
+}
+```
+
+Save the ARN of the role for the Openflow configuration.
+
+### Configure the external access integration
+
+Allow access to the Entra token endpoint, the AWS STS endpoint, and the AWS service endpoints that the flow uses. The
+following example allows access to Entra, AWS STS, and Amazon S3. Replace `<REGION>` with the bucket region:
+
+Copy code
+
+```
+USE ROLE SECURITYADMIN;
+USE DATABASE openflow_db;
+USE SCHEMA openflow_schema;
+
+CREATE NETWORK RULE openflow_entra_aws_network_rule
+    MODE = EGRESS
+    TYPE = HOST_PORT
+    VALUE_LIST = (
+      'login.microsoftonline.com:443',
+      'sts.<REGION>.amazonaws.com:443',
+      's3.<REGION>.amazonaws.com:443',
+      's3.amazonaws.com:443',
+      '*.s3.<REGION>.amazonaws.com:443',
+      '*.s3.amazonaws.com:443'
+    );
+
+CREATE EXTERNAL ACCESS INTEGRATION openflow_entra_aws_eai
+    ALLOWED_NETWORK_RULES = (openflow_entra_aws_network_rule)
+    ENABLED = TRUE;
+
+GRANT USAGE ON INTEGRATION openflow_entra_aws_eai TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+```
+
+After you create the external access integration, associate it with your runtime. See
+[Set up Openflow - Snowflake Deployment: Configure allowed domains for Openflow connectors](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list).
+
+### Configure the Openflow controller services
+
+In addition to the common controller services described earlier on this page, create the following controller services:
+
+1. In the Snowflake Workload Identity Token Provider, set **Audience** to `api://AzureADTokenExchange`. This value must
+   match the audience of the Entra federated credential.
+2. Create and enable a
+   [StandardWebClientServiceProvider](/user-guide/data-integration/openflow/controllers/standardwebclientserviceprovider)
+   controller service. You can use the default property values.
+3. Create a
+   [JWTBearerOAuth2AccessTokenProvider](/user-guide/data-integration/openflow/controllers/jwtbeareroauth2accesstokenprovider)
+   controller service with the following configuration:
+
+   - **Assertion Strategy**: `External Provider`.
+   - **External Assertion Provider**: reference the Snowflake Workload Identity Token Provider.
+   - **Token Endpoint URL**: `https://login.microsoftonline.com/<TENANT_ID>/oauth2/v2.0/token`.
+   - **Grant Type**: `client_credentials`.
+   - **Assertion Parameter Name**: `client_assertion`.
+   - **Web Client Service**: reference the Standard Web Client Service Provider.
+4. Add the following dynamic properties to the JWT Bearer OAuth2 Access Token Provider:
+
+   | Dynamic property | Value |
+   | --- | --- |
+   | `FORM.client_assertion_type` | `urn:ietf:params:oauth:client-assertion-type:jwt-bearer` |
+   | `FORM.client_id` | `<CLIENT_ID>` |
+   | `FORM.scope` | `api://<CLIENT_ID>/.default` |
+
+   Expand
+
+   Show lessSee more
+5. Select **Verify** on the JWT Bearer OAuth2 Access Token Provider to confirm the Snowflake-to-Entra token exchange,
+   then enable the controller service.
+6. Create an
+   [AWSCredentialsProviderControllerService](/user-guide/data-integration/openflow/controllers/awscredentialsprovidercontrollerservice)
+   controller service with the following configuration:
+
+   - **OAuth2 Access Token Provider**: reference the JWT Bearer OAuth2 Access Token Provider.
+   - **Assume Role ARN**: the ARN of the IAM role you created.
+   - **Assume Role Session Name**: any descriptive string that identifies the session.
+   - **Assume Role STS Region**: the region for the STS endpoint.
+7. Enable the AWS Credentials Provider Service and configure AWS components, such as `ListS3`, to reference it.
+
+Note
+
+The **Verify** action on the JWT Bearer OAuth2 Access Token Provider confirms the Snowflake-to-Entra exchange. The AWS
+Credentials Provider Service doesn’t have a **Verify** action; an AWS processor exercises the AWS STS exchange when the
+processor runs.
+
+Use the correct audience at each exchange
+
+The chain uses different audience values for the Snowflake and Entra tokens:
+
+| Value | Where you configure it | Purpose |
+| --- | --- | --- |
+| `api://AzureADTokenExchange` | Snowflake Workload Identity Token Provider and Entra federated credential | Audience of the Snowflake-issued JWT. |
+| `api://<CLIENT_ID>/.default` | `FORM.scope` on the JWT Bearer OAuth2 Access Token Provider | Scope requested from Entra. |
+| `api://<CLIENT_ID>` | AWS IAM OIDC provider audience and the trust policy `aud` condition | Audience of the Entra access token that AWS validates. |
+
+Expand
+
+Show lessSee more
+
+The values aren’t interchangeable. For example, if you configure the AWS identity provider audience as
+`api://AzureADTokenExchange`, AWS STS returns `InvalidIdentityToken`.
+
 ## GCP
 
 ### Create the workload identity pool and provider

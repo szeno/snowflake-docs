@@ -8,6 +8,18 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.8.0 (August 27, 2026)
+
+### New features and updates
+
+- Added the generally available Elastic Channels API for Java, Python, and Node.js, including fire-and-forget and waitable append methods.
+- Added success and error handlers with caller-supplied append tokens for correlating asynchronous outcomes.
+- Added `requestId` and `retryCount` to Elastic callback details. These fields help correlate requests and identify when an SDK retry might have introduced duplicate rows.
+- Added the Elastic REST table path, which automatically uses the managed default pipe and its implicit `ELASTIC` channel.
+- Added `waitForFlush` support for Elastic Channels.
+
+For more information, see [Elastic Channels overview](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-overview).
+
 ## Version 1.7.0 (July 23, 2026)
 
 ### Behavior changes
@@ -22,8 +34,8 @@ Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
 ### New features and updates
 
-- Added elastic channels and table mode to the Snowpipe Streaming SDK for Node.js, bringing Node.js parity with the Java and Python SDKs for elastic ingestion. Elastic channels require SDK version 1.6.2 or later. For more information, see [Elastic Channels](/LIMITEDACCESS/snowpipe-streaming-elastic-channels).
-- Elastic channels that upload in file mode now stage data under the durable stage location when the server provides it, so elastic file-mode uploads receive the durable TTL. Non-elastic channels are unchanged.
+- Added Elastic Channels and table mode to the Snowpipe Streaming SDK for Node.js, bringing Node.js parity with the Java and Python SDKs for elastic ingestion. For the GA Elastic Channel API, use SDK version 1.8.0 or later. For more information, see [Elastic Channels overview](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-overview).
+- Elastic Channels that upload in file mode now stage data under the durable stage location when the server provides it, so elastic file-mode uploads receive the durable TTL. Non-elastic channels are unchanged.
 
 ## Version 1.6.1 (June 29, 2026)
 

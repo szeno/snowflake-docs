@@ -2,7 +2,13 @@
 
 This guide outlines key best practices to design and implement robust data ingestion pipelines by using Snowpipe Streaming with high-performance architecture. By following these best practices, you ensure that your pipelines are durable, reliable, and have efficient error handling.
 
-## Manage channels strategically
+## Let the SDK batch automatically
+
+Append rows as they arrive. The Java, Python, and Node.js SDKs buffer and combine appends internally using time and size thresholds, and handle compression and sending data to Snowflake. Use multi-row append APIs when your source already supplies multiple rows together, not as a prerequisite for throughput.
+
+For each Named Channel, submit rows serially in source order without waiting for each row to commit. Bound outstanding work and retained bytes, and periodically wait for the committed offset to reach or pass your source checkpoint. Advance the source checkpoint only after that commit. An application checkpoint tracks committed progress, not how the SDK groups rows for sending. See [Open and use a Named Channel](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started#get-started-with-named-channels). For Elastic acknowledgements without offset tokens, see [Elastic Channels best practices](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-best-practices#label-elastic-bound-acknowledgements).
+
+## Manage Named Channels strategically
 
 Apply the following channel-management strategies for performance and long-term stability:
 
@@ -59,13 +65,15 @@ FROM my_table
 QUALIFY STREAM_OFFSET != previous_offset + 1;
 ```
 
-## Use compression for REST API requests
+## Batch rows and use compression for REST API requests
 
-When you use the Snowpipe Streaming REST API, use compression to send more data per request and reduce network overhead.
+Direct REST clients must group and send rows themselves. Combine rows into requests using newline-delimited JSON (NDJSON), with one JSON object per line, and use compression to reduce network overhead. Bound request size and send partial batches based on elapsed time so low-volume streams don’t wait indefinitely for a full batch.
 
-Although the REST API has a physical limit of 4 MB per request, this limit applies to the observed transfer size. By using compression, you can fit a larger uncompressed data volume into each request, enabling higher throughput and reducing the number of API calls required.
+Named Channel REST requests have a 4 MB limit on the payload sent over the network, after compression if used. By using compression, you can fit a larger uncompressed data volume into each request, enabling higher throughput and reducing the number of API calls required.
 
 Snowflake recommends using ZSTD as the high-performance compression algorithm, although Gzip is also supported.
+
+For Snowflake-side tracing and duplicate detection, include a `requestId` UUID query parameter with each REST request. Use the same `requestId` for all retry attempts on the same rowset (batch of rows). Snowflake logs the request ID and can use it to correlate retried requests and identify potential duplicates. See [Limitations and considerations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations) for per-request payload limits.
 
 ## Optimize ingestion performance and cost with MATCH\_BY\_COLUMN\_NAME
 
@@ -83,7 +91,14 @@ For optimal performance and data integrity, provide semi-structured data by usin
 - **Performance**: With native objects, the SDK can handle data more efficiently without requiring additional parsing steps on the Snowflake server.
 - **Type Safety**: The high-performance architecture treats string literals as literal text. By using native objects, you ensure that your data is stored as structured JSON rather than escaped string values.
 
-PythonNode.js
+JavaPythonNode.js
+
+Copy code
+
+```
+// Preferred: SDK converts the List to a structured ARRAY
+row.put("tags", Arrays.asList("electronics", "sale"));
+```
 
 Copy code
 
@@ -174,9 +189,9 @@ java -Xmx4g -jar your-app.jar
 
 ### Wrap ingestion in try-catch blocks
 
-Don’t assume that an append call always succeeds. Every call to `appendRow`/`appendRows` (Java) or `append_row`/`append_rows` (Python) can return an error, so wrap it, catch the error the SDK returns (for example, `StreamingIngestError` in Python), and then retry or otherwise handle it. Never ignore or drop the returned error. Interpret the HTTP status codes, specifically 409 for invalidations and 429 for throttling.
+Don’t assume that an append call always succeeds. Synchronous validation, serialization, closed-client, and immediate backpressure failures are raised directly by the append call. Catch the SDK error (for example, `StreamingIngestError` in Python), and then retry or otherwise handle it. Never ignore or drop the returned error. Interpret the HTTP status codes, specifically 409 for Named Channel invalidations and 429 for throttling.
 
-Some errors surface asynchronously, after rows are buffered rather than at the append call, so in addition to catching errors at the call site, monitor channel status (for example, `getChannelStatus` or `row_error_count`) to detect failures that appear later.
+Some errors surface asynchronously, after rows are buffered rather than at the append call. Monitor Named Channel status (for example, `getChannelStatus` or `row_error_count`) to detect failures that appear later.
 
 ### Implement exponential back-off
 

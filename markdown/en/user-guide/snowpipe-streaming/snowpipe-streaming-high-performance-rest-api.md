@@ -2,13 +2,14 @@
 
 Note
 
-We recommend that you begin with the Snowpipe Streaming SDK over the REST API to benefit from the improved performance and getting-started experience.
+Where possible, use the Snowpipe Streaming SDK instead of the REST API to benefit from automatic batching and simpler integration. Use direct REST when an SDK isn’t suitable for your environment.
 
-The Snowpipe Streaming REST API is designed for lightweight workloads and provides a flexible way to integrate with external applications without using the Snowpipe Streaming SDK.
+The Snowpipe Streaming REST API is designed for lightweight workloads and provides a flexible way to integrate with external applications without using a Snowpipe Streaming SDK.
 
-The following  diagram provides a visual overview of how data flows from the client to the Snowflake server, detailing each of the key API endpoints in the process.
+This reference documents both ingestion modes:
 
-> ![Snowpipe Streaming REST API overview](/static/images/data-load-snowpipe-streaming-rest-api.png)
+- [Elastic Channel endpoints](#elastic-channel-rest-api) for at-least-once ingestion without channel lifecycle or offset-token management.
+- [Named Channel endpoints](#named-channel-rest-api) for ordered, exactly-once ingestion.
 
 ## Request headers
 
@@ -25,9 +26,7 @@ Expand
 
 Show lessSee more
 
-Note
-
-The maximum allowed size for a single request payload is 16 MB. If your data is larger, you must split it into multiple requests.
+Direct REST clients must group rows into newline-delimited JSON (NDJSON), with one JSON object per line, and handle compression themselves. Both Elastic and Named Channel append requests have a 4 MB payload limit (the payload size sent over the network, after compression if used). Batch rows and use ZSTD or Gzip compression to reduce request overhead; bound batch size and elapsed time before sending.
 
 ## Get Hostname
 
@@ -101,7 +100,73 @@ Expand
 
 Show lessSee more
 
-## Open Channel
+## Elastic Channel endpoints
+
+Elastic Channels don’t require a separate open-channel operation. Send a batch of NDJSON rows directly to a table or to the implicit `ELASTIC` channel of a pipe:
+
+```
+POST /v2/streaming/data/databases/{databaseName}/schemas/{schemaName}/tables/{tableName}/rows
+POST /v2/streaming/data/databases/{databaseName}/schemas/{schemaName}/pipes/{pipeName}/channels/ELASTIC/rows
+```
+
+The table endpoint is only for Elastic Channels. On the first request, Snowflake creates or resolves the managed default pipe named `<tableName>-STREAMING`. Each streaming pipe includes an implicit `ELASTIC` channel, which the request uses without a separate open-channel operation. Use the pipe endpoint for an Elastic Channel on a custom pipe with in-flight transformations or pre-clustering.
+
+### Elastic request attributes
+
+| Attribute | Required | Component | Description |
+| --- | --- | --- | --- |
+| `databaseName` | Yes | URI | Database name, case-insensitive. |
+| `schemaName` | Yes | URI | Schema name, case-insensitive. |
+| `tableName` or `pipeName` | Yes | URI | The target table for the default pipe, or the custom pipe name. |
+| `rows` | Yes | Body | NDJSON rows. The maximum Elastic request payload is 4 MB (the payload size sent over the network, after compression if used). |
+| `requestId` | No | Query parameter | A UUID that tracks the request. Use the same value on every retry of the same rowset (batch of rows), and generate a new UUID for each distinct rowset. |
+| `retryCount` | No | Query parameter | The retry attempt number, starting at `0`. Increment it for each retry. A value greater than `0` signals that duplicate rows are possible; it doesn’t prove that a duplicate occurred. |
+
+Expand
+
+Show lessSee more
+
+Elastic requests must not include `offsetToken`, `startOffsetToken`, `endOffsetToken`, or `continuationToken`.
+
+### Elastic response and delivery semantics
+
+A successful HTTP 200 response is the durable acknowledgement: Snowflake has durably buffered the request payload. It doesn’t mean that rows are immediately queryable in the target table. Row-level processing errors are persisted to the [error table](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables) when error logging is enabled.
+
+Copy code
+
+```
+{
+  "message": "OK"
+}
+```
+
+Elastic Channels provide at-least-once delivery without an ordering guarantee. Retrying after an ambiguous response can produce duplicate rows. Include a stable event identifier in the row payload and reconcile or deduplicate downstream when duplicates matter.
+
+### Elastic append example
+
+Copy code
+
+```
+export REQUEST_ID=$(uuidgen)
+
+curl -sS -X POST \
+  -H "Authorization: Bearer $SCOPED_TOKEN" \
+  -H "Content-Type: application/x-ndjson" \
+  "https://${INGEST_HOST}/v2/streaming/data/databases/$DB/schemas/$SCHEMA/tables/$TABLE/rows?requestId=$REQUEST_ID&retryCount=0" \
+  --data-binary @rows.ndjson | jq .
+```
+
+For a retry of this rowset, reuse `REQUEST_ID` and increment `retryCount`. To use a custom pipe, replace the table path with `/pipes/$PIPE/channels/ELASTIC/rows`.
+
+## Named Channel endpoints
+
+Named Channels require explicit channel lifecycle, continuation tokens, and source offset tokens. The following operations support ordered, exactly-once ingestion.
+
+The following diagram shows the Named Channel request flow:
+
+> ![Snowpipe Streaming named-channel REST API flow](/static/images/data-load-snowpipe-streaming-rest-api.png)
+
+### Open a Named Channel
 
 The `Open Channel` operation creates or opens a new channel against a pipe or table. If the channel already exists, Snowflake bumps the client sequencer of the channel and returns the last committed offset token.
 
@@ -162,7 +227,7 @@ Expand
 
 Show lessSee more
 
-## Append Row(s)
+### Append rows to a Named Channel
 
 The `Append Rows` operation inserts a batch of rows to the given channel.
 
@@ -212,7 +277,7 @@ Expand
 
 Show lessSee more
 
-## Drop Channel
+### Drop a Named Channel
 
 The `Drop Channel` operation drops a channel at server side along with its metadata.
 
@@ -239,7 +304,7 @@ Response:
 
 This operation returns a payload with no specific successful response other than the HTTP status code.
 
-## Bulk Get Channel Status
+### Get Named Channel status in bulk
 
 The `Bulk Get Channel Status` operation returns the status of a channel for a specific client sequencer.
 

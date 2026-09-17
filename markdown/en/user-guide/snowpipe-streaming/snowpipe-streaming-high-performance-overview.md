@@ -2,8 +2,8 @@
 
 This section describes the key concepts for Snowpipe Streaming. For an introduction to Snowpipe Streaming and its capabilities, see [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview).
 
-[Channels and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels)
-:   Learn how channels provide ordered ingestion and how offset tokens enable exactly-once delivery, including crash recovery examples for Kafka and log file ingestion.
+[Choosing a channel type](/user-guide/snowpipe-streaming/snowpipe-streaming-choosing-channel-type)
+:   Understand what a channel does and compare Elastic Channels with Named Channels by delivery semantics, ordering, producer coordination, and use case.
 
 [The PIPE object](/user-guide/snowpipe-streaming/snowpipe-streaming-pipe-object)
 :   Understand how the PIPE object manages server-side data processing, including in-flight transformations, pre-clustering, and the default pipe for simplified setup.
@@ -11,5 +11,8 @@ This section describes the key concepts for Snowpipe Streaming. For an introduct
 [Table support and schema](/user-guide/snowpipe-streaming/snowpipe-streaming-table-support)
 :   Review supported table types (including Apache Iceberg v2 and v3), schema evolution, supported Java data types, and insert-only operation constraints.
 
-[Operations and reference](/user-guide/snowpipe-streaming/snowpipe-streaming-operations)
-:   Monitor ingestion health, understand required access privileges, and reference observability tools.
+[Iceberg tables](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-iceberg)
+:   Stream data into Snowflake-managed Apache Iceberg tables, including Iceberg v2 and v3 tables, using Elastic Channels or Named Channels.
+
+[Access control](/user-guide/snowpipe-streaming/snowpipe-streaming-access-control)
+:   Review the required privileges for streaming into a table through a pipe.

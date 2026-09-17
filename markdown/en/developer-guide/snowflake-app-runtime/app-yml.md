@@ -464,6 +464,15 @@ to its default, including a value set with `ALTER APPLICATION SERVICE`.
 The exception is `execute_as_role`, which you can’t change after the app
 is created.
 
+The CLI sends only the service-level keys in that specification, such as
+`query_warehouse`, the instance counts, `label`, `secrets`, and
+`environment_variables`. Build-time sections such as `install`, `build`, and `run`,
+and client-side keys such as `targets` and `ignore`, aren’t part of it. If you write
+the SQL yourself, see
+[CREATE OR ALTER APPLICATION SERVICE](/sql-reference/sql/create-application-service#label-create-or-alter-application-service-syntax)
+for the keys a specification accepts. It rejects any key it doesn’t recognize, so you
+can’t pass a whole `app.yml` as a specification.
+
 ## Common errors
 
 | Symptom | Cause | What to do |

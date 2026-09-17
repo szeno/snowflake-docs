@@ -2,9 +2,11 @@
 
 This guide describes how to migrate from the classic Snowpipe Java SDK to the high-performance Snowpipe Streaming SDK. The architectural changes and API updates discussed here also apply to migrations to the Python and Node.js SDKs, because the high-performance architecture is available in all three languages. Although the code examples in this document are in Java, the core migration principles remain consistent across languages.
 
+This guide uses Named Channels because they preserve the ordered, offset-token recovery model used by Snowpipe Streaming Classic applications. For new workloads that don’t require these guarantees, evaluate [Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-overview) separately.
+
 ## Key architectural changes
 
-The following table summarizes the most important architectural changes in the high-performance Snowpipe Streaming SDK. For a detailed comparison of the SDKs, see [Comparison between Snowpipe Streaming high-performance and classic SDKs](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-comparison).
+The following table summarizes the most important architectural changes in the high-performance Snowpipe Streaming SDK. For a detailed comparison of the SDKs, see [Comparison between Named Channel and classic SDKs](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-comparison).
 
 | Area | Classic (snowflake-ingest-java) | High-Performance (snowpipe-streaming SDK) |
 | --- | --- | --- |

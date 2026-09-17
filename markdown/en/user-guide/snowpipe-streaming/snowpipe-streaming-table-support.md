@@ -8,13 +8,19 @@ Snowpipe Streaming supports ingestion into Snowflake-managed Apache Iceberg™ t
 
 ## Schema evolution
 
-Snowpipe Streaming supports automatic table schema evolution. When enabled, Snowflake can automatically add new columns that are detected in the incoming stream and drop NOT NULL constraints to accommodate new data patterns. For more information, see [Table schema evolution](/user-guide/data-load-schema-evolution).
+Snowpipe Streaming supports automatic table schema evolution on tables with `ENABLE_SCHEMA_EVOLUTION = TRUE`. Snowflake infers supported new top-level fields in the incoming stream and adds the corresponding columns. Schema evolution occurs asynchronously after the append is durably acknowledged. Snowflake can also drop NOT NULL constraints when incoming rows omit required columns. For more information, see [Table schema evolution](/user-guide/data-load-schema-evolution).
 
 Limitations of schema evolution:
 
-- Supported exclusively for standard Snowflake tables. External tables and Apache Iceberg™ tables aren’t supported.
 - The precision, scale, or length of existing columns can’t be increased automatically.
-- Schema evolution isn’t supported for structured data types. However, new columns that contain structured types are inferred as VARIANT.
+- For standard Snowflake tables, schema evolution isn’t supported for structured data types. New columns that contain structured values are inferred as VARIANT instead.
+- For Snowflake-managed Iceberg tables, both v2 and v3 support new top-level columns inferred from JSON numbers, booleans, strings, dates, times, and timestamps.
+- Nested JSON objects infer as VARIANT and can add a column only on Iceberg v3. VARIANT isn’t supported on Iceberg v2.
+- Lists and arrays can’t add columns on Iceberg v2 or v3. Schema evolution doesn’t create structured ARRAY, OBJECT, or MAP columns; define these columns when you create the table.
+- BINARY, GEOGRAPHY, and GEOMETRY columns are supported by managed Iceberg tables but aren’t inferred from incoming JSON values. Define these columns when you create the table.
+- Nanosecond timestamps require Iceberg v3. Iceberg v2 can ingest the value at microsecond precision when default-scale coercion is enabled; otherwise the row is rejected.
+- A new field whose only observed value is null is added as VARCHAR.
+- Externally managed Iceberg tables and external tables aren’t supported.
 
 ## Insert-only operations
 

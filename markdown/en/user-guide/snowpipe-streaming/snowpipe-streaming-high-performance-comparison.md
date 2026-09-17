@@ -1,6 +1,6 @@
-# Comparison between Snowpipe Streaming high-performance and classic SDKs
+# Comparison between Named Channel and classic SDKs
 
-This section summarizes the main differences between the classic and high-performance SDKs.
+This section summarizes the main differences between the Snowpipe Streaming Classic SDK and the Named Channel APIs in the high-performance SDK.
 
 **Client and channel management**
 
@@ -18,9 +18,9 @@ This section summarizes the main differences between the classic and high-perfor
 - **GetChannelStatus**: This is a new API available on the `Channel` object.
 - **waitForFlush**: New `waitForFlush` methods have been added to both the client and channel objects.
 
-  - Client: `void close(boolean waitForFlush, Duration timeoutDuration)`
-  - Channel and Client: `void waitForFlush((optional) Duration timeoutDuration)`
-- **waitForCommit**: A new method, `CompletableFuture<Boolean> waitForCommit(Predicate<String> tokenChecker, Duration timeoutDuration)`, lets you wait for a commit to be confirmed.
+  - Client: `CompletableFuture<Void> close(boolean waitForFlush, Duration timeoutDuration)`
+  - Channel and Client: `CompletableFuture<Void> waitForFlush((optional) Duration timeoutDuration)`
+- **waitForCommit**: `CompletableFuture<Void> waitForCommit(Predicate<String> tokenChecker, Duration timeoutDuration)` polls the latest committed offset until the supplied predicate succeeds. It is a Named Channel source checkpoint, not a flush operation. The Future completes exceptionally on timeout or failure.
 - **initiateFlush**: This new method `void initiateFlush()` asynchronously calls a flush on a channel or client. The method lets you flush data without waiting for the timeout or size limits.
 
 **Data type and parsing**
@@ -104,7 +104,7 @@ Show lessSee more
 > | `CompletableFuture<Void> close(boolean drop)` | `Void close(boolean waitForFlush, Duration timeoutDuration)` | API name is changed, but the behavior is the same. |
 > | `Boolean isValid()` | N/A | Removed. |
 > | N/A | `CompletableFuture<Void> waitForFlush((optional)Duration timeoutDuration)` | A new method to wait for the flush to complete. `timeoutDuration`: Specifies how long the channel should wait before timing out. |
-> | N/A | `void waitForCommit(Predicate<String> tokenChecker, Duration timeoutDuration)` | A new method that asynchronously triggers and waits for the flush of all buffered data within this specific channel to the Snowflake server. This method ensures that all pending data is successfully written and the flush operation is complete before proceeding. |
+> | N/A | `CompletableFuture<Void> waitForCommit(Predicate<String> tokenChecker, Duration timeoutDuration)` | Polls the latest committed offset until the supplied predicate succeeds. The predicate must handle committed progress beyond the target offset. Use it at source checkpoints, not after every append; it doesn’t trigger a flush or control SDK batching. The Future completes exceptionally on timeout or failure. |
 > | N/A | `void initiateFlush()` | A new method for channels to asynchronously trigger a flush. |
 >
 > Expand

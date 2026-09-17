@@ -14,9 +14,9 @@ For quick setup, Snowflake automatically creates a [default pipe](#label-ssv2-de
 
 ## Default pipe
 
-Snowflake provides a default pipe for every target table. The default pipe is created on demand after the first successful pipe-info or open-channel call is made against the target table. This lets you start streaming data immediately without needing to manually execute CREATE PIPE DDL statements.
+Snowflake provides a default pipe for every target table. The default pipe is created on demand after the first successful pipe-info call, Named Channel open call, or Elastic table-endpoint request against the target table. Every streaming pipe includes an implicit `ELASTIC` channel. The Elastic table endpoint uses that channel without a separate open-channel operation. This lets you start streaming data immediately without manually executing CREATE PIPE DDL statements.
 
-- On-demand creation: You can only view or describe the pipe (using [SHOW PIPES](/sql-reference/sql/show-pipes) or [DESCRIBE PIPE](/sql-reference/sql/desc-pipe)) after it has been instantiated by one of these calls.
+- On-demand creation: You can only view or describe the pipe (using [SHOW PIPES](/sql-reference/sql/show-pipes) or [DESCRIBE PIPE](/sql-reference/sql/desc-pipe)) after one of these operations instantiates it.
 - Naming convention: `<TABLE_NAME>-STREAMING` (for example, `MY_TABLE-STREAMING`)
 - Fully Snowflake managed: You can’t run CREATE, ALTER, or DROP on the default pipe.
 - Visibility: You can inspect the default pipe using [SHOW PIPES](/sql-reference/sql/show-pipes), [DESCRIBE PIPE](/sql-reference/sql/desc-pipe), and [SHOW CHANNELS](/sql-reference/sql/show-channels). The default pipe is also included in the [ACCOUNT\_USAGE.PIPES](/sql-reference/account-usage/pipes), [ACCOUNT\_USAGE.METERING\_HISTORY](/sql-reference/account-usage/metering_history), and [ORGANIZATION\_USAGE.PIPES](/sql-reference/organization-usage/pipes) views.
@@ -33,7 +33,7 @@ The default pipe has the following limitation:
 
 If your workflow requires transformations, create your own named pipe. For more information, see [CREATE PIPE](/sql-reference/sql/create-pipe).
 
-When you configure the Snowpipe Streaming SDK or REST API, you can reference the default pipe name in your client configuration to begin streaming. For more information, see [Tutorial: Get started with Snowpipe Streaming high-performance architecture SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started) and [Tutorial: Get started with Snowpipe Streaming REST API using cURL and a JWT](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-tutorial).
+When you configure the Snowpipe Streaming SDK or REST API, you can reference the default pipe name in your client configuration to begin streaming. For more information, see [Tutorial: Get started with Named Channels using the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started) and [Tutorial: Get started with Named Channels using the REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-tutorial).
 
 ## Pre-clustering data during ingestion
 

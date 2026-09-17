@@ -176,3 +176,30 @@ Symptoms:
 - **Increase `max_slot_wal_keep_size` directly.** Adjust the value using
   [server settings](/user-guide/snowflake-postgres/postgres-server-settings). Set it high enough
   to cover the longest expected apply lag for your workload.
+
+## Alert debugging
+
+### Alert doesn’t fire
+
+The following conditions look correct but never match and therefore fail silently:
+
+- **The owning role doesn’t own any Postgres instance**, so `list_mirrors` returns nothing.
+- **`status` was `NULL` and the predicate used `<> 'ACTIVE'`** — `NULL <> 'ACTIVE'` evaluates
+  to `NULL`, not `TRUE`.
+- **`last_operation_time` was `NULL` and the predicate had only a time comparison** — without an
+  `IS NULL` branch, the mirror that has been failing since creation is the one the alert can’t
+  see.
+- **The condition required consecutive failed task runs** — runs skipped by the failure backoff
+  are recorded as successes and break the streak.
+- **A `TIMESTAMP_NTZ` column was compared against `CURRENT_TIMESTAMP()`** — in a US-Pacific
+  session this shifts the threshold by 420 minutes, so a 30-minute staleness test stays quiet
+  for over seven hours. Use `SYSDATE()` instead.
+
+Run the condition query on its own, as the owning role, before assuming the alert is at fault.
+
+### Alert fires when the mirror is healthy
+
+If the condition reads `last_apply_time` and something has called `refresh_mirror`,
+the alert may fire on a healthy mirror. `refresh_mirror` sets `last_apply_time` to `NULL` on
+purpose to force the next run past the refresh-interval gate, so a manual refresh makes a
+healthy mirror look like it has never applied anything. Use `last_operation_time` instead.

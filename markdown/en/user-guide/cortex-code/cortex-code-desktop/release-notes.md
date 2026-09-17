@@ -13,6 +13,7 @@ For information about Cortex Code Desktop, see [Cortex Code Desktop](/user-guide
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v1.21.5](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-5) | September 2026 | Recovery guidance when a local dbt executable is missing, clearer skill and plugin installation errors, and more accurate agent memory guidance |
 | [v1.21.4](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-4) | September 2026 | Windows installer parity with macOS, add highlighted conversation text to chat, cancel a pending steering message, and a Gemini reliability fix |
 | [v1.21.3](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-3) | September 2026 | Isolated Snowflake sessions for agent SQL, session search, a thinking effort control, and the redesigned dbt workspace as standard |
 | [v1.21.2](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-2) | August 2026 | Four new chart types, choosing local or cloud when creating an automation, a redesigned restricted session scope dialog, and a memory leak fix |

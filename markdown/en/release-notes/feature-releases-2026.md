@@ -4,10 +4,13 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
+- [Sep 15, 2026: Elastic Channels for Snowpipe Streaming (General availability)](/release-notes/2026/other/2026-09-15-snowpipe-streaming-elastic-channels-ga)
 - [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
+- [Sep 14, 2026: Catalog-linked databases: Write support for nested namespaces](/release-notes/2026/other/2026-09-14-cld-nested-namespace-write-support-open-catalog)
 - [Sep 14, 2026: Zero-copy support for all table formats in interactive warehouses (General availability)](/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
 - [Sep 11, 2026: Automations in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-09-11-cowork-automations-ga)

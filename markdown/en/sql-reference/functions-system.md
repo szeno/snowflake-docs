@@ -229,7 +229,6 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$REFERENCE](/sql-reference/functions/system_reference) |  |
 | [SYSTEM$REGISTRY\_LIST\_IMAGES](/sql-reference/functions/system_registry_list_images) | Deprecated; use the [SHOW IMAGES IN IMAGE REPOSITORY](/sql-reference/sql/show-images-in-image-repository) command instead. |
 | [SYSTEM$REPORT\_HEALTH\_STATUS](/sql-reference/functions/system_report_health_status) |  |
-|  |  |
 | [SYSTEM$SET\_RETURN\_VALUE](/sql-reference/functions/system_set_return_value) |  |
 | [SYSTEM$SET\_SPAN\_ATTRIBUTES (for Snowflake Scripting)](/sql-reference/functions/system_set_span_attributes) |  |
 | [SYSTEM$SHOW\_ACTIVE\_BEHAVIOR\_CHANGE\_BUNDLES](/sql-reference/functions/system_show_active_behavior_change_bundles) |  |

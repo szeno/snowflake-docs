@@ -175,15 +175,19 @@ Clustering service type.
 
 ### Optima Clustering costs
 
-Optima Clustering bills based on the volume of data you ingest, not on serverless compute hours. Snowflake calculates the cost as:
+Optima Clustering bills based on the volume of uncompressed data you ingest, not on serverless compute hours. Snowflake calculates the
+cost as:
 
 ```
-Clustering cost = GB ingested × 0.007 credits per GB × overlap factor
+Clustering cost = uncompressed GB ingested × per uncompressed GB billing rate × overlap factor
 ```
+
+For the current per uncompressed GB billing rate, see the
+[Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 The overlap factor is a value between `0` and `1` that represents the proportion of ingested data that requires active clustering:
 
-- If all ingested data requires active clustering, the overlap factor is `1`, and the cost is at most 0.007 credits per ingested GB.
+- If all ingested data requires active clustering, the overlap factor is `1`, and the cost is billed at the full per uncompressed GB rate.
 - If the data is naturally well clustered on arrival, the overlap factor approaches `0`, and the cost approaches zero.
 
 The overlap factor isn’t shown as a separate rebate on your bill. Your bill shows Optima Clustering credits only.
@@ -242,8 +246,9 @@ enabling Automatic Clustering for a table and maintaining the table in a well-cl
 the compute cost of changing the cluster key of a table.
 
 For Optima Clustering, the function supports estimates for one-time costs (for example, enabling clustering or changing a clustering key).
-It doesn’t yet return a maintenance cost estimate for Optima Clustering. Optima Clustering maintenance costs are bounded at a maximum of
-0.007 credits per ingested GB.
+It doesn’t yet return a maintenance cost estimate for Optima Clustering. Optima Clustering maintenance costs are bounded at the per
+uncompressed GB billing rate. For the current rate, see the
+[Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 Important
 

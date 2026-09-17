@@ -44,10 +44,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [ODBC Driver (v3.21.0)](/release-notes/clients-drivers/odbc-2026)
+- [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
+- [Sep 15, 2026: Elastic Channels for Snowpipe Streaming (General availability)](/release-notes/2026/other/2026-09-15-snowpipe-streaming-elastic-channels-ga)
 - [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
+- [Sep 14, 2026: Catalog-linked databases: Write support for nested namespaces](/release-notes/2026/other/2026-09-14-cld-nested-namespace-write-support-open-catalog)
 - [Sep 14, 2026: Zero-copy support for all table formats in interactive warehouses (General availability)](/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
 - [Snowflake ML Python (v2.1.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
@@ -100,6 +103,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Aug 27, 2026: CoCo in the Snowflake Extension for Visual Studio Code (General availability)](/release-notes/2026/other/2026-08-27-coco-vscode-extension-ga)
 - [Aug 27, 2026: Increased file limit for deployed dbt project objects](/release-notes/2026/other/2026-08-27-dbt-projects-on-snowflake-file-limit)
 - [Aug 27, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-08-27-dcr)
+- [Snowpipe Streaming SDK (v1.8.0)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Aug 26, 2026: Cortex Extension references in agent skills (General availability)](/release-notes/2026/other/2026-08-26-agent-skills-cortex-extension-references-ga)
 - [Aug 26, 2026: Cortex Agents Coding Agent (General availability)](/release-notes/2026/other/2026-08-26-cortex-agents-coding-agent-ga)
 - [Aug 26, 2026: Organization user types (General availability)](/release-notes/2026/other/2026-08-26-organization-user-types)
@@ -133,6 +137,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Node.js Driver (v3.2.0)](/release-notes/clients-drivers/nodejs-2026)
 - [August 17, 2026: AI mode for sensitive data classification (Public Preview)](/release-notes/2026/other/2026-08-17-sensitive-data-classification-ai-mode-preview)
 - [Aug 17, 2026: New SNOWFLAKE\_COCO\_USAGE\_HISTORY view in Account Usage and Organization Usage (General availability)](/release-notes/2026/other/2026-08-17-snowflake-coco-usage-history-view)
-- [Aug 16, 2026: Feature policy rules (General availability)](/release-notes/2026/other/2026-08-16-feature-policy-rules-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -29,7 +29,9 @@ This topic lists known limitations of Snowflake App Runtime.
 - Standard SPCS commands (`CREATE SERVICE`, `ALTER SERVICE`) don’t work
   with Application Services. Use the `APPLICATION SERVICE` variants instead.
 - An Application Service deploys exactly one package at a time.
-- `CREATE OR REPLACE APPLICATION SERVICE` isn’t supported.
+- `CREATE OR REPLACE APPLICATION SERVICE` isn’t supported. Use
+  [CREATE OR ALTER APPLICATION SERVICE](/sql-reference/sql/create-application-service#label-create-or-alter-application-service-syntax)
+  to create a service if it doesn’t exist or update it if it does.
 - `UNDROP` isn’t supported for Application Services. After a service is
   dropped, it can’t be recovered.
 - Transferring ownership of an Application Service isn’t supported.

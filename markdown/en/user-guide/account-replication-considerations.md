@@ -183,6 +183,7 @@ groups. Security policies include:
 
 - [Aggregation policies](/user-guide/aggregation-policies)
 - [Authentication policies](/user-guide/authentication-policies)
+- [Data movement policies](/user-guide/data-movement-policies), including data movement rules
 - [Masking policies](/user-guide/security-column-intro)
 - [Password policies](/user-guide/password-authentication#label-password-policies)
 - [Privacy policies](/user-guide/diff-privacy/differential-privacy-admin-privacy-policies)

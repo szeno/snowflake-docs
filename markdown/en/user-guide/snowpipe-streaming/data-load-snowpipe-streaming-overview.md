@@ -1,25 +1,33 @@
 # Snowpipe Streaming
 
-Snowpipe Streaming is Snowflake’s real-time ingestion service built on the high-performance architecture. It enables applications to load streaming data directly into Snowflake tables as rows arrive, without staging files or managing intermediate storage. Data becomes available for query within seconds of ingestion, supporting use cases from IoT telemetry and Change Data Capture (CDC) pipelines to fraud detection and live analytics.
+Snowpipe Streaming is Snowflake’s real-time ingestion service built on our latest high-performance architecture. It enables applications to stream rows directly from devices, applications, and services into Snowflake tables or Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables. This direct path can remove staging files, intermediate object storage, message buses, and connector services that the workload doesn’t otherwise need.
+
+Snowpipe Streaming supports two ingestion modes. In both modes, a channel is a logical path that carries rows through a pipe to a target table:
+
+- **Elastic Channels** are the recommended starting point for most new applications. Producers write directly without creating or coordinating channels; Snowflake manages them and scales ingestion as traffic changes. An acknowledgement confirms that Snowflake has durably buffered the append, so the producer can release its retained copy; table processing and query visibility follow. Elastic Channels provide at-least-once delivery without an ordering guarantee. Producers retain unacknowledged events according to their delivery requirements.
+- **Named Channels** provide ordered, exactly-once ingestion within each channel by using offset tokens. Use Named Channels when reading from a source that requires strict ordering semantics, such as Kafka partitions or Change Data Capture (CDC).
 
 Snowpipe Streaming delivers:
 
-- Up to **10 GB/s** throughput per table
-- **As low as 5 seconds** end-to-end ingest-to-query latency
-- **Exactly-once delivery** through built-in offset token tracking
-- **Ordered ingestion** within each channel
+- Up to **20 GB/s** throughput per table
+- **As low as 5 seconds** ingest-to-queryable latency
+- **Direct ingestion without application-managed channels** through Elastic Channels
+- **Ordered, exactly-once ingestion** through Named Channels and offset tokens
 - Streaming into Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables
+
+The results you observe depend on workload shape and configuration, including row size, table width (number of columns), SDK buffering or REST request batching, concurrency, table type, transformations, and clustering.
 
 ## Why use Snowpipe Streaming
 
-- **Exactly-once delivery**: Built-in offset token tracking enables exactly-once semantics. Your application tracks committed offsets and replays from the last committed position on recovery, preventing duplicate data and data loss. For more information, see [Offset tokens and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-offset-tokens).
-- **Ordered ingestion**: Rows are ingested in order within each [channel](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-channels). Channels map naturally to source partitions (for example, Kafka topic partitions), enabling deterministic replay and zero-loss recovery.
-- **High throughput, low latency**: Designed to support ingest speeds of up to 10 GB/s per table, with data available for query in as low as 5 seconds.
+- **Simpler direct ingestion**: Elastic Channels let producers stream rows directly from devices and services into Snowflake, reducing pipeline hops without requiring you to create channels or coordinate ingestion across producers. Snowflake scales the ingest path as producers and traffic change.
+- **Exactly-once and ordered ingestion when required**: Named Channels use offset tokens to track committed progress and preserve row order within each channel. They map naturally to source partitions and make strict exactly-once recovery straightforward.
+- **High throughput, low latency**: Designed to support ingest speeds of up to 20 GB/s per table, with ingest-to-queryable latency as low as 5 seconds. Results depend on workload shape and configuration.
 - **In-flight transformations**: Cleanse, reshape, and transform data during ingestion by using COPY command syntax within the PIPE object. Reorder columns, cast types, and apply expressions before data is committed to the target table, with no separate ETL step needed.
 - **Pre-clustering at ingest time**: Sort data during ingestion for optimized query performance on tables with clustering keys.
 - **Apache Iceberg table support**: Stream data into Snowflake-managed Iceberg tables, including both Iceberg v2 and [Iceberg v3](/user-guide/tables-iceberg-v3-specification-support) tables. For more information, see [Snowpipe Streaming high-performance architecture with Apache Iceberg™ tables](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-iceberg).
 - **Schema evolution**: Automatically adapt table schemas to changing data structures. Snowflake can add new columns detected in the incoming stream without manual DDL changes.
-- **Simplified pipelines**: SDKs write rows directly into tables, bypassing the need for staging files or intermediate cloud storage.
+- **Row-level error visibility**: Enable [error logging](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables) to capture rows that fail processing after acknowledgement, with details for diagnosis and recovery.
+- **Simplified pipelines**: With Elastic Channels, producers write rows directly into Snowflake tables or Iceberg tables without staging files or intermediate message-bus infrastructure that the workload doesn’t otherwise need.
 - **Serverless and scalable**: Compute resources scale automatically based on ingestion load. No infrastructure to manage.
 - **Transparent pricing**: Throughput-based billing calculated by credits per uncompressed GB of data ingested. For more information, see [Snowpipe Streaming high-performance architecture: Understand your costs](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-cost).
 
@@ -39,22 +47,24 @@ Expand
 
 Show lessSee more
 
-The Java, Python, and Node.js SDKs use a shared Rust-based client core for improved client-side performance and lower resource usage.
+The Java, Python, and Node.js SDKs use a shared Rust-based client core. Append rows as they arrive: the SDK automatically buffers and batches appends using time and size thresholds, and handles compression and sending data to Snowflake. Direct REST clients instead group rows into newline-delimited JSON (NDJSON), with one JSON object per line, and handle compression themselves.
 
 Note
 
-We recommend that you begin with the Snowpipe Streaming SDK over the REST API to benefit from the improved performance and getting-started experience.
+Where possible, use the Snowpipe Streaming SDK instead of the REST API to benefit from automatic batching and simpler integration. Use direct REST when an SDK isn’t suitable for your environment.
 
-To get started, see [Tutorial: Get started with the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started) or [Tutorial: Get started with the REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-tutorial).
+To get started, choose [Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-overview) or [Named Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-channels), then follow the SDK or REST tutorial in that section.
+
+For a side-by-side comparison and use-case guidance, see [Choosing a channel type](/user-guide/snowpipe-streaming/snowpipe-streaming-choosing-channel-type).
 
 For technical details about the PIPE object, channels, offset tokens, and supported data types, see [Key concepts](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview).
 
 ## Recommended for
 
-- High-volume streaming workloads requiring up to 10 GB/s throughput
-- Real-time analytics and dashboards with data freshness as low as 5 seconds
-- IoT and edge deployments using the REST API
-- CDC (Change Data Capture) pipelines with exactly-once delivery guarantees
+- High-volume streaming workloads with per-table throughput needs of up to 20 GB/s
+- Real-time analytics and dashboards with ingest-to-queryable latency as low as 5 seconds
+- IoT, telemetry, and distributed applications using Elastic Channels through an SDK or the REST API
+- CDC pipelines using Named Channels with exactly-once delivery guarantees
 - Apache Kafka topic ingestion using the [Snowflake Connector for Kafka](/user-guide/kafka-connector/index)
 - Streaming into [Apache Iceberg](/user-guide/tables-iceberg) tables for open table format analytics
 
@@ -64,68 +74,4 @@ Looking for SQL-native streaming? See [Dynamic Tables](/user-guide/dynamic-table
 
 ## Snowpipe Streaming versus Snowpipe
 
-Snowpipe Streaming is intended to complement Snowpipe, not replace it. Use Snowpipe Streaming in scenarios where data arrives as rows (for example, from Apache Kafka topics, IoT devices, or application events) instead of files. With Snowpipe Streaming, you don’t need to create files to load data into Snowflake tables.
-
-> ![Snowpipe Streaming](/static/images/data-load-snowpipe-streaming.png)
-
-The following table describes the differences between Snowpipe Streaming and Snowpipe:
-
-| Category | Snowpipe Streaming | Snowpipe |
-| --- | --- | --- |
-| Form of data to load | Rows | Files. If your existing data pipeline generates files in blob storage, we recommend using Snowpipe instead. |
-| Data ordering | Ordered insertions within each channel | Not supported. Snowpipe can load data from files in an order different from the file creation timestamps in cloud storage. |
-| Load history | Load history recorded in [SNOWPIPE\_STREAMING\_FILE\_MIGRATION\_HISTORY view](/sql-reference/account-usage/snowpipe_streaming_file_migration_history) (Account Usage) | Load history recorded in [COPY\_HISTORY](/sql-reference/account-usage/copy_history) (Account Usage) and [COPY\_HISTORY function](/sql-reference/functions/copy_history) (Information Schema) |
-| Pipe object | The PIPE object is the server-side processing layer for all streaming ingestion. It handles schema validation, in-flight transformations, and pre-clustering. A default pipe is created automatically for each table, or you can create a custom pipe for advanced processing. | A pipe object queues and loads staged file data into target tables. |
-
-Expand
-
-Show lessSee more
-
-## In this section
-
-**Key concepts**
-
-- [Channels and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels)
-- [The PIPE object](/user-guide/snowpipe-streaming/snowpipe-streaming-pipe-object)
-- [Table support and schema](/user-guide/snowpipe-streaming/snowpipe-streaming-table-support)
-- [Operations and reference](/user-guide/snowpipe-streaming/snowpipe-streaming-operations)
-
-**Get started**
-
-- [Tutorial: Get started with the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started)
-- [Tutorial: Get started with the REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-tutorial)
-- [Configurations and examples](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-configurations)
-
-**Ingestion targets**
-
-- [Iceberg tables](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-iceberg)
-
-**Operations**
-
-- [Best practices](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-best-practices)
-- [Error handling](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling)
-- [Error logging](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables)
-- [Run the SDK in Snowpark Container Services](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-spcs)
-- [Costs](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-cost)
-- [Limitations and considerations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations)
-- [Migration from classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-migration)
-
-**Reference**
-
-- [REST API endpoints](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api)
-- [Python SDK Reference](https://docs.snowflake.com/en/user-guide/snowpipe-streaming-sdk-python/reference/latest/index)
-- [Node.js SDK Reference](https://docs.snowflake.com/user-guide/snowpipe-streaming-sdk/reference/nodejs/index.html)
-- [Java SDK Reference](https://docs.snowflake.com/user-guide/snowpipe-streaming-sdk/reference/java/index.html)
-- [Comparison: Classic vs current SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-comparison)
-
-## Classic architecture
-
-Important
-
-The classic architecture, which uses the [snowflake-ingest-sdk](https://mvnrepository.com/artifact/net.snowflake/snowflake-ingest-sdk) Java SDK, is planned for deprecation. No immediate changes are required. Current workloads continue to be fully supported.
-
-For full details, see [Notice of planned deprecation](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-deprecation).
-
-If you have existing workloads running on the classic architecture, see [Classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview). For a detailed comparison of differences, see [Comparison between high-performance and classic SDKs](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-comparison).
-
-If you’re upgrading to the high-performance architecture, see [Migration guide](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-migration).
+Snowpipe Streaming and [Snowpipe](/user-guide/data-load-snowpipe-intro) complement each other. Use Snowpipe Streaming when data arrives as rows from applications, devices, or services and you need low-latency data availability. Use Snowpipe when your pipeline already produces files in cloud storage and batch-oriented, higher-latency loading is acceptable.

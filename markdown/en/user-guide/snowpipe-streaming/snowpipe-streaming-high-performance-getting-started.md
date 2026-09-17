@@ -1,6 +1,8 @@
-# Tutorial: Get started with Snowpipe Streaming high-performance architecture SDK
+# Tutorial: Get started with Named Channels using the SDK
 
-This tutorial provides step-by-step instructions for setting up and running a demo application that utilizes the new high-performance architecture with the `snowpipe-streaming` SDK.
+This tutorial provides step-by-step instructions for setting up and running a Named Channel demo application with the `snowpipe-streaming` SDK. Named Channels provide ordered, exactly-once ingestion. Exactly-once recovery requires records retained in the source or durable application-managed storage for replay.
+
+For Elastic Channels (the recommended starting point for most new applications), see [Tutorial: Get started with Elastic Channels (SDK)](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-getting-started).
 
 ## Prerequisites
 
@@ -38,15 +40,11 @@ Before you run the demo, ensure that you meet the following prerequisites:
   ```
 - Snowpipe Streaming SDKs and the sample code:
 
-  - For **AWS**: Obtain the [Java SDK](https://central.sonatype.com/artifact/com.snowflake/snowpipe-streaming), [Python SDK](https://pypi.org/project/snowpipe-streaming/), or [Node.js SDK](https://www.npmjs.com/package/snowpipe-streaming) (any version).
-  - For **Azure**: Requires SDK version 1.1.0 or later.
-  - For **GCP**: Requires SDK version 1.1.0 or later.
-
   Download the sample code for your preferred language from the [Snowpipe Streaming SDK examples in the GitHub repository](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples).
 
-## Get started
+## Prerequisites and setup
 
-This section outlines the steps required to set up and run the demo application.
+The following steps configure the Snowflake objects, authentication, and SDK dependency required for Named Channel ingestion.
 
 ### Step 1: Configure Snowflake objects
 
@@ -154,7 +152,32 @@ Replace the placeholders:
 
 ### Step 3: Set up the demo project
 
-PythonNode.js
+JavaPythonNode.js
+
+**Download:** [Sample Java code](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/java-example)
+
+**Add the JAR dependency**
+
+To include the Snowpipe Streaming SDK, add the following dependency to your Maven `pom.xml`. Maven automatically downloads the JAR from the public repository.
+
+Copy code
+
+```
+<dependency>
+    <groupId>com.snowflake</groupId>
+    <artifactId>snowpipe-streaming</artifactId>
+    <version>YOUR_SDK_VERSION</version>
+</dependency>
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>2.18.1</version>
+</dependency>
+```
+
+Important
+
+Replace `YOUR_SDK_VERSION` with the specific version available on [Maven Central](https://central.sonatype.com/artifact/com.snowflake/snowpipe-streaming).
 
 **Download:** [Sample Python code](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/python-example)
 
@@ -192,54 +215,129 @@ For more information about the package, see [npm](https://www.npmjs.com/package/
 
 Ensure that the `profile.json` file that you configured in [Step 2: Configure an authentication profile](#label-snowpipe-streaming-high-performance-demo-project-step-2) is located in the root directory of your project.
 
-### Step 4: Use the provided code example and run the demo application
+## Open and use a Named Channel
 
-In your terminal, navigate to the project’s root directory.
+Use a Named Channel when your application requires ordering within a channel or exactly-once recovery. Complete Steps 1 through 3 in [Prerequisites and setup](#named-channel-sdk-setup) before running the following code.
 
-PythonNode.js
+The examples open `MY_CHANNEL` with an initial offset token, asynchronously append three rows with offset tokens `1`, `2`, and `3` without waiting on each individual append, retrieve channel status, then wait once for offset token `3` to commit before closing.
 
-**Run the demo application**
+Append rows as they arrive; the SDK combines appends internally using time and size thresholds. Submit rows serially in source order within each Named Channel, but don’t wait for every row to commit. Bound outstanding work and checkpoint periodically without collecting rows into another batch before submitting them.
 
-Run the Python demo:
-
-Copy code
-
-```
-python example.py
-```
-
-**Run the demo application**
-
-Run the Node.js demo:
+JavaPythonNode.js
 
 Copy code
 
 ```
-node example.js
+ObjectMapper mapper = new ObjectMapper();
+JsonNode profile = mapper.readTree(Files.readAllBytes(Paths.get("profile.json")));
+Properties properties = new Properties();
+profile.fields().forEachRemaining(
+    entry -> properties.put(entry.getKey(), entry.getValue().asText()));
+
+try (SnowflakeStreamingIngestClient client =
+    SnowflakeStreamingIngestClientFactory.tableBuilder(
+            "demo-client", "MY_DATABASE", "MY_SCHEMA", "MY_TABLE")
+        .setProperties(properties)
+        .build()) {
+  SnowflakeStreamingIngestChannel channel =
+      client.openChannel("MY_CHANNEL", "0").getChannel();
+
+  Map<String, Object> row1 = Map.of("DATA", Map.of("event_id", 1, "status", "active"), "C1", 1, "C2", "example");
+  Map<String, Object> row2 = Map.of("DATA", Map.of("event_id", 2, "status", "active"), "C1", 2, "C2", "example");
+  Map<String, Object> row3 = Map.of("DATA", Map.of("event_id", 3, "status", "active"), "C1", 3, "C2", "example");
+
+  channel.appendRow(row1, "1");
+  channel.appendRow(row2, "2");
+  channel.appendRow(row3, "3");
+
+  ChannelStatus status = channel.getChannelStatus();
+
+  // Wait until offset 3 or a later offset is committed.
+  channel.waitForCommit(
+      token -> token != null && Long.parseLong(token) >= 3,
+      Duration.ofMinutes(1)).get();
+  channel.close();
+}
 ```
-
-### Step 5: Verify the data
-
-After running the demo, verify the ingested data in Snowflake:
 
 Copy code
 
 ```
-SELECT COUNT(*) FROM MY_DATABASE.MY_SCHEMA.MY_TABLE;
-SELECT * FROM MY_DATABASE.MY_SCHEMA.MY_TABLE LIMIT 10;
-```
+from snowflake.ingest.streaming import StreamingIngestClient
 
-Verify that your data was ingested as a structured object rather than a string literal:
+client = StreamingIngestClient.from_table(
+    client_name="demo-client",
+    db_name="MY_DATABASE",
+    schema_name="MY_SCHEMA",
+    table_name="MY_TABLE",
+    profile_json="profile.json",
+)
+channel, status = client.open_channel("MY_CHANNEL", "0")
+
+def make_row(event_id):
+    return {
+        "DATA": {"event_id": event_id, "status": "active"},
+        "C1": event_id,
+        "C2": "example",
+    }
+
+channel.append_row(make_row(1), "1")
+channel.append_row(make_row(2), "2")
+channel.append_row(make_row(3), "3")
+
+status = channel.get_channel_status()
+
+# Wait until offset 3 or a later offset is committed.
+channel.wait_for_commit(
+    lambda token: token is not None and int(token) >= 3,
+    timeout_seconds=60,
+)
+channel.close()
+client.close()
+```
 
 Copy code
 
 ```
-SELECT
-    data,
-    TYPEOF(data) as data_type
-FROM MY_DATABASE.MY_SCHEMA.MY_TABLE
-LIMIT 10;
+const { createTableClient } = require("snowpipe-streaming");
+
+const client = await createTableClient({
+  clientName: "demo-client",
+  dbName: "MY_DATABASE",
+  schemaName: "MY_SCHEMA",
+  tableName: "MY_TABLE",
+  profilePath: "profile.json",
+});
+const { channel } = await client.openChannel({
+  name: "MY_CHANNEL",
+  offsetToken: "0",
+});
+
+const makeRow = (eventId) => ({
+  DATA: { event_id: eventId, status: "active" },
+  C1: eventId,
+  C2: "example",
+});
+
+channel.appendRow(makeRow(1), "1");
+channel.appendRow(makeRow(2), "2");
+channel.appendRow(makeRow(3), "3");
+
+const status = await channel.getChannelStatus();
+
+// Wait until offset 3 or a later offset is committed.
+await channel.waitForCommit(
+  (token) => token !== null && Number(token) >= 3,
+  { timeoutMs: 60000 },
+);
+await channel.close();
+await client.close();
 ```
 
-- If `data_type` returns `OBJECT`, the ingestion is correct.
-- If `data_type` returns `VARCHAR`, your application is passing a string literal that isn’t being parsed.
+Important
+
+Don’t call `waitForCommit` after every row or small batch. Waiting on every append serializes ingestion around commit latency and defeats the purpose of asynchronous appends. `waitForCommit` polls channel status until the target offset commits, so reserve it for checkpoints, source handoffs, or graceful shutdown.
+
+See the full [Java](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/java-example), [Python](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/python-example), and [Node.js](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/nodejs-example) samples for complete examples.
+
+Run the application, then query the target table to verify the rows. In a production application, retrieve the latest committed offset when you open the Named Channel and resume the source from the next record. For more information, see [Offset tokens and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-offset-tokens).

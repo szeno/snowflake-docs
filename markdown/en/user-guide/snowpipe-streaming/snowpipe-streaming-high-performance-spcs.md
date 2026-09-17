@@ -7,7 +7,7 @@ This support applies to the Java, Python, and Node.js SDKs.
 ## Prerequisites
 
 - A Snowflake account with Snowpark Container Services available. For setup details, see [Common setup](/developer-guide/snowpark-container-services/common-setup).
-- A target table, role, and PIPE object in your Snowflake account. For setup details, see [Tutorial: Get started with Snowpipe Streaming high-performance architecture SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started).
+- A target table, role, and PIPE object in your Snowflake account. For setup details, see [Tutorial: Get started with Named Channels using the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started).
 - Snowpipe Streaming SDK version 1.5.0 or later for the language you use.
 
 ## Authenticate with the SPCS workload-identity token
@@ -49,7 +49,23 @@ Copy code
 
 Bundle the SDK into your container image alongside your application code. The following examples show minimal Dockerfile snippets for each language. Adapt them to your existing image and base layer.
 
-PythonNode.js
+JavaPythonNode.js
+
+Copy code
+
+```
+FROM eclipse-temurin:17-jdk
+
+WORKDIR /app
+
+# Copy your application JAR (built with the Snowpipe Streaming Java SDK on the classpath)
+COPY target/my-streaming-app.jar /app/
+
+# profile.json with authorization_type=SPCS
+COPY profile.json /app/
+
+ENTRYPOINT ["java", "-jar", "/app/my-streaming-app.jar"]
+```
 
 Copy code
 

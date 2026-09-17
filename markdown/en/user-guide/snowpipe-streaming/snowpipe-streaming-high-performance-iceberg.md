@@ -1,6 +1,8 @@
 # Snowpipe Streaming high-performance architecture with Apache Iceberg™ tables
 
-Snowpipe Streaming with high-performance architecture supports ingesting data into Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables, including both Iceberg v2 and [Iceberg v3](/user-guide/tables-iceberg-v3-specification-support) tables. This enables near real-time streaming of data into Iceberg tables with all the performance benefits of the high-performance architecture.
+Snowpipe Streaming with high-performance architecture supports ingesting data into Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables, including both Iceberg v2 and [Iceberg v3](/user-guide/tables-iceberg-v3-specification-support) tables. You can use Elastic Channels for the simplest server-scaled path, or Named Channels when you require ordered, exactly-once ingestion.
+
+Both partitioned and non-partitioned Snowflake-managed Iceberg tables are supported.
 
 Note
 
@@ -92,7 +94,7 @@ CREATE OR REPLACE PIPE my_iceberg_pipe AS
 
 ### Step 4: Stream data using the SDK
 
-Configure the SDK to stream data into your Iceberg table through the pipe. Use the same SDK setup as described in [Tutorial: Get started with Snowpipe Streaming high-performance architecture SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started), specifying your Iceberg table’s pipe in the client configuration.
+Configure the SDK to stream data into your Iceberg table through the pipe. For Elastic Channels, use [Tutorial: Get started with Elastic Channels (SDK)](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-getting-started), specifying the Iceberg table for table mode or the custom Iceberg pipe for pipe mode.
 
 ## Supported Iceberg versions
 
@@ -106,18 +108,19 @@ The Snowflake Ingest SDK supports most of the Iceberg data types that Snowflake 
 
 The SDK also supports ingestion into the three [structured data types](/sql-reference/data-types-structured): Structured ARRAY, Structured OBJECT, and Structured MAP.
 
+You can ingest values into existing complex or structured columns when the table schema defines them. For the distinction between existing-column support and automatic type inference, see [Schema evolution](/user-guide/snowpipe-streaming/snowpipe-streaming-table-support#label-streaming-schema-evolution).
+
 ## Usage notes
 
 - Snowpipe Streaming only supports **Snowflake as the Iceberg catalog**. Externally managed Iceberg tables that use external catalogs (such as AWS Glue or Hive Metastore) aren’t supported. However, you can [sync your Snowflake-managed Iceberg tables with Snowflake Open Catalog](/user-guide/tables-iceberg-open-catalog-sync).
 - For Iceberg tables that use an external volume, Snowflake connects to your storage location using the [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def), and you’re responsible for [data storage](/user-guide/tables-iceberg#label-tables-iceberg-data-storage). For Iceberg tables that use [Snowflake storage](/user-guide/tables-iceberg-internal-storage), Snowflake stores and manages the table files.
 - The Iceberg-compatible Parquet files are created based on the [STORAGE\_SERIALIZATION\_POLICY](/sql-reference/parameters#label-storage-serialization-policy) specified on the Iceberg table.
-- Server-side schema evolution is supported for Iceberg tables that have `ENABLE_SCHEMA_EVOLUTION = TRUE`, the same way it’s supported for standard tables. For more information, see [Table schema evolution](/user-guide/data-load-schema-evolution).
+- Server-side schema evolution is supported for Snowflake-managed Iceberg tables. For configuration, asynchronous behavior, and the complete Iceberg v2/v3 inference constraints, see [Schema evolution](/user-guide/snowpipe-streaming/snowpipe-streaming-table-support#label-streaming-schema-evolution).
 
 ## Limitations
 
 The following limitations apply to Snowpipe Streaming with high-performance architecture and Iceberg tables:
 
-- Partitioned Iceberg tables aren’t supported.
 - Length-constrained VARCHAR columns (for example, `VARCHAR(100)`) aren’t supported for Iceberg tables. Use STRING or VARCHAR without a length constraint.
 
 The [Snowpipe Streaming high-performance architecture limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations#label-snowpipe-streaming-high-performance-limitations) and [Iceberg tables limitations](/user-guide/tables-iceberg#label-tables-iceberg-considerations) also apply.
