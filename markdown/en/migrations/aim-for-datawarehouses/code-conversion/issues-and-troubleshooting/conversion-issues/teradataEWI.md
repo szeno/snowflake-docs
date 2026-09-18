@@ -483,7 +483,7 @@ This ensures that filtering, selection, and grouping all use the same logic, avo
       first_name VARCHAR(50) COLLATE 'en-cs'
   );
   ```
-- Prompt the Snowflake AIM Agent for Data Warehouses to **enable the –UseCollateForCaseSpecification flag to use COLLATE for case specification** during conversion. This option ensures that case specification (such as CASESPECIFIC or NOT CASESPECIFIC) is handled using COLLATE functions instead of UPPER functions.
+- To use COLLATE for case specification during conversion, don’t specify the `--disableCollateForCaseSpecification` flag. By default, SnowConvert AI handles case specification, such as CASESPECIFIC or NOT CASESPECIFIC, by using COLLATE instead of the UPPER and RTRIM functions.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
 
 ## SSC-EWI-TD0008

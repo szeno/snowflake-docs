@@ -134,7 +134,6 @@ After the provider fulfills your request, you can access the private listing sha
 If you access listings from an account in US government region, the following limitations apply:
 
 - You cannot get paid listings.
-- You cannot get listings for a Snowflake Native App.
 - You cannot get Snowflake connectors.
 - You cannot get listings that use manual fulfillment.
 

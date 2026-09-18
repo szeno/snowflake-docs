@@ -124,10 +124,6 @@ However, if no services run on a node for a specific duration, Snowflake automat
 
 ### Backup instance types
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Backup instance types for compute pools is a [preview feature](/release-notes/preview-features) available to all accounts.
-
 If the primary instance family for a compute pool is capacity-constrained, Snowflake can automatically fall back to a backup instance family that you specify, instead of returning an insufficient capacity error (ICE). To configure this, set the `BACKUP_INSTANCE_FAMILIES` parameter when you [create](/sql-reference/sql/create-compute-pool) or [alter](/sql-reference/sql/alter-compute-pool) a compute pool.
 
 If you have experienced ICEs on a compute pool, or run production workloads in regions where capacity for your instance type is frequently constrained, backup instance types provide automatic failover without manual intervention. Backup families may have different hardware specifications and pricing than the primary; verify compatibility and pricing before configuring.

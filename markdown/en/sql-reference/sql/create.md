@@ -80,6 +80,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule)
 > - [CREATE NOTEBOOK](/sql-reference/sql/create-notebook)
 > - [CREATE NOTEBOOK PROJECT](/sql-reference/sql/create-notebook-project)
+> - [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle)
 > - [CREATE ONLINE FEATURE TABLE](/sql-reference/sql/create-online-feature-table)
 > - [CREATE ORGANIZATION LISTING](/sql-reference/sql/create-organization-listing)
 > - [CREATE PACKAGES POLICY](/sql-reference/sql/create-packages-policy)
@@ -116,4 +117,4 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE SNOWFLAKE.ML.CLASSIFICATION](/sql-reference/classes/classification/commands/create-classification)
 > - [CREATE CLASSIFICATION\_PROFILE](/sql-reference/classes/classification_profile/commands/create-classification-profile)
 > - [CREATE CUSTOM\_CLASSIFIER](/sql-reference/classes/custom_classifier/commands/create-custom-classifier)
-> - [- [](/user-guide/ml-functions/forecasting)](/sql-reference/classes/forecast/commands/create-forecast#label-class-forecast-create)
+> - [CREATE SNOWFLAKE.ML.FORECAST](/sql-reference/classes/forecast/commands/create-forecast#label-class-forecast-create)

@@ -1,7 +1,7 @@
 # FORECAST (SNOWFLAKE.ML)
 
 A forecast model produces a forecast for a single time series or for multiple time series. You use
-[- [](/user-guide/ml-functions/forecasting)](/sql-reference/classes/forecast/commands/create-forecast#label-class-forecast-create) to create and train the forecasting model, then use the model’s
+[CREATE SNOWFLAKE.ML.FORECAST](/sql-reference/classes/forecast/commands/create-forecast#label-class-forecast-create) to create and train the forecasting model, then use the model’s
 [<model\_name>!FORECAST](/sql-reference/classes/forecast/methods/forecast#label-class-forecast-forecast) method to produce forecasts. The [<model\_name>!EXPLAIN\_FEATURE\_IMPORTANCE](/sql-reference/classes/forecast/methods/explain_feature_importance#label-class-forecast-explain-feature-importance)
 method provides information about how each feature in the training data influences the forecast. The
 [<model\_name>!SHOW\_TRAINING\_LOGS](/sql-reference/classes/forecast/methods/show_training_logs#label-class-forecast-show-training-logs) method provides error messages for any time series whose models failed to

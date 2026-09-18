@@ -114,7 +114,7 @@ The command output provides compute pool properties and metadata in the followin
 | `is_exclusive` | `true` if the compute pool is created exclusively for a Snowflake Native App; `false` otherwise. |
 | `application` | Name of the Snowflake Native App if the compute pool is created exclusively for the app. Otherwise, NULL. |
 | `placement_group` | Specifies the fault domain into which the compute pool nodes are placed. A fault domain is similar to the cloud provider’s availability zone. For more information, see [Compute pool placement](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-placement-group). |
-| `backup_instance_families` | This column is in [public preview](/release-notes/preview-features). Ordered list of backup instance families configured for the compute pool; the order determines fallback priority. NULL if no backup families are configured. For more information, see [backup instance types](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-backup-instance-types). |
+| `backup_instance_families` | Ordered list of backup instance families configured for the compute pool; the order determines fallback priority. NULL if no backup families are configured. For more information, see [backup instance types](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-backup-instance-types). |
 
 Expand
 

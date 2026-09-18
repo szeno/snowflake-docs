@@ -120,7 +120,7 @@ Expand
 
 Show lessSee more
 
-For evaluation workflows and examples of the last three functions, see [Cortex Agent evaluations](/user-guide/snowflake-cortex/cortex-agents-evaluations) (SQL section under evaluation results).
+For evaluation workflows and examples of the last three functions, see [Cortex Agent evaluations](/user-guide/snowflake-cortex/cortex-agents-evaluations) (Inspect evaluation results with SQL).
 
 ### Query monitoring events
 

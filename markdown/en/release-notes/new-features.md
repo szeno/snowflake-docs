@@ -43,8 +43,14 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
-- [ODBC Driver (v3.21.0)](/release-notes/clients-drivers/odbc-2026)
+- [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
+- [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
+- [.NET Driver (v6.2.0)](/release-notes/clients-drivers/dotnet-2026)
+- [ODBC Driver (v4.0.0-rc4)](/release-notes/clients-drivers/odbc-2026)
 - [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
+- [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
+- [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
@@ -61,6 +67,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 10, 2026: External secret providers (Preview)](/release-notes/2026/other/2026-09-10-external-secret-providers-preview)
 - [Sep 10, 2026: Iceberg Scan Plan API in Horizon Catalog (Public Preview)](/release-notes/2026/other/2026-09-10-iceberg-scan-plan-api-public-preview)
 - [Sep 10, 2026: Inherited grants and container-level MANAGE GRANTS (General availability)](/release-notes/2026/other/2026-09-10-inherited-grants-ga)
+- [ODBC Driver (v3.21.0)](/release-notes/clients-drivers/odbc-2026)
 - [ODBC Driver (v4.0.0-rc3)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0rc3)](/release-notes/clients-drivers/python-connector-2026)
 - [Snowflake ML Python (v2.0.0)](/release-notes/clients-drivers/snowpark-ml-2026)
@@ -135,7 +142,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [August 18, 2026: User skills in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-08-18-user-skills-preview)
 - [JDBC Driver (v4.3.3)](/release-notes/clients-drivers/jdbc-2026)
 - [Node.js Driver (v3.2.0)](/release-notes/clients-drivers/nodejs-2026)
-- [August 17, 2026: AI mode for sensitive data classification (Public Preview)](/release-notes/2026/other/2026-08-17-sensitive-data-classification-ai-mode-preview)
-- [Aug 17, 2026: New SNOWFLAKE\_COCO\_USAGE\_HISTORY view in Account Usage and Organization Usage (General availability)](/release-notes/2026/other/2026-08-17-snowflake-coco-usage-history-view)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -1,5 +1,9 @@
 # SHOW NOTEBOOK PROJECTS
 
+Note
+
+Notebook Project Objects have been renamed to **Code Bundles**. The `NOTEBOOK PROJECT` grammar on this page continues to work. For the current command and its new capabilities, see [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles) and [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles).
+
 Lists the notebook projects (Snowflake `NOTEBOOK` objects) visible to the current role.
 
 You can use this command to list objects in the current database and schema for the session, a specified database or schema, or

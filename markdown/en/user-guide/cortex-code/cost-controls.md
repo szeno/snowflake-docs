@@ -14,7 +14,7 @@ The following table maps common goals to the control that fits them:
 | If you want to | Use |
 | --- | --- |
 | Track CoCo spend by team or cost center and get alerted as spend approaches a limit | [Budgets](/user-guide/snowflake-cortex/governance-and-availability/ai-cost-management-and-governance) |
-| Get notified as users approach their limits and enforce per-user daily and monthly credit limits for CoCo, with automatic blocking | [Per-user quotas](/user-guide/budgets/per-user-quotas) |
+| Get notified as users approach their limits and enforce per-user credit limits for CoCo, with automatic blocking | [Per-user quotas](/user-guide/budgets/per-user-quotas) |
 | Set a simple per-user daily estimated credit limit for a specific CoCo surface (CLI, Desktop, or Snowsight) | [Daily credit usage limits](/user-guide/cortex-code/credit-usage-limit) |
 
 Expand
@@ -43,7 +43,7 @@ and [shared resource budgets](/user-guide/budgets/budget-shared-resources).
 Per-user quotas give you both proactive visibility and enforcement for CoCo at per-user granularity. With a
 quota, you can do the following:
 
-- Define daily and monthly per-user credit limits that apply uniformly to all users in scope.
+- Define monthly, weekly, and daily per-user credit limits that apply uniformly to all users in scope.
 - Receive notifications, based on actual or projected spend, as users approach or reach those limits, so you
   can act early.
 - Block a user automatically at their limit or run a custom stored procedure. Blocks release automatically

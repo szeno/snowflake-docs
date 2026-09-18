@@ -201,6 +201,7 @@ model’s context window.
 | Model | Context window (tokens) | File types | File size | Max pages | Documents per prompt |
 | --- | --- | --- | --- | --- | --- |
 | `gemini-3.1-pro` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 3,000 | 20 |
+| `gemini-3.1-flash-lite` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `gemini-3.5-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `claude-4-sonnet` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-4-opus` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
@@ -208,6 +209,11 @@ model’s context window.
 | `claude-sonnet-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-opus-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-sonnet-4-6` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-opus-4-6` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-opus-4-7` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-opus-4-8` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-sonnet-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-opus-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 
 Expand
 

@@ -13,8 +13,8 @@ The *account budget* monitors spending for all credit usage in the account.
 You can also create a *custom budget* to monitor the spending limits for a specific group of
 [supported objects](/user-guide/budgets/custom-budget#label-budgets-supported-objects).
 
-You can also use [per-user quotas](/user-guide/budgets/per-user-quotas) to enforce monthly and
-daily credit limits for individual users in your account.
+You can also use [per-user quotas](/user-guide/budgets/per-user-quotas) to enforce per-user
+credit limits for individual users in your account.
 
 For both types of budgets, you must set up the spending limit and specify how you want to receive notifications.
 

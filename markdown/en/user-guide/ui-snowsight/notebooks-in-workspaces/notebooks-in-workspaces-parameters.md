@@ -4,25 +4,23 @@ Feature — Generally Available
 
 Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supported.
 
-Currently, parameters passed in the `ARGUMENTS` string are parsed into the `sys.argv` list using whitespace as the delimiter.
+Parameters passed in the `ARGUMENTS` list are placed into the `sys.argv` list, with one entry per argument.
 
-## Example: Execute a notebook project with parameters
+## Example: Execute a Code Bundle with parameters
 
-The following example passes two arguments (env and prod) using ARGUMENTS = ‘env prod’.
+The following example passes two arguments (`env` and `prod`) using `ARGUMENTS = ('env', 'prod')`.
 
-The first element (`sys.argv[0]`) is the notebook filename, followed by the space-separated arguments.
+The first element (`sys.argv[0]`) is the notebook filename, followed by each argument in the list.
 
 Copy code
 
 ```
-EXECUTE NOTEBOOK PROJECT "<database_name>"."<schema_name>"."<project_name>"
-  MAIN_FILE = 'snow://workspace/<workspace_hash>/path/to/notebook.ipynb' -- Notebook name with full file path
-  COMPUTE_POOL = '<compute_pool_name>'
-  RUNTIME = '<runtime_version>'    -- For example, V2.2-CPU-PY3.11
-  QUERY_WAREHOUSE = '<warehouse_name>'
-  ARGUMENTS = 'env prod' -- Can pass in a single string, which can be parsed in the notebook code. Point to the environment configuration.
-  REQUIREMENTS_FILE = 'path/to/requirements.txt';
+EXECUTE CODE BUNDLE "<database_name>"."<schema_name>"."<bundle_name>"
+  ENTRYPOINT = 'path/to/notebook.ipynb' -- Notebook file to run
+  ARGUMENTS = ('env', 'prod'); -- Each element is passed as a separate argument. Point to the environment configuration.
 ```
+
+The compute pool, runtime, query warehouse, and dependencies are defined in the Code Bundle’s `code_bundle.yml` specification.
 
 ## View all arguments
 
@@ -81,4 +79,4 @@ Output example:
 env
 ```
 
-For full syntax and parameter details, see [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project).
+For full syntax and parameter details, see [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).

@@ -5,7 +5,7 @@ to control costs for Snowflake CoWork and take automated actions such as revokin
 exceeds your configured limits. Resource budgets give you control over the credits consumed at an aggregated level
 by the entire Snowflake CoWork service.
 
-Resource budgets apply to the Snowflake CoWork object. To set the same monthly or daily credit limit for each user, and optionally block users who reach that limit on Snowflake CoWork and other AI domains, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+Resource budgets apply to the Snowflake CoWork object. To set the same per-user credit limits for each user, and optionally block users who reach a limit on Snowflake CoWork and other AI domains, use [per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## How resource budgets work
 

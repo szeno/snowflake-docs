@@ -57,6 +57,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table) | Modifies properties such as clustering options and tags for an existing [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER ICEBERG TABLE … ALTER COLUMN … SET DATA TYPE (structured types)](/sql-reference/sql/alter-iceberg-table-alter-column-set-data-type) | Modifies (evolves) a [structured type](/sql-reference/data-types-structured) column in a Snowflake-managed [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed) | Converts an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses an external Iceberg catalog into a table that uses Snowflake as the catalog (a Snowflake-managed Iceberg table). |
+| [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution) | Adds, drops, or replaces partition fields for a Snowflake-managed [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh) | Refreshes the metadata for an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses an external Iceberg catalog. |
 | [ALTER INTEGRATION](/sql-reference/sql/alter-integration) | Modifies the properties for an existing integration. |
 | [ALTER JOIN POLICY](/sql-reference/sql/alter-join-policy) | Replaces the existing rules or comment for a [join policy](/user-guide/join-policies). |
@@ -216,7 +217,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE NETWORK POLICY](/sql-reference/sql/create-network-policy) | Creates a network policy or replaces an existing network policy. |
 | [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule) | Creates a network rule or replaces an existing network rule. |
 | [CREATE NOTEBOOK](/sql-reference/sql/create-notebook) | Creates a new [Snowflake notebook](/user-guide/ui-snowsight/notebooks) or replaces an existing notebook. |
-| [CREATE NOTEBOOK PROJECT](/sql-reference/sql/create-notebook-project) |  |
+| [CREATE NOTEBOOK PROJECT](/sql-reference/sql/create-notebook-project) | Creates a Notebook Project for non-interactive execution. |
+| [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle) | Creates a Code Bundle for packaging and running non-SQL code on Snowflake compute. |
 | [CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration) | Creates a new notification integration in the account or replaces an existing integration. |
 | [CREATE NOTIFICATION INTEGRATION (email)](/sql-reference/sql/create-notification-integration-email) | Creates a new notification integration in the account or replaces an existing integration for [sending email messages](/user-guide/notifications/email-notifications). |
 | [CREATE NOTIFICATION INTEGRATION (inbound from an Azure Event Grid topic)](/sql-reference/sql/create-notification-integration-queue-inbound-azure) | Creates a new notification integration in the account or replaces an existing integration for receiving messages from an Azure Event Grid topic. |
@@ -452,7 +454,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [EXECUTE INFERENCE JOB SERVICE](/sql-reference/sql/execute-inference-job-service) | Runs batch inference on a model in the Snowflake Model Registry as a Snowpark Container Services job. |
 | [EXECUTE JOB SERVICE](/sql-reference/sql/execute-job-service) | Executes a Snowpark Container Services service as a job. |
 | [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook) | Executes the notebook outside the Notebook Editor. |
-| [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) | Executes a notebook stored in a notebook project (NPO). |
+| [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) | Executes a Notebook Project. |
+| [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) | Executes a Code Bundle at the specified entrypoint. |
 | [EXECUTE TASK](/sql-reference/sql/execute-task) | Manually triggers an asynchronous single run of a task (either a standalone task or the root task in a [task graph](/user-guide/tasks-graphs#label-task-dag)) independent of the schedule defined for the task. |
 | [EXPLAIN](/sql-reference/sql/explain) | Returns the logical execution plan for the specified SQL statement. |
 | **G** |  |
@@ -572,7 +575,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW MODELS](/sql-reference/sql/show-models) | Lists the machine learning models that you have privileges to access. |
 | [SHOW NETWORK POLICIES](/sql-reference/sql/show-network-policies) | Lists all network policies defined in the system. |
 | [SHOW NETWORK RULES](/sql-reference/sql/show-network-rules) | Lists all network rules defined in the system. |
-| [SHOW NOTEBOOK PROJECTS](/sql-reference/sql/show-notebook-projects) | Lists the notebook projects (Snowflake `NOTEBOOK` objects) visible to the current role. |
+| [SHOW NOTEBOOK PROJECTS](/sql-reference/sql/show-notebook-projects) | Lists the Notebook Projects visible to the current role. |
+| [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles) | Lists the Code Bundles visible to the current role. |
 | [SHOW NOTEBOOKS](/sql-reference/sql/show-notebooks) | Lists the [notebooks](/user-guide/ui-snowsight/notebooks) for which you have access privileges. |
 | [SHOW NOTIFICATION INTEGRATIONS](/sql-reference/sql/show-notification-integrations) | Lists the notification integrations in your account. |
 | [SHOW OBJECTS](/sql-reference/sql/show-objects) | Lists the tables and views for which you have access privileges. |

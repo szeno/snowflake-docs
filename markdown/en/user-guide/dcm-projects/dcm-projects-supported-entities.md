@@ -123,7 +123,8 @@ With re-initialization or a full refresh:
 
 **Limitations:**
 
-- Reordering columns
+- Reordering columns of existing dynamic tables is not supported.
+- The `PREVIEW` command doesn’t support custom incremental dynamic tables.
 
 ### File format
 

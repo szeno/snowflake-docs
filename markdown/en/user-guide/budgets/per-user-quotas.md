@@ -7,11 +7,11 @@ complex AI functions over a large dataset.
 
 With per-user quotas, you can:
 
-- Define monthly and daily per-user credit limits that apply uniformly to all users in scope.
+- Define monthly, weekly, and daily per-user credit limits that apply uniformly to all users in scope.
 - Apply the quota to all users in your account, or select specific users using tags to represent teams, cost centers, or business units.
-- Block users automatically when they reach their daily or monthly limit. Blocks are released automatically when the cycle resets or you raise the limit.
-- Configure notifications, based on actual or projected spend against the monthly or daily limit, when users approach or exceed their limits.
-- Automate custom enforcement actions with stored procedures triggered at configurable thresholds, and reset affected states at the start of each quota cycle.
+- Block users automatically when they reach a per-user limit. Blocks are released automatically when the cycle resets or you raise the limit.
+- Configure notifications, based on actual or projected spend against a per-user limit, when users approach or exceed their limits.
+- Automate custom enforcement actions with stored procedures triggered at configurable thresholds, and reset affected states at the start of each month.
 - Monitor per-user spending, utilization, and enforcement status in Snowsight.
 
 ## How per-user quotas work
@@ -21,22 +21,21 @@ within a specified database and schema. After you create a quota, you configure 
 which users are in scope, what their quota thresholds are, and what actions to take when
 thresholds are crossed.
 
-### Monthly cycle
+### Quota cycles
 
-Quotas operate on a monthly cycle aligned to the UTC calendar month. At the start of each new
-calendar month, per-user usage counters reset automatically.
+A quota can define up to three per-user spending limits, one for each cycle, that apply uniformly to
+every user in scope. All cycles are UTC-based, and per-user usage counters reset automatically at the
+start of each cycle. Set at least one limit:
 
-### Monthly and daily limits
+- **Monthly limit**: The maximum credits a user can consume during a UTC calendar month. Monthly
+  usage resets on the first of the month.
+- **Weekly limit**: The maximum credits a user can consume during a single ISO week. Weekly usage
+  resets Monday at 00:00 UTC.
+- **Daily limit**: The maximum credits a user can consume during a single UTC day. Daily usage
+  resets at the start of each UTC day.
 
-A quota can define two per-user spending limits that apply uniformly to every user in scope:
-
-- **Monthly limit**: The maximum credits a user can consume during the UTC calendar month. Monthly
-  usage resets at the start of each month.
-- **Daily limit** (optional): The maximum credits a user can consume during a single UTC day,
-  evaluated within the monthly cycle. Daily usage resets at the start of each UTC day.
-
-Daily and monthly limits are evaluated independently. A user can be enforced against the daily
-limit while still being within their monthly limit, and the reverse is also true.
+The limits are evaluated independently. A user can be enforced against one limit while still being
+within the others.
 
 ### Enforcement actions
 
@@ -44,8 +43,8 @@ When a user reaches a limit, the quota can take an enforcement action:
 
 - **Block** (built-in): Snowflake automatically blocks the user from issuing new AI requests once
   their spend reaches the limit, with no customer-authored code. Enforcement is evaluated within
-  minutes of a spend event, applies per period (daily or monthly), and is
-  released automatically when the period resets. For more information, see
+  minutes of a spend event, applies per cycle, and is
+  released automatically when the cycle resets. For more information, see
   [Block users at the limit](#label-per-user-quota-enforcement).
 - **Custom action**: A stored procedure that you provide runs when a threshold is crossed, letting
   you implement custom enforcement such as revoking access based on a role, sending customized notifications, or writing an
@@ -85,15 +84,18 @@ For provider-specific setup steps, see:
 ### Threshold types
 
 Thresholds determine when notifications or custom actions are triggered for a user. They are
-expressed as a percentage of the monthly per-user quota and can be evaluated using one of two
-methods:
+expressed as a percentage of the per-user limit for the cycle the threshold is configured against,
+and can be evaluated using one of two methods:
 
-- **Actual spend**: Triggers when a user’s accumulated spend within the current UTC calendar
-  month exceeds the configured percentage of their monthly per-user quota. This is typically
+- **Actual spend**: Triggers when a user’s accumulated spend within the current cycle exceeds the
+  configured percentage of their per-user limit for that cycle. This is typically
   used for hard enforcement.
 - **Projected spend** (default): Triggers when the user’s current spending rate, extrapolated
-  to the end of the UTC calendar month or UTC calendar day, indicates they are likely to exceed the threshold. This
+  to the end of the cycle, indicates they are likely to exceed the threshold. This
   is proactive and used for early warning and prevention.
+
+Projections need enough elapsed usage in the cycle to be meaningful, so they aren’t calculated during
+approximately the first 12 hours of a daily or weekly cycle.
 
 **Example: Actual spend**
 
@@ -118,7 +120,7 @@ and AI domains can’t be combined in the same quota.
 | Domain | Monitored costs |
 | --- | --- |
 | WAREHOUSE | Compute resources for query execution in warehouses, includes warehouse metering and query acceleration costs. |
-| AI FUNCTION | Credit usage for AI functions operations attributed to the user. |
+| AI FUNCTION | Credit usage for AI function operations attributed to the user. |
 | SNOWFLAKE INTELLIGENCE | Credit usage for Snowflake CoWork (formerly Snowflake Intelligence) operations attributed to the user. |
 | CORTEX AGENT | Credit usage for Cortex Agents operations attributed to the user. |
 | CORTEX CODE | Credit usage for Snowflake CoCo (formerly Cortex Code) operations attributed to the user. Includes spend from Snowflake CoCo CLI, Snowflake CoCo in Snowsight, and Snowflake CoCo Desktop. |
@@ -197,13 +199,17 @@ CALL my_quota!ADD_SHARED_RESOURCE('AI GATEWAY');
 
 ## Limitations and considerations
 
-- Quotas operate on a monthly cycle aligned to the UTC calendar month. Custom quota cycles, such as weekly
-  or custom start dates, are not supported.
+- Quotas support monthly, weekly, and daily cycles aligned to the UTC calendar. Custom cycle start dates
+  are not supported.
+- Custom actions and cycle-start actions are evaluated against the monthly cycle only. They don’t
+  apply to weekly or daily limits.
+- Snowsight offers custom actions and cycle-start actions only for quotas scoped to warehouses. To use
+  them with an AI-related scope, configure them with SQL.
 - By default, a new quota monitors all users in the account. You can narrow the scope with tags,
   or exclude specific users.
 - No enforcement occurs until a per-user spending limit is set.
 - You cannot set different limits for different users within the same quota. All users share
-  the same per-user limit.
+  the same per-user limits.
 - Collective spending limits across all users in a quota are not supported. Each user’s limit
   is evaluated independently.
 - Quota evaluation is not real time but occurs within minutes. A slight lag might occur between a user being blocked and the data appearing in Snowsight.
@@ -223,8 +229,9 @@ The following limitations apply to [block enforcement](#label-per-user-quota-enf
   they spend in that short window, which is usually small for interactive use. For example, with a
   100-credit limit, a user who reaches 100 and spends 30 more before the block takes effect ends at
   130. A large single request, such as an AI function over a big table, can overshoot more. This should be considered when defining the quota limit.
-- Daily and monthly cycles reset at UTC midnight. A user who starts spending near a cycle boundary
-  can consume up to one full limit before the reset and a fresh limit after it.
+- Daily and monthly cycles reset at UTC midnight, and the weekly cycle resets Monday at 00:00 UTC. A user
+  who starts spending near a cycle boundary can consume up to one full limit before the reset and a fresh
+  limit after it.
 - Limit and scope changes aren’t immediate. Quota configuration can take up to approximately 5-10 minutes to
   propagate before enforcement acts on them, including changes to limits and scope.
 
@@ -273,8 +280,10 @@ After creating the quota, configure it by following the steps in the sections be
 ## Specify users in scope
 
 By default, a new quota monitors all users in the account, so no scope configuration is required.
-You can narrow the scope to a subset of users with tags, or keep all users in scope while excluding
-a specific subset.
+You can narrow the scope to a subset of users with tags, add or remove individual users by name, or
+combine both.
+
+### Scope users with tags
 
 To scope the quota to a subset of users, use the `SET_USER_TAGS` method to specify which users are
 in scope. Pass the tags by reference and specify the operator (`UNION` or `INTERSECTION`). The
@@ -296,9 +305,9 @@ Note
 
 The role used to set user tags on a quota must have the `APPLYBUDGET` privilege on each tag.
 
-To keep all users in scope but exclude a subset, use `EXCLUDE_USERS` with the tags that identify
-the users to exclude. In the following example, the quota keeps all users in scope except any user
-tagged with a `usage_tier` tag whose value is `high`:
+To keep all users in scope but exclude a subset by tag, use `EXCLUDE_USERS` with the tags that
+identify the users to exclude. In the following example, the quota keeps all users in scope except
+any user tagged with a `usage_tier` tag whose value is `high`:
 
 Copy code
 
@@ -308,6 +317,37 @@ CALL my_quota!EXCLUDE_USERS('TAG', [
 ]);
 ```
 
+### Include or exclude individual users
+
+To add specific users directly, pass their names to `INCLUDE_USERS`. To exclude specific users, pass
+their names to `EXCLUDE_USERS` with the `'USER'` keyword:
+
+Copy code
+
+```
+CALL my_quota!INCLUDE_USERS(['ALICE', 'BOB']);
+CALL my_quota!EXCLUDE_USERS('USER', ['CAROL']);
+```
+
+Unlike `SET_USER_TAGS`, both methods accumulate. Calling either one again adds to the existing list
+rather than replacing it.
+
+Naming a user this way takes precedence over the quota’s tag scope. An included user is monitored
+whether or not they match the tags, and an excluded user stays out even while they still match. Later
+tag changes don’t override it: a user who gains a matching tag joins the scope, but a user you
+excluded by name stays excluded.
+
+Note
+
+To clear a list, pass an empty array: `INCLUDE_USERS([])` or `EXCLUDE_USERS('USER', [])`. Changing the
+quota’s user scope to all users also clears both lists, so adjust individual users after you set the
+scope.
+
+A user can belong to more than one quota. Each quota evaluates that user’s spending against its own
+limit independently.
+
+### Verify the user scope
+
 To verify the current user scope:
 
 Copy code
@@ -316,12 +356,36 @@ Copy code
 CALL my_quota!GET_QUOTA_SCOPE();
 ```
 
-Returns a JSON object showing the configured tags and operator:
+Returns a JSON object showing the attached monitored domains, the users included and excluded by name,
+the configured tags, and the operator:
 
 Copy code
 
 ```
 {
+  "excluded_users": [
+    {
+      "user_id": 3817,
+      "user_name": "CAROL"
+    }
+  ],
+  "included_users": [
+    {
+      "user_id": 2153,
+      "user_name": "ALICE"
+    },
+    {
+      "user_id": 6253,
+      "user_name": "BOB"
+    }
+  ],
+  "shared_resources": [
+    {
+      "domain": "CORTEX_AGENT",
+      "id": -1,
+      "name": "[ALL-AGENTS]"
+    }
+  ],
   "user_tags": {
     "operator": "UNION",
     "tags": [
@@ -344,6 +408,18 @@ Copy code
 }
 ```
 
+The `shared_resources` array lists the monitored domains added with
+[ADD\_SHARED\_RESOURCE](#label-per-user-quota-supported-resources). When a whole domain is attached rather than a specific
+resource, the entry has an `id` of `-1` and a bracketed `name` such as `[ALL-AGENTS]`.
+
+The `included_users` and `excluded_users` arrays list the users added or removed by name with
+`INCLUDE_USERS` and `EXCLUDE_USERS`. Both arrays are empty when the quota is scoped only by tags.
+
+Note
+
+Use `GET_QUOTA_SCOPE` to confirm which domains a quota monitors after calling `ADD_SHARED_RESOURCE` or
+`REMOVE_SHARED_RESOURCE`.
+
 To list the users currently resolved into the quota’s scope:
 
 Copy code
@@ -359,9 +435,9 @@ lag by up to approximately 2 hours. Recent tag changes might not appear in `GET_
 
 ## Set per-user spending limits
 
-The quota admin sets a monthly per-user credit limit. Each user in scope is assigned the same
-per-user limit, and limits are enforced independently per user. There is no aggregation or
-collective cap across users.
+The quota admin sets one or more per-user credit limits: monthly, weekly, daily, or any
+combination. Each user in scope is assigned the same per-user limits, and limits are enforced
+independently per user. There is no aggregation or collective cap across users.
 
 Set the spending limit per user to 120 credits:
 
@@ -371,7 +447,7 @@ Copy code
 CALL my_quota!SET_PER_USER_LIMIT(120);
 ```
 
-Retrieve the current configuration, including the monthly and daily per-user limits:
+Retrieve the current configuration, including the per-user limits:
 
 Copy code
 
@@ -379,30 +455,35 @@ Copy code
 CALL my_quota!GET_CONFIG();
 ```
 
-### Set a daily per-user limit
+### Set a weekly or daily per-user limit
 
-In addition to the monthly limit, you can set a daily per-user limit by passing the optional cycle
-argument to `SET_PER_USER_LIMIT`. The default cycle is monthly.
+To set a weekly or daily limit, pass the cycle argument to `SET_PER_USER_LIMIT`. Without the
+argument, the limit applies to the monthly cycle.
 
 Copy code
 
 ```
--- Monthly limit (default, existing behavior).
+-- Monthly limit (default).
 CALL my_quota!SET_PER_USER_LIMIT(1000);
+
+-- Weekly limit.
+CALL my_quota!SET_PER_USER_LIMIT(500, 'WEEKLY');
 
 -- Daily limit.
 CALL my_quota!SET_PER_USER_LIMIT(120, 'DAILY');
 ```
 
-The daily limit resets at the start of each UTC day and is evaluated independently of the monthly
-limit.
+Each cycle is evaluated independently of the others, so a user is blocked as soon as they reach any
+limit you set. The daily limit resets at the start of each UTC day. The weekly limit follows the ISO
+week and resets Monday at 00:00 UTC, so a user blocked by their weekly limit is released the following
+Monday.
 
-To remove a limit, pass the cycle to unset. For example, remove the daily limit:
+To remove a limit, pass the cycle to unset. For example, remove the weekly limit:
 
 Copy code
 
 ```
-CALL my_quota!UNSET_PER_USER_LIMIT('DAILY');
+CALL my_quota!UNSET_PER_USER_LIMIT('WEEKLY');
 ```
 
 ## Block users at the limit
@@ -459,7 +540,8 @@ When enforcement is enabled, Snowflake runs a continuous loop for each user in s
    For AI functions, in-progress calls are terminated when the block takes effect, not just new
    requests.
 5. **Cycle reset**: Blocks expire automatically at the cycle boundary (UTC midnight for a daily
-   limit, the first of the month for a monthly limit). No separate clearing step is required, and
+   limit, Monday at 00:00 UTC for a weekly limit, the first of the month for a monthly limit). No
+   separate clearing step is required, and
    the user can spend again once the cycle rolls over. Blocks are also released when you raise the
    per-user limit above the user’s current spend or remove the quota.
 
@@ -490,8 +572,8 @@ You can also view a list of all blocked users across quotas from the ACCOUNT\_US
 
 Note
 
-`GET_CONFIG` includes the `BLOCK_ENFORCEMENT_ENABLED` and `PER_USER_LIMIT_DAILY` values alongside
-the existing configuration, such as `PER_USER_LIMIT`.
+`GET_CONFIG` includes the `BLOCK_ENFORCEMENT_ENABLED`, `PER_USER_LIMIT_WEEKLY`, and
+`PER_USER_LIMIT_DAILY` values alongside the existing configuration, such as `PER_USER_LIMIT`.
 
 ### Respond to escalations
 
@@ -564,7 +646,7 @@ thresholds of their per-user quota. For each threshold, you specify:
 - The threshold percentage (for example, `80` for 80% of the quota).
 - The threshold type: `PROJECTED` (default) or `ACTUAL`.
 - Whether to notify the user directly (`TRUE` or `FALSE`).
-- Whether the notification should be based on monthly or daily (‘MONTHLY’ or ‘DAILY’) limit.
+- Which limit the notification is based on (`'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`).
 
 Add a notification threshold:
 
@@ -663,6 +745,9 @@ CALL my_quota!SET_ADMIN_EMAILS('admin1@example.com, admin2@example.com');
 Quota admins can configure custom actions that are executed when a user breaches a per-user
 quota threshold. Custom actions are implemented as stored procedures. When a threshold is
 breached, the stored procedure is invoked for each user who has exceeded the threshold.
+
+Custom actions are evaluated against the monthly per-user limit only. You can configure them with SQL
+for any resource scope, but Snowsight offers them only for quotas scoped to warehouses.
 
 The quota evaluation process passes the list of user IDs who have exceeded their quota
 thresholds during the current quota run as the first argument to the stored procedure. Every
@@ -822,13 +907,16 @@ CALL my_quota!REMOVE_CUSTOM_ACTIONS(
 ## Configure a cycle-start (reset) action
 
 Quota admins can optionally configure a cycle-start action that is executed automatically at
-the start of each quota cycle (the beginning of each UTC calendar month). The reset action is
+the beginning of each UTC calendar month. The reset action is
 implemented as a stored procedure and is intended to restore states affected by quota
 enforcement, such as re-enabling users or restoring access to resources.
 
+Cycle-start actions run on the monthly cycle only. You can configure them with SQL for any resource
+scope, but Snowsight offers them only for quotas scoped to warehouses.
+
 Only one reset action may be configured per quota. The reset action:
 
-- Runs once at the beginning of each quota cycle.
+- Runs once at the beginning of each UTC calendar month.
 - Executes independently of user-level threshold evaluations.
 - Receives any configured parameters defined by the admin.
 
@@ -984,7 +1072,9 @@ Show lessSee more
 | --- | --- |
 | `SET_USER_TAGS([[<tag_ref>, '<value>'], ...], '<operator>')` | Set the user tags and operator (`UNION` or `INTERSECTION`) that define which users are in scope. See [Specify users in scope](#label-per-user-quota-user-scope). |
 | `EXCLUDE_USERS('TAG', [[<tag_ref>, '<value>'], ...])` | Keep all users in scope but exclude those matching the given tags. |
-| `GET_QUOTA_SCOPE()` | Return the configured user tags and operator. |
+| `INCLUDE_USERS(['<user>', ...])` | Add specific users to the quota by name, or reverse an earlier exclusion. See [Include or exclude individual users](#label-per-user-quota-user-membership). |
+| `EXCLUDE_USERS('USER', ['<user>', ...])` | Exclude specific users from the quota by name. See [Include or exclude individual users](#label-per-user-quota-user-membership). |
+| `GET_QUOTA_SCOPE()` | Return the attached monitored domains, the users included and excluded by name, and the configured user tags and operator. |
 | `GET_USERS()` | Return the users currently resolved into the quota’s scope. |
 
 Expand
@@ -995,9 +1085,9 @@ Show lessSee more
 
 | Method | Description |
 | --- | --- |
-| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The optional cycle argument accepts `'DAILY'`; the default is monthly. See [Set per-user spending limits](#label-per-user-quota-spending-limit). |
-| `UNSET_PER_USER_LIMIT('<cycle>')` | Remove the per-user limit for a cycle (`'DAILY'` or monthly). |
-| `GET_CONFIG()` | Return the quota configuration, including `PER_USER_LIMIT`, `PER_USER_LIMIT_DAILY`, `BLOCK_ENFORCEMENT_ENABLED`. |
+| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The optional cycle argument accepts `'WEEKLY'` or `'DAILY'`; the default is monthly. See [Set per-user spending limits](#label-per-user-quota-spending-limit). |
+| `UNSET_PER_USER_LIMIT('<cycle>')` | Remove the per-user limit for a cycle (`'WEEKLY'`, `'DAILY'`, or monthly). |
+| `GET_CONFIG()` | Return the quota configuration, including `PER_USER_LIMIT`, `PER_USER_LIMIT_WEEKLY`, `PER_USER_LIMIT_DAILY`, `BLOCK_ENFORCEMENT_ENABLED`. |
 
 Expand
 
@@ -1019,7 +1109,7 @@ Show lessSee more
 
 | Method | Description |
 | --- | --- |
-| `ADD_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>', <notify_user>, '<DAILY or MONTHLY limit>')` | Add an individual-user notification threshold. See [Configure notifications](#label-per-user-quota-notifications). |
+| `ADD_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>', <notify_user>, '<cycle>')` | Add an individual-user notification threshold. The cycle accepts `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`. See [Configure notifications](#label-per-user-quota-notifications). |
 | `REMOVE_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>')` | Remove a notification threshold. |
 | `GET_NOTIFICATION_THRESHOLDS()` | List configured notification thresholds. |
 | `ADD_NOTIFICATION_INTEGRATION('<name>')` | Add a notification integration for admin summaries. |
@@ -1048,7 +1138,7 @@ Show lessSee more
 
 | Method | Description |
 | --- | --- |
-| `SET_CYCLE_START_ACTION(<sproc_ref>, <args>)` | Set the procedure to run at the start of each quota cycle. See [Configure a cycle-start (reset) action](#label-per-user-quota-cycle-start). |
+| `SET_CYCLE_START_ACTION(<sproc_ref>, <args>)` | Set the procedure to run at the start of each UTC calendar month. See [Configure a cycle-start (reset) action](#label-per-user-quota-cycle-start). |
 | `GET_CYCLE_START_ACTION()` | Return the configured cycle-start action. |
 | `REMOVE_CYCLE_START_ACTION()` | Remove the cycle-start action. |
 
@@ -1100,15 +1190,18 @@ The **Basic information** page sets the quota’s name, location, and limits.
 - **Location**: The database and schema that own the quota object.
 - **Monthly credit limit**: The monthly credit ceiling for each user in scope. Usage resets on the
   first of each month.
+- **Weekly credit limit**: The weekly credit ceiling for each user in scope. Usage resets Monday at
+  00:00 UTC. This field appears when you’re monitoring AI features.
 - **Daily credit limit**: The daily credit ceiling for each user in scope, in credits per user per
   day. Usage resets daily at 00:00 UTC. This field appears when you’re monitoring AI features. For
-  AI features, set at least one of the daily or monthly credit limit.
+  AI features, set at least one of the daily or monthly credit limits.
 
 Note
 
 The available limit fields depend on the resource scope you chose on the **Quota scope** page. For
-AI-related features, both **Monthly credit limit** and **Daily credit limit** appear, and at least
-one is required. For warehouses, only **Monthly credit limit** appears, and it’s required.
+AI-related features, **Monthly credit limit**, **Weekly credit limit**, and **Daily credit limit**
+appear, and at least one is required. For warehouses, only **Monthly credit limit** appears, and
+it’s required.
 
 #### Alert notifications
 
@@ -1129,7 +1222,7 @@ you set a monthly limit.
 The **Enforcement and actions** page configures how limits are enforced and adds custom automated
 actions.
 
-- **Enable enforcement**: When enabled, the monthly and daily credit limits are enforced for the
+- **Enable enforcement**: When enabled, the per-user limits are enforced for the
   quota by blocking users who reach their limit. Admins can configure whether the end user receives emails when they are blocked. For more information, see
   [Block users at the limit](#label-per-user-quota-enforcement).
 - **Custom actions**: Trigger stored procedures when monthly spend reaches a threshold. Custom
@@ -1139,8 +1232,8 @@ actions.
 Note
 
 The options on this page depend on the resource scope you chose. AI-related scopes show
-**Enable enforcement**; warehouse scopes show **Custom actions** only, because block enforcement
-doesn’t apply to warehouses.
+**Enable enforcement**, because the wizard doesn’t offer custom actions for AI-related scopes. Warehouse
+scopes show **Custom actions**, because block enforcement doesn’t apply to warehouses.
 
 When you’re done, select **Create**. Snowflake provisions the quota and begins evaluating
 consumption for all users in scope.
@@ -1156,14 +1249,15 @@ The **Budgets** tab lists every quota and budget in your account. Quotas are tra
 budgets so that you can govern all spend controls from one place.
 This view includes:
 
-- **Summary cards**: At-a-glance counts of spend controls that are tracking spend, that are over
-  or at risk, and that have no limit set. Each card shows the split between custom budgets and
-  quotas.
+- **Summary cards**: **Total budgets** (spend controls tracking spend), **Over limit**, and **No
+  limit configured**. Each card shows the split between custom budgets and quotas.
 - **Filter tabs**: Switch between **All budgets**, **Custom budgets**, and **Quotas**, and filter
   the list by **Type** and **Status**.
-- **List columns**: For each quota, the list shows the **Name**, **Status**, **Monthly per-user
-  limit**, **Daily per-user limit**, **Monthly avg utilization**, **Daily budget utilization**,
-  **Users monitored**, and **Users blocked**.
+- **List columns**: The columns depend on the tab. On **All budgets**, the list shows **Name**,
+  **Type**, **Status**, **Spend (credits)**, and **Limit (credits)**, with per-cycle spend and
+  limits for quota rows. On **Quotas**, the list shows **Name**, **Quota status**, **Monthly
+  per-user limit**, **Weekly per-user limit**, **Daily per-user limit**, **Users in quota**,
+  **Enforcement**, and **Users blocked**. A cycle with no limit set reads `Not configured`.
 
 Select a quota’s name to open the quota deep-dive view.
 
@@ -1173,23 +1267,26 @@ The quota deep-dive view summarizes spending and enforcement across all users in
 single quota.
 This view includes:
 
-- **Avg utilization**: Average utilization across in-scope users, measured against the per-user
-  limit.
-- **User status**: A breakdown of how many users are on track versus over budget.
+- **Avg monthly utilization**, **This week’s avg utilization**, and **Today’s avg utilization**:
+  Average utilization across in-scope users for each cycle, measured against the per-user limit for
+  that cycle.
+- **User status**: A breakdown of in-scope users by status: **On track**, **Over monthly**, **Over
+  weekly**, **Over daily**, and **Over multiple**.
 - **Enforcement breakdown**: A breakdown of users with an enforcement action applied, such as the
-  number of users blocked against the daily or monthly limit.
+  number of users blocked against a per-user limit.
 - **Top user spend over time**: A graph of the highest-spending users over the current cycle,
   plotted against the per-user limit.
 - **Quota details**: The quota’s configuration, including:
-  - **Per-user limit**: The monthly limit and, if configured, the daily limit (for example,
-    `1 credit / month` and `1 credit / day`).
-  - **Avg user spend** and **Highest spend** across in-scope users.
+  - **Per-user limit**: The limit configured for each cycle (for example,
+    `10,000 credits / month` and `5,000 credits / day`).
+  - **Monthly avg user spend** and **Monthly highest user spend** across in-scope users.
   - **Quota scope**: The users in scope (all users in the account, or the tag-based filters
     applied) and the monitored domains, such as AI functions, Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway.
   - **Notifications**: The configured notification thresholds.
 - **User table**: A searchable, filterable list of every user in scope. For each user, the table
-  shows **Utilization**, **Status**, **Spend**, **Enforcement status** (such as Blocked), and
-  **Monitored tags**.
+  shows **Enforcement**, utilization and spend for each configured cycle (**Monthly utilization**
+  and **Monthly spend**, **Weekly utilization** and **Weekly spend**, **Today’s utilization** and
+  **Today’s spend**), and **Matched tags**.
 
 Select a user in the table to open the user deep-dive view.
 
@@ -1199,13 +1296,16 @@ The user deep-dive view shows spending detail for a single user within a quota.
 This view includes:
 
 - **Monthly utilization**: The user’s spend against their monthly limit.
-- **Daily utilization**: The user’s spend against their daily limit.
+- **Weekly utilization**: The user’s spend against their weekly limit.
+- **Today’s utilization**: The user’s spend so far today against their daily limit.
 - **Spend by type**: A breakdown of the user’s spend by monitored domain, such as AI functions.
-- **User details**: The per-user monthly and daily limits, the user’s current spend, and their
-  average daily spend.
-- **Spend by day**: A graph and table of the user’s daily and aggregated spend across the cycle,
-  including each day’s spend as a percentage of the monthly limit. Switch between **Daily spend**
-  and **Aggregated spend** to change how the graph is plotted.
+- **User details**: The **Per-user limit** for each cycle, the user’s **Current spend**, and their
+  **Avg weekly spend** and **Avg daily spend**.
+- **Matched tags**: The tags on the user that matched the quota’s tag scope.
+- **Spend by day**: A graph and table of the user’s spend across the cycle. Switch between **Daily
+  spend**, **Weekly spend**, and **Aggregated spend** to change how the graph is plotted. The table
+  breaks out each day’s **Monthly utilization**, **Aggregated spend**, **Weekly utilization**,
+  **Weekly spend**, **Daily utilization**, and **Daily spend**.
 
 ## Using Snowflake CoCo
 

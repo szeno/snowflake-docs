@@ -331,7 +331,7 @@ Description:
     - Pre-existing files with disallowed extensions will not appear in Workspaces.
     - Users can still use the Snowflake CLI `PUT` command to upload files with non-allowed extensions to a workspace’s virtual stage or a Notebook
       Project Object’s virtual stage. However, these files are inaccessible and cannot be used, viewed, downloaded (via `GET`), or listed (via `LIST`)
-      from within the workspace or Notebook Project Object environment.
+      from within the workspace or Code Bundle environment.
     - To maintain core workspace functionality, include `.ipynb` and `.sql` in the allow list.
     - Files without an extension (for example, `Makefile`) are not allowed once the list is non-empty.
     - Dotfiles (for example, `.gitignore` or `.venv`) must be explicitly added to the list.
@@ -360,7 +360,7 @@ Description:
     - Pre-existing files with disallowed extensions will not appear in Workspaces.
     - Users can still use the Snowflake CLI `PUT` command to upload files with non-allowed extensions to a workspace’s virtual stage or a Notebook
       Project Object’s virtual stage. However, these files are inaccessible and cannot be used, viewed, downloaded (via `GET`), or listed (via `LIST`)
-      from within the workspace or Notebook Project Object environment.
+      from within the workspace or Code Bundle environment.
     - To maintain core workspace functionality, include `.ipynb` and `.sql` in the allow list.
     - Files without an extension (for example, `Makefile`) are not allowed once the list is non-empty.
     - Dotfiles (for example, `.gitignore` or `.venv`) must be explicitly added to the list.

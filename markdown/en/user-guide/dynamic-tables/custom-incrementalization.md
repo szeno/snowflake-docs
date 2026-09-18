@@ -308,7 +308,7 @@ If delete-then-insert of the same row should be invisible to your merge logic (f
 
 ## Limitations
 
-- No dbt or DCM integration. Use `CREATE OR ALTER` to update custom incremental dynamic table definitions.
+- No dbt integration. Use `CREATE OR ALTER` or [DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-dynamic-table) to update custom incremental dynamic table definitions.
 - Only `CREATE OR ALTER` can modify the `REFRESH USING` definition and properties (such as [`TARGET_LAG`](/user-guide/dynamic-tables/target-lag)).
 - Upstream schema changes cause the next refresh to fail with a compile error. If the upstream object was altered (not replaced or dropped), use `CREATE OR ALTER` with an updated `REFRESH USING` definition to recover. The next refresh continues from the last successful refresh. If the upstream used `CREATE OR REPLACE`, change tracking is broken and you must recreate the downstream with `CREATE OR REPLACE`.
 - [Frozen regions (`FROZEN WHERE`)](/user-guide/dynamic-tables/frozen-regions) and `INSERT ONLY INPUTS` can’t be combined with `REFRESH USING`.

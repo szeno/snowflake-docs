@@ -262,7 +262,7 @@ that can analyze your queries and recommend how to configure interactive analyti
 The skill helps you with clustering key selection, warehouse sizing, table attachment, and overall
 performance tuning.
 
-To use the skill, start Cortex Code (CLI or Desktop) and describe your workload. For example:
+To use the skill, start Cortex Code (CLI, Desktop or in Snowsight) and describe your workload. For example:
 
 ```
 I have the following query:
@@ -283,13 +283,12 @@ than a second. The database with the tables used by the query is
 DM_TESTTPCH_BENCH_DB and the schema is TPCH_SF100. The filter on order date
 will be different, and users might also filter data for a specific nation,
 region, or market. How can I make sure that I can obtain the performance I need?
-Use the current connection to connect to Snowflake.
 ```
 
 The skill connects to your Snowflake account, inspects the tables and their current clustering,
 evaluates the query profile, and provides recommendations including:
 
-- Whether an interactive warehouse or interactive table is the best fit for your workload.
+- Whether an interactive warehouse is the best fit for your workload.
 - Clustering key suggestions based on your filter patterns and join columns.
 - Warehouse sizing guidance based on your data volume.
 - Materialized view candidates for frequently run aggregation patterns.

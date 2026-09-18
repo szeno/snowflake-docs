@@ -1,52 +1,101 @@
-# Enterprise use cases for DCM Projects
+# Architectural recommendations for DCM Projects
 
-This topic covers how to use DCM Projects in enterprise environments, such as managing multiple projects, working with multiple environments, and
-collaborating on projects.
+This topic provides architectural recommendations for organizing DCM Projects definitions into project folders and deployment targets. It also
+explains how to work with multiple environments and collaborate on projects.
 
-## When to use multiple DCM projects
+## **Project folders and deployment targets**
 
-When deciding if and how to split a DCM project into multiple projects, consider ownership and templating.
+A project folder contains a `manifest.yml` file and a set of definitions under `sources/definitions/`. The manifest maps each target to a
+DCM project object in a Snowflake account. Each target specifies the owner role for that object and can select a templating configuration.
+The same set of definitions can therefore support several deployments. For more information, see
+[Project targets](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-targets).
 
-### Ownership
+The following table summarizes how shared definitions and deployment boundaries affect the choice of structure:
 
-Each project has one owner role that can deploy all defined objects. Grants allow granular access management for individual objects inside
-the project. However, if different groups of users are responsible for deploying changes to a project, it generally makes sense to
-split a DCM project accordingly.
+| Structure | When it fits | Characteristics | Example |
+| --- | --- | --- | --- |
+| One project folder with one target | Most objects share an owner role, and the definitions are evaluated once or repeated for a small set of similar resources. Up to approximately 20 template iterations is a rule of thumb when the generated infrastructure is managed together. | Each `PLAN` or `DEPLOY` operation evaluates all definitions and loop iterations together. DCM Projects resolves dependencies within that deployment. | A platform team uses one template to create the same database structure for 20 regional teams. |
+| One project folder with multiple targets | Deployments share most definitions but need different owner roles or independent deployment operations. | Targets share definitions and select their own templating configurations. Independent targets can be planned and deployed concurrently, with failures handled separately. Template changes are maintained in one place. | A platform team manages 100 or more tenants, each with a coexisting production target that supplies its namespace and other variables. |
+| Separate project folders, each with its own targets | Teams maintain mostly different definitions. Dependencies across deployment boundaries are limited or explicitly coordinated. | Each folder has its own manifest and definitions. Teams maintain and deploy their definitions independently, while coordinating any dependencies across targets. | Marketing and finance maintain separate pipelines and serving layers with different definitions and ownership. |
 
-The following is an example scenario:
+Expand
 
-- The platform administrator deploys a database and a warehouse, creates the team administrator role, and
-  grants CREATE privileges to the team administrator for a defined set of object types inside that database, as well as access to a defined
-  set of account-level integrations.
-- The team administrator can now decide how to organize schemas and dynamic tables inside that database, fine-tune refresh frequencies, and grant more
-  granular read access to individual team members.
+Show lessSee more
 
-The following is a solution:
+![Three project structures: one target with template loops, multiple targets with shared definitions, and separate project folders with their own targets.](/static/images/dcm-projects/dcm-project-architecture-options.png)
 
-- The platform administrator deploys the high-level infrastructure for the team and grants the team administrator the privilege to create DCM project projects
-  inside their database.
-- The team administrator can now also benefit from DCM Projects by creating one or more projects inside the team database to manage tables and grants to team members.
+These three options can also be combined, for example, to deploy templated infrastructure for multiple teams within each tenant across
+production and non-production environments.
 
-### Template variables
+### One target for definitions deployed together
 
-If a DCM project defines a range of objects that are and should remain mostly similar, it is generally more convenient to define them once
-as a parameterized template.
+One target can deploy a set of definitions once or render a parameterized template in a loop. Each `PLAN` or `DEPLOY` operation evaluates
+the definitions and all loop iterations together, allowing DCM Projects to resolve dependencies within that deployment.
 
-The following is an example scenario:
+For example, a platform team provides a database for each regional team:
 
-- The platform team deploys a database for each regional team in the organization.
-- New regions are expected to be added over time.
-- All regions require mostly the same setup of schema, landing tables, roles, and warehouse.
-- Changes in this database template should be applied to all teams, for example, adding a read-only role.
+- Each region requires mostly the same infrastructure, including schemas and landing tables.
+- The template also defines roles and a warehouse for each region.
+- Additional regions are expected over time.
+- Template changes, such as adding a read-only role, apply to all regions.
 
-The following is a solution:
+The platform team can maintain one set of definitions and use a Jinja loop for the regional teams listed in a templating configuration in the
+manifest. As a rule of thumb, up to approximately 20 iterations can remain in one target when most objects share an owner role and the
+generated infrastructure is managed together. This is an architectural guideline rather than a product limit.
 
-- You can execute a single set of definitions in a loop for each regional team listed in the manifest profile.
+### Multiple targets for independent deployments of shared definitions
 
-When more elements of this template start to diverge and the number of templating conditions increases, it can become easier to read and
-maintain separate DCM projects with their individual object definitions.
+One project folder can also define multiple coexisting production targets. Targets can represent tenants or regional teams in addition to
+development, staging, or production environments.
 
-## Use DCM Projects with multiple environments
+For example, a platform team serving 100 or more tenants can maintain one set of definitions and give each tenant its own target. Each target
+selects a templating configuration that supplies the tenant’s namespace and other variables. Independent deployments use distinct
+DCM project objects and distinct names for the managed objects within the same account.
+
+This structure provides the following capabilities:
+
+- Changes to shared definitions are maintained in one place.
+- Each target can specify a different owner role through `project_owner`.
+- Each target can be planned and deployed independently, so a failure in one deployment doesn’t require stopping the others.
+- Independent targets can be planned and deployed concurrently, which can reduce the total time to apply changes across tenants.
+
+### Separate project folders for independently maintained definitions
+
+Separate project folders let teams maintain different sets of definitions, each with its own manifest and targets. This fits object groups
+with limited dependencies between them, such as marketing and finance teams with separate pipelines and serving layers. Splitting a very
+large set of definitions along these boundaries can also reduce the scope of each `PLAN` and `DEPLOY` operation.
+
+Each DCM project object has one owner role that can deploy its defined objects. Grants allow granular access to individual managed objects.
+When different teams are responsible for maintaining and deploying different definitions, separate project folders can reflect those
+responsibilities.
+
+For example, a platform administrator provides infrastructure that a team administrator builds on:
+
+- The platform administrator deploys a database and a warehouse, creates a team administrator role, and grants it the required privileges.
+- Those privileges allow creation of a defined set of object types in the database and access to a defined set of account-level integrations.
+- The platform administrator also grants the team administrator the privilege to create DCM project objects inside the database.
+- The team administrator maintains a separate project folder and targets for team-owned definitions. These definitions organize schemas and
+  dynamic tables, configure refresh frequencies, and manage granular access for team members.
+
+The platform-managed infrastructure must exist before the team administrator deploys definitions that depend on it. Dependencies across
+these targets require explicit coordination of deployment order.
+
+Separate project folders can also become easier to maintain when instances of a shared template diverge. As differences accumulate and
+templating conditions increase, independently maintained definitions can be easier to read than a shared template with many exceptions.
+
+## **Separation of concerns and deployment dependencies**
+
+One set of definitions can cover both infrastructure and governance definitions, allowing DCM Projects to resolve their dependencies and determine the execution order for `PLAN` and `DEPLOY`.
+
+When business or organizational requirements call for separate ownership or deployment processes, one common scenario is a separate project
+folder for grants, policies, and role privileges. Its definitions reference objects managed by the infrastructure definitions, creating a primarily
+one-directional dependency. The infrastructure target must be deployed first so that the objects exist, followed by the access-privilege
+target that applies grants to those objects.
+
+Dependencies across these targets require manual coordination. Keeping the definitions together under one target avoids this coordination
+when separate ownership or deployment isn’t required.
+
+## **Environment isolation and object naming**
 
 The following diagram shows a typical workflow for deploying a DCM project to multiple environments.
 
@@ -64,7 +113,7 @@ The benefit of a single-account setup is the ability to easily clone production 
 deploying those changes to production. However, copying parts of production data and infrastructure to a different account, for example,
 through org-internal data shares, can be more costly.
 
-### Impact on DCM project templating
+### Distinct object names across environments
 
 Distinct object names for each environment are a requirement for single-account setups, for example, to keep `EMEA_DB` and `EMEA_ADMIN`
 separate from `EMEA_DB_DEV` and `EMEA_ADMIN_DEV`. Snowflake also recommends this practice for multi-account setups. Templated names
@@ -74,9 +123,7 @@ quickly create and destroy sandbox environments to test different solutions.
 This applies to all account-level objects, such as databases, roles, and warehouses. You then need to apply these templated names to all
 fully qualified names of nested objects.
 
-## Collaborate on DCM Projects
-
-### Shared development environment
+## **Independent development in a shared environment**
 
 Multiple developers commonly share the same development account to build and iterate on data products in parallel. However, if multiple
 users work on the same project in parallel, their PLAN and DEPLOY operations can cause conflicts if they don’t use templating to create
@@ -124,6 +171,9 @@ The following is a solution:
      db: "PROD"
      wh_size: "LARGE"
   ```
+
+![DCM Project CI/CD workflow.](/static/images/dcm-projects/dcm-project-ci-cd-flow.png)
+
 - You can apply the same templating solution when one developer works on multiple projects.
 - The following is an example of a scalable project setup for teams.
 

@@ -106,4 +106,4 @@ For specific syntax, usage notes, and examples, see:
 - [DROP BUDGET](/sql-reference/classes/budget/commands/drop-budget)
 - [DROP CLASSIFICATION\_PROFILE](/sql-reference/classes/classification_profile/commands/drop-classification-profile)
 - [DROP CUSTOM\_CLASSIFIER](/sql-reference/classes/custom_classifier/commands/drop-custom-classifier)
-- [Removes the specified model from the current or specified schema. Dropped…](/sql-reference/classes/forecast/commands/drop-forecast#label-class-forecast-drop)
+- [DROP SNOWFLAKE.ML.FORECAST](/sql-reference/classes/forecast/commands/drop-forecast#label-class-forecast-drop)

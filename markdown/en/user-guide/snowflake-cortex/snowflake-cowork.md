@@ -156,7 +156,7 @@ follows this workflow:
 
 ## Cost considerations
 
-To monitor spend for a Snowflake CoWork object and act when that spend crosses a threshold, use [resource budgets](/user-guide/snowflake-cortex/snowflake-cowork/cowork-resource-budgets). To enforce monthly or daily credit limits for individual users, and optionally block users who reach their AI quota, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+To monitor spend for a Snowflake CoWork object and act when that spend crosses a threshold, use [resource budgets](/user-guide/snowflake-cortex/snowflake-cowork/cowork-resource-budgets). To enforce per-user credit limits for individual users, and optionally block users who reach their AI quota, use [per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## Legal notices
 

@@ -4,7 +4,7 @@ A resource budget lets you monitor Cortex Agents spend for your account and take
 to control costs for Cortex Agents and take automated actions such as revoking access when spending
 exceeds your configured limits. Resource budgets give you control over the credits consumed at an aggregated level for that specific Agent.
 
-Resource budgets apply to the Cortex Agent object. To set the same monthly or daily credit limit for each user, and optionally block users who reach that limit on Cortex Agents and other AI domains, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+Resource budgets apply to the Cortex Agent object. To set the same per-user credit limits for each user, and optionally block users who reach a limit on Cortex Agents and other AI domains, use [per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## How resource budgets work
 

@@ -95,10 +95,6 @@ ALTER COMPUTE POOL [ IF EXISTS ] <name> UNSET { AUTO_SUSPEND_SECS         |
 
         INSTANCE\_FAMILY can be altered only when a compute pool is fully suspended. Upon resuming, Snowflake uses the new instance type to provision the compute pool.
 
-    [Preview Feature — Open](/release-notes/preview-features)
-
-    Backup instance types for compute pools is a [preview feature](/release-notes/preview-features) available to all accounts.
-
     `BACKUP_INSTANCE_FAMILIES = ( 'instance_family_name' [ , ... ] )`
     :   Sets or replaces the ordered list of backup instance families for the compute pool. The change takes effect immediately without requiring pool suspension or service restart; the next scale-up event uses the updated list. The list must contain at least one entry, must not include the primary `INSTANCE_FAMILY` or duplicates, and must use valid instance family identifiers.
 

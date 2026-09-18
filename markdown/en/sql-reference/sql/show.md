@@ -115,6 +115,7 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW NETWORK RULES](/sql-reference/sql/show-network-rules)
 > - [SHOW NOTEBOOKS](/sql-reference/sql/show-notebooks)
 > - [SHOW NOTEBOOK PROJECTS](/sql-reference/sql/show-notebook-projects)
+> - [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles)
 > - [SHOW OBJECTS](/sql-reference/sql/show-objects)
 > - [SHOW OBJECTS OWNED BY APPLICATION](/sql-reference/sql/show-objects-owned-by-application)
 > - [SHOW ONLINE FEATURE TABLES](/sql-reference/sql/show-online-feature-tables)

@@ -4,10 +4,6 @@ Feature — Generally Available
 
 Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, and Google Cloud Platform commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions).
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Backup instance types for compute pools is a [preview feature](/release-notes/preview-features) available to all accounts.
-
 Lists the nodes currently provisioned in a specified [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool), including the instance family backing each node. Use this command to see which primary or backup instance families are actually in use when [backup instance types](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-backup-instance-types) are configured for a pool.
 
 See also:

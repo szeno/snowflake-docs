@@ -52,7 +52,7 @@ Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supporte
   from IPython.display import Image, display
   display(Image(filename="path/to/example_image.png"))
   ```
-- SQL cells cannot run [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) (non-interactive execution). To chain notebooks,
+- SQL cells cannot run [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) (non-interactive execution). To chain notebooks,
   use Jupyter magic commands, such as `%run`, which executes another notebook in the same Python process. For more information, see
   [Jupyter magics](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-edit-run#label-nb-in-ws-edit-run-jupyter-magics).
 - If the execution context (database and schema) or the query warehouse is not set when you run notebooks in Workspaces, the interactive datagrid for

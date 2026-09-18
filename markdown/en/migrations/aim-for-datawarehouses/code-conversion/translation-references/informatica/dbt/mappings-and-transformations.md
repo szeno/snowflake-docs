@@ -164,6 +164,33 @@ Note
 
 `SSC-EWI-INF0069` is emitted when the Mapping alone is converted, because the file name lives on the Session’s File Reader attributes rather than in the Mapping. Convert the Workflow along with the Mapping, or replace `UNKNOWN_FILE` with the file name you want to read.
 
+A Workflow and Session can resolve the file basename. Snowflake (`stg_flat_file__SRC_DATA.sql` from `flat_file_source_duplicate_instances.xml`):
+
+Copy code
+
+```
+SELECT
+   $1 :: NUMERIC(5, 0) AS COL_ID,
+   $2 :: VARCHAR(20) AS COL_VALUE
+FROM
+   @public.landing_stage/infpc/sources/TestFolder/SRC_DATA/src_data.csv (FILE_FORMAT => 'TestFolder_m_DUP_FLAT_FILE_SRC_DATA')
+```
+
+When the Session uses `$$` parameters for the source directory and filename, the staging model keeps them as dbt runtime variables:
+
+Copy code
+
+```
+SELECT
+   $1 :: VARCHAR(10) AS EMPLOYEE_ID,
+   $2 :: VARCHAR(100) AS FULL_NAME,
+   $3 :: FLOAT AS SALARY
+FROM
+   @public.landing_stage/infpc/sources/TestFolder/SRC_DIRECT_CSV/{{ var('SourceDirectory') }}/{{ var('SourceFileName') }} (FILE_FORMAT => 'TestFolder_m_DIRECT_LOAD_SRC_DIRECT_CSV')
+```
+
+The generated ingestion manifest records the source identity, original location, stage binding, and each consumer. Generated Openflow flows copy mapped files from customer object storage onto the generated internal landing stage. For the file-arrival workflow, see the [Informatica PowerCenter overview](../README).
+
 A fixed-width flat file (`DELIMITED="NO"`) has no equivalent Snowflake file format, so no `FILE_FORMAT` is generated. The staging model projects `null` for each field and carries `SSC-EWI-INF0068` so you can map the field offsets by hand:
 
 Copy code
@@ -387,7 +414,7 @@ When the policy is **Use All Values**, the same join is emitted **without** `QUA
 
 An unconnected Lookup isn’t this join. It becomes a dbt macro under `macros/` (for example `macros/ulkp_departments.sql`). The Expression, Filter, or Router that referenced `:LKP` calls that macro with Jinja, it doesn’t emit an `int_` `QUALIFY` join. Nested `:LKP` calls become nested macro invocations: the inner call has no extra Jinja braces, and the outer call wraps the whole expression.
 
-A connected Lookup whose **Source Type** is **Flat File** still emits an `int_` join, but `lookup_reference` reads the lookup file’s staging model (`stg_flat_file__...`) instead of `{{ source() }}`.
+A connected Lookup whose **Source Type** is **Flat File** still emits an `int_` join, but `lookup_reference` reads the lookup file’s staging model (`stg_flat_file__...`) instead of `{{ source() }}`. Its stage prefix uses the owning folder and Source Definition identity, just like a flat-file source. The ingestion manifest inventories the Lookup as a consumer of that source identity rather than creating a second landing source.
 
 #### Property mapping
 
@@ -1902,7 +1929,7 @@ When the Mapping includes an Update Strategy, the mart is materialized increment
 
 ### Flat File Target
 
-A delimited flat-file Target Definition becomes a mart model materialized as a table, with a `post_hook` that calls a generated `copy_into_stage` macro to unload the model’s rows to a stage. The unload is bound to `public.landing_stage/infpc/targets/{target}/` and carries the field delimiter, text qualifier, and record delimiter declared on the Flat File Target, so you don’t need to supply a stage path or a dbt variable of your own.
+A delimited flat-file Target Definition becomes a mart model materialized as a table, with a `post_hook` that calls a generated `copy_into_stage` macro to unload the model’s rows to a stage. The unload is bound to `public.landing_stage/infpc/targets/<Def>/` and carries the field delimiter, text qualifier, and record delimiter declared on the Flat File Target, so you don’t need to supply a stage path or a dbt variable of your own. This target prefix is an unload destination, not a landing source for the ingestion manifest or Openflow.
 
 Two Informatica settings have no Snowflake equivalent when writing to a stage, and each raises an EWI on the mart model:
 
@@ -1975,18 +2002,8 @@ SKIP_HEADER = 1
 EMPTY_FIELD_AS_NULL = TRUE;
 ```
 
-`stages.sql` holds the landing stage that every converted flat-file read and unload binds to:
-
-Copy code
-
-```
--- SnowConvert land zone: every converted flat-file read and unload binds to this stage.
-CREATE STAGE IF NOT EXISTS public.landing_stage
-  COMMENT = 'SnowConvert-generated land zone. Retarget URL/integration; keep the name and subfolder layout.';
-```
-
 Important
 
-Replace the `YOUR_DB` and `YOUR_SCHEMA` placeholders in the `COPY INTO` target with your actual Snowflake database and schema, and point the landing stage at the storage location that holds your files, before you run the Task.
+Replace the `YOUR_DB` and `YOUR_SCHEMA` placeholders in the `COPY INTO` target with your actual Snowflake database and schema. Generated Openflow flows copy the file from customer object storage onto the generated internal stage path that the `COPY INTO` statement reads. See the [Informatica PowerCenter overview](../README).
 
-A Session qualifies for this shortcut only when it’s a pure load. When it isn’t, for example the Source Qualifier has a filter, the target has pre-SQL, or the Session doesn’t name a source file, the Session converts as a full dbt project instead.
+A Session qualifies for this shortcut only when it’s a pure load with a static source-to-table identity. When it isn’t, for example the Source Qualifier has a filter, the target has pre-SQL, or the Session doesn’t name a source file, the Session converts as a full dbt project instead. A parameterized source-to-table identity remains on the dbt or Snowflake Scripting path. SnowConvert doesn’t ship parameterized Direct COPY.

@@ -20,7 +20,7 @@ For evaluation methodology and dataset design guidance, see [Best Practices for 
 The ability to run a Cortex Agent evaluation requires the role that runs the evaluation to have the following:
 
 - The DATABASE ROLE SNOWFLAKE.CORTEX\_USER role
-- The USE AI FUNCTIONS account-level privilege (or the per-function `USE AI FUNCTION AI_COMPLETE` privilege). Agent evaluations compute their metrics with the [AI\_COMPLETE](/sql-reference/functions/ai_complete) function using the LLM-as-a-judge technique, so the role that runs the evaluation must be able to call AI\_COMPLETE. This privilege is granted to the PUBLIC role by default. If your account has revoked it from PUBLIC, grant it explicitly. For more information, see [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges).
+- The USE AI FUNCTIONS account-level privilege (or the per-function `USE AI FUNCTION AI_COMPLETE` privilege). Evaluation judges use Cortex LLM inference, which is gated by this privilege. The USE AI FUNCTIONS privilege is granted to the PUBLIC role by default. If your account has revoked it from PUBLIC, grant it explicitly. For more information, see [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges).
 - The EXECUTE TASK ON ACCOUNT permission
 - The USAGE permission on the database and schema containing your agent
 - The USAGE permission on the database and schema containing your evaluation data
@@ -50,7 +50,7 @@ Before starting a Cortex Agent evaluation, prepare a table containing your evalu
 
 Creating this table requires CREATE TABLE ON SCHEMA, and creating a dataset from it requires CREATE DATASET ON SCHEMA. For the full list, see [Access control requirements](#label-agent-evaluation-access-control).
 
-### Cortex Code
+### Prepare a dataset with Cortex Code
 
 [Cortex Code](/user-guide/cortex-code/cortex-code) can help you create or update an evaluation dataset. Use the `dataset-curation` sub-skill of the Cortex Code [`agent-studio`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-agent-studio) skill in the CLI (see [Cortex Code CLI - Skills](/user-guide/cortex-code/extensibility#label-extensibility-skills)), or select **Create with Cortex Code** or **Manage datasets** on an agent’s **Evaluations** tab in Snowsight, to:
 
@@ -160,7 +160,7 @@ Available to all accounts.
 
 Both metrics read the `ground_truth_invocations` key in the ground truth VARIANT. The value is an array of JSON objects, one per expected tool-related check. Use the empty array `[]` when you expect **no** tools to be called. Each metric uses this key differently:
 
-- **Tool selection accuracy (TSA)** compares the tool **names** you list in ground truth to the tool names the agent actually invoked, among the tools this metric scores (listed later in this section). Agents can call tools in parallel or in multiple valid orders, so ordering is not considered. For each record, Snowflake counts how many expected tool names are matched to actual invocations (each actual call is matched at most once), using the formula `matched tools / max(number of expected tool entries, number of actual tool calls)`. This penalizes every failure mode: too few calls, too many calls, or the wrong tools. TSA scoring is deterministic.
+- **Tool selection accuracy (TSA)** compares the tool **names** you list in ground truth to the tool names the agent actually invoked, among the tools this metric scores (listed later in this section). Agents can call tools in parallel or in multiple valid orders, so ordering is not considered. For each record, Snowflake counts how many expected tool names are matched to actual invocations (each actual call is matched at most once), using the formula `matched tools / max(number of expected tool entries, number of actual tool calls)`. This penalizes every failure mode: too few calls, too many calls, or the wrong tools. TSA scoring is deterministic for a given set of tool calls: no LLM judge is involved, so the same tool calls always produce the same score. A TSA score that changes between otherwise identical runs means the agent invoked different tools, not that scoring varied. For details, see [Interpret score variance across runs](#label-agent-evaluation-score-variance).
 - **Tool execution accuracy (TEA)** scores the **input and output quality** of the tool calls you describe in ground truth. For each entry, Snowflake finds the closest semantic match among the agent’s actual invocations for that tool (pairing each tool call at most once), then scores how well the expected input and output align with the real invocation. An expected tool the agent never invoked scores 0.0 and lowers TEA. Extra tools the agent invokes beyond your ground truth don’t penalize TEA (rely on TSA for this instead). TSA and TEA currently score only the tools listed later in this section; other tool types are skipped and left out of those scores.
 
 `tool_input` and `tool_output` are optional. If you omit one or both for an entry, Snowflake only evaluates what you provided. If you provide neither, TEA only confirms the tool was invoked (a name match) and doesn’t grade input or output quality for that entry.
@@ -282,13 +282,13 @@ The column-mapping keys differ depending on how you create the dataset:
 
 ## Start an agent evaluation
 
-### Cortex Code
+### Start an evaluation with Cortex Code
 
 You can also run an evaluation through [Cortex Code](/user-guide/cortex-code/cortex-code). Use the `evaluate-cortex-agent` sub-skill of the Cortex Code [`agent-studio`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-agent-studio) skill in the CLI (see [Cortex Code CLI - Skills](/user-guide/cortex-code/extensibility#label-extensibility-skills)), or continue the same Cortex Code flow from **Prepare an evaluation dataset** in Snowsight directly into running the evaluation against your dataset.
 
 The skill accepts the same choices as the other paths, including which [agent version](#label-cortex-agent-evaluation-yaml-spec) to evaluate and which [metric versions](#label-agent-evaluation-metric-versions) to score with.
 
-### Snowsight
+### Start an evaluation in Snowsight
 
 Note
 
@@ -351,7 +351,7 @@ Begin a manual evaluation of a Cortex Agent by doing the following:
 
 At any point, you can select **Cancel** to cancel creating the evaluation, or select **Prev** to return to the previous modal.
 
-### SQL
+### Start an evaluation with SQL
 
 To start or retrieve information on an evaluation with SQL, use the [EXECUTE\_AI\_EVALUATION](/sql-reference/functions/execute_ai_evaluation) function. This function has the following required arguments:
 
@@ -415,7 +415,7 @@ You can call the EXECUTE\_AI\_EVALUATION function from a [Task](/user-guide/task
 
 Evaluation results include information about the requested metrics and the agent’s execution for each dataset input. Each input is processed as one **turn** (one **trace** made up of **spans**). See [Terminology](/user-guide/snowflake-cortex/cortex-agents-monitor#label-cortex-agent-observability-terminology).
 
-### Cortex Code
+### Inspect evaluation results with Cortex Code
 
 In the [Cortex Code](/user-guide/cortex-code/cortex-code) CLI, the [`agent-studio`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-agent-studio) skill provides two sub-skills for working with completed evaluations:
 
@@ -424,7 +424,7 @@ In the [Cortex Code](/user-guide/cortex-code/cortex-code) CLI, the [`agent-studi
 
 For more information about Cortex Code skills, see [Cortex Code CLI - Skills](/user-guide/cortex-code/extensibility#label-extensibility-skills).
 
-### Snowsight
+### Inspect evaluation results in Snowsight
 
 The **Evaluations** tab for an agent in Snowsight gives you an overview of every evaluation run and its summary results. The tab shows evaluation runs across every version of the agent. Selecting a specific version in the agent versions panel doesn’t filter this tab.
 
@@ -523,7 +523,7 @@ The execution trace for that evaluation input (one turn). This includes planning
 
 Each span in the turn’s trace, with the resolved agent version and input, processing, and output information for that step of agent execution. This information is the same as that provided by [agent monitoring](/user-guide/snowflake-cortex/cortex-agents-monitor#label-cortex-agent-log-info).
 
-### SQL
+### Inspect evaluation results with SQL
 
 Important
 
@@ -606,6 +606,25 @@ Note
 
 The fields of `record` and `record_attributes` are subject to change, but the fields `record:"severity_text"` and `record_attributes:"snow.ai.observability.run.name"` are guaranteed to be present in AI Observability logs.
 
+## Interpret score variance across runs
+
+An evaluation run doesn’t replay a stored trace. For each input in your dataset, the run invokes your agent again through the Cortex Agents API and scores the trace that invocation produces. Version pinning fixes the two configurations around that trace:
+
+- An [agent version](#label-cortex-agent-evaluation-yaml-spec) fixes the configuration that’s invoked: the agent’s instructions, tools, and orchestration model.
+- A [metric version](#label-agent-evaluation-metric-versions) fixes the judge that scores the result: its model, prompt, rubric, and thresholds.
+
+Neither one pins the trace. Agent orchestration is non-deterministic, so repeated runs of the same dataset against the same pinned agent version and metric version can take different tool paths and produce different scores.
+
+Snowflake benchmarks the system metric judges for high scoring consistency: judging the same trace more than once returns the same score, or one very close to it. Treat score movement across runs as a signal about your agent rather than about the metric:
+
+- `answer_correctness` grades the final response against your ground truth and is usually the most stable metric, because different paths often arrive at the same answer.
+- `tool_selection_accuracy`, `tool_execution_accuracy`, and `logical_consistency` read the trace, so they expose path variability that `answer_correctness` hides. Movement in these metrics usually means the agent planned or invoked tools differently from one run to the next.
+- `tool_selection_accuracy` uses no judge at all. If its score changes between runs, the agent’s tool calls changed.
+
+Tip
+
+Before you gate a CI/CD pipeline on a threshold, run the same dataset several times to learn its normal range, then gate on that range instead of a single run’s exact score. Use [Compare evaluation runs](#label-agent-evaluation-compare-runs) with **Hide unchanged metrics** to find which inputs move between runs: a few unstable inputs tell you more about where to fix your agent than a shifted average does. Pin a committed agent version, and name the orchestration model explicitly instead of using `auto`, so a configuration change never gets mistaken for agent variance.
+
 ## Agent Evaluation YAML specification
 
 To define the YAML file to configure an Agent Evaluation, including defining custom metrics, there are three top-level keys:
@@ -669,7 +688,9 @@ When you omit `agent_version`, the evaluation targets the same version that an u
 
 Tip
 
-Pin a committed version for evaluations you want to compare over time. Because the live version is mutable, two runs against it can score differently for reasons that have nothing to do with your dataset. An alias such as `production` resolves to one version for each run, but later runs can target a different version if the alias is reassigned. Targeting a committed version such as `VERSION$3` keeps scheduled or CI/CD evaluations reproducible.
+Pin a committed version for evaluations you want to compare over time. Because the live version is mutable, two runs against it can score differently for reasons that have nothing to do with your dataset. An alias such as `production` resolves to one version for each run, but later runs can target a different version if the alias is reassigned. Targeting a committed version such as `VERSION$3` keeps the configuration under test fixed across scheduled or CI/CD evaluations.
+
+Pinning a version fixes the agent configuration that’s scored, not the agent behavior that gets scored. Each run re-invokes the agent, so every run produces a new trace. For what that means for run-to-run scores, see [Interpret score variance across runs](#label-agent-evaluation-score-variance).
 
 The following example agent configuration runs the `production` alias of an agent named `evaluated_agent` with the label `Basic evaluation`, using the dataset `evaluation_input`:
 
@@ -697,13 +718,13 @@ Note that the agent name is relative to the current database and schema. You can
 The `metrics` value is a sequence of metrics to evaluate, including your own custom metric definitions. The accepted values for pre-defined metrics are:
 
 - `answer_correctness`: Measure how closely the expected ground truth answer for a given input query matches the actual response streamed from the agent.
-- `tool_selection_accuracy` (Public Preview): Measure whether the agent invoked the expected tools to arrive at the final response. Scoring is deterministic.
+- `tool_selection_accuracy` (Public Preview): Measure whether the agent invoked the expected tools to arrive at the final response. Scoring is deterministic for a given set of tool calls.
 - `tool_execution_accuracy` (Public Preview): Measure the input and output quality of the tools called to arrive at the final response.
 - `logical_consistency`: Measure consistency across agent instructions, planning, and tool calls. This metric is *reference-free* and doesn’t use a dataset.
 
 #### System metric versions
 
-All four system metrics accept a version: `answer_correctness`, `logical_consistency`, `tool_selection_accuracy`, and `tool_execution_accuracy`. For the metrics scored by an LLM judge, a metric version pins the judge model and the prompt, rubric, and thresholds used to produce a score, so a pinned version scores consistently from run to run. `tool_selection_accuracy` accepts a version and records it with the run, but its scoring is deterministic, so its scores don’t vary by version. List a metric as a plain string to accept the current default version, or as a mapping with `name` and `version` to pin one:
+All four system metrics accept a version: `answer_correctness`, `logical_consistency`, `tool_selection_accuracy`, and `tool_execution_accuracy`. For the metrics scored by an LLM judge, a metric version pins the judge model and the prompt, rubric, and thresholds used to produce a score, so the same trace scores consistently from one run to the next. A metric version pins the judge, not the trace the judge reads: see [Interpret score variance across runs](#label-agent-evaluation-score-variance). `tool_selection_accuracy` accepts a version and records it with the run, but its scoring is deterministic for a given set of tool calls, so its scores don’t vary by version. List a metric as a plain string to accept the current default version, or as a mapping with `name` and `version` to pin one:
 
 Copy code
 
@@ -743,6 +764,8 @@ The following major versions are available. Specify only the major version to au
 Expand
 
 Show lessSee more
+
+Snowflake recommends `v3` when you evaluate long traces. `logical_consistency` sends the whole trace to its judge, so an agent that makes many tool calls per input is the most likely to approach a judge’s context window on the smaller `v1` and `v2` judges.
 
 For system metrics, you select the metric version, not the underlying judge model. Snowflake selects the judge model for that version based on the models your account allows, using [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference). If both judge models are allowed and available, Snowflake uses the Anthropic model. To select a specific judge model, define a custom metric and set its `model` key. If none of a version’s judge models are available in your region or allowed by your account’s model settings, the run fails with an error rather than silently substituting a different model. Choose a version whose models your account allows, and see [Judge model availability](#label-agent-evaluation-judge-models) for what’s available where.
 
@@ -1002,7 +1025,7 @@ Cortex Agent evaluations are subject to the following limitations:
 
 ## Cost considerations
 
-Agent Evaluations run a Cortex Agent to create output for evaluation, and LLM judges to compute the evaluation metrics. You’re charged for each run of the agent against a ground truth query. The evaluation’s LLM judges are run by the [AI\_COMPLETE](/sql-reference/functions/ai_complete) function, and you incur charges based on the model Snowflake selects for judging. Additionally, you’re charged for the following:
+Agent Evaluations run a Cortex Agent to create output for evaluation, and LLM judges to compute the evaluation metrics. You’re charged for each run of the agent against a ground truth query, and for the judge inference that scores each metric, at the rate of the [judge model for that metric version](#label-agent-evaluation-metric-versions). Additionally, you’re charged for the following:
 
 - Warehouse charges for tasks used to manage evaluation runs
 - Warehouse charges for queries used to compute evaluation metrics
@@ -1010,3 +1033,35 @@ Agent Evaluations run a Cortex Agent to create output for evaluation, and LLM ju
 - Warehouse charges to retrieve evaluation results viewed in Snowsight
 
 For more information on estimating costs, see [Understanding overall cost](/user-guide/cost-understanding-overall). Refer to the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf) for full cost information.
+
+### Track judge inference usage
+
+Snowflake issues the judge inference calls for an evaluation through the Cortex REST API, so that usage is recorded in [CORTEX\_REST\_API\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_rest_api_usage_history).
+
+To attribute judge usage to a particular evaluation run, join the request IDs recorded on the run’s `eval` spans to the `REQUEST_ID` column of the view. Each `eval` span carries its request IDs in the `ai.observability.eval.inference_request_ids` key inside the `ai.observability.eval.full_metadata` attribute:
+
+Copy code
+
+```
+WITH eval_requests AS (
+  SELECT
+    record_attributes:"snow.ai.observability.run.name"::VARCHAR AS run_name,
+    record_attributes:"ai.observability.eval.metric_name"::VARCHAR AS metric_name,
+    ids.value::VARCHAR AS request_id
+  FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS,
+    LATERAL FLATTEN(input => STRTOK_TO_ARRAY(
+      PARSE_JSON(record_attributes:"ai.observability.eval.full_metadata"::VARCHAR)
+        :"ai.observability.eval.inference_request_ids"::VARCHAR, ',')) AS ids
+  WHERE record_attributes:"ai.observability.span_type"::VARCHAR = 'eval'
+    AND record_attributes:"snow.ai.observability.run.name"::VARCHAR = 'run-1'
+)
+SELECT
+  eval_requests.run_name,
+  eval_requests.metric_name,
+  rest_usage.model_name,
+  rest_usage.tokens,
+  rest_usage.tokens_granular
+FROM eval_requests
+INNER JOIN SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_USAGE_HISTORY AS rest_usage
+  ON rest_usage.request_id = eval_requests.request_id;
+```

@@ -409,6 +409,15 @@ To determine whether the connector finished re-reading the binary log:
    - **binlog.position.rewind**: the latest position the processor read before re-reading of the binary log started.
    - **binlog.position.dml**: the current latest position read by the processor. As long as this value is lower than the rewind value above, the processor is still re-reading the binary log.
 
+Note
+
+If `binlog.position.rewind` shows `/4`, the connector was installed fresh from the registry with no prior state to record a binlog position from. `/4` is a placeholder value meaning “oldest available position,” and the `dml` vs. `rewind` comparison can’t be used to gauge progress in this case.
+
+To confirm the connector has caught up, use one of these checks instead:
+
+- **Row counts**: compare source and destination table row counts.
+- **Binlog position**: run `SHOW BINARY LOG STATUS` (MySQL 8.2 and later) or `SHOW MASTER STATUS` (MySQL 8.1 and earlier) on the source to get the current binlog head, then compare it to `binlog.position.dml`. When the gap is small and stays low as new changes arrive, the connector has caught up.
+
 ### Usage notes
 
 - After a running connector is switched to read from the earliest position, and starts running,

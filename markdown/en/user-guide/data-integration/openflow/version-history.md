@@ -6,6 +6,53 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## September 16, 2026
+
+### Control Plane Core `0.133.0`
+
+- Deployment upgrade is now triggerable from Control Plane for BYOC Deployments
+- Connector configuration parameters now refresh automatically when a connector’s version changes, eliminating the need to reload the page to see updated parameter options after an upgrade
+- Runtime and connector display names containing special characters (e.g. parentheses, quotes) are now handled correctly
+- Fixed a case where creation of multiple Snowflake Deployment at exactly the same time could lead to a failure
+- Security patches and dependency upgrades
+
+### Control Plane UI `0.92.0`
+
+- Connector install dialogs now explain why certain runtime versions are filtered out (e.g. incompatible version constraints), giving users actionable context rather than an unexplained empty list
+- Schema lookup in connector configuration now uses the query-parameter API, improving reliability and reducing failures on accounts with large schema counts
+- Gen 2 connector, runtime, and deployment names are now validated as valid Snowflake identifiers in real time as you type, surfacing naming errors before submission
+- Fixed a UI state issue where the “saving” spinner on deployment listings would remain stuck after a mutation completed successfully
+- Security patches and dependency upgrades
+
+### Data Plane Service `0.133.0`
+
+- Diagnostic bundles now recover and include a Runtime’s flow file even when a Runtime’s pods are unhealthy
+- Security patches and dependency upgrades
+
+### Data Plane UI `0.23.0`
+
+- Security patches and dependency upgrades
+
+### Runtime Operator `0.77.0`
+
+- Security patches and dependency upgrades
+
+### Ingress Controller `2026.9.9-18`
+
+- Security patches and dependency upgrades
+
+### Openflow Token Refresher `1.20.0`
+
+- Security patches and dependency upgrades
+
+### AWS Data Plane Agent `1.66.0`
+
+- Security patches and dependency upgrades
+
+### SPCS Data Plane Agent `1.49.0`
+
+- Security patches and dependency upgrades
+
 ## September 11, 2026
 
 ### SPCS Data Plane Agent 1.47.2

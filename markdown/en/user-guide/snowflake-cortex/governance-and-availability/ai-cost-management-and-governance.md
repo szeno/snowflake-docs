@@ -73,7 +73,7 @@ A [shared resource budget](/user-guide/budgets/budget-shared-resources) lets you
 
 ### Per-user quotas for AI features
 
-A [per-user quota](/user-guide/budgets/per-user-quotas) sets monthly and daily credit limits that apply to each user individually and, unlike a budget, can block usage without any stored procedure of your own. Quotas can cover warehouse compute and AI domains, including AI Functions, Cortex Agents, Cortex Code, Cortex AI Gateway, and Snowflake CoWork. Quotas are the only AI cost control with built-in enforcement: blocks are applied within minutes of the limit being reached, rather than on the periodic budget evaluation cycle, and the block is released when the cycle resets.
+A [per-user quota](/user-guide/budgets/per-user-quotas) sets per-user credit limits that apply to each user individually and, unlike a budget, can block usage without any stored procedure of your own. Quotas can cover warehouse compute and AI domains, including AI Functions, Cortex Agents, Cortex Code, Cortex AI Gateway, and Snowflake CoWork. Quotas are the only AI cost control with built-in enforcement: blocks are applied within minutes of the limit being reached, rather than on the periodic budget evaluation cycle, and the block is released when the cycle resets.
 
 Two differences from budgets are worth keeping in mind when you choose between them:
 

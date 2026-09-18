@@ -219,7 +219,7 @@ Note
 | CREATE ICEBERG TABLE … LIKE | ✔ | ✔ | ✔ | ✔ | See usage notes:   - [Snowflake managed](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-snowflake-usage-notes) - [Externally managed](/sql-reference/sql/create-iceberg-table-rest#label-create-catalog-table-rest-usage-notes) |
 | Deletion vectors | ✔ | ✔ | ✔ | N/A | Requires Iceberg v3. |
 | Clustering | ❌ | ❌ | ❌ | ❌ |  |
-| Partition evolution | ❌ | Limited support | Limited support | Limited support | We support partition evolution if it is done with an external engine. |
+| [Partition evolution](/sql-reference/sql/alter-iceberg-table-partition-evolution) | ✔ | Limited support | Limited support | Limited support | On externally managed tables, partition evolution is only supported if done with an external engine. |
 | Partition transforms | ✔ | ✔ | ✔ | ✔ | For the supported partition transforms, see:   - [Snowflake managed](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-snowflake-partitionexpressions) - [Externally managed](/sql-reference/sql/create-iceberg-table-rest#label-create-iceberg-table-rest-partitionexpressions) |
 | Positional deletes | ✔ | ✔ | ✔ | ✔ |  |
 | Snowpipe | Limited support | Limited support | Limited support | Limited support | - Currently in *Public Preview*. - See the [usage notes](/sql-reference/sql/copy-into-table#label-copy-into-table-usage-notes) for COPY INTO <table>. |
@@ -239,7 +239,6 @@ Consider the following before you use partitioned writes for Iceberg tables:
   Snowflake writes data according to the latest partition specification.
 - The [GET\_DDL](/sql-reference/functions/get_ddl) function doesn’t include the PARTITION BY clause in its output.
 - The sum of the sizes of the outputs for all partition transforms can’t exceed 1024 bytes for a single row.
-- Because partition evolution isn’t supported for Snowflake-managed tables, you must drop the table and create a new one with partitioning.
 - The DAY(), MONTH(), YEAR() partition transform parameters, which you specify within the PARTITION BY clause under table properties,
   are part of the Iceberg specification. For multiple days, months, or years, the partition expression parameter returns a partition for
   each calendar day, month, or year.

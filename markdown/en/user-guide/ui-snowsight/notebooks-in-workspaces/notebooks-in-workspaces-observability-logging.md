@@ -80,14 +80,14 @@ For more information on event table schema and column definitions, see [Event ta
 
 ## View logs for scheduled notebook runs in Snowsight
 
-Each scheduled notebook uses a notebook project object that stores deployed code, execution history, and artifacts.
+Each scheduled notebook uses a Code Bundle (formerly a Notebook Project Object) that stores deployed code, execution history, and artifacts.
 
 To view logs for scheduled runs in Snowsight:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Catalog** » **Explorer**.
-3. Search for the database and schema containing the notebook project object.
-4. Select the notebook project object, and then select the **Run history** tab.
+3. Search for the database and schema containing the Code Bundle.
+4. Select the Code Bundle, and then select the **Run history** tab.
 5. For the run you want to inspect, in the **Logs** column, select **Logs**.
 
 After you enable logging in your notebook code, your custom log messages and infrastructure initialization logs appear in this log view.

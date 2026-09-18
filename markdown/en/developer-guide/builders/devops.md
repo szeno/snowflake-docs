@@ -282,7 +282,7 @@ templating:
 ```
 
 For enterprise patterns such as multi-project setups and team collaboration, see
-[Enterprise use cases for DCM Projects](/user-guide/dcm-projects/dcm-projects-enterprise).
+[Architectural recommendations for DCM Projects](/user-guide/dcm-projects/dcm-projects-enterprise).
 
 ### Advanced: Jinja parameterization for custom scripts
 

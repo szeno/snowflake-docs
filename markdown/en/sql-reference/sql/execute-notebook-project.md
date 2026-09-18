@@ -1,5 +1,9 @@
 # EXECUTE NOTEBOOK PROJECT
 
+Note
+
+Notebook Project Objects have been renamed to **Code Bundles**. The `NOTEBOOK PROJECT` grammar on this page continues to work, including inside existing tasks and schedules. For the current command and its new capabilities, see [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) and [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles).
+
 Executes a notebook stored in a notebook project (NPO). This command runs the notebook in a non-interactive (headless) mode and is useful for CI/CD
 pipelines and other orchestrated workflows where you want to pass parameters or lock dependency versions for repeatable runs. The command can be run from:
 
@@ -30,7 +34,7 @@ EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name>
   COMPUTE_POOL = '<compute_pool_name>'
   QUERY_WAREHOUSE = '<warehouse_name>'
   RUNTIME = '<runtime_version>'
-  [ ARGUMENTS = '<parameter_string>' ]
+  [ ARGUMENTS = ( '<arg>' [ , '<arg>' ... ] ) ]
   [ REQUIREMENTS_FILE = '<path/to/requirements.txt>' ]
   [ ARTIFACT_REPOSITORIES = ( <repository_name> [ , ... ] ) ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
@@ -79,13 +83,12 @@ EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name>
 Depending on how the project and runtime are configured, you may need to set the following parameters. The descriptions below define their
 purpose and typical usage.
 
-`ARGUMENTS = 'parameter_string'`
+`ARGUMENTS = ( 'arg' [ , 'arg' ... ] )`
 :   Optionally passes one or more string arguments to the notebook at runtime, which appear as command-line arguments in the `sys.argv` list.
-    Arguments are useful for making notebook logic dynamic (for example, selecting an environment such as `env prod`).
+    Arguments are useful for making notebook logic dynamic (for example, selecting an environment such as `--env prod`).
 
-    To pass multiple arguments, specify them in a single string separated by spaces. The arguments are parsed into `sys.argv` using
-    whitespace as the delimiter. In a Python cell, access the arguments using `sys.argv[0]` for the notebook name, `sys.argv[1]` for
-    the first argument, and so on.
+    Specify each argument as a separate quoted string in the list. In a Python cell, access the arguments using `sys.argv[0]` for the
+    notebook name, `sys.argv[1]` for the first argument, and so on.
 
     Only strings are supported; other data types (such as integers or Booleans) are interpreted as NULL.
 
@@ -94,7 +97,7 @@ purpose and typical usage.
     Copy code
 
     ```
-    ARGUMENTS = 'env prod';
+    ARGUMENTS = ('--env', 'prod');
     ```
 
     Copy code
@@ -177,8 +180,8 @@ EXECUTE NOTEBOOK PROJECT "sales_detection_db"."schema"."DEFAULT_PROJ_B32BCFD4"
   MAIN_FILE = 'notebook_file.ipynb'
   COMPUTE_POOL = 'test_X_CPU'
   QUERY_WAREHOUSE = 'ENG_INFRA_WH'
-  RUNTIME = 'V2.6-CPU-PY3.12'
-  ARGUMENTS = 'env prod'
+  RUNTIME = 'V2.9-CPU-PY3.12'
+  ARGUMENTS = ('--env', 'prod')
   REQUIREMENTS_FILE = 'path/to/requirements.txt'
   ARTIFACT_REPOSITORIES = (snowflake.snowpark.pypi_shared_repository)
   EXTERNAL_ACCESS_INTEGRATIONS = ('test_EAI')

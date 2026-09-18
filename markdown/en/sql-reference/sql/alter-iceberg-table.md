@@ -7,13 +7,14 @@ Note
 To replace the catalog integration for an externally managed Iceberg table in a standard Snowflake database with a different
 catalog integration, see [SYSTEM$SET\_CATALOG\_INTEGRATION](/sql-reference/functions/system_set_catalog_integration).
 
-You can also use an ALTER ICEBERG TABLE statement to refresh a table, convert a table, or alter a structured type column. The syntax for those operations varies
-considerably. To view the syntax, parameter descriptions, usage notes, and examples for refreshing or converting an Iceberg table,
+You can also use an ALTER ICEBERG TABLE statement to refresh a table, convert a table, alter a structured type column, or evolve partition specs. The syntax for those operations varies
+considerably. To view the syntax, parameter descriptions, usage notes, and examples for these operations,
 see the following pages:
 
 - [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh)
 - [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed)
 - [ALTER ICEBERG TABLE … ALTER COLUMN … SET DATA TYPE (structured types)](/sql-reference/sql/alter-iceberg-table-alter-column-set-data-type)
+- [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution)
 
 This topic refers to Iceberg tables as simply “tables” except where specifying *Iceberg tables* avoids confusion.
 

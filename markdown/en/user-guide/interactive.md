@@ -24,7 +24,7 @@ Interactive warehouses support all table types on Snowflake:
 | --- | --- |
 | Standard tables | Best default, same performance as Interactive tables |
 | Dynamic tables | Similar to Standard tables in terms of performance, supports dynamic updates |
-| Interactive tables | Best for consistenty query latency, reserved for future capabilities |
+| Interactive tables | Best for consistent query latency, reserved for future capabilities |
 | Iceberg tables | Most flexible, lower query performance than other options |
 | Hybrid tables | Supported for surface compatibility only. Not recommended for interactive analytics workloads; use only when a hybrid table must participate in a query, such as a join with another table, that runs on an interactive warehouse. |
 
@@ -77,7 +77,7 @@ Copy code
 ALTER WAREHOUSE interactive_demo RESUME;
 ```
 
-If you have tables added to an interactive warehouse, those added tables will be proactively warmed upon warehouse resumption. Queries will be slow while the cache warms after resuming. Warming speed depends on data size and warehouse size. A XS warehouse warms roughly at 300-400MB/s. The larger the table, the longer the cache-warming time. Larger warehouses warm faster.
+If you have tables added to an interactive warehouse, those added tables will be proactively warmed upon warehouse resumption. Queries will be slow while the cache warms after resuming. Warming speed depends on data size and warehouse size. An XS warehouse warms roughly at 300-400MB/s. The larger the table, the longer the cache-warming time. Larger warehouses warm faster.
 
 The following command suspends an interactive warehouse:
 
@@ -179,7 +179,7 @@ see [Use cases](#label-interactive-when-should-i-use-them) and
 
 ### Detaching tables from an interactive warehouse
 
-You can detach one or more tables from an interactive warehouse by running an [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) command with the DROP TABLES clause on the Interactive warehouse. To run this command, the role must have the MANAGE ATTACHED TABLES or MODIFY privilege on the warehouse.
+You can detach one or more tables from an interactive warehouse by running an [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) command with the DROP TABLES clause on the interactive warehouse. To run this command, the role must have the MANAGE ATTACHED TABLES or MODIFY privilege on the warehouse.
 
 Copy code
 
@@ -193,7 +193,7 @@ The tables still exist after this operation. This ALTER WAREHOUSE clause isn’t
 
 ### Automatically handling statement timeouts
 
-To ensure Interactive Warehouses’ resources are available for high-concurrency, low-latency queries, Snowflake Interactive Warehouses have a query runtime limit of 5 seconds. You should configure a **fallback warehouse** where longer-running queries will be re-executed on a warehouse of your choice. This fallback behavior is transparent to the client issuing the query, it behaves as an internal retry.
+To ensure interactive warehouses’ resources are available for high-concurrency, low-latency queries, Snowflake interactive warehouses have a query runtime limit of 5 seconds. You should configure a **fallback warehouse** where longer-running queries will be re-executed on a warehouse of your choice. This fallback behavior is transparent to the client issuing the query. It behaves as an internal retry.
 
 Note
 
@@ -201,8 +201,8 @@ The fallback warehouse is a standard warehouse and can be shared with non-intera
 You should usually pick a warehouse size that is either the same or larger than the interactive
 warehouse.
 
-- **Timeout Threshold:** The STATEMENT\_TIMEOUT\_IN\_SECONDS for queries on Interactive Warehouses are fixed at a default and maximum of 5 seconds. If a query doesn’t complete within this window, then Snowflake automatically retries the query on the fallback warehouse.
-- **Retry logic:** When a retry on fallback warehouse occurs, the failed query time shows up in fault\_handling\_time in query profile.
+- **Timeout Threshold:** The STATEMENT\_TIMEOUT\_IN\_SECONDS for queries on interactive warehouses is fixed at a default and maximum of 5 seconds. If a query doesn’t complete within this window, then Snowflake automatically retries the query on the fallback warehouse.
+- **Retry logic:** When a retry on the fallback warehouse occurs, the failed query time shows up in fault\_handling\_time in Query Profile.
 - **Warehouse state:** The fallback warehouse must be started (or set to auto-resume) to accept the retried query. Standard credit consumption applies to the fallback warehouse once it is active.
 - **RBAC requirements:** To query with fallback support, the querying role must have USAGE on both the interactive warehouse and its fallback warehouse. To set a fallback warehouse, the administrator role must have ALTER WAREHOUSE on the interactive warehouse and USAGE on the fallback warehouse.
 
@@ -315,7 +315,7 @@ AS
 
 #### Specifying auto-refresh for an interactive table
 
-Interactive table also support automatic refresh mode, similar to dynamic tables. It supports most dynamic table features. To make an interactive table automatically refresh, specify the TARGET\_LAG clause with an interval.
+Interactive tables also support automatic refresh mode, similar to dynamic tables. It supports most dynamic table features. To make an interactive table automatically refresh, specify the TARGET\_LAG clause with an interval.
 
 When you specify TARGET\_LAG, you must also specify the WAREHOUSE clause and the name of a standard warehouse that Snowflake will use for regular
 maintenance refreshes.

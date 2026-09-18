@@ -12,7 +12,7 @@ consumption per tagged user group and evaluates spending against the budget inde
 subject to multiple budgets, each budget is evaluated independently and the user is stopped by whichever
 threshold is reached first.
 
-Shared resource-level budgets set a spending limit for a tagged group of users on a specific Snowflake CoWork object. To apply the same monthly or daily credit limit to each user, across Snowflake CoWork and other AI domains, and optionally block users who reach that limit, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+Shared resource-level budgets set a spending limit for a tagged group of users on a specific Snowflake CoWork object. To apply the same per-user credit limits to each user, across Snowflake CoWork and other AI domains, and optionally block users who reach a limit, use [per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## How shared resource-level budgets work
 

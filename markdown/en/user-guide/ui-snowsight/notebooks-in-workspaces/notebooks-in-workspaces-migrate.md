@@ -88,9 +88,9 @@ If any of the Legacy Notebooks have been scheduled, you’re prompted to resched
 
    ![Reschedule existing legacy tasks dialog with task list, Pause prior legacy notebook tasks toggle, and Reschedule tasks button](/static/images/snowsight/workspaces/notebook-migration-reschedule-modal.png)
 
-   Through the rescheduling flow, you create Notebook Project Objects (NPOs) to replace the Legacy Notebook objects. Correspondingly,
-   EXECUTE NOTEBOOK PROJECT replaces EXECUTE NOTEBOOK. Alternatively, you can follow the documentation on using SQL for
-   [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project).
+   Through the rescheduling flow, you create Code Bundles (formerly Notebook Project Objects) to replace the Legacy Notebook objects. Correspondingly,
+   EXECUTE CODE BUNDLE replaces EXECUTE NOTEBOOK. Alternatively, you can follow the documentation on using SQL for
+   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).
 3. To drop legacy tasks entirely instead of pausing them through the dialog, use the Tasks page in Snowsight or run the SQL command:
 
    Copy code

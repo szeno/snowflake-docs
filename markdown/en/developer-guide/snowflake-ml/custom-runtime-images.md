@@ -220,7 +220,7 @@ Once your custom image is registered, you can use it to run Notebook services. T
 your specialized environment with all your required dependencies.
 
 Registered custom images can be selected from advanced settings when creating, editing, and scheduling a
-notebook in the workspaces UI. You can also use a custom image when executing a notebook project using SQL with the
+notebook in the workspaces UI. You can also use a custom image when executing a Code Bundle using SQL with the
 `RUNTIME` parameter. Reference an admin-approved Custom Runtime Environment using the `cre@<name>` format.
 
 ### Prerequisites
@@ -237,6 +237,28 @@ notebook in the workspaces UI. You can also use a custom image when executing a 
   reproducibility. In this case, you must recreate the CRE.
 
 ### Example
+
+Using the `CODE BUNDLE` grammar, set the custom runtime image through the specification:
+
+Copy code
+
+```
+EXECUTE CODE BUNDLE DB.SCHEMA.MY_CODE_BUNDLE
+    ENTRYPOINT = 'proj.ipynb'
+    WITH SPECIFICATION
+    $$
+    bundle:
+      type: custom
+      compute_type: compute_pool
+      language: python
+      compute_options:
+        compute_pool: SYSTEM_COMPUTE_POOL_CPU
+        query_warehouse: MY_WH
+        runtime_version: 'cre@my_custom_env'
+    $$;
+```
+
+Using the `NOTEBOOK PROJECT` grammar, which is still supported:
 
 Copy code
 

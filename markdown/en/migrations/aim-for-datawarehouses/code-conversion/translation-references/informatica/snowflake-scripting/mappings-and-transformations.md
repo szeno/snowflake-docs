@@ -188,6 +188,8 @@ ENCODING = 'WINDOWS1252'
 EMPTY_FIELD_AS_NULL = TRUE;
 ```
 
+The Source Qualifier keeps the `tmp_sq_` naming and projection used for relational sources. Only its input changes to the positional stage read. The generated ingestion manifest records the file source and its consumers, and generated Openflow flows copy mapped files from customer object storage onto this internal stage prefix. See the [Informatica PowerCenter overview](../README).
+
 Fixed-width flat-file sources don’t have an equivalent Snowflake file format. SnowConvert emits `SSC-EWI-INF0068`, doesn’t generate a `FILE_FORMAT`, and preserves a relational read as a placeholder for manual conversion.
 
 ## Expression
@@ -814,7 +816,7 @@ FROM
 
 ### Flat file Lookup
 
-A connected flat-file Lookup follows the Use Any Value shape, but `lookup_reference` reads positional `$1` / `$2` columns from `@public.landing_stage/infpc/sources/<Folder>/<Def>/`. `SSC-EWI-INF0069` is emitted when the source file name cannot be resolved.
+A connected flat-file Lookup follows the Use Any Value shape, but `lookup_reference` reads positional `$1` / `$2` columns from `@public.landing_stage/infpc/sources/<Folder>/<Def>/`. The Lookup shares the owning folder and Source Definition landing identity with other consumers of that file.
 
 Snowflake (`Lookup_ConnectedFlatFileWithHeader_EmitsExpectedProcedureSql`):
 
@@ -824,7 +826,6 @@ Copy code
 INSERT INTO YOUR_DB.YOUR_SCHEMA.FF_LKP_Tgt_Hdr (SC_ROW_ID, CustId, CustName)
 WITH
 --** SSC-FDM-INF0070 - Use Any Value RETURNS AN ARBITRARY ROW WHEN MULTIPLE ROWS MATCH; IN SNOWFLAKE THE SELECTED ROW MAY VARY PER RUN. ADD AN ORDER BY TO THE LOOKUP SQL OVERRIDE ONLY IF A SPECIFIC ROW IS REQUIRED. **
-!!!RESOLVE EWI!!! /*** SSC-EWI-INF0069 - FLAT FILE SOURCE FILE NAME COULD NOT BE RESOLVED. LANDING PATH '@public.landing_stage/infpc/sources/Lookup_SNOW_3719618/ff_lkp_hdr/UNKNOWN_FILE' REQUIRES A MANUAL FILE BINDING. ***/!!!
 cte_lkptrans AS
 (
    WITH lookup_reference AS
@@ -838,7 +839,7 @@ cte_lkptrans AS
                $1 :: NUMBER(10, 0) AS id,
                $2 :: VARCHAR(50) AS name
             FROM
-               @public.landing_stage/infpc/sources/Lookup_SNOW_3719618/ff_lkp_hdr/UNKNOWN_FILE (FILE_FORMAT => 'Lookup_SNOW_3719618_m_Lookup_FlatFileHdr_ff_lkp_hdr')
+               @public.landing_stage/infpc/sources/Lookup_SNOW_3719618/ff_lkp_hdr/ff_lkp_hdr.csv (FILE_FORMAT => 'Lookup_SNOW_3719618_m_Lookup_FlatFileHdr_ff_lkp_hdr')
          ) ff_lkp_hdr
       QUALIFY
          ROW_NUMBER() OVER (
@@ -877,6 +878,27 @@ SELECT
 FROM
    cte_lkptrans AS sd
    ;
+```
+
+When you convert a Mapping without its Workflow and Session, the converter can’t resolve a Lookup filename stored in the Session. The Mapping-only output retains `SSC-EWI-INF0069` and `UNKNOWN_FILE`:
+
+Copy code
+
+```
+!!!RESOLVE EWI!!! /*** SSC-EWI-INF0069 - FLAT FILE SOURCE FILE NAME COULD NOT BE RESOLVED. LANDING PATH '@public.landing_stage/infpc/sources/Lookup_SNOW_3719618/ff_lkp_hdr/UNKNOWN_FILE' REQUIRES A MANUAL FILE BINDING. ***/!!!
+```
+
+When the Session uses `$$LookupDirectory` and `$$LookupFileName`, the procedure reads both values from the control-variable scope and builds the stage read with `EXECUTE IMMEDIATE`:
+
+Copy code
+
+```
+LET lookupdirectory VARCHAR := public.GetControlVariableUDF('LookupDirectory', :scope) :: VARCHAR;
+LET lookupfilename VARCHAR := public.GetControlVariableUDF('LookupFileName', :scope) :: VARCHAR;
+---- Start block 'TestFolder.m_FlatFileLookup.Lkp_DivToCode'
+EXECUTE IMMEDIATE 'CREATE OR REPLACE TEMPORARY TABLE tmp_flat_file_lookup_Lkp_DivToCode AS (SELECT $1 :: VARCHAR(3) AS LKP_divID, $2 :: VARCHAR(10) AS divCode FROM @public.landing_stage/infpc/sources/TestFolder/Lkp_DivToCode/' || :lookupdirectory || '/' || :lookupfilename || ' (FILE_FORMAT => ''TestFolder_m_FlatFileLookup_Lkp_DivToCode''))'
+---- End block 'TestFolder.m_FlatFileLookup.Lkp_DivToCode'
+;
 ```
 
 ### Unconnected Lookup
@@ -924,6 +946,27 @@ SELECT
 FROM
    cte_exptrans AS sd
    ;
+```
+
+An unconnected flat-file Lookup remains a scalar lookup, but its source is a stage read. The positional projection prefixes the Lookup fields with `lkp_`, so the subquery contains only Lookup columns and doesn’t capture columns from the calling row:
+
+Copy code
+
+```
+(
+   SELECT
+      ANY_VALUE(lkp.lkp_divCode)
+   FROM
+      (
+         SELECT
+            $1 :: VARCHAR(3) AS lkp_divID,
+            $2 :: VARCHAR(10) AS lkp_divCode
+         FROM
+            @public.landing_stage/infpc/sources/Lkp_Unconnected/division_codes.txt (FILE_FORMAT => 'm_UnconnectedFlatFileLookup_Lkp_Unconnected')
+      ) AS lkp
+   WHERE
+      EQUAL_NULL(divID, lkp.lkp_divID)
+) AS LookupCode
 ```
 
 ## Update Strategy

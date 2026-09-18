@@ -8,7 +8,7 @@ Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supporte
 
 Snowflake notebooks running in Workspaces can use [secret objects](/sql-reference/sql/create-secret) together with external access integrations (EAIs)
 so that credentials never appear as literals in notebook code. You configure secrets and EAIs in SQL (for example, in a worksheet); you then attach them to
-the notebook service, scheduler, or [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) call.
+the notebook service, scheduler, or [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) call.
 
 ## Prerequisites: setting up secrets and external access
 
@@ -153,23 +153,30 @@ Replace `_/_/github_secret` with the normalized path for your OAuth2 secret (dat
 When you schedule a notebook from Snowsight, add the EAIs and secrets the scheduled task should use in the scheduling dialog so the headless run
 inherits the same external access and credentials as interactive development.
 
-## Non-interactive runs with `EXECUTE NOTEBOOK PROJECT` and secrets
+## Non-interactive runs with `EXECUTE CODE BUNDLE` and secrets
 
-Headless runs must list both EAIs and secrets when the notebook depends on them. Pass integrations with `EXTERNAL_ACCESS_INTEGRATIONS` and pass secrets
-with `SECRETS`. For full syntax, see [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project).
+Headless runs need the external access integrations and secrets the notebook depends on. Define them in the `code_bundle.yml` specification of the
+Code Bundle (formerly a Notebook Project Object), or inline in the `EXECUTE CODE BUNDLE` statement with a `WITH SPECIFICATION` clause. For full syntax,
+see [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).
 
 Copy code
 
 ```
-EXECUTE NOTEBOOK PROJECT "<database_name>"."<schema_name>"."<project_name>"
-  MAIN_FILE = 'notebook.ipynb'
-  COMPUTE_POOL = '<compute_pool_name>'
-  RUNTIME = '<runtime_version>'
-  QUERY_WAREHOUSE = '<warehouse_name>'
-  ARGUMENTS = '<string>'
-  REQUIREMENTS_FILE = '<path/to/requirements.txt>'
-  EXTERNAL_ACCESS_INTEGRATIONS = ('integration_name')
-  SECRETS = ( <database_name>.<schema_name>.<secret_name> [ , ... ] );
+# code_bundle.yml
+bundle:
+  ...
+  external_access_integrations:
+    - <database_name>.<schema_name>.<integration_name>
+  secrets:
+    - <database_name>.<schema_name>.<secret_name>
+```
+
+Copy code
+
+```
+EXECUTE CODE BUNDLE "<database_name>"."<schema_name>"."<bundle_name>"
+  ENTRYPOINT = 'notebook.ipynb'
+  ARGUMENTS = ( '<arg>' [ , '<arg>' ... ] );
 ```
 
 Replace the placeholders with the integrations and fully qualified secrets your notebook requires.

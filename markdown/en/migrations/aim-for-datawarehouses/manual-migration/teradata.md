@@ -170,6 +170,6 @@ Flag to indicate whether the input code should be processed before parsing and t
 
 The path to a .json file that specifies new names for certain objects such as Tables, Views, Procedures, Functions, and Macros. This parameter can’t be used with the `customSchema` argument. Navigate to the [Renaming Feature](renaming-feature) to learn more about this argument.
 
-#### `--UseCollateForCaseSpecification`
+#### `--disableCollateForCaseSpecification`
 
-This flag indicates whether to use COLLATE or UPPER to preserve Case Specification functionality, for example, CASESPECIFIC or NOT CASESPECIFIC. By default, it is turned off, meaning that the UPPER function will be used to emulate case insensitivity (NOT CASESPECIFIC).
+Disables the use of COLLATE to preserve case specification functionality, such as CASESPECIFIC or NOT CASESPECIFIC. When you specify this flag, SnowConvert AI uses the UPPER and RTRIM functions to emulate case-insensitive comparisons. By default, this flag is turned off and SnowConvert AI uses COLLATE.

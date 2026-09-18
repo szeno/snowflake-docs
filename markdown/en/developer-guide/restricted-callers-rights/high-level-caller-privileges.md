@@ -181,7 +181,7 @@ OBJECT MANAGEMENT doesn’t cover the following sensitive operations. They requi
 - Alteration of the account.
 - Creation or alteration of integrations, listings, shares, and users.
 - Creation of executables (including, but not limited to, procedures, UDFs, UDTFs, tasks, alerts, Streamlit in Snowflake apps,
-  services, service classes, agents, MCP servers, dbt projects, DCM projects, notebooks, and notebook projects).
+  services, service classes, agents, MCP servers, dbt projects, DCM projects, notebooks, and Code Bundles).
 - Invocation of executables not covered by PROGRAM USAGE.
 - Execution of a job service.
 - Creation of a [programmatic access token](/user-guide/programmatic-access-tokens) (PAT).
@@ -225,7 +225,7 @@ of a procedure. Only `CALLER FULL MANAGEMENT` does.
 | Create or transfer ownership of an executable. | FULL MANAGEMENT |  |
 | Alter the execution mode of an executable (for example, `ALTER PROCEDURE ... EXECUTE AS OWNER`). | FULL MANAGEMENT |  |
 | Create a [programmatic access token](/user-guide/programmatic-access-tokens) (PAT). | FULL MANAGEMENT |  |
-| Execute a Job Service, dbt project, DCM project, notebook, or notebook project. | FULL MANAGEMENT | Execution of these entities doesn’t propagate RCR semantics, so it’s guarded at the highest level. |
+| Execute a Job Service, dbt project, DCM project, notebook, or Code Bundle. | FULL MANAGEMENT | Execution of these entities doesn’t propagate RCR semantics, so it’s guarded at the highest level. |
 | Inspect query results from outside the current RCR invocation, for example through [LAST\_QUERY\_ID](/sql-reference/functions/last_query_id), [RESULT\_SCAN](/sql-reference/functions/result_scan), or [DESC RESULT](/sql-reference/sql/desc-result). | FULL MANAGEMENT | Inspecting query results that originated *inside* the current RCR invocation doesn’t require any caller privileges. |
 
 Expand

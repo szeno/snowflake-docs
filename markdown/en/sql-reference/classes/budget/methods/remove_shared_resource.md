@@ -44,7 +44,9 @@ Copy code
 
 Returns a VARCHAR value that indicates whether or not the resource was successfully removed from the budget.
 
-If the resource could not be removed from the budget, the function returns an error message.
+If the resource can’t be removed, the method raises an error rather than returning a message. For example,
+specifying a domain that isn’t supported, or passing a reference to an object that doesn’t exist or that
+your role can’t access, raises an error.
 
 ## Access control requirements
 

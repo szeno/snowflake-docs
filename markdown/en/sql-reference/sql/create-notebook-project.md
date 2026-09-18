@@ -1,5 +1,9 @@
 # CREATE NOTEBOOK PROJECT
 
+Note
+
+Notebook Project Objects have been renamed to **Code Bundles**. The `NOTEBOOK PROJECT` grammar on this page continues to work. For the current command and its new capabilities, see [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle) and [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles).
+
 Creates a notebook project object. A [notebook project object (NPO)](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule#label-nb-in-ws-schedule-npo) links a Snowsight workspace
 to a database and schema. When the NPO is created, all files from the workspace are copied into the project in the specified database and schema.
 The notebook project can then be executed using [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project).

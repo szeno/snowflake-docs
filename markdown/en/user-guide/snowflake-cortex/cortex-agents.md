@@ -170,7 +170,7 @@ This list isn’t exhaustive. Tools that run their own compute or call other ser
 For the rates that apply to each feature, see the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
-To limit what a single run consumes, set an orchestration budget on the agent. To monitor spend for an agent object and act when that spend crosses a threshold, use [resource budgets](/user-guide/snowflake-cortex/cortex-agents-resource-budgets). To enforce monthly or daily credit limits for individual users, and optionally block users who reach their AI quota, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+To limit what a single run consumes, set an orchestration budget on the agent. To monitor spend for an agent object and act when that spend crosses a threshold, use [resource budgets](/user-guide/snowflake-cortex/cortex-agents-resource-budgets). To enforce per-user credit limits for individual users, and optionally block users who reach their AI quota, use [per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## Legal notices
 

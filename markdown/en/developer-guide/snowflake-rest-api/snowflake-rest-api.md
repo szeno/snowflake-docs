@@ -78,9 +78,6 @@ The Snowflake REST APIs supports the following resources through the correspondi
   - [API integration](/developer-guide/snowflake-rest-api/api-integration/api-integration-introduction)
   - [Use catalog integrations](/developer-guide/snowflake-rest-api/catalog-integration/catalog-integration-introduction)
   - [Use notification integrations](/developer-guide/snowflake-rest-api/notification-integration/notification-integration-introduction)
-- Using Spark Connect
-
-  - [Spark Connect](/developer-guide/snowflake-rest-api/spark-connect/spark-connect-introduction)
 - Managing tags
 
   - [Tags](/developer-guide/snowflake-rest-api/tag/tag-introduction)

@@ -72,7 +72,9 @@ AI_COMPLETE(
     - `claude-sonnet-5`
     - `gemini-2.5-flash`
     - `gemini-2.5-flash-lite`
+    - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
+    - `gemini-3.5-flash`
     - `llama4-maverick`
     - `llama4-scout`
     - `openai-gpt-4.1`
@@ -101,7 +103,9 @@ AI_COMPLETE(
     - `claude-sonnet-5`
     - `gemini-2.5-flash`
     - `gemini-2.5-flash-lite`
+    - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
+    - `gemini-3.5-flash`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -256,7 +260,8 @@ FROM image_table;
 - To process multiple documents, specify a prompt object in the function call that defines a prompt template and the associated document files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the documents in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
 - Only text and documents are supported. Video and audio files are not supported.
 - All models support these formats: `.txt`, `.md`, and `.pdf`. Claude models also support `.txt`, `.md`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.csv`, and `.xhtml`.
-- Claude models have a maximum document size of 4.5 MB. Gemini 3.1 Pro has a maximum document size of 10 MB.
+- Claude models have a maximum document size of 22 MB. Gemini models have a maximum document size of 37.5 MB.
+- Claude models accept up to 5 documents per prompt. Gemini models accept up to 20 documents per prompt. For context windows and page limits, see .
 - The function does not support custom network policies.
 - Stage names are case-insensitive; paths are case-sensitive.
 

@@ -71,24 +71,28 @@ ALTER ACCOUNT UNSET DEFAULT_PYTHON_ARTIFACT_REPOSITORY;
 
 ## Headless execution with SQL
 
-When you use the EXECUTE NOTEBOOK PROJECT command in scheduling and production workloads, include the ARTIFACT\_REPOSITORIES
-parameter as an optional argument.
+When you run a Code Bundle (formerly a Notebook Project Object) with [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) in scheduling and production
+workloads, define the artifact repositories in the Code Bundle’s `code_bundle.yml` specification under `artifact_repositories`.
 
 Copy code
 
 ```
-EXECUTE NOTEBOOK PROJECT <database_name>.<schema_name>.<project_name>
-  MAIN_FILE = 'notebook.ipynb'
-  COMPUTE_POOL = '<compute_pool_name>'
-  QUERY_WAREHOUSE = '<warehouse_name>'
-  RUNTIME = '<runtime_version>'
-  [ ARGUMENTS = '<parameter_string>' ]
-  [ REQUIREMENTS_FILE = '<path/to/requirements.txt>' ]
-  [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> ) ]
-  [ ARTIFACT_REPOSITORIES = (snowflake.snowpark.pypi_shared_repository) ];
+# code_bundle.yml
+bundle:
+  ...
+  artifact_repositories:
+    - snowflake.snowpark.pypi_shared_repository
+```
+
+Copy code
+
+```
+EXECUTE CODE BUNDLE <database_name>.<schema_name>.<bundle_name>
+  ENTRYPOINT = 'notebook.ipynb'
+  [ ARGUMENTS = ( '<arg>' [ , '<arg>' ... ] ) ];
 ```
 
 Note
 
-If both EXTERNAL\_ACCESS\_INTEGRATIONS and ARTIFACT\_REPOSITORIES parameters are specified, packages are only installed from the
+If both `external_access_integrations` and `artifact_repositories` are specified in the specification, packages are only installed from the
 artifact repositories.

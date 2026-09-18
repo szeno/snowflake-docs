@@ -46,6 +46,60 @@ Before deploying, replace the `YOUR_SCHEMA` and `YOUR_DB` placeholders in `sourc
 
 Most Data Flows follow the default path: the Data Flow becomes a dbt project, and the Control Flow Task that runs it calls `EXECUTE DBT PROJECT`. One case skips the dbt project. When a Data Flow only moves a Flat File Source into an OLE DB Destination, the conversion emits a Direct COPY instead: the Task runs a `COPY INTO` statement against the staged file, and no dbt project is generated for that Data Flow. Eligibility depends on the shape of the Data Flow, so check the generated output to see which path each Data Flow took. For the generated statements, see [Mappings and transformations](mappings-and-transformations).
 
+## Ingestion
+
+Generated flat-file reads bind to the shared `public.landing_stage`, and Flat File Destinations unload to it. Files consumed by the reads must be in the stage before the converted code runs. The conversion inventories each read, binds it to a stable stage prefix, and writes an ingestion manifest with importable Openflow flows that land the files.
+
+| Generated file | Contents |
+| --- | --- |
+| `ingestion-manifest.json` | One entry per landed source: the owning package and connection manager, original locations, bound stage prefix, selected file or pattern, generated consumers, and expected object-store and stage paths. With an artifacts path and session timestamp, find it at `<artifacts path>/ingestion/<session timestamp>/ingestion-manifest.json`. Without a timestamp, the timestamp segment is omitted. Without an artifacts path, find it at `ETL/ingestion-manifest.json`. |
+| `ETL/openflow/SnowConvert ETL Landing.json` | An Openflow flow that lists, fetches, and puts your source files into the landing stage from an S3-compatible store. `SnowConvert ETL Landing (Azure).json` and `SnowConvert ETL Landing (GCS).json` are the Azure Blob Storage and Google Cloud Storage variants of the same flow. |
+
+Expand
+
+Show lessSee more
+
+### Landing the files
+
+1. **Read the manifest**: each source carries the bound stage prefix, the original locations found in the package, and the object-store prefix to upload to.
+2. **Map each original location to a prefix in your own object store**: SnowConvert can’t infer a bucket from `C:\Landing\Sales` or from a UNC share, so that mapping is yours to decide. The stage side of the mapping is already fixed by the generated SQL.
+3. **Import the flow that matches your object store**: every component is emitted disabled. The flow carries parameter names such as `SOURCE_BUCKET`, `SOURCE_ENDPOINT`, and `SOURCE_REGION` plus Snowflake connection settings, never values or credentials. Fill in the parameters and credentials service, then enable the flow. The canvas has one process group per package and a `Shared` group for project-level connection managers. A source that still needs a customer mapping, such as a connection string built from an SSIS expression, is omitted.
+4. **Confirm the files landed**: `LIST @public.landing_stage/ssis/` shows the objects that arrived under the generated prefixes.
+5. **Run the converted code**: the Direct COPY tasks, dbt projects, and orchestration procedures all read from those prefixes. Destination keys stay the same on every run, so `COPY INTO` load history keeps working.
+
+### Stage prefixes
+
+Each converted read binds to a prefix built from the SSIS identity that owns the file, not from the original folder:
+
+| Source | Bound stage prefix |
+| --- | --- |
+| Flat File Source with a package connection manager | `ssis/<package>/<connection manager>/` |
+| Flat File Source with a project connection manager | `ssis/projects/<connection manager>_<12 hexadecimal characters>/` |
+| Excel Source | `ssis/<package>/`, the package folder without a connection manager segment |
+| Any of those inside a ForEach File container | The same prefix followed by the normalized enumerated folder, so `C:\Landing\Sales` becomes `c/landing/sales/` and `\\corp-fs\finance\incoming` becomes `unc/corp_fs/finance/incoming/` |
+
+Expand
+
+Show lessSee more
+
+A read of one exact file keeps the file name observed in the package, so a `FinanceLoad` package whose `OrdersFile` connection manager points at `\\corp-fs\finance\incoming\orders.csv` reads `@public.landing_stage/ssis/FinanceLoad/OrdersFile/orders.csv`. When the package doesn’t resolve to a file name, the path keeps `UNKNOWN_FILE` and no destination is invented for it.
+
+### ForEach File containers
+
+A ForEach File container is the only shape where a file pattern, subfolder recursion, or a folder-only connection string is eligible. The land prefix carries the enumerated folder. FileSpec becomes the `PATTERN`, and TraverseSubfolders decides whether nested keys are preserved.
+
+When the body is eligible, the loop collapses into a single patterned load: see [Direct COPY](mappings-and-transformations#direct-copy). A nested or otherwise ineligible body keeps the loop and falls back to `LIST` plus a cursor over the same bound prefix, as described in [ForEach Loop Containers](#foreach-loop-containers).
+
+### Sources that are inventoried
+
+The manifest covers the reads that can bind to the landing stage:
+
+- Flat File Sources with a delimited connection manager.
+- Flat File Sources with a fixed-width connection manager when every column declares a width. The generated SQL slices those rows with `SUBSTR`.
+- Excel Sources.
+
+MultiFlatFile connection managers aren’t inventoried, and neither is a fixed-width connection manager whose column layout is incomplete.
+
 ## Data flow components
 
 These SSIS Data Flow sources, transformations, and destinations are supported. Unlisted Data Flow components generate EWI [SSC-EWI-SSIS0001](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0001). Raw File Source, Raw File Destination, and XML Source are not yet available. For a before/after example of each, see [Mappings and transformations](mappings-and-transformations).
@@ -53,9 +107,9 @@ These SSIS Data Flow sources, transformations, and destinations are supported. U
 | Component | Category | dbt mapping | Naming | Status |
 | --- | --- | --- | --- | --- |
 | [Microsoft.OLEDBSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/ole-db-source?view=sql-server-ver17) | Source | Staging model | stg\_raw\_\_{component\_name} | Available |
-| [Microsoft.FlatFileSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/flat-file-source?view=sql-server-ver17) | Source | Staging model | stg\_raw\_\_{component\_name} | Available |
+| [Microsoft.FlatFileSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/flat-file-source?view=sql-server-ver17) | Source | Staging model | stg\_raw\_\_{component\_name} | Available. See [Ingestion](#ingestion) |
 | [Microsoft.DataReaderSourceAdapter / Microsoft.ADONETSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/ado-net-source?view=sql-server-ver17) | Source | Staging (`source()` or embedded SQL) | stg\_raw\_\_{component\_name} | Available |
-| [Microsoft.ExcelSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/excel-source?view=sql-server-ver17) | Source | Staging (READ\_EXCEL UDF) | stg\_raw\_\_{component\_name} | Available with limitations |
+| [Microsoft.ExcelSource](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/excel-source?view=sql-server-ver17) | Source | Staging (READ\_EXCEL UDF) | stg\_raw\_\_{component\_name} | Available with limitations. See [Ingestion](#ingestion) |
 | [Microsoft.SSISOracleSrc](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/oracle-source?view=sql-server-ver17) | Source | Staging | stg\_raw\_\_{component\_name} | Available with limitations |
 | [Microsoft.DerivedColumn](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/transformations/derived-column-transformation?view=sql-server-ver17) | Transformation | Intermediate (SELECT with expressions) | int\_{component\_name} | Available |
 | [Microsoft.DataConvert](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/transformations/data-conversion-transformation?view=sql-server-ver17) | Transformation | Intermediate (CAST) | int\_{component\_name} | Available |
@@ -76,7 +130,7 @@ These SSIS Data Flow sources, transformations, and destinations are supported. U
 | [Microsoft.OLEDBCommand](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/transformations/ole-db-command-transformation?view=sql-server-ver17) | Transformation | Incremental mart + delete/update macro | {target} | Available |
 | Script Component | Transformation | EWI [SSC-EWI-SSIS0001](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0001) | — | Not yet available |
 | [Microsoft.OLEDBDestination](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/ole-db-destination?view=sql-server-ver17) | Destination | Mart | {target} | Available |
-| [Microsoft.FlatFileDestination](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/flat-file-destination?view=sql-server-ver17) | Destination | Mart | {target} | Available |
+| [Microsoft.FlatFileDestination](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/flat-file-destination?view=sql-server-ver17) | Destination | Mart | {target} | Available. Unloads to the stage prefix described in [Ingestion](#ingestion) |
 | [Microsoft.ExcelDestination](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/excel-destination?view=sql-server-ver17) | Destination | Mart | {target} | Available |
 | [Microsoft.SSISOracleDst](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/oracle-destination?view=sql-server-ver17) | Destination | Mart | {target} | Available |
 
@@ -90,7 +144,7 @@ These SSIS Control Flow tasks and containers are supported:
 
 | Element | Category | Conversion target | Status | Notes |
 | --- | --- | --- | --- | --- |
-| [Microsoft.Pipeline (Data Flow Task)](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/data-flow?view=sql-server-ver17) | Task | dbt project or Direct COPY | Available | Eligible Flat File Source to OLE DB Destination graphs emit COPY and no dbt project |
+| [Microsoft.Pipeline (Data Flow Task)](https://learn.microsoft.com/en-us/sql/integration-services/data-flow/data-flow?view=sql-server-ver17) | Task | dbt project or Direct COPY | Available | Eligible Flat File Source to OLE DB Destination graphs emit COPY and no dbt project. Staged files come from [Ingestion](#ingestion) |
 | [Microsoft.ExecuteSQLTask](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/execute-sql-task?view=sql-server-ver17) | Task | Inline SQL or stored procedure | Available | See [Execute SQL Task](#execute-sql-task) |
 | [Microsoft.ExecutePackageTask](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/execute-package-task?view=sql-server-ver17) | Task | Inline EXECUTE TASK or CALL | Available | See [Execute Package Task](#execute-package-task) |
 | [Microsoft.SendMailTask](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/send-mail-task?view=sql-server-ver17) | Task | SYSTEM$SEND\_EMAIL | Available with limitations | See [Send Mail Task](#send-mail-task) |
@@ -99,7 +153,7 @@ These SSIS Control Flow tasks and containers are supported:
 | [Microsoft.ExpressionTask](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/expression-task?view=sql-server-ver17) | Task | Assignment (:=) or SELECT | Available | Converts SSIS expressions to Snowflake Scripting assignments |
 | [STOCK:SEQUENCE (Sequence Container)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/sequence-container?view=sql-server-ver17) | Container | Inline sequential | Available | See [Sequence Containers](#sequence-containers) |
 | [STOCK:FORLOOP (For Loop Container)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/for-loop-container?view=sql-server-ver17) | Container | WHILE when Init/Eval/Assign present; else once + EWI | Available with limitations | See [For Loop Containers](#for-loop-containers) |
-| [STOCK:FOREACHLOOP (File)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | LIST / CURSOR | Available with limitations | Stage mapping [SSC-EWI-SSIS0014](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014) |
+| [STOCK:FOREACHLOOP (File)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | LIST / CURSOR | Available with limitations | Stage mapping [SSC-EWI-SSIS0014](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014); enumerated folder prefixes are described in [Ingestion](#ingestion) |
 | [STOCK:FOREACHLOOP (ADO)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | Cursor + variable assignments | Available with limitations | Source query placeholder emits [SSC-EWI-SSIS0004](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0004) |
 | [STOCK:FOREACHLOOP (From Variable)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | FLATTEN + RESULT\_SCAN | Available | Iterates values from a variable collection |
 | [STOCK:FOREACHLOOP (other)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | EWI stub | Not yet available | Item, NodeList, SMO, HDFS, SchemaRowset |

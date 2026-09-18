@@ -62,7 +62,7 @@ Note
 Warehouses are object instances, so the second argument must be a `SYSTEM$REFERENCE` to the
 specific warehouse rather than a plain warehouse name.
 
-## Creating a budget for warehouses in Snowsight
+## Create a budget for warehouses in Snowsight
 
 You can create and configure budgets for warehouses directly in Snowsight using a guided user
 interface.

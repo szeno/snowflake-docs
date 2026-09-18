@@ -248,7 +248,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
+- [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
 - [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
+- [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
+- [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
@@ -329,6 +334,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Aug 4, 2026: Gateway Monitoring & A/B Testing (General availability)](/release-notes/2026/other/2026-08-04-gateway-monitoring-ab-testing-ga)
 - [Aug 4, 2026: Multi-party Approval (General availability)](/release-notes/2026/other/2026-08-04-multi-party-approval-ga)
 - [Aug 3, 2026: ACCESS\_HISTORY view: New agents\_info column](/release-notes/2026/other/2026-08-03-access-history-agents-info-column)
+- [Aug 03, 2026: Notebook Project Objects are now Code Bundles](/release-notes/2026/other/2026-08-03-code-bundles-rename)
 - [Aug 3, 2026: Inline Stored Procedures for hybrid tables (Public preview)](/release-notes/2026/other/2026-08-03-inline-stored-procedures-hybrid-tables-preview)
 - [Aug 3, 2026: Organization Hub (General availability)](/release-notes/2026/other/2026-08-03-organization-hub-ga)
 - [Aug 03, 2026: AI Agents Inventory in the Trust Center AI Security tab (Preview)](/release-notes/2026/other/2026-08-03-trust-center-ai-agents-inventory-preview)

@@ -27,7 +27,7 @@ To view a list of release note announcements, filtered by date and release type,
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | TBD | TBD |  |
 | [Node.js Driver](/release-notes/clients-drivers/nodejs) | TBD | TBD |  |
-| [ODBC Driver](/release-notes/clients-drivers/odbc) | 3.21.0 | 08-Oct-2026 |  |
+| [ODBC Driver](/release-notes/clients-drivers/odbc) | TBD | TBD |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | TBD | TBD |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | TBD | TBD |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
@@ -51,11 +51,13 @@ Show lessSee more
 | Client | Version | Date | BCR? |
 | --- | --- | --- | --- |
 | [.NET Driver](/release-notes/clients-drivers/dotnet) | 6.1.0 | 03-Sep-2026 |  |
+| 6.2.0 | 17-Sep-2026 |  |
 | [Go Snowflake Driver](/release-notes/clients-drivers/golang) | 2.2.0 | 03-Sep-2026 |  |
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | 4.3.4 | 03-Sep-2026 |  |
 | [Node.js Driver](/release-notes/clients-drivers/nodejs) | 3.3.0 | 03-Sep-2026 |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 3.20.0 | 03-Sep-2026 |  |
+| 3.21.0 | 10-Sep-2026 |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | 4.2.0 | 03-Sep-2026 |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | TBD | TBD |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |

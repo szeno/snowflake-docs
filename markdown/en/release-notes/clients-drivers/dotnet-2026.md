@@ -10,6 +10,18 @@ Snowflake uses semantic versioning for .NET Driver updates.
 
 See [.NET Driver](/developer-guide/dotnet/dotnet-driver) for documentation.
 
+## Version 6.2.0 (September 17, 2026)
+
+### New features and improvements
+
+- Added `ExecuteDbDataReaderWithMemoryStream` method on `SnowflakeDbCommand` for uploading data from an in-memory `MemoryStream` via PUT without writing to disk. When `AUTO_COMPRESS=TRUE`, compression is performed in-memory by default; set `SF_PUT_DISABLE_IN_MEMORY_COMPRESS=true` to use temporary files instead.
+- `FILE_TRANSFER_MEMORY_THRESHOLD` connection parameter now also controls the in-memory buffer limit during PUT encryption. When the encrypted payload exceeds this threshold, the driver spills to a temporary file. Set to `-1` to keep encryption entirely in memory (no disk spill). Defaults to 1 MB when not specified.
+- Added the opt-in `WORKLOAD_IDENTITY_HOST` connection property, overriding the AWS STS endpoint used by `WORKLOAD_IDENTITY` authentication. It accepts a bare host or a full URL and applies no partition or domain-suffix mapping; the value is normalized (the scheme defaults to `https`, a default port and trailing slashes are dropped) and applies to every AWS attestation flow. When unset - the default - the regional endpoint is used exactly as before. It is rejected for non-AWS workload identity providers.
+
+### Bug fixes
+
+- Fixed `ExecuteReader(CommandBehavior.SchemaOnly)` to send `describeOnly=true` to the server, returning column metadata without executing the query. Previously the `CommandBehavior` parameter was ignored.
+
 ## Version 6.1.0 (September 3, 2026)
 
 ### New features and improvements

@@ -99,10 +99,6 @@ CREATE COMPUTE POOL [ IF NOT EXISTS ] <name>
 
     You can also set `placement_group` to `DISTRIBUTED`. In this case, Snowflake attempts to distribute compute pool nodes across all available placement groups to maintain an even distribution across multiple placement groups so that the groups are more fault tolerant. For more information, see [Compute pool placement](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-placement-group).
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Backup instance types for compute pools is a [preview feature](/release-notes/preview-features) available to all accounts.
-
 `BACKUP_INSTANCE_FAMILIES = ( 'instance_family_name' [ , ... ] )`
 :   An ordered list of instance families to use as fallbacks when the primary `INSTANCE_FAMILY` cannot be provisioned due to an insufficient capacity error (ICE). Snowflake always attempts the primary family first, then tries each backup family in the order you specify.
 

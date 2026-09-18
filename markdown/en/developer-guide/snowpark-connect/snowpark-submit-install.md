@@ -1,5 +1,13 @@
 # Using Snowpark Submit
 
+Note
+
+Snowpark Submit runs batch Spark workloads on warehouse compute, but it also requires a Snowpark Container Services compute pool, which you
+provision and manage. For new batch workloads, consider submitting Spark jobs as Code Bundles instead: they run on
+warehouse compute with no Snowpark Container Services compute pool required, using either a SQL statement (`EXECUTE CODE BUNDLE`) or the REST
+API for external orchestrators such as Apache Airflow and CI/CD systems. See
+[Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle).
+
 Snowpark Submit lets you run batch-oriented Spark workloads directly on Snowflake’s infrastructure. You package your application as a
 Python script or a Scala/Java JAR, then use the Snowpark Submit CLI to submit it. The job runs in cluster mode on Snowpark Container Services with no external
 Spark cluster required.
