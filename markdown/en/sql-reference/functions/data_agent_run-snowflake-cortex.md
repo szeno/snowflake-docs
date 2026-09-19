@@ -259,6 +259,29 @@ SELECT
   ) AS resp;
 ```
 
+Run an agent in a [Personal Database](/user-guide/personal-databases) and create a thread automatically:
+
+Copy code
+
+```
+SELECT TRY_PARSE_JSON(
+  SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+    '"USER$JSMITH".PUBLIC.MY_AGENT',
+    $${
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "What are some types of products?" }
+          ]
+        }
+      ]
+    }$$,
+    TRUE
+  )
+) AS resp;
+```
+
 Run a specific committed version of an agent:
 
 Copy code

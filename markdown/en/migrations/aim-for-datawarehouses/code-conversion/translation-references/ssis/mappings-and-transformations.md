@@ -130,6 +130,8 @@ An Excel Source becomes a **staging model** that reads the worksheet through the
 
 The workbook is bound to the landing stage, and an `excel_raw_data` CTE reads it with `TABLE(excel_source_udf('<stage path>', '<worksheet>', '<HDR flag>'))`. A `parsed_data` CTE then types each column: text columns are cast with `:: VARCHAR`, and numeric, date, timestamp, time, and Boolean columns use the matching `TRY_TO_` function, so a value that can’t be parsed becomes null instead of failing the load. The original Excel connection string is kept as a comment at the top of the model. When the connection sets `HDR=NO`, the worksheet has no header row and the columns are named `F1`, `F2`, and so on.
 
+The workbook is also inventoried for ingestion, under the package folder alone: an Excel connection manager adds no segment of its own, so the manifest entry and the UDF read the same `ssis/<package>/` prefix.
+
 #### Example
 
 Snowflake (`stg_raw__excel_source.sql`):
@@ -232,7 +234,11 @@ A Flat File Source becomes a **staging model** that reads the file from the land
 
 The staging model is named `stg_flat_file__<component>` and reads the file positionally: the first column becomes `$1`, the second `$2`, and so on, each cast to the type that the connection manager declares and aliased to the column name. The file itself is read from `@public.landing_stage/ssis/<package>/<connection manager>/<file>`, and the flat file connection manager becomes a named file format called `<package>_<data flow>_<component>` that carries the field delimiter, the encoding that matches the code page, and `NULL` handling.
 
+That prefix follows the connection manager’s identity. A package-local connection manager binds `ssis/<package>/<connection manager>/`, while a project-level one binds `ssis/projects/<connection manager>_<identity>/`, so every package that resolves the same project connection manager reads one prefix. A connection manager driven by a [ForEach File Enumerator](README#foreach-loop-containers) also carries the enumerated folder, and the read becomes a pattern over that prefix rather than a single file, with the nested path segments included when the enumerator is recursive.
+
 When the connection manager puts column names in the first data row, the model filters that row out with `WHERE METADATA$FILE_ROW_NUMBER > 1`. When the component doesn’t retain `NULL` values, each column is wrapped in `COALESCE` with a default for its type, so an empty field becomes that default instead of `NULL`. When the component retains `NULL` values, the same model is generated without the `COALESCE` calls. A fixed-width connection manager is read with `SUBSTR` over `$1` instead of positional columns.
+
+The read is also inventoried for ingestion. A delimited connection manager becomes a source in the generated ingestion manifest, which is what lands the file under the prefix the model reads. A Multiple Flat Files connection manager isn’t inventoried, and a fixed-width one is inventoried only when every column declares a width. For how a file reaches that prefix, see the [SSIS overview](README).
 
 #### Example
 
@@ -1456,16 +1462,113 @@ SKIP_HEADER = 1
 EMPTY_FIELD_AS_NULL = TRUE;
 ```
 
-Snowflake (`stages.sql`):
+#### Limitations
+
+Every converted flat-file read binds to the generated `public.landing_stage`. That stage is internal, so a `COPY INTO` statement finds a file only once the file has been landed under the prefix it reads. The conversion also writes an ingestion manifest and an Openflow flow definition that carry those same prefixes. Import the flow into Openflow, fill in the bucket, region, endpoint, and credential parameters for the object storage that holds your source files, and enable it. Each object then lands where its `COPY INTO` expects it, so keep the stage name and the subfolder layout that those statements read.
+
+#### ForEach File loads
+
+Not every ForEach File body collapses. SnowConvert AI chooses among patterned COPY, a retained loop that still emits Direct COPY, or a complete fallback to a dbt project.
+
+The bound prefix is `ssis/<package>/<connection manager>/<enumerated folder>/`. The examples below use package `ForEachFlatFileLoad`, connection manager `OrdersFlatFile`, and enumerated folder `c/landing/sales` (from `C:\landing\sales`).
+
+**Collapsed patterned COPY (non-recursive)**
+
+When the ForEach File enumerator can be replaced by a single stage pattern, orchestration emits one `COPY INTO` with a non-recursive `PATTERN`. There is no dbt project.
 
 Copy code
 
 ```
--- SnowConvert land zone: every converted flat-file read and unload binds to this stage.
-CREATE STAGE IF NOT EXISTS public.landing_stage
-  COMMENT = 'SnowConvert-generated land zone. Retarget URL/integration; keep the name and subfolder layout.';
+:force:
+
+CREATE OR REPLACE TASK public.foreachflatfileload_process_files
+WAREHOUSE=DUMMY_WAREHOUSE
+AFTER public.foreachflatfileload
+AS
+BEGIN
+   COPY INTO sales.customer_orders (
+      customer_id,
+      customer_name
+   )
+   FROM
+   (
+      SELECT
+         $1 :: NUMERIC,
+         $2 :: VARCHAR(50) :: VARCHAR(20)
+      FROM
+         @public.landing_stage/ssis/ForEachFlatFileLoad/OrdersFlatFile/c/landing/sales/ (FILE_FORMAT => 'ForEachFlatFileLoad_Process_Files_Data_Flow_Task_Orders_Source')
+   )
+   PATTERN = 'sales_[^/]{2}_[^/]*\.csv';
+END;
 ```
 
-#### Limitations
+A folder-only Flat File connection string uses the same collapsed patterned COPY.
 
-Every converted flat-file read binds to the generated `public.landing_stage`. Retarget its URL or storage integration for your account, and keep the stage name and the subfolder layout that the `COPY INTO` statements expect.
+**Collapsed patterned COPY (recursive)**
+
+When the enumerator is recursive, the `COPY INTO` statement uses `PATTERN = '(?:[^/]+/)*sales_[^/]{2}_[^/]*\.csv'` to include nested path segments.
+
+**Retained loop with Direct COPY**
+
+Nested Sequence containers, rich bodies (for example row-count variables), and observable downstream variable use keep the ForEach loop. Orchestration still emits Direct COPY inside the loop body. These shapes are not collapsed to a single patterned `COPY INTO`.
+
+Copy code
+
+```
+:force:
+
+LIST @public.landing_stage/ssis/ForEachFallbackLoad/OrdersFlatFile/c/landing/sales PATTERN = '.*/.*\.csv';
+LET file_cursor CURSOR
+FOR
+   SELECT
+      REGEXP_SUBSTR($1, '[^/]+$') AS FILE_VALUE,
+      '@' || $1 AS STAGE_FILE_PATH
+   FROM
+      TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+   WHERE
+      $1 NOT LIKE '%ssis/ForEachFallbackLoad/OrdersFlatFile/c/landing/sales/%/%';
+FOR file_row IN file_cursor DO
+   User_CurrentFileName := :file_row.FILE_VALUE;
+   CALL public.UpdateControlVariable('User_CurrentFileName', 'ForEachFallbackLoad', TO_VARIANT(:User_CurrentFileName));
+   COPY INTO sales.customer_orders (
+      customer_id,
+      customer_name
+   )
+   FROM
+   (
+      SELECT
+         $1 :: NUMERIC,
+         $2 :: VARCHAR(50) :: VARCHAR(20)
+      FROM
+         :file_row.STAGE_FILE_PATH (FILE_FORMAT => 'ForEachFallbackLoad_Process_Files_Nested_Sequence_Data_Flow_Task_Orders_Source')
+   );
+END FOR;
+```
+
+**Complete fallback to dbt**
+
+Ineligible shapes (dynamic file specs, non-trivial derived columns, and similar) retain complete fallback artifacts: LIST/CURSOR orchestration plus `EXECUTE DBT PROJECT`. They are not Direct COPY collapses.
+
+Copy code
+
+```
+:force:
+
+!!!RESOLVE EWI!!! /*** SSC-EWI-SSIS0014 - THE FOLDER PATH REQUIRES MANUAL MAPPING TO A SNOWFLAKE STAGE. ***/!!!!!!RESOLVE EWI!!! /*** SSC-EWI-SSIS0007 - SSIS EXECUTABLE CONTAINS PROPERTY EXPRESSIONS that were not converted. ***/!!!
+LIST @<STAGE_PLACEHOLDER>/landing/sales PATTERN = '.*/.*\.csv';
+LET file_cursor CURSOR
+FOR
+   SELECT
+      REGEXP_SUBSTR($1, '[^/]+$') AS FILE_VALUE
+   FROM
+      TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+   WHERE
+      $1 NOT LIKE '%landing/sales/%/%';
+FOR file_row IN file_cursor DO
+   User_CurrentFileName := :file_row.FILE_VALUE;
+   CALL public.UpdateControlVariable('User_CurrentFileName', 'ForEachFallbackLoad', TO_VARIANT(:User_CurrentFileName));
+   LET dbt_vars_json VARCHAR := public.BuildDbtVarsJsonUDF('ForEachFallbackLoad');
+   LET full_args VARCHAR := 'build --target dev --vars ''' || dbt_vars_json || '''';
+   EXECUTE DBT PROJECT public.Process_Files_Data_Flow_Task ARGS=:full_args;
+END FOR;
+```

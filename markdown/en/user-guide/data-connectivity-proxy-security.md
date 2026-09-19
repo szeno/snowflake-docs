@@ -90,8 +90,14 @@ remain in Snowflake and are never transmitted to the agent.
 
 ## Corporate proxy support
 
-The agent includes a built-in CONNECT tunnel fallback for environments where a direct TLS connection to Snowflake’s relay is unavailable.
-This fallback is automatic and requires no configuration.
-
 Routing the agent’s own outbound traffic through an enterprise-managed forward proxy (HTTPS\_PROXY / CONNECT-based forwarding) isn’t
-supported. The agent host must have direct outbound access to port 443. This capability is planned for a future release.
+supported. The agent host must have direct outbound access to the required Snowflake hostnames on port 443.
+
+Every connection path requires end-to-end TLS without interception.
+
+The TLS connection between the agent and Snowflake must remain end-to-end and unmodified. Don’t use TLS inspection or decryption,
+certificate substitution, or TLS termination for DCP traffic. These controls can prevent the agent from authenticating with its
+client certificate and from establishing stable relay connections, even when a firewall allows outbound traffic on port 443.
+
+Configure firewalls, proxies, and other network security devices to bypass TLS inspection for traffic from the agent host to every
+DCP hostname listed under [DCP networking requirements](/user-guide/data-connectivity-proxy-setup#label-dcp-networking).

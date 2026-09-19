@@ -271,6 +271,8 @@ SELECT GET_DDL('CORTEX_AGENT', 'my_agent');
 +------------------------------------------------------------------------+
 ```
 
+For a [secure agent](/user-guide/snowflake-cortex/cortex-agents-secure), GET\_DDL includes the `SECURE = TRUE` property. When the owner role is not activated, the output omits `FROM SPECIFICATION` and the specification body entirely.
+
 ### Views
 
 Return the DDL used to create a view named `books_view`:

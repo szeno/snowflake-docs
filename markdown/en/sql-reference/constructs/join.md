@@ -34,6 +34,7 @@ FROM <object_ref1> [
                    ]
                    JOIN <object_ref2>
   [ ON <condition> ]
+  [ { FIRST | LAST } ( <alias> ) ]
 [ ... ]
 ```
 
@@ -50,6 +51,7 @@ FROM <object_ref1> [
                    ]
                    JOIN <object_ref2>
   [ USING( <column_list> ) ]
+  [ { FIRST | LAST } ( <alias> ) ]
 [ ... ]
 ```
 
@@ -102,6 +104,10 @@ FROM <object_ref1> [
 
     - You are migrating workloads into Snowflake that have join order directives.
     - You want to improve performance by scanning join tables in a specific order.
+
+    To choose which table is scanned first without rewriting the order in which you write the tables, add a
+    read-order clause after the `ON` or `USING` clause. For details, see
+    [the read-order clause](/sql-reference/constructs/join#label-join-read-order).
 
     Default: `INNER JOIN`
 
@@ -172,9 +178,32 @@ FROM <object_ref1> [
 
     For examples of standard and nonstandard usage, see the [examples section](#label-join-examples).
 
+`{ FIRST | LAST } ( alias )`
+:   Specifies which side of a directed join is scanned first. This clause is called the *read-order clause*.
+    `FIRST( alias )` names the table that is scanned first, and
+    `LAST( alias )` names the table that is scanned last.
+
+    A join has two sides, so the two forms are interchangeable. For
+    `o1 INNER DIRECTED JOIN o2`, specifying `FIRST(o2)` is equivalent to
+    specifying `LAST(o1)`. Use whichever form is clearer. You can specify only one read-order clause for a
+    single join.
+
+    The `alias` must name one of the two tables that the join combines. If the
+    table doesn’t have an explicit alias, use the table name.
+
+    This clause is useful when you want to set the scan order of one join inside a chain of joins. Without it,
+    you must restructure the query: move a table to the front of the `FROM` clause, parenthesize the remaining
+    join, and move the join condition to change which side is scanned first. For an example, see
+    [Set the scan order for a directed join](#label-join-examples-read-order).
+
+    For restrictions, see the [usage notes](#label-join-usage-notes).
+
+    Default: The left table is scanned first.
+
 ## Usage notes
 
 - The following restrictions apply to table functions other than SQL UDTFs:
+
   - You can’t specify the `ON`, `USING`, or `NATURAL JOIN` clause in a lateral table
     function, other than a SQL UDTF.
 
@@ -264,6 +293,33 @@ FROM <object_ref1> [
       TABLE(FLATTEN(input=>[col_a]))
       ON ... ;
     ```
+- The following restrictions apply to the read-order clause
+  (`{ FIRST | LAST } ( alias )`):
+
+  - The join must specify the `DIRECTED` keyword and an `ON` or `USING` clause. Using `FIRST` or `LAST` on a
+    join that isn’t directed returns the following error:
+
+    ```
+    001867 (42601): SQL compilation error: FIRST or LAST is only valid on a DIRECTED JOIN.
+    ```
+  - The clause isn’t supported for `CROSS DIRECTED JOIN`, `NATURAL ... DIRECTED JOIN`, or a directed join
+    that omits the `ON` and `USING` clauses. In those positions, `FIRST` or `LAST` is parsed as an alias for
+    the second table rather than as a read-order clause. If that table has no alias of its own, the statement
+    succeeds and the requested scan order is silently ignored; if it already has one, the statement fails
+    with a syntax error. Add an `ON` or `USING` clause to set the scan order.
+  - The `alias` must name one of the two tables that the join combines.
+    When one side of the join is itself a join (for example, the accumulated result of earlier joins in a
+    chain), that side can’t be named, so name the table on the other side instead. Naming anything else
+    returns the following error:
+
+    ```
+    001868 (42601): SQL compilation error: FIRST or LAST requires two direct operands, and
+    alias 'my_alias' must name one of them.
+    ```
+  - You can specify at most one read-order clause for a single join, but you can specify a read-order clause
+    on more than one join in the same query.
+  - `FIRST` and `LAST` aren’t reserved keywords. You can continue to use them as table names, column names,
+    and aliases.
 
 ## Examples
 
@@ -298,6 +354,7 @@ The following examples run queries with joins:
 - [Run a query with a natural join](#label-join-examples-natural-join)
 - [Run a query that combines joins in the FROM clause](#label-join-examples-combine-joins-in-from-clause)
 - [Run queries with joins that use the USING clause](#label-join-examples-using-clause)
+- [Set the scan order for a directed join](#label-join-examples-read-order)
 
 ### Run a query with an inner join
 
@@ -676,4 +733,81 @@ from the second table or NULL:
 |------+------|
 | a    | NULL |
 +------+------+
+```
+
+### Set the scan order for a directed join
+
+By default, a directed join scans the left table first. The following example uses `FIRST` to scan the
+right table (`t2`) first instead. The results are the same as for the corresponding inner join; only the
+scan order changes:
+
+Copy code
+
+```
+SELECT t1.col1, t2.col1
+  FROM t1 INNER DIRECTED JOIN t2
+    ON t2.col1 = t1.col1 FIRST(t2)
+  ORDER BY 1,2;
+```
+
+```
++------+------+
+| COL1 | COL1 |
+|------+------|
+|    2 |    2 |
+|    2 |    2 |
+|    3 |    3 |
++------+------+
+```
+
+Because a join has two sides, `LAST(t1)` is equivalent to `FIRST(t2)` in this query.
+
+The read-order clause is most useful when you want to set the scan order of one join in a chain of joins.
+Chained joins are combined from left to right, so in the following query the second join combines the
+result of `t1 INNER JOIN t2` with `t3`. Adding `FIRST(t3)` scans `t3` first in that join, without changing
+anything else about the query:
+
+Copy code
+
+```
+SELECT t1.col1, t2.col1, t3.col1
+  FROM t1
+    INNER JOIN t2 ON t2.col1 = t1.col1
+    INNER DIRECTED JOIN t3 ON t3.col1 = t2.col1 FIRST(t3)
+  ORDER BY 1,2,3;
+```
+
+```
++------+------+------+
+| COL1 | COL1 | COL1 |
+|------+------+------|
+|    2 |    2 |    2 |
+|    2 |    2 |    2 |
++------+------+------+
+```
+
+You can’t use `LAST` to express the same intent in this query, because the other side of that join is the
+result of `t1 INNER JOIN t2`, which doesn’t have an alias that you can name.
+
+To scan `t3` first without the read-order clause, you must restructure the query: move `t3` to the front of
+the `FROM` clause, parenthesize the other join, and move the join condition to the outer join. The following
+query is equivalent to the preceding one:
+
+Copy code
+
+```
+SELECT t1.col1, t2.col1, t3.col1
+  FROM t3
+    INNER DIRECTED JOIN (t1 INNER JOIN t2 ON t2.col1 = t1.col1)
+      ON t3.col1 = t2.col1
+  ORDER BY 1,2,3;
+```
+
+```
++------+------+------+
+| COL1 | COL1 | COL1 |
+|------+------+------|
+|    2 |    2 |    2 |
+|    2 |    2 |    2 |
++------+------+------+
 ```

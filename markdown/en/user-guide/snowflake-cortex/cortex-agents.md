@@ -49,7 +49,7 @@ Cortex Agents is built around the following concepts:
 
 | Concept | Description |
 | --- | --- |
-| **Agent** | A schema-level object that bundles the agent’s model, tools, orchestration settings, and instructions. Create it once and reuse it across interactions and applications. |
+| **Agent** | A schema-level object that bundles the agent’s model, tools, orchestration settings, and instructions. Create it once and reuse it across interactions and applications. Permanent agents persist until dropped; [temporary agents](/user-guide/snowflake-cortex/cortex-agents-temporary) last for the current session only. [Secure agents](/user-guide/snowflake-cortex/cortex-agents-secure) hide the specification from non-owner roles. |
 | **Tools** | How the agent acts on your data and systems: Cortex Analyst, Cortex Search, [code execution](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool), custom tools, and more. See [Tools](#label-cortex-agents-tools). |
 | **Orchestration** | The LLM-driven plan, use tools, reflect loop the agent runs to answer a request. You shape it with natural-language planning and response instructions. |
 | **Thread** | Persisted conversation context across turns, so your client application doesn’t manage state. Create a thread object and reference its ID in agent interactions. |

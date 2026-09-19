@@ -409,3 +409,9 @@ specify this keyword, the first, or left, table is scanned before the second, or
 `o1 INNER DIRECTED JOIN o2` scans the `o1` table before the `o2` table. If the
 `DIRECTED` keyword is added, the join type — for example, `INNER` or `OUTER` — is required.
 For more information, see [JOIN](/sql-reference/constructs/join).
+
+To scan the other table first on a directed join without changing the order in which you write the tables,
+add a read-order clause (`FIRST( alias )` or
+`LAST( alias )`) after the `ON` or `USING` clause. This is useful when
+you want to set the scan order of a single join in a chain of joins. For details, see
+[the read-order clause](/sql-reference/constructs/join#label-join-read-order).

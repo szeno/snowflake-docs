@@ -258,7 +258,7 @@ The following table lists the objects that are included in a database or schema 
 | Data metric functions (DMFs) | No |  |
 | Policies | Yes | The following kinds of policies are included in a schema or database backup:   - Column-level security (masking) - Row access policies - Tag-based masking policies   If any table included in the backup has any other kind of policy applied (for example an aggregation policy, a projection policy, or a storage lifecycle policy), backup creation fails. |
 | Grants | Yes | If you drop a role, associated ownership grants are transferred to the role that performs the DROP ROLE command. Grants other than ownership are deleted in this case. Therefore, the grants on a restored object might differ from the grants that existed when the backup was created. |
-| Database roles | No | If the backup includes a database role or any object with an ownership grant to a database role, backup creation fails. |
+| Database roles | Yes |  |
 | Object tagging | Yes |  |
 | Alerts | Yes |  |
 | Network rules | Yes |  |

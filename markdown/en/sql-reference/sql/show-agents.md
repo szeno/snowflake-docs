@@ -93,6 +93,7 @@ The command output provides Cortex Agent properties and metadata in the followin
 | `owner` | Owner role of the agent. |
 | `comment` | Comment text for the agent. |
 | `profile` | Agent profile JSON (display\_name, avatar, color). |
+| `is_secure` | Whether the agent is secure (`true` or `false`). For more information, see [Secure agents](/user-guide/snowflake-cortex/cortex-agents-secure). |
 
 Expand
 
@@ -145,6 +146,8 @@ For general information about roles and privilege grants for performing SQL acti
 
   To view results for which more than ten thousand records exist, query the corresponding view (if one exists) in the [Snowflake Information Schema](/sql-reference/info-schema).
 
+- Temporary agents created in the current session appear in the SHOW AGENTS output for that session. They are not visible to other sessions or users. See [Working with temporary agents](/user-guide/snowflake-cortex/cortex-agents-temporary).
+
 ## Examples
 
 List all agents in the current schema:
@@ -158,11 +161,11 @@ SHOW AGENTS;
 Sample output:
 
 ```
-+--------------+---------+---------------+-------------+-----------+-----------------------+-------------------------------------+
-| created_on         | name  | database_name | schema_name | owner     | comment          | profile                            |
-|--------------+---------+---------------+-------------+-----------+-----------------------+-------------------------------------|
-| 2025-09-15 17:04:37.263 +0000 | TEST_AGENT | EXAMPLE_DB   | AGENTS | TEST_ROLE | null | {"display_name":"test"} |
-+--------------+---------+---------------+-------------+-----------+-----------------------+-------------------------------------+
++-------------------------------+------------+---------------+-------------+-----------+---------+--------------------------+-----------+
+| created_on                    | name       | database_name | schema_name | owner     | comment | profile                  | is_secure |
+|-------------------------------+------------+---------------+-------------+-----------+---------+--------------------------+-----------|
+| 2025-09-15 17:04:37.263 +0000 | TEST_AGENT | EXAMPLE_DB    | AGENTS      | TEST_ROLE | null    | {"display_name":"test"}  | false     |
++-------------------------------+------------+---------------+-------------+-----------+---------+--------------------------+-----------+
 ```
 
 The following example lists agents in a specific schema:

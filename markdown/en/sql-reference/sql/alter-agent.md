@@ -13,6 +13,7 @@ Copy code
 ALTER AGENT <name> SET
   [ COMMENT = '<string>' ]
   [ PROFILE = '<string>' ]
+  [ SECURE = { TRUE | FALSE } ]
 
 ALTER AGENT <name> MODIFY LIVE VERSION SET SPECIFICATION = <specification>
 
@@ -59,6 +60,14 @@ ALTER AGENT <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
         Expand
 
         Show lessSee more
+
+    `SECURE = { TRUE | FALSE }`
+    :   Sets whether the agent is secure:
+
+        - `TRUE` marks the agent as secure. The complete specification is visible only when the owner role is activated.
+        - `FALSE` removes the secure designation. If sharing controls require an agent in a share or Native App export to remain secure, Snowflake returns error `093932` (`SHARED_AGENT_CANT_BE_UNSECURE`). Revoke the agent’s grants to shares and application roles before setting this property to `FALSE`.
+
+        For more information, see [Secure agents](/user-guide/snowflake-cortex/cortex-agents-secure).
 
 `MODIFY LIVE VERSION SET SPECIFICATION specification`
 :   Specifies the VARCHAR value containing the replacement settings for an agent as either a YAML or JSON object:
@@ -229,6 +238,7 @@ For general information about roles and privilege grants for performing SQL acti
   Fields that are not included in the new specification are removed.
 - Both YAML and JSON formats are supported for specifications.
 - Invalid specification fields result in an error.
+- Temporary agents support ALTER AGENT for LIVE version changes only. Versioning operations such as `COMMIT` are not supported for temporary agents. See [Working with temporary agents](/user-guide/snowflake-cortex/cortex-agents-temporary).
 - To control whether a missing privilege on a configured tool aborts the run, set `tool_not_accessible` on the specification’s top-level `orchestration` key, not on `models.orchestration` or `instructions.orchestration`. For details, see [Where to set the field](/user-guide/snowflake-cortex/cortex-agents-inaccessible-tool-handling#label-cortex-agents-inaccessible-tool-where-to-set).
 - Regarding metadata:
 
@@ -312,4 +322,20 @@ Copy code
 
 ```
 ALTER AGENT my_support_agent UNSET TAG cost_center;
+```
+
+Mark an agent as secure:
+
+Copy code
+
+```
+ALTER AGENT my_agent SET SECURE = TRUE;
+```
+
+Remove the secure designation:
+
+Copy code
+
+```
+ALTER AGENT my_agent SET SECURE = FALSE;
 ```

@@ -6,7 +6,73 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## September 18, 2026
+
+### AWS Data Plane Agent `1.66.1`
+
+- Fixed an issue that caused deployment upgrade to fail for BYOC deployments 1.60.0 and newer.
+
+## September 17, 2026
+
+### Runtime Server 2026.9.17.2
+
+- Security patches and dependency upgrades.
+- Private connectivity: Restored user-context authentication for Guided Wizard requests now that custom-credential Private Link requests are supported.
+- Upgraded the Runtime UI to version 0.90.0:
+  - Component State: Converted the state listing to a virtual-scroll table with consistent scrolling and column alignment.
+  - Component State: Disabled single-entry clearing when only a partial state listing is available, while preserving whole-state clearing.
+  - CDC PostgreSQL and MySQL: Replaced the single-line logical-key JSON field with a multi-line JSON editor that validates syntax before verification.
+  - Connector configuration: Hid dependency-gated steps from Summary and details when those steps weren’t shown in the wizard.
+  - Flow versioning: Added a rebase workflow for updating a versioned flow without discarding local changes.
+  - Flow operations: Added a `Stop sources` action that stops new data entering a group while allowing in-flight data to finish.
+  - SharePoint: Added explicit drive-level replication selection and persisted selected sites, drives, pages, and folders in the guided wizard.
+  - SharePoint: Added expandable previews for included pages and files in replication details.
+
+### Runtime Extensions 2026.9.17.7
+
+- CDC PostgreSQL: Expanded partition trees during publication validation so selecting a published partitioned parent or leaf no longer produces a false “not in publication” error.
+- External secrets: Added Google Cloud Secret Manager support to the Snowflake parameter provider.
+- CDC SQL Server: Added a gen 2 connector supporting Change Tracking and Change Data Capture.
+- Salesforce: Added a guarded recovery watermark for replaying incremental ingestion from an earlier timestamp. Replaying can produce duplicate records; forward timestamps are rejected to prevent skipped data.
+- SharePoint: Combined the file and group ingestion schedules into one setting while preserving existing configured cadence. If the previous values differed, the file-ingestion value takes precedence.
+- SharePoint: Corrected staged source-file removal after processing and Publish Delete.
+- CDC SQL Server: Ensured re-added tables create a fresh journal and stream instead of remaining stalled by stale schema state.
+- CDC MySQL: Rejected unsupported tagged GTID transactions with guidance to use binlog-based tracking.
+
+### Connectors 2026.9.17.1
+
+- Google Drive 0.23.0 / 0.5.0 / 0.29.0 / 0.6.0:
+  - Prevented files from being permanently skipped after interrupted downstream writes by deferring duplicate-hash persistence and retrying transient Snowflake operations.
+
 ## September 16, 2026
+
+### Runtime Server 2026.9.15.2
+
+- Security patches and dependency upgrades.
+- Gen 2 connectors: Allowed connectors to stop while components are starting or enabling.
+- Auto-scaling: Gave processors a bounded grace period to stop cleanly during node offload before forced termination.
+- Gen 2 connectors: Invalidated cached Secrets Manager values when starting a connector, making it easier to refresh values after secret rotation.
+
+### Runtime Extensions 2026.9.15.21
+
+- JMS: Ensured orderly shutdown of active and idle JMS workers during scale-down events.
+- CDC MySQL: Added support for re-reading the binary log when GTID position tracking is enabled.
+- CDC MySQL: Fell back to binlog position tracking when the replica does not preserve commit order, because GTID checkpoints are unsafe when replicated transactions reach the binary log out of commit order.
+- CDC MySQL: Removed the Experimental label from GTID position tracking mode.
+- CDC MySQL: Fixed journal generation after a primary changes without a schema change while the connector remains connected to a replica.
+- Jira Core: Populated project lead and description, project-version driver, and approver fields that could previously remain empty because required Jira Cloud expansion parameters were omitted. Customers might have seen `LEAD_ID` return `NULL` for every project.
+- CDC Databases: Continued collecting remaining DML for a table already selected for merge when the concurrent-merge limit is reached. Schema-change FlowFiles are not held back by that limit.
+- CDC SQL Server: In cursor capture mode, table listing no longer performs Change Tracking checks or reports Change Tracking guidance in missing-table warnings.
+- Table Consolidation: Added a configurable concurrent-merge limit, defaulting to 125, and reported merge-query and affected-row counters.
+- CDC PostgreSQL: Added an opt-in Legacy Compatibility Mode that uppercases destination column names and maps PostgreSQL `timestamptz` columns to `TIMESTAMP_TZ`. Use it when migrating from the legacy PostgreSQL connector, and do not change it after the gen 2 connector starts.
+- Snowpipe Streaming: Added Durable Stage Location handling for Elastic Channels.
+
+### Connectors 2026.9.15.1
+
+- Oracle Embedded License Public Sector 0.49.0:
+  - Made journal-table creation stateless and serialized it per node to prevent setup from overlapping with Snowpipe Streaming writes.
+- SQL Server CT Singletons 0.54.0:
+  - Added a Change Tracking flow for Azure SQL singleton databases. One connector instance can replicate multiple isolated databases by using a connection-pool lookup and one connection pool per database.
 
 ### Control Plane Core `0.133.0`
 

@@ -247,6 +247,15 @@ Allow every hostname in the following table. The agent connects over either rela
 network allows. Both are fully supported — you don’t need to prefer one. If you allowlist only the fallback hostname, the agent
 still works, and all relay traffic uses that hostname.
 
+Important
+
+The agent requires end-to-end TLS connectivity to these hostnames. Configure firewalls, proxies, and other network security
+devices to pass this traffic without TLS inspection or decryption, certificate substitution, or TLS termination. An outbound
+allow rule isn’t sufficient if a security device still intercepts or modifies the TLS connection.
+
+If your network applies TLS inspection by default, create a narrowly scoped no-decrypt exception for traffic from the agent host
+to these hostnames on port 443.
+
 In these patterns, `<cloud>` is the cloud provider that hosts your Snowflake account: `aws`, `azure`, or `gcp`. The segment reflects the
 hostname format only. It doesn’t mean the agent’s traffic transits that provider’s network.
 
@@ -273,7 +282,8 @@ FROM TABLE(FLATTEN(input => PARSE_JSON(SYSTEM$ALLOWLIST()))) f
 WHERE f.VALUE:type::STRING LIKE 'DCP%';
 ```
 
-If your environment uses a corporate HTTP proxy, see [Corporate proxy support](/user-guide/data-connectivity-proxy-security#label-dcp-corporate-proxy).
+For more information about forward proxy and TLS inspection restrictions, see
+[Corporate proxy support](/user-guide/data-connectivity-proxy-security#label-dcp-corporate-proxy).
 
 ### DNS
 

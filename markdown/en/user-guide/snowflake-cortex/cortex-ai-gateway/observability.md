@@ -71,7 +71,25 @@ The spans the gateway records are what it sees from the outside: one span per re
 that uses OpenTelemetry can also export its own traces to the gateway, which adds the client’s view of
 the same work, including the steps it took between requests.
 
-The gateway accepts OTLP traces over `http/protobuf` or `http/json` at
+Client telemetry is off until you turn it on in the gateway specification:
+
+Copy code
+
+```
+ALTER AI GATEWAY SNOWFLAKE FROM SPECIFICATION $$
+schema_version: 1
+models:
+  - name: '*'
+logging:
+  enabled: true
+  enable_client_telemetry: true
+$$;
+```
+
+`FROM SPECIFICATION` replaces the whole specification, so start from what `DESCRIBE AI GATEWAY` returns.
+See [Change the specification](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-change-specification).
+
+The gateway then accepts OTLP traces over `http/protobuf` or `http/json` at
 `<gateway-endpoint>/telemetry/v1/traces`, authenticated with the same programmatic access token you use
 for inference. Get the endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE`, as described in
 [Gateway endpoint](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-url-format).

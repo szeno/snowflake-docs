@@ -41,7 +41,7 @@ The command output provides Cortex Agent properties and metadata in the followin
 | `owner` | Owner role of the agent. |
 | `comment` | Comment text for the agent. |
 | `profile` | Agent profile JSON (display\_name, avatar, color). |
-| `agent_spec` | Complete JSON specification of the agent. |
+| `agent_spec` | Complete JSON specification of the agent. For a [secure agent](/user-guide/snowflake-cortex/cortex-agents-secure), this column returns NULL when the owner role is not activated in the session. |
 | `created_on` | Timestamp when the agent was created. |
 
 Expand
@@ -83,6 +83,8 @@ For general information about roles and privilege grants for performing SQL acti
   You must use double-quoted identifiers because the output column names for SHOW commands are in lowercase.
   The double quotes ensure that the column names in the SELECT list or WHERE clause match the column names
   in the SHOW command output that was scanned.
+
+- For secure agents, `agent_spec` is redacted (NULL) for non-owner sessions. The agent name, owner, profile, and other metadata columns remain visible. See [Secure agents](/user-guide/snowflake-cortex/cortex-agents-secure).
 
 ## Examples
 

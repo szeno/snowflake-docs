@@ -128,6 +128,50 @@ The following examples show how to create an agent object from Snowsight or usin
 >   $$;
 > ```
 
+### Create an agent in your Personal Database
+
+You can create a Cortex Agent in your [Personal Database](/user-guide/personal-databases). This gives you a user-specific location for developing and testing an agent without first requesting access to a shared database.
+
+Personal Database names use the `USER$<username>` format. Enclose the database name in double quotes when it contains special characters. The following example creates an agent in the `PUBLIC` schema of the Personal Database for the user `JSMITH`:
+
+Copy code
+
+```
+CREATE OR REPLACE AGENT "USER$JSMITH".PUBLIC.MY_AGENT
+  COMMENT = 'Personal Database agent'
+  FROM SPECIFICATION
+  $$
+  models:
+    orchestration: auto
+
+  instructions:
+    response: "You are a helpful assistant."
+  $$;
+```
+
+To run the agent with SQL, pass its fully qualified name to [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex):
+
+Copy code
+
+```
+SELECT TRY_PARSE_JSON(
+  SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
+    '"USER$JSMITH".PUBLIC.MY_AGENT',
+    $${
+      "messages": [
+        {
+          "role": "user",
+          "content": [
+            { "type": "text", "text": "What are some types of products?" }
+          ]
+        }
+      ]
+    }$$,
+    TRUE
+  )
+) AS resp;
+```
+
 ## Add tools
 
 After you’ve created the agent, add the tools it can use and provide instructions on how to orchestrate across them. For a description of what each tool does, see [Tools](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-tools).

@@ -327,6 +327,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `llama3.1-8b` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
 | `llama3.1-70b` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
 | `llama3.1-405b` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
+| `deepseek-v4-flash` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `deepseek-r1` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-7b` | ✔ | ✔ |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |
 | `mistral-large` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |

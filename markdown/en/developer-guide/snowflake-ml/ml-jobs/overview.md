@@ -361,7 +361,7 @@ Note
 
 ML Job Definitions are available in `snowflake-ml-python` version 1.26 and later.
 
-To create an ML Job Definition, use the :class:`MLJobDefinition` class.
+To create an ML Job Definition, use the `MLJobDefinition` class.
 The API closely mirrors the job-creation APIs. All optional parameters supported for job creation are also supported when creating job definitions.
 
 Use Function Dispatch to register individual Python functions with the `@remote` decorator.
@@ -384,7 +384,7 @@ definition = hello_world
 job1 = hello_world()
 ```
 
-Use *register()* to create job definitions from a local file, a local directory, or a stage directory.
+Use `register()` to create job definitions from a local file, a local directory, or a stage directory.
 
 Copy code
 
@@ -480,13 +480,13 @@ ray_dashboard_url = job.get_ray_dashboard_url() # copy and paste this url in bro
 
 ## Managing ML Jobs
 
-When you submit a Snowflake ML Job, the API creates an :class:`MLJob` instance. You can use it to do the following:
+When you submit a Snowflake ML Job, the API creates an `MLJob` instance. You can use it to do the following:
 
 - Track job progress through status updates
 - Debug issues using detailed execution logs
 - Retrieve the execution result (if any)
 
-You can use the `get_job` API to retrieve an :class:`MLJob` object by its ID. The following Python code shows how to retrieve an :class:`MLJob` object:
+You can use the `get_job` API to retrieve an `MLJob` object by its ID. The following Python code shows how to retrieve an `MLJob` object:
 
 Copy code
 
@@ -514,7 +514,16 @@ The Snowflake ML Job API runs payloads inside the [Snowflake Container Runtime](
 Most use cases should work “out of the box” without additional configuration.
 If you need custom dependencies, you can use `pip_requirements` to install them.
 
-To install custom dependencies, you must enable external network access using an External Access Integration. You can use the following SQL example command to provide access:
+Snowflake ML Jobs support two ways to install packages:
+
+- **External Access Integration (EAI)**: lets the job reach an external package index, such as PyPI or a private feed, over the network.
+- **Artifact repository**: serves packages to the job from a Snowflake `ARTIFACT REPOSITORY` object governed by role-based access control (RBAC), so the job doesn’t need external network access for package installs.
+
+Use one of these for a given job. If you specify both, the artifact repositories take effect and packages are installed only from those repositories.
+
+### Using an External Access Integration
+
+To install custom dependencies from an external package index, you must enable external network access using an External Access Integration. You can use the following SQL example command to provide access:
 
 Copy code
 
@@ -526,7 +535,7 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION PYPI_EAI
 
 For more information about external access integrations, see [Creating and using an external access integration](/developer-guide/external-network-access/creating-using-external-network-access).
 
-After you’ve provided external network access, you can use the `pip_requirements` and `external_access_integrations` parameters to configure custom dependencies. You can use packages that aren’t available in the container runtime environment or if you specific versions of the packages.
+After you’ve provided external network access, you can use the `pip_requirements` and `external_access_integrations` parameters to configure custom dependencies. You can use packages that aren’t available in the container runtime environment or if you need specific versions of the packages.
 
 The following Python code shows how to specify custom dependencies to the `remote` decorator:
 
@@ -677,6 +686,73 @@ job = submit_file(
 ```
 
 For more information about the `container.secrets`, see [`containers.secrets` field](/developer-guide/snowpark-container-services/specification-reference#label-spcs-spec-ref-containers-secrets).
+
+### Using artifact repositories
+
+Snowflake’s default PyPI artifact repository lets you install PyPI packages with support for [package policies](/developer-guide/udf/python/packages-policy) in your jobs. The Snowflake PyPI repo is a schema-level, RBAC-governed object: `snowflake.snowpark.pypi_shared_repository`. Because packages are served through this object, your job doesn’t need external network access to install them.
+
+You can also use a customer-hosted artifact repository as the package source for a job: for example, a Nexus, JFrog, Azure DevOps, Google Cloud Artifact Registry, or AWS CodeArtifact repository registered as a Snowflake `ARTIFACT REPOSITORY` object. To configure your own repository, see [Integrate customer-hosted Python artifact repositories](/developer-guide/udf/python/customer-hosted-python-artifact-repositories).
+
+Note
+
+Artifact repository support in Snowflake ML Jobs is available in `snowflake-ml-python` version 1.51.0 and later.
+
+#### Privilege requirements
+
+By default, the `PUBLIC` role has access to the Snowflake PyPI repo. To manage privileges, use the following commands:
+
+Copy code
+
+```
+-- To revoke access from the PUBLIC role:
+REVOKE DATABASE ROLE SNOWFLAKE.PYPI_REPOSITORY_USER FROM ROLE PUBLIC;
+
+-- To grant access to specific roles:
+GRANT DATABASE ROLE SNOWFLAKE.PYPI_REPOSITORY_USER TO ROLE <your_user_role>;
+```
+
+To use a customer-hosted repository, the role that submits the job needs the `USAGE` privilege on that artifact repository. For more information, see [Integrate customer-hosted Python artifact repositories](/developer-guide/udf/python/customer-hosted-python-artifact-repositories).
+
+#### Submitting a job with an artifact repository
+
+Pass the fully qualified repository name to the `artifact_repositories` parameter, along with the packages you want in `pip_requirements`. The parameter accepts a list, so you can specify more than one repository.
+
+The following Python code shows how to use an artifact repository with the `remote` decorator. The same parameter works the same way with `submit_file()`, `submit_directory()`, `submit_from_stage()`, and `MLJobDefinition.register()`.
+
+Copy code
+
+```
+@remote(
+  "MY_COMPUTE_POOL",
+  stage_name="payload_stage",
+  artifact_repositories=["snowflake.snowpark.pypi_shared_repository"],
+  pip_requirements=["catboost"],
+  session=session,
+)
+def my_function():
+  # Your code here
+```
+
+To install internal packages from a customer-hosted repository, specify that repository. You can list it alongside the Snowflake PyPI repo if your payload also needs public packages:
+
+Copy code
+
+```
+artifact_repositories=[
+  "my_db.my_schema.my_python_repo",
+  "snowflake.snowpark.pypi_shared_repository",
+],
+pip_requirements=["internal-package==1.2.3", "catboost"],
+```
+
+#### How multiple repositories are resolved
+
+When you specify more than one repository, all of them are exposed to the container. The package installer that runs inside the container, not the ML Job itself, determines which repository a package comes from:
+
+- If your code runs `pip install foo`, `pip` queries all configured artifact repositories and selects the best matching package version.
+- If your code runs `uv pip install foo`, `uv` checks the repositories in the configured order and uses the first repository that contains `foo`.
+
+Because the installer resolves conflicts, the same set of repositories can produce different results depending on which installer you use. For example, if both repository A and repository B contain `foo`, `uv` uses A when A is listed first, while `pip` might choose the highest compatible version across both. To make resolution predictable, list your repositories in priority order and pin package versions in `pip_requirements`.
 
 ## Examples
 

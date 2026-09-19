@@ -19,6 +19,7 @@ automatically transferred to ACCOUNTADMIN ownership.
 
 PDBs support the following object types:
 
+- Agents
 - Application services
 - Artifact repositories
 - Git repositories
@@ -30,6 +31,10 @@ PDBs support the following object types:
 
 The PDB is created when a user first interacts with the [Workspaces UI](/user-guide/ui-snowsight/workspaces).
 Workspaces are file-based entities and require storage within a Snowflake database.
+
+### Cortex Agents
+
+You can create a [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents) in the `PUBLIC` schema of your Personal Database. Personal Database names use the `USER$<username>` format. For an example that creates and runs a personal agent, see [Create an agent in your Personal Database](/user-guide/snowflake-cortex/cortex-agents-manage#label-cortex-agents-personal-database).
 
 ## Security
 

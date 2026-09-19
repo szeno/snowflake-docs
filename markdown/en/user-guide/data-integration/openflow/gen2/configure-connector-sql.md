@@ -111,10 +111,16 @@ standard workflow is download → edit → upload → commit.
 
    ```
    PUT 'file:///path/to/config.json'
-     'snow://openflow_connector/my_db.my_schema.my_connector/versions/live/config.json'
+     'snow://openflow_connector/my_db.my_schema.my_connector/versions/live/'
      AUTO_COMPRESS = FALSE
      OVERWRITE = TRUE;
    ```
+
+   Warning
+
+   The destination is the live version **directory**, not the file path. `PUT` appends the
+   source file name automatically. If you include `config.json` in the destination, it creates
+   a nested `config.json/config.json` object that shadows the real file.
 5. Commit the live version to create the default:
 
    Copy code

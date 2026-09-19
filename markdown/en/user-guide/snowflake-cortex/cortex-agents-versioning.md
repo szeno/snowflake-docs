@@ -262,7 +262,7 @@ Copy code
 LIST snow://agent/my_agent/versions/production/;
 
 -- Download the agent spec from a specific version
-GET snow://agent/my_agent/versions/VERSION$2/agent.yaml file:///tmp/;
+GET snow://agent/my_agent/versions/VERSION$2/agent_spec.yaml file:///tmp/;
 ```
 
 Stage operations are read-only and useful for auditing, debugging, and comparing versions.
@@ -344,3 +344,5 @@ The following limitations apply to Cortex Agent versioning:
   another version results in an error.
 - **Case sensitivity**: Aliases are case-sensitive when created with double-quoted identifiers; otherwise they
   are stored in uppercase.
+- **Temporary agents**: Temporary agents operate on the LIVE version only. `COMMIT`, `VERSION$N` references,
+  aliases, and `SHOW VERSIONS IN AGENT` are not supported. See [Working with temporary agents](/user-guide/snowflake-cortex/cortex-agents-temporary).

@@ -88,7 +88,7 @@ A read of one exact file keeps the file name observed in the package, so a `Fina
 
 A ForEach File container is the only shape where a file pattern, subfolder recursion, or a folder-only connection string is eligible. The land prefix carries the enumerated folder. FileSpec becomes the `PATTERN`, and TraverseSubfolders decides whether nested keys are preserved.
 
-When the body is eligible, the loop collapses into a single patterned load: see [Direct COPY](mappings-and-transformations#direct-copy). A nested or otherwise ineligible body keeps the loop and falls back to `LIST` plus a cursor over the same bound prefix, as described in [ForEach Loop Containers](#foreach-loop-containers).
+When the body is eligible, the loop collapses into a single patterned load: see [ForEach File loads](mappings-and-transformations#foreach-file-loads). A nested or otherwise ineligible body keeps the loop and falls back to `LIST` plus a cursor over the same bound prefix, as described in [ForEach Loop Containers](#foreach-loop-containers).
 
 ### Sources that are inventoried
 
@@ -153,7 +153,7 @@ These SSIS Control Flow tasks and containers are supported:
 | [Microsoft.ExpressionTask](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/expression-task?view=sql-server-ver17) | Task | Assignment (:=) or SELECT | Available | Converts SSIS expressions to Snowflake Scripting assignments |
 | [STOCK:SEQUENCE (Sequence Container)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/sequence-container?view=sql-server-ver17) | Container | Inline sequential | Available | See [Sequence Containers](#sequence-containers) |
 | [STOCK:FORLOOP (For Loop Container)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/for-loop-container?view=sql-server-ver17) | Container | WHILE when Init/Eval/Assign present; else once + EWI | Available with limitations | See [For Loop Containers](#for-loop-containers) |
-| [STOCK:FOREACHLOOP (File)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | LIST / CURSOR | Available with limitations | Stage mapping [SSC-EWI-SSIS0014](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014); enumerated folder prefixes are described in [Ingestion](#ingestion) |
+| [STOCK:FOREACHLOOP (File)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | COPY with PATTERN, or LIST / CURSOR | Available with limitations | Reads the bound landing-stage prefix, described in [Ingestion](#ingestion); an unresolved folder emits [SSC-EWI-SSIS0014](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014) |
 | [STOCK:FOREACHLOOP (ADO)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | Cursor + variable assignments | Available with limitations | Source query placeholder emits [SSC-EWI-SSIS0004](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0004) |
 | [STOCK:FOREACHLOOP (From Variable)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | FLATTEN + RESULT\_SCAN | Available | Iterates values from a variable collection |
 | [STOCK:FOREACHLOOP (other)](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) | Container | EWI stub | Not yet available | Item, NodeList, SMO, HDFS, SchemaRowset |
@@ -241,38 +241,13 @@ END LOOP;
 
 **File Enumerator (Supported)**
 
-[ForEach File Enumerator containers](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) are converted to Snowflake stage operations using the LIST command and cursor pattern:
+[ForEach File Enumerator containers](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/foreach-loop-container?view=sql-server-ver17) bind the enumerated folder to `@public.landing_stage/ssis/<package>/<connection manager>/<enumerated folder>/`. That bound prefix is the default. `LIST @<STAGE_PLACEHOLDER>` is not.
 
-Copy code
+Eligible bodies that only move a Flat File Source into an OLE DB Destination collapse to Direct COPY. Patterned, recursive, retained-loop, and complete-fallback goldens live in [ForEach File loads](mappings-and-transformations#foreach-file-loads). A flat file connection manager whose connection string names a folder instead of a file can be bound only inside a ForEach File container, because the enumerator is what supplies the file names.
 
-```
-:force:
+A container that can’t collapse keeps the loop. A nested container, a body that does more than the load, or a downstream task that reads the enumerated file name still reads the same bound prefix, this time with `LIST` and a cursor. A container whose folder can’t be resolved at all, such as one whose FileSpec comes from a property expression, falls back to `LIST @<STAGE_PLACEHOLDER>` and emits [SSC-EWI-SSIS0014](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014). Replace that placeholder with the stage that holds the folder before you run the task.
 
--- List files from Snowflake stage
-LIST @<STAGE_PLACEHOLDER>/FolderPath PATTERN = '.*/file_pattern\.csv';
-
--- Create cursor for iteration
-LET file_cursor CURSOR FOR
-   SELECT REGEXP_SUBSTR($1, '[^/]+$') AS FILE_VALUE
-   FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
-   WHERE $1 NOT LIKE '%FolderPath/%/%';
-
--- Iterate through files
-FOR file_row IN file_cursor DO
-   User_CurrentFileName := :file_row.FILE_VALUE;
-   EXECUTE DBT PROJECT public.My_DataFlow_Project ARGS='build --target dev';
-END FOR;
-```
-
-**Configuration requirements:**
-
-After migration, you’ll need to:
-
-- Replace `<STAGE_PLACEHOLDER>` with your actual Snowflake stage name
-- Ensure the folder path is correctly mapped to a Snowflake stage
-- Verify that files are properly staged in Snowflake
-
-An [EWI (SSC-EWI-SSIS0014)](../../issues-and-troubleshooting/conversion-issues/ssisEWI#ssc-ewi-ssis0014) is generated to remind you of this manual configuration step.
+The files themselves reach the landing stage through the generated ingestion artifacts. See [Ingestion](#ingestion).
 
 **ADO enumerator**
 
@@ -466,6 +441,8 @@ TASK-based Execute Package conversions run asynchronously. For synchronous behav
 ### File System Task
 
 [File System Tasks](https://learn.microsoft.com/en-us/sql/integration-services/control-flow/file-system-task?view=sql-server-ver17) convert to Snowflake stage operations (`COPY FILES` and `REMOVE`). They do not become dbt models.
+
+When the task acts on a file that a Flat File Source already binds, the generated statements use the same `@public.landing_stage/ssis/<package>/` prefixes that the load reads, so the archive follows the loaded file rather than an unrelated path. See [Ingestion](#ingestion).
 
 ##### Conversion behavior
 

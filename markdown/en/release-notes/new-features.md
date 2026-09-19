@@ -44,11 +44,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
 - [.NET Driver (v6.2.0)](/release-notes/clients-drivers/dotnet-2026)
 - [ODBC Driver (v4.0.0-rc4)](/release-notes/clients-drivers/odbc-2026)
 - [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
+- [Sep 16, 2026: Cortex Agents object enhancements (General availability)](/release-notes/2026/other/2026-09-16-cortex-agents-object-enhancements-ga)
 - [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
 - [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
@@ -137,10 +139,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [ODBC Driver (v4.0.0-rc1)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0rc1)](/release-notes/clients-drivers/python-connector-2026)
 - [ServiceNow® V2 (v5.28.1)](/release-notes/connectors/servicenow-v2)
-- [August 18, 2026: Access externally managed Apache Iceberg™ tables through Snowflake Horizon Catalog (Preview)](/release-notes/2026/other/2026-08-18-externally-managed-iceberg-tables-horizon-irc-preview)
-- [Aug 18, 2026: Power BI ingestion for Semantic View Autopilot (General availability)](/release-notes/2026/other/2026-08-18-semantic-views-power-bi-ingestion-ga)
-- [August 18, 2026: User skills in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-08-18-user-skills-preview)
-- [JDBC Driver (v4.3.3)](/release-notes/clients-drivers/jdbc-2026)
-- [Node.js Driver (v3.2.0)](/release-notes/clients-drivers/nodejs-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).
