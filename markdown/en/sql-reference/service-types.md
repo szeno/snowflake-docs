@@ -9,6 +9,7 @@ This topic contains the types of usage that can incur costs in Snowflake.
 | AI\_INFERENCE\_TOOLS | AI INFERENCE TOOLS | Credit-based usage for inference AI tool calls invoked by AI workloads. | AI and Machine Learning | AI Credits |
 | AI\_SENSITIVE\_DATA\_CLASSIFICATION | AI SENSITIVE DATA CLASSIFICATION | AI token credits for AI-enriched sensitive data classification. | Management and Governance | AI Credits |
 | AI\_SERVICES | AI SERVICES | Usage of Snowflake AI and ML services including Cortex functions. | AI and Machine Learning | Credits |
+| AI\_TRAINING | AI TRAINING | Compute used by AI Training jobs | AI and Machine Learning | AI Credits |
 | ARCHIVE\_STORAGE\_COLD | ARCHIVE STORAGE COLD | Long-term cold archive storage for infrequently accessed data. | Storage | TiB-Months |
 | ARCHIVE\_STORAGE\_COOL | ARCHIVE STORAGE COOL | Mid-tier archive storage for occasionally accessed data. | Storage | TiB-Months |
 | ARCHIVE\_STORAGE\_DATA\_RETRIEVAL | ARCHIVE STORAGE DATA RETRIEVAL | Charges for retrieving data from archive storage tiers. | Databases | TiB |
@@ -37,6 +38,7 @@ This topic contains the types of usage that can incur costs in Snowflake.
 | INTERNAL\_DATA\_TRANSFER | INTERNAL DATA TRANSFER | Data transfer between Snowflake regions or cloud providers. | Networking | TiB |
 | LOGGING | LOGGING | Storage and compute for event logging and audit trails. | Management and Governance | Credits |
 | MATERIALIZED\_VIEW | MATERIALIZED VIEWS | Serverless compute for maintaining materialized views. | Compute | Credits |
+| ONLINE\_FEATURE\_STORE\_AUTOSCALE\_COMPUTE | ONLINE FEATURE STORE AUTOSCALE COMPUTE | Compute used by Feature Store autoscale managed compute pools. | AI and Machine Learning | Credits |
 | ONLINE\_FEATURE\_STORE\_COMPUTE | ONLINE FEATURE STORE COMPUTE | Compute used by Online Feature Store | AI and Machine Learning | Credits |
 | ONLINE\_FEATURE\_STORE\_STORAGE | ONLINE FEATURE STORE STORAGE | Storage used by Online Feature Store | AI and Machine Learning | TiB-Months |
 | OPENFLOW\_COMPUTE\_BYOC | OPENFLOW COMPUTE BYOC | Openflow compute using Bring Your Own Cloud resources. | Compute | Credits |

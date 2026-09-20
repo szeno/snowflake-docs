@@ -133,11 +133,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [August 20, 2026: Cortex Agent code execution tool (Preview)](/release-notes/2026/other/2026-08-20-cortex-agents-code-execution-tool-preview)
 - [Aug 20, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-08-20-dcr)
 - [Snowflake ML Python (v1.52.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [August 19, 2026: Data movement policies (General availability)](/release-notes/2026/other/2026-08-19-data-movement-policies-ga)
-- [Aug 19, 2026: Organization Features in Organization Command Center (Preview)](/release-notes/2026/other/2026-08-19-organization-hub-command-center-features-preview)
-- [Aug 19, 2026: Organization Command Center 3rd party access configuration (Preview)](/release-notes/2026/other/2026-08-19-organization-hub-command-center-third-party-preview)
-- [ODBC Driver (v4.0.0-rc1)](/release-notes/clients-drivers/odbc-2026)
-- [Python Connector (v5.0.0rc1)](/release-notes/clients-drivers/python-connector-2026)
-- [ServiceNow® V2 (v5.28.1)](/release-notes/connectors/servicenow-v2)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).
