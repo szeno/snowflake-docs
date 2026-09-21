@@ -52,6 +52,7 @@ Additionally, you cannot execute the following commands in a reader account:
 - [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository)
 - [COPY INTO <table>](/sql-reference/sql/copy-into-table)
 - [CREATE MASKING POLICY](/sql-reference/sql/create-masking-policy)
+- [CREATE MODEL](/sql-reference/sql/create-model)
 - [CREATE PIPE](/sql-reference/sql/create-pipe)
 - [CREATE ROW ACCESS POLICY](/sql-reference/sql/create-row-access-policy)
 - [CREATE SERVICE](/sql-reference/sql/create-service)

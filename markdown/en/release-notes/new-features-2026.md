@@ -249,6 +249,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 ## Feature updates earlier in 2026
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)

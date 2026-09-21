@@ -44,6 +44,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
@@ -64,6 +65,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
 - [Sep 11, 2026: Automations in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-09-11-cowork-automations-ga)
 - [Sep 11, 2026: Second generation Openflow deployments and runtimes now available on GCP](/release-notes/2026/other/2026-09-11-openflow-gen2-deployment-runtime-gcp)
+- [ServiceNow® V2 (v5.28.2)](/release-notes/connectors/servicenow-v2)
 - [Sep 10, 2026: Using dbt artifacts for Slim CI and defer to production in dbt Projects on Snowflake (General availability)](/release-notes/2026/other/2026-09-10-dbt-artifacts-slim-ci-defer-to-production-ga)
 - [Sep 10, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-10-dcr)
 - [Sep 10, 2026: External secret providers (Preview)](/release-notes/2026/other/2026-09-10-external-secret-providers-preview)
@@ -129,9 +131,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Aug 21, 2026: Version targeting for Cortex Agent and Cortex Analyst evaluations (General availability)](/release-notes/2026/other/2026-08-21-cortex-agent-eval-version-targeting-ga)
 - [Aug 21, 2026: CoCo automations in CLI and Snowsight (Preview)](/release-notes/2026/other/2026-08-21-cortex-code-automations-preview)
 - [Aug 21, 2026: AIM-Virtualization 3.176](/release-notes/aim-virtualization/aim-virtualization-3.176)
-- [Aug 20, 2026: AI\_EXTRACT and AI\_PARSE\_DOCUMENT support for client-side encrypted stages and network-restricted accounts (General availability)](/release-notes/2026/other/2026-08-20-ai-extract-parse-document-cse-network-restrictions-ga)
-- [August 20, 2026: Cortex Agent code execution tool (Preview)](/release-notes/2026/other/2026-08-20-cortex-agents-code-execution-tool-preview)
-- [Aug 20, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-08-20-dcr)
-- [Snowflake ML Python (v1.52.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

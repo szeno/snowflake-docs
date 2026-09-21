@@ -4,6 +4,25 @@ This topic provides release notes for the Snowflake Connector for ServiceNow® V
 information, see
 [Snowflake Connector for ServiceNow](https://other-docs.snowflake.com/en/connectors/servicenow/v2/about).
 
+## Version 5.28.2 (September 11, 2026)
+
+### Behavior changes
+
+Not applicable.
+
+### New features
+
+Not applicable.
+
+### Bug fixes
+
+- Fixed an issue where calling the `CONFIGURE_SCAN_EVENT_LOG_IN_INCREMENTAL` stored procedure with `FALSE` didn’t
+  reduce `__EVENT_LOG` table scanning during deletions synchronization the way it did for inserts and updates. On
+  accounts with a large `__EVENT_LOG` table, this issue could cause the connector to scan the entire table for every
+  batch of the deletions journal.
+- Fixed an issue where the `CHECK_ROW_COUNT` procedure’s `max_sys_created_on` filter always reported a Snowflake row
+  count of 0 for connectors that have display value fetching enabled.
+
 ## Version 5.28.1 (August 19, 2026)
 
 ### Behavior changes
