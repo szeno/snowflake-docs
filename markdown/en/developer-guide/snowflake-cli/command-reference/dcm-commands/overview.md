@@ -26,6 +26,13 @@ Most DCM commands accept an optional project identifier argument and a `--target
 2. If `--target` is specified, the `project_name` from that target in `manifest.yml` is used.
 3. If neither is provided, the `default_target` from `manifest.yml` is used.
 
+The selected target continues to supply its templating configuration when you pass an explicit project identifier. The CLI still resolves
+the manifest and source files.
+
+Targets don’t select the authenticated connection, account, or active role. Use global connection options such as `--connection` and
+`--role` separately. The CLI warns when the connected account doesn’t match the target’s `account_identifier` or, during project creation,
+when the current role doesn’t match `project_owner`; it doesn’t switch the account or assume the owner role.
+
 **Examples:**
 
 Copy code

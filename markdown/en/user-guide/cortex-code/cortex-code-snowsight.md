@@ -52,6 +52,13 @@ Note
 If your account previously opted out of (or disabled) Snowflake Copilot (legacy), CoCo will also be disabled. Contact your account
 team to enable this feature for your account.
 
+Note
+
+On self-service [trial accounts](/user-guide/admin-trial-account), AI features are disabled by default.
+To enable them, an account administrator must
+[add a credit card to the account](/user-guide/admin-trial-account#label-trial-account-ai-features).
+Adding a credit card doesn’t upgrade the trial to a paid account or end the trial period.
+
 ## Use cases and benefits
 
 CoCo in Snowsight acts as an intelligent agent, helping you work more efficiently by translating natural language

@@ -246,7 +246,7 @@ supported. Supported features include those in the following list:
 | [Secure views](/user-guide/views-secure) |  |
 | Sensitive Data Classification |  |
 | [Target file size](/user-guide/tables-iceberg-manage#label-tables-iceberg-target-file-size) |  |
-| [Single-argument Iceberg partitioning](/user-guide/tables-iceberg-metadata#label-tables-iceberg-partitioning) | Partitioned tables can’t also write deletion vectors; only copy-on-write is supported for partitioned tables. |
+| [Single-argument Iceberg partitioning](/user-guide/tables-iceberg-metadata#label-tables-iceberg-partitioning) |  |
 | [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) | Versions 4.0 or newer. |
 | [Snowpark](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.DataFrameWriter.saveAsTable) | 1.33.0 or newer. |
 | Snowpark pandas API method [to\_iceberg](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/1.45.0/modin/pandas_api/modin.pandas.to_iceberg) | Only supported for Iceberg v3 when ICEBERG\_VERSION\_DEFAULT is set on the account, database, or schema. If ICEBERG\_VERSION = 3 is set at the table level, Snowpark pandas API method to\_iceberg isn’t supported. |

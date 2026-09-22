@@ -57,10 +57,10 @@ None
 ## Options
 
 `--app-name TEXT`
-:   Name of the Snowflake App Runtime to initialize. Defaults to the current directory name.
+:   Name of the Snowflake App Runtime project to initialize. Defaults to the current directory name.
 
 `--dry-run`
-:   Only print the resolved configuration values without writing app.yml. Default: False.
+:   Only print the resolved configuration values without writing `app.yml`. Default: False.
 
 `--build-eai TEXT`
 :   External access integration used during the app build.
@@ -147,7 +147,7 @@ None
 :   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
+:   Enables a silent re-authentication when the current access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
 :   Whether to opt-in to single-use refresh token semantics. Default: `False`.

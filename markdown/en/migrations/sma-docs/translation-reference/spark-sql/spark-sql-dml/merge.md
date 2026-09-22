@@ -26,7 +26,7 @@ matched_action
 
 not_matched_action
  { INSERT * |
-   INSERT (column1 [, ...] ) VALUES ( expr | DEFAULT ] [, ...] )
+   INSERT (column1 [, ...] ) VALUES ( expr | DEFAULT ] [, ...] ) }
 
 not_matched_by_source_action
  { DELETE |
@@ -140,7 +140,7 @@ PERSON_ID%FIRST_NAME%LAST_NAME%TITLE%
 Copy code
 
 ```
-MERGE INTO people_target2 pt
+MERGE INTO people_target pt
 USING people_source ps
 ON    (pt.person_id = ps.person_id)
 WHEN MATCHED THEN UPDATE
@@ -185,7 +185,7 @@ Since Snowflake doesn't support these options, the migration process will instea
 MERGE INTO people_target pt
 USING people_source ps
 ON    (pt.person_id = ps.person_id)
-WHEN MATCHED AND pt.person_id &lt; 3 THEN DELETE
+WHEN MATCHED AND pt.person_id < 3 THEN DELETE
 WHEN NOT MATCHED BY TARGET THEN INSERT *;
 
 SELECT * FROM people_target;
@@ -207,7 +207,7 @@ Copy code
 MERGE INTO people_target pt
 USING people_source ps
 ON    (pt.person_id = ps.person_id)
-WHEN MATCHED AND pt.person_id &lt; 3 THEN DELETE
+WHEN MATCHED AND pt.person_id < 3 THEN DELETE
 WHEN NOT MATCHED THEN INSERT
   (pt.person_id, pt.first_name, pt.last_name, pt.title)
   VALUES (ps.person_id, ps.first_name, ps.last_name, ps.title);
@@ -229,7 +229,7 @@ The `DELETE` action in Snowflake works the same way as in other databases. You c
 
 ### MERGE Statement - WHEN NOT MATCHED BY SOURCE
 
-`WHEN NOT MATCHED BY SOURCE` clauses are triggered when a row in the target table has no matching rows in the source table. This occurs when both the `merge_condition` and the optional `not_match_by_source_condition` evaluate to true. For more details, see the [Spark documentation](https://docs.databricks.com/en/sql/language-manual/delta-merge-into.html).
+`WHEN NOT MATCHED BY SOURCE` clauses are triggered when a row in the target table has no matching rows in the source table. This occurs when both the `merge_condition` and the optional `not_matched_by_source_condition` evaluate to true. For more details, see the [Spark documentation](https://docs.databricks.com/en/sql/language-manual/delta-merge-into.html).
 
 Snowflake does not support this clause directly. To handle this limitation, you can use the following workaround for both `DELETE` and `UPDATE` actions.
 

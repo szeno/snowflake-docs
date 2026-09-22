@@ -1,6 +1,6 @@
 # Snowpark Migration Accelerator: Open Source Libraries
 
-The open-source libraries used in the Snowpark Migration Accelerator Include:
+The open-source libraries used in the Snowpark Migration Accelerator include:
 
 ## .NET Open Source Libraries
 

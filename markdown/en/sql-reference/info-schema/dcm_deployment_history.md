@@ -77,9 +77,8 @@ Show lessSee more
   [Snowflake Information Schema](/sql-reference/info-schema).
 - This function returns deployments from the past 12 months only. There is no ACCOUNT\_USAGE view
   equivalent for DCM deployment history.
-- Older deployments remain available as deployment artifacts stored inside the DCM project for as
-  long as the project object exists. The artifacts (not this function) are the canonical long-term
-  audit trail. For more information, see [Monitor and troubleshoot DCM Projects](/user-guide/dcm-projects/dcm-projects-monitor).
+- For long-term retention and deletion behavior, see
+  [Deployment artifacts](/user-guide/dcm-projects/dcm-projects-monitor#label-dcm-projects-deployment-artifacts).
 
 ## Examples
 

@@ -178,7 +178,7 @@ Copy code
 ```
 USE DATABASE mydb;
 
-SHOW DCM PROJECTS;
+SHOW DCM PROJECTS IN SCHEMA PUBLIC;
 ```
 
 Show the available DCM projects in the `my_schema` schema:

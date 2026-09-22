@@ -84,3 +84,39 @@ Copy code
 ```
 GRANT USAGE ON FUTURE STREAMLITS IN SCHEMA streamlit_db.streamlit_schema TO ROLE streamlit_viewer;
 ```
+
+## Privileges required to embed a Streamlit app
+
+To generate an embed URL for a Streamlit app, which is how the app is rendered in an external web
+page, a role must have both of the following privileges:
+
+- USAGE on the database, the schema, and the Streamlit app, as described in
+  [Privileges required to view a Streamlit app](#label-streamlit-access-privs-view). A role without USAGE gets the same response as if the app
+  didn’t exist.
+- EMBED on the Streamlit app.
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE  streamlit_db                                  TO ROLE embed_minter;
+GRANT USAGE ON SCHEMA    streamlit_db.streamlit_schema                 TO ROLE embed_minter;
+GRANT USAGE ON STREAMLIT streamlit_db.streamlit_schema.streamlit_app   TO ROLE embed_minter;
+GRANT EMBED ON STREAMLIT streamlit_db.streamlit_schema.streamlit_app   TO ROLE embed_minter;
+```
+
+Important
+
+OWNERSHIP of a Streamlit app doesn’t imply EMBED. The app owner must be granted EMBED explicitly, the
+same as any other role.
+
+Because EMBED is granted separately from USAGE, you can share an app with a role for viewing in
+Snowsight without also allowing that role to publish the app to an external page. To remove
+embedding access while leaving the ability to view the app intact, revoke EMBED on its own:
+
+Copy code
+
+```
+REVOKE EMBED ON STREAMLIT streamlit_db.streamlit_schema.streamlit_app FROM ROLE embed_minter;
+```
+
+For more information, see [Embedding Streamlit in Snowflake apps in external pages](/developer-guide/streamlit/features/embedding/overview).

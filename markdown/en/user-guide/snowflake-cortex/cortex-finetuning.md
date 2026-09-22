@@ -166,7 +166,7 @@ SELECT SNOWFLAKE.CORTEX.FINETUNE(
 Note
 
 To get responses that follow a schema you define, use structured outputs to generate fine-tuning data.
-For more information about structured outputs, see [AI\_COMPLETE structured outputs](/user-guide/snowflake-cortex/complete-structured-outputs).
+For more information about structured outputs, see [AI\_COMPLETE (Structured outputs)](/sql-reference/functions/ai_complete-structured-outputs).
 
 A prompt is an input to the LLM and completion is the response from the LLM. Your training data should include prompt and completion pairs
 that show how you want the model to respond to particular prompts.

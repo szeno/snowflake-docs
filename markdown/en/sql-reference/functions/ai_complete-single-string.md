@@ -60,7 +60,7 @@ AI_COMPLETE(
 
     If `response_format` is not specified, the response is a string containing either the response or a serialized JSON object containing the response and information about it.
 
-    For more information, see [AI\_COMPLETE structured outputs](/user-guide/snowflake-cortex/complete-structured-outputs).
+    For more information, see [AI\_COMPLETE (Structured outputs)](/sql-reference/functions/ai_complete-structured-outputs).
 
 `show_details`
 :   A boolean flag that indicates whether to return a serialized JSON object containing the response and information about it.

@@ -6,18 +6,27 @@ This tutorial guides you through creating a workspace for [dbt Projects on Snowf
 
 If you would like to get started with running an existing dbt Core project on dbt Projects on Snowflake, see [Migrate from dbt Core to dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-migrate-from-dbt-core).
 
+Note
+
+GitHub isn’t a requirement of dbt Projects on Snowflake. Snowflake connects to any Git platform listed in [Using a Git repository in Snowflake](/developer-guide/git/git-overview),
+including GitLab, Bitbucket, and Azure DevOps. This tutorial uses GitHub only because the sample project is hosted there.
+
+To follow the tutorial with another provider, import the sample repository into your own GitLab, Azure DevOps, or Bitbucket repository, and then
+use your own repository URL in the setup steps. For provider-specific API integration examples, see
+[Step 3: Connect your Git repository with OAuth2](/user-guide/data-engineering/dbt-projects-on-snowflake-migrate-from-dbt-core#label-dbt-migrate-step3).
+
 ### Prerequisites
 
-- **GitHub**
+- **Git provider**
 
-  - A GitHub account that can create a repository and manage access to that repository.
+  - An account with a [supported Git platform](/developer-guide/git/git-overview) that can create a repository and manage access to that repository. The steps in this tutorial use GitHub.
   - Git on the command line. For more information about installation, see [Set up Git](https://docs.github.com/en/get-started/git-basics/set-up-git).
 - **Snowflake**
 
   - A Snowflake account and user with privileges as described in [Access control for dbt projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-access-control).
   - Privileges to create and edit the following objects or access to an administrator who can create each of them on your behalf:
     - An API integration
-    - If your GitHub repository is private, a secret
+    - If your repository is private, a secret
     - A network rule
     - (Optional) An external access integration that references the network rule (a one-time admin setup, followed by a `USAGE` grant on the integration to the role that runs dbt)
     - Your user object

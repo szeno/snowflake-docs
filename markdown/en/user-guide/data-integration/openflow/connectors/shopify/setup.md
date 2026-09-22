@@ -23,19 +23,12 @@ This topic describes the steps to set up the Openflow Connector for Shopify.
    - [Set up Openflow - Snowflake Deployment - Task overview](/user-guide/data-integration/openflow/setup-openflow-spcs)
 3. If you’re using Openflow - Snowflake Deployments, ensure that you have reviewed
    [the required domain configuration](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list)
-   and have granted access to the [domains](#label-shopify-req-domains) required by the connector.
+   and have granted access to the required domains for the [Shopify](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-shopify) connector.
+   If you’re using Openflow - BYOC Deployments, configure your cloud network egress to allow HTTPS (port 443)
+   access to `<your_store>.myshopify.com` and `storage.googleapis.com`. The connector needs the
+   latter to download signed Google Cloud Storage URLs that Shopify returns for bulk-query results.
 4. Ensure you have access to the Openflow admin role or a similar role you use to manage Openflow.
-5. If you’re creating a Snowflake service user to manage the connector, set up key pair authentication. For more information, see [key pair authentication](/user-guide/key-pair-auth).
-
-## Required endpoints
-
-The following endpoints are required for the connector to function:
-
-- `<your_store>.myshopify.com:443` (for example, `mystore.myshopify.com:443`): Shopify Admin GraphQL API
-- `storage.googleapis.com:443`: Shopify bulk-operation result downloads. When a bulk query completes, Shopify returns a signed Google Cloud Storage URL for the JSONL result file. The connector must be able to reach this host to download the file.
-
-If you’re using Openflow - BYOC Deployments, configure your cloud network egress to allow HTTPS (port 443) access to both endpoints.
-If you’re using Openflow - Snowflake Deployments, you must create a network rule and an external access integration (EAI). For more information, see [Create a network rule (Openflow - Snowflake Deployments only)](#label-create-network-rule).
+5. If you’re deploying in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication strategy, set up key pair authentication. For more information, see [key pair authentication](/user-guide/key-pair-auth).
 
 ## Set up Shopify
 
@@ -101,31 +94,9 @@ in the Shopify developer documentation.
 
 ## Set up your Snowflake account
 
-As an Openflow administrator, perform the following tasks to set up your Snowflake account.
-
-### Create a Snowflake service user (Openflow - BYOC Deployments only)
-
-Note
-
-This step is only required if you’re deploying the connector in Openflow - BYOC Deployments. It isn’t needed for Openflow - Snowflake Deployments.
-
-1. Create a service user:
-
-   Copy code
-
-   ```
-   USE ROLE USERADMIN;
-   CREATE USER <openflow_service_user>
-     TYPE=SERVICE
-     COMMENT='Service user for the Shopify connector';
-   ```
-2. Store the private key in a file. When configuring the connector, specify the file path. For more information, see [key pair authentication](/user-guide/key-pair-auth).
-
-   Copy code
-
-   ```
-   ALTER USER <openflow_service_user> SET RSA_PUBLIC_KEY = '<pubkey>';
-   ```
+As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant it the following privileges.
 
 ### Create database, schema, and warehouse
 
@@ -134,91 +105,49 @@ This step is only required if you’re deploying the connector in Openflow - BYO
    Copy code
 
    ```
-   USE ROLE ACCOUNTADMIN;
-   CREATE DATABASE IF NOT EXISTS <shopify_database>;
+   USE ROLE OPENFLOW_ADMIN;
+   CREATE DATABASE IF NOT EXISTS <destination_database>;
    ```
 2. Create the destination schema:
 
    Copy code
 
    ```
-   CREATE SCHEMA IF NOT EXISTS <shopify_database>.<shopify_schema>;
+   CREATE SCHEMA IF NOT EXISTS <destination_database>.<destination_schema>;
    ```
-3. Create a role for the connector and grant the required privileges:
+3. Grant the required privileges to the runtime’s execute-as role:
 
    Copy code
 
    ```
-   CREATE ROLE IF NOT EXISTS <shopify_connector_role>;
-
-   GRANT USAGE ON DATABASE <shopify_database> TO ROLE <shopify_connector_role>;
-   GRANT USAGE ON SCHEMA <shopify_database>.<shopify_schema> TO ROLE <shopify_connector_role>;
-   GRANT CREATE TABLE ON SCHEMA <shopify_database>.<shopify_schema> TO ROLE <shopify_connector_role>;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE TABLE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 4. Create a warehouse (or use an existing one) and grant usage privileges:
 
    Copy code
 
    ```
-   CREATE WAREHOUSE IF NOT EXISTS <shopify_warehouse>
+   CREATE WAREHOUSE IF NOT EXISTS <openflow_warehouse>
      WITH
-     WAREHOUSE_SIZE = 'SMALL'
+     WAREHOUSE_SIZE = 'XSMALL'
      AUTO_SUSPEND = 300
      AUTO_RESUME = TRUE;
 
-   GRANT USAGE, OPERATE ON WAREHOUSE <shopify_warehouse> TO ROLE <shopify_connector_role>;
+   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
-5. If using Openflow - BYOC Deployments, assign the role to the service user:
-
-   Copy code
-
-   ```
-   GRANT ROLE <shopify_connector_role> TO USER <openflow_service_user>;
-   ALTER USER <openflow_service_user> SET DEFAULT_ROLE = <shopify_connector_role>;
-   ```
-
-### Create a network rule (Openflow - Snowflake Deployments only)
+5. If any other Snowflake users require access to the tables ingested by the
+   connector (for example, for custom processing in Snowflake), grant those users the execute-as
+   role.
 
 Note
 
-If your runtime executes in Openflow - BYOC Deployments, you don’t need to create an External Access Integration (EAI). Instead, configure your cloud network egress to allow HTTPS (port 443) access to your Shopify store domain.
-
-To allow the connector to call the Shopify API from a Snowflake-hosted runtime, create a
-network rule and an external access integration (EAI), and then grant the execute-as role usage
-privileges on the EAI.
-
-1. Create a network rule:
-
-   Copy code
-
-   ```
-   USE ROLE ACCOUNTADMIN;
-
-   CREATE OR REPLACE NETWORK RULE openflow_<runtime_name>_shopify_network_rule
-     TYPE = HOST_PORT
-     MODE = EGRESS
-     VALUE_LIST = (
-       '<your_store>.myshopify.com:443',
-       'storage.googleapis.com:443'
-     );
-   ```
-2. Create an External Access Integration:
-
-   Copy code
-
-   ```
-   CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION openflow_<runtime_name>_shopify_eai
-     ALLOWED_NETWORK_RULES = (openflow_<runtime_name>_shopify_network_rule)
-     ENABLED = TRUE;
-   ```
-3. Grant your execute-as role USAGE on the integration:
-
-   Copy code
-
-   ```
-   GRANT USAGE ON INTEGRATION openflow_<runtime_name>_shopify_eai
-     TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Install the connector
 

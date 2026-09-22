@@ -111,7 +111,7 @@ You can use [CREATE SECRET](/sql-reference/sql/create-secret) to create a secret
 external network location. For example, the secret can contain credentials such as a username and password or a
 [security integration](/sql-reference/sql/create-security-integration).
 
-For access to an external network location that supports OAuth, a best practice is have your secret contain a reference to a
+For access to an external network location that supports OAuth, a best practice is to have your secret contain a reference to a
 [security integration](/sql-reference/sql/create-security-integration) that contains values needed for OAuth flow such as a client ID,
 client secret, token endpoint, and so on.
 
@@ -237,7 +237,7 @@ then using it in the UDF handler for the rest of the query.
 
 For security, Snowflake requires that when creating a UDF or procedure, you must use a role that has the following:
 
-- The READ privilege on any secret it references, as well the USAGE privilege on the secret’s schema.
+- The READ privilege on any secret it references, as well as the USAGE privilege on the secret’s schema.
 - The USAGE privilege on any integration it references.
 
 Requiring these privileges enables an administrator to manage the set of users who can enable external access. For more information, refer

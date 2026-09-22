@@ -3,7 +3,7 @@
 Call `querySnowflake` from `lib/snowflake.ts` to run SQL. The
 [`snowflake-apps`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-snowflake-apps)
 skill adds that file when it scaffolds the app. The helper wraps the Snowflake
-driver and manages a connection pool. When the app is deployed it uses the
+driver and manages a connection pool. When the app is deployed, it uses the
 [session token](/developer-guide/snowflake-app-runtime/runtime-environment#label-runtime-environment-tokens)
 Snowflake writes for the service. On your machine it uses your local Snowflake
 connection.

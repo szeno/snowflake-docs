@@ -170,10 +170,11 @@ Snowflake recommends allow listing all s3 regions:
   - `*.s3.me-central-1.amazonaws.com`
   - `*.s3.af-south-1.amazonaws.com`
 
-The last domain is obtained from the report URL is returned after the report is ready to fetch.
-This is an Amazon S3 bucket where the report is stored. Customers will need to specify their own AWS region.
-for example, `us-east-1` or `eu-west-1` and a specific bucket. As it may be not possible to know the
-exact region and bucket, Snowflake suggests using wildcards and listing all possible regions for a given location.
+The last domain is obtained from the report URL, which is returned after the report is ready to
+fetch. This is an Amazon S3 bucket where the report is stored. Customers will need to specify their
+own AWS region, for example, `us-east-1` or `eu-west-1`, and a specific bucket. As it may be not
+possible to know the exact region and bucket, Snowflake suggests using wildcards and listing all
+possible regions for a given location.
 
 ### AWS Secret Manager
 
@@ -183,6 +184,14 @@ The following domains are used by the AWS Secret Manager connector.
 - `sts.us-west-2.amazonaws.com`
 - `aws.amazon.com`
 - `amazonaws.com`
+
+### BigQuery
+
+The following domains are used by the BigQuery connector.
+
+- `bigquery.googleapis.com`
+- `bigquerystorage.googleapis.com`
+- `oauth2.googleapis.com`
 
 ### Box
 
@@ -287,6 +296,12 @@ The following domains are used by the PostgreSQL connector.
 
 - Customer-specific domain and port combination.
 
+### Salesforce Bulk API
+
+The following domains are used by the Salesforce Bulk API connector.
+
+- Customer-specific domain and port combination.
+
 ### SharePoint
 
 The following domains are used by the SharePoint connector.
@@ -295,6 +310,14 @@ The following domains are used by the SharePoint connector.
 - `graph.microsoft.com:80`
 - `graph.microsoft.com:443`
 - `login.microsoftonline.com`
+- `*.svc.ms`
+
+### Shopify
+
+The following domains are used by the Shopify connector.
+
+- Customer-specific domain (for example, `<your_store>.myshopify.com`): Shopify Admin GraphQL API.
+- `storage.googleapis.com`: Shopify bulk-operation result downloads. When a bulk query completes, Shopify returns a signed Google Cloud Storage URL for the JSONL result file. The connector must be able to reach this host to download the file.
 
 ### Slack
 
@@ -312,6 +335,12 @@ The following domains are used by the Slack connector.
 The following domains are used by the SQL Server connector.
 
 - Customer-specific domain and port combination.
+
+### Veeva Vault
+
+The following domains are used by the Veeva Vault connector.
+
+- Customer-specific vault hostname.
 
 ### Workday
 

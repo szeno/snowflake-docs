@@ -54,7 +54,8 @@ For general information about roles and privilege grants for performing SQL acti
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully
   without returning an error.
 
-- Dropping a DCM project in Snowflake doesn’t remove any objects created by executing the DCM project.
+- Dropping a DCM project deletes its retained deployment history and artifacts. Entities, grants, and attachments previously managed by
+  the project remain in place as unmanaged resources.
 
 ## Examples
 

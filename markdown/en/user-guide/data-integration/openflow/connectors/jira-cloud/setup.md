@@ -104,48 +104,60 @@ permissions. However, tokens with scopes are recommended for fine-grained access
 
 ## Set up Snowflake account
 
-As a Snowflake account administrator, perform the following tasks:
+As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant it the following privileges.
 
-1. Create a new role or use an existing role.
-2. Create a new Snowflake service user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property).
-3. Grant the Snowflake service user the role you created in the previous steps.
-4. Configure with [key-pair auth](/user-guide/key-pair-auth) for the Snowflake SERVICE user from step 2.
-5. Configure a secrets manager supported by Openflow (recommended), for example, AWS, Azure, and HashiCorp, and store the public and private keys in the secret store.
+### Create database, schema, and warehouse
 
-   Note
-
-   If for any reason, you don’t want to use a secrets manager, then you are responsible for safeguarding the
-   public key and private key files used for key-pair authentication according to the security policies of your organization.
-
-   1. After the secrets manager is configured, determine how you will authenticate to it. On AWS, use the
-      EC2 instance role associated with Openflow as this way no other secrets have to be persisted.
-   2. In Openflow, configure a Parameter Provider associated with this Secrets Manager, from the main menu (⋮) in the upper-right corner.
-      Navigate to **Controller Settings** » **Parameter Provider** and then fetch your parameter values.
-   3. At this point, all credentials can be referenced with the associated parameter paths and no sensitive values need to be persisted within Openflow.
-6. If any other Snowflake users require access to the tables ingested by the connector (for example, for custom processing in Snowflake),
-   then grant those users the role created in step 1.
-7. Create a database and schema in Snowflake for the connector to store ingested data. Grant the following [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the role created in the first step.
+1. Create the destination database:
 
    Copy code
 
    ```
-   CREATE DATABASE jira_destination_db;
-   CREATE SCHEMA jira_destination_db.jira_destination_schema;
-   GRANT USAGE ON DATABASE jira_destination_db TO ROLE <jira_connector_role>;
-   GRANT USAGE ON SCHEMA jira_destination_db.jira_destination_schema TO ROLE <jira_connector_role>;
-   GRANT CREATE TABLE ON SCHEMA jira_destination_db.jira_destination_schema TO ROLE <jira_connector_role>;
+   USE ROLE OPENFLOW_ADMIN;
+   CREATE DATABASE IF NOT EXISTS <destination_database>;
    ```
-8. Create a warehouse that the connector will use or use an existing one. Start with the smallest warehouse size, then experiment with size depending on the
-   amount of data transferred. Large data volumes typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than larger warehouse sizes.
-9. Ensure that the user with the role used by the connector has the required privileges to use the warehouse. If that’s not the case then grant the required privileges to the role.
+2. Create the destination schema:
 
    Copy code
 
    ```
-   CREATE WAREHOUSE jira_connector_warehouse WITH WAREHOUSE_SIZE = 'X-Small';
-   GRANT USAGE ON WAREHOUSE jira_connector_warehouse TO ROLE <jira_connector_role>;
+   CREATE SCHEMA IF NOT EXISTS <destination_database>.<destination_schema>;
    ```
+3. Grant the required privileges to the runtime’s execute-as role:
+
+   Copy code
+
+   ```
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE TABLE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+4. Create a warehouse (or use an existing one) and grant usage privileges:
+
+   Copy code
+
+   ```
+   CREATE WAREHOUSE IF NOT EXISTS <openflow_warehouse>
+     WITH
+     WAREHOUSE_SIZE = 'XSMALL'
+     AUTO_SUSPEND = 300
+     AUTO_RESUME = TRUE;
+
+   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+5. If any other Snowflake users require access to the tables ingested by the
+   connector (for example, for custom processing in Snowflake), grant those users the execute-as
+   role.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Set up the connector
 
@@ -204,7 +216,7 @@ Show lessSee more
 | Destination Schema | The schema where data will be persisted, which must already exist in Snowflake. The name is case-sensitive. For unquoted identifiers, provide the name in uppercase.  See the following examples:  - `CREATE SCHEMA SCHEMA_NAME` or `CREATE SCHEMA schema_name`: use `SCHEMA_NAME` - `CREATE SCHEMA "schema_name"` or `CREATE SCHEMA "SCHEMA_NAME"`: use `schema_name` or `SCHEMA_NAME`, respectively | Yes |
 | Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. | Yes |
 | Snowflake Account Identifier | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Snowflake account name formatted as [organization-name]-[account-name]. | Yes |
-| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank.   **KEY\_PAIR**: Must be the RSA private key used for authentication.  The RSA key must be formatted according to PKCS8 standards and have standard PEM headers and footers. Note that either a Snowflake Private Key File or a Snowflake Private Key must be defined. | No |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Must be the RSA private key used for authentication, formatted according to PKCS8   standards and including standard PEM headers and footers. Note that either a Snowflake Private   Key File or a Snowflake Private Key must be defined. | No |
 | Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: The private key file must be blank. - **KEY\_PAIR**: Upload the file that contains the RSA private key used for authentication to Snowflake,   formatted according to PKCS8 standards and including standard PEM headers and footers.   The header line begins with `-----BEGIN PRIVATE`.   To upload the private key file, select the **Reference asset** checkbox. | No |
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake private key file. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |

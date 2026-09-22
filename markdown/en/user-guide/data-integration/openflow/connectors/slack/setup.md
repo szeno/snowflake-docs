@@ -121,29 +121,53 @@ done by adding a rule to enable egress on the “slack.com” domain.
 
 ## Set up Snowflake account
 
-As a Snowflake account administrator, perform the following tasks:
+As a Snowflake account administrator, perform the following tasks. With the default `SNOWFLAKE_MANAGED`
+authentication strategy, the runtime’s execute-as role is the identity the connector uses to access
+Snowflake, so you grant it the privileges below.
 
-1. Create a new role or use an existing role and grant the [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges).
-2. Create a new Snowflake service user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property).
-3. Grant the Snowflake service user the role you created in the previous steps.
-4. Configure with [key-pair auth](/user-guide/key-pair-auth) for the Snowflake SERVICE user from step 2.
-5. Snowflake strongly recommends this step. Configure a secrets manager supported by Openflow, for example, AWS, Azure, and Hashicorp, and store the public and private keys in the secret store.
+1. Create a database and schema in Snowflake for the connector to store ingested data. Grant the privileges needed for the connector’s tables and internal stage to the execute-as role.
 
-   Note
+   Copy code
 
-   If for any reason, you do not wish to use a secrets manager, then you are responsible for safeguarding the
-   public key and private key files used for key-pair authentication according to the security policies of your organization.
+   ```
+   CREATE DATABASE IF NOT EXISTS <destination_database>;
+   CREATE SCHEMA IF NOT EXISTS <destination_database>.<destination_schema>;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE TABLE, CREATE STAGE, CREATE SEQUENCE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
 
-   1. Once the secrets manager is configured, determine how you will authenticate to it. On AWS, it’s recommended that you the
-      EC2 instance role associated with Openflow as this way no other secrets have to be persisted.
-   2. In Openflow, configure a Parameter Provider associated with this Secrets Manager, from the hamburger menu in the upper right.
-      Navigate to **Controller Settings** » **Parameter Provider** and then fetch your parameter values.
-   3. At this point all credentials can be referenced with the associated parameter paths and no sensitive values need to be persisted within Openflow.
-6. If any other Snowflake users require access to the raw ingested documents and tables ingested by the connector (for example, for custom processing in Snowflake),
-   then grant those users the role created in step 1.
-7. Designate a warehouse for the connector to use. Start with the smallest warehouse size, then experiment with size depending on the number of tables being replicated,
+   If you’re using [Use case 2: Ingest Slack content and enable Cortex](#label-slack-use-case-2-ingest-slack-content-and-enable-cortex), also grant the privilege to create the optional Cortex Search service:
+
+   Copy code
+
+   ```
+   GRANT CREATE CORTEX SEARCH SERVICE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+2. If any other Snowflake users require access to the raw documents and tables ingested by the connector (for example, for custom processing in Snowflake),
+   then grant those users the execute-as role.
+3. Designate a warehouse for the connector to use. Start with the smallest warehouse size, then experiment with size depending on the number of tables being replicated,
    and the amount of data transferred. Large table numbers typically scale better with
    [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than larger warehouse sizes.
+
+   Copy code
+
+   ```
+   CREATE WAREHOUSE IF NOT EXISTS <openflow_warehouse>
+     WITH
+     WAREHOUSE_SIZE = 'XSMALL'
+     AUTO_SUSPEND = 300
+     AUTO_RESUME = TRUE;
+   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Use case 1: Ingest Slack content only
 
@@ -158,17 +182,7 @@ As a data engineer, perform the following tasks to configure the connector:
 
 #### Install the connector
 
-1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the role created in the first step. Substitute the role placeholder with the actual value and use the following SQL commands:
-
-   Copy code
-
-   ```
-   CREATE DATABASE DESTINATION_DB;
-   CREATE SCHEMA DESTINATION_DB.DESTINATION_SCHEMA;
-   GRANT USAGE ON DATABASE DESTINATION_DB TO ROLE <CONNECTOR_ROLE>;
-   GRANT USAGE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   GRANT CREATE TABLE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   ```
+1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the execute-as role, as described in [Set up Snowflake account](#label-slack-set-up-snowflake-account).
 
 To install the connector, do the following as a data engineer:
 
@@ -189,7 +203,7 @@ The Openflow canvas appears with the connector process group added to it.
 1. Right-click on the imported process group and select **Parameters**.
 2. Enter the required parameter values as described in **Flow parameters: Ingest content only** below.
 3. Right-click on the canvas and select **Enable all controller services**.
-4. Right-click on the imported process group and select **Start**. The flow creates all required Snowflake objects and begins ingesting Slack data.
+4. Right-click on the imported process group and select **Start**. The flow creates the required tables and begins ingesting Slack data.
 
 ##### Flow parameters: Ingest content only
 
@@ -197,14 +211,15 @@ The Openflow canvas appears with the connector process group added to it.
 | --- | --- |
 | App Token | Slack *App-level token* generated in the Slack App. |
 | Bot Token | Slack *Bot token* generated in the Slack App. |
-| Destination Database | Database to contain all connector objects (created if absent). |
-| Destination Schema | Schema inside the database (created if absent). |
-| Snowflake Account | Snowflake account identifier. |
-| Snowflake Role | Role the flow assumes after authentication. |
-| Snowflake User | Username the flow uses to connect. |
-| Snowflake Private Key | RSA private key used for authentication (PKCS8 PEM format). Note that either Snowflake Private Key or Snowflake Private Key File must be defined. |
-| Snowflake Private Key Password | Password for the encrypted private key (leave blank if unencrypted). |
-| Snowflake Private Key File | File containing the RSA Private Key (PKCS8 PEM format). The header line starts with `-----BEGIN PRIVATE`. |
+| Destination Database | Database to contain all connector objects. It must already exist. |
+| Destination Schema | Schema inside the database. It must already exist. |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
+| Snowflake Account | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Snowflake account identifier. |
+| Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED**: Use the runtime’s execute-as role (or a child role granted to it). - **KEY\_PAIR**: Use a valid role configured for your service user. |
+| Snowflake User | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Username the flow uses to connect. |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: RSA private key used for authentication (PKCS8 PEM format). Note that either Snowflake   Private Key or Snowflake Private Key File must be defined. |
+| Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Password for the encrypted private key (leave blank if unencrypted). |
+| Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: File containing the RSA Private Key (PKCS8 PEM format). The header line starts with   `-----BEGIN PRIVATE`. |
 | Snowflake Warehouse | Warehouse used for SQL executed by the flow. |
 | Upload Interval | Time to gather data before pushing to Snowflake. A longer interval reduces load on Snowflake but may increase latency and memory usage. |
 | Refresh Slack Members | Minutes between Slack membership (ACL) refreshes. |
@@ -226,17 +241,7 @@ As a data engineer, perform the following tasks to configure the connector:
 
 #### Install the connector
 
-1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the role created in the first step. Substitute the role placeholder with the actual value and use the following SQL commands:
-
-   Copy code
-
-   ```
-   CREATE DATABASE DESTINATION_DB;
-   CREATE SCHEMA DESTINATION_DB.DESTINATION_SCHEMA;
-   GRANT USAGE ON DATABASE DESTINATION_DB TO ROLE <CONNECTOR_ROLE>;
-   GRANT USAGE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   GRANT CREATE TABLE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   ```
+1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the execute-as role, as described in [Set up Snowflake account](#label-slack-set-up-snowflake-account).
 
 To install the connector, do the following as a data engineer:
 
@@ -266,14 +271,15 @@ The Openflow canvas appears with the connector process group added to it.
 | --- | --- |
 | App Token | Slack *App-level token* generated in the Slack App. |
 | Bot Token | Slack *Bot token* generated in the Slack App. |
-| Destination Database | Database to contain all connector objects (created if absent). |
-| Destination Schema | Schema inside the database (created if absent). |
+| Destination Database | Database to contain all connector objects. It must already exist. |
+| Destination Schema | Schema inside the database. It must already exist. |
 | Upload Interval | Time to gather data before pushing to Snowflake. A larger value reduces load but increases data latency. |
-| Snowflake Account | Snowflake account identifier. |
-| Snowflake Role | Role the flow assumes after authentication. |
-| Snowflake User | Username the flow uses to connect. |
-| Snowflake Private Key | PEM-formatted private key for key-pair authentication. |
-| Snowflake Private Key Password | Password for the encrypted private key (blank if unencrypted). |
+| Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. |
+| Snowflake Account | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Snowflake account identifier. |
+| Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED**: Use the runtime’s execute-as role (or a child role granted to it). - **KEY\_PAIR**: Use a valid role configured for your service user. |
+| Snowflake User | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Username the flow uses to connect. |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: PEM-formatted private key for key-pair authentication. |
+| Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED**: Must be blank. - **KEY\_PAIR**: Password for the encrypted private key (blank if unencrypted). |
 | Snowflake Warehouse | Warehouse used for all SQL executed by the flow **and** by Cortex. |
 | Refresh Slack Members | Minutes between Slack membership (ACL) refreshes. |
 

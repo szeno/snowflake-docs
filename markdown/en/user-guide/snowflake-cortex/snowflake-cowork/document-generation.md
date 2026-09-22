@@ -4,20 +4,22 @@
 
 Available to all accounts.
 
-Snowflake CoWork can turn your analysis into shareable files you can hand to stakeholders. After you explore
-a question in chat, ask Snowflake CoWork to generate a document or presentation so others can review the
-insights without repeating the analysis.
+Snowflake CoWork can turn your analysis into a PDF, PowerPoint, or HTML file. After you explore a question
+in chat, ask Snowflake CoWork to generate the file so you can review the insights without repeating the
+analysis.
 
-Reach for document generation when you want to package findings for others, for example:
+Reach for document generation when you want to package findings, for example:
 
 - An executive deck that summarizes trends, risks, and recommended actions
 - A PDF brief that captures key metrics and supporting detail for a working group
+- An HTML report that presents the same findings in a formatted page you can view in chat
 
-Document generation is built into Snowflake CoWork: ask for a PDF or PowerPoint in chat, and the agent
-produces the file. To customize how generation works, for example always using a company PowerPoint template
-or a fixed deck structure, create a [user skill](/user-guide/snowflake-cortex/snowflake-cowork/user-skills) or
-attach an [agent skill](/user-guide/snowflake-cortex/cortex-agents-skills). Your user and agent skills take
-precedence over the built-in behavior.
+Document generation is built into Snowflake CoWork: ask for a PDF, PowerPoint, or HTML file in chat, and
+the agent produces it. When generation finishes, you can view the file inline in Snowflake CoWork. To
+customize how generation works, for example always using a company PowerPoint template or a fixed deck
+structure, create a [user skill](/user-guide/snowflake-cortex/snowflake-cowork/user-skills) or attach an
+[agent skill](/user-guide/snowflake-cortex/cortex-agents-skills). Your user and agent skills take precedence
+over the built-in behavior.
 
 ## Prerequisites
 
@@ -37,12 +39,13 @@ Snowflake CoWork can generate the following file formats:
 | --- | --- | --- |
 | PDF | `.pdf` | Share a written brief, summary, or report |
 | PowerPoint | `.pptx` | Share a presentation deck with slides and talking points |
+| HTML | `.html` | View a formatted report inline in Snowflake CoWork |
 
 Expand
 
 Show lessSee more
 
-## Generate a document or presentation
+## Generate a document, presentation, or HTML file
 
 Ask Snowflake CoWork in chat for the format you want, and describe the audience and content. For example:
 
@@ -50,8 +53,10 @@ Ask Snowflake CoWork in chat for the format you want, and describe the audience 
 
 > “Generate a PDF brief with the top churn drivers and the supporting metrics from this analysis.”
 
-Snowflake CoWork uses the conversation context and your agent’s data tools to draft the file, then provides
-the generated document or presentation for you to download and share.
+> “Create an HTML report that visualizes Q4 pipeline risk by region, with the supporting metrics from this analysis.”
+
+Snowflake CoWork uses the conversation context and your agent’s data tools to draft the file. When
+generation finishes, you can view the file inline in Snowflake CoWork.
 
 ## Use your own template
 

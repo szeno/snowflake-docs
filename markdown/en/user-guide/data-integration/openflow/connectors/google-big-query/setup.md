@@ -21,20 +21,9 @@ This topic describes the steps to set up the Openflow Connector for Google BigQu
 
    - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
    - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs)
-3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the [domains](#label-of-bq-req-domains) required by the connector.
+3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the required domains for the [BigQuery](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-bigquery) connector.
 4. You have access to the Openflow admin role or similar role you use to manage Openflow.
-5. If you are creating a Snowflake service user to manage the connector, you have created a key pair authentication. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
-
-## Required endpoints
-
-The following endpoints are required for the connector to function:
-
-- `bigquery.googleapis.com:443`
-- `bigquerystorage.googleapis.com:443`
-- `oauth2.googleapis.com:443`
-
-If you are using Openflow - BYOC, you need to configure your cloud network egress to allow TLS 443 access to the endpoints listed above.
-If you are using Openflow - Snowflake Deployments, you need to create a network rule and an external access integration (EAI). Then, grant the execute-as role usage privileges on the EAI.
+5. If you’re deploying in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication strategy, you have created key pair authentication. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
 
 ## Set up BigQuery
 
@@ -68,100 +57,67 @@ If you are using Openflow - Snowflake Deployments, you need to create a network 
 
 ## Set up your Snowflake account
 
-As an Openflow administrator, perform the following tasks to set up your Snowflake account:
+As an Openflow administrator, perform the following tasks for this connector. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant these privileges to that role.
 
-1. Create a Snowflake service user:
+1. Create a database to store the replicated data, and grant the execute-as role
+   [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
+   destination schemas automatically. Snowflake recommends a dedicated destination database per
+   connector, to avoid collisions with other data sources including other connectors.
 
-   Copy code
-
-   ```
-   USE ROLE USERADMIN;
-   CREATE USER <openflow_service_user>
-     TYPE=SERVICE
-     COMMENT='Service user for Openflow automation';
-   ```
-2. Store the private key for that user in a file to supply to the connector’s configuration. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
-
-   Copy code
-
-   ```
-   ALTER USER <openflow_service_user> SET RSA_PUBLIC_KEY = '<pubkey>';
-   ```
-3. Create a database that stores the replicated data, and set up permissions for the
-   Snowflake user to create objects in that database by granting USAGE and CREATE SCHEMA privileges.
+   Keep this destination database separate from the database that holds your Openflow
+   infrastructure objects, such as the runtime, the connector, and any secrets. A connector
+   creates destination objects based on the source schema and table names, so those names aren’t
+   under your control and can change as the source changes.
 
    Copy code
 
    ```
-   USE ROLE ACCOUNTADMIN;
    CREATE DATABASE IF NOT EXISTS <destination_database>;
-   GRANT USAGE ON DATABASE <destination_database> TO USER <openflow_service_user>;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO USER <openflow_service_user>;
-   ```
-4. Create a new warehouse or use an existing warehouse for the connector.
 
-   To create a new warehouse:
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
+   **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
+   on the number of tables being replicated, and the amount of data transferred. Large table
+   numbers typically scale better with
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
 
    Copy code
 
    ```
-   CREATE WAREHOUSE <openflow_warehouse>
-   WITH
-   WAREHOUSE_SIZE = 'MEDIUM'
-   AUTO_SUSPEND = 300
-   AUTO_RESUME = TRUE;
-   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO USER <openflow_service_user>;
+   CREATE WAREHOUSE <ingest_warehouse>
+     WITH
+       WAREHOUSE_SIZE = 'XSMALL'
+       AUTO_SUSPEND = 300
+       AUTO_RESUME = TRUE;
+
+   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
+3. **Snowflake deployments only:** Make sure this connector’s source host and port are permitted
+   by a network rule that your runtime’s external access integration (EAI) allows.
 
-   Start with the MEDIUM warehouse size, then experiment with size depending on the amount of tables being replicated, and the amount of data transferred.
+   The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
+   the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
+   [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
+   What is specific to this connector is getting its source host into a rule that EAI references.
 
-   To determine if you should increase, monitor the connector and database while data replication is in progress. If you observe significant delays during incremental replication, experiment with a larger warehouse size. However large table numbers typically scale better using [multi-cluster warehouses](/user-guide/warehouses-multicluster) instead of increasing the warehouse size.
-5. Create an external access integration to enable network access outside of Snowflake.
+   The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
+   That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the
+   driver name, or the database path.
 
-   Caution
+   BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
+   network rules.
 
-   If your runtime executes in Openflow - BYOC, you do not need to create an External Access Integration (EAI). Instead, configure your cloud network egress to allow TLS 443 access to the endpoints listed below.
+Note
 
-   Required host:port endpoints are listed in [Required endpoints](#label-of-bq-req-domains).
-
-   To allow the connector to call the required Google APIs from a Snowflake-hosted runtime, you must create a network rule and an external access integration (EAI). Then, grant the execute-as role usage privileges on the EAI.
-
-   To create the external access integration and network rule and grant access, perform the following steps:
-
-   1. Create a network rule to allow the connector to access the required Google APIs:
-
-      Copy code
-
-      ```
-      USE ROLE ACCOUNTADMIN;
-      USE DATABASE <openflow_network_db>;
-
-      CREATE OR REPLACE NETWORK RULE openflow_<runtime_name>_network_rule
-        TYPE = HOST_PORT
-        MODE = EGRESS
-        VALUE_LIST = (
-          'bigquery.googleapis.com:443',
-          'bigquerystorage.googleapis.com:443',
-          'oauth2.googleapis.com:443'
-        );
-      ```
-   2. Create an External Access Integration that references the network rule:
-
-      Copy code
-
-      ```
-      CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION openflow_<runtime_name>_eai
-        ALLOWED_NETWORK_RULES = (openflow_<runtime_name>_network_rule)
-        ENABLED = TRUE;
-      ```
-   3. Grant your execute-as role USAGE on the integration:
-
-      Copy code
-
-      ```
-      GRANT USAGE ON INTEGRATION openflow_<runtime_name>_eai
-        TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-      ```
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Install the connector
 
@@ -209,7 +165,7 @@ Show lessSee more
 
 | Parameter | Description |
 | --- | --- |
-| Snowflake Authentication Strategy | When using SPCS, use `SNOWFLAKE_MANAGED` as the value for Authentication Strategy. When using BYOC, use `KEY_PAIR` as the value for Authentication Strategy.  **Example:** `KEY_PAIR` |
+| Snowflake Authentication Strategy | Use `SNOWFLAKE_MANAGED` as the value for Authentication Strategy for both Openflow - Snowflake Deployments and Openflow - BYOC Deployments. Alternatively, if you’re deploying in Openflow - BYOC Deployments, you can use `KEY_PAIR`.  **Example:** `SNOWFLAKE_MANAGED` |
 | Snowflake Account Identifier | When using:   - `SNOWFLAKE_MANAGED` Authentication Strategy: Must be blank. - `KEY_PAIR`: Snowflake account name where data will be persisted. |
 | Destination Database | The name of the destination database to replicate into. Mixed case is supported. |
 | Snowflake Private Key File | When using:   - `SNOWFLAKE_MANAGED` Authentication Strategy: The private key file must be blank. - `KEY_PAIR`: Upload the file that contains the RSA private key used for authentication to Snowflake, formatted according to PKCS8 standards and including standard PEM headers and footers. The header line begins with `-----BEGIN PRIVATE`. To upload the private key file, select the Reference asset checkbox. |

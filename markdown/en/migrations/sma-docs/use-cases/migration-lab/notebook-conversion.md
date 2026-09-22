@@ -22,10 +22,10 @@ You can use the compare feature to view both of these side by side as we did wit
 
 [![Converted code comparison](/static/images/migrations/sma-assets/converted-code-comparison.png)](/static/images/migrations/sma-assets/converted-code-comparison.png)
 
-Not that there are only two unique EWI’s in this notebook. You can return to the search bar to find them, but since this is so short, you could also just… scroll down. These are the unique issues:
+Note that there are only two unique EWIs in this notebook. You can return to the search bar to find them, but since this is so short, you could also just… scroll down. These are the unique issues:
 
 - **SPRKPY1002** => *pyspark.sql.readwriter.DataFrameReader.jdbc is not supported*. This is a similar issue to the one we saw in the pipeline file, but that was a write call. This is a read call to the SQL Server database. We will resolve this in a bit.
-- **SPRKPY1068** => *“pyspark.sql.dataframe.DataFrame.toPandas is not supported if there are columns of type ArrayType, but it has a workaround. See documentation for more info.* This is another warning. If we pass an array to this function in Snowpark, it may not work. Let’s keep an eye on this when we test it.
+- **SPRKPY1068** => *pyspark.sql.dataframe.DataFrame.toPandas is not supported if there are columns of type ArrayType, but it has a workaround. See documentation for more info.* This is another warning. If we pass an array to this function in Snowpark, it may not work. Let’s keep an eye on this when we test it.
 
 And that’s it for the notebook… and our issues. We resolved a parsing error, recognized that we will have to fix the input/outputs, and there’s a couple of potential functional differences we should keep an eye on. Let’s move on to the next step: resolving any session calls.
 
@@ -142,7 +142,7 @@ Now let’s look at this notebook in Snowsight. Unlike the pipeline file, we can
 
 ## Running the Notebook in Snowsight
 
-Let’s take the version of the notebook that we have right now (having worked through the issues, the session calls, and the inputs and outputs) and load it into Snowflake. To do this, go to the notebooks section in SnowSight:
+Let’s take the version of the notebook that we have right now (having worked through the issues, the session calls, and the inputs and outputs) and load it into Snowflake. To do this, go to the notebooks section in Snowsight:
 
 [![Snowsight Notebooks section](/static/images/migrations/sma-assets/snowsight-notebooks-section.png)](/static/images/migrations/sma-assets/snowsight-notebooks-section.png)
 
@@ -194,7 +194,7 @@ Let’s replace the old code in the cell with the new code. That will look somet
 
 [![New code in cell](/static/images/migrations/sma-assets/new-code-in-cell.png)](/static/images/migrations/sma-assets/new-code-in-cell.png)
 
-Now let’s address the available packages for this run, but instead of us figuring out what we need to add. Let’s let Snowflake. One of the better parts of using a notebook is that we can run individual cells and see what the results are. Let’s run our import library cell.
+Now let’s address the available packages for this run, but instead of us figuring out what we need to add, let’s let Snowflake. One of the better parts of using a notebook is that we can run individual cells and see what the results are. Let’s run our import library cell.
 
 If you haven’t already, go ahead and start the session by clicking in the top right corner of the screen where it says “Start”:
 

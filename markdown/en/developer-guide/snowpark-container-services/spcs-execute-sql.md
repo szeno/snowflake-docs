@@ -8,11 +8,11 @@ Your application container can connect to Snowflake and execute SQL. This topic 
 
 ## Credential configuration options
 
-You have three options to connect to Snowflake from a service container:
+You have four options to connect to Snowflake from a service container:
 
 - **Use Snowflake-provided service user credentials:** Snowflake provides every service with credentials, which are referred to as service credentials. A service uses these credentials to connect to Snowflake as the service user.
 - **Use Snowflake-provided caller credentials:** When you configure your service with caller’s rights, Snowflake also provides credentials for the service to connect to Snowflake as the calling user.
-- **Use customer-provided credentials:** In certain cases, you may want to connect to Snowflake using custom user-provided credentials (for example PAT, JWT, etc) instead of using the service user or caller credentials described above. In this case the credential is not managed by Snowflake and it is your responsibility to keep it valid and secure.
+- **Use customer-provided credentials:** In certain cases, you may want to connect to Snowflake using custom user-provided credentials (for example, PAT, JWT) instead of using the service user or caller credentials described above. In this case the credential is not managed by Snowflake and it is your responsibility to keep it valid and secure.
 - **Use any credentials over the public internet:** In this case, you use an external access integration (EAI) that allows your service to connect to Snowflake’s internet endpoint by using valid authentication credentials. This option requires an administrator to create the EAI, and then grant the USAGE privilege on the integration to the service owner role.
 
   Note
@@ -33,7 +33,7 @@ When you use Snowflake-provided service credentials, be aware of the following e
 When you start a service, including job services, Snowflake performs several actions. In each of your application containers, Snowflake enables the container code to use drivers for connecting to Snowflake and executing SQL, which is similar to any other code on your computer connecting to Snowflake. The following list shows the actions that Snowflake performs when you start a service:
 
 - Provides credentials (an OAuth token) in the container in a file that is named `/snowflake/session/token`. The container code uses
-  these credentials to authenticate as the service user. This OAuth token can’t be used outside Snowpark Container Services
+  these credentials to authenticate as the service user. This OAuth token can’t be used outside Snowpark Container Services.
 - Sets the following environment variables for you to configure a Snowflake client in your service code:
   - SNOWFLAKE\_ACCOUNT: This variable is set to the [account locator](/user-guide/admin-account-identifier#label-account-locator) for the Snowflake account that the service is currently running under.
   - SNOWFLAKE\_HOST: This variable provides the hostname that is used to connect to Snowflake.
@@ -124,7 +124,7 @@ The caller’s rights feature is supported only when [accessing a service](/deve
 
 Configuring caller’s rights for your application is a two-step procedure.
 
-1. In the [service specification](/developer-guide/snowpark-container-services/specification-reference), set the `executeAsCaller` to `true`, in as shown in the following specification fragment:
+1. In the [service specification](/developer-guide/snowpark-container-services/specification-reference), set the `executeAsCaller` to `true`, as shown in the following specification fragment:
 
    Copy code
 
@@ -206,7 +206,7 @@ service’s ingress endpoints, either programmatically or by using a browser, re
   of the calling user using the default role of the user. If there is no default role configured for the user, the PUBLIC role is used.
 - **Accessing a public endpoint programmatically:** When [logging into an endpoint programmatically](/user-guide/oauth-custom#label-oauth-token-exchange) using JWT token, you can optionally set the `scope` parameter to specify the role to activate
 
-Currently, after a service establishes a caller’s right connection to Snowflake on behalf of the caller, switching roles is not supported. If your application needs to use different roles to access different objects, you must change the user’s default secondary roles property.
+Currently, after a service establishes a caller’s rights connection to Snowflake on behalf of the caller, switching roles is not supported. If your application needs to use different roles to access different objects, you must change the user’s default secondary roles property.
 
 - To set up the user to have all secondary roles active by default, use the [ALTER USER](/sql-reference/sql/alter-user) command to set the [DEFAULT\_SECONDARY\_ROLES](/sql-reference/sql/create-user#label-create-user-default-secondary-roles) property of the user to (‘ALL’), as shown in the following example:
 
@@ -355,7 +355,7 @@ Using your driver of choice, establish a connection to Snowflake, including stan
 
 Note
 
-At this time the following drivers are supported, others coming soon:
+At this time the following drivers are supported; others are coming soon:
 
 - Python Connector >= v4.5.0
 - ODBC Driver >= v3.14.0
@@ -431,7 +431,7 @@ conn = snowflake.connector.connect(
 
 To use a default hostname, you need external access integration with a network rule that allows access from your service to the
 Snowflake internet hostname for your account. For example, if your account name is `MYACCOUNT` in the organization `MYORG`, the hostname is
-`myorg-myaccount.snowflakecomputing.com`. For more information, see [Configure service egress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress). [Privatelink](/user-guide/private-connectivity-inbound) hostnames are not supported
+`myorg-myaccount.snowflakecomputing.com`. For more information, see [Configure service egress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress). [Privatelink](/user-guide/private-connectivity-inbound) hostnames are not supported.
 
 - Create a network rule that matches your account’s Snowflake API hostname:
 
@@ -665,7 +665,7 @@ AND users.schema_id = services.service_schema_id
 AND users.type = 'SNOWFLAKE_SERVICE'
 ```
 
-The query join SERVICES and USERS views in the ACCOUNT\_USAGE schema to retrieve services and service user information. Note the following:
+The query joins SERVICES and USERS views in the ACCOUNT\_USAGE schema to retrieve services and service user information. Note the following:
 
 - When a service runs queries, it runs the queries as service user and the service user’s name is the same as the service name. Therefore, you specify the join condition: `users.name = services.service_name`.
 - Service names are unique only within a schema. Therefore, the query specifies the join condition (`users.schema_id = services.service_schema_id`) to ensure each service user is matched against the specific service they belong to (and not any other same-named service running in different schemas).

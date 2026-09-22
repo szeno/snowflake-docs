@@ -85,8 +85,8 @@ criteria_1 = " COUNT(*) "
 criteria_2 = " * "
 fromClause = " FROM COUNTRIES"
 
-df1 = spark.sql(bas + criteria_1 + fromClause)
-df2 = spark.sql(bas + criteria_2 + fromClause)
+df1 = spark.sql(base + criteria_1 + fromClause)
+df2 = spark.sql(base + criteria_2 + fromClause)
 ```
 
 Copy code
@@ -98,9 +98,9 @@ criteria_2 = " * "
 fromClause = " FROM COUNTRIES"
 #EWI: SPRKPY1077 => SQL embedded code cannot be processed.
 
-df1 = spark.sql(bas + criteria_1 + fromClause)
+df1 = spark.sql(base + criteria_1 + fromClause)
 #EWI: SPRKPY1077 => SQL embedded code cannot be processed.
-df2 = spark.sql(bas + criteria_2 + fromClause)
+df2 = spark.sql(base + criteria_2 + fromClause)
 ```
 
 - Using string interpolation to dynamically generate SQL statements:

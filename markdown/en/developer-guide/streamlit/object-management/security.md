@@ -65,6 +65,10 @@ Note
 - Loading images or media from external domains is supported in Streamlit in Snowflake, but not in Snowflake Native App Framework.
 - Loading fonts from external domains is supported in Streamlit in Snowflake, including embedded apps, but not in Snowflake Native App Framework.
   In Snowflake Native App Framework, fonts are restricted to the app’s own asset origin, the Snowflake font CDN, and data URIs.
+  Because fonts, images, and media are permitted from any HTTPS origin, the CSP doesn’t restrict every
+  potentially dangerous behavior for untrusted content. This matters most for apps embedded in external
+  pages. For more information, see
+  [Security considerations](/developer-guide/streamlit/features/embedding/overview#label-sis-embed-security).
 - The CSP also blocks front-end calls that are generally considered unsafe, such as `eval()`.
 
 This restrictive policy means that most third-party JavaScript libraries and custom components that rely on

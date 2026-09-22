@@ -44,9 +44,12 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
+- [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
+- [Sep 17, 2026: HTML generation in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-09-17-cowork-html-generation-preview)
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
 - [.NET Driver (v6.2.0)](/release-notes/clients-drivers/dotnet-2026)
 - [ODBC Driver (v4.0.0-rc4)](/release-notes/clients-drivers/odbc-2026)
@@ -57,6 +60,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
+- [Sep 15, 2026: Embedding Streamlit in Snowflake apps in external pages (General availability)](/release-notes/2026/other/2026-09-15-sis-embedding-ga)
 - [Sep 15, 2026: Elastic Channels for Snowpipe Streaming (General availability)](/release-notes/2026/other/2026-09-15-snowpipe-streaming-elastic-channels-ga)
 - [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
 - [Sep 14, 2026: Catalog-linked databases: Write support for nested namespaces](/release-notes/2026/other/2026-09-14-cld-nested-namespace-write-support-open-catalog)
@@ -65,7 +69,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
 - [Sep 11, 2026: Automations in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-09-11-cowork-automations-ga)
 - [Sep 11, 2026: Second generation Openflow deployments and runtimes now available on GCP](/release-notes/2026/other/2026-09-11-openflow-gen2-deployment-runtime-gcp)
-- [ServiceNow® V2 (v5.28.2)](/release-notes/connectors/servicenow-v2)
+- [ServiceNow® V2 (v5.28.2)](/release-notes/connectors/servicenow-v2-2026)
 - [Sep 10, 2026: Using dbt artifacts for Slim CI and defer to production in dbt Projects on Snowflake (General availability)](/release-notes/2026/other/2026-09-10-dbt-artifacts-slim-ci-defer-to-production-ga)
 - [Sep 10, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-10-dcr)
 - [Sep 10, 2026: External secret providers (Preview)](/release-notes/2026/other/2026-09-10-external-secret-providers-preview)
@@ -128,8 +132,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Aug 24, 2026: Improved data freshness for ORGANIZATION\_USAGE premium views](/release-notes/2026/other/2026-08-24-organization-usage-premium-views-latency)
 - [Snowflake CLI (v3.25.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowflake ML Python (v1.53.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Aug 21, 2026: Version targeting for Cortex Agent and Cortex Analyst evaluations (General availability)](/release-notes/2026/other/2026-08-21-cortex-agent-eval-version-targeting-ga)
-- [Aug 21, 2026: CoCo automations in CLI and Snowsight (Preview)](/release-notes/2026/other/2026-08-21-cortex-code-automations-preview)
-- [Aug 21, 2026: AIM-Virtualization 3.176](/release-notes/aim-virtualization/aim-virtualization-3.176)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

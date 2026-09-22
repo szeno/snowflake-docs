@@ -259,7 +259,7 @@ Consider the following before you use partitioned writes for Iceberg tables:
     The Apache Iceberg table specification doesn’t define a standard serialization method, so different engines might implement different
     methods.
 
-    For example, Snowflake doesn’t encode the `~` character but Apache Spark™ encodes this character as `%7E`.
+    For example, Snowflake doesn’t encode the `~` character, but Apache Spark™ encodes this character as `%7E`.
   - Snowflake always writes the hierarchical paths directly under the `/data` directory in your external cloud storage.
   - When writing delete files, Snowflake uses the following behavior:
 

@@ -16,7 +16,7 @@ And let’s go back to the assessment -> conversion -> validation flow that we h
 - Resolve input/output references
 - Run the code locally
 
-  - And run the code in Snowflake
+  - Run the code in Snowflake
 - Ran the newly migrated scripts and validated their success
 
 Snowflake has spent a great deal of time improving its ingestion and data engineering capabilities, just as it has spent time improving migration tools like SnowConvert, the SnowConvert Migration Assistant, and the Snowpark Migration Accelerator. Each of these will continue to improve. Please feel free to reach out if you have any suggestions for migration tooling. These teams are always looking for additional feedback to improve the tools.

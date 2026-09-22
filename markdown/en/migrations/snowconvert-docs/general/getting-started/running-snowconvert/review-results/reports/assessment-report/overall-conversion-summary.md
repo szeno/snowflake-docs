@@ -4,7 +4,7 @@
 
 ## Total Files
 
-Represents the number of files discovered in the input address and that were successfully migrated by SnowConvert.
+Represents the number of files discovered in the input address that were successfully migrated by SnowConvert.
 
 ### CSV Associated field name
 
@@ -119,7 +119,7 @@ output_folder
 
 **Expected Script Files:** 6
 
-**Explanation:** In this case, the 6 files with extensions with Script file extensions are recognized as Script Files. The 2 extensions for BTEQ files previously mentioned are counted but the SQL file is not counted because it is a [SQL File](#sql-files).
+**Explanation:** In this case, the 6 files with Script file extensions are recognized as Script Files. The 2 extensions for BTEQ files previously mentioned are counted but the SQL file is not counted because it is a [SQL File](#sql-files).
 
 ## Total Files Not Generated
 
@@ -186,7 +186,7 @@ FROM orders;
 
 **Expected Conversion Speed: 4 lines/sec**
 
-**Explanation:** Let’s say that the example execution time was 2 seconds, taking into account that the number of lines is 8. Applying the formula 8/2 = 4, so the Converting Speed is 4 lines per sec.
+**Explanation:** Let’s say that the example execution time was 2 seconds, taking into account that the number of lines is 8. Applying the formula 8/2 = 4, so the Conversion Speed is 4 lines per sec.
 
 ## Conversion Time
 
@@ -297,7 +297,7 @@ Copy code
 CREATE OR REPLACE TABLE table1 (
      COL1 SYS.XMLTYPE
 )
-COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},{"attributes":{"component":"teradata"}}'
+COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},"attributes":{"component":"teradata"}}'
 ;
 
 SELECT
@@ -308,7 +308,7 @@ FROM
 CREATE OR REPLACE TABLE table2 (
 INTERVAL_YEAR_TYPE VARCHAR(21) !!!RESOLVE EWI!!! /*** SSC-EWI-0036 - INTERVAL YEAR(2) DATA TYPE CONVERTED TO VARCHAR ***/!!!
 )
-COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},{"attributes":{"component":"teradata"}}'
+COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},"attributes":{"component":"teradata"}}'
 ;
 ```
 

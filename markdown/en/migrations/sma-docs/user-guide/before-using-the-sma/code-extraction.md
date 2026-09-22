@@ -1,6 +1,3 @@
-description:
-:   How do you get the code?
-
 # Snowpark Migration Accelerator: Code Extraction
 
 The Snowpark Migration Accelerator (SMA) processes all files within a specified directory. While it creates an inventory of every file, it specifically analyzes files with certain extensions to identify Spark API references.

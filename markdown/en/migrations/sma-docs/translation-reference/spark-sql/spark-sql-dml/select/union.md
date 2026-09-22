@@ -118,7 +118,7 @@ Expand
 
 Show lessSee more
 
-**INTERSECT Operator:** Returns only the rows that appear in both result sets, eliminating duplicates. It compares the results of two or more SELECT statements and returns only the matching records. Returns only the rows that appear in both result sets, eliminating duplicates.
+**INTERSECT Operator:** Returns only the rows that appear in both result sets, eliminating duplicates. It compares the results of two or more SELECT statements and returns only the matching records.
 
 | c |
 | --- |
@@ -129,7 +129,7 @@ Expand
 
 Show lessSee more
 
-**INTERSECT DISTINCT Operator:** Returns only unique rows that appear in both result sets, eliminating any duplicates. Returns only unique rows that appear in both queries, eliminating any duplicates from the result set.
+**INTERSECT DISTINCT Operator:** Returns only unique rows that appear in both result sets, eliminating any duplicates.
 
 | c |
 | --- |
@@ -140,7 +140,7 @@ Expand
 
 Show lessSee more
 
-**INTERSECT ALL Operator:** Returns all matching rows from multiple queries, including duplicates. Unlike the standard INTERSECT operator, which removes duplicates, INTERSECT ALL preserves duplicate rows in the final result set. Returns all rows that appear in both result sets, including duplicates. Unlike INTERSECT, which removes duplicates, INTERSECT ALL preserves duplicate rows based on their frequency in both sets.
+**INTERSECT ALL Operator:** Returns all matching rows from multiple queries, including duplicates. Unlike the standard INTERSECT operator, which removes duplicates, INTERSECT ALL preserves duplicate rows in the final result set.
 
 | c |
 | --- |
@@ -152,21 +152,7 @@ Expand
 
 Show lessSee more
 
-**UNION Operator:** The UNION operator combines the results of two or more SELECT statements into a single result set. It removes duplicate rows from the combined result set by default. The UNION operator combines the results of two or more SELECT statements into a single result set. It removes duplicate rows from the combined results.
-
-| c |
-| --- |
-| 1 |
-| 3 |
-| 5 |
-| 4 |
-| 2 |
-
-Expand
-
-Show lessSee more
-
-**UNION DISTINCT Operator:** The UNION DISTINCT operator combines two or more result sets and removes any duplicate rows from the final output. It returns only unique rows from all the combined queries. The UNION DISTINCT operator combines rows from two or more queries while removing any duplicate rows from the final result set.
+**UNION Operator:** The UNION operator combines the results of two or more SELECT statements into a single result set. It removes duplicate rows from the combined result set by default.
 
 | c |
 | --- |
@@ -180,7 +166,21 @@ Expand
 
 Show lessSee more
 
-**UNION ALL Operator:** The UNION ALL operator combines rows from two or more queries without removing duplicate records. Unlike the UNION operator, UNION ALL retains all rows, including duplicates, making it faster to execute since it doesn’t need to perform duplicate checking. This operator combines the results of two or more SELECT statements and includes all rows, including duplicates. Unlike UNION, which removes duplicate rows, UNION ALL retains all rows from all SELECT statements.
+**UNION DISTINCT Operator:** The UNION DISTINCT operator combines two or more result sets and removes any duplicate rows from the final output. It returns only unique rows from all the combined queries.
+
+| c |
+| --- |
+| 1 |
+| 3 |
+| 5 |
+| 4 |
+| 2 |
+
+Expand
+
+Show lessSee more
+
+**UNION ALL Operator:** The UNION ALL operator combines rows from two or more queries without removing duplicate records. Unlike the UNION operator, UNION ALL retains all rows, including duplicates, making it faster to execute since it doesn’t need to perform duplicate checking.
 
 | c |
 | --- |

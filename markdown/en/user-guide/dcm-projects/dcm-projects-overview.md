@@ -160,23 +160,6 @@ For object types still in preview, it’s not guaranteed that the changeset capt
 - DCM templating variables are not intended for sensitive information like credentials. The rendered SQL definitions don’t redact any
   values inserted by environment variables.
 
-### The `/out/` subfolder
-
-The `/out/` folder in your project directory contains the rendered project definitions after you run PLAN with one of the following:
-
-- The `--save-output` flag in the CLI.
-- The Workspace UI.
-- An `OUTPUT_PATH` pointed at this folder in an `EXECUTE DCM PROJECT ... PLAN` statement.
-
-Each new PLAN execution that saves its output overwrites the previously rendered output in the `/out/` folder.
-
-The `/out/` folder also contains the raw changeset as an `out/plan_result.json` file. The Workspace UI uses this file to render the PLAN changeset, and you can also process it with agents or automations.
-
-Consider the following:
-
-- You can ignore the `/out/` folder if you don’t need the rendered output or changeset. To prevent it from being committed to your Git repository, add `/out/` to your project’s `.gitignore` file.
-- You can safely delete the `/out/` folder at any time. It’s recreated the next time you run PLAN with output saving enabled.
-
 ## Key use cases for DCM Projects
 
 This section describes key use cases for DCM Projects and how they help address challenges that data businesses face at scale.

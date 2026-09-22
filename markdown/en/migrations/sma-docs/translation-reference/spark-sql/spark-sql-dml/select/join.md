@@ -105,7 +105,7 @@ SELECT id, name, deptno
            (104, 'Evan' , 4),
            (106, 'Amy'  , 6)) AS v1 (id, name, deptno);
 
-CREATE TEMP VIEW department(deptno, deptname) AS
+CREATE TEMPORARY TABLE department(deptno, deptname) AS
 SELECT deptno, deptname
   FROM (VALUES(3, 'Engineering'),
           (2, 'Sales'      ),

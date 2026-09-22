@@ -14,9 +14,9 @@ Also, in the ScopeValidation report, you will find information about the failed 
 
 ### Why is it ambiguous?
 
-Block comments on SQL start with `/*` and end with `*/` . When the character sequence `/*/` is used, depending on the source language, it can start a nesting inside the block comment, or finish the whole block.
+Block comments in SQL start with `/*` and end with `*/` . When the character sequence `/*/` is used, depending on the source language, it can start a nesting inside the block comment, or finish the whole block.
 
-Here is an example of valid statements using `/*/`
+Here are examples of valid statements using `/*/`.
 
 Copy code
 

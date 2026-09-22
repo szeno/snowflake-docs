@@ -7,7 +7,7 @@ The Scope Validator step checks if the entry code meets the basic requirements t
 - The entry code is extracted
 - Valid entry file format
 - Valid files and folder naming
-- Valid Comments
+- Valid comments
 
 Note
 

@@ -1,6 +1,6 @@
 # snow dcm list
 
-Lists all available DCM Projects.
+Lists the DCM Projects visible to the active role within the selected scope.
 
 ## Syntax
 
@@ -185,11 +185,12 @@ None
 
 ## Usage notes
 
-The `snow dcm list` command lists all available DCM project objects.
+The `snow dcm list` command lists DCM project objects visible to the active role within the current or explicitly selected scope. Specify
+`--in-account` to search across the account.
 
 ## Examples
 
-- List all available DCM project objects:
+- List the visible DCM project objects in the current scope:
 
   Copy code
 
@@ -209,4 +210,11 @@ The `snow dcm list` command lists all available DCM project objects.
 
   ```
   snow dcm list --in database MY_DB
+  ```
+- List visible DCM project objects across the account:
+
+  Copy code
+
+  ```
+  snow dcm list --in-account
   ```

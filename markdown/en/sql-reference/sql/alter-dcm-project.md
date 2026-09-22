@@ -18,9 +18,15 @@ ALTER DCM PROJECT [ IF EXISTS ] <name> SET
 ALTER DCM PROJECT [ IF EXISTS ] <name> UNSET
   [ LOG_LEVEL ]
   [ COMMENT ]
+
+ALTER DCM PROJECT <name>
+  UNMANAGE GRANT <grant_specification>
+
+ALTER DCM PROJECT <name>
+  DROP DEPLOYMENT <deployment_name>
 ```
 
-## Required parameters
+## Parameters
 
 `name`
 :   Specifies the identifier for the DCM project to alter.
@@ -33,27 +39,26 @@ ALTER DCM PROJECT [ IF EXISTS ] <name> UNSET
 `SET ...`
 :   Sets one or more specified properties or parameters for the DCM project:
 
-Optional parameters
-:   `LOG_LEVEL = log_level`
-    :   Sets the logging level for the DCM project.
+`LOG_LEVEL = log_level`
+:   Sets the logging level for the DCM project.
 
-        For more information about levels, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). For information about setting the log level, see
-        [Setting levels for logging, metrics, and tracing](/developer-guide/logging-tracing/telemetry-levels).
+    For more information about levels, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). For information about setting the log level, see
+    [Setting levels for logging, metrics, and tracing](/developer-guide/logging-tracing/telemetry-levels).
 
-        The value can be one of the following:
+    The value can be one of the following:
 
-        - `TRACE`
-        - `DEBUG`
-        - `INFO`
-        - `WARN`
-        - `ERROR`
-        - `FATAL`
-        - `OFF`
+    - `TRACE`
+    - `DEBUG`
+    - `INFO`
+    - `WARN`
+    - `ERROR`
+    - `FATAL`
+    - `OFF`
 
-        Default: `OFF`
+    Default: `OFF`
 
-    `COMMENT = 'string_literal'`
-    :   Adds a comment or overwrites an existing comment for the DCM project.
+`COMMENT = 'string_literal'`
+:   Adds a comment or overwrites an existing comment for the DCM project.
 
 `UNSET ...`
 :   Unsets one or more specified properties or parameters for the DCM project, which resets the properties to their defaults:
@@ -65,6 +70,16 @@ Optional parameters
 
     When unsetting a property or parameter, specify only the property or parameter name (unless the syntax above indicates that you
     should specify the value). Specifying the value returns an error.
+
+`UNMANAGE GRANT grant_specification`
+:   Removes the specified grant from the project’s management scope without revoking the underlying privilege. Write
+    `grant_specification` as you would write a [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) statement, but omit the leading `GRANT` keyword.
+    Remove the corresponding `GRANT` statement from the project definitions before the next deployment to prevent the project from managing it
+    again.
+
+`DROP DEPLOYMENT deployment_name`
+:   Deletes the specified retained deployment record and its artifacts. This operation doesn’t reverse the infrastructure changes made by that
+    deployment.
 
 ## Access control requirements
 
@@ -110,4 +125,22 @@ Copy code
 
 ```
 ALTER DCM PROJECT my_project SET COMMENT = 'Updated project for Q4 data management';
+```
+
+The following example stops managing a grant without revoking the privilege:
+
+Copy code
+
+```
+ALTER DCM PROJECT my_project
+  UNMANAGE GRANT SELECT ON TABLE my_db.my_schema.my_table TO ROLE analyst;
+```
+
+The following example deletes the retained deployment record named `DEPLOYMENT$1`:
+
+Copy code
+
+```
+ALTER DCM PROJECT my_project
+  DROP DEPLOYMENT DEPLOYMENT$1;
 ```

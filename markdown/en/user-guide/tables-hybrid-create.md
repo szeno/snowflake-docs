@@ -4,7 +4,7 @@ Feature — Generally Available
 
 Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
-This topic provides an overview on creating [hybrid tables](/user-guide/tables-hybrid) in Snowflake.
+This topic provides an overview of creating [hybrid tables](/user-guide/tables-hybrid) in Snowflake.
 
 Note
 
@@ -72,7 +72,7 @@ including `INSERT ALL`. It accelerates loading whether the hybrid table is empty
 
 You can check the **Statistics** information in Snowsight query profiles to see whether the bulk-load
 fast path was used. **Number of rows inserted** is referred to as the **Number of rows bulk loaded** when the fast
-path is used. For example, this CTAS operation bulk loaded 200000 rows into a new table:
+path is used. For example, this CTAS operation bulk loaded 200,000 rows into a new table:
 
 ![CTAS query profile that uses the optimized bulk loading](/static/images/screens/number_of_rows_bulk_loaded_new.png)
 

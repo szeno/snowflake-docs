@@ -32,7 +32,7 @@ You have the following interface options available for DCM Projects.
 
 | Interface tool | Best for |
 | --- | --- |
-| **Snowsight**  A workspace in Snowsight is a Snowflake native cloud IDE in your account. | - Easily create or upload DCM definition files via the UI. - Connect to a Git repository to pull and push changes. - Review, edit, and debug definition files. - Execute DCM PLAN and DEPLOY commands using the workspace UI. - Browse the database catalog to see DCM project objects and their configuration, managed objects and deployment history. - Select a target profile to automatically use the linked DCM project and templating configuration. |
+| **Snowsight**  A workspace in Snowsight is a Snowflake native cloud IDE in your account. | - Easily create or upload DCM definition files via the UI. - Connect to a Git repository to pull and push changes. - Review, edit, and debug definition files. - Execute DCM PLAN and DEPLOY commands using the workspace UI. - Browse the database catalog to see DCM project objects and their configuration, managed objects, and deployment history. - Select a target profile to automatically use the linked DCM project and templating configuration. |
 | **Local IDE** with **Snowflake CLI**  The most familiar and personalized interface for software engineers. | - Create and edit definition files locally. - Connect to a Git repository to pull and push changes. - Concise Snowflake CLI commands with directory context and optional flags. - Rich formatted output and an option to save as a `.json` file. - Option to leverage Cortex Code CLI for agentic or assisted development. - See [Snowflake CLI for DCM Projects](#label-dcm-projects-snowflake-cli) for information about installing and running Snowflake CLI in your local IDE. |
 | **Cortex Code**  An agentic AI tool for Snowflake. See [Cortex Code for DCM Projects](#label-dcm-projects-cortex-code) for more information. | - AI assisted or agentic authoring of local definition files. - AI assisted or agentic code validation and debugging by running static analysis and DCM PLAN commands. |
 | **SQL commands** | - Run SQL commands from the Snowflake CLI REPL, workspaces, notebooks, or worksheets. - Customize commands with additional arguments. - Same commands work across all Snowflake SQL interfaces. |
@@ -87,7 +87,8 @@ For example:
 Snowflake CLI is a command-line interface for Snowflake. It is a tool that you can use to interact with your Snowflake account from your local
 IDE.
 
-1. DCM Projects require Snowflake CLI version 3.16 or higher. Install or upgrade Snowflake CLI as described in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+1. DCM Projects require Snowflake CLI version 3.24.0 or higher for the commands and options documented in this guide. Install or upgrade
+   Snowflake CLI as described in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
 2. Configure your connection to your Snowflake account, as described in [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect). Confirm you have a working connection:
 
    Copy code
@@ -95,6 +96,9 @@ IDE.
    ```
    snow connection test
    ```
+
+   For more information about how the CLI resolves project targets separately from the active connection and role, see
+   [Project identifier resolution](/developer-guide/snowflake-cli/command-reference/dcm-commands/overview#label-snowcli-dcm-project-identifier-resolution).
 3. Navigate to the local directory of your Git repository clone. For example:
 
    Copy code
@@ -175,7 +179,7 @@ snow dcm create <my_project> --if-not-exists
 
 snow dcm create # uses the name specified in the default target from the manifest
 
-snow dcm create --target # uses the named target from the manifest
+snow dcm create --target DEV # uses the named target from the manifest
 ```
 
 1. In the navigation menu, select **Projects** » **Workspaces**.
@@ -205,7 +209,7 @@ These privileges are independent of the access control for definition files stor
 
 | Privilege | Description | Allowed operations |
 | --- | --- | --- |
-| READ | - Shows if the DCM project object exists. - Lists the objects and grants deployed by the DCM project, which are visible to the user’s role.   This means you need both READ on the DCM project and READ on the objects themselves. | - SHOW DCM PROJECTS LIKE ‘%project’ - DESCRIBE DCM PROJECT <project> - SHOW ENTITIES IN DCM PROJECT <project> |
+| READ | - Shows if the DCM project object exists. - Lists the objects and grants deployed by the DCM project, which are visible to the user’s role.   This means you need both `READ` on the DCM project and the appropriate privilege to see each managed object. The underlying privilege varies by object type. | - SHOW DCM PROJECTS LIKE ‘%project’ - DESCRIBE DCM PROJECT <project> - SHOW ENTITIES IN DCM PROJECT <project> |
 | MONITOR | - Gives access to the complete deployment history, including all artifacts. - Gives the role the ability to analyze, debug, or audit production deployments without the ability to deploy changes directly. | - All READ privileges - DESCRIBE DCM PROJECT <project> (with source and deployment path of latest deployment) - INFORMATION\_SCHEMA.DCM\_DEPLOYMENT\_HISTORY (project\_name => ‘db.schema.project’) - SHOW DEPLOYMENTS IN DCM PROJECT <project> - LIST all files in the deployment - GET any access to files inside the DCM project |
 | OWNERSHIP | - The role that is used to create the DCM project object is the owner of that project. - Gives the role the ability to deploy changes. - Gives the role the ability to transfer ownership of the project to another role when the project has not yet been deployed. | - All MONITOR privileges - EXECUTE DCM PROJECT <project> PLAN - EXECUTE DCM PROJECT <project> DEPLOY - EXECUTE DCM PROJECT <project> PREVIEW - EXECUTE DCM PROJECT <project> TEST - DROP DCM PROJECT <project> - ALTER DCM PROJECT <project> - GRANT READ on DCM PROJECT <project> TO ROLE <role2> - GRANT MONITOR on DCM PROJECT <project> TO ROLE <role2> |
 
@@ -217,28 +221,9 @@ Show lessSee more
 
 The role that deploys a DCM project, by default, has the OWNERSHIP privilege of all deployed objects.
 
-The project definitions can include GRANT OWNERSHIP statements to other roles. The DCM project owner role automatically has OWNERSHIP on
-all roles it creates inside the project. However, if one of those roles is then granted OWNERSHIP of other deployed entities (such as tables
-or schemas), the project owner role no longer has direct OWNERSHIP of those entities. To avoid being locked out of those objects on future
-deployments, you must also grant that role to the project owner role:
-
-Copy code
-
-```
--- Define a role inside the project. The project owner role has OWNERSHIP on this role by default.
-DEFINE ROLE MY_DB.MY_SCHEMA.DATA_OWNER_ROLE;
-
--- Define a table inside the project.
-DEFINE TABLE MY_DB.MY_SCHEMA.MY_TABLE (ID INT, NAME VARCHAR);
-
--- Transfer ownership of the table to the role.
-GRANT OWNERSHIP ON TABLE MY_DB.MY_SCHEMA.MY_TABLE TO ROLE DATA_OWNER_ROLE;
-
--- Grant the role to the project owner role so the project owner inherits
--- ownership of MY_TABLE through the role hierarchy.
--- Without this, the project owner is locked out of MY_TABLE on future deployments.
-GRANT ROLE DATA_OWNER_ROLE TO ROLE DCM_PROJECT_OWNER_ROLE;
-```
+Project definitions can transfer ownership to other roles. To prevent owner lockout, the DCM project owner role must hold the role that
+receives ownership. For the complete definition pattern and its limitations, see
+[OWNERSHIP grants](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-grant-ownership).
 
 DCM PLAN and DEPLOY actively check for potential owner lockout and fail before making any changes if a `GRANT OWNERSHIP` statement on a
 managed object points to a role that the project owner role doesn’t hold. This is a safety check, not a side effect: DCM prevents the
@@ -246,7 +231,12 @@ lockout from happening in the first place.
 
 The situation where the project owner is already locked out of a managed object only occurs when a privilege was revoked from the project
 owner role manually outside of DCM. In that case, the next PLAN or DEPLOY will fail because the current state no longer matches what DCM
-expects. To recover, either remove the object’s definition from the project or restore ownership to the project owner role outside of DCM.
+expects. To recover, restore the required ownership or role hierarchy outside of DCM.
+
+For an intentional management handoff, first use the documented
+[detach workflow](#label-dcm-projects-detach-object) with a role that has the required privileges, and then remove the definition before
+redeploying. Removing a definition without first detaching the object expresses intent to drop the managed object; it isn’t a recovery
+method for owner lockout.
 
 If you want to migrate existing objects to be managed by a DCM project, the role that owns the DCM project object also has to have ownership
 privileges (direct or inherited through other roles) on the object to be managed by DCM project.
@@ -331,7 +321,7 @@ cd ./Quickstarts/DCM_Project_Quickstart_1/
 snow dcm plan
 ```
 
-An example of a CLI command to plan a DCM project from a Snowflake stage or Git repository clone is:
+An example of a CLI command to plan a DCM project from local files by using a non-default target is:
 
 Copy code
 
@@ -344,9 +334,9 @@ An example of a CLI command to plan a DCM project with optional arguments is:
 Copy code
 
 ```
-snow dcm plan
---variable "wh_size='MEDIUM'" --variable "teams = ['TEAM_A', 'TEAM_B']"
---save-output
+snow dcm plan \
+  --variable "wh_size='MEDIUM'" --variable "teams = ['TEAM_A', 'TEAM_B']" \
+  --save-output
 ```
 
 Variables must be enclosed in double quotes, with additional single quotes for string values. Lists of values require
@@ -459,7 +449,7 @@ You have the following options to reference the location of the manifest and def
   The Snowsight user interface automatically lists all DCM project definitions inside the current workspace. You can select one of these
   paths and workspaces will use it to run DCM commands.
 
-  If you want to manually run SQL commands in workspaces you can also refer to that same path inside any of your workspaces.
+  If you want to manually run SQL commands in workspaces, you can also refer to that same path inside any of your workspaces.
 
   **Tip:** The 3-dot menu next to every file in your workspace lets you copy the full path to that file into your SQL code.
 
@@ -472,7 +462,7 @@ You have the following options to reference the location of the manifest and def
     PLAN
     USING CONFIGURATION DEV
   FROM
-    'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/live/Quickstarts/DCM_Project_Quickstart_1'
+    'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/live/Quickstarts/DCM_Project_Quickstart_1';
   ```
 - From a local Git repository clone on your disk
 
@@ -496,7 +486,9 @@ You have the following options to reference the location of the manifest and def
   Copy code
 
   ```
-  snow dcm plan DCM_PROJECT_DEV --configuration DEV --from ./Quickstarts/DCM_Project_Quickstart_2/
+  snow dcm plan DCM_PROJECT_DEV \
+    --target DEV \
+    --from ./Quickstarts/DCM_Project_Quickstart_2/
   ```
 - From your remote repository in a workflow
 
@@ -509,20 +501,27 @@ You have the following options to reference the location of the manifest and def
   Copy code
 
   ```
-  steps:
-    - uses: actions/checkout@v4
-    - uses: snowflakedb/snowflake-actions/dcm/dcm-plan@v3
-      with:
-        target: PROD
-        project-path: Quickstarts/DCM_Project_Quickstart_1/
-        snowflake-user: ${{ env.SNOWFLAKE_USER }}
+  jobs:
+    plan:
+      runs-on: ubuntu-latest
+      environment: PROD
+      permissions:
+        contents: read
+        id-token: write
+      steps:
+        - uses: actions/checkout@v7
+        - uses: snowflakedb/snowflake-actions/dcm/plan@v3
+          with:
+            target: PROD
+            project-path: Quickstarts/DCM_Project_Quickstart_1/
+            snowflake-user: ${{ env.SNOWFLAKE_USER }}
   ```
 - From a Stage or Git repository clone in Snowflake
 
   If you want to run a PROCEDURE or TASK inside Snowflake that runs DCM commands, this SQL command can reference an absolute
   path to a Snowflake stage or Git repository clone inside the account.
 
-  For Git repository clones, consider first running ALTER GIT REPOSITORY FETCH to have the latest version.
+  For Git repository clones, consider first running ALTER GIT REPOSITORY FETCH to get the latest version.
 
   `'@...'` paths can only be used when executing DCM SQL commands.
 
@@ -535,7 +534,7 @@ You have the following options to reference the location of the manifest and def
     PLAN
     USING CONFIGURATION DEV
   FROM
-    '@DCM_DEMO.DEPLOY.DCM_DEMO/branches/main/Quickstarts/DCM_Project_Quickstart_1/'
+    '@DCM_DEMO.DEPLOY.DCM_DEMO/branches/main/Quickstarts/DCM_Project_Quickstart_1/';
   ```
 
 ### Plan output
@@ -582,24 +581,31 @@ FROM
 Copy code
 
 ```
-snow dcm deploy DCM_PROJECT_DEV --configuration DEV --variable "suffix='DEV_USER'" --variable "user='JANEDOE'"
+snow dcm deploy DCM_PROJECT_DEV \
+  --target DEV \
+  --variable "suffix='DEV_USER'" \
+  --variable "user='JANEDOE'"
 ```
 
 Each deployment attempt (executing, successful, failed, or canceled) has a deployment number, for example `DEPLOYMENT$1`. Optionally you can
 specify a unique string as a deployment *alias* to name individual deployments for better observability in the deployment history.
 Think of the deployment *alias* like a commit message for your code change.
 
-Each DEPLOY command first runs an internal PRE-PLAN as part of the deployment. If the PRE-PLAN succeeds, the DEPLOY is executed
-directly afterwards. There is no option to intercept or review this internal plan step. The PRE-PLAN is executed to further
+Each `DEPLOY` command first runs an internal `COMPILE` and `PLAN` as part of the deployment. If the `PLAN` succeeds, `DEPLOY` is executed
+directly afterwards. There is no option to intercept or review this internal plan step. The `PLAN` is executed to further
 reduce the risk of failure during the deployment.
-If a DEPLOY fails, you can see in the error message if it failed during the PRE-PLAN or DEPLOY step.
-Failure during the PRE-PLAN step is similar to PLAN - no DDL changes are executed.
+`DEPLOY` reconciles the submitted definitions with the current account state and computes a fresh changeset. It doesn’t replay a previously
+saved `PLAN` result. Intervening account changes can therefore change the deployment changeset even when the submitted definitions are
+unchanged.
+If `DEPLOY` fails, you can see in the error message if it failed during the `RENDER`, `COMPILE`, `PLAN` or `DEPLOY` step.
+Failure during any step before `DEPLOY` step is similar to `PLAN`: No DDL changes are executed.
 
 Important
 
 Failure during the DEPLOY step can result in partial execution of the defined changes. This can potentially cause some of the
 managed objects to be in an undefined state. In most cases, fixing the root cause and executing DEPLOY again restores the
-defined target state.
+defined target state. To apply an earlier definition state through a new reconciliation, see
+[Recover an earlier defined state](/user-guide/dcm-projects/dcm-projects-monitor#label-dcm-projects-recover-state).
 
 The target path for the DEPLOY output file can’t be customized. Deployment artifacts are always stored inside the DCM project.
 
@@ -884,7 +890,7 @@ These reusable actions are only available for GitHub. The same CI/CD concepts ap
 Bitbucket Pipelines, and other providers. Only the workflow syntax differs. No published actions are available for
 those platforms yet. Consider building your own workflows using a coding agent such as Cortex Code.
 
-The following reusable actions are available: `dcm-parse-manifest`, `dcm-connection-test`, `dcm-plan`, and `dcm-deploy`.
+The following reusable actions are available: `dcm/parse-manifest`, `dcm/connection-test`, `dcm/plan`, and `dcm/deploy`.
 For setup instructions, input/output documentation, and sample workflows, see the
 [GitHub Marketplace listing](https://github.com/marketplace/actions/snowflake-actions#github-actions-for-dcm-projects).
 
@@ -918,14 +924,23 @@ The sample workflows demonstrate the following patterns applicable to any DCM Pr
 
 - **Manifest-driven configuration**: Each workflow reads `account_identifier`, `project_owner`, and `project_name` from the
   manifest targets, keeping environment configuration in one place.
-- **Data drop protection**: The deploy workflow detects destructive DROP operations on data-bearing objects
-  (databases, schemas, tables, and stages) and blocks the deployment if any are found.
+- **Selected `DROP` detection**: The deploy workflow checks the saved `PLAN` result for top-level `DROP` entries for databases, schemas,
+  tables, and stages, and blocks the deployment if any are found. This check doesn’t cover every destructive `ALTER` or nested change, and
+  it doesn’t freeze the fresh changeset that `DEPLOY` computes.
 - **Sequential stage-to-production promotion**: Production deployment starts only after staging deployment succeeds and data quality tests pass.
 - **Pull request comments**: Plan and deploy summaries are posted as comments on the originating pull request.
 
 The following screenshot shows a sample PLAN summary that a workflow posted as a pull request comment.
 
 ![GitHub Actions bot comment on a pull request summarizing a DCM PLAN, including created and altered objects](/static/images/dcm-projects/dcm_github_actions_pr_comment.png)
+
+The deployment workflows use the following sequence for each target:
+
+1. Plan: Runs `snow dcm plan` and summarizes the changeset.
+2. Selected `DROP` detection: Checks the saved `PLAN` for top-level `DROP` entries for databases, schemas, tables, or stages.
+3. Deploy: Runs `snow dcm deploy`.
+4. Post-deployment scripts (optional): Runs separate SQL scripts with Jinja variable injection.
+5. Test expectations (optional): Runs `snow dcm test` to validate data quality expectations.
 
 ##### Sample workflow: Test connections
 
@@ -960,14 +975,8 @@ summary of the planned changes directly on the pull request. The workflow perfor
 - Workflow configuration file: [DCM\_3\_Deploy\_to\_Prod.yml](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/DCM_3_Deploy_to_Prod.yml)
 - Trigger: Push to the `main` branch (typically a merged pull request)
 
-This workflow plans and deploys to a single production target. Use it when you don’t need a staging environment or when staging
-is handled separately. The workflow performs the following steps:
-
-1. Plan: Runs `snow dcm plan` and summarizes the changeset.
-2. Data drop detection: Blocks the pipeline if the plan contains DROP operations for databases, schemas, tables, or stages.
-3. Deploy: Runs `snow dcm deploy`.
-4. Post scripts (optional): Runs SQL post-hook scripts with Jinja variable injection.
-5. Test expectations (optional): Runs `snow dcm test` to validate data quality expectations.
+This workflow runs the deployment sequence once for the production target. Use it when you don’t need a staging environment or when staging
+is handled separately.
 
 After deployment, the workflow optionally posts a status summary to the originating pull request.
 
@@ -977,17 +986,11 @@ After deployment, the workflow optionally posts a status summary to the originat
 - Trigger: Push to the `main` branch (typically a merged pull request)
 
 This workflow implements a sequential promotion pipeline. Changes are first deployed to staging, validated end-to-end, and only then
-promoted to production. If any step fails, the pipeline stops and production is not affected.
+promoted to production. A staging failure prevents production deployment from starting. A failure after production deployment starts can
+leave partial production changes, and a test failure occurs after production has changed.
 
-The deployment sequence for each target (STAGE, then PROD) includes:
-
-1. Plan: Runs `snow dcm plan` and summarizes the changeset.
-2. Data drop detection: Blocks the pipeline if the plan contains DROP operations for databases, schemas, tables, or stages.
-3. Deploy: Runs `snow dcm deploy`.
-4. Post scripts (optional): Runs SQL post-hook scripts with Jinja variable injection.
-5. Test expectations (optional): Runs `snow dcm test` to validate data quality expectations.
-
-Production deployment starts only after all staging steps pass. After all jobs complete, the workflow optionally posts a final
+The workflow runs the deployment sequence first for STAGE and then for PROD. Production deployment starts only after all staging steps pass.
+After all jobs complete, the workflow optionally posts a final
 status summary to the originating pull request.
 
 ## Frequently asked questions (FAQ)
@@ -999,10 +1002,12 @@ How do I rename an existing object?
     4. Run DEPLOY to save the new state.
 
 How do I deploy objects that are not yet supported by DEFINE statements?
-:   You can run CREATE IF NOT EXISTS or CREATE OR REPLACE statements in a separate SQL script after executing your DCM project plan or
-    deployment.
+:   Provision external prerequisites before `PLAN` when DCM definitions reference objects or files that must already exist for compilation.
+    Run other imperative operations in separate post-deployment scripts after `DEPLOY`. These scripts have their own lifecycle and aren’t included
+    in DCM changesets or recovery artifacts.
 
-    Both options support Jinja2 templating and dry-run (dry-run renders the Jinja templating but does not verify successful SQL compilation).
+    Separately executed scripts can support Jinja2 templating and dry-run. Dry-run renders the Jinja templating but doesn’t verify successful SQL
+    compilation.
 
     For example:
 

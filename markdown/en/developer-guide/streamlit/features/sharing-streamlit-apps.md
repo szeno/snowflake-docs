@@ -6,6 +6,9 @@ Not supported in government regions.
 
 This topic covers URLs for sharing Streamlit in Snowflake apps with or without the Snowsight interface.
 
+To render an app inside an external web page rather than share a link to it, see
+[Embedding Streamlit in Snowflake apps in external pages](/developer-guide/streamlit/features/embedding/overview).
+
 ## App URLs
 
 Each Streamlit in Snowflake app has two URLs: app-builder URLs that show the Snowsight elements and

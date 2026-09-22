@@ -21,18 +21,11 @@ This topic describes the steps to set up the Openflow Connector for Veeva Vault.
 
    - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
    - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs)
-3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the [domains](#label-of-veeva-req-domains) required by the connector.
+3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the required domains for the [Veeva Vault](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-veeva-vault) connector.
+   If you are using Openflow - BYOC Deployments, configure your cloud network egress to allow TLS 443 access to
+   your Vault hostname (for example, `myvault.veevavault.com:443`).
 4. You have access to the Openflow admin role or a similar role you use to manage Openflow.
-5. If you are creating a Snowflake service user to manage the connector, you have created key pair authentication. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
-
-## Required endpoints
-
-The following endpoint is required for the connector to function:
-
-- `<your_vault_hostname>:443` (for example, `myvault.veevavault.com:443`)
-
-If you are using Openflow - BYOC Deployments, configure your cloud network egress to allow TLS 443 access to this endpoint.
-If you are using Openflow - Snowflake Deployments, you must create a network rule and an external access integration (EAI). See [Create a network rule (Openflow Snowflake Deployments only)](#create-a-network-rule-openflow-snowflake-deployments-only) for details.
+5. If you’re deploying in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication strategy, you have created key pair authentication. For more information, see [key pair authentication](/user-guide/key-pair-auth).
 
 ## Set up Veeva Vault
 
@@ -66,31 +59,9 @@ its password is changed.
 
 ## Set up your Snowflake account
 
-As an Openflow administrator, perform the following tasks to set up your Snowflake account.
-
-### Create a Snowflake service user (Openflow BYOC only)
-
-Note
-
-This step is only required if you are deploying the connector in Openflow - BYOC Deployments. It isn’t needed for Openflow - Snowflake Deployments.
-
-1. Create a service user:
-
-   Copy code
-
-   ```
-   USE ROLE USERADMIN;
-   CREATE USER <openflow_service_user>
-     TYPE=SERVICE
-     COMMENT='Service user for the Veeva Vault connector';
-   ```
-2. Store the private key for that user in a file to supply to the connector’s configuration. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
-
-   Copy code
-
-   ```
-   ALTER USER <openflow_service_user> SET RSA_PUBLIC_KEY = '<pubkey>';
-   ```
+As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant it the following privileges.
 
 ### Create database, schema, and warehouse
 
@@ -99,88 +70,60 @@ This step is only required if you are deploying the connector in Openflow - BYOC
    Copy code
 
    ```
-   USE ROLE ACCOUNTADMIN;
-   CREATE DATABASE IF NOT EXISTS <veeva_database>;
+   USE ROLE OPENFLOW_ADMIN;
+   CREATE DATABASE IF NOT EXISTS <destination_database>;
    ```
 2. Create the destination schema:
 
    Copy code
 
    ```
-   CREATE SCHEMA IF NOT EXISTS <veeva_database>.<veeva_schema>;
+   CREATE SCHEMA IF NOT EXISTS <destination_database>.<destination_schema>;
    ```
-3. Create a role for the connector and grant the required privileges:
+3. Grant the required privileges to the runtime’s execute-as role:
 
    Copy code
 
    ```
-   CREATE ROLE IF NOT EXISTS <veeva_connector_role>;
-
-   GRANT USAGE ON DATABASE <veeva_database> TO ROLE <veeva_connector_role>;
-   GRANT USAGE ON SCHEMA <veeva_database>.<veeva_schema> TO ROLE <veeva_connector_role>;
-   GRANT CREATE TABLE ON SCHEMA <veeva_database>.<veeva_schema> TO ROLE <veeva_connector_role>;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE TABLE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 4. Create a warehouse (or use an existing one) and grant usage privileges:
 
    Copy code
 
    ```
-   CREATE WAREHOUSE IF NOT EXISTS <veeva_warehouse>
+   CREATE WAREHOUSE IF NOT EXISTS <openflow_warehouse>
      WITH
-    WAREHOUSE_SIZE = 'SMALL'
-    AUTO_SUSPEND = 300
-    AUTO_RESUME = TRUE;
+     WAREHOUSE_SIZE = 'XSMALL'
+     AUTO_SUSPEND = 300
+     AUTO_RESUME = TRUE;
 
-   GRANT USAGE, OPERATE ON WAREHOUSE <veeva_warehouse> TO ROLE <veeva_connector_role>;
+   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
-5. If using Openflow - BYOC Deployments, assign the role to the service user:
+5. If any other Snowflake users require access to the tables ingested by the
+   connector (for example, for custom processing in Snowflake), grant those users the execute-as
+   role.
 
-   Copy code
+Note
 
-   ```
-   GRANT ROLE <veeva_connector_role> TO USER <openflow_service_user>;
-   ALTER USER <openflow_service_user> SET DEFAULT_ROLE = <veeva_connector_role>;
-   ```
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
-### Create a network rule (Openflow Snowflake Deployments only)
+### Grant the privilege to create a pipe
 
-Caution
+The connector uses Snowpipe Streaming with high-performance architecture, which requires a `PIPE`
+object. Grant the additional privilege needed to create it:
 
-If your runtime executes in Openflow - BYOC Deployments, you don’t need to create an External Access Integration (EAI). Instead, configure your cloud network egress to allow TLS 443 access to your Veeva Vault hostname.
+Copy code
 
-To allow the connector to call the Veeva Vault API from a Snowflake-hosted runtime, create a
-network rule and an external access integration (EAI), and then grant the execute-as role usage
-privileges on the EAI.
-
-1. Create a network rule:
-
-   Copy code
-
-   ```
-   USE ROLE ACCOUNTADMIN;
-
-   CREATE OR REPLACE NETWORK RULE openflow_<runtime_name>_veeva_network_rule
-     TYPE = HOST_PORT
-     MODE = EGRESS
-     VALUE_LIST = ('<your_vault_hostname>:443');
-   ```
-2. Create an External Access Integration:
-
-   Copy code
-
-   ```
-   CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION openflow_<runtime_name>_veeva_eai
-     ALLOWED_NETWORK_RULES = (openflow_<runtime_name>_veeva_network_rule)
-     ENABLED = TRUE;
-   ```
-3. Grant your execute-as role USAGE on the integration:
-
-   Copy code
-
-   ```
-   GRANT USAGE ON INTEGRATION openflow_<runtime_name>_veeva_eai
-     TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
+```
+GRANT CREATE PIPE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+```
 
 ## Install the connector
 

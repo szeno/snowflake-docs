@@ -64,6 +64,8 @@ For general information about roles and privilege grants for performing SQL acti
 - The OR REPLACE and IF NOT EXISTS clauses are mutually exclusive. They can’t both be used in the same statement.
 - CREATE OR REPLACE *<object>* statements are atomic. That is, when an object is replaced, the old object is deleted and the new object is created in a single transaction.
 
+- Replacing a DCM project deletes its retained deployment history and artifacts. Objects, grants, and attachments previously managed by the
+  replaced project remain in place as unmanaged resources.
 - Regarding metadata:
 
   Attention

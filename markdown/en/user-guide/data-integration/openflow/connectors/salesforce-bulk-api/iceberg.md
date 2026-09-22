@@ -47,12 +47,13 @@ ALTER DATABASE <my_salesforce_db> SET
 
 `COMPATIBLE` produces Parquet files readable by external engines. `OPTIMIZED` enables Snowflake-specific query optimizations. Choose based on your data query needs. For more information, see [STORAGE\_SERIALIZATION\_POLICY](/sql-reference/parameters#storage-serialization-policy).
 
-Grant the connector role `USAGE` on the external volume:
+Grant the execute-as role (which your service user also holds under `KEY_PAIR` authentication)
+`USAGE` on the external volume:
 
 Copy code
 
 ```
-GRANT USAGE ON EXTERNAL VOLUME <external_volume> TO ROLE <Salesforce_connector_role_name>;
+GRANT USAGE ON EXTERNAL VOLUME <external_volume> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
 ```
 
 This grant isn’t required when you use Snowflake storage (`EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'`).

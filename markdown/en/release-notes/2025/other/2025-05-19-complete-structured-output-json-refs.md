@@ -14,4 +14,4 @@ Key benefits include:
 - **Scalability:** Referenced components allow you to extend functionality without duplicating validation logic
 - **Schema clarity:** References create a clear, organized hierarchy that better represents real-world relationships.
 
-To get started, see [COMPLETE Structured Outputs](/user-guide/snowflake-cortex/complete-structured-outputs).
+To get started, see [COMPLETE Structured Outputs](/sql-reference/functions/ai_complete-structured-outputs).

@@ -123,6 +123,7 @@ With re-initialization or a full refresh:
 
 **Limitations:**
 
+- Adding comments to dynamic table columns isn’t supported.
 - Reordering columns of existing dynamic tables is not supported.
 - The `PREVIEW` command doesn’t support custom incremental dynamic tables.
 
@@ -309,7 +310,7 @@ DEFINE SEMANTIC VIEW DEMO{{env_suffix}}.ANALYTICS.SALES_METRICS
       PRIMARY KEY (CUSTOMER_ID)
   )
   RELATIONSHIPS (
-    orders (CUSTOMER_ID) REFERENCES customers (CUSTOMER_ID)
+    orders_to_customers AS orders (CUSTOMER_ID) REFERENCES customers (CUSTOMER_ID)
   )
   DIMENSIONS (
     orders.ORDER_DATE AS orders.ORDER_DATE,
@@ -395,6 +396,18 @@ including streams on tables, views, directory tables, and external tables.
 
 ### Table
 
+To define a table column with a default value and comment, specify the column name and data type, followed by the `DEFAULT` and `COMMENT`
+clauses:
+
+Copy code
+
+```
+DEFINE TABLE MY_DB.MY_SCHEMA.ORDERS (
+  ORDER_ID NUMBER DEFAULT 0 COMMENT 'Unique order identifier',
+  ORDER_STATUS VARCHAR DEFAULT 'PENDING' COMMENT 'Current order status'
+);
+```
+
 **Limitations:**
 
 - Reordering columns
@@ -451,14 +464,34 @@ AS
 
 **Limitations:**
 
-- All tasks in a task graph must be defined within the same DCM project.
-- To transfer ownership of a task graph within DCM Projects, define a `GRANT OWNERSHIP` statement for each task in the graph. Granting
-  ownership on child tasks detaches them from the graph. Deploy the project to create the graph and apply the ownership grants,
-  then deploy again to restore the parent-child links from your definitions.
+- All tasks in a task graph must be defined within the same DCM project, then same schema and owned by the same role.
+- After you configure the [executor role and role hierarchy](#label-dcm-projects-restricted-execution), transferring ownership of a task
+  graph requires multiple deployments:
+  1. Define and deploy the tasks to create the task graph.
+  2. Add a `GRANT OWNERSHIP` statement for every task in the graph, and deploy again to transfer ownership to the lower-level role. Ownership
+     transfer removes predecessor relationships and detaches child tasks from the graph.
+  3. Deploy again to restore the predecessor relationships and target states from the task definitions.
 - `PLAN` only validates that the task can be created successfully. It doesn’t check whether the task will run successfully, as task
   logic is compiled at runtime.
 
 ### View
+
+Note
+
+To add comments to view columns, list every output column in parentheses immediately after the view name. Add `COMMENT '<comment>'` after
+each column name that needs a comment. Don’t specify data types in the column list.
+
+Copy code
+
+```
+DEFINE VIEW MY_DB.MY_SCHEMA.MY_VIEW (
+  ORDER_ID COMMENT 'Unique order identifier',
+  ORDER_TOTAL COMMENT 'Total order amount'
+)
+AS
+  SELECT ORDER_ID, ORDER_TOTAL
+  FROM MY_DB.MY_SCHEMA.ORDERS;
+```
 
 **Limitations:**
 
@@ -481,6 +514,9 @@ Just like each object can be defined only once in DCM Projects, each privilege-g
 DCM Projects is only aware of grants that were defined and deployed through DCM Projects. Any grants that were added outside of DCM Projects coexist,
 and DCM Projects doesn’t remove them.
 
+Support for a `GRANT` statement that references a user or integration doesn’t mean that DCM Projects can define or manage the lifecycle of that
+user or integration. Object-definition support and grant-target support are separate.
+
 Note
 
 `GRANT ON ALL` and `GRANT ON FUTURE` aren’t recommended in DCM Projects. Use [inherited grants](#label-dcm-projects-inherited-grants)
@@ -499,7 +535,7 @@ being locked out on future deployments, explicitly grant the role to the project
 Copy code
 
 ```
-DEFINE ROLE MY_DB.MY_SCHEMA.DATA_OWNER_ROLE;
+DEFINE ROLE DATA_OWNER_ROLE;
 GRANT OWNERSHIP ON TABLE MY_DB.MY_SCHEMA.MY_TABLE TO ROLE DATA_OWNER_ROLE;
 
 -- Required: adds DATA_OWNER_ROLE to the project owner's role hierarchy so the
@@ -522,6 +558,23 @@ If the project owner role doesn’t hold the object’s current owner role, you 
   - Define all desired grants on the target object in the DCM project, including any pre-existing grants.
   - Revoke the pre-existing grants manually outside of DCM Projects.
 
+### Run procedures and tasks with restricted privileges
+
+You can use a dedicated executor role when a DCM project deploys and manages a procedure or task, but the object should run with restricted
+privileges. This pattern applies to owner’s rights procedures and tasks, which run with the privileges of their owner role.
+
+In the same DCM project:
+
+1. Define the procedure or task.
+2. Define a dedicated executor role, such as `pipeline_runner`, or reference an existing role.
+3. Grant the privileges required to run the procedure or task to the executor role.
+4. Grant the executor role to the DCM project owner role. This role hierarchy prevents the project owner from losing the ability to manage
+   the object after ownership is transferred.
+5. Grant `OWNERSHIP` on the procedure or task to the executor role.
+
+Keep the ownership transfer and the other privilege grants on the target object in the same DCM project. For more information, see
+[OWNERSHIP grants](#label-dcm-projects-object-type-grant-ownership).
+
 ### Inherited grants
 
 [Preview Feature](/release-notes/preview-features) — Open
@@ -542,6 +595,9 @@ Copy code
 ```
 ALTER ACCOUNT SET FEATURE_RBAC_INHERITED_GRANTS = 'ENABLED';
 ```
+
+The role that creates an inherited grant must have `MANAGE GRANTS` on the selected container or on a higher container. `OWNERSHIP` of the
+container alone isn’t sufficient.
 
 **Syntax:**
 
@@ -581,8 +637,8 @@ Available to all accounts.
 
 In conjunction with inherited grants, DCM Projects also supports
 [container-level `MANAGE GRANTS`](/user-guide/container-manage-grants-intro), which lets you delegate grant administration for a
-specific database or schema. A role granted `MANAGE GRANTS` on a container can manage all grant types on objects inside that
-container without needing account-level `SECURITYADMIN` privileges.
+specific database or schema. A role granted `MANAGE GRANTS` on a container can manage supported grants on objects inside that container
+without needing account-level `SECURITYADMIN` privileges. It can’t transfer object ownership.
 
 **Prerequisites:**
 
@@ -696,6 +752,7 @@ information about this property, see [Required privilege on the table or view](/
 
 **Limitations:**
 
+- Schema-level DMF attachments aren’t supported in DCM Projects.
 - You can’t change the role specified by `EXECUTE AS ROLE` for an existing attachment by modifying just that property. To change
   the role, remove the `ATTACH` statement, deploy, then redefine it with the new `EXECUTE AS ROLE` value.
 
@@ -707,7 +764,7 @@ To see all available system DMFs, query `SHOW DATA METRIC FUNCTIONS IN DATABASE 
 
 Available to all accounts.
 
-Use `ATTACH TAG` to declaratively assign Snowflake object tags to any DCM Projects-managed entity. DCM Projects reconciles the
+Use `ATTACH TAG` to declaratively assign Snowflake object tags to the supported target types listed in this section. DCM Projects reconciles the
 declared tag assignments on every deployment, replacing manual `ALTER <object> SET TAG` calls.
 
 The tag and the target object don’t need to be defined in the same DCM project. You can reference tags and objects
@@ -803,7 +860,8 @@ DCM Projects tracks individual `tag-target` pairs, not whole statements. On each
 - **Detach:** If a pair is removed from the definitions, DCM Projects detaches the tag from that target on the next
   deployment.
 
-Tags attached to objects outside of DCM Projects aren’t tracked by DCM Projects and won’t be affected by any deployment.
+Tag assignments made outside DCM Projects aren’t tracked by DCM Projects and won’t be affected by a deployment, regardless of whether DCM Projects manages the
+target object.
 
 To assign a different value to the same tag on different targets, split them into separate statements:
 

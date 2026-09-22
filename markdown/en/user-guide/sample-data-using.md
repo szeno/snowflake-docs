@@ -3,7 +3,7 @@
 The sample database, SNOWFLAKE\_SAMPLE\_DATA, is identical to the databases that you create in your account, except that it is read-only.
 As such, the following operations are not allowed:
 
-- No DDL can be performed on the data set schemas (i.e. tables and other database objects cannot be added, dropped, or altered).
+- No DDL can be performed on the data set schemas (that is, tables and other database objects cannot be added, dropped, or altered).
 - No DML can be performed on the tables in the schemas.
 - No cloning or Time Travel can be performed on the database or any schemas/tables in the database.
 
@@ -60,7 +60,7 @@ database, SFC\_SAMPLES.SAMPLE\_DATA, indicating it originated from the SFC\_SAMP
 
 To use a table or view in the sample database, you can either:
 
-- Reference the fully-qualified name of the table in your query (in the form of `snowflake_sample_data.schema_name.object_name`).
+- Reference the fully qualified name of the table in your query (in the form of `snowflake_sample_data.schema_name.object_name`).
 
   OR
 - Specify the sample database (and schema) for your session using the [USE DATABASE](/sql-reference/sql/use-database) and/or [USE SCHEMA](/sql-reference/sql/use-schema) commands.
@@ -92,4 +92,4 @@ The following two examples illustrate using both approaches to query the `lineit
 Note
 
 You must have a running, current warehouse in your session to perform queries. You set the current warehouse in a session using the [USE WAREHOUSE](/sql-reference/sql/use-warehouse)
-command (or within the Worksheet in the web interface.)
+command (or within the Worksheet in the web interface).

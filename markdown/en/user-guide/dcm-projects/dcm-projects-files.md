@@ -5,8 +5,8 @@ Git repository or your local workspace.
 
 - The manifest file
 
-  - Specifies which object definition files to include.
-  - Defines configurations for different environments with [template variables](#label-dcm-projects-files-configurations).
+  - Defines deployment targets and configurations for different environments with
+    [template variables](#label-dcm-projects-files-configurations).
 - The object definition files
 
   - Define a group of Snowflake objects that you want to manage together in the DCM project.
@@ -43,12 +43,11 @@ DCM Projects follows the standardized folder structure:
 - DCM Projects object definition files must be placed under `sources/definitions/`.
 - The optional global macro files can be placed under `sources/macros/`.
 - File naming and nesting inside these project directories are flexible.
-- Saved output artifacts from DCM commands are always written to `out/`.
-- If you have additional scripts or project files that you want to use for DCM commands, you can add them under `sources` (for
-  example, dbt project files).
+- Snowflake CLI and Workspaces save local command output under `out/`. SQL commands can use interface-specific output locations.
+- If you have additional scripts that you want to use with DCM commands, you can add them under `sources`.
 - If you have other custom scripts that you want to store within the project folder that should not be used by DCM Projects commands and not
   uploaded from local, add them in a folder outside of the `sources` folder.
-- The CLI commands only upload files within the `sources` folder.
+- Snowflake CLI uploads `manifest.yml` and the files under `sources`.
 
 Note
 
@@ -67,13 +66,60 @@ my_dcm_project/
   │   │   └── silver.sql
   │   ├── macros/
   │   │   └── global_macro.sql
-  │   └── dbt/
-  │       ├── my_dbt_project_1/
-  │       └── my_dbt_project_2/
   ├── my_post_scripts/
   └── out/
       └── plan/
 ```
+
+You can also keep multiple projects in one repository. Keep each project in a separate, non-overlapping folder with its own `manifest.yml`
+and `sources/definitions/` directory:
+
+Copy code
+
+```
+repository/
+  ├── customer_data/
+  │   ├── manifest.yml
+  │   └── sources/
+  │       └── definitions/
+  │           └── customer_data.sql
+  └── reporting/
+      ├── manifest.yml
+      └── sources/
+          └── definitions/
+              └── reporting.sql
+```
+
+Run a command for a specific project by passing its directory:
+
+Copy code
+
+```
+snow dcm plan --from ./customer_data/
+```
+
+Each project’s DCM configuration belongs in its `manifest.yml` file, not in `snowflake.yml`.
+
+## The `/out/` subfolder
+
+The `/out/` folder in your project directory contains the rendered project definitions after you run `PLAN` with one of the following:
+
+- The `--save-output` flag in the CLI.
+- The Workspace UI.
+- An `OUTPUT_PATH` pointed at this folder in an `EXECUTE DCM PROJECT ... PLAN` statement.
+
+Each CLI command that uses `--save-output` recreates the local `/out/` folder. Copy any local output that you need to retain before running
+another command with this option. Workspaces and SQL `OUTPUT_PATH` destinations have their own overwrite behavior.
+
+For `PLAN`, the local `/out/` folder also contains the response JSON as `plan_result.json` and the rendered definitions. The Workspace UI
+uses the response file to render the `PLAN` changeset, and you can also process it with agents or automations. These local outputs are
+distinct from the deployment artifacts retained inside the DCM project after `DEPLOY`.
+
+Consider the following:
+
+- You can ignore the `/out/` folder if you don’t need the rendered output or changeset. To prevent it from being committed to your Git
+  repository, add `/out/` to your project’s `.gitignore` file.
+- You can safely delete the `/out/` folder at any time. It’s recreated the next time you run `PLAN` with output saving enabled.
 
 ## Create a manifest file
 
@@ -132,6 +178,10 @@ targets:
 Expand
 
 Show lessSee more
+
+Targets select a project object and templating configuration, not the authenticated Snowflake CLI connection or active role. For CLI precedence,
+mismatch warnings, and examples, see
+[Project identifier resolution](/developer-guide/snowflake-cli/command-reference/dcm-commands/overview#label-snowcli-dcm-project-identifier-resolution).
 
 #### Map between project definitions and project objects
 
@@ -263,7 +313,9 @@ differences:
   files during project execution.
 - If you remove a DEFINE statement, Snowflake drops the corresponding object the next time you deploy the project.
 - Only a subset of Snowflake objects is supported. For details, see [Supported object types in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
-- All objects must be defined with a fully qualified name in the format `database.schema.object_name`.
+- Qualify object names according to the object’s scope. Account-level objects use account-level identifiers, database-level objects use
+  the appropriate two-part form, and schema-level objects use fully qualified three-part names in the format
+  `database.schema.object_name`.
 
 Definition files can contain various [Jinja2 templating](#label-dcm-projects-templating) options and support advanced templating features, which allow you to
 do the following:
@@ -432,6 +484,13 @@ When using templates in your object definitions, you have the following options:
 
   Not all templating configurations have to be referenced by a target profile. You can keep unused configurations to switch the templating
   config for your target from one to another.
+
+  Warning
+
+  A DCM project has only one deployed configuration at a time. Switching a target to another configuration can drop objects from the
+  previous configuration when those objects aren’t present in the newly rendered definitions. For coexisting deployments, use distinct
+  DCM project objects and non-overlapping managed object names. For more information, see
+  [Deploy a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-deploy).
 - Define shared default values under `templating: defaults:` to avoid repeating common variables across configurations. See
   [Project templating configurations](#label-dcm-projects-files-configurations) for more details.
 - Overwrite specific variables with one-time values at runtime using the `--variable` flag in CLI.

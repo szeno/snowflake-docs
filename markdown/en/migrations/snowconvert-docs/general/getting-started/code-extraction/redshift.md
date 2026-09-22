@@ -19,7 +19,7 @@ Go to <https://github.com/Snowflake-Labs/SC.DDLExportScripts/>.
 
 From the Code option, select the drop-down and use the **Download ZIP** option to download the code.
 
-Decompress the ZIP file. The code for Teradata should be under the Teradata folder.
+Decompress the ZIP file. The code for Redshift should be under the Redshift folder.
 
 [![image](/static/images/migrations/sc-assets/Screenshot2025-01-28at8.39.54AM.png "image")](/static/images/migrations/sc-assets/Screenshot2025-01-28at8.39.54AM.png)
 

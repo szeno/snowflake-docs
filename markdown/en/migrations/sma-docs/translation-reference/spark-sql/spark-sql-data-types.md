@@ -35,8 +35,8 @@ For more information, refer to the Spark SQL [data types](https://spark.apache.o
 
 ### Integer types
 
-When converting integer data types from the source system, both `LONG` and `SHORT` are mapped to Snowflake’s `INTEGER` data type, as `INTEGER` can accommodate the full range of values for both data types.
+When converting integer data types from the source system, both `LONG` and `SHORT` are mapped to Snowflake’s `INT` data type, as `INTEGER` can accommodate the full range of values for both data types.
 
-- SparkSQL LONG: Range from -32,768 to 32,767
-- SparkSQL SHORT: Range from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+- SparkSQL LONG: Range from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807
+- SparkSQL SHORT: Range from -32,768 to 32,767
 - Snowflake INTEGER: Range from -9.9999999999999999999999999999999999999 x 10^38 to +9.9999999999999999999999999999999999999 x 10^38

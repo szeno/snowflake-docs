@@ -27,7 +27,7 @@ If you expect a substantial load or sudden bursts of activity on the services yo
 
 Setting a maximum node limit prevents an unexpectedly large number of nodes from being added to your compute pool by Snowflake autoscaling. This can be crucial in scenarios such as unexpected load spikes or issues in your code that might cause Snowflake to allocate a larger number of compute pool nodes than originally planned.
 
-To create a compute pool using [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), or SQL:
+To create a compute pool using [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or SQL:
 
 Snowsight:
 :   1. In the navigation menu, select **Compute** » **Compute Pools**.
@@ -140,7 +140,7 @@ The pool’s configured `INSTANCE_FAMILY` has no effect on billing; billing is b
 
 ## Managing a compute pool
 
-You can manage a compute pool using [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), or SQL.
+You can manage a compute pool using [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or SQL.
 
 In [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), you choose the more options menu (**…**) next to the compute pool name, and choose the desired operation from the menu. This section explains SQL commands you can use to manage a compute pool.
 
@@ -299,7 +299,7 @@ Service disruptions during a maintenance window or critical updates are not cove
 - **Design high availability services to run in degraded state during maintenance:** To remain available during maintenance, your service must be tolerant to running with only 50% of the instances.
 - **Provide a readiness probe:** If you don’t provide a readiness probe, Snowflake assumes your service instance is ready as soon as the code starts executing. Typically it takes some time for a container to complete initialization and be ready to handle requests. You should provide a readiness probe in the service configuration to explicitly tell Snowflake when your service instance is ready to handle requests.
 - **Monitor maintenance schedules:** Use [SYSTEM$GET\_COMPUTE\_POOL\_PENDING\_MAINTENANCE](/sql-reference/functions/system_get_compute_pool_pending_maintenance) to check whether maintenance is pending and when the next window begins. Avoid scheduling critical tasks during a maintenance window.
-- **Avoid scheduling job Service to run during maintenance windows:** Snowflake might cancel a running job during a maintenance window.
+- **Avoid scheduling job service to run during maintenance windows:** Snowflake might cancel a running job during a maintenance window.
 - **Perform regular backups or checkpoints:** Periodically back up or checkpoint your application state on persistent storage (including block storage, Snowflake stages, or Snowflake tables).
 
 ## How services are scheduled on a compute pool
@@ -456,7 +456,7 @@ For more information, see [SHOW PARAMETERS](/sql-reference/sql/show-parameters).
 
 ### Configuring your own preferred compute pools for Notebooks
 
-By default, Notebook services run in system compute pools. If you don’t want to use the Snowflake-provisioned compute pools, you have the option to choose other compute pools in your account for Notebooks. To override the Snowflake-provisioned compute pools you can set these parameters ([DEFAULT\_NOTEBOOK\_COMPUTE\_POOL\_CPU](/sql-reference/parameters#label-default-notebook-compute-pool-cpu) and [DEFAULT\_NOTEBOOK\_COMPUTE\_POOL\_GPU](/sql-reference/parameters#label-default-notebook-compute-pool-gpu)). Note that this will change your Snowsight experience. When creating a Notebook in Snowsight, the compute pool you configure using these parameters appears as the first preference in the UI. The following example commands set these parameters:
+By default, Notebook services run in system compute pools. If you don’t want to use the Snowflake-provisioned compute pools, you have the option to choose other compute pools in your account for Notebooks. To override the Snowflake-provisioned compute pools, you can set these parameters ([DEFAULT\_NOTEBOOK\_COMPUTE\_POOL\_CPU](/sql-reference/parameters#label-default-notebook-compute-pool-cpu) and [DEFAULT\_NOTEBOOK\_COMPUTE\_POOL\_GPU](/sql-reference/parameters#label-default-notebook-compute-pool-gpu)). Note that this will change your Snowsight experience. When creating a Notebook in Snowsight, the compute pool you configure using these parameters appears as the first preference in the UI. The following example commands set these parameters:
 
 - Configure `my_pool` as the account-level compute pool preferred for Notebooks using GPU runtime.
 

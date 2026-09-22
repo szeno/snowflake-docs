@@ -27,7 +27,7 @@ Copy code
 
 The SMA application allows users to enable or disable the SMA-Checkpoints feature through the *Conversion Settings* modal, accessible from the conversion settings page.
 
-[![Change conversion Settings](/static/images/migrations/sma-assets/change-conversion-settings.png)](/static/images/migrations/sma-assets/change-conversion-settings.png)
+[![Change conversion settings](/static/images/migrations/sma-assets/change-conversion-settings.png)](/static/images/migrations/sma-assets/change-conversion-settings.png)
 
 **Configuring SMA-Checkpoints settings**
 

@@ -1,4 +1,4 @@
-# SnowConvert AI - SnowConvert AI Scopes
+# SnowConvert AI - Scopes
 
 ## Scope definitions
 
@@ -21,7 +21,7 @@ There can be elements within the Assessment Scope that are not part of the conve
 - the code unit definition is not readable (ex: encrypted)
 - the code unit definition is in a not supported programming language (ex: java)
 
-Lines of code of code units out of the conversion scope will not be used to calculate conversion rates, but they will be used to provide some information in the assessment documents. For example, a Database Link object In Oracle is considered out of scope, however, references made to this object are still counted and reported in the [Object References Report](reports/object-references-report).
+Lines of code of code units out of the conversion scope will not be used to calculate conversion rates, but they will be used to provide some information in the assessment documents. For example, a Database Link object in Oracle is considered out of scope, however, references made to this object are still counted and reported in the [Object References Report](reports/object-references-report).
 
 The following is the list of Code Units per language considered out of the conversion scope.
 

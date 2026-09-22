@@ -91,65 +91,67 @@ To configure the MongoDB environment, perform the following steps:
 
 ## Set up the target Snowflake account
 
-To set up the target Snowflake account, perform the following steps:
+As an Openflow administrator, perform the following tasks for this connector. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant these privileges to that role.
 
-1. Create a Snowflake user.
+1. Create a database to store the replicated data, and grant the execute-as role
+   [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
+   destination schemas automatically. Snowflake recommends a dedicated destination database per
+   connector, to avoid collisions with other data sources including other connectors.
 
-   Create a Snowflake user with the type as SERVICE.
-
-   Copy code
-
-   ```
-   USE ROLE USERADMIN;
-   CREATE USER <openflow_service_user>
-     TYPE=SERVICE
-     COMMENT='Service user for Openflow automation';
-   ```
-
-   Store the private key for that user in a file to supply to the connector’s
-   configuration. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
+   Keep this destination database separate from the database that holds your Openflow
+   infrastructure objects, such as the runtime, the connector, and any secrets. A connector
+   creates destination objects based on the source schema and table names, so those names aren’t
+   under your control and can change as the source changes.
 
    Copy code
 
    ```
-   ALTER USER <openflow_service_user> SET RSA_PUBLIC_KEY = '<pubkey>';
-   ```
-2. Create a database.
-
-   Create a database that stores the replicated data, and set up
-   permissions for the Snowflake user to create objects in that database by
-   granting USAGE and CREATE SCHEMA privileges.
-
-   Copy code
-
-   ```
-   USE ROLE ACCOUNTADMIN;
    CREATE DATABASE IF NOT EXISTS <destination_database>;
-   GRANT USAGE ON DATABASE <destination_database> TO USER <openflow_service_user>;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO USER <openflow_service_user>;
+
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
-3. Create a new warehouse or use an existing warehouse for the connector.
+2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
+   **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
+   on the number of tables being replicated, and the amount of data transferred. Large table
+   numbers typically scale better with
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
 
-   To create a new warehouse, perform the following steps:
+   Copy code
 
-> Copy code
->
-> ```
-> CREATE WAREHOUSE <openflow_warehouse>
-> WITH
-> WAREHOUSE_SIZE = 'MEDIUM'
-> AUTO_SUSPEND = 300
-> AUTO_RESUME = TRUE;
-> GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO USER <openflow_service_user>;
-> ```
+   ```
+   CREATE WAREHOUSE <ingest_warehouse>
+     WITH
+       WAREHOUSE_SIZE = 'XSMALL'
+       AUTO_SUSPEND = 300
+       AUTO_RESUME = TRUE;
 
-- Start with the MEDIUM warehouse size, then experiment with size depending on the
-  number of tables being replicated and the amount of data transferred.
-- To determine if you should increase, monitor the connector and database while data
-  replication is in progress. If you observe significant delays during incremental
-  replication, experiment with a larger warehouse size. However, large table numbers
-  typically scale better using [multi-cluster warehouses](/user-guide/warehouses-multicluster)
-  instead of increasing the warehouse size.
+   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+3. **Snowflake deployments only:** Make sure this connector’s source host and port are permitted
+   by a network rule that your runtime’s external access integration (EAI) allows.
+
+   The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
+   the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
+   [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
+   What is specific to this connector is getting its source host into a rule that EAI references.
+
+   The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
+   That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the
+   driver name, or the database path.
+
+   BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
+   network rules.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Next steps
 

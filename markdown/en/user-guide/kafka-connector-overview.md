@@ -221,7 +221,7 @@ The Kafka connector with Snowpipe Streaming supports dead-letter queues (DLQ) fo
 
 ### Limitations of fault tolerance with the connector
 
-Kafka Topics can be configured with a limit on storage space or retention time.
+Kafka topics can be configured with a limit on storage space or retention time.
 
 - The default retention time is 7 days. If the system is offline for more than the retention time, then expired records will
   not be loaded. Similarly, if Kafka’s storage space limit is exceeded, some messages will not be delivered.

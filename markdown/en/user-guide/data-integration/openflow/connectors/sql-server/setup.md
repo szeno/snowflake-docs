@@ -134,8 +134,7 @@ You must perform these tasks as a database administrator.
 
 As an Openflow administrator, perform the following tasks for this connector. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
-the connector uses to access Snowflake, so you grant these privileges to that role rather than
-creating a separate service user.
+the connector uses to access Snowflake, so you grant these privileges to that role.
 
 1. Create a database to store the replicated data, and grant the execute-as role
    [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
@@ -152,8 +151,8 @@ creating a separate service user.
    ```
    CREATE DATABASE IF NOT EXISTS <destination_database>;
 
-   GRANT USAGE ON DATABASE <destination_database> TO ROLE <execute_as_role>;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE <execute_as_role>;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
@@ -170,7 +169,7 @@ creating a separate service user.
        AUTO_SUSPEND = 300
        AUTO_RESUME = TRUE;
 
-   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE <execute_as_role>;
+   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 3. **Snowflake deployments only:** Make sure this connector’s source host and port are permitted
    by a network rule that your runtime’s external access integration (EAI) allows.
@@ -187,41 +186,13 @@ creating a separate service user.
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
 
-For additional setup when you use key-pair authentication with BYOC:
+Note
 
-Key-pair authentication is available only for BYOC deployments, and is not required for the
-default `SNOWFLAKE_MANAGED` authentication strategy. Skip this section unless you set the
-connector’s **Snowflake Authentication Strategy** parameter to `KEY_PAIR`.
-
-1. Create a Snowflake user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property), create a role for
-   it, and grant that role the same destination database and warehouse privileges you granted the
-   execute-as role:
-
-   Copy code
-
-   ```
-   CREATE USER <username> TYPE=SERVICE COMMENT='Service user for automated access of Openflow';
-   CREATE ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL TO USER <username>;
-
-   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
-2. Create a pair of secure keys (public and private). Store the private key for the user in a file
-   to supply to the connector’s configuration. Assign the public key to the Snowflake service user:
-
-   Copy code
-
-   ```
-   ALTER USER <username> SET RSA_PUBLIC_KEY = 'thekey';
-   ```
-
-   For more information, see [pair of keys](/user-guide/key-pair-auth).
-
-When using `KEY_PAIR`, you must also set the connector’s **Snowflake Account Identifier** and
-**Snowflake Connection Strategy** parameters. Both are left blank or ignored under
-`SNOWFLAKE_MANAGED`.
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Install the connector
 
@@ -317,7 +288,7 @@ For failover behavior, see [Always On Availability Groups and source failover](/
 | Snowflake Account Identifier | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Snowflake account name formatted as [organization-name]-[account-name]. | Yes |
 | Snowflake Connection Strategy | When using KEY\_PAIR, specify the strategy for connecting to Snowflake:   - **STANDARD** (default): Connect using standard public routing to Snowflake services. - **PRIVATE\_CONNECTIVITY**: Connect using private addresses associated with the supporting cloud platform such as AWS PrivateLink. | Required for BYOC with KEY\_PAIR only, otherwise ignored. |
 | Snowflake Object Identifier Resolution | Specifies how source object identifiers such as schemas, tables, and column names are stored and queried in Snowflake. This setting dictates whether you must use double quotes in SQL queries.  Option 1: Default, case-insensitive (recommended).   - **Transformation**: All identifiers are converted to uppercase. For   example, `My_Table` becomes `MY_TABLE`. - **Queries**: SQL queries are case-insensitive and don’t require SQL   double quotes.   For example, `SELECT * FROM my_table;` returns the same results as `SELECT * FROM MY_TABLE;`.  Note  Snowflake recommends using this option if database objects are not expected to have mixed case names.  Important  Do not change this setting after connector ingestion has begun. Changing this setting after ingestion has begun breaks the existing ingestion. If you must change this setting, create a new connector instance.  Option 2: Case-sensitive.   - **Transformation**: Case is preserved.   For example, `My_Table` remains `My_Table`. - **Queries**: SQL queries must use double quotes to match the exact   case for database objects.   For example, `SELECT * FROM "My_Table";`.   Note  Snowflake recommends using this option if you must preserve source casing for legacy or compatibility reasons. For example, the source database includes table names that differ in case only, such as `MY_TABLE` and `my_table`, which result in a name collision when using case-insensitive comparisons. | Yes |
-| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank.   **KEY\_PAIR**: Must be the RSA private key used for authentication.  The RSA key must be formatted according to PKCS8 standards and have standard PEM headers and footers. Note that either a Snowflake Private Key File or a Snowflake Private Key must be defined. | No |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Must be the RSA private key used for authentication, formatted according to PKCS8   standards and including standard PEM headers and footers. Note that either a Snowflake Private   Key File or a Snowflake Private Key must be defined. | No |
 | Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: The private key file must be blank. - **KEY\_PAIR**: Upload the file that contains the RSA private key used for authentication to Snowflake,   formatted according to PKCS8 standards and including standard PEM headers and footers.   The header line begins with `-----BEGIN PRIVATE`.   To upload the private key file, select the **Reference asset** checkbox. | No |
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake Private Key File. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |

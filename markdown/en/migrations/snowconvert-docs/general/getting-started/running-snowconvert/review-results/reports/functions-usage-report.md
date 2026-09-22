@@ -7,7 +7,7 @@ The term “usage” is used in this context to indicate that a specific functio
 These are some examples of places where functions can be invoked in SQL languages:
 
 - Any DDL, `CREATE TABLE` default columns value or as part of a `CREATE VIEW` select using a function.
-- Any DML, like `INSERT` and `DELETE`
+- Any DML, like `INSERT` and `DELETE`.
 - In procedural language, assign the returned value of a function to a sql variable
 - In the `FROM` using table valued functions.
 
@@ -30,4 +30,4 @@ The function usage report is presented in a table format, and contains the follo
 
 #### Summarization
 
-Each individual function usage is summarized using a specific criteria, that may include multiple columns to form a “composite key”. The basic grouping is made using the Category, and Migration Status columns.
+Each individual function usage is summarized using a specific criterion that may include multiple columns to form a “composite key”. The basic grouping is made using the Category, and Migration Status columns.

@@ -10,6 +10,9 @@ To use the `snow dcm` commands, you must install Snowflake CLI version 3.24.0 or
 
 Snowflake CLI requires a working connection to interact with Snowflake. For information about managing connections, see [Configuring Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-cli).
 
+For more information about how targets interact with the active connection and role, see
+[Project identifier resolution](/developer-guide/snowflake-cli/command-reference/dcm-commands/overview#label-snowcli-dcm-project-identifier-resolution).
+
 ## Initialize a DCM project from a template
 
 - To initialize a DCM project from a template, use the `snow init` command:
@@ -32,7 +35,7 @@ Snowflake CLI requires a working connection to interact with Snowflake. For info
 
 ## Snowflake CLI commands
 
-To support DCM Projects, Snowflake CLI added the following commands:
+To support DCM projects, Snowflake CLI added the following commands:
 
 - [snow dcm create](/developer-guide/snowflake-cli/command-reference/dcm-commands/create)
 - [snow dcm deploy](/developer-guide/snowflake-cli/command-reference/dcm-commands/deploy)
@@ -211,7 +214,8 @@ For more information, see [snow dcm test](/developer-guide/snowflake-cli/command
 
 ### Purge a DCM project
 
-Use the `snow dcm purge` command to drop all Snowflake objects managed by a DCM project without dropping the project itself. The operation is recorded in the project’s deployment history.
+Use the `snow dcm purge` command to drop all entities, revoke all grants, and remove all attachments managed by a DCM project without dropping
+the project itself. The operation is recorded in the project’s deployment history.
 
 - Purge a project:
 
@@ -239,7 +243,8 @@ For more information, see [snow dcm purge](/developer-guide/snowflake-cli/comman
 
 ### Drop a DCM project
 
-Use the `snow dcm drop` command to drop a DCM project. This command deletes the project and all its versions. The stage associated with the project is not deleted.
+Use the `snow dcm drop` command to drop a DCM project object and its retained deployment history. Objects, grants, and attachments previously
+managed by the project remain in place as unmanaged resources.
 
 - Drop a project:
 

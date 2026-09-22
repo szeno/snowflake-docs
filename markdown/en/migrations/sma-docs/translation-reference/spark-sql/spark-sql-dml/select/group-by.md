@@ -119,7 +119,7 @@ Copy code
 -- 1. Sum of quantity per dealership. Group by `id`.
 SELECT id, sum(quantity) FROM dealer GROUP BY id ORDER BY id;
 
--- 2. Use column position in GROUP by clause.
+-- 2. Use column position in GROUP BY clause.
 SELECT id, sum(quantity) FROM dealer GROUP BY 1 ORDER BY 1;
 
 -- 3. Multiple aggregations.
@@ -151,7 +151,7 @@ SELECT city, car_model, sum(quantity) AS sum
     GROUP BY GROUPING SETS ((city, car_model), (city), (car_model), ())
     ORDER BY city;
 
--- 8.Group by processing with `ROLLUP` clause.
+-- 8. Group by processing with `ROLLUP` clause.
 -- Equivalent GROUP BY GROUPING SETS ((city, car_model), (city), ())
 SELECT city, car_model, sum(quantity) AS sum
     FROM dealer
@@ -297,7 +297,7 @@ Copy code
 -- 1. Sum of quantity per dealership. Group by `id`.
 SELECT id, sum(quantity) FROM dealer GROUP BY id ORDER BY id;
 
--- 2. Use column position in GROUP by clause.
+-- 2. Use column position in GROUP BY clause.
 SELECT id, sum(quantity) FROM dealer GROUP BY 1 ORDER BY 1;
 
 -- 3. Multiple aggregations.

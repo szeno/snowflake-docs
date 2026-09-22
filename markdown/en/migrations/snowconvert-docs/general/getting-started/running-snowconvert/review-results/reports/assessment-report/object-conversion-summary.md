@@ -130,7 +130,7 @@ COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":
 
 **Expected Object Conversion Rate: 66.66%**
 
-**Explanation:** In this example we have 3 statements, all of them have been identified as an object, but just the `table1`, and the `view1` have a 100% conversion rate. The `table3` has an error warning meaning that the conversion of this table is not 100%, that’s why just 2 of the 3 statements are counted as fully converted objects.
+**Explanation:** In this example we have 3 statements, all of them have been identified as an object, but just the `table1`, and the `view1` have a 100% conversion rate. The `table2` has an error warning meaning that the conversion of this table is not 100%, that’s why just 2 of the 3 statements are counted as fully converted objects.
 
 ## Fully Converted Objects
 
@@ -189,7 +189,7 @@ COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":
 
 **Expected Fully Converted Objects: 2**
 
-**Explanation:** In this example we have 3 statements, all of them have been identified as an object, but just the `table1`, and the `view1` have a 100% conversion rate. The `table3` has an error warning meaning that the conversion of this table is not 100%, that’s why just 2 of the 3 statements are counted as fully converted objects.
+**Explanation:** In this example we have 3 statements, all of them have been identified as an object, but just the `table1`, and the `view1` have a 100% conversion rate. The `table2` has an error warning meaning that the conversion of this table is not 100%, that’s why just 2 of the 3 statements are counted as fully converted objects.
 
 ## Unrecognized Elements
 
@@ -332,6 +332,6 @@ Copy code
 --FQyI4Q==
 ```
 
-**Expected Lines of Code in Unrecognized Elements: 1**
+**Expected Wrapped Objects: 1**
 
 **Explanation:** The procedure is declared as a wrapped object, that’s why is counted as a wrapped object.

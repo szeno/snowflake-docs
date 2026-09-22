@@ -194,7 +194,7 @@ Note
 
 This command automatically uploads local source SQL files to a temporary stage in Snowflake so their content impacts the final result of the operation.
 
-Use the `--save-output` option to save the plan results to a local `out/plan.json` file.
+Use the `--save-output` option to save the plan results to a local `out/plan_result.json` file.
 
 Use `--delta` during active development to get faster feedback on incremental changes. Because it skips unchanged
 definitions, it doesn’t detect changes that happened outside of DCM Projects on your account since the last deployment.
@@ -223,12 +223,13 @@ Always run a full `snow dcm plan` before deploying.
   ```
   snow dcm plan MY_DB.MY_SCHEMA.MY_PROJECT
   ```
-- Plan a DCM project project using local files, where the project name is specified in the `DEV` target in the manifest, set the value for the `db_name` variable, and set the deployment alias to `v3`:
+- Plan a DCM project project using local files, where the project name is specified in the `DEV` target in the manifest, and set the value
+  for the `db_name` variable:
 
   Copy code
 
   ```
-  snow dcm plan --target DEV --variable db_name=jdoe --alias v3
+  snow dcm plan --target DEV --variable "db_name='jdoe'"
   ```
 - Plan a DCM project object and save the plan output locally:
 

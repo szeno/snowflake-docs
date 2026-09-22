@@ -25,21 +25,29 @@ This topic describes how to troubleshoot the Openflow Connector for Shopify.
 
 If the connector logs an error such as `OAuth2 access token request failed` caused by `java.net.UnknownHostException: <your_store>.myshopify.com`, the runtime can’t reach the Shopify domain. This means the External Access Integration (EAI) for the connector hasn’t been created, or USAGE on the EAI hasn’t been granted to the runtime’s execute-as role.
 
-Follow the steps in [Create a network rule (Openflow - Snowflake Deployments only)](/user-guide/data-integration/openflow/connectors/shopify/setup#label-create-network-rule) to create the network rule and EAI, and grant the execute-as role USAGE on the integration.
+Follow the steps in [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations) to create the network rule and EAI, and grant the execute-as role USAGE on the integration. Add both required endpoints to the network rule’s `VALUE_LIST`, as described in the following section.
 
 ## Connector fails with `UnresolvedAddressException` when downloading bulk results
 
 If the connector logs a `WebClientServiceException` with `java.net.ConnectException` or `java.nio.channels.UnresolvedAddressException` when accessing a `storage.googleapis.com` URL, the EAI network rule is missing `storage.googleapis.com:443` in its `VALUE_LIST`. After a bulk operation completes, Shopify returns a signed Google Cloud Storage URL for the result file, and the connector must be able to reach that host to download it.
 
-Update the network rule to include both required endpoints:
+`ALTER NETWORK RULE ... SET VALUE_LIST` overwrites the entire existing list, so as a precaution,
+first check what’s already in the rule before changing it:
 
 Copy code
 
 ```
-CREATE OR REPLACE NETWORK RULE openflow_<runtime_name>_shopify_network_rule
-  TYPE = HOST_PORT
-  MODE = EGRESS
-  VALUE_LIST = (
+DESCRIBE NETWORK RULE OPENFLOW_<RUNTIME_NAME>_NETWORK_RULE;
+```
+
+Then update the network rule to include the existing entries plus the two required endpoints:
+
+Copy code
+
+```
+ALTER NETWORK RULE OPENFLOW_<RUNTIME_NAME>_NETWORK_RULE
+  SET VALUE_LIST = (
+    -- existing entries from the value_list column above,
     '<your_store>.myshopify.com:443',
     'storage.googleapis.com:443'
   );

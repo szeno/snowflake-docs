@@ -1,7 +1,7 @@
 description:
-:   Install the SMA on a Windows machine
+:   Install the SMA on a macOS machine
 
-# Snowpark Migration Accelerator: MacOS Installation
+# Snowpark Migration Accelerator: macOS Installation
 
 You can install the Snowpark Migration Accelerator (SMA) on macOS in two ways:
 

@@ -22,7 +22,7 @@ a top-level namespace.
 
 Caution
 
-Don’t use a period (`.`) in a namespace name unless period is the value you set for the NAMESPACE\_FLATTEN\_DELIMITER parameter and
+Don’t use a period (`.`) in a namespace name unless a period is the value you set for the NAMESPACE\_FLATTEN\_DELIMITER parameter and
 NAMESPACE\_MODE is set to FLATTEN\_NESTED\_NAMESPACE. Otherwise, the namespace won’t be created.
 
 This update also includes the following changes:

@@ -59,7 +59,7 @@ SELECT SYSTEM$REMOTE_APP_OPERATION(
 
 This function call executes `SELECT * FROM app_schema.app_table` as the application.
 
-The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See [Querying operation results](#querying-operation-results) section below for more details.
+The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See the [Querying operation results](#querying-operation-results) section below for more details.
 
 ### Reading the result of the SQL statement
 
@@ -87,7 +87,7 @@ SELECT SYSTEM$REMOTE_APP_OPERATION(
 
 The `reason` specified will be visible to the consumer as the application’s disablement reason, for instance in `DESCRIBE APPLICATION`.
 
-The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See [Querying operation results](#querying-operation-results) section below for more details.
+The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See the [Querying operation results](#querying-operation-results) section below for more details.
 
 ## Operation type: `enable`
 
@@ -112,7 +112,7 @@ Note
 This operation can only enable applications that have been disabled by the provider.
 If an application was disabled by Snowflake, see [What to do if an app is unavailable](/developer-guide/native-apps/ui-consumer-managing-applications#what-to-do-if-an-app-is-unavailable).
 
-The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See [Querying operation results](#querying-operation-results) section below for more details.
+The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See the [Querying operation results](#querying-operation-results) section below for more details.
 
 ## Operation type: `retry_upgrade`
 
@@ -132,7 +132,7 @@ SELECT SYSTEM$REMOTE_APP_OPERATION(
 );
 ```
 
-The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See [Querying operation results](#querying-operation-results) section below for more details.
+The system function returns a JSON string `{"request_id": "<uuid>"}`. This `request_id` can be used to query the result of the operation in the event table. See the [Querying operation results](#querying-operation-results) section below for more details.
 
 ## Querying operation results
 

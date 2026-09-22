@@ -1413,6 +1413,7 @@ Operating on an object in a schema requires at least one privilege on the parent
 | --- | --- |
 | OWNERSHIP | Grants full control over the Streamlit object; required to alter the Streamlit object. Only a single role can hold this privilege on a specific object at a time. |
 | USAGE | Enables viewing and running a Streamlit app, as well as displaying information about the Streamlit object. This privilege does not allow users to see the Streamlit app code or the artifacts that define the Streamlit app. |
+| EMBED | Enables generating an embed URL for a Streamlit app, so that the app can be rendered in an external web page. This privilege is required in addition to USAGE, and is not implied by OWNERSHIP. For more information, see [embedding apps in external pages](/developer-guide/streamlit/features/embedding/overview). |
 
 Expand
 

@@ -40,7 +40,7 @@ Copy code
     Address VARCHAR(255),
     City VARCHAR(255)
 )
-COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},{"attributes":{"component":"azure synapse"}}'
+COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":0},"attributes":{"component":"azure synapse"}}'
 ;
 ```
 
@@ -99,4 +99,4 @@ Before we get lost in the magic of these code conversions, here are a few terms/
 - *Conversion rule* or *transformation rule:* rules that allow SnowConvert AI to convert from a portion of source code to the expected target code.
 - *Parse:* parse or parsing is an initial process done by SnowConvert AI to understand the source code and build up an internal data structure required for executing the conversion rules.
 
-On the next few pages, you’ll learn more about the kind of conversions that SnowConvert AI for SQL Server is capable of. If you’re ready to get started, visit the [**Getting Started**](../../README) page in this documentation.
+On the next few pages, you’ll learn more about the kind of conversions that SnowConvert AI for Azure Synapse is capable of. If you’re ready to get started, visit the [**Getting Started**](../../README) page in this documentation.

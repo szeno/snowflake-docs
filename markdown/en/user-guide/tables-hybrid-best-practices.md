@@ -55,7 +55,7 @@ In order to access hybrid tables, you will need to use one of the following driv
 > | --- | --- |
 > | Go | 1.6.25 |
 > | JDBC | 3.13.31 |
-> | .Net | 2.1.2 |
+> | .NET | 2.1.2 |
 > | Node.js | 1.9.0 |
 > | ODBC | 3.0.2 |
 > | PHP | 2.0.0 |
@@ -243,7 +243,7 @@ required to support your workload’s throughput.
 ## Caching and warm-up
 
 The first hybrid table query issued to a newly started warehouse triggers activities such as query planning,
-index selection, I/O to load data, caching decisions, and, of course query execution. The query engine continues
+index selection, I/O to load data, caching decisions, and, of course, query execution. The query engine continues
 to optimize memory and storage for the query. This time is called the “warm-up” period. Query latency
 drops until the engine converges on a steady-state latency.
 
@@ -262,7 +262,7 @@ after a cold start experience higher latency until caches are populated.
 If your workload has variable throughput patterns, you can enable autoscaling and auto-suspend to
 reduce consumption or suspend your warehouse when demand is lower. When your warehouse restarts or
 auto-scales to add a new cluster, caches will need to rehydrate. Set the scaling policy to
-`Standard` rather than `Economy` for the best performance. see [Multi-cluster warehouses](/user-guide/warehouses-multicluster).
+`Standard` rather than `Economy` for the best performance. See [Multi-cluster warehouses](/user-guide/warehouses-multicluster).
 
 ## Stored procedures and hybrid tables
 

@@ -28,7 +28,7 @@ The following table summarizes what you can observe for each native Cortex featu
 | **Cortex Analyst** | Request and response logs; batch evaluations | [Cortex Analyst administrator monitoring](/user-guide/snowflake-cortex/cortex-analyst/admin-observability), [Cortex Analyst evaluations](/user-guide/snowflake-cortex/cortex-analyst-evaluations) |
 | **Cortex Search** | Request logs when logging is enabled; query with `GET_AI_OBSERVABILITY_EVENTS` and `CORTEX SEARCH SERVICE` | [Monitor Cortex Search requests](/user-guide/snowflake-cortex/cortex-search/cortex-search-monitor) |
 | **Built-in Cortex AI Functions** | Credits, tokens, function name, and model per call in Account Usage | [Managing Cortex AI Function costs with Account Usage](/user-guide/snowflake-cortex/ai-func-cost-management) |
-| **Cortex AI Function Studio** | Author and evaluate custom AI functions; production usage in Account Usage | [Cortex AI Function Studio](/user-guide/snowflake-cortex/ai-function-studio) |
+| **Cortex AI Function Studio** | Author and evaluate custom AI functions; production usage in Account Usage | [Cortex AI Function Evaluation and Optimization](/user-guide/snowflake-cortex/ai-function-studio) |
 | **Cortex REST API** | Tokens, credits, model, request ID, and inference region per request in Account Usage | [Monitor usage](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-rest-api-monitor-usage) |
 | **Cortex AI Guardrails** | Guardrail scan activity, tokens, credits, and request metadata in Account Usage | [Monitor guardrail activity](/user-guide/snowflake-cortex/cortex-ai-guardrails#label-cortex-ai-guardrails-monitor) |
 

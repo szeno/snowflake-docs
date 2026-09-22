@@ -1,6 +1,6 @@
 # The Apache Kafka and Kafka Connect framework
 
-This topic describes the basic concepts of Apache Kafka and Kafka Connect Framework.
+This topic describes the basic concepts of Apache Kafka and Kafka Connect framework.
 
 Apache Kafka software uses a publish and subscribe model to write and read streams of records,
 similar to a message queue or enterprise messaging system.

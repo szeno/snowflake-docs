@@ -31,21 +31,21 @@ Note
 
 Personal skills can only be accessed from the workspace where they were created. They are not available when using a different workspace or when outside of a workspace.
 
-## Skills and plugins in Horizon Catalog
+## Skills and plugins in AI & ML
 
 Note
 
-The Skill Catalog is rolling out progressively. If you don’t see **Catalog >> Skills and plugins** in Snowsight or Skill Catalog entries in the `/` menu, the feature might not yet be enabled for your account. Contact your account team for availability.
+The Skill Catalog is rolling out progressively. If you don’t see **AI & ML >> Skills and plugins** in Snowsight or Skill Catalog entries in the `/` menu, the feature might not yet be enabled for your account. Contact your account team for availability.
 
-Skills can be shared and discovered through the Horizon Catalog. The `+` menu and the `/` command both show Local, Built-in, and Skill Catalog skills.
+Skills can be shared and discovered through AI & ML. The `+` menu and the `/` command both show Local, Built-in, and Skill Catalog skills.
 
 To share a skill, use the `share-skill` skill, which provides a share link. To install a shared skill, paste a skill link into the message box. The `find-skill` skill helps facilitate skill discovery and invocation.
 
-### Managing skills in the Catalog
+### Managing skills in AI & ML
 
-A user with the ACCOUNTADMIN role can manage skills through the Catalog:
+A user with the ACCOUNTADMIN role can manage skills through AI & ML:
 
-1. Navigate to **Catalog >> Skills and plugins** to browse and search available skills.
+1. Navigate to **AI & ML >> Skills and plugins** to browse and search available skills.
 2. Select a skill to view its details.
 3. Available management actions:
    - Change access (role or user)

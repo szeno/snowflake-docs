@@ -115,7 +115,7 @@ For what those lifecycle settings do, see
 
 ## Delegate monitoring
 
-Grant MONITOR to let a role view runtime status and read container logs:
+Grant `MONITOR` to let a role view runtime status and read container logs:
 
 Copy code
 

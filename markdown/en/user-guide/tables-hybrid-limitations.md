@@ -56,7 +56,7 @@ Collations
 
 Consistency
 :   By default, hybrid tables use a session-based consistency model where read operations in the session return
-    the latest data from write operations in the same session. There might be some staleness (less than 100ms) for
+    the latest data from write operations in the same session. There might be some staleness (less than 100 ms) for
     changes made outside of the session. To avoid staleness,
     set `READ_LATEST_WRITES = true` at the statement or session level. Note that this
     might incur some latency overhead of a few milliseconds.

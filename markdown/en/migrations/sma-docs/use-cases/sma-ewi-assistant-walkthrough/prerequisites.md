@@ -1,6 +1,3 @@
-description:
-:   To utilize this feature effectively, ensure the following requirements are met.
-
 # Prerequisites
 
 # To use the SMA AI Assistant, you must first complete the following prerequisites. Minimum requirements

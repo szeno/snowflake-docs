@@ -183,7 +183,8 @@ snow dcm drop-deployment
 
 ## Usage notes
 
-The `snow dcm drop-deployment` command drops a specified deployment of a DCM project.
+The `snow dcm drop-deployment` command deletes a specified retained deployment record and its artifacts from a DCM project. It doesn’t
+reverse the infrastructure changes made by that deployment.
 
 ## Examples
 

@@ -19,7 +19,7 @@ An email will be sent to your inbox containing the access code.
 To execute a conversion fill out the required fields in the **‘Project Creation’** page like:
 
 - Project name
-- Source language (Teradata, Oracle, Sql-Server and Redshift)
+- Source language (Teradata, Oracle, SQL Server and Redshift)
 - Input and output folder
 - A valid access code
 

@@ -25,8 +25,7 @@ Openflow Connector for Oracle.
 
 As an Openflow administrator, perform the following tasks for this connector. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
-the connector uses to access Snowflake, so you grant these privileges to that role rather than
-creating a separate service user.
+the connector uses to access Snowflake, so you grant these privileges to that role.
 
 1. Create a database to store the replicated data, and grant the execute-as role
    [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
@@ -43,8 +42,8 @@ creating a separate service user.
    ```
    CREATE DATABASE IF NOT EXISTS <destination_database>;
 
-   GRANT USAGE ON DATABASE <destination_database> TO ROLE <execute_as_role>;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE <execute_as_role>;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
@@ -61,7 +60,7 @@ creating a separate service user.
        AUTO_SUSPEND = 300
        AUTO_RESUME = TRUE;
 
-   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE <execute_as_role>;
+   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
 3. **Snowflake deployments only:** Make sure this connector’s source host and port are permitted
    by a network rule that your runtime’s external access integration (EAI) allows.
@@ -78,41 +77,13 @@ creating a separate service user.
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
 
-### Additional setup for key-pair authentication (BYOC only)
+Note
 
-Key-pair authentication is available only for BYOC deployments, and is not required for the
-default `SNOWFLAKE_MANAGED` authentication strategy. Skip this section unless you set the
-connector’s **Snowflake Authentication Strategy** parameter to `KEY_PAIR`.
-
-1. Create a Snowflake user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property), create a role for
-   it, and grant that role the same destination database and warehouse privileges you granted the
-   execute-as role:
-
-   Copy code
-
-   ```
-   CREATE USER <username> TYPE=SERVICE COMMENT='Service user for automated access of Openflow';
-   CREATE ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL TO USER <username>;
-
-   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT CREATE SCHEMA ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   GRANT USAGE, OPERATE ON WAREHOUSE <ingest_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
-   ```
-2. Create a pair of secure keys (public and private). Store the private key for the user in a file
-   to supply to the connector’s configuration. Assign the public key to the Snowflake service user:
-
-   Copy code
-
-   ```
-   ALTER USER <username> SET RSA_PUBLIC_KEY = 'thekey';
-   ```
-
-   For more information, see [pair of keys](/user-guide/key-pair-auth).
-
-When using `KEY_PAIR`, you must also set the connector’s **Snowflake Account Identifier** and
-**Snowflake Connection Strategy** parameters. Both are left blank or ignored under
-`SNOWFLAKE_MANAGED`.
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Next steps
 

@@ -70,4 +70,4 @@ Copy code
 
 - There is one parsing error in line number one. This is because of an invalid token `CREATE TABLE!`
 - There is another parsing error on line 10. This is because of an invalid token`VARCHAR2!`
-- There is an unknown function `UNKNOWN_FUNCTION` , which is translated as is, but warning SSC-EWI-0073 is added to indicate that this is something that has not been checked yet and therefore, the functional equivalence cannot be assured.
+- There is an unknown function `UNKOWN_FUNCTION` , which is translated as is, but warning SSC-EWI-0073 is added to indicate that this is something that has not been checked yet and therefore, the functional equivalence cannot be assured.

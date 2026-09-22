@@ -9,7 +9,7 @@ including:
 - [Upcoming pending changes](#label-unbundled-changes-upcoming-pending-changes) that will not be part of a behavior change bundle and cannot be enabled in advance.
 - [Canceled behavior changes](/release-notes/bcr-bundles/un-bundled/unbundled-cancelled-behavior-changes#label-unbundled-changes-canceled-changes) that have been removed from BCR bundles and will not be implemented.
 
-If you have questions about any of these behavior changes, please feel free to contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+If you have questions about any of these behavior changes, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 ## Recently implemented changes
 

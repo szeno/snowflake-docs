@@ -22,4 +22,4 @@ AI\_SENTIMENT’s capabilities include:
 
 Whether you’re monitoring social media sentiment, analyzing product feedback, or tracking brand perception, AI\_SENTIMENT
 provides the intelligence you need to make data-driven decisions that improve customer satisfaction — in multiple
-markets, venues, and languages. To get started, see [AI\_SENTIMENT](/user-guide/snowflake-cortex/ai-sentiment).
+markets, venues, and languages. To get started, see [AI\_SENTIMENT](/sql-reference/functions/ai_sentiment).

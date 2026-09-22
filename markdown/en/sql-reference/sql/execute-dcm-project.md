@@ -39,6 +39,7 @@ EXECUTE DCM PROJECT <name>
   PREVIEW <fully_qualified_table_object_name>
   USING CONFIGURATION <config_name>
   FROM '<source_files_path>'
+  [ LIMIT <number_of_rows> ]
 
 EXECUTE DCM PROJECT <name>
   PURGE [ AS "<deployment_name_alias>" ]
@@ -123,8 +124,11 @@ EXECUTE DCM PROJECT <name>
     the directory doesn’t exist, Snowflake creates it. Each `PLAN` execution that specifies `OUTPUT_PATH` overwrites any previously
     rendered output in that directory.
 
-    See [The /out/ subfolder](/user-guide/dcm-projects/dcm-projects-overview#label-dcm-projects-out-folder) for details on the contents of
-    this directory.
+    For more information about the contents of this directory, see
+    [The /out/ subfolder](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-out-folder).
+
+`LIMIT number_of_rows`
+:   Limits the number of rows returned by `PREVIEW`.
 
 ## Access control requirements
 
@@ -423,10 +427,10 @@ An example of the JSON output for a data quality test:
 
 ## Usage notes
 
-When executing a DCM project with EXECUTE DCM PROJECT PLAN, the output of the command is the same as for the actual deployment. The
-difference is that no changes to the affected account are applied. This feature allows you to verify whether the rendered definition files
-have a valid syntax, what changes would be applied to the account, and whether the project owner role has the required privileges to apply
-these changes.
+When executing a DCM project with `EXECUTE DCM PROJECT ... PLAN`, the output structure and simulation are the same as for deployment, but no
+changes are applied to the account. `PLAN` lets you verify whether the rendered definition files have valid syntax, what changes the current
+account state would produce, and whether the project owner role has the required privileges. `DEPLOY` doesn’t execute a saved `PLAN` result.
+For more information, see [Deploy a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-deploy).
 
 Because PLAN closely mirrors DEPLOY, it requires the same OWNERSHIP privilege on the DCM project as DEPLOY, even though no changes
 are applied. This way, a dry run surfaces privilege errors before deployment.
@@ -501,9 +505,19 @@ for template variables in an EXECUTE DCM PROJECT statement.
    manifest_version: 2
    type: DCM_PROJECT
    default_target: DCM_DEV
+
    targets:
      DCM_DEV:
-    desc: "created by hello world project"
+       account_identifier: MYORG-MYACCOUNT
+       project_name: MY_DB.MY_SCHEMA.MY_PROJECT
+       project_owner: DCM_PROJECT_OWNER
+       templating_config: FIRST_CONFIG
+
+   templating:
+     defaults:
+       desc: "created by hello world project"
+     configurations:
+       FIRST_CONFIG: {}
    ```
 2. Create a definition file that uses the template variable:
 
@@ -521,7 +535,7 @@ for template variables in an EXECUTE DCM PROJECT statement.
    ```
    EXECUTE DCM PROJECT MY_PROJECT DEPLOY
      USING CONFIGURATION FIRST_CONFIG (desc => 'This object is mine')
-     FROM '/my/project/source';
+     FROM '@my_database.my_schema.my_stage/my_project';
    ```
 
 **Provide a value for a template variable not defined in the manifest file**
@@ -539,5 +553,7 @@ for template variables in an EXECUTE DCM PROJECT statement.
    Copy code
 
    ```
-   EXECUTE DCM PROJECT MY_PROJECT (desc_new => 'This object is mine');
+   EXECUTE DCM PROJECT MY_PROJECT PLAN
+     USING (desc_new => 'This object is mine')
+     FROM '@my_database.my_schema.my_stage/my_project';
    ```

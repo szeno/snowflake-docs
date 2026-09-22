@@ -27,7 +27,7 @@ It would be recommended to create a project directory. This can be called whatev
 
 Now that we have our source files in an accessible directory, it is time to run the SMA.
 
-If you have not already downloaded it, the SMA is accessible from [the Snowflake website](https://www.snowflake.com/en/migrate-to-the-cloud/migration-accelerator/). It is also accessible from the Migrations page in SnowSight in your Snowflake account:
+If you have not already downloaded it, the SMA is accessible from [the Snowflake website](https://www.snowflake.com/en/migrate-to-the-cloud/migration-accelerator/). It is also accessible from the Migrations page in Snowsight in your Snowflake account:
 
 [![Access SMA](/static/images/migrations/sma-assets/access-sma.png)](/static/images/migrations/sma-assets/access-sma.png)
 
@@ -37,7 +37,7 @@ Once you download the tool, install it! There is more information on [installing
 
 Once you have installed the tool, open it! When you launch the SMA, it will look very similar to its partner tool, SnowConvert. Both of these tools are built on a similar concept where you input code files into the tool and it runs. As a reminder, we have seen that SnowConvert can take the DDL and data directly from the source and input it directly into Snowflake. The SMA does not do this. It only takes in code files as a source and outputs those files to something that is compatible with Snowflake. This is primarily because the tool does not know how a user will orchestrate their spark code, but also to make it more secure to use.
 
-Once you have launched the tool, It will ask you if you would like to create a new project or open an already existing one:
+Once you have launched the tool, it will ask you if you would like to create a new project or open an already existing one:
 
 [![New project](/static/images/migrations/sma-assets/new-project.png)](/static/images/migrations/sma-assets/new-project.png)
 

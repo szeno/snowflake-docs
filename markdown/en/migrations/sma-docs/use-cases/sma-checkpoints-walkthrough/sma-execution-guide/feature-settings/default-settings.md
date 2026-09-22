@@ -1,6 +1,3 @@
-description:
-:   The SMA-Checkpoints feature includes several settings, each with its corresponding default value.
-
 # Snowpark Migration Accelerator: Default Settings
 
 ## Default Values

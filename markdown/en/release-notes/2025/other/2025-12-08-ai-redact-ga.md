@@ -12,4 +12,4 @@ Results in the following output:
 
 > “[NAME]’s email is [EMAIL] and he lives in [ADDRESS].”
 
-For more information, see [Detect and redact personally identifiable information (PII)](/user-guide/snowflake-cortex/redact-pii) and [AI\_REDACT](/sql-reference/functions/ai_redact).
+For more information, see [AI\_REDACT](/sql-reference/functions/ai_redact).

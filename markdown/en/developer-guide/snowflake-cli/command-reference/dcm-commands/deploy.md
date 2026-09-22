@@ -201,9 +201,9 @@ Note
 
 This command automatically uploads local source SQL files to a temporary stage in Snowflake so their content impacts the final result of the operation.
 
-Use the `--save-output` option to save the deployment results to a local `out/deploy.json` file.
+Use the `--save-output` option to save the deployment results to a local `out/deploy_result.json` file.
 
-For more information about the deployment process, see [Deploy a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-deploy).
+`DEPLOY` always runs `PLAN`. For more information about the deployment process, see [Deploy a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-deploy).
 
 ## Examples
 

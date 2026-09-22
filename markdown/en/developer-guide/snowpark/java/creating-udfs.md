@@ -94,7 +94,7 @@ Show lessSee more
 ## Specifying Dependencies for a UDF
 
 In order to define a UDF through the Snowpark API, you must call `Session.addDependency()` for any files that contain any
-classes and resources that your UDF depends on (e.g. JAR files, resource files, etc.). (For details on reading resources from a
+classes and resources that your UDF depends on (for example, JAR files and resource files). (For details on reading resources from a
 UDF, see [Reading Files from a UDF](#label-snowpark-java-udf-read-files).)
 
 The Snowpark library uploads these files to an internal stage and adds the files to the classpath when executing your UDF.
@@ -185,7 +185,7 @@ To create an anonymous UDF, you can either:
 
 Note
 
-When writing multi-threaded code (e.g. when using parallel collections), use the `registerTemporary` method to register
+When writing multi-threaded code (for example, when using parallel collections), use the `registerTemporary` method to register
 UDFs, rather than using the `udf` method. This can prevent errors in which the default Snowflake `Session` object
 cannot be found.
 
@@ -249,7 +249,7 @@ DataFrame dfEmailsWithLangCol =
 
 ## Creating and Registering a Named UDF
 
-If you want to call a UDF by name (e.g. by using the `Functions.callUDF` static method) or if you need to use a UDF in
+If you want to call a UDF by name (for example, by using the `Functions.callUDF` static method) or if you need to use a UDF in
 subsequent sessions, you can create and register a named UDF. To do this, use one of the following methods in the
 `UDFRegistration` class:
 
@@ -258,7 +258,7 @@ subsequent sessions, you can create and register a named UDF. To do this, use on
 
 To access an object of the `UDFRegistration` class, call the `udf` method of the `Session` object.
 
-When calling `registerTemporary` or `registerPermanent` method, pass in the lambda expression and the [DataTypes](../reference/java/com/snowflake/snowpark_java/types/DataTypes.html)
+When calling the `registerTemporary` or `registerPermanent` method, pass in the lambda expression and the [DataTypes](../reference/java/com/snowflake/snowpark_java/types/DataTypes.html)
 fields (or objects constructed by the methods of that class) representing the data types of the inputs and output.
 
 For example:
@@ -532,7 +532,7 @@ For information on calling a UDTF, see [Calling a UDTF](#label-snowpark-java-udt
 
 ### Defining the UDTF Class
 
-Define a class that implements one of the `JavaUDTFn` interfaces (e.g. `JavaUDTF0`, `JavaUDTF1`, etc.) in the
+Define a class that implements one of the `JavaUDTFn` interfaces (for example, `JavaUDTF0` or `JavaUDTF1`) in the
 [com.snowflake.snowpark\_java.udtf package](../reference/java/com/snowflake/snowpark_java/udtf/package-summary.html), where `n` specifies the number of input arguments for your UDTF. For example,
 if your UDTF passes in 2 input arguments, implement the `JavaUDTF2` interface.
 
@@ -667,7 +667,7 @@ In the `process()` method, build and return a [java.util.stream.Stream](https://
 returned by the UDTF for the given input values. The fields in the row must use the types that you specified in the
 `outputSchema` method. (See [Implementing the outputSchema() Method](#label-snowpark-java-udtf-define-class-output-schema).)
 
-For example, if your UDTF generates rows, construct and return an `Iterable` of `Row` objects for the generated rows:
+For example, if your UDTF generates rows, construct and return a `Stream` of `Row` objects for the generated rows:
 
 > Copy code
 >
@@ -792,7 +792,7 @@ If you do not need to return additional rows at the end of each partition, retur
 Note
 
 While Snowflake supports large partitions with timeouts tuned to process them successfully, especially large partitions can cause
-processing to time out (such as when `endPartition` takes too long to complete). Please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) if you need the
+processing to time out (such as when `endPartition` takes too long to complete). Contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) if you need the
 timeout threshold adjusted for specific usage scenarios.
 
 #### Example of a UDTF Class

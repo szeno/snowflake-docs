@@ -45,6 +45,13 @@ Setting the account-level `CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER` 
 blocks all users, and you can then selectively allow access for individual users by assigning
 them a positive value. See [Daily credit usage limits for CoCo](/user-guide/cortex-code/credit-usage-limit).
 
+Note
+
+On self-service [trial accounts](/user-guide/admin-trial-account), AI features are disabled by default.
+To enable them, an account administrator must
+[add a credit card to the account](/user-guide/admin-trial-account#label-trial-account-ai-features).
+Adding a credit card doesn’t upgrade the trial to a paid account or end the trial period.
+
 ## What’s new
 
 See [Release notes](/user-guide/cortex-code/cortex-code-desktop/release-notes) for the latest features,

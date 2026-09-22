@@ -78,7 +78,7 @@ replicating large collections.
 
 - The connector doesn’t support multi-node Openflow runtimes. Configure the runtime for this connector with **Min nodes** and **Max nodes** set to `1`.
 
-For information about creating a warehouse for the connector, see [Designate a warehouse](/user-guide/data-integration/openflow/connectors/mongodb/connect#label-designate-warehouse).
+For information about creating a warehouse for the connector, see [Set up the target Snowflake account](/user-guide/data-integration/openflow/connectors/mongodb/connect#label-mongodb-set-up-target-snowflake-account).
 
 ## Workflow
 

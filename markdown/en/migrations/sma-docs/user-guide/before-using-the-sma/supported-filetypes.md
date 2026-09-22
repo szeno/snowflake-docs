@@ -35,7 +35,7 @@ The SMA will analyze notebook files to identify:
 
 The analysis is performed based on the cell type within each notebook. Notebooks can contain a mix of SQL, Python, and Scala cells. The SMA will create an [inventory of all cell types](/migrations/sma-docs/user-guide/scos-conversion/output-reports/sma-inventories) in its output report.
 
-### Excluded Files and folders
+### Excluded Files and Folders
 
 By default, certain files and folders are excluded from scanning. These exclusions primarily consist of project configuration files and their associated directories.
 

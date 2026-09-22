@@ -6,4 +6,4 @@ their formats via a schema simplifies prompting, reduces the need for post-proce
 pipelines, and enables seamless integration with systems that require deterministic responses. COMPLETE Structured
 Outputs is available for customers using the SQL and REST API Interfaces.
 
-For more information, see [AI\_COMPLETE structured outputs](/user-guide/snowflake-cortex/complete-structured-outputs).
+For more information, see [AI\_COMPLETE (Structured outputs)](/sql-reference/functions/ai_complete-structured-outputs).

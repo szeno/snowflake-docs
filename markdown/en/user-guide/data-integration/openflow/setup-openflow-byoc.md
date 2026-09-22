@@ -100,7 +100,7 @@ An execute-as role is a Snowflake role bound to a specific Openflow runtime. Con
 - Grant access to Snowflake resources.
 - Grant access to connector-specific resources.
 
-Because execute-as roles are linked to Openflow managed tokens, you don’t need to create separate service users and key pairs for authentication to Snowflake.
+Because execute-as roles are linked to Openflow managed tokens, you don’t need to create separate service users and key pairs for authentication to Snowflake. If you’re deploying a connector with the `KEY_PAIR` authentication strategy instead, see [Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth).
 
 Note
 

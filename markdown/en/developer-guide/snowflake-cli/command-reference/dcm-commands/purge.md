@@ -195,9 +195,11 @@ snow dcm purge
 
 ## Usage notes
 
-The `snow dcm purge` command drops every Snowflake object managed by the specified DCM project object, but does not drop the DCM project object itself. The operation is recorded in the project’s deployment history and prints the computed changeset on completion.
+The `snow dcm purge` command drops every entity, revokes every grant, and removes every attachment managed by the specified DCM project
+object, but doesn’t drop the DCM project object itself. The operation is recorded in the project’s deployment history and prints the
+computed changeset on completion.
 
-Use the `--save-output` option to save the purge results to a local `out/purge.json` file.
+Use the `--save-output` option to save the purge results to a local `out/purge_result.json` file.
 
 Note
 

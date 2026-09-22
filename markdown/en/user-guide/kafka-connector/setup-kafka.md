@@ -695,7 +695,7 @@ channels. They’re only relevant when migrating from a v3 connector that used
 #### Other properties
 
 `tasks.max`
-:   Number of tasks, usually the same as the number of CPU cores across the worker nodes in the Kafka Connect cluster. To achieve best performance, Snowflake recommends setting the number of tasks equal to the total number of Kafka partitions, but not exceeding the number of CPU cores. High number of tasks may result in an increased memory consumption and frequent rebalances.
+:   Number of tasks, usually the same as the number of CPU cores across the worker nodes in the Kafka Connect cluster. To achieve best performance, Snowflake recommends setting the number of tasks equal to the total number of Kafka partitions, but not exceeding the number of CPU cores. A high number of tasks may result in an increased memory consumption and frequent rebalances.
 
 `snowflake.topic2table.map`
 :   Comma-separated list of topic-to-table mappings in `topic:table` format. Supports regex

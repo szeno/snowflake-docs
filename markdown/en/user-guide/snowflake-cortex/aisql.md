@@ -42,6 +42,7 @@ quick translations, that don’t require any customization.
 - [AI\_FILTER](/sql-reference/functions/ai_filter): Returns True or False for a given text or image input, allowing you to filter results in *SELECT*, *WHERE*, or *JOIN … ON* clauses.
 - [AI\_AGG](/sql-reference/functions/ai_agg): Aggregates a text column and returns insights across multiple rows based on a user-defined prompt. This function isn’t subject to context window limitations.
 - [AI\_EMBED](/sql-reference/functions/ai_embed): Generates an embedding vector for a text or image input, which can be used for similarity search, clustering, and classification tasks.
+- [AI\_MULTI\_EMBED](/sql-reference/functions/ai_multi_embed): Creates multimodal embeddings from text, images, audio, or video, returning one or more vectors with segment metadata for semantic search across modalities.
 - [AI\_EXTRACT](/sql-reference/functions/ai_extract): Extracts information from an input string or file, for example, text, images, and documents. Supports multiple languages.
 - [AI\_SENTIMENT](/sql-reference/functions/ai_sentiment): Extracts sentiment from text.
 - [AI\_SUMMARIZE](/sql-reference/functions/ai_summarize): Automatically summarizes text, images, and documents, identifying key themes, facts, and relationships across multimodal content.

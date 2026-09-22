@@ -62,10 +62,10 @@ information:
   - Deployment metadata, including timestamp, object name, and query ID
   - The changeset
 
-This complete set makes all deployment actions reproducible for debugging, auditing, or redeploying
-the defined state. Deployment artifacts remain inside the DCM project for as long as the project object exists, which
-makes them the canonical audit trail for a DCM project. The [Deployment history](#label-dcm-projects-deployment-history) function is a
-faster, higher-level way to query this information.
+This set retains the definitions and execution context for debugging, auditing, and re-planning the defined state. Deployment artifacts
+remain inside the DCM project until the project object or the individual deployment record is explicitly dropped. The retained artifacts
+are the canonical audit trail for a DCM project. The [Deployment history](#label-dcm-projects-deployment-history) function is a faster, higher-level way to
+query this information.
 
 The following commands are available for observing and auditing a DCM project:
 
@@ -102,8 +102,27 @@ snow dcm describe --target STAGE
 
 snow dcm list-deployments
 
-snow dcm drop-deployment 'DEPLOYMENT$1'
+snow dcm drop-deployment --deployment 'DEPLOYMENT$1'
 ```
+
+### Recover an earlier defined state
+
+To recover an earlier definition state, retrieve the retained definitions and effective templating configuration from that deployment,
+including runtime variable overrides. Run a new full `PLAN` against the current account state, review the resulting changeset, and then
+redeploy those definitions.
+
+This process applies the earlier defined state through a new reconciliation. It doesn’t undo DML, restore historical table contents, or
+guarantee the exact prior physical or internal state. Use a separate data-recovery mechanism, such as
+[Time Travel](/user-guide/data-time-travel), to recover historical data, subject to that mechanism’s retention and other constraints.
+
+### Check for drift only
+
+To isolate changes made outside DCM Projects, retrieve the definitions and effective templating configuration from the last deployment, including
+runtime variable overrides. Run a full `PLAN` with those definitions against the same project and account.
+
+Don’t use a feature branch for a drift-only check because its intended source changes are combined with account drift. `PLAN DELTA` also
+isn’t a drift-only check: it doesn’t compare unchanged definitions with current account state. This procedure reports drift for review; it
+doesn’t automatically remediate it.
 
 ### Deployment history
 
@@ -115,9 +134,8 @@ For the full syntax, arguments, output columns, and examples, see the
 Note
 
 The DCM\_DEPLOYMENT\_HISTORY function returns deployments from the past 12 months only. There is no ACCOUNT\_USAGE view
-equivalent. Older deployments remain available as [deployment artifacts](#label-dcm-projects-deployment-artifacts)
-inside the DCM project for as long as the project object exists, so the artifacts (not this function) are the canonical
-long-term audit trail.
+equivalent. For long-term retention and deletion behavior, see
+[Deployment artifacts](#label-dcm-projects-deployment-artifacts).
 
 SQLSnowsight
 

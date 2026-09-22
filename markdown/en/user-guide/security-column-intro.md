@@ -1204,7 +1204,7 @@ These views might include, but are not limited to, the [COLUMNS](/sql-reference/
 ## Tagged Objects
 
 As a data administrator, you can use this table to associate the coverage and prevalence in the **Dashboard** to a list of specific
-tables, view, or columns quickly. You can also filter the table results manually as follows.
+tables, views, or columns quickly. You can also filter the table results manually as follows.
 
 - Choose **Tables** or **Columns**.
 - For tags, you can filter with tags, without tags, or by a specific tag.

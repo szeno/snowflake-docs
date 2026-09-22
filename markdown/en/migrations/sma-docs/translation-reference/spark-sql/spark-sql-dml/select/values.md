@@ -142,4 +142,4 @@ No issues were found
 
 ### Related EWIs
 
-No related Enterprise Warehouse Integrations
+No related EWIs

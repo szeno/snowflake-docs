@@ -179,7 +179,9 @@ snow dcm create
 
 ## Usage notes
 
-The `snow dcm create` command creates a DCM project object in Snowflake if one does not exist. The DCM project object is created in the current session’s database and schema, or in those specified with `snow dcm` command options.
+The `snow dcm create` command creates a DCM project object in Snowflake. To request a no-op when the object already exists, specify
+`--if-not-exists`. The DCM project object is created in the current session’s database and schema, or in those specified with `snow dcm`
+command options.
 
 ## Examples
 

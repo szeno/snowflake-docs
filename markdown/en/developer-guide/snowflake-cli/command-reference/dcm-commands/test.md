@@ -194,7 +194,7 @@ The command returns:
 - Exit code `0` if all tests pass
 - Exit code `1` if any test fails
 
-Use the `--save-output` option to save the test results to a local `out/test.json` file.
+Use the `--save-output` option to save the test results to a local `out/test_result.json` file.
 
 ## Examples
 

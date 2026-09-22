@@ -117,7 +117,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object |
 | --- | --- |
-| READ | - DCM project - Managed object |
+| - `READ` on the DCM project - The appropriate visibility privilege for each managed object, which varies by object type | - DCM project - Managed object |
 
 Expand
 

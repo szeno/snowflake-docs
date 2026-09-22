@@ -166,7 +166,7 @@ from snowflake.snowpark import Session
 from snowflake.snowpark import functions as F
 from snowflake.snowpark import Row
 
-Create a Spark session using the Session builder:
+Create a Snowflake session using the Session builder:
 
 spark_session = Session.builder.create()
 

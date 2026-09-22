@@ -219,7 +219,7 @@ Initial public preview release of the connector built on the Universal Core. Thi
 ### Bug fixes
 
 - Fixed the Azure IMDS `Metadata` header to use lowercase `"true"` instead of `"True"`, which caused 400 errors during Azure Workload Identity Federation authentication.
-- Fixed the default `crl_download_max_size` to be 20MB instead of 200MB to prevent potential out-of-memory issues.
+- Fixed the default `crl_download_max_size` to be 20 MB instead of 200 MB to prevent potential out-of-memory issues.
 - Fixed a bug where Azure GET commands would incorrectly set the file status to `UPLOADED` instead of preserving the `DOWNLOADED` status during metadata retrieval.
 - Fixed the `unsafe_skip_file_permissions_check` flag not being respected when reading `connections.toml`.
 - Fixed a `JSONDecodeError` in `result_batch._load()` when fetching large result sets.

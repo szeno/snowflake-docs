@@ -23,7 +23,9 @@ This topic describes the steps to set up the Openflow Connector for Snowflake to
 
 ## Set up Snowflake account
 
-As a Snowflake account administrator, perform the following tasks:
+As a Snowflake account administrator, perform the following tasks. With the default `SNOWFLAKE_MANAGED`
+authentication strategy, the runtime’s execute-as role is the identity the connector uses to access
+Snowflake, so you grant it the privileges below.
 
 1. Create the database, source table, and the stream object that the connector will use for reading CDC events. For example:
 
@@ -35,50 +37,41 @@ As a Snowflake account administrator, perform the following tasks:
    create table stream_source (user_id varchar, data varchar);
    create stream stream_on_table on table stream_source;
    ```
-2. Create a new role or use an existing role, and grant the SELECT privilege on the stream
-   and the source object for the stream. The connector will also need the USAGE privilege on the database and
-   schema containing the stream and source object for the stream. For example:
+2. Grant the runtime’s execute-as role the SELECT privilege on the stream and the source object for
+   the stream, and the USAGE privilege on the database and schema containing them. For example:
 
    Copy code
 
    ```
-   create role stream_reader;
-   grant usage on database stream_db to role stream_reader;
-   grant usage on schema stream_db.public to role stream_reader;
-   grant select on stream_source to role stream_reader;
-   grant select on stream_on_table to role stream_reader;
+   grant usage on database stream_db to role OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   grant usage on schema stream_db.public to role OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   grant select on stream_source to role OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   grant select on stream_on_table to role OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
    ```
-3. Create a new Snowflake service user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property). For example:
-
-   Copy code
-
-   ```
-   create user stream_user type = service;
-   ```
-4. Grant the Snowflake service user the role you created in the previous steps. For example:
-
-   Copy code
-
-   ```
-   grant role stream_reader to user stream_user;
-   ```
-5. Configure [key-pair auth](/user-guide/key-pair-auth) for the Snowflake SERVICE user from step 3.
-6. Snowflake strongly recommends this step. Configure a secrets manager supported by Openflow, such as AWS, Azure, and HashiCorp,
-   and store the public and private keys in the secret store. However, note that the private key generated in step 5 can be used
-   directly as a configuration parameter for the connector configuration. In such a case, the private key is stored in Openflow runtime configuration.
-
-   Note
-
-   If for any reason, you do not wish to use a secrets manager, then you are responsible for safeguarding the
-   public key and private key files used for key-pair authentication according to the security policies of your organization.
-
-   1. Once the secrets manager is configured, determine how you will authenticate to it. On AWS, it’s recommended that you use the
-      EC2 instance role associated with Openflow, so that no other secrets have to be persisted.
-   2. In Openflow, configure a Parameter Provider associated with this Secrets Manager, from the hamburger menu in the upper right.
-      Navigate to **Controller Settings** » **Parameter Provider** and then fetch your parameter values.
-   3. At this point all credentials can be referenced with the associated parameter paths and no sensitive values need to be persisted within Openflow.
-7. Designate a warehouse for the connector to use. One connector can replicate a single table to a single Kafka topic.
+3. Designate a warehouse for the connector to use. One connector can replicate a single table to a single Kafka topic.
    For this kind of processing, you can select the smallest warehouse.
+
+   Copy code
+
+   ```
+   create warehouse if not exists <openflow_warehouse>
+     with
+     warehouse_size = 'XSMALL'
+     auto_suspend = 300
+     auto_resume = true;
+
+   grant usage, operate on warehouse <openflow_warehouse> to role OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. The privileges to grant
+your service user’s role are the ones from step 2 (`SELECT` on the stream and source object,
+and `USAGE` on their database and schema), not a destination database and warehouse. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Set up the connector
 

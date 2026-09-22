@@ -85,7 +85,7 @@ The formatting of the generated code may appear different from the source code d
 
 ---
 
-##### Create Table
+##### CREATE TABLE
 
 **Input code (SparkSQL)**
 
@@ -101,7 +101,7 @@ CREATE TABLE SOME_TABLE
 Copy code
 
 ```
-CREATE TABLE SOME_TABLEA
+CREATE TABLE SOME_TABLE
 (COL1 VARCHAR(5))
 COMMENT = '{"origin":"sf_sit","name":"sma","version":{"major":0,"minor":0,"patch":0},"attributes":{"language":"SparkSql"}}';
 ```

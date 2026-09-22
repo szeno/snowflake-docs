@@ -406,7 +406,7 @@ Show lessSee more
 ### Iceberg write options: `merge-schema`
 
 Pass `mergeSchema` or (`merge-schema` / `merge_schema`) to evolve the Iceberg table schema
-during a V2 `overwrite()` or `partitionOverwrite()`:
+during a V2 `overwrite()` or `overwritePartitions()`:
 
 Copy code
 
@@ -431,7 +431,7 @@ Per-write validation for Iceberg V2 writes, passed via `.option(...)` on `append
 `overwrite`, or `overwritePartitions`.
 
 - **check-ordering** (default `true`) — verifies the data’s column order matches the target table.
-- **check-nullability** (default follows `snowpark.connect.nullability.trackColumns`, i.e. off) — blocks writing a nullable column into a NOT NULL column.
+- **check-nullability** (default follows `snowpark.connect.nullability.trackColumns`, that is, off) — blocks writing a nullable column into a NOT NULL column.
 
 Copy code
 

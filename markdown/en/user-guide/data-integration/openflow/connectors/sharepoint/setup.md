@@ -74,95 +74,93 @@ As an Azure or Office 365 account administrator, perform the following actions:
 
 ## Set up your Snowflake account
 
-As a Snowflake account administrator, perform the following tasks manually
-or by using the script included below:
+As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
+default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
+the connector uses to access Snowflake, so you grant it the following privileges.
 
-1. Create a new role or use an existing role and grant the [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges).
-2. Create a new Snowflake service user with the type as [SERVICE](/sql-reference/sql/create-user#label-user-type-property).
-3. Grant the Snowflake service user the role you created in the previous steps.
-4. Configure with [key-pair auth](/user-guide/key-pair-auth) for the Snowflake SERVICE user from step 2.
-5. Snowflake strongly recommends this step. Configure a secrets manager supported by Openflow, for example, AWS, Azure, and Hashicorp, and store the public and private keys in the secret store.
+### Create database, schema, and warehouse
 
-   Note
+1. Create the destination database:
 
-   If for any reason, you do not wish to use a secrets manager, then you are responsible for safeguarding the
-   public key and private key files used for key-pair authentication according to the security policies of your organization.
+   Copy code
 
-   1. Once the secrets manager is configured, determine how you will authenticate to it. On AWS, it’s recommended that you the
-      EC2 instance role associated with Openflow as this way no other secrets have to be persisted.
-   2. In Openflow, configure a Parameter Provider associated with this Secrets Manager, from the hamburger menu in the upper right.
-      Navigate to **Controller Settings** » **Parameter Provider** and then fetch your parameter values.
-   3. At this point all credentials can be referenced with the associated parameter paths and no sensitive values need to be persisted within Openflow.
-6. If any other Snowflake users require access to the raw ingested documents and tables ingested by the connector (for example, for custom processing in Snowflake),
-   then grant those users the role created in step 1.
-7. Designate a warehouse for the connector to use. Start with the smallest warehouse size, then experiment with size depending on the number of tables being replicated,
-   and the amount of data transferred. Large table numbers typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than larger warehouse sizes.
+   ```
+   USE ROLE OPENFLOW_ADMIN;
+   CREATE DATABASE IF NOT EXISTS <destination_database>;
+   ```
+2. Create the destination schema:
 
-### Example setup
+   Copy code
 
-> Copy code
->
-> ```
-> --The following script assumes you'll need to create all required roles, users, and objects.
-> --However, you may want to reuse some that are already in existence.
->
-> --Create a Snowflake service user to manage the connector
-> USE ROLE USERADMIN;
-> CREATE USER <openflow_service_user> TYPE=SERVICE COMMENT='Service user for Openflow automation';
->
-> --Create a pair of secure keys (public and private). For more information, see
-> --key-pair authentication. Store the private key for the user in a file to supply
-> --to the connector’s configuration. Assign the public key to the Snowflake service user:
-> ALTER USER <openflow_service_user> SET RSA_PUBLIC_KEY = '<pubkey>';
->
->
-> --Create a role to manage the connector and the associated data and
-> --grant it to that user
-> USE ROLE SECURITYADMIN;
-> CREATE ROLE <openflow_connector_admin_role>;
-> GRANT ROLE <openflow_connector_admin_role> TO USER <openflow_service_user>;
->
->
-> --The following block is for USE CASE 2 (Cortex connect) ONLY
-> --Create a role for read access to the cortex search service created by this connector.
-> --This role should be granted to any role that will use the service
-> CREATE ROLE <cortex_search_service_read_only_role>;
-> GRANT ROLE <cortex_search_service_read_only_role> TO ROLE <whatever_roles_will_access_search_service>;
->
-> --Create the database the data will be stored in and grant usage to the roles created
-> USE ROLE ACCOUNTADMIN; --use whatever role you want to own your DB
-> CREATE DATABASE IF NOT EXISTS <destination_database>;
-> GRANT USAGE ON DATABASE <destination_database> TO ROLE <openflow_connector_admin_role>;
->
-> --Create the schema the data will be stored in and grant the necessary privileges
-> --on that schema to the connector admin role:
-> USE DATABASE <destination_database>;
-> CREATE SCHEMA IF NOT EXISTS <destination_schema>;
-> GRANT USAGE ON SCHEMA <destination_schema> TO ROLE <openflow_connector_admin_role>;
-> GRANT CREATE TABLE, CREATE DYNAMIC TABLE, CREATE STAGE, CREATE SEQUENCE, CREATE CORTEX
-> SEARCH SERVICE ON SCHEMA <destination_schema> TO ROLE <openflow_connector_admin_role>;
->
-> --The following block is for CASE 2 (Cortex connect) ONLY
-> --Grant the Cortex read-only role access to the database and schema
-> GRANT USAGE ON DATABASE <destination_database> TO ROLE <cortex_search_service_read_only_role>;
-> GRANT USAGE ON SCHEMA <destination_schema> TO ROLE <cortex_search_service_read_only_role>;
->
-> --Create the warehouse this connector will use if it doesn't already exist. Grant the
-> --appropriate privileges to the connector admin role. Adjust the size according to your needs.
-> CREATE WAREHOUSE <openflow_warehouse>
-> WITH
->    WAREHOUSE_SIZE = 'MEDIUM'
->    AUTO_SUSPEND = 300
->    AUTO_RESUME = TRUE;
-> GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE <openflow_connector_admin_role>;
-> ```
+   ```
+   CREATE SCHEMA IF NOT EXISTS <destination_database>.<destination_schema>;
+   ```
+3. Grant the required privileges to the runtime’s execute-as role:
+
+   Copy code
+
+   ```
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT CREATE TABLE, CREATE DYNAMIC TABLE, CREATE STAGE, CREATE SEQUENCE ON SCHEMA <destination_database>.<destination_schema>
+     TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+4. Create a warehouse (or use an existing one) and grant usage privileges:
+
+   Copy code
+
+   ```
+   CREATE WAREHOUSE IF NOT EXISTS <openflow_warehouse>
+     WITH
+     WAREHOUSE_SIZE = 'XSMALL'
+     AUTO_SUSPEND = 300
+     AUTO_RESUME = TRUE;
+
+   GRANT USAGE, OPERATE ON WAREHOUSE <openflow_warehouse> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   ```
+5. If any other Snowflake users require access to the raw documents and tables ingested by the
+   connector (for example, for custom processing in Snowflake), grant those users the execute-as
+   role.
+
+### Grant Cortex Search privileges
+
+If you’re using the connector for the use case **Ingest files and perform processing with Cortex**,
+also perform the following tasks:
+
+1. Create a role for read access to the Cortex Search service created by this connector, and grant
+   it to any role that will use the service:
+
+   Copy code
+
+   ```
+   USE ROLE SECURITYADMIN;
+   CREATE ROLE IF NOT EXISTS <cortex_search_service_read_only_role>;
+   GRANT ROLE <cortex_search_service_read_only_role> TO ROLE <whatever_roles_will_access_search_service>;
+   ```
+2. Grant the privilege to create the Cortex Search service, and grant the read-only role access to
+   the database and schema:
+
+   Copy code
+
+   ```
+   GRANT CREATE CORTEX SEARCH SERVICE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+   GRANT USAGE ON DATABASE <destination_database> TO ROLE <cortex_search_service_read_only_role>;
+   GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE <cortex_search_service_read_only_role>;
+   ```
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ## Use case 1: Ingest files only
 
 Use a connector to:
 
-- Ingest and continuously update Sharepoint files for custom processing within Snowflake
+- Ingest and continuously update SharePoint files for custom processing within Snowflake
 - Optionally ingest file permissions (ACL connectors) to persist access controls downstream
 
 ### Set up the connector
@@ -193,9 +191,9 @@ The Openflow canvas appears with the connector process group added to it.
 
 1. Populate the process group parameters
    1. Right-click on the imported process group and select **Parameters**.
-   2. Enter the required parameter values as described in [Sharepoint Ingestion Parameters](#sharepoint-ingestion-parameters), [Sharepoint Destination Parameters](#sharepoint-destination-parameters) and [Sharepoint Source Parameters](#sharepoint-source-parameters).
+   2. Enter the required parameter values as described in [SharePoint Ingestion Parameters](#sharepoint-ingestion-parameters), [SharePoint Destination Parameters](#sharepoint-destination-parameters) and [SharePoint Source Parameters](#sharepoint-source-parameters).
 
-##### Sharepoint Source Parameters
+##### SharePoint Source Parameters
 
 **For all connectors:**
 
@@ -214,15 +212,15 @@ Show lessSee more
 
 | Parameter | Description |
 | --- | --- |
-| Sharepoint Application Private Key | A generated application private key in PEM format. The key must be unencrypted. |
-| Sharepoint Site Domain | A domain name of the synchronized Sharepoint site. |
-| Sharepoint Application Certificate | A generated application certificate in PEM format. |
+| SharePoint Application Private Key | A generated application private key in PEM format. The key must be unencrypted. |
+| SharePoint Site Domain | A domain name of the synchronized SharePoint site. |
+| SharePoint Application Certificate | A generated application certificate in PEM format. |
 
 Expand
 
 Show lessSee more
 
-##### Sharepoint Destination Parameters
+##### SharePoint Destination Parameters
 
 | Parameter | Description | Required |
 | --- | --- | --- |
@@ -230,7 +228,7 @@ Show lessSee more
 | Destination Schema | The schema where data will be persisted, which must already exist in Snowflake. The name is case-sensitive. For unquoted identifiers, provide the name in uppercase.  See the following examples:  - `CREATE SCHEMA SCHEMA_NAME` or `CREATE SCHEMA schema_name`: use `SCHEMA_NAME` - `CREATE SCHEMA "schema_name"` or `CREATE SCHEMA "SCHEMA_NAME"`: use `schema_name` or `SCHEMA_NAME`, respectively | Yes |
 | Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. | Yes |
 | Snowflake Account Identifier | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Snowflake account name formatted as [organization-name]-[account-name]. | Yes |
-| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank.   **KEY\_PAIR**: Must be the RSA private key used for authentication.  The RSA key must be formatted according to PKCS8 standards and have standard PEM headers and footers. Note that either a Snowflake Private Key File or a Snowflake Private Key must be defined. | No |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Must be the RSA private key used for authentication, formatted according to PKCS8   standards and including standard PEM headers and footers. Note that either a Snowflake Private   Key File or a Snowflake Private Key must be defined. | No |
 | Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: The private key file must be blank. - **KEY\_PAIR**: Upload the file that contains the RSA private key used for authentication to Snowflake,   formatted according to PKCS8 standards and including standard PEM headers and footers.   The header line begins with `-----BEGIN PRIVATE`.   To upload the private key file, select the **Reference asset** checkbox. | No |
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake private key file. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |
@@ -241,7 +239,7 @@ Expand
 
 Show lessSee more
 
-##### Sharepoint Ingestion Parameters
+##### SharePoint Ingestion Parameters
 
 **For all connectors:**
 
@@ -249,7 +247,7 @@ Show lessSee more
 | --- | --- |
 | SharePoint Source Folder | Supported files from this folder and all its subfolders is ingested into Snowflake. The folder path is relative to a Shared Documents library. |
 | File Extensions To Ingest | A comma-separated list that specifies file extensions to ingest. The connector tries to convert the files to PDF format first, if possible. Nonetheless, the extension check is performed on the original file extension. To learn about the formats that can be converted, see [Format options](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http#format-options) If some of the specified file extensions are not supported by Cortex Parse Document, then the connector ignores those files, logs a warning message in an event log, and continues processing other files. |
-| Sharepoint Document Library Name | A library in the SharePoint Site to ingest files from. |
+| SharePoint Document Library Name | A library in the SharePoint Site to ingest files from. |
 | Snowflake File Hash Table Name | Name of the table to store file hashes to determine if the content has changed. This parameter should generally not be changed. |
 
 Expand
@@ -260,7 +258,7 @@ Show lessSee more
 
 | Parameter | Description |
 | --- | --- |
-| Sharepoint Site Groups Enabled | Specifies whether the Site Groups functionality is enabled. |
+| SharePoint Site Groups Enabled | Specifies whether the Site Groups functionality is enabled. |
 
 Expand
 
@@ -284,17 +282,7 @@ As a data engineer, perform the following tasks to configure the connector:
 
 #### Install the connector
 
-1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the role created in the first step. Substitute the role placeholder with the actual value and use the following SQL commands:
-
-   Copy code
-
-   ```
-   CREATE DATABASE DESTINATION_DB;
-   CREATE SCHEMA DESTINATION_DB.DESTINATION_SCHEMA;
-   GRANT USAGE ON DATABASE DESTINATION_DB TO ROLE <CONNECTOR_ROLE>;
-   GRANT USAGE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   GRANT CREATE TABLE ON SCHEMA DESTINATION_DB.DESTINATION_SCHEMA TO ROLE <CONNECTOR_ROLE>;
-   ```
+1. Create a database and schema in Snowflake for the connector to store ingested data. Grant required [Database privileges](/user-guide/security-access-control-privileges#label-database-privileges) to the execute-as role, as described in [Set up your Snowflake account](#label-sharepoint-set-up-your-snowflake-account).
 
 To install the connector, do the following as a data engineer:
 
@@ -314,9 +302,9 @@ The Openflow canvas appears with the connector process group added to it.
 
 1. Populate the process group parameters
    1. Right click on the imported process group and select **Parameters**.
-   2. Enter the required parameter values as described in [Sharepoint Cortex Connect Source Parameters](#sharepoint-cortex-connect-source-parameters), [Sharepoint Cortex Connect Destination Parameters](#sharepoint-cortex-connect-destination-parameters) and [Sharepoint Cortex Connect Ingestion Parameters](#sharepoint-cortex-connect-ingestion-parameters).
+   2. Enter the required parameter values as described in [SharePoint Cortex Connect Source Parameters](#sharepoint-cortex-connect-source-parameters), [SharePoint Cortex Connect Destination Parameters](#sharepoint-cortex-connect-destination-parameters) and [SharePoint Cortex Connect Ingestion Parameters](#sharepoint-cortex-connect-ingestion-parameters).
 
-##### Sharepoint Cortex Connect Source Parameters
+##### SharePoint Cortex Connect Source Parameters
 
 **For all connectors:**
 
@@ -335,15 +323,15 @@ Show lessSee more
 
 | Parameter | Description |
 | --- | --- |
-| Sharepoint Application Private Key | A generated application private key in PEM format. The key must be unencrypted. |
-| Sharepoint Site Domain | A domain name of the synchronized Sharepoint site. |
-| Sharepoint Application Certificate | A generated application certificate in PEM format. |
+| SharePoint Application Private Key | A generated application private key in PEM format. The key must be unencrypted. |
+| SharePoint Site Domain | A domain name of the synchronized SharePoint site. |
+| SharePoint Application Certificate | A generated application certificate in PEM format. |
 
 Expand
 
 Show lessSee more
 
-##### Sharepoint Cortex Connect Destination Parameters
+##### SharePoint Cortex Connect Destination Parameters
 
 | Parameter | Description | Required |
 | --- | --- | --- |
@@ -351,7 +339,7 @@ Show lessSee more
 | Destination Schema | The schema where data will be persisted, which must already exist in Snowflake. The name is case-sensitive. For unquoted identifiers, provide the name in uppercase.  See the following examples:  - `CREATE SCHEMA SCHEMA_NAME` or `CREATE SCHEMA schema_name`: use `SCHEMA_NAME` - `CREATE SCHEMA "schema_name"` or `CREATE SCHEMA "SCHEMA_NAME"`: use `schema_name` or `SCHEMA_NAME`, respectively | Yes |
 | Snowflake Authentication Strategy | When using:   - **Snowflake Openflow Deployment** or **BYOC**: Use SNOWFLAKE\_MANAGED.   This token is managed automatically by Snowflake.   BYOC deployments must have previously configured   [execute-as roles](/user-guide/data-integration/openflow/setup-openflow-byoc#label-deployment-byoc-setup-runtime-role) to use SNOWFLAKE\_MANAGED. - **BYOC**: Alternatively, BYOC can use KEY\_PAIR as the value for the authentication strategy. | Yes |
 | Snowflake Account Identifier | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Snowflake account name formatted as [organization-name]-[account-name]. | Yes |
-| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank.   **KEY\_PAIR**: Must be the RSA private key used for authentication.  The RSA key must be formatted according to PKCS8 standards and have standard PEM headers and footers. Note that either a Snowflake Private Key File or a Snowflake Private Key must be defined. | No |
+| Snowflake Private Key | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Must be the RSA private key used for authentication, formatted according to PKCS8   standards and including standard PEM headers and footers. Note that either a Snowflake Private   Key File or a Snowflake Private Key must be defined. | No |
 | Snowflake Private Key File | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: The private key file must be blank. - **KEY\_PAIR**: Upload the file that contains the RSA private key used for authentication to Snowflake,   formatted according to PKCS8 standards and including standard PEM headers and footers.   The header line begins with `-----BEGIN PRIVATE`.   To upload the private key file, select the **Reference asset** checkbox. | No |
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake private key file. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |
@@ -362,7 +350,7 @@ Expand
 
 Show lessSee more
 
-##### Sharepoint Cortex Connect Ingestion Parameters
+##### SharePoint Cortex Connect Ingestion Parameters
 
 **For all connectors:**
 
@@ -370,7 +358,7 @@ Show lessSee more
 | --- | --- |
 | SharePoint Source Folder | Supported files from this folder and all its subfolders is ingested into Snowflake. The folder path is relative to a Shared Documents library. |
 | File Extensions To Ingest | A comma-separated list that specifies file extensions to ingest. The connector tries to convert the files to PDF format first, if possible. Nonetheless, the extension check is performed on the original file extension. To learn about the formats that can be converted, see [Format options](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http#format-options) If some of the specified file extensions are not supported by Cortex Parse Document, then the connector ignores those files, logs a warning message in an event log, and continues processing other files. |
-| Sharepoint Document Library Name | A library in the SharePoint Site to ingest files from. |
+| SharePoint Document Library Name | A library in the SharePoint Site to ingest files from. |
 | Snowflake File Hash Table Name | Name of the table to store file hashes to determine if the content has changed. This parameter should generally not be changed. |
 | OCR Mode | The OCR mode to use when parsing files with [Parsing documents with AI\_PARSE\_DOCUMENT](/user-guide/snowflake-cortex/parse-document) function. The value can be `OCR` or `LAYOUT`. In `OCR` mode, only raw text content is extracted, ignoring formatting and table structures. In `LAYOUT` mode, the output preserves table structures as Markdown. |
 | Snowflake Cortex Search Service User Role | An identifier of a role that is assigned usage permissions on the Cortex Search service. |
@@ -383,7 +371,7 @@ Show lessSee more
 
 | Parameter | Description |
 | --- | --- |
-| Sharepoint Site Groups Enabled | Specifies whether the Site Groups functionality is enabled. |
+| SharePoint Site Groups Enabled | Specifies whether the Site Groups functionality is enabled. |
 
 Expand
 
@@ -393,7 +381,7 @@ Show lessSee more
 2. Right-click on the imported process group and select **Start**. The connector starts the data ingestion.
 3. [Query the Cortex Search service](#query-the-cortex-search-service).
 
-## Use case 3: Customise the connector definition
+## Use case 3: Customize the connector definition
 
 Customize the connector definition to perform custom processing on ingested files.
 
@@ -440,7 +428,7 @@ The Openflow canvas appears with the connector process group added to it.
    2. Right click on the imported process group and select **Start**.
 4. [Query the Cortex Search service](#query-the-cortex-search-service).
 
-## Enabling Sharepoint site groups
+## Enabling SharePoint site groups
 
 ### Microsoft Graph application for site groups
 
@@ -471,7 +459,7 @@ You can use the [Cortex Search](/user-guide/snowflake-cortex/cortex-search/corte
 and search applications to chat with or query your documents in SharePoint.
 
 After you install and configure the connector and it begins
-ingesting content from Sharepoint, you can query the Cortex Search service.
+ingesting content from SharePoint, you can query the Cortex Search service.
 For more information about using Cortex Search, see [Query a Cortex Search service](/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service).
 
 **Filter responses**
@@ -513,8 +501,8 @@ Here’s a complete list of values that you can enter for `columns`:
 
 | Column name | Type | Description |
 | --- | --- | --- |
-| `full_name` | String | A full path to the file from the Sharepoint site documents root. Example: `folder_1/folder_2/file_name.pdf`. |
-| `web_url` | String | A URL that displays an original Sharepoint file in a browser. |
+| `full_name` | String | A full path to the file from the SharePoint site documents root. Example: `folder_1/folder_2/file_name.pdf`. |
+| `web_url` | String | A URL that displays an original SharePoint file in a browser. |
 | `last_modified_date_time` | String | Date and time when the item was most recently modified. |
 | `chunk` | String | A piece of text from the document that matched the Cortex Search query. |
 

@@ -78,7 +78,7 @@ GRANT ROLE kafka_connector_role_1 TO USER kafka_connector_user_1;
 ALTER USER kafka_connector_user_1 SET DEFAULT_ROLE = kafka_connector_role_1;
 ```
 
-Note that any privileges must be granted directly to the role used by the connector. Grants cannot be inherited from role hierarchy.
+Note that any privileges must be granted directly to the role used by the connector. Grants cannot be inherited from the role hierarchy.
 
 For more information on creating custom roles and role hierarchies, see [Configuring access control](/user-guide/security-access-control-configure).
 
@@ -361,7 +361,7 @@ The following properties can be set in the Kafka configuration file for either d
 :   If the value of this parameter is not empty, the Kafka connector uses this phrase to try to decrypt the private key.
 
 `tasks.max`
-:   Number of tasks, usually the same as the number of CPU cores across the worker nodes in the Kafka Connect cluster. To achieve best performance, Snowflake recommends setting the number of tasks equal to the total number of Kafka partitions, but not exceeding the number of CPU cores. High number of tasks may result in increased memory consumption and frequent rebalances.
+:   Number of tasks, usually the same as the number of CPU cores across the worker nodes in the Kafka Connect cluster. To achieve best performance, Snowflake recommends setting the number of tasks equal to the total number of Kafka partitions, but not exceeding the number of CPU cores. A high number of tasks may result in increased memory consumption and frequent rebalances.
 
 `snowflake.topic2table.map`
 :   This optional parameter lets a user specify which topics should be mapped to which tables. Each topic and its table name should be separated by a colon (see example below). This table name must be a valid Snowflake unquoted identifier. For information about valid table names, see [Identifier requirements](/sql-reference/identifiers-syntax). The topic configuration allows use of regular expressions to define topics, just as the use of `topics.regex` does. The regular expressions cannot be ambiguous — any matched topic must match only a single target table.
@@ -549,7 +549,7 @@ The following properties can be set in the Kafka configuration file for either d
 :   This option is used to enable or disable streaming channel offset migration logic.
     When `true`, offset tokens are migrated from V2 channel name format V2 to V1 channel name format.
     The V2 channel name format was used in Kafka Connector versions 2.1.0 and 2.1.1 only and is deprecated.
-    V1 format name format is used unless V2 format is enabled using `snowflake.streaming.channel.name.include.connector.name = true`.
+    V1 format is used unless V2 format is enabled using `snowflake.streaming.channel.name.include.connector.name = true`.
     Disabling this option might have side effects.
     Please consult Snowflake support before disabling this option.
 

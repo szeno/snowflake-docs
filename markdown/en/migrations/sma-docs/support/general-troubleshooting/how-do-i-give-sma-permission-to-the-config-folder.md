@@ -1,5 +1,5 @@
 description:
-:   Giving access to the configuration folder for SMA varies from OS.
+:   Giving access to the configuration folder for SMA varies by OS.
 
 # Snowpark Migration Accelerator: How do I give SMA permission to the config folder?
 
@@ -20,7 +20,7 @@ Please ensure SMA has full access to the appropriate folder for your operating s
 ## For macOS
 
 1. Open the Terminal by pressing **cmd** + **spacebar**, typing `Terminal`, and pressing **enter**.
-2. Navigate to your home directory by typing `cd ~` and pressing enter.
+2. Navigate to your home directory by typing `cd ~` and pressing **enter**.
 3. Change the permissions of the .config directory by typing `chmod 777 .config`. If you see “Operation not permitted,” use `sudo chmod 777 .config` instead.
 4. Close the Terminal and restart the Snowpark Migration Accelerator (SMA).
 

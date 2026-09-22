@@ -136,7 +136,7 @@ Important
 
 If you’re using AI\_COMPLETE with a prompt object, you can’t provide a JSON schema to get a structured output as a response.
 
-To get a structured output as the response, use the *response\_format* parameter with [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string). For more information using structured outputs, see [AI\_COMPLETE structured outputs](/user-guide/snowflake-cortex/complete-structured-outputs).
+To get a structured output as the response, use the *response\_format* parameter with [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string). For more information using structured outputs, see [AI\_COMPLETE (Structured outputs)](/sql-reference/functions/ai_complete-structured-outputs).
 
 ## Example
 

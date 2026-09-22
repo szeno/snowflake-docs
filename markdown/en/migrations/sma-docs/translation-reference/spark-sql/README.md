@@ -11,7 +11,7 @@ Let’s examine how these tools compare across different categories.
 | --- | --- |
 | DDL | [spark-sql-ddl](/migrations/sma-docs/translation-reference/spark-sql/spark-sql-ddl/README) |
 | DML | [spark-sql-dml](/migrations/sma-docs/translation-reference/spark-sql/spark-sql-dml/README) |
-| Data Types | [spark-sql-data-types.md](/migrations/sma-docs/translation-reference/spark-sql/spark-sql-data-types) |
+| Data Types | [spark-sql-data-types](/migrations/sma-docs/translation-reference/spark-sql/spark-sql-data-types) |
 
 Expand
 

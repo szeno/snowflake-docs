@@ -64,7 +64,7 @@ Ways to use it:
 ### `snowflake-interactive`
 
 Create and manage [Interactive Warehouses](/user-guide/interactive) for low-latency, high-concurrency workloads: sub-second dashboards, API backends, and agentic queries.
-Interactive warehouses works on any table type: standard, iceberg, dynamic, hybrid and interactive tables.
+Interactive warehouses work on any table type: standard, Iceberg, dynamic, hybrid, and interactive tables.
 
 Ways to use it:
 

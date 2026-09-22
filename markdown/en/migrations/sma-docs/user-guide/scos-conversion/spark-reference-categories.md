@@ -128,7 +128,7 @@ Copy code
 col1 = col("col1")
 col2 = col("col2")
 from snowflake.snowpark.functions as f
-f.contains(col, col2)
+f.contains(col1, col2)
 ```
 
 ## WorkAround
@@ -182,8 +182,6 @@ df:DataFrame = spark.createDataFrame(rowData, columns)
 ## NotDefined
 
 This error occurs when the tool identifies a PySpark element but cannot convert it because the element is not included in the tool’s supported conversion database.
-
-This category applies when a PySpark element cannot be converted because there is no corresponding feature or functionality in Snowflake.
 
 - Snowpark Support: Not Available
 - Tool Support: Not Available

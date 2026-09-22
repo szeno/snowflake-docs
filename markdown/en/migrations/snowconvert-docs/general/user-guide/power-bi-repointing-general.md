@@ -1,6 +1,6 @@
 # SnowConvert AI: Power BI Repointing
 
-This guide provides comprehensive instructions on utilizing Snowconvert AI for Power BI repointing to Snowflake. It details the process of migrating your existing Power BI reports and dashboards to leverage Snowflake as their underlying data source. You will learn how to prepare your Power BI reports, execute the Snowconvert AI tool, and validate the repointed reports to ensure seamless integration with Snowflake.
+This guide provides comprehensive instructions on utilizing SnowConvert AI for Power BI repointing to Snowflake. It details the process of migrating your existing Power BI reports and dashboards to leverage Snowflake as their underlying data source. You will learn how to prepare your Power BI reports, execute the SnowConvert AI tool, and validate the repointed reports to ensure seamless integration with Snowflake.
 
 SnowConvert AI provides a new option to redefine their Power BI connections to the migrated databases in Snowflake. This redefinition of connections is called repointing. Repointing is executed inside the SnowConvert AI migration logic and uses the migration context to identify and migrate correctly embedded SQL queries.
 
