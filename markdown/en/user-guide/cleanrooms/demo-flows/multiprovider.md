@@ -11,7 +11,7 @@ This topic provides a high-level guide to the components that make up a collabor
 ## Requirements
 
 - You must be [updated to the latest version of Snowflake Data Clean Rooms](/user-guide/cleanrooms/managing-updates#label-dcr-updating-cleanrooms-environment-main).
-- You need access to the Data Clean Rooms Collaboration API to see or manage collaborations. For more information, see [Managing access to collaborations, resources, and data](/user-guide/cleanrooms/manage-access).
+- You can see and manage collaborations in [Snowsight](/user-guide/cleanrooms/collab-ui-overview) or through the [Collaboration API](/user-guide/cleanrooms/collaboration-api-reference). Either way, your role needs the appropriate privileges. For more information, see [Managing access to collaborations, resources, and data](/user-guide/cleanrooms/manage-access).
 - Data Providers must use Snowflake Enterprise Edition. Owners and Analysis runners can use Standard Edition.
 - If you use Snowflake Standard Edition, you cannot share data through a data clean room with policy enforcement. However, you can access data offerings from other collaborators, or [use your own data](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data) without applying policies or sharing the data.
 - To [activate results](/user-guide/cleanrooms/activation) to another Snowflake account, you must use Snowflake Enterprise Edition.

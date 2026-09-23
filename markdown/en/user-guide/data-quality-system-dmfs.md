@@ -49,9 +49,21 @@ Currently, Snowflake supports these system DMFs to measure common metrics withou
 |  | [APPROX\_QUANTILE\_50](/sql-reference/functions/dmf_approx_quantile_50) | Determine the approximate 50th percentile (median) value for a numeric column. |
 |  | [APPROX\_QUANTILE\_99](/sql-reference/functions/dmf_approx_quantile_99) | Determine the approximate 99th percentile value for a numeric column. |
 |  | [AVG](/sql-reference/functions/dmf_avg) | Determine the average value of a column. |
+|  | [EXTREME\_OUTLIER\_COUNT](/sql-reference/functions/dmf_extreme_outlier_count) | Determine how many values in a numeric column fall outside the extreme asymmetric Tukey fences for the column. |
+|  | [EXTREME\_OUTLIER\_IQR\_COUNT](/sql-reference/functions/dmf_extreme_outlier_iqr_count) | Determine how many values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
+|  | [EXTREME\_OUTLIER\_IQR\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_iqr_percent) | Determine what percentage of values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
+|  | [EXTREME\_OUTLIER\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_percent) | Determine what percentage of values in a numeric column fall outside the extreme asymmetric Tukey fences for the column. |
+|  | [EXTREME\_OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_extreme_outlier_zscore_count) | Determine how many values in a numeric column have a Z-score greater than 4.5. |
+|  | [EXTREME\_OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_zscore_percent) | Determine what percentage of values in a numeric column have a Z-score greater than 4.5. |
 |  | [MAX](/sql-reference/functions/dmf_max) | Determine the maximum value of a column. |
 |  | [MEDIAN](/sql-reference/functions/dmf_median) | Determine the exact median value for a numeric column. |
 |  | [MIN](/sql-reference/functions/dmf_min) | Determine the minimum value of a column. |
+|  | [OUTLIER\_COUNT](/sql-reference/functions/dmf_outlier_count) | Determine how many values in a numeric column fall outside the asymmetric Tukey fences for the column. |
+|  | [OUTLIER\_IQR\_COUNT](/sql-reference/functions/dmf_outlier_iqr_count) | Determine how many values in a numeric column fall outside the standard Tukey fences (1.5 times the interquartile range). |
+|  | [OUTLIER\_IQR\_PERCENT](/sql-reference/functions/dmf_outlier_iqr_percent) | Determine what percentage of values in a numeric column fall outside the standard Tukey fences (1.5 times the interquartile range). |
+|  | [OUTLIER\_PERCENT](/sql-reference/functions/dmf_outlier_percent) | Determine what percentage of values in a numeric column fall outside the asymmetric Tukey fences for the column. |
+|  | [OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_outlier_zscore_count) | Determine how many values in a numeric column have a Z-score greater than 3. |
+|  | [OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_outlier_zscore_percent) | Determine what percentage of values in a numeric column have a Z-score greater than 3. |
 |  | [STDDEV](/sql-reference/functions/dmf_stddev) | Determine the standard deviation value for a column. |
 |  | [STRING\_LENGTH\_AVG](/sql-reference/functions/dmf_string_length_avg) | Determine the average string length of non-NULL values for a string column. |
 |  | [STRING\_LENGTH\_MAX](/sql-reference/functions/dmf_string_length_max) | Determine the maximum string length of non-NULL values for a string column. |

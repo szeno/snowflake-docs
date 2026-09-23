@@ -1,6 +1,6 @@
 # Edit a collaboration in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -27,7 +27,7 @@ the collaboration. When you share a template, all affected collaborators
 To share a template:
 
 1. Navigate to the [collaboration details page](/user-guide/cleanrooms/collab-ui-details#label-dcr-collab-ui-details).
-2. Select the **Shared by you** tab.
+2. Select the **Templates** tab.
 3. Select **Share Template**.
 4. In the dialog, select a **Template ID** from the list of registered templates in
    your account.
@@ -41,7 +41,7 @@ until all required collaborators approve it.
 
 To share an existing template with additional collaborators:
 
-1. On the **Shared by you** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
+1. On the **Templates** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
    template row.
 2. Select **Share with collaborators**.
 3. Select new collaborators to share the template with.
@@ -51,7 +51,7 @@ To share an existing template with additional collaborators:
 
 To remove collaborators from a shared template:
 
-1. On the **Shared by you** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
+1. On the **Templates** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
    template row.
 2. Select **Remove collaborators**.
 3. Select the collaborators to remove.
@@ -86,10 +86,15 @@ auto-approval setting on the [collaboration details page](/user-guide/cleanrooms
 If you are a data provider in the collaboration, you can share registered data offerings
 from your account to make them available to analysis runners.
 
+Note
+
+You can share a data offering only with the role that you used to join the collaboration. If you
+select a different role, the dialog tells you to switch to the role used to join.
+
 To link a data offering:
 
 1. Navigate to the [collaboration details page](/user-guide/cleanrooms/collab-ui-details#label-dcr-collab-ui-details).
-2. Select the **Shared by you** tab.
+2. Select the **Data Offerings** tab.
 3. Select **Share Data Offering**.
 4. In the dialog, select the **Registry** that holds the data offering. Select **Default**
    for the default account registry.
@@ -97,7 +102,8 @@ To link a data offering:
    account.
 6. Select the collaborators (analysis runners) who should have access to the data
    offering.
-7. Select **Submit Request**.
+7. Select the role that you used to join the collaboration.
+8. Select **Submit Request**.
 
 The request appears on the **Update Requests** tab with a status of **Pending**. Monitor the request until its status
 changes to **Completed**, which indicates that the data offering is available to the selected analysis runners.
@@ -106,7 +112,7 @@ changes to **Completed**, which indicates that the data offering is available to
 
 To remove a data offering from the collaboration:
 
-1. On the **Shared by you** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
+1. On the **Data Offerings** tab, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the
    data offering row.
 2. Select **Unlink**.
 3. Confirm the removal.
@@ -117,12 +123,22 @@ To leave a collaboration that you have joined:
 
 1. On the [collaborations listing](/user-guide/cleanrooms/collab-ui-listing#label-dcr-collab-ui-listing), find the
    collaboration card.
-2. Select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the collaboration card.
+2. Select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the collaboration card. You can also select
+   **Leave** in the header of the [collaboration details page](/user-guide/cleanrooms/collab-ui-details#label-dcr-collab-ui-details).
 3. Select **Leave**.
 4. In the confirmation dialog, select **Yes, leave** to confirm.
 
-After leaving, the collaboration moves back to the **Invited** tab, and you can
-rejoin later if needed.
+Warning
+
+Leaving a collaboration is irreversible. You can’t rejoin a collaboration after you leave it.
+
+While the operation runs, the collaboration shows a **Leaving** status. When it finishes, the
+collaboration shows **Pending cleanup**. Select **Remove** on the collaboration card to remove it
+from your account.
+
+If your role doesn’t have permission to leave collaborations, the action is disabled and a tooltip
+explains why. The action is also unavailable for some statuses, such as a collaboration that’s
+already in **Leaving** status.
 
 ## Tear down a collaboration
 
@@ -133,9 +149,18 @@ To tear down a collaboration:
 
 1. On the [collaborations listing](/user-guide/cleanrooms/collab-ui-listing#label-dcr-collab-ui-listing), find the
    collaboration card.
-2. Select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the collaboration card.
+2. Select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the collaboration card. You can also select
+   **Teardown** in the header of the [collaboration details page](/user-guide/cleanrooms/collab-ui-details#label-dcr-collab-ui-details).
 3. Select **Teardown**.
 4. In the confirmation dialog, select **Yes, teardown** to confirm.
+
+While the operation runs, the collaboration shows **Teardown in progress**. When it finishes, the
+collaboration shows **Pending cleanup**. Select **Remove** on the collaboration card to remove it
+from your account.
+
+Tearing down a collaboration doesn’t finish the cleanup in the other collaborators’ accounts. Every
+other collaborator sees the collaboration change to **Pending cleanup** and must select **Remove**
+to remove the clean room application and collaboration metadata from their own account.
 
 Warning
 

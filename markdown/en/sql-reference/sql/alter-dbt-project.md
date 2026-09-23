@@ -115,8 +115,8 @@ ALTER DBT PROJECT [ IF EXISTS ] <name> UNSET
         version by default. You can override this value for an individual execution with the `WRITEBACK`
         parameter of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
 
-        Regardless of this setting, Snowflake separately stores per-query result artifacts and an archive
-        for each execution.
+        Snowflake stores the per-query result artifacts and archive regardless of this setting.
+        For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
     `DEFAULT_TARGET = default_target`
     :   Specifies the profile used for compilation and subsequent executions (for example, `prod`) of the dbt project object. This parameter can be overridden by using the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project)

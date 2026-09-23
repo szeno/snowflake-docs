@@ -1,6 +1,6 @@
 # View collaborations in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -17,7 +17,7 @@ collaboration, the listing shows:
 - The collaboration name.
 - A description of the collaboration.
 - The list of collaborators and their status.
-- The last updated timestamp.
+- The last updated timestamp, shown as a relative time such as `2 hours ago`.
 - A **Run** button to run analysis templates (if you have execute access).
 
 Hover over a collaboration card to access Cortex Code actions: select **Add to Chat** to
@@ -27,12 +27,11 @@ summary of the collaboration.
 ## **Invited** tab
 
 The **Invited** tab shows collaborations that have been shared with your account but that
-you haven’t joined yet. This tab is split into two sections:
+you haven’t joined yet. This tab is split into two sections, each showing a count and each of
+which you can expand or collapse:
 
-- **Ready to join**: Collaborations that are ready for you to join. Select **Join** to
-  start the join flow.
-- **Pending review**: Collaborations that require you to review before joining. Select
-  **Start Review** to start the review flow.
+- **Ready to join**: Collaborations that are ready for you to join.
+- **Ready to review**: Collaborations that require you to review before joining.
 
 Hover over a collaboration card to access Cortex Code actions: select **Add to Chat** to
 open Cortex Code with the collaboration context, or **Explain** to get an AI-generated
@@ -55,4 +54,6 @@ You can filter, search, and sort the collaborations list:
 ## Create a collaboration
 
 To create a new collaboration, select **Create Collaboration** at the top of the listing page.
+If your role doesn’t have the CREATE COLLABORATION privilege, the button is disabled and a
+tooltip explains that you don’t have the required role.
 For more information, see [Create a collaboration in Snowsight](/user-guide/cleanrooms/collab-ui-create).

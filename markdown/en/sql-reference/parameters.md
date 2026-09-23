@@ -35,7 +35,7 @@ Snowflake provides the following account parameters:
 | [ALLOWED\_SPCS\_WORKLOAD\_TYPES](#label-allowed-spcs-workload-types) | Used to specify the workload types that are allowed in your account to deploy to Snowpark Container Services. |
 | [CLIENT\_ENCRYPTION\_KEY\_SIZE](#label-client-encryption-key-size) | Used for encryption of files staged for data loading or unloading; might require additional installation and configuration (see description for details). |
 | [COCO\_CLOUD\_AGENTS\_NON\_SNOWFLAKE\_EGRESS\_DISABLED](#label-coco-cloud-agents-non-snowflake-egress-disabled) | Used to disable non-Snowflake network egress from the Cortex Code Cloud Agents sandbox for the account. |
-| [COCO\_SNOWSIGHT\_ALLOW\_ALL\_PERMISSION\_OPTIONS\_DISABLED](#label-coco-snowsight-allow-all-permission-options-disabled) | Used to disable the allow-all permission options for tool calls (for example, SQL execution or Bash) in Cortex Code in Snowsight. |
+| [COCO\_SNOWSIGHT\_ALLOW\_ALL\_PERMISSION\_OPTIONS\_DISABLED](#label-coco-snowsight-allow-all-permission-options-disabled) | Used to disable allow-all permission options and Bypass approvals for tool calls in Cortex Code in Snowsight. |
 | [CORTEX\_ENABLED\_CROSS\_REGION](#label-cortex-enable-cross-region) | Used to enable cross-region processing of Snowflake Cortex calls in a different region if the call cannot be processed in your account region. |
 | [DEFAULT\_DBT\_VERSION](#label-default-dbt-version) | Used to set the default version for all future dbt project objects created in an account. |
 | [DISABLE\_USER\_PRIVILEGE\_GRANTS](#label-disable-user-privilege-grants) | Used to disable granting of privileges directly to users. For more information, see [GRANT privileges to USERS Usage notes](/sql-reference/sql/grant-privilege-user#label-grant-privilege-user-usage-notes). |
@@ -1105,12 +1105,14 @@ Data Type:
 :   Boolean
 
 Description:
-:   Controls whether allow-all permission options are available to users in Cortex Code in Snowsight. When Cortex Code requests permission to run a tool call (for example, SQL execution or Bash), users are normally offered two allow-all options: **Allow <tool> in this chat** and **Always allow <tool>**. Setting this parameter to `TRUE` disables both options for all tool types.
+:   Controls whether users in Cortex Code in Snowsight can approve tool calls in bulk. When Cortex Code requests permission to run a tool call (for example, SQL execution or Bash), users are normally offered two allow-all options: **Allow <tool> in this chat** and **Always allow <tool>**. The CoCo side panel also includes a **Bypass approvals** mode that runs tool calls without individual prompts.
+
+    Setting this parameter to `TRUE` disables both allow-all options for all tool types, hides the approval-mode selector, and keeps the composer on **Default approvals**. Users must approve each tool call individually.
 
 Values:
-:   `TRUE`: Both allow-all permission options (**Allow <tool> in this chat** and **Always allow <tool>**) are disabled for all tool types in Cortex Code in Snowsight. Users must approve each tool call individually.
+:   `TRUE`: Allow-all permission options (**Allow <tool> in this chat** and **Always allow <tool>**) are disabled, **Bypass approvals** is unavailable, and the composer stays on **Default approvals**. Users must approve each tool call individually.
 
-    `FALSE`: Both allow-all permission options are available to users.
+    `FALSE`: Allow-all permission options and **Bypass approvals** are available to users.
 
 Default:
 :   `FALSE`

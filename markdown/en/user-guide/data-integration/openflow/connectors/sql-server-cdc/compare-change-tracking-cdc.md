@@ -121,8 +121,10 @@ and [Supported SQL Server versions](/user-guide/data-integration/openflow/connec
 ## Schema change handling
 
 Both connectors apply supported source-table schema changes during replication,
-without a full re-snapshot of the table. Neither connector supports changing a
-table’s primary key, or changing the precision or scale of a numeric column.
+without a full re-snapshot of the table. Neither connector supports changing the
+precision or scale of a numeric column. Changing a table’s primary key while
+change detection is enabled is blocked by SQL Server on the source; to move the
+connector to a new replication key, restart replication for the affected table.
 
 - The Openflow Connector for SQL Server picks up schema changes on the next poll. It adds new columns
   to the destination table (without backfilling existing rows) and soft-deletes

@@ -26,15 +26,17 @@ seamlessly as-is without modification, ensuring consistent security across all q
 When an external engine requests access to a protected table, the workflow proceeds as follows:
 
 1. **Request**: The engine issues a scan request via the Iceberg REST Catalog API.
-2. **Evaluation**: Horizon Catalog identifies and evaluates all applicable data policies for that specific table and
-   user context.
-3. **Planning**: Horizon Catalog applies row access filters and column masks, returning a precisely filtered governance enforced dataset to the engine.
+2. **Evaluation**: Horizon Catalog evaluates the query context against active row access and masking policies on the
+   table. Snowflake Horizon’s built-in optimization bypasses scan plan materialization based on policy evaluation
+   whenever possible, keeping query latency low.
+3. **Planning**: If the policy evaluation in the Evaluation step determines that dynamic filtering or masking is
+   required, Horizon Catalog generates a precisely filtered governance enforced dataset (scan plan).
 4. **Enforcement**: Only the authorized subset of data is exposed, ensuring the engine never sees restricted records.
 
 Because enforcement occurs at the catalog during server-side planning, no custom policy or additional plugins are required
 within the external engine.
 
-[![Scan Plan API architecture showing external query engines connecting to Snowflake Horizon Catalog, which applies policy filters to policy-protected Iceberg tables](/static/images/scan-plan-api-architecture.png)](/static/images/scan-plan-api-architecture.png)
+[![Scan Plan API architecture showing external query engines connecting to Snowflake Horizon Catalog, which applies policy filters to Snowflake-managed and externally managed Iceberg tables](/static/images/scan-plan-api-architecture.png)](/static/images/scan-plan-api-architecture.png)
 
 ## Prerequisites
 

@@ -156,7 +156,7 @@ After you address the problem that caused the failure, you can add the table bac
 
 ### Schema changes
 
-During incremental replication, the connector detects many source table schema changes and updates the destination table automatically. Unsupported changes stop replication for the affected table until you restart it.
+During incremental replication, the connector may detect source table schema changes and update the destination table automatically. Unsupported changes stop replication for the affected table until you restart it.
 
 #### Supported changes
 
@@ -167,6 +167,7 @@ The connector supports the following schema changes:
 - **Rename column.** The connector treats a rename as dropping the original column and adding a new one. The connector retains the original column under a suffixed name; for example, a column named `A` becomes `A__SNOWFLAKE_DELETED`. For query patterns, see [Renamed columns](#renamed-columns).
 - **Compatible type change.** The connector keeps replication running with the destination column type unchanged when you change a column to a source type that maps to the same Snowflake data type (for example, `INT` to `BIGINT`, both mapped to `NUMBER`).
 - **Re-add a previously dropped column.** The connector adds the column as a new destination column alongside the existing soft-deleted column (for example, `A` and `A__SNOWFLAKE_DELETED`).
+- **Primary key definition change.** The connector supports adding or removing primary key columns, or changing which columns form the primary key, as long as the table still has a valid replication key after the change. If you drop the primary key and no other valid replication key remains (for example, a qualifying unique index or a configured logical key), replication for the affected table fails and the table is marked `FAILED`.
 
 If you drop a column that was previously dropped and soft-deleted, replication for the affected table fails because the soft-deleted column name is already taken.
 
@@ -174,7 +175,6 @@ If you drop a column that was previously dropped and soft-deleted, replication f
 
 The connector doesn’t support the following schema changes. When one occurs, replication stops for the affected table:
 
-- **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key.
 - **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively).
 - **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
 - **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`.

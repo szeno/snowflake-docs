@@ -1,6 +1,6 @@
 # Review and join a collaboration in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -20,61 +20,68 @@ For more information, see [Managing access to collaborations, resources, and dat
 
 ## Review a collaboration
 
-Collaborations that require review before joining appear in the **Ready to Review**
-section of the **Invited** tab.
+Collaborations that require review before joining appear in the **Ready to review** section of
+the **Invited** tab. Reviewing prepares the collaboration in your account so that you can inspect
+its full contents before committing to join: which data offerings and templates other collaborators
+are sharing, and which resources are being requested from you. Joining shares any resources
+requested from you, so review first if you want to see what you’re agreeing to.
 
 To review a collaboration:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Data sharing** » **Data clean rooms**.
 3. Select the **Invited** tab.
-4. In the **Ready to Review** section, select **Start Review** on the collaboration card.
+4. In the **Ready to review** section, select **Review** on the collaboration card. You can also
+   select the card to open its details page and then select **Review** in the page header.
+5. In the **Review Collaboration** dialog, enter a **Collaboration name**. This is the name for
+   the collaboration in your own account, and it can differ from the name the owner chose.
 
-The review flow lets you examine the collaboration details, including:
+   Important
 
-- The collaboration name, description, and owner.
-- The list of collaborators and their assigned roles.
-- The templates and data offerings included in the collaboration.
+   The collaboration name can’t be edited after this step, so pick something meaningful for your
+   use case.
+6. Select **Next** to submit the review request.
 
-After reviewing, you can choose to proceed to joining the collaboration, or close
-the review dialog and return later.
+Preparing the collaboration usually takes a few minutes, and you can close the dialog while it
+finishes. When the collaboration is ready for review, open its details page to inspect the
+collaborators, templates, data offerings, and specification that the owner shared.
+
+Note
+
+For a cross-cloud or cross-region collaboration, you can’t start a review until the data
+finishes replicating to your region. The dialog reports that replication is in progress. Select
+**Refresh** to check again. For details on replication frequency and latency, see
+[Managing Cross-Cloud Auto-Fulfillment in Collaboration Data Clean Rooms](/user-guide/cleanrooms/laf).
 
 ## Join a collaboration
 
-Collaborations that are ready to join appear in the **Pending Join** section of the
-**Invited** tab. Collaborations that you have already reviewed also appear here.
+Collaborations that are ready to join appear in the **Ready to join** section of the **Invited**
+tab. Collaborations that you’ve already reviewed also appear here.
 
 To join a collaboration:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Data sharing** » **Data clean rooms**.
 3. Select the **Invited** tab.
-4. Select **Join** on the collaboration card.
-5. In the join wizard, complete the following steps:
+4. Select **Join** on the collaboration card, or select the card to open its details page and
+   then select **Join** in the page header.
+5. Review the collaboration details, then in the **Join collaboration** dialog select
+   **Confirm**.
 
-### Step 1: Basic details
+   By selecting **Confirm**, you acknowledge that you’ve reviewed the collaboration details and
+   approve your role and resources being shared with this collaboration.
 
-Configure your local settings for the collaboration:
+Joining runs in the background and might take a few minutes. When it finishes, the collaboration
+moves from your **Invited** tab to your **Joined** tab, and the full
+[details page](/user-guide/cleanrooms/collab-ui-details) becomes available.
 
-- **Collaboration name**: A name for the collaboration in your account. This
-  can be different from the collaboration name set by the owner.
-- Review the collaboration description provided by the owner.
+## What you can see before joining
 
-If the join wizard detects that your current role may not have the necessary privileges,
-a validation banner appears with guidance on which role to use.
+Until you join, the **Templates** and **Data Offerings** tabs list what the collaboration
+specification defines rather than live details, and you can’t act on the items they list. After you
+join, the tabs show live details, and the actions to share templates and data offerings and to run
+analysis become available. The **Update Requests** tab appears only after you join.
 
-Select **Next** to proceed.
-
-### Step 2: Review and join
-
-Review the full collaboration details before joining. The review page shows a tabbed
-view of the collaboration content, including collaborators, templates, data offerings,
-and the raw specification.
-
-To use Cortex Code to get an AI-generated explanation of the collaboration, or to help
-decide whether to join, select **Explain** or **Help Decide**. Cortex Code
-analyzes the collaboration and provides guidance.
-
-When you’re satisfied, select **Join** to join the collaboration. After joining,
-the collaboration moves from your **Invited** tab to your **Joined** tab, and
-you can access its [details page](/user-guide/cleanrooms/collab-ui-details).
+If a review or join fails, the collaboration shows a failure status and the details page explains
+what went wrong. For more information, see
+[Snowsight UI troubleshooting](/user-guide/cleanrooms/v2/troubleshooting#label-dcr-troubleshooting-snowsight).

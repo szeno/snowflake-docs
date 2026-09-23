@@ -394,7 +394,7 @@ the App Registration Object ID for the AWS `sub` condition, AWS STS rejects the 
 
 1. In the AWS console, go to **IAM** » **Identity providers** and select **Add provider**.
 2. For **Provider type**, select **OpenID Connect**.
-3. For **Provider URL**, enter `https://login.microsoftonline.com/<TENANT_ID>/v2.0`.
+3. For **Provider URL**, enter `https://sts.windows.net/<TENANT_ID>/`. Include the trailing slash.
 4. For **Audience**, enter the Entra Application ID URI, `api://<CLIENT_ID>`.
 5. Select **Add provider**.
 
@@ -418,13 +418,13 @@ Copy code
     {
       "Effect": "Allow",
       "Principal": {
-        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/login.microsoftonline.com/<TENANT_ID>/v2.0"
+        "Federated": "arn:aws:iam::<ACCOUNT_ID>:oidc-provider/sts.windows.net/<TENANT_ID>/"
       },
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "login.microsoftonline.com/<TENANT_ID>/v2.0:sub": "<SERVICE_PRINCIPAL_OBJECT_ID>",
-          "login.microsoftonline.com/<TENANT_ID>/v2.0:aud": "api://<CLIENT_ID>"
+          "sts.windows.net/<TENANT_ID>/:sub": "<SERVICE_PRINCIPAL_OBJECT_ID>",
+          "sts.windows.net/<TENANT_ID>/:aud": "api://<CLIENT_ID>"
         }
       }
     }

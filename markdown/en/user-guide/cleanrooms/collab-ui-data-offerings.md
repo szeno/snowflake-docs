@@ -1,6 +1,6 @@
 # Manage data offerings in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -36,7 +36,8 @@ For each data offering, the listing shows:
 - **Registry**: The [registry](/user-guide/cleanrooms/registries) where the data offering
   is registered. Data offerings in the default account registry show **Default**.
 - **Datasets**: The datasets included in the data offering.
-- **Created**: When the data offering was registered.
+- **Created**: When the data offering was registered, shown as a relative time such as
+  `2 days ago`.
 
 In grid view, each card also shows the data offering description.
 
@@ -60,6 +61,10 @@ data offering card or the **Name** cell in list view to access AI actions:
 
 - **Add to Chat**: Open Cortex Code with the data offering context attached.
 - **Explain**: Get an AI-generated summary of the data offering in Cortex Code.
+
+If Cortex Code isn’t available for your account, these actions are disabled. Hover over a disabled
+action to see a popover that says so and links to the Cortex Code documentation. For the roles that
+Cortex Code requires, see [Cortex Code access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
 
 ## Create a data offering
 

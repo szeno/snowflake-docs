@@ -479,8 +479,8 @@ With the default writeback behavior, concurrent executions can write target and 
 - **Recommended:** Set `WRITEBACK = FALSE` for executions that don’t need to persist target and log artifacts to the live version.
 - If writeback is required, set distinct, non-overlapping `--target-path` and `--log-path` values for each execution.
 
-Regardless of the writeback setting, Snowflake stores
-separate per-query result artifacts and an archive for each execution.
+Snowflake stores the per-query result artifacts and archive regardless of this setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
 Concurrent object executions are different from the `threads` profile setting. Concurrent executions run multiple dbt commands using one deployed object, while `threads` control parallel model work within one execution. For details, see [Run a dbt project object concurrently](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod#label-dbt-project-concurrent-executions).
 

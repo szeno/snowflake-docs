@@ -73,6 +73,71 @@ Solution:
     - `CREATED` for the collaboration owner, who can then call JOIN again.
     - `INVITED` for collaborators other than the owner, who can then call REVIEW again.
 
+## Snowsight UI
+
+These errors apply to the [Snowflake Data Clean Rooms UI in Snowsight](/user-guide/cleanrooms/collab-ui-overview).
+
+Error:
+:   The **Data clean rooms** page says that Snowflake Data Clean Rooms isn’t installed, or that you don’t have access.
+
+Cause:
+:   Either the Snowflake Data Clean Rooms environment isn’t installed in the account, or your current role doesn’t have the privileges to access it.
+
+Solution:
+:   Ask an account administrator to [install the environment](/user-guide/cleanrooms/installing-dcr), then select **Retry** to check again. If it’s already installed, switch to a role that has [collaboration privileges](/user-guide/cleanrooms/manage-access).
+
+---
+
+Error:
+:   The page reports that the installed version isn’t compatible.
+
+Cause:
+:   The UI requires clean rooms environment version 14.6 or later. This check takes precedence over the role check, so a role problem might also exist behind it.
+
+Solution:
+:   Update the environment, then reload the page. For more information, see [Managing clean room environment updates](/user-guide/cleanrooms/managing-updates).
+
+---
+
+Error:
+:   A collaboration failed to create, review, or join, and you need to report it to Snowflake Support.
+
+Solution:
+:   Open the collaboration and select the action on the failure banner to see the error details. Where a query ID is available, the dialog shows a copyable **Query ID** alongside the **Failure** message. Include both when you contact Snowflake Support.
+
+---
+
+Error:
+:   A collaboration shows the **Creation timed out** status.
+
+Cause:
+:   Creation didn’t finish within the expected window. This is distinct from a creation failure. This status appears to the collaboration owner.
+
+Solution:
+:   Tear down the collaboration, then create it again. For more information, see [Tear down a collaboration](/user-guide/cleanrooms/collab-ui-manage#label-dcr-collab-ui-teardown).
+
+---
+
+Error:
+:   You can’t review a collaboration, and the dialog reports that replication is in progress.
+
+Cause:
+:   The collaboration data is still replicating to your region, which happens with cross-cloud and cross-region collaborations.
+
+Solution:
+:   Wait for replication to finish, then select **Refresh** in the dialog. For details on replication frequency and latency, see [Managing Cross-Cloud Auto-Fulfillment in Collaboration Data Clean Rooms](/user-guide/cleanrooms/laf). For the equivalent API error and how to check replication status, see [Snowsight UI](#label-dcr-collaboration-replication-delays).
+
+---
+
+Error:
+:   Cortex Code actions such as **Explain** or **Suggest** are disabled.
+
+Cause:
+:   Cortex Code isn’t available for your account.
+
+Solution:
+:   Hover over the disabled action. The popover confirms that Cortex Code isn’t available for your account and links to the Cortex Code documentation. For the roles that Cortex Code requires, see [Cortex Code access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
+
 ## API and permissions
 
 Error:

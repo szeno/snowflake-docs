@@ -943,7 +943,18 @@ Consider the following items when you access Iceberg tables with an external que
     on AWS Commercial Gov (US) in the us-east-1 and us-west-2 regions.
   - For Iceberg tables stored on Amazon S3:
 
-    - If you want to use SSE-KMS encryption, contact customer support or your account team for assistance with enabling access.
+    - If you want to use SSE-KMS encryption, Snowflake must know the full Amazon Resource Name (ARN) of your AWS KMS key to vend credentials
+      that can access the encrypted data. Do one of the following:
+
+      - Set the external volume’s `KMS_KEY_ID` to the full key ARN (for example,
+        `arn:aws:kms:us-west-2:111111122222:key/1a1a11aa-aa1a-aaa1a-a1a1-000000000000`).
+      - Grant the IAM role for your external volume the `kms:DescribeKey` permission on the key so that Snowflake can resolve the ARN for you.
+
+      Note
+
+      KMS key aliases aren’t supported. If you don’t complete one of these options, credential vending can still succeed, but reading or
+      writing the encrypted table data fails because the vended credential doesn’t have access to your KMS key. If access errors continue
+      after you complete one of these options, contact Snowflake support or your account team for assistance.
   - Reading and writing Iceberg v3 tables via the Horizon Iceberg REST Catalog API is supported for customer-managed and Snowflake-managed storage.
   - For Iceberg tables stored on Azure:
 

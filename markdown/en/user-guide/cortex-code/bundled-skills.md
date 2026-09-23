@@ -188,6 +188,17 @@ Ways to use it:
 - Build a multi-step pipeline as a task graph with parent-child dependencies, fan-out and fan-in patterns, and finalizer tasks
 - Diagnose issues with tasks: for example, diagnose an auto-suspended task, or a task that runs interactively but fails when run by the scheduler, by inspecting `TASK_HISTORY` and owner-role privileges
 
+### `snowpipe-streaming`
+
+Set up, troubleshoot, monitor, optimize, and migrate Snowpipe Streaming pipelines on the high-performance architecture, which uses PIPE objects and the Python SDK (primary) or Java SDK.
+
+Ways to use it:
+
+- Set up a low-latency streaming pipeline with the Python SDK, including PIPE creation, channel configuration, and key-pair, PAT, or OAuth authentication
+- Troubleshoot a failing channel by diagnosing offset gaps, row errors, and ingestion stalls, and run a pipeline health check
+- Monitor channel health, throughput, and ingestion cost, or tune the pipeline for lower latency and higher throughput
+- Migrate a classic Snowpipe Streaming pipeline to the high-performance architecture
+
 ### `integrations`
 
 Create and manage all Snowflake integration types: API, catalog, external access, notification, security, and storage integrations.

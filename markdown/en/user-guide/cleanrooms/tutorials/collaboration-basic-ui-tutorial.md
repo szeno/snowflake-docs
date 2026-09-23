@@ -1,6 +1,6 @@
 # Tutorial: Get started with collaboration clean rooms (Snowsight)
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -386,7 +386,7 @@ in the join wizard to get a natural language summary of the collaboration.
 Now that you’ve joined, link the data offering you registered so Alice can use it.
 
 1. Open `ui_tutorial_collaboration` from the **Joined** tab.
-2. Select the **Shared by you** tab.
+2. Select the **Data Offerings** tab.
 3. Select **Share Data Offering**.
 4. Select the **Registry** that holds your data offering. Select **Default** to use the default account registry, which
    is where you registered it.
@@ -406,8 +406,8 @@ Switch back to **Alice’s account**. Confirm that `ui_tutorial_collaboration` a
 the overlap analysis.
 
 1. Select the **Collaborations** tab and open `ui_tutorial_collaboration`.
-2. Select the **Shared with you** tab.
-3. In the **Available Templates to Run** section, select `standard_audience_overlap_v0` to view its details, including
+2. Select the **Templates** tab.
+3. Select `standard_audience_overlap_v0` to view its details, including
    required parameters and the SQL logic.
 4. Select **Open in Workspaces**.
 

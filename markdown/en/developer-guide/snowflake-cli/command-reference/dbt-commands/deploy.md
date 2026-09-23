@@ -88,7 +88,8 @@ snow dbt deploy
 `--default-writeback / --no-default-writeback`
 :   Sets whether executions write generated target and log files back to the live version by default. The setting persists on the dbt project
     object and applies to later executions, but an individual execution can override it. Omit the option to leave the existing setting unchanged.
-    Regardless of this setting, Snowflake stores separate per-query result artifacts and an archive for each execution.
+    Snowflake stores the per-query result artifacts and archive regardless of this setting.
+    For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
     Default: True.
 
 `--git-commit TEXT`

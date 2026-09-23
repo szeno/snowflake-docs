@@ -53,13 +53,21 @@ SYSTEM$CLASSIFY( '<object_name>' ,
 >     When you use this argument, call the stored procedure with the role that has the OWNERSHIP privilege on the schema.
 >
 > `{'ai_mode': true}`
-> :   Enables [AI mode](/user-guide/classify-intro#label-classify-ai-mode) to use LLMs to identify additional semantic categories beyond those
+> :   [Preview Feature](/release-notes/preview-features) — Open
+>
+>     For details, see [AI mode](/user-guide/classify-intro#label-classify-ai-mode).
+>
+>     Enables [AI mode](/user-guide/classify-intro#label-classify-ai-mode) to use LLMs to identify additional semantic categories beyond those
 >     identified by standard classification.
 >
 >     LLM usage is billed under the `AI_SENSITIVE_DATA_CLASSIFICATION` [service type](/sql-reference/service-types).
 >
 > `{'ai_mode': true, 'auto_tag': true}`
-> :   Classify the specified object with AI mode enabled and set the recommended classification system tags on the columns when the
+> :   [Preview Feature](/release-notes/preview-features) — Open
+>
+>     For details, see [AI mode](/user-guide/classify-intro#label-classify-ai-mode).
+>
+>     Classify the specified object with [AI mode](/user-guide/classify-intro#label-classify-ai-mode) enabled and set the recommended classification system tags on the columns when the
 >     classification process is complete.
 >
 >     When you use this argument, call the stored procedure with the role that has the OWNERSHIP privilege on the schema.

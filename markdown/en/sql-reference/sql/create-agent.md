@@ -94,6 +94,8 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] AGENT [ IF NOT EXISTS 
 `FROM SPECIFICATION $$ specification_object $$`
 :   Specifies the VARCHAR value containing the settings for an agent as a YAML object. The maximum length of the specification object is 100,000 bytes.
 
+    Successful creation doesn’t guarantee valid tool specifications; test the agent before deploying it.
+
     The YAML object should have the following structure:
 
     Copy code

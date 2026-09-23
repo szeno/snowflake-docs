@@ -92,6 +92,22 @@ Show lessSee more
 
 Snowflake strongly recommends that you externalize secrets, such as the `private_key` and OAuth credentials, and store them in a key management service; for example, AWS KMS.
 
+## FIPS 140-3 compliance
+
+Beginning with SDK version 1.5.0, the Snowpipe Streaming SDK uses a FIPS 140-3 validated cryptographic provider for TLS connections and data encryption. The change applies to the Java, Python, and Node.js SDKs and is enabled automatically. You don’t need to update your application or change configuration to use it.
+
+What this means for your application:
+
+- TLS connections to Snowflake and to your cloud storage provider use FIPS 140-3 validated algorithms.
+- The SDK enforces HTTPS-only connections; non-TLS endpoints are rejected.
+- The SDK runs a cryptographic self-test at startup. If the self-test fails, client creation fails with a clear error and the process doesn’t continue.
+
+Customer impact:
+
+- Existing applications that already connect to Snowflake over HTTPS continue to work without changes.
+- Applications that route SDK traffic through a proxy must use a TLS-terminating proxy. Plain-HTTP proxies and `http://` URLs are rejected.
+- For SnowGov regions and other deployments with formal FIPS 140-2 or 140-3 requirements, see [Supported cloud regions](/user-guide/intro-regions) for the regional compliance posture.
+
 ## Configuration examples
 
 The following examples show client-side and environment variable configurations.

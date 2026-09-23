@@ -1,6 +1,6 @@
 # View collaboration details in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -10,6 +10,11 @@ The collaboration details page shows comprehensive information about a single co
 including collaborators, templates, data offerings, and update requests. You can access the
 details page by selecting a collaboration from the
 [collaborations listing](/user-guide/cleanrooms/collab-ui-listing#label-dcr-collab-ui-listing).
+
+The details page is available for collaborations you’ve joined and for collaborations you’ve been
+invited to, though an invited collaboration shows preliminary information until you review and
+join it. You can’t open the details page while a collaboration is still being created. For more
+information, see [What you can see before joining](/user-guide/cleanrooms/collab-ui-join#label-dcr-collab-ui-join-before).
 
 To use Cortex Code to get an AI-generated explanation of a collaboration, select the
 **Explain** button in the page header. Cortex Code opens and provides a summary of the
@@ -22,7 +27,33 @@ The overview section at the top of the details page displays the following infor
 - **Name**: The collaboration name.
 - **My alias**: Your account’s alias in this collaboration.
 - **Description**: The collaboration description.
-- **Last updated**: The timestamp of the last update to the collaboration.
+- **Last updated**: The time of the last update to the collaboration, shown as a relative time
+  such as `2 hours ago`.
+
+## Page actions
+
+The actions available in the page header depend on the collaboration’s status and on your role
+in it:
+
+- **Review**: Submit a review request for a collaboration you’ve been invited to. For more
+  information, see [Review and join a collaboration in Snowsight](/user-guide/cleanrooms/collab-ui-join).
+- **Join**: Join a collaboration that is ready to join.
+- **Leave**: Leave a collaboration you’ve joined. You can’t rejoin a collaboration after leaving
+  it.
+- **Teardown**: Tear down a collaboration that you own, which removes it for all collaborators.
+
+If your role doesn’t have the required privilege for an action, the button is disabled and a
+tooltip explains why.
+
+For more information about leaving and tearing down collaborations, see
+[Edit a collaboration in Snowsight](/user-guide/cleanrooms/collab-ui-manage).
+
+## Status banners
+
+When a collaboration needs your attention or an operation fails, the details page shows a banner
+above the tabs. For a failed operation, select the banner action to open the error details. For
+more information, see
+[Snowsight UI troubleshooting](/user-guide/cleanrooms/v2/troubleshooting#label-dcr-troubleshooting-snowsight).
 
 ## Collaboration tabs
 
@@ -41,69 +72,54 @@ the following information:
 The current collaborator (you) is marked with a **You** badge. The collaboration owner
 is marked with an **Owner** badge.
 
-### **Shared by you** tab
+A collaborator can show a **Replicating** status, which means the collaboration data is still
+replicating to that collaborator’s region. This happens with cross-cloud and cross-region
+collaborations. Until replication finishes, that collaborator can’t review the collaboration. For
+details on replication frequency and delays, see [Managing Cross-Cloud Auto-Fulfillment in Collaboration Data Clean Rooms](/user-guide/cleanrooms/laf).
 
-The **Shared by you** tab shows the templates and data offerings that you have shared
-into this collaboration. This tab has two sections:
+### **Templates** tab
 
-**Templates you shared**
+The **Templates** tab lists the analysis templates in the collaboration that concern your account:
+templates you shared with other collaborators, templates shared with you, and templates that can be
+run against a data offering you provided. The templates appear in a single table, where the
+**Shared by** and **Shared with** columns show each template’s relationship to your account.
 
-A table of templates that your account has shared with other collaborators. For each
-template, you can see:
+For each template, you can see:
 
 - The template ID.
-- Which collaborators the template is shared with.
+- Which collaborator shared it, and which collaborators it’s shared with.
 - The current approval status.
 
 To share a new template, select **Share Template**. For more information, see
 [Share a template](/user-guide/cleanrooms/collab-ui-manage#label-dcr-collab-ui-share-template).
 
-To share an existing template with additional collaborators, or to remove collaborators from
-a shared template, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the template row.
+The actions available on a row depend on your relationship to that template:
 
-**Data offerings you shared**
+- For a template you shared, select the actions menu ([![More options](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-explorer-ellipsis.png)) on the row to share it
+  with additional collaborators or to remove collaborators from it.
+- For a template shared with you, select the row to view its details, including the template SQL
+  logic and its parameters. From the details you can select **Open in Workspaces** to generate a
+  pre-configured run analysis SQL statement, or **Run** to use Cortex Code to generate a run
+  analysis specification. For more information, see
+  [Run analysis and activation in Snowsight](/user-guide/cleanrooms/collab-ui-run-analysis).
 
-A table of data offerings that your account has linked to this collaboration. For each
-data offering, you can see:
+### **Data Offerings** tab
+
+The **Data Offerings** tab lists the data offerings in the collaboration that you shared or that
+are shared with you, in a single table.
+
+For each data offering, you can see:
 
 - The data offering ID.
-- Which collaborators have access.
+- Which collaborator shared it, and which collaborators have access.
 
 To share a new data offering, select **Share Data Offering**. For more information, see
 [Share a data offering](/user-guide/cleanrooms/collab-ui-manage#label-dcr-collab-ui-link-do).
 
-### **Shared with you** tab
+The actions available on a row depend on your relationship to that data offering:
 
-The **Shared with you** tab shows templates and data offerings available for you to
-use in analysis. This tab has two sections:
-
-**Available Templates to Run**
-
-A list of analysis templates available to you, organized by analysis runner. Select a
-template to view its details, including:
-
-- The template SQL logic.
-- Template parameters and their descriptions.
-- Which collaborators provided the template.
-
-From the template details, you can:
-
-- Select **Open in Workspaces** to generate a pre-configured run analysis SQL statement
-  and open it in a Snowflake workspace.
-- Select **Run** to use Cortex Code to generate a run analysis specification
-  tailored to the template and collaboration context.
-
-For more information, see [Run analysis and activation in Snowsight](/user-guide/cleanrooms/collab-ui-run-analysis).
-
-**Available data offerings**
-
-A list of data offerings available for use in your analysis templates, including:
-
-- The data offering ID.
-- Which collaborator provided the data offering.
-
-Select a data offering to view its details, including the view name, join columns, and
-allowed columns.
+- For a data offering shared with you, select the row to view its details, including the view name,
+  join columns, and allowed columns.
 
 ### **Update Requests** tab
 
@@ -121,6 +137,12 @@ Select a template request to view its details and the approval log, which shows 
 approval status for each collaborator. To approve or reject a request, select
 **Approve** or **Reject**. For more information, see
 [Approve or reject template requests](/user-guide/cleanrooms/collab-ui-manage#label-dcr-collab-ui-approve-templates).
+
+If an update request fails, hover over its status badge to see the reason. The reason also appears
+in a banner when you open the request details.
+
+The **Update Requests** tab appears only after you join the collaboration, because there’s nothing
+to approve or reject until then.
 
 ### **Collaboration Spec** tab
 

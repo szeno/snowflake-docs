@@ -99,8 +99,8 @@ CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
     version by default. You can override this value for an individual execution with the `WRITEBACK`
     parameter of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
 
-    Regardless of this setting, Snowflake separately stores per-query result artifacts and an archive
-    for each execution.
+    Snowflake stores the per-query result artifacts and archive regardless of this setting.
+    For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
     Default: `TRUE`
 

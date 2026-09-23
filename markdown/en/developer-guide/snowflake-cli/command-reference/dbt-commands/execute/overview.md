@@ -69,8 +69,9 @@ The following examples show how to invoke `snow dbt execute`. The NAME argument 
   Place `--writeback` or `--no-writeback` before the dbt command. If you omit the option, the execution uses the object’s `DEFAULT_WRITEBACK`
   setting. For concurrent executions of the same dbt project object, Snowflake recommends `--no-writeback` when target and log artifacts
   don’t need to persist to the live version. Using `--no-writeback` avoids conflicts during concurrent executions by preventing writes to
-  overlapping target and log directories. If writeback is required, use distinct, non-overlapping target and log directories for each execution. Snowflake
-  continues to store per-query result artifacts regardless of the setting. For examples, see
+  overlapping target and log directories. If writeback is required, use distinct, non-overlapping target and log directories for each execution.
+  Snowflake stores the per-query result artifacts and archive regardless of this setting.
+  For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs). For examples, see
   [Run a dbt project object concurrently](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod#label-dbt-project-concurrent-executions).
 - Run only models that changed since the last successful production execution, along with their downstream dependencies:
 

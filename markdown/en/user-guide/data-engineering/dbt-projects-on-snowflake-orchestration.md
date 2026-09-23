@@ -13,9 +13,9 @@ You have two paths:
   infrastructure or cross-system workflows that extend beyond Snowflake.
 
 If multiple schedules or workflow branches need to execute the same dbt project object at the same
-time, Snowflake recommends `WRITEBACK = FALSE`. This is the simplest option because Snowflake still
-stores separate per-query result artifacts and an archive for each execution. If writeback is
-required, use distinct, non-overlapping target and log directories. For examples, see
+time, Snowflake recommends `WRITEBACK = FALSE`. Snowflake stores the per-query result artifacts and archive regardless of this setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
+If writeback is required, use distinct, non-overlapping target and log directories. For examples, see
 [Run a dbt project object concurrently](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod#label-dbt-project-concurrent-executions).
 
 ## Choosing an orchestration approach
@@ -175,7 +175,8 @@ ALTER TASK my_db.my_schema.run_dbt_slices RESUME;
 ```
 
 When the root task runs, the two child tasks execute the finance and sales data slices concurrently.
-Snowflake stores separate per-query result artifacts and an archive for each execution.
+Snowflake stores the per-query result artifacts and archive regardless of the `WRITEBACK` setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
 ### Pass dynamic configuration at run time
 
@@ -334,7 +335,8 @@ with DAG(
     )
 ```
 
-Snowflake stores separate per-query result artifacts and an archive for each execution.
+Snowflake stores the per-query result artifacts and archive regardless of the `WRITEBACK` setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
 #### Pass per-run variables with ENV\_VARS
 

@@ -150,7 +150,7 @@ To avoid this, the connector snapshots a physically partitioned table one partit
 
 ### Schema changes
 
-During incremental replication, the connector detects many source table schema changes and updates the destination table automatically. Unsupported changes stop replication for the affected table until you restart it.
+During incremental replication, the connector may detect source table schema changes and update the destination table automatically. For an unsupported change, restart replication for the affected table to recover or to apply the change.
 
 #### Supported changes
 
@@ -166,9 +166,9 @@ If you drop a column that was previously dropped and soft-deleted, replication f
 
 #### Unsupported changes
 
-The connector doesn’t support the following schema changes. When one occurs, replication stops for the affected table:
+The connector doesn’t support the following schema changes. Unless noted otherwise, replication stops for the affected table until you restart it:
 
-- **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key.
+- **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key. The connector doesn’t detect this change and keeps replicating with the previous key; replication doesn’t stop on its own. Restart replication for the affected table so the connector picks up the new key.
 - **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively).
 - **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
 - **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`.

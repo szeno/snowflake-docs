@@ -1,6 +1,6 @@
 # Run analysis and activation in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -35,8 +35,8 @@ To run analysis from the collaborations listing:
 To run analysis from the collaboration details page:
 
 1. Navigate to the [collaboration details page](/user-guide/cleanrooms/collab-ui-details#label-dcr-collab-ui-details).
-2. Select the **Shared with you** tab.
-3. In the **Available Templates to Run** section, select a template to view its details.
+2. Select the **Templates** tab.
+3. Select a template that’s shared with you to view its details.
 4. In the template details drawer, select one of the following:
    - **Open in Workspaces**: Generates a pre-configured SQL statement and opens it in
      a Snowflake workspace.

@@ -1,6 +1,6 @@
 # Create a collaboration in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -72,6 +72,10 @@ configure:
 - **Data Offering IDs**: Optionally specify data offering IDs expected from this
   collaborator.
 
+Every additional collaborator must have at least one role selected. The collaboration as a whole
+also needs at least one data provider and at least one analysis runner. The wizard blocks you from
+continuing until these are satisfied.
+
 To use Cortex Code to get suggestions for collaborator roles and resource assignments,
 select the **Suggest** button.
 
@@ -89,6 +93,11 @@ checkbox matrices that let you control:
 
 Select the appropriate checkboxes to grant access. To use Cortex Code to get suggestions
 for the run configuration, select the **Suggest** button.
+
+Every data offering must be shared with at least one analysis runner, and every analysis runner
+must have at least one data provider mapped to it. If you clear a data provider, the wizard also
+clears that provider’s data offering assignments, so reassign any offerings you still want to
+include, or remove them in the **Collaborator details** step.
 
 Select **Next** to proceed.
 

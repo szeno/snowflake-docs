@@ -241,7 +241,7 @@ CREATE TABLE customers (
 
 ### Schema changes
 
-During incremental replication, the connector detects many source table schema changes and applies them automatically through SQL Server capture instance rotation, without stopping replication or requiring a manual re-snapshot of the table. Unsupported changes stop replication for the affected table until you restart it. To manage capture instances, the connector uses the wrapper procedures deployed during setup. For more information, see [Deploy the Openflow CDC wrapper procedures](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sql-server-cdc-wrapper-procedures).
+During incremental replication, the connector may detect source table schema changes and apply them automatically through SQL Server capture instance rotation, without stopping replication or requiring a manual re-snapshot of the table. For an unsupported change, restart replication for the affected table to recover or to apply the change. To manage capture instances, the connector uses the wrapper procedures deployed during setup. For more information, see [Deploy the Openflow CDC wrapper procedures](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sql-server-cdc-wrapper-procedures).
 
 #### Supported changes
 
@@ -258,9 +258,9 @@ If you drop a column that was previously dropped and soft-deleted, replication f
 
 #### Unsupported changes
 
-The connector doesn’t support the following schema changes. When one occurs, replication stops for the affected table:
+The connector doesn’t support the following schema changes. Unless noted otherwise, replication stops for the affected table until you restart it:
 
-- **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key.
+- **Primary key definition change.** SQL Server blocks dropping, switching, or otherwise modifying the primary key of a table while Change Data Capture is enabled on it. This is a source-side restriction that SQL Server enforces itself, not a limitation of the connector: the statement fails on the source database before any change reaches the connector. Adding a primary key to a table that didn’t have one doesn’t refresh the key the connector already uses; to change the replication key, restart replication for the affected table. For more information, see the primary-key restart guidance in [Limitations](#limitations).
 - **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively).
 - **Rename column.** SQL Server doesn’t allow renaming a column that belongs to an active CDC capture instance. This is a source-side restriction that SQL Server enforces itself, not a limitation of the connector: the rename statement fails on the source database before any change reaches the connector.
 

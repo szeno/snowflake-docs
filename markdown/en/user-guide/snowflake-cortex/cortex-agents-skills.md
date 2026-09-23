@@ -138,7 +138,7 @@ extension’s `skills/<member_name>/` subdirectories. For `SKILL`-type extension
 | --- | --- | --- |
 | type | Yes | Must be `CORTEX_EXTENSION`. |
 | path | Yes | The extension FQN in `DATABASE.SCHEMA.EXTENSION_NAME` form. |
-| version | No | Pins which committed version of the extension to expand. Accepts a concrete version name (for example, `VERSION$2`) or an alias (for example, `LAST`, `DEFAULT`). When omitted, Snowflake uses the extension’s default version and falls back to the last committed version. `LIVE` versions are rejected. |
+| version | No | Pins which committed version of the extension to expand. Accepts a concrete version name (for example, `VERSION$2`) or an alias (for example, `LAST`, `DEFAULT`). When omitted, Snowflake uses the extension’s default version and falls back to the last committed version. `LIVE` references are rejected during runtime skill resolution, not agent creation. |
 
 Expand
 

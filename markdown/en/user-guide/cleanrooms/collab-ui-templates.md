@@ -1,6 +1,6 @@
 # Manage templates in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
+Feature — Generally Available
 
 Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#label-dcr-supported-regions).
 
@@ -36,7 +36,7 @@ For each template, the listing shows:
 - **Type**: The template type, either **SQL Analysis** or **SQL Activation**.
 - **Registry**: The [registry](/user-guide/cleanrooms/registries) where the template is
   registered. Templates in the default account registry show **Default**.
-- **Created**: When the template was registered.
+- **Created**: When the template was registered, shown as a relative time such as `2 days ago`.
 
 In grid view, each card also shows the template description.
 
@@ -62,6 +62,10 @@ template card or the **Name** cell in list view to access AI actions:
 
 - **Add to Chat**: Open Cortex Code with the template context attached.
 - **Explain**: Get an AI-generated summary of the template in Cortex Code.
+
+If Cortex Code isn’t available for your account, these actions are disabled. Hover over a disabled
+action to see a popover that says so and links to the Cortex Code documentation. For the roles that
+Cortex Code requires, see [Cortex Code access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
 
 ## Create a template
 

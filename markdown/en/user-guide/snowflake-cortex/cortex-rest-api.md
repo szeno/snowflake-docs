@@ -299,6 +299,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region) | Azure EU (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `claude-opus-5-5` | \* |  | \* |  |  |  | \* |  | \* | \* |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-8` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-7` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
@@ -329,6 +330,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `llama3.1-405b` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
 | `deepseek-v4-flash` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `deepseek-r1` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
+| `glm-5.3` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-7b` | ✔ | ✔ |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |
 | `mistral-large` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-large2` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |

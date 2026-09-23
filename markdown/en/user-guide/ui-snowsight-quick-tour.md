@@ -1,6 +1,6 @@
 # Snowsight quick tour
 
-In Snowsight, you can perform data analysis and engineering tasks, monitor query and data loading and transformation activity,
+In Snowsight, you can perform data analysis and engineering tasks, monitor query, data loading, and transformation activity,
 explore your Snowflake database objects, and administer your Snowflake database, including managing the cost and adding users and roles.
 
 You can use Snowsight to perform the following tasks:

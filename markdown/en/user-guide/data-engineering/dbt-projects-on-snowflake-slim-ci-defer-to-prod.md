@@ -51,7 +51,8 @@ Auto compile applies to deployment. Writeback applies to executions:
 
 Auto compile writes compile artifacts to the live version so that Snowflake can display project details. It doesn’t create an execution result that the `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions can reuse.
 
-Disabling writeback prevents an execution from writing target and log artifacts to the live version. If you plan to run your dbt project object concurrently, Snowflake recommends disabling writeback. Regardless of the writeback setting, Snowflake still stores the per-query result artifacts and their archive under the object’s `results` directory.
+Disabling writeback prevents an execution from writing target and log artifacts to the live version. If you plan to run your dbt project object concurrently, Snowflake recommends disabling writeback. Snowflake stores the per-query result artifacts and archive regardless of this setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
 ### Choose state artifacts
 
@@ -170,7 +171,39 @@ By default, a dbt project object has `DEFAULT_WRITEBACK = TRUE`, so concurrent e
 1. Prefer disabling writeback when the executions don’t need to persist target and log artifacts to the live version. Set `DEFAULT_WRITEBACK = FALSE` on the dbt project object to disable writeback for subsequent executions by default, or override the object default for an individual execution with `WRITEBACK = FALSE` or `--no-writeback`.
 2. If writeback is required, use distinct, non-overlapping target and log directories for each execution.
 
-To disable writeback by default for the dbt project object:
+### Set the object default during deployment
+
+With Snowflake CLI, use `--no-default-writeback` to create or update the project with writeback disabled for subsequent executions:
+
+Copy code
+
+```
+snow dbt deploy my_db.my_schema.my_dbt_project \
+  --source ./path/to/dbt_project \
+  --no-default-writeback
+```
+
+This setting persists on the object. On later deployments, omitting the flag leaves the existing setting unchanged. Disabling default
+writeback affects only execution-time artifact writeback. Automatic compilation can still write compiled artifacts to the live version
+during creation or deployment. To disable automatic compilation, you can separately specify `--no-auto-compile`.
+
+With SQL, set `DEFAULT_WRITEBACK = FALSE` when creating the object from a stage directory containing `dbt_project.yml` and the project files:
+
+Copy code
+
+```
+CREATE OR REPLACE DBT PROJECT my_db.my_schema.my_dbt_project
+  FROM '@my_db.my_schema.dbt_source_stage/my_dbt_project/'
+  DEFAULT_WRITEBACK = FALSE;
+```
+
+`CREATE OR REPLACE DBT PROJECT` recreates an existing object and removes its run history. To change only the writeback default of an
+existing object, use `ALTER DBT PROJECT ... SET` below. To update its source files without replacing the object, use
+[`ALTER DBT PROJECT ... DEPLOY`](/sql-reference/sql/alter-dbt-project).
+
+### Change the default on an existing object
+
+To disable writeback for subsequent executions without redeploying the project:
 
 Copy code
 
@@ -179,7 +212,9 @@ ALTER DBT PROJECT my_db.my_schema.my_dbt_project
   SET DEFAULT_WRITEBACK = FALSE;
 ```
 
-To disable writeback for an individual SQL execution:
+### Override the default for one execution
+
+To disable writeback for an individual SQL execution without changing the object default:
 
 Copy code
 
@@ -197,7 +232,11 @@ Copy code
 snow dbt execute --no-writeback my_dbt_project run
 ```
 
-Regardless of the writeback setting, Snowflake stores separate per-query result artifacts and an archive for each execution.
+If an execution omits `WRITEBACK` or the CLI writeback flag, it uses the object’s `DEFAULT_WRITEBACK` value. You can also override a
+disabled object default with `WRITEBACK = TRUE` or `--writeback` for a run that needs to persist artifacts to the live version.
+
+Snowflake stores the per-query result artifacts and archive regardless of this setting.
+For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
 ### Use distinct target and log paths
 
