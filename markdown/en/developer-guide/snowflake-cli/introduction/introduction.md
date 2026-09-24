@@ -36,12 +36,11 @@ As a command-line interface (CLI), Snowflake CLI provides several benefits for d
 
 ## How does Snowflake CLI differ from SnowSQL?
 
-SnowSQL is the command-line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML
-operations, including loading data into and unloading data out of database tables.
+Snowflake CLI is the preferred command-line client for running SQL and for managing workloads and applications that
+connect to Snowflake. SnowSQL is a legacy command-line client for SQL queries, DDL, DML, and loading or unloading data.
+Snowflake will only add new features and enhancements to Snowflake CLI. Snowflake supports SnowSQL 1.5.x through April 16, 2028.
 
-The Snowflake CLI command-line client, in contrast, focuses primarily on managing workloads and applications that connect
-to Snowflake. Snowflake CLI lets you locally
-run and debug Snowflake apps, with the following benefits:
+Snowflake CLI also lets you locally run and debug Snowflake apps, with the following benefits:
 
 - You can search, create, and upload Python packages that might not be supported in Anaconda yet.
 - Snowflake CLI supports Snowpark Python user-defined functions and stored procedures, warehouses, and Streamlit apps.
@@ -53,7 +52,7 @@ run and debug Snowflake apps, with the following benefits:
 - When you update existing applications, code and dependencies are automatically altered as needed.
 - Deployment artifacts are automatically managed and uploaded to Snowflake stages.
 
-Snowflake plans to continue enhancing Snowflake CLI to provide developers a robust tool for leveraging all of the SnowSQL capabilities in a new open-source CLI.
+If you already use SnowSQL, see [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
 
 ## Security considerations
 

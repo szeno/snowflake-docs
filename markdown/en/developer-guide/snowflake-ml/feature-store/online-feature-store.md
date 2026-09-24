@@ -224,7 +224,159 @@ while status.status != "RUNNING":
     status = fs.get_online_service_status()
     print(f"Status: {status.status}")
 
+print(f"Size: {status.size}")
 print(f"Query URL: {status.endpoints}")
+```
+
+### Choose an online service size
+
+Note
+
+Requires `snowflake-ml-python` version 1.54 or later.
+
+The online service is provisioned at a size that determines its serving capacity. To pin a
+size at creation, pass the `size` keyword argument. Larger sizes serve more concurrent reads
+and ingestion throughput at higher cost.
+
+Copy code
+
+```
+create_result = fs.create_online_service(
+    "FS_PRODUCER_ROLE",
+    "FS_CONSUMER_ROLE",
+    size="M",
+)
+```
+
+The `size` argument accepts one of the following values (case-insensitive):
+
+| Size | Notes |
+| --- | --- |
+| `XS` | Prototyping and experiments. Available only at creation; an `XS` service can’t be resized later. |
+| `S` | Light or early-stage production: a small working set and low QPS (roughly tens of QPS). |
+| `M` | Steady production traffic with a moderate working set. Roughly double `S` (roughly 100 to 300 QPS). |
+| `L` | Larger working sets or higher query and ingest QPS (roughly 300 to 500+ QPS). Roughly double `M`. |
+| `XL` | High-throughput serving with a large in-memory working set (500+ QPS, with more latency headroom). |
+| `2XL` | Very high throughput or very large working sets. Roughly double `XL`. |
+| `3XL` | The largest workloads, with the most memory and serving headroom. |
+
+Expand
+
+Show lessSee more
+
+The QPS ranges are rough, order-of-magnitude starting points for directional guidance, not
+guarantees. Your actual size depends on your workload, so use these to pick a starting size and
+then right-size against real traffic. See [Estimate the size you need](#label-online-fs-estimate-size)
+for the factors that drive sizing.
+
+When you omit `size`, the server applies its default size. Accounts that cap the available
+size are provisioned at their cap instead. To read the size a service is provisioned at, check
+the `size` attribute on the status returned by `get_online_service_status()`. This attribute is
+`None` for services created before sizes were recorded.
+
+To change the size of an existing online service, see
+[Resize the online service](#label-online-fs-resize-online-service).
+
+### Estimate the size you need
+
+Note
+
+These are rough guidelines, not performance guarantees. The right size depends on your data
+and traffic, so benchmark your own workload and adjust. Because you can
+[resize a running service](#label-online-fs-resize-online-service) up or down, you don’t have to
+get this exactly right up front: start conservatively and scale based on what you observe.
+
+The online store keeps feature values in memory for low-latency reads, so the size you need is
+driven mainly by these factors:
+
+- **Working set size.** The total online data that must fit in memory: roughly the number of
+  entity keys multiplied by the number and size of the features across all online feature views.
+  This is usually the dominant factor. Size for headroom above your current data rather than for
+  an exact fit.
+- **Read throughput and concurrency.** Your sustained and peak query QPS, and how many features
+  (or feature groups) each request fetches.
+- **Ingest throughput.** Your sustained and peak write and stream-ingest QPS.
+- **Latency target.** The store targets about 10 ms p50 (see
+  [Retrieval latency performance and benchmarking](#label-online-python-retrieve-features-from-online-storage)).
+  Holding a tight latency target under high concurrency needs more headroom.
+
+Each step up the tiers (`S` to `M` to `L`, and so on) roughly doubles the memory and serving
+headroom available to the service. As a starting point:
+
+- Use `XS` or `S` for prototyping and light workloads.
+- Move up a tier or two for steady production traffic, based on your working set and peak QPS.
+- Leave headroom for background work. Backfills, offline to online syncs, and feature view re-registration can
+  run alongside peak serving traffic, so provision enough that they don’t compete with online reads.
+
+If you’re unsure, start one tier above your minimum estimate, watch latency and utilization under
+real traffic, and resize from there. Use the
+[Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit)
+to measure your workload before committing to a size.
+
+**Signs a service is underprovisioned.** When a service is too small for its load, read latency
+rises (especially p90 and p99), latency gets more variable, and a severely overloaded service
+starts returning query or ingest errors. Watch request volume, latency percentiles, and error
+rate on the
+[Online Serving tab](/developer-guide/snowflake-ml/feature-store/monitoring#label-fs-monitoring-online-serving)
+of the Feature Store monitoring view, including while background jobs run at peak traffic. If
+latency trends toward your target or errors climb, [resize up](#label-online-fs-resize-online-service)
+a tier.
+
+### Resize the online service
+
+Note
+
+Requires `snowflake-ml-python` version 2.0.0 or later.
+
+As your serving load changes, resize a running online service up or down with
+`alter_online_service`. Pass the target `size` as a keyword argument:
+
+Copy code
+
+```
+fs.alter_online_service(size="L")
+```
+
+Brief downtime during resize
+
+A resize ends with a database failover that causes about 20 seconds of downtime, during which
+online queries and ingestion return errors. Plan resizes for a low-traffic window and make sure
+your clients retry. The service serves normally for the rest of the resize, which can otherwise
+run for hours.
+
+The `size` argument accepts one of `S`, `M`, `L`, `XL`, `2XL`, or `3XL` (case-insensitive).
+Unlike [creation](#label-online-fs-create-online-service-size), `XS` isn’t a valid source or
+target: it’s a prototyping tier, so reaching another size from an `XS` service means re-creating
+the service.
+
+Keep the following in mind when resizing:
+
+- **Resize up or down.** You can move to any other tier in a single call, in either direction and
+  any distance (for example, `S` directly to `L`, or `2XL` down to `M`). `alter_online_service` will raise an error if you request the size the service is already running at.
+- **The service must be `RUNNING`.** Requesting a different size while a resize is already in
+  flight is rejected. Re-requesting the size a resize is already converging to does nothing.
+- **Resizing runs in the background.** `alter_online_service` returns as soon as the request is
+  recorded. The change then runs in the background and can take hours on a large service. The
+  service serves online reads and stream ingestion for most of the resize, except for about
+  20 seconds of downtime at the final database failover, when queries and ingestion return
+  errors. The service reports status `UPDATING_SIZE` while the change converges. An accepted
+  resize can’t be cancelled: drop and re-create the service to stop one early.
+
+Poll `get_online_service_status()` until the status is `RUNNING` and `size` is the size you
+requested:
+
+Copy code
+
+```
+import time
+
+fs.alter_online_service(size="L")
+
+status = fs.get_online_service_status()
+while not (status.status == "RUNNING" and status.size == "L"):
+    time.sleep(60)
+    status = fs.get_online_service_status()
+    print(f"Status: {status.status}, size: {status.size}")
 ```
 
 ## Read from the online store

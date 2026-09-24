@@ -27,6 +27,14 @@ As an Openflow administrator, perform the following tasks for this connector. Wi
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant these privileges to that role.
 
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
+
 1. Create a database to store the replicated data, and grant the execute-as role
    [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
    destination schemas automatically. Snowflake recommends a dedicated destination database per
@@ -76,14 +84,6 @@ the connector uses to access Snowflake, so you grant these privileges to that ro
 
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ## Next steps
 

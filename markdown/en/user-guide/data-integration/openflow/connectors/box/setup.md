@@ -17,7 +17,7 @@ This topic describes the steps to set up the Openflow Connector for Box.
 ## Prerequisites
 
 1. Ensure that you have reviewed [About Openflow Connector for Box](/user-guide/data-integration/openflow/connectors/box/about).
-2. Ensure that you have [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc) or [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs).
+2. Ensure that you have [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs) or [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc).
 3. If using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list)
    and have granted access to the required domains for the [Box](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-box) connector.
 
@@ -56,6 +56,14 @@ For more information, see [Setup with JWT](https://developer.box.com/guides/auth
 As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant it the following privileges.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ### Create database, schema, and warehouse
 
@@ -126,14 +134,6 @@ also perform the following tasks:
    GRANT USAGE ON DATABASE <destination_database> TO ROLE <cortex_search_service_read_only_role>;
    GRANT USAGE ON SCHEMA <destination_database>.<destination_schema> TO ROLE <cortex_search_service_read_only_role>;
    ```
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ## Use cases
 

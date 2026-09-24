@@ -6,6 +6,7 @@ definition qualifies for incremental refresh.
 
 Recently added query support
 
+- **Non-deterministic aggregate functions** (APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, APPROX\_TOP\_K) in the SELECT clause (Sep 2026)
 - **VOLATILE scalar UDFs** (Jul 2026)
 - **MIN\_BY / MAX\_BY** aggregate and window functions (Mar 2026)
 - **Expanded outer join patterns** including self-joins (Apr 2026)
@@ -44,10 +45,10 @@ for incremental refresh with restrictions, the table describes the specific cond
 | --- | --- | --- |
 | [WITH](/sql-reference/constructs/with) | Supported when the CTE subquery uses only incrementally supported features.  WITH RECURSIVE is not supported. | Supported |
 | [CONNECT BY](/sql-reference/constructs/connect-by) | Not supported | Supported |
-| [SELECT](/sql-reference/sql/select) | Supported. Expressions must use deterministic built-in functions and [immutable](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview). Scalar [VOLATILE](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview) are supported with restrictions. See [User-defined functions](#user-defined-functions). | Supported |
+| [SELECT](/sql-reference/sql/select) | Supported. Expressions must use deterministic built-in functions and [immutable](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview), except for functions this page lists as supported in the SELECT clause. That includes [non-deterministic aggregate functions](#label-dynamic-tables-supported-nondeterministic-aggregates) such as APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, and APPROX\_TOP\_K, and scalar [VOLATILE](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview). | Supported |
 | [DISTINCT](/sql-reference/sql/select) | Supported | Supported |
 | [FROM](/sql-reference/constructs/from) | Base tables, views, Snowflake-managed Apache Iceberg™ tables, externally managed Iceberg tables, Delta Direct tables, and other dynamic tables.  Subqueries outside of FROM clauses (for example, WHERE EXISTS) are not supported. | Supported |
-| [WHERE](/sql-reference/constructs/where) / [HAVING](/sql-reference/constructs/having) / [QUALIFY](/sql-reference/constructs/qualify) | Filters with the same expressions that are valid in SELECT are supported.  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. | Supported.  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. |
+| [WHERE](/sql-reference/constructs/where) / [HAVING](/sql-reference/constructs/having) / [QUALIFY](/sql-reference/constructs/qualify) | Filters with the same expressions that are valid in SELECT are supported, except for functions this page lists as supported in the SELECT clause only (for example, APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, APPROX\_TOP\_K, and VOLATILE scalar UDFs).  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. | Supported.  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. |
 | [GROUP BY](/sql-reference/constructs/group-by) | Supported. GROUP BY ROLLUP, GROUP BY CUBE, and GROUP BY GROUPING SETS are not supported for incremental refresh. | Supported |
 | Scalar aggregates | Supported | Supported |
 | [INNER JOIN](/sql-reference/constructs/join) | Supported. You can specify any number of tables, and Snowflake tracks changes to all tables in the join. | Supported |
@@ -59,7 +60,7 @@ for incremental refresh with restrictions, the table describes the specific cond
 | [MINUS, EXCEPT, INTERSECT](/sql-reference/operators-query) | Not supported | Supported |
 | [ORDER BY](/sql-reference/constructs/order-by) | Accepted but has no effect. Dynamic tables have no guaranteed row order. | Accepted but has no effect. Dynamic tables have no guaranteed row order. |
 | [LIMIT / FETCH](/sql-reference/constructs/limit) / [TOP <n>](/sql-reference/constructs/top_n) | Not supported | Supported |
-| [Window functions](/sql-reference/functions-window) | Supported, except for the following:   - PERCENT\_RANK, DENSE\_RANK, or RANK with sliding window frames (for example, `ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING`). - ANY\_VALUE is not supported because it is a non-deterministic function. | Supported |
+| [Window functions](/sql-reference/functions-window) | Supported, except for the following:   - PERCENT\_RANK, DENSE\_RANK, or RANK with sliding window frames (for example, `ROWS BETWEEN 2 PRECEDING AND UNBOUNDED FOLLOWING`). - ANY\_VALUE is not supported because it is a non-deterministic function.   Non-deterministic aggregate functions such as APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, and APPROX\_TOP\_K are supported in the SELECT clause. See [Non-deterministic aggregate functions](#label-dynamic-tables-supported-nondeterministic-aggregates). | Supported |
 | [User-defined functions](/developer-guide/udf/udf-overview) (UDFs and UDTFs) | Supported with restrictions. See [User-defined functions](#user-defined-functions) below. | Supported |
 | [ML or LLM functions](/user-guide/snowflake-cortex/aisql) | Supported in the SELECT clause. | Supported |
 | All [subquery operators](/sql-reference/operators-subquery) | Not supported | Supported |
@@ -185,6 +186,7 @@ CREATE OR REPLACE DYNAMIC TABLE dt_flattened_contacts
 
 Many non-deterministic functions are supported for incremental refresh. Timestamp functions
 (CURRENT\_TIMESTAMP, CURRENT\_DATE, CURRENT\_TIME) work in WHERE, HAVING, and QUALIFY clauses.
+Non-deterministic aggregate functions such as APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, and APPROX\_TOP\_K are supported in the SELECT clause.
 Session-context functions (CURRENT\_USER, CURRENT\_ROLE, CURRENT\_WAREHOUSE) and sequence
 functions are restricted. The following table shows the full matrix.
 
@@ -195,8 +197,9 @@ Tip
 | Non-deterministic function | Incremental refresh | Full refresh |
 | --- | --- | --- |
 | [ANY\_VALUE](/sql-reference/functions/any_value) | Not supported | Not supported |
-| [APPROX\_PERCENTILE](/sql-reference/functions/approx_percentile) | Not supported | Supported |
-| [APPROX\_TOP\_K](/sql-reference/functions/approx_top_k) | Not supported | Supported |
+| [APPROX\_COUNT\_DISTINCT](/sql-reference/functions/approx_count_distinct) | Supported in the SELECT clause | Supported |
+| [APPROX\_PERCENTILE](/sql-reference/functions/approx_percentile) | Supported in the SELECT clause | Supported |
+| [APPROX\_TOP\_K](/sql-reference/functions/approx_top_k) | Supported in the SELECT clause | Supported |
 | [AI\_CLASSIFY](/sql-reference/functions/ai_classify) | Supported in the SELECT clause | Supported |
 | [AI\_COMPLETE](/sql-reference/functions/ai_complete) | Supported in the SELECT clause | Supported |
 | [CURRENT\_ACCOUNT](/sql-reference/functions/current_account) | Not supported | Supported |
@@ -226,6 +229,45 @@ Tip
 Expand
 
 Show lessSee more
+
+### Non-deterministic aggregate functions
+
+Non-deterministic aggregate functions are supported
+for incremental refresh in INCREMENTAL, AUTO, and ADAPTIVE refresh modes when they appear in the
+SELECT clause. You can use them as aggregates with GROUP BY or as window functions.
+
+The following functions are supported:
+
+- [APPROX\_COUNT\_DISTINCT](/sql-reference/functions/approx_count_distinct) (and its alias [HLL](/sql-reference/functions/hll))
+- [APPROX\_PERCENTILE](/sql-reference/functions/approx_percentile)
+- [APPROX\_TOP\_K](/sql-reference/functions/approx_top_k)
+
+These functions return approximations, not exact results. For example, APPROX\_COUNT\_DISTINCT
+returns an approximation of `COUNT(DISTINCT ...)`, not an exact distinct count.
+
+Place non-deterministic aggregates in the SELECT clause only
+
+Non-deterministic aggregate functions are supported for incremental refresh only in the SELECT
+clause. Placing them in WHERE, GROUP BY, HAVING, or QUALIFY clauses is not supported.
+
+The following example groups orders by customer and uses APPROX\_COUNT\_DISTINCT to estimate how many
+distinct products each customer ordered:
+
+Copy code
+
+```
+CREATE OR ALTER DYNAMIC TABLE dt_orders_by_customer
+    TARGET_LAG = '30 minutes'
+    WAREHOUSE = transform_wh
+    REFRESH_MODE = INCREMENTAL
+AS
+    SELECT
+        customer_id,
+        APPROX_COUNT_DISTINCT(product_name) AS approx_distinct_products,
+        SUM(quantity * unit_price) AS order_total
+    FROM raw_orders
+    GROUP BY customer_id;
+```
 
 ### User-defined functions
 
@@ -292,7 +334,7 @@ The following conditions cause Snowflake to use full refresh instead of incremen
 | Outer joins with non-equality predicates (such as `ON a.id > b.id`) | Definition shape |
 | WITH RECURSIVE | Definition shape |
 | Subqueries outside FROM clauses (such as WHERE EXISTS, WHERE IN (SELECT …)) | Definition shape |
-| Non-deterministic functions in SELECT (such as RANDOM(), UUID\_STRING(), CURRENT\_TIMESTAMP()) | Function type |
+| Non-deterministic scalar functions in SELECT (such as RANDOM(), UUID\_STRING(), CURRENT\_TIMESTAMP()) | Function type |
 | SQL UDFs that contain subqueries | Function type |
 | External functions | Function type |
 | An upstream dynamic table uses FULL refresh (unless it has a [system-derived unique key](/user-guide/dynamic-tables/input-data-optimization)) | Pipeline shape |

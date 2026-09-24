@@ -1,6 +1,6 @@
 # Testing stored procedures and UDFs
 
-This page describes how the Snowflake AIM Agent for Data Warehouses tests a converted stored procedure or UDF for behavioral equivalence with its source counterpart. For strategy selection (source-data vs. synthetic), see [Testing overview](/migrations/aim-for-datawarehouses/testing/overview).
+This page describes how the Snowflake AIM Agent for Data Warehouses tests a converted stored procedure or UDF for behavioral equivalence with its source counterpart. For strategy selection (source-data vs testbed), see [Testing overview](/migrations/aim-for-datawarehouses/testing/overview).
 
 Testing runs inside the migrate-objects loop. After a procedure or function is deployed to Snowflake, it goes through a **deploy → test → fix** cycle and is only marked complete once its output matches the source-side baseline (or you choose to skip it).
 
@@ -92,4 +92,5 @@ Before testing runs, make sure:
 ## Related content
 
 - [Testing overview](/migrations/aim-for-datawarehouses/testing/overview) — strategies and when to use each.
+- [Synthetic testbed generator](/migrations/aim-for-datawarehouses/testing/synthetic-testbed-generator): constraint-aware table data and a query log for capture and validate.
 - [Considerations by source dialect](/migrations/aim-for-datawarehouses/testing/considerations-by-dialect) — isolation model and permissions per dialect.

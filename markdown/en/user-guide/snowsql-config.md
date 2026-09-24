@@ -1,5 +1,14 @@
 # Configuring SnowSQL
 
+Caution
+
+[Snowflake CLI](/developer-guide/snowflake-cli/index) is the preferred command-line client for new installs and new work. SnowSQL is a
+legacy command-line client. Snowflake will only add new features and enhancements to Snowflake CLI. Snowflake supports SnowSQL 1.5.x through
+April 16, 2028. Earlier minor versions have earlier support end dates.
+
+If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation). If you already use
+SnowSQL, see [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
+
 This topic describes how to configure SnowSQL using connection parameters, configuration options, and variables.
 
 ## About the SnowSQL `config` file

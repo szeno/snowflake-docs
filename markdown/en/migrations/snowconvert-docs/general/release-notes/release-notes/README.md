@@ -1,5 +1,235 @@
 # SnowConvert AI - Recent Release Notes
 
+## Version 2.46.0 (Sep 23, 2026)
+
+### CLI
+
+#### New Features
+
+- Added `scai data migrate-schema` command for managing `DATA_MIGRATION` metadata.
+- Added Power BI assessment support via `scai assessment`.
+- Added `scai assessment data-lineage` command with an expandable HTML data lineage graph.
+- Added Teradata workload insights artifact generation.
+- Added automatic detection and copying of Power BI `.pbit` files during `scai code add`.
+- Added support for skipping report generation via the `SCAI_SKIP_CONVERSION_REPORTS=true` environment variable.
+
+#### Improvements
+
+- The `scai --version` command now surfaces data orchestrator and worker version pins.
+- The `scai code deploy` command no longer requires `database` and `warehouse` on connection profiles.
+- Aligned anti-pattern help output with currently supported dialects.
+
+#### Bug Fixes
+
+- Fixed an issue where `scai code convert` refused ETL units with no source platform.
+- Fixed deploy bindings lookup to be case-insensitive.
+- Fixed `--profile` flag colliding with injected connection flags.
+- Fixed driver caching to preserve the source file when `--driver-path` points into the cache directory.
+- Fixed `scai doctor` to skip `TASK_RESULTS` stage checks when the schema does not exist.
+
+### Conversion Engine
+
+#### New Features
+
+##### General
+
+- Enabled `PERIOD` and `INTERVAL` data types by default, retaining legacy paths for Iceberg targets.
+- Added inventory of relational database objects for assessment.
+- Added classification of database-ingestion objects for landing.
+
+##### Databricks
+
+- Enabled Hybrid `CREATE TABLE` conversion.
+
+##### Oracle
+
+- Added translation of `UTL_FILE` package procedures: `FOPEN`, `PUT_LINE`, `PUT`, `NEW_LINE`, `FCLOSE`, `FFLUSH`, `FGETATTR`, `FREMOVE`, `FRENAME`, `IS_OPEN`, `FCLOSE_ALL`, and `GET_LINE`.
+- Added nested UDT inlining, package `TYPE`/`SUBTYPE` hoisting, and `TABLE OF OBJECT` collection element attribute access.
+- Pinned `INTERVAL` `VARCHAR` width at maximum precision.
+- Added rewrite of `CURRENT OF` and `RETURNING ROWID` to the `SC_ROW_UID` helper.
+
+##### Spark SQL
+
+- Enabled Hybrid `CREATE TABLE` conversion.
+
+##### SQL Server
+
+- Added conversion of `xml.value()`, `xml.query()`, and `xml.nodes()` to `PARSE_XML`/`XMLGET`/`FLATTEN`.
+- Added translation of byte-proven `HASHBYTES` inputs to binary digest functions.
+- Added conversion of `FOR JSON PATH` and `FOR BROWSE` clauses.
+- Added conversion of character `CAST` to variable-length binary via `TO_BINARY`.
+- Added conversion of safe `DBCC` statements.
+- Added conversion of system-versioned temporal tables to deployable Snowflake DDL.
+- Dropped `ROWGUIDCOL` with precondition checks and marked `SPARSE`/`FILESTREAM` columns.
+- Truncated compound `/=` assignment on integer targets.
+- Removed the `FILESTREAM` column option and reported the inline-storage difference.
+
+##### SSIS
+
+- Enabled linear dbt model chain consolidation behind the `--EtlShrinker` flag.
+- Added chain consolidation around split, lookup, multicast, union, join, and multiple destinations.
+
+#### Bug Fixes
+
+##### Oracle
+
+- Fixed parsing of non-reserved keywords as identifiers.
+- Fixed re-encoding of backslashes in `LIKE` patterns and `ESCAPE` characters.
+- Fixed `TO_NCHAR` argument conversion.
+- Fixed a `FORALL` pattern replacer crash.
+- Fixed `SAVE EXCEPTIONS` audit on `INSERT SELECT` with collection field access.
+- Fixed resolution of `FORALL TABLE OF cursor%ROWTYPE` fields.
+- Fixed preservation of package functions with `NVL` date fallbacks.
+- Fixed `DEFAULT` package constant hoisting order.
+- Fixed repeated package `OUT` arguments.
+- Fixed package cursor `OPEN` routing.
+- Fixed hoisting of package constants before dependent local variables.
+
+##### Redshift
+
+- Fixed equivalent `REGEXP_INSTR` calls to pass through without unnecessary conversion.
+- Fixed conversion of frequent datetime format literals.
+
+##### SQL Server
+
+- Fixed provably-zero `@@FETCH_STATUS` restriction to proven guard positions.
+- Fixed `FORMAT` model sizing from the value’s declared precision.
+- Fixed mining of out-of-line `ALTER TABLE ADD CONSTRAINT FOREIGN KEY`.
+- Fixed `DROP TABLE IF EXISTS` emission for table-variable cleanup.
+- Fixed suppression of `SSC-FDM-0002` on equality-only correlated `NOT EXISTS`.
+- Fixed deployable `HASHBYTES` emission for runtime text in SQL UDFs.
+- Fixed folded `USER_ID` emission to apply only in measured consuming contexts.
+
+##### Teradata
+
+- Fixed `FDM-0001` emission for join index `SELECT *`.
+- Fixed preservation of comments before `END IF`.
+- Fixed translation of `LOCATE` to `CHARINDEX`.
+- Fixed volatile hash-table reference consistency.
+
+##### General
+
+- Fixed `FDM-0001` emission for alias-qualified `SELECT *` and BigQuery views.
+- Fixed conversion of top-level `DECLARE` initializers and cursors.
+- Fixed XML `modify delete` lowering to Scripting assignment.
+- Fixed `LEN` to `LENGTH` translation in Snowflake Scripting scalar UDF bodies.
+- Preserved `--` inside SQL string literals in SSIS packages before parse.
+- Fixed `APPLY` table-value-constructor route gating on admitted classes.
+
+### Data Validation
+
+#### New Features
+
+- Added always-on L3 pushdown via `extraction.strategy` configuration.
+- Added support for Snowflake-managed Iceberg external volumes.
+- Added Iceberg v3 (compatible) type mappings.
+- Added support for partitioning based on date parts (`partitionByDate`).
+- Added L3 copy extract for SQL Server with CETAS and remaining signature lanes.
+- Added Azure Synapse dedicated-pool key inference and service-principal worker authentication.
+- Added GCS backend for cloud-direct extraction via the Data Exchange Agent.
+- Added Oracle `BFILE` locator migration.
+- Excluded SQL Server computed columns from data migration.
+- Closed remaining BigQuery data migration data-type gaps.
+
+#### Improvements
+
+- Improved L3 pushdown to inline comparisons without temp tables.
+- Serialized Oracle native JSON at extraction time.
+- Serialized Iceberg checksum `ADD_FILES_COPY` commits.
+- Aligned Redshift Iceberg v2 DDL with `UNLOAD REAL`, `DOUBLE`, and `VARBYTE` footers.
+- Consolidated Iceberg type mappings behind a spec-keyed strategy.
+- Mapped Teradata integers to `NUMBER(38,0)`.
+- Aligned Teradata identifiers with Snowflake folding rules.
+- Used `COUNT_BIG` for L1 row counts on T-SQL and DB2.
+- Aligned `WRITE_NOS` Iceberg `NUMBER`, `TIME`, and `LOB` footers.
+- Activated all secondary roles on Snowflake sessions.
+- Logged L1 column inclusion the same way as exclusion.
+
+#### Bug Fixes
+
+- Fixed PostgreSQL NULL vs empty string preservation through staged CSV.
+- Fixed key inference folding non-key `INCLUDE` columns into inferred keys.
+- Fixed DV failure when column exclusion drops every column or an index column.
+- Fixed Redshift connector to normalize descriptions so Parquet types are not inferred per batch.
+- Fixed Snowpipe setup to fail before enqueueing L2/L3 dependents.
+- Fixed Teradata identifier folding and XML-in-VARCHAR `PARSE_JSON`.
+- Fixed column exclusion honoring on L1 schema validation.
+- Fixed Iceberg checksum initial sync loading only one partition batch.
+- Fixed SQL Server/Synapse `DATETIME` NULL preservation.
+- Fixed ISO timestamp normalization for Redshift and PostgreSQL L2 min/max.
+- Fixed date-part NULL bucket migration.
+- Right-trimmed Teradata blank-padded `CHAR` on extract.
+- Fixed L2 `COUNT_DISTINCT` collation normalization for SQL Server/Synapse.
+- Fixed warehouse tasks hanging on `NO_DATA` query status.
+- Fixed mixed-interval column binding to SDV Jinja before pyodbc.
+- Fixed Snowflake `TO_CHAR` mask to 38-digit budget.
+- Fixed parameterized numeric type matching to bare normalization keys.
+- Fixed missing Snowpipe drain detection.
+- Fixed abort of DV runs when the target table is empty.
+- Fixed Redshift `SUPER` columns read as NULL by the validator.
+- Fixed empty-to-empty data validation to treat as a pass.
+- Fixed DV string comparison to use stored values, with Teradata-only space `RTRIM`.
+- Fixed float comparison to use IEEE-754 bits.
+- Fixed mixed-case partition key folding in watermark partition-reuse probe.
+- Fixed Teradata L3 to fail early when `HASH_MD5` is missing.
+
+### Others
+
+#### Migration Plugin
+
+##### New Features
+
+- Added Object Lineage explorer with Stellar Canvas visualization.
+- Added opt-in ETL validation flow gate.
+- Added data lineage view in the assessment dashboard with a reporting layer.
+- Added Teradata workload insights rendering in the dashboard.
+- Added Power BI lineage assessment.
+- Added SQL Server Discovery from Extended Events on the dashboard.
+- Added full migration support for Azure Synapse.
+- Added Talend platform support with tMap extraction and expressions.
+- Enabled Tableau repointing for SQL Server.
+- Added Alteryx platform provider for ETL Stabilization.
+
+##### Improvements
+
+- Opened the assessment dashboard automatically after assessment completes.
+- Offered existing Snowflake connections at the deploy-target step.
+- Named the active wave in `migration_status`.
+- Skipped source-connection setup when no source database exists.
+- Resumed existing AI-First output without rerunning the producer.
+- Scaled dbt test-generation depth to per-model risk.
+- Renamed anti-patterns to Optimization Opportunities.
+- Routed unsupported ETL platforms to the AI-First convert action.
+- Improved Workload Insights Discovery UI.
+
+##### Bug Fixes
+
+- Fixed MCP server to name the missing database on a connect failure.
+- Fixed assessment report scroll position reset on section switch.
+- Fixed assessment report to render only sublinks whose anchor exists.
+- Fixed Gantt timeline accuracy for spool reads, timezone, phantom segments, and dispatched tasks.
+- Fixed MCP server Snowflake session re-authentication on token expiry.
+- Fixed autonomous mode to use the target connection instead of the agent connection.
+- Fixed dashboard URL offering when no UI is available.
+
+#### Testing Framework
+
+##### New Features
+
+- Added `dbt_project` target seeding for units converted to local dbt-core projects in `scai test seed`.
+
+##### Improvements
+
+- Improved procedure coverage to distinguish measurable procedures and parse quoted SQL bodies in `scai test validate`.
+- Added `RETURNS ARRAY` procedure support in the validate-list.
+
+##### Bug Fixes
+
+- Fixed Teradata `etl-validate` failure with LDAP connections.
+- Fixed `--create-schema` with no test YAMLs to treat as success.
+- Fixed validate abort when `deployedTo` is blank.
+- Fixed vacuous ETL validate stamp handling.
+
 ## Version 2.44.0 (Sep 10, 2026)
 
 ### CLI

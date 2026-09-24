@@ -10,6 +10,29 @@ Snowflake uses semantic versioning for Snowflake Connector for Python updates.
 
 See [Snowflake Connector for Python](/developer-guide/python-connector/python-connector) for documentation.
 
+## Version 4.7.5 (Sep 21, 2026)
+
+### New features and updates
+
+- Added the `SNOWFLAKE_MIN_TLS_VERSION` environment variable (`1.2`, `1.3`, `TLSv1.2`, or `TLSv1.3`, defaulting to TLS 1.2) to raise the minimum TLS version on every outbound connection a synchronous connector makes: the Snowflake API, stage transfers, OCSP/CRL fetches, platform detection, IdP requests, AWS SDK requests (workload identity STS calls and the platform-detection identity probe), and Azure AD token requests made by `azure-identity`. An unrecognized value is rejected at connect time. The variable name and accepted values match the Go driver. Asynchronous (`snowflake.connector.aio`) connections aren’t yet covered.
+
+### Bug fixes
+
+- Follow-up to the 4.7.4 incomplete-result fix: when a successful query request has an incomplete inline first chunk, the connector re-fetches the finished query once via GET `/queries/{qid}/result` before building the result set. JSON treats empty or shorter-than-declared inline rowsets as incomplete. Arrow only treats a missing or empty `rowsetBase64` as incomplete so the execute hot path doesn’t decode IPC. If the result GET fails (a transport error or `success: false`), the original payload is kept; if the GET succeeds but is still incomplete, that response is used. In either incomplete case, the existing row count checks still raise `OperationalError` errno `252013` when the result is drained (no silent EOF). On the sync path, a remote result chunk whose body holds fewer rows than its declared `rowCount` is re-downloaded once before that check raises, so a truncated-but-valid chunk download can recover without silent data loss. Asynchronous (`snowflake.connector.aio`) remote-chunk re-download is unchanged.
+- Fixed a TLS handshake failure that can’t succeed on retry (a minimum-version mismatch, an untrusted certificate, or a hostname mismatch) being reported by `connect()` as a generic `250001: Could not connect to Snowflake backend after N attempt(s)` with a firewall-troubleshooting hint. The network layer already identified and named such failures, but the authentication layer retried them until the login timeout expired and then replaced the diagnosis. They now surface as `NonRetryableTlsError` (a subclass of `OperationalError` that keeps the same errno, so existing handlers are unaffected) naming the underlying cause, and are no longer retried. Transient handshake faults (`ECONNRESET`, unexpected EOF) remain retryable.
+
+## Version 4.7.4 (Sep 16, 2026)
+
+### New features and updates
+
+- None.
+
+### Bug fixes
+
+- Fixed missing retries on transient HTTP failures when fetching an OAuth access token from the IdP token endpoint (`OAUTH_CLIENT_CREDENTIALS` and `OAUTH_AUTHORIZATION_CODE`). Token requests now retry transport errors, HTTP 408/429, and 5xx responses.
+- Fixed a TLS handshake terminated by the peer (`SSLError` containing `SysCallError(-1, 'Unexpected EOF')`) being classified as non-retryable and raised as an `OperationalError`, unlike `ECONNRESET`. Such handshake `Unexpected EOF` errors are now retried on both the sync and async request paths.
+- Fixed `fetchone()`, `fetchmany()`, `fetchall()`, and cursor iteration silently returning an incomplete result set. A downloaded result chunk holding fewer rows than the backend reported was treated as a normal end of results, so callers received fewer rows than the query produced with no exception. Such a chunk now raises an `OperationalError` (errno `252013`). Errors raised while iterating a result set are no longer reported as end of results either: `_fetchone()` previously caught every `TypeError` and returned `None`, so a failure anywhere in the download or parse chain was indistinguishable from an exhausted result set. Both the sync and async paths are fixed.
+
 ## Version 5.0.0rc3 (Sep 10, 2026)
 
 Third release candidate of the connector built on the Universal Core. See [Snowflake Connector for Python built on the Universal Core](/developer-guide/python-connector/python-connector-universal-core) for installation instructions, the curated list of behavior differences, and migration guidance.

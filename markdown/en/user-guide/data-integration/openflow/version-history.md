@@ -6,6 +6,27 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## September 22, 2026
+
+### Runtime Server 2026.9.22.16
+
+- Security patches and dependency upgrades.
+- Added a virtual-thread processor scheduling strategy.
+- Gen 2 connectors: Added connector backlog support status reporting.
+
+### Runtime Extensions 2026.9.22.2
+
+- Azure databases: Added an Azure Entra database password provider for connecting to flexible PostgreSQL and MySQL instances by using workload identity federation.
+- SharePoint gen 2: Added clear verification errors when the destination database or schema doesn’t exist or isn’t visible to the configured role. Verification now checks required database and schema privileges, and the warehouse dropdown lists warehouses the role can use.
+- SharePoint gen 2: Prevented reuse of old batch IDs after reinstalling against an existing destination by waiting for destination setup and batch-counter seeding before ingestion. Leading and trailing spaces in connector configuration fields are ignored.
+- CDC PostgreSQL: Closed database connections when replication fails to start or stop.
+- CDC databases: Added logging that reports which journal stream series still exist when the expected series is missing. Streams from a different series aren’t consumed.
+- CDC SQL Server CT: Prevented changes committed during Change Tracking reads from being skipped permanently.
+- CDC Oracle: Added the `metrics.cdc.capture.committed.timestamp.min` FlowFile attribute with the earliest source commit timestamp represented in the output after the corresponding commit is observed.
+- CDC databases and Table Consolidation: Kept in-flight merge polls visible during restart recovery to prevent overlapping merges for the same table.
+- CDC SQL Server: Added cursor-based capture for sources where Change Tracking or CDC is unavailable. The capture uses a configured watermark column with seekback and an optional recency ceiling, but doesn’t capture hard deletes or updates that don’t advance the watermark.
+- SharePoint gen 2: Added browsing for Microsoft Graph sites, libraries, folders, files, and pages, and listing of Snowflake destination databases and schemas from the connector UI.
+
 ## September 18, 2026
 
 ### AWS Data Plane Agent `1.66.1`

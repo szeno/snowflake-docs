@@ -100,3 +100,4 @@ GRANT CREATE DATABASE ON <PARENT_DATABASE> TO <USER>;
 
 - [Testing overview](/migrations/aim-for-datawarehouses/testing/overview) — strategies and when to use each.
 - [Testing stored procedures and UDFs](/migrations/aim-for-datawarehouses/testing/sprocs-and-udfs) — the capture/validate/fix-loop flow.
+- [Synthetic testbed generator](/migrations/aim-for-datawarehouses/testing/synthetic-testbed-generator): constraint-aware table data and a query log for capture and validate.

@@ -44,9 +44,12 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
+- [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
+- [Python Connector (v4.7.5)](/release-notes/clients-drivers/python-connector-2026)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: HTML generation in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-09-17-cowork-html-generation-preview)
@@ -57,6 +60,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 16, 2026: Cortex Agents object enhancements (General availability)](/release-notes/2026/other/2026-09-16-cortex-agents-object-enhancements-ga)
 - [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
 - [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
+- [Python Connector (v4.7.4)](/release-notes/clients-drivers/python-connector-2026)
 - [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
 - [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)

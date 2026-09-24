@@ -198,8 +198,7 @@ For more information, see [Encrypting table files](/user-guide/tables-iceberg-ma
 >
 >         To use this external volume with [Snowflake Horizon Catalog credential vending](/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon),
 >         set `KMS_KEY_ID` to the full key ARN, or grant the external volume’s IAM role the `kms:DescribeKey`
->         permission so that Snowflake can resolve the ARN for you. KMS key aliases aren’t supported for
->         credential vending.
+>         permission so that Snowflake can resolve the ARN for you.
 >
 > `USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }`
 > :   Specifies whether to use outbound private connectivity to harden your security posture. For information about using this parameter, see

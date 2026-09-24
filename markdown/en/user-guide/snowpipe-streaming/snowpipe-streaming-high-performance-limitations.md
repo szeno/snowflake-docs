@@ -17,7 +17,7 @@ This document outlines the known limitations and key considerations for Snowpipe
 
 ## Named Channel limits
 
-Each Named Channel has the following soft limits. If your application requires higher throughput per Named Channel, contact Snowflake Support to discuss increasing these limits.
+Each Named Channel has the following default limits. The throughput and request-rate limits are enforced defaults that Snowflake Support can raise on request. The 4 MB REST payload limit is a hard per-request cap that is not raised on request; use compression (Gzip or ZSTD) to fit more data per request. If your application requires higher throughput per Named Channel, contact Snowflake Support to discuss increasing the adjustable limits.
 
 - Named Channel throughput: 20 MB/s (uncompressed).
 - REST payload limit: 4 MB per request (the payload size sent over the network, after compression if used). To ingest more data per request, use compression (Gzip or ZSTD). This lets you fit a larger uncompressed data volume into the 4 MB limit.

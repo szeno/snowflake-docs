@@ -952,9 +952,9 @@ Consider the following items when you access Iceberg tables with an external que
 
       Note
 
-      KMS key aliases aren’t supported. If you don’t complete one of these options, credential vending can still succeed, but reading or
-      writing the encrypted table data fails because the vended credential doesn’t have access to your KMS key. If access errors continue
-      after you complete one of these options, contact Snowflake support or your account team for assistance.
+      If you don’t complete one of these options, credential vending can still succeed, but reading or writing the encrypted table data
+      fails because the vended credential doesn’t have access to your KMS key. If access errors continue after you complete one of these
+      options, contact Snowflake support or your account team for assistance.
   - Reading and writing Iceberg v3 tables via the Horizon Iceberg REST Catalog API is supported for customer-managed and Snowflake-managed storage.
   - For Iceberg tables stored on Azure:
 

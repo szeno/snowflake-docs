@@ -9,6 +9,7 @@ DCM Projects definition files support three types of statements:
 **Entities:**
 
 - [Alert](#label-dcm-projects-object-type-alert)
+- [Code Bundle](#label-dcm-projects-object-type-code-bundle)
 - [Database](#label-dcm-projects-object-type-database)
 - [Dynamic table](#label-dcm-projects-object-type-dynamic-table)
 - [File format](#label-dcm-projects-object-type-file-format)
@@ -32,6 +33,7 @@ DCM Projects definition files support three types of statements:
   - [External stage](#label-dcm-projects-object-type-external-stage)
   - [Internal stage](#label-dcm-projects-object-type-internal-stage)
 - [Stream](#label-dcm-projects-object-type-stream)
+- [Streamlit](#label-dcm-projects-object-type-streamlit)
 - [Table](#label-dcm-projects-object-type-table)
 - [Tag](#label-dcm-projects-object-type-tag)
 - [Task](#label-dcm-projects-object-type-task)
@@ -49,6 +51,108 @@ DCM Projects definition files support three types of statements:
 
 - [ATTACH Data Metric Function](#label-dcm-projects-object-type-dmf)
 - [ATTACH TAG](#label-dcm-projects-attach-tag)
+
+**Project files:**
+
+- [Project assets](#label-dcm-project-assets)
+
+## Project assets
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+To create or update Streamlit apps (`DEFINE STREAMLIT`) and Code Bundles (`DEFINE CODE BUNDLE`) with DCM Projects, declare their
+source files as named entries in the manifest’s `assets` section. Assets let you place `manifest.yml` alongside existing code
+folders and use those files in DCM Projects without moving them into `sources/`.
+
+Each entry under the top-level `assets` section has a name and either `path` for one glob pattern or `paths` for multiple
+patterns. Paths are relative to the folder that contains `manifest.yml`. For example:
+
+```
+my_dcm_project/
+├── manifest.yml
+├── sources/
+│   └── definitions/
+│       └── objects.sql
+├── streamlit/
+│   └── my_dashboard/
+│       └── streamlit_app.py
+├── code_bundles/
+│   └── my_job/
+│       ├── code_bundle.yml
+│       └── my_job.ipynb
+└── shared/
+    └── helpers.py
+```
+
+Copy code
+
+```
+assets:
+  my_dashboard:
+    path: 'streamlit/my_dashboard/**/*'
+
+  my_job:
+    paths:
+      - 'code_bundles/my_job/**/*'
+      - 'shared/helpers.py'
+```
+
+Reference an entry’s name in the object’s `FROM` clause, for example, `FROM 'asset://my_dashboard'`. `DEFINE STREAMLIT` and
+`DEFINE CODE BUNDLE` can’t reference the original source folder or file path directly in `FROM`. Asset names are case-sensitive
+and must match `^[a-zA-Z_][a-zA-Z0-9_]*$`.
+
+**Path constraints:**
+
+- Paths must be relative to the folder that contains `manifest.yml` and must stay within the DCM project.
+- `*` matches within one path component. `**` matches across directories. A path can also name one file.
+- `?` and brace expansion aren’t supported. Brackets are literal characters. `**` must be a whole path component followed by
+  another component.
+- Paths can’t contain Jinja expressions. Enclose paths in single quotation marks in YAML.
+- A pattern that matches no files causes the run to fail.
+
+When you run `PLAN` or `DEPLOY` through Snowflake CLI, the CLI uploads the files that match the manifest paths. DCM Projects stores imported
+files under `assets/<asset_name>/` in the deployment history artifacts. The literal directory prefix before the first wildcard
+is removed:
+
+| Pattern | Matched file | Materialized as |
+| --- | --- | --- |
+| `'app/**/*'` | `app/lib/util.py` | `assets/<name>/lib/util.py` |
+| `'**/*'` | `app/lib/util.py` | `assets/<name>/app/lib/util.py` |
+| `'app/static/**/*'` | `app/static/style.css` | `assets/<name>/style.css` |
+| `'app/main.py'` | `app/main.py` | `assets/<name>/main.py` |
+
+Expand
+
+Show lessSee more
+
+Entrypoints such as `MAIN_FILE` and `ENTRYPOINT` are relative to the imported root. Two files that resolve to the same
+destination in one named asset cause an error. Different named assets can import the same source file.
+
+Adding `--save-output` to `snow dcm plan` creates a local `out/` folder that contains rendered definitions under
+`out/rendered/`, including imported files under `out/rendered/assets/`.
+
+**Excluded files:**
+
+- `sources/` is reserved for DCM Projects definitions, macros, and tests. Imported code files must be outside it. `manifest.yml` and
+  `out/` are also excluded, even when explicitly named in a path.
+- The CLI silently excludes dotfiles and dot-directories, including explicitly named files such as `.env`.
+- Symlinks within the project are followed. Symlinks that point outside it are skipped.
+
+**Limits:**
+
+| Limit | Value |
+| --- | --- |
+| Size of a single asset file | 50 MB |
+| Number of files per run | 5,000 |
+| Total size of all assets | 512 MB |
+| Length of an asset path | 1,024 |
+| Length of an asset name | 255 |
+
+Expand
+
+Show lessSee more
 
 ## Entities
 
@@ -96,6 +200,80 @@ DEFINE ALERT MY_DB.MY_SCHEMA.ALRT_CHECK_ORDER_VOLUME
 
 - `PLAN` only validates that the alert can be created successfully. It doesn’t check whether the alert will run
   successfully, as alert logic is compiled at runtime.
+
+### Code Bundle
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+You can define [Code Bundles](/developer-guide/code-bundles/code-bundles) directly in DCM Projects. Code Bundles package and run
+non-SQL jobs, such as Python, on Snowflake compute. DCM Projects manages the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across
+environments using Jinja templating.
+
+Place the bundle source files inside the DCM project root folder but outside `sources/`. A bundle folder contains the
+`code_bundle.yml` specification, the notebook that serves as the entry point, and any Python helper modules that the notebook
+imports:
+
+```
+my_dcm_project/
+├── manifest.yml
+├── sources/
+│   └── definitions/
+│       └── jobs.sql              ← DEFINE CODE BUNDLE statement
+└── code_bundles/
+    └── my_job/                   ← path imported as the my_job asset
+        ├── my_job.ipynb          ← entry point
+        ├── helpers.py
+        └── code_bundle.yml
+```
+
+Declare the source folder as a [project asset](#label-dcm-project-assets), then reference its asset name in the
+`DEFINE CODE BUNDLE` statement:
+
+Copy code
+
+```
+assets:
+  my_job:
+    path: 'code_bundles/my_job/**/*'
+```
+
+Copy code
+
+```
+DEFINE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
+  FROM 'asset://my_job'
+  COMMENT = 'Python job managed by DCM';
+```
+
+The contents of the asset become the root of the bundle version, so `code_bundle.yml` and the entry point must be at the top of
+the asset. Point the pattern at the bundle folder itself (`'code_bundles/my_job/**/*'`), not its parent
+(`'code_bundles/**/*'`). DCM Projects doesn’t validate this layout. A bundle assembled with the wrong pattern deploys successfully but
+fails when you execute it.
+
+The entry point is specified when you execute the bundle, for example from a task:
+
+Copy code
+
+```
+EXECUTE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
+  ENTRYPOINT = 'my_job.ipynb';
+```
+
+`PLAN` and `PLAN DELTA` detect changes to the `DEFINE CODE BUNDLE` statement and its referenced assets.
+
+**Limitations:**
+
+- A Code Bundle’s source must be a project asset. A relative path in the `FROM` clause fails at compile time.
+- DCM Projects can’t adopt a Code Bundle that already exists outside the project because a bundle can be deployed only from the stage
+  where it was created. Drop the existing bundle and let the project create it, or remove the `DEFINE` statement.
+- A Code Bundle can’t be detached from the project that manages it. Drop the bundle, or remove its `DEFINE` statement and let
+  the project drop it on the next deployment.
+- Removing the `DEFINE CODE BUNDLE` statement drops the bundle and all its versions on the next deployment.
+- A DCM project that manages a Code Bundle can’t be dropped or replaced. Run
+  `EXECUTE DCM PROJECT <name> PURGE` to drop the managed entities, then drop the project.
+- `PLAN` validates that the Code Bundle object can be created, but doesn’t check whether the bundled code runs successfully.
 
 ### Database
 
@@ -193,10 +371,6 @@ other network-aware objects. For more information, see [Network rules](/user-gui
 
 ### Pipe
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 DCM Projects supports defining Snowflake pipes. DCM Projects manages the pipe lifecycle (`CREATE`, `ALTER`, `DROP`) across environments using Jinja
 templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/create-pipe) are available in `DEFINE PIPE`.
 
@@ -216,10 +390,6 @@ DCM Projects supports defining authentication policies. For more information, se
 [CREATE AUTHENTICATION POLICY](/sql-reference/sql/create-authentication-policy).
 
 #### Masking policy
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 DCM Projects supports defining masking policies. For more information, see [CREATE MASKING POLICY](/sql-reference/sql/create-masking-policy).
 
@@ -335,10 +505,6 @@ DCM Projects supports defining sequences that generate unique numbers across ses
 
 ### Share
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 DCM Projects supports defining shares, which let you manage the share object and all `GRANT` statements on it declaratively,
 controlling which objects are exposed to the share. All share properties supported by
 [CREATE SHARE](/sql-reference/sql/create-share) are available in `DEFINE SHARE`. For more information, see
@@ -381,10 +547,6 @@ An internal stage stores data files within Snowflake.
 
 ### Stream
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 DCM Projects supports defining streams. All stream variants supported by
 [CREATE OR ALTER STREAM](/sql-reference/sql/create-stream#create-or-alter-stream) are available in `DEFINE STREAM`,
 including streams on tables, views, directory tables, and external tables.
@@ -393,6 +555,156 @@ including streams on tables, views, directory tables, and external tables.
 
 - Streams are immutable after creation. Only the `COMMENT` can be changed. To change any other property (such as the
   source object or `APPEND_ONLY`), you must drop and recreate the stream.
+
+### Streamlit
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+You can define one or more Streamlit apps, their infrastructure, underlying tables, and access control together in a single
+DCM project folder, then deploy everything to any environment with one command.
+
+This approach is especially useful for dashboard and data app deployments that depend on objects such as tables, views, and
+dynamic tables that are also managed by DCM Projects. You can version and promote the data pipeline and the app that consumes it
+together across environments.
+
+In Public Preview, `DEFINE STREAMLIT` supports only assets referenced by an `asset://` URI in the `FROM` clause.
+
+[![](/static/images/dcm-projects/streamlit-in-dcm-project.png)](/static/images/dcm-projects/streamlit-in-dcm-project.png)
+
+#### Create a DCM project for Streamlit
+
+An existing Streamlit app folder can include:
+
+- `streamlit_app.py` or another entrypoint file
+- `environment.yml` for warehouse runtime, or `requirements.txt` or `pyproject.toml` for container runtime
+- Supporting Python modules, pages, or asset files
+
+Place the app inside the DCM project root folder but outside `sources/`. Organize it in any sibling folder structure you
+choose, for example, `streamlit/my_dashboard/`.
+
+Copy code
+
+```
+my_dcm_project/
+├── manifest.yml
+├── sources/
+│   └── definitions/
+│       ├── pipeline.sql
+│       ├── access.sql
+│       └── dashboard.sql         ← DEFINE STREAMLIT statement
+└── streamlit/
+    └── my_dashboard/             ← path imported as the my_dashboard asset
+        ├── streamlit_app.py
+        ├── page_2.py
+        ├── pyproject.toml
+        └── snowflake.yml
+```
+
+Add the `DEFINE STREAMLIT` statement to your DCM Projects definitions with:
+
+- The fully qualified name for the Streamlit object
+- The `asset://` URI for the Streamlit asset
+- The entrypoint filename (`MAIN_FILE`)
+- The warehouse to use for query execution (`QUERY_WAREHOUSE`)
+- The compute pool and runtime (`COMPUTE_POOL`, `RUNTIME_NAME`) for container-runtime apps
+- An optional display title (`TITLE`)
+- Any external access integrations (`EXTERNAL_ACCESS_INTEGRATIONS`) and stage imports (`IMPORTS`) that the app requires
+
+Copy code
+
+```
+DEFINE STREAMLIT DEMO{{env_suffix}}.SERVE.MY_DASHBOARD
+    FROM 'asset://my_dashboard/'
+    MAIN_FILE = 'streamlit_app.py'
+    QUERY_WAREHOUSE = DEMO_WH{{env_suffix}}
+    COMPUTE_POOL = SYSTEM_COMPUTE_POOL_CPU
+    RUNTIME_NAME = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
+    TITLE = 'My Dashboard'
+    EXTERNAL_ACCESS_INTEGRATIONS = ()
+    IMPORTS = ()
+;
+```
+
+#### Import a Streamlit app as an asset
+
+Import the Streamlit app as an asset and reference it with an `asset://` URI in the `FROM` clause. Asset files must be inside
+the DCM project root folder but outside the `sources/` folder.
+
+In `manifest.yml`, define the Streamlit folder as an asset in a top-level `assets` section. For each asset, use `path` to
+specify one path or `paths` to specify a list of paths. Each asset path must be a valid glob expression, directory path, or
+file path and must be enclosed in single quotation marks. Glob expressions support only `*` and `**`:
+
+Copy code
+
+```
+targets:
+  # ...
+
+assets:
+  my_dashboard:
+    path: 'streamlit/my_dashboard/**/*'
+
+  my_next_streamlit:
+    paths:
+      - 'streamlit_2'
+      - 'streamlit/shared/library.py'
+
+templating:
+  # ...
+```
+
+If you have a pre-existing Streamlit project, you don’t need to move its files. Use the existing Streamlit project folder as
+the DCM project root, and add `manifest.yml` and the `sources/` folder to that root. Then import the existing project files
+with `**/*`. DCM Projects automatically excludes DCM Projects-owned files and folders from the match:
+
+Copy code
+
+```
+assets:
+  my_dashboard:
+    path: '**/*'
+```
+
+Reference the asset in the `FROM` clause by using the `asset://<asset_name>/` URI. The URI references the user-defined asset
+name under `assets`, not the original path or directory name:
+
+Copy code
+
+```
+DEFINE STREAMLIT DEMO{{env_suffix}}.SERVE.MY_DASHBOARD
+    FROM 'asset://my_dashboard/'
+    MAIN_FILE = 'streamlit_app.py'
+    QUERY_WAREHOUSE = DEMO_WH{{env_suffix}}
+;
+```
+
+When DCM Projects renders the project, the imported asset files appear with the rendered definitions under
+`out/rendered/assets/`. DCM Projects also includes them in the deployment artifacts.
+
+#### Plan and deploy a DCM project with a Streamlit app
+
+Run your regular DCM Projects `PLAN` and `DEPLOY` commands. If the `DEFINE STREAMLIT` statement, the referenced asset, or any of its
+source paths or files have changed since the last successful deployment, `PLAN` and `PLAN DELTA` show the Streamlit object as
+part of the changeset. `DEPLOY` replaces any modified files and creates a new version.
+
+`PLAN` only validates that the Streamlit object can be created. It doesn’t test whether the app itself runs successfully
+when started.
+
+After the first successful deployment, the Streamlit app is immediately live. DCM Projects automatically initializes the live
+version after creating the Streamlit object, so you don’t need to run `ALTER STREAMLIT` manually.
+
+Removing the `DEFINE STREAMLIT` statement drops the Streamlit object on the next deployment.
+
+**Limitations:**
+
+- DCM Projects Jinja templating variables aren’t passed through to Streamlit Python files. You can use Jinja in the
+  `DEFINE STREAMLIT` statement itself, for example, to set the warehouse or compute pool name, but not inside your app code.
+  - To reference environment-specific objects from inside your Streamlit app at runtime, query the active context using
+    `CURRENT_DATABASE()`, `CURRENT_SCHEMA()`, or similar functions to infer the environment.
+- Asset paths must resolve within the DCM project. Assets can’t include files in the `sources/` folder, and you can’t
+  specify a path to another repository or folder outside of the DCM project.
 
 ### Table
 

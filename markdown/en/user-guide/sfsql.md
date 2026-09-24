@@ -2,7 +2,9 @@
 
 Obsoleted Feature
 
-`sfsql` is now obsoleted. Use [SnowSQL](/user-guide/snowsql) instead.
+`sfsql` is obsolete. Use [Snowflake CLI](/developer-guide/snowflake-cli/index), the preferred command-line client.
+SnowSQL remains available as a legacy client. Snowflake supports SnowSQL 1.5.x through April 16, 2028. If you already use SnowSQL, see
+[Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
 
 `sfsql` provides a command-line interface for connecting to Snowflake through JDBC to execute SQL queries and perform DDL and DML operations, including loading and unloading data from database tables.
 `sfsql` is a Bash shell script (on Linux/macOS) or batch file (on Microsoft Windows) implemented on top of [HenPlus](http://henplus.sourceforge.net/).

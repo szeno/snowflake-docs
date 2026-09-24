@@ -19,8 +19,8 @@ This topic describes the steps to set up the Openflow Connector for Google BigQu
 1. Review [About the Openflow Connector for Google BigQuery](/user-guide/data-integration/openflow/connectors/google-big-query/about).
 2. Set up your runtime deployment.
 
-   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
    - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs)
+   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
 3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the required domains for the [BigQuery](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-bigquery) connector.
 4. You have access to the Openflow admin role or similar role you use to manage Openflow.
 5. If you’re deploying in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication strategy, you have created key pair authentication. For more information, see [key-pair authentication](/user-guide/key-pair-auth).
@@ -60,6 +60,14 @@ This topic describes the steps to set up the Openflow Connector for Google BigQu
 As an Openflow administrator, perform the following tasks for this connector. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant these privileges to that role.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 1. Create a database to store the replicated data, and grant the execute-as role
    [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
@@ -110,14 +118,6 @@ the connector uses to access Snowflake, so you grant these privileges to that ro
 
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ## Install the connector
 

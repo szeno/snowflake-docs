@@ -24,8 +24,8 @@ Before setting up the connector, ensure that you have completed the following pr
 2. Ensure that you have reviewed [Supported SQL Server versions](/user-guide/data-integration/openflow/connectors/sql-server/about#label-sql-server-versions).
 3. Ensure that you have set up your runtime deployment. For more information, see the following topics:
 
-   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
-   - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs).
+   - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs)
+   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc).
 4. If you use Openflow - Snowflake Deployments, ensure that you have reviewed
    [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the required domains for the [SQL Server](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-sqlserver) connector.
 
@@ -136,6 +136,14 @@ As an Openflow administrator, perform the following tasks for this connector. Wi
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant these privileges to that role.
 
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
+
 1. Create a database to store the replicated data, and grant the execute-as role
    [USAGE and CREATE SCHEMA](/user-guide/security-access-control-privileges#label-database-privileges) on it. The connector creates
    destination schemas automatically. Snowflake recommends a dedicated destination database per
@@ -185,14 +193,6 @@ the connector uses to access Snowflake, so you grant these privileges to that ro
 
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ## Install the connector
 

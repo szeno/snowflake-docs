@@ -17,7 +17,7 @@ This topic describes the steps to set up the Openflow Connector for LinkedIn Ads
 ## Prerequisites
 
 1. Ensure that you have reviewed [About Openflow Connector for LinkedIn Ads](/user-guide/data-integration/openflow/connectors/linkedin-ads/about).
-2. Ensure that you have [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc) or [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs).
+2. Ensure that you have [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs) or [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc).
 3. If using Openflow - Snowflake Deployments, ensure that you’ve reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list)
    and have granted access to the required domains for the [LinkedIn Ads](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-linkedinads) connector.
 
@@ -36,6 +36,14 @@ This topic describes the steps to set up the Openflow Connector for LinkedIn Ads
 As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant it the following privileges.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ### Create database, schema, and warehouse
 
@@ -79,14 +87,6 @@ the connector uses to access Snowflake, so you grant it the following privileges
 5. If any other Snowflake users require access to the tables ingested by the
    connector (for example, for custom processing in Snowflake), grant those users the execute-as
    role.
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ## Set up the connector
 

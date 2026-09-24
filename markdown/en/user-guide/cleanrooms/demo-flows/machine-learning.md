@@ -4,18 +4,8 @@
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 This topic describes the provider and consumer flows needed to programmatically set up a clean room, share it with a consumer, and run analyses through advanced machine learning algorithms in it. The provider flows loads secure Python code implementing a random-forest-based XGBoost machine learning algorithm into the clean room. This is completely confidential, and visible only to the provider. The consumer cannot see the Python machine-learning code loaded into the clean room.
 

@@ -216,7 +216,7 @@ These errors result from changes in your environment, such as dropped objects or
 
 **Message:** Query contains a non-deterministic function that change tracking does not support.
 
-**Cause:** The dynamic table’s definition uses a non-deterministic function in a position where incremental refresh can’t track changes. Timestamp functions (CURRENT\_TIMESTAMP, CURRENT\_DATE, CURRENT\_TIME) are supported in WHERE, HAVING, and QUALIFY clauses. This error occurs when a non-deterministic function like RANDOM() or a session-context function (CURRENT\_USER, CURRENT\_ROLE) appears in the SELECT list or another unsupported position.
+**Cause:** The dynamic table’s definition uses a non-deterministic function in a position where incremental refresh can’t track changes. Timestamp functions (CURRENT\_TIMESTAMP, CURRENT\_DATE, CURRENT\_TIME) are supported in WHERE, HAVING, and QUALIFY clauses. Non-deterministic aggregate functions such as APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, and APPROX\_TOP\_K are supported in the SELECT clause. This error occurs when a non-deterministic scalar function like RANDOM() or a session-context function (CURRENT\_USER, CURRENT\_ROLE) appears in the SELECT list or another unsupported position.
 
 **Resolution:** Move the non-deterministic function to a WHERE, HAVING, or QUALIFY clause (supported for timestamp functions), remove it from the definition, or recreate the dynamic table with `REFRESH_MODE = FULL`. For example, `CURRENT_TIMESTAMP()` in the SELECT list forces full refresh:
 

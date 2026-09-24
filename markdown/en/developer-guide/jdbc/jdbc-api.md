@@ -32,6 +32,8 @@ A CallableStatement is used to execute a stored procedure.
 | Method Name | Notes |
 | --- | --- |
 | **Supported Methods** |  |
+| None | `CallableStatement` extends `PreparedStatement`, so inherited methods such as `execute()`, `executeQuery()`, and the indexed `setXxx(int, ...)` setters still work. The `CallableStatement`-specific methods listed under **Unsupported Methods** throw `SQLFeatureNotSupportedException` because Snowflake stored procedures don’t accept OUT or INOUT parameters. |
+| **Unsupported Methods** |  |
 | `getBigDecimal(int, int)` |  |
 | `getBoolean(int)` |  |
 | `getByte(int)` |  |
@@ -49,8 +51,6 @@ A CallableStatement is used to execute a stored procedure.
 | `registerOutParameter(int, int, int)` |  |
 | `registerOutParameter(int, int)` |  |
 | `wasNull()` |  |
-| **Unsupported Methods** |  |
-| None. |  |
 
 Expand
 

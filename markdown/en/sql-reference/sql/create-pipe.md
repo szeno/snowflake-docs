@@ -28,10 +28,6 @@ CREATE [ OR REPLACE ] PIPE [ IF NOT EXISTS ] <name>
 
 ### CREATE OR ALTER PIPE
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Creates a new pipe if it doesn’t already exist, or transforms an existing pipe into the pipe defined in the statement.
 A CREATE OR ALTER PIPE statement follows the syntax rules of a CREATE PIPE statement and has the same limitations as an
 [ALTER PIPE](/sql-reference/sql/alter-pipe) statement.
@@ -225,10 +221,6 @@ If you recreate a pipe (using the CREATE OR REPLACE PIPE syntax), see [Recreatin
 considerations and best practices.
 
 ### CREATE OR ALTER PIPE
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 - All limitations of the [ALTER PIPE](/sql-reference/sql/alter-pipe) command apply.
 - The pipe’s COPY INTO statement (`copy_statement`) can’t be changed for an existing pipe. If you need to change the pipe definition,

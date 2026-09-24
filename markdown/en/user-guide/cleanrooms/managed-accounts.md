@@ -2,25 +2,15 @@
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 Managed Account Terms termination
 
 The [Snowflake Data Clean Room Managed Account Terms](https://www.snowflake.com/en/legal/other/data-clean-rooms/managed-account-terms/)
-are being terminated effective **2027-06-01**. Prior to that date, your ability to create new managed accounts
-is limited as described in the end-of-life notice above. Snowflake will contact affected managed account
-users separately with additional details.
+are being terminated effective **June 1, 2027**, following the timeline in the
+[end-of-life notice](/user-guide/cleanrooms/pc-eol#label-dcr-pc-eol-managed-accounts). Snowflake will
+contact affected managed account users separately with additional details.
 
 ## Overview
 

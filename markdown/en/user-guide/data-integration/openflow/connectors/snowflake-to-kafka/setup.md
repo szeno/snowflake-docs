@@ -17,7 +17,7 @@ This topic describes the steps to set up the Openflow Connector for Snowflake to
 ## Prerequisites
 
 1. Ensure that you have reviewed [About Openflow Connector for Snowflake to Kafka](/user-guide/data-integration/openflow/connectors/snowflake-to-kafka/about).
-2. Ensure that you have [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc) or [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs).
+2. Ensure that you have [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs) or [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc).
 3. Create a Snowflake stream that will be queried for the changes.
 4. Create a Kafka topic that will receive CDC messages from the Snowflake stream.
 

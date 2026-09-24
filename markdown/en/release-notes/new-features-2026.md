@@ -249,6 +249,8 @@ For more recent releases and feature updates, see [Snowflake server release note
 ## Feature updates earlier in 2026
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
+- [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
+- [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)

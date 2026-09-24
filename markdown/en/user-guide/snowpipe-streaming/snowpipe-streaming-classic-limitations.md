@@ -11,6 +11,7 @@ For Snowpipe Streaming classic, be aware of the following limitations:
   - GEOGRAPHY and GEOMETRY data types
   - Columns with collations
   - TEMPORARY tables
+  - TRANSIENT tables, including tables created in a transient schema or database
   - Transient Iceberg tables that use [Snowflake storage](/user-guide/tables-iceberg-internal-storage)
   - Structured data types (like OBJECT, MAP, ARRAY) are only supported for ingestion to iceberg tables.
 - The total number of channels per table can’t exceed 10,000. We recommend reusing channels when you need them. Contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) if you need to open more than 10,000 channels per table.

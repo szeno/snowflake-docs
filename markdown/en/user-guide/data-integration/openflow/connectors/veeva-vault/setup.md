@@ -19,8 +19,8 @@ This topic describes the steps to set up the Openflow Connector for Veeva Vault.
 1. Review [About the Openflow Connector for Veeva Vault](/user-guide/data-integration/openflow/connectors/veeva-vault/about).
 2. Set up your runtime deployment.
 
-   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
    - [Set up Openflow - Snowflake Deployments](/user-guide/data-integration/openflow/setup-openflow-spcs)
+   - [Set up Openflow - BYOC](/user-guide/data-integration/openflow/setup-openflow-byoc)
 3. If you are using Openflow - Snowflake Deployments, ensure that you have reviewed [configuring required domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) and have granted access to the required domains for the [Veeva Vault](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list#label-openflow-domains-used-by-openflow-connectors-veeva-vault) connector.
    If you are using Openflow - BYOC Deployments, configure your cloud network egress to allow TLS 443 access to
    your Vault hostname (for example, `myvault.veevavault.com:443`).
@@ -62,6 +62,14 @@ its password is changed.
 As an Openflow administrator, perform the following tasks to set up your Snowflake account. With the
 default `SNOWFLAKE_MANAGED` authentication strategy, the runtime’s execute-as role is the identity
 the connector uses to access Snowflake, so you grant it the following privileges.
+
+Note
+
+If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
+strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
+role to a service user rather than relying on the runtime’s managed token. See
+[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
+to create the service user.
 
 ### Create database, schema, and warehouse
 
@@ -105,14 +113,6 @@ the connector uses to access Snowflake, so you grant it the following privileges
 5. If any other Snowflake users require access to the tables ingested by the
    connector (for example, for custom processing in Snowflake), grant those users the execute-as
    role.
-
-Note
-
-If you’re deploying the connector in Openflow - BYOC Deployments and using the `KEY_PAIR` authentication
-strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
-role to a service user rather than relying on the runtime’s managed token. See
-[Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
-to create the service user.
 
 ### Grant the privilege to create a pipe
 

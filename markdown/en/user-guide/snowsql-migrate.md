@@ -1,10 +1,21 @@
 # Migrating from SnowSQL to Snowflake CLI
 
-Note
+Caution
 
-Snowflake CLI migration support is still in development. In the meantime, Snowflake encourages you to migrate from SnowSQL using these instructions.
+[Snowflake CLI](/developer-guide/snowflake-cli/index) is the preferred command-line client for new installs and new work. SnowSQL is a
+legacy command-line client. Snowflake will only add new features and enhancements to Snowflake CLI. Snowflake supports SnowSQL 1.5.x through
+April 16, 2028. Earlier minor versions have earlier support end dates.
 
-This guide provides instructions for migrating from SnowSQL to Snowflake CLI to help you seamlessly move your existing SnowSQL connections and environment variables.
+If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation). If you already use
+SnowSQL, follow the steps in this topic.
+
+## Choose your path
+
+- **New to Snowflake:** [Install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation) and start with
+  [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes). You don’t need SnowSQL.
+- **Already using SnowSQL:** Follow the migration steps in this topic.
+
+This guide helps you move existing SnowSQL connections, configuration, and SQL workflows to Snowflake CLI.
 
 - [Migration steps](#label-snowsql-migration-migrate-connections)
 - [Migrate your configurations](#label-snowsql-migration-migrate-configurations)
@@ -417,6 +428,10 @@ Useful links:
 
 - [snow sql](/developer-guide/snowflake-cli/command-reference/sql-commands/sql) documentation
 - [Executing SQL statements](/developer-guide/snowflake-cli/sql/execute-sql) documentation
+
+You can run [PUT](/sql-reference/sql/put) and [GET](/sql-reference/sql/get) with `snow sql` the same way you run other SQL
+statements. For interactive SQL, enter `snow sql` with no `-q` or `-f` option. For details, see
+[Entering SQL commands in interactive mode](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode).
 
 ### Execute SQL queries from various inputs
 

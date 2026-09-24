@@ -4,18 +4,8 @@
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 Clean rooms enable users to share data with a collaborator while maintaining the privacy of the data by tightly controlling what can be
 done with it. This tutorial leads you through the basic flow of using the clean rooms UI to work with a Snowflake Data Clean Room with two test
@@ -71,18 +61,8 @@ Clean room collaborators are either providers or consumers:
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 Sign in to the clean room where you will create, configure, and share a clean room as a provider.
 
@@ -93,18 +73,8 @@ will act as the provider.
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this section you will add the consumer account that you are using for this tutorial as a collaborator. Administrators must define
 someone as a collaborator *before* other users can share a clean room with that collaborator.
@@ -125,18 +95,8 @@ To add the consumer as a collaborator:
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this section, you will do the following:
 
@@ -230,18 +190,8 @@ Next, you will switch to act as the consumer who joins the clean room and uses i
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this section, you switch from being the provider who created and shared the clean room to acting as the consumer to install and run the
 clean room.
@@ -253,18 +203,8 @@ clean room.
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this section you will do the following actions:
 
@@ -335,18 +275,8 @@ To define the segmentation and activation columns:
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this step, you run an audience overlap and segmentation analysis in the clean room. You must first select the data to use in the
 analysis.
@@ -393,18 +323,8 @@ To configure and run an analysis:
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In this step you will activate the results of your analysis to the provider’s Snowflake account. These results are enriched with data from
 the consumer and provider tables.
@@ -431,18 +351,8 @@ the provider account for activation.
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 In the previous step you activated to the provider’s Snowsight account. Provider activation
 data is stored in the SAMOOHA\_BY\_SNOWFLAKE\_LOCAL\_DB.PUBLIC.PROVIDER\_ACTIVATION\_SUMMARY table of the provider’s Snowflake account.
@@ -483,18 +393,8 @@ SnowsightSQL
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 You can delete the clean room and activation data that you created for this tutorial to clean up your production environment.
 
@@ -531,18 +431,8 @@ To delete a clean room:
 
 End-of-life notice
 
-The legacy Provider and Consumer Data Clean Rooms are being discontinued. Migrate to the
-[Collaboration API](/user-guide/cleanrooms/overview) using the
-[migration tool](/user-guide/cleanrooms/migration-tool) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the
-  [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction).
-- **2027-02-01:** The [web application user interface](/user-guide/cleanrooms/v1/web-app-introduction)
-  will no longer be accessible, and new legacy clean rooms may not be created via the
-  [Provider and Consumer API](/user-guide/cleanrooms/getting-started).
-- **2027-06-01:** Legacy [Provider and Consumer clean rooms](/user-guide/cleanrooms/getting-started)
-  will no longer be accessible. Use the [Collaboration API](/user-guide/cleanrooms/overview)
-  to create and manage clean rooms.
+The legacy Provider and Consumer Data Clean Rooms are being discontinued. See the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol) for dates and migration guidance.
 
 Congratulations! You have now used the clean rooms UI to create and share a clean room as a provider. You have also acted as the consumer
 who is using the clean room to analyze data within a privacy-preserving environment.

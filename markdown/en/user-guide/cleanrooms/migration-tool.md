@@ -7,12 +7,8 @@ Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#lab
 Not available in government and VPS deployments.
 
 The legacy Provider and Consumer Data Clean Rooms are being discontinued. Use the migration tool
-to move to the [Collaboration API](/user-guide/cleanrooms/overview) before the dates below.
-
-- **2026-10-01:** New legacy clean rooms may not be created via the web application user interface.
-- **2027-02-01:** The web application user interface will no longer be accessible, and new legacy
-  clean rooms may not be created via the API.
-- **2027-06-01:** Legacy clean rooms will no longer be accessible. Only the Collaboration API can be used.
+to move to the [Collaboration API](/user-guide/cleanrooms/overview) before the dates in the
+[end-of-life timeline](/user-guide/cleanrooms/pc-eol).
 
 The Snowflake Data Clean Room migration tool helps you migrate legacy Provider and Consumer
 clean rooms and webapp clean rooms to the Collaboration API. Given the name of a legacy

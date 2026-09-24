@@ -95,10 +95,6 @@ For more information about cloning, see [CREATE <object> … CLONE](/sql-referen
 
 ### CREATE OR ALTER STREAM
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Creates a new stream if it doesn’t already exist, or transforms an existing stream into the stream defined in the statement.
 A CREATE OR ALTER STREAM statement follows the syntax rules of a CREATE STREAM statement and has the same limitations as an
 [ALTER STREAM](/sql-reference/sql/alter-stream) statement.
@@ -408,10 +404,6 @@ For general information about roles and privilege grants for performing SQL acti
 - CREATE OR REPLACE *<object>* statements are atomic. That is, when an object is replaced, the old object is deleted and the new object is created in a single transaction.
 
 ### CREATE OR ALTER STREAM
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 - All limitations of the [ALTER STREAM](/sql-reference/sql/alter-stream) command apply.
 - The source object (table, view, external table, stage, or dynamic table), APPEND\_ONLY setting, and INSERT\_ONLY setting can’t be changed
