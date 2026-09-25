@@ -260,8 +260,13 @@ components: create the controller services at the flow controller level (**Contr
 
 In the `ConsumeKafka` processor, set the **Kafka Connection Service** property to reference an
 [AmazonMSKConnectionService](/user-guide/data-integration/openflow/controllers/amazonmskconnectionservice) controller
-service. In that controller service:
+service. If the component picker lists two services with this name, select the one without the Snowflake badge. The
+Snowflake-badged service is deprecated and doesn’t support workload identity federation.
 
+In the controller service, set the following properties in order. Each selection reveals the properties required by the
+next step:
+
+- Set **Security Protocol** to `SASL_SSL`.
 - Set **SASL Mechanism** to `AWS_MSK_IAM`.
 - Set **AWS Role Source** to `Web Identity Provider`, which reveals the following properties:
   - **AWS Assume Role ARN**: the ARN of the IAM role you created.

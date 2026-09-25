@@ -139,7 +139,7 @@ You can specify `--import` multiple times to mount files from multiple locations
 
 An execution can import at most one ZIP file. The only supported way to import a ZIP file is to use the [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) system function, which returns the archive from a dbt project object’s results stage. Snowflake extracts the archive automatically.
 
-GitHub Actions automatically supplies branch and commit metadata when you deploy with Snowflake CLI. For other CI runners, explicitly pass `--git-branch` and `--git-commit` so the dbt project object remains traceable to its source.
+GitHub Actions automatically supplies repository URL, branch, and commit metadata when you deploy with Snowflake CLI. For other CI runners, explicitly pass `--git-url`, `--git-branch`, and `--git-commit` so the dbt project object remains traceable to its source.
 
 For an end-to-end Slim CI example that uses `--env` and `--env-vars` with an isolated database for each pull request, see [Tutorial: Set up CI/CD with Slim CI and per-PR databases for dbt Projects on Snowflake](/user-guide/tutorials/dbt-projects-on-snowflake-advanced-ci-cd-tutorial).
 

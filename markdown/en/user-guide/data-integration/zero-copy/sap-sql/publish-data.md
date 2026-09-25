@@ -90,7 +90,7 @@ them explicitly when creating each table:
 Copy code
 
 ```
-CREATE ICEBERG TABLE my_publish_db.my_schema.my_table (
+CREATE ICEBERG TABLE my_publish_db.my_schema.my_iceberg_table (
   id STRING PRIMARY KEY,
   name STRING,
   value NUMBER(38,0)
@@ -104,6 +104,48 @@ CREATE ICEBERG TABLE my_publish_db.my_schema.my_table (
 Note
 
 You must define a primary key on each Iceberg table that you publish to SAP® BDC Connect for Snowflake. In the preceding example, `id` is the primary key. Mark the same column as the key (`"key": true`) in the CSN document when you publish the data product.
+
+You can also publish a dynamic Iceberg table. The other requirements are the
+same as for the Iceberg tables described earlier. To create one, use
+[CREATE DYNAMIC ICEBERG TABLE](/sql-reference/sql/create-dynamic-table#label-create-dt-iceberg-syntax),
+then add the primary key with
+[ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table):
+
+Copy code
+
+```
+CREATE DYNAMIC ICEBERG TABLE my_publish_db.my_schema.my_dynamic_table
+  TARGET_LAG = '20 minutes'
+  WAREHOUSE = my_warehouse
+  ICEBERG_VERSION = 3
+  CATALOG = 'SNOWFLAKE'
+  ICEBERG_MERGE_ON_READ_BEHAVIOR = 'DISABLED'
+  STORAGE_SERIALIZATION_POLICY = 'COMPATIBLE'
+  AS
+    SELECT id, name, value
+      FROM my_publish_db.my_schema.my_iceberg_table;
+
+ALTER DYNAMIC TABLE my_publish_db.my_schema.my_dynamic_table
+  ADD PRIMARY KEY (id);
+```
+
+Both Iceberg tables and dynamic Iceberg tables can be permanent or transient. To
+create either one as a transient table, add `TRANSIENT` to the statement, as in
+`CREATE TRANSIENT ICEBERG TABLE` or `CREATE TRANSIENT DYNAMIC ICEBERG TABLE`.
+For the difference between the two table types, see
+[Transient Tables](/user-guide/tables-temp-transient#label-table-type-transient).
+
+To confirm that a table carries a primary key before you publish it, use
+[SHOW PRIMARY KEYS](/sql-reference/sql/show-primary-keys). It returns one row for
+each primary key column:
+
+Copy code
+
+```
+SHOW PRIMARY KEYS IN TABLE my_publish_db.my_schema.my_iceberg_table;
+
+SHOW PRIMARY KEYS IN TABLE my_publish_db.my_schema.my_dynamic_table;
+```
 
 ### Create a share
 
@@ -141,8 +183,12 @@ Grant `SELECT` on a specific table:
 Copy code
 
 ```
-GRANT SELECT ON TABLE my_publish_db.my_schema.my_table TO SHARE my_share;
+GRANT SELECT ON TABLE my_publish_db.my_schema.my_iceberg_table TO SHARE my_share;
 ```
+
+`GRANT SELECT ON TABLE` works for every supported table type. You can also use
+`GRANT SELECT ON ICEBERG TABLE`, and for a dynamic Iceberg table,
+`GRANT SELECT ON DYNAMIC TABLE`.
 
 ### Associate the share with the connector
 
@@ -184,7 +230,7 @@ REVOKE USAGE ON DATABASE my_publish_db FROM SHARE my_share;
 
 REVOKE USAGE ON SCHEMA my_publish_db.my_schema FROM SHARE my_share;
 
-REVOKE SELECT ON TABLE my_publish_db.my_schema.my_table FROM SHARE my_share;
+REVOKE SELECT ON TABLE my_publish_db.my_schema.my_iceberg_table FROM SHARE my_share;
 ```
 
 ## Publish a data product to SAP® BDC Connect for Snowflake

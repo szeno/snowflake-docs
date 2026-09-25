@@ -7,7 +7,7 @@ user level.
 
 A session begins when a user connects to Snowflake and authenticates successfully using a Snowflake programmatic client or [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 A session is independent of an identity provider (IdP) session. If the Snowflake session expires but the IdP session remains active,
-a user can log in to Snowflake without entering their login credentials again (i.e. silent authentication).
+a user can log in to Snowflake without entering their login credentials again (that is, silent authentication).
 
 By default, a session is maintained indefinitely with continued user activity. After a period of inactivity in the session, known as the
 idle session timeout, the user must authenticate to Snowflake again. The default idle session timeout is four hours for non-UI (programmatic)
@@ -24,7 +24,7 @@ These session timeouts apply to the following:
 - Supported [connectors and drivers](/guides-overview-connecting).
 - Third-party clients that connect to Snowflake using a supported connector or driver.
 
-Snowflake recommends reusing existing sessions when possible and to close the connection to Snowflake when a session is no longer needed.
+Snowflake recommends reusing existing sessions when possible and closing the connection to Snowflake when a session is no longer needed.
 
 ### Snowsight session expiration and logout behavior
 

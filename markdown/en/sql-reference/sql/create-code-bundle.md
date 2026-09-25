@@ -9,11 +9,8 @@ schema-level object that packages your project source files (for example, `.py` 
 execution on Snowflake compute. When the Code Bundle is created, all files from the source are copied into the object in the specified database and
 schema. The Code Bundle can then be executed using [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).
 
-You can create a Code Bundle from a stage or a private workspace.
-
-Note
-
-Creating Code Bundles from shared workspaces is not currently supported.
+You can create a Code Bundle from an internal or temporary stage, a private workspace, or a shared workspace.
+External stages aren’t supported.
 
 See also:
 :   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook)

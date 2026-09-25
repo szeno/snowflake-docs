@@ -73,6 +73,19 @@ workspace:
 - **Execution**: The warehouse used to run SQL queries.
 - **External network access** via an [External Access Integration](/developer-guide/external-network-access/external-network-access-overview).
 
+Note
+
+The compute pool and the query warehouse are authorized against different roles, because they
+are used at different times:
+
+- **Compute pool**: checked when the app starts, as you, using all roles granted to you,
+  including secondary roles.
+- **Query warehouse**: checked each time the app runs a query, as the app, using only the
+  single role the app runs as. Secondary roles are not used.
+
+As a result, the query warehouse list shows only warehouses that the app’s role can use on its
+own. If a warehouse you expect is missing, grant USAGE on it to the app’s role.
+
 For apps in workspaces, settings are stored per app, per user. Changing settings on your
 development app doesn’t affect the deployed app.
 

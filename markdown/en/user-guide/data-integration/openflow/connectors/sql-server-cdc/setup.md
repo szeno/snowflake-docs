@@ -606,6 +606,14 @@ SQLServer Ingestion Parameters context, the configuration is picked up by the co
 
 To run multiple CDC connector instances on one runtime, see .
 
+Note
+
+**DBCPConnectionPool validation**
+
+Enabling the `DBCPConnectionPool` controller service configures the connection pool but doesn’t open a JDBC connection.
+
+To test the connection from the Openflow runtime, open the controller service configuration and select **Verify**. Confirm that the **Establish Connection** step succeeds. This test opens a connection by using the configured JDBC URL, driver, username, and password.
+
 ### SQLServer Source Parameters
 
 | Parameter | Description |
@@ -633,6 +641,26 @@ Note
 
 Azure SQL Database refers to the single-database PaaS offering, not Azure SQL Managed Instance.
 
+Note
+
+**Azure SQL Managed Instance through a proxy**
+
+If you connect to Azure SQL Managed Instance through a proxy, Nginx route, or another intermediate host, configure Azure SQL Managed Instance to use `Proxy` connection mode.
+
+Don’t use `Redirect` mode when the Openflow runtime must route SQL Server traffic through the proxy host. In `Redirect` mode, Azure SQL Managed Instance can instruct the JDBC driver to reconnect to a different backend host. That redirected host might not be reachable through the proxy route configured for the Openflow runtime.
+
+For example:
+
+1. Openflow connects to `nginx.example.com:10001`.
+2. Nginx forwards traffic to `sqlmi.example.database.windows.net:1433`.
+3. Azure SQL Managed Instance in `Redirect` mode tells the JDBC driver to reconnect to another backend host.
+4. The Openflow runtime tries to connect to that redirected host directly.
+5. The connection fails because the redirected host isn’t routed through the proxy.
+
+Use `Proxy` mode when all SQL Server traffic must stay on the original proxy route.
+
+For **SQLServer Username**, enter the SQL login configured on the Azure SQL Managed Instance.
+
 ### Always On Availability Groups
 
 Configure the connector to connect through the availability group **listener** (the virtual network name for the group), not through an individual replica node. Set the listener hostname in the **SQLServer Connection URL** parameter in the SQLServer Source Parameters context.
@@ -642,6 +670,32 @@ Configure the connector to connect through the availability group **listener** (
 Warning
 
 Do not change the connection target after replication has started. Each database maintains its own replication position independently, so switching to a different server or listener can cause the connector to lose track of which changes have already been processed. This might result in data loss.
+
+### Azure Private Link Service for SQL Server
+
+If you connect to SQL Server through a customer-managed Azure Private Link Service (PLS), use the `host` value returned by `SYSTEM$GET_PRIVATELINK_ENDPOINTS_INFO()` as the hostname in **SQLServer Connection URL**. This is the logical hostname supplied when the Snowflake outbound private connectivity endpoint was provisioned. The PLS alias or resource ID identifies the Azure service during provisioning, but it isn’t the JDBC hostname.
+
+For example:
+
+- `jdbc:sqlserver://<host>:1433;databaseName=<db>`
+
+Add the same hostname and port to the Openflow egress network rule:
+
+Copy code
+
+```
+TYPE = PRIVATE_HOST_PORT
+MODE = EGRESS
+VALUE_LIST = ('<host>:1433')
+```
+
+Include the `:1433` port explicitly. For a `PRIVATE_HOST_PORT` network rule, if you don’t specify a port it defaults to 443, which doesn’t match the SQL Server listener.
+
+Snowflake routes this registered hostname through the outbound private endpoint. In Azure, configure the PLS and its Standard Load Balancer or Direct Connect destination so that the backend route, health probe, SQL Server listener, and port forwarding deliver traffic for the same port.
+
+This guidance applies to a customer-managed Azure PLS that fronts SQL Server. It doesn’t apply to a native Azure SQL Managed Instance private endpoint.
+
+To provision and approve the endpoint (`SYSTEM$PROVISION_PRIVATELINK_ENDPOINT` and the Azure-side approval), see [External network access and private connectivity on Microsoft Azure](/developer-guide/external-network-access/creating-using-private-azure) and [Private connectivity for outbound network traffic](/user-guide/private-connectivity-outbound).
 
 For `ApplicationIntent` in the JDBC URL on Always On Availability Groups:
 

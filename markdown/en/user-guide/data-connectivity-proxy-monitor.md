@@ -21,7 +21,7 @@ DESCRIBE DATA CONNECTIVITY PROXY "quoted_client_name";
 - `DOWN`: `AGENT_STATUS` isn’t `DCP_AGENT_LIFECYCLE_CONNECTED`, including a client that has never reported a status.
 - `HEALTHY`: the client is connected, bootstrap succeeded, certificate rotation isn’t failed, and the data path isn’t failed or in
   progress.
-- `DEGRADED`: the client is connected, but bootstrap isn’t confirmed success, or certificate rotation or the data path isn’t well.
+- `DEGRADED`: the client is connected, but bootstrap success isn’t confirmed, or certificate rotation or the data path isn’t healthy.
 
 An unreported data path doesn’t count as unhealthy. A certificate rotation in progress doesn’t demote health, because traffic still uses
 the current certificate. `LAST_HEARTBEAT_AT` is the last heartbeat timestamp; heartbeat is already folded into `AGENT_HEALTH`.

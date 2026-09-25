@@ -1,7 +1,7 @@
 # Load data into Snowflake
 
 Data can be loaded into Snowflake in a number of ways.
-The following topics provide an overview of data loading concepts, tasks, tools, and techniques to quick and easily load data into your Snowflake database.
+The following topics provide an overview of data loading concepts, tasks, tools, and techniques to quickly and easily load data into your Snowflake database.
 
 [Overview of data loading](/user-guide/data-load-overview)
 :   Options available to load data into Snowflake.

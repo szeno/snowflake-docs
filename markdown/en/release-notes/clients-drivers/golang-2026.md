@@ -181,7 +181,7 @@ See [Go Snowflake Driver](/developer-guide/golang/go-driver) for documentation.
 
 ### New features and updates
 
-- Added support for Go 1.26, and dropped support for Go 1.23.
+- Added support for Go 1.26 and dropped support for Go 1.23.
 - Added support for FIPS-only mode.
 
 ### Bug fixes

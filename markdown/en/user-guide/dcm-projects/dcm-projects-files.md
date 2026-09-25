@@ -312,7 +312,7 @@ differences:
 - The order and location of DEFINE statements don’t matter. Snowflake collects and sorts all statements from all definition
   files during project execution.
 - If you remove a DEFINE statement, Snowflake drops the corresponding object the next time you deploy the project.
-- Only a subset of Snowflake objects is supported. For details, see [Supported object types in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
+- Only a subset of Snowflake objects is supported. For details, see [Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
 - Qualify object names according to the object’s scope. Account-level objects use account-level identifiers, database-level objects use
   the appropriate two-part form, and schema-level objects use fully qualified three-part names in the format
   `database.schema.object_name`.

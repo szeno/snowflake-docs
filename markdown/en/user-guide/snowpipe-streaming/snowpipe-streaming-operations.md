@@ -76,16 +76,7 @@ A channel is invalid whenever `channel_status_code` isn’t `SUCCESS`. An invali
 
 ## Prometheus metrics and logging
 
-Enable Prometheus metrics on the SDK by setting the environment variable `SS_ENABLE_METRICS=true` before starting your application. The default endpoint is `/metrics` on port `50000`.
-
-Copy code
-
-```
-export SS_ENABLE_METRICS=true
-curl http://127.0.0.1:50000/metrics
-```
-
-For Prometheus scrape configuration and JVM heap-sizing guidance, see [Get Prometheus metrics](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-best-practices#get-prometheus-metrics).
+For metrics setup, Prometheus configuration, and client logging, see [Monitor SDK clients with Prometheus and logs](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-client-monitoring).
 
 ## Migrating from the classic architecture
 

@@ -7,11 +7,8 @@ Notebook Project Objects have been renamed to **Code Bundles**. The `NOTEBOOK PR
 Creates a notebook project object. A [notebook project object (NPO)](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule#label-nb-in-ws-schedule-npo) links a Snowsight workspace
 to a database and schema. When the NPO is created, all files from the workspace are copied into the project in the specified database and schema.
 The notebook project can then be executed using [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project).
-You can create a notebook project object from a stage or a private workspace.
-
-Note
-
-Creating notebook project objects from shared workspaces is not currently supported.
+You can create a notebook project object from an internal or temporary stage, a private workspace, or a shared
+workspace. External stages aren’t supported.
 
 See also:
 :   [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project), [SHOW NOTEBOOK PROJECTS](/sql-reference/sql/show-notebook-projects), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook)

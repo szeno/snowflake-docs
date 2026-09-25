@@ -101,7 +101,7 @@ Expand
 Show lessSee more
 
 Whichever tool you choose, confirm that it covers the object types you need. See
-[Supported object types in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities) for DCM Projects and the
+[Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities) for DCM Projects and the
 [provider documentation](https://registry.terraform.io/providers/snowflakedb/snowflake/latest/docs) for Terraform.
 
 Note

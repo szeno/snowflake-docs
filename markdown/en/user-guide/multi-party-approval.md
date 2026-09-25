@@ -342,7 +342,7 @@ Show lessSee more
 This example shows the end-to-end MPA workflow when a Requester attempts to activate
 Tri-Secret Secure customer-managed encryption keys.
 
-**Step 1 — Trigger the block (Requester)**
+**Step 1: Trigger the block (Requester)**
 
 The Requester attempts to activate the CMK. The engine intercepts the call and returns
 an `MPA_APPROVAL_REQUIRED` error containing a unique `request_id`:
@@ -366,7 +366,7 @@ SYSTEM$CAST_MULTI_PARTY_APPROVAL_VOTE('a1b2c3d4-e5f6-7890-abcd-ef1234567890',
 Request-ID: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890'
 ```
 
-**Step 2 — Submit justification (Requester)**
+**Step 2: Submit justification (Requester)**
 
 The Requester submits a business justification using the `request_id` from the error:
 
@@ -381,13 +381,13 @@ SELECT SYSTEM$UPDATE_MULTI_PARTY_APPROVAL_JUSTIFICATION(
 
 This transitions the request to `PENDING` and notifies the designated Approvers.
 
-**Step 3 — Review and approve (Approver)**
+**Step 3: Review and approve (Approver)**
 
 The Approver receives an email notification. They navigate to the Snowsight
 Requests & Approvals page, review the request and justification, and cast an Approve
 vote. Once the required quorum is reached, the request status changes to `APPROVED`.
 
-**Step 4 — Replay the statement (Requester)**
+**Step 4: Replay the statement (Requester)**
 
 The Requester is notified that the request is approved and replays the original
 statement. The engine matches it to the approved request and executes the change:
@@ -445,8 +445,8 @@ Show lessSee more
 
 ## Breakglass
 
-In emergencies where the standard approval workflow can’t be completed — for example,
+In emergencies where the standard approval workflow can’t be completed (for example,
 if all Approvers are unavailable, a misconfigured policy has locked out legitimate
 administrators, or a critical security incident requires immediate action that can’t
-wait for standard review — Snowflake Support can intervene. Breakglass actions require
+wait for standard review), Snowflake Support can intervene. Breakglass actions require
 a formal support ticket. Contact Snowflake Support to initiate a breakglass request.

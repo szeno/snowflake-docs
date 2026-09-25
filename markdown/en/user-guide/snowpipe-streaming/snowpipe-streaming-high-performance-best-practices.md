@@ -120,38 +120,7 @@ await channel.appendRow(row, "1");
 
 ## Get Prometheus metrics
 
-To get performance metrics from the Snowpipe Streaming high-performance client, you must enable the built-in Prometheus metrics server and configure your Prometheus service to scrape the endpoint.
-
-Enable the metrics server by setting the environment variable `SS_ENABLE_METRICS` to `true` before running your application.
-
-Scrape the metrics endpoint on the host that is running your Snowpipe Streaming ingest process. The default path is `/metrics` on the host and port defined by `SS_METRICS_IP` and `SS_METRICS_PORT`.
-
-### Example: Verifying the metrics endpoint (local process/dev box)
-
-Copy code
-
-```
-# Enable Prometheus metrics
-export SS_ENABLE_METRICS=true
-# Run your application (the server starts on 127.0.0.1:50000 by default)
-
-# Curl the endpoint to verify the metrics are exposed
-curl http://127.0.0.1:50000/metrics
-```
-
-### Example: Prometheus scrape configuration
-
-Point your Prometheus service at the host running the Snowpipe Streaming client.
-
-Copy code
-
-```
-scrape_configs:
-  - job_name: snowpipe_streaming_hp
-    metrics_path: /metrics   # default is /metrics
-    static_configs:
-      - targets: ['127.0.0.1:50000']
-```
+For metrics setup, Prometheus configuration, and client logging, see [Monitor SDK clients with Prometheus and logs](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-client-monitoring).
 
 ## Memory management on Linux and macOS
 

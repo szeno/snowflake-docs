@@ -309,8 +309,9 @@ To monitor the requests that use your semantic view, see [Monitor Cortex Agent r
 To allow other users or roles to use your semantic view, grant them the appropriate privileges. Semantic views support
 the standard Snowflake privilege model:
 
-- **SELECT**: Required to query the semantic view and view its contents.
-- **REFERENCES**: Required to use the semantic view with Cortex Agents and see its structure.
+- **SELECT**: Required to query the semantic view and view its contents. This privilege is sufficient to use the semantic
+  view with Cortex Agents.
+- **REFERENCES**: Enables viewing the semantic view’s structure without granting access to its data.
 - **OWNERSHIP**: Full control over the semantic view.
 
 To grant another role the privileges to view and query a semantic view:

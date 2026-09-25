@@ -282,6 +282,9 @@ CHECK ( <expr> )
     - Constant values.
     - [Scalar functions](/sql-reference/functions) that don’t rely on the environment or execution context.
 
+    An inline CHECK constraint can reference only the column it’s defined on. To enforce a condition that spans
+    multiple columns, define the constraint out of line.
+
     The expression can’t contain any of the following items:
 
     - User-defined functions (UDFs).
@@ -291,7 +294,10 @@ CHECK ( <expr> )
     - System-defined functions that rely on the environment or execution context, such as the CURRENT\_DATE
       function or the CURRENT\_ROLE function.
 
-    For more information, see [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check).
+    For [hybrid tables](/user-guide/tables-hybrid), you can specify a CHECK constraint only in a
+    [CREATE HYBRID TABLE](/sql-reference/sql/create-hybrid-table) statement, not in an ALTER TABLE … ADD CONSTRAINT statement.
+
+    For more information, see [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check) and [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
 
 ### Non-default values for ENABLE and VALIDATE properties
 

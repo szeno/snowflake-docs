@@ -41,6 +41,11 @@ replacing its live version in a single operation. A valid dbt project must conta
         type: snowflake
   ```
 
+When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the repository URL, commit, and branch in the dbt
+project object’s deployment metadata. For other CI runners, explicitly pass `--git-url`, `--git-commit`, and `--git-branch`. Use the
+repository’s web URL without a username, password, or access token. You can inspect this metadata in the `last_deployed_from` column
+returned by [SHOW DBT PROJECTS](/sql-reference/sql/show-dbt-projects) or [DESCRIBE DBT PROJECT](/sql-reference/sql/desc-dbt-project).
+
 The following examples illustrate how to use the `snow dbt deploy` command:
 
 Warning

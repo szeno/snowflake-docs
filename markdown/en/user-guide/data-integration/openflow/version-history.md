@@ -6,6 +6,19 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## September 24, 2026
+
+### Runtime Server 2026.9.24.2
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.9.24.2
+
+- CDC PostgreSQL: Passed each FlowFile through the merge step immediately so journal-table merge scheduling is controlled by the downstream merge processor instead of being delayed until a later cron invocation.
+- CDC Oracle: Added a client-side ROWID chunking strategy for read-only databases and very large bigfile tablespaces where Oracle’s parallel-execute chunking procedure cannot be used.
+- Schema evolution: When a removed non-nullable column is renamed, dropped the `NOT NULL` constraint so later inserts and merges don’t fail with `NULL result in a non-nullable column`.
+- CDC MySQL and PostgreSQL: Blocked gen 1 to gen 2 migration until Re-snapshot Table Exclusions is blank. Permanently excluded tables must be removed from Included Table Names or Included Table Regex.
+
 ## September 22, 2026
 
 ### Runtime Server 2026.9.22.16

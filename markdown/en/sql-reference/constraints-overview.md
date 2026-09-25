@@ -48,7 +48,7 @@ with respect to the enforcement of constraints and whether constraints are requi
 | FOREIGN KEY constraints | Optional, enforced (referential integrity) | Optional, not enforced |
 | UNIQUE constraints | Optional, enforced | Optional, not enforced |
 | NOT NULL constraints | Optional, enforced | Optional, enforced |
-| CHECK constraints | Not supported | Optional, enforced |
+| CHECK constraints | Optional, enforced; can be defined only at table creation | Optional, enforced |
 
 Expand
 
@@ -120,6 +120,7 @@ in the following SQL commands:
 
 - [CREATE TABLE](/sql-reference/sql/create-table)
 - [ALTER TABLE](/sql-reference/sql/alter-table)
+- [CREATE HYBRID TABLE](/sql-reference/sql/create-hybrid-table)
 - [CREATE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table)
 - [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table)
 
@@ -173,13 +174,18 @@ For examples of CHECK constraints, see [Examples of constraints with standard ta
     also references another column. In this case, delete the constraint before deleting the column.
 - If records violate a CHECK constraint during ingestion, the entire batch operation fails the first time
   it encounters a record that isn’t valid.
+- For [hybrid tables](/user-guide/tables-hybrid), you can define a CHECK constraint only when you create the table.
+  ALTER TABLE … ADD CONSTRAINT … CHECK and ALTER TABLE … ALTER CONSTRAINT aren’t supported on a hybrid table.
+  You can rename or drop an existing CHECK constraint on a hybrid table, but you can’t add it back afterward. For
+  more information, see [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
 
 ### Limitations
 
-- Only standard tables and Snowflake-managed Iceberg tables support CHECK constraints. Other types of tables,
-  such as hybrid tables, don’t support CHECK constraints.
+- Standard tables, hybrid tables, and Snowflake-managed Iceberg tables support CHECK constraints. Other types of
+  tables don’t support CHECK constraints.
 - The expression associated with an existing CHECK constraint can’t be modified using an ALTER TABLE command.
-  To modify the expression, drop and re-create the CHECK constraint.
+  To modify the expression, drop and re-create the CHECK constraint. On a hybrid table, you can’t re-create the
+  constraint on the existing table, so you must re-create the table.
 - CHECK constraints can’t be specified in CREATE OR ALTER TABLE commands.
 - The following operations don’t support CHECK constraints:
   - If you attempt to COPY INTO a table with CHECK constraints, the operation fails.

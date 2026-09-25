@@ -31,7 +31,7 @@ Snowflake base URL for REST endpoints
     https://<account_identifier>.snowflakecomputing.com
     ```
 
-    Where `account-identifier` is the [account identifier](/user-guide/admin-account-identifier) of your Snowflake account. You
+    Where `account_identifier` is the [account identifier](/user-guide/admin-account-identifier) of your Snowflake account. You
     can use either the account name format or the account locator format as your account identifier.
 
     For example, if your account identifier is `myorg-dev_account`, then the base URL of the external lineage

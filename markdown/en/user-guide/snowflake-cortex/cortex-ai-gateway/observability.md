@@ -208,8 +208,8 @@ Show lessSee more
 | `record_attributes:"gen_ai.request.model"` | The model requested. `unknown` when the model couldn’t be resolved. |
 | `record_attributes:"gen_ai.response.model"` | The model that served the response. Set on responses only. |
 | `record_attributes:"gen_ai.conversation.id"` | The conversation thread the turn belongs to, taken from the `x-snowflake-ai-gateway-conversation-id` header, or `x-claude-code-session-id` when that isn’t present. |
-| `record_attributes:"gen_ai.usage.input_tokens"`, `record_attributes:"gen_ai.usage.output_tokens"` | Input and output tokens for the span. |
-| `record_attributes:"gen_ai.usage.cache_creation.input_tokens"`, `record_attributes:"gen_ai.usage.cache_read.input_tokens"` | Prompt cache write and read tokens. Populated intermittently. |
+| `record_attributes:"gen_ai.usage.input_tokens"`, `record_attributes:"gen_ai.usage.output_tokens"` | Total input tokens, including cached input tokens, and total output tokens for the span. |
+| `record_attributes:"gen_ai.usage.cache_creation.input_tokens"`, `record_attributes:"gen_ai.usage.cache_read.input_tokens"` | Prompt cache write and read tokens. These counts are subsets of `gen_ai.usage.input_tokens`, not additional tokens. Populated intermittently. |
 | `record_attributes:"gen_ai.request.max_tokens"` | The `max_tokens` value sent with the request. |
 | `record_attributes:"gen_ai.request.temperature"`, `record_attributes:"gen_ai.request.seed"` | Sampling parameters, set only when the caller sends them. `seed` applies to OpenAI Chat Completions only. |
 | `record_attributes:"gen_ai.output.type"` | The output type, `text`. Unset for reasoning-only responses. |
@@ -220,6 +220,11 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+Don’t add the cache counts to `gen_ai.usage.input_tokens`, because doing so counts those tokens twice.
+Calculate non-cached input as `input tokens - cache read input tokens - cache write input tokens`.
+
+For credits consumed, see [AI\_GATEWAY\_USAGE\_HISTORY view](/sql-reference/account-usage/ai_gateway_usage_history).
 
 ### HTTP
 

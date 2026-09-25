@@ -664,7 +664,6 @@ include:
   - component: $CI_SERVER_FQDN/snowflake-dev/snowflake-cicd-component/configure-snowflake-cli@1.1.0
     inputs:
       use-oidc: true
-      cli-version: "3.16"
       template-only: true
 
 stages:
@@ -690,6 +689,7 @@ ci-test-dbt:
       snow dbt deploy tester_tasty_bytes_dbt_project_object_gitlab
       --source ./tasty_bytes
       --dbt-version 1.11.11
+      --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
       -x
@@ -743,6 +743,7 @@ steps:
       snow dbt deploy tester_tasty_bytes_dbt_project_object_ado \
         --source ./tasty_bytes \
         --dbt-version 1.11.11 \
+        --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(System.PullRequest.SourceBranch)" \
         -x
@@ -764,9 +765,15 @@ steps:
 
 In Azure DevOps, go to **Pipelines** » **New pipeline**, select your repository, and point it to this YAML file.
 
-When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the commit and branch. The GitLab and
-Azure DevOps workflows must explicitly pass `--git-commit` and `--git-branch`. These flags record the source commit and
-branch in the dbt project object’s deployment metadata.
+When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the repository URL, commit, and branch. The GitLab and
+Azure DevOps workflows must explicitly pass `--git-url`, `--git-commit`, and `--git-branch`. These flags record the source repository, commit,
+and branch in the dbt project object’s deployment metadata.
+
+Use these CI-provided values for the repository URL:
+
+- **GitLab CI/CD:** Use `$CI_PROJECT_URL`, for example, `https://gitlab.com/acme/my-dbt-project`. Don’t use `$CI_REPOSITORY_URL`, which can
+  contain a temporary job token.
+- **Azure DevOps:** Use `$(Build.Repository.Uri)`, for example, `https://dev.azure.com/acme/data/_git/my-dbt-project`.
 
 ### Key pieces from the workflow file
 
@@ -894,6 +901,7 @@ cd-deploy-dbt:
       --source ./tasty_bytes
       --default-target prod
       --dbt-version 1.11.11
+      --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
       -x
@@ -949,6 +957,7 @@ steps:
         --source ./tasty_bytes \
         --default-target prod \
         --dbt-version 1.11.11 \
+        --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(Build.SourceBranchName)" \
         -x

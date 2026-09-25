@@ -287,6 +287,17 @@ Note
 If the query history DAG shows “No data available,” the run likely failed before `run_results.json` could be generated.
 For more information, see [Limitations for the query history DAG](/user-guide/data-engineering/dbt-projects-on-snowflake-limitations#label-dbt-limitations-query-history-dag).
 
+## Inspect deployment metadata
+
+Use [SHOW DBT PROJECTS](/sql-reference/sql/show-dbt-projects) or [DESCRIBE DBT PROJECT](/sql-reference/sql/desc-dbt-project) to inspect the `last_deployed_from` column for a dbt
+project object. It describes the most recent deployment and can contain `git_url` or `stage_url`, `git_commit`, `git_branch`, `user`, and
+`timestamp` fields. It returns `NULL` when no deployment metadata was recorded.
+
+When you deploy with [snow dbt deploy](/developer-guide/snowflake-cli/command-reference/dbt-commands/deploy) in GitHub Actions, Snowflake CLI
+automatically captures the repository URL, commit, and branch. For other CI runners, explicitly pass `--git-url`, `--git-commit`, and
+`--git-branch`. Use the repository’s web URL without a username, password, or access token because Snowflake stores the URL in deployment
+metadata.
+
 ## Access dbt artifacts and logs programmatically
 
 Use the [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/functions/dbt_project_execution_history) table function and the following system functions to access dbt artifacts and logs programmatically.

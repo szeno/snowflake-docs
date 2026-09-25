@@ -44,7 +44,7 @@ The output of the command includes the following columns, which describe the pro
 | `external_access_integrations` | The name of the external access integrations the dbt project object is permitted to use to pull remote dependencies from dbt package hub or GitHub. |
 | `default_writeback` | Whether executions write generated target and log files back to the live version by default. |
 | `auto_compile` | Whether Snowflake compiles the project after deployment. |
-| `last_deployed_from` | An OBJECT that describes the source of the most recent deployment. Depending on the source, it can contain `stage_url`, `git_commit`, `git_branch`, `user`, and `timestamp` fields. Returns `NULL` when no deployment metadata was recorded. |
+| `last_deployed_from` | An OBJECT that describes the source of the most recent deployment. Depending on the source, it can contain `git_url` or `stage_url`, `git_commit`, `git_branch`, `user`, and `timestamp` fields. Returns `NULL` when no deployment metadata was recorded. |
 
 Expand
 
@@ -115,5 +115,5 @@ The following output shows the live-version and deployment columns:
 ```
 | name           | default_version | default_version_location_uri                             | default_writeback | auto_compile | last_deployed_from                                                                                                                   |
 |----------------|-----------------|----------------------------------------------------------|-------------------|--------------|--------------------------------------------------------------------------------------------------------------------------------------|
-| my_dbt_project | LIVE            | snow://dbt/MY_DB.MY_SCHEMA.my_dbt_project/versions/live/ | true              | true         | {"stage_url":"@MY_DB.MY_SCHEMA.DBT_PROJECT_STAGE","git_commit":"abc123","git_branch":"main","user":"DBT_CI","timestamp":"..."}          |
+| my_dbt_project | LIVE            | snow://dbt/MY_DB.MY_SCHEMA.my_dbt_project/versions/live/ | true              | true         | {"git_url":"https://github.com/example/my_dbt_project","git_commit":"abc123","git_branch":"main","user":"DBT_CI","timestamp":"..."}     |
 ```

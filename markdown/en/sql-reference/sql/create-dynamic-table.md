@@ -99,9 +99,10 @@ CREATE OR ALTER [ TRANSIENT ] DYNAMIC TABLE <name> (
 ```
 
 Creates a dynamic table if it doesn’t exist, or alters it according to the dynamic table
-definition. The CREATE OR ALTER DYNAMIC TABLE syntax follows the rules of a
-[CREATE DYNAMIC TABLE](/sql-reference/sql/create-dynamic-table) statement and has the same limitations as
-an [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table) statement.
+definition. `CREATE OR ALTER DYNAMIC TABLE` follows `CREATE DYNAMIC TABLE` syntax. It can change
+many properties of an existing table, but it doesn’t support operations such as
+`SUSPEND`, `RESUME`, `RENAME TO`, `SWAP WITH`, and `CLONE`. For those operations, see
+[Limitations of CREATE OR ALTER DYNAMIC TABLE](#label-create-or-alter-dt-limitations).
 
 For more information, see [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
 
@@ -878,18 +879,16 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## CREATE OR ALTER DYNAMIC TABLE usage notes
 
-- All limitations of the [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table) command apply.
+### Limitations of CREATE OR ALTER DYNAMIC TABLE
 
-### Limitations
-
-The following limitations apply specifically to the `CREATE OR ALTER DYNAMIC TABLE` variant. They don’t apply to [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table).
+The following limitations apply specifically to the `CREATE OR ALTER DYNAMIC TABLE` variant.
 
 The following actions *aren’t* supported:
 
-> - Swapping dynamic tables by using the SWAP WITH parameter.
-> - Renaming a dynamic table by using the RENAME TO parameter.
-> - Creating a clone of a dynamic table by using the CLONE parameter.
-> - Suspending or resuming by using the SUSPEND and RESUME parameters. (Use [ALTER DYNAMIC TABLE … SUSPEND | RESUME](/sql-reference/sql/alter-dynamic-table) instead.)
+> - Swapping two dynamic tables. Use [ALTER DYNAMIC TABLE … SWAP WITH](/sql-reference/sql/alter-dynamic-table#label-alter-dynamic-table-swap) instead.
+> - Renaming a dynamic table. Use [ALTER DYNAMIC TABLE … RENAME TO](/sql-reference/sql/alter-dynamic-table#label-alter-dynamic-table-rename-to) instead.
+> - Cloning a dynamic table. Use [CREATE DYNAMIC TABLE … CLONE](#label-create-dt-clone-syntax) instead.
+> - Suspending or resuming a dynamic table. Use [ALTER DYNAMIC TABLE … SUSPEND | RESUME](/sql-reference/sql/alter-dynamic-table#label-alter-dynamic-table-suspend-resume) instead.
 > - Converting a TRANSIENT dynamic table into a non-TRANSIENT dynamic table, or vice versa.
 > - Adding or changing tags, policies, and data metric functions. Any existing tags, policies, and data metric functions are preserved.
 >   To add or modify these, use [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table).

@@ -45,6 +45,11 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
+- [Sep 24, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-24-dcr)
+- [Sep 24, 2026: CHECK constraints on hybrid tables (General availability)](/release-notes/2026/other/2026-09-24-hybrid-tables-check-constraints-ga)
+- [Sep 24, 2026: Snowpipe Streaming: Event table monitoring](/release-notes/2026/other/2026-09-24-snowpipe-streaming-monitoring)
+- [Sep 24, 2026: Snowpipe Streaming: Partitioned Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-09-24-snowpipe-streaming-partitioned-iceberg-ga)
+- [Sep 24, 2026: VALUES clause is supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-24-values-clause-incremental-dynamic-tables)
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
@@ -132,9 +137,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Aug 25, 2026: Remote Development with the Snowflake Extension for Visual Studio Code (Preview)](/release-notes/2026/other/2026-08-25-remote-development-vscode-preview)
 - [August 25, 2026: Stable egress IP addresses on Azure (Preview)](/release-notes/2026/other/2026-08-25-stable-egress-ip-azure-preview)
 - [Ingest Java SDK (v4.4.4)](/release-notes/clients-drivers/ingest-java-sdk-2026)
-- [Aug 24, 2026: CoCo Desktop v1.21.1](/release-notes/2026/other/2026-08-24-coco-desktop-v1-21-1)
-- [Aug 24, 2026: Improved data freshness for ORGANIZATION\_USAGE premium views](/release-notes/2026/other/2026-08-24-organization-usage-premium-views-latency)
-- [Snowflake CLI (v3.25.0)](/release-notes/clients-drivers/snowflake-cli-2026)
-- [Snowflake ML Python (v1.53.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

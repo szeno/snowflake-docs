@@ -2,7 +2,7 @@
 
 A *storage lifecycle policy* is a schema-level object that automatically manages the data lifecycle for
 standard, interactive, and dynamic Snowflake tables.
-Use these policies to archive or expire specific table rows that are based on conditions that you define, such as data age or other criteria.
+Use these policies to archive or expire specific table rows based on conditions that you define, such as data age or other criteria.
 Snowflake automatically executes these policies daily by using shared compute resources.
 
 ## How storage lifecycle policies work
@@ -58,7 +58,7 @@ Snowflake supports archiving data in the following storage tiers:
 | Archive tier | Description |
 | --- | --- |
 | COOL | Offers fast retrieval time, so data is readily available. The minimum archival period is 90 days. |
-| COLD | Offers greater cost savings than the COOL tier; it is four times less expensive. The minimum archival period is 180 days. Compared to the COOL tier, COLD has a longer data retrieval time, which is up to 48 hours. Data retrieval operations from the COLD storage tier support a maximum of 1 million files per restore operation. |
+| COLD | Offers greater cost savings than the COOL tier; it is one-fourth the cost. The minimum archival period is 180 days. Compared to the COOL tier, COLD has a longer data retrieval time, which is up to 48 hours. Data retrieval operations from the COLD storage tier support a maximum of 1 million files per restore operation. |
 
 Expand
 

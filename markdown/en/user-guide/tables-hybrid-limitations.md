@@ -62,13 +62,19 @@ Consistency
     might incur some latency overhead of a few milliseconds.
 
 Constraints
-:   PRIMARY KEY, UNIQUE, and FOREIGN KEY constraints are enforced for hybrid tables, but some limitations apply.
+:   PRIMARY KEY, UNIQUE, FOREIGN KEY, and CHECK constraints are enforced for hybrid tables, but some limitations apply.
+    In particular, you can define a CHECK constraint only when you create the table, and you can’t use
+    [COPY INTO <table>](/sql-reference/sql/copy-into-table) to load a hybrid table that has a CHECK constraint.
     For information, see [Constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-notes-on-constraints).
 
 COPY
 :   When you load a hybrid table with the COPY INTO command, `ABORT_STATEMENT` is the only option that is
     supported for `ON_ERROR`. Setting `ON_ERROR=SKIP_FILE` returns an error. For
     more information, see [Loading data](/user-guide/tables-hybrid-create#label-create-loading-data).
+
+    You can’t use COPY INTO to load a hybrid table that has a CHECK constraint. The operation fails. To load data into
+    such a table, use [INSERT](/sql-reference/sql/insert) or
+    [CREATE HYBRID TABLE … AS SELECT](/sql-reference/sql/create-hybrid-table#label-create-hybrid-table-as).
 
 Data size
 :   You are limited to storing 2 TB of data in hybrid tables per Snowflake database.

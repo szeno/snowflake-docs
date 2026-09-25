@@ -36,7 +36,13 @@ If your account contributed multiple resource types, you see the union of all ap
 
 ## How to view activity history
 
-To view activity history for a collaboration, call
+You can view activity history in Snowsight or by calling the Collaboration API.
+
+In Snowsight, the **Activity** tab on the Snowflake Data Clean Rooms page lets you browse,
+filter, and sort a collaboration’s activity and inspect the details of any run. For more information, see
+[View collaboration activity in Snowsight](/user-guide/cleanrooms/collab-ui-activity).
+
+To view activity history with the Collaboration API, call
 [VIEW\_ACTIVITY\_HISTORY](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-view-activity-history-reference) with the collaboration name.
 
 ### Basic query
@@ -126,5 +132,6 @@ For container-level log output (stdout/stderr from the job script), see
 
 ## Related topics
 
-- [VIEW\_ACTIVITY\_HISTORY](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-view-activity-history-reference) — Stored procedure API reference.
-- [Managing access to collaborations, resources, and data](/user-guide/cleanrooms/manage-access) — Granting privileges on a collaboration.
+- [VIEW\_ACTIVITY\_HISTORY](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-view-activity-history-reference): Stored procedure API reference.
+- [View collaboration activity in Snowsight](/user-guide/cleanrooms/collab-ui-activity): Viewing activity in Snowsight.
+- [Managing access to collaborations, resources, and data](/user-guide/cleanrooms/manage-access): Granting privileges on a collaboration.

@@ -159,8 +159,8 @@ For more information about the privileges supported for each object type, see [A
     - `FUNCTION`
     - `GATEWAY`
     - `GIT REPOSITORY`
-    - `IMAGE REPOSITORY`
     - `ICEBERG TABLE`
+    - `IMAGE REPOSITORY`
     - `INTERACTIVE TABLE`
     - `JOIN POLICY`
     - `MASKING POLICY`
@@ -181,9 +181,9 @@ For more information about the privileges supported for each object type, see [A
     - `ROW ACCESS POLICY`
     - `SECRET`
     - `SEMANTIC VIEW`
+    - `SEQUENCE`
     - `SERVICE`
     - `SESSION POLICY`
-    - `SEQUENCE`
     - `SNAPSHOT`
     - `SNAPSHOT POLICY`
     - `SNAPSHOT SET`

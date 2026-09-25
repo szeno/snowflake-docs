@@ -16,7 +16,7 @@ This release includes the following capabilities:
   for deploy and remote-build configuration, including named
   [targets](/developer-guide/snowflake-app-runtime/deploy-targets) and
   [personal databases](/user-guide/personal-databases).
-- Query Snowflake as the service or as the signed-in user. See
+- Querying Snowflake as the service or as the signed-in user. See
   [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
 - SQL commands for Application Services and artifact repositories. See
   [Snowflake Apps SQL commands](/sql-reference/commands-snowflake-apps).

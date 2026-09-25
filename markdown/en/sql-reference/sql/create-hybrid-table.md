@@ -69,7 +69,11 @@ Where:
 > ```
 > inlineConstraint ::=
 >   [ CONSTRAINT <constraint_name> ]
->   { UNIQUE | PRIMARY KEY | { [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] } }
+>   { UNIQUE
+>     | PRIMARY KEY
+>     | { [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ] }
+>     | CHECK ( <expr> )
+>   }
 >   [ <constraint_properties> ]
 >
 > outoflineConstraint ::=
@@ -78,6 +82,7 @@ Where:
 >     | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ]
 >     | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ]
 >       REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ]
+>     | CHECK ( <expr> )
 >   }
 >   [ <constraint_properties> ]
 >   [ COMMENT '<string_literal>' ]
@@ -175,8 +180,9 @@ Where:
     - For performance-sensitive workloads, `NOORDER` is the recommended option for `AUTOINCREMENT` columns.
 
 `CONSTRAINT ...`
-:   Defines an inline or out-of-line constraint for the specified column(s) in the table. UNIQUE and FOREIGN KEY constraints
-    are optional for hybrid table columns. See also [Constraints for hybrid tables](#label-hybrid-table-notes-on-constraints).
+:   Defines an inline or out-of-line constraint for the specified column(s) in the table. UNIQUE, FOREIGN KEY, and CHECK
+    constraints are optional for hybrid table columns. See also [Constraints for hybrid tables](#label-hybrid-table-notes-on-constraints) and
+    [CHECK constraints](#label-hybrid-table-check-constraints).
 
     For complete syntax details, see [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint). For general information about constraints, see
     [Constraints](/sql-reference/constraints).
@@ -283,15 +289,19 @@ The following rules apply to constraints that are defined on hybrid tables.
     CONSTRAINT pkey_1 PRIMARY KEY (col1, col2)
     );
   ```
-- PRIMARY KEY, UNIQUE, and FOREIGN KEY constraints are all enforced on hybrid tables, and you cannot set the NOT ENFORCED
-  property on these constraints.
+- PRIMARY KEY, UNIQUE, FOREIGN KEY, and CHECK constraints are all enforced on hybrid tables. Setting the NOT ENFORCED
+  property on a PRIMARY KEY, UNIQUE, or FOREIGN KEY constraint returns an error. A CHECK constraint accepts
+  NOT ENFORCED without returning an error, but Snowflake then creates no constraint at all rather than an unenforced
+  one, so don’t use NOT ENFORCED to define an advisory CHECK constraint.
 - PRIMARY KEY, UNIQUE, and FOREIGN KEY constraints build their own underlying indexes. The creation of indexes results in
   additional data being stored. Secondary (or covering) indexes can also be defined explicitly when the table is created,
   using the `outoflineIndex` syntax.
 - Constraints are enforced at the row level, not at the statement or transaction level (that is, deferred constraints).
-- A PRIMARY KEY constraint can be defined only when the table is created. You can add and drop UNIQUE and
-  FOREIGN KEY constraints on an existing hybrid table by using [ALTER TABLE](/sql-reference/sql/alter-table). For more information,
-  see [Add and drop constraints on an existing hybrid table](#label-hybrid-table-online-constraints).
+- PRIMARY KEY and CHECK constraints can be defined only when the table is created. You can add and drop UNIQUE and
+  FOREIGN KEY constraints on an existing hybrid table by using [ALTER TABLE](/sql-reference/sql/alter-table). For more
+  information, see [Add and drop constraints on an existing hybrid table](#label-hybrid-table-online-constraints).
+- CHECK constraints are enforced on every write. You can rename or drop a CHECK constraint on an existing hybrid
+  table, but you can’t add one. For more information, see [CHECK constraints](#label-hybrid-table-check-constraints).
 - You cannot alter a column to be UNIQUE. To add a UNIQUE constraint to an existing hybrid table, use the out-of-line
   ALTER TABLE … ADD CONSTRAINT syntax.
 
@@ -306,6 +316,63 @@ The following rules apply specifically to FOREIGN KEY constraints:
 - FOREIGN KEY constraints do not support deferrable behavior.
 - FOREIGN KEY constraints only support [RESTRICT and NO ACTION properties](/sql-reference/sql/create-table-constraint#label-properties-fk-constraints-only)
   for DELETE and UPDATE operations.
+
+### CHECK constraints
+
+A CHECK constraint enforces a SQL expression as a condition on the values that can be inserted into or updated in one
+or more columns. Hybrid tables enforce CHECK constraints on every write, the same way standard tables do. For general
+information about the constraint and its expression rules, see [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check).
+
+The following rules are specific to hybrid tables:
+
+- You can define a CHECK constraint only when you create the table. Every form of CREATE HYBRID TABLE supports the
+  constraint, including [CREATE HYBRID TABLE … AS SELECT (CTAS)](#label-create-hybrid-table-as) and [CREATE HYBRID TABLE … LIKE](#label-create-hybrid-table-like). Adding a CHECK
+  constraint to an existing hybrid table with ALTER TABLE … ADD CONSTRAINT isn’t supported.
+- You can rename or drop an existing CHECK constraint with
+  [ALTER TABLE … RENAME CONSTRAINT or ALTER TABLE … DROP CONSTRAINT](/sql-reference/sql/alter-table). Because you
+  can’t add a CHECK constraint to an existing hybrid table, dropping one is permanent. To restore the constraint, you
+  must re-create the table.
+- ALTER TABLE … ALTER CONSTRAINT isn’t supported for a CHECK constraint on a hybrid table, so you can’t change the
+  constraint to VALIDATE or NOVALIDATE after you create the table.
+- You can’t use [COPY INTO <table>](/sql-reference/sql/copy-into-table) to load a hybrid table that has a CHECK constraint. The
+  operation fails. Load the table with [INSERT](/sql-reference/sql/insert) or CREATE HYBRID TABLE … AS SELECT instead.
+
+As with standard tables, an inline CHECK constraint can reference only the column it’s defined on. Define the
+constraint out of line to enforce a condition that spans multiple columns.
+
+The following example defines an inline CHECK constraint on a single column and a named out-of-line CHECK constraint
+that spans two columns:
+
+Copy code
+
+```
+CREATE OR REPLACE HYBRID TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  quantity INTEGER CHECK (quantity > 0),
+  list_price NUMBER(10,2),
+  sale_price NUMBER(10,2),
+  CONSTRAINT check_sale_price CHECK (sale_price <= list_price)
+  );
+```
+
+An INSERT, UPDATE, or MERGE statement that violates either constraint fails, and the row isn’t written:
+
+Copy code
+
+```
+INSERT INTO orders VALUES (1, 5, 100.00, 150.00);
+```
+
+Because `sale_price` is greater than `list_price`, the statement violates the out-of-line constraint and returns an
+error that identifies the constraint by name:
+
+```
+Operation on table ORDERS failed because CHECK constraint CHECK_SALE_PRICE,
+which requires that sale_price <= list_price, was violated
+```
+
+If you don’t name a constraint, Snowflake generates a name for it, and the error message reports that generated name
+instead. Naming your CHECK constraints makes these errors easier to interpret.
 
 ### Add and drop constraints on an existing hybrid table
 
@@ -457,7 +524,7 @@ Creates a new hybrid table that contains the results of a query:
 >
 > - Column definitions
 > - A PRIMARY KEY constraint
-> - Other constraints, as needed (UNIQUE, NOT NULL, FOREIGN KEY)
+> - Other constraints, as needed (UNIQUE, NOT NULL, FOREIGN KEY, CHECK)
 > - Secondary indexes (and any INCLUDE columns)
 >
 > The schema of the new hybrid table can’t be inferred from a SELECT statement.

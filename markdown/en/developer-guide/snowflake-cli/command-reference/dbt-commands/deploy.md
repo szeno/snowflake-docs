@@ -17,6 +17,7 @@ snow dbt deploy
   --profiles-dir <profiles_dir>
   --auto-compile / --no-auto-compile
   --default-writeback / --no-default-writeback
+  --git-url <git_url>
   --git-commit <git_commit>
   --git-branch <git_branch>
   --force / --no-force
@@ -27,8 +28,6 @@ snow dbt deploy
   --default-env <default_env>
   --install-local-deps
   --dbt-version <dbt_version>
-  --git-commit <git_commit>
-  --git-branch <git_branch>
   --connection <connection>
   --host <host>
   --port <port>
@@ -92,11 +91,15 @@ snow dbt deploy
     For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
     Default: True.
 
+`--git-url TEXT`
+:   Git repository URL to record in the dbt project object’s deployment metadata.
+
+    Snowflake CLI captures the repository URL, commit, and branch automatically when `snow dbt deploy` runs in GitHub Actions. For other CI
+    runners, specify `--git-url`, `--git-commit`, and `--git-branch`. Use the repository’s web URL, not a clone URL that contains a
+    username, password, or access token. Snowflake stores this value in deployment metadata.
+
 `--git-commit TEXT`
 :   Git commit identifier to record in the dbt project object’s deployment metadata.
-
-    Snowflake CLI captures the commit and branch automatically when `snow dbt deploy` runs in GitHub Actions. For other CI
-    runners, specify `--git-commit` and `--git-branch`.
 
 `--git-branch TEXT`
 :   Git branch name to record in the dbt project object’s deployment metadata.
@@ -124,12 +127,6 @@ snow dbt deploy
 
 `--dbt-version TEXT`
 :   dbt version to use for the project, for example ’1.11.11’. Full list of supported versions can be found at <https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions>.
-
-`--git-commit TEXT`
-:   Git commit hash to record in last\_deployed\_from metadata when deploying from a plain stage (e.g. SnowCLI temp stage). In GitHub Actions it is auto-detected when not provided.
-
-`--git-branch TEXT`
-:   Git branch name to record in last\_deployed\_from metadata when deploying from a plain stage (e.g. SnowCLI temp stage). In GitHub Actions it is auto-detected when not provided.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your *config.toml* file. Default: *default*.
@@ -265,7 +262,7 @@ The `snow dbt deploy` command uploads local files to a temporary stage and eithe
         type: snowflake
   ```
 
-When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the commit and branch. For other CI runners, explicitly pass `--git-commit` and `--git-branch` to preserve this source metadata.
+When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the repository URL, commit, and branch. For other CI runners, explicitly pass `--git-url`, `--git-commit`, and `--git-branch` to preserve this source metadata.
 
 Warning
 
@@ -288,13 +285,14 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
   ```
   snow dbt deploy jaffle_shop --no-auto-compile
   ```
-- Deploy from a CI runner and record the source commit and branch. Snowflake CLI captures this information automatically when
+- Deploy from a CI runner and record the source repository, commit, and branch. Snowflake CLI captures this information automatically when
   deploying from GitHub Actions:
 
   Copy code
 
   ```
   snow dbt deploy jaffle_shop \
+    --git-url "https://example.com/my-org/jaffle-shop" \
     --git-commit "<commit_sha>" \
     --git-branch "<branch_name>"
   ```

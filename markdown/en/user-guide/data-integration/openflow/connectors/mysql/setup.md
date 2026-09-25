@@ -259,6 +259,10 @@ CREATE SECRET <openflow_db>.<openflow_schema>.<secret_name>
 GRANT READ ON SECRET <openflow_db>.<openflow_schema>.<secret_name> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
 ```
 
+You can also source the secret value from an external secret provider, such as AWS Secrets Manager, Azure Key Vault,
+or Google Cloud Secret Manager. For more information, see
+[Use external secret providers with Openflow](/user-guide/data-integration/openflow/security/external-secret-providers).
+
 If the execute-as role doesn’t already have `USAGE` on the infrastructure database and schema
 (for example, if you deviated from the recommended setup path), grant it:
 

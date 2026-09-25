@@ -297,9 +297,9 @@ call it until end-of-life; accounts that had not used it can’t start.
 
 Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 
-| Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region) | Azure EU (Cross-Region) |
+| Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `claude-opus-5-5` | \* |  | \* |  |  |  | \* |  | \* | \* |  |  |  |  |
+| `claude-opus-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-8` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-7` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
@@ -317,7 +317,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `openai-1p-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-1p-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.4` | \* |  |  |  |  |  |  |  |  |  | \* | \* |  | \* |
+| `openai-gpt-5.4` | \* |  |  | \* | \* | \* |  |  |  |  | \* | \* | † | \* |
 | `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
 | `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
 | `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
@@ -331,6 +331,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `deepseek-v4-flash` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `deepseek-r1` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `glm-5.3` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `kimi-k3` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-7b` | ✔ | ✔ |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |
 | `mistral-large` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-large2` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
@@ -385,6 +386,8 @@ Show lessSee more
 \* Indicates a public preview function or model. Public preview features aren’t suitable for production workloads.
 
 \*\* Indicates a private preview model. Private preview models are available only to accounts that Snowflake has explicitly enabled, and they aren’t suitable for production workloads.
+
+† Models are available to Azure US FedRAMP High Plus accounts through cross-region inference with processing on AWS in the United States. See [US FedRAMP High and DoD gov regions](/user-guide/snowflake-cortex/cross-region-inference#label-cortex-cross-region-fedramp-dod).
 
 You can also use any [fine-tuned](/user-guide/snowflake-cortex/cortex-finetuning) model in any supported region.
 

@@ -6,6 +6,11 @@ For more recent feature updates, see [Snowflake server release notes and feature
 
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
+- [Sep 24, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-24-dcr)
+- [Sep 24, 2026: CHECK constraints on hybrid tables (General availability)](/release-notes/2026/other/2026-09-24-hybrid-tables-check-constraints-ga)
+- [Sep 24, 2026: Snowpipe Streaming: Event table monitoring](/release-notes/2026/other/2026-09-24-snowpipe-streaming-monitoring)
+- [Sep 24, 2026: Snowpipe Streaming: Partitioned Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-09-24-snowpipe-streaming-partitioned-iceberg-ga)
+- [Sep 24, 2026: VALUES clause is supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-24-values-clause-incremental-dynamic-tables)
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)

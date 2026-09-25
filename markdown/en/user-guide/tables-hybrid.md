@@ -67,6 +67,7 @@ Hybrid tables provide some additional features that are not supported by other S
 | FOREIGN KEY constraints | Optional, enforced (referential integrity) | Optional, not enforced |
 | UNIQUE constraints | Optional (except for PRIMARY KEY), enforced | Optional, not enforced |
 | NOT NULL constraints | Optional (except for PRIMARY KEY), enforced | Optional, enforced |
+| CHECK constraints | Optional, enforced; can be defined only at table creation | Optional, enforced |
 | Indexes | Supported for performance; updated synchronously on writes | The search optimization service indexes columns for better point-lookup performance; batch updated/maintained asynchronously |
 
 Expand

@@ -12,6 +12,8 @@ The following capabilities are now generally available:
 - `DEFINE PIPE`
 - `DEFINE SHARE`
 - `DEFINE STREAM`
+- Inherited grants
+- Container-level `MANAGE GRANTS`
 
 ## Capabilities in preview
 
@@ -21,4 +23,4 @@ The following capabilities are now available in preview:
 - `DEFINE CODE BUNDLE`, which manages Code Bundles and their source files declaratively.
 - `DEFINE STREAMLIT`, which manages Streamlit apps, their infrastructure, and access control declaratively.
 
-For more information, see [Supported object types in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
+For more information, see [Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).

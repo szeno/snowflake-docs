@@ -17,6 +17,7 @@ to the secrets that its Snowflake role should read.
 For more information, see the following topics:
 
 - [External secret providers](/user-guide/external-secret-providers)
+- [Use external secret providers with Openflow](/user-guide/data-integration/openflow/security/external-secret-providers)
 - [CREATE SECURITY INTEGRATION (External secret provider)](/sql-reference/sql/create-security-integration-api-auth-external-secret-provider)
 - [ALTER SECURITY INTEGRATION (External secret provider)](/sql-reference/sql/alter-security-integration-api-auth-external-secret-provider)
 - [SYSTEM$VERIFY\_EXTERNAL\_SECRET\_INTEGRATION](/sql-reference/functions/system_verify_external_secret_integration)

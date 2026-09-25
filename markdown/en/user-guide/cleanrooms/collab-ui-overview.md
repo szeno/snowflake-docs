@@ -18,6 +18,7 @@ The Snowsight UI is organized into the following top-level tabs:
   collaborations.
 - **Data Offerings**: Create, register, and manage data offerings before adding them to
   collaborations.
+- **Activity**: Review the template runs in a collaboration.
 
 This separation lets developers build and manage templates and data offerings
 independently, so collaborators can then use those objects in their collaboration workflows.
@@ -99,3 +100,5 @@ The Snowsight UI for Snowflake Data Clean Rooms supports the following workflows
   inspect the analysis and activation templates registered in your account.
 - [Manage data offerings](/user-guide/cleanrooms/collab-ui-data-offerings): Browse, search,
   create, and inspect the data offerings registered in your account.
+- [View collaboration activity](/user-guide/cleanrooms/collab-ui-activity): Audit, filter, and
+  inspect the template runs in a collaboration.

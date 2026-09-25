@@ -629,7 +629,6 @@ include:
   - component: $CI_SERVER_FQDN/snowflake-dev/snowflake-cicd-component/configure-snowflake-cli@1.1.0
     inputs:
       use-oidc: true
-      cli-version: "3.16"
       template-only: true
 
 stages:
@@ -658,6 +657,7 @@ ci-test-dbt-slim-ci:
       --source ./tasty_bytes
       --no-auto-compile
       --dbt-version 1.11.11
+      --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
       -x
@@ -745,6 +745,7 @@ steps:
         --source ./tasty_bytes \
         --no-auto-compile \
         --dbt-version 1.11.11 \
+        --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(System.PullRequest.SourceBranch)" \
         -x
@@ -795,9 +796,15 @@ If you use PAT authentication, set `useWorkloadIdentity` to `false` and add `SNO
 mapping. For workload identity, keep the `SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)` map on every later `script:` step — the task stores the token
 as a secret, so Azure Pipelines does not inject it automatically.
 
-When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the commit and branch. The GitLab and
-Azure DevOps workflows must explicitly pass `--git-commit` and `--git-branch`. These flags record the source commit and
-branch in the dbt project object’s deployment metadata.
+When `snow dbt deploy` runs in GitHub Actions, Snowflake CLI automatically captures the repository URL, commit, and branch. The GitLab and
+Azure DevOps workflows must explicitly pass `--git-url`, `--git-commit`, and `--git-branch`. These flags record the source repository, commit,
+and branch in the dbt project object’s deployment metadata.
+
+Use these CI-provided values for the repository URL:
+
+- **GitLab CI/CD:** Use `$CI_PROJECT_URL`, for example, `https://gitlab.com/acme/my-dbt-project`. Don’t use `$CI_REPOSITORY_URL`, which can
+  contain a temporary job token.
+- **Azure DevOps:** Use `$(Build.Repository.Uri)`, for example, `https://dev.azure.com/acme/data/_git/my-dbt-project`.
 
 ### Key pieces from the workflow file
 
@@ -998,6 +1005,7 @@ cd-deploy-dbt-slim-ci:
       --default-target prod
       --no-auto-compile
       --dbt-version 1.11.11
+      --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
       -x
@@ -1054,6 +1062,7 @@ steps:
         --default-target prod \
         --no-auto-compile \
         --dbt-version 1.11.11 \
+        --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(Build.SourceBranchName)" \
         -x

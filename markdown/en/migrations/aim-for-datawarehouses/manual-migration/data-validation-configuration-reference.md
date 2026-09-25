@@ -8,17 +8,21 @@ If you use the Snowflake AIM Agent for Data Warehouses instead of hand-editing t
 
 For SnowConvert AI CLI commands that generate and submit validation workflows, see [Data validation](./data-validation).
 
+Note
+
+Property names in this file are **camelCase** (for example `sourcePlatform`, `fullyQualifiedName`, `validationConfiguration`). This is the format `scai data validate generate-config` produces and `scai data validate start` reads. Keys that don’t match — including snake\_case spellings such as `source_platform` — are **silently ignored**, which can leave a required value like `sourcePlatform` unset and stop the workflow from starting. When in doubt, generate the file with `scai data validate generate-config` and edit from there.
+
 ## Validation workflow file overview
 
 Validation is driven by a single YAML workflow file. Key sections:
 
 | Section | Purpose |
 | --- | --- |
-| `source_platform` / `target_platform` | Source dialect and target (defaults to Snowflake) |
-| `validation_configuration` | Global L1/L2/L3 toggles, thresholds, early stopping, accepted transformations |
-| `comparison_configuration` | Numeric `tolerance` and optional type mapping file |
+| `sourcePlatform` / `targetPlatform` | Source dialect and target (defaults to Snowflake) |
+| `validationConfiguration` | Global L1/L2/L3 toggles, thresholds, early stopping, accepted transformations |
+| `comparisonConfiguration` | Numeric `tolerance` and optional type mapping file |
 | `acceptedTransformations` | Global rules for expected source-to-target value pairs (optional) |
-| `database_mappings` / `schema_mappings` | Source-to-target name maps |
+| `databaseMappings` / `schemaMappings` | Source-to-target name maps |
 | `tables` | Tables to validate, with optional per-table overrides |
 | `views` | Same shape as `tables`, for view validation |
 | `objects` | Same shape as `tables`, with optional `objectType`; omitting the type triggers runtime detection |
@@ -31,21 +35,21 @@ Show lessSee more
 
 | Property | Type | Required | Description |
 | --- | --- | --- | --- |
-| `source_platform` | `String` | Yes | Source dialect: `sqlserver`, `redshift`, `teradata`, `oracle`, `postgresql`, or `snowflake`. |
-| `target_platform` | `String` |  | Defaults to `Snowflake`. |
-| `target_database` | `String` |  | Default target database for tables that don’t specify one. |
+| `sourcePlatform` | `String` | Yes | Source dialect: `sqlserver`, `redshift`, `teradata`, `oracle`, `postgresql`, or `snowflake`. |
+| `targetPlatform` | `String` |  | Defaults to `Snowflake`. |
+| `targetDatabase` | `String` |  | Default target database for tables that don’t specify one. |
 | `affinity` | `String` |  | Optional affinity tag that routes this workflow’s tasks to matching Workers. Same matching rules as migration; see [Affinity](./data-migration-configuration-reference#affinity). |
-| `validation_configuration` | `Object` |  | Global validation levels and options. |
-| `comparison_configuration` | `Object` |  | Numeric tolerance and optional type mapping file. |
+| `validationConfiguration` | `Object` |  | Global validation levels and options. |
+| `comparisonConfiguration` | `Object` |  | Numeric tolerance and optional type mapping file. |
 | `acceptedTransformations` | `Array` |  | Global accepted-transformation rules. Merged with per-table rules. |
-| `database_mappings` | `Object` |  | Map of source database names to Snowflake database names. |
-| `schema_mappings` | `Object` |  | Map of source schema names to Snowflake schema names. |
-| `tables` | `Array` | See note | Table entries to validate (each tagged `object_type = "TABLE"`). |
-| `views` | `Array` | See note | View entries using the same shape as `tables` (each tagged `object_type = "VIEW"`). |
+| `databaseMappings` | `Object` |  | Map of source database names to Snowflake database names. |
+| `schemaMappings` | `Object` |  | Map of source schema names to Snowflake schema names. |
+| `tables` | `Array` | See note | Table entries to validate (each tagged `objectType = "TABLE"`). |
+| `views` | `Array` | See note | View entries using the same shape as `tables` (each tagged `objectType = "VIEW"`). |
 | `objects` | `Array` | See note | Entries using the same shape as `tables`, plus an optional `objectType` (`TABLE` or `VIEW`). Omitting `objectType` resolves the type at runtime against the target Snowflake catalog. See [Objects with runtime type detection](#objects-with-runtime-type-detection). |
-| `target_partition_size_rows` | `Integer` |  | Desired rows per partition. Mutually exclusive with `target_partition_size_mb`. |
-| `target_partition_size_mb` | `Integer` |  | Desired MB per partition. Default is 200 MB when both are omitted. |
-| `use_snowpipe_for_results` | `Boolean` |  | When `true` (default), L2/L3 results from Worker-based workflows are ingested via Snowpipe. Snowflake-to-Snowflake workflows ignore this flag and never use Snowpipe. |
+| `targetPartitionSizeRows` | `Integer` |  | Desired rows per partition. Mutually exclusive with `targetPartitionSizeMb`. |
+| `targetPartitionSizeMb` | `Integer` |  | Desired MB per partition. Default is 200 MB when both are omitted. |
+| `useSnowpipeForResults` | `Boolean` |  | When `true` (default), L2/L3 results from Worker-based workflows are ingested via Snowpipe. Snowflake-to-Snowflake workflows ignore this flag and never use Snowpipe. |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints for source queries. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | How `INTERVAL` columns are compared. Defaults to `"interval"`, matching the target’s native interval type. See [INTERVAL data type handling](#interval-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Preferred, granular normalization overrides by data type, column, or column pattern. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
@@ -74,22 +78,22 @@ The top-level `objects` array is an alternative to `tables` and `views` that let
 
 ## Validation configuration
 
-When `validation_configuration` is omitted, defaults are: schema validation and metrics validation **enabled**; row validation **disabled**; when L3 is enabled, Worker-based workflows fingerprint each partition with MD5 row hashes and drill into individual cells on mismatches (Snowflake-to-Snowflake L3 uses SQL set-difference instead; see [Validating Data from Snowflake](../data-migration-validation/validate-snowflake)); `max_failed_rows_number` defaults to **1000**; `early_stopping_for_cell_by_cell_comparison` defaults to **`true`**; `early_stopping_for_row_hashing` defaults to **`false`**.
+When `validationConfiguration` is omitted, defaults are: schema validation and metrics validation **enabled**; row validation **disabled**; when L3 is enabled, Worker-based workflows fingerprint each partition with MD5 row hashes and drill into individual cells on mismatches (Snowflake-to-Snowflake L3 uses SQL set-difference instead; see [Validating Data from Snowflake](../data-migration-validation/validate-snowflake)); `maxFailedRowsNumber` defaults to **1000**; `earlyStoppingForCellByCellComparison` defaults to **`true`**; `earlyStoppingForRowHashing` defaults to **`false`**.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| `schema_validation` | `Boolean` | Level 1: schema and column consistency checks. |
-| `metrics_validation` | `Boolean` | Level 2: statistical metrics comparison. |
-| `row_validation` | `Boolean` | Level 3: row fingerprinting and cell drill-down on mismatches. |
-| `continue_on_failure` | `Boolean` | Whether to continue to the next validation level after a failure. |
-| `max_failed_rows_number` | `Integer` | Cap on failed rows reported for L3 per partition and early-stop threshold (default **1000**). |
-| `exclude_metrics` | `Boolean` | When `true`, skips overflow-prone L2 aggregates: `avg`, `sum`, and `stddev` (default `false`). |
-| `apply_metric_column_modifier` | `Boolean` | When `true` (default), applies a platform overflow guard to aggregate metrics such as `sum` and `avg`. |
-| `early_stopping_for_row_hashing` | `Boolean` | When `true`, stops remaining row-hash partitions once `max_failed_rows_number` mismatches are ingested (default `false`). |
-| `early_stopping_for_cell_by_cell_comparison` | `Boolean` | When `true`, stops remaining cell drill-down partitions once `max_failed_rows_number` mismatches are ingested (default `true`). |
-| `early_stop_check_interval_minutes` | `Integer` | Poll interval when either early-stop flag is enabled (default **5**). |
-| `early_stop_check_interval_seconds` | `Integer` | Alternative poll interval in seconds. Mutually exclusive with `early_stop_check_interval_minutes`. |
-| `text_comparison_mode` | `String` (`"logical"`, `"raw"`) | Teradata only. `"logical"` (default) normalizes text before comparing; `"raw"` compares source and target text byte-exact. |
+| `schemaValidation` | `Boolean` | Level 1: schema and column consistency checks. |
+| `metricsValidation` | `Boolean` | Level 2: statistical metrics comparison. |
+| `rowValidation` | `Boolean` | Level 3: row fingerprinting and cell drill-down on mismatches. |
+| `continueOnFailure` | `Boolean` | Whether to continue to the next validation level after a failure. |
+| `maxFailedRowsNumber` | `Integer` | Cap on failed rows reported for L3 per partition and early-stop threshold (default **1000**). |
+| `excludeMetrics` | `Boolean` | When `true`, skips overflow-prone L2 aggregates: `avg`, `sum`, and `stddev` (default `false`). |
+| `applyMetricColumnModifier` | `Boolean` | When `true` (default), applies a platform overflow guard to aggregate metrics such as `sum` and `avg`. |
+| `earlyStoppingForRowHashing` | `Boolean` | When `true`, stops remaining row-hash partitions once `maxFailedRowsNumber` mismatches are ingested (default `false`). |
+| `earlyStoppingForCellByCellComparison` | `Boolean` | When `true`, stops remaining cell drill-down partitions once `maxFailedRowsNumber` mismatches are ingested (default `true`). |
+| `earlyStopCheckIntervalMinutes` | `Integer` | Poll interval when either early-stop flag is enabled (default **5**). |
+| `earlyStopCheckIntervalSeconds` | `Integer` | Alternative poll interval in seconds. Mutually exclusive with `earlyStopCheckIntervalMinutes`. |
+| `textComparisonMode` | `String` (`"logical"`, `"raw"`) | Teradata only. `"logical"` (default) normalizes text before comparing; `"raw"` compares source and target text byte-exact. |
 | `acceptedTransformations` | `Array` | Rules merged with workflow-root and per-table rules. |
 
 Expand
@@ -100,7 +104,7 @@ Show lessSee more
 
 **Schema validation (L1)** compares table name, column names, ordinal position, data types, character length, numeric precision and scale, nullability, and row count. Results use `SUCCESS`, `WARNING` (treated as a pass), or `FAILURE`.
 
-**Metrics validation (L2)** compares row count, min, max, sum, average, null count, distinct count, standard deviation, and variance (metrics vary by column type). Numeric comparisons honor `comparison_configuration.tolerance` (default `0.001`). Results use `SUCCESS`, `WARNING`, or `FAILURE`.
+**Metrics validation (L2)** compares row count, min, max, sum, average, null count, distinct count, standard deviation, and variance (metrics vary by column type). Numeric comparisons honor `comparisonConfiguration.tolerance` (default `0.001`). Results use `SUCCESS`, `WARNING`, or `FAILURE`.
 
 **Row validation (L3)** on Worker-based (non-Snowflake) workflows fingerprints each partition with MD5 row hashes, then drills into individual cells on mismatches. Snowflake-to-Snowflake L3 compares rows with SQL set-difference in the warehouse. Row-level `RESULT` values include:
 
@@ -125,7 +129,7 @@ Task-level failures are recorded in `DATA_VALIDATION_ERROR`, distinct from row-l
 | Property | Type | Description |
 | --- | --- | --- |
 | `tolerance` | `Number` | Relative tolerance for L2 metric comparisons (default `0.001`, or 0.1%). |
-| `type_mapping_file_path` | `String` | Optional path to a custom type mapping file. |
+| `typeMappingFilePath` | `String` | Optional path to a custom type mapping file. |
 
 Expand
 
@@ -138,8 +142,8 @@ Accepted transformations allowlist specific source-to-target value pairs so AIM 
 Rules can appear at three levels (unioned per table):
 
 1. Workflow root (`acceptedTransformations`)
-2. Global `validation_configuration.acceptedTransformations`
-3. Per-table `acceptedTransformations` or nested `validation_configuration.acceptedTransformations`
+2. Global `validationConfiguration.acceptedTransformations`
+3. Per-table `acceptedTransformations` or nested `validationConfiguration.acceptedTransformations`
 
 Each rule object:
 
@@ -159,8 +163,8 @@ Example:
 Copy code
 
 ```
-validation_configuration:
-  row_validation: true
+validationConfiguration:
+  rowValidation: true
 acceptedTransformations:
   - column: status
     sourceValue: "ACTIVE"
@@ -169,7 +173,7 @@ acceptedTransformations:
     sourceValue: null
     targetValue: "false"
 tables:
-  - fully_qualified_name: MYDB.MYSCHEMA.MYTABLE
+  - fullyQualifiedName: MYDB.MYSCHEMA.MYTABLE
     acceptedTransformations:
       - column: code
         sourceValue: "Y"
@@ -184,45 +188,50 @@ Some per-entry properties accept more than one spelling. Use the documented came
 
 | Concept | Documented name | Also accepted |
 | --- | --- | --- |
-| Source row filter | `sourceWhereClause` | `whereClause` (legacy), `source_where_clause`, `where_clause` |
-| Target row filter | `targetWhereClause` | `target_where_clause` |
+| Source row filter | `sourceWhereClause` | `whereClause` (legacy) |
+| Target row filter | `targetWhereClause` | — |
 | L3 index columns (source) | `indexColumnList` | `index_column_list` |
 | L3 index columns (target) | `targetIndexColumnList` | `target_index_column_list` |
+| Partition columns | `columnNamesToPartitionBy` | `partitionColumn` (legacy, single column) |
+| Rows per partition | `targetPartitionSizeRows` | `targetRowsPerPartition` (legacy) |
+| MB per partition | `targetPartitionSizeMb` | `targetMbPerPartition` (legacy) |
 
 Expand
 
 Show lessSee more
 
+Only the spellings listed above are recognized. Any other key — including snake\_case forms not shown here, such as `where_clause` or `column_names_to_partition_by` — is silently ignored rather than rejected, so a typo leaves the corresponding value unset.
+
 Three rules apply:
 
 - **Set both WHERE clauses or neither.** Filtering one side only means you’re comparing different row subsets on source and target, which almost always reports mismatches.
 - **Don’t combine `sourceWhereClause` with the legacy `whereClause`** on the same entry. The workflow is rejected when it loads.
-- **camelCase wins** if an entry supplies both camelCase and snake\_case spellings for the index column lists.
+- **camelCase wins** if an entry supplies both `indexColumnList` and its `index_column_list` alias (the same applies to `targetIndexColumnList`).
 
 | Property | Type | Required | Description |
 | --- | --- | --- | --- |
-| `fully_qualified_name` | `String` | Yes | Source object name (format depends on platform). |
-| `use_column_selection_as_exclude_list` | `Boolean` |  | Default `false`. |
-| `column_selection_list` | `String[]` |  | Columns to include or exclude (literals and/or Python regex). |
-| `target_name` | `String` |  | Target object name override. |
-| `target_database` | `String` |  | Per-table target database override. |
-| `target_schema` | `String` |  | Per-table target schema override. |
+| `fullyQualifiedName` | `String` | Yes | Source object name (format depends on platform). |
+| `useColumnSelectionAsExcludeList` | `Boolean` |  | Default `false`. |
+| `columnSelectionList` | `String[]` |  | Columns to include or exclude (literals and/or Python regex). |
+| `targetName` | `String` |  | Target object name override. |
+| `targetDatabase` | `String` |  | Per-table target database override. |
+| `targetSchema` | `String` |  | Per-table target schema override. |
 | `sourceWhereClause` | `String` |  | Filter applied to **source** rows, in the source dialect. Pair it with `targetWhereClause`. See [Property naming and aliases](#property-naming-and-aliases) and [Filtering compared rows](#filtering-compared-rows). |
 | `targetWhereClause` | `String` |  | Filter applied to **target** rows, in Snowflake SQL. Pair it with `sourceWhereClause`. |
 | `indexColumnList` | `String[]` |  | Columns used to align rows on the source (required for L3). Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
 | `targetIndexColumnList` | `String[]` |  | Columns used to align rows on the target. |
-| `column_mappings` | `Object` |  | Map of source column name to target column name. |
-| `is_case_sensitive` | `Boolean` |  | Case sensitivity for identifiers and column filtering (default `false`). |
-| `object_type` | `String` |  | `TABLE` (default) or `VIEW`. Set to `VIEW` to validate a view from a flat `tables` list instead of the `views` array. |
-| `column_names_to_partition_by` | `String[]` |  | Columns for range-based partitioning during L2/L3. Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
-| `target_partition_size_rows` | `Integer` |  | Per-table rows per partition override. |
-| `target_partition_size_mb` | `Integer` |  | Per-table MB per partition override. |
-| `max_failed_rows_number` | `Integer` |  | Overrides the global L3 cap for this object. |
+| `columnMappings` | `Object` |  | Map of source column name to target column name. |
+| `isCaseSensitive` | `Boolean` |  | Case sensitivity for identifiers and column filtering (default `false`). |
+| `objectType` | `String` |  | `TABLE` (default) or `VIEW`. Set to `VIEW` to validate a view from a flat `tables` list instead of the `views` array. |
+| `columnNamesToPartitionBy` | `String[]` |  | Columns for range-based partitioning during L2/L3. Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
+| `targetPartitionSizeRows` | `Integer` |  | Per-table rows per partition override. |
+| `targetPartitionSizeMb` | `Integer` |  | Per-table MB per partition override. |
+| `maxFailedRowsNumber` | `Integer` |  | Overrides the global L3 cap for this object. |
 | `acceptedTransformations` | `Array` |  | Per-table accepted-transformation rules. |
-| `validation_configuration` | `Object` |  | Nested overrides for this object only. |
+| `validationConfiguration` | `Object` |  | Nested overrides for this object only. |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints for source queries on this object. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
-| `excludeMetrics` | `Boolean` |  | Per-table override for `exclude_metrics`. |
-| `applyMetricColumnModifier` | `Boolean` |  | Per-table override for `apply_metric_column_modifier`. |
+| `excludeMetrics` | `Boolean` |  | Per-table override for `excludeMetrics`. |
+| `applyMetricColumnModifier` | `Boolean` |  | Per-table override for `applyMetricColumnModifier`. |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Per-table normalization overrides. Take precedence over workflow-level rules for matching columns. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `synchronization` | `SynchronizationStrategy` |  | Per-table incremental validation strategy. Overrides `defaultTableConfiguration.synchronization` field by field. See [Incremental validation](#incremental-validation). |
@@ -239,8 +248,8 @@ Copy code
 
 ```
 tables:
-  - fully_qualified_name: MYDB.dbo.ORDERS
-    target_name: ORDERS
+  - fullyQualifiedName: MYDB.dbo.ORDERS
+    targetName: ORDERS
     sourceWhereClause: "STATUS = 'ACTIVE'"
     targetWhereClause: "STATUS = 'ACTIVE'"
     indexColumnList:
@@ -253,12 +262,12 @@ When a table uses [incremental validation](#incremental-validation), neither fil
 
 ### Column filtering with regex patterns
 
-Each entry in `column_selection_list` is matched against every column name:
+Each entry in `columnSelectionList` is matched against every column name:
 
-- **Literal** — plain string (for example `LOAD_DATE`), case-insensitive unless `is_case_sensitive: true`
+- **Literal** — plain string (for example `LOAD_DATE`), case-insensitive unless `isCaseSensitive: true`
 - **Regex** — entry wrapped in single quotes with `r"..."` inside (for example `'r".*_TS"'`)
 
-| `use_column_selection_as_exclude_list` | Behavior |
+| `useColumnSelectionAsExcludeList` | Behavior |
 | --- | --- |
 | `false` (default) | **Include mode** — only matched columns are validated |
 | `true` | **Exclude mode** — all columns except matched ones are validated |
@@ -269,20 +278,20 @@ Show lessSee more
 
 ## Partitioning
 
-When `column_names_to_partition_by` is set, the Orchestrator splits the table into range-based partitions:
+When `columnNamesToPartitionBy` is set, the Orchestrator splits the table into range-based partitions:
 
-1. Compute target rows-per-partition from `target_partition_size_rows` or `target_partition_size_mb` (default 200 MB).
+1. Compute target rows-per-partition from `targetPartitionSizeRows` or `targetPartitionSizeMb` (default 200 MB).
 2. Apply internal caps for safe infrastructure bounds.
 3. Derive partition count as `ceil(row_count / effective_rows_per_partition)`.
 
 ### Automatic partition and index key selection
 
-When `column_names_to_partition_by` or `indexColumnList` is omitted for a table that needs metrics or row validation, AIM DMV infers keys automatically from source catalog metadata:
+When `columnNamesToPartitionBy` or `indexColumnList` is omitted for a table that needs metrics or row validation, AIM DMV infers keys automatically from source catalog metadata:
 
 - **Partition key**: clustered, sort, or distribution key columns when available, otherwise a unique index, otherwise the first non-boolean schema column as a last resort.
 - **Index key** (for L3 row alignment): the declared primary key, otherwise the first unique index as a fallback.
 
-Inferred keys are cached per source table and reused by later workflows. A manually specified `column_names_to_partition_by` or `indexColumnList` always takes precedence. Views can’t be inferred; set these explicitly when validating a view, and prefer a partition key that matches the underlying tables plus a `sourceWhereClause` to limit the scan. See [Validating views](../data-migration-validation/data-validation-advanced-configuration#validating-views).
+Inferred keys are cached per source table and reused by later workflows. A manually specified `columnNamesToPartitionBy` or `indexColumnList` always takes precedence. Views can’t be inferred; set these explicitly when validating a view, and prefer a partition key that matches the underlying tables plus a `sourceWhereClause` to limit the scan. See [Validating views](../data-migration-validation/data-validation-advanced-configuration#validating-views).
 
 Each partition key must be a **real, physical column name**. Persisted computed columns (SQL Server) and virtual columns (Oracle) qualify. Bare SQL expressions, pseudo-columns (for example Oracle `ROWID`, `ROWNUM`, or `ORA_ROWSCN`), and hidden system columns are **not** valid: AIM DMV quotes partition key names as identifiers, so those values won’t resolve. To partition on a derived value, add a persisted or virtual computed column on the source and reference that column name.
 
@@ -312,7 +321,7 @@ Note
 
 ### Prerequisites
 
-- The table must be **partitioned**. Set `column_names_to_partition_by`, or let AIM DMV infer it. Change detection works per partition, so an unpartitioned table has nothing to skip.
+- The table must be **partitioned**. Set `columnNamesToPartitionBy`, or let AIM DMV infer it. Change detection works per partition, so an unpartitioned table has nothing to skip.
 - At least one **prior full validation** must have completed, to establish baseline metadata in `PARTITION_METADATA.SYNCHRONIZATION_DATA`. The first run with `synchronization` configured still validates everything.
 
 ### What happens on each run
@@ -341,25 +350,25 @@ Because change detection relies on the same hashing as migration checksums, revi
 Copy code
 
 ```
-source_platform: sqlserver
-target_database: MY_DB
+sourcePlatform: sqlserver
+targetDatabase: MY_DB
 defaultTableConfiguration:
-  column_names_to_partition_by:
+  columnNamesToPartitionBy:
     - ID
   synchronization:
     strategy: checksum
 tables:
   # Inherits the checksum strategy and the partition column.
-  - fully_qualified_name: MYDB.dbo.CUSTOMERS
+  - fullyQualifiedName: MYDB.dbo.CUSTOMERS
   # Overrides both: partition on ORDER_ID, detect change by watermark.
-  - fully_qualified_name: MYDB.dbo.ORDERS
-    column_names_to_partition_by:
+  - fullyQualifiedName: MYDB.dbo.ORDERS
+    columnNamesToPartitionBy:
       - ORDER_ID
     synchronization:
       strategy: watermark
       watermarkColumn: UPDATED_AT
   # Opts out: always validate in full, despite the global default.
-  - fully_qualified_name: MYDB.dbo.LOOKUP_CODES
+  - fullyQualifiedName: MYDB.dbo.LOOKUP_CODES
     synchronization:
       strategy: none
 ```
@@ -426,7 +435,7 @@ validationCustomNormalizationRules:
     sourceExpression: "ST_AsText({{ col_name }})"
     targetExpression: "TO_VARCHAR({{ col_name }})"
 tables:
-  - fully_qualified_name: MYDB.MYSCHEMA.MYTABLE
+  - fullyQualifiedName: MYDB.MYSCHEMA.MYTABLE
     validationCustomNormalizationRules:
       - column: LEGACY_FLAG
         sourceExpression: "TRIM(CAST({{ col_name }} AS VARCHAR(10)))"
@@ -482,7 +491,7 @@ Each array entry:
 | --- | --- | --- |
 | `datatype` | `String` | Source or target data type (uppercased). |
 | `metrics` | `Array` | Metric definitions for that type. |
-| `replace_all` | `Boolean` | When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). |
+| `replaceAll` | `Boolean` | When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). |
 
 Expand
 
@@ -493,9 +502,9 @@ Each metric definition:
 | Field | Type | Description |
 | --- | --- | --- |
 | `name` | `String` | Metric name (for example `count`, `sum`, `min`, `max`, `stddev`). |
-| `metric_query` | `String` | SQL aggregate using `"{{ col_name }}"`. A null or empty value **removes** that metric from the built-in set. |
-| `metric_return_datatype` | `String` | Data type used to normalize the metric result. |
-| `metric_column_modifier` | `String` | Optional overflow guard override for this metric. |
+| `metricQuery` | `String` | SQL aggregate using `"{{ col_name }}"`. A null or empty value **removes** that metric from the built-in set. |
+| `metricReturnDatatype` | `String` | Data type used to normalize the metric result. |
+| `metricColumnModifier` | `String` | Optional overflow guard override for this metric. |
 
 Expand
 
@@ -505,10 +514,10 @@ Control which metrics run with these related settings:
 
 | Setting | Default | Purpose |
 | --- | --- | --- |
-| `metrics_validation` | `true` | Enable or disable L2 entirely (global or per table). |
-| `exclude_metrics` / `excludeMetrics` | `false` | Skip overflow-prone aggregates: `avg`, `sum`, `stddev`. |
-| `apply_metric_column_modifier` / `applyMetricColumnModifier` | `true` | Apply platform overflow guards to aggregate metrics. |
-| `comparison_configuration.tolerance` | `0.001` | Relative threshold for **numeric** L2 metric comparison only. |
+| `metricsValidation` | `true` | Enable or disable L2 entirely (global or per table). |
+| `excludeMetrics` | `false` | Skip overflow-prone aggregates: `avg`, `sum`, `stddev`. |
+| `applyMetricColumnModifier` | `true` | Apply platform overflow guards to aggregate metrics. |
+| `comparisonConfiguration.tolerance` | `0.001` | Relative threshold for **numeric** L2 metric comparison only. |
 
 Expand
 
@@ -522,14 +531,14 @@ Copy code
 validationCustomMetrics:
   source:
     - datatype: BIT
-      replace_all: false
+      replaceAll: false
       metrics:
         - name: sum
-          metric_query: "SUM(\"{{ col_name }}\")"
-          metric_return_datatype: NUMBER
+          metricQuery: "SUM(\"{{ col_name }}\")"
+          metricReturnDatatype: NUMBER
         - name: stddev_pop
-          metric_query: "STDDEV_POP(\"{{ col_name }}\")"
-          metric_return_datatype: FLOAT
+          metricQuery: "STDDEV_POP(\"{{ col_name }}\")"
+          metricReturnDatatype: FLOAT
   target: []
 ```
 
@@ -584,7 +593,7 @@ A type rule also doesn’t change how values compare. When the two sides hold th
 
 Note
 
-L3 row validation requires schema validation. The workflow is rejected if you set `schema_validation: false` while relying on them.
+L3 row validation requires schema validation. The workflow is rejected if you set `schemaValidation: false` while relying on them.
 
 Set these rules at the workflow root or on an individual table entry. Per-table rules win for matching columns.
 

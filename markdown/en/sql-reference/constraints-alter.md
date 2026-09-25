@@ -45,6 +45,10 @@ ALTER TABLE <table_name>
 For CHECK constraints, the `constraint_name` is required. Also, you can’t modify the `expr` associated
 with a CHECK constraint. To modify the `expr`, the CHECK constraint must be dropped and re-created.
 
+For [hybrid tables](/user-guide/tables-hybrid), ALTER TABLE … ALTER CONSTRAINT isn’t supported for CHECK
+constraints, and a dropped CHECK constraint can’t be re-created on the existing table. For more information, see
+[CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+
 Currently, Snowflake only supports setting the following constraint properties:
 
 - [ NOT ] ENFORCED

@@ -96,7 +96,7 @@ agent mounts.
 
 The agent only reads a local file (`--sf-bootstrap-credentials`, default `/etc/dcp-agent/secrets/dcp-bootstrap-token`). It doesn’t call a
 secrets manager API itself. Fetch the secret at deploy time or from a sidecar, then place it at that path. Restrict file permissions
-(`chmod 600`) and the IAM or RBAC identity that can read the secret.
+(`chmod 600`) and limit the IAM or RBAC identity that can read the secret.
 
 The following examples write the secret to `/etc/dcp-agent/secrets/dcp-bootstrap-token`. Adapt the secret name and then start the agent as
 in Step 4.

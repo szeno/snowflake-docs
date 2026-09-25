@@ -1,6 +1,6 @@
 # Data Connectivity Proxy security
 
-This page describes how Data Connectivity Proxy (DCP) authenticates agents, manages certificates, encrypts data-path traffic, and how you
+This page describes how Data Connectivity Proxy (DCP) authenticates agents, manages certificates, and encrypts data-path traffic, and how you
 revoke access.
 
 ## Authentication and certificate management

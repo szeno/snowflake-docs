@@ -16,3 +16,6 @@ This section describes the key concepts for Snowpipe Streaming. For an introduct
 
 [Access control](/user-guide/snowpipe-streaming/snowpipe-streaming-access-control)
 :   Review the required privileges for streaming into a table through a pipe.
+
+[Monitor Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry)
+:   Query event table telemetry to track ingestion progress, measure processing time, and investigate row and channel errors.

@@ -287,3 +287,51 @@ Note
 
 To learn more about credit usage, idle timeout behavior, and notebook service management, see [Setting up compute](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup#label-nb-in-ws-compute-setup)
 and [Idle timeout](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup#label-nb-in-ws-idle-timeout).
+
+## Run a scheduled notebook as a specific user
+
+By default, a task runs as an internal system service that uses the privileges of the task owner role. Because Code Bundles
+run with caller’s rights, you can add the [EXECUTE AS USER](/sql-reference/sql/create-task) clause to the task so that scheduled
+runs are performed on behalf of a named user instead. This approach gives you:
+
+- **Secondary roles:** the run activates the user’s default secondary roles, so the notebook can reach objects spread across
+  multiple roles.
+- **User-based policies:** masking policies and row access policies that evaluate the querying user resolve against the named
+  user rather than a system user.
+- **Audit attribution:** runs are attributed to the named user instead of the `SYSTEM` user, giving you a clear audit trail.
+
+`EXECUTE AS USER` is supported for both compute paths: Container Runtime (compute pool) and warehouse execution.
+
+Before you create the task, grant the task owner role the `IMPERSONATE` privilege on the user, and grant the user the task’s
+owner role:
+
+Copy code
+
+```
+GRANT IMPERSONATE ON USER notebook_service_user TO ROLE notebook_task_owner;
+GRANT ROLE notebook_task_owner TO USER notebook_service_user;
+```
+
+Then specify the user when you create the task:
+
+Copy code
+
+```
+CREATE OR REPLACE TASK my_db.my_schema.nightly_run
+  WAREHOUSE = my_wh
+  SCHEDULE = 'USING CRON 0 9 * * * America/Los_Angeles'
+  EXECUTE AS USER notebook_service_user
+AS
+  EXECUTE CODE BUNDLE my_db.my_schema.my_bundle
+    ENTRYPOINT = 'notebook.ipynb';
+```
+
+For production schedules, we recommend a dedicated service user rather than a person’s user. A service user gets only the
+privileges you intend, and the schedule keeps working if the person changes teams or leaves. For more information about
+user-based task execution, see [Run tasks with user privileges](/user-guide/tasks-intro#label-user-based-security-for-tasks).
+
+Note
+
+Run history and results for these runs are visible to the executing user. Other users need Code Bundle `OWNERSHIP`, `USAGE`, or
+`MONITOR` to see run history, and `IMPERSONATE` on the executing user to see run results. For details, see
+[Run history and result visibility](#label-nb-in-ws-schedule-run-visibility).

@@ -608,7 +608,7 @@ Schema evolution is limited to the following operations:
 
 ## Using the connector with Apache Iceberg™ tables
 
-The connector can ingest data into a Snowflake-managed Apache Iceberg™ table. You must create the Iceberg table manually before running the connector; the connector doesn’t create Iceberg tables automatically and doesn’t support schema evolution.
+The connector can ingest data into a Snowflake-managed Apache Iceberg™ table. You must create the Iceberg table manually before running the connector; the connector doesn’t create Iceberg tables automatically. Server-side schema evolution is supported for Iceberg tables; client-side schema evolution isn’t. For more information, see [Validation and error handling](/user-guide/kafka-connector/validation-error-handling).
 
 The Iceberg table can use either of the following storage options:
 

@@ -7,16 +7,16 @@ Snowflake ODBC Driver 4.x and Snowflake Connector for Python 5.x are in public p
 See [Universal Core](/developer-guide/universal-core/universal-core).
 
 Snowflake provides a CLI (command-line interface) as well as other client software (drivers, connectors, etc.) for connecting to Snowflake and using certain
-Snowflake features (e.g. Apache Kafka for loading data, Apache Hive metadata for external tables). The clients must be installed on each local workstation or system from which
+Snowflake features (for example, Apache Kafka for loading data, Apache Hive metadata for external tables). The clients must be installed on each local workstation or system from which
 you wish to connect.
 
 As needed, we release new versions of the clients to fix bugs, and introduce enhancements and new features. New versions are backward-compatible with existing Snowflake
 features, but we do not guarantee that earlier versions are forward-compatible. As such, we recommend actively monitoring and maintaining the versions of your installed
-clients; if they are not in-sync with the current version of Snowflake, you may encounter issues when connecting to and using Snowflake.
+clients; if they are not in sync with the current version of Snowflake, you may encounter issues when connecting to and using Snowflake.
 
 Attention
 
-For critical or important client changes (especially required security updates), Snowflake might require you to upgrade to the latest version. Please make sure to always check the [Release Notes](/release-notes/clients-drivers/monthly-releases) for the client drivers you’re using to see if there’s an important security fix in a particular version, and plan your driver upgrades accordingly.
+For critical or important client changes (especially required security updates), Snowflake might require you to upgrade to the latest version. Make sure to always check the [Release Notes](/release-notes/clients-drivers/monthly-releases) for the client drivers you’re using to see if there’s an important security fix in a particular version, and plan your driver upgrades accordingly.
 
 For more information about determining the current version of a client or driver, refer to the following:
 
@@ -35,7 +35,7 @@ base article for more information.
 
 ## Recommended client versions
 
-As a policy, Snowflake recommends that you always install the latest (i.e. most recent) version of each client,
+As a policy, Snowflake recommends that you always install the latest (that is, most recent) version of each client,
 if possible.
 
 Snowflake uses semantic versioning for client and driver updates, excluding Snowpark APIs.
@@ -47,7 +47,7 @@ To help you track supported versions, the following table includes the minimum v
 supports. If you use a version older than the minimum, Snowflake makes no commitment to provide support.
 
 Once a client is installed, you are not required to upgrade each time a new version is released; however, to stay current with the
-latest fixes, updates, and features, we recommend monitoring for new versions and upgrading at regular intervals (e.g. monthly,
+latest fixes, updates, and features, we recommend monitoring for new versions and upgrading at regular intervals (for example, monthly,
 quarterly, semiannually).
 
 | Type | Client | Recommended Version | Minimum Supported Version (as of Feb 01, 2026) [[1]](#footnote-1) [[2]](#footnote-2) | Release Information | Where to Download the Installers [[3]](#footnote-3) |
@@ -110,18 +110,18 @@ the support policy.
 Snowflake maintains the following support policy for all clients provided by Snowflake:
 
 - For all clients listed on this page, Snowflake generally supports each client version for at least two years, except in cases where a more recent version introduces
-  critical fixes (e.g. for security or performance issues).
+  critical fixes (for example, for security or performance issues).
 
   Client versions that are below the minimum supported version might be blocked from connecting to Snowflake. Note that Snowflake
   will provide advance notification before blocking access for a particular client version.
-- Unsupported versions might be removed from distribution (i.e. they may no longer be available for download/install).
+- Unsupported versions might be removed from distribution (that is, they may no longer be available for download/install).
 - Snowflake provides bug fixes, new features, and required security updates only on the latest client versions. Likewise, when troubleshooting client issues,
-  Snowflake verifies only against the latest client versions only.
+  Snowflake verifies only against the latest client versions.
 - Snowflake ensures backward compatibility for APIs across all supported client versions.
 
 Note
 
-This policy does not cover client connectors provided by third-party partners (Informatica, Tableau, etc.); please
+This policy does not cover client connectors provided by third-party partners (Informatica, Tableau, etc.);
 consult directly with the partners providing the
 connectors for information about their support policies.
 

@@ -115,6 +115,10 @@ ones.
     TYPE = HOST_PORT
     VALUE_LIST = ('comma separated list of host:port pairs');
    ```
+
+   Note
+
+   For a private connection, use `TYPE = PRIVATE_HOST_PORT` and include the port explicitly. The hostname depends on the source and private connectivity configuration. For SQL Server through a customer-managed Azure Private Link Service, see [Azure Private Link Service for SQL Server](/user-guide/data-integration/openflow/connectors/sql-server/setup#label-sql-server-azure-privatelink).
 2. Create an external access integration, or add the network rule to an existing one.
    See [CREATE EXTERNAL ACCESS INTEGRATION](/sql-reference/sql/create-external-access-integration) for more information.
 

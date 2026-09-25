@@ -6,6 +6,7 @@ definition qualifies for incremental refresh.
 
 Recently added query support
 
+- **VALUES clause** in the FROM clause (Sep 2026)
 - **Non-deterministic aggregate functions** (APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, APPROX\_TOP\_K) in the SELECT clause (Sep 2026)
 - **VOLATILE scalar UDFs** (Jul 2026)
 - **MIN\_BY / MAX\_BY** aggregate and window functions (Mar 2026)
@@ -47,7 +48,8 @@ for incremental refresh with restrictions, the table describes the specific cond
 | [CONNECT BY](/sql-reference/constructs/connect-by) | Not supported | Supported |
 | [SELECT](/sql-reference/sql/select) | Supported. Expressions must use deterministic built-in functions and [immutable](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview), except for functions this page lists as supported in the SELECT clause. That includes [non-deterministic aggregate functions](#label-dynamic-tables-supported-nondeterministic-aggregates) such as APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, and APPROX\_TOP\_K, and scalar [VOLATILE](/sql-reference/sql/create-function#label-create-function-syntax) [user-defined functions](/developer-guide/udf/udf-overview). | Supported |
 | [DISTINCT](/sql-reference/sql/select) | Supported | Supported |
-| [FROM](/sql-reference/constructs/from) | Base tables, views, Snowflake-managed Apache Iceberg™ tables, externally managed Iceberg tables, Delta Direct tables, and other dynamic tables.  Subqueries outside of FROM clauses (for example, WHERE EXISTS) are not supported. | Supported |
+| [FROM](/sql-reference/constructs/from) | Base tables, views, Snowflake-managed Apache Iceberg™ tables, externally managed Iceberg tables, Delta Direct tables, other dynamic tables, and [VALUES](/sql-reference/constructs/values) clauses.  Subqueries outside of FROM clauses (for example, WHERE EXISTS) are not supported. | Supported |
+| [VALUES](/sql-reference/constructs/values) | Supported in the FROM clause. Expressions must be constants or expressions that can be evaluated as constants at compile time. See [VALUES example](#label-dynamic-tables-supported-values-example). | Supported |
 | [WHERE](/sql-reference/constructs/where) / [HAVING](/sql-reference/constructs/having) / [QUALIFY](/sql-reference/constructs/qualify) | Filters with the same expressions that are valid in SELECT are supported, except for functions this page lists as supported in the SELECT clause only (for example, APPROX\_COUNT\_DISTINCT, APPROX\_PERCENTILE, APPROX\_TOP\_K, and VOLATILE scalar UDFs).  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. | Supported.  Filters with the CURRENT\_TIMESTAMP, CURRENT\_TIME, and CURRENT\_DATE functions and their aliases are supported. |
 | [GROUP BY](/sql-reference/constructs/group-by) | Supported. GROUP BY ROLLUP, GROUP BY CUBE, and GROUP BY GROUPING SETS are not supported for incremental refresh. | Supported |
 | Scalar aggregates | Supported | Supported |
@@ -105,6 +107,36 @@ AS
 
 Orders without a matching customer appear in the results with NULL values for `customer_name` and `region`.
 Snowflake tracks changes to both `raw_orders` and `dim_customers`.
+
+### Example: VALUES clause with incremental refresh
+
+The following example joins order data to a constant lookup table defined with a VALUES clause.
+Snowflake tracks changes to `raw_orders`. The VALUES rows are constants and don’t change between
+refreshes.
+
+Copy code
+
+```
+CREATE OR ALTER DYNAMIC TABLE dt_orders_by_status_group
+    TARGET_LAG = '30 minutes'
+    WAREHOUSE = transform_wh
+    REFRESH_MODE = INCREMENTAL
+AS
+    SELECT
+        o.order_id,
+        o.customer_id,
+        o.order_date,
+        o.order_status,
+        s.status_group
+    FROM raw_orders o
+    INNER JOIN (
+        VALUES
+            ('completed', 'closed'),
+            ('returned', 'closed'),
+            ('pending', 'open')
+    ) AS s(order_status, status_group)
+        ON o.order_status = s.order_status;
+```
 
 ### Example: UNION ALL with incremental refresh
 

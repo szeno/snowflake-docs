@@ -26,8 +26,9 @@ You can monitor and handle ingestion errors in the following ways:
   to monitor aggregated error counts, last error message, and last error timestamp.
 - Query the [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY](/sql-reference/account-usage/snowpipe_streaming_channel_history)
   view for historical error trends and patterns.
+- Query [event table telemetry](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry) to investigate row and channel errors alongside ingestion progress and processing time.
 
-These methods tell you *that* errors occurred and *how many*, but not *which rows* failed or their payloads.
+These monitoring options provide counts and error details, not the complete original data for every rejected row. Use error tables when you need that data for inspection or reprocessing, subject to the capture and size limits described on this page.
 
 **With error tables:**
 

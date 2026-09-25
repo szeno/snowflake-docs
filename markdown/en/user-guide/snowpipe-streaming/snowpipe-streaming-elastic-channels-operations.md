@@ -132,14 +132,4 @@ LIMIT 20;
 
 ## Prometheus metrics
 
-Enable Prometheus metrics on the SDK by setting the environment variable `SS_ENABLE_METRICS=true` before starting your application. The default endpoint is `/metrics` on port `50000`.
-
-Copy code
-
-```
-export SS_ENABLE_METRICS=true
-# then start the application
-curl http://127.0.0.1:50000/metrics
-```
-
-For the full Prometheus configuration example, see [Best practices for Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-best-practices#get-prometheus-metrics).
+For metrics setup, Prometheus configuration, and client logging, see [Monitor SDK clients with Prometheus and logs](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-client-monitoring).

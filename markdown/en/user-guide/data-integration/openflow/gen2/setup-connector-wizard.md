@@ -48,6 +48,8 @@ Before you start the setup wizard, make sure the following requirements are met:
   [Snowflake secrets](/sql-reference/sql/create-secret) and accessible to the runtime’s
   `EXECUTE_AS_ROLE` (see
   [Create an execute-as role](/user-guide/data-integration/openflow/gen2/quickstart#label-openflow-gen2-quickstart-execute-as-role)).
+  You can also source secret values from an
+  [external secret provider](/user-guide/data-integration/openflow/security/external-secret-providers).
 - You have `CREATE OPENFLOW CONNECTOR` on the schema that the runtime is in, `USAGE` on the
   runtime, and `USAGE` on the runtime’s database and schema.
 - You have the required permissions for the connector you want to install, and have

@@ -6,6 +6,11 @@ Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supporte
 
 Parameters passed in the `ARGUMENTS` list are placed into the `sys.argv` list, with one entry per argument.
 
+The examples on this page use [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), which takes a list of
+argument strings. The older [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) command takes a single
+string instead. To pass a value that’s computed at runtime, such as a task configuration value, see
+[Pass arguments computed at runtime](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-dynamic-arguments).
+
 ## Example: Execute a Code Bundle with parameters
 
 The following example passes two arguments (`env` and `prod`) using `ARGUMENTS = ('env', 'prod')`.

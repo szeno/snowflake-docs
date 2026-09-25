@@ -28,14 +28,14 @@ See [.NET Driver](/developer-guide/dotnet/dotnet-driver) for documentation.
 
 - Extended log secret-masking to cover additional cloud-storage URL query parameters, and routed the telemetry loggers through the shared masking pipeline.
 - Restricted the `WORKLOAD_IDENTITY` authenticator to recognized Snowflake hosts (`*.snowflakecomputing.com`/`.cn`/`.mil`), normalizing the host before a suffix-anchored match. The `SNOWFLAKE_WIF_ALLOWED_HOST_SUFFIXES` environment variable additively extends the recognized-host list.
-- Performance improvements in parsing query status for given result set.
+- Performance improvements in parsing query status for a given result set.
 - NuGet package now publishes `.snupkg` symbol packages, enabling source-link debugging for consumers.
 - Added configurable timeouts for chunk download stream reads. `SF_CHUNK_DOWNLOAD_IDLE_TIMEOUT` (default 180s) detects stalled connections between reads; `SF_CHUNK_DOWNLOAD_READ_TIMEOUT` (default disabled) sets a per-read deadline. Both are configured in seconds; set to `0` to disable.
 
 ### Bug fixes
 
 - Token cache file on Linux/macOS is now written as UTF-8 without a BOM for cross-driver compatibility.
-- Fixed `TIMESTAMP_TZ` sub-hour timezone offsets (e.g. +05:30) being truncated to whole hours in JSON result format.
+- Fixed `TIMESTAMP_TZ` sub-hour timezone offsets (for example, +05:30) being truncated to whole hours in JSON result format.
 
 ## Version 6.0.0 (August 10, 2026)
 

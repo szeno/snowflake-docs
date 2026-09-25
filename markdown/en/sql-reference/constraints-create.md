@@ -39,6 +39,9 @@ For [hybrid tables](/user-guide/tables-hybrid), adding a UNIQUE or FOREIGN KEY c
 operation that also validates the rows already in the table. For more information, see
 [Add and drop constraints on an existing hybrid table](/sql-reference/sql/create-hybrid-table#label-hybrid-table-online-constraints).
 
+ALTER TABLE can’t add a CHECK constraint to a hybrid table. Define CHECK constraints on a hybrid table when you create
+the table. For more information, see [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+
 ## Constraints in CREATE TABLE … LIKE and CLONE
 
 Snowflake supports creating copies of tables using [CREATE TABLE](/sql-reference/sql/create-table):

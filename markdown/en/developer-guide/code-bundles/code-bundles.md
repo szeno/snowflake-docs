@@ -577,7 +577,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 ### EXECUTE CODE BUNDLE
 
-Runs a Code Bundle at the specified entrypoint.
+Runs a Code Bundle at the specified entrypoint. You can run this command from a SQL worksheet, a task, or a caller’s rights
+stored procedure. For the full list, see
+[Supported invocation contexts](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-invocation-contexts).
 
 Copy code
 
@@ -593,7 +595,7 @@ EXECUTE CODE BUNDLE <name>
 | Parameter | Description |
 | --- | --- |
 | `ENTRYPOINT` | File path within the bundle to execute. |
-| `ARGUMENTS` | List of command-line argument strings passed to the script. |
+| `ARGUMENTS` | List of command-line argument strings passed to the script. Each value must be a string literal or a SQL variable reference such as `:my_var`; function calls aren’t supported. For details, see [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-dynamic-arguments). |
 | `WITH SPECIFICATION` | Inline YAML specification that overrides the stored `code_bundle.yml`. |
 
 Expand

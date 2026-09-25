@@ -343,6 +343,10 @@ Note
 
 You can only upgrade connectors after you have [upgraded their runtime](#label-openflow-upgrading-a-runtime).
 
+If the connector process group has local changes, Openflow analyzes whether it can retain those changes while applying
+the connector update. Review the rebase analysis before you apply the update. If the analysis identifies a conflicting
+or unsupported local change, the update is blocked. Resolve or revert the change, then retry the connector update.
+
 To upgrade a connector, do the following:
 
 1. In the navigation menu, select **Ingestion** » **Openflow**.

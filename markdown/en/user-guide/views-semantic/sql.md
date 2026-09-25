@@ -2973,24 +2973,24 @@ SELECT privilege on the semantic view itself.
 This behavior is consistent with [the privileges required to query standard views](/user-guide/views-introduction#label-views-privileges).
 
 To use a semantic view that you do not own in [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents), you must use a
-role that has the REFERENCES and SELECT privileges on that view.
+role that has the SELECT privilege on that view.
 
-To grant the REFERENCES and SELECT privileges on a semantic view, use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege)
-command. For example, to grant the REFERENCES and SELECT privileges on the semantic view named `my_semantic_view` to the role
+To grant the SELECT privilege on a semantic view, use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege)
+command. For example, to grant the SELECT privilege on the semantic view named `my_semantic_view` to the role
 `my_analyst_role`, you can run the following statement:
 
 Copy code
 
 ```
-GRANT REFERENCES, SELECT ON SEMANTIC VIEW my_semantic_view TO ROLE my_analyst_role;
+GRANT SELECT ON SEMANTIC VIEW my_semantic_view TO ROLE my_analyst_role;
 ```
 
 If you have a schema containing semantic views that you want to share with Cortex Agents users, you can use
-[future grants](/user-guide/security-access-control-configure#label-granting-future-privs-on-schema-objects) to grant the privileges on any semantic view that you create
+[future grants](/user-guide/security-access-control-configure#label-granting-future-privs-on-schema-objects) to grant the privilege on any semantic view that you create
 in that schema. For example:
 
 Copy code
 
 ```
-GRANT REFERENCES, SELECT ON FUTURE SEMANTIC VIEWS IN SCHEMA my_schema TO ROLE my_analyst_role;
+GRANT SELECT ON FUTURE SEMANTIC VIEWS IN SCHEMA my_schema TO ROLE my_analyst_role;
 ```

@@ -118,7 +118,7 @@ See [PHP PDO Driver for Snowflake](/developer-guide/php-pdo/php-pdo-driver) for 
 - Updated Curl to 8.16.0.
 - Removed the workload identity federation (WIF) auto-detection mechanism.
 - Added auto-detection of the application path and included it in the `CLIENT_ENVIRONMENT` variable.
-- Updated OpenSSL to 3.0.18
+- Updated OpenSSL to 3.0.18.
 
 ### Bug fixes
 

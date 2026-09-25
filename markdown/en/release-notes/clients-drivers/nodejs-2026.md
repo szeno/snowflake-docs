@@ -175,7 +175,7 @@ Beginning with version 3.0.0, the Node.js driver introduced the following breaki
   - Partial strings were incorrectly matching instead of requiring a full destination match.
 - Fixed CRL ADVISORY mode to log failures at the warn level instead of debug.
 - Fixed OAuth Authorization Code reauthentication not using the refreshed access token when the cached access token is expired.
-- Fixed OAuth Authorization Code refresh token being removed from cache when the IDP does not return a new one.
+- Fixed OAuth Authorization Code refresh token being removed from cache when the IdP does not return a new one.
 - Fixed an unhandled promise rejection when the server returns malformed query responses.
 
 ## Version 2.3.4 (Feb 9, 2026)
@@ -191,6 +191,6 @@ Beginning with version 3.0.0, the Node.js driver introduced the following breaki
 ### Bug fixes
 
 - Fixed inconsistent retry behavior across HTTP requests and ensured all recoverable failures are properly retried.
-- Fixed invalid oauth scope when *role* and *oauthScope* are missing from the connection configuration.
+- Fixed invalid OAuth scope when `role` and `oauthScope` are missing from the connection configuration.
 - Fixed `APPLICATION` field not being passed from the connection configuration to `login-request` telemetry.
 - Fixed build errors in bundlers caused by the `minicore` module.

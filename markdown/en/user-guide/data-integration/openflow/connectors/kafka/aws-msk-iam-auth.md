@@ -30,7 +30,9 @@ From the Openflow canvas, access the Controller Services configuration:
 Add a new AmazonMSKConnectionService:
 
 1. Select **+** to add a new controller service.
-2. Select **AmazonMSKConnectionService** from the list.
+2. Select **AmazonMSKConnectionService** from the list. If two services with this name appear, select the one without the
+   Snowflake badge. The Snowflake-badged service is deprecated and doesn’t support IAM authentication through a web
+   identity provider.
 3. Select **Add**.
 
 Configure the AmazonMSKConnectionService properties:

@@ -8,6 +8,9 @@ Streamlit app in a workspace. In addition, the compute pool must allow the
 `STREAMLIT` workload type through the `ALLOWED_SPCS_WORKLOAD_TYPES` parameter.
 The default value for this parameter is `ALL`, which includes `STREAMLIT`.
 
+Secondary roles apply to the compute pool but not to the query warehouse, which the app uses
+under a single role. Grant USAGE on the query warehouse directly to the role the app runs as.
+
 To learn more about compute pool workloads, see
 [Snowpark Container Services: Working with compute pools](/developer-guide/snowpark-container-services/working-with-compute-pool).
 

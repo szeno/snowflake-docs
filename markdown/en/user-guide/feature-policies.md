@@ -282,7 +282,7 @@ For objects created inside a regular database (not a personal database or applic
 
 1. A policy applied directly to the database (`ALTER DATABASE ... SET FEATURE POLICY`)
 2. The account-level `FOR ALL DATABASES` policy
-3. No policy applies — the creation is allowed.
+3. No policy applies: the creation is allowed.
 
 ### Personal databases
 
@@ -292,7 +292,7 @@ For objects created inside a personal database:
 2. The account-level `FOR ALL PERSONAL DATABASES` policy
 3. The account-level `FOR ALL DATABASES` policy (personal databases fall under this context when no
    `FOR ALL PERSONAL DATABASES` policy is set)
-4. No policy applies — the creation is allowed.
+4. No policy applies: the creation is allowed.
 
 ### Native apps (application instances)
 
@@ -301,7 +301,7 @@ For objects created inside a native app:
 1. A policy applied directly to the app (`ALTER APPLICATION ... SET FEATURE POLICY` or
    `CREATE APPLICATION ... WITH FEATURE POLICY`)
 2. The account-level `FOR ALL APPLICATIONS` policy
-3. No policy applies — the creation is allowed.
+3. No policy applies: the creation is allowed.
 
 `FOR ALL DATABASES` does not apply to native apps (application instances or application packages).
 
@@ -852,7 +852,7 @@ Note
 The feature policy must be in the same account as the account-level policy assignment.
 
 If you don’t include the policy database in the replication group, Snowflake creates a dangling
-reference in the target account. The fully-qualified policy name points to the source account’s
+reference in the target account. The fully qualified policy name points to the source account’s
 database, which doesn’t exist in the target account, so the policy isn’t enforced there.
 
 For more information, see [Replication considerations](/user-guide/account-replication-considerations).

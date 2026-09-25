@@ -23,7 +23,7 @@ Note
   the table schema, policies, tags, and constraints from the source table. For details about how schema
   changes (column add or drop) on the source table affect restore, see
   [Schema evolution](/user-guide/storage-management/storage-lifecycle-policies-retrieving-archived-data#label-slp-schema-evolution).
-- The WHERE clause is required. Reading archived data is expensive, and should be performed infrequently.
+- The WHERE clause is required. Reading archived data is expensive and should be performed infrequently.
   Filtering results using the WHERE clause helps you minimize costs by ensuring that Snowflake reads only the data that you
   require from archival storage.
 - To estimate the number of files that Snowflake will retrieve from archive storage, run the [EXPLAIN](/sql-reference/sql/explain) command before

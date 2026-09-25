@@ -141,7 +141,7 @@ and examples, see:
 Identifying an agentic session also lets you limit what the agent can do to a subset of the
 privileges the user’s roles already allow. A
 [Restricted Session Scope](/user-guide/restricted-session-scope) (RSS) is a privilege ceiling. It
-intersects with the user privielges and never grants privileges the user doesn’t already have.
+intersects with the user privileges and never grants privileges the user doesn’t already have.
 
 Set `AGENT_RESTRICTED_SESSION_SCOPE` on a session policy, then attach that policy to the account or
 to users. The ceiling applies only when an agent is active

@@ -90,8 +90,7 @@ Copy code
 CREATE DATABASE my_sfdc_db
   LINKED_ZEROCOPY_CONNECTOR = (
     CONNECTOR_NAME = 'my_db.my_schema.my_sfdc_connector',
-    ALL_SHARES = TRUE,
-    SYNC_INTERVAL_SECONDS = 30  -- optional; controls how often new shares are detected
+    ALL_SHARES = TRUE
   );
 
 -- Mount a filtered set of shares
@@ -107,7 +106,33 @@ CREATE DATABASE my_sfdc_db
     CONNECTOR_NAME = 'my_db.my_schema.my_sfdc_connector',
     SHARE_NAME = 'my_share'
   );
+
+-- Mount all shares, setting the optional properties
+CREATE DATABASE my_sfdc_db
+  LINKED_ZEROCOPY_CONNECTOR = (
+    CONNECTOR_NAME = 'my_db.my_schema.my_sfdc_connector',
+    ALL_SHARES = TRUE,
+    SYNC_INTERVAL_SECONDS = 300,
+    LEGACY_SALESFORCE_SCHEMA_ALIAS = FALSE,
+    SALESFORCE_USER_FRIENDLY_NAME = TRUE
+  );
 ```
+
+`LEGACY_SALESFORCE_SCHEMA_ALIAS` and `SALESFORCE_USER_FRIENDLY_NAME` apply only
+to a Salesforce connector, and you can set them only when you create the
+database.
+
+The following properties are all optional:
+
+| Property | Default | Description |
+| --- | --- | --- |
+| `SYNC_INTERVAL_SECONDS` | `300` (5 minutes) for a Salesforce connector | How often automatic table discovery looks for structural changes in the Salesforce catalog, such as a new data share. The value can range from 30 to 86400 seconds (1 day). Unlike the other two properties, you can change this one after creation with `ALTER DATABASE <cld_name> UPDATE LINKED_ZEROCOPY_CONNECTOR SET SYNC_INTERVAL_SECONDS = <seconds>`. |
+| `LEGACY_SALESFORCE_SCHEMA_ALIAS` | `FALSE` | If `TRUE`, also exposes each mounted share under its Data Cloud V1 schema name, `schema_<share_name>`, so that a three-part reference written against the database created from the legacy target still resolves after you swap in the catalog-linked database. For more information, see [Migrate from the legacy Snowflake data share target](/user-guide/data-integration/zero-copy/salesforce/migrate-legacy-share). |
+| `SALESFORCE_USER_FRIENDLY_NAME` | `TRUE` | If `TRUE`, also exposes a short-named view for each object, with the object-type suffix (`__dll`, `__dlm`, or `__cio`) removed from the view name and the `__c` suffix removed from the column names. For example, `Case_Home__dll` is also available as `Case_Home`, and its `AccountId__c` column as `AccountId`. |
+
+Expand
+
+Show lessSee more
 
 To confirm the database was created:
 

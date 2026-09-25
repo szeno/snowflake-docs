@@ -9,7 +9,8 @@ This topic explains Named Channel error handling for Snowpipe Streaming with hig
 - Enhanced channel status endpoint: This edition extends the channel status endpoint to provide more comprehensive error information.
 - Granular error details: The high-performance edition provides more detailed error information to help identify where it occurred and find the root causes of ingestion issues.
 - Improved client experience: The high-performance edition simplifies error handling for clients, reducing the complexity of error reasoning and recovery.
-- The channel history view: [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY view](/sql-reference/account-usage/snowpipe_streaming_channel_history) provides a historical record of channel activity to monitor and locate errors. This feature lets you track error trends and proactively address potential issues.
+- The channel history view: [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY view](/sql-reference/account-usage/snowpipe_streaming_channel_history) provides a historical record of channel activity to monitor and locate errors.
+- Event table telemetry: Query events to investigate row and channel errors alongside ingestion progress and processing time. For examples and alert templates, see [Monitor Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry).
 
 ### Channel status endpoint details
 

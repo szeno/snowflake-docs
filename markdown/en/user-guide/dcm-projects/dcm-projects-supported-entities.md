@@ -1,12 +1,14 @@
-# Supported object types in DCM Projects
+# Supported entities in DCM Projects
 
 DCM Projects definition files support three types of statements:
 
-- **[Entities](#label-dcm-projects-entities)** — `DEFINE` statements that create and manage Snowflake objects
+- **[Objects](#label-dcm-projects-objects)** — `DEFINE` statements that create and manage Snowflake objects
 - **[Grants](#label-dcm-projects-grants)** — `GRANT` statements that assign privileges and roles
 - **[Attachments](#label-dcm-projects-attachments)** — `ATTACH` statements that associate objects with other objects
 
-**Entities:**
+You can also reference additional files that your definitions need as [project assets](#label-dcm-project-assets) by specifying paths relative to the folder that contains `manifest.yml`.
+
+**Objects:**
 
 - [Alert](#label-dcm-projects-object-type-alert)
 - [Code Bundle](#label-dcm-projects-object-type-code-bundle)
@@ -17,11 +19,11 @@ DCM Projects definition files support three types of statements:
   - [Data metric functions](#label-dcm-projects-object-type-dmf-function)
 - [Network rule](#label-dcm-projects-object-type-network-rule)
 - [Pipe](#label-dcm-projects-object-type-pipe)
-- [Policies](#label-dcm-projects-object-type-policies)
-  - [Authentication policy](#label-dcm-projects-object-type-auth-policy)
-  - [Masking policy](#label-dcm-projects-object-type-masking-policy)
-  - [Network policy](#label-dcm-projects-object-type-network-policy)
-  - [Row access policy](#label-dcm-projects-object-type-row-access-policy)
+- [Policies](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-policies)
+  - [Authentication policy](/sql-reference/sql/create-authentication-policy)
+  - [Masking policy](/sql-reference/sql/create-masking-policy)
+  - [Network policy](/user-guide/network-policies)
+  - [Row access policy](/user-guide/security-row-intro)
 - [Procedures](#label-dcm-projects-object-type-procedure)
 - [Roles](#label-dcm-projects-object-type-role)
   - [Database role](#label-dcm-projects-object-type-database-role)
@@ -40,6 +42,10 @@ DCM Projects definition files support three types of statements:
 - [View](#label-dcm-projects-object-type-view)
 - [Warehouse](#label-dcm-projects-object-type-warehouse)
 
+**Assets:**
+
+- [Project assets](#label-dcm-project-assets)
+
 **Grants:**
 
 - [GRANT](#label-dcm-projects-object-type-grant)
@@ -50,111 +56,9 @@ DCM Projects definition files support three types of statements:
 **Attachments:**
 
 - [ATTACH Data Metric Function](#label-dcm-projects-object-type-dmf)
-- [ATTACH TAG](#label-dcm-projects-attach-tag)
+- [ATTACH Tag](#label-dcm-projects-attach-tag)
 
-**Project files:**
-
-- [Project assets](#label-dcm-project-assets)
-
-## Project assets
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-To create or update Streamlit apps (`DEFINE STREAMLIT`) and Code Bundles (`DEFINE CODE BUNDLE`) with DCM Projects, declare their
-source files as named entries in the manifest’s `assets` section. Assets let you place `manifest.yml` alongside existing code
-folders and use those files in DCM Projects without moving them into `sources/`.
-
-Each entry under the top-level `assets` section has a name and either `path` for one glob pattern or `paths` for multiple
-patterns. Paths are relative to the folder that contains `manifest.yml`. For example:
-
-```
-my_dcm_project/
-├── manifest.yml
-├── sources/
-│   └── definitions/
-│       └── objects.sql
-├── streamlit/
-│   └── my_dashboard/
-│       └── streamlit_app.py
-├── code_bundles/
-│   └── my_job/
-│       ├── code_bundle.yml
-│       └── my_job.ipynb
-└── shared/
-    └── helpers.py
-```
-
-Copy code
-
-```
-assets:
-  my_dashboard:
-    path: 'streamlit/my_dashboard/**/*'
-
-  my_job:
-    paths:
-      - 'code_bundles/my_job/**/*'
-      - 'shared/helpers.py'
-```
-
-Reference an entry’s name in the object’s `FROM` clause, for example, `FROM 'asset://my_dashboard'`. `DEFINE STREAMLIT` and
-`DEFINE CODE BUNDLE` can’t reference the original source folder or file path directly in `FROM`. Asset names are case-sensitive
-and must match `^[a-zA-Z_][a-zA-Z0-9_]*$`.
-
-**Path constraints:**
-
-- Paths must be relative to the folder that contains `manifest.yml` and must stay within the DCM project.
-- `*` matches within one path component. `**` matches across directories. A path can also name one file.
-- `?` and brace expansion aren’t supported. Brackets are literal characters. `**` must be a whole path component followed by
-  another component.
-- Paths can’t contain Jinja expressions. Enclose paths in single quotation marks in YAML.
-- A pattern that matches no files causes the run to fail.
-
-When you run `PLAN` or `DEPLOY` through Snowflake CLI, the CLI uploads the files that match the manifest paths. DCM Projects stores imported
-files under `assets/<asset_name>/` in the deployment history artifacts. The literal directory prefix before the first wildcard
-is removed:
-
-| Pattern | Matched file | Materialized as |
-| --- | --- | --- |
-| `'app/**/*'` | `app/lib/util.py` | `assets/<name>/lib/util.py` |
-| `'**/*'` | `app/lib/util.py` | `assets/<name>/app/lib/util.py` |
-| `'app/static/**/*'` | `app/static/style.css` | `assets/<name>/style.css` |
-| `'app/main.py'` | `app/main.py` | `assets/<name>/main.py` |
-
-Expand
-
-Show lessSee more
-
-Entrypoints such as `MAIN_FILE` and `ENTRYPOINT` are relative to the imported root. Two files that resolve to the same
-destination in one named asset cause an error. Different named assets can import the same source file.
-
-Adding `--save-output` to `snow dcm plan` creates a local `out/` folder that contains rendered definitions under
-`out/rendered/`, including imported files under `out/rendered/assets/`.
-
-**Excluded files:**
-
-- `sources/` is reserved for DCM Projects definitions, macros, and tests. Imported code files must be outside it. `manifest.yml` and
-  `out/` are also excluded, even when explicitly named in a path.
-- The CLI silently excludes dotfiles and dot-directories, including explicitly named files such as `.env`.
-- Symlinks within the project are followed. Symlinks that point outside it are skipped.
-
-**Limits:**
-
-| Limit | Value |
-| --- | --- |
-| Size of a single asset file | 50 MB |
-| Number of files per run | 5,000 |
-| Total size of all assets | 512 MB |
-| Length of an asset path | 1,024 |
-| Length of an asset name | 255 |
-
-Expand
-
-Show lessSee more
-
-## Entities
+## Objects
 
 DCM Projects uses `DEFINE` statements to create and manage Snowflake objects. A `DEFINE` statement runs as a
 [CREATE OR ALTER](/sql-reference/sql/create-or-alter) command for the corresponding object type, so all `CREATE OR ALTER` usage
@@ -272,7 +176,7 @@ EXECUTE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
   the project drop it on the next deployment.
 - Removing the `DEFINE CODE BUNDLE` statement drops the bundle and all its versions on the next deployment.
 - A DCM project that manages a Code Bundle can’t be dropped or replaced. Run
-  `EXECUTE DCM PROJECT <name> PURGE` to drop the managed entities, then drop the project.
+  `EXECUTE DCM PROJECT <name> PURGE` to drop the managed objects, then drop the project.
 - `PLAN` validates that the Code Bundle object can be created, but doesn’t check whether the bundled code runs successfully.
 
 ### Database
@@ -384,45 +288,28 @@ templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/cr
 
 DCM Projects supports defining the following types of policies:
 
-#### Authentication policy
+- [Authentication policy](/sql-reference/sql/create-authentication-policy)
+- [Masking policy](/sql-reference/sql/create-masking-policy)
+- [Network policy](/user-guide/network-policies)
+- [Row access policy](/user-guide/security-row-intro) (Public Preview)
 
-DCM Projects supports defining authentication policies. For more information, see
-[CREATE AUTHENTICATION POLICY](/sql-reference/sql/create-authentication-policy).
-
-#### Masking policy
-
-DCM Projects supports defining masking policies. For more information, see [CREATE MASKING POLICY](/sql-reference/sql/create-masking-policy).
-
-**Limitations:**
-
-- Attaching a masking policy to a table or view column as part of a DCM project definition isn’t yet supported; see
-  [Attachments](#label-dcm-projects-attachments).
-
-#### Network policy
-
-DCM Projects supports defining network policies, which restrict account, user, or integration access to specific IP addresses using
-network rules. For more information, see [Controlling network traffic with network policies](/user-guide/network-policies).
-
-**Limitations:**
-
-- You can’t replace an existing network policy while it’s assigned to an account, security integration, or user. Unassign the
-  policy before redeploying a replacement.
-- Assigning the policy to an account, user, or integration must be done outside of DCM Projects, using `ALTER ACCOUNT`, `ALTER USER`,
-  or `ALTER SECURITY INTEGRATION`.
-
-#### Row access policy
+`DEFINE ROW ACCESS POLICY` is in Public Preview.
 
 [Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
 
-DCM Projects supports defining row access policies, which filter the rows returned by a query based on the executing role. All row
-access policy properties supported by [CREATE ROW ACCESS POLICY](/sql-reference/sql/create-row-access-policy) are available in
-`DEFINE ROW ACCESS POLICY`. For more information, see [Understanding row access policies](/user-guide/security-row-intro).
-
 **Limitations:**
 
-- Attaching a row access policy to a table or view as part of a DCM project definition isn’t yet supported; see
+- **Masking policy:** Attaching a masking policy to a table or view column as part of a DCM project definition isn’t yet
+  supported; see [Attachments](#label-dcm-projects-attachments).
+- **Network policy:**
+  - You can’t replace an existing network policy while it’s assigned to an account, security integration, or user. Unassign
+    the policy before redeploying a replacement.
+  - Assigning the policy to an account, user, or integration must be done outside of DCM Projects, using `ALTER ACCOUNT`,
+    `ALTER USER`, or `ALTER SECURITY INTEGRATION`.
+- **Row access policy:** Attaching a row access policy to a table or view as part of a DCM project definition isn’t yet
+  supported; see
   [Attachments](#label-dcm-projects-attachments).
 
 ### Procedures
@@ -633,8 +520,9 @@ Import the Streamlit app as an asset and reference it with an `asset://` URI in 
 the DCM project root folder but outside the `sources/` folder.
 
 In `manifest.yml`, define the Streamlit folder as an asset in a top-level `assets` section. For each asset, use `path` to
-specify one path or `paths` to specify a list of paths. Each asset path must be a valid glob expression, directory path, or
-file path and must be enclosed in single quotation marks. Glob expressions support only `*` and `**`:
+specify one path or `paths` to specify a list of paths. Each asset path must be a valid glob expression or file path and must
+be enclosed in single quotation marks. A directory path by itself isn’t supported. To include the contents of a directory,
+append a glob pattern such as `/**/*`. Glob expressions support only `*` and `**`:
 
 Copy code
 
@@ -648,7 +536,7 @@ assets:
 
   my_next_streamlit:
     paths:
-      - 'streamlit_2'
+      - 'streamlit_2/**/*'
       - 'streamlit/shared/library.py'
 
 templating:
@@ -815,6 +703,105 @@ AS
 
 - INITIALLY\_SUSPENDED
 
+## Project assets
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+To create or update Streamlit apps (`DEFINE STREAMLIT`) and Code Bundles (`DEFINE CODE BUNDLE`) with DCM Projects, declare their
+source files as named entries in the manifest’s `assets` section. Assets let you place `manifest.yml` alongside existing code
+folders and use those files in DCM Projects without moving them into `sources/`.
+
+Each entry under the top-level `assets` section has a name and either `path` for one glob pattern or `paths` for multiple
+patterns. Paths are relative to the folder that contains `manifest.yml`. For example:
+
+```
+my_dcm_project/
+├── manifest.yml
+├── sources/
+│   └── definitions/
+│       └── objects.sql
+├── streamlit/
+│   └── my_dashboard/
+│       └── streamlit_app.py
+├── code_bundles/
+│   └── my_job/
+│       ├── code_bundle.yml
+│       └── my_job.ipynb
+└── shared/
+    └── helpers.py
+```
+
+Copy code
+
+```
+assets:
+  my_dashboard:
+    path: 'streamlit/my_dashboard/**/*'
+
+  my_job:
+    paths:
+      - 'code_bundles/my_job/**/*'
+      - 'shared/helpers.py'
+```
+
+Reference an entry’s name in the object’s `FROM` clause, for example, `FROM 'asset://my_dashboard'`. `DEFINE STREAMLIT` and
+`DEFINE CODE BUNDLE` can’t reference the original source folder or file path directly in `FROM`. Asset names are case-sensitive
+and must match `^[a-zA-Z_][a-zA-Z0-9_]*$`.
+
+**Path constraints:**
+
+- Paths must be relative to the folder that contains `manifest.yml` and must stay within the DCM project.
+- A directory path by itself isn’t supported. Append a glob pattern, such as `/**/*`, to include the directory’s contents.
+- `*` matches within one path component. `**` matches across directories. A path can also name one file.
+- `?` and brace expansion aren’t supported. Brackets are literal characters. `**` must be a whole path component followed by
+  another component.
+- Paths can’t contain Jinja expressions. Enclose paths in single quotation marks in YAML.
+- A pattern that matches no files causes the run to fail.
+
+When you run `PLAN` or `DEPLOY` through Snowflake CLI, the CLI uploads the files that match the manifest paths. DCM Projects stores imported
+files under `assets/<asset_name>/` in the deployment history artifacts. The literal directory prefix before the first wildcard
+is removed:
+
+| Pattern | Matched file | Materialized as |
+| --- | --- | --- |
+| `'app/**/*'` | `app/lib/util.py` | `assets/<name>/lib/util.py` |
+| `'**/*'` | `app/lib/util.py` | `assets/<name>/app/lib/util.py` |
+| `'app/static/**/*'` | `app/static/style.css` | `assets/<name>/style.css` |
+| `'app/main.py'` | `app/main.py` | `assets/<name>/main.py` |
+
+Expand
+
+Show lessSee more
+
+Entrypoints such as `MAIN_FILE` and `ENTRYPOINT` are relative to the imported root. Two files that resolve to the same
+destination in one named asset cause an error. Different named assets can import the same source file.
+
+Adding `--save-output` to `snow dcm plan` creates a local `out/` folder that contains rendered definitions under
+`out/rendered/`, including imported files under `out/rendered/assets/`.
+
+**Excluded files:**
+
+- `sources/` is reserved for DCM Projects definitions, macros, and tests. Imported code files must be outside it. `manifest.yml` and
+  `out/` are also excluded, even when explicitly named in a path.
+- The CLI silently excludes dotfiles and dot-directories, including explicitly named files such as `.env`.
+- Symlinks within the project are followed. Symlinks that point outside it are skipped.
+
+**Limits:**
+
+| Limit | Value |
+| --- | --- |
+| Size of a single asset file | 50 MB |
+| Number of files per run | 5,000 |
+| Total size of all assets | 512 MB |
+| Length of an asset path | 1,024 |
+| Length of an asset name | 255 |
+
+Expand
+
+Show lessSee more
+
 ## Grants
 
 DCM Projects uses `GRANT` statements to assign privileges and roles within a project.
@@ -829,10 +816,12 @@ and DCM Projects doesn’t remove them.
 Support for a `GRANT` statement that references a user or integration doesn’t mean that DCM Projects can define or manage the lifecycle of that
 user or integration. Object-definition support and grant-target support are separate.
 
-Note
-
 `GRANT ON ALL` and `GRANT ON FUTURE` aren’t recommended in DCM Projects. Use [inherited grants](#label-dcm-projects-inherited-grants)
 instead, which apply to all current and future objects of a type within a container and offer better performance for DCM Projects executions.
+
+Note
+
+Support for `GRANT ON ALL` and `GRANT ON FUTURE` in DCM Projects will be deprecated in a future behavior change release in favor of inherited grants.
 
 **Unsupported `GRANT` types:**
 
@@ -841,7 +830,7 @@ instead, which apply to all current and future objects of a type within a contai
 ### OWNERSHIP grants
 
 The DCM project owner role automatically has `OWNERSHIP` on all roles it creates inside the project. However, if one of those roles is
-then granted `OWNERSHIP` of other deployed entities, the project owner role no longer has direct `OWNERSHIP` of those entities. To avoid
+then granted `OWNERSHIP` of other deployed objects, the project owner role no longer has direct `OWNERSHIP` of those objects. To avoid
 being locked out on future deployments, explicitly grant the role to the project owner role in the same definition files:
 
 Copy code
@@ -889,18 +878,14 @@ Keep the ownership transfer and the other privilege grants on the target object 
 
 ### Inherited grants
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 DCM Projects supports [inherited grants](/user-guide/inherited-grants-intro), which let you declaratively define a single grant on a
 container (`ACCOUNT`, `DATABASE`, or `SCHEMA`) that automatically applies to every current and future object of a specified type
 within that container.
 
 **Prerequisites:**
 
-Inherited grants require a separate account-level opt-in that’s independent of DCM Projects. Before you can include them in your DCM Projects
-definitions, run:
+Until the behavior change is fully rolled out, inherited grants still require a separate account-level opt-in that’s independent of DCM Projects. Before you can include them in your DCM Projects
+definitions, review [inherited grants](/user-guide/inherited-grants-intro) and run:
 
 Copy code
 
@@ -943,10 +928,6 @@ revokes the grant on the next deployment.
 
 ### Container-level MANAGE GRANTS
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 In conjunction with inherited grants, DCM Projects also supports
 [container-level `MANAGE GRANTS`](/user-guide/container-manage-grants-intro), which lets you delegate grant administration for a
 specific database or schema. A role granted `MANAGE GRANTS` on a container can manage supported grants on objects inside that container
@@ -954,7 +935,7 @@ without needing account-level `SECURITYADMIN` privileges. It can’t transfer ob
 
 **Prerequisites:**
 
-Container-level `MANAGE GRANTS` requires the same account-level opt-in as inherited grants. Before you can include it in your
+Until the behavior change is fully rolled out, container-level `MANAGE GRANTS` requires the same account-level opt-in as inherited grants. Before you can include it in your
 DCM Projects definitions, run:
 
 Copy code
@@ -1070,7 +1051,7 @@ information about this property, see [Required privilege on the table or view](/
 
 To see all available system DMFs, query `SHOW DATA METRIC FUNCTIONS IN DATABASE SNOWFLAKE`.
 
-### ATTACH TAG
+### ATTACH Tag
 
 [Preview Feature](/release-notes/preview-features) — Open
 
@@ -1093,7 +1074,7 @@ Copy code
 
 ```
 ATTACH TAG <tag_fqn> = '<value>'
-  TO <entity_keyword> <entity_fqn> [ COLUMN <column_name> ];
+  TO <object_keyword> <object_fqn> [ COLUMN <column_name> ];
 ```
 
 Copy code
@@ -1118,7 +1099,7 @@ ATTACH TAG MY_DB.GOV.DATA_DOMAIN = 'marketing'
 
 Multiple tags and multiple targets (N×M): a single `ATTACH TAG` statement can list multiple tag assignments and
 multiple targets. DCM Projects expands them as a Cartesian product: every listed tag is attached to every listed target.
-You can mix entity-level and column-level targets in the same statement.
+You can mix object-level and column-level targets in the same statement.
 
 Copy code
 
@@ -1132,9 +1113,9 @@ ATTACH TAG MY_DB.GOV.TAG_PII = 'true',
 
 This single statement creates six tag-target pairs: both tags are attached to each of the three targets.
 
-**Supported entities:**
+**Supported objects:**
 
-| Entity keyword | Column target supported |
+| Object keyword | Column target supported |
 | --- | --- |
 | `DATABASE <db>` | No |
 | `SCHEMA <db>.<schema>` | No |
@@ -1205,7 +1186,7 @@ for the full description of these behaviors.
 **Limitations:**
 
 - The account-level `GRANT APPLY TAG ON ACCOUNT` privilege is enforced only when the grantee can also see the target
-  entity. If the grantee doesn’t hold a privilege that lets them see the target, the attachment isn’t applied.
+  object. If the grantee doesn’t hold a privilege that lets them see the target, the attachment isn’t applied.
 - All native Snowflake [object tagging limitations and quotas](/user-guide/object-tagging/introduction#label-object-tagging-limitations-and-considerations)
   apply.
 - Masking policies and row access policies aren’t yet supported as `ATTACH TAG` targets.

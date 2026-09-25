@@ -302,7 +302,9 @@ Complete connector-specific setup before you run the wizard or start a connector
 - **Secrets:** Create [Snowflake secrets](/sql-reference/sql/create-secret) for credentials (for
   example, database passwords) and grant **READ** to the runtime’s `EXECUTE_AS_ROLE`. Check your
   connector’s setup topic for the required secret type. See
-  [Create an execute-as role](#label-openflow-gen2-quickstart-execute-as-role).
+  [Create an execute-as role](#label-openflow-gen2-quickstart-execute-as-role). You can also source secret values
+  from an
+  [external secret provider](/user-guide/data-integration/openflow/security/external-secret-providers).
 - **Source preparation:** Follow the public connector setup topic for your source (for example,
   PostgreSQL publication and replication for PostgreSQL CDC).
 

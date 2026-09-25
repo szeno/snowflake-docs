@@ -131,11 +131,8 @@ Copy code
 schema_version: 1
 models:
   - name: claude-sonnet-4-6
-    type: cortex
   - name: claude-haiku-4-5
-    type: cortex
   - name: claude-opus-5
-    type: cortex
 logging:
   enabled: true
   capture_payload:
@@ -159,8 +156,7 @@ logging:
 | Field | Description |
 | --- | --- |
 | `schema_version` | The version of the specification format. Use `1`. |
-| `models` | The models the gateway exposes. Each entry takes a `name` and a `type`. A `name` of `'*'` enables every model available to the account. |
-| `models[].type` | Where the model is served from. `cortex` covers the models Snowflake hosts through Cortex. |
+| `models` | The models the gateway exposes. Each entry takes a `name`. A `name` of `'*'` enables every model available to the account. |
 | `logging.enabled` | Whether the gateway records traces for the requests that pass through it. This is the switch everything else depends on: while it’s `false`, nothing is recorded no matter what `capture_payload` is set to. See [Observability for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability). |
 | `logging.enable_client_telemetry` | Whether the gateway accepts traces that client applications export to it. See [Send client traces to the gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability#label-cortex-ai-gateway-client-traces). |
 | `logging.capture_payload.request_response` | Whether prompts and model responses are recorded alongside the metadata. `false` means they aren’t captured. Takes effect only when `logging.enabled` is `true`. Turning this on records the content of requests and responses, so treat the trace table as sensitive once it’s enabled. |
@@ -185,11 +181,8 @@ ALTER AI GATEWAY SNOWFLAKE FROM SPECIFICATION $$
 schema_version: 1
 models:
   - name: claude-sonnet-4-6
-    type: cortex
   - name: claude-haiku-4-5
-    type: cortex
   - name: claude-opus-5
-    type: cortex
 logging:
   enabled: true
   capture_payload:

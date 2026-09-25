@@ -61,7 +61,14 @@ EXECUTE CODE BUNDLE <name>
     Specify each argument as a separate quoted string in the list. In a Python entrypoint, access the arguments using `sys.argv[0]` for the
     entrypoint name, `sys.argv[1]` for the first argument, and so on.
 
+    Each value must be a string literal or a [SQL variable](/sql-reference/session-variables) reference such as `:my_var`.
+    Function calls and other expressions aren’t supported. For an example of passing values computed at runtime, see
+    [Pass arguments computed at runtime](#label-execute-code-bundle-dynamic-arguments).
+
     Only strings are supported; other data types (such as integers or Booleans) are interpreted as NULL.
+
+    The `ARGUMENTS` syntax differs between the two commands: `EXECUTE CODE BUNDLE` takes a parenthesized list of strings, while
+    [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) takes a single string.
 
     Examples:
 
@@ -121,8 +128,28 @@ For general information about roles and privilege grants for performing SQL acti
 ## Usage notes
 
 - You can’t run the `EXECUTE CODE BUNDLE` command from a notebook cell.
-- You can call `EXECUTE CODE BUNDLE` from tasks, enabling runs as part of larger workflows.
+- You can call `EXECUTE CODE BUNDLE` from tasks, enabling runs as part of larger workflows. For details, see
+  [Supported invocation contexts](#label-execute-code-bundle-invocation-contexts).
 - Run history and run result visibility for executions triggered by this command depends on the viewing role’s Code Bundle privileges and `IMPERSONATE` privilege over the initiating user. For details, see [Run history and result visibility](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule#label-nb-in-ws-schedule-run-visibility).
+
+### Supported invocation contexts
+
+`EXECUTE CODE BUNDLE` runs with caller’s rights, so it’s only supported in contexts that preserve the caller’s identity.
+The following table shows where you can run the command:
+
+| Context | Supported | Notes |
+| --- | --- | --- |
+| SQL worksheet or SQL file | Yes | Runs as the calling user. |
+| Task body | Yes | Supported both as a single-statement body and inside a `BEGIN ... END` [Snowflake Scripting](/developer-guide/snowflake-scripting/index) block. |
+| Stored procedure with `EXECUTE AS CALLER` | Yes | The procedure runs with the caller’s privileges. |
+| Stored procedure with `EXECUTE AS OWNER` | No | Owner’s rights procedures can’t run the command. Use `EXECUTE AS CALLER` instead. |
+| Stored procedure with `EXECUTE AS RESTRICTED CALLER` | No | Code Bundles don’t support [restricted caller’s rights](/developer-guide/restricted-callers-rights) yet. |
+| Streamlit app | No | Streamlit in Snowflake apps run with [owner’s rights](/developer-guide/streamlit/object-management/owners-rights) by default, and the [restricted caller’s rights](/developer-guide/streamlit/features/restricted-callers-rights) option isn’t supported by this command. |
+| Notebook cell | No | Nested execution isn’t supported. |
+
+Expand
+
+Show lessSee more
 
 ## Examples
 
@@ -153,4 +180,53 @@ Copy code
 EXECUTE CODE BUNDLE "sales_detection_db"."schema"."nightly_training"
   ENTRYPOINT = 'notebook_file.ipynb'
   ARGUMENTS = ('--env', 'prod');
+```
+
+### Pass arguments computed at runtime
+
+`ARGUMENTS` accepts string literals or SQL variables, but not function calls. To pass a value that’s computed at runtime,
+assign it to a variable first inside a `BEGIN ... END` block, then reference the variable with a colon prefix.
+
+The following task reads values from its own [CONFIG](/sql-reference/sql/create-task) property with
+[SYSTEM$GET\_TASK\_GRAPH\_CONFIG](/sql-reference/functions/system_get_task_graph_config) and passes them to the entrypoint:
+
+Copy code
+
+```
+CREATE TASK my_db.my_schema.nightly_run
+  WAREHOUSE = my_wh
+  SCHEDULE = 'USING CRON 0 9 * * * America/Los_Angeles'
+  CONFIG = $${"source_table": "raw_sales", "output_table": "sales_agg"}$$
+AS
+BEGIN
+  LET source_table VARCHAR := SYSTEM$GET_TASK_GRAPH_CONFIG('source_table')::VARCHAR;
+  LET output_table VARCHAR := SYSTEM$GET_TASK_GRAPH_CONFIG('output_table')::VARCHAR;
+  EXECUTE CODE BUNDLE my_db.my_schema.my_bundle
+    ENTRYPOINT = 'jobs/main.py'
+    ARGUMENTS = ('--source-table', :source_table, '--output-table', :output_table);
+END;
+```
+
+Read the arguments in the entrypoint with `sys.argv`:
+
+Copy code
+
+```
+import sys
+
+# sys.argv[0] is the entrypoint name, so the arguments start at index 1.
+print(sys.argv)  # ['jobs/main.py', '--source-table', 'raw_sales', '--output-table', 'sales_agg']
+```
+
+The same pattern works with other values available at runtime, such as a predecessor task’s return value from
+[SYSTEM$GET\_PREDECESSOR\_RETURN\_VALUE](/sql-reference/functions/system_get_predecessor_return_value) or a session variable
+set with [SET](/sql-reference/sql/set).
+
+Passing a function call directly to `ARGUMENTS` isn’t supported and fails to compile:
+
+Copy code
+
+```
+-- Not supported.
+ARGUMENTS = (SYSTEM$GET_TASK_GRAPH_CONFIG('source_table'));
 ```

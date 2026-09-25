@@ -22,8 +22,6 @@ resource pressure early. They’re color-coded to show the current state:
 - **Yellow (caution):** utilization is elevated. Consider reducing memory use or moving to a larger compute pool.
 - **Red (high):** utilization is high and code might fail or the kernel might be stopped to free memory.
 
-![Notebook footer showing color-coded CPU and memory utilization pills.](/static/images/snowsight/workspaces/notebook-utilization-pills.png)
-
 ## View utilization details
 
 Select the utilization pills to open the utilization popup, which breaks down memory use for the connected service:
@@ -38,8 +36,6 @@ When the service is in the caution or high zone, the popup also shows in-context
 - **Restart the current kernel:** clear in-memory state for the active kernel.
 - **Manage all running kernels:** review and stop kernels across connected files.
 - **View service details:** open the Service Details pane for deeper monitoring.
-
-![Utilization details popup showing per-file memory breakdown and recommendations.](/static/images/snowsight/workspaces/notebook-utilization-popup.png)
 
 ## Use the Service Details pane
 
@@ -70,8 +66,6 @@ The Resource Monitoring tab shows how the service uses compute over time:
 - **File filters** to focus on specific connected files.
 - **Toggle background processes** to include or exclude supporting processes in the view.
 - **Inspect with CoCo** to investigate resource use in Cortex Code.
-
-![Resource Monitoring tab showing CPU and memory timelines with threshold markers.](/static/images/snowsight/workspaces/notebook-resource-monitoring.png)
 
 ### Logs
 

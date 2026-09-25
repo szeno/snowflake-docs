@@ -13,4 +13,4 @@ DCM Projects now supports the following capabilities in preview:
 - **DEFINE NETWORK POLICY**: Define network policies that restrict account, user, or integration access to specific IP addresses using network rules.
 - **DEFINE MASKING POLICY**: Define masking policies to manage their lifecycle (CREATE, ALTER, DROP) as part of a DCM project. Attaching a masking policy to a table or view column isn’t yet supported.
 
-For more information, see [Supported object types in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities) and [Deploy and manage DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
+For more information, see [Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities) and [Deploy and manage DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
