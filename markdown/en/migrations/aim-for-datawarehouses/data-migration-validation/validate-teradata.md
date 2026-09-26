@@ -149,6 +149,32 @@ views:
     target_partition_size_rows: 50000
 ```
 
+## Character set handling
+
+Teradata stores character columns under a server character set. **Latin** and **Unicode** columns validate directly. **Non-Latin character sets** — for example `KANJISJIS`, `KANJI1`, and `GRAPHIC` — are translated to Unicode with Teradata’s `<charset>_TO_UNICODE` translation before AIM DMV fingerprints a row for L3 (row-level) validation.
+
+Some byte sequences in a non-Latin column have no Unicode equivalent. The **`onUntranslatable`** setting controls what happens then:
+
+| `onUntranslatable` | Behavior |
+| --- | --- |
+| `"substitute"` (default) | Each untranslatable character is replaced with the substitution character **U+001A** (the Unicode SUB control character), via Teradata’s `TRANSLATE(... WITH ERROR)`, so translation — and therefore row hashing and comparison — proceeds. The same substitution is applied on both sides, so validation still reports a meaningful result. |
+| `"fail"` | The affected validation task fails instead of substituting, surfacing that the column holds characters that can’t be represented in Unicode. Use it when you’d rather stop and inspect than compare substituted values. |
+
+Expand
+
+Show lessSee more
+
+Set it under `validationConfiguration`, globally or per table (a per-table value overrides the global one):
+
+Copy code
+
+```
+validationConfiguration:
+  onUntranslatable: substitute   # or: fail
+```
+
+`onUntranslatable` affects only non-Latin Teradata source columns; Latin and Unicode columns are unaffected. Schema (L1) and metrics (L2) validation don’t translate character data, so the setting applies to L3 row-level validation. For the property entry, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference#validation-configuration).
+
 ## Data type mappings
 
 During validation comparisons, these Teradata source types map automatically to Snowflake types:

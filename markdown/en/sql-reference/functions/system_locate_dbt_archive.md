@@ -22,7 +22,16 @@ SYSTEM$LOCATE_DBT_ARCHIVE ( '<query_id>' )
 
 ## Returns
 
-This function returns the URL from which you can retrieve the zipped contents of the results of a specified dbt project object.
+This function returns the URL of `dbt_artifacts.zip` for a specified dbt project object run. The archive contains the full target
+directory, including compiled SQL and files that aren’t uploaded separately, plus execution logs.
+
+Use `SYSTEM$LOCATE_DBT_ARCHIVE` directly when you need the archived target and logs, such as compiled SQL. When you import the
+archive returned by this function `AS 'state'` in the `IMPORTS` clause of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project), Snowflake extracts it
+automatically at `./imports/state`, with the dbt artifacts in `./imports/state/target`. An execution can automatically extract at most one
+ZIP file. Importing the full archive can take longer than importing standalone artifacts.
+
+[SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts), on the other hand, returns the results directory. When used in `IMPORTS`,
+`SYSTEM$LOCATE_DBT_ARTIFACTS` imports the results directory, including `dbt_artifacts.zip`, but doesn’t extract the ZIP file.
 
 For more information and examples, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 

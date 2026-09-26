@@ -1,6 +1,6 @@
 # snow sql
 
-Executes a Snowflake query. Use either query, filename, or input option. Query to execute can be specified using query option, filename option (all queries from file will be executed), or via stdin by piping output from another command. For example `cat my.sql | snow sql -i`. The command supports variable substitution that happens on the client side.
+Executes a Snowflake query. Use either query, filename, or input option. Query to execute can be specified using query option, filename option (all queries from file will be executed), or via stdin by piping output from another command. For example `cat my.sql | snow sql -i`. With no query source, opens an interactive REPL. The prompt stays `" > "` unless you set `--prompt-format` or a quoted `prompt_format` in the `[cli]` section of `config.toml`. The command supports variable substitution that happens on the client side.
 
 ## Syntax
 
@@ -17,6 +17,7 @@ snow sql
   --enable-templating <enabled_templating>
   --local-only
   --no-prompt-exit-repl
+  --prompt-format <prompt_format>
   --project <project_definition>
   --env <env_overrides>
   --connection <connection>
@@ -89,6 +90,9 @@ None
 
 `--no-prompt-exit-repl`
 :   Do not prompt before exiting the REPL.
+
+`--prompt-format TEXT`
+:   Format string for the interactive SQL REPL prompt. Ignored with `-q`, `-f`, or `-i`. Unset keeps the default prompt. Placeholders: `[user]`, `[host]`, `[account]`, `[role]`, `[warehouse]`, `[database]`, `[schema]`, and `[connection]` (the `-c` connection name). They update after USE. Missing values render as `(no user)`, `(no database)`, and so on. A backslash followed by n is a newline; prefix a bracket or backslash with a backslash to make it literal. Unknown tokens, including colour `[#rrggbb]` / `[bg:#rrggbb]`, are dropped with a warning. Quoted `prompt_format` in the `[cli]` section of `config.toml` sets the default.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.

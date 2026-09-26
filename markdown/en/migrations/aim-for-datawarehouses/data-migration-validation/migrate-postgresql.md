@@ -116,6 +116,19 @@ Copy code
 For the EVENTS table, store INTERVAL columns as text instead of native INTERVAL so we keep exact year-month fields
 ```
 
+## Incremental sync and VACUUM FREEZE
+
+PostgreSQL supports [incremental sync](../manual-migration/data-migration-configuration-reference#synchronizationstrategy-model) with both the `watermark` and `checksum` strategies. For `checksum`, PostgreSQL is a special case: instead of hashing column values, the default partition checksum fingerprints each partition from the MVCC system column `xmin` (the inserting transaction ID of each row). It reads no column data, so change detection stays cheap even on wide tables.
+
+The one caveat comes from `VACUUM FREEZE`. To protect against transaction-ID wraparound, freezing rewrites each row’s `xmin` to a fixed “frozen” value. That has two effects on `checksum` sync:
+
+- **A frozen partition may re-migrate once (safe).** Freezing changes a partition’s fingerprint even though no data changed, so the next sync run re-extracts that partition one extra time. This costs time but never loses data.
+- **A change may be missed (rare).** Once every row in a partition is frozen, the partition’s fingerprint depends only on its row count. If rows are updated and then frozen again *between two consecutive sync runs*, the next run can reproduce the previous fingerprint and skip the partition. Reaching this requires roughly `vacuum_freeze_min_age` transactions (50 million by default) plus a vacuum landing between two runs, so it isn’t reachable at a normal sync cadence.
+
+If a table is subject to aggressive freezing and you need value-based detection, set a value-derived `synchronization.checksumExpression` (for example `MAX(updated_at)`) or use the `watermark` strategy with a monotonic column. See [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect).
+
+`xmin`-based detection reads the physical row header, so it works on ordinary tables and on declarative-partitioned parent tables, but not on views or foreign tables.
+
 ## Platform-specific considerations
 
 - **`use_copy = true`**: PostgreSQL native COPY protocol is enabled by default for cloud migration and significantly improves extraction speed on large tables.

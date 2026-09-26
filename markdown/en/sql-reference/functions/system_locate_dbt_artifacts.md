@@ -26,6 +26,17 @@ The function returns the file path for dbt project object artifacts from a run (
 
 For more information and examples, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
+This is the results directory for the specified query, not a search for the latest execution. Its standalone target files can include
+`manifest.json`, `semantic_manifest.json`, `run_results.json`, and `sources.json` when present, and `logs/dbt.log` contains the current
+execution’s log. For the complete directory layout, see
+[Results directory contents](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-results-directory-contents).
+
+The function returns a location. Use `LIST` to inspect the returned location or `GET` to download files. When used in the `IMPORTS` clause
+of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project), `SYSTEM$LOCATE_DBT_ARTIFACTS` imports the results directory, including
+`dbt_artifacts.zip`, but doesn’t extract the ZIP file. When you import the location `AS 'state'`, Snowflake mounts the query’s results
+directory at `./imports/state`, with the dbt artifacts in `./imports/state/target`. Use `SYSTEM$LOCATE_DBT_ARCHIVE` directly when you need
+the archived target and logs, such as compiled SQL. Snowflake extracts the archive automatically.
+
 ## Access control requirements
 
 This function can only be used with dbt project objects, not Workspaces, when you have one of the following privileges:

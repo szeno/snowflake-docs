@@ -22,8 +22,14 @@ dbt state selection compares the project you are executing with artifacts from a
 
 - `manifest.json`, which describes the resources and relationships in the earlier project.
 - `run_results.json`, which records the status of resources processed by an earlier command.
+- `sources.json`, which records source freshness results, including source load timestamps.
 
 The `--state <path>` option tells dbt where to read these artifacts. For a dbt project object, use an import to mount the artifacts under the execution’s `./imports` directory, then point `--state` at the mounted directory.
+
+Different selectors need different artifacts. `state:modified+` uses `manifest.json`, `result:error+` uses `run_results.json`, and
+`source_status:fresher+` compares current source freshness results with an earlier `sources.json`. A selector works only when the imported
+results from the earlier execution contain the corresponding artifact. For source freshness prerequisites and comparison behavior, see
+[Source status selection](https://docs.getdbt.com/reference/node-selection/methods#source_status).
 
 Slim CI uses state selectors to limit the resources that CI processes. The selector `state:modified+` selects resources that changed relative to the state artifacts and also includes their downstream dependencies. Use Slim CI when you want to validate only changed resources and their downstream dependencies instead of rebuilding and retesting the entire project.
 
@@ -58,12 +64,23 @@ For retrieval instructions, see [Access dbt artifacts and logs programmatically]
 
 Choose the system function that matches how you want to identify an earlier execution:
 
-1. Use [`SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_successful_run_target) for the normal Slim CI workflow. Import the result `AS 'state'` and read it from `./imports/state`.
+1. Use [`SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_successful_run_target) for the normal Slim CI workflow. When you import the result `AS 'state'`, Snowflake mounts the target artifacts at `./imports/state`.
 2. Use [`SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_failed_run_target) to recover from the most recent failed qualifying execution.
 3. Use [`SYSTEM$DBT_GET_LAST_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_run_target) when you need the most recent completed qualifying execution regardless of whether it succeeded or failed.
 4. Use [`SYSTEM$LOCATE_DBT_ARTIFACTS`](/sql-reference/functions/system_locate_dbt_artifacts) or [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) when you know the query ID of the execution you need. When you import the result `AS 'state'`, Snowflake mounts the query-scoped results under `./imports/state`, and the dbt artifacts are in `./imports/state/target`.
 
 The `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions select a recent execution by dbt project object, completion status, qualifying command filter, and target path. The `SYSTEM$LOCATE_DBT_*` functions require the query ID of a specific execution.
+
+By default, the `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions search for `compile`, `build`, `run`, and `docs generate` executions. Pass
+`'source freshness'` as the command filter to find freshness results. These functions return the matching execution’s target location.
+They don’t execute a dbt command or generate missing artifacts.
+
+When used in `IMPORTS`, the `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions import standalone target artifacts, including `manifest.json`,
+`run_results.json`, and `sources.json` when present. `SYSTEM$LOCATE_DBT_ARTIFACTS` imports a specific query’s results directory,
+including `dbt_artifacts.zip`, but doesn’t extract the ZIP file. Use `SYSTEM$LOCATE_DBT_ARCHIVE` directly when you need the archived target
+and logs, such as compiled SQL. This function is the only way to extract a ZIP file into an execution, and an execution can extract at
+most one ZIP file. Importing the full archive can take longer than importing standalone artifacts. For the results directory’s file list, see
+[Results directory contents](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-results-directory-contents).
 
 ## Prerequisites for using dbt state artifacts
 
@@ -135,9 +152,12 @@ snow dbt execute \
   build --target dev --state ./imports/state --defer --select state:modified+
 ```
 
-You can specify `--import` multiple times to mount files from multiple locations. Each alias names a subdirectory under `./imports`. For example, `AS 'state'` mounts the returned artifacts at `./imports/state`. Pass that path to dbt with `--state`.
+You can specify `--import` multiple times to mount files from multiple locations. Each alias names a subdirectory under `./imports`. For example, `AS 'state'` mounts the returned artifacts at `./imports/state`. The `--state` option reads the artifacts from that path.
 
-An execution can import at most one ZIP file. The only supported way to import a ZIP file is to use the [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) system function, which returns the archive from a dbt project object’s results stage. Snowflake extracts the archive automatically.
+When used with `--import`, `SYSTEM$LOCATE_DBT_ARTIFACTS` imports the results directory, including `dbt_artifacts.zip`, but doesn’t
+extract the ZIP file. Use [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) directly when you need the
+archived target and logs, such as compiled SQL. Snowflake extracts the archive automatically. An execution can automatically
+extract at most one ZIP file.
 
 GitHub Actions automatically supplies repository URL, branch, and commit metadata when you deploy with Snowflake CLI. For other CI runners, explicitly pass `--git-url`, `--git-branch`, and `--git-commit` so the dbt project object remains traceable to its source.
 
@@ -147,7 +167,36 @@ For an end-to-end Slim CI example that uses `--env` and `--env-vars` with an iso
 
 When a `run` or `build` fails partway through, rerunning the complete command repeats work that already succeeded. `dbt retry` can avoid a complete rerun, but it replays the previous invocation with inherited arguments and selected resources, giving you less control over what dbt reruns.
 
-For more control, import the failed execution’s state with [`SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_failed_run_target), then use an explicit result selector:
+If you know the failed execution’s query ID, import its results with
+[`SYSTEM$LOCATE_DBT_ARTIFACTS`](/sql-reference/functions/system_locate_dbt_artifacts), then use an explicit result selector:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT my_dbt_project
+  ARGS = 'build --state ./imports/state/target --select result:error+'
+  IMPORTS = (
+    SYSTEM$LOCATE_DBT_ARTIFACTS('<query_id>') AS 'state'
+  );
+```
+
+If you don’t know the query ID, import the most recent failed execution’s state with
+[`SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_failed_run_target), then use an explicit result selector:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT my_dbt_project
+  ARGS = 'build --state ./imports/state --select result:error+'
+  IMPORTS = (
+    SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET(
+      'my_db.my_schema.production_dbt_project',
+      'run,build'
+    ) AS 'state'
+  );
+```
+
+With Snowflake CLI:
 
 Copy code
 
@@ -283,9 +332,11 @@ EXECUTE DBT PROJECT my_db.my_schema.my_dbt_project
   );
 ```
 
-`SYSTEM$LOCATE_DBT_ARTIFACTS` mounts the query-scoped results directory under `./imports/state`. The dbt artifacts are in its `target` subdirectory.
+`SYSTEM$LOCATE_DBT_ARTIFACTS` imports the query-scoped results directory, including `dbt_artifacts.zip`, but doesn’t extract the
+ZIP file. It mounts the results directory under `./imports/state`, and the dbt artifacts are in its `target` subdirectory.
 
-Alternatively, import and extract the complete results archive with [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive):
+Use [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) directly when you need the archived target
+and logs, such as compiled SQL:
 
 Copy code
 
@@ -297,14 +348,15 @@ EXECUTE DBT PROJECT my_db.my_schema.my_dbt_project
   );
 ```
 
-`SYSTEM$LOCATE_DBT_ARCHIVE` is the only supported way to import a ZIP file. It returns the archive from a dbt project object’s results stage. Snowflake extracts the file automatically when you import it, and it counts as the one ZIP file allowed for the execution. Importing and extracting the complete archive can involve many more files and take longer than importing only the dbt artifacts needed for ordinary Slim CI. Use the archive only when you need the complete archived result.
+`SYSTEM$LOCATE_DBT_ARCHIVE` is the only way to extract a ZIP file into an execution. An execution can extract at most one ZIP file.
+Importing the full archive can take longer than importing standalone artifacts.
 
 ## Use other artifact-based dbt workflows
 
 The mutable live version also supports these workflows:
 
 - **Partial parsing:** With writeback enabled, dbt can persist compatible parsing artifacts in the target path and reuse them during a later execution.
-- **Source freshness:** Run `source freshness` to evaluate source freshness and write its artifacts to the target path.
+- **Source freshness:** Run `source freshness` to evaluate source freshness and write `sources.json` to the target path. For a SQL execution and retrieval example, see [Retrieve source freshness results](/sql-reference/functions/system_dbt_get_last_run_target#label-dbt-get-last-run-source-freshness).
 - **Project cleanup:** Run `clean` to remove configured target directories. Cleanup is all or nothing. For more details, see [Clean a dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake-supported-commands#label-dbt-clean-project-object).
 
 ## Observability

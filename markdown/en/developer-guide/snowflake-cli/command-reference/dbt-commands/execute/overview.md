@@ -9,8 +9,12 @@ The `snow dbt execute` command executes one of the following [dbt commands](http
 - [build](https://docs.getdbt.com/reference/commands/build)
 - [clean](https://docs.getdbt.com/reference/commands/clean)
 - [compile](https://docs.getdbt.com/reference/commands/compile)
+- [debug](https://docs.getdbt.com/reference/commands/debug)
 - [deps](https://docs.getdbt.com/reference/commands/deps)
+- `deps_compile`
+- [docs](https://docs.getdbt.com/reference/commands/cmd-docs)
 - [list](https://docs.getdbt.com/reference/commands/list)
+- [ls](https://docs.getdbt.com/reference/commands/list)
 - [parse](https://docs.getdbt.com/reference/commands/parse)
 - [retry](https://docs.getdbt.com/reference/commands/retry)
 - [run](https://docs.getdbt.com/reference/commands/run)
@@ -57,7 +61,7 @@ The following examples show how to invoke `snow dbt execute`. The NAME argument 
   snow dbt execute --use-shell-env-vars my_dbt_project run
   ```
 
-  `--env-vars` applies inline `DBT_`-prefixed overrides for a single execution, and `--use-shell-env-vars` pulls `DBT_`-prefixed shell variables into the run (excluding `DBT_ENV_SECRET_*` variables). To select an environment defined in the project’s `env.yml` file, add the `--env` flag. These flags require Snowflake CLI 3.21 or later. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+  `--env-vars` applies inline `DBT_`-prefixed overrides for a single execution, and `--use-shell-env-vars` pulls `DBT_`-prefixed shell variables into the run (excluding `DBT_ENV_SECRET_*` variables). To select an environment defined in the project’s `env.yml` file, add the `--env` flag. These flags are generally available in Snowflake CLI 3.28.0. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 - Run without writing generated target and log files back to the live version:
 
   Copy code
@@ -84,7 +88,11 @@ The following examples show how to invoke `snow dbt execute`. The NAME argument 
     run --state ./imports/state --defer --select state:modified+
   ```
 
-  `SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET` returns the manifest.json and run\_results.json from most recent successful execution in the results folder of the production dbt project object. The `state` alias mounts it under `./imports/state`, which is the path passed to dbt with `--state`. For prerequisites and a complete Slim CI workflow, see [Use dbt artifacts for Slim CI and defer to production](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod).
+  [`SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_successful_run_target) locates the target artifacts
+  from the most recent successful qualifying execution
+  of the production dbt project object. These target artifacts can include `manifest.json`, `run_results.json`, and `sources.json` when
+  present, but not `dbt_artifacts.zip`. The `state` alias mounts the artifacts under `./imports/state`, which is the path passed to dbt with `--state`.
+  For prerequisites and a complete Slim CI workflow, see [Use dbt artifacts for Slim CI and defer to production](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod).
 
   Repeat `--import` to mount files from multiple locations. Each alias determines the directory name under `./imports`. Imports make files
   available only to that execution. They don’t permanently copy the files into the dbt project object’s live version. To copy files into or

@@ -28,7 +28,9 @@ SYSTEM$DBT_GET_LAST_RUN_TARGET (
 `commands`
 :   Optional comma-separated list of dbt commands to include when searching execution history. The default list is `compile`, `build`, `run`, and `docs generate`.
 
-    For a compound command, specify the command and its subcommand, such as `docs generate`.
+    For a compound command, specify the command and its subcommand, such as `docs generate` or `source freshness`. To retrieve source
+    freshness results, pass `source freshness` explicitly. For an example, see
+    [Retrieve source freshness results](#label-dbt-get-last-run-source-freshness).
 
 `target_path`
 :   Optional target path to match. When specified, the function considers only executions that used that target path.
@@ -38,6 +40,10 @@ SYSTEM$DBT_GET_LAST_RUN_TARGET (
 Returns the location of dbt artifacts produced by the object’s most recent completed qualifying execution. Use the location with the `IMPORTS` parameter of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project) or the Snowflake CLI `--import` option.
 
 Returns `NULL` if no qualifying completed execution with a populated target directory is available in the lookback window.
+
+The location contains standalone target artifacts such as `manifest.json`, `run_results.json`, and `sources.json` when present. The
+function doesn’t generate missing files or return `dbt_artifacts.zip`. When you import the location `AS 'state'`, Snowflake mounts the
+target artifacts at `./imports/state`. For the full archive from a known query, use [SYSTEM$LOCATE\_DBT\_ARCHIVE](/sql-reference/functions/system_locate_dbt_archive).
 
 ## Access control requirements
 
@@ -59,6 +65,8 @@ For general information about roles and privilege grants for performing SQL acti
 - To retrieve dbt artifacts for a specific query ID instead, use [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts) or [SYSTEM$LOCATE\_DBT\_ARCHIVE](/sql-reference/functions/system_locate_dbt_archive).
 
 ## Examples
+
+### Import artifacts from a recent execution
 
 Return the location of dbt artifacts from the most recent completed execution:
 
@@ -103,3 +111,61 @@ EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
     ) AS 'state'
   );
 ```
+
+### Retrieve source freshness results
+
+The `source_status:fresher+` selector compares current and previous `sources.json` files. It selects sources with newer data along with
+their downstream resources. In the following CI/CD example, you run source freshness on a tester object to create the current file, then
+import the production object’s source freshness results as the previous state. Both objects must configure freshness for the sources
+being compared, and the execution role must be able to query those sources. For comparison behavior, see
+[Source status selection](https://docs.getdbt.com/reference/node-selection/methods#source_status). For configuration, see
+[Source freshness](https://docs.getdbt.com/docs/deploy/source-freshness).
+
+First, run source freshness on the production object to create the previous results:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT my_db.my_schema.production_dbt_project
+  ARGS = 'source freshness';
+```
+
+Snowflake stores the generated `sources.json` in the production execution’s
+[results directory](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-results-directory-contents).
+
+After source data changes, run source freshness on the tester object and write the current `sources.json` file to its live version:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT my_db.my_schema.tester_dbt_project
+  ARGS = 'source freshness'
+  WRITEBACK = TRUE;
+```
+
+`WRITEBACK = TRUE` persists the current `sources.json` in the tester object’s live `target` directory so the next execution can use it.
+Snowflake also stores the file in the tester execution’s results directory.
+
+Import the production object’s previous freshness results `AS 'state'`. Snowflake mounts the production target at `./imports/state`.
+The build uses the tester object’s current `target/sources.json` file and the previous `./imports/state/sources.json` file for the
+comparison. These files record source freshness results, not the contents of the source tables:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT my_db.my_schema.tester_dbt_project
+  ARGS = 'build --state ./imports/state --select source_status:fresher+'
+  IMPORTS = (
+    SYSTEM$DBT_GET_LAST_RUN_TARGET(
+      'my_db.my_schema.production_dbt_project',
+      'source freshness'
+    ) AS 'state'
+  );
+```
+
+This function includes failed freshness executions as well as successful ones, so it can locate results when a freshness threshold is
+exceeded. To select only a successful freshness execution, call
+[SYSTEM$DBT\_GET\_LAST\_SUCCESSFUL\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_successful_run_target):
+`SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET('my_db.my_schema.production_dbt_project', 'source freshness')`.
+If the object has multiple qualifying executions and you need artifacts from one exact run, pass that execution’s query ID to
+[SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts).

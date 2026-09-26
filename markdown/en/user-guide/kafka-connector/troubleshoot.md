@@ -69,13 +69,23 @@ that the connector is actively ingesting into.
 
 ### Authentication failures
 
-The v4 connector supports key-pair authentication only. Common authentication issues:
+**Key pair authentication**
 
-- **Invalid private key**: Verify that the `snowflake.private.key` value is a valid Base64-encoded
-  PKCS#8 private key.
-- **Key passphrase**: If your key is encrypted, set `snowflake.private.key.passphrase` to the correct passphrase.
-- **Role privileges**: Verify that the role specified in `snowflake.role.name` has the required
-  privileges. See [Snowflake Connector for Kafka: Configure Snowflake](/user-guide/kafka-connector/setup-snowflake) for details.
+- **Invalid private key**: Verify that `snowflake.private.key` is a valid base64-encoded PKCS#8
+  private key with no header, footer, or line breaks.
+- **Encrypted key**: If the key is encrypted, set `snowflake.private.key.passphrase` to the
+  correct passphrase.
+- **Role privileges**: Verify that the role in `snowflake.role.name` has the required privileges.
+  See [Snowflake Connector for Kafka: Configure Snowflake](/user-guide/kafka-connector/setup-snowflake) for details.
+
+**OAuth authentication** (version 4.1.0 and later)
+
+- **Startup failure**: Verify that `snowflake.oauth.client.id` and `snowflake.oauth.client.secret`
+  are set and match the OAuth integration in your Snowflake account.
+- **Token endpoint unreachable**: If using External OAuth, verify that your Kafka Connect workers
+  can reach the identity provider’s token endpoint specified in `snowflake.oauth.token.endpoint`.
+- **Role privileges**: The connector uses the role in `snowflake.role.name`. Verify that this role
+  has `USAGE` on the OAuth security integration and the required privileges on target objects.
 
 ### Authorization errors
 

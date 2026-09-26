@@ -64,6 +64,7 @@ to which it is applied, and not all objects support all privileges:
 | MANAGE ACCOUNTS | Global | Grants the ability to manage the lifecycle of accounts in an organization. |
 | MANAGE APPLICATION SPECIFICATIONS | Global | Grants the ability to approve app specifications. |
 | MANAGE CALLER GRANTS | Global | Grants the ability to manage [caller grants](/developer-guide/restricted-callers-rights) in the account. |
+| MANAGE CORTEX EXTENSION SECURITY SCAN | Global | Grants the ability to override a Cortex Extension security scan and read its findings. |
 | MANAGE GRANTS | Global, Database, Schema | Grants the ability to grant or revoke privileges on any object as if the invoking role were the owner of the object. When granted on a database or schema, the ability is limited to that container and the objects in it. For details, see [Delegating grant management with container-level MANAGE GRANTS](/user-guide/container-manage-grants-intro). |
 | MANAGE LISTING AUTO FULFILLMENT | Global | Grants the ability to publish listings to remote regions using [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment) and manage auto-fulfillment settings for listings. |
 | MANAGE ORGANIZATION ACCESS | Global | Grants the ability to manage organizational access to a given account. |
@@ -89,6 +90,7 @@ to which it is applied, and not all objects support all privileges:
 | MODIFY SESSION TRACE LEVEL | Global | Enables setting the level of trace events captured for stored procedures and UDFs invoked in the current session. When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
 | MODIFY TRACE LEVEL | Global | Enables setting the level of trace events captured for stored procedures and UDFs in the current account. When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
 | MONITOR | User, Resource Monitor, Warehouse, Database, Schema, Task, Failover Group, Replication Group, Alert, Compute Pool, Service, Dynamic Table, Semantic View, Snowflake Native App, Agent, dbt Projects on Snowflake | Grants the ability to see details within an object (for example, queries and usage within a warehouse).     For semantic views, the MONITOR privilege also allows you to view Cortex Analyst [monitoring and observability data](/user-guide/snowflake-cortex/cortex-analyst/admin-observability). |
+| MONITOR CORTEX EXTENSIONS | Global | Grants the ability to view metadata for every Cortex Extension in the account. |
 | MONITOR EXECUTION | Global | Grants the ability to monitor pipes (Snowpipe) or tasks in the account. |
 | MONITOR ROLE | Global | Grants the ability to view roles in the account. |
 | MONITOR SECURITY | Global | Grants the ability to call system functions pertaining to [Customer-managed keys](/user-guide/security-encryption-manage#label-customer-managed-keys). |
@@ -97,7 +99,7 @@ to which it is applied, and not all objects support all privileges:
 | OPERATE | Warehouse, Task, Dynamic table, Alert, Compute Pool, Service | Grants the ability to start, stop, suspend, or resume a virtual warehouse. Grants the ability to suspend or resume a task. Grants the ability to suspend, resume, or refresh a dynamic table. Grants the ability to suspend or resume a compute pool. Grants the ability to suspend or resume a Snowpark Container Services service, upgrade service, set, and unset service properties. |
 | OWNERSHIP | All | Grants the ability to drop, alter, and grant or revoke access to an object. Required to rename an object and create a temporary object with the same name as the object itself. OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role or any role with the MANAGE GRANTS privilege. |
 | PURCHASE DATA EXCHANGE LISTING | Global | Grants the ability to purchase a paid listing. |
-| READ | Stage (internal only), Compute Pool, Git Repository, Image Repository | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
+| READ | Stage (internal only), Compute Pool, Git Repository, Image Repository, Cortex Extension | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
 | READ SESSION | Global | Grants the ability to read session context. |
 | READ UNREDACTED AI OBSERVABILITY EVENTS TABLE | Global | Grants the ability to read the unredacted data in an AI observability events table. |
 | READ UNREDACTED ERROR TABLE | Global | Grants the ability to read the unredacted data in an error table. Required when the error table is associated with a base table that has security policies, such as a [masking policy](/user-guide/security-column-intro). For more information about error tables, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging). |
@@ -112,7 +114,7 @@ to which it is applied, and not all objects support all privileges:
 | USE AI FUNCTIONS | Global | Grants the ability to use Snowflake Cortex AI Functions. Users need both the USE AI FUNCTIONS account privilege and the CORTEX\_USER database role to use all Snowflake Cortex AI Functions. For more information, see [Snowflake Cortex AI Functions (including LLM functions)](/user-guide/snowflake-cortex/aisql). |
 | USAGE | Warehouse, Dataset, Data Exchange Listing, Integration, Database, Schema, Stage (external only), File Format, Sequence, Stored Procedure, User-Defined Types, User-Defined Function, External Function, Compute Pool, Snapshot, Backup Policy, Backup Set, Model, dbt project object, Agent, MCP Server | Grants the ability to execute a [USE <object>](/sql-reference/sql/use) command on the object. Also grants the ability to execute a [SHOW <objects>](/sql-reference/sql/show) command on the object. Usage on a compute pool is required to create a Snowpark Container Services service. For models, USAGE grants the ability to run inference methods. It doesn’t grant access to the model’s underlying artifacts. For dbt Projects on Snowflake, grants the ability to SHOW, DESCRIBE, view execution history, and execute the dbt project object. |
 | VIEW LINEAGE | Global | Grants the [ability to view data lineage](/user-guide/ui-snowsight-lineage), including upstream and downstream lineage objects and dependencies. |
-| WRITE | Stage (internal only), image repository, Git Repository | Grants the ability to perform any operations that require writing to an internal stage ([PUT](/sql-reference/sql/put), [REMOVE](/sql-reference/sql/remove), [COPY INTO <location>](/sql-reference/sql/copy-into-location), etc.). Grants the ability to upload an image to an image repository. |
+| WRITE | Stage (internal only), Image Repository, Git Repository, Cortex Extension | Grants the ability to perform any operations that require writing to an internal stage ([PUT](/sql-reference/sql/put), [REMOVE](/sql-reference/sql/remove), [COPY INTO <location>](/sql-reference/sql/copy-into-location), etc.). Grants the ability to upload an image to an image repository. |
 
 Expand
 
@@ -186,6 +188,7 @@ The remaining sections in this topic describe the specific privileges available 
 | MANAGE ACCOUNT SUPPORT CASES | Grants the ability to view, comment on, and manage all Support cases for the current account in Snowsight. |  |
 | MANAGE APPLICATION SPECIFICATIONS | Grants the ability to approve app specifications. |  |
 | MANAGE CALLER GRANTS | Grants the ability to manage [caller grants](/developer-guide/restricted-callers-rights) in the account. |  |
+| MANAGE CORTEX EXTENSION SECURITY SCAN | Grants the ability to override the security scan status of a Cortex Extension and to read its scan findings. | Also requires MONITOR CORTEX EXTENSIONS. Granted to ACCOUNTADMIN by default. |
 | MANAGE GRANTS | Enables granting or revoking privileges on objects for which the role is not the owner. MANAGE GRANTS can also be granted on a database or schema to limit the ability to that container; see [Delegating grant management with container-level MANAGE GRANTS](/user-guide/container-manage-grants-intro). | Must be granted by a role that holds MANAGE GRANTS WITH GRANT OPTION on the account or, for a database or schema, on that container or a higher container. The SECURITYADMIN role holds account-level MANAGE GRANTS by default. For details, see [How to obtain MANAGE GRANTS on a container](/user-guide/container-manage-grants-using#label-container-manage-grants-using-obtain). |
 | MANAGE LISTING AUTO FULFILLMENT | Grants the ability to publish listings to remote regions using [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment) and manage auto-fulfillment settings for listings. | In the [organization account](/user-guide/organization-accounts), must be granted by the GLOBALORGADMIN role. In all other accounts, must be granted by the ACCOUNTADMIN role after that role has been [delegated privileges by the ORGADMIN role](/collaboration/provider-listings-auto-fulfillment-manage-privileges#label-delegate-laf-privileges). |
 | MANAGE ORGANIZATION ACCESS | Grants the ability to manage organizational access to a given account. |  |
@@ -207,6 +210,7 @@ The remaining sections in this topic describe the specific privileges available 
 | MODIFY SESSION METRIC LEVEL | Enables setting the level of metrics data captured for stored procedures and UDFs invoked in the current session. | For more information, see [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level). |
 | MODIFY TRACE LEVEL | Enables setting the level of trace events captured for stored procedures and UDFs in the current account. | When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
 | MODIFY SESSION TRACE LEVEL | Enables setting the level of trace events captured for stored procedures and UDFs invoked in the current session. | When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
+| MONITOR CORTEX EXTENSIONS | Grants the ability to view metadata for every Cortex Extension in the account, including DESCRIBE, LIST, and SHOW VERSIONS. | Read-only. Granted to ACCOUNTADMIN by default. |
 | MONITOR EXECUTION | Grants the ability to monitor any pipes or tasks in the account. | Must be granted by the ACCOUNTADMIN role. The USAGE privilege is also required on each database and schema that stores these objects. |
 | MONITOR | Grants the ability to describe connections, resolve any object and session, and show capacity groups, locks, login events, query history by warehouse, REST history events, task history, and transactions. |  |
 | MONITOR ROLE | Grants the ability to view roles in the account. |  |
@@ -1541,3 +1545,25 @@ Expand
 Show lessSee more
 
 For information about creating and sharing workspaces, see [Shared workspaces](/user-guide/ui-snowsight/workspaces-shared).
+
+## Cortex Extension privileges
+
+| Privilege | Usage |
+| --- | --- |
+| READ | Grants the ability to install and use the shared skill or plugin. This is the privilege that gives an end user access to a shared skill. |
+| WRITE | Grants the ability to update the Cortex Extension, including changing whether it’s discoverable in the catalog. Granting WRITE also grants READ access. You do not need to grant READ separately. |
+| OWNERSHIP | Grants full control over the Cortex Extension. Only a single role can hold this privilege on a specific object at a time. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
+| ALL [ PRIVILEGES ] | Grants all applicable privileges, except OWNERSHIP, on the Cortex Extension. |
+
+Expand
+
+Show lessSee more
+
+To delegate governance of every Cortex Extension in an account to a role other than ACCOUNTADMIN, grant `WRITE` and
+`MANAGE GRANTS` account-wide with the `INHERITED` keyword, which requires
+[inherited grants](/user-guide/inherited-grants-intro). Delegation also draws on the account privileges
+`MONITOR CORTEX EXTENSIONS` and `MANAGE CORTEX EXTENSION SECURITY SCAN`. For the full set of grants that administering
+shared skills and plugins needs, see
+[Delegate administration](/user-guide/cortex-code/cortex-code-skill-plugin-sharing#label-cortex-code-skill-sharing-delegate-administration).
+
+For information about sharing skills and plugins, see [Share skills and plugins](/user-guide/cortex-code/cortex-code-skill-plugin-sharing).

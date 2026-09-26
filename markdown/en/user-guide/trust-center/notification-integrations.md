@@ -22,9 +22,10 @@ To configure notification integrations for the Trust Center, perform the followi
 1. [Create a notification integration](#label-trust-center-webhook-create)
 2. [Grant access to the notification integration](#label-trust-center-webhook-grant-access)
 3. [Configure notification settings for scanners](#label-trust-center-webhook-configure-scanner)
-4. [Run the scanner](#label-trust-center-webhook-run-scanner)
-5. [Interpret the notification payload](#label-trust-center-webhook-notification-payload)
-6. [Troubleshoot notification issues](#label-trust-center-webhook-debug)
+4. [Send a test notification](#label-trust-center-webhook-test)
+5. [Run the scanner](#label-trust-center-webhook-run-scanner)
+6. [Interpret the notification output](#label-trust-center-webhook-notification-payload)
+7. [Troubleshoot notification issues](#label-trust-center-webhook-debug)
 
 ### Create a notification integration
 
@@ -205,6 +206,86 @@ CALL SNOWFLAKE.TRUST_CENTER.UNSET_CONFIGURATION(
 );
 ```
 
+### Send a test notification
+
+After you configure a notification integration for a scanner or scanner package, you can verify that
+the integration works by sending a test notification instead of waiting for a scanner to produce a
+real finding. To send a test notification, call the `SEND_TEST_NOTIFICATION_INTEGRATION` stored
+procedure. The procedure sends one mock finding to a single configured integration. To test a
+package-level configuration, pass the scanner package name. To test a scanner-level configuration,
+also pass a scanner name.
+
+The following example sends a test notification to an integration that’s configured at the scanner
+package level:
+
+Copy code
+
+```
+CALL SNOWFLAKE.TRUST_CENTER.SEND_TEST_NOTIFICATION_INTEGRATION(
+  'CIS_BENCHMARKS',
+  'TEST_PAGERDUTY_INT'
+);
+```
+
+The following example sends a test notification to an integration that’s configured for a specific
+scanner (`CIS_BENCHMARKS_CIS1_1`) within a scanner package:
+
+Copy code
+
+```
+CALL SNOWFLAKE.TRUST_CENTER.SEND_TEST_NOTIFICATION_INTEGRATION(
+  'CIS_BENCHMARKS',
+  'CIS_BENCHMARKS_CIS1_1',
+  'TEST_PAGERDUTY_INT'
+);
+```
+
+The procedure accepts the following arguments:
+
+| Argument | Description |
+| --- | --- |
+| `scanner_package_id` | Required. Name of the scanner package that the integration is configured for, such as `CIS_BENCHMARKS`. |
+| `scanner_id` | Optional. Name of a specific scanner within the package, such as `CIS_BENCHMARKS_CIS1_1`. Include this argument to test a scanner-level configuration. Omit it to test the package-level configuration. |
+| `integration_name` | Required. Name of the configured notification integration to test. The name must match an integration that’s configured at the scope you specify. |
+
+Expand
+
+Show lessSee more
+
+The procedure returns an object with a `status` field that’s either `SUCCESS` or `FAILURE`, along
+with a `message` field and, if the notification fails to send, an `error_message` field.
+
+For example, a successful call returns:
+
+Copy code
+
+```
+{
+  "status": "SUCCESS",
+  "message": "Sent a test notification to TEST_PAGERDUTY_INT.",
+  "error_message": null
+}
+```
+
+If the notification fails to send, the `status` is `FAILURE` and `error_message` describes the
+problem:
+
+Copy code
+
+```
+{
+  "status": "FAILURE",
+  "message": "Failed to send a test notification to TEST_PAGERDUTY_INT.",
+  "error_message": "Invalid Notification Integration configuration: <details>"
+}
+```
+
+The test notification uses the same payload structure as a real finding, described in
+[Interpret the notification output](#label-trust-center-webhook-notification-payload). The mock
+finding has a `finding_identifier` value of `TEST` and a `finding_severity` value that matches the
+`SEVERITY_THRESHOLD` configured for the integration, so you can distinguish test notifications from
+real findings.
+
 ### Run the scanner
 
 Trust Center supports [schedule-based scanners](/user-guide/trust-center/overview#label-trust-center-scanners-schedule-based) and [event-driven scanners](/user-guide/trust-center/overview#label-trust-center-scanners-event-driven). After setting the configuration, you can run a scanner on demand or wait for the scanner
@@ -317,3 +398,7 @@ Copy code
 ```
 SELECT * FROM SNOWFLAKE.TRUST_CENTER.NOTIFICATION_HISTORY ORDER BY SENT_ON DESC;
 ```
+
+Test notifications that you send with [SEND\_TEST\_NOTIFICATION\_INTEGRATION](#label-trust-center-webhook-test) also
+appear in `SNOWFLAKE.TRUST_CENTER.NOTIFICATION_HISTORY`, recorded with a `TEST` finding identifier, so you can
+confirm that a test was recorded.

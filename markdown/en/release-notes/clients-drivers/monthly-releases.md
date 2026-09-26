@@ -59,7 +59,8 @@ Show lessSee more
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 3.20.0 | 03-Sep-2026 |  |
 | 3.21.0 | 10-Sep-2026 |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | 4.2.0 | 03-Sep-2026 |  |
-| [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | TBD | TBD |  |
+| [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | 3.27.0 | 09-Sep-2026 |  |
+| 3.28.0 | 28-Sep-2026 |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
 | [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 4.7.3 | 03-Sep-2026 |  |
 | [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | 3.2.2 | 01-Sep-2026 |  |

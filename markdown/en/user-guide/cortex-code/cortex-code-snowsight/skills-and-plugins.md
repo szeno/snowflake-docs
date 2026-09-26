@@ -8,8 +8,9 @@ To use skills and plugins in CoCo on Snowsight, you need:
 
 - An active warehouse in your session. Skills execute queries and AI functions on your behalf,
   so your current warehouse handles the compute. Any warehouse size works for most skills.
-- To manage skills in the Horizon Catalog (share, change access, delete), you need the
-  ACCOUNTADMIN role or a role with equivalent privileges on the Catalog.
+- To manage skills in AI & ML (share, change access, delete), you need the
+  ACCOUNTADMIN role or a role that ACCOUNTADMIN has granted the relevant governance privileges to.
+  For details, see [Delegate administration](/user-guide/cortex-code/cortex-code-skill-plugin-sharing#label-cortex-code-skill-sharing-delegate-administration).
 
 ## Built-in skills
 
@@ -35,17 +36,18 @@ Personal skills can only be accessed from the workspace where they were created.
 
 Note
 
-The Skill Catalog is rolling out progressively. If you don’t see **AI & ML >> Skills and plugins** in Snowsight or Skill Catalog entries in the `/` menu, the feature might not yet be enabled for your account. Contact your account team for availability.
+Sharing skills and plugins is rolling out progressively. If you don’t see **AI & ML** > **Skills and plugins** in Snowsight or shared skills in the `/` menu, the feature might not yet be enabled for your account. Contact your account team for availability.
 
-Skills can be shared and discovered through AI & ML. The `+` menu and the `/` command both show Local, Built-in, and Skill Catalog skills.
+Skills can be shared and discovered through AI & ML. The `+` menu and the `/` command both show local, built-in, and shared skills.
 
 To share a skill, use the `share-skill` skill, which provides a share link. To install a shared skill, paste a skill link into the message box. The `find-skill` skill helps facilitate skill discovery and invocation.
 
 ### Managing skills in AI & ML
 
-A user with the ACCOUNTADMIN role can manage skills through AI & ML:
+A user with the ACCOUNTADMIN role, or a role that ACCOUNTADMIN has granted the relevant governance privileges to,
+can manage skills through AI & ML:
 
-1. Navigate to **AI & ML >> Skills and plugins** to browse and search available skills.
+1. Navigate to **AI & ML** > **Skills and plugins** to browse and search available skills.
 2. Select a skill to view its details.
 3. Available management actions:
    - Change access (role or user)

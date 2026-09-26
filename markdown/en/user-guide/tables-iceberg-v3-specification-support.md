@@ -15,6 +15,7 @@ The following v3 data types are supported:
 - `geometry`
 - `nanosecond timestamp`
 - `variant`
+- [UNKNOWN data type](/sql-reference/data-types-unknown)
 
 For more information, see [Iceberg v3 data types](/user-guide/tables-iceberg-data-types#label-tables-iceberg-v3-data-types).
 
@@ -265,10 +266,8 @@ Show lessSee more
 
 The following features from the Iceberg v3 specification aren’t supported:
 
-- Nested variant
 - Multi-argument transforms for partitioning and sorting
 - Table encryption keys
-- UNKNOWN data type
 
 ## Examples: Support for v3 with existing Snowflake features
 

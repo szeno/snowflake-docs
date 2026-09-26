@@ -1,21 +1,32 @@
-# snow streamlit share
+# snow spcs service remote-build
 
-Shares a Streamlit app with a role or, using `--to-user`, with one or more users. The share is also recorded under the matching entity’s `grants:` in `snowflake.yml`, so the next `snow streamlit deploy` keeps it.
+Note
+
+You can use Snowpark Container Services from Snowflake CLI only if you have the necessary permissions to use Snowpark Container Services.
+
+Builds an image or app artifact with Snowflake’s remote build REST API, instead of `snow spcs service build-image` (which runs `EXECUTE JOB SERVICE`).
+
+Use `--build-type image` (the default) to build an OCI container image and push it to an image repository. Use `--build-type app` to build an application tarball and upload it to an artifact repository; `--location` is required for that type.
 
 ## Syntax
 
 Copy code
 
 ```
-snow streamlit share
-  <name>
-  <to_role>
-  --to-user <to_user>
-  --with-grant-option
-  --grant-location-usage
+snow spcs service remote-build
+  --build-context-dir <build_context_dir>
+  --location <location>
+  --name <name>
+  --image-tag <image_tag>
+  --project-type <project_type>
+  --compute-pool <compute_pool>
+  --stage <stage>
+  --build-type <build_type>
+  --validation-profile <validation_profile>
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -43,6 +54,8 @@ snow streamlit share
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -53,31 +66,48 @@ snow streamlit share
 
 ## Arguments
 
-`name`
-:   Identifier of the Streamlit app; for example: my\_streamlit.
-
-`to_role`
-:   Role with which to share the Streamlit app. Optional when you pass `--to-user`.
+None
 
 ## Options
 
-`--to-user TEXT`
-:   User with which to share the Streamlit app, instead of a role. Repeat the option to share with several users.
+`--build-context-dir DIRECTORY`
+:   Directory to use as build context. Must contain a Dockerfile (image) or project root (app).
 
-`--with-grant-option`
-:   Also let the grantee share the app with others. Default: False.
+`--location TEXT`
+:   Target repository for the build output. For image builds: IMAGE REPOSITORY in [db.][schema.]repo format (optional, account default used when omitted). For app builds: ARTIFACT REPOSITORY in db.schema.repo format (required).
 
-`--grant-location-usage`
-:   Also grant the grantee USAGE on the database and schema holding the app. Default: False.
+`--name TEXT`
+:   Output name. For image builds: short image name without a tag. For app builds: artifact package name. Auto-generated when omitted.
+
+`--image-tag TEXT`
+:   Tag for the built image. Applies to image builds only. Defaults to ‘latest’ when omitted.
+
+`--project-type TEXT`
+:   Project type hint for app builds (e.g. ‘node’, ‘python’). Ignored for image builds.
+
+`--compute-pool TEXT`
+:   Compute pool to run the build job on. Uses the platform default when omitted.
+
+`--stage TEXT`
+:   Stage to store build context files. Format: [db.][schema.]stage\_name. If not provided, a temporary stage will be created and dropped automatically.
+
+`--build-type TEXT`
+:   Type of build to execute: ‘image’ (default) or ‘app’. Default: image.
+
+`--validation-profile TEXT`
+:   Validation profile for image builds (e.g. ML\_JOB, NOTEBOOK). Selects the pre-baked ruleset the image builder runs before publish. Ignored for –build-type app. When omitted, no image validation is requested.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -149,25 +179,31 @@ snow streamlit share
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -180,17 +216,3 @@ snow streamlit share
 
 `--help`
 :   Displays the help text for this command.
-
-## Usage notes
-
-None.
-
-## Examples
-
-The following example shares `my-app` with the custom `analyst` role:
-
-Copy code
-
-```
-snow streamlit share my-app analyst
-```

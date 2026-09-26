@@ -62,6 +62,13 @@ This makes container runtimes more flexible. You’ll always have access to the 
 version of Streamlit, including `streamlit-nightly` versions. Container runtimes also
 support [restricted caller’s rights (Preview)](/developer-guide/streamlit/features/restricted-callers-rights).
 
+Note
+
+You can also run a Streamlit app on a container runtime inside a Snowflake Native App, where the app
+creates and owns the compute pool in the consumer account. That path has additional requirements,
+including manifest privileges and an app specification for external access. For more information,
+see [Container runtime](/developer-guide/native-apps/adding-streamlit#label-streamlit-container-runtime-na).
+
 ## Warehouse runtimes
 
 Warehouse runtimes provide an on-demand, personal instance of the Streamlit app for

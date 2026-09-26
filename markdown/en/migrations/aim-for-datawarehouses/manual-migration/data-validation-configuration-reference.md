@@ -94,6 +94,7 @@ When `validationConfiguration` is omitted, defaults are: schema validation and m
 | `earlyStopCheckIntervalMinutes` | `Integer` | Poll interval when either early-stop flag is enabled (default **5**). |
 | `earlyStopCheckIntervalSeconds` | `Integer` | Alternative poll interval in seconds. Mutually exclusive with `earlyStopCheckIntervalMinutes`. |
 | `textComparisonMode` | `String` (`"logical"`, `"raw"`) | Teradata only. `"logical"` (default) normalizes text before comparing; `"raw"` compares source and target text byte-exact. |
+| `onUntranslatable` | `String` (`"substitute"`, `"fail"`) | Teradata only. How untranslatable characters in non-Latin Teradata character sets (for example `KANJISJIS`, `GRAPHIC`) are handled when the source is translated to Unicode for L3 row hashing. `"substitute"` (default) replaces each untranslatable character so comparison proceeds; `"fail"` fails the affected task instead. Set globally or per table. See [Character set handling](../data-migration-validation/validate-teradata#character-set-handling). |
 | `acceptedTransformations` | `Array` | Rules merged with workflow-root and per-table rules. |
 
 Expand

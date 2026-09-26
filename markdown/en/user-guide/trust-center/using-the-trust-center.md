@@ -57,8 +57,9 @@ For information about how many credits are charged per Compute-Hour for the oper
 
 The Trust Center Snowsight interface has the following tabs:
 
-- **Overview** - Displays a high-level summary of Trust Center findings for your account. Select the **View** option in each section of
-  **Overview** to see more detailed information about a specific aspect of your account’s security posture.
+- **Overview** - Displays a high-level summary of Trust Center findings for your account, including the [Account posture](#label-trust-center-account-posture)
+  section. Select the **View** option in each section of **Overview** to see more detailed information about a specific aspect of your
+  account’s security posture.
 - **Violations** - Shows violations, suggests remediation actions for them, and provides detailed information about them. For information
   about using this tab, see [Manage the violation findings lifecycle](#label-managing-findings) and [Manage security risks](#label-trust-center-managing-security-risks).
 - **Detections** - Shows the detections found by the scanners and provides information about them. For information about using this tab,
@@ -76,6 +77,74 @@ The Trust Center Snowsight interface has the following tabs:
 - **AI Security** - Monitor the security posture of AI workloads in your account, including
   Cortex Agents, the [AI Security scanner package](/user-guide/trust-center/overview#label-ai-security-scanner-package), and [Cortex AI Guardrails](/user-guide/snowflake-cortex/cortex-ai-guardrails)
   runtime protections. For more information, see [View the AI Security tab](#label-trust-center-ai-security-tab).
+
+## Review account posture
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+The **Account posture** section on the **Overview** tab aggregates Trust Center monitoring activity for your account over a time period
+that you select, and generates a PDF report of that activity.
+
+The rest of the Trust Center tells you what’s at risk in your account right now: open [violations](#label-trust-center-view-violations)
+and [detections](#label-trust-center-detections-view), authentication readiness, [sensitive data](/user-guide/classify-ui-trust-center),
+and [AI workload risks](#label-trust-center-ai-security-tab). Account posture adds the other half of that picture. It shows which findings
+were remediated, which violations you triaged and muted, and which scanners ran and reported no at-risk entities. Reporting on that
+activity previously meant writing your own queries against account usage data, or building your own tooling to share the results.
+
+Use account posture and the posture report to:
+
+- **Show the controls that pass, not just the risks that are open.** Scanners that ran clean during the period are reported alongside open
+  findings, so a reviewer can see which checks your account satisfies.
+- **Show progress over a period.** Violation findings are grouped as newly opened, remediated, increased, decreased, unchanged, and muted,
+  so you can demonstrate how your posture changed instead of reporting a single count.
+- **Share evidence with people who don’t use your account.** The PDF is a self-contained, point-in-time record of the period you select,
+  which makes it useful for compliance evidence and for management or auditor reporting.
+
+To open the section, follow these steps:
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. Switch to a role that has the `SNOWFLAKE.TRUST_CENTER_VIEWER` or `SNOWFLAKE.TRUST_CENTER_ADMIN` application role granted to it. For
+   more information, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
+3. In the navigation menu, select **Governance & security** » **Trust Center**.
+4. Select the **Overview** tab.
+
+### Account posture widgets
+
+The **Account posture** section includes the following widgets:
+
+- **Scanning status** - A chart that shows how many of your account’s total scanners ran during the selected period, and what share of
+  findings report zero at-risk entities.
+- **Findings** - The number of open findings and how that count changed compared with the start of the selected period.
+- **At-risk entities** - The total number of entities discovered and the change over the period, broken out by entity type such as **User**,
+  **Table**, and **Procedure**.
+
+### Generate a posture report
+
+To generate a PDF posture report:
+
+1. On the **Overview** tab, in the **Account posture** section, select a time period from the drop-down menu. The default is **Last 28
+   days**.
+2. Select **Generate report**.
+
+The Trust Center generates a PDF report. The report header records the account name, reporting period, and generation time. All timestamps in the
+report are shown in UTC.
+
+### Contents of the posture report
+
+The PDF posture report includes the following sections:
+
+- **Scanner enablement** - How many first-party scanners are enabled, with coverage for each scanner package.
+- **Scanner activity in period** - Which scanners ran during the period, how many found no at-risk entities, and active scanner posture by
+  package.
+- **Configuration changes** - The most recent enable or disable per scanner package, and violation triage activity (mute, unmute, comments)
+  within the reporting period. This section doesn’t include earlier package state history, individual scanner enable or disable, schedule
+  updates, or notification-setting changes. To see who made other configuration changes, review your account’s query history.
+- **Violation findings activity in period** - Violations grouped as newly opened, remediated, increased, decreased, unchanged, no active
+  findings, and muted. Each entry includes the scanner, scanner package, at-risk entity count, and percent change where applicable.
+- **Detection findings activity in period** - Detections reported during the period and scanners that ran but reported no detections.
+- **Scanner status** - For each scanner package, each scanner’s description, status, last run in the period, and schedule.
 
 ## View the AI Security tab
 

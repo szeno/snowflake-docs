@@ -209,7 +209,7 @@ Snowflake recommends sharing skills through the Snowflake catalog, a Git reposit
 
 #### Snowflake catalog
 
-Use the Snowflake catalog to share skills and plugins across your account with built-in governance and discoverability. Skills and plugins shared this way appear in the **Skills & Plugins** area under Horizon Catalog in Snowsight. For details, see [Share skills and plugins](/user-guide/cortex-code/cortex-code-skill-plugin-sharing).
+Use the Snowflake catalog to share skills and plugins across your account with built-in governance and discoverability. Skills and plugins shared this way appear on the **Skills and plugins** page under **AI & ML** in Snowsight. For details, see [Share skills and plugins](/user-guide/cortex-code/cortex-code-skill-plugin-sharing).
 
 #### Git repositories
 

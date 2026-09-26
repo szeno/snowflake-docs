@@ -158,7 +158,6 @@ Consider the following as you use the Iceberg v3 data types:
 >   - The keys for objects in VARIANT columns should be of type STRING.
 >   - Using Snowpipe or COPY INTO to load data into Iceberg tables with VARIANT columns is supported. However, Snowpipe and COPY INTO cannot
 >     be used to load data into OBJECT, ARRAY, or MAP columns that contain a nested VARIANT column.
->   - Nested variants aren’t supported.
 >   - You can store [UUID](/sql-reference/data-types-uuid) values in a VARIANT column. UUID is also supported as the
 >     element or value type of Iceberg structured types (`struct`, `list`, and `map`).
 >   - Also see [Considerations for semi-structured data stored in VARIANT](/user-guide/semistructured-considerations).

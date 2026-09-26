@@ -224,7 +224,7 @@ pip install <package name> --only-binary=:all: --python-version 3.12 –platform
 ### Limitations
 
 - Access to private repositories is not supported.
-- You cannot use this feature directly in Notebooks. However, you can use a UDF or stored procedure that uses PyPI packages within a notebook.
+- You can use Artifact Repository directly in [Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-artifact-repositories). You can’t use it directly in [Legacy Notebooks](/user-guide/ui-snowsight/notebooks), but you can call a UDF or stored procedure that uses PyPI packages from a legacy notebook.
 - You cannot use Artifact Repository within anonymous stored procedures.
 
 Note

@@ -43,14 +43,19 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 8, 2026: Skill and plugin sharing in CoCo (General availability)](/release-notes/2026/other/2026-10-08-skill-plugin-sharing-ga)
+- [Snowflake CLI (v3.28.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
 - [Sep 24, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-24-dcr)
 - [Sep 24, 2026: CHECK constraints on hybrid tables (General availability)](/release-notes/2026/other/2026-09-24-hybrid-tables-check-constraints-ga)
 - [Sep 24, 2026: Snowpipe Streaming: Event table monitoring](/release-notes/2026/other/2026-09-24-snowpipe-streaming-monitoring)
 - [Sep 24, 2026: Snowpipe Streaming: Partitioned Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-09-24-snowpipe-streaming-partitioned-iceberg-ga)
+- [Sep 24, 2026: Programmatic notifications for Trust Center findings (Preview)](/release-notes/2026/other/2026-09-24-trust-center-programmatic-notifications)
 - [Sep 24, 2026: VALUES clause is supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-24-values-clause-incremental-dynamic-tables)
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
+- [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)
+- [Sep 23, 2026: Account posture reporting in the Trust Center (Preview)](/release-notes/2026/other/2026-09-23-trust-center-account-posture-preview)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
@@ -88,8 +93,10 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [ODBC Driver (v4.0.0-rc3)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0rc3)](/release-notes/clients-drivers/python-connector-2026)
 - [Snowflake ML Python (v2.0.0)](/release-notes/clients-drivers/snowpark-ml-2026)
+- [Snowpark Python (v1.55.0)](/release-notes/clients-drivers/snowpark-python-2026)
 - [SnowSQL (v1.5.2)](/release-notes/clients-drivers/snowsql-2026)
 - [Sep 09, 2026: Openflow gen 1 deployment creation retired](/release-notes/2026/other/2026-09-09-openflow-gen1-deployment-retirement)
+- [Snowflake CLI (v3.27.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Sep 8, 2026: CoCo Desktop v1.21.3](/release-notes/2026/other/2026-09-08-coco-desktop-v1-21-3)
 - [Sep 08, 2026: Add and drop hybrid table constraints online (General availability)](/release-notes/2026/other/2026-09-08-hybrid-tables-online-constraints-ga)
 - [Sep 08, 2026: Second generation Openflow deployments and runtimes (General availability)](/release-notes/2026/other/2026-09-08-openflow-gen2-deployment-runtime-ga)
@@ -132,10 +139,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Aug 26, 2026: Cortex Agents Coding Agent (General availability)](/release-notes/2026/other/2026-08-26-cortex-agents-coding-agent-ga)
 - [Aug 26, 2026: Organization user types (General availability)](/release-notes/2026/other/2026-08-26-organization-user-types)
 - [Aug 26, 2026: Semantic Studio (Preview)](/release-notes/2026/other/2026-08-26-semantic-studio-preview)
-- [Aug 25, 2026: Multi-value tags (General availability)](/release-notes/2026/other/2026-08-25-multi-value-tags-ga)
-- [August 25, 2026: Remote app operations for Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-08-25-remote-app-operations-preview)
-- [Aug 25, 2026: Remote Development with the Snowflake Extension for Visual Studio Code (Preview)](/release-notes/2026/other/2026-08-25-remote-development-vscode-preview)
-- [August 25, 2026: Stable egress IP addresses on Azure (Preview)](/release-notes/2026/other/2026-08-25-stable-egress-ip-azure-preview)
-- [Ingest Java SDK (v4.4.4)](/release-notes/clients-drivers/ingest-java-sdk-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

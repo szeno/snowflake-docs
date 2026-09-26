@@ -8,6 +8,10 @@ DCM Projects definition files support three types of statements:
 
 You can also reference additional files that your definitions need as [project assets](#label-dcm-project-assets) by specifying paths relative to the folder that contains `manifest.yml`.
 
+Note
+
+For objects, grants, and attachments in preview, the changeset format in `plan_results.json` and `deploy_results.json` can be subject to change.
+
 **Objects:**
 
 - [Alert](#label-dcm-projects-object-type-alert)
@@ -289,11 +293,9 @@ templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/cr
 DCM Projects supports defining the following types of policies:
 
 - [Authentication policy](/sql-reference/sql/create-authentication-policy)
-- [Masking policy](/sql-reference/sql/create-masking-policy)
+- [Masking policy](/sql-reference/sql/create-masking-policy) (Public Preview)
 - [Network policy](/user-guide/network-policies)
 - [Row access policy](/user-guide/security-row-intro) (Public Preview)
-
-`DEFINE ROW ACCESS POLICY` is in Public Preview.
 
 [Preview Feature](/release-notes/preview-features) — Open
 
@@ -301,6 +303,7 @@ Available to all accounts.
 
 **Limitations:**
 
+- `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are still in Public Preview.
 - **Masking policy:** Attaching a masking policy to a table or view column as part of a DCM project definition isn’t yet
   supported; see [Attachments](#label-dcm-projects-attachments).
 - **Network policy:**

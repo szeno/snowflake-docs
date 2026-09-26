@@ -14,6 +14,30 @@ Warning
 
 Because Python 3.8 has reached its [End of Life](https://devguide.python.org/versions/), deprecation warnings will be triggered when you use `snowpark-python` with Python 3.8. For more information, see [Snowflake Python Runtime Support](/developer-guide/python-runtime-support-policy). Snowpark Python 1.24.0 will be the last client and server version to support Python 3.8, in accordance with [Anaconda’s policy](https://forum.anaconda.com/t/python-3-8-reaches-end-of-life/87265). Upgrade your existing Python 3.8 objects to Python 3.9 or later.
 
+## Version 1.55.0: Sep 10, 2026
+
+### Snowpark Python API updates
+
+#### New features
+
+- Added `DataFrame.to_polars()` to convert a Snowpark DataFrame to a Polars DataFrame. The method supports an optional `transport="parquet"` mode for large workloads where data transfer accounts for most of the execution time.
+- Added interval type support for Python UDFs and stored procedures. Use `datetime.timedelta` as the type annotation for day-time interval (`DayTimeIntervalType`) parameters and return values, and `YearMonthInterval` (a type annotation sentinel from `snowflake.snowpark.types`) for year-month interval (`YearMonthIntervalType`) parameters and return values.
+- Added support for a `table_properties` key in the `iceberg_config` dictionary of `DataFrameWriter.save_as_table`. This key generates a `TABLE_PROPERTIES = ('k'='v', ...)` clause when creating an Apache Iceberg™ table with `CREATE TABLE` or `CREATE TABLE AS SELECT`.
+
+#### Bug fixes
+
+- Fixed a bug where registering a UDF, UDTF, or stored procedure with an integer optional argument failed with `SQL compilation error: invalid default argument expression`. Integer defaults were generated with a redundant `:: INT` cast, but a parameter default accepts only a constant expression. The redundant cast is no longer generated.
+
+#### Documentation
+
+- Documented the JSON Schema `response_format` structure for `ai_extract` and `DataFrame.ai.extract`.
+
+### Snowpark pandas API updates
+
+#### Bug fixes
+
+- Fixed a bug where referencing `modin.pandas` inside a Snowpark pandas `apply()` function raised a `ModuleNotFoundError`.
+
 ## Version 1.54.0: Jul 29, 2026
 
 ### New features

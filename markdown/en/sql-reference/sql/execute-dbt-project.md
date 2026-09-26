@@ -118,6 +118,10 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 
     Other system functions aren’t supported in `IMPORTS`.
 
+    Use `IMPORTS` to reuse state from an earlier execution without copying artifacts into the live version. Snowflake makes files from each
+    source location available under `./imports` before dbt runs. State comparison uses `manifest.json`, result selection uses
+    `run_results.json`, and source freshness comparison uses `sources.json`, when those files are present.
+
     Use `AS '<alias>'` to name the subdirectory for an import. For example, `AS 'state'` mounts the
     imported files at `./imports/state`. The `--state` option in `ARGS` must point to the mounted
     directory. `IMPORTS` alone doesn’t tell dbt to use the files as state. For a complete example, see
@@ -129,15 +133,20 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
     `DBT_PROD` mounts at `./imports/dbt_prod_target`. Use an alias when you want a shorter, more
     predictable path.
 
-    An `IMPORTS` list can include at most one ZIP file. To import it, use the
-    [`SYSTEM$LOCATE_DBT_ARCHIVE`](/sql-reference/functions/system_locate_dbt_archive) system function,
-    which returns the archive from a dbt project object’s results stage. ZIP files from other source
-    locations aren’t supported. Snowflake extracts the archive automatically.
+    Use [SYSTEM$DBT\_GET\_LAST\_SUCCESSFUL\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_successful_run_target) to import dbt artifacts from the most recent successful
+    execution of a dbt project object.
 
-    For dbt artifacts from the most recent successful execution of a dbt project object, use
-    [SYSTEM$DBT\_GET\_LAST\_SUCCESSFUL\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_successful_run_target). To import dbt artifacts from
-    a specific query, use [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts). This function mounts
-    the query’s results directory, so the dbt artifacts are under `./imports/<alias>/target`.
+    The `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions search for the most recent qualifying execution and import its target artifacts without `dbt_artifacts.zip`. Their default command filter is
+    `compile,build,run,docs generate`. Specify `source freshness` explicitly to retrieve freshness results.
+
+    Use [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts) to import dbt artifacts from a specific query. When used in `IMPORTS`,
+    `SYSTEM$LOCATE_DBT_ARTIFACTS` imports the results directory, including `dbt_artifacts.zip`, but doesn’t extract the ZIP file. The
+    function mounts the results directory under `./imports/<alias>`, so the dbt artifacts are under `./imports/<alias>/target`.
+
+    Use `SYSTEM$LOCATE_DBT_ARCHIVE` to import the full archived target and logs, such as compiled SQL. This function is the only way to
+    extract a ZIP file into an execution, and an execution can extract at most one ZIP file. Snowflake doesn’t automatically extract ZIP files
+    imported from other locations, such as a named stage. Importing the full archive can take longer than importing standalone artifacts. For details, see
+    [Results directory contents](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-results-directory-contents).
 
     Default: No value
 
@@ -196,6 +205,7 @@ The dbt command specified in EXECUTE DBT PROJECT runs with the privileges of the
 - [Default run command with target and models specified](#label-execute-dbt-project-default-run-example)
 - [Explicit test command with target and models specified](#label-execute-dbt-project-test-example)
 - [Explicit run command with downstream models specified](#label-execute-dbt-project-explicit-run-example)
+- [Run changed models by importing state from a stage](#label-execute-dbt-project-stage-import-example)
 - [Run changed models by importing state from a production project](#label-execute-dbt-project-state-import-example)
 - [Run changed models by importing state from a specific query](#label-execute-dbt-project-query-state-import-example)
 - [Run a dbt project object concurrently](#label-execute-dbt-project-concurrent-no-writeback-example)
@@ -232,6 +242,21 @@ Copy code
 ```
 EXECUTE DBT PROJECT my_database.my_schema.my_dbt_project
   ARGS = 'run --select simple_customers+ --target dev';
+```
+
+### Run changed models by importing state from a stage
+
+Import dbt state artifacts from a directory on a named stage. The alias `state` mounts the files at `./imports/state`, which is the path
+passed to dbt with `--state`:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
+  ARGS = 'run --state ./imports/state --defer --select state:modified+'
+  IMPORTS = (
+    '@my_db.my_schema.my_stage/target_2026_04_25/' AS 'state'
+  );
 ```
 
 ### Run changed models by importing state from a production project
@@ -279,17 +304,16 @@ EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
 For requirements and query ID lookup examples, see
 [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts).
 
-### Import a ZIP archive from a results stage
+### Import and extract a ZIP archive from a results stage
 
-`SYSTEM$LOCATE_DBT_ARCHIVE` is the supported way to import a ZIP file. It returns an archive from a
-dbt project object’s results stage. An `IMPORTS` list can include at most one ZIP file. ZIP files
-from other source locations aren’t supported. Snowflake extracts the archive automatically:
+`SYSTEM$LOCATE_DBT_ARCHIVE` is the only way to extract a ZIP file into an execution. It returns the archive from a dbt project object’s
+results stage, and an execution can extract at most one ZIP file:
 
 Copy code
 
 ```
 EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
-  ARGS = 'run --state ./imports/archive --defer --select state:modified+'
+  ARGS = 'run --state ./imports/archive/target --defer --select state:modified+'
   IMPORTS = (
     SYSTEM$LOCATE_DBT_ARCHIVE(
       '01c6a772-001e-db19-0000-5349650b6cfe'

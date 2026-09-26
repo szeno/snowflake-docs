@@ -32,7 +32,9 @@ SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET (
 :   Optional comma-separated list of dbt commands to include when searching execution history. The
     default list is `compile`, `build`, `run`, and `docs generate`.
 
-    For a compound command, specify the command and its subcommand, such as `docs generate`.
+    For a compound command, specify the command and its subcommand, such as `docs generate` or `source freshness`. To retrieve source
+    freshness results, pass `source freshness` explicitly. For an example, see
+    [Retrieve source freshness results](/sql-reference/functions/system_dbt_get_last_run_target#label-dbt-get-last-run-source-freshness).
 
 `target_path`
 :   Optional target path to match. When specified, the function considers only executions that used
@@ -46,6 +48,10 @@ execution. Use the location with the `IMPORTS` parameter of
 
 Returns `NULL` if no qualifying execution with a populated target directory is available in the
 lookback window.
+
+The location contains standalone target artifacts such as `manifest.json`, `run_results.json`, and `sources.json` when present. The
+function doesn’t generate missing files or return `dbt_artifacts.zip`. When you import the location `AS 'state'`, Snowflake mounts the
+target artifacts at `./imports/state`. For the full archive from a known query, use [SYSTEM$LOCATE\_DBT\_ARCHIVE](/sql-reference/functions/system_locate_dbt_archive).
 
 ## Access control requirements
 

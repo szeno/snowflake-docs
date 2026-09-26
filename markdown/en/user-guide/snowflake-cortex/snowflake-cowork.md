@@ -54,6 +54,17 @@ The Snowflake CoWork mobile app for iOS is available on the [App Store](https://
 
 Snowflake CoWork offers the following additional options for users from the UI:
 
+#### User memory
+
+User memory lets Snowflake CoWork remember preferences you ask it to save and use them in later
+conversations. For example, you can ask, “Remember that I prefer concise answers.” User memory
+applies only to interactions in Snowflake CoWork, not to direct calls to agents through the
+[Cortex Agent API](/user-guide/snowflake-cortex/cortex-agents-rest-api).
+
+To turn off user memory for yourself, open **Settings** > **Memories** in Snowflake CoWork and
+turn off **Reference saved memories**. This setting applies only to your user and doesn’t delete
+existing saved memories.
+
 #### Deep Research
 
 Deep Research is an investigation mode for complex, open-ended questions that require multi-step

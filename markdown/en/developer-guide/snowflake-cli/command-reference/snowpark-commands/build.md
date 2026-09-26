@@ -1,6 +1,6 @@
 # snow snowpark build
 
-Builds artifacts required for the Snowpark project. The artifacts can be used by `deploy` command. For each directory in artifacts a .zip file is created. All non-anaconda dependencies are packaged in dependencies.zip file.
+Builds artifacts required for the Snowpark project. The artifacts can be used by `deploy` command. For each directory in artifacts a .zip file is created. All non-anaconda dependencies are packaged in a `dependencies.zip` file. When the project has no `requirements.txt`, dependencies are collected from the PEP 621 `[project]` table in `pyproject.toml`. Optional extras are not included. If `requirements.txt` is present, it is used and `pyproject.toml` is ignored.
 
 ## Syntax
 

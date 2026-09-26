@@ -12,8 +12,10 @@ This topic provides information about the limitations of Snowflake Native Apps.
 Snowflake Native Apps have the following known limitations:
 
 - Temporary tables or stages are not supported.
-- Some Streamlit features are not supported. See [Unsupported Streamlit Features](/developer-guide/native-apps/adding-streamlit#label-streamlit-unsupported-features-na)
+- Some Streamlit features are not supported. See [Unsupported Streamlit features](/developer-guide/native-apps/adding-streamlit#label-streamlit-unsupported-features-na)
   for details.
+- Running a Streamlit app on a container runtime is in preview and has additional limitations. For
+  details, see [Limitations for container runtimes in an app](/developer-guide/native-apps/adding-streamlit#label-streamlit-container-limitations-na).
 - Snowflake Native Apps do not support failover for business continuity. For example, adding an application
   package to a replication group or failover group is not supported.
 - [Storage lifecycle policies](/user-guide/storage-management/storage-lifecycle-policies) aren’t

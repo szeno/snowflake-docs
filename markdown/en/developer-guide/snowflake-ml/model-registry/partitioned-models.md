@@ -244,10 +244,6 @@ For more information about defining parameters, see
 
 ### Using batch inference jobs with partitioned models
 
-Note
-
-This feature requires `snowflake-ml-python` version 1.33.0 or later.
-
 You can also use the `run_batch` method to run partitioned inference as a
 [batch inference job](/developer-guide/snowflake-ml/inference/batch-inference-jobs) on
 Snowpark Container Services (SPCS). This is useful for large-scale workloads that benefit from distributed
@@ -258,7 +254,7 @@ To partition the input data, pass the `partition_column` argument in `InputSpec`
 Copy code
 
 ```
-from snowflake.ml.model.batch import InputSpec, OutputSpec
+from snowflake.ml.model.batch_inference import InputSpec, OutputSpec
 
 job = model_version.run_batch(
     input_df,

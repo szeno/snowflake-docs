@@ -41,4 +41,4 @@ For more information, see [Preparing an External Location For Files](/user-guide
 
 Spark queries benefit from Snowflake’s automatic query pushdown optimization, which improves performance. By default, Snowflake query pushdown is enabled in Databricks.
 
-For more details about query pushdown, see [Pushing Spark Query Processing to Snowflake](https://www.snowflake.com/snowflake-spark-part-2-pushing-query-processing/) (Snowflake Blog).
+For supported operations and limitations, see [Query pushdown](/user-guide/spark-connector-use#label-spark-pushdown).

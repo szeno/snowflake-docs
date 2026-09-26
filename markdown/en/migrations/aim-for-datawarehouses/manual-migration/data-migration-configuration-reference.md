@@ -307,6 +307,15 @@ Both incremental strategies carry a cost and a coverage caveat:
 - **`checksum`** recomputes a checksum on the source for **every partition on every run**, so the detection pass itself has a fixed cost proportional to table size. A custom `checksumExpression` over an indexed row-version or SCN column is usually much cheaper than the default per-column hash.
 - **`watermark`** only reads the watermark column, but it can’t see rows that changed without the watermark advancing.
 
+Warning
+
+With the `watermark` strategy, `trackModifications` and `trackDeletions` are **off by default**, which changes what an incremental run does to updated and deleted source rows:
+
+- **Updated rows are duplicated.** Without `trackModifications: true`, a row whose watermark advances is re-extracted and **appended**, leaving both the old and new versions on the target. Set `trackModifications: true` (with `primaryKeyColumns`) to deduplicate by primary key after the load.
+- **Deleted rows are not removed.** Without `trackDeletions: true`, a row deleted at the source **stays** on the target. Set `trackDeletions: true` (with `primaryKeyColumns`) to delete target rows that no longer exist at the source.
+
+Enable both when the source table receives updates or deletes and you need the target to stay in sync. They apply only to the `watermark` strategy.
+
 ### Changes a checksum may not detect
 
 The default partition checksum hashes a **normalized subset** of columns. Some types are skipped outright. A row whose only change falls into one of the categories below won’t be detected, so its partition won’t be re-extracted.
@@ -318,6 +327,7 @@ This applies to `synchronization.strategy: checksum` during migration and to [in
 | Skipped legacy large objects | SQL Server `TEXT`, `NTEXT`, `IMAGE`; Oracle LOBs, `LONG`, `XMLTYPE`, `VECTOR` | The column is excluded from the checksum input, so changes confined to it are invisible |
 | Spatial values as text | SQL Server, Redshift, and Oracle `SDO_GEOMETRY` | Compared as Well-Known Text with spacing normalized, so binary geometry detail is lost |
 | A custom `checksumExpression` | Any platform | Only that expression drives detection — whether a change is detected depends entirely on what the expression evaluates |
+| Fully frozen partitions | PostgreSQL (`checksum` strategy) | The default PostgreSQL checksum fingerprints a partition from each row’s MVCC `xmin`. `VACUUM FREEZE` rewrites every row’s `xmin` to the same frozen value, so a fully frozen partition’s fingerprint depends only on its row count. An update that is frozen again between two consecutive sync runs may go undetected. Use a value-derived `checksumExpression` (for example `MAX(updated_at)`) or the `watermark` strategy. See [Migrating Data from PostgreSQL](../data-migration-validation/migrate-postgresql#incremental-sync-and-vacuum-freeze). |
 
 Expand
 
@@ -487,6 +497,36 @@ Copy code
     extraction:
       strategy: tpt
 ```
+
+## Constraints, identity columns, and sequences
+
+AIM DMV data migration moves **table data**. It creates each target table with its columns and data types and loads rows; it does **not** author source **constraints** (CHECK, UNIQUE, PRIMARY KEY, FOREIGN KEY) or **identity columns**, **auto-increment columns**, or **sequences** from the source schema. Convert that DDL with SnowConvert — it translates constraints and identity/sequence definitions into Snowflake equivalents — and apply it as part of schema conversion. During a data load, CHECK constraints and generators are handled differently.
+
+### CHECK constraints
+
+You don’t need to drop or re-create CHECK constraints by hand. When a target table already has CHECK constraints (for example, ones created by SnowConvert), AIM DMV **temporarily removes them before loading the table and restores them after the load completes**. This keeps constraints that would otherwise reject in-flight rows during `COPY INTO` from blocking the migration, and leaves them in place once the load finishes — no manual step is required.
+
+During a [`preflight`](#preflight-bounded-dry-run) dry run the constraints are removed but not restored (the transient preflight schema is discarded anyway), unless you set `preflightKeepSchema: true`.
+
+### Identity columns and sequences
+
+Migration copies the values in an identity/auto-increment column (or a sequence-fed column) as ordinary data, but it does not create or advance the target’s generator. Snowflake fixes a sequence’s or identity column’s starting value **at creation time** and has no runtime “reseed”, so create the target generator with a `START` past the highest migrated value:
+
+Copy code
+
+```
+-- 1. Read the loaded maximum.
+SELECT MAX(ID) AS max_id FROM TARGET_DB.PUBLIC.ORDERS;
+
+-- 2. Create the sequence starting after it (substitute max_id + 1).
+CREATE SEQUENCE IF NOT EXISTS TARGET_DB.PUBLIC.ORDERS_SEQ START = <max_id + 1> INCREMENT = 1;
+
+-- 3. Use it as the column default for new inserts.
+ALTER TABLE TARGET_DB.PUBLIC.ORDERS
+  ALTER COLUMN ID SET DEFAULT TARGET_DB.PUBLIC.ORDERS_SEQ.NEXTVAL;
+```
+
+Do this once the final data load completes. For [incremental sync](#synchronizationstrategy-model), reseed at cutover, when writes move to Snowflake — otherwise later incremental loads would collide with generator values already handed out. SnowConvert emits the sequence/identity DDL during schema conversion; adjust its `START` to clear the migrated range.
 
 ## Worker configuration
 

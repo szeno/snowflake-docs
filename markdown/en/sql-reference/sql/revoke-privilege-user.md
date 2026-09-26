@@ -147,6 +147,7 @@ For more information about the privileges supported for each object type, see [A
     - `AGGREGATION POLICY`
     - `ALERT`
     - `AUTHENTICATION POLICY`
+    - `CORTEX EXTENSION`
     - `CORTEX SEARCH SERVICE`
     - `DATA METRIC FUNCTION`
     - `DATASET`

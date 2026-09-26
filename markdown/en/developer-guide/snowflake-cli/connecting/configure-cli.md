@@ -407,6 +407,26 @@ $Content = Get-Content -Raw $Path
 For files created under a different encoding entirely, for example cp932, use a third-party tool (like Notepad++)
 to convert to BOM-free UTF-8 instead.
 
+## Set a default output format
+
+By default, Snowflake CLI prints command results as a table. You can change the default to `TABLE`, `JSON`, `JSON_EXT`, or `CSV`. `--format` on a command still overrides the default.
+
+- Add the `output_format` setting to the `config.toml` file:
+
+  Copy code
+
+  ```
+  [cli]
+  output_format = "JSON"
+  ```
+- Set the `SNOWFLAKE_CLI_OUTPUT_FORMAT` environment variable:
+
+  Copy code
+
+  ```
+  export SNOWFLAKE_CLI_OUTPUT_FORMAT=JSON
+  ```
+
 ## Suppress version update notifications
 
 By default, Snowflake CLI checks for newer versions and displays a notification message when a newer version is available. You can suppress these notifications using either a configuration file setting or an environment variable, as follows:

@@ -7,11 +7,11 @@ In this topic, the term COPY refers to both:
 - [COPY INTO <table>](/sql-reference/sql/copy-into-table) (used to transfer data from an internal or external stage into a table).
 - [COPY INTO <location>](/sql-reference/sql/copy-into-location) (used to transfer data from a table into an internal or external stage).
 
-## Verifying the Network Connection to Snowflake with SnowCD
+## Verifying the network connection to Snowflake
 
-After configuring your driver, you can evaluate and troubleshoot your network connectivity to Snowflake using [SnowCD](/user-guide/snowcd).
+To test a connection to Snowflake, use the `snow connection test` command in Snowflake CLI. For connection setup and diagnostic options, see [Test and diagnose a connection](/developer-guide/snowflake-cli/connecting/configure-connections#test-and-diagnose-a-connection).
 
-You can use SnowCD during the initial configuration process and on-demand at any time to evaluate and troubleshoot your network connection to Snowflake.
+Run the test from the environment whose network connectivity you want to check. A successful CLI connection test doesn’t verify the Spark Connector’s configuration or connectivity from other Spark nodes.
 
 ## Pushdown
 

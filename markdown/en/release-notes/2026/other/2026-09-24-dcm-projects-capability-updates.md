@@ -8,7 +8,6 @@ The following capabilities are now generally available:
 
 - `CREATE OR ALTER PIPE`
 - `CREATE OR ALTER STREAM`
-- `DEFINE MASKING POLICY`
 - `DEFINE PIPE`
 - `DEFINE SHARE`
 - `DEFINE STREAM`

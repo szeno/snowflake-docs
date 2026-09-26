@@ -235,7 +235,7 @@ Copy code
 
 ```
 from snowflake.ml.model import target_platform
-from snowflake.ml.model.batch import OutputSpec
+from snowflake.ml.model.batch_inference import OutputSpec
 from snowflake.ml.registry import Registry
 
 reg = Registry(session=session)

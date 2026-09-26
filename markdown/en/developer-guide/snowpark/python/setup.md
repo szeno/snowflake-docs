@@ -136,6 +136,12 @@ pip install "snowflake-snowpark-python[pandas]"
 You can view the Snowpark Python project description on
 [the Python Package Index (PyPi) repository](https://pypi.org/project/snowflake-snowpark-python/).
 
+## Next step: Connect to Snowflake
+
+After installing Snowpark, [create a session](/developer-guide/snowpark/python/creating-session) to authenticate and connect to Snowflake from your Python application. The session guide explains how to use a named connection from `connections.toml` or pass connection parameters to `Session.builder`.
+
+Snowpark uses the authentication mechanisms supported by the Snowflake Connector for Python. For authentication options, including single sign-on (SSO), multi-factor authentication (MFA), and key pair authentication, see [Connecting to Snowflake with the Python Connector](/developer-guide/python-connector/python-connector-connect).
+
 ## Setting up Snowflake Notebooks for Snowpark
 
 You can use the Snowflake Notebooks development environment to perform data science and data engineering workflows with Python. Snowflake Notebooks

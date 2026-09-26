@@ -159,8 +159,8 @@ property of the product, not a defect, and it stays under controls you own:
 ## Prompt injection defenses
 
 The agent treats content it reads as potential instructions, including files in trusted
-workspaces, prompts, fetched URLs, and outputs from MCP servers, plugins, and subagents. Cortex
-Code Desktop defends against prompt injection in depth:
+workspaces, prompts, fetched URLs, and outputs from MCP servers, plugins, and subagents. CoCo
+Desktop defends against prompt injection in depth:
 
 - **Server-side I/O Guardrails** scan tool outputs, including MCP responses, for known injection patterns using vector similarity.
 - **Cortex AI Guardrails** apply centrally at the platform layer to catch indirect injection in tool calls and novel or zero-day patterns beyond signature matching.
@@ -183,7 +183,7 @@ competing or high-risk extensions are explicitly blocked. As a result:
 - Only allowlisted extensions appear in the Extensions panel, so not every extension on Open VSX is available.
 - Adding a new extension to the catalog requires security review, so an extension you’re looking for may not be available yet. Request it through your Snowflake contact if you need it.
 
-This curation bounds the supply-chain surface to a known, reviewed set rather than the open Open
+This curation bounds the supply-chain surface to a known, reviewed set rather than the entire Open
 VSX marketplace. Allowlisted extensions still run with the same privileges as the app, and new
 versions of an allowlisted extension are auto-updated.
 
@@ -252,10 +252,10 @@ level. Commands you run manually in the integrated terminal are not affected.
 - Some agent workflows that depend on shell side-effects (for example, installing packages
   that affect the current shell session) may behave differently inside the sandbox.
 
-CoCo Desktop will adopt the VSCode native agent sandbox and agent-tools framework
+CoCo Desktop will adopt the VS Code native agent sandbox and agent-tools framework
 as those features stabilize upstream. For more information, see
-[VSCode agent tools](https://code.visualstudio.com/docs/copilot/agents/agent-tools) and
-[VSCode Copilot security](https://code.visualstudio.com/docs/copilot/security).
+[VS Code agent tools](https://code.visualstudio.com/docs/copilot/agents/agent-tools) and
+[VS Code Copilot security](https://code.visualstudio.com/docs/copilot/security).
 
 ## Audit logging and observability
 
