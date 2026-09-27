@@ -119,4 +119,4 @@ If experiencing high latency:
 
 1. Verify network configuration between Openflow and external systems.
 2. Consider deploying Openflow in the same region as your Kinesis stream.
-3. If working with low throughput, consider lowering the Client Lag settings in the PublishSnowpipeStreaming processor and Max Uncommitted Time in the ConsumeKinesis processor.
+3. If working with low throughput, consider lowering **Max Batch Duration** in the ConsumeKinesis processor.

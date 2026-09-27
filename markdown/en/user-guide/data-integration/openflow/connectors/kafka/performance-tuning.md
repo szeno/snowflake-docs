@@ -125,4 +125,4 @@ If experiencing high latency:
 
 1. Verify network configuration between Openflow and external systems.
 2. Consider deploying Openflow closer to your Kafka cluster.
-3. If working with low throughput, consider lowering the Client Lag settings in the PublishSnowpipeStreaming processor and Max Uncommitted Time in the ConsumeKafka processor.
+3. If working with low throughput, consider lowering **Max Uncommitted Time** in the ConsumeKafka processor.
