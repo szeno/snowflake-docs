@@ -8,7 +8,7 @@ Some individual Cortex AI Functions are [Preview Features](/release-notes/previe
 the status of each function before using it in production. Functions not marked as preview features are generally
 available (GA) and can be used in production.
 
-Use Cortex AI Functions in Snowflake to run unstructured analytics on text and images with industry-leading LLMs from OpenAI, Anthropic, Meta, Mistral AI, and DeepSeek.
+Use Cortex AI Functions in Snowflake to run unstructured analytics on text and images with industry-leading LLMs from OpenAI, Anthropic, Meta, Mistral AI, DeepSeek, and xAI.
 AI Functions support use cases such as:
 
 - Extracting entities to enrich metadata and streamline validation

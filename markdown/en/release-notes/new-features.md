@@ -131,13 +131,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Snowflake ML Python (v1.54.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Aug 30, 2026: Cortex Agents asynchronous API (General availability)](/release-notes/2026/other/2026-08-30-cortex-agents-async-api-ga)
 - [Aug 28, 2026: Snowflake recommends transitioning from Cortex Analyst to Cortex Agents](/release-notes/2026/other/2026-08-28-cortex-analyst-transition-cortex-agents)
-- [Aug 27, 2026: CoCo in the Snowflake Extension for Visual Studio Code (General availability)](/release-notes/2026/other/2026-08-27-coco-vscode-extension-ga)
-- [Aug 27, 2026: Increased file limit for deployed dbt project objects](/release-notes/2026/other/2026-08-27-dbt-projects-on-snowflake-file-limit)
-- [Aug 27, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-08-27-dcr)
-- [Snowpipe Streaming SDK (v1.8.0)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
-- [Aug 26, 2026: Cortex Extension references in agent skills (General availability)](/release-notes/2026/other/2026-08-26-agent-skills-cortex-extension-references-ga)
-- [Aug 26, 2026: Cortex Agents Coding Agent (General availability)](/release-notes/2026/other/2026-08-26-cortex-agents-coding-agent-ga)
-- [Aug 26, 2026: Organization user types (General availability)](/release-notes/2026/other/2026-08-26-organization-user-types)
-- [Aug 26, 2026: Semantic Studio (Preview)](/release-notes/2026/other/2026-08-26-semantic-studio-preview)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

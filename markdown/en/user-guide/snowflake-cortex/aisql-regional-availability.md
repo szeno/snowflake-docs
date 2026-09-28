@@ -96,6 +96,10 @@ In the AWS Europe West 1 (Ireland) region:
 |  | `claude-haiku-4-5` | 200,000 | 64,000 |
 |  | `claude-opus-4-5` | 200,000 | 64,000 |
 |  | `gemini-3.1-pro` | 1,000,000 | 64,000 |
+|  | `gemini-3.5-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.8-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.7-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.1-flash-lite` | 1,000,000 | 64,000 |
 |  | `mistral-large2` | 128,000 | 8,192 |
 |  | `mistral-large3` | 256,000 | 32,768 |
 |  | `qwen3-32b` | 128,000 | 8,192 |
@@ -197,6 +201,11 @@ The following functions and models are available in any region via [cross-region
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-4-sonnet [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.8-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `llama4-maverick [legacy]` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
