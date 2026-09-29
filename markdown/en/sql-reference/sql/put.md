@@ -173,7 +173,7 @@ Where:
 
     The following clients support the OVERWRITE option for Snowflake accounts hosted on Amazon Web Services or Microsoft Azure:
 
-    > - SnowSQL
+    > - [Snowflake CLI](/developer-guide/snowflake-cli/index)
     > - Snowflake ODBC Driver
     > - Snowflake JDBC Driver
     > - Snowflake Connector for Python
@@ -184,9 +184,9 @@ Where:
 
 ## Usage notes
 
-- The command cannot be executed from the **Worksheets** [![Worksheet tab](/static/images/screens/ui-navigation-worksheet-icon.svg)](/static/images/screens/ui-navigation-worksheet-icon.svg) page in either Snowflake web interface; instead, use the
-  [SnowSQL client](/user-guide/snowsql) or [Drivers](/developer-guide/drivers) to upload data files,
-  or check the documentation for a specific Snowflake client to verify support for this command.
+- The command can’t be run from the **Worksheets** [![Worksheet tab](/static/images/screens/ui-navigation-worksheet-icon.svg)](/static/images/screens/ui-navigation-worksheet-icon.svg) page in either Snowflake web interface. Use
+  [Snowflake CLI](/developer-guide/snowflake-cli/index) (`snow sql`) or [Drivers](/developer-guide/drivers) to upload data files, or
+  check the documentation for a specific Snowflake client to verify support for this command.
 
   Alternatively, you can [use the Snowsight UI to upload files onto a name internal stage](/user-guide/data-load-local-file-system-stage-ui#label-snowsight-stage-upload-files-internal).
 - File-globbing patterns, like wildcards, are supported unless the files that match the pattern have divergent directory paths.

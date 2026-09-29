@@ -9,8 +9,8 @@ You can use EXECUTE IMMEDIATE to do the following:
   until runtime. For examples, see [Executing dynamic SQL in a Snowflake Scripting block](#label-execute-immediate-example-snowflake-scripting-dynamic-sql).
 - Set a session variable to a SQL statement, and reference the session variable to run the SQL statement.
   For an example, see [Setting a session variable to a statement and executing it](#label-execute-immediate-example-session-variable).
-- If you are using SnowSQL or Snowsight, run a Snowflake Scripting anonymous block.
-  For an example, see [Running an anonymous block in SnowSQL or Snowsight](#label-execute-immediate-example-snowsql-classic-console).
+- If you are using Snowflake CLI or Snowsight, run a Snowflake Scripting anonymous block.
+  For an example, see [Running an anonymous block in Snowflake CLI or Snowsight](#label-execute-immediate-example-snowsql-classic-console).
 
 ## Syntax
 
@@ -94,9 +94,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -170,9 +170,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -239,13 +239,13 @@ EXECUTE IMMEDIATE $stmt;
 +-------------+
 ```
 
-### Running an anonymous block in SnowSQL or Snowsight
+### Running an anonymous block in Snowflake CLI or Snowsight
 
 When you run a [Snowflake Scripting](/developer-guide/snowflake-scripting/index) anonymous block
-in [SnowSQL](/user-guide/snowsql) or [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), you must specify the block as
+in [Snowflake CLI](/developer-guide/snowflake-cli/index) or [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), you must specify the block as
 a string literal (delimited by single quotes or double dollar signs), and you must pass the
 block to the EXECUTE IMMEDIATE command. For more information, see
-[Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+[Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 This example runs an anonymous block passed to the EXECUTE IMMEDIATE command:
 

@@ -46,6 +46,31 @@ This example uses the library and signature for version 1.27.0 of the package. U
   Use the `imports` argument instead.
 - The `snowflake.ml.model.models.huggingface_pipeline.HuggingfacePipelineModel` class has been deprecated and will be removed in a future release.
 
+## Version 2.2.0 (2026-09-21)
+
+### New Features
+
+- Dependencies: Support scikit-learn < 2, including 1.9.
+- Feature Store: The Postgres-backed Online Feature Store (Public Preview) now supports feature views with
+  Iceberg-backed offline storage (`StorageConfig(format=StorageFormat.ICEBERG)`).
+- ML Jobs: `runtime_environment` version pins without a Python suffix now select an image matching the submitting
+  client’s Python version. Pins with an explicit suffix, such as `-py311`, continue to select that Python version.
+
+### Bug Fixes
+
+- Registry: `ModelVersion.load()` now compares the model owner to `CURRENT_ROLE()` (the role that
+  executes SQL) instead of `Session.get_current_role()`. Owner’s-rights Streamlit apps and
+  `EXECUTE AS OWNER` procedures can load when statements run as the owner even if the caller’s
+  primary role is not the owner.
+
+### Behavior Changes
+
+- Dependencies: `scipy` is no longer a required dependency of `snowflake-ml-python`. It is still
+  installed transitively with `pip install snowflake-ml-python[scikit-learn]`. Direct `scipy` usage
+  in `snowflake.ml.modeling.preprocessing` already requires that extra.
+
+### Deprecations
+
 ## Version 2.1.0 (2026-09-14)
 
 ### New Features

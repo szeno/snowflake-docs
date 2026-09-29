@@ -40,6 +40,21 @@ differs by [Openflow connector generation](/user-guide/data-integration/openflow
 When you configure a connector property that accepts a secret, the Openflow UI displays the resolved
 secrets in a dropdown. Select the expected secret for the property.
 
+To reference an external secret in `config.json` (for
+[SQL-based connector configuration](/user-guide/data-integration/openflow/gen2/configure-connector-sql)),
+use `valueType = SECRET_REFERENCE` and construct the `fullyQualifiedSecretName` as follows:
+
+```
+EXTERNAL_<integration_name>.<secret_name>.<value_name>
+```
+
+Where `<value_name>` is:
+
+- The **secret name** for a plaintext secret.
+- The **JSON field name** for a JSON secret.
+
+See [Parameter mapping](#label-openflow-external-secret-parameter-mapping) for how secret values map to parameter names.
+
 ### Gen 1 connectors
 
 The Snowflake Parameter Provider organizes the parameters created from each external secret into a
@@ -59,7 +74,9 @@ secrets. Repeat **Fetch** after you add or rotate external secrets when you need
 
 ## Parameter mapping
 
-This mapping determines the generated Parameter Context and parameter names for gen 1 connectors.
+This mapping determines how external secrets are exposed as Openflow parameters. Gen 1 connectors
+consume these as Parameter Contexts. Gen 2 connectors use the same naming to construct
+`fullyQualifiedSecretName` in `config.json`.
 
 Each external secret maps as follows:
 

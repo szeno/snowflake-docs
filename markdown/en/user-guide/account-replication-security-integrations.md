@@ -1,4 +1,4 @@
-# Replication of security integrations & network policies across multiple accounts
+# Replication of security integrations and network policies across multiple accounts
 
 [Business Critical Feature](/user-guide/intro-editions)
 
@@ -16,7 +16,7 @@ These objects and services are supported across [regions](/user-guide/intro-regi
 
 ## Overview
 
-Snowflake supports replicating network policies and security integrations for federated SSO (i.e. SAML2 and OIDC), OAuth, and SCIM along with
+Snowflake supports replicating network policies and security integrations for federated SSO (that is, SAML2 and OIDC), OAuth, and SCIM along with
 enabling failover/failback for each network policy and integration.
 
 The general approach to test replication and failover/failback with each network policy and security integration is as follows:
@@ -44,7 +44,7 @@ Replicating a SAML2 security integration links the source account and the target
 [connection URL](/user-guide/client-redirect) in the SAML2 security integration definition.
 
 It is important to update the identity provider to specify the connection URL and that users exist in the source account. Without these
-updates, user verification cannot occur, which will result in the inability of the user to access the target account.
+updates, user verification cannot occur, which means users can’t access the target account.
 
 Current Limitation:
 :   For SAML SSO to Snowflake, replicating a SAML2 security integration that specifies the connection URL is only supported on the current
@@ -128,7 +128,7 @@ This procedure is a representative example to do the following:
      REPLICATION_SCHEDULE = '10 MINUTE';
    ```
 
-**Target Account Steps:**
+**Target account steps:**
 
 1. Prior to replication, verify the number of users and security integrations that are present in the target
    account by executing the [SHOW USERS](/sql-reference/sql/show-users) and [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations) commands, respectively.
@@ -263,10 +263,10 @@ This procedure is a representative example to do the following:
 ## Replicating SCIM security integrations
 
 Replicating a SCIM security integration allows the target account to incorporate SCIM updates that are made to the source account
-(e.g. adding new users, adding new roles) after refreshing the target account.
+(for example, adding new users, adding new roles) after refreshing the target account.
 
 After replicating the SCIM security integration, both Snowflake accounts have the ability to receive SCIM updates from the identity
-provider. However, Snowflake allows specifying only one account as the *primary* (i.e. source) account and it is the primary account that
+provider. However, Snowflake allows specifying only one account as the *primary* (that is, the source) account, and it is the primary account that
 receives SCIM updates from the identity provider.
 
 You can optionally designate a different account as the primary account to receive SCIM updates after replicating the SCIM integration.
@@ -277,7 +277,7 @@ For this procedure, assume the following:
 - Source account: `https://example-northamericawest.snowflakecomputing.com/`
 - Target account: `https://example-northamericaeast.snowflakecomputing.com/`
 - Connection URL: `https://example-global.snowflakecomputing.com`
-- A secondary connection exists in the target account (i.e. only refresh operations are needed).
+- A secondary connection exists in the target account (that is, only refresh operations are needed).
 - The identity provider is configured to use the [connection URL](/user-guide/client-redirect) (`https://example-global.snowflakecomputing.com`) as
   the SCIM provisioning base URL, not the source account URL directly. After failover, promoting the connection to
   the new primary account reroutes provisioning requests without requiring any reconfiguration of the identity
@@ -316,7 +316,7 @@ This procedure is a representative example to do the following:
    SCIM_CLIENT = 'okta'
    RUN_AS_ROLE = 'OKTA_PROVISIONER';
 
-   select system$generate_scim_access_token('OKTA_PROVISIONING');
+   SELECT system$generate_scim_access_token('OKTA_PROVISIONING');
    ```
 
    Be sure to update the Okta SCIM application for Snowflake. For details, see [Okta configuration](/user-guide/scim-okta#label-scim-okta-configuration).
@@ -407,7 +407,7 @@ For this procedure, assume the following:
 - Source account: `https://example-northamericawest.snowflakecomputing.com/`
 - Target account: `https://example-northamericaeast.snowflakecomputing.com/`
 - Connection URL: `https://example-global.snowflakecomputing.com`
-- A secondary connection exists in the target account (i.e. only refresh operations are needed).
+- A secondary connection exists in the target account (that is, only refresh operations are needed).
 - The Snowflake OAuth or External OAuth security integrations already exist in the source account.
 
 This procedure is a representative example to do the following:
@@ -544,7 +544,7 @@ For this example, assume the following:
 - Source account: `https://example-northamericawest.snowflakecomputing.com/`
 - Target account: `https://example-northamericaeast.snowflakecomputing.com/`
 - Connection URL: `https://example-global.snowflakecomputing.com`
-- A secondary connection exists in the target account (i.e. only refresh operations are needed).
+- A secondary connection exists in the target account (that is, only refresh operations are needed).
 - Network policies exist in the source account.
 - The Snowflake OAuth and/or SCIM security integration already exists in the source account and the integration specifies a network policy.
 
@@ -630,8 +630,8 @@ replication group centralizes the replication management of the objects and avoi
 objects are not replicated. Otherwise, you must coordinate the replication operation carefully to ensure that all objects are replicated to
 the target account.
 
-For example, you can have a replication group for databases. This replication group (e.g. `rg1`) specifies the database that contains the
-secret and the database to store the ServiceNow data. The other replication group (e.g. `rg2`) specifies the user, role, and integration
+For example, you can have a replication group for databases. This replication group (for example, `rg1`) specifies the database that contains the
+secret and the database to store the ServiceNow data. The other replication group (for example, `rg2`) specifies the user, role, and integration
 objects and the grants of these roles to users. In this scenario, if you replicate the integrations first and then decide to refresh the
 target account to include the secret database, users, and roles, the replication refresh operation is successful.
 
@@ -651,7 +651,7 @@ For this procedure, assume the following:
 - Source account: `https://example-northamericawest.snowflakecomputing.com/`
 - Target account: `https://example-northamericaeast.snowflakecomputing.com/`
 - Connection URL: `https://example-global.snowflakecomputing.com`
-- A secondary connection exists in the target account (i.e. only refresh operations are needed).
+- A secondary connection exists in the target account (that is, only refresh operations are needed).
 - Other security integrations for authentication and network policies to restrict access are already replicated.
 
 **Source account steps:**

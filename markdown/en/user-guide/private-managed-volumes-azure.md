@@ -27,7 +27,7 @@ Implementing private endpoints to access Snowflake-managed storage volumes provi
 
 Microsoft Azure defines how a private endpoint can interact with Snowflake:
 
-- A single private endpoint can communicate to a single Snowflake Service Endpoint. You can have multiple one-to-one
+- A single private endpoint can communicate with a single Snowflake Service Endpoint. You can have multiple one-to-one
   configurations that connect to the same managed storage volume.
 - The maximum number of private endpoints in your storage account that can connect to a Snowflake-managed storage volume is fixed.
   For details, see

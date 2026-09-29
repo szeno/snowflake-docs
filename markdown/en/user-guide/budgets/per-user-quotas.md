@@ -23,19 +23,16 @@ thresholds are crossed.
 
 ### Quota cycles
 
-A quota can define up to three per-user spending limits, one for each cycle, that apply uniformly to
-every user in scope. All cycles are UTC-based, and per-user usage counters reset automatically at the
-start of each cycle. Set at least one limit:
+Set at least one of the following limits. Each limit is the maximum number of credits a user can
+consume in one cycle. Every cycle begins at 00:00 UTC, when each user’s usage counter resets to zero.
 
-- **Monthly limit**: The maximum credits a user can consume during a UTC calendar month. Monthly
-  usage resets on the first of the month.
-- **Weekly limit**: The maximum credits a user can consume during a single ISO week. Weekly usage
-  resets Monday at 00:00 UTC.
-- **Daily limit**: The maximum credits a user can consume during a single UTC day. Daily usage
-  resets at the start of each UTC day.
+- **Monthly limit**: One calendar month, starting on the first of the month.
+- **Weekly limit**: One week, starting on Monday.
+- **Daily limit**: One day.
 
-The limits are evaluated independently. A user can be enforced against one limit while still being
-within the others.
+If you set more than one limit, Snowflake evaluates each configured limit independently. If the Block
+action is enabled, a user who reaches any limit is blocked for the rest of that limit’s cycle, even if
+they remain below the other limits.
 
 ### Enforcement actions
 

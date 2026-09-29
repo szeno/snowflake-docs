@@ -10,6 +10,24 @@ Snowflake uses semantic versioning for Snowflake Connector for Kafka updates.
 
 See [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) for documentation.
 
+## Version 4.2.0 (Sep 24, 2026)
+
+### New features
+
+- Added Snowpark Container Services (SPCS) workload-identity authentication. When the connector
+  runs in SPCS, it can authenticate with the container’s workload identity.
+- Increased the maximum LOB size in client-side validation to 128 MB.
+- Upgraded the Snowpipe Streaming SDK to version 1.8.0.
+- Upgraded the Snowflake JDBC driver to version 4.3.3.
+- Updated dependencies, including Jackson, Bouncy Castle FIPS, and Gson.
+
+### Bug fixes
+
+- Quoted pipe names in `pipeExist()` so pipes with special characters are detected correctly.
+- Detected OAuth authorization failures structurally so rejected credentials are no longer missed.
+- Rejected a blank URL, user, or role instead of accepting the value silently.
+- Allowlisted `kafka_start` connector configuration keys used in telemetry.
+
 ## Version 4.1.0 (Jul 22, 2026)
 
 Note

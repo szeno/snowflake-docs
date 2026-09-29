@@ -1,11 +1,12 @@
-# Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector
+# Using Snowflake Scripting in Snowflake CLI and Python Connector
 
-This topic explains how to run the Snowflake Scripting examples in [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), and the [Python Connector](/developer-guide/python-connector/python-connector).
+This topic explains how to run the Snowflake Scripting examples in [Snowflake CLI](/developer-guide/snowflake-cli/index) and the
+[Python Connector](/developer-guide/python-connector/python-connector).
 
 Note
 
-If you are using other clients and interfaces, such as [Snowflake CLI](/developer-guide/snowflake-cli/index) or the
-[JDBC driver](/developer-guide/jdbc/jdbc), you can skip this topic and refer to
+If you are using clients and interfaces that parse Snowflake Scripting blocks correctly, such as
+[Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) worksheets or the [JDBC driver](/developer-guide/jdbc/jdbc), you can skip this topic and see
 [Snowflake Scripting blocks](/developer-guide/snowflake-scripting/blocks).
 
 ## Introduction
@@ -13,7 +14,6 @@ If you are using other clients and interfaces, such as [Snowflake CLI](/develope
 Currently, the following interfaces do not correctly parse Snowflake Scripting blocks:
 
 - [Snowflake CLI](/developer-guide/snowflake-cli/index)
-- [SnowSQL](/user-guide/snowsql)
 - The `execute_stream()` and `execute_string()` methods in
   [Python Connector](/developer-guide/python-connector/python-connector) code
 

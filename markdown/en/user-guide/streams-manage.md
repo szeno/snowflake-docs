@@ -4,7 +4,7 @@ This topic describes the administrative tasks associated with managing streams.
 
 ## Enabling change tracking on views and underlying tables
 
-In order for users to query change data on a view, change tracking must be enabled on the view and underlying tables.
+For users to query change data on a view, change tracking must be enabled on the view and underlying tables.
 
 Only the object owner (that is, the role with the OWNERSHIP privilege) on a given view or underlying tables can enable change tracking.
 
@@ -128,6 +128,6 @@ To view and manage a stream in Snowsight, do the following:
 
 When viewing the stream in Snowsight, you can do the following:
 
-- In the **Details** section, review the table name to which the stream applies, the type of stream, and whether or not the stream is stale.
+- In the **Details** section, review the table name to which the stream applies, the type of stream, and whether the stream is stale.
 - Review the SQL statement used to create the stream.
 - Manage privileges on the stream. See [Manage object privileges with Snowsight](/user-guide/security-access-control-configure#label-snowsight-manage-object-privileges).

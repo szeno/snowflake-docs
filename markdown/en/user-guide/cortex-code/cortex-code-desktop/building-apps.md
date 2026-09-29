@@ -150,7 +150,7 @@ Show lessSee more
 
 Note
 
-Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, pass `{ callersRights: true }` to your query helper. You don’t configure anything in `app.yml` for caller’s rights.
+Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, pass `{ callersRights: true }` to your query helper. You don’t configure anything in `app.yml` for Caller’s Rights.
 
 ### Developing locally
 

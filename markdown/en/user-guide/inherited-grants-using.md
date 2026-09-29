@@ -41,8 +41,9 @@ REVOKE INHERITED <privilege> ON ALL <object_type_plural>
 
 ## Required container privileges
 
-Inherited object privileges do not replace required container privileges. For a role to access an object in a schema,
-the role typically also needs `USAGE` on the database and schema.
+The inherited grant on a container provides the authorization to resolve that container. That authorization does
+not extend to containers below the grant’s container. For a role to access an object, the role must still be able to
+resolve every container in the object’s name.
 
 For example, to allow `analyst_role` to query tables in `prod.analytics`:
 
@@ -50,15 +51,15 @@ Copy code
 
 ```
 GRANT USAGE ON DATABASE prod TO ROLE analyst_role;
-GRANT USAGE ON SCHEMA prod.analytics TO ROLE analyst_role;
 
 GRANT INHERITED SELECT ON ALL TABLES
   IN SCHEMA prod.analytics
   TO ROLE analyst_role;
 ```
 
-The inherited `SELECT` grant controls access to the tables. The `USAGE` grants allow the role to resolve the database
-and schema.
+The inherited `SELECT` grant both authorizes `SELECT` on matching tables and provides the authorization to resolve the
+`prod.analytics` schema. The `USAGE` grant on the database allows the role to resolve `prod`, which is not the
+container of the inherited grant.
 
 ## Examples
 
@@ -268,12 +269,10 @@ GRANT USAGE ON DATABASE sales_db TO ROLE eu_lead      WITH GRANT OPTION;
 -- Each domain lead defines its own grants, including the database USAGE its readers need
 USE ROLE us_west_lead;
 GRANT USAGE ON DATABASE sales_db TO ROLE us_west_reader;
-GRANT USAGE ON SCHEMA sales_db.us_west TO ROLE us_west_reader;
 GRANT INHERITED SELECT ON ALL TABLES IN SCHEMA sales_db.us_west TO ROLE us_west_reader;
 
 USE ROLE eu_lead;
 GRANT USAGE ON DATABASE sales_db TO ROLE eu_reader;
-GRANT USAGE ON SCHEMA sales_db.eu TO ROLE eu_reader;
 GRANT INHERITED SELECT ON ALL TABLES IN SCHEMA sales_db.eu TO ROLE eu_reader;
 ```
 
@@ -281,7 +280,8 @@ GRANT INHERITED SELECT ON ALL TABLES IN SCHEMA sales_db.eu TO ROLE eu_reader;
 role. Domain leads operate independently without involving the database admin or `SECURITYADMIN` for routine grant
 management, including when they add reader roles later.
 
-Reading a table requires `USAGE` on the database as well as the schema. See
+The inherited `SELECT` grant on the schema provides the authorization to resolve that schema. Reading a table still
+requires authorization to resolve the parent database. See
 [Required container privileges](#label-inherited-grants-using-container-privileges). Because each lead’s
 `MANAGE GRANTS` is scoped to its own schema, it can’t grant database-level `USAGE` on its own authority. Granting each
 lead `USAGE ON DATABASE sales_db WITH GRANT OPTION` lets it extend that privilege to its own reader roles, so a new
@@ -535,7 +535,7 @@ The same four columns appear in the `GRANTS_TO_ROLES` view in `ACCOUNT_USAGE` an
 
 | Behavior | Likely cause | Action |
 | --- | --- | --- |
-| `SELECT` query fails with “Object does not exist or not authorized” even though `GRANT INHERITED SELECT ON ALL TABLES ...` was issued | Missing `USAGE` on the parent schema or database; name resolution fails before the `SELECT` privilege is checked | Issue `GRANT INHERITED USAGE ON ALL SCHEMAS IN DATABASE <name>` and ensure the role has `USAGE` on the database itself. |
+| `SELECT` query fails with “Object does not exist or not authorized” even though `GRANT INHERITED SELECT ON ALL TABLES ...` was issued | Missing privilege to resolve the parent database; name resolution fails before the `SELECT` privilege is checked | Issue `GRANT INHERITED USAGE ON ALL SCHEMAS IN DATABASE <name>` and ensure the role has `USAGE` on the database itself. |
 | `GRANT INHERITED ...` fails with “Insufficient privileges” | Executing role lacks `MANAGE GRANTS` on the container or a regrantable privilege | Grant `MANAGE GRANTS` on the container (or higher) to the executing role, or use a role that already holds it. |
 | `SHOW GRANTS TO ROLE <role>` returns inherited rows with an empty `NAME` column | Expected behavior: inherited grants apply to a class of securables, not a specific object | Use `SHOW INHERITED GRANTS IN <container>` to see container-level grants, or `SHOW GRANTS ON <object>` to see the inherited grant in the context of a specific object. |
 | New table created in a covered container is not accessible to the grantee | The new table is of an object type not covered by the inherited grant (for example, an `ICEBERG TABLE` when only `TABLES` was granted) | Issue an additional `GRANT INHERITED` statement for the new object type. |

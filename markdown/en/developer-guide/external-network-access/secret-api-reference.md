@@ -64,8 +64,22 @@ CREATE OR REPLACE FUNCTION get_secret_type()
 
 ## Python API for Secret Access
 
-For code in Python, use the `_snowflake` module exposed to Python UDFs that execute within Snowflake. The following table lists
-`_snowflake` functions for accessing data in a secret.
+For Python handler code that executes within Snowflake, use the public `snowflake.snowpark.secrets` module, available in Snowpark Python 1.40.0 or later, to access secrets. Include `snowflake-snowpark-python` in the handler’s package dependencies. The secret must still be allowed by the external access integration and bound to an alias in the handler’s `SECRETS` clause.
+
+The public module provides the functions listed below. Pass the bound alias, not the secret object’s database-qualified name. For example, if the `SECRETS` clause binds the alias `cred`, handler code can retrieve its type without exposing the secret value:
+
+Copy code
+
+```
+from snowflake.snowpark import secrets
+
+def get_secret():
+    return secrets.get_secret_type("cred")
+```
+
+The existing `_snowflake` functions remain available in Snowflake. To use the public module in existing handler code, replace `import _snowflake` with `from snowflake.snowpark import secrets` and call the corresponding `secrets` function. `get_username_password` returns a `UsernamePassword` object, and `get_cloud_provider_token` returns a `CloudProviderToken` object, with the attributes listed below. Don’t log or return passwords or tokens from a handler.
+
+Importing the public module on your development machine doesn’t grant access to Snowflake secrets. These examples require execution within Snowflake with the integration and secret bindings configured. The public `get_wif_token` function requires Snowpark Python 1.52.0 or later and isn’t available in Snowpark Container Services file-based secret environments.
 
 | Function | Description |
 | --- | --- |
@@ -80,7 +94,7 @@ Expand
 
 Show lessSee more
 
-To use the `_snowflake` module in your handler code, import it as you would another module.
+To use the public module in a SQL-defined Python UDF, include `snowflake-snowpark-python` in the `PACKAGES` clause and import `secrets` in the handler.
 
 Code in the following example retrieves the value set for the TYPE clause when the secret was created with CREATE SECRET. Here,
 the `oauth_token` secret is of type OAUTH2.
@@ -93,41 +107,38 @@ CREATE OR REPLACE FUNCTION get_secret_type()
   LANGUAGE PYTHON
   RUNTIME_VERSION = 3.12
   HANDLER = 'get_secret'
+  PACKAGES = ('snowflake-snowpark-python')
   EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
   SECRETS = ('cred' = oauth_token )
   AS
 $$
-import _snowflake
+from snowflake.snowpark import secrets
 
 def get_secret():
-  secret_type = _snowflake.get_secret_type('cred')
+  secret_type = secrets.get_secret_type('cred')
   return secret_type
 $$;
 ```
 
-Code in the following example retrieves the username and password held by the secret.
+Code in the following example retrieves the username and password object and checks that both attributes contain values. It returns only a Boolean, not the credentials. In an application handler, use these attributes to authenticate an external client without logging or returning them.
 
 Copy code
 
 ```
-CREATE OR REPLACE FUNCTION get_secret_username_password()
-  RETURNS STRING
+CREATE OR REPLACE FUNCTION has_secret_credentials()
+  RETURNS BOOLEAN
   LANGUAGE PYTHON
   RUNTIME_VERSION = 3.12
-  HANDLER = 'get_secret_username_password'
+  HANDLER = 'has_secret_credentials'
+  PACKAGES = ('snowflake-snowpark-python')
   EXTERNAL_ACCESS_INTEGRATIONS = (external_access_integration)
   SECRETS = ('cred' = credentials_secret )
   AS
 $$
-import _snowflake
+from snowflake.snowpark import secrets
 
-def get_secret_username_password():
-  username_password_object = _snowflake.get_username_password('cred');
-
-  username_password_dictionary = {}
-  username_password_dictionary["Username"] = username_password_object.username
-  username_password_dictionary["Password"] = username_password_object.password
-
-  return username_password_dictionary
+def has_secret_credentials():
+  credentials = secrets.get_username_password('cred')
+  return bool(credentials.username and credentials.password)
 $$;
 ```

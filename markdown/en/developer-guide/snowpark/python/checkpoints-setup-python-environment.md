@@ -1,23 +1,49 @@
 # Setting up a Python development environment
 
-To use Snowpark Checkpoints, set up a Python development environment with one of these supported versions:
+Set up a Python environment compatible with the Snowpark Checkpoints package you install. Snowpark Checkpoints 0.4.0 requires Python 3.9, 3.10, or 3.11; use Python 3.11 for a new environment. These package requirements differ from the Python runtime versions supported by Snowflake UDFs.
 
-Generally available versions:
+Install the `snowpark-checkpoints` package in that environment by following [Install Snowpark Checkpoints](/developer-guide/snowpark/python/checkpoints-installation). The guide includes pip and conda commands for the complete library and its individual packages. Installing the complete library also installs its required dependencies, including Snowpark Python 1.23.0 or later.
 
-- 3.9 (deprecated)
-- 3.10
-- 3.11
-- 3.12
-- 3.13
-- 3.14
+## Create a virtual environment
 
-Note
+For example, with Python 3.11 installed, create an isolated environment using the built-in `venv` module:
 
-- Python 3.9 (deprecated) depends on Snowpark client version 1.5.0.
-- Python 3.10 depends on Snowpark client version 1.5.1.
-- Python 3.11 depends on Snowpark client version 1.9.0.
+Copy code
 
-You can create a Python virtual environment for a particular Python version using tools like
-[Anaconda](https://www.anaconda.com/),
-[Miniconda](https://docs.conda.io/en/latest/miniconda.html), or
-[virtualenv](https://docs.python.org/3/tutorial/venv.html).
+```
+python3.11 -m venv .venv
+```
+
+Activate it on macOS or Linux:
+
+Copy code
+
+```
+source .venv/bin/activate
+```
+
+On Windows PowerShell, create and activate the environment with:
+
+Copy code
+
+```
+py -3.11 -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+After activation, verify the interpreter version:
+
+Copy code
+
+```
+python --version
+```
+
+The output should identify Python 3.11. Then follow [Install Snowpark Checkpoints](/developer-guide/snowpark/python/checkpoints-installation) to install the library in this environment.
+
+## Try the examples
+
+After installation, see these examples for the next steps:
+
+- [Generate Snowpark DataFrames for unit tests](/developer-guide/snowpark/python/checkpoints-hypothesis#examples).
+- [Configure Checkpoints logging](/developer-guide/snowpark/python/checkpoints-logging#basic-logging-configuration).

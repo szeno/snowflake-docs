@@ -18,6 +18,7 @@ If you’re not sure where to start, try the most capable models first to establ
 `claude-opus-5` and `gemini-3.1-pro` are the most capable models offered by Snowflake Cortex,
 and will give you a good idea of what a state-of-the-art model can do.
 
+- `claude-opus-5-5` (Public Preview) is Anthropic’s latest Claude Opus model, with further gains in coding, long-horizon agentic work, and professional tasks like document drafting and data analysis. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call. It requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
 - `claude-opus-5` is Anthropic’s flagship Claude Opus model, with improved performance on coding, long-horizon agentic work, and professional tasks like document drafting and data analysis. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call.
 - `claude-opus-4-8` is Anthropic’s Claude Opus model, built for advanced reasoning, long-running agentic workflows, and complex coding tasks. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call.
 - `gemini-3.1-pro` (Public Preview) is Google’s most capable Gemini model available in Snowflake Cortex, suited for advanced reasoning and multimodal tasks. It supports up to 64,000 output tokens and requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
@@ -88,6 +89,7 @@ In the AWS Europe West 1 (Ireland) region:
 | AI\_COMPLETE | `llama4-maverick` | 128,000 | 8,192 |
 |  | `claude-sonnet-5` | 1,000,000 | 64,000 |
 |  | `claude-sonnet-4-6` | 1,000,000 | 64,000 |
+|  | `claude-opus-5-5` | 1,000,000 | 128,000 |
 |  | `claude-opus-5` | 1,000,000 | 128,000 |
 |  | `claude-opus-4-8` | 1,000,000 | 128,000 |
 |  | `claude-opus-4-7` | 1,000,000 | 128,000 |
@@ -211,9 +213,11 @@ The following functions and models are available in any region via [cross-region
 | `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `llama3.3-70b` | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-1p-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-1p-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-1p-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.4` | \* |  | \* | \* | \* |  |  |  |  | \* | † | \* |  |
 | `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |

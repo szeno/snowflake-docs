@@ -118,9 +118,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -211,9 +211,9 @@ AS
   END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -292,9 +292,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -350,9 +350,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -388,9 +388,9 @@ BEGIN
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 
@@ -499,9 +499,9 @@ begin
 END;
 ```
 
-Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql), the Classic Console, or the
+Note: If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the
 `execute_stream` or `execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector)
-code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
+code, use this example instead (see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)):
 
 Copy code
 

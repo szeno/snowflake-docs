@@ -43,8 +43,9 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
-- [Oct 8, 2026: Skill and plugin sharing in CoCo (General availability)](/release-notes/2026/other/2026-10-08-skill-plugin-sharing-ga)
+- [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
 - [Snowflake CLI (v3.28.0)](/release-notes/clients-drivers/snowflake-cli-2026)
+- [Sep 25, 2026: OpenAI GPT-5.6 and GPT-6 Astra models (General availability)](/release-notes/2026/other/2026-09-25-openai-gpt-56-astra-ga)
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
 - [Sep 24, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-24-dcr)
@@ -59,7 +60,9 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
+- [Sep 21, 2026: Lineage preservation through temporary tables and views (General availability)](/release-notes/2026/other/2026-09-21-lineage-temporary-objects)
 - [Python Connector (v4.7.5)](/release-notes/clients-drivers/python-connector-2026)
+- [Snowflake ML Python (v2.2.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: HTML generation in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-09-17-cowork-html-generation-preview)
@@ -130,6 +133,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Snowflake CLI (v3.26.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowflake ML Python (v1.54.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Aug 30, 2026: Cortex Agents asynchronous API (General availability)](/release-notes/2026/other/2026-08-30-cortex-agents-async-api-ga)
-- [Aug 28, 2026: Snowflake recommends transitioning from Cortex Analyst to Cortex Agents](/release-notes/2026/other/2026-08-28-cortex-analyst-transition-cortex-agents)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

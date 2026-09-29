@@ -39,8 +39,9 @@ of the remote repository’s files.
 
 Note
 
-You can’t execute the `PUT` command through the Snowflake GUI; you can use SnowSQL to execute `PUT`. For an example `PUT` command
-to copy a .jar file to a stage, see [Uploading the dependency to the stage](#label-dependencies-upload-files) in this topic.
+You can’t run the `PUT` command from a [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) worksheet. Use
+[Snowflake CLI](/developer-guide/snowflake-cli/sql/execute-sql) (`snow sql`) to run `PUT`.
+For an example `PUT` command to copy a .jar file to a stage, see [Uploading the dependency to the stage](#label-dependencies-upload-files) in this topic.
 
 Choose or create one of the following for your dependency:
 

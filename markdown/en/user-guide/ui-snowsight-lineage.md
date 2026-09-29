@@ -307,7 +307,10 @@ Historical information is retained as follows:
 - Dynamic tables appear in the lineage graph for other objects, but the **Lineage** tab does not appear for dynamic tables
   themselves.
 - Deleted tables are not shown in the lineage graph, but renamed tables are shown.
-- Temporary tables are not shown in the lineage graph.
+- Temporary tables and views can appear in the lineage graph while they exist. After they’re dropped, Snowflake
+  preserves the lineage between their upstream sources and downstream tables when the temporary object is a genuine
+  bridge (it has both an upstream source and a downstream table). For more information, see
+  [Preserving data lineage through temporary tables and views](/user-guide/lineage-temporary-objects).
 - Lineage does not include a table that was used for filtering or joining when data did not move from the table to the downstream object. In
   the following example, table `t2` is not considered part of the lineage of table `target_table`:
 

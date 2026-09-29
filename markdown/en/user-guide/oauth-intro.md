@@ -106,4 +106,4 @@ For more information, refer to [Redirecting client connections](/user-guide/clie
 Snowflake supports replication and failover/failback with both the Snowflake OAuth and External OAuth security integrations from the source
 account to the target account.
 
-For details, refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations).
+For details, refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).

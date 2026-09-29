@@ -39,5 +39,5 @@ Snowflake Scripting.
 [Examples for common use cases of Snowflake Scripting](/developer-guide/snowflake-scripting/use-cases)
 :   Explore examples of Snowflake Scripting code for some common use cases.
 
-[Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples)
-:   Run the Snowflake Scripting examples in SnowSQL, Snowsight and Python Connector code.
+[Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples)
+:   Run the Snowflake Scripting examples in Snowflake CLI, Snowsight and Python Connector code.

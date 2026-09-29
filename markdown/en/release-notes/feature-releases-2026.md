@@ -4,7 +4,8 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
-- [Oct 8, 2026: Skill and plugin sharing in CoCo (General availability)](/release-notes/2026/other/2026-10-08-skill-plugin-sharing-ga)
+- [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
+- [Sep 25, 2026: OpenAI GPT-5.6 and GPT-6 Astra models (General availability)](/release-notes/2026/other/2026-09-25-openai-gpt-56-astra-ga)
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
 - [Sep 24, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-24-dcr)
@@ -19,6 +20,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
+- [Sep 21, 2026: Lineage preservation through temporary tables and views (General availability)](/release-notes/2026/other/2026-09-21-lineage-temporary-objects)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: HTML generation in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-09-17-cowork-html-generation-preview)

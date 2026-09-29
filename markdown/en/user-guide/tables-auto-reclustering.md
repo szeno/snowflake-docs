@@ -243,7 +243,7 @@ consumed by reclustering activity.
 
 You can call the [SYSTEM$ESTIMATE\_AUTOMATIC\_CLUSTERING\_COSTS](/sql-reference/functions/system_estimate_automatic_clustering_costs) function to help estimate the compute cost of
 enabling Automatic Clustering for a table and maintaining the table in a well-clustered state. You can also call the function to help predict
-the compute cost of changing the cluster key of a table.
+the compute cost of changing the clustering key of a table.
 
 For Optima Clustering, the function supports estimates for one-time costs (for example, enabling clustering or changing a clustering key).
 It doesn’t yet return a maintenance cost estimate for Optima Clustering. Optima Clustering maintenance costs are bounded at the per

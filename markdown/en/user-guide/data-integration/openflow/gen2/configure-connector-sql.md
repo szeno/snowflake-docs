@@ -199,6 +199,48 @@ Grant **READ** on each referenced secret to the runtime’s `EXECUTE_AS_ROLE`. T
 needs **USAGE** on the secret’s database and schema. Grant these privileges before you start the
 connector.
 
+### External secrets
+
+You can also source secret values from an
+[external secret provider](/user-guide/data-integration/openflow/security/external-secret-providers)
+(AWS Secrets Manager, Azure Key Vault, or Google Cloud Secret Manager). Use `valueType = SECRET_REFERENCE`
+and construct the `fullyQualifiedSecretName` as follows:
+
+```
+EXTERNAL_<integration_name>.<secret_name>.<value_name>
+```
+
+Where `<value_name>` depends on the secret’s format:
+
+- **Plaintext secret**: Use the secret name as the value name.
+- **JSON secret**: Use the name of the JSON field that contains the sensitive value.
+
+Example (plaintext secret named `db_password` in integration `my_secrets_int`):
+
+Copy code
+
+```
+"Source Database Password": {
+  "valueType": "SECRET_REFERENCE",
+  "fullyQualifiedSecretName": "EXTERNAL_my_secrets_int.db_password.db_password"
+}
+```
+
+Example (JSON secret named `service_config` in integration `my_secrets_int`, extracting the
+`password` field):
+
+Copy code
+
+```
+"Source Database Password": {
+  "valueType": "SECRET_REFERENCE",
+  "fullyQualifiedSecretName": "EXTERNAL_my_secrets_int.service_config.password"
+}
+```
+
+For setup and prerequisites, see
+[Use external secret providers with Openflow](/user-guide/data-integration/openflow/security/external-secret-providers).
+
 ## Create from a known configuration (optional)
 
 For your first connector, use `FROM DEFINITION` (above) or the setup wizard. When you already

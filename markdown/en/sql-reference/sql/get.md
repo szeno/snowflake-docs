@@ -124,8 +124,9 @@ Where:
 > - Google Cloud (using ODBC Driver Version 2.21.5 and higher).
 > - Microsoft Azure (using ODBC Driver Version 2.20.2 and higher).
 
-- The command cannot be executed from the **Worksheets** [![Worksheet tab](/static/images/screens/ui-navigation-worksheet-icon.svg)](/static/images/screens/ui-navigation-worksheet-icon.svg) page in either Snowflake web interface; instead, use the
-  SnowSQL client to download data files, or check the documentation for the specific Snowflake client to verify support for this command.
+- The command can’t be run from the **Worksheets** [![Worksheet tab](/static/images/screens/ui-navigation-worksheet-icon.svg)](/static/images/screens/ui-navigation-worksheet-icon.svg) page in either Snowflake web interface. Use
+  [Snowflake CLI](/developer-guide/snowflake-cli/index) (`snow sql`) to download data files, or check the documentation for the
+  specific Snowflake client to verify support for this command.
 - The command does not rename files.
 - Downloaded files are automatically decrypted using the same key that was used to encrypt the file when it was either uploaded
   (using [PUT](/sql-reference/sql/put)) or unloaded from a table (using [COPY INTO <location>](/sql-reference/sql/copy-into-location)).

@@ -257,9 +257,9 @@ For an example, see [procedure-scoped temporary table example](/developer-guide/
 
 Note
 
-If you are creating a Snowflake Scripting procedure in SnowSQL or Snowsight, you must
+If you are creating a Snowflake Scripting procedure in Snowflake CLI or Snowsight, you must
 use [string literal delimiters](/sql-reference/data-types-text#label-quoted-string-constants) (`'` or `$$`) around
-`{procedure definition}`. See [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+`{procedure definition}`. See [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 ## Variant syntax
 
@@ -463,8 +463,8 @@ CREATE [ OR ALTER ] PROCEDURE ...
       `{procedure definition}` if:
 
       - You are using a language other than Snowflake Scripting.
-      - You are creating a Snowflake Scripting procedure in SnowSQL or Snowsight. See
-        [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+      - You are creating a Snowflake Scripting procedure in Snowflake CLI or Snowsight. See
+        [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
     - For stored procedures in JavaScript, if you are writing a string that contains newlines, you can use
       backquotes (also called “backticks”) around the string.
 

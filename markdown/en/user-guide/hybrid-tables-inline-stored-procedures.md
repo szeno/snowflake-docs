@@ -1,10 +1,6 @@
 # Inline Stored Procedures for hybrid tables
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-Inline Stored Procedures are a new type of
+Inline Stored Procedures are a type of
 [Snowflake stored procedure](/developer-guide/stored-procedure/stored-procedures-overview)
 designed specifically for operational workloads on [hybrid tables](/user-guide/tables-hybrid).
 By executing the entire procedure body as a single atomic unit pushed directly to the query processing
@@ -12,32 +8,6 @@ layer, Inline Stored Procedures reduce per-statement overhead and deliver signif
 for OLTP-style workloads. In benchmarks using the TPROC-C workload, Inline Stored Procedures achieve over
 7,000 transactions per minute (TPM) on a single XSMALL warehouse, more than a 10x improvement
 compared to standard Snowflake stored procedures.
-
-## Prerequisites
-
-This public preview is available on any Snowflake account and warehouse. No request is required.
-
-For the best performance, set the `ENABLE_USE_STABLE_PATH` parameter to `TRUE` on the warehouse
-that runs your Inline Stored Procedures. For details, see
-[Relationship to operational query performance](#label-isproc-operational-query-performance).
-
-## Relationship to operational query performance
-
-Inline Stored Procedures build on the
-[operational query performance improvements](/user-guide/hybrid-tables-operational-query-performance)
-available for hybrid tables. Those improvements automatically recognize recurring, short-running
-queries on hybrid tables and optimize their execution by reducing the per-query overhead from
-parsing, plan compilation, and scheduling.
-
-To get the best performance, set the `ENABLE_USE_STABLE_PATH` parameter to `TRUE` on the warehouse
-that runs your Inline Stored Procedures. This is the same parameter that enables the operational
-query performance improvements, and it applies those optimizations to the individual statements
-inside the procedure body. Enabling this parameter also optimizes single-statement queries on the
-same warehouse, so both workload types benefit. These optimizations are transparent: Snowflake
-applies them automatically when eligible queries are detected.
-
-For more details on eligible query patterns and how the optimizations work, see
-[Performance improvements for operational queries on hybrid tables](/user-guide/hybrid-tables-operational-query-performance).
 
 ## Overview
 
@@ -681,16 +651,6 @@ CALL process_order(1, 1, 1, 'STANDARD');
 
 To get the best performance from Inline Stored Procedures, apply the following practices:
 
-- **Enable the operational query performance optimizations**. Set the `ENABLE_USE_STABLE_PATH` parameter to `TRUE` on
-  the warehouse that runs your Inline Stored Procedures. This parameter enables the
-  [operational query performance improvements for hybrid tables](/user-guide/hybrid-tables-operational-query-performance),
-  which optimize the individual statements inside the procedure body:
-
-  Copy code
-
-  ```
-  ALTER WAREHOUSE <warehouse_name> SET ENABLE_USE_STABLE_PATH = TRUE;
-  ```
 - **Use bind variables (prepared statements)**. Call the procedure with bound parameters from your
   application code instead of string-interpolating values into the `CALL` statement. Most
   Snowflake drivers use bind variables automatically when you use prepared statements. Bind

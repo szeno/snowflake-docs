@@ -699,4 +699,4 @@ Account:
 
 Snowflake supports replication and failover/failback for network policies and network rules, including the assignment of the network policy.
 
-For details, refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations).
+For details, refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).

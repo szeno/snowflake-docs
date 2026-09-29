@@ -204,7 +204,7 @@ Account replication supports the replication of integrations for the following f
   - Snowflake OAuth
   - External OAuth
 
-  For more information about security integrations, see [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations).
+  For more information about security integrations, see [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).
 - API integrations.
 
   After replicating API integrations to a target account, you must grant access to the remote service to the replicated
@@ -242,7 +242,7 @@ Requires Business Critical Edition (or higher).
 
 The feature supports replicating network policies.
 
-For more information, see [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations).
+For more information, see [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).
 
 ### Parameter replication
 
@@ -357,10 +357,10 @@ users and groups with SCIM:
 | [Multi-factor authentication (MFA)](/user-guide/security-mfa) | ✔ | Users who are enrolled in MFA in the source account must separately enroll in MFA when they log in to each target account. |
 | [Key-pair authentication](/user-guide/key-pair-auth) | ✔ |  |
 | [Programmatic access tokens](/user-guide/programmatic-access-tokens) | ✔ | Programmatic access tokens are replicated to the target account only if users and roles are replicated. |
-| [Federated Authentication](/user-guide/admin-security-fed-auth-overview) | ✔ | Refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating federated SSO (that is, SAML2) security integrations. |
-| [Snowflake OAuth](/user-guide/oauth-snowflake-overview) | ✔ | Refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating OAuth security integrations. |
-| [External OAuth](/user-guide/oauth-ext-overview) | ✔ | Refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating OAuth security integrations. |
-| [SCIM](/user-guide/scim-intro) | ✔ | Refer to [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating SCIM security integrations. |
+| [Federated Authentication](/user-guide/admin-security-fed-auth-overview) | ✔ | Refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating federated SSO (that is, SAML2) security integrations. |
+| [Snowflake OAuth](/user-guide/oauth-snowflake-overview) | ✔ | Refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating OAuth security integrations. |
+| [External OAuth](/user-guide/oauth-ext-overview) | ✔ | Refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating OAuth security integrations. |
+| [SCIM](/user-guide/scim-intro) | ✔ | Refer to [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations) for details on replicating SCIM security integrations. |
 
 Expand
 

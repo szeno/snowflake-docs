@@ -178,6 +178,72 @@ Expected output:
 1  value2  4.56   456  False
 ```
 
+## Test file-handling code with SnowflakeFile
+
+With Snowpark Python 1.35.0 or later, you can use `SnowflakeFile` locally to test read operations on local files and files in mocked stages. The following examples use synthetic text and don’t connect to a Snowflake account. Install the Snowpark Python library with the `localtest` dependency as described above.
+
+### Read a local file
+
+This example creates a temporary file, reads it with `SnowflakeFile`, and checks its contents. Reading a local file doesn’t require a Snowpark session.
+
+Copy code
+
+```
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from snowflake.snowpark.files import SnowflakeFile
+
+with TemporaryDirectory() as directory:
+    file_path = Path(directory) / "message.txt"
+    file_path.write_text("Hello from a local file!", encoding="utf-8")
+
+    with SnowflakeFile.open(str(file_path), "r") as source:
+        assert source.read() == "Hello from a local file!"
+```
+
+### Read a mocked stage file in a UDF
+
+This example creates a local testing session, puts a file in a mocked stage, and calls a UDF through the DataFrame API. Use a separate Python process from any connected Snowpark session so stage reads use the local testing session.
+
+Copy code
+
+```
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from snowflake.snowpark import Session
+from snowflake.snowpark.files import SnowflakeFile
+from snowflake.snowpark.functions import col, udf
+
+session = Session.builder.config("local_testing", True).create()
+
+try:
+    with TemporaryDirectory() as directory:
+        file_path = Path(directory) / "message.txt"
+        file_path.write_text("Hello from a mocked stage!", encoding="utf-8")
+        session.file.put(str(file_path), "@file_test_stage", auto_compress=False)
+
+        @udf(session=session)
+        def read_file(file_location: str) -> str:
+            with SnowflakeFile.open(file_location, "r") as source:
+                return source.read()
+
+        files = session.create_dataframe(
+            [["@file_test_stage/message.txt"]], schema=["file_location"]
+        )
+        result = files.select(read_file(col("file_location"))).collect()
+        assert result[0][0] == "Hello from a mocked stage!"
+finally:
+    session.close()
+```
+
+### Differences from execution in Snowflake
+
+- Local `SnowflakeFile` reads don’t support scoped URLs or stage URLs beginning with `https://`.
+- These examples test file-handling logic, not Snowflake privileges or production file access. The local implementation doesn’t enforce `require_scoped_url` as the Snowflake execution environment does.
+- When deploying a UDF that reads caller-provided files, keep the default scoped-URL requirement and pass a scoped file URL. Don’t disable this requirement to make a local stage-path example work in production. See [Reading dynamically specified files with SnowflakeFile](/developer-guide/udf/python/udf-python-examples#label-reading-file-from-python-udf-snowflakefile).
+
 ## Create a PyTest Fixture for a session
 
 [PyTest fixtures](https://docs.pytest.org/en/6.2.x/fixture.html) are functions that are executed before a test (or module of tests),

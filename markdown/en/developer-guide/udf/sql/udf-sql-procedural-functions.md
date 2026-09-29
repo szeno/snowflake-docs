@@ -94,10 +94,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `calculate_profit` in a query:
 
@@ -177,10 +176,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `check_dept` in a query:
 
@@ -245,10 +243,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `count_to` in a query:
 
@@ -301,10 +298,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `raise_exception` in a query and specify `1` for the input value:
 
@@ -387,10 +383,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `value_to_insert` in multiple INSERT statements:
 
@@ -454,10 +449,9 @@ END;
 
 Note
 
-If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql),
-the Classic Console, or the `execute_stream` or `execute_string` method in
-[Python Connector](/developer-guide/python-connector/python-connector) code, this example requires minor
-changes. For more information, see [Using Snowflake Scripting in Snowflake CLI, SnowSQL, and Python Connector](/developer-guide/snowflake-scripting/running-examples).
+If you use [Snowflake CLI](/developer-guide/snowflake-cli/index), the Classic Console, or the `execute_stream` or
+`execute_string` method in [Python Connector](/developer-guide/python-connector/python-connector) code, this example
+requires minor changes. For more information, see [Using Snowflake Scripting in Snowflake CLI and Python Connector](/developer-guide/snowflake-scripting/running-examples).
 
 Call `get_product` in the WHERE clause of a query to return the rows
 where the product is greater than `350`:

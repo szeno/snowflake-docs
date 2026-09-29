@@ -207,8 +207,7 @@ The following configuration properties from v3 aren’t accepted in v4:
 - `enable.streaming.channel.offset.migration` (v3 internal channel name format migration, not needed in v4)
 - `snowflake.streaming.channel.name.include.connector.name`
 - `enable.streaming.channel.offset.verification`
-- `snowflake.authenticator` (only key-pair authentication supported)
-- `snowflake.oauth.*` (OAuth not supported in v4)
+- `snowflake.oauth.*` (v3 OAuth property names not used in v4; see [Authentication](/user-guide/kafka-connector/setup-kafka#label-kafkahp-authentication) for v4 OAuth support)
 - `provider`
 
 ### Removed custom converters
@@ -227,7 +226,7 @@ Use standard community converters instead:
 
 ### Authentication
 
-v4 supports key-pair authentication only. If you use OAuth with v3, you must switch to key-pair authentication before migrating.
+v4.0 supports key-pair authentication only. Starting with v4.1.0, the connector also supports OAuth, and starting with v4.2.0 it supports workload-identity (SPCS) authentication. If you used OAuth with v3, you must use key-pair authentication when initially migrating to v4.0; you can switch to OAuth after upgrading to v4.1.0 or later, or to SPCS authentication after upgrading to v4.2.0 or later. For details, see [Authentication](/user-guide/kafka-connector/setup-kafka#label-kafkahp-authentication).
 
 ## Migration steps
 

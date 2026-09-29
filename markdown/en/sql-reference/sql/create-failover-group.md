@@ -501,7 +501,7 @@ To confirm that profiles are replicated on the target account, follow these step
 ### Create a failover group to enable replication and failover for security integrations and network policies
 
 For more information and examples for replicating security integrations and network policies,
-see [Replication of security integrations & network policies across multiple accounts](/user-guide/account-replication-security-integrations).
+see [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).
 
 ### Create a failover group that uses optimized refresh
 

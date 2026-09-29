@@ -7,8 +7,9 @@ This feature requires Enterprise Edition (or higher). To inquire about upgrading
 When a data metric function (DMF) is associated with a table or view, the DMF runs at regular intervals and returns a value that provides
 insights into data quality.
 
-You can now use a single SQL statement to configure a schema so that all of the objects in the schema are associated with the same DMF. You
-can associate the following system DMFs at the schema level:
+You can now use a single SQL statement to configure a schema so that supported objects in the schema are associated with the same DMF.
+Session temporary tables are not associated after the behavior change described in
+[Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064). You can associate the following system DMFs at the schema level:
 
 - [ROW\_COUNT](/sql-reference/functions/dmf_row_count) — Use to return information about the volume of data in objects within the
   schema.
@@ -34,7 +35,10 @@ the `my_schema` schema.
 
 ## Add a DMF to a schema
 
-When you associate a DMF with a schema, all of the objects within the schema are associated with the DMF.
+When you associate a DMF with a schema, Snowflake creates associations for the supported objects in the schema.
+Snowflake does not associate the DMF with session temporary tables. Transient tables are associated unless you exclude them
+with `EXCLUDE_TABLE_TYPES`. `'TRANSIENT'` matches the table type that [SHOW TABLES](/sql-reference/sql/show-tables)
+reports as `kind`, not only tables created with the `TRANSIENT` keyword.
 
 ### Syntax
 
@@ -64,8 +68,9 @@ ALTER SCHEMA <name>
     Default: FALSE
 
 `EXCLUDE_TABLE_TYPES = ( 'object_type', 'object_type' ... )`
-:   Excludes all objects of the specified type; Snowflake doesn’t create associations between the DMF and those objects. The following are
-    the possible values:
+:   Excludes all objects of the specified type; Snowflake doesn’t create associations between the DMF and those objects.
+
+    Object types:
 
     - `'DYNAMIC_TABLE'`
     - `'EVENT_TABLE'`
@@ -74,6 +79,22 @@ ALTER SCHEMA <name>
     - `'MATERIALIZED_VIEW'`
     - `'TABLE'`
     - `'VIEW'`
+
+    Table permanence (these objects still have domain `TABLE`):
+
+    - `'TRANSIENT'` — tables whose type is `TRANSIENT`. That includes `CREATE TRANSIENT TABLE` and tables created in a
+      [transient schema or database](/user-guide/tables-temp-transient) (those tables are transient even if you omit the
+      `TRANSIENT` keyword). Session temporary tables are not treated as `'TRANSIENT'`.
+
+    Snowflake never associates a schema-level DMF with session temporary tables (`CREATE TEMPORARY TABLE`). You don’t need to list
+    `'TEMPORARY'` in `EXCLUDE_TABLE_TYPES`. For the behavior change that introduced this skip, see
+    [Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).
+
+    `'TABLE'` excludes all tables of domain TABLE, including transient tables. To skip only transient tables and keep monitoring
+    permanent tables, specify `'TRANSIENT'`, not `'TABLE'`.
+
+    Permanent staging tables that are neither temporary nor transient can’t be excluded by type. Put them in a different schema, or
+    [override the DMF association at the object level](#label-dmf-bulk-override).
 
     To exclude a specific object, not all objects of a certain type, you can
     [override the DMF association at the object level](#label-dmf-bulk-override).
@@ -107,6 +128,16 @@ Copy code
 ALTER SCHEMA my_schema
   ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.ROW_COUNT ON ()
     EXCLUDE_TABLE_TYPES=('VIEW', 'MATERIALIZED_VIEW');
+```
+
+Associate the ROW\_COUNT DMF with objects in a schema, but don’t associate it with transient tables:
+
+Copy code
+
+```
+ALTER SCHEMA my_schema
+  ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.ROW_COUNT ON ()
+    EXCLUDE_TABLE_TYPES = ('TRANSIENT');
 ```
 
 ## Overriding settings at the object level
@@ -218,3 +249,5 @@ with the object. For a list of these privileges, see [Access control requirement
 - The FRESHNESS DMF requires a column argument for views and external tables. As a result, if you add the FRESHNESS DMF to a schema,
   Snowflake skips views and external tables when associating the DMF with objects in the schema.
 - You can’t set a trigger-based schedule at the schema level.
+- Snowflake does not associate schema-level DMFs with session temporary tables. For details, see
+  [Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).

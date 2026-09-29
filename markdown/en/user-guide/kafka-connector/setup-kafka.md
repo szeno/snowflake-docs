@@ -356,13 +356,17 @@ authentication methods, see [Authentication](#label-kafkahp-authentication).
 
 ### Authentication
 
-The connector authenticates to Snowflake for both the JDBC connection and the Snowpipe Streaming SDK using `snowflake.authenticator`. Currently supported methods are key pair authentication (the default) and OAuth.
+The connector authenticates to Snowflake for both the JDBC connection and the Snowpipe Streaming SDK using `snowflake.authenticator`. The supported authentication methods are:
+
+- **Key pair authentication** (default) — use `snowflake_jwt`.
+- **OAuth** — use `oauth`. Supported by version 4.1.0 and later.
+- **Workload-identity authentication** — use `spcs`. For connectors running inside [Snowpark Container Services](/developer-guide/snowpark-container-services/overview). Supported by version 4.2.0 and later.
 
 `snowflake.authenticator`
 :   The authentication method for the JDBC connection and the Snowpipe Streaming SDK.
 
     Valid values:
-    :   `snowflake_jwt` (key pair authentication), `oauth`
+    :   `snowflake_jwt` (key pair authentication), `oauth`, `spcs` (workload-identity authentication)
 
     Default:
     :   `snowflake_jwt`
@@ -421,6 +425,49 @@ To use OAuth, set `snowflake.authenticator` to `oauth` and provide your OAuth in
 Note
 
 The client secret and refresh token are secrets. Snowflake recommends externalizing them, as described in [Externalizing secrets](#label-kafkahp-externalize-secrets).
+
+#### SPCS authentication (workload-identity)
+
+Note
+
+SPCS authentication is supported by the Kafka connector version 4.2.0 and later.
+
+For a connector running inside [Snowpark Container Services (SPCS)](/developer-guide/snowpark-container-services/overview), set `snowflake.authenticator` to `spcs`. The connector uses the SPCS service identity instead of a private key or OAuth client credential.
+
+The SPCS runtime supplies `snowflake.url.name`, `snowflake.user.name`, `snowflake.database.name`, and `snowflake.schema.name` when those properties are absent or blank. Configure the connector properties that are specific to your topics and converters. For a minimal configuration, use:
+
+Copy code
+
+```
+{
+  "name": "my_connector",
+  "config": {
+    "connector.class": "com.snowflake.kafka.connector.SnowflakeStreamingSinkConnector",
+    "topics": "my_topic",
+    "snowflake.authenticator": "spcs",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "false",
+    "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+    "snowflake.streaming.validate.compatibility.with.classic": "false"
+  }
+}
+```
+
+`snowflake.role.name` is accepted but overridden under SPCS authentication. The connector uses the role of the user who created the SPCS service. Assign the intended role when you run `CREATE SERVICE`. If that role cannot access the target table, ingestion reports that the table does not exist rather than that access was denied.
+
+If `snowflake.private.key` or OAuth properties are present with `snowflake.authenticator=spcs`, the connector starts and logs a warning that the credential is ignored. This supports migration from key-pair or OAuth configuration without requiring the old credential to be removed first.
+
+To enable the SPCS service identity, include the following in the service specification:
+
+Copy code
+
+```
+capabilities:
+  securityContext:
+    enableCustomCredentials: true
+```
+
+For general SPCS authentication, service setup, and workload-identity token rotation, see [Run the Snowpipe Streaming SDK in Snowpark Container Services](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-spcs). The SDK guide covers the platform-level token lifecycle; this section documents only the Kafka Connector configuration and behavior.
 
 #### Externalizing secrets
 

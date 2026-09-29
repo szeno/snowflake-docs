@@ -39,7 +39,8 @@ carries the refresh prediction:
     "properties": {
       "refresh_mode": "ADAPTIVE",
       "effective_refresh_action": "INCREMENTAL",
-      "is_expect_failure": false
+      "is_expect_failure": false,
+      "effective_refresh_action_is_incremental": true
     }
   }
 ]
@@ -56,7 +57,7 @@ with columns `operation`, `domain`, `name`, `changes`, and `effects`. For exampl
 
 ```
 operation    domain           name                            changes    effects
-ALTER        DYNAMIC_TABLE    "MYDB"."MYSCHEMA"."DT_ORDERS"    []         [{"effect_type": "DYNAMIC_TABLE_REFRESH", "properties": {"refresh_mode": "ADAPTIVE", "effective_refresh_action": "INCREMENTAL", "is_expect_failure": false}}]
+ALTER        DYNAMIC_TABLE    "MYDB"."MYSCHEMA"."DT_ORDERS"    []         [{"effect_type": "DYNAMIC_TABLE_REFRESH", "properties": {"refresh_mode": "ADAPTIVE", "effective_refresh_action": "INCREMENTAL", "is_expect_failure": false, "effective_refresh_action_is_incremental": true}}]
 ```
 
 The `changes` column describes the set of changes the statement would make, which is outside the scope
@@ -70,6 +71,7 @@ Each `DYNAMIC_TABLE_REFRESH` effect carries a `properties` object:
 | Property | Description |
 | --- | --- |
 | `effective_refresh_action` | What the next refresh action is. For the possible values, see [Refresh actions](#label-dynamic-tables-predict-refresh-actions). |
+| `effective_refresh_action_is_incremental` | `true` when the next refresh applies changes incrementally. This is true when `effective_refresh_action` is `INCREMENTAL`, `CUSTOM_INCREMENTAL`, or `NO_DATA`. |
 | `is_expect_failure` | `true` when the next refresh would fail. Always present. |
 | `refresh_mode` | The refresh mode the table currently uses. Omitted when the prediction is a failure. |
 | `refresh_mode_reason` | Why the dynamic table chooses this refresh mode. Omitted when the table’s refresh mode is INCREMENTAL, and when the prediction is a failure. See [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes). |
@@ -96,6 +98,10 @@ have:
 Expand
 
 Show lessSee more
+
+The `effective_refresh_action_is_incremental` property is `true` for the incremental actions
+(`INCREMENTAL`, `CUSTOM_INCREMENTAL`, and `NO_DATA`) and `false` for the rest. `NO_DATA` counts as
+incremental because it’s the case where an incremental refresh runs but finds no changed rows to apply.
 
 Note
 
@@ -131,7 +137,8 @@ EXPLAIN CHANGES ALTER DYNAMIC TABLE dt_orders UNSET FROZEN WHERE;
       "refresh_mode": "ADAPTIVE",
       "effective_refresh_action": "REINITIALIZE",
       "is_expect_failure": false,
-      "effective_refresh_action_reason": "Frozen region changed or removed."
+      "effective_refresh_action_reason": "Frozen region changed or removed.",
+      "effective_refresh_action_is_incremental": false
     }
   }
 ]
