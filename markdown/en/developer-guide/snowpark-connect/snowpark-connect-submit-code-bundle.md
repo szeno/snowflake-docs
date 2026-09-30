@@ -718,11 +718,12 @@ Snowflake also records structured exception attributes on these records, which y
 
 ### Spark Monitoring UI
 
-You can browse your Spark runs in the Spark Monitoring UI in Snowsight. Sign in to Snowsight, then open the Spark run
-history at `https://app.snowflake.com/<organization>/<account>/#/compute/history/spark` (replace `<organization>` and
-`<account>` with your own). The page lists Spark runs over a selectable time range, such as the last 7 days. Each run
-appears as a single entry identified by the same job ID returned at submission, so you can set the time range and locate
-a run by its ID.
+You can browse your Spark runs in the [Spark Monitoring UI](/developer-guide/snowpark-connect/spark-monitoring-ui)
+in Snowsight. Sign in to Snowsight, then open the Spark Monitoring UI at
+`https://app.snowflake.com/<organization>/<account>/#/compute/history/spark` (replace `<organization>` and `<account>`
+with your own). The page lists Spark runs over a selectable time range, such as the last 7 days. Each run appears as a
+single entry identified by the same job ID returned at submission, so you can set the time range and locate a run by
+its ID.
 
 ### Cancel a job
 

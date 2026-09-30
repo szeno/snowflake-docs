@@ -322,7 +322,7 @@ MODE = INGRESS
 VALUE_LIST = ('ALL')
 
 -- Add the compute pool network rule to allowed/blocked rule list
-ALTER NETWORK POLICY <name> ADD { ALLOWED_NETWORK_RULE_LIST = '<network_rule>' | BLOCKED_NETWORK_RULE_LIST = '<network_rule>' }
+ALTER NETWORK POLICY <name> ADD { ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' ) | BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' ) }
 ```
 
 #### Configure caller’s rights for your service using customer-provided credentials

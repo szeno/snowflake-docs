@@ -26,11 +26,13 @@ instead of pre-filtering the data or creating a view.
 ## Supported DMFs
 
 The FILTER clause is supported for most system DMFs in the `SNOWFLAKE.CORE` schema and for custom
-DMFs.
+DMFs, including `FRESHNESS` when it’s associated with a column (`FRESHNESS ON (<column>)`).
 
 The following DMFs aren’t supported with FILTER:
 
-- `FRESHNESS`, because it operates on the table as a whole and doesn’t take column arguments.
+- `FRESHNESS` associated without a column (`ON ()`). This is a restriction specific to
+  FRESHNESS, not a general rule about columnless DMFs — `ROW_COUNT` associated without a
+  column (`ON ()`) is also columnless and does support FILTER.
 - DMFs with reference tables (multi-table associations), because the filter can only target a single
   table.
 
@@ -219,8 +221,10 @@ The [DATA\_METRIC\_FUNCTION\_REFERENCES view](/sql-reference/account-usage/data_
 - **Schema-level associations.** FILTER isn’t supported on schema-level DMF associations
   (`ALTER SCHEMA ... ADD DATA METRIC FUNCTION`). To filter rows, create the association at the
   table or view level.
-- **FRESHNESS DMF.** FILTER isn’t supported for the FRESHNESS DMF, because it operates on the
-  table as a whole and doesn’t take column arguments.
+- **FRESHNESS DMF.** FILTER isn’t supported for FRESHNESS associated without a column
+  (`ON ()`). This is a restriction specific to FRESHNESS, not a general rule about columnless
+  DMFs — `ROW_COUNT` associated without a column (`ON ()`) is also columnless and does
+  support FILTER.
 - **Multi-table DMFs.** FILTER isn’t supported for DMFs with a reference table (two-table
   associations), because the filter expression can only target a single table.
 - **WITHIN GROUP.** FILTER and WITHIN GROUP can’t be combined on the same association. Create

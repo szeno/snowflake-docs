@@ -7,19 +7,27 @@
   To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 Charges based on replication are divided into two categories: data transfer and compute resources. Both categories are billed on the
-target account (i.e. the account that stores the secondary database or secondary replication/failover group that is refreshed).
+target account (that is, the account that stores the secondary database or secondary replication/failover group that is refreshed).
+
+Data transfer charges apply the same way for every refresh mode: Replication Classic, Optimized Refresh, and RPO Assurance. Compute
+billing depends on the refresh mode of the failover group:
+
+- **Replication Classic:** billed as Snowflake-provided compute, as described in [Compute resources (Replication Classic)](/user-guide/account-replication-cost#label-replication-classic-compute).
+- **Optimized Refresh and RPO Assurance:** billed on replicated data volume and changed objects. See
+  [Pricing for Optimized Refresh and RPO Assurance](#label-optimized-refresh-pricing). The compute resources described in the next section don’t apply to these modes.
 
 Data transfer:
 :   The initial replication and subsequent synchronization operations transfer data between regions. Cloud providers charge for
     data transferred from one region to another within their own network.
 
-    The data transfer rate is determined by the location of the source account (i.e. the account that stores the primary replication
+    The data transfer rate is determined by the location of the source account (that is, the account that stores the primary replication
     or failover group). For data transfer pricing, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
     For more information, see [Understanding data transfer cost](/user-guide/cost-understanding-data-transfer).
 
-Compute resources:
-:   Replication operations use Snowflake-provided compute resources for the following:
+Compute resources (Replication Classic):
+:   For failover groups that use Replication Classic (the default), replication operations use Snowflake-provided compute resources for the
+    following:
 
     - To determine the delta of both metadata and data to be copied during the refresh operation.
     - To copy the data between accounts across regions.
@@ -77,20 +85,19 @@ To view the data transfer amounts and credit usage for replication for your acco
 To view the cost of replication for individual databases replicated with Database Replication, see
 [Monitoring database replication cost](/user-guide/db-replication-config#label-monitoring-database-replication-cost).
 
-## Pricing for optimized refresh
+## Pricing for Optimized Refresh and RPO Assurance
 
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+When a failover group uses [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh)
+(`OPTIMIZED_REFRESH = TRUE`) or [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance)
+(`RPO_ASSURANCE = TRUE`), account replication for that failover group is billed on replicated data volume and changed objects, not on
+the Replication Classic compute model described in [Compute resources (Replication Classic)](/user-guide/account-replication-cost#label-replication-classic-compute).
 
-Available to all Business Critical Edition (or higher) accounts.
+Failover groups that remain on Replication Classic continue to be billed under that compute model.
 
-When a failover group has [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh) enabled
-(`OPTIMIZED_REFRESH = TRUE`), account replication for that failover group is billed under the following model. Failover groups where
-`OPTIMIZED_REFRESH = FALSE` continue to be billed under the existing replication pricing described in the previous sections.
-
-| Dimension | Rate | Notes |
-| --- | --- | --- |
-| Replicated data volume | 5 credits per TB | Charged on the data replicated to the target account on each refresh. |
-| Changed objects | 0.2 credits per 10,000 changed objects | Applies only after the first 25,000,000 changed objects per account per month. The free allowance is summed across all failover groups in the account on a calendar-month basis. |
+| Dimension | Optimized Refresh | RPO Assurance | Notes |
+| --- | --- | --- | --- |
+| Replicated data volume | 5 credits per TB | 10 credits per TB | Charged on the data replicated to the target account on each refresh. |
+| Changed objects | 0.2 credits per 10,000 changed objects | 0.2 credits per 10,000 changed objects | Applies only after the first 25,000,000 changed objects per account per month. The free allowance is summed across all failover groups in the account on a calendar-month basis. |
 
 Expand
 
@@ -105,7 +112,8 @@ Object data (the rows in a table) is billed under the replicated data volume dim
 
 Note
 
-- The setting is per failover group. You can mix optimized refresh and Replication Classic in the same account; each failover group is
-  billed under the pricing model that matches its current `OPTIMIZED_REFRESH` setting.
-- Optimized refresh doesn’t change replica storage costs in the target account or cross-region or cross-cloud egress charges. Those
-  charges are unchanged.
+- Refresh mode is per failover group. You can mix Replication Classic, Optimized Refresh, and RPO Assurance in the same account. Each
+  failover group is billed under the pricing model that matches its current refresh mode.
+- Because RPO Assurance refreshes run continuously to maintain the RPO target, replication costs reflect the ongoing activity.
+- Optimized Refresh and RPO Assurance don’t change replica storage costs in the target account or cross-region or cross-cloud data
+  transfer charges. Data transfer costs are the same regardless of refresh mode.

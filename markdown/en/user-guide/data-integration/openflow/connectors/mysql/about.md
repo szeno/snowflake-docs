@@ -77,8 +77,12 @@ Show lessSee more
 - The connector doesn’t replicate tables with data that exceeds
   [Snowflake’s type limitations](/sql-reference/intro-summary-data-types).
 - The connector doesn’t replicate columns of types GEOMETRY, GEOMETRYCOLLECTION, LINESTRING, MULTILINESTRING, MULTIPOINT, MULTIPOLYGON, POINT, and POLYGON.
-- The connector is subject to the [Group Replication limitations of MySQL](https://dev.mysql.com/doc/refman/8.4/en/group-replication-limitations.html#group-replication-limitations-transaction-size).
-  This means that a single transaction must fit into a binary log message of size no more than 4 GB.
+- With binary log position tracking, a single transaction must fit into a binary log message of size
+  no more than 4 GB, as described in the
+  [Group Replication limitations of MySQL](https://dev.mysql.com/doc/refman/8.4/en/group-replication-limitations.html#group-replication-limitations-transaction-size).
+  Larger transactions are supported only with
+  [GTID-based replication](/user-guide/data-integration/openflow/connectors/mysql/gtid), which is
+  available for MySQL sources and gen 1 connectors only.
 - The connector doesn’t support replicating tables from a reader instance in Amazon Aurora as Aurora reader instances don’t maintain their own binary logs.
 - The connector supports common source table schema changes during replication, such as adding, dropping, and renaming columns. See [Schema changes](#label-database-schema-changes) for the full list and a few unsupported change types.
 - For `DATE` and `DATETIME` types in MySQL or MariaDB, any values that contain a zero month or day

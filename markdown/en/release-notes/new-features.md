@@ -43,8 +43,12 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
+- [Sep 30, 2026: Spark Monitoring UI (Preview)](/release-notes/2026/other/2026-09-30-spark-monitoring-ui)
+- [Sep 29, 2026: Response caching for Cortex AI Functions](/release-notes/2026/other/2026-09-29-cortex-response-caching)
 - [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
 - [Snowflake CLI (v3.28.0)](/release-notes/clients-drivers/snowflake-cli-2026)
+- [Snowflake ML Python (v2.3.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Sep 25, 2026: OpenAI GPT-5.6 and GPT-6 Astra models (General availability)](/release-notes/2026/other/2026-09-25-openai-gpt-56-astra-ga)
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)
 - [Sep 24, 2026: DCM Projects capability updates](/release-notes/2026/other/2026-09-24-dcm-projects-capability-updates)
@@ -54,6 +58,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 24, 2026: Snowpipe Streaming: Partitioned Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-09-24-snowpipe-streaming-partitioned-iceberg-ga)
 - [Sep 24, 2026: Programmatic notifications for Trust Center findings (Preview)](/release-notes/2026/other/2026-09-24-trust-center-programmatic-notifications)
 - [Sep 24, 2026: VALUES clause is supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-24-values-clause-incremental-dynamic-tables)
+- [Snowpipe Streaming SDK (v1.8.1)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)
 - [Sep 23, 2026: Account posture reporting in the Trust Center (Preview)](/release-notes/2026/other/2026-09-23-trust-center-account-posture-preview)

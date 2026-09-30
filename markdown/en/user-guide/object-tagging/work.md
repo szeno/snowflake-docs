@@ -226,13 +226,13 @@ ALTER WAREHOUSE wh1 SET TAG cost_center = 'sales';
 
 #### Extended example: Create and assign tags with SQL
 
-The following is an extended example that provides a high-level overview on how to use SQL to implement object tagging. It shows you how to
+The following is an extended example that provides a high-level overview of how to use SQL to implement object tagging. It shows you how to
 do the following:
 
 - Manage the access control privileges needed to work with tags.
 
   For simplicity, the workflow assumes a centralized management approach to tags, where the `tag_admin` custom role has both the CREATE
-  TAG and the global APPLY TAG privileges. For alternative approaches, see [Approaches assigning tagging privileges](#label-object-tagging-approaches).
+  TAG and the global APPLY TAG privileges. For alternative approaches, see [Approaches to assigning tagging privileges](#label-object-tagging-approaches).
 - Create a tag using a [CREATE TAG](/sql-reference/sql/create-tag) statement.
 - Assign a tag to a new Snowflake object using a [CREATE <object>](/sql-reference/sql/create) command.
 - Assign a tag to existing Snowflake objects using [ALTER <object>](/sql-reference/sql/alter) commands.
@@ -331,11 +331,11 @@ The following table summarizes the relationship between tag privileges and DDL o
 | Operation | Privilege required |
 | --- | --- |
 | Create tag. | A role with the CREATE TAG privilege in the same schema. |
-| Create tag that propagates | A role with the APPLY TAG privilege on the account and the OWNERSHIP privilege on the tag. |
+| Create tag that propagates. | A role with the APPLY TAG privilege on the account and the OWNERSHIP privilege on the tag. |
 | Alter tag. | The role with the OWNERSHIP privilege on the tag. |
 | Drop & Undrop tag. | A role with the OWNERSHIP privilege on the tag and USAGE or any other privilege on the database and schema in which the tag exists. |
 | Show tags. | One of the following:   A role with the USAGE privilege on the schema in which the tags exist, or   A role with the APPLY TAG privilege on the account. |
-| Set or unset a tag on an object. | For individual objects, a role with the APPLY TAG privilege on the account, or the APPLY TAG privilege on the tag and the OWNERSHIP privilege on the object on which the tag is set. See [Supported objects](/user-guide/object-tagging/introduction#label-object-tag-supported-objects). |
+| Set or unset a tag on an object. | For individual objects, a role with the APPLY TAG privilege on the account, or the APPLY privilege on the tag and the OWNERSHIP privilege on the object on which the tag is set. See [Supported objects](/user-guide/object-tagging/introduction#label-object-tag-supported-objects). |
 | Set or unset a tag on a column. | A role with the APPLY TAG privilege on the account, or a role with the APPLY privilege on the tag and the OWNERSHIP privilege on the table or view. |
 | Get tags on an object. | See [SYSTEM$GET\_TAG](/sql-reference/functions/system_get_tag), [TAG\_REFERENCES](/sql-reference/functions/tag_references), and [TAG\_REFERENCES\_WITH\_LINEAGE](/sql-reference/functions/tag_references_with_lineage). |
 
@@ -343,7 +343,7 @@ Expand
 
 Show lessSee more
 
-### Approaches assigning tagging privileges
+### Approaches to assigning tagging privileges
 
 This section describes different approaches to assigning the privileges needed to create and set tags.
 

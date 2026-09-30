@@ -177,7 +177,7 @@ Copy code
 ```
 SELECT
     DATE_TRUNC('day', start_time),
-    SUM(total_elapsed_time),
+    AVG(total_elapsed_time),
     ANY_VALUE(query_id)
   FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY
   WHERE query_parameterized_hash = 'cbd58379a88c37ed6cc0ecfebb053b03'

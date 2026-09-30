@@ -58,7 +58,7 @@ signature, the tagged column is automatically protected by the masking policy. F
 ## Using tags to monitor resource usage
 
 Assigning tags to warehouses enables accurate resource usage monitoring. Querying tags on resources allows for easy resource
-grouping by cost center or some other organization unit. Additionally, the tag can facilitate analyzing relatively short-term business
+grouping by cost center or some other organizational unit. Additionally, the tag can facilitate analyzing relatively short-term business
 activities, such as projects, to provide a more granular insight into what, when, and how resources were used.
 
 For an example of using tags to monitor resource usage, see [Setting up object tags for cost attribution](/user-guide/cost-attributing#label-cost-attribute-tag).
@@ -115,7 +115,7 @@ Copy code
 ```
 CREATE TABLE t1 (
   COL1 INT WITH TAG (tag1='col1', tag2='col1'),
-  COL2 INT WITH TAG (tag1='col2'),
+  COL2 INT WITH TAG (tag1='col2')
   )
   WITH TAG (tag3='t1');
 ```

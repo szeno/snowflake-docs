@@ -264,12 +264,8 @@ CREATE FAILOVER GROUP [ IF NOT EXISTS ] <secondary_name>
       refresh operation never runs.
 
 `OPTIMIZED_REFRESH = { TRUE | FALSE }`
-:   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-    Available to all Business Critical Edition (or higher) accounts.
-
-    Specifies whether the failover group uses [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh).
-    Optimized refresh tracks metadata changes on the source account and applies only those changes to the target account on each refresh,
+:   Specifies whether the failover group uses [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh).
+    Optimized Refresh tracks metadata changes on the source account and applies only those changes to the target account on each refresh,
     so refresh duration scales with the rate of change rather than the total size of your environment.
 
     When set to `TRUE`:
@@ -278,9 +274,9 @@ CREATE FAILOVER GROUP [ IF NOT EXISTS ] <secondary_name>
     - The property can be set on the primary failover group only. The CREATE FAILOVER GROUP … AS REPLICA OF statement that creates a
       secondary failover group does not accept the property.
     - The first refresh after enabling is a one-time bootstrapping refresh that establishes the baseline. Subsequent refreshes are
-      incremental. The bootstrapping refresh is billed under the optimized-refresh pricing model.
-    - The optimized-refresh pricing model applies for all refreshes while this property is `TRUE`. For details, see
-      [Pricing for optimized refresh](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
+      incremental. The bootstrapping refresh is billed under the Optimized Refresh pricing model.
+    - The Optimized Refresh pricing model applies for all refreshes while this property is `TRUE`. For details, see
+      [Pricing for Optimized Refresh and RPO Assurance](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
 
     Default:
     :   `FALSE`
@@ -375,8 +371,8 @@ For general information about roles and privilege grants for performing SQL acti
   Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
 - For an account that is newly upgraded to Business Critical Edition (or higher), it might take up to 12 hours for failover capabilities to
   become available.
-- When `OPTIMIZED_REFRESH = TRUE`, the failover group must have a REPLICATION\_SCHEDULE with an interval of 6 hours or less. The property
-  can be set on the primary failover group only. For details, see [Optimized refresh for failover groups](/user-guide/account-replication-config#label-optimized-refresh).
+- When `OPTIMIZED_REFRESH = TRUE`, the failover group must have a `REPLICATION_SCHEDULE` with an interval of 6 hours or less. The property
+  can be set on the primary failover group only. For details, see [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh).
 
 ## Examples
 
@@ -503,11 +499,11 @@ To confirm that profiles are replicated on the target account, follow these step
 For more information and examples for replicating security integrations and network policies,
 see [Replication of security integrations and network policies across multiple accounts](/user-guide/account-replication-security-integrations).
 
-### Create a failover group that uses optimized refresh
+### Create a failover group that uses Optimized Refresh
 
 **Executed on source account**
 
-Create a failover group named `myfg` that uses [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh) to
+Create a failover group named `myfg` that uses [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) to
 replicate database `db1` to the target account `myaccount2`. The replication schedule refreshes the failover group every 10 minutes:
 
 Copy code

@@ -123,7 +123,7 @@ Copy code
 
 ```
 reg = Registry(...)
-mv = reg.get_model("Explainable_Catboost_Model").default
+mv = reg.get_model("diamond_catboost_explain_enabled").default
 explanations = mv.run(input_data, function_name="explain")
 ```
 

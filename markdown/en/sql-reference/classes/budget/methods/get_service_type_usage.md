@@ -92,8 +92,8 @@ For more information, see [Budgets roles and privileges](/user-guide/budgets#lab
 
 ## Usage notes
 
-- For `timezone`, you can specify a [time zone name](https://data.iana.org/time-zones/tzdb-2025b/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb-2025b/backward) from release
-  2025b of the [IANA Time Zone Database](https://www.iana.org/time-zones) (e.g. `America/Los_Angeles`, `Europe/London`, `UTC`,
+- For `timezone`, you can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from release
+  2026c of the [IANA Time Zone Database](https://www.iana.org/time-zones) (e.g. `America/Los_Angeles`, `Europe/London`, `UTC`,
   `Etc/GMT`, etc.).
 
   Note

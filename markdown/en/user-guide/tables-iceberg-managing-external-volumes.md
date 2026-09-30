@@ -210,7 +210,7 @@ The command output includes a `base_location` property that indicates the locati
 This section describes the flat layout in Snowflake for data and metadata directories for Snowflake-managed tables.
 
 When you create a Snowflake-managed table that uses the default flat directory layout (PATH\_LAYOUT = FLAT), Snowflake writes all Parquet
-data files under a single `data/` directory and all table metadata data files under a single `metadata/` directory. Snowflake also writes
+data files under a single `data/` directory and all table metadata files under a single `metadata/` directory. Snowflake also writes
 metadata for [Delta-based tables](/user-guide/tables-iceberg-metadata#label-tables-iceberg-metadata-delta).
 
 Snowflake constructs paths using the following patterns, depending on the values specified

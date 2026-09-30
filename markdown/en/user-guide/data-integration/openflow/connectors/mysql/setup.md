@@ -75,8 +75,8 @@ As a database administrator, perform the following tasks:
    This indicates that `sort_buffer_size` should be raised.
 3. If you’re using Amazon RDS databases, then increase the retention period relevant to *binlog\_expire\_logs\_seconds* using *rds\_set\_configuration*.
    For example, if you want to store binlog for 24 hours, then call `mysql.rds_set_configuration('binlog retention hours', 24)`.
-4. When using a read replica to connect, binary logging must be enabled on the replica.
-5. After binary logging is enabled, configure the replica to log the events received from its source into its own binary log.
+4. When using a read replica to connect, enable binary logging on the replica, then configure the
+   replica to log the events received from its source into its own binary log.
 
    Copy code
 
@@ -86,6 +86,22 @@ As a database administrator, perform the following tasks:
 
    `log_replica_updates` allows the replica to write events received from its source to its own binary
    log, making those changes available to any databases that are replicating from it.
+5. (Optional) Enable GTID tracking for a gen 1 connector. If you want the connector to track its
+   replication position with Global Transaction Identifiers instead of binary log file positions,
+   enable GTIDs on the source server. There are prerequisites, including clearing transactions
+   without GTIDs out of the retained binary logs. See
+   [Prerequisites](/user-guide/data-integration/openflow/connectors/mysql/gtid#label-mysql-gtid-prerequisites)
+   in the GTID guide.
+
+   If the source is itself a replica, also confirm that
+   [replica\_preserve\_commit\_order](https://dev.mysql.com/doc/refman/8.4/en/replication-options-replica.html#sysvar_replica_preserve_commit_order)
+   is `ON`, which is the default in MySQL 8.4. The connector doesn’t support the out-of-order commits
+   that a multithreaded replica can produce when this setting is `OFF`.
+
+   GTID tracking lets replication survive a source server failover, and it supports transactions
+   larger than 4 GB. It’s available for MySQL sources and gen 1 connectors only. For what the
+   connector supports and how to turn it on, see
+   [Openflow Connector for MySQL: GTID-based replication](/user-guide/data-integration/openflow/connectors/mysql/gtid).
 6. Connect via SSL. If you’re planning to use an SSL connection to MySQL, prepare the root certificate for your database server.
    It is required during configuration.
 7. Create a user for the connector. The connector requires a user with the REPLICATION SLAVE and REPLICATION CLIENT privileges

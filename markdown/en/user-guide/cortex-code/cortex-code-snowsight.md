@@ -165,15 +165,34 @@ Two things determine which models you can choose:
 
 ### View or change the active model
 
-The model selector is at the lower right of the message box, next to the send button. It shows the name of the active model.
+The model selector is at the lower right of the message box, next to the send button. It shows the name of the active model and, for models that support it, the active effort level.
 
-To see which model CoCo is using or to switch models, open the model selector. Each specific model includes a short description of what it’s best suited for.
+To see which model CoCo is using or to switch models, open the model selector. The menu lists the Auto options (**Auto**, **Auto Intelligent**, and **Auto Efficient**) first, each with a short description, followed by one entry for each model family. Older versions of each family are under **Other models**.
 
 Select an option from the menu to change the model.
 
 Account administrators can configure a default model for all users in the account. For instructions, see [Configure default model settings](/user-guide/cortex-code/configure-model-settings).
 
 For the database roles a user needs to access CoCo, see [Access control requirements](#label-cortex-code-snowsight-access-control).
+
+### Change the effort level
+
+For some models, such as Claude Opus 5, you can choose how much reasoning the model does before it responds. Higher effort can produce better results on complex tasks, but responses take longer.
+
+To change the effort level:
+
+1. Open the model selector.
+2. Select **Effort**.
+3. Select **Low**, **Medium**, or **High**.
+
+The selector shows the active effort level next to the model name. If you don’t choose a level, CoCo uses the model’s default.
+
+Not every option lets you choose a level:
+
+- For Auto options, the **Effort** row shows **Automatically set**.
+- For models where the provider sets the effort level, the **Effort** row shows **Set by the provider for this model**.
+
+CoCo saves your effort level for each chat, along with the selected model. You can also choose an effort level from the message box on the Snowsight home page. That choice applies to the chat that opens in the CoCo panel.
 
 ## Web search
 

@@ -137,6 +137,7 @@ user logins, and queries:
 | [QUERY\_ACCELERATION\_HISTORY](/sql-reference/functions/query_acceleration_history) | 14 days | Results depend on MONITOR USAGE privilege. [1] |
 | [QUERY\_HISTORY , QUERY\_HISTORY\_BY\_\*](/sql-reference/functions/query_history) | 7 days | Results depend on the privileges assigned to the user’s current role. |
 | [REPLICATION\_GROUP\_DANGLING\_REFERENCES](/sql-reference/functions/replication_group_dangling_references) | N/A |  |
+| [REPLICATION\_GROUP\_LAG\_HISTORY](/sql-reference/functions/replication_group_lag_history) | 14 days | Results are only returned for a role with any privilege on the replication or failover group. |
 | [REPLICATION\_GROUP\_REFRESH\_HISTORY, REPLICATION\_GROUP\_REFRESH\_HISTORY\_ALL](/sql-reference/functions/replication_group_refresh_history) | 14 days | Results are only returned for a role with any privilege on the replication or failover group. |
 | [REPLICATION\_GROUP\_REFRESH\_PROGRESS, REPLICATION\_GROUP\_REFRESH\_PROGRESS\_BY\_JOB, REPLICATION\_GROUP\_REFRESH\_PROGRESS\_ALL](/sql-reference/functions/replication_group_refresh_progress) | 14 days | Results are only returned for a role with any privilege on the replication or failover group. |
 | [REPLICATION\_GROUP\_USAGE\_HISTORY](/sql-reference/functions/replication_group_usage_history) | 14 days | Results depend on the MONITOR USAGE privilege. [1] |

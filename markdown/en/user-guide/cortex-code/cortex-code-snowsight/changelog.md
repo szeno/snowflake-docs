@@ -6,12 +6,24 @@ This page documents notable changes to Cortex Code in Snowsight.
 
 | Date | Feature | Phase |
 | --- | --- | --- |
+| Sep 29 | Effort level selection for models | GA |
 | Sep 24 | Approval modes (Default approvals / Bypass approvals) | GA |
 | Sep 9 | Restrict this chat (restricted session scope) | GA |
 
 Expand
 
 Show lessSee more
+
+### Effort level selection
+
+The model selector now includes an **Effort** option. For models that support
+it, such as Claude Opus 5, you can choose **Low**, **Medium**, or **High** to
+control how much reasoning the model does before it responds. Your choice is
+saved for each chat. For details, see
+[Change the effort level](/user-guide/cortex-code/cortex-code-snowsight#label-coco-snowsight-effort).
+
+The model list is also reorganized: Auto options appear first, followed by one
+entry for each model family, with older versions under **Other models**.
 
 ### Approval modes
 

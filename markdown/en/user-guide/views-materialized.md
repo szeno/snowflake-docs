@@ -44,11 +44,6 @@ Snowflake’s implementation of materialized views provides a number of unique c
   If a query is run before the materialized view is up-to-date, Snowflake either updates the materialized view or uses the up-to-date
   portions of the materialized view and retrieves any required newer data from the base table.
 
-Important
-
-The automatic maintenance of materialized views consumes credits. For more details, see
-[Materialized Views Cost](#label-materialized-views-maintenance-billing) (in this topic).
-
 ### Deciding When to Create a Materialized View or a Regular View
 
 In general, when deciding whether to create a materialized view or a regular view, use the following criteria:
@@ -996,6 +991,13 @@ views, Snowflake recommends that you start by clustering only the materialized
 views, and that you monitor performance and cost before and after adding
 clustering to the base table.
 
+If you create a materialized view on a base table that is already clustered, consider removing the clustering on the base
+table. Any change to the clustering of the base table eventually requires a refresh of the materialized view, which adds
+to the materialized view’s maintenance costs.
+
+Clustering materialized views, especially materialized views on base tables that change frequently, increases costs.
+Do not cluster more materialized views than you need to.
+
 If you plan to create a table, load it, and create a clustered materialized
 view(s) on the table, then Snowflake recommends that you create the
 materialized views last (after loading as much data as possible). This
@@ -1003,10 +1005,13 @@ can save money on the initial data load, because it avoids some extra effort
 to maintain the clustering of the materialized view the first time that
 the materialized view is loaded.
 
+Almost all information about clustering tables also applies to clustering materialized views.
+
 For more details about clustering, refer to:
 
 - [Understanding Snowflake Table Structures](/user-guide/tables-micro-partitions)
 - [Automatic Clustering](/user-guide/tables-auto-reclustering)
+- [Strategies for Selecting Clustering Keys](/user-guide/tables-clustering-keys#label-clustering-keys-strategies)
 
 For more information about the costs of clustering materialized views, refer to:
 
@@ -1086,16 +1091,10 @@ The following sections summarize the best practices for working with materialize
 
 ### Best Practices for Clustering Materialized Views and their Base Tables
 
-- If you create a materialized view on a base table, and if the materialized views are accessed frequently and the
-  base table is not accessed frequently, it is usually more efficient to avoid clustering the base table.
+- Cluster the materialized views rather than the base table when the base table is rarely accessed directly.
+- Do not cluster more materialized views than you need to.
 
-  If you create a materialized view on a clustered table, consider removing any clustering on the base table, because
-  any change to the clustering of the base table will eventually require a refresh of the materialized view,
-  which adds to the materialized view’s maintenance costs.
-- Clustering materialized views, especially materialized views on base tables that change frequently, increases
-  costs. Do not cluster more materialized views than you need to.
-- Almost all information about clustering tables also applies to clustering materialized views.
-  For more information about clustering tables, see [Strategies for Selecting Clustering Keys](/user-guide/tables-clustering-keys#label-clustering-keys-strategies).
+For details, see [Materialized Views and Clustering](#label-clustering-base-table-and-materialized-view).
 
 ## Examples
 

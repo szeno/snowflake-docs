@@ -13,7 +13,7 @@ Note
 This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
 
 This topic describes important maintenance considerations and best practices for
-maintaining the Openflow Connector for MySQL such as reinstalling the connector or setting the starting binary log position for loading.
+maintaining the Openflow Connector for MySQL such as reinstalling the connector or setting the starting position of the CDC stream.
 
 These operations are often used in conjunction with [Incremental replication without snapshots](/user-guide/data-integration/openflow/connectors/mysql/incremental-replication).
 
@@ -173,7 +173,7 @@ While a snapshot replication is in progress, only increase the number of channel
 
 When the source produces frequent changes to rows that contain large values, you might need a Large warehouse. With smaller warehouses, replicating many 8 MB rows can cause an out-of-memory error. By contrast, replicating 128 MB rows with continuous merges completes without warehouse errors, because the connector streams the data file by file through the **Upload Rows via Snowpipe Streaming 2** processor and the merge processes it gradually.
 
-Incremental replication is also subject to the MySQL transaction size limitation: a single transaction must fit into a binary log message of no more than 4 GB. For more information, see [Limitations](/user-guide/data-integration/openflow/connectors/mysql/about#limitations).
+Under binary log position tracking, incremental replication is also subject to the MySQL transaction size limitation: a single transaction must fit into a binary log message of no more than 4 GB. Larger transactions require [GTID tracking](/user-guide/data-integration/openflow/connectors/mysql/gtid). For more information, see [Limitations](/user-guide/data-integration/openflow/connectors/mysql/about#limitations).
 
 ## Enable error logging on an existing schema
 
@@ -352,7 +352,7 @@ If the new instance is located in a different runtime, you must re-enter all par
    1. Right-click the connector’s process group, then select **Download flow definition**.
    2. Select both of the following options, then download the flow definition:
       - **Export with External Services**: includes the controller services that the connector references from parent process groups.
-      - **Export with Components State**: includes component state, such as binary log positions and incremental replication state, so that replication continues from where it left off.
+      - **Export with Components State**: includes component state, such as binary log or GTID positions and incremental replication state, so that replication continues from where it left off.
 3. Create the connector in the target runtime:
 
    - If you downloaded the flow definition, import it into the new runtime. Importing the flow definition preserves the component state captured during the export, so the connector resumes incremental replication from its previous positions.
@@ -363,60 +363,81 @@ If the new instance is located in a different runtime, you must re-enter all par
 
    - Set the `Ingestion Type` parameter to `incremental`. For more information on the concerns, see [Enable incremental replication without snapshots](/user-guide/data-integration/openflow/connectors/mysql/incremental-replication#label-mysql-incremental-replication).
    - Set the `Starting Binlog Position` parameter to `Earliest`.
-     For more information and potential concerns, see [Specify load from binary log position](#label-mysql-connector-start-restart-incremental-load-from-earliest-available-binary-log-position).
+     For more information and potential concerns, see [Specify the starting position of the CDC stream](#label-mysql-connector-start-restart-incremental-load-from-earliest-available-binary-log-position).
 
    Note
 
-   If you imported the flow definition with **Export with Components State** selected, the connector retains its previous binary log positions. In this case, leave `Starting Binlog Position` set to `Latest` to continue replication from where it stopped.
+   If you imported the flow definition with **Export with Components State** selected, the connector retains its previous position in the CDC stream. In this case, leave `Starting Binlog Position` set to `Latest` to continue replication from where it stopped.
 6. Start the new connector.
 
 ### Usage notes
 
 The new connector uses the existing destination tables that were created by the original connector, but the connector creates new journal tables.
 
-## Specify load from binary log position
+## Specify the starting position of the CDC stream
 
-The Openflow Connector for MySQL connector allows you to select the starting position where MySQL binary logs are read.
+The Openflow Connector for MySQL connector allows you to select the starting position where the CDC stream is read.
 By default, the connector reads from the latest available position. Alternatively, you can choose the earliest position available on the source instance.
 Choosing to start from the earliest position is common when reinstalling the connector.
 This allows the new instance to catch up and continue replicating existing tables without having to snapshot each again.
+It’s also part of the procedure for
+[reverting from GTID tracking to binary log tracking](/user-guide/data-integration/openflow/connectors/mysql/gtid#label-mysql-gtid-revert).
 
-Note that switching a running connector from latest to earliest position causes the entire available binary log
+The `Starting Binlog Position` parameter applies to both position tracking modes, but the earliest
+position means something different in each:
+
+- With binary log position tracking, it’s the earliest position in the earliest binary log file that
+  the source still retains.
+- With [GTID tracking](/user-guide/data-integration/openflow/connectors/mysql/gtid), it’s the oldest
+  transaction the source still retains, which the connector determines from the `@@gtid_purged`
+  variable on MySQL.
+
+Note that switching a running connector from latest to earliest position causes the entire available CDC stream
 to be re-read, re-processed, and re-applied to the destination table.
 
 Warning
 
-While the binary log is being re-read, the columns and data in affected destination tables
+While the CDC stream is being re-read, the columns and data in affected destination tables
 can become out of sync with their sources until all events have been re-processed and merged.
 
 The following parameters that control snapshot loads are available in the `Ingestion Parameters` context:
 
 | Parameter | Description |
 | --- | --- |
-| Starting Binlog Position | - `Latest` (default): CDC stream reading starts at the latest available position and continues from there. - `Earliest`: Switches the incremental load to start, or restart reading from the earliest available   binary log position. |
-| Re-read Tables in State | - `New` (default):   While re-reading the binary log, only those events will be processed   from new tables added to replication after the re-reading started.   Other events are discarded until the connector reaches the position just before re-reading started. - `Any active`: Re-read and re-process events from any table currently in replication. |
+| Starting Binlog Position | - `Latest` (default): CDC stream reading starts at the latest available position and continues from there. - `Earliest`: Switches the incremental load to start, or restart reading from the earliest available   position. Under binary log position tracking, that’s the earliest retained binary log position.   Under GTID tracking, it’s the oldest transaction the source still retains. |
+| Re-read Tables in State | - `New` (default):   While re-reading the CDC stream, only those events will be processed   from new tables added to replication after the re-reading started.   Other events are discarded until the connector reaches the position just before re-reading started. - `Any active`: Re-read and re-process events from any table currently in replication. |
 
 Expand
 
 Show lessSee more
 
-To determine whether the connector finished re-reading the binary log:
+To determine whether the connector finished re-reading the CDC stream:
 
 1. Navigate to the Openflow canvas.
 2. Open the **Incremental Load** process group.
 3. Right-click the topmost processor named **Read MySQL CDC Stream**, then select **View state**.
-4. Compare the state entries:
+4. Compare the state entries. Which entries are present depends on the position tracking mode in use.
+
+   Under binary log position tracking:
+
    - **binlog.position.rewind**: the latest position the processor read before re-reading of the binary log started.
    - **binlog.position.dml**: the current latest position read by the processor. As long as this value is lower than the rewind value above, the processor is still re-reading the binary log.
 
-Note
+   Note
 
-If `binlog.position.rewind` shows `/4`, the connector was installed fresh from the registry with no prior state to record a binlog position from. `/4` is a placeholder value meaning “oldest available position,” and the `dml` vs. `rewind` comparison can’t be used to gauge progress in this case.
+   If `binlog.position.rewind` shows `/4`, the connector was installed fresh from the registry with no prior state to record a binlog position from. `/4` is a placeholder value meaning “oldest available position,” and the `dml` vs. `rewind` comparison can’t be used to gauge progress in this case.
 
-To confirm the connector has caught up, use one of these checks instead:
+   To confirm the connector has caught up, use one of these checks instead:
 
-- **Row counts**: compare source and destination table row counts.
-- **Binlog position**: run `SHOW BINARY LOG STATUS` (MySQL 8.2 and later) or `SHOW MASTER STATUS` (MySQL 8.1 and earlier) on the source to get the current binlog head, then compare it to `binlog.position.dml`. When the gap is small and stays low as new changes arrive, the connector has caught up.
+   - **Row counts**: compare source and destination table row counts.
+   - **Binlog position**: run `SHOW BINARY LOG STATUS` (MySQL 8.2 and later) or `SHOW MASTER STATUS` (MySQL 8.1 and earlier) on the source to get the current binlog head, then compare it to `binlog.position.dml`. When the gap is small and stays low as new changes arrive, the connector has caught up.
+
+   Under GTID tracking:
+
+   - **gtid.position.rewind**: the position the processor had reached before re-reading started. The
+     processor is still re-reading as long as this entry is present.
+   - **gtid.rewind.completed**: set to `true` once re-reading finishes. At that point the connector
+     removes the **gtid.position.rewind** entry.
 
 ### Usage notes
 
@@ -424,6 +445,11 @@ To confirm the connector has caught up, use one of these checks instead:
   the process can’t be reconfigured or canceled, and will continue until the currently-read position reaches the position from before it started.
 - Switching to the earliest position on a running connector will, for any tables being re-processed,
   finish their existing journals, and create new journal tables.
-- If the binary log contains events from a previous table that was dropped
+- If the CDC stream contains events from a previous table that was dropped
   and re-created in the source database, re-reading the stream re-processes all events in the current destination.
   The connector can’t distinguish between a previous and current source table if they share the same name.
+- Setting `Starting Binlog Position` back to `Latest` is what clears the bookkeeping from a finished
+  re-read. Until you do, the connector can’t start another one.
+- If the connector is still migrating from binary log positions to GTIDs, it ignores a request to
+  read from the earliest position and logs a warning. Keep `Starting Binlog Position` set to
+  `Earliest` and the connector will automatically start the re-read once the GTID migration is complete.

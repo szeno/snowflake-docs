@@ -39,7 +39,8 @@ and any cloud.
 ## Build your AI context layer
 
 Collect, enrich, and activate context across BI tools and data so that both humans and AI agents operate on the same
-trusted semantics.
+trusted semantics. Together, these capabilities make up
+[Horizon Context](/user-guide/snowflake-horizon/horizon-context), the governed context layer in Horizon Catalog.
 
 [Semantic views](/user-guide/views-semantic/overview)
 :   Create governed, business-aligned definitions that AI agents use to understand your data. You can create them from scratch by using Autopilot, or ingest them from Tableau and Power BI.

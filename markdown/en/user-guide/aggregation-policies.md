@@ -656,7 +656,7 @@ database or schema:
 - Cloning a schema results in the cloning of all aggregation policies within the schema.
 - A cloned table maps to the same aggregation policies as the source table.
   - When a table is cloned in the context of its parent schema cloning, if the source table has a reference to an aggregation policy in the
-    same parent schema (i.e. a local reference), the cloned table will have a reference to the cloned aggregation policy.
+    same parent schema (that is, a local reference), the cloned table will have a reference to the cloned aggregation policy.
   - If the source table refers to an aggregation policy in a different schema (i.e. a foreign reference), then the cloned table retains the
     foreign reference.
 

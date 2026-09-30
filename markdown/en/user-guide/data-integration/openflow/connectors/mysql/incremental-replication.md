@@ -62,7 +62,7 @@ Incremental replication can fail for several reasons, for example:
 - A merge operation can’t complete.
 - A transient error persists through so many retries that the table enters the FAILED state.
 
-To recover the table without a new snapshot, remove it from replication, switch the connector to incremental-only mode reading from the earliest available position, and add the table back. The connector reads all available changes from the oldest available binary log position, then replays and reapplies them to the destination table.
+To recover the table without a new snapshot, remove it from replication, switch the connector to incremental-only mode reading from the earliest available position, and add the table back. The connector reads all available changes from the earliest available position in the CDC stream, then replays and reapplies them to the destination table.
 
 Important
 
@@ -77,7 +77,7 @@ To recover the table:
    Don’t drop the destination table. This procedure reuses the existing destination table and replays incremental changes onto it.
 2. Stop the connector’s process group so that you can change its configuration. On the connector canvas, right-click the connector’s process group and select **Stop**.
 3. In the `Ingestion Parameters` context, set the `Ingestion Type` parameter to `incremental`.
-4. Set the `Starting Binlog Position` parameter to `Earliest`. The connector reads all available changes again from the oldest available binary log position, then replays and reapplies them to the destination table. For more information, see [Specify load from binary log position](/user-guide/data-integration/openflow/connectors/mysql/maintenance#label-mysql-connector-start-restart-incremental-load-from-earliest-available-binary-log-position).
+4. Set the `Starting Binlog Position` parameter to `Earliest`. The connector reads all available changes again from the earliest available position in the CDC stream, then replays and reapplies them to the destination table. For more information, see [Specify the starting position of the CDC stream](/user-guide/data-integration/openflow/connectors/mysql/maintenance#label-mysql-connector-start-restart-incremental-load-from-earliest-available-binary-log-position).
 
    Leave `Re-read Tables in State` at its default value, `New`, so that only the table you add back reads from the earliest position. Tables already in replication continue from their last positions.
 5. Add the table back to replication by reversing the change you made in step 1.

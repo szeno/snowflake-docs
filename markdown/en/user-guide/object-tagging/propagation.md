@@ -192,7 +192,7 @@ Query: Find all tags that had a conflict when propagated
       DISTINCT RECORD_ATTRIBUTES['tag_name'] as tags,
       VALUE['conflict_values'] as conflicting_tag_values,
       VALUE['resolution_type'] as resolution_type,
-      VALUE['resolved_value'] as resolved_value,
+      VALUE['resolved_values'] as resolved_value
     FROM tagging_db.tagging_schema.my_event_table
     WHERE
       SCOPE['name'] = 'snow.automatic_tag_propagation'
@@ -206,7 +206,7 @@ Query: Find entities that had conflicts when the tag `TAG1` was propagated
     SELECT
       TIMESTAMP as time,
       RECORD_ATTRIBUTES['entity_name'] as entity_name,
-      RECORD_ATTRIBUTES['entity_domain'] as entity_domain,
+      RECORD_ATTRIBUTES['entity_domain'] as entity_domain
     FROM tagging_db.tagging_schema.my_event_table
     WHERE
       SCOPE['name'] = 'snow.automatic_tag_propagation'

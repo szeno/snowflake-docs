@@ -119,26 +119,25 @@ recover automatically:
 
 ## Delete a deployment
 
-Deleting a deployment removes the management compute pool and all deployment-level
-configuration. You must delete all runtimes first. Any data or objects
-already integrated into Snowflake aren’t affected.
+Deleting a deployment removes its deployment-level configuration. For Snowflake deployments,
+deletion also removes the management compute pool. For BYOC deployments, you must first
+remove the deployment’s AWS infrastructure as described below. You must delete all runtimes
+first. Any data or objects already integrated into Snowflake aren’t affected.
 
 Warning
 
-Deleting a deployment can’t be undone. Before you delete, make sure all runtimes
-have been removed and you no longer need the deployment configuration.
+Deleting a deployment can’t be undone. Before deleting runtimes, follow the guidance in
+[Back up flow definitions and protect runtime state](#back-up-flow-definitions-and-protect-runtime-state).
+Before deleting the deployment, make sure all runtimes have been removed and you no longer
+need the deployment configuration.
 
-**Gen 2 (SQL):** Drop the deployment directly:
+### Remove BYOC infrastructure in AWS
 
-Copy code
+Complete these steps for **both gen 1 and gen 2 BYOC deployments** before removing the
+deployment from Openflow. SQL commands don’t replace these AWS cleanup steps.
+For Snowflake deployments, skip to [Remove the deployment from Openflow](#remove-the-deployment-from-openflow).
 
-```
-DROP OPENFLOW DEPLOYMENT my_deployment;
-```
-
-**Gen 1 BYOC (AWS Console):**
-
-1. Navigate to EC2 Instances.
+1. In the AWS Console, navigate to EC2 Instances.
 2. Select the `openflow-agent-{deployment-key}` instance with your deployment key.
 3. Click **Connect** at the top of the page.
 4. Switch from **EC2 Instance Connect** to **Connect using EC2 Instance Connect Endpoint**. Leave the default EC2 Instance Connect Endpoint
@@ -149,13 +148,29 @@ DROP OPENFLOW DEPLOYMENT my_deployment;
 
    - This may take 20-30 minutes. If your connection is interrupted, the process continues running in the background.
    - You can log back in and view its status with the command: `journalctl -u docker -f -n 250`
-   - The `destroy` process is complete when you see output of `delete successful`.
+   - The `destroy` process is complete when you see output of `delete successful`. Wait for this output before continuing.
 7. Navigate to
    [CloudFormation](https://us-east-1.console.aws.amazon.com/cloudformation/home)
    in the AWS Console for your region.
-8. Delete the CloudFormation stack for your deployment.
+8. Delete the CloudFormation stack for your deployment and wait for stack deletion to complete.
 
-From Snowsight:
+Important
+
+Running `destroy.sh` doesn’t complete BYOC teardown. You must also delete the CloudFormation
+stack and then remove the deployment from Openflow. Running `create.sh` after `destroy.sh`
+on the same deployment isn’t a supported reinstall workflow.
+
+To start over, complete all deletion steps, then [create a new BYOC deployment](/user-guide/data-integration/openflow/setup-openflow-byoc)
+and use the new deployment’s CloudFormation template. Don’t reuse the old deployment or its template.
+
+### Remove the deployment from Openflow
+
+For BYOC deployments, complete the AWS cleanup above before proceeding.
+Gen 1 deployments must use the UI. Gen 2 deployments can use either the UI or SQL.
+
+#### From the UI
+
+For either generation, start from Snowsight:
 
 1. In the navigation menu, select **Ingestion** » **Openflow**.
 2. Select **Launch Openflow**.
@@ -164,6 +179,28 @@ From Snowsight:
 5. Select **Delete**.
 6. In the confirmation dialog, type `delete` to confirm deletion.
 7. Click **Delete deployment**.
+
+#### Using SQL (gen 2 only)
+
+For a gen 2 deployment, you can use SQL instead of the UI steps above. For BYOC deployments,
+first complete [Remove BYOC infrastructure in AWS](#remove-byoc-infrastructure-in-aws).
+
+1. Terminate the deployment:
+
+   Copy code
+
+   ```
+   ALTER OPENFLOW DEPLOYMENT my_deployment TERMINATE;
+   ```
+2. Use [DESCRIBE OPENFLOW DEPLOYMENT](/sql-reference/sql/desc-openflow-deployment) to check the
+   deployment’s status. Wait until the status is `TERMINATED` before continuing.
+3. Remove the terminated deployment record:
+
+   Copy code
+
+   ```
+   DROP OPENFLOW DEPLOYMENT my_deployment;
+   ```
 
 ## Upgrade a deployment
 

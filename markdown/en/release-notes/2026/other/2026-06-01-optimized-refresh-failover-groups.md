@@ -4,4 +4,4 @@ Optimized refresh is a new refresh mode for failover groups, now available in pu
 
 Optimized refresh also introduces a new, simplified pricing model that is primarily based on the volume of data changes that get replicated, making your replication costs easier to forecast.
 
-For more information, see [Optimized refresh for failover groups](/user-guide/account-replication-config#label-optimized-refresh) and [Pricing for optimized refresh](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
+For more information, see [Optimized Refresh and RPO Assurance](/user-guide/account-replication-optimized-refresh) and [Pricing for Optimized Refresh and RPO Assurance](/user-guide/account-replication-cost#label-optimized-refresh-pricing).

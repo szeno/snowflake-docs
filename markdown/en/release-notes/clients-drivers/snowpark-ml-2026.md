@@ -46,6 +46,24 @@ This example uses the library and signature for version 1.27.0 of the package. U
   Use the `imports` argument instead.
 - The `snowflake.ml.model.models.huggingface_pipeline.HuggingfacePipelineModel` class has been deprecated and will be removed in a future release.
 
+## Version 2.3.0 (2026-09-28)
+
+### New Features
+
+- Experiment Tracking: `ExperimentTracking` accepts an optional `model_registry` parameter. When provided,
+  `log_model` stores models in the registry’s database and schema instead of the experiment’s, so experiments
+  and models can live in separate schemas.
+
+### Bug Fixes
+
+- Feature Store: Offline reads of a feature view with several list aggregations or several secondary-key
+  aggregation windows used to return incomplete results in some scenarios. The bug has been fixed
+  and the existing feature views pick up the fix on their next read, with no re-registration or backfill required.
+
+### Behavior Changes
+
+### Deprecations
+
 ## Version 2.2.0 (2026-09-21)
 
 ### New Features

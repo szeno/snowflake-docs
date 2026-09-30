@@ -84,7 +84,8 @@ The command returns the following columns:
 | `next_scheduled_refresh` | Date and time of the next scheduled refresh. |
 | `owner` | Name of the role with the OWNERSHIP privilege on the failover group. NULL if the failover group is in a different region. |
 | `is_listing_auto_fulfillment_group` | TRUE if the replication group is used for [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment). FALSE otherwise. |
-| `is_optimized_refresh_enabled` | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all Business Critical Edition (or higher) accounts.  TRUE if [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh) is enabled for the failover group. FALSE otherwise. When TRUE, subsequent refreshes for the group run as optimized refresh; when FALSE, they run as Replication Classic. |
+| `is_optimized_refresh_enabled` | TRUE if [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) is enabled for the failover group. FALSE otherwise. When TRUE, subsequent refreshes for the group run as Optimized Refresh; when FALSE, they run as Replication Classic unless [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance) is enabled. |
+| `rpo_assurance` | TRUE if [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance) is enabled for the failover group. FALSE otherwise. |
 
 Expand
 

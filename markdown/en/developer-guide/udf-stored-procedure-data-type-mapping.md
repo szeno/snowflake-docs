@@ -117,7 +117,7 @@ A returned Java `null` value translates back to SQL `NULL`.
 A Java UDF is largely isolated from the environment in which it is called. However, the timezone is inherited from
 the calling environment. If the caller’s session set a default time zone before calling the Java UDF, then the Java
 UDF has the same default time zone. Java UDF uses the same [IANA Time Zone Database](https://www.iana.org/time-zones) data as the native [TIMEZONE](/sql-reference/parameters#label-timezone)
-Snowflake SQL uses (i.e. data from release 2025b of the Time Zone Database).
+Snowflake SQL uses (i.e. data from release 2026c of the Time Zone Database).
 
 ### Snowpark Package Types Supported for User-Defined Functions
 

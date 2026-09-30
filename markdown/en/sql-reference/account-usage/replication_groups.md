@@ -30,7 +30,7 @@ the types of objects that it applies to, and its schedule for replication refres
 | OWNER | VARCHAR | Name of the role with the OWNERSHIP privilege on the replication or failover group. |
 | IS\_LISTING\_AUTO\_FULFILLMENT\_GROUP | BOOLEAN | TRUE if the replication group is used for Cross-Cloud Auto-Fulfillment. FALSE otherwise. |
 | ERROR\_INTEGRATION | VARCHAR | The name of the notification integration for the replication group or failover group to which the error notification is sent in cases of refresh failures. |
-| IS\_OPTIMIZED\_REFRESH\_ENABLED | BOOLEAN | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all Business Critical Edition (or higher) accounts.  TRUE if [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh) is enabled for the group. FALSE otherwise. Only failover groups support optimized refresh; for replication groups the column is always FALSE. |
+| IS\_OPTIMIZED\_REFRESH\_ENABLED | BOOLEAN | TRUE if [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) is enabled for the group. FALSE otherwise. Only failover groups support Optimized Refresh; for replication groups the column is always FALSE. |
 
 Expand
 

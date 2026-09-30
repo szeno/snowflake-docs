@@ -9,6 +9,7 @@ This support applies to the Java, Python, and Node.js SDKs.
 - A Snowflake account with Snowpark Container Services available. For setup details, see [Common setup](/developer-guide/snowpark-container-services/common-setup).
 - A target table, role, and PIPE object in your Snowflake account. For setup details, see [Tutorial: Get started with Named Channels using the SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-getting-started).
 - Snowpipe Streaming SDK version 1.5.0 or later for the language you use.
+- If your account or the service’s user has a [network policy](/user-guide/network-policies), a network rule of type `COMPUTE_POOL` that allows the compute pool running the service. See [If your account uses a network policy](#if-your-account-uses-a-network-policy).
 
 ## Authenticate with the SPCS workload-identity token
 
@@ -123,6 +124,35 @@ capabilities:
 
 For a full walkthrough of creating a service, granting roles, and managing the lifecycle, see [Snowpark Container Services: Working with services](/developer-guide/snowpark-container-services/working-with-services).
 
+## If your account uses a network policy
+
+If a network policy is active for your account or for the user that the service connects as, allow the compute pool that runs the service. Otherwise, authentication fails with error `390422`.
+
+Because the service uses customer-provided credentials (`enableCustomCredentials: true`), requests from the service are matched only against network rules of type `COMPUTE_POOL`. IPv4 rules, including private ranges such as `10.0.0.0/8`, never match these requests.
+
+1. Create a network rule of type `COMPUTE_POOL`:
+
+   Copy code
+
+   ```
+   CREATE NETWORK RULE <db>.<schema>.<rule_name>
+     TYPE = COMPUTE_POOL
+     MODE = INGRESS
+     VALUE_LIST = ('<compute_pool_name>');
+   ```
+
+   To allow all compute pools in the account, use `VALUE_LIST = ('ALL')`.
+2. Add the rule to the active network policy. Use the fully qualified rule name in parentheses:
+
+   Copy code
+
+   ```
+   ALTER NETWORK POLICY <policy_name>
+     ADD ALLOWED_NETWORK_RULE_LIST = ('<db>.<schema>.<rule_name>');
+   ```
+
+For background, see [Allow account access](/developer-guide/snowpark-container-services/spcs-execute-sql#allow-account-access).
+
 ## Token rotation
 
 The SPCS platform rotates the workload-identity token periodically. The SDK rereads the token file in the background; your application code doesn’t need to handle rotation explicitly. The SDK invalidates internal HTTP connections when the token is refreshed.
@@ -133,3 +163,15 @@ If the token file is removed or becomes unreadable while the SDK is running, the
 
 - The SDK reads its workload-identity token from the local filesystem inside the SPCS container. Authentication isn’t supported by passing a bearer token in code; use the file-based path.
 - Network egress from your SPCS service to Snowflake must be permitted by your SPCS configuration. For details, see [Network egress](/developer-guide/snowpark-container-services/additional-considerations-services-jobs#egress-traffic).
+- Connections from the service are subject to account-level and user-level network policies, and they match only network rules of type `COMPUTE_POOL`. External access integrations don’t affect this. See [If your account uses a network policy](#if-your-account-uses-a-network-policy).
+
+## Troubleshooting
+
+| Error | Cause | Resolution |
+| --- | --- | --- |
+| `390422`: Incoming request with IP … is not allowed to access Snowflake. | A network policy applies, and it has no `COMPUTE_POOL` network rule that allows the service’s compute pool. IPv4 rules don’t match requests from SPCS. | Add a `COMPUTE_POOL` network rule to the policy. See [If your account uses a network policy](#if-your-account-uses-a-network-policy). |
+| `395090`: Error connecting to Snowflake via Snowpark Container Services. Please use OAuth when connecting. | The client isn’t using the SPCS workload-identity token, for example because it authenticates with a key pair. | Use SPCS authentication in the client, and set `capabilities.securityContext.enableCustomCredentials` to `true` in the service specification. |
+
+Expand
+
+Show lessSee more

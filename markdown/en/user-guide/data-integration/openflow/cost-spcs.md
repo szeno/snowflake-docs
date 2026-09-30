@@ -32,12 +32,12 @@ The total costs for running Openflow are based on the number and types of instan
 
 Openflow uses compute pools for two different purposes:
 
-- Openflow Management Services (the `Openflow_Control_Pool_0` compute pool)
+- Openflow Management Services (a compute pool whose name ends in `_CONTROL_POOL`)
 
   Openflow Management Services run as part of an Openflow deployment. They
   use a dedicated compute pool to manage the Openflow deployment. This compute pool begins running
   as soon as you create a deployment. It continues to run as long as the deployment is
-  active.
+  active. See [Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming) for how to identify this compute pool.
 
   Caution
 
@@ -64,15 +64,47 @@ compute costs:
 - [METERING\_HISTORY](/sql-reference/account-usage/metering_history)
 
 Compute pool costs related to Openflow appear under *SERVICE\_TYPE* as *OPENFLOW\_COMPUTE\_SNOWFLAKE*. In these rows,
-*NAME* returns the name of the compute pool that incurred the cost, which lets you separate Openflow Management
-Services costs from runtime costs.
+*NAME* returns the name of the compute pool that incurred the cost and *ENTITY\_ID* returns the compute pool’s ID,
+which lets you separate Openflow Management Services costs from runtime costs. See
+[Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming) for what the compute pool name tells you about attributing costs to a
+specific deployment.
 
 Note
 
 The [OPENFLOW\_USAGE\_HISTORY](/sql-reference/account-usage/openflow_usage_history) view currently does not
 contain records for the *OPENFLOW\_COMPUTE\_SNOWFLAKE* service type. That view covers Openflow BYOC deployments only.
 
-As a result, per-runtime cost attribution isn’t available for Openflow Snowflake Deployments.
+Per-runtime cost attribution isn’t available for Openflow Snowflake Deployments: runtimes of the same size within a
+deployment share the same compute pool. Per-deployment attribution is possible in some cases; see
+[Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming).
+
+#### Compute pool naming and per-deployment attribution
+
+Compute pool names follow the pattern `<cluster_name>_CONTROL_POOL`, `<cluster_name>_SMALL`,
+`<cluster_name>_MEDIUM`, or `<cluster_name>_LARGE`. The `<cluster_name>` portion depends on when the deployment
+was created:
+
+- Most existing deployments use the shared default cluster name `INTERNAL_OPENFLOW_0`, so their compute pools are
+  named `INTERNAL_OPENFLOW_0_CONTROL_POOL`, `INTERNAL_OPENFLOW_0_SMALL`, `INTERNAL_OPENFLOW_0_MEDIUM`, and
+  `INTERNAL_OPENFLOW_0_LARGE`. **Every Openflow Snowflake Deployment in the account that uses the default cluster
+  name shares these same compute pools.**
+- Some deployments have a unique, generated cluster name that embeds an internal deployment identifier, for
+  example `OPENFLOW_1234567890_SMALL` or `OPENFLOW_A1B2C3D4_E5F6_7890_ABCD_EF1234567890_SMALL`. Each such
+  deployment has its own dedicated set of compute pools.
+
+To find out which naming pattern applies to a deployment, check the *NAME* values that
+[METERING\_HISTORY](/sql-reference/account-usage/metering_history) returns for *SERVICE\_TYPE* =
+*OPENFLOW\_COMPUTE\_SNOWFLAKE*, or run `SHOW COMPUTE POOLS LIKE 'INTERNAL_OPENFLOW%'` and
+`SHOW COMPUTE POOLS LIKE 'OPENFLOW%'`.
+
+When every Openflow Snowflake Deployment in an account uses the default cluster name, you can split *management*
+(`CONTROL_POOL`) costs from *runtime* (`SMALL`/`MEDIUM`/`LARGE`) costs, but you can’t attribute credits to a
+specific deployment, because the pools are shared. When a deployment has a unique generated cluster name, you can
+additionally group `METERING_HISTORY` rows by that cluster-name prefix to attribute credits to that deployment; see
+[Query: Openflow compute credit consumption per deployment](#label-openflow-spcs-cost-openflow-per-deployment-query).
+
+Snowflake doesn’t currently provide a documented `SHOW` command or Account Usage view that maps a generated
+cluster name back to the deployment name that created it. Contact Snowflake Support if you need that mapping.
 
 For more information on compute costs in Snowflake, see [Exploring compute cost](/user-guide/cost-exploring-compute).
 
@@ -90,7 +122,10 @@ To view Openflow compute costs in [Snowsight](/user-guide/ui-snowsight-gs#label-
 
 #### Query: Daily Openflow compute credit consumption
 
-The following query returns daily credit consumption for Openflow compute over the last 30 days:
+The following query returns daily credit consumption for Openflow compute over the last 30 days. Because
+[METERING\_DAILY\_HISTORY](/sql-reference/account-usage/metering_daily_history) aggregates by *SERVICE\_TYPE*, this
+returns one total per day for all Openflow Snowflake Deployment compute in the account; it doesn’t break out
+individual compute pools or deployments. Use the hourly queries that follow for that level of detail.
 
 Copy code
 
@@ -105,21 +140,48 @@ GROUP BY 1, 2
 ORDER BY 1 DESC;
 ```
 
-#### Query: Hourly Openflow compute credit consumption
+#### Query: Hourly Openflow compute credit consumption by compute pool
 
-The following query returns hourly credit consumption for Openflow compute, useful for identifying peak-usage periods:
+The following query returns hourly credit consumption for Openflow compute, including the compute pool name and
+ID. Use *NAME* to separate management (`_CONTROL_POOL`) costs from runtime pool costs, and to identify peak-usage
+periods:
 
 Copy code
 
 ```
 SELECT start_time,
+  name,
+  entity_id,
   service_type,
-  credits_used
+  credits_used_compute
 FROM snowflake.account_usage.metering_history
 WHERE service_type = 'OPENFLOW_COMPUTE_SNOWFLAKE'
-  AND start_time >= DATEADD(day, -7, CURRENT_TIMESTAMP())
-ORDER BY 1 DESC;
+  AND start_time >= DATEADD(month, -1, CURRENT_TIMESTAMP())
+ORDER BY start_time DESC;
 ```
+
+#### Query: Openflow compute credit consumption per deployment
+
+The following query groups Openflow compute credit consumption by `cluster_name`, the shared prefix of each
+compute pool’s *NAME* (everything before the trailing `_CONTROL_POOL`, `_SMALL`, `_MEDIUM`, or `_LARGE`):
+
+Copy code
+
+```
+SELECT
+  REGEXP_REPLACE(name, '_(CONTROL_POOL|SMALL|MEDIUM|LARGE)$', '') AS cluster_name,
+  SUM(credits_used_compute) AS credits_used
+FROM snowflake.account_usage.metering_history
+WHERE service_type = 'OPENFLOW_COMPUTE_SNOWFLAKE'
+  AND start_time >= DATEADD(month, -1, CURRENT_TIMESTAMP())
+GROUP BY 1
+ORDER BY 2 DESC;
+```
+
+If every row for the account returns the same `cluster_name` (for example, `INTERNAL_OPENFLOW_0`), every Openflow
+Snowflake Deployment in the account shares the same compute pools and this query can’t separate their costs.
+Distinct `cluster_name` values identify separate deployments; see
+[Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming).
 
 ### Snowpark Container Services infrastructure costs
 
@@ -215,6 +277,9 @@ Expand
 
 Show lessSee more
 
+The `INTERNAL_OPENFLOW_0_*` names shown here are the default; some deployments have a different, unique compute
+pool name instead. See [Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming) for the full naming pattern.
+
 Openflow scales the underlying Snowflake Compute Pools when additional compute pool
 nodes need to be scheduled, based on CPU consumption, up to the maximum node count specified during runtime creation.
 
@@ -237,29 +302,33 @@ Show lessSee more
 
 ### Examples for calculating Openflow - Snowflake Deployment consumption
 
+The following examples use the default compute pool names (`INTERNAL_OPENFLOW_0_*`). If your deployment has a
+generated cluster name instead, the same math applies to your `<cluster_name>_*` pools; see
+[Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming).
+
 You created an Openflow Snowflake Deployment and have not created any runtimes.
-:   - The Openflow\_Control\_Pool\_0 Compute Pool is running with one CPU\_X64\_S instance
+:   - The INTERNAL\_OPENFLOW\_0\_CONTROL\_POOL Compute Pool is running with one CPU\_X64\_S instance
     - Total Openflow consumption = 1 CPU\_X64\_S instance-hour
 
 You created one small runtime with Min Nodes = 1 and Max Nodes = 2. Runtime stays at 1 node for 1 hour.
-:   - The Openflow\_Control\_Pool\_0 Compute Pool is running with 1 CPU\_X64\_S instance
+:   - The INTERNAL\_OPENFLOW\_0\_CONTROL\_POOL Compute Pool is running with 1 CPU\_X64\_S instance
     - The INTERNAL\_OPENFLOW\_0\_SMALL Compute Pool is running with 1 CPU\_X64\_S instance
     - Total Openflow consumption = 2 CPU\_X64\_S instance-hours
 
 You created two small runtimes with min/max of two nodes each, and one large runtime with min/max of 10 nodes. These Runtimes are active for one hour.
-:   - The Openflow\_Control\_Pool\_0 Compute Pool is running with 1 CPU\_X64\_S instance
+:   - The INTERNAL\_OPENFLOW\_0\_CONTROL\_POOL Compute Pool is running with 1 CPU\_X64\_S instance
 
       - Two small runtimes at two nodes = INTERNAL\_OPENFLOW\_0\_SMALL Compute Pool is running with 2 CPU\_X64\_S instances = 2 CPU\_X64\_S instance-hours
       - One large runtime at 10 nodes = INTERNAL\_OPENFLOW\_0\_LARGE Compute Pool is running with 4 CPU\_X64\_L instances = 4 CPU\_X64\_L instance-hours
     - Total Openflow consumption = 3 CPU\_X64\_S instance-hours + 4 CPU\_X64\_L instance-hours
 
 You created one medium runtime with one node. After 20 minutes, it scales to two nodes. After 20 minutes, it scales back down to one node and runs for another 20 minutes.
-:   - The Openflow\_Control\_Pool\_0 Compute Pool is running with 1 CPU\_X64\_S instance
+:   - The INTERNAL\_OPENFLOW\_0\_CONTROL\_POOL Compute Pool is running with 1 CPU\_X64\_S instance
     - One medium runtime scaling up to two nodes = INTERNAL\_OPENFLOW\_0\_MEDIUM Compute Pool is running with 1 CPU\_X64\_SL instance = 1 CPU\_X64\_SL instance-hour
     - Total Openflow consumption = 1 CPU\_X64\_S instance-hour + 1 CPU\_X64\_SL instance-hour
 
 You created one medium runtime with two nodes, then suspended it after 30 minutes.
-:   - The Openflow\_Control\_Pool\_0 Compute Pool is running with 1 CPU\_X64\_S instance
+:   - The INTERNAL\_OPENFLOW\_0\_CONTROL\_POOL Compute Pool is running with 1 CPU\_X64\_S instance
     - One medium runtime at one node = INTERNAL\_OPENFLOW\_0\_MEDIUM Compute Pool is running with 1 CPU\_X64\_SL instance
     - 30 minutes = 1/2 hour
     - Total Openflow consumption = 1 CPU\_X64\_S instance-hour + 1/2 CPU\_X64\_SL instance-hour

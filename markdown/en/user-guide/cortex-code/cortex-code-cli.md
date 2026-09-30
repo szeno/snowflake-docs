@@ -58,6 +58,12 @@ this directory to your PATH.
 
 After installation, invoke CoCo CLI from the Run dialog (Win+R), Command Prompt (`cmd.exe`), or PowerShell.
 
+If the installation fails
+
+For common installation and setup errors, including a failing install script, see
+[Troubleshooting](/user-guide/cortex-code/cli-reference#label-coco-cli-troubleshooting) in the
+CoCo CLI reference.
+
 ## Connect to Snowflake
 
 After installing the CoCo CLI, issue the `cortex` command. A setup wizard guides you through the

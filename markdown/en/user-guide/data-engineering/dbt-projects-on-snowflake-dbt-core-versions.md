@@ -8,6 +8,7 @@ to pin specific versions for governance and reproducibility while providing a cl
 
 | dbt Version Supported | Snowflake Support Level | dbt Labs Support |
 | --- | --- | --- |
+| dbt Fusion 2.0.0-preview.210 | Active support | Active |
 | dbt Fusion 2.0.0-preview.186 | Active support | Active |
 | dbt Fusion 2.0.0-preview.175 | Active support | Active |
 | dbt Core 1.11.11 | Active support | Active support until Dec 18, 2026 |

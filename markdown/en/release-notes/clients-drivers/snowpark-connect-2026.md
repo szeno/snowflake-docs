@@ -5,6 +5,37 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.44.0 (September 24, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Forward Iceberg spec table properties such as `format-version` and `write.target-file-size` to Snowflake unchanged, instead of translating them client-side
+
+#### Bug fixes
+
+- Read a single Parquet file footer for schema inference when `mergeSchema` is off
+- Parse bracketed timestamp patterns with `SimpleDateFormat` under `timeParserPolicy=LEGACY`
+- Validate the CSV `charset`/`encoding` option and reject invalid names like Spark does
+- Support `spark.sql.legacy.json.allowEmptyString.enabled`
+- Forward JSON `encoding`/`charset` options to the native sandbox reader
+- Align `samplingRatio` validation for CSV with Spark and clamp values above 1.0
+- Handle `NullType` columns in explicit schemas for native sandbox file reads
+- Pin `pyspark` to 3.x in UDTFs and avoid duplicate-package errors with user packages
+- Fix identifier casing in `getTable`, `listColumns`, and `refreshTable` for Glue/Unity catalogs
+- Support Iceberg `ALTER TABLE ... REPLACE BRANCH`
+
+#### New features
+
+- Skip NDV sampling for Parquet Direct reads that don’t take part in joins
+- Forward Spark `TBLPROPERTIES` on managed Iceberg `CREATE TABLE` and CTAS
+- Support Iceberg `cherrypick_snapshot` procedure
+- Support `readable_metrics` on Iceberg metadata tables and fix `.partitions` for DATE
+- Refresh Iceberg table metadata on `REFRESH TABLE` and `spark.catalog.refreshTable`
+- Support XML file reads and schema inference through the native Spark sandbox
+- Add opt-in `snowpark.connect.useJavaRegexForRlikeWhitespace` for `RLIKE` `\s` matching
+
 ## 1.42.0 (September 10, 2026)
 
 ### Snowpark Connect for Spark

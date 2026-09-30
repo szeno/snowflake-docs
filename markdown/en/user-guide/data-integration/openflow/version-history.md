@@ -6,6 +6,47 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## September 25, 2026
+
+### Control Plane Core 0.134.0
+
+- Fixed an issue creating Gen 2 Runtimes where the user’s privileges were not properly evaluated when determining the available target Deployments.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.134.0
+
+- Fixed a race condition where deleting a connector with a missing NiFi flow could fail.
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.93.0
+
+- Improved runtime listing layout with better column spacing.
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.24.0
+
+- Disabled endpoint routes now redirect to a clear feature-access error page instead of showing a blank screen.
+- Security patches and dependency upgrades.
+
+### Runtime Operator 0.79.0
+
+- Improved TLS security — runtime TLS now uses PEM certificates directly instead of JKS keystores, simplifying certificate management and improving FIPS compliance.
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.9.23-20
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.50.0
+
+- Improved telemetry collection efficiency with tiered collectors based on node instance type.
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.67.0
+
+- Reduced overall compute usage by the EC2 agent to avoid unnecessary costs imposed by AWS when compute budget can become exhausted. This included reducing how often agent reconciler runs in the background and improving kubernetes manifest handling.
+- Security patches and dependency upgrades.
+
 ## September 24, 2026
 
 ### Runtime Server 2026.9.24.2
@@ -105,8 +146,6 @@ Show entries for:DeploymentRuntime / ConnectorControl Plane
 
 - Oracle Embedded License Public Sector 0.49.0:
   - Made journal-table creation stateless and serialized it per node to prevent setup from overlapping with Snowpipe Streaming writes.
-- SQL Server CT Singletons 0.54.0:
-  - Added a Change Tracking flow for Azure SQL singleton databases. One connector instance can replicate multiple isolated databases by using a connection-pool lookup and one connection pool per database.
 
 ### Control Plane Core `0.133.0`
 

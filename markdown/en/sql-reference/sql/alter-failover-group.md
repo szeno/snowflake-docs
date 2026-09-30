@@ -23,7 +23,8 @@ From the source account, you can perform the following actions:
   - Certain types of notification integrations (see [Integration replication](/user-guide/account-replication-intro#label-account-replication-integrations))
 - Add or remove target accounts enabled for replication and failover.
 - Move shares or databases to another failover group.
-- Enable or disable [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh).
+- Enable or disable [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) or
+  [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance).
 
 From the target account, you can perform the following actions:
 
@@ -65,13 +66,16 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
   OPTIMIZED_REFRESH = { TRUE | FALSE }
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
+  RPO_ASSURANCE = { TRUE | FALSE }
+
+ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
   ERROR_INTEGRATION = <integration_name>
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
   TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> UNSET
-  { COMMENT | REPLICATION_SCHEDULE | OPTIMIZED_REFRESH | ERROR_INTEGRATION } [ , ... ]
+  { COMMENT | REPLICATION_SCHEDULE | OPTIMIZED_REFRESH | RPO_ASSURANCE | ERROR_INTEGRATION } [ , ... ]
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> UNSET
   TAG <tag_name> [ , <tag_name> ... ]
@@ -355,26 +359,47 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> RESUME
         :   `NULL`
 
     `OPTIMIZED_REFRESH = { TRUE | FALSE }`
-    :   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-        Available to all Business Critical Edition (or higher) accounts.
-
-        Enables or disables [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh) for the failover group.
-        Optimized refresh tracks metadata changes on the source account and applies only those changes to the target account on each refresh,
+    :   Enables or disables [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) for the failover group.
+        Optimized Refresh tracks metadata changes on the source account and applies only those changes to the target account on each refresh,
         so refresh duration scales with the rate of change rather than the total size of your environment.
 
         When set to `TRUE`:
 
-        - A REPLICATION\_SCHEDULE is required, and the schedule interval must be no more than 6 hours. You can set or update the schedule in the
+        - A `REPLICATION_SCHEDULE` is required, and the schedule interval must be no more than 6 hours. You can set or update the schedule in the
           same ALTER statement. For best results, Snowflake recommends a schedule of `10 MINUTE` or less.
         - The property can be set on the primary failover group only.
         - The next refresh after enabling is a one-time bootstrapping refresh that establishes the baseline. Subsequent refreshes are incremental.
-          The bootstrapping refresh is billed under the optimized-refresh pricing model.
-        - The optimized-refresh pricing model applies for all refreshes while this property is `TRUE`. For details, see
-          [Pricing for optimized refresh](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
+          The bootstrapping refresh is billed under the Optimized Refresh pricing model.
+        - The Optimized Refresh pricing model applies for all refreshes while this property is `TRUE`. For details, see
+          [Pricing for Optimized Refresh and RPO Assurance](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
 
-        To revert to [Replication Classic](/user-guide/account-replication-config#label-optimized-refresh), use the UNSET form (see the
-        `UNSET ...` description below). The next refresh runs as Replication Classic and is billed under the existing replication pricing.
+        To revert to [Replication Classic](/user-guide/account-replication-optimized-refresh), use the UNSET form (see the
+        `UNSET ...` description below). The next refresh runs as Replication Classic and is billed under Replication Classic compute pricing.
+
+        You can’t set `OPTIMIZED_REFRESH = TRUE` on a failover group that has `RPO_ASSURANCE = TRUE`. RPO Assurance enables Optimized Refresh
+        automatically and manages the refresh schedule for you.
+
+        Default:
+        :   `FALSE`
+
+    `RPO_ASSURANCE = { TRUE | FALSE }`
+    :   Enables or disables [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance) for the failover group. When
+        enabled, Snowflake manages continuous replication refreshes to keep secondary accounts in sync with the primary. Enabling the feature
+        doesn’t by itself mean the pair is covered by the SLA. For the current RPO target, and when it is backed by a service-level
+        agreement (SLA), see
+        [SLA eligibility and coverage](/user-guide/account-replication-optimized-refresh#label-rpo-assurance-sla).
+
+        When set to `TRUE`:
+
+        - The failover group must not have a `REPLICATION_SCHEDULE` set. Unset the schedule before enabling RPO Assurance.
+        - Optimized Refresh is enabled automatically. You don’t need to set `OPTIMIZED_REFRESH` yourself.
+        - The property can be set on the primary failover group only.
+        - Continuous refreshes begin immediately on secondary accounts that aren’t suspended.
+        - Billing uses the RPO Assurance rates. For details, see
+          [Pricing for Optimized Refresh and RPO Assurance](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
+
+        To disable RPO Assurance, use the UNSET form (see the `UNSET ...` description below). Continuous refreshes stop, and you can set a
+        `REPLICATION_SCHEDULE` if needed. A pair isn’t covered by the SLA while RPO Assurance is disabled.
 
         Default:
         :   `FALSE`
@@ -537,6 +562,7 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> RESUME
     - `COMMENT`
     - `REPLICATION_SCHEDULE`
     - `OPTIMIZED_REFRESH`
+    - `RPO_ASSURANCE`
     - `ERROR_INTEGRATION`
     - `TAG tag_name [ , tag_name ... ]`
 
@@ -683,7 +709,7 @@ ALTER FAILOVER GROUP myfg
   SET REPLICATION_SCHEDULE = '15 MINUTE';
 ```
 
-Switch an existing failover group to [optimized refresh](/user-guide/account-replication-config#label-optimized-refresh). If the failover
+Switch an existing failover group to [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh). If the failover
 group does not already have a REPLICATION\_SCHEDULE that meets the 6-hour requirement, set or adjust it in the same statement:
 
 Copy code
@@ -700,6 +726,23 @@ Copy code
 
 ```
 ALTER FAILOVER GROUP myfg UNSET OPTIMIZED_REFRESH;
+```
+
+Enable [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance). Unset any existing replication schedule first:
+
+Copy code
+
+```
+ALTER FAILOVER GROUP myfg UNSET REPLICATION_SCHEDULE;
+ALTER FAILOVER GROUP myfg SET RPO_ASSURANCE = TRUE;
+```
+
+Disable RPO Assurance:
+
+Copy code
+
+```
+ALTER FAILOVER GROUP myfg UNSET RPO_ASSURANCE;
 ```
 
 ### Executed from the target account

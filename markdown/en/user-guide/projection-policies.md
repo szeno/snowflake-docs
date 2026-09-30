@@ -28,7 +28,7 @@ Copy code
 
 ```
 SELECT protected_C,                         -- NULL, in outer query
-       my_func(protected_C),                -- Any functions on NULL returns NULL
+       my_func(protected_C),                -- Any function on NULL returns NULL
        nonprotected_C
        FROM (SELECT protected_C,            -- Projection policies are ignored in a nested query.
                     nonprotected_C from T)
@@ -85,7 +85,7 @@ value. However, consider the following prior to setting a projection policy on a
   ```
 - A projection constraint does not guarantee that a malicious actor could not use deliberate queries to obtain potentially sensitive data
   from a projection-constrained column. Projection policies are best suited for use with partners and customers with whom you have an
-  existing level of trust. In addition, providers should be vigilant about potential misuses of their data (e.g. reviewing the access
+  existing level of trust. In addition, providers should be vigilant about potential misuses of their data (for example, reviewing the access
   history for their listings).
 - In rare instances, an error message for a query containing a projection-constrained column can contain a single value from the column.
 - For all of these reasons, if you need to prevent leakage about a specific column or entity, you should omit the column entirely from
@@ -735,7 +735,7 @@ Snowflake supports different permissions to create and set a projection policy o
 2. In a hybrid management approach, a single role has the CREATE PROJECTION POLICY privilege to ensure projection policies are named
    consistently and individual teams or roles have the APPLY privilege for a specific projection policy.
 
-   For example, the custom role `finance_role` role can be granted the permission to set the projection policy `cost_center` on tables
+   For example, the custom role `finance_role` can be granted the permission to set the projection policy `cost_center` on tables
    and views the role owns (i.e. the role has the OWNERSHIP privilege on the table or view):
 
    Copy code

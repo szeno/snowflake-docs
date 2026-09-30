@@ -8,6 +8,9 @@ CoCo Desktop is a native macOS/Windows desktop application that brings CoCo’s 
 agentic capabilities into an IDE-like surface: file editor, integrated terminal, agentic AI
 loop, agentic browser, agentic notebook, and deep Snowflake awareness.
 
+To use CoCo inside a code editor you already use, such as Visual Studio Code, instead of a separate
+app, see [Cortex Code in your code editor](/user-guide/cortex-code/cortex-code-in-your-editor).
+
 Get CoCo Desktop
 
 **[Download the latest version](https://www.snowflake.com/en/product/snowflake-coco/downloads/)**. Available for macOS and Windows.

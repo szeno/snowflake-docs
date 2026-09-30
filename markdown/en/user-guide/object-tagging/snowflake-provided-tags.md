@@ -4,7 +4,7 @@
 
 Available to all accounts.
 
-Snowflake-provided tags are out of the box tags for common governance use cases, such as tracking cost centers, identifying sensitive data,
+Snowflake-provided tags are out-of-the-box tags for common governance use cases, such as tracking cost centers, identifying sensitive data,
 certifying trusted data assets, and pausing tag propagation. These tags give you a consistent tagging vocabulary across accounts,
 databases, teams, and use cases.
 
@@ -39,7 +39,7 @@ The following Snowflake-provided tags are available:
 | Tag | Purpose |
 | --- | --- |
 | `SNOWFLAKE.TAGS.COST_CENTER` | Identifies the cost center associated with an object for cost tracking and budget control. |
-| `SNOWFLAKE.TAGS.CERTIFICATION_STATUS` | Identifies whether a data asset is ready and is trusted for use. |
+| `SNOWFLAKE.TAGS.CERTIFICATION_STATUS` | Identifies whether a data asset is ready and trusted for use. |
 | `SNOWFLAKE.TAGS.SENSITIVITY` | Assigns a standardized sensitivity level to a data object. |
 | `SNOWFLAKE.TAGS.ENVIRONMENT` | Identifies the deployment environment an object belongs to. |
 | `SNOWFLAKE.TAGS.PROJECT` | Associates an object with a project for organization and cost tracking. |
@@ -55,7 +55,7 @@ Use `SNOWFLAKE.TAGS.COST_CENTER` to identify the cost center associated with an 
 
 ### CERTIFICATION\_STATUS
 
-Use `SNOWFLAKE.TAGS.CERTIFICATION_STATUS` to identify whether a data asset is ready and is trusted for use.
+Use `SNOWFLAKE.TAGS.CERTIFICATION_STATUS` to identify whether a data asset is ready and trusted for use.
 
 The tag supports the following values:
 
@@ -150,7 +150,7 @@ roles as needed.
 | --- | --- |
 | `OOB_TAG_READ` | USAGE on the `SNOWFLAKE.TAGS` schema so roles can see the tags. This role is also granted to PUBLIC. |
 | `OOB_TAG_APPLY` | APPLY on Snowflake-provided tags so a role can assign the tags to objects. |
-| `OOB_TAG_ADMIN` | MODIFY on Snowflake-provided tags so a role can change allowed values, comments, and propagate settings. This role doesn’t apply to `CERTIFICATION_STATUS`. |
+| `OOB_TAG_ADMIN` | MODIFY on Snowflake-provided tags so a role can change allowed values, comments, and propagation settings. This role doesn’t apply to `CERTIFICATION_STATUS`. |
 
 Expand
 

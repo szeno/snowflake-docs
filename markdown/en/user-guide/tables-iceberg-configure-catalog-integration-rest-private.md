@@ -192,7 +192,7 @@ Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon 
   access everything managed by the AWS Glue Data Catalog in the same region. For more information, see [Creating an interface VPC endpoint for AWS Glue](https://docs.aws.amazon.com/glue/latest/dg/vpc-interface-endpoints.html#vpc-endpoint-create)
   in the AWS documentation.
 
-You only need to provision one private connectivity endpoint. Unity requires just one private connectivity endpoint to access everything managed by the Unity Data Catalog in the same region.
+You only need to provision one private connectivity endpoint. Unity requires just one private connectivity endpoint to access everything managed by the Unity Catalog in the same region.
 
 AWSAzure
 
@@ -247,7 +247,7 @@ AWSAzure
 
   Where:
 
-  - `<<databricks_workspace_resource_id>>` is the resource ID for your Databricks workspace in the Azure portal that
+  - `<databricks_workspace_resource_id>` is the resource ID for your Databricks workspace in the Azure portal that
     you copied when you
     [gathered private connectivity information for your catalog](#label-tables-iceberg-configure-catalog-integration-rest-private-gather-private-connectivity-information-catalog).
   - `<databricks_workspace_host_name>` is the Databricks workspace host name that you retrieved when you

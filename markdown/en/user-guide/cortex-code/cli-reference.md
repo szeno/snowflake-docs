@@ -520,7 +520,21 @@ they are needed, so not all of them are present on a new installation.
 
 ## Troubleshooting
 
-Following are common error messages you may encounter during installation and setup.
+Following are common errors and failure modes you may encounter during installation and setup.
+
+### Install script fails
+
+If the install script fails on macOS, Linux, or WSL, check whether `curl` is reading options from
+your `~/.curlrc` file. Custom options in that file, such as `--verbose`, can interfere with the
+script. Re-run the command with the `-q` flag, which tells `curl` to ignore `~/.curlrc`:
+
+Copy code
+
+```
+curl -qLsS https://ai.snowflake.com/static/cc-scripts/install.sh | sh
+```
+
+Always include `-q` when piping `curl` output to a shell.
 
 ### Command not found
 

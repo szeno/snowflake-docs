@@ -59,5 +59,8 @@ Advanced ML workloads:
 :   See [Lookalike audience modeling](/user-guide/cleanrooms/collab-lookalike-modeling)
     for an example of training and scoring a model using Python UDFs or ML Jobs inside a clean room.
 
+    See [Transaction matching across two parties](/user-guide/cleanrooms/collab-hybrid-txn-matching)
+    for a two-step pipeline that combines SQL pre-filtering with distributed Ray task matching on a compute pool.
+
 For more examples, including inventory forecasting, lookalike audience modeling, and last touch attribution, see the
 [Use cases](/user-guide/cleanrooms/collab-inventory-forecasting) section.

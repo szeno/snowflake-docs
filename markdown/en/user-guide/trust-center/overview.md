@@ -129,7 +129,7 @@ To access the **Organization** tab, you must meet the following requirements:
 
 ### Account-level findings
 
-[Scanners](#label-trust-center-scanners) find and report violations and detections findings through the Trust Center. A violation persists over
+[Scanners](#label-trust-center-scanners) find and report violations and detection findings through the Trust Center. A violation persists over
 time and represents a configuration that doesn’t conform with a scanner’s requirements. A detection occurs one time and represents a
 unique event. You can use the Trust Center to view and manage findings for your account. For more information, see [Using the Trust Center](/user-guide/trust-center/using-the-trust-center).
 
@@ -172,7 +172,7 @@ detections:
 - Login events originated from an unrecognized IP address.
 - A large amount of data was transferred to an external stage.
 - A task had a high error rate between two points in time.
-- Some client versions (for example, Drivers) currently in use may have known vulnerabilities or have reached their end-of-life status.
+- Some client versions (for example, drivers) currently in use may have known vulnerabilities or have reached their end-of-life status.
 
 Scanners report each detection based on an event trigger. For example, a scanner reports a detection when it detects a suspicious sign-in event
 and reports a separate detection when it detects another suspicious sign-in event at a different time. For a detection, the Trust Center provides
@@ -222,7 +222,7 @@ Note
 
 Event-driven scanners might appear as multiple items in the [METERING\_HISTORY view](/sql-reference/account-usage/metering_history).
 
-### Scanner Packages
+### Scanner packages
 
 *Scanner packages* contain a description and a list of scanners that run when you [enable the scanner package](/user-guide/trust-center/using-the-trust-center#label-trust-center-enable-scanner-packages).
 After you enable a scanner package, the scanner package runs immediately, regardless of the configured schedule. After you enable a scanner

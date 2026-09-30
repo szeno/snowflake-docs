@@ -475,3 +475,79 @@ Solution:
 
     ML Jobs code specs that were already linked to a collaboration before June 18, 2026 continue to work
     without re-registration.
+
+---
+
+Error:
+:   Multi-node ML Job status is `FAILED` but logs show successful execution and
+    results were written.
+
+Cause:
+:   Ray worker nodes on non-head nodes are still active when the head node script
+    exits. The ML Jobs launcher interprets the incomplete shutdown as a failure.
+
+Solution:
+:   Call `ray.shutdown()` explicitly after `ray.get(futures)` and before the script
+    exits. This terminates all workers cleanly before the launcher checks exit status.
+
+    Copy code
+
+    ```
+    results = ray.get(futures)
+    ray.shutdown()
+    ```
+
+---
+
+Error:
+:   `KeyError` on a column name (for example, `KeyError: 'HASHED_EMAIL'`) in an ML
+    Jobs script that reads from a DCR view.
+
+Cause:
+:   DCR views rename columns based on `schema_and_template_policies`. The
+    `join_standard` / `hashed_email_sha256` policy renames `HASHED_EMAIL` to
+    `HASHED_EMAIL_SHA256`. The `timestamp` category renames date columns to
+    `TIMESTAMP`.
+
+Solution:
+:   Detect column names dynamically instead of hardcoding them:
+
+    Copy code
+
+    ```
+    email_col = next(c for c in df.columns if "EMAIL" in c or "HASHED" in c)
+    ```
+
+---
+
+Error:
+:   `get_logs` returns only partial container output for a long-running ML Job.
+
+Cause:
+:   `get_logs` retrieves output through
+    [SYSTEM$GET\_SERVICE\_LOGS](/sql-reference/functions/system_get_service_logs), which
+    returns only the most recent container output. The beginning of a long-running
+    job’s logs might be missing.
+
+Solution:
+:   Query the account event table for complete, persisted container logs. See
+    [Publishing and accessing container logs](/developer-guide/snowpark-container-services/monitoring-services#label-snowpark-containers-working-with-services-local-logs).
+
+---
+
+Error:
+:   `API call outside of DCR` when using `distributed_partition_function` in an ML
+    Jobs script.
+
+Cause:
+:   `distributed_partition_function` uses `session.file.put()` and `session.file.get()`
+    to exchange data through stages. In a clean room, the Snowpark session is scoped
+    to the installed application namespace, so stage operations that target locations
+    outside that namespace are rejected.
+
+Solution:
+:   Use raw `@ray.remote` tasks instead of `distributed_partition_function`. Read all
+    data in the main process with `get_active_session()`, then pass pandas DataFrames
+    to remote tasks. See
+    [Transaction matching across two parties](/user-guide/cleanrooms/collab-hybrid-txn-matching)
+    for a working example.

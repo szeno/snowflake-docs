@@ -210,7 +210,12 @@ and using the sandbox, see [Sandbox](/user-guide/cortex-code/sandbox).
 
 ### Hook integration
 
-You can customize permission policy using hooks. Here is an example pre-execution hook that approves auto-approves bash commands:
+You can customize permission policy using hooks. Add hook configuration to `~/.snowflake/cortex/settings.json`
+to apply it to all projects, or to `.cortex/settings.json` in a project directory to apply it to that project only.
+
+The following example is a pre-execution hook that auto-approves bash commands:
+
+Copy code
 
 ```
 {
@@ -221,7 +226,7 @@ You can customize permission policy using hooks. Here is an example pre-executio
          "hooks": [
             {
                "type": "command",
-               "command": "bash .claude/hooks/auto-approve.sh"
+               "command": "bash .cortex/hooks/auto-approve.sh"
             }
          ]
          }

@@ -20,7 +20,7 @@ Here’s the short list of what’s different when dbt runs inside Snowflake:
 | Where you edit and run | Local IDE + terminal | **Snowflake Workspaces** (a web IDE in Snowsight) or Cortex Code Desktop |
 | What kicks off runs | Third-party orchestrator such as Airflow | **Snowflake tasks** (scheduled SQL) |
 | Connection / auth | `profiles.yml` with account, user, password | [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file) or `profiles.yml` in the project root, **no account, user, or password needed** |
-| dbt engine | Whatever you installed | Choose a Snowflake-managed runtime, for example **1.11.11** (dbt Core) or **2.0.0-preview.186** (dbt Fusion). No installs. |
+| dbt engine | Whatever you installed | Choose a Snowflake-managed runtime, for example **1.11.11** (dbt Core) or **2.0.0-preview.210** (dbt Fusion). No installs. |
 | Getting packages (`dbt deps`) | Runs locally | Runs in Snowflake using an **external access integration** |
 | Deploying | n/a | A **dbt project object** with one mutable live version in Snowflake |
 
@@ -77,7 +77,7 @@ Copy code
 ALTER ACCOUNT SET DEFAULT_DBT_VERSION = '1.11.11';
 
 -- Or, to default to dbt Fusion:
-ALTER ACCOUNT SET DEFAULT_DBT_VERSION = '2.0.0-preview.186';
+ALTER ACCOUNT SET DEFAULT_DBT_VERSION = '2.0.0-preview.210';
 ```
 
 To see what versions are available at any time:
@@ -596,7 +596,7 @@ Copy code
 CREATE OR REPLACE DBT PROJECT prod_db.analytics.my_dbt_project
   FROM 'snow://workspace/USER$.PUBLIC."my_dbt_workspace"/versions/live/my_dbt_project'
   DEFAULT_TARGET = 'prod'
-  DBT_VERSION = '2.0.0-preview.186'
+  DBT_VERSION = '2.0.0-preview.210'
   EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access)
   COMMENT = 'Analytics dbt project';
 ```

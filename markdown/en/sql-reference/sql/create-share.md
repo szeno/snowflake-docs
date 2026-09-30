@@ -39,6 +39,9 @@ The following modifications are supported when altering a share:
 
 - Adding, updating, or removing a COMMENT.
 
+Setting `SHARE_RESTRICTIONS` isn’t supported in this variant. You can set `SHARE_RESTRICTIONS` only with
+[ALTER SHARE](/sql-reference/sql/alter-share) when you add or remove accounts.
+
 For more information, see [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
 
 Copy code
@@ -64,6 +67,14 @@ CREATE OR ALTER SHARE <name>
 :   Specifies a comment for the share.
 
     Default: No value
+
+Note
+
+You can’t set `SHARE_RESTRICTIONS` in `CREATE SHARE` or in the [CREATE OR ALTER SHARE](#label-create-or-alter-share-syntax) variant. After
+you create the share, set `SHARE_RESTRICTIONS` with [ALTER SHARE](/sql-reference/sql/alter-share) when you add or remove consumer
+accounts (`ADD | REMOVE ACCOUNTS`). The default is `TRUE`. Setting `SHARE_RESTRICTIONS` requires the
+`OVERRIDE SHARE RESTRICTIONS` privilege and either `OWNERSHIP` on the share or the `CREATE SHARE` privilege. For
+behavior, defaults, and privilege details, see [Direct share restrictions](/user-guide/direct-share-restrictions).
 
 ## Access control requirements
 
@@ -102,6 +113,8 @@ For more information about access control requirements for Snowflake Secure Data
 
 - All limitations of the [ALTER SHARE](/sql-reference/sql/alter-share) command apply.
 - Adding or removing accounts from the share is not supported. Use [ALTER SHARE](/sql-reference/sql/alter-share) to add or remove consumer accounts.
+- Setting `SHARE_RESTRICTIONS` isn’t supported. Use [ALTER SHARE](/sql-reference/sql/alter-share) with `ADD | REMOVE ACCOUNTS` to
+  set `SHARE_RESTRICTIONS`.
 - Setting or unsetting a tag is not supported.
 - Renaming a share is not supported.
 

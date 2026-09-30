@@ -164,6 +164,7 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 |  | [REPLICATION\_GROUP\_REFRESH\_HISTORY, REPLICATION\_GROUP\_REFRESH\_HISTORY\_ALL](/sql-reference/functions/replication_group_refresh_history) |  |
 |  | [REPLICATION\_GROUP\_REFRESH\_PROGRESS, REPLICATION\_GROUP\_REFRESH\_PROGRESS\_BY\_JOB, REPLICATION\_GROUP\_REFRESH\_PROGRESS\_ALL](/sql-reference/functions/replication_group_refresh_progress) |  |
 |  | [REPLICATION\_GROUP\_USAGE\_HISTORY](/sql-reference/functions/replication_group_usage_history) | TO BE DEPRECATED - Refer to [REPLICATION\_GROUP\_USAGE\_HISTORY view](/sql-reference/account-usage/replication_group_usage_history). |
+|  | [REPLICATION\_GROUP\_LAG\_HISTORY](/sql-reference/functions/replication_group_lag_history) |  |
 | Alerts | [ALERT\_HISTORY](/sql-reference/functions/alert_history) | For more information, see [Setting up alerts based on data in Snowflake](/user-guide/alerts). |
 |  | [SERVERLESS\_ALERT\_HISTORY](/sql-reference/functions/serverless_alert_history) | TO BE DEPRECATED - Refer to [SERVERLESS\_ALERT\_HISTORY view](/sql-reference/account-usage/serverless_alert_history). |
 | Bind variables | [BIND\_VALUES](/sql-reference/functions/bind_values) | For more information, see [Retrieve bind variable values](/sql-reference/bind-variables#label-bind-variables-retrieving-values). |

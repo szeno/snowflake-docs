@@ -467,6 +467,8 @@ capabilities:
     enableCustomCredentials: true
 ```
 
+If your account or the connector’s user has a network policy, add a network rule of type `COMPUTE_POOL` for the compute pool that runs the connector. Otherwise, the connector reaches the `RUNNING` state but fails to ingest, with error `390422` in the service logs. IPv4 network rules don’t match requests from SPCS. For steps, see [If your account uses a network policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-spcs#if-your-account-uses-a-network-policy).
+
 For general SPCS authentication, service setup, and workload-identity token rotation, see [Run the Snowpipe Streaming SDK in Snowpark Container Services](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-spcs). The SDK guide covers the platform-level token lifecycle; this section documents only the Kafka Connector configuration and behavior.
 
 #### Externalizing secrets

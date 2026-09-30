@@ -8,6 +8,19 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.8.1 (September 24, 2026)
+
+### Behavior changes
+
+- The SDK now retries HTTP 401 and 403 responses using standard backoff instead of waiting for a token refresh, reducing recovery time after a scoped access token is invalidated.
+
+### Bug fixes
+
+- Fixed an issue in the Java SDK where an exception thrown from an application-supplied acknowledgment callback could silently stop acknowledgments for other channels sharing the same background thread.
+- Fixed an issue where channel names containing `#` were truncated when building request URLs, causing insert and channel status requests to fail.
+- Fixed an issue where file-mode uploads to Amazon S3 ignored the VPC endpoint (PrivateLink) configured for a stage, so uploads could bypass the private network path.
+- Updated Jackson databind in the Java SDK to address a known security vulnerability.
+
 ## Version 1.8.0 (August 27, 2026)
 
 ### New features and updates

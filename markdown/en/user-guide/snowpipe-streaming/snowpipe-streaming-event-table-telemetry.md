@@ -19,12 +19,33 @@ Use event tables to monitor processing across your streaming pipelines from with
 Before you query Snowpipe Streaming telemetry, ensure that you have the following:
 
 - A Snowpipe Streaming pipeline that uses the high-performance architecture.
-- An [active event table](/developer-guide/logging-tracing/event-table-setting-up), which is the destination configured to receive telemetry. The Snowflake-managed default is `SNOWFLAKE.TELEMETRY.EVENTS`.
+- An [active event table](/developer-guide/logging-tracing/event-table-setting-up), which is the destination configured to receive telemetry. Snowflake provides `SNOWFLAKE.TELEMETRY.EVENTS` as the default, so you don’t need to create a new event table unless you want a custom destination. Having an active event table doesn’t by itself enable Snowpipe Streaming event collection.
 - A role with permission to query that table or its view. For the default table, the `SNOWFLAKE.EVENTS_VIEWER` application role provides access to `SNOWFLAKE.TELEMETRY.EVENTS_VIEW`, not the underlying table. Use the view in the examples if you have viewer access. For other access options, see [Event table access control](/developer-guide/logging-tracing/event-table-setting-up).
+
+### Find the event-table destination
+
+The event table stores monitoring records. It is separate from the target table that receives your streamed data. To check the configured destination, run:
+
+Copy code
+
+```
+SHOW PARAMETERS LIKE 'EVENT_TABLE' IN ACCOUNT;
+SHOW PARAMETERS LIKE 'EVENT_TABLE' IN DATABASE <database_name>;
+```
+
+Use the `value` column to identify the configured destination; the `default` column shows the default setting. A database-level destination takes precedence over the account-level destination. If a custom destination is already configured, query that destination rather than assuming events are in the default table. Changing the destination can affect other workloads. For configuration details, see [Event table setup](/developer-guide/logging-tracing/event-table-setting-up).
 
 ### Enable event collection
 
-The `LOG_EVENT_LEVEL` parameter controls which events Snowflake records. Set it to `INFO` on the schema that contains your target tables:
+The `LOG_EVENT_LEVEL` parameter controls which events Snowflake records and defaults to `OFF`. Existing configurations can already enable collection. Check the effective setting on the schema that contains your target tables:
+
+Copy code
+
+```
+SHOW PARAMETERS LIKE 'LOG_EVENT_LEVEL' IN SCHEMA <database_name>.<schema_name>;
+```
+
+If the setting doesn’t already capture informational events, set it to `INFO`:
 
 Copy code
 
@@ -39,6 +60,8 @@ If the schema doesn’t set a level, it inherits the database setting, which in 
 - `OFF`: Records no Snowpipe Streaming events. Ingestion continues normally.
 
 Changes might not take effect immediately. For more information, see [Set telemetry levels](/developer-guide/logging-tracing/telemetry-levels).
+
+To verify collection, send a fresh batch through Snowpipe Streaming after enabling it, allow time for telemetry to arrive, and run the query in the next section. The query’s time window must include the new activity. Existing rows in the target table don’t generate new streaming events, and enabling collection doesn’t backfill events for earlier ingestion. A regular SQL `INSERT` doesn’t exercise Snowpipe Streaming event collection.
 
 ### Query Snowpipe Streaming events
 
@@ -263,6 +286,10 @@ WHERE scope:"name"::STRING = 'snow.snowpipe.streaming'
 ORDER BY timestamp DESC;
 ```
 
+### Example Streamlit dashboard
+
+For a starting point, see the [Snowpipe Streaming monitoring dashboard example](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/monitoring). Follow the example’s README to create a Streamlit in Snowflake app that queries your event table for row counts, errors, latency, and channel activity. Review its access and sharing guidance before sharing the app with other users.
+
 ### Snowflake alert templates
 
 Alert templates provide predefined monitoring conditions that you can configure for your workload. Snowpipe Streaming templates include:
@@ -277,7 +304,8 @@ You can monitor an account, database, schema, or table. Available templates and 
 
 Use the [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY view](/sql-reference/account-usage/snowpipe_streaming_channel_history) for historical channel activity. To retain rejected-row data for inspection or reprocessing, use [error tables](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables), subject to their capture and size limits.
 
-- **No events appear:** Check the active event table, query permissions, and `LOG_EVENT_LEVEL` setting. Verify that the time range and object names in your query match the ingestion you want to inspect.
+- **The query returns no events:** Check the active event-table destination and effective `LOG_EVENT_LEVEL`. Confirm that fresh Snowpipe Streaming activity occurred within the query’s time window and that the target database, schema, and table filters match. Allow time for event delivery before retrying.
+- **The query fails:** Inspect its error and query ID in Query History. Check permissions for the role executing the query and warehouse availability. Successful worksheet access doesn’t establish that an app uses the same execution role or access model.
 - **Data isn’t arriving:** Look for recent `commit` events with a positive `row_count` and check for `channel_error` events. For Named Channels, confirm progress with channel status.
 - **Rows are rejected:** Compare `error_count` with `rows_parsed` in commit events, then inspect `row_error` events for details.
 - **Processing is slow:** Compare latency measurements with row counts and errors for the same table, channel, and time interval.

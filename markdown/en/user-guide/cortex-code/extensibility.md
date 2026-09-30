@@ -1,6 +1,19 @@
 # CoCo CLI extensibility
 
-CoCo CLI can be extended with custom behaviors, specialized agents, lifecycle hooks, and external tool integrations. This topic covers the four main extensibility mechanisms:
+CoCo CLI can be extended with custom behaviors, specialized agents, lifecycle hooks, and external tool integrations. This topic covers the four main extensibility mechanisms.
+
+Shared across CoCo surfaces
+
+Skills and hooks you configure for CoCo CLI are also available in CoCo Desktop (and vice versa)
+because both surfaces read from the same configuration files in `~/.snowflake/cortex/`. You don’t
+need to install a skill separately for each surface. For Desktop-specific guidance, see
+[CoCo Desktop skills](/user-guide/cortex-code/cortex-code-desktop/skills) and
+[CoCo Desktop hooks](/user-guide/cortex-code/cortex-code-desktop/hooks).
+
+CoCo in Snowsight supports skills shared through the [Horizon Catalog](/user-guide/cortex-code/cortex-code-snowsight/skills-and-plugins).
+Local file-based skills (from `~/.snowflake/cortex/skills/`) aren’t available in Snowsight.
+
+The four extensibility mechanisms are:
 
 [Skills](#label-extensibility-skills)
 :   Markdown files that inject domain-specific knowledge and instructions into conversations. Use skills to teach CoCo about your organization’s best practices, coding standards, or specialized workflows.

@@ -23,9 +23,9 @@ ALTER NETWORK POLICY [ IF EXISTS ] <name> SET {
 
 ALTER NETWORK POLICY [ IF EXISTS ] <name> UNSET COMMENT
 
-ALTER NETWORK POLICY <name> ADD { ALLOWED_NETWORK_RULE_LIST = '<network_rule>' | BLOCKED_NETWORK_RULE_LIST = '<network_rule>' }
+ALTER NETWORK POLICY <name> ADD { ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , ... ] ) }
 
-ALTER NETWORK POLICY <name> REMOVE { ALLOWED_NETWORK_RULE_LIST = '<network_rule>' | BLOCKED_NETWORK_RULE_LIST = '<network_rule>' }
+ALTER NETWORK POLICY <name> REMOVE { ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' [ , ... ] ) }
 
 ALTER NETWORK POLICY <name>  RENAME TO <new_name>
 
@@ -107,10 +107,10 @@ ALTER NETWORK POLICY <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 
 The `ADD` and `REMOVE` commands are in preview, and are available to all accounts on AWS.
 
-`ADD { ALLOWED_NETWORK_RULE_LIST = 'network_rule' | BLOCKED_NETWORK_RULE_LIST = 'network_rule' }`
+`ADD { ALLOWED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) }`
 :   Adds a network rule to the allowed or blocked list of the network policy without removing existing ones.
 
-`REMOVE { ALLOWED_NETWORK_RULE_LIST = 'network_rule' | BLOCKED_NETWORK_RULE_LIST = 'network_rule' }`
+`REMOVE { ALLOWED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) }`
 :   Removes a network rule from the allowed or blocked list of the network policy.
 
 `RENAME TO ...`

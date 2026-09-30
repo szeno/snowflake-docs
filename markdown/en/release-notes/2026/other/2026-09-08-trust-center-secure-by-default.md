@@ -20,4 +20,4 @@ or by using stored procedures.
 
 For more information, see
 [Secure by default](/user-guide/trust-center/using-the-trust-center#label-trust-center-secure-by-default) and
-[Scanner Packages](/user-guide/trust-center/overview#label-trust-center-scanner-packages).
+[Scanner packages](/user-guide/trust-center/overview#label-trust-center-scanner-packages).

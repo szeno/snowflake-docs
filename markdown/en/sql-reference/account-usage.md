@@ -251,6 +251,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [STORAGE\_LIFECYCLE\_POLICY\_HISTORY](/sql-reference/account-usage/storage_lifecycle_policy_history) | Historical | 2 hours |  | Data retained for 1 year. |
 | [STORAGE\_REQUEST\_HISTORY](/sql-reference/account-usage/storage_request_history) | Historical | 6 hours |  | Data retained for 1 year. |
 | [STORAGE\_USAGE](/sql-reference/account-usage/storage_usage) | Historical | 2 hours |  | Combined usage across all database tables and internal stages. Data retained for 1 year. |
+| [STREAMS](/sql-reference/account-usage/streams) | Object | 2 hours |  |  |
 | [TABLES](/sql-reference/account-usage/tables) | Object | 90 minutes |  |  |
 | [TABLE\_CONSTRAINTS](/sql-reference/account-usage/table_constraints) | Object | 2 hours |  |  |
 | [TABLE\_DML\_HISTORY](/sql-reference/account-usage/table_dml_history) | Historical | 6 hours |  | Data retained for 1 year. |

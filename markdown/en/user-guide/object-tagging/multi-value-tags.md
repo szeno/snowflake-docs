@@ -11,7 +11,7 @@ or multiple compliance requirements (`COMPLIANCE = 'GDPR'` and `COMPLIANCE = 'PC
 
 Key characteristics of multi-value tags:
 
-- A tag must be explicitly configured with the MULTI\_VALUE = TRUE property to support multiple values.
+- A tag must be explicitly configured with the `MULTI_VALUE = TRUE` property to support multiple values.
 - After a tag is set to multi-value, it can’t be reverted to a single-value tag.
 - You use `ADD VALUE` and `DROP VALUE` operations to manage multiple values on an object.
 - The default limit is 10 values per multi-value tag per object.
@@ -33,7 +33,7 @@ Show lessSee more
 
 ## Creating a multi-value tag
 
-To create a tag that supports multiple values, use the MULTI\_VALUE = TRUE attribute in the [CREATE TAG](/sql-reference/sql/create-tag) statement:
+To create a tag that supports multiple values, use the `MULTI_VALUE = TRUE` attribute in the [CREATE TAG](/sql-reference/sql/create-tag) statement:
 
 Copy code
 
@@ -62,7 +62,7 @@ ALTER TAG sensitivity_tag SET MULTI_VALUE = TRUE;
 
 Note
 
-After a tag is set to multi-value, either at tag creation or by calling ALTER TAG, it can’t be reverted to a single-value tag.
+After a tag is set to multi-value, either at tag creation or by calling `ALTER TAG`, it can’t be reverted to a single-value tag.
 
 ## Assigning multiple values to objects
 
@@ -298,12 +298,12 @@ SELECT
 
 ## Limitations
 
-- The MULTI\_VALUE property can’t be set to FALSE. After a tag is configured as multi-value, it can’t be reverted.
+- The `MULTI_VALUE` property can’t be set to FALSE. After a tag is configured as multi-value, it can’t be reverted.
 - The default limit is 10 values per multi-value tag per object.
 - `SYSTEM$GET_TAG`, `SYSTEM$GET_TAG_ON_CURRENT_TABLE`, and `SYSTEM$GET_TAG_ON_CURRENT_COLUMN` return an error when
   called on a tag with multiple values assigned. Use `SYSTEM$TAG_VALUE_CONTAINS` instead.
 - Adding a duplicate value is a no-op (no error is raised, and the value count does not increase).
-- ADD VALUE and DROP VALUE operations require the tag to have `MULTI_VALUE = TRUE`. Running these operations on a
+- `ADD VALUE` and `DROP VALUE` operations require the tag to have `MULTI_VALUE = TRUE`. Running these operations on a
   single-value tag returns an error.
 
 ## Supported objects

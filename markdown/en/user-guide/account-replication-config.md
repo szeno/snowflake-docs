@@ -676,147 +676,16 @@ SELECT schema_name, catalog_name, replicable_with_failover_groups
 +--------------------+--------------+---------------------------------+
 ```
 
-## Optimized refresh for failover groups
+## Optimized Refresh and RPO Assurance
 
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+Optimized Refresh makes failover group refreshes more efficient and predictable as the number of objects in your account grows. RPO
+Assurance provides a Recovery Point Objective (RPO) target. Snowflake manages continuous refreshes for you and, for covered pairs,
+commits to the RPO target under the SLA.
 
-Available to all Business Critical Edition (or higher) accounts.
+Failover groups that haven’t opted into Optimized Refresh or RPO Assurance continue to run in Replication Classic mode.
 
-Optimized refresh is a refresh mode for failover groups that makes refreshes more efficient and predictable as the number of objects in
-your account grows. Each refresh scans and applies only the data and metadata changes since the previous refresh, so refresh duration scales with your rate of change
-rather than the number of objects within the failover group.
-
-The existing refresh experience continues to be available and is referred to as *Replication Classic*. Failover groups that you have today
-keep running as Replication Classic by default; no action is required to keep using them.
-
-You opt in per failover group by setting a single property on the primary failover group: `OPTIMIZED_REFRESH = TRUE`.
-
-### Benefits
-
-- **Lower, more predictable RPO as you grow.** Because each refresh moves only what changed since the previous refresh, refresh duration is
-  governed by your rate of change rather than the total object count in your account. Accounts with large numbers of databases, schemas,
-  tables, roles, and grants see the largest improvement.
-- **Faster refreshes on stable workloads.** Periods of low metadata change result in correspondingly small refresh cycles.
-- **Simpler, more forecastable pricing.** The pricing model that applies to optimized refresh is anchored primarily on the volume of
-  replicated data, with a generous monthly free allowance on the per-object-change dimension. For details, see
-  [Pricing for optimized refresh](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
-- **Drop-in compatibility.** Optimized refresh works with the same failover group SQL surface you already use. Replication, failover, and
-  failback semantics are unchanged.
-
-### Requirements
-
-When you enable optimized refresh on a failover group:
-
-- The failover group must have a [REPLICATION\_SCHEDULE](/sql-reference/sql/create-failover-group) set, and the schedule interval must be
-  no more than 6 hours. If the most recent successful refresh for the failover group is older than 6 hours, the next refresh falls back
-  to a full refresh that re-establishes the baseline before incremental refreshes resume.
-- The `OPTIMIZED_REFRESH` property can be set on the primary failover group only. Setting it on a secondary failover group fails.
-- Business Critical Edition (or higher) is required (inherited from the failover group feature itself).
-
-Tip
-
-For the best experience with optimized refresh, Snowflake recommends a `REPLICATION_SCHEDULE` of `10 MINUTE` or less. Frequent refreshes
-keep each incremental cycle small, which delivers the low RPO and the most predictable refresh durations.
-
-### Enable optimized refresh on a new failover group
-
-Run this on the source account. The example creates a failover group named `myfg` that uses optimized refresh to replicate database `db1`
-to the target account `myaccount2`, refreshing every 10 minutes:
-
-Copy code
-
-```
-CREATE FAILOVER GROUP myfg
-  OBJECT_TYPES = DATABASES
-  ALLOWED_DATABASES = db1
-  ALLOWED_ACCOUNTS = myorg.myaccount2
-  REPLICATION_SCHEDULE = '10 MINUTE'
-  OPTIMIZED_REFRESH = TRUE;
-```
-
-On the target account, create the secondary failover group as usual. No additional property is required on the secondary:
-
-Copy code
-
-```
-CREATE FAILOVER GROUP myfg
-  AS REPLICA OF myorg.myaccount1.myfg;
-```
-
-### Switch an existing failover group to optimized refresh
-
-Run this on the source account. If the existing failover group does not already have a `REPLICATION_SCHEDULE` that meets the 6-hour
-requirement, set or adjust it in the same statement:
-
-Copy code
-
-```
-ALTER FAILOVER GROUP myfg SET
-  REPLICATION_SCHEDULE = '10 MINUTE'
-  OPTIMIZED_REFRESH = TRUE;
-```
-
-After the ALTER succeeds, the next refresh runs as optimized refresh, with the first-refresh behavior described in
-[What to expect the first time you enable optimized refresh](#label-optimized-refresh-first-refresh).
-
-### Switch a failover group back to Replication Classic
-
-Optimized refresh is fully reversible. To revert a failover group to Replication Classic, unset the property:
-
-Copy code
-
-```
-ALTER FAILOVER GROUP myfg UNSET OPTIMIZED_REFRESH;
-```
-
-The next refresh runs under Replication Classic and is billed under the existing replication pricing.
-
-### Verify the current mode
-
-Use [SHOW FAILOVER GROUPS](/sql-reference/sql/show-failover-groups) to confirm which mode each group is using. The output includes an
-`is_optimized_refresh_enabled` column:
-
-Copy code
-
-```
-SHOW FAILOVER GROUPS;
-```
-
-A value of `TRUE` means subsequent refreshes for the group use optimized refresh. A value of `FALSE` means they use Replication Classic.
-
-You can also query the [REPLICATION\_GROUPS view](/sql-reference/account-usage/replication_groups) in ACCOUNT\_USAGE to see the
-`IS_OPTIMIZED_REFRESH_ENABLED` column.
-
-### What to expect the first time you enable optimized refresh
-
-When you set `OPTIMIZED_REFRESH = TRUE` on an existing failover group, or create a new failover group with the property set, the first
-refresh after enabling is a one-time bootstrapping refresh that establishes the baseline from which Snowflake then applies incremental
-changes.
-
-Plan for the following:
-
-- The bootstrapping refresh takes longer than steady-state refreshes. Its duration is comparable to a Replication Classic refresh on the
-  same failover group.
-- The bootstrapping refresh is billed under the optimized-refresh pricing model (replicated data volume plus changed objects, subject to
-  the monthly free allowance). For details, see [Pricing for optimized refresh](/user-guide/account-replication-cost#label-optimized-refresh-pricing).
-- Subsequent refreshes are incremental and fast. Beginning with the second refresh, only changes since the previous refresh are sent to
-  the target account.
-
-If you enable optimized refresh on a failover group whose `REPLICATION_SCHEDULE` would produce a refresh imminently, that refresh is the
-one that runs as the bootstrapping refresh. You don’t need to trigger anything manually.
-
-After the bootstrapping refresh, all standard failover group operations behave exactly as they did before. Scheduled refreshes, manual
-refreshes, promotion, failover, and failback are unchanged.
-
-### Limitations during Public Preview
-
-- Under certain rare conditions, for example, a new Snowflake release that introduces replication support for a new feature, an
-  individual refresh can run as a full refresh instead of an incremental one. That refresh takes longer than usual.
-
-### Mix optimized refresh and Replication Classic in the same account
-
-The `OPTIMIZED_REFRESH` setting is per failover group. Some failover groups in an account can use optimized refresh while others stay on
-Replication Classic. Replication, failover, and failback work the same way for failover groups regardless of refresh mode.
+For complete documentation, including how to enable each mode, the limitations of each mode, and how to monitor lag, see
+[Optimized Refresh and RPO Assurance](/user-guide/account-replication-optimized-refresh).
 
 ## Apply global IDs to objects created by scripts in target accounts
 

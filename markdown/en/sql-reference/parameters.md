@@ -1407,7 +1407,7 @@ Description:
 :   Specifies the dbt version used for a dbt project object when no `DBT_VERSION` is specified in the CREATE DBT PROJECT statement. Changing this parameter doesn’t affect existing dbt project objects. It only applies to projects created afterward when an explicit `DBT_VERSION` attribute is not specified. This allows organization administrators to opt into newer versions (for example, changing the default to `1.11.11`) without requiring users to manually update CREATE DBT PROJECT DDL statements for every individual project. For more information, see [Set the account-level default version](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions#label-dbt-projects-set-account-level-default).
 
 Values:
-:   `1.9.4`, `1.10.15`, `1.11.11`, `2.0.0-preview.175`, or `2.0.0-preview.186`
+:   `1.9.4`, `1.10.15`, `1.11.11`, `2.0.0-preview.175`, `2.0.0-preview.186`, or `2.0.0-preview.210`
 
 Default:
 :   `1.9.4`
@@ -4508,7 +4508,7 @@ Description:
 :   Specifies the time zone for the session.
 
 Values:
-:   You can specify a [time zone name](https://data.iana.org/time-zones/tzdb-2025b/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb-2025b/backward) from release 2025b of the [IANA Time Zone Database](https://www.iana.org/time-zones) (e.g.
+:   You can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from release 2026c of the [IANA Time Zone Database](https://www.iana.org/time-zones) (e.g.
     `America/Los_Angeles`, `Europe/London`, `UTC`, `Etc/GMT`, etc.).
 
 Default:
