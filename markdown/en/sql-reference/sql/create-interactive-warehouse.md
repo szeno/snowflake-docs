@@ -69,6 +69,7 @@ Where:
 
         - All specified tables must be interactive tables created with the `INTERACTIVE` keyword.
         - If this clause is omitted, you can associate interactive tables later using [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) with the `ADD TABLES` clause.
+        - You can attach up to 100 tables to an interactive warehouse.
         - Cache warming may take significant time depending on the size of the data.
 
 `WAREHOUSE_SIZE = string_constant`

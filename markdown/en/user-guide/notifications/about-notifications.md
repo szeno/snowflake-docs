@@ -1,6 +1,6 @@
 # Notifications in Snowflake
 
-You can configure Snowflake to send notifications to a queue provided by a Cloud service (Amazon SNS, Google Cloud PubSub, or
+You can configure Snowflake to send notifications to a queue provided by a cloud service (Amazon SNS, Google Cloud PubSub, or
 Azure Event Grid), an email address, or a webhook. For details, see the following sections:
 
 - [Sending notifications to cloud provider queues (Amazon SNS, Google Cloud PubSub, and Azure Event Grid)](/user-guide/notifications/queue-notifications)

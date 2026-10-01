@@ -75,6 +75,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
   [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ]
+  [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
 ```
 
 Where:

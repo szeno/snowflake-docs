@@ -129,6 +129,8 @@ tables:
 
 The workflow references the stage object, not the storage integration. Configuration parsing fails if `externalStage` is omitted.
 
+Grant the `DBMS_CLOUD` credential and the Snowflake storage integration the object-store access in [External stage and storage integration](./required-privileges#external-stage-and-storage-integration).
+
 ### Incremental sync
 
 Oracle supports all three strategies: **`none`**, **`watermark`**, and **`checksum`**.

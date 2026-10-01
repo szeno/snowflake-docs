@@ -38,8 +38,8 @@ schema changes and additions to the set of mirrored tables.
 - **Schema evolution.** Schema changes and DDL like columns added to or removed from a mirrored schema on Postgres
   appear in Snowflake without reconfiguring the mirror.
 - **Iceberg target tables.** Mirror into Snowflake-managed Iceberg tables instead of native Snowflake tables by
-  setting `target_table_type => 'ICEBERG'` on `CREATE_MIRROR`. Iceberg targets use Snowflake-managed storage:
-  no external catalog or external storage is required.
+  setting `target_table_type => 'ICEBERG'` on `CREATE_MIRROR`. By default Iceberg targets use Snowflake-managed storage.
+  Pass `external_volume` to write them to customer-owned storage. No external catalog is required.
 - **Queryable 7-day change feed.** Every mirrored table has a `$changes` companion that exposes
   inserts, updates, and deletes for the last 7 days, queryable from both Snowflake and Postgres.
 - **Transactional apply.** Row changes from a source transaction become visible on the target
@@ -47,6 +47,37 @@ schema changes and additions to the set of mirrored tables.
   mirrored tables. See [Transactional guarantees](#label-transactional-guarantees).
 
 **[Create your first mirror →](/user-guide/snowflake-postgres/postgres-data-mirroring-create)**
+
+## Table-level vs schema-level replication
+
+A mirror can name source relations as tables, schemas, or both. The choice sets the membership
+rule as the source evolves.
+
+|  | Table-level (`postgres_tables`) | Schema-level (`postgres_schemas`) |
+| --- | --- | --- |
+| Membership | Exactly the tables you name | Every table in the schema, now and later |
+| New source table (`CREATE TABLE`) | Not mirrored until you `alter_mirror` with `add_tables` | Mirrored automatically, including the initial snapshot |
+| Target contents | Predictable: only what you chose | Follows the source schema and can grow without a mirror change |
+| Onboarding | Explicit, per table | Automatic |
+| Detached partition | Stops tracking the detached leaf | Keeps the detached table mirrored as a standalone table |
+| Blast radius | Small: out-of-scope tables stay out unless named | Larger: a table added to the schema is exposed to Snowflake automatically |
+| Best fit | A curated subset of a busy schema | A schema that is the unit of replication |
+
+Expand
+
+Show lessSee more
+
+Use **table-level** replication when you want a reviewable subset, when the schema also contains
+unsupported or sensitive tables, or when you don’t want new tables to appear on Snowflake until
+someone adds them. A newly created source table is silently un-mirrored until you add it.
+
+Use **schema-level** replication when the intent is “mirror everything in this schema,” when the
+schema changes often, or when detaching a partition should keep the detached table mirrored.
+Any table added to the schema is mirrored automatically, including tables you did not intend to
+expose.
+
+You can grow or shrink either set later with `alter_mirror` (`add_tables`/`remove_tables`,
+`add_schemas`/`remove_schemas`). Replacing the whole object set in one shot is not supported.
 
 ## How mirroring works
 
@@ -204,6 +235,7 @@ Mirroring is currently available only on Amazon Web Services (AWS) and Microsoft
 
 - [Create a mirror](/user-guide/snowflake-postgres/postgres-data-mirroring-create) — walk through creating your first mirror.
 - [Query mirrored data](/user-guide/snowflake-postgres/postgres-data-mirroring-query) — query target tables, the `$changes` feed, and the `$live` view.
-- [Manage and monitor mirrors](/user-guide/snowflake-postgres/postgres-data-mirroring-manage) — alter, drop, inspect, and monitor mirrors, plus troubleshooting.
+- [Manage and monitor mirrors](/user-guide/snowflake-postgres/postgres-data-mirroring-manage) — alter, drop, inspect, and monitor mirrors, plus troubleshooting and lag alerts.
+- [Postgres-to-Snowflake Mirroring Performance Considerations](/user-guide/snowflake-postgres/postgres-data-mirroring-performance) — plan, measure, and improve snapshot and CDC performance.
 - [Type mapping reference](/user-guide/snowflake-postgres/postgres-data-mirroring-type-mapping) — how Postgres types map to Iceberg on the target.
 - [Mirror procedures reference](/user-guide/snowflake-postgres/postgres-data-mirroring-reference) — the `snowflake.postgres` procedures and `$changes` schema.

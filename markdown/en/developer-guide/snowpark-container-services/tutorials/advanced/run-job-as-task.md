@@ -1,4 +1,4 @@
-# Tutorial: Run a Snowflake Container Services job as a Snowflake task
+# Tutorial: Run a Snowpark Container Services job as a Snowflake task
 
 Feature — Generally Available
 
@@ -27,7 +27,7 @@ Save the sample code provided for the job service, build an image, and upload it
 
 ### Save the code that is provided for the job service
 
-Save the followng example job service code files to your local machine:
+Save the following example job service code files to your local machine:
 
 - `main.py`
 
@@ -181,7 +181,7 @@ SHOW IMAGE REPOSITORIES;
   ```
   <orgname>-<acctname>.registry.snowflakecomputing.com/tutorial_db/data_schema/tutorial_repository
   ```
-- The host name in the repository URL is registry host name. An example is shown:
+- The host name in the repository URL is the registry host name. An example is shown:
 
   ```
   <orgname>-<acctname>.registry.snowflakecomputing.com
@@ -215,7 +215,7 @@ The command ends with a period (.) which specifies current working directory as 
    1. For Docker to upload an image on your behalf to your repository,
       first [authenticate Docker with the registry](/developer-guide/snowpark-container-services/working-with-registry-repository#label-registry-and-repository-authentication).
 
-      1. We recommend by using [Snowflake CLI](/developer-guide/snowflake-cli/index)
+      1. We recommend using [Snowflake CLI](/developer-guide/snowflake-cli/index)
          to authenticate your local Docker instance with the image
          registry for your Snowflake account. Make sure that you configured Snowflake CLI to connect to Snowflake. For more information,
          see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
@@ -281,7 +281,7 @@ AS
 
 ;
 
--- Tasks you created are initially suspended state. So you first resume the tasks and run.
+-- Tasks you created are initially in a suspended state. So you first resume the tasks and run.
 select SYSTEM$TASK_DEPENDENTS_ENABLE ('step1_prepare_data');
 ALTER TASK step1_prepare_data RESUME;
 
@@ -361,7 +361,7 @@ def create_dag(name: str) -> DAG:
         # the task, when run, executes the function object.
         step1 = DAGTask("step1", prepare_dataset_task)
         # In contrast, for step2 you execute the execute_spcs_job function
-        # that returns a SQL string that is passed  to DAGTask.
+        # that returns a SQL string that is passed to DAGTask.
         step2 = DAGTask("step2", execute_spcs_job())
 
         # Build the DAG
@@ -396,7 +396,7 @@ To view the job service details in task history, perform the following steps:
 4. For the selected schema, select **Tasks**.
 5. Select a specific task.
 
-   The task details appear, with additional **Graph**, and **Run History** tabs.
+   The task details appear, with additional **Graph** and **Run History** tabs.
 6. To view the ID of the job service that you executed as part of the task run, select the **Run History** tab.
 
 To view the task details in job history, perform the following steps:

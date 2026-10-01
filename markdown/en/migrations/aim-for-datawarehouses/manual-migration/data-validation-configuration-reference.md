@@ -96,10 +96,69 @@ When `validationConfiguration` is omitted, defaults are: schema validation and m
 | `textComparisonMode` | `String` (`"logical"`, `"raw"`) | Teradata only. `"logical"` (default) normalizes text before comparing; `"raw"` compares source and target text byte-exact. |
 | `onUntranslatable` | `String` (`"substitute"`, `"fail"`) | Teradata only. How untranslatable characters in non-Latin Teradata character sets (for example `KANJISJIS`, `GRAPHIC`) are handled when the source is translated to Unicode for L3 row hashing. `"substitute"` (default) replaces each untranslatable character so comparison proceeds; `"fail"` fails the affected task instead. Set globally or per table. See [Character set handling](../data-migration-validation/validate-teradata#character-set-handling). |
 | `acceptedTransformations` | `Array` | Rules merged with workflow-root and per-table rules. |
+| `extraction` | `Object` | Optional. How L3 signature extracts leave the source. Same `strategy` and `externalStage` values as [data migration extraction](./data-migration-configuration-reference#extractionstrategy-model). See [L3 extraction](#l3-extraction). |
 
 Expand
 
 Show lessSee more
+
+### L3 extraction
+
+When `row_validation` is enabled on a **Worker-based** (non-Snowflake) source, AIM DMV extracts source-side signature Parquet (primary-key columns plus a row MD5) and compares it in Snowflake. The optional `validation_configuration.extraction` block chooses the **transport**, using the same strategy names as data migration. Snowflake-to-Snowflake L3 does not use this block; see [Validating Data from Snowflake](../data-migration-validation/validate-snowflake).
+
+| Field | Type | Required | Description |
+| --- | --- | --- | --- |
+| `strategy` | `String` |  | Same values as migration: `regular`, `unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`, or `cloud_direct`. Must be supported for the workflow `source_platform`. Recommended: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** (BigQuery), or **regular** (PostgreSQL, `use_copy = true`). |
+| `externalStage` | `String` | See description | Required when `strategy` writes to object storage (`unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`, `cloud_direct`). Fully qualified Snowflake external stage covering the same object-store prefix the Worker or source export writes to. |
+| `storageBackend` | `String` (`"s3"`, `"gcs"`, `"blob"`) |  | Optional. For `cloud_direct` only, when the Worker has more than one of `[connections.target.s3]`, `[connections.target.gcs]`, or `[connections.target.blob]` configured. |
+
+Expand
+
+Show lessSee more
+
+Defaults:
+
+- The recommended L3 extract is always the source’s native export: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** (BigQuery), or **regular** (PostgreSQL, `use_copy = true`). For object-store natives, set `strategy` and `externalStage` to match.
+- Omit `extraction`, or set `strategy: regular`, to pull the signature query through the Worker over the source connection and land files on the internal validation stage (`TASK_RESULTS`).
+- Object-store strategies reuse the same Worker TOML credentials and Snowflake external stage you already set up for migration of that source.
+
+Workflow create fails when:
+
+- `strategy` is not supported for the source platform (for example `write_nos` on Redshift).
+- An object-store strategy is set without `externalStage`.
+
+Copy code
+
+```
+validation_configuration:
+  schema_validation: true
+  metrics_validation: true
+  row_validation: true
+  extraction:
+    strategy: unload
+    externalStage: MY_DB.PUBLIC.MY_REDSHIFT_STAGE
+```
+
+See [Choosing an L3 extraction strategy](../data-migration-validation/data-validation-advanced-configuration#choosing-an-l3-extraction-strategy) and the per-platform validation pages for Worker prerequisites.
+
+#### Object storage backends
+
+The recommended L3 extract is always the source’s native export. Object-store natives land signatures on a Snowflake external stage instead of the internal validation `TASK_RESULTS` stage. The **store** depends on the source and strategy, not only Amazon S3:
+
+| `extraction.strategy` | Recommended for | Typical landing store |
+| --- | --- | --- |
+| `unload` (**UNLOAD**) | Amazon Redshift | Amazon S3 |
+| `write_nos` (**WRITE\_NOS**) | Teradata | Amazon S3, Azure Blob, or GCS (`write_nos_location_scheme` `/s3/`, `/az/`, or `/gs/`) |
+| `dbms_cloud` (**DBMS\_CLOUD**) | Oracle | The object store in `dbms_cloud_file_uri_prefix` (often S3; any store `DBMS_CLOUD` and your Snowflake stage both support) |
+| `cet_as` (**CETAS**) | SQL Server / Azure Synapse | Azure Blob |
+| `export_data` (**EXPORT DATA**) | BigQuery | GCS |
+| `regular` (**COPY**) | PostgreSQL (`use_copy = true`) | Internal validation stage (`TASK_RESULTS`) |
+
+Expand
+
+Show lessSee more
+
+Reuse the same Worker TOML and `externalStage` as migration for that source. Snowflake stage grants and object-store IAM (S3, Azure Blob, GCS) are listed once on [Required privileges: External stage and storage integration](../data-migration-validation/required-privileges#external-stage-and-storage-integration).
 
 ### Validation levels and result codes
 

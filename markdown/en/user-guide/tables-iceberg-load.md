@@ -38,6 +38,12 @@ the [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceber
   must use the FULL\_INGEST option. The other LOAD\_MODE
   options aren’t supported. However, Parquet files that contain row lineage are likely already part of an Iceberg v3 table. For the best
   practice on how to handle Parquet files that are already part of another Iceberg table, see the [note above](#label-tables-iceberg-load-mode).
+- Snowflake-managed Iceberg tables support schema evolution via the `ENABLE_SCHEMA_EVOLUTION` parameter on
+  [CREATE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table-snowflake) and
+  [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table). The usage notes in
+  [Enable automatic table schema evolution](/user-guide/data-load-schema-evolution) apply to Iceberg tables as well.
+
+  Schema evolution is not supported for [structured type](/sql-reference/data-types-structured) fields in Iceberg tables.
 
 ## Example: Load Iceberg-compatible Parquet files
 

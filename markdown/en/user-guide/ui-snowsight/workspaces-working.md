@@ -2,8 +2,8 @@
 
 Important
 
-Starting in September 2025, Snowflake is gradually upgrading accounts from Worksheets to Workspaces. Workspaces will become the default
-SQL editor. For more information, see [Defaulting accounts from Worksheets to Workspaces](/release-notes/bcr-bundles/un-bundled/bcr-2117).
+Workspaces has replaced Legacy Worksheets. To start running SQL, see
+[Run your first SQL query](/user-guide/ui-snowsight/workspaces#label-workspaces-run-first-query).
 
 ## Create and work with files and folders
 
@@ -21,6 +21,9 @@ In a workspace you can use a familiar IDE and source control conventions to auth
    - **Upload Files**: Upload one or more files to any location in your workspace. The editor uses the file extension and applies the appropriate icon,
      behavior, and syntax highlighting to the file when it’s opened. For example, `.sql` files show SQL-specific features.
    - **Upload Folder**: Select one or more files or folders to add to the selected workspace.
+
+To create and run a Python script, name the file with a `.py` extension and follow
+[Open and run a Python file](/user-guide/ui-workspaces-python#label-py-in-ws-open-and-run).
 
 ### Manage files
 
@@ -130,10 +133,10 @@ This feature is useful for quick calculations and data exploration without creat
 
 ## Keyboard shortcuts
 
-Worksheets provide keyboard shortcuts to help you quickly navigate, customize your view, and edit queries. The following table identifies
+Workspaces provides keyboard shortcuts to help you quickly navigate, customize your view, and edit queries. The following table identifies
 commonly used keyboard shortcuts:
 
-| Task | MacOS shortcut | Windows shortcut |
+| Task | macOS shortcut | Windows shortcut |
 | --- | --- | --- |
 | Run selected | `command` + `return` | `CTRL` + `Enter` |
 | Run all | `command` + `shift` + `return` | `CTRL` + `Shift` + `Enter` |
@@ -146,6 +149,7 @@ commonly used keyboard shortcuts:
 | Paste file in selected location | `command` + `V` | `CTRL` + `V` |
 | Open query results pane | `control` + `option` + `↑` | `CTRL` + `Alt` + `↑` |
 | Close query results pane | `control` + `option` + `↓` | `CTRL` + `Alt` + `↓` |
+| Open query history pane | `control` + `shift` + `H` | `CTRL` + `Shift` + `H` |
 | Open inline Copilot | `command` + `I` | `CTRL` + `I` |
 | Comment out code | `command` + `/` | `CTRL` + `/` |
 | Go to top of file | `command` + `home` or `command` + `↑` | `CTRL` + `home` or `CTRL` + `↑` |
@@ -241,6 +245,5 @@ unaffected.
 - Column statistics may take longer to generate as the number of columns increases.
 - Snowflake Copilot is not available in Workspaces.
 - [Query filters](/user-guide/ui-snowsight-filters) are not supported. Any queries containing filters will fail.
-- Workspaces files are not included in Universal Search results.
 - Opening and editing the same worksheet in the new Workspaces UI and old Worksheets UI simultaneously can result in lost changes.
 - For worksheets, execution context settings (role, warehouse, and namespace) are not synchronized across the new Workspaces UI and the old Worksheets UI.

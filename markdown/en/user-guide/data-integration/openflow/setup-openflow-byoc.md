@@ -261,8 +261,9 @@ If you want to use an existing VPC and your own subnets, ensure that you have th
 This step is only required once for your organization.
 
 1. Sign in to Snowflake as a user with the ORGADMIN role.
-2. In the navigation menu, select **Ingestion** » **Openflow**.
-3. Accept the Openflow terms of service.
+2. In the navigation menu, select **Admin** » **Terms**.
+3. Locate **Openflow terms of service** in the list.
+4. Review the agreement and select **Accept**.
 
    If you don’t see this option, the terms have already been accepted for your organization.
 

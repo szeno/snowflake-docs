@@ -7,7 +7,8 @@ Validation supports both the **dedicated SQL pool** (`azure_synapse`) and the **
 ## Prerequisites
 
 - **Microsoft ODBC Driver 18 for SQL Server** on Worker hosts (same guidance as [Migrating Data from Azure Synapse Analytics](./migrate-synapse)).
-- **Live Synapse access** for metrics and row-level validation: validation runs SQL against live Synapse even when tables were migrated via CETAS export to Azure Blob.
+- **Live Synapse access** for metrics and row-level validation: L1 and L2 always run SQL against live Synapse.
+- **L3 object storage (Recommended)**: Use **CETAS** (`extraction.strategy: cet_as`) so signatures land on **Azure Blob** (same CETAS setup as [Migrating Data from Azure Synapse Analytics](./migrate-synapse#using-cetas-extraction)). See [Object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage) and [Azure Blob Storage](./required-privileges#azure-blob-storage).
 
 ## Connectivity
 

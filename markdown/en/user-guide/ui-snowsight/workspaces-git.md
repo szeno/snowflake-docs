@@ -27,6 +27,11 @@ Note
 
 For a complete list of limitations, see [Git in Snowflake limitations](/developer-guide/git/git-limitations).
 
+Your current role from the Snowsight user menu determines which API integrations and secrets you can access when creating a Git workspace.
+To change it, in the lower-left corner, select your name » **Switch role**. The Git workspace belongs to you, not to this role.
+Changing the execution role inside an open SQL file doesn’t change access to these resources in the workspace creation dialog.
+For details, see [Roles in Workspaces](/user-guide/ui-snowsight/workspaces#label-workspaces-role-context).
+
 To create a new Git-synced workspace, follow these steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -38,7 +43,7 @@ To create a new Git-synced workspace, follow these steps:
 
    The API integration must allow access to the Git repository URL you used in step 4. Creating an API integration requires the
    [CREATE API INTEGRATION](/sql-reference/sql/create-api-integration) privilege, which is often restricted to admin roles in many
-   accounts. If another role created the API integration, the current role must have the USAGE privilege on that API integration.
+   accounts. If another role created the API integration, the role selected in your user menu must have the `USAGE` privilege on that API integration.
 7. Select an authentication method:
 
    - **OAuth2** - To use OAuth2 for authentication, you must configure the API integration to support OAuth with your Git provider. For more information,

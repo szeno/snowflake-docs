@@ -277,7 +277,7 @@ any tables. However, you can still use other interactive warehouses to query tho
 - If a query consistently times out, that’s a signal that it might not be suitable for use with interactive warehouses. Commonly, applying some of the performance tuning techniques can help reduce query latency. See [Performance considerations](/user-guide/interactive-performance#label-interactive-performance-considerations) for more details.
 - Interactive warehouses support auto-suspend and auto-resume. The minimum auto-suspend interval is 24 hours (86400 seconds). This is different from auto-scaling, in which clusters will run for a minimum of 1 hour. Manual suspension/resume of interactive warehouse is supported with a minimum 1 hour billing period. Expect significant query latency when you resume an interactive warehouse, because the data cache needs to warm up again. For more information, see
   [Resuming and suspending an interactive warehouse](#label-interactive-resume-and-suspend-a-warehouse).
-- Proactive warming is limited to 10 tables. You can query any table without proactive warming. This is a temporary limitation to prevent overloading of the system. This limit will be increased in the future. If you need to add more than 10 tables, contact Snowflake Support.
+- You can attach up to 100 tables to an interactive warehouse for proactive cache warming. You can query any table without attaching it. If you need to attach more than 100 tables, contact Snowflake Support.
 - You can’t run [CALL commands](/sql-reference/sql/call) to call stored procedures in an interactive warehouse.
 - You can’t use the `->>` [pipe operator](/sql-reference/operators-flow). That operator uses stored procedures behind the scenes.
 

@@ -23,7 +23,7 @@ The Orchestrator and Workers can be deployed in multiple ways:
 - Both in your environment, including custom hardware, virtual machines, or Kubernetes.
 - Orchestrator on Snowpark Container Services and Workers in your environment, or the other way around.
 
-See [Deploying workers](./deploy-workers) for deployment scenarios, compute pools, image repositories, and network access setup.
+See [Deploying workers](./deploy-workers) for deployment scenarios, compute pools, and network access setup.
 
 ## Prerequisites
 

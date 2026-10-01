@@ -1,4 +1,4 @@
-# Snowpark Container Services: Understanding Instance families
+# Snowpark Container Services: Understanding instance families
 
 Feature — Generally Available
 

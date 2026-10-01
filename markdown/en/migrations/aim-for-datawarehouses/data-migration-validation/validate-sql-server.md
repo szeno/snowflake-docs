@@ -5,6 +5,7 @@ This page covers SQL Server-specific setup for [Data validation](./data-validati
 ## Prerequisites
 
 - **SQL Server connection driver** on Worker hosts. Install the Worker with the `sqlserver` extra to use the preferred `mssql-python` driver without a system ODBC installation. The Worker falls back to `pyodbc` when the native driver isn’t available or the Worker TOML `extra_options` contains an unsupported keyword. See [Migrating Data from SQL Server](./migrate-sql-server#prerequisites).
+- **L3 object storage (Recommended)**: Use **CETAS** (`extraction.strategy: cet_as`) so signatures land on **Azure Blob** (same CETAS objects and Snowflake external stage as [Migrating Data from SQL Server](./migrate-sql-server#using-cetas-extraction)). See [Object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage) and [Azure Blob Storage](./required-privileges#azure-blob-storage).
 
 ## Connectivity
 

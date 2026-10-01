@@ -637,3 +637,4 @@ Snowflake-managed Iceberg tables.
 > - [Clustering](/user-guide/tables-clustering-micropartitions)
 > - Standard and append-only [streams](/user-guide/streams-intro). Insert-only streams are supported.
 > - [Replication](/user-guide/account-replication-intro) of Iceberg tables, external volumes, or catalog integrations
+> - [Snowflake schema evolution](/user-guide/data-load-schema-evolution)

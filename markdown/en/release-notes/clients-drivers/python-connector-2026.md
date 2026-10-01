@@ -10,6 +10,74 @@ Snowflake uses semantic versioning for Snowflake Connector for Python updates.
 
 See [Snowflake Connector for Python](/developer-guide/python-connector/python-connector) for documentation.
 
+## Version 5.0.0rc4 (Sep 30, 2026)
+
+### New features and updates
+
+- Added Duo push continuation and MFA callbacks for username and password authentication.
+- Added native Arrow conversion for Boolean, numeric, DECFLOAT, text, binary, DATE, TIME, TIMESTAMP, INTERVAL, and VECTOR values, including NumPy scalar output and `DictCursor` rows.
+- Added pandas and Arrow fetching for JSON result sets returned by commands such as `SHOW`, `DESCRIBE`, DDL, PUT, and GET.
+- Added the `platform_detection_timeout_seconds` connection parameter. Setting it to `0` skips cloud metadata and STS requests while retaining environment-based platform detection.
+- Added the `put_compress_level` and `put_tempdir` connection parameters for PUT auto-compression.
+- Added the `proxy_scheme` connection parameter for HTTPS connections to proxies and `extra_root_store_path` for extending the default TLS trust store.
+- Added support for generators and other iterators in `executemany()`.
+- Added `FILE`, `INTERVAL_YEAR_MONTH`, and `INTERVAL_DAY_TIME` type codes.
+- Added Conda packaging for the connector.
+
+### Changes
+
+- Requires Python 3.11 or later, unchanged from version 5.0.0rc3.
+- Changed `client_store_temporary_credential` to default to `True`. Set it to `False` explicitly to disable ID, OAuth, and MFA token caching.
+- Improved native Arrow fetching by using the result prefetch pipeline for asynchronous rows.
+- Improved GCS PUT throughput by streaming each file in one request.
+- Improved first-connection latency on non-FIPS builds.
+- Restored the `timezone`, `interpolate_empty_sequences`, and `reuse_results` connection parameters, along with legacy aliases for private-key, external-browser timeout, and console-login settings.
+- Changed failed-login errors to include the server-provided reason.
+
+### Bug fixes
+
+- Fixed `cursor.description` reporting GEOGRAPHY and GEOMETRY columns as OBJECT.
+- Fixed `ALTER SESSION`, `COMMIT`, and other statements rejected by statement preparation so they fall back to direct execution.
+- Fixed `ALTER SESSION SET` cache updates with non-ASCII SQL text.
+- Fixed `SNOWFLAKE_CONNECTIONS` parsing so Snowpark configuration is read as TOML.
+- Fixed `ReauthenticationRequest` so it is importable from `snowflake.connector.network` and exposes its underlying `cause`.
+- Fixed asynchronous multi-statement result retrieval returning only the first statement.
+- Fixed statement-level parameters being omitted from queries and bind values being omitted from describe-only preparation.
+- Fixed Python array binding when the session-scoped bind stage is unavailable by retrying with inline JSON bindings.
+- Fixed timestamp and MAP conversion failures that could terminate the Python process.
+- Fixed invalid query IDs so they raise a connector error instead of reaching the server.
+- Fixed `write_pandas()` quoting for Parquet and Iceberg field and option names.
+- Fixed intermittent key-pair authentication failures on Windows and added support for plaintext PEM strings in `private_key`.
+- Fixed OAuth refresh-token retention when refresh-token rotation is disabled.
+- Fixed token-cache files with unsafe permissions so they are reported and ignored rather than modified and used.
+- Fixed native Okta authentication errors so they include the Snowflake rejection reason.
+- Fixed external-browser callbacks so their CORS origin must match the connected Snowflake account.
+- Fixed Azure GET corruption caused by transparent gzip decompression.
+- Fixed encrypted S3 GET downloads for files created by server-side unloads.
+- Fixed S3 and GCS upload retries after temporary credential expiration.
+- Fixed S3 external-stage operations that don’t provide a session token.
+- Fixed GET results from stage subdirectories so the `file` column reports the downloaded file name.
+
+## Version 4.8.0 (Sep 30, 2026)
+
+### Security fixes
+
+- Fixed external-browser (SSO) authentication to validate the `Origin` header on the local callback server, rejecting tokens delivered from unexpected origins. A trailing slash in the origin (for example, `https://account.snowflakecomputing.com/`) is now accepted on par with the bare origin, matching JDBC and other driver behavior. Preconnect probe connections (empty recv) no longer count against the retry budget and no longer abort the login flow.
+
+### New features and updates
+
+- Added the `SNOWFLAKE_TLS_CIPHERS` environment variable to restrict which TLS ciphers the connector offers. It takes a colon-separated list. Names beginning with `TLS_` are applied as TLS 1.3 cipher suites and the remainder as the cipher list for TLS 1.2 and below, so a single variable covers both. Leaving it unset keeps OpenSSL’s defaults unchanged, and an unrecognized cipher name is rejected rather than silently ignored. The restriction covers Snowflake API traffic, cloud-storage (stage) transfers, OCSP/CRL fetches, and IdP requests. Requests issued by the AWS and Azure SDKs, and asynchronous connections, aren’t covered. For TLS 1.3 suites specifically they can’t be, because the Python standard library exposes no API for restricting them.
+- Added the `workload_identity_host` connection option that overrides the STS host used by AWS Workload Identity Federation, for endpoints the driver can’t derive from the region (such as an interface VPC endpoint). The default STS host is now resolved via botocore so partitions that don’t use `amazonaws.com`, such as ISO and European Sovereign Cloud, get the correct hostname. A privately routed host can’t be reached by Snowflake on the default GetCallerIdentity path, so a VPC or PrivateLink STS endpoint also requires `workload_identity_aws_use_outbound_token=True`.
+
+### Changes
+
+- OCSP certificate revocation checks are now off unless you opt in. Set `ocsp_fail_open=True` (fail-open) or `ocsp_fail_open=False` (fail-closed) to enable OCSP. The stored default is `None` (unset); only an explicit `True` or `False` opts in, so forwarding `DEFAULT_CONFIGURATION` as keyword arguments doesn’t turn OCSP on. `disable_ocsp_checks=True` (or `insecure_mode=True`) always turns OCSP off, including when `ocsp_fail_open` is also set. `disable_ocsp_checks=False` and `insecure_mode=False` are the stored defaults and aren’t an opt-in. The connection attribute `ocsp_fail_open` is no longer a report of whether OCSP is fail-open; it is the stored preference (`None` = unset, `True` = fail-open, `False` = fail-closed). Use `_ocsp_mode()` or `disable_ocsp_checks` to see whether checks are actually on. `ocsp_response_cache_filename` and `ocsp_root_certs_dict_lock_timeout` don’t turn OCSP on; if they’re set without an OCSP mode parameter they’re ignored and a warning is logged. The `SF_OCSP_FAIL_OPEN` environment variable still only switches fail-open versus fail-closed after OCSP is already on. Login `OCSP_MODE` telemetry now reports `DISABLE_OCSP_CHECKS` by default. The process-global `FEATURE_OCSP_MODE` is updated by each constructed REST client, except that a later default (OCSP off) client doesn’t overwrite a non-default already stored on the process, and a later `FAIL_OPEN` client doesn’t overwrite `FAIL_CLOSED`.
+- Raised the minimum `pyOpenSSL` requirement to 25.3.0, the first version providing `set_tls13_ciphersuites`. This doesn’t narrow the set of installable versions in practice: earlier releases cap `cryptography` below 46 and so were already uninstallable alongside the connector’s own `cryptography>=46.0.5` requirement.
+
+### Bug fixes
+
+- Fixed MD5 computation for Azure clouds.
+
 ## Version 4.7.5 (Sep 21, 2026)
 
 ### New features and updates
@@ -165,7 +233,6 @@ Initial public preview release of the connector built on the Universal Core. Thi
 - Added support for Python 3.14t (free-threaded).
   - **Note:** Python 3.14t is not supported on `win_arm64` because `cryptography` wheels are not yet available for that platform and architecture combination.
 - Improved URL validation reliability by replacing the hand-rolled regex in `is_valid_url()` with `urllib.parse.urlparse`.
-- Removed the pandas upper bound dependency constraint on the `[pandas]` extra to allow installation of pandas 3.0.0 and later.
 - Added native AKS (Azure Kubernetes Service) workload identity support. When running on AKS with workload identity configured, the connector automatically uses `WorkloadIdentityCredential` to authenticate using the injected service account credentials. OIDC backward compatibility is also supported.
 - Added the `workload_identity_aws_use_outbound_token` connection option (default `false`) to opt into AWS WIF JWT attestation using the STS `GetWebIdentityToken` action instead of the default SigV4 `GetCallerIdentity` method. This connection option supersedes the `SNOWFLAKE_ENABLE_AWS_WIF_OUTBOUND_TOKEN` environment variable introduced in version 4.5.0, which will be removed in a future release.
 

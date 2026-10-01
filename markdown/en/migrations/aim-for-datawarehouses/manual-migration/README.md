@@ -21,9 +21,45 @@ The SnowConvert AI CLI will also allow developers to create skills and agents th
 
 ## Prerequisites
 
-- macOS, Windows, or Linux
+- A supported operating system:
+  - **macOS** — Apple Silicon (arm64) or Intel (x64)
+  - **Windows** — Windows 10, Windows 11, or Windows Server (x64 or arm64). Also requires the [Microsoft Visual C++ Redistributable](#windows-visual-cpp-redistributable) (see below).
+  - **Linux** — x64 or arm64
 - Snowflake CLI: recommended for Snowflake connection configuration [SnowCLI Install Guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
 - A source database to extract from, or a set of code to use
+
+### Windows: Microsoft Visual C++ Redistributable (required)
+
+The SnowConvert AI CLI ships native components (for example, `scai_state`) that depend on the Microsoft Visual C++ runtime (`VCRUNTIME140.dll`). On Windows you must install the **Microsoft Visual C++ Redistributable** before running `scai`. If it is missing, commands fail to load the native library with an error such as:
+
+```
+Error: Unable to load DLL 'scai_state' or one of its dependencies: The specified module could not be found. (0x8007007E)
+```
+
+> [!IMPORTANT]
+> When this dependency is missing, code conversion may still appear to succeed while report generation — including the **Assessment Report** — silently fails. Install the redistributable to generate the full set of reports.
+
+Install the redistributable that matches your architecture:
+
+- **x64 (most common):** [Microsoft Visual C++ Redistributable (x64)](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+- **arm64 (Windows on Arm):** [Microsoft Visual C++ Redistributable (arm64)](https://aka.ms/vs/17/release/vc_redist.arm64.exe)
+
+Or install it with [winget](https://learn.microsoft.com/en-us/windows/package-manager/winget/):
+
+Copy code
+
+```
+# x64
+winget install --id Microsoft.VCRedist.2015+.x64 -e
+
+# Windows on Arm
+winget install --id Microsoft.VCRedist.2015+.arm64 -e
+```
+
+Most Windows systems with recent Microsoft development tooling already have this runtime. Restricted, locked-down, or freshly provisioned environments frequently do not, and are where this error is typically seen.
+
+> [!NOTE]
+> macOS and Linux do not require a separately installed C++ runtime. The native libraries the SnowConvert AI CLI needs are provided by the operating system or bundled with the installer.
 
 ## Snowflake Connection Setup
 
@@ -72,6 +108,9 @@ Copy code
 ```
 irm https://snowconvert.snowflake.com/storage/windows/prod/cli/install.ps1 | iex
 ```
+
+> [!IMPORTANT]
+> On Windows, the SnowConvert AI CLI also requires the [Microsoft Visual C++ Redistributable](#windows-visual-cpp-redistributable). Install it before running `scai`, otherwise reports (including the Assessment Report) fail to generate.
 
 ## Homebrew Installation (macOS only - legacy)
 
@@ -1232,6 +1271,24 @@ scai code add -i /path/to/source
 # For SQL Server / Redshift extraction
 scai code extract
 ```
+
+“Unable to load DLL ‘scai\_state’” or “The specified module could not be found. (0x8007007E)” (Windows)
+
+The SnowConvert AI CLI could not load a native component because the Microsoft Visual C++ runtime (`VCRUNTIME140.dll`) is not installed. You may see conversion appear to succeed while the main reports (including the Assessment Report) fail to generate.
+
+Install the [Microsoft Visual C++ Redistributable](#windows-visual-cpp-redistributable) for your architecture, then re-run the command:
+
+Copy code
+
+```
+# x64 (most common)
+winget install --id Microsoft.VCRedist.2015+.x64 -e
+
+# Windows on Arm
+winget install --id Microsoft.VCRedist.2015+.arm64 -e
+```
+
+If you cannot use `winget`, download the installer directly: [x64](https://aka.ms/vs/17/release/vc_redist.x64.exe) or [arm64](https://aka.ms/vs/17/release/vc_redist.arm64.exe).
 
 ## Supported Source Dialects
 

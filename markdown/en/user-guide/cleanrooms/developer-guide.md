@@ -65,6 +65,36 @@ Name your test Snowflake accounts meaningfully to indicate their typical usage: 
 account.” This can help when you have multiple test accounts and must choose an account on the clean
 rooms login page.
 
+## Iterating quickly in a same-organization collaboration
+
+When every collaborator in a collaboration belongs to the same organization, Snowflake skips the
+[automated security scan](/developer-guide/native-apps/security-run-scan) that otherwise runs when you create the collaboration
+and each time you add a template that references a code spec. The scan accounts for most of the wait time in both cases, so a
+same-organization collaboration is a much faster environment for developing and testing code specs and templates.
+
+A development cycle in a same-organization collaboration looks like this:
+
+1. Create a collaboration whose collaborators are all accounts in your own organization. For guidance on which accounts to use, see
+   [Setting up testing accounts](#setting-up-testing-accounts).
+2. [Register your code specs and templates](/user-guide/cleanrooms/custom-templates) and add the templates to the
+   collaboration. Iterate as much as you need: each new version becomes usable without waiting for a scan.
+3. Run analyses to validate your results.
+4. Before you add collaborators from other organizations, confirm that your collaboration passes the security scan. Turn the scan on in
+   either of these ways, and iterate until it passes:
+
+   - Create a separate test collaboration that sets `distribution: external`, and add your templates to it. Your development
+     collaboration stays unscanned, so you can continue to use it for iterating on your templates.
+   - Set `distribution: external` on the development collaboration itself. We recommend doing this only when you’re finished iterating, because
+     the setting is permanent.
+5. Add the collaborators from other organizations to the collaboration, or create a new collaboration that uses the code specs
+   and templates you verified. Because code specs and templates are registered in
+   [your account’s registry](/user-guide/cleanrooms/registries) rather than in a particular collaboration, a new collaboration
+   can reference the same registered template without you registering them again.
+
+For how Snowflake decides whether to run the scan, and how the override interacts with that, see the
+[`distribution` field](/user-guide/cleanrooms/spec-collaboration#label-dcr-collaboration-distribution) in the collaboration
+specification.
+
 ## References and resources
 
 The following topics are useful for Snowflake Data Clean Room developers.

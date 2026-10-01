@@ -40,7 +40,7 @@ Snowflake object that grants an SPCS service permission to reach external hosts 
 
 ## Extraction strategy
 
-How a Worker reads data from the source during migration. Platform-specific options include **regular** (default ODBC/JDBC query), **UNLOAD** (Redshift), **WRITE\_NOS** and **TPT** (Teradata), and **BCP** (SQL Server).
+How AIM DMV reads data from the source during **migration**, and how it extracts L3 signature Parquet during **validation**. The recommended extract is always the source’s native export: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** (BigQuery), or **regular** (PostgreSQL). Validation uses the same strategy names under `validation_configuration.extraction`. See [Extraction strategies](../manual-migration/data-migration-configuration-reference#extraction-strategies) and [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 ## Hybrid table
 

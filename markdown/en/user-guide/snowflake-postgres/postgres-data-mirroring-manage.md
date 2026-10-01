@@ -36,8 +36,8 @@ For the role that governs reading mirrored data, see
 
 ## Alter a mirror
 
-Use `alter_mirror` to change the refresh interval, or to add or remove tables and schemas from
-the mirror:
+Use `alter_mirror` to change the refresh interval, add or remove tables and schemas, or change
+the warehouse that runs the apply task:
 
 Copy code
 
@@ -48,9 +48,19 @@ CALL SNOWFLAKE.POSTGRES.ALTER_MIRROR(
     add_tables       => ['public.shipments'],
     remove_tables    => NULL,
     add_schemas      => NULL,
-    remove_schemas   => NULL
+    remove_schemas   => NULL,
+    warehouse        => 'my_big_wh'
 );
 ```
+
+`warehouse` converts a serverless apply task to a user-managed warehouse. Pass `warehouse => NULL`
+to convert back to serverless. Omit the `warehouse` parameter to leave compute unchanged: `NULL`
+selects serverless compute; it does not mean “leave this alone.” Grant
+`USAGE ON WAREHOUSE ... TO APPLICATION snowflake` before pointing the task at a warehouse.
+
+Changing `refresh_interval` or `warehouse` briefly suspends the apply task to reconfigure it, then
+restores its prior state. A mirror that was suspended stays suspended; use `resume_mirror` to start
+it again. `alter_mirror` does not resume a mirror that was stopped on purpose.
 
 Renaming a schema or table on PostgreSQL doesn’t require reconfiguring the mirror. The rename is
 captured by the source extension and automatically applied to the target database.
@@ -66,12 +76,17 @@ mirror was set up.
 Copy code
 
 ```
+-- Drop the mirror and its target database (default)
 CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('orders_mirror');
+
+-- Keep the target database and its tables
+CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('orders_mirror', drop_target_database => FALSE);
 ```
 
-The target database is left as an empty orphan. It can’t be reassigned to a new mirror (see
-[Target database names can’t be reused](#target-database-names-cant-be-reused)). The target database
-is owned by the `snowflake` application, so it can’t be dropped or modified directly. To drop it,
+By default the target database is dropped with the mirror. Pass `drop_target_database => FALSE`
+to keep it. A kept database can’t be reassigned to a new mirror (see
+[Target database names can’t be reused](#target-database-names-cant-be-reused)). It is owned by
+the `snowflake` application, so it can’t be dropped or modified directly. To drop it later,
 `ACCOUNTADMIN` can transfer ownership first:
 
 Copy code
@@ -79,14 +94,6 @@ Copy code
 ```
 GRANT OWNERSHIP ON DATABASE POSTGRESMIRRORTOSNOWFLAKE TO ROLE ACCOUNTADMIN;
 DROP DATABASE POSTGRESMIRRORTOSNOWFLAKE;
-```
-
-To drop the target database as part of `drop_mirror`, use `drop_target_database => TRUE`:
-
-Copy code
-
-```
-CALL SNOWFLAKE.POSTGRES.DROP_MIRROR(mirror_name => 'orders_mirror', drop_target_database => TRUE);
 ```
 
 Caution
@@ -145,15 +152,14 @@ Copy code
 -- 1. Identify and drop any user-created Iceberg tables that reference the mirror's
 --    catalog integration (see diagnostic query above)
 
--- 2. Drop each mirror (removes target tables, $changes feeds, and catalog integration)
+-- 2. Drop each mirror (default: also drops the target database)
 CALL SNOWFLAKE.POSTGRES.DROP_MIRROR('<mirror_name>');
 
 -- 3. Drop the Postgres instance
 DROP POSTGRES INSTANCE "<instance_name>";
-
--- 4. Optional: drop the orphaned target database
-DROP DATABASE <target_database>;
 ```
+
+If you kept a target database with `drop_target_database => FALSE`, transfer ownership and drop it as shown in [Drop a mirror](#drop-a-mirror).
 
 ### Automatic cleanup of orphaned mirrors
 
@@ -194,12 +200,18 @@ Copy code
 CALL SNOWFLAKE.POSTGRES.LIST_MIRRORED_TABLES('orders_mirror');
 ```
 
-Each table has one of the following status indicators:
+`state` is the coarse target-side indicator:
 
 - **`SNAPSHOTTING`**: Snowflake is copying the current contents of the Postgres table into
   Snowflake for the first time.
 - **`REPLICATING`**: The initial sync is complete and the mirror is continuously applying new
   changes from Postgres to Snowflake. This is the normal healthy state.
+
+The same result also includes source-side snapshot detail (`snapshot_state`, `snapshot_percentage`,
+`snapshot_rows_processed`, `snapshot_total_rows`, `snapshot_reason`, `pending_since`,
+`last_snapshot_error`, `last_snapshot_error_at`). Those columns are `NULL` if the source is
+unreachable. For a cheap fleet-wide view of onboarding progress, use
+`list_mirrors.initial_snapshot_tables_remaining` instead of looping `list_mirrored_tables`.
 
 For full result column details, see [Mirror management procedures](/user-guide/snowflake-postgres/postgres-data-mirroring-reference#label-mirror-management-procedures).
 
@@ -207,7 +219,8 @@ For full result column details, see [Mirror management procedures](/user-guide/s
 
 The `describe_mirror` procedure surfaces a rolling window of recent apply runs in the
 `recent_query_durations` column for a quick look at cadence and latency. Each apply run displays
-a `state` of `SUCCEEDED`, `FAILED`, or `CANCELLED`.
+a `state` of `SUCCEEDED`, `FAILED`, or `CANCELLED`. Apply lag is in `apply_lag_seconds`,
+`apply_lag_operations`, and `apply_lag_bytes`; flush lag is in `postgres_status`.
 
 For a full history, `ACCOUNTADMIN` can query Snowflake’s task history directly:
 
@@ -239,6 +252,32 @@ CALL SNOWFLAKE.POSTGRES.QUERY_ADMIN_LOG(
 
 If an apply task run fails, its error message is persisted on the mirror and surfaced by
 `describe_mirror` and `list_mirrors`. The next successful run clears the error.
+
+### Source-side snapshot progress
+
+On the Postgres instance, `snowflake_cdc.snapshot_progress` shows each initial copy that is
+running right now (percentage, rows processed, estimated total). An empty result is normal when
+no copy is in flight.
+
+Copy code
+
+```
+SELECT *
+FROM snowflake_cdc.snapshot_progress
+WHERE publication_name = 'orders_mirror';
+```
+
+`snowflake_cdc.snapshot_status` lists every tracked table’s snapshot state (`PENDING`, `SNAPSHOTTING`,
+`ERROR`, or `REPLICATING`), why it is snapshotting, and the last snapshot error. This is the catalog view
+that `list_mirrored_tables` surfaces from Snowflake.
+
+Copy code
+
+```
+SELECT schema_name, table_name, snapshot_state, reason, last_snapshot_error
+FROM snowflake_cdc.snapshot_status
+WHERE publication_name = 'orders_mirror';
+```
 
 ## Alert on mirror health
 
@@ -483,6 +522,66 @@ the rest: worker PID, error detail, and per-table snapshot state.
 
 For alert debugging, see [Troubleshoot mirrors](/user-guide/snowflake-postgres/postgres-data-mirroring-troubleshooting#label-alert-debug).
 
+## Alert on mirror lag
+
+Health alerts catch a suspended or errored mirror. Lag alerts catch a mirror that is still
+`ACTIVE` but falling behind. Replication has two hops: **Postgres → Iceberg** (the CDC worker)
+and **Iceberg → target tables** (the apply task). `describe_mirror` reports them separately:
+
+- `postgres_status:cdc_flush_lag_seconds` and `postgres_status:slot_lag_bytes` for the flush hop
+- `apply_lag_seconds`, `apply_lag_operations`, and `apply_lag_bytes` for the apply hop
+
+Add the time terms for end-to-end lag, and the byte terms for end-to-end WAL volume. A `NULL` on
+the source-side terms or on `apply_lag_operations` / `apply_lag_bytes` means “not known,” never
+“caught up.”
+
+Copy code
+
+```
+CREATE OR REPLACE ALERT ops.public.mirror_total_lag
+  WAREHOUSE = ops_wh
+  SCHEDULE = '5 MINUTE'
+  IF (EXISTS (
+      SELECT 1
+      FROM TABLE(snowflake.postgres.describe_mirror('orders_mirror'))
+      WHERE postgres_status:cdc_flush_lag_seconds::NUMBER
+            + apply_lag_seconds > 3600
+  ))
+  THEN CALL SYSTEM$SEND_EMAIL(
+      'mirror_alert_email',
+      'oncall@example.com',
+      'Postgres mirror lag exceeds 1 hour',
+      'Run: SELECT * FROM TABLE(snowflake.postgres.describe_mirror(''orders_mirror''));'
+  );
+```
+
+Alert on one hop at a time when you want a different owner for each failure:
+
+Copy code
+
+```
+-- Flush hop only: the source is not keeping Iceberg current
+WHERE postgres_status:cdc_flush_lag_seconds::NUMBER > 3600
+
+-- Apply hop only: the target is not consuming what the source has flushed
+WHERE apply_lag_seconds > 3600
+```
+
+Alert on backlog volume instead of (or in addition to) freshness:
+
+Copy code
+
+```
+-- Flush backlog, in source WAL bytes (1 GiB)
+WHERE postgres_status:slot_lag_bytes::NUMBER > 1073741824
+
+-- Apply backlog, in operations
+WHERE apply_lag_operations > 1000
+```
+
+Use `last_applied_commit_lsn` and `last_applied_commit_time` when you need a read-your-writes
+check rather than a lag threshold.
+
 ## Suspend and resume mirroring
 
 You have two options when suspending a Postgres instance that has active mirrors: leave the mirror
@@ -511,13 +610,16 @@ Copy code
 CALL SNOWFLAKE.POSTGRES.SUSPEND_MIRROR('orders_mirror');
 ```
 
-After resuming the Postgres instance, restart the mirror:
+After resuming the Postgres instance, resume the mirror in place:
 
 Copy code
 
 ```
-CALL SNOWFLAKE.POSTGRES.RESTART_MIRROR('orders_mirror');
+CALL SNOWFLAKE.POSTGRES.RESUME_MIRROR('orders_mirror');
 ```
+
+If `resume_mirror` raises `RESTART_REQUIRED`, the unapplied operations have aged out. Use
+`restart_mirror` instead (see [Mirror auto-suspend after repeated failures](#label-mirror-auto-suspend)).
 
 Caution
 
@@ -544,7 +646,26 @@ a Friday-to-Monday outage with time left for investigation.
 When a mirror is auto-suspended, `describe_mirror` shows the mirror as suspended and includes the
 error from the most recent failed apply run.
 
-Once you’ve resolved the underlying problem, restart the mirror:
+Once you’ve resolved the underlying problem, resume in place. `resume_mirror` checks that the
+unapplied operations are still on the source before it starts the apply task. If those operations
+have aged out of the metalog, it raises `RESTART_REQUIRED` and leaves the mirror suspended:
+
+Copy code
+
+```
+CALL SNOWFLAKE.POSTGRES.RESUME_MIRROR('orders_mirror');
+```
+
+Copy code
+
+```
+[RESTART_REQUIRED] Cannot resume mirror orders_mirror in place: the operations
+it has not applied are no longer on the source (...). Use restart_mirror to
+re-snapshot the mirror instead.
+```
+
+If `resume_mirror` succeeds, the mirror continues from the operation it stopped at. If it returns
+`RESTART_REQUIRED`, re-snapshot instead:
 
 Copy code
 

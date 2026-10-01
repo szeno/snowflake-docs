@@ -417,6 +417,7 @@ The following table describes the OAuth parameters for custom MCP servers:
 | OAUTH\_CLIENT\_AUTH\_METHOD | STRING | No | CLIENT\_SECRET\_BASIC | Authentication method: `CLIENT_SECRET_BASIC`, `CLIENT_SECRET_POST`, or `NONE` for a public client that authenticates with a static client ID and no client secret. `NONE` applies only when `TYPE = OAUTH2`. |
 | OAUTH\_ALLOWED\_SCOPES | LIST | No | None | List of OAuth scopes to request from the external service provider. Required by some providers to grant access to specific APIs or resources. |
 | OAUTH\_REFRESH\_TOKEN\_VALIDITY | INTEGER | No | 0 (never expires) | Validity period, in seconds, of the OAuth refresh token issued by the external MCP service. When set, the value must be at least 3600 (one hour). The default of 0 is treated as a refresh token that never expires, so set this value explicitly to ensure users re-authenticate periodically. |
+| OAUTH\_RESOURCE | STRING | No | None | Resource indicator sent as `resource` on the authorization and token requests. Must be an absolute URI. Applies only when `TYPE = OAUTH2`; derived automatically from `OAUTH_RESOURCE_URL` for `OAUTH_DYNAMIC_CLIENT`. |
 
 Expand
 

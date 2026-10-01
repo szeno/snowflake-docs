@@ -51,7 +51,7 @@ SQL:
     ```
 
 The instance family identifies the type of machine you want to provision
-for compute pool nodes. Specifying instance family in
+for compute pool nodes. Specifying an instance family when
 creating a compute pool is similar to specifying warehouse size
 (XSMALL, SMALL, MEDIUM, LARGE and so on) when creating a warehouse. The following table lists the available machine types. You can also use the [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families) command to get this list of available instance families.
 
@@ -63,7 +63,7 @@ If `placement_group` is not specified, Snowflake places compute pool nodes based
 
 If you choose to specify a `placement_group`, you have two options:
 
-- **Specify a specific placement group:** When you specify `placement_group`, Snowflake provisions all nodes for that pool from the specified placement group. You should set `placement_group` to a specific placement group in the following situations:
+- **Specify a named placement group:** When you specify `placement_group`, Snowflake provisions all nodes for that pool from the specified placement group. You should set `placement_group` to a specific placement group in the following situations:
 
   - You need reduced cross-node latency and lower communication costs for highly
     interactive, tightly coupled services.
@@ -93,7 +93,7 @@ If you choose to specify a `placement_group`, you have two options:
   - Service instances distribution: When there is more than one service instance, Snowflake attempts to evenly distribute the instances across placement groups.
     Sometimes even distribution can’t be achieved because of constraints, such as capacity limitations.
   - Outage behavior: In the current implementation, if a placement group fails, Snowflake doesn’t automatically fail over nodes to
-    healthy placement groups. You should overprovision your service instances (N+1) so that nodes in the remaining placement groups can handle the traffic load during an outage. In the event of placement group outage, Snowflake takes the following actions:
+    healthy placement groups. You should overprovision your service instances (N+1) so that nodes in the remaining placement groups can handle the traffic load during an outage. In the event of a placement group outage, Snowflake takes the following actions:
     - Stops placing new service instances in the impacted placement group.
     - Routes ingress traffic to service instances in the healthy placement groups.
     - Recreates service instances in the impacted placement group on the healthy placement groups.
@@ -272,7 +272,7 @@ node active for up to a month.
 
 ### Maintenance window
 
-In general, scheduled maintenance occurs every Saturday from 8 PM to Sunday at 8 AM, and every Sunday from 8 PM to Monday at 8 AM, in the timezone of the region where your account is hosted. For [early access accounts](/user-guide/intro-releases#label-releases-early-access-to-full-releases), maintenance takes place daily starting at 11 PM and can last up to 6 hours.
+In general, scheduled maintenance occurs every Saturday from 8 PM to Sunday at 8 AM, and every Sunday from 8 PM to Monday at 8 AM, in the time zone of the region where your account is hosted. For [early access accounts](/user-guide/intro-releases#label-releases-early-access-to-full-releases), maintenance takes place daily starting at 11 PM and can last up to 6 hours.
 
 ### Service disruption
 

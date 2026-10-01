@@ -14,8 +14,31 @@ with your own data. This topic describes how to reshare incoming data.
 - Resharing of apps is not supported.
 - You can’t attach data objects from imported databases or Uniform Listing Locators (ULLs) directly to another share. To reshare data
   objects from an incoming listing, you must create a secure view in your database.
-- Resharers can only reshare tables, dynamic tables, and views from the incoming data products allowed for resharing.
+- Resharers can reshare tables, dynamic tables, and views from incoming data products allowed for resharing by creating a secure view.
+  UDFs and UDTFs can be reshared only from a `CALLER`-mode listing. For the full comparison, see
+  [Objects supported for sharing and resharing](/collaboration/resharing-as-provider#objects-supported-for-sharing-and-resharing).
 - Reshared listings don’t support disaster recovery.
+- If the provider’s listing uses `reshare_policy_enforcement: CALLER`, the listing must be from the same Snowflake organization. You can
+  create secure views that reference provider data either via the listing’s ULL or via a mounted imported database:
+
+  Copy code
+
+  ```
+  -- Option 1: reference via ULL
+  CREATE SECURE VIEW my_db.public.my_view
+    AS SELECT * FROM ORGDATACLOUD$INTERNAL$MY_LISTING.schema.table;
+
+  -- Option 2: reference via mounted imported database
+  CREATE SECURE VIEW my_db.public.my_view
+    AS SELECT * FROM imported_db.schema.table;
+  ```
+- If the provider’s listing uses `reshare_policy_enforcement: CALLER`, your reshared listing must also use
+  `reshare_policy_enforcement: CALLER`. You cannot switch to `RESHARER` mode when resharing data from a CALLER-mode provider.
+
+Note
+
+To reshare UDFs or UDTFs from a provider’s data product, the provider’s listing must have `reshare_policy_enforcement` set to `CALLER`.
+Resharing UDFs and UDTFs is not supported when the provider uses `RESHARER` mode.
 
 ## Resharing workflow
 

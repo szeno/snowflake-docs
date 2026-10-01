@@ -22,6 +22,33 @@ Run full row-level validation on the ORDERS and CUSTOMERS tables, but keep the r
 
 The agent sets `row_validation: true` for the tables you named (globally it stays off). See [Validation levels](./data-validation#validation-levels).
 
+## Choosing an L3 extraction strategy
+
+L3 needs a source-side signature extract before Snowflake can compare row hashes. The optional `validation_configuration.extraction` block uses the **same strategy names as data migration**. The recommended L3 extract is always the source’s native export:
+
+| Source | Recommended strategy |
+| --- | --- |
+| Amazon Redshift | **UNLOAD** (`unload`) |
+| Teradata | **WRITE\_NOS** (`write_nos`) |
+| Oracle | **DBMS\_CLOUD** (`dbms_cloud`) |
+| SQL Server / Azure Synapse | **CETAS** (`cet_as`) |
+| BigQuery | **EXPORT DATA** (`export_data`) |
+| PostgreSQL | **regular** (COPY, `use_copy = true`) |
+
+Expand
+
+Show lessSee more
+
+**Prompt:**
+
+Copy code
+
+```
+Use UNLOAD for L3 signature extraction on this Redshift validation workflow, with the same external stage as migration
+```
+
+The agent sets `validation_configuration.extraction.strategy` and `externalStage` (and Worker TOML fields if needed). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) for the property shape, platform gating, and [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage). Snowflake stage grants and object-store IAM are on [Required privileges](./required-privileges#external-stage-and-storage-integration).
+
 ## Re-validating only what changed
 
 Scheduled re-validation of a large table doesn’t have to compare every partition every time. **Incremental validation** detects which partitions changed since the last run and re-validates only those. It’s read-only: nothing is written to the target.

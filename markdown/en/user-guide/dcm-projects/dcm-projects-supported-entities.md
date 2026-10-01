@@ -53,6 +53,8 @@ For objects, grants, and attachments in preview, the changeset format in `plan_r
 **Grants:**
 
 - [GRANT](#label-dcm-projects-object-type-grant)
+- [Future grants](#label-dcm-projects-future-grants)
+- [GRANT ON ALL](#label-dcm-projects-grant-on-all)
 - [OWNERSHIP grants](#label-dcm-projects-object-type-grant-ownership)
 - [Inherited grants](#label-dcm-projects-inherited-grants)
 - [Container-level MANAGE GRANTS](#label-dcm-projects-container-manage-grants)
@@ -60,6 +62,7 @@ For objects, grants, and attachments in preview, the changeset format in `plan_r
 **Attachments:**
 
 - [ATTACH Data Metric Function](#label-dcm-projects-object-type-dmf)
+- [ATTACH Masking Policy](#label-dcm-attach-masking-policy)
 - [ATTACH Tag](#label-dcm-projects-attach-tag)
 
 ## Objects
@@ -119,6 +122,8 @@ You can define [Code Bundles](/developer-guide/code-bundles/code-bundles) direct
 non-SQL jobs, such as Python, on Snowflake compute. DCM Projects manages the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across
 environments using Jinja templating.
 
+#### Import Code Bundle files as a project asset
+
 Place the bundle source files inside the DCM project root folder but outside `sources/`. A bundle folder contains the
 `code_bundle.yml` specification, the notebook that serves as the entry point, and any Python helper modules that the notebook
 imports:
@@ -136,8 +141,10 @@ my_dcm_project/
         └── code_bundle.yml
 ```
 
-Declare the source folder as a [project asset](#label-dcm-project-assets), then reference its asset name in the
+Declare the source files as a [project asset](#label-dcm-project-assets), then reference the asset name in the
 `DEFINE CODE BUNDLE` statement:
+
+During deployment, DCM Projects uses the imported files to create or update the Code Bundle.
 
 Copy code
 
@@ -159,6 +166,8 @@ The contents of the asset become the root of the bundle version, so `code_bundle
 the asset. Point the pattern at the bundle folder itself (`'code_bundles/my_job/**/*'`), not its parent
 (`'code_bundles/**/*'`). DCM Projects doesn’t validate this layout. A bundle assembled with the wrong pattern deploys successfully but
 fails when you execute it.
+
+#### Execute a Code Bundle
 
 The entry point is specified when you execute the bundle, for example from a task:
 
@@ -304,8 +313,8 @@ Available to all accounts.
 **Limitations:**
 
 - `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are still in Public Preview.
-- **Masking policy:** Attaching a masking policy to a table or view column as part of a DCM project definition isn’t yet
-  supported; see [Attachments](#label-dcm-projects-attachments).
+- **Masking policy:** `DEFINE MASKING POLICY` doesn’t support attaching a masking policy inline as part of an object
+  definition. Use [ATTACH Masking Policy](#label-dcm-attach-masking-policy) to manage the attachment separately.
 - **Network policy:**
   - You can’t replace an existing network policy while it’s assigned to an account, security integration, or user. Unassign
     the policy before redeploying a replacement.
@@ -352,10 +361,6 @@ Database roles are scoped to a specific database and can be granted to account r
 DCM Projects supports defining schemas.
 
 ### Semantic view
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 DCM Projects supports defining [semantic views](/user-guide/views-semantic/overview). Every deployment of a definition change reconciles the full semantic view definition: tables, relationships, facts, dimensions, metrics, AI instructions, and verified queries.
 
@@ -459,8 +464,6 @@ This approach is especially useful for dashboard and data app deployments that d
 dynamic tables that are also managed by DCM Projects. You can version and promote the data pipeline and the app that consumes it
 together across environments.
 
-In Public Preview, `DEFINE STREAMLIT` supports only assets referenced by an `asset://` URI in the `FROM` clause.
-
 [![](/static/images/dcm-projects/streamlit-in-dcm-project.png)](/static/images/dcm-projects/streamlit-in-dcm-project.png)
 
 #### Create a DCM project for Streamlit
@@ -517,10 +520,11 @@ DEFINE STREAMLIT DEMO{{env_suffix}}.SERVE.MY_DASHBOARD
 ;
 ```
 
-#### Import a Streamlit app as an asset
+#### Import Streamlit files as a project asset
 
-Import the Streamlit app as an asset and reference it with an `asset://` URI in the `FROM` clause. Asset files must be inside
-the DCM project root folder but outside the `sources/` folder.
+Declare the Streamlit files as a project asset and reference the asset with an `asset://` URI in the `FROM` clause. Asset files
+must be inside the DCM project root folder but outside the `sources/` folder. During deployment, DCM Projects uses the imported files
+to create or update the Streamlit app.
 
 In `manifest.yml`, define the Streamlit folder as an asset in a top-level `assets` section. For each asset, use `path` to
 specify one path or `paths` to specify a list of paths. Each asset path must be a valid glob expression or file path and must
@@ -624,14 +628,10 @@ DEFINE TABLE MY_DB.MY_SCHEMA.ORDERS (
 
 DCM Projects supports defining tags. For more information, see [Introduction to object tagging](/user-guide/object-tagging/introduction).
 
-**Unsupported attributes:**
-
-- Propagate
-
 **Limitations:**
 
 - All [CREATE OR ALTER TAG limitations](/sql-reference/sql/create-tag#create-or-alter-tag-usage-notes)
-  apply to `DEFINE TAG`. They don’t apply to `ATTACH TAG`.
+  apply to `DEFINE TAG`.
 
 ### Task
 
@@ -819,16 +819,25 @@ and DCM Projects doesn’t remove them.
 Support for a `GRANT` statement that references a user or integration doesn’t mean that DCM Projects can define or manage the lifecycle of that
 user or integration. Object-definition support and grant-target support are separate.
 
-`GRANT ON ALL` and `GRANT ON FUTURE` aren’t recommended in DCM Projects. Use [inherited grants](#label-dcm-projects-inherited-grants)
-instead, which apply to all current and future objects of a type within a container and offer better performance for DCM Projects executions.
-
-Note
-
-Support for `GRANT ON ALL` and `GRANT ON FUTURE` in DCM Projects will be deprecated in a future behavior change release in favor of inherited grants.
-
 **Unsupported `GRANT` types:**
 
 - CALLER grants
+
+### GRANT ON FUTURE
+
+DCM Projects supports `GRANT ON FUTURE`, which grants privileges on future objects of a specified type within a container.
+
+Note
+
+`GRANT ON FUTURE` is supported but isn’t recommended in DCM Projects and will be deprecated in a future behavior change release. Use [inherited grants](#label-dcm-projects-inherited-grants) instead, which apply to current and future objects and offer better performance for DCM Projects executions. Replacing `GRANT ON FUTURE` with an inherited grant expands the grant to existing objects. Review the affected existing and future objects before migrating.
+
+### GRANT ON ALL
+
+DCM Projects supports `GRANT ON ALL`, which grants privileges on all existing objects of a specified type within a container.
+
+Note
+
+`GRANT ON ALL` is supported but isn’t recommended in DCM Projects and will be deprecated in a future behavior change release. Use [inherited grants](#label-dcm-projects-inherited-grants) instead, which apply to current and future objects and offer better performance for DCM Projects executions. Replacing `GRANT ON ALL` with an inherited grant expands the grant to future objects. Review the affected existing and future objects before migrating.
 
 ### OWNERSHIP grants
 
@@ -879,7 +888,7 @@ In the same DCM project:
 Keep the ownership transfer and the other privilege grants on the target object in the same DCM project. For more information, see
 [OWNERSHIP grants](#label-dcm-projects-object-type-grant-ownership).
 
-### Inherited grants
+### INHERITED grants
 
 DCM Projects supports [inherited grants](/user-guide/inherited-grants-intro), which let you declaratively define a single grant on a
 container (`ACCOUNT`, `DATABASE`, or `SCHEMA`) that automatically applies to every current and future object of a specified type
@@ -980,10 +989,9 @@ DCM Projects uses `ATTACH` statements to associate objects — such as data qual
 
 **Limitations:**
 
-- Attaching masking policies (to table or view columns) or row access policies (to tables or views) isn’t yet
-  supported. You can attach either policy type manually outside of DCM Projects. DCM Projects definitions for table objects
-  ignore any attached masking or row access policies and don’t revoke them on redeploy, even when the definitions
-  don’t contain the policies.
+- Attaching row access policies to tables or views isn’t yet supported. You can attach a row access policy manually outside of
+  DCM Projects. DCM Projects definitions for table objects ignore attached row access policies and don’t revoke them on redeploy, even when
+  the definitions don’t contain the policies.
 
 ### ATTACH Data Metric Function
 
@@ -1053,6 +1061,46 @@ information about this property, see [Required privilege on the table or view](/
   the role, remove the `ATTACH` statement, deploy, then redefine it with the new `EXECUTE AS ROLE` value.
 
 To see all available system DMFs, query `SHOW DATA METRIC FUNCTIONS IN DATABASE SNOWFLAKE`.
+
+### ATTACH Masking Policy
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Use `ATTACH MASKING POLICY` to declaratively assign a masking policy to one or more columns in tables, Apache Iceberg™ tables, views, or dynamic tables. The masking policy and target columns don’t need to be defined in the same DCM project. You can reference masking policies and columns anywhere in the account if the deploying role has the required privileges. For more information, see [Masking policy privileges](/user-guide/security-column-intro#label-security-column-privileges-masking-policies).
+
+**Syntax:**
+
+Copy code
+
+```
+ATTACH MASKING POLICY <policy_fqn>
+  TO { TABLE | ICEBERG TABLE | VIEW | DYNAMIC TABLE } <object_fqn>
+    COLUMN <column_name> [ USING ( <column_name> [ , ... ] ) ]
+  [ , { TABLE | ICEBERG TABLE | VIEW | DYNAMIC TABLE } <object_fqn>
+    COLUMN <column_name> [ USING ( <column_name> [ , ... ] ) ] ... ];
+```
+
+To attach a masking policy to multiple table columns and use additional columns in the masking-policy conditions:
+
+Copy code
+
+```
+ATTACH MASKING POLICY MY_DB.GOV.EMAIL_MASK_BY_REGION
+  TO TABLE MY_DB.SALES.CUSTOMERS COLUMN EMAIL USING (EMAIL, REGION),
+     TABLE MY_DB.SALES.CONTACTS COLUMN EMAIL USING (EMAIL, REGION);
+```
+
+A column can have only one masking policy. DCM Projects always applies the declared masking policy with the `FORCE` option so that it can replace an existing policy. The result depends on the existing attachment:
+
+- If a process outside DCM Projects attached the existing masking policy, DCM Projects replaces it during deployment.
+- If another DCM project manages the existing masking policy attachment, the deployment fails before DCM Projects replaces it. This applies whether the projects declare the same policy or different policies in the attachment statement.
+- If the current DCM project had managed the existing attachment, DCM Projects updates it in place.
+
+Warning
+
+When you remove an `ATTACH MASKING POLICY` statement from the definitions, DCM Projects removes the masking policy from the column during the next deployment. DCM Projects doesn’t restore a policy that was attached before the project managed the attachment.
 
 ### ATTACH Tag
 

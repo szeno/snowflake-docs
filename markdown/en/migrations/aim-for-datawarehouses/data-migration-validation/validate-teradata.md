@@ -8,7 +8,7 @@ Before you validate Teradata data, make sure the following are in place:
 
 - **Teradata connectivity on Workers**: Same as data migration. Prefer **`teradatasql`** when available; otherwise set **`odbc_driver`** to the exact registered driver name. Optional **`dbc_name`**, port **1025** by default, optional **`authentication`** (TD2, LDAP, KRB5).
 - **HASH\_MD5 UDF (required for L3 row fingerprinting)**: See [HASH\_MD5 UDF](#hash_md5-udf) below.
-- **No WRITE\_NOS or TPT for validation-only Workers**: Validation reads the source over SQL (metrics and row-level validation). You don’t need **`write_nos_*`** TOML or **`tbuild`** on a host solely running validation, unless the same Worker also executes migration **`tpt`** or **`write_nos`** tasks.
+- **L3 object storage (Recommended)**: Use **WRITE\_NOS** (`extraction.strategy: write_nos`) so signatures land on S3, Azure Blob, or GCS (`write_nos_location_scheme` `/s3/`, `/az/`, or `/gs/`), with the same Worker `write_nos_*` TOML and Snowflake external stage as migration. Schema and metrics validation still read Teradata over SQL. **`tbuild`** isn’t required for validation. See [Object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage) and [External stage and storage integration](./required-privileges#external-stage-and-storage-integration).
 
 ## HASH\_MD5 UDF
 
@@ -96,8 +96,8 @@ password = "your_password"
 | Topic | Data migration (load) | Cloud Data Validation |
 | --- | --- | --- |
 | **Purpose** | Move data with `regular`, `write_nos`, or `tpt` | Compare live Teradata tables/views to Snowflake with schema, metrics, and row-level validation |
-| **`write_nos_*` TOML** | Required when strategy is `write_nos` | **Not** required for validation-only workloads |
-| **`tbuild` / TTU** | Required for `tpt` migration tasks | **Not** required for validation-only Workers |
+| **`write_nos_*` TOML** | Required when strategy is `write_nos` | Required only when validation sets `extraction.strategy: write_nos` for L3 signatures |
+| **`tbuild` / TTU** | Required for `tpt` migration tasks | **Not** required for validation (DV does not use a `tpt` strategy; use `regular` or `write_nos`) |
 
 Expand
 
@@ -217,7 +217,7 @@ Use `comparison_configuration.type_mapping_file_path` to supply a custom mapping
   ```
   Run cloud data validation for my Teradata tables, with schema and metrics validation on all tables and row-level validation on sales_transactions
   ```
-- **After `tpt` or `write_nos` migrations**: Validation still reads the source over SQL. Ensure Teradata objects you validate are reachable and match the validation workflow names.
+- **After `tpt` or `write_nos` migrations**: Schema and metrics still read Teradata over SQL. For L3, reuse **WRITE\_NOS** with the same external stage and Worker `write_nos_*` settings as migration. Ensure Teradata objects you validate are reachable and match the validation workflow names.
 - **L3 cost control**: Enable **`early_stopping`** and tune **`max_failed_rows_number`** per table to avoid scanning partitions on a table that has clearly failed.
 - **Partitioning**: Use **`column_names_to_partition_by`** so wide tables don’t time out on metrics and row-level validation scans.
 

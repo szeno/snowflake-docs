@@ -466,6 +466,7 @@ Currently, this feature is only available on Amazon Web Services (AWS).
     - This clause only applies to interactive warehouses created with the INTERACTIVE keyword.
     - If an interactive table is already associated with the warehouse, the command succeeds but has no effect.
     - An interactive table can be associated with multiple interactive warehouses.
+    - You can attach up to 100 tables to an interactive warehouse.
     - Cache warming may take significant time depending on the size of the data.
 
     `table_name`

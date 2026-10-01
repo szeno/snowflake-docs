@@ -16,4 +16,4 @@ compute pool definition.
 For pricing information, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 For a complete list of available instance families and specifications, see
-[Snowpark Container Services: Understanding Instance families](/developer-guide/snowpark-container-services/instance-families).
+[Snowpark Container Services: Understanding instance families](/developer-guide/snowpark-container-services/instance-families).

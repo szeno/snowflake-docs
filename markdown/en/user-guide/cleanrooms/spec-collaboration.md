@@ -26,6 +26,7 @@ spec_type: collaboration        # Required: Must be "collaboration"
 name: <collaboration_name>      # Required: Unique name (max 75 chars)
 description: <collaboration_description>  # Optional: Description (max 1,000 chars)
 owner: <owner_alias>            # Required: Alias of owner
+distribution: external          # Optional: Always run automated security scan
 
 collaborator_identifier_aliases:  # Required: Map aliases to account identifiers
   <alias_1>: <account_identifier_1>  # One or more alias mappings...
@@ -58,6 +59,22 @@ analysis_runners:               # Required: Who can run analyses
 
 `owner: owner_alias`
 :   Alias of the collaboration owner, as defined in `collaborator_identifier_aliases`.
+
+`distribution: external` (*Optional*)
+:   Snowflake sets a collaboration’s
+    [distribution](/developer-guide/native-apps/security-run-scan#label-native-apps-distribution-property-set) automatically from
+    the organizations of its collaborators: `INTERNAL` when every collaborator is in one organization, and `EXTERNAL` when the
+    collaborators span two or more. Only an `EXTERNAL` collaboration runs the
+    [automated security scan](/developer-guide/native-apps/security-run-scan), which Snowflake must approve before collaborators can
+    use the collaboration.
+
+    Set this field to override a same-organization collaboration to `EXTERNAL`, so that Snowflake scans it anyway. Setting it is
+    permanent: you can’t remove the field or set it to `INTERNAL`. The field has no effect on a cross-organization collaboration,
+    because those are already `EXTERNAL`.
+
+    The field appears in the specification returned by
+    [VIEW\_COLLABORATIONS](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-view-collaborations-reference)
+    only when you set it.
 
 `collaborator_identifier_aliases`
 :   A mapping of collaborator aliases to their [Data Sharing Account Identifiers](/user-guide/admin-account-identifier#label-account-name-data-sharing). Only users listed

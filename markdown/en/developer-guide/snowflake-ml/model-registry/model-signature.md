@@ -87,12 +87,12 @@ from snowflake.ml.model.model_signature import ModelSignature, FeatureSpec, Data
 
 sig = ModelSignature(
     inputs=[
-        FeatureSpec(dtype=DataType.DOUBLE, name=f_0),
-        FeatureSpec(dtype=DataType.INT64, name=sparse_0_fixed_len, shape=(5, 5)),
-        FeatureSpec(dtype=DataType.INT64, name=sparse_1_variable_len, shape=(-1,)),
+        FeatureSpec(dtype=DataType.DOUBLE, name="f_0"),
+        FeatureSpec(dtype=DataType.INT64, name="sparse_0_fixed_len", shape=(5, 5)),
+        FeatureSpec(dtype=DataType.INT64, name="sparse_1_variable_len", shape=(-1,)),
     ],
     outputs=[
-        FeatureSpec(dtype=DataType.FLOAT, name=output),
+        FeatureSpec(dtype=DataType.FLOAT, name="output"),
     ]
 )
 ```

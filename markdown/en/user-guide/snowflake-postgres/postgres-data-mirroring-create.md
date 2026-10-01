@@ -34,6 +34,14 @@ additional compute and storage alongside your normal traffic. On smaller instanc
 matters most, so for sustained high write throughput use STANDARD\_L or larger with extra
 disk (for example, >250 GB) to absorb load spikes without the mirror falling behind.
 
+Each mirror’s walsender runs at elevated CPU priority by default
+(`snowflake_cdc.walsender_cpu_priority`). Decoding also raises `logical_decoding_work_mem` per
+mirror (derived from `shared_buffers` unless you set it explicitly).
+`snowflake_cdc.max_publications` caps how many mirrors an instance accepts; the default is twice
+the instance’s online CPU count. See
+[Source instance resources](/user-guide/snowflake-postgres/postgres-data-mirroring-create#label-source-instance-resources)
+for details.
+
 Disk size also affects write-ahead log (WAL) retention: `max_slot_wal_keep_size` defaults to one-tenth of the
 allocated disk. If apply lag causes the WAL backlog to exceed that limit, Postgres invalidates
 the replication slot and mirroring automatically re-snapshots all tables after 10 minutes. See
@@ -51,6 +59,22 @@ which limits the total number of mirrors (and any other logical replication subs
 single instance. If you plan to run many mirrors, see
 [CREATE MIRROR fails if max\_replication\_slots is too low](/user-guide/snowflake-postgres/postgres-data-mirroring-troubleshooting#label-replication-slot-limit)
 for how to increase the limit before you reach it.
+
+### Source instance resources
+
+Mirroring is prioritized over other work on the source instance because a walsender that falls
+behind pins WAL and can force a full re-snapshot.
+
+- **CPU.** Each mirror’s walsender runs at elevated scheduling priority by default
+  (`snowflake_cdc.walsender_cpu_priority = high`). Decoding wins CPU contests against client
+  backends, which can reduce client write throughput on a saturated instance. Set the parameter
+  to `low` to yield to client queries, or `normal` to leave the inherited priority unchanged.
+- **Memory.** Each mirror raises `logical_decoding_work_mem` for its decoding session. By default
+  (`-1`) the limit is a quarter of `shared_buffers` divided across the mirrors on the instance,
+  capped at 1 GB each. An explicit size is used as-is.
+- **Mirror count.** `snowflake_cdc.max_publications` refuses new `create_mirror` calls once the
+  instance hosts that many mirrors. The default is twice the instance’s online CPU count. Set
+  `-1` for no limit. Lowering the setting does not drop existing mirrors.
 
 ### Source table requirements
 
@@ -100,6 +124,23 @@ GRANT APPLICATION ROLE snowflake.postgres_mirror_admin TO ROLE "my_role";
 GRANT USAGE ON POSTGRES INSTANCE "my_instance" TO APPLICATION snowflake;
 ```
 
+If you create Iceberg targets on your own storage, also grant the volume to the application
+before you call `create_mirror`:
+
+Copy code
+
+```
+GRANT USAGE ON EXTERNAL VOLUME my_iceberg_volume TO APPLICATION snowflake;
+```
+
+If you pin the apply task to a user-managed warehouse, grant warehouse usage the same way:
+
+Copy code
+
+```
+GRANT USAGE ON WAREHOUSE my_wh TO APPLICATION snowflake;
+```
+
 Replace `"my_instance"` with the name of your Postgres instance,
 and replace `"my_role"` with the name of the role that will manage mirrors.
 
@@ -130,7 +171,10 @@ CALL SNOWFLAKE.POSTGRES.CREATE_MIRROR(
 );
 ```
 
-You must specify either `postgres_tables` or `postgres_schemas`, but not both. The
+You must specify `postgres_tables`, `postgres_schemas`, or both. `postgres_tables` tracks exactly
+the tables you list. `postgres_schemas` tracks every current and future table in those schemas.
+See [Table-level vs schema-level replication](/user-guide/snowflake-postgres/postgres-data-mirroring#label-table-level-vs-schema-level-replication)
+for how to choose. The
 `refresh_interval` defaults to `'10 minutes'` and accepts values like `'30 seconds'`, `'1 minute'`,
 `'1 hour'`, or `'1 day'` (maximum). For full parameter details, see
 [create\_mirror](/user-guide/snowflake-postgres/postgres-data-mirroring-reference#label-mirror-management-procedures).
@@ -153,8 +197,27 @@ CALL SNOWFLAKE.POSTGRES.CREATE_MIRROR(
 );
 ```
 
-Iceberg target tables use Snowflake-managed storage. External catalogs and external storage are
-not supported.
+Iceberg target tables use Snowflake-managed storage unless you pass `external_volume`. External
+catalogs aren’t supported. To write Iceberg targets to your own storage, grant the volume first,
+then pass both `target_table_type => 'ICEBERG'` and `external_volume`:
+
+Copy code
+
+```
+GRANT USAGE ON EXTERNAL VOLUME my_iceberg_volume TO APPLICATION snowflake;
+
+CALL SNOWFLAKE.POSTGRES.CREATE_MIRROR(
+    mirror_name         => 'orders_mirror',
+    postgres_instance   => 'mirror-test-sql',
+    postgres_database   => 'postgres',
+    target_database     => 'POSTGRESMIRRORTOSNOWFLAKE',
+    postgres_tables     => ['public.devices', 'public.sensors', 'public.readings'],
+    postgres_schemas    => NULL,
+    refresh_interval    => '1 minute',
+    target_table_type   => 'ICEBERG',
+    external_volume     => 'my_iceberg_volume'
+);
+```
 
 **Using the Snowflake UI:**
 

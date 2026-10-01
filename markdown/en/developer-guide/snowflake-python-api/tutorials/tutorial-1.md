@@ -2,7 +2,7 @@
 
 ## Introduction
 
-In this tutorial, you learn the fundamentals for managing Snowflake resource objects using the Snowflake Python APIs. To get started with the
+In this tutorial, you learn the fundamentals of managing Snowflake resource objects using the Snowflake Python APIs. To get started with the
 API, you create and manage a Snowflake database, schema, table, and virtual warehouse.
 
 ### Prerequisites

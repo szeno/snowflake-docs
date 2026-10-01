@@ -57,8 +57,9 @@ The **Openflow Admin role** is used by a deployment engineer to set up Openflow 
 This step is only required once for your organization.
 
 1. Sign in to Snowflake as a user with the ORGADMIN role.
-2. In the navigation menu, select **Ingestion** » **Openflow**.
-3. Review the agreement and select **Accept**.
+2. In the navigation menu, select **Admin** » **Terms**.
+3. Locate **Openflow terms of service** in the list.
+4. Review the agreement and select **Accept**.
 
 ## Start Openflow
 

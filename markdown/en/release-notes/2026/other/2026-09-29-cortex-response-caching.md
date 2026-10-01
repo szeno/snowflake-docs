@@ -1,6 +1,7 @@
 # Sep 29, 2026: Response caching for Cortex AI Functions
 
-Snowflake Cortex now automatically caches and reuses the results of AI function calls. When a query makes an identical
+[Snowflake Cortex AI Functions](/user-guide/snowflake-cortex/aisql) now automatically caches and reuses the
+results of [AI\_COMPLETE](/sql-reference/functions/ai_complete) calls. When a query makes an identical
 AI\_COMPLETE call more than once, Snowflake can return the stored result instead of running inference again,
 which lowers cost and speeds up query execution.
 

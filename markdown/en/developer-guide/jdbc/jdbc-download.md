@@ -31,7 +31,7 @@ To download the standard driver:
 
    > <https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc>
 2. Select the directory for the version that you need.
-   The most recent version (4.3.3) is not always at the end of the list. Versions are listed alphabetically,
+   The most recent version (4.4.0) is not always at the end of the list. Versions are listed alphabetically,
    not numerically. For example, 3.10.x comes after 3.1.x, not after 3.9.x.
 3. Download the appropriate `snowflake-jdbc-#.#.#.jar` file:
 
@@ -50,7 +50,7 @@ To download the FIPS-compliant driver:
 
    > <https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc-fips>
 2. Select the directory for the version that you need.
-   The most recent version (4.3.3) is not always at the end of the list. Versions are listed alphabetically,
+   The most recent version (4.4.0) is not always at the end of the list. Versions are listed alphabetically,
    not numerically. For example, 3.10.x comes after 3.1.x, not after 3.9.x.
 3. Download the appropriate `snowflake-jdbc-fips-#.#.#.jar` file:
 
@@ -69,7 +69,7 @@ To download the thin-jar driver:
 
    > <https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc-thin>
 2. Select the directory for the version that you need.
-   The most recent version (4.3.3) is not always at the end of the list. Versions are listed alphabetically,
+   The most recent version (4.4.0) is not always at the end of the list. Versions are listed alphabetically,
    not numerically. For example, 3.10.x comes after 3.1.x, not after 3.9.x.
 3. Download the appropriate `snowflake-jdbc-thin-#.#.#.jar` file:
 
@@ -144,12 +144,12 @@ To verify the JDBC driver package signature:
    For example:
 
    ```
-   $ gpg --verify snowflake-jdbc-4.3.3.jar.asc snowflake-jdbc-4.3.3.jar
+   $ gpg --verify snowflake-jdbc-4.4.0.jar.asc snowflake-jdbc-4.4.0.jar
    gpg: Signature made Wed 22 Feb 2017 04:31:58 PM UTC using RSA key ID <gpg_key_id>
    gpg: Good signature from "Snowflake Computing <snowflake_gpg@snowflake.net>"
    ```
 
-   Specify the correct version numbers for the JDBC driver package you are verifying. Version 4.3.3 is used in this
+   Specify the correct version numbers for the JDBC driver package you are verifying. Version 4.4.0 is used in this
    example for illustration purposes only. The latest available version of the driver may be higher.
 
    Note
@@ -191,7 +191,7 @@ For example:
     <dependency>
    <groupId>net.snowflake</groupId>
    <artifactId>snowflake-jdbc</artifactId>
-   <version>4.3.3</version>
+   <version>4.4.0</version>
     </dependency>
     ...
   </dependencies>
@@ -204,7 +204,7 @@ For example:
     <dependency>
    <groupId>net.snowflake</groupId>
    <artifactId>snowflake-jdbc-fips</artifactId>
-   <version>4.3.3</version>
+   <version>4.4.0</version>
     </dependency>
     ...
   </dependencies>
@@ -217,13 +217,13 @@ For example:
     <dependency>
    <groupId>net.snowflake</groupId>
    <artifactId>snowflake-jdbc-thin</artifactId>
-   <version>4.3.3</version>
+   <version>4.4.0</version>
     </dependency>
     ...
   </dependencies>
   ```
 
-where the `<version>` tag specifies the version of the driver you want to integrate. Note that version 4.3.3 is used in this example for illustration purposes only. A later version of the driver might be available.
+where the `<version>` tag specifies the version of the driver you want to integrate. Note that version 4.4.0 is used in this example for illustration purposes only. A later version of the driver might be available.
 
 The developer notes are hosted along with the source code on [GitHub](https://github.com/snowflakedb/snowflake-jdbc).
 

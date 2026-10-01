@@ -39,6 +39,19 @@ Resharing supports several scenarios, including:
 - **Cross-region auto-fulfillment**: When a resharer shares listing data to another region, listing auto-fulfillment replicates the data to
   the target region. The provider doesn’t incur additional costs for this replication. Replication costs are attributed to the resharer.
 
+## Policy enforcement modes
+
+When a provider enables resharing, they can control how governance policies are applied when consumers access reshared data. This is configured using the `reshare_policy_enforcement` property in the listing manifest.
+
+There are two modes:
+
+- **`RESHARER`** (default): Consumers see exactly what the resharer can see from the provider’s data. Governance policies are evaluated in the resharer’s account context. This is the recommended mode for cross-organization resharing.
+- **`CALLER`**: Each consumer sees only what they themselves are permitted to see from the provider’s data, regardless of what the resharer can see. Governance policies — including `SYS_CONTEXT`-based checks such as org user group restrictions — are applied in the consumer’s account context. This is the recommended mode for same-organization resharing where the provider wants to enforce per-consumer entitlements across all downstream accounts.
+
+For example, a central data team (the provider) might publish a listing within their organization where row-level access depends on the consumer’s org user group. When another team (the resharer) shares that data further within the organization, `CALLER` mode ensures that each downstream consumer sees only their own entitled rows — not what the resharer sees.
+
+For configuration details, including limitations and YAML syntax, see [Using resharing as a provider](/collaboration/resharing-as-provider).
+
 ## Resharing listings workflow
 
 A typical workflow for resharing includes a minimum of three parties.

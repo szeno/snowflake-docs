@@ -48,4 +48,4 @@ Sessions aren’t shared between job services. Therefore, you can’t use tempor
 
 ## Example
 
-For an example, see [Tutorial: Run a Snowflake Container Services job as a Snowflake task](/developer-guide/snowpark-container-services/tutorials/advanced/run-job-as-task).
+For an example, see [Tutorial: Run a Snowpark Container Services job as a Snowflake task](/developer-guide/snowpark-container-services/tutorials/advanced/run-job-as-task).

@@ -60,7 +60,7 @@ If you are using Snowflake Notebooks, in order to download the weights of the mo
 - `cdn-lfs.hf.co`
 - `transfer.xethub.hf.co`
 - `cas-server.xethub.hf.co`
-- `cas-bridge.xethub.hf.c`
+- `cas-bridge.xethub.hf.co`
 
 Note
 
@@ -174,6 +174,8 @@ remote_prediction = model.run(pd.DataFrame(["Hello, how are you?"], columns=["in
 
 ## Example
 
+The following examples assume `reg` is an instance of `snowflake.ml.registry.Registry`.
+
 Copy code
 
 ```
@@ -189,7 +191,7 @@ finbert_model = transformers.pipeline(
 )
 
 # Log the model
-mv = registry.log_model(
+mv = reg.log_model(
     finbert_model,
     model_name="finbert",
     version_name="v1",
@@ -264,12 +266,12 @@ model = transformers.pipeline(
     model="google-bert/bert-base-uncased",
 )
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="GOOGLE_BERT_BASE_UNCASED",
 )
 
-input_df = pd.DataFrame([{"text": "LynYuu is the [MASK] of the Grand Duchy of Yu."}])
+input_df = pd.DataFrame([{"inputs": "LynYuu is the [MASK] of the Grand Duchy of Yu."}])
 mv.run(
     input_df,
     # function_name="__call__", # Optional
@@ -324,7 +326,7 @@ model = transformers.pipeline(
     model="dslim/bert-base-NER",
 )
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="BERT_BASE_NER",
 )
@@ -390,7 +392,7 @@ QA_input = {
     "context": "The option to convert models between FARM and transformers gives freedom to the user and let people easily switch between frameworks.",
 }
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="ROBERTA_BASE_SQUAD2",
 )
@@ -455,7 +457,7 @@ QA_input = {
     "context": "The option to convert models between FARM and transformers gives freedom to the user and let people easily switch between frameworks.",
 }
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="ROBERTA_BASE_SQUAD2",
 )
@@ -515,7 +517,7 @@ model = transformers.pipeline(
 
 text = "The transformers library is a great library for natural language processing which provides a unified interface for many different models and tasks."
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="BART_LARGE_CNN",
 )
@@ -590,7 +592,7 @@ data = {
 }
 query = "What is the city of the year 2004?"
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="TAPEX_BASE_FINETUNED_WIKISQL",
 )
@@ -653,7 +655,7 @@ model = transformers.pipeline(
 
 text = "I'm happy today!"
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="TWITTER_ROBERTA_BASE_SENTIMENT_LATEST",
 )
@@ -721,7 +723,7 @@ model = transformers.pipeline(
 
 text = "I'm happy today!"
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="TWITTER_ROBERTA_BASE_SENTIMENT_LATEST",
 )
@@ -784,7 +786,7 @@ model = transformers.pipeline(
 
 text = "Tell me a joke."
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="T5_SMALL",
 )
@@ -854,7 +856,7 @@ model = transformers.pipeline(
 
 text = "Иттерді кім шығарды?"
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="KAZRUSH_KK_RU",
 )
@@ -968,7 +970,7 @@ model = transformers.pipeline(
     model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
 )
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="TINYLLAMA",
 )
@@ -1043,7 +1045,7 @@ model = transformers.pipeline(
     model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
 )
 
-mv = registry.log_model(
+mv = reg.log_model(
     model=model,
     model_name="TINYLLAMA",
     signatures=openai_signatures.OPENAI_CHAT_SIGNATURE,

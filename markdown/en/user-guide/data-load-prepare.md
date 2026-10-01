@@ -11,7 +11,7 @@ See [SQL data types reference](/sql-reference-data-types) for descriptions of th
 
 We recommend that you compress your data files when you are loading large data sets. See [CREATE FILE FORMAT](/sql-reference/sql/create-file-format) for the compression algorithms supported for each data type.
 
-When loading compressed data, Snowflake will automatically determine the file and codec compression method for your data files. The COMPRESSION file format option describes how your data files are already compressed in the stage. Set the COMPRESSION option in one of the following ways:
+When loading compressed data, Snowflake automatically determines the file and codec compression method for your data files. The COMPRESSION file format option describes how your data files are already compressed in the stage. Set the COMPRESSION option in one of the following ways:
 
 > - As a file format option specified directly in the [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement.
 > - As a file format option specified for a named file format or stage object. The named file format/stage object can then be referenced in the COPY INTO *<table>* statement.
@@ -22,7 +22,7 @@ The following file formats are supported:
 
 > | Structured/Semi-structured | Type | Notes |
 > | --- | --- | --- |
-> | Structured | Delimited (CSV, TSV, etc.) | Any valid singlebyte delimiter is supported; default is comma (i.e. CSV). |
+> | Structured | Delimited (CSV, TSV, etc.) | Any valid single-byte delimiter is supported; default is comma (that is, CSV). |
 > | Semi-structured | JSON |  |
 > |  | Avro | Includes automatic detection and processing of compressed Avro files. |
 > |  | ORC | Includes automatic detection and processing of compressed ORC files. |
@@ -39,16 +39,16 @@ File format options specify the type of data contained in a file, as well as oth
 
 Snowflake natively supports semi-structured data, which means semi-structured data can be loaded into relational tables without requiring the definition of a schema in advance. Snowflake supports loading semi-structured data directly into columns of type VARIANT (see [Semi-structured data types](/sql-reference/data-types-semistructured) for more details).
 
-Currently supported semi-structured data formats include JSON, Avro, ORC, Parquet, or XML:
+Currently supported semi-structured data formats include JSON, Avro, ORC, Parquet, and XML:
 
 - For JSON, Avro, ORC, and Parquet data, each top-level, complete object is loaded as a separate row in the table. Each object can contain new line characters and spaces as long as the object is valid.
 - For XML data, each top-level element is loaded as a separate row in the table. An element is identified by a start and close tag of the same name.
 
-Typically, tables used to store semi-structured data consist of a single VARIANT column. Once the data is loaded, you can query the data similar to structured data. You can also perform other tasks, such as extracting values and objects from arrays. For more information, see the [FLATTEN](/sql-reference/functions/flatten) table function.
+Typically, tables used to store semi-structured data consist of a single VARIANT column. Once the data is loaded, you can query the data similarly to structured data. You can also perform other tasks, such as extracting values and objects from arrays. For more information, see the [FLATTEN](/sql-reference/functions/flatten) table function.
 
 Note
 
-Semi-structured data can be loaded into tables with multiple columns, but the semi-structured data must be stored as a field in a structured file (e.g. CSV file). Then, the data can be loaded into a specified column in the table.
+Semi-structured data can be loaded into tables with multiple columns, but the semi-structured data must be stored as a field in a structured file (for example, a CSV file). Then, the data can be loaded into a specified column in the table.
 
 ### Named file formats
 

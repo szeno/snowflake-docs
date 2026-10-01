@@ -10,7 +10,7 @@ After the agent generates a workflow, it always shows you the YAML and asks whet
 
 ## Choosing an extraction strategy
 
-Most platforms support a **server-side export** strategy that writes data directly to object storage (for example `unload` for Redshift, `dbms_cloud` for Oracle, `write_nos` for Teradata). When your source supports one and the prerequisites are in place (external stage, credentials, platform permissions), use it for **all** tables from that source. Data never flows through the Worker, and you avoid mixing `regular` with a server-side strategy on the same source without a good reason.
+Most platforms support a **server-side export** strategy that writes data directly to object storage (for example `unload` for Redshift, `dbms_cloud` for Oracle, `write_nos` for Teradata). When your source supports one and the prerequisites are in place (external stage, credentials, platform permissions), use it for **all** tables from that source. Data never flows through the Worker, and you avoid mixing `regular` with a server-side strategy on the same source without a good reason. For **PostgreSQL**, **`regular`** (COPY, `use_copy = true`) is the recommended extract.
 
 Use **`regular`** extraction only when data volume is genuinely small, or when object storage and the external stage aren’t set up yet. Once prerequisites are ready, switch the whole workflow to the server-side strategy rather than reserving it for “large tables only.”
 

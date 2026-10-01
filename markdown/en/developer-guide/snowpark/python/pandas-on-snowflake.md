@@ -13,7 +13,7 @@ pandas on Snowflake is delivered through the Snowpark pandas API as part of the 
 - **Meeting Python developers where they are:** pandas on Snowflake offers a familiar interface to Python developers by providing a
   pandas-compatible layer that can run natively in Snowflake.
 - **Scalable distributed pandas:** pandas on Snowflake bridges the convenience of pandas with the scalability of Snowflake by leveraging existing query optimization techniques in Snowflake. Minimal code rewrites are required, simplifying the migration journey, so you can seamlessly move from prototype to production.
-- **No additional compute infrastructure to manage and tune:** pandas on Snowflake leverages the Snowflake’s powerful compute engine, so you do not need to set
+- **No additional compute infrastructure to manage and tune:** pandas on Snowflake leverages Snowflake’s powerful compute engine, so you do not need to set
   up or manage any additional compute infrastructure.
 
 ## Getting started with pandas on Snowflake
@@ -175,7 +175,7 @@ df.get_backend()
 Copy code
 
 ```
-# Create a 10M row table in Snowflake and populate with sythentic data
+# Create a 10M row table in Snowflake and populate with synthetic data
 session.sql('''CREATE OR REPLACE TABLE revenue_transactions (Transaction_ID STRING, Date DATE, Revenue FLOAT);''').collect()
 session.sql('''SET num_days = (SELECT DATEDIFF(DAY, '2024-01-01', CURRENT_DATE));''').collect()
 session.sql('''INSERT INTO revenue_transactions (Transaction_ID, Date, Revenue) SELECT UUID_STRING() AS Transaction_ID, DATEADD(DAY, UNIFORM(0, $num_days, RANDOM()), '2024-01-01') AS Date, UNIFORM(10, 1000, RANDOM()) AS Revenue FROM TABLE(GENERATOR(ROWCOUNT => 10000000));''').collect()
@@ -298,7 +298,7 @@ Show lessSee more
 ### Execution environment
 
 - `pandas`: Operates on a single machine and processes in-memory data.
-- `pandas on Snowflake`: Integrates with Snowflake, which allows for distributed computing across a cluster of machines for large datasets, while leveraging in memory pandas for processing small datasets. This integration enables handling of much larger datasets that exceed the memory capacity of a single machine. Note that using the Snowpark
+- `pandas on Snowflake`: Integrates with Snowflake, which allows for distributed computing across a cluster of machines for large datasets, while leveraging in-memory pandas for processing small datasets. This integration enables handling of much larger datasets that exceed the memory capacity of a single machine. Note that using the Snowpark
   pandas API requires a connection to Snowflake.
 
 ### Lazy versus eager evaluation
@@ -638,7 +638,7 @@ Setting this value will penalize transferring rows out of Snowflake.
 
 ### Configuring local execution limits
 
-Once a DataFrame is local it will generally stay local unless there is a need to move it back to Snowflake for a merge, but there is an upper bound considered for the maximum size of data than can be processed locally. Currently this boundary is 10M rows.
+Once a DataFrame is local it will generally stay local unless there is a need to move it back to Snowflake for a merge, but there is an upper bound considered for the maximum size of data that can be processed locally. Currently this boundary is 10M rows.
 
 ### Checking and setting backend
 
@@ -818,7 +818,7 @@ The libraries listed below accept pandas on Snowflake DataFrames as input, but n
 - Altair
 - Seaborn
 - Matplotlib
-- Numpy
+- NumPy
 - Scikit-learn
 - XGBoost
 - NLTK

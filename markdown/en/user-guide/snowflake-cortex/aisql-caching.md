@@ -2,11 +2,11 @@
 
 ## Response caching
 
-Snowflake Cortex automatically caches the results of AI function calls to reduce cost and speed up query
-execution. Snowflake stores the encrypted response of each [AI\_COMPLETE](/sql-reference/functions/ai_complete)
-call within a query. When the query makes an identical call more than once, Snowflake can return the stored
-result instead of running inference again. Cache hits are not billed, so you see lower token and credit
-consumption for the query.
+[Snowflake Cortex AI Functions](/user-guide/snowflake-cortex/aisql) automatically caches and reuses the
+results of [AI\_COMPLETE](/sql-reference/functions/ai_complete) calls to reduce cost and speed up query
+execution. Snowflake stores the encrypted response of each AI\_COMPLETE call within a query. When the query
+makes an identical call more than once, Snowflake can return the stored result instead of running inference
+again. Cache hits are not billed, so you see lower token and credit consumption for the query.
 
 Response caching is applied automatically and requires no configuration. Caching is best effort, and cache
 hits are not guaranteed. We have active optimization efforts in place to improve caching performance.

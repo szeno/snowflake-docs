@@ -5,6 +5,7 @@ This page covers Oracle-specific setup for [Data validation](./data-validation).
 ## Prerequisites
 
 - **Oracle Instant Client** and ODBC driver on Workers (same as [Migrating Data from Oracle](./migrate-oracle)).
+- **L3 object storage (Recommended)**: Use **DBMS\_CLOUD** (`extraction.strategy: dbms_cloud`) so signatures land on the same object store and Snowflake external stage as migration (the URI in `dbms_cloud_file_uri_prefix`). Schema and metrics validation still read Oracle over SQL. See [Object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage), [External stage and storage integration](./required-privileges#external-stage-and-storage-integration) for that URI, and [Server-side export with dbms\_cloud](./migrate-oracle#server-side-export-with-dbms_cloud).
 
 ## Connectivity
 

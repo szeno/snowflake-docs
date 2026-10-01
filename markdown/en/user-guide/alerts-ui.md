@@ -92,7 +92,7 @@ Openflow is configured to log events. For information, see the following section
 
 ### Prerequisites for data quality alerts
 
-Make sure that Data Metric Functions (DMF) are registered and are running against the tables and views that you want to monitor.
+Make sure that Data Metric Functions (DMFs) are registered and are running against the tables and views that you want to monitor.
 
 For information, see [Use SQL to set up data metric functions](/user-guide/data-quality-working).
 

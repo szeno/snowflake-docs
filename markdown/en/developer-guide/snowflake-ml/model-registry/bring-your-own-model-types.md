@@ -167,7 +167,7 @@ provide a [model signature](/developer-guide/snowflake-ml/model-registry/model-s
 Copy code
 
 ```
-reg = Registry(session=sp_session, database_name="ML", schema_name="REGISTRY")
+reg = Registry(session=session, database_name="ML", schema_name="REGISTRY")
 mv = reg.log_model(my_model,
             model_name="my_custom_model",
             version_name="v1",
@@ -337,6 +337,8 @@ In this example, use the sample data to infer a [model signature](/developer-gui
 Copy code
 
 ```
+from snowflake.ml.model import model_signature
+
 predict_signature = model_signature.infer_signature(input_data=test_df, output_data=output_df)
 ```
 
@@ -377,7 +379,7 @@ Use the `run` function to call the model for prediction.
 Copy code
 
 ```
-snowpark_df = session.create_dataframe(test_data, schema=col_nms)
+snowpark_df = session.create_dataframe(test_data, schema=col_names)
 
 custom_mv.run(snowpark_df).show()
 ```

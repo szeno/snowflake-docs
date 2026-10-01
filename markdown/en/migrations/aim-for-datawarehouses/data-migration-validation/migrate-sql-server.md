@@ -137,6 +137,8 @@ defaultTableConfiguration:
     externalStage: TARGET_DB.PUBLIC.AZURE_LANDING
 ```
 
+Grant the CETAS credential identity and the Snowflake Azure service principal as described in [Azure Blob Storage](./required-privileges#azure-blob-storage).
+
 ## Using cloud\_direct with Azure Blob
 
 For `cloud_direct`, configure Azure Blob as a Worker target and use a Snowflake external stage that points to the same container and prefix:

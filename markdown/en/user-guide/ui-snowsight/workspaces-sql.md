@@ -12,6 +12,46 @@ only the owner can access the workspace.
 
 Required privileges vary by operation and are noted in each section below.
 
+## Reference workspace files in SQL
+
+Use the same `snow://workspace/` path format for reading and modifying files in a workspace:
+
+```
+snow://workspace/<database>.<schema>.<workspace>/versions/head/<path>
+```
+
+The database, schema, and workspace identify the workspace object. The optional path after `/versions/head/` identifies a file or folder
+within the workspace. Omit that path to reference the workspace root.
+
+Your default **My Workspace** uses the object name `USER$.PUBLIC.DEFAULT$`, not `My Workspace`.
+`USER$` refers to your personal database. For example, list files in **My Workspace**:
+
+Copy code
+
+```
+LIST 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/head/';
+```
+
+For another private workspace, replace `DEFAULT$` with the workspace’s object name. Enclose case-sensitive names or names
+containing spaces in double quotes, and enclose the full path in single quotes. For example, for a workspace named `my_workspace`:
+
+Copy code
+
+```
+LIST 'snow://workspace/USER$.PUBLIC."my_workspace"/versions/head/';
+```
+
+For a shared workspace, use the database and schema that contain it. For example, list files in a shared workspace:
+
+Copy code
+
+```
+LIST 'snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/head/';
+```
+
+For full `LIST` syntax and options, see [LIST](/sql-reference/sql/list). The following sections show how to use workspace paths
+to upload, download, and remove files.
+
 ## Create a workspace
 
 Copy code
@@ -41,7 +81,8 @@ Requires OWNERSHIP on the workspace.
 
 ## Add a live version
 
-A mutable live version must exist before you can upload files.
+A mutable live version must exist before you can upload or remove files.
+If an operation fails because no live version exists, run the following command and retry the operation with the same `/versions/head/` path:
 
 Copy code
 
@@ -61,14 +102,14 @@ Copy code
 
 ```
 PUT file:///path/to/report.sql
-    snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/live/
+    snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/head/
     AUTO_COMPRESS=false OVERWRITE=true;
 ```
 
-The destination folder comes after `/versions/live/`:
+The destination folder comes after `/versions/head/`:
 
-- `/versions/live/` places the file at the workspace root.
-- `/versions/live/reports/monthly/` places the file in a subdirectory.
+- `/versions/head/` places the file at the workspace root.
+- `/versions/head/reports/monthly/` places the file in a subdirectory.
 
 For full `PUT` syntax and options, see [PUT](/sql-reference/sql/put).
 
@@ -90,8 +131,6 @@ GET snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/head/report.sql
     file:///path/to/download/;
 ```
 
-Use `/versions/head/` to download the latest published state.
-
 For full `GET` syntax and options, see [GET](/sql-reference/sql/get).
 
 Note
@@ -103,19 +142,21 @@ Requires READ privilege on the workspace.
 Copy code
 
 ```
-REMOVE snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/live/report.sql;
+REMOVE snow://workspace/MY_DB.WORK.MY_WORKSPACE/versions/head/report.sql;
 ```
 
 Warning
 
-Unlike `PUT`, which requires `COMMIT` to publish changes, `REMOVE` auto-publishes — the file is
-immediately removed from `/versions/head/` for all users unless they have their own uncommitted version
+Unlike `PUT`, which requires `COMMIT` to publish changes, `REMOVE` auto-publishes: The file is
+immediately removed from the published workspace for all users unless they have their own uncommitted version
 of that same file. This auto-publish behavior is relevant for shared workspaces, where other users see
 the removal right away. This behavior may change to require an explicit commit in a future release.
 
 For full `REMOVE` syntax and options, see [REMOVE](/sql-reference/sql/remove).
 
 Note
+
+A live version must exist before running `REMOVE`. If it does not, [add a live version](#label-workspaces-sql-add-live-version) first.
 
 Requires WRITE privilege on the workspace.
 
@@ -135,7 +176,7 @@ Requires READ privilege on the workspace.
 
 ## Commit (publish all changes)
 
-Committing publishes all file changes, making them visible to other users via `/versions/head/`.
+Committing publishes all file changes, making them available to other users. Users with their own live version might still see their unpublished changes.
 
 Copy code
 
@@ -146,7 +187,7 @@ ALTER WORKSPACE MY_DB.WORK.MY_WORKSPACE COMMIT;
 Important
 
 - After committing, the live version no longer exists. You must [add a live version](#label-workspaces-sql-add-live-version) again before
-  the next `PUT`.
+  the next `PUT` or `REMOVE`.
 - Unlike [publishing from the UI](/user-guide/ui-snowsight/workspaces-shared#label-shared-workspaces-resolve-conflicts), `COMMIT` offers
   no conflict protection — the commit might override files that other users have changed recently.
 
@@ -172,7 +213,7 @@ discarded, and modified files revert to their last committed state.
 Note
 
 After abort, the live version no longer exists. You must [add a live version](#label-workspaces-sql-add-live-version) again before the
-next `PUT`.
+next `PUT` or `REMOVE`.
 
 Requires WRITE privilege on the workspace.
 

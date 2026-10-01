@@ -29,7 +29,7 @@ The **Pipe Details** page includes information about the following:
 
 - [Status](/sql-reference/functions/system_pipe_status#label-snowpipe-status). Examples: **Running**; **Paused**.
 - The number of files pending in the pipe, if any.
-- The date of last ingestion performed, if applicable.
+- The date of the last ingestion performed, if applicable.
 - The warehouse. (Snowpipe always runs using **Serverless** compute resources.)
 - The incoming [Notification channel](/user-guide/data-load-snowpipe-auto) to tell the Pipe when there are new files.
 - Relationships between the stages, pipes, and tables in a graph.
@@ -71,6 +71,6 @@ The pipe metrics section helps analyze health and throughput of your pipe with t
 - **Min row count**: identifies files with fewer rows than expected or empty files.
 - **Pending files**: shows the number of detected files yet to be loaded into the table.
 
-You can also choose to manually load files that haven’t been loaded by selecting the **Manual Refresh** option on the ellipsis drop-down menu on the top right corner of the page.
+You can also choose to manually load files that haven’t been loaded by selecting the **Manual Refresh** option on the ellipsis drop-down menu in the top-right corner of the page.
 
 To search for individual files, use the search bar on the top right corner of the page. You can search by file name, status, or date.

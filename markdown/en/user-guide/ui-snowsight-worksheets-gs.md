@@ -2,9 +2,9 @@
 
 Important
 
-Legacy Worksheets will be removed from Snowsight on **June 22, 2026**.
-[Workspaces](/user-guide/ui-snowsight/workspaces) is the replacement
-SQL editing experience. For the full deprecation timeline and migration guidance, see
+This page describes the retired Legacy Worksheets interface. To create a SQL file and run a query in Workspaces, see
+[Run your first SQL query](/user-guide/ui-snowsight/workspaces#label-workspaces-run-first-query).
+For the deprecation timeline and migration details, see
 [Deprecation of Legacy Worksheets and Dashboards](/release-notes/bcr-bundles/un-bundled/bcr-2260).
 
 View and create worksheets in Snowsight.

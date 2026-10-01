@@ -242,13 +242,15 @@ work an Adaptive Warehouse can run at once, relative to a system-computed baseli
 MAX\_QUERY\_PERFORMANCE\_LEVEL.
 
 Type:
-:   Non-negative integer
+:   `0` or an integer greater than or equal to `2`
 
 Default:
 :   `2`
 
 Setting this value to `0` means unlimited throughput: the warehouse can use as much burst
 capacity as available with no cap.
+
+The default, `2`, is also the lowest finite value. A value of `1` isn’t allowed.
 
 **Semantics:**
 
@@ -563,7 +565,8 @@ and QUERY\_THROUGHPUT\_MULTIPLIER can’t be set on a standard warehouse.
     at once, relative to a system-computed baseline for MAX\_QUERY\_PERFORMANCE\_LEVEL. Snowflake
     calculates a throughput budget from QUERY\_THROUGHPUT\_MULTIPLIER and MAX\_QUERY\_PERFORMANCE\_LEVEL;
     admission control uses that budget and per-query estimated work to decide whether to start or
-    queue each new query. A value of `0` means unlimited throughput.
+    queue each new query. Valid values are `0`, which means unlimited throughput, or an integer
+    greater than or equal to `2`.
 
     Default: `2`.
 

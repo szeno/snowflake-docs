@@ -67,6 +67,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
   [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ]
+  [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
 ```
 
 Where:
@@ -387,6 +388,25 @@ For more information about cloning, see [CREATE <object> … CLONE](/sql-referen
 
     Before you specify a clustering key for a table, you should understand micro-partitions.
     For more information, see [Understanding Snowflake Table Structures](/user-guide/tables-micro-partitions).
+
+`ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE }`
+:   Enables or disables automatic changes to the table schema from data loaded into the table from source files, including:
+
+    > - Added columns.
+    >
+    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+    > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
+
+    Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
+
+    Note
+
+    Loading data from files evolves the table columns when all of the following are true:
+
+    - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
+    - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+
+    Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
 
 `EXTERNAL_VOLUME = 'external_volume_name'`
 :   Specifies where the Iceberg table stores its metadata files and data in Parquet format. Iceberg metadata and manifest files store the table schema, partitions, snapshots, and other metadata.

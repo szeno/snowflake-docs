@@ -50,7 +50,7 @@ spark = snowflake.snowpark_connect.init_spark_session()
 When you develop a notebook interactively, it runs against whatever database and schema your session has selected with
 `USE DATABASE` and `USE SCHEMA`. A Code Bundle run is non-interactive and does not inherit that interactive context, so
 an unqualified table or view name may not resolve the way it did during development. Reference Snowflake objects by
-their fully-qualified names (`database.schema.object`) so the notebook runs consistently regardless of session context.
+their fully qualified names (`database.schema.object`) so the notebook runs consistently regardless of session context.
 
 ## Run with SQL
 

@@ -5,6 +5,7 @@ This page covers PostgreSQL-specific setup for [Data validation](./data-validati
 ## Prerequisites
 
 - **Npgsql driver** on Workers (no ODBC install). Same `ssl_mode` guidance as [Migrating Data from PostgreSQL](./migrate-postgresql).
+- **regular (Recommended)**: L3 uses `extraction.strategy: regular` with the PostgreSQL COPY protocol (`use_copy = true`). Install `psql` on the Worker host. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 ## Connectivity
 
@@ -121,7 +122,7 @@ The EVENTS table was migrated with intervalHandling set to varchar. Use the same
   Run cloud data validation for my PostgreSQL tables, with schema and metrics validation on all tables and row-level validation on orders
   ```
 - Confirm the Worker’s **`ssl_mode`** matches your PostgreSQL host before running validation workflows; a mismatch fails connectivity, not just validation.
-- **`use_copy = true`** speeds up source reads on large tables; confirm your role and network allow the PostgreSQL `COPY` path.
+- **`use_copy = true`**: Recommended extract for PostgreSQL (COPY with `regular`). Confirm your role and network allow the PostgreSQL `COPY` path.
 - **Anti-locking**: No automatic hint is added on PostgreSQL. Set `queryModifiers` only when you need custom source SQL hints. See [Anti-locking and query modifiers](../manual-migration/data-validation-configuration-reference#anti-locking-and-query-modifiers).
 
 ## Related content

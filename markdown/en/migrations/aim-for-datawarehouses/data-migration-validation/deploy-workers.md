@@ -49,7 +49,7 @@ If the source is only reachable from a private network that Snowflake can’t eg
 
 ### What you typically prepare
 
-You usually create a **compute pool** (and often an image repository and warehouse) before the agent or CLI deploys services. For `INSTANCE_FAMILY` sizing and `SHOW COMPUTE POOL INSTANCE FAMILIES`, see [Manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup#prerequisites).
+You usually create a **compute pool** and warehouse before the agent or CLI deploys services. For `INSTANCE_FAMILY` sizing and `SHOW COMPUTE POOL INSTANCE FAMILIES`, see [Manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup#prerequisites).
 
 The agent or CLI then typically creates the Worker **secret**, **network rule**, **external access integration**, and **service**. Avoid recreating those by hand unless you have a reason to. Full SQL templates live on the [manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup) page.
 

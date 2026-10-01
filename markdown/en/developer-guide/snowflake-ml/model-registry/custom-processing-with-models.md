@@ -120,13 +120,13 @@ The following example uses your own model as a custom model.
 Copy code
 
 ```
-mc = custom_model.ModelContext(
-    my_model=your_own_model,
-)
-
 from snowflake.ml.model import custom_model
 import pandas as pd
 import json
+
+mc = custom_model.ModelContext(
+    my_model=your_own_model,
+)
 
 class ExampleYourOwnModel(custom_model.CustomModel):
     def __init__(self, context: custom_model.ModelContext) -> None:
@@ -134,7 +134,7 @@ class ExampleYourOwnModel(custom_model.CustomModel):
 
     @custom_model.inference_api
     def predict(self, input: pd.DataFrame) -> pd.DataFrame:
-        model_output = self.context['my_model'].predict(features)
+        model_output = self.context['my_model'].predict(input)
         return pd.DataFrame({'output': model_output})
 ```
 
@@ -150,7 +150,6 @@ mc = custom_model.ModelContext(
     model1=model1,
     model2=model2,
     feature_preproc=preproc
-    }
 )
 ```
 

@@ -1,9 +1,5 @@
 # Semantic Studio
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Semantic Studio is the authoring environment for [semantic views](/user-guide/views-semantic/overview) inside Workspaces.
 You define a semantic view as a YAML file and deploy it to a live Snowflake object, with Snowflake CoCo, an AI-driven
 intelligent agent, available directly in the editing workflow. You can create, refine, and debug a semantic view through

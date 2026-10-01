@@ -2,7 +2,7 @@
 
 This set of topics describes how to use the COPY command to unload data from a table into an internal (that is, Snowflake) stage. You can then download the unloaded data files to your local file system.
 
-As illustrated in the diagram below, unloading data to a local file system is performed in two, separate steps:
+As illustrated in the diagram below, unloading data to a local file system is performed in two separate steps:
 
 Step 1:
 :   Use the [COPY INTO <location>](/sql-reference/sql/copy-into-location) command to copy the data from the Snowflake database table into one or more files in a Snowflake stage. In the SQL statement, you specify the
@@ -51,7 +51,7 @@ The following example creates an internal stage that references the named file f
 
 #### Unload data to the named stage
 
-1. Use the [COPY INTO <location>](/sql-reference/sql/copy-into-location) command to unload all the rows from a table into one or more files into the `my_unload_stage` stage. The statement prefixes the unloaded
+1. Use the [COPY INTO <location>](/sql-reference/sql/copy-into-location) command to unload all the rows from a table into one or more files in the `my_unload_stage` stage. The statement prefixes the unloaded
    file(s) with `unload/` to organize the files in the stage:
 
    For example:
@@ -59,7 +59,7 @@ The following example creates an internal stage that references the named file f
    Copy code
 
    ```
-   COPY INTO @mystage/unload/ from mytable;
+   COPY INTO @mystage/unload/ FROM mytable;
    ```
 
    Note that the `@` character by itself identifies a named stage.

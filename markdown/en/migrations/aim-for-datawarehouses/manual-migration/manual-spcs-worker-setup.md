@@ -6,7 +6,7 @@ For deployment scenarios and when to use SPCS versus customer-hosted Workers, se
 
 ## Prerequisites
 
-Prepare these objects before creating a Worker service (the agent or CLI can help with images; you usually create the compute pool yourself):
+Prepare these objects before creating a Worker service:
 
 1. **Compute pool**: hosts the SPCS services.
 
@@ -29,9 +29,8 @@ SHOW COMPUTE POOL INSTANCE FAMILIES;
 
 See [Compute pool sizing](#compute-pool-sizing) for how to size the pool.
 
-2. **Image repository**: stores Orchestrator and Worker container images. Your role needs WRITE on the repository.
-3. **Container images**: push Orchestrator and Worker images to the repository. The Snowflake AIM Agent for Data Warehouses or SnowConvert AI CLI can help with image preparation and upload.
-4. **Warehouse**: a warehouse for the service specification’s `QUERY_WAREHOUSE`.
+2. **Worker container image**: use the Snowflake-managed image at `/snowflake/images/snowflake_images/data-exchange-worker:<version>`. The `scai data worker setup` command reports the pinned version that corresponds to your SnowConvert AI CLI version. You don’t need to create an image repository or push the image.
+3. **Warehouse**: a warehouse for the service specification’s `QUERY_WAREHOUSE`.
 
 ### Compute pool sizing
 
@@ -136,7 +135,7 @@ CREATE SERVICE <worker_service_name>
     spec:
       containers:
         - name: agent
-          image: <your_image_repository>/data-exchange-agent:redshift
+          image: /snowflake/images/snowflake_images/data-exchange-worker:<version>
           env:
             # Source system
             DATA_SOURCE_HOST: <redshift_endpoint>

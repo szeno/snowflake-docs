@@ -18,6 +18,8 @@ that the registry knows the signatures of the target methods.
 
 ## Example
 
+This example assumes `reg` is an instance of `snowflake.ml.registry.Registry`.
+
 Copy code
 
 ```
@@ -26,9 +28,9 @@ from sklearn import datasets, model_selection
 
 cal_X, cal_y = datasets.load_breast_cancer(as_frame=True, return_X_y=True)
 cal_X_train, cal_X_test, cal_y_train, cal_y_test = model_selection.train_test_split(cal_X, cal_y)
-params = dict(n_estimators=100, reg_lambda=1, gamma=0, max_depth=3, objective="binary:logistic")
-regressor = xgboost.train(params, xgboost.DMatrix(data=cal_X_train, label=cal_y_train))
-model_ref = registry.log_model(
+params = dict(reg_lambda=1, gamma=0, max_depth=3, objective="binary:logistic")
+regressor = xgboost.train(params, xgboost.DMatrix(data=cal_X_train, label=cal_y_train), num_boost_round=100)
+model_ref = reg.log_model(
     regressor,
     model_name="xgBooster",
     version_name="v1",

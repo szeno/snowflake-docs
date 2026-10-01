@@ -86,7 +86,8 @@ The following requirements, considerations, and limitations apply to workspaces 
 
 ### Personal database requirement
 
-Workspaces are created within a personal database and cannot be shared with other users. Personal databases must be enabled at the account level, which requires ACCOUNTADMIN privileges. For more information, see [Manage access and behavior](/user-guide/ui-snowsight/workspaces#label-manage-access-and-behavior).
+Private workspaces are stored in a personal database that Snowflake automatically creates when a user first accesses Workspaces.
+An administrator doesn’t need to enable personal databases. For more information, see [Personal Databases](/user-guide/personal-databases).
 
 Shared workspaces are created within a specific database and schema, which grants access to multiple authenticated users. Users assigned specific roles can then contribute, edit, and modify code and files simultaneously within the environment. For more information, see [Shared workspaces](/user-guide/ui-snowsight/workspaces-shared).
 

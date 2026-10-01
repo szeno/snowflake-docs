@@ -33,6 +33,81 @@ With this property set, your consumer can only reshare within their own organiza
 
 For the full listing manifest reference, see [Listing manifest reference](/progaccess/listing-manifest-reference).
 
+## Configuring policy enforcement mode
+
+The `reshare_policy_enforcement` property controls how governance policies are evaluated when consumers access reshared data. Set this in the listing manifest alongside `resharing.enabled`.
+
+Copy code
+
+```
+resharing:
+  enabled: true
+  only_within_organization: true
+  reshare_policy_enforcement: CALLER   # or RESHARER (default)
+```
+
+The two modes are:
+
+- **`RESHARER`** (default): Governance policies are evaluated in the resharer’s account context. Each consumer sees what the resharer can see from the provider’s data. Recommended for cross-organization resharing.
+- **`CALLER`**: Governance policies are evaluated in each consumer’s account context. Consumers see only what they themselves are permitted to see from the provider’s data, regardless of what the resharer sees. Recommended for same-organization resharing where the provider wants to enforce per-consumer entitlements — for example, when base tables use `SYS_CONTEXT` to restrict access by org user group.
+
+### When to use each mode
+
+| Use case | Recommended mode |
+| --- | --- |
+| Resharing with accounts outside your organization | `RESHARER` |
+| Resharing within your organization so that consumers see exactly what the resharer can access | `RESHARER` |
+| Resharing within your organization with per-consumer policy enforcement | `CALLER` |
+
+Expand
+
+Show lessSee more
+
+### Immutability
+
+Important
+
+Policy enforcement mode cannot be changed after a listing is published. To use a different mode, you must create a new listing.
+
+### Limitations of CALLER mode
+
+- **Same organization required**: All accounts involved in resharing — provider, resharer, and downstream consumers — must belong to the same Snowflake organization. Resharers can create secure views over the provider’s listing using either its Uniform Listing Locator (ULL) or an imported database; a ULL is not required.
+- **CALLER mode propagates**: Once a listing in the resharing chain uses CALLER mode, all downstream reshared listings must also use CALLER mode. Downstream resharers cannot switch to RESHARER mode.
+- **Auto-fulfillment required for cross-region**: If a downstream consumer reshares your data to a different region, your listing must have auto-fulfillment enabled and be visible to that target region.
+
+### Objects supported for sharing and resharing
+
+Sharing an object with a consumer does not necessarily mean that the consumer can reshare it. The following table compares objects in an
+incoming share or listing when resharing is enabled. For tables, dynamic tables, and views, the resharer exposes the incoming data through
+a secure view in their own database; they cannot attach an object from the imported database directly to an outgoing share.
+
+| Object in the incoming data product | Sharing | Resharing a direct share (`RESHARER`) | Resharing a listing (`RESHARER`) | Resharing a listing (`CALLER`) |
+| --- | --- | --- | --- | --- |
+| Table | Supported | Supported through a secure view | Supported through a secure view | Supported through a secure view |
+| Dynamic table | Supported | Supported through a secure view | Supported through a secure view | Supported through a secure view |
+| View | Supported | Supported through a secure view | Supported through a secure view | Supported through a secure view |
+| UDF or UDTF | Supported | Not supported | Not supported | Supported |
+
+Expand
+
+Show lessSee more
+
+This table covers the object types supported for resharing, not every object type that can be shared. Resharing apps is not supported.
+For direct-share restrictions, see [Resharing shares](/user-guide/data-share-consumers#resharing-shares). A `CALLER`-mode listing requires
+all accounts in the resharing chain to belong to the same Snowflake organization.
+
+Note
+
+Resharing of direct shares (shares created with [CREATE SHARE](/sql-reference/sql/create-share)) always uses `RESHARER` enforcement mode regardless of any configuration. Only views, tables, and dynamic tables are supported for resharing from a direct share.
+
+### Cross-region behavior
+
+When using caller mode for cross-region resharing, Snowflake replicates the provider’s data directly to the consumer’s target region. Unlike resharer mode, no dynamic tables are created in the resharer’s account.
+
+Note
+
+If all downstream reshared listings are dropped, the provider’s remote share replica is not automatically cleaned up. To remove the replica, you can drop the listing, disable auto-fulfillment, or remove all target accounts from the listing’s visible regions.
+
 ## Default resharing behavior for organizational listings
 
 For organizational listings, enabling resharing without specifying `only_within_organization` defaults to resharing within the
@@ -53,8 +128,9 @@ downstream consumption breaks for all consumers of any reshared listings created
 
 ## Supported governance policies
 
-When resharing data that has governance policies applied, only the following policy types are supported. Note that policies are evaluated in
-the context of the account doing the resharing, not by the downstream consumer:
+When resharing data that has governance policies applied, only the following policy types are supported. With `RESHARER` enforcement,
+policies are evaluated in the resharer’s account context; with `CALLER` enforcement, they are evaluated in the downstream consumer’s
+account context:
 
 - [Row access policy](/sql-reference/sql/create-row-access-policy)
 - [Masking policy](/sql-reference/sql/create-masking-policy)
@@ -67,8 +143,8 @@ If you apply an unsupported policy type on your shared data, resharing will be b
 ## Supported context functions
 
 If your shared data uses context functions in governance policies or secure view definitions, only the following context functions are
-supported for resharing. These functions return values as if they were executed by the account doing the resharing, not by the downstream
-consumer:
+supported for resharing. With `RESHARER` enforcement, functions resolve in the resharer’s context; with `CALLER` enforcement, they resolve
+in the downstream consumer’s context:
 
 - [CURRENT\_ACCOUNT](/sql-reference/functions/current_account)
 - [CURRENT\_ACCOUNT\_NAME](/sql-reference/functions/current_account_name)

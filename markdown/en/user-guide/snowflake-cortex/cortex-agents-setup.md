@@ -96,7 +96,7 @@ The following privileges control who can create, manage, and use an agent:
 | CREATE AGENT | Schema | Required to create an agent. |
 | USAGE | Agent | Required to query the agent to generate responses. The role also needs `USAGE` on the database and schema containing the agent, along with privileges on the objects used by the agent’s tools. See [Additional privileges for tools](#label-cortex-agents-tool-privileges). |
 | USAGE | Warehouse | Required on the user’s default warehouse to run agent queries and tools. |
-| MODIFY | Agent | Required to update the agent. |
+| MODIFY | Agent | Permits updating the agent and removing it with [DROP AGENT](/sql-reference/sql/drop-agent). |
 | MONITOR | Agent | Required to view the agent’s threads, logs, and traces. |
 | OWNERSHIP | Agent | Automatically granted to the role that creates the agent. Can be transferred to another role with [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership). |
 

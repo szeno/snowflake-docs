@@ -34,6 +34,8 @@ Schema evolution is a standalone feature but can be used in conjunction with the
 >   However, for the Kafka connector with Snowpipe Streaming, schema evolution is not tracked by the `SchemaEvolutionRecord` output. The `SchemaEvolutionRecord` output always shows NULL.
 > - When a column is manually renamed or modified after a schema evolution, the schema evolution record will be cleared.
 > - Schema evolution isn’t supported by [tasks](/user-guide/tasks-intro).
+> - These usage notes apply to Snowflake-managed Iceberg tables as well. Schema evolution is not supported for
+>   [structured type](/sql-reference/data-types-structured) fields in Iceberg tables.
 
 ## Schema evolution support: Ingestion method comparison
 

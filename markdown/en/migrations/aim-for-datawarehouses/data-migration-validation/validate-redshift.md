@@ -5,7 +5,8 @@ This page covers Amazon Redshift-specific setup for [Data validation](./data-val
 ## Prerequisites
 
 - **ODBC connectivity** to Redshift from Worker hosts (standard or IAM auth; same TOML as [Migrating Data from Amazon Redshift](./migrate-redshift)).
-- **Live Redshift access** for L2/L3: validation runs SQL against live Redshift even when tables were loaded via UNLOAD to S3.
+- **Live Redshift access** for L1 and L2. Schema and metrics validation always run SQL against live Redshift.
+- **L3 object storage (Recommended)**: Use **UNLOAD** (`extraction.strategy: unload`) so signatures land on **Amazon S3** with the same Worker `unload_*` TOML and Snowflake `externalStage` as migration. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) and [Amazon S3](./required-privileges#amazon-s3).
 
 ## Connectivity
 
@@ -27,7 +28,7 @@ auth_method = "standard"
 
 ## Validation behavior
 
-- **After UNLOAD migrations**: Validation still runs **SQL against live Redshift** for source-side metrics and row checks. Ensure the Worker can reach the cluster and that large partition result sets stay within timeout and spool limits.
+- **After UNLOAD migrations**: Schema and metrics validation still run **SQL against live Redshift**. For L3, reuse **UNLOAD** with the same Worker `unload_*` TOML and Snowflake `externalStage` as migration. Grant the Redshift cluster IAM role the [Amazon S3](./required-privileges#amazon-s3) writer actions. Ensure the Worker can reach the cluster and that large partition result sets stay within timeout and spool limits.
 - **Iceberg targets**: Validation compares whatever is in Snowflake (native or Iceberg). Iceberg targets don’t change L2/L3 SQL on the Redshift side.
 
 For partitioning and `indexColumnList`, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).

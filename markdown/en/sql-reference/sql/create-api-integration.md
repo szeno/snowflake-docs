@@ -171,6 +171,7 @@ CREATE [ OR REPLACE ] API INTEGRATION [ IF NOT EXISTS ] <integration_name>
     [ OAUTH_CLIENT_AUTH_METHOD = { CLIENT_SECRET_BASIC | CLIENT_SECRET_POST | NONE } ]
     [ OAUTH_DISCOVERY_URL = '<discovery_url>' ]
     [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]
+    [ OAUTH_RESOURCE = '<resource_uri>' ]
   )
   ENABLED = { TRUE | FALSE }
   [ COMMENT = '<string_literal>' ]
@@ -552,6 +553,12 @@ to `external_mcp`. For end-to-end setup, see
         When set, the value must be at least `3600` (one hour). The default is `0`, which
         Snowflake treats as a refresh token that never expires. Snowflake recommends setting an explicit,
         finite value so users periodically re-authenticate to the external MCP service.
+      - `OAUTH_RESOURCE = 'resource_uri'`
+
+        Optional. Resource indicator for the external MCP server, sent as the `resource` parameter
+        on the OAuth authorization and token requests. The value must be an absolute URI. Supported
+        only for `TYPE = OAUTH2`; not supported for `TYPE = OAUTH_DYNAMIC_CLIENT`, which derives the
+        resource automatically from `OAUTH_RESOURCE_URL`.
     - `TYPE = OAUTH_DYNAMIC_CLIENT`: Authenticate using OAuth Dynamic Client Registration
       (DCR). Snowflake registers itself with the MCP service automatically. Specify the following
       sub-parameter:

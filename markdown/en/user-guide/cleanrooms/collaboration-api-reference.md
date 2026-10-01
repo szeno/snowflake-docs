@@ -1609,6 +1609,7 @@ EDIT supports the following changes:
 - Change a collaborator’s role (for example, update a data provider to an analysis runner, or the reverse).
 - Share an already-registered template with an analysis runner, or remove a shared template.
 - Share an already-linked data offering from a data provider with an analysis runner, or unlink a shared data offering.
+- Add `distribution: external`, which turns on the [automated security scan](/user-guide/cleanrooms/spec-collaboration#label-dcr-collaboration-distribution) for a collaboration whose collaborators are all in one organization.
 
 The following fields cannot be changed with EDIT:
 
@@ -1616,6 +1617,8 @@ The following fields cannot be changed with EDIT:
 - `description`
 - `owner`
 - `activation_destinations`
+
+You can add `distribution: external`, but you can’t remove it or change its value after it’s set. A request that drops the field returns an error.
 
 You cannot rename an existing alias in `collaborator_identifier_aliases` or remap it to a different account. However, `collaborator_identifier_aliases` is updated automatically as collaborators are added or removed.
 
@@ -1653,6 +1656,7 @@ A string message confirming that the update request has been submitted. Use [VIE
 
 - Approvers can only approve or reject the entire request; partial approval of individual changes is not supported.
 - You can only add a collaborator in a different cloud region from the owner if the collaboration was originally created as a cross-cloud collaboration. If the collaboration wasn’t initially set up for [Cross-Cloud Auto-Fulfillment](/user-guide/cleanrooms/laf#label-dcr-collab-enabling-laf), every collaborator added with EDIT must be in the same region as the owner. Conversely, removing the last cross-region collaborator does not cause the collaboration to start supporting [external tables](/user-guide/cleanrooms/laf#label-dcr-collab-laf-limitations).
+- Adding a collaborator from another organization to a same-organization collaboration turns on the [automated security scan](/user-guide/cleanrooms/spec-collaboration#label-dcr-collaboration-distribution). The request doesn’t complete until the scan resolves, so it might take longer to complete than other edit requests. The collaboration is scanned for every later patch, even if you remove that collaborator again.
 - When the edit adds a new collaborator, the collaboration tracks that collaborator through the `INVITED`, `REVIEWING`, `JOINING`, and `JOINED` states. The update request moves directly to `APPROVED` once the existing collaborators approve it; the new collaborator’s review and join operations do not change the request status. Affected collaborators can review any newly shared resources by calling [VIEW\_DATA\_OFFERINGS](#label-dcr-collaboration-view-data-offerings-reference), [VIEW\_TEMPLATES](#label-dcr-collaboration-view-templates-reference), and [VIEW\_CODE\_SPECS](#label-dcr-collaboration-view-code-specs-reference).
 
 #### Example

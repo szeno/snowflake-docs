@@ -77,6 +77,29 @@ Note
 `$live` views aren’t transactional. Because `$changes` rows arrive incrementally, a `$live` view
 can expose a partial transaction where some rows are visible before others. If you need transactional consistency, query the target tables instead.
 
+## `$live` during a re-snapshot
+
+A re-snapshot drops the change log and reloads the target table from a fresh copy of the source.
+The target table keeps its rows until that reload, so `$live` is rewritten to read only the target
+for the duration rather than being dropped.
+
+While it is in that state `$live` is not live:
+
+- It is frozen at the last apply run before the re-snapshot began. Source changes committed during
+  the window aren’t visible through it.
+- It can briefly return fewer rows than it did a moment earlier, because rows that were only in
+  `$changes` and had not been merged yet are no longer readable.
+
+`$live` is absent for part of the window in two cases: while the reload itself is running, and if
+the source table’s schema changed during the re-snapshot (the retained rows no longer match the
+new columns). It comes back with its normal definition once the reload completes.
+
+The initial snapshot of a table is different: there is nothing retained to read, so `$live` is
+only created once the first load has completed.
+
+For recovery steps that can re-snapshot a mirror, see
+[Mirror auto-suspend after repeated failures](/user-guide/snowflake-postgres/postgres-data-mirroring-manage#label-mirror-auto-suspend).
+
 ## Query changes with the `$changes` table
 
 Each mirrored table has a companion `$changes` table (for example, `orders_db.public.orders$changes`). It is a rolling **7-day change feed**: every insert, update, and delete that happens on the
@@ -88,7 +111,8 @@ You can query `$changes` directly to build pipelines, audit trails, or point-in-
 
 When a table is **added to a mirror for the first time,** whether by creating the mirror, adding a table explicitly, or creating a new table inside a schema that is already mirrored, the mirror needs a full baseline copy of any existing rows before the change feed can start. During this period the table shows as `SNAPSHOTTING` in `list_mirrored_tables`. No changes are lost; the feed starts automatically once the copy completes.
 
-This is the only situation that triggers a full data copy. No DDL on an already-mirrored table causes a re-snapshot.
+Adding a table triggers its initial snapshot. Recovery operations, such as restarting a mirror
+after unapplied operations age out, can trigger a later re-snapshot.
 
 ### DDL updates in `$changes`
 

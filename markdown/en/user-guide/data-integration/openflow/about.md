@@ -18,10 +18,20 @@ The Openflow platform is currently available for deployment in customers’ own 
 
 Openflow isn’t automatically available in trial accounts. To enable it, contact your Snowflake account team.
 
-For operational safeguards (backing up flows, avoiding data loss when you remove deployments or runtimes), see [Manage Openflow](/user-guide/data-integration/openflow/manage).
+## Start here
+
+- New deployments: follow the [gen 2 quickstart](/user-guide/data-integration/openflow/gen2/quickstart).
+  Any new deployment you create is gen 2. For how gen 1 and gen 2 differ, see
+  [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations).
+- Choose a deployment type: [Openflow - Snowflake Deployment](/user-guide/data-integration/openflow/about-spcs)
+  or [Bring Your Own Cloud (BYOC)](/user-guide/data-integration/openflow/about-byoc).
+- Security topics (outbound authentication, secrets, and related guides):
+  [Openflow security](/user-guide/data-integration/openflow/security/index).
+- Operational safeguards (backing up flows, avoiding data loss when you remove
+  deployments or runtimes): [Manage Openflow](/user-guide/data-integration/openflow/manage).
 
 This topic describes the key features of Openflow, its benefits,
-architecture, workflow, and use cases.
+architecture, and use cases.
 
 ## Key features and benefits
 
@@ -100,7 +110,10 @@ Openflow use cases include:
 
 Openflow uses industry-leading security features that help ensure you have
 the highest levels of security for your account, and users,
-and all the data you store in Snowflake. Some key aspects include:
+and all the data you store in Snowflake.
+
+For procedure-oriented security topics, see [Openflow security](/user-guide/data-integration/openflow/security/index).
+Some key aspects include:
 
 Authentication
 :   - Runtimes use [Snowflake Managed Token](#label-openflow-snowflake-managed-token) as the

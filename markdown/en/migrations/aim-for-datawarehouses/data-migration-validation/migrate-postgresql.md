@@ -9,7 +9,7 @@ This page covers PostgreSQL-specific setup for [Data migration](./data-migration
 
 ## Connectivity and extraction
 
-PostgreSQL uses **`regular`** extraction (partitioned `SELECT` through the Worker to Parquet, then the internal migration stage).
+The recommended extract is **`regular`**, which uses the PostgreSQL COPY protocol (`use_copy = true`, the default for cloud migration). It requires `psql` on the Worker host.
 
 ### Managed host (TLS required)
 

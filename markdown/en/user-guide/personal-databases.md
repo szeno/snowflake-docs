@@ -15,6 +15,23 @@ automatically transferred to ACCOUNTADMIN ownership.
   conflicts in shared databases.
 - **Governance:** All Personal Database objects are fully governed by RBAC.
 
+## Compare personal and standard databases
+
+A PDB stores supported objects for personal development. It isn’t a general-purpose database for tables and views.
+Use a standard database to store the data that your workspace code queries. The following table summarizes the differences:
+
+| Capability | Personal database | Standard database |
+| --- | --- | --- |
+| Creation | Snowflake creates the database automatically. | A role with the required privileges creates the database. |
+| Supported objects | Supports the object types listed in [PDB object types](#label-personal-databases-pdb-object-types). | Supports general-purpose database objects, including tables and views. |
+| Table data | Can’t store data in tables. Workspace files can contain code that queries data in other databases. | Stores table data that users can query with the required privileges. |
+
+Expand
+
+Show lessSee more
+
+Access to a PDB doesn’t grant additional access to data in other databases. Your code still requires the appropriate privileges on that data.
+
 ## PDB object types
 
 PDBs support the following object types:
@@ -29,8 +46,11 @@ PDBs support the following object types:
 
 ### Workspaces
 
-The PDB is created when a user first interacts with the [Workspaces UI](/user-guide/ui-snowsight/workspaces).
-Workspaces are file-based entities and require storage within a Snowflake database.
+Snowflake creates the PDB automatically.
+[Workspaces](/user-guide/ui-snowsight/workspaces) are file-based entities and require storage within a Snowflake database.
+
+You don’t need an account-level or user-level command to enable personal databases. Administrators can’t disable them.
+To control which supported object types users can create, see [Use feature policies with Personal Databases](#label-personal-databases-feature-policies).
 
 ### Cortex Agents
 
@@ -191,4 +211,4 @@ Administrators can’t perform the following tasks:
 - View how much storage is used for PDBs. PDBs do not appear in `DATABASE_STORAGE_USAGE_HISTORY`.
 - Limit how much storage is used for each PDB.
 - Drop PDBs, or prevent individual users from using them.
-- Create new PDBs. New PDBs are created on demand when a user creates a workspace.
+- Create new PDBs. Snowflake creates PDBs automatically.

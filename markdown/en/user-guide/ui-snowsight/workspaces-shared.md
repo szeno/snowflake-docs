@@ -21,18 +21,29 @@ Show lessSee more
 
 ## Shared workspace functionality
 
-Shared workspaces are created within a specific database and schema, which grants access to multiple authenticated users. Users assigned
-specific roles can then contribute, edit, and modify code and files simultaneously within the environment.
+Shared workspaces are created within a specific database and schema. The privileges granted to a user’s role determine what the user can do:
 
-Users with access to a shared workspace can perform the following actions:
+| Workspace privilege | Capabilities |
+| --- | --- |
+| `READ` | View the workspace and its files without changing their contents. |
+| `WRITE` | Create, edit, and delete files. Includes `READ`, so a separate `READ` grant isn’t required. |
+| `OWNERSHIP` | Full control over the workspace. Only one role owns a workspace at a time. |
 
-- View and edit the contents of the shared workspace.
-- Run queries using their own access privileges.
-- Collaborate on file edits with other authorized users.
-- Move or copy files and folders from any of their private workspaces to the shared workspace. This capability allows users to integrate
-  existing work into the team environment.
+Expand
+
+Show lessSee more
+
+Access to workspace files doesn’t grant access to the data or compute used by their code. Users run queries with their own execution privileges.
+For privilege definitions, see [Workspace privileges](/user-guide/security-access-control-privileges#label-access-control-privileges-workspace).
+
+Users with write access can collaborate on file edits and move or copy files from their private workspaces into a shared workspace.
+For the draft and publish workflow, see [Collaborate in a shared workspace](#label-shared-workspaces-collaborate-in-a-shared-workspace).
 
 ## Create a shared workspace
+
+The creation dialog selects your current Snowsight user-menu role as the owner by default.
+The owner role menu lists all your roles, so you can select a different role to own the shared workspace.
+The execution role selected inside an open SQL file doesn’t determine the workspace’s owner.
 
 Shared workspaces are created within a specific database and schema that the role has access to. To create a shared workspace, the role must either own the destination schema or have sufficient privileges on it:
 
@@ -48,19 +59,28 @@ Shared workspaces are created within a specific database and schema that the rol
 
 Shared workspaces can be shared with roles that have the USAGE privilege on the database where the shared workspace is located.
 
+To grant `CREATE WORKSPACE` on a schema, use a role that owns the schema, has the global `MANAGE GRANTS` privilege,
+or holds `CREATE WORKSPACE` on that schema with `WITH GRANT OPTION`. Having `CREATE WORKSPACE` alone doesn’t authorize a role to grant it to others.
+The accompanying `USAGE` grants also require grant authority on their respective objects. For details, see
+[GRANT access control requirements](/sql-reference/sql/grant-privilege#label-grant-privilege-access-control-requirements).
+
 To create a shared workspace, follow these steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Workspaces**.
 3. In the **Workspaces** menu, select **Shared workspace** in the **Create** section.
 4. Specify a shared workspace name.
-5. Select a shared database and schema for the workspace.
-6. Specify the roles to share the workspace with.
-7. Select **Create** after you have finished adding roles.
+5. Review the owner role. Your current role is selected by default; you can choose another of your roles from the menu.
+6. Select a shared database and schema for the workspace.
+7. Specify the roles to share the workspace with.
+8. Select **Create** after you have finished adding roles.
 
 ## Access and filter shared workspaces
 
-You can navigate, filter, and search for workspaces using the **Workspaces** menu.
+You can navigate, filter, and search for workspaces using the **Workspaces** menu. Your current role from the
+Snowsight user menu determines which shared workspaces you can see and access. To use a different role,
+select your name in the lower-left corner » **Switch role**. Changing the role inside a SQL file doesn’t change this list.
+For details, see [Roles in Workspaces](/user-guide/ui-snowsight/workspaces#label-workspaces-role-context).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Workspaces**.

@@ -8,7 +8,7 @@ The following file formats are supported:
 
 > | Structured/Semi-structured | Type | Notes |
 > | --- | --- | --- |
-> | Structured | Delimited (CSV, TSV, etc.) | Any valid singlebyte delimiter is supported; default is comma (i.e. CSV). |
+> | Structured | Delimited (CSV, TSV, etc.) | Any valid single-byte delimiter is supported; default is comma (that is, CSV). |
 > | Semi-structured | JSON, Parquet |  |
 >
 > Expand
@@ -31,9 +31,9 @@ Individual file format options can be specified in any of the following places:
 
 In addition, to simplify data unloading, Snowflake supports creating named file formats, which are database objects that encapsulate all of the required
 format information. Named file formats can then be used as input in all the same places where you can specify individual file format options, thereby
-helping to streamline the data unloading process for similarly-formatted data.
+helping to streamline the data unloading process for similarly formatted data.
 
-Named file formats are optional, but are recommended when you plan to regularly unload similarly-formatted data.
+Named file formats are optional, but are recommended when you plan to regularly unload similarly formatted data.
 
 ### Create a named file format
 

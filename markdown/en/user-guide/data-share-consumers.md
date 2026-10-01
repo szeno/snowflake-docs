@@ -193,6 +193,11 @@ Similarly, the output of SHOW SHARES and DESC SHARE includes the name of the dat
 As a consumer, when resharing is allowed, you can reshare data that you imported from a provider’s direct share with other Snowflake
 accounts in your own organization. You can’t reshare a direct share with accounts outside your organization.
 
+Resharing a direct share always uses `RESHARER` policy enforcement: downstream consumers see the data available to the resharer.
+Only tables, dynamic tables, and views from the incoming direct share can be reshared, through a secure view in the resharer’s own database.
+UDFs and UDTFs cannot be reshared from a direct share. For a comparison with listing resharing, see
+[Objects supported for sharing and resharing](/collaboration/resharing-as-provider#objects-supported-for-sharing-and-resharing).
+
 Before you reshare, run [SHOW DATABASES](/sql-reference/sql/show-databases) and inspect the `resharing_settings` column for the imported
 database. When resharing is allowed, `resharing_settings` contains a JSON object similar to the following:
 

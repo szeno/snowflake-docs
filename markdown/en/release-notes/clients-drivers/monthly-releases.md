@@ -53,9 +53,12 @@ Show lessSee more
 | [.NET Driver](/release-notes/clients-drivers/dotnet) | 6.1.0 | 03-Sep-2026 |  |
 | 6.2.0 | 17-Sep-2026 |  |
 | [Go Snowflake Driver](/release-notes/clients-drivers/golang) | 2.2.0 | 03-Sep-2026 |  |
+| 2.3.0 | 30-Sep-2026 |  |
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | 4.3.4 | 03-Sep-2026 |  |
+| 4.4.0 | 30-Sep-2026 |  |
 | [Node.js Driver](/release-notes/clients-drivers/nodejs) | 3.3.0 | 03-Sep-2026 |  |
+| 3.4.0 | 30-Sep-2026 |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 3.20.0 | 03-Sep-2026 |  |
 | 3.21.0 | 10-Sep-2026 |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | 4.2.0 | 03-Sep-2026 |  |
@@ -63,6 +66,7 @@ Show lessSee more
 | 3.28.0 | 28-Sep-2026 |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
 | [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 4.7.3 | 03-Sep-2026 |  |
+| 4.8.0 | 30-Sep-2026 |  |
 | [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | 3.2.2 | 01-Sep-2026 |  |
 | [Snowpipe Streaming SDK](/release-notes/clients-drivers/snowpipe-streaming-sdk) | TBD | TBD |  |
 | [Snowflake Python APIs](/release-notes/clients-drivers/snowapi-python) | TBD | TBD |  |

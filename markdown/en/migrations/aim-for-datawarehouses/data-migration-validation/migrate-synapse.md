@@ -162,6 +162,8 @@ CREATE OR REPLACE STAGE my_synapse_stage
   FILE_FORMAT = (TYPE = 'PARQUET');
 ```
 
+Grant the CETAS credential identity and the Snowflake Azure service principal as described in [Azure Blob Storage](./required-privileges#azure-blob-storage).
+
 **3. Add CETAS settings to Worker TOML.** Reference the external data source and file format by name; CETAS is enabled when both are set:
 
 Copy code

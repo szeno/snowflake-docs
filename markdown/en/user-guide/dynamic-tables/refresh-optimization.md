@@ -64,7 +64,7 @@ refresh.
 | UNION ALL | Takes the union of changes from each side. | Performs well. No special considerations. |
 | WITH (CTEs) | Computes changes for each Common Table Expression. | Performs well, but avoid overly complex single-table definitions. Consider splitting into multiple dynamic tables. |
 | Scalar aggregates | Fully recalculates the aggregate when any input changes. | Avoid in performance-critical tables. Consider grouping by a constant instead. |
-| GROUP BY | Recalculates aggregates for every grouping key that contains changes. | Cluster base tables by grouping keys. Avoid compound expressions in keys. See [Optimize aggregations](#label-dynamic-tables-refresh-optimization-aggregations). |
+| GROUP BY | Recalculates aggregates for every grouping key that contains changes. When the GROUP BY is the top-level operator and the definition exposes the grouping keys and aggregates in supported form, Snowflake reuses the previously computed state. | Cluster base tables by grouping keys. Avoid compound expressions in keys. Make the aggregate top-level by splitting dynamic tables if possible. See [Optimize aggregations](#label-dynamic-tables-refresh-optimization-aggregations). |
 | DISTINCT | Equivalent to GROUP BY ALL. | Locality-sensitive. Consider using QUALIFY instead. See [Remove duplicates efficiently](#label-dynamic-tables-refresh-optimization-deduplication). |
 | Window functions | Recalculates the function for every partition that contains changes. | Always include PARTITION BY. Cluster base tables by partition keys. See [Optimize window functions](#label-dynamic-tables-refresh-optimization-windows). |
 | INNER JOIN | Joins changes from each side with the other table. | Performs well when one side is small or changes infrequently. Cluster the less-frequently-changing side. See [Optimize joins](#label-dynamic-tables-refresh-optimization-joins). |
@@ -82,14 +82,19 @@ The following sections show how to restructure queries that use locality-sensiti
 
 ### Optimize aggregations
 
-When you use [GROUP BY](/sql-reference/constructs/group-by), Snowflake recalculates aggregates
-for every grouping key that contains changes. Performance depends on the following factors:
+#### Simplify compound expressions in grouping keys
+
+Unless the
+[optimization for top-level aggregates](#label-dynamic-tables-refresh-optimization-top-level-aggregates)
+can be used, Snowflake recalculates aggregates for every grouping key that contains changes
+when you use [GROUP BY](/sql-reference/constructs/group-by). Performance depends on the
+following factors:
 
 - **Data clustering**: Base tables clustered by grouping keys perform best.
 - **Change distribution**: Keep changes to fewer than [five percent](/user-guide/dynamic-tables/refresh-modes#label-dynamic-tables-refresh-no-5-percent-rule) of grouping keys.
 - **Key complexity**: Simple column references outperform compound expressions.
 
-#### Problem: Compound expressions in grouping keys
+##### Problem: Compound expressions in grouping keys
 
 This query performs poorly because the grouping key is an expression:
 
@@ -105,7 +110,7 @@ AS
   GROUP BY 1;
 ```
 
-#### Solution: Materialize the expression
+##### Solution: Materialize the expression
 
 Split into two dynamic tables to expose a simple grouping key:
 
@@ -130,6 +135,145 @@ AS
 
 The intermediate table exposes a simple column for GROUP BY, and Snowflake can
 track changes at the partition level more efficiently.
+
+#### Benefit from top-level aggregates
+
+When a GROUP BY appears at the top-level projection of a dynamic table, Snowflake can
+maintain it incrementally by reusing the values already stored in the dynamic table instead
+of recomputing every impacted group from scratch. This optimization is applied automatically
+when the definition meets the requirements listed in this section.
+
+For example, the following definitions qualify for this optimization:
+
+- `SELECT customer_id, SUM(quantity * unit_price) FROM raw_orders GROUP BY customer_id`
+- `SELECT customer_id, COUNT(*) FROM raw_orders GROUP BY customer_id HAVING COUNT(*) > 5`
+- `SELECT product_name, ROUND(AVG(quantity), 2) FROM raw_orders GROUP BY product_name`
+
+The optimization is applied only when a dynamic table is created or recreated. If your
+existing dynamic table already qualifies, recreate it with `CREATE OR REPLACE` to benefit
+from the optimization. `CREATE OR ALTER` is not sufficient.
+
+The optimization supports the following aggregates: `AVG`, `BOOLAND_AGG`, `BOOLOR_AGG`,
+`BOOLXOR_AGG`, `CORR`, `COUNT`, `COUNT(*)`, `COUNT_IF`, `COVAR_POP`, `COVAR_SAMP`,
+`KURTOSIS`, `MAX`, `MIN`, `REGR_AVGX`, `REGR_AVGY`, `REGR_COUNT`, `REGR_INTERCEPT`,
+`REGR_R2`, `REGR_SLOPE`, `REGR_SXX`, `REGR_SXY`, `REGR_SYY`, `SKEW`, `STDDEV`,
+`STDDEV_POP`, `STDDEV_SAMP`, `SUM`, `VARIANCE`, `VARIANCE_POP`, `VARIANCE_SAMP`,
+`VAR_POP`, and `VAR_SAMP`. `DISTINCT` inside an aggregate is not supported by the
+optimization: for example, `COUNT(DISTINCT …)` and `SUM(DISTINCT …)` prevent it.
+
+When the SELECT list does not directly expose a grouping key or aggregate that the
+optimization needs, Snowflake can account for it automatically on re-creation for the
+following data types:
+`BIGINT`, `BOOLEAN`, `BYTEINT`, `DATE`, `DATETIME`, `DEC`, `DECFLOAT`, `DECIMAL`, `DOUBLE`,
+`DOUBLE PRECISION`, `FLOAT`, `FLOAT4`, `FLOAT8`, `INT`, `INTEGER`, `INTERVAL`, `IPADDRESS`,
+`LONG`, `NUMBER`, `NUMERIC`, `REAL`, `SMALLINT`, `TIME`, `TIMESTAMP`, `TIMESTAMP WITH LOCAL TIME ZONE`, `TIMESTAMP WITH TIME ZONE`, `TIMESTAMP WITHOUT TIME ZONE`, `TIMESTAMPLTZ`,
+`TIMESTAMPNTZ`, `TIMESTAMPTZ`, `TIMESTAMP_LTZ`, `TIMESTAMP_NTZ`, `TIMESTAMP_TZ`, `TINYINT`,
+and `UUID`. For other data types, select the keys and aggregates themselves explicitly
+rather than relying on automatic support. The same data type restriction applies to
+aggregates referenced only in a `HAVING` predicate.
+
+If a dynamic table does not qualify for this optimization with its current definition, the
+following adjustments can make it qualify:
+
+- If an operator such as a join sits above the GROUP BY, move the aggregate into its own
+  dynamic table and perform the join in a downstream dynamic table, as shown in the example
+  below.
+- If you select a grouping key only wrapped in a non-injective expression and the key’s
+  data type is not among the supported data types listed above, select the key itself
+  explicitly as well. For example, if the dynamic table is defined as
+  `SELECT UPPER(product_name), ... FROM raw_orders GROUP BY product_name` with
+  `product_name` being a `VARCHAR` and `UPPER` being non-injective, then `product_name`
+  needs to be selected explicitly. The requirement applies to the expression in the GROUP BY
+  clause, not to the columns inside it: with `GROUP BY UPPER(product_name)` the grouping key
+  is `UPPER(product_name)`, so selecting that expression is sufficient.
+- If you do not select a grouping key at all and its data type is not among the supported
+  data types listed above, select the key itself explicitly. For example, if the
+  dynamic table is defined as `SELECT COUNT(*), ... FROM raw_orders GROUP BY order_status`
+  with `order_status` being a `VARCHAR`, then `order_status` needs to be selected explicitly.
+- If you wrap an aggregate, select the aggregate itself explicitly as well if its result
+  type is not among the supported data types listed above. For example,
+  `MIN(product_name)` returns a `VARCHAR`, so selecting `SUBSTR(MIN(product_name), 1, 5)`
+  requires selecting `MIN(product_name)` explicitly. The same applies to a cast: selecting
+  `MIN(order_ref)::INT` with `order_ref` being a `VARCHAR` encoding an `INT` requires
+  selecting `MIN(order_ref)` explicitly.
+- If you select an expression containing multiple keys or aggregates, select the keys and
+  aggregates whose data type is not among the supported data types listed above
+  explicitly unwrapped as well. For example, if the dynamic table is defined as
+  `SELECT customer_id || ' ' || product_name || ' (' || MIN(order_status) || '): ' || SUM(quantity * unit_price), ... FROM raw_orders GROUP BY customer_id, product_name`,
+  then `product_name` and `MIN(order_status)` are `VARCHAR` and need to be selected
+  explicitly, while `customer_id` is an `INT` and `SUM(quantity * unit_price)` is a
+  `DECIMAL`, so Snowflake accounts for those automatically.
+- If a `HAVING` predicate references an aggregate that is not in the SELECT list, select the
+  aggregate explicitly if its result type is not among the supported data types listed
+  above.
+  Context-aware predicates that reference `CURRENT_TIMESTAMP`, `CURRENT_DATE`, or constant
+  subqueries are not supported by the optimization.
+
+Note
+
+Grouping keys with non-binary collations, `TIMESTAMP_TZ`, and semi-structured `VARIANT`,
+`OBJECT`, or `ARRAY` types are not supported by the optimization because these
+types can have multiple stored representations for the same value.
+
+##### Problem: A join sits above the aggregate
+
+This definition puts the aggregate in a subquery and joins a dimension table on top of it,
+so the GROUP BY does not appear at the top-level projection. Snowflake cannot apply
+the optimization:
+
+Copy code
+
+```
+CREATE OR REPLACE DYNAMIC TABLE dt_customer_revenue
+  TARGET_LAG = '1 hour'
+  WAREHOUSE = transform_wh
+AS
+  SELECT
+    c.region,
+    t.total_revenue
+  FROM (
+    SELECT customer_id, SUM(quantity * unit_price) AS total_revenue
+    FROM raw_orders
+    GROUP BY customer_id
+  ) t
+  JOIN dim_customers c ON t.customer_id = c.customer_id;
+```
+
+The join sits above the GROUP BY in the subquery, so the GROUP BY does not appear at the
+top-level projection.
+
+##### Solution: Split the aggregate and the join into two dynamic tables
+
+Move the aggregate into its own top-level dynamic table, then perform the join in a
+downstream dynamic table that consumes it:
+
+Copy code
+
+```
+CREATE OR REPLACE DYNAMIC TABLE dt_customer_revenue_totals
+  TARGET_LAG = DOWNSTREAM
+  WAREHOUSE = transform_wh
+AS
+  SELECT
+    customer_id,
+    SUM(quantity * unit_price) AS total_revenue
+  FROM raw_orders
+  GROUP BY customer_id;
+
+CREATE OR REPLACE DYNAMIC TABLE dt_customer_revenue
+  TARGET_LAG = '1 hour'
+  WAREHOUSE = transform_wh
+AS
+  SELECT
+    c.region,
+    s.total_revenue
+  FROM dt_customer_revenue_totals s
+  JOIN dim_customers c ON s.customer_id = c.customer_id;
+```
+
+The first dynamic table has the GROUP BY at the top-level projection and exposes the key and
+aggregate, so Snowflake can apply the optimization. The second dynamic table handles the join
+and consumes the pre-aggregated results.
 
 ### Optimize joins
 

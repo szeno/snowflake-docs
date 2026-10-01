@@ -41,6 +41,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
 
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ REPLACE_INVALID_CHARACTERS ]
@@ -49,6 +50,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ ENABLE_DATA_COMPACTION ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR ]
   [ ENABLE_ICEBERG_MERGE_ON_READ ]
+  [ ENABLE_SCHEMA_EVOLUTION ]
 
 ALTER ICEBERG TABLE [ IF EXISTS ] dataGovnPolicyTagAction
 
@@ -365,6 +367,25 @@ Where:
 
         For a detailed description of this parameter, see [Deprecated: ENABLE\_ICEBERG\_MERGE\_ON\_READ](/user-guide/tables-iceberg-manage#label-enable-iceberg-merge-on-read).
 
+`ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE }`
+:   Enables or disables automatic changes to the table schema from data loaded into the table from source files, including:
+
+    > - Added columns.
+    >
+    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+    > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
+
+    Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
+
+    Note
+
+    Loading data from files evolves the table columns when all of the following are true:
+
+    - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
+    - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+
+    Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
 `UNSET`
 :   Currently, you can only unset the following parameters with this command:
 
@@ -374,6 +395,7 @@ Where:
     > - `ENABLE_DATA_COMPACTION`
     > - `ICEBERG_MERGE_ON_READ_BEHAVIOR`
     > - `ENABLE_ICEBERG_MERGE_ON_READ`
+    > - `ENABLE_SCHEMA_EVOLUTION`
 
 ## Clustering actions (`clusteringAction`)
 

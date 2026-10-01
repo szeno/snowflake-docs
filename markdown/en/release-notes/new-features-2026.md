@@ -9,6 +9,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Server releases earlier in 2026
 
+- [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
+
+  - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)
+
+    - [New ACCOUNT\_USAGE.STREAMS view](/release-notes/2026/10_35#new-accountusagestreams-view)
+  - [Release notes change log](/release-notes/2026/10_35#release-notes-change-log)
 - [10.32 Release Notes (with behavior changes): Sep 05, 2026 - Sep 09, 2026](/release-notes/2026/10_32)
 
   - [Behavior change bundles](/release-notes/2026/10_32#behavior-change-bundles)
@@ -248,9 +254,15 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
+- [Sep 30, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-30-claude-sonnet-5-5-preview)
+- [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
+- [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
 - [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
+- [Sep 30, 2026: Semantic Studio (General availability)](/release-notes/2026/other/2026-09-30-semantic-studio-ga)
 - [Sep 30, 2026: Spark Monitoring UI (Preview)](/release-notes/2026/other/2026-09-30-spark-monitoring-ui)
 - [Sep 29, 2026: Response caching for Cortex AI Functions](/release-notes/2026/other/2026-09-29-cortex-response-caching)
+- [Sep 28, 2026: CoCo Desktop v1.21.6](/release-notes/2026/other/2026-09-28-coco-desktop-v1-21-6)
 - [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
 - [Sep 25, 2026: OpenAI GPT-5.6 and GPT-6 Astra models (General availability)](/release-notes/2026/other/2026-09-25-openai-gpt-56-astra-ga)
 - [Sep 24, 2026: Code Bundles (Preview)](/release-notes/2026/other/2026-09-24-code-bundles)

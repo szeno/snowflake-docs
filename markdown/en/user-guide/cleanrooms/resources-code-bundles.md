@@ -183,6 +183,8 @@ Note
 
 Installing a template with a code spec triggers a Snowflake security check, and issues a new patch of the underlying clean room. The template will not be available or usable until the process is complete and the patch is installed.
 
+Snowflake skips this security check when all of the collaborators belong to the same organization, which makes a same-organization collaboration a much faster place to develop and test your code. See [Iterating quickly in a same-organization collaboration](/user-guide/cleanrooms/developer-guide#label-dcr-collab-single-org-development).
+
 To check the progress of the patch installation:
 
 1. Find the name of the clean room application. Typically, this will be `SFDCR_<clean room name>`, but you can search to be sure:

@@ -15,6 +15,12 @@ If you have questions about any of these features, contact
 
 ## Recent server releases
 
+- [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
+
+  - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)
+
+    - [New ACCOUNT\_USAGE.STREAMS view](/release-notes/2026/10_35#new-accountusagestreams-view)
+  - [Release notes change log](/release-notes/2026/10_35#release-notes-change-log)
 - [10.32 Release Notes (with behavior changes): Sep 05, 2026 - Sep 09, 2026](/release-notes/2026/10_32)
 
   - [Behavior change bundles](/release-notes/2026/10_32#behavior-change-bundles)
@@ -32,20 +38,25 @@ If you have questions about any of these features, contact
     - [Per-user quotas (General availability)](/release-notes/2026/10_29#per-user-quotas-general-availability)
     - [Anomaly monitors for cost anomalies (Preview)](/release-notes/2026/10_29#anomaly-monitors-for-cost-anomalies-preview)
   - [Release notes change log](/release-notes/2026/10_29#release-notes-change-log)
-- [10.27 Release Notes: Aug 2, 2026 - Aug 6, 2026](/release-notes/2026/10_27)
-
-  - [Data pipeline updates](/release-notes/2026/10_27#data-pipeline-updates)
-
-    - [CREATE OR ALTER DYNAMIC TABLE (General availability)](/release-notes/2026/10_27#create-or-alter-dynamic-table-general-availability)
-  - [Release notes change log](/release-notes/2026/10_27#release-notes-change-log)
 
 For earlier server releases, see [Server releases earlier in 2026](/release-notes/weekly-releases-2026).
 
 ## Recent feature updates
 
+- [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
+- [Sep 30, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-30-claude-sonnet-5-5-preview)
+- [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
+- [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
 - [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
+- [Sep 30, 2026: Semantic Studio (General availability)](/release-notes/2026/other/2026-09-30-semantic-studio-ga)
 - [Sep 30, 2026: Spark Monitoring UI (Preview)](/release-notes/2026/other/2026-09-30-spark-monitoring-ui)
+- [Go Driver (v2.3.0)](/release-notes/clients-drivers/golang-2026)
+- [JDBC Driver (v4.4.0)](/release-notes/clients-drivers/jdbc-2026)
+- [Node.js Driver (v3.4.0)](/release-notes/clients-drivers/nodejs-2026)
+- [Python Connector (v5.0.0rc4)](/release-notes/clients-drivers/python-connector-2026)
+- [Python Connector (v4.8.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Sep 29, 2026: Response caching for Cortex AI Functions](/release-notes/2026/other/2026-09-29-cortex-response-caching)
+- [Sep 28, 2026: CoCo Desktop v1.21.6](/release-notes/2026/other/2026-09-28-coco-desktop-v1-21-6)
 - [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
 - [Snowflake CLI (v3.28.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowflake ML Python (v2.3.0)](/release-notes/clients-drivers/snowpark-ml-2026)
@@ -130,13 +141,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 01, 2026: Snowflake App Runtime (General availability)](/release-notes/2026/other/2026-09-01-snowflake-app-runtime-ga)
 - [ODBC Driver (v4.0.0-rc2)](/release-notes/clients-drivers/odbc-2026)
 - [Spark Connector (v3.2.2)](/release-notes/clients-drivers/spark-connector-2026)
-- [August 31, 2026: app.yml for Snowflake App Runtime (Preview)](/release-notes/2026/other/2026-08-31-app-yml-v2)
-- [Aug 31, 2026: CoCo Desktop v1.21.2](/release-notes/2026/other/2026-08-31-coco-desktop-v1-21-2)
-- [August 31, 2026: Second generation Openflow (Preview)](/release-notes/2026/other/2026-08-31-openflow-gen2-preview)
-- [Aug 31, 2026: Snowflake-provided tags (Public Preview)](/release-notes/2026/other/2026-08-31-snowflake-provided-tags-preview)
-- [Ingest Java SDK (v4.4.5)](/release-notes/clients-drivers/ingest-java-sdk-2026)
-- [Snowflake CLI (v3.26.0)](/release-notes/clients-drivers/snowflake-cli-2026)
-- [Snowflake ML Python (v1.54.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Aug 30, 2026: Cortex Agents asynchronous API (General availability)](/release-notes/2026/other/2026-08-30-cortex-agents-async-api-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

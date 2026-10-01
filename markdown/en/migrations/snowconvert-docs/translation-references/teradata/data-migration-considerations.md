@@ -106,6 +106,8 @@ Copy code
 
 Credential modes (choose **exactly one**): `write_nos_function_mapping` (recommended), `write_nos_authorization_name`, or `write_nos_access_id` plus `write_nos_access_key`.
 
+Grant Teradata NOS and the Snowflake storage integration the matching store in [External stage and storage integration](./required-privileges#external-stage-and-storage-integration).
+
 **Prompt:**
 
 Copy code

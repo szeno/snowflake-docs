@@ -143,15 +143,77 @@ Grant these only when your deployment or target uses the corresponding feature.
 
 ### External stage and storage integration
 
-Required when you load from external cloud storage (S3, Azure Blob, or GCS) instead of Snowflake’s internal stage.
+Required when you load from external cloud storage (S3, Azure Blob, or GCS) instead of Snowflake’s internal stage, including native L3 signature extracts (`unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`). PostgreSQL L3 uses `regular` with Worker COPY into the internal `TASK_RESULTS` stage, so it doesn’t need these grants.
 
 Copy code
 
 ```
 GRANT USAGE ON INTEGRATION <storage_integration_name> TO ROLE <migration_role>;
 GRANT USAGE ON STAGE <db>.<schema>.<external_stage> TO ROLE <migration_role>;
-GRANT READ ON STAGE <db>.<schema>.<external_stage> TO ROLE <migration_role>;
+GRANT READ, WRITE ON STAGE <db>.<schema>.<external_stage> TO ROLE <migration_role>;
 ```
+
+`USAGE` and `READ`/`WRITE` on the Snowflake stage aren’t enough. The source **writer** identity and the Snowflake **storage integration** also need access on the same bucket, container, or prefix. This section is the grant list for that access. For which L3 strategy lands on which store, see [Object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage).
+
+#### Amazon S3
+
+When files land on **Amazon S3**, two identities need access to the same bucket and prefix: the **writer** (Redshift, Oracle, or Teradata) and the **Snowflake storage integration** that reads the files through `externalStage`. These actions don’t apply to Azure Blob or GCS prefixes.
+
+The Snowflake integration role needs `s3:GetBucketLocation`, `s3:GetObject`, `s3:GetObjectVersion`, `s3:ListBucket`, and `s3:DeleteObject`. See [Configure a Snowflake storage integration for Amazon S3](/user-guide/data-load-s3-config-storage-integration#label-s3-storage-integration-required-actions).
+
+Writer IAM (the identity that creates the Parquet objects) depends on the strategy:
+
+| `extraction.strategy` | Writer identity | Required S3 actions on the prefix |
+| --- | --- | --- |
+| `unload` | Redshift cluster IAM role (`unload_iam_role_arn`). The role must trust `redshift.amazonaws.com`. | `s3:PutObject`, `s3:DeleteObject`, `s3:AbortMultipartUpload`, `s3:ListBucket`, `s3:GetBucketLocation` |
+| `dbms_cloud` | IAM user or role stored in the Oracle `DBMS_CLOUD` credential | `s3:PutObject`, `s3:GetObject`, `s3:ListBucket` |
+| `write_nos` (S3 location) | Identity Teradata NOS uses (`write_nos_function_mapping`, authorization object, or access keys) | `s3:PutObject`, `s3:AbortMultipartUpload`, `s3:ListBucket`, `s3:GetBucketLocation` |
+
+Expand
+
+Show lessSee more
+
+`cet_as` and `export_data` don’t use S3. `regular` doesn’t use a customer object-store bucket.
+
+#### Azure Blob Storage
+
+When files land on **Azure Blob Storage**, two identities need access to the same container and prefix: the **writer** (SQL Server or Synapse CETAS, Teradata NOS, or Oracle `DBMS_CLOUD`) and the **Snowflake storage integration** that reads the files through `externalStage`.
+
+Grant the Snowflake Azure service principal **Storage Blob Data Contributor** on the storage account or container. After you create the integration, consent the `AZURE_CONSENT_URL` and assign the role to the app name from `DESC STORAGE INTEGRATION`. See [Configure an Azure container for loading data](/user-guide/data-load-azure-config#label-configuring-azure-storage-integration).
+
+Writer access depends on the strategy:
+
+| `extraction.strategy` | Writer identity | Required Azure access on the container |
+| --- | --- | --- |
+| `cet_as` | Identity behind the SQL Server or Synapse `DATABASE SCOPED CREDENTIAL` used by the external data source | **Storage Blob Data Contributor** (CETAS writes Parquet) |
+| `write_nos` with `/az/` | Identity Teradata NOS uses | Write, create, and list blobs on the container |
+| `dbms_cloud` to an Azure URI | Credential stored in Oracle `DBMS_CLOUD` | Write (and read, if the credential also lists objects) on that URI |
+
+Expand
+
+Show lessSee more
+
+If you use a SAS token instead of a storage integration, include Read, List, Write, Add, Create, and Permanent Delete. See the SAS option on [Configure an Azure container for loading data](/user-guide/data-load-azure-config).
+
+#### Google Cloud Storage
+
+When files land on **Google Cloud Storage**, two identities need access to the same bucket and prefix: the **writer** (Teradata NOS, BigQuery `EXPORT DATA`, or Oracle `DBMS_CLOUD`) and the **Snowflake GCS service account** from `DESC STORAGE INTEGRATION` (`STORAGE_GCS_SERVICE_ACCOUNT`).
+
+Grant `storage.buckets.get`, `storage.objects.get`, `storage.objects.list`, and `storage.objects.delete` (for example `roles/storage.objectAdmin`). See [Configure an integration for Google Cloud Storage](/user-guide/data-load-gcs-config).
+
+Writer IAM depends on the strategy:
+
+| `extraction.strategy` | Writer identity | Required GCS access on the prefix |
+| --- | --- | --- |
+| `write_nos` with `/gs/` | Identity Teradata NOS uses | Create (and typically get/list) objects |
+| `export_data` | BigQuery job identity (`EXPORT DATA`) | `storage.objects.create` and `storage.objects.delete` |
+| `dbms_cloud` to a GCS URI | Credential stored in Oracle `DBMS_CLOUD` | Create objects on that URI |
+
+Expand
+
+Show lessSee more
+
+Stage URLs often use `gcs://` while Worker TOML uses `gs://`. Treat those as the same bucket.
 
 ### Iceberg table targets
 
@@ -229,6 +291,8 @@ GRANT SELECT, INSERT, UPDATE, DELETE, TRUNCATE ON FUTURE TABLES IN SCHEMA <targe
 
 -- 5. External stage integration (optional)
 -- GRANT USAGE ON INTEGRATION <storage_integration> TO ROLE DMV_MIGRATION_ROLE;
+-- GRANT USAGE ON STAGE <db>.<schema>.<external_stage> TO ROLE DMV_MIGRATION_ROLE;
+-- GRANT READ, WRITE ON STAGE <db>.<schema>.<external_stage> TO ROLE DMV_MIGRATION_ROLE;
 
 -- 6. Iceberg target (optional)
 -- GRANT CREATE ICEBERG TABLE ON SCHEMA <target_db>.<target_schema> TO ROLE DMV_MIGRATION_ROLE;
@@ -285,18 +349,18 @@ For the other environment variables AIM DMV reads, including metadata storage mo
 
 AIM DMV Workers connect to your source platform to read table metadata, infer keys, estimate sizes, and extract data. Grant the privileges below to the source database user the Workers connect as (the user configured in `connections.source.<platform>`). Share this section with your source platform’s database administrator.
 
-The requirements differ by platform, but the pattern is the same everywhere: read access to the tables being migrated, plus visibility into the platform’s system catalog. Row-level data validation (L3) sometimes needs an extra hashing privilege.
+The requirements differ by platform, but the pattern is the same everywhere: read access to the tables being migrated, plus visibility into the platform’s system catalog. Row-level data validation (L3) sometimes needs an extra hashing privilege. Native L3 extracts that write Parquet to object storage also need the [cloud storage IAM](#external-stage-and-storage-integration) on the writer identity and the Snowflake storage integration.
 
 The following table summarizes the requirements. Each platform’s grants and details follow.
 
 | Platform | Primary requirement | Catalog access | Data validation (L3) extra |
 | --- | --- | --- | --- |
-| Oracle | `SELECT` on source tables | Automatic (`ALL_*` views) | `EXECUTE ON DBMS_CRYPTO` (LOB columns only) |
-| SQL Server | `SELECT` on source schema and `VIEW DATABASE STATE` | `VIEW DEFINITION` | None |
-| Azure Synapse | Same as SQL Server | Same as SQL Server | CETAS extraction needs `CREATE EXTERNAL TABLE` |
-| Amazon Redshift | `SELECT` on source tables and `USAGE` on schema | Automatic (`information_schema`) | None |
-| Teradata | `SELECT` on source database and `SELECT` on `DBC` | Explicit `SELECT` on `DBC.*V` views | `HASH_MD5` UDF and `EXECUTE FUNCTION` |
-| PostgreSQL | `SELECT` on source tables and `USAGE` on schema | Automatic (`pg_catalog`, `information_schema`) | None |
+| Oracle | `SELECT` on source tables | Automatic (`ALL_*` views) | `EXECUTE ON DBMS_CRYPTO` (LOB columns only); `DBMS_CLOUD` plus object-store IAM when using `dbms_cloud` |
+| SQL Server | `SELECT` on source schema and `VIEW DATABASE STATE` | `VIEW DEFINITION` | CETAS needs `CREATE EXTERNAL TABLE` and Azure Blob writer access |
+| Azure Synapse | Same as SQL Server | Same as SQL Server | CETAS needs `CREATE EXTERNAL TABLE` and Azure Blob writer access |
+| Amazon Redshift | `SELECT` on source tables and `USAGE` on schema | Automatic (`information_schema`) | `UNLOAD` needs S3 IAM on the cluster role (`unload_iam_role_arn`) |
+| Teradata | `SELECT` on source database and `SELECT` on `DBC` | Explicit `SELECT` on `DBC.*V` views | `HASH_MD5` UDF and `EXECUTE FUNCTION`; `WRITE_NOS` plus object-store IAM |
+| PostgreSQL | `SELECT` on source tables and `USAGE` on schema | Automatic (`pg_catalog`, `information_schema`) | Recommended extract is COPY (`regular`); no extra SQL grant |
 
 Expand
 
@@ -554,7 +618,7 @@ GRANT SELECT ON ALL TABLES IN SCHEMA <external_schema> TO <source_user>;
 
 - `SVV_TABLE_INFO` shows only the tables the user owns, or all tables for a superuser. If the row count returns NULL, AIM DMV falls back to `COUNT(*)`.
 - `information_schema` views are visible when the user has `SELECT` on the underlying tables.
-- `UNLOAD` to S3 requires `SELECT` on the source table. Redshift grants `UNLOAD` implicitly with `SELECT`.
+- `UNLOAD` to S3 requires `SELECT` on the source table. Redshift grants `UNLOAD` implicitly with `SELECT`. The cluster IAM role (`unload_iam_role_arn`) still needs the [Amazon S3](#amazon-s3) writer actions on the unload prefix.
 - External tables (Spectrum or Iceberg) use `SVV_EXTERNAL_COLUMNS` and `SVV_EXTERNAL_TABLES`, and require `USAGE` on the external schema.
 
 ### Teradata
@@ -665,6 +729,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA <source_schema>
 - `USAGE` on the schema is required before any object within it is accessible.
 - Row count uses `COUNT(*)`, because PostgreSQL doesn’t keep a reliable pre-computed row count.
 - PostgreSQL folds unquoted identifiers to lowercase, the opposite of Oracle; AIM DMV normalizes accordingly.
+- Recommended L3 extract is **regular** with Worker COPY (`use_copy = true`). That uses the same `SELECT` grants and the internal `TASK_RESULTS` stage. It doesn’t need an external stage or object-store IAM.
 
 ## Related content
 
@@ -673,3 +738,4 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA <source_schema>
 - [Deploying workers](./deploy-workers)
 - [Data migration](./data-migration)
 - [Data validation](./data-validation)
+- [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction)

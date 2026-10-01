@@ -456,7 +456,7 @@ store only the Base64-encoded credentials in the secret, include the `Basic` pre
 
 To send a notification to a webhook:
 
-1. Pass the [SANITIZE\_WEBHOOK\_CONTENT](/sql-reference/functions/sanitize_webhook_content) function to remove any placeholders (like
+1. Use the [SANITIZE\_WEBHOOK\_CONTENT](/sql-reference/functions/sanitize_webhook_content) function to remove any placeholders (like
    SNOWFLAKE\_WEBHOOK\_SECRET) from the message.
 2. Call the [SYSTEM$SEND\_SNOWFLAKE\_NOTIFICATION](/sql-reference/stored-procedures/system_send_snowflake_notification) stored
    procedure, passing in the sanitized message and specifying the name of the webhook notification integration to use.

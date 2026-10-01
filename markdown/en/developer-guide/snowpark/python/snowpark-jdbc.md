@@ -38,7 +38,7 @@ Show lessSee more
 Snowpark Python JDBC currently has one form of underlying ingestion mechanism:
 
 UDTF ingestion
-:   All workloads run on the Snowflake server. Snowpark creates a Java UDTF and invoke it in parallel to ingest data into a Snowflake temporary table. Thus the `udtf_configs` parameter is required for this feature.
+:   All workloads run on the Snowflake server. Snowpark creates a Java UDTF and invokes it in parallel to ingest data into a Snowflake temporary table. Thus the `udtf_configs` parameter is required for this feature.
 
 The Snowpark Python JDBC has two ways to parallelize and accelerate ingestion:
 
@@ -243,7 +243,7 @@ Fetch\_size
             ]
         )
     df_table.write.save_as_table("snowflake_table", mode="overwrite")
-    return f"success"
+    return "success"
 
    $$
    ;
@@ -351,7 +351,7 @@ Fetch\_size
     "imports": ["<your stage path to jdbc jar file>"]
    }
 
-   # Call dbapi to pull data from target table
+   # Call session.read.jdbc to pull data from target table
    df_table = session.read.jdbc(
         url=connection_str,
         udtf_configs=udtf_configs,
@@ -383,7 +383,7 @@ Fetch\_size
    "secret": "<your secret>",
    "imports": ["<your stage path to jdbc jar file>"]
    }
-   # Call dbapi to pull data from target table
+   # Call session.read.jdbc to pull data from target table
    df_table = session.read.jdbc(
       url=connection_str,
       udtf_configs=udtf_configs,
@@ -406,21 +406,21 @@ Fetch\_size
    WHERE s.program_name = 'snowflake-snowpark-python';
    ```
 
-### Source tracing when using Snowpark JDBC to connect to PostgresSQL
+### Source tracing when using Snowpark JDBC to connect to PostgreSQL
 
 1. Include a tag of Snowpark in your create connection function:
 
    Copy code
 
    ```
-   connection_str="jdbc:postgres://<your host>:<your port>/<your db>?applicationName=snowflake-snowpark-python"
+   connection_str="jdbc:postgresql://<your host>:<your port>/<your db>?applicationName=snowflake-snowpark-python"
    udtf_configs = {
    "external_access_integration": "<your integration>",
    "secret": "<your secret>",
    "imports": ["<your stage path to jdbc jar file>"]
    }
 
-   # Call dbapi to pull data from target table
+   # Call session.read.jdbc to pull data from target table
    df_table = session.read.jdbc(
         url=connection_str,
         udtf_configs=udtf_configs,
@@ -460,7 +460,7 @@ Fetch\_size
    "secret": "<your secret>",
    "imports": ["<your stage path to jdbc jar file>"]
    }
-   # Call dbapi to pull data from target table
+   # Call session.read.jdbc to pull data from target table
    df_table = session.read.jdbc(
         url=connection_str,
         udtf_configs=udtf_configs,
@@ -509,7 +509,7 @@ The following is a certified list of data types of different DBMS systems. If yo
 - TIMESTAMP WITH LOCAL TIME ZONE
 - RAW
 
-### PostgresSQL
+### PostgreSQL
 
 - BIGINT
 - BIGSERIAL

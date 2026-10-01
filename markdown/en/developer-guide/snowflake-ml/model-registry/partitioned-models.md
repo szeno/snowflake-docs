@@ -98,7 +98,7 @@ Copy code
 ```
 from snowflake.ml.registry import Registry
 
-reg = Registry(session=sp_session, database_name="ML", schema_name="REGISTRY")
+reg = Registry(session=session, database_name="ML", schema_name="REGISTRY")
 model_version = reg.log_model(my_model,
   model_name="my_model",
   version_name="v1",
@@ -314,17 +314,17 @@ Copy code
 ```
 from snowflake.ml.model import custom_model
 
-# `models` is a dict with model ids as keys, and fitted xgboost models as values.
+# `fitted_models` is a list of fitted xgboost models, one per partition.
 models = {
-  "model1": models[0],
-  "model2": models[1],
+  "model1": fitted_models[0],
+  "model2": fitted_models[1],
   ...
 }
 
 model_context = custom_model.ModelContext(
   models=models
 )
-my_stateful_model = MyStatefulCustomModel(model_context=model_context)
+my_stateful_model = MyStatefulCustomModel(context=model_context)
 ```
 
 When logging `my_stateful_model`, the submodels provided in the context are stored along with all model files.

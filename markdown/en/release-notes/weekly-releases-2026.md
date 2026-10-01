@@ -4,6 +4,12 @@ This topic lists the release notes for server releases that occurred earlier in 
 
 For more recent releases, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
+
+  - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)
+
+    - [New ACCOUNT\_USAGE.STREAMS view](/release-notes/2026/10_35#new-accountusagestreams-view)
+  - [Release notes change log](/release-notes/2026/10_35#release-notes-change-log)
 - [10.32 Release Notes (with behavior changes): Sep 05, 2026 - Sep 09, 2026](/release-notes/2026/10_32)
 
   - [Behavior change bundles](/release-notes/2026/10_32#behavior-change-bundles)

@@ -1,6 +1,6 @@
 # Best practices for shared workspaces
 
-The following recommendations detail how administrators can effectively plan, configure, and maintain shared workspaces.
+The following recommendations help administrators and collaborators set up, organize, and maintain shared workspaces.
 
 ## Plan and set up shared workspaces
 
@@ -12,6 +12,9 @@ To create a shared workspace, users must either own the target schema or have th
 > - CREATE WORKSPACE on the schema
 
 ### Grant creation privileges
+
+The role granting `CREATE WORKSPACE` needs authority to grant privileges on the schema, not just permission to create a workspace.
+For the grant-authority requirements, see [Create a shared workspace](/user-guide/ui-snowsight/workspaces-shared#label-shared-workspaces-create-a-shared-workspace).
 
 1. As an administrator, to grant the necessary schema-level privileges to a role, run the following command:
 
@@ -103,6 +106,35 @@ flexibility with centralized governance and discoverability.
 
 - Use existing roles that already represent team membership or function.
 - Assign a designated steward role responsible for managing access and maintaining the workplace structure.
+
+## Organize files and collaborate
+
+### Use a consistent folder structure
+
+Group files by project or workflow, then use folders for related queries, scripts, and supporting files. Agree on naming conventions
+so collaborators can find the right file without opening each one. For example, use `queries/` for SQL files and `scripts/` for Python files.
+
+Use **Copy to** when bringing a file into a shared workspace if you want to keep the private original. Use **Move** when the shared copy
+should replace it. For the steps, see [Share files and folders in a workspace](/user-guide/ui-snowsight/workspaces-shared#label-shared-workspaces-share-files-and-folders-in-a-workspace).
+
+### Review changes before publishing
+
+Edits to an existing file remain in your draft until you publish them. Use **Publish changes** » **Show changes** to review your edits,
+then publish when they’re ready for collaborators. Coordinate changes to the same file and review differences before overwriting another user’s version.
+
+Not every action waits for publishing. Uploading, renaming, and deleting files or folders is immediately visible to collaborators.
+Moving or copying files into a shared workspace also publishes them immediately. Coordinate these actions with your team.
+
+For the workflow and conflict options, see [Collaborate in a shared workspace](/user-guide/ui-snowsight/workspaces-shared#label-shared-workspaces-collaborate-in-a-shared-workspace).
+
+### Choose publish history or Git for version control
+
+Use **Publish changes** » **View publish history** to review published versions of a file and restore an earlier version.
+Publish history tracks published file versions, not every draft edit. For the steps, see
+[View publish history](/user-guide/ui-snowsight/workspaces-shared#label-shared-workspaces-publish-history).
+
+Shared workspace publishing isn’t a Git commit or pull request workflow. If your team needs Git branches and pull requests,
+use separate [Git-synced workspaces](/user-guide/ui-snowsight/workspaces-git) connected to the same repository and collaborate through Git.
 
 ## Adoption and maintenance
 

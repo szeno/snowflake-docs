@@ -86,7 +86,7 @@ Set up Redshift data migration for my project with regular extraction and the Wo
 
 **1. Grant Redshift permission to write to S3.**
 
-Your Redshift cluster’s IAM role must have `s3:PutObject` and `s3:ListBucket` permissions on the target bucket.
+Your Redshift cluster’s IAM role must have the [Amazon S3](./required-privileges#amazon-s3) writer actions on the target bucket and prefix. Grant the Snowflake storage integration the same section’s integration actions.
 
 **2. Create a Snowflake external stage** pointing at the same S3 path:
 

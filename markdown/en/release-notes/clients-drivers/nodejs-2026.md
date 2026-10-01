@@ -10,6 +10,27 @@ Snowflake uses semantic versioning for Node.js Driver updates.
 
 See [Node.js Driver](/developer-guide/node-js/nodejs-driver) for documentation.
 
+## Version 3.4.0 (September 30, 2026)
+
+### Security fixes
+
+- Hardened `EXTERNALBROWSER` authentication by binding the local callback listener to `127.0.0.1` and rejecting requests whose `Origin` header doesn’t match the connected Snowflake account. The listener now ignores incomplete or unrelated requests instead of ending the login.
+
+### New features and updates
+
+- Added the `workloadIdentityHost` connection option that overrides the STS host used by AWS workload identity flows, so AWS partitions unknown to the driver can be reached. When this option isn’t set, the STS host is derived from the AWS region.
+- Bumped the `toml` dependency to version 5.0.0.
+
+### Changes
+
+- Turned OCSP off by default and marked OCSP support as deprecated. OCSP support will be removed in the next major release. Use CRL validation (`certRevocationCheckMode`) instead.
+  - To keep using OCSP, call `snowflake.configure({ disableOCSPChecks: false })`, `snowflake.configure({ ocspFailOpen: true })` for fail-open, or `snowflake.configure({ ocspFailOpen: false })` for fail-closed. If both options are provided in the same call, `disableOCSPChecks: true` turns OCSP off regardless of `ocspFailOpen`. CRL still takes precedence when `certRevocationCheckMode` is enabled.
+  - Deprecated APIs: OCSP options (`disableOCSPChecks`, `ocspFailOpen`, `useConnectionConfigProxyForOCSP`), `connection.setupOcspPrivateLink()`, `ocspModes`, and OCSP error codes.
+
+### Bug fixes
+
+- Fixed failed `PUT` operations reporting `Unknown Error in uploading a file` instead of the underlying storage error.
+
 ## Version 3.3.0 (September 3, 2026)
 
 ### Security fixes

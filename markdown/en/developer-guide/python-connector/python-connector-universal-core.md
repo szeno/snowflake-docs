@@ -69,7 +69,7 @@ This build of the Python driver is currently distributed as a release candidate 
 
 ### Prerequisites
 
-- Python 3.11 or later. Wheels are published for CPython 3.11, 3.12, 3.13, and 3.14.
+- This release candidate requires Python 3.11 or later. Wheels are published for CPython 3.11, 3.12, 3.13, and 3.14.
 
 ### Install the new version
 
@@ -89,7 +89,7 @@ To pin a specific release-candidate build instead of always taking the latest pr
 > Copy code
 >
 > ```
-> pip install snowflake-connector-python==5.0.0rc3
+> pip install snowflake-connector-python==5.0.0rc4
 > ```
 
 Optional extras such as `pandas` install the same way as with the current driver:
@@ -191,7 +191,7 @@ Alternatively, if your project declares its dependencies in `pyproject.toml`, pi
 > ```
 > [project]
 > dependencies = [
->     "snowflake-connector-python==5.0.0rc3",
+>     "snowflake-connector-python==5.0.0rc4",
 > ]
 > ```
 

@@ -146,9 +146,11 @@ SHOW [ TERSE ] INDEXES
 | --- | --- |
 | `created_on` | Date and time when the index was created. |
 | `name` | Name of the index. |
+| `kind` | Type of index. The value is `KEY_VALUE_INDEX`. |
 | `is_unique` | Whether the index is a unique index. |
 | `columns` | List of indexed columns. |
 | `included_columns` | List of covered columns. |
+| `status` | Status of the index. Possible values are:   - `ACTIVE`: Index is complete and can be used to retrieve data. - `SUSPENDED`: Index is only updated and is not used to retrieve data. - `BUILD FAILURE`: An error has occurred with the index build process. You need to drop and recreate the index. - `BUILD IN PROGRESS`: Index is being built and is not used to retrieve data.   For more information, see [Usage notes](/sql-reference/sql/create-index#label-create-index-usage-notes). |
 | `table` | Name of the table. |
 | `database_name` | Database in which the index is stored. |
 | `schema_name` | Schema in which the index is stored. |
@@ -162,6 +164,8 @@ Expand
 Show lessSee more
 
 ## Usage notes
+
+- You can use this command to track the progress of an index build. Check the `status` column to determine whether an index is active, still building, or failed.
 
 - The command doesn’t require a running warehouse to execute.
 - The command only returns objects for which the current user’s current role has been granted at least one access privilege.
@@ -218,6 +222,7 @@ SHOW INDEXES
              "table",
              "columns",
              "included_columns",
+             "status",
              "database_name",
              "schema_name"
         FROM $1
@@ -227,9 +232,9 @@ SHOW INDEXES
 The following output shows the SELECT query result only. One index qualifies for the WHERE clause condition:
 
 ```
-+------------+-----------+---------------------+-------------+------------------+---------------+-------------+
-| name       | is_unique | table               | columns     | included_columns | database_name | schema_name |
-|------------+-----------+---------------------+-------------+------------------+---------------+-------------|
-| DEVICE_IDX | N         | SENSOR_DATA_DEVICE2 | [DEVICE_ID] | [TEMPERATURE]    | HT_SENSORS    | HT_SCHEMA   |
-+------------+-----------+---------------------+-------------+------------------+---------------+-------------+
++------------+-----------+---------------------+-------------+------------------+--------+----------------+-------------+
+| name       | is_unique | table               | columns     | included_columns | status | database_name  | schema_name |
+|------------+-----------+---------------------+-------------+------------------+--------+----------------+-------------|
+| DEVICE_IDX | N         | SENSOR_DATA_DEVICE2 | [DEVICE_ID] | [TEMPERATURE]    | ACTIVE | HT_SENSORS     | HT_SCHEMA   |
++------------+-----------+---------------------+-------------+------------------+--------+----------------+-------------+
 ```

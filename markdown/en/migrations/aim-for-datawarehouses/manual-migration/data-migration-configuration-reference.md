@@ -412,7 +412,7 @@ Each table can set **`extraction.strategy`** (or inherit from **`defaultTableCon
 | **`dbms_cloud`** | Oracle only | **Recommended default** when object storage and a Snowflake external stage are available. Server-side export via `DBMS_CLOUD.EXPORT_DATA`. Use for all tables from the source. See [Migrating Data from Oracle](../data-migration-validation/migrate-oracle). |
 | **`cet_as`** | SQL Server and Azure Synapse | Source-side CETAS export to Azure Blob. See [Migrating Data from SQL Server](../data-migration-validation/migrate-sql-server#using-cetas-extraction) and [Migrating Data from Azure Synapse Analytics](../data-migration-validation/migrate-synapse#using-cetas-extraction). |
 | **`cloud_direct`** | Supported ODBC sources | Worker streams query results directly to S3 or Azure Blob, skipping local disk and re-upload. |
-| **`regular`** (default) | All | Worker pulls data over the source connection, then uploads to the Snowflake internal stage. Use when volume is genuinely small, or when server-side export prerequisites aren’t in place yet. |
+| **`regular`** (default) | All | Worker pulls data over the source connection, then uploads to the Snowflake internal stage. On **PostgreSQL**, **`regular`** with COPY (`use_copy = true`) is the recommended extract. |
 | **`tpt`** | Teradata only | Worker-side bulk export via Teradata Parallel Transporter when WRITE\_NOS isn’t available. See [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). |
 
 Expand

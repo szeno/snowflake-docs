@@ -108,7 +108,7 @@ Copy code
 ```
 from snowflake.ml.registry import Registry
 
-reg = Registry(session=sp_session, database_name="ML", schema_name="REGISTRY")
+reg = Registry(session=session, database_name="ML", schema_name="REGISTRY")
 ```
 
 ## Registering models and versions
@@ -172,7 +172,7 @@ The combination of model name and version must be unique in the schema.
 | `conda_dependencies` | List of Conda packages required by your model. This argument specifies package names and optional versions in [Conda format](https://docs.conda.io/projects/conda/en/latest/user-guide/concepts/pkg-search.html), that is, `"[channel::]package [operator version]"`. If you do not specify a channel, the Snowflake channel is assumed when the model runs on a warehouse. conda-forge is assumed for models running on Snowpark Container Services (SPCS). |
 | `ext_modules` | List of external modules to pickle with the model. Supported with scikit-learn, Snowpark ML, PyTorch, TorchScript, and custom models. |
 | `metrics` | Dictionary that contains metrics linked to the model version. |
-| `options` | Dictionary that contains options for model creation. The following options are available for all model types:   - `embed_local_ml_library`: whether to embed a copy of the local Snowpark ML library into the model. Default: `False`. - `relax_version`: whether to relax the version constraints of the dependencies. This replaces version specifiers like   `==x.y.z` with specifiers like `<=x.y, <(x+1)`. Default: `True`. - `save_location`: A string specifying the location (directory path) to save the model and metadata (e.g. `"/path/to/my/directory"`). - `function_type`: Sets the method function type globally to either “FUNCTION” or “TABLE\_FUNCTION”. To set method function types   individually see `function_type` in `method_options`. - `volatility`: Set the volatility for all model methods. Custom models default to `VOLATILE` and all other models default to `IMMUTABLE`.   To set method volatility individually, see `volatility` in `method_options`.   Note  `VOLATILE` model methods require a full table refresh when used in Dynamic Tables. For more information, see [Supported queries for dynamic tables](/user-guide/dynamic-tables/supported-queries).   - `method_options`: A dictionary of per-method options, where the key is the name of a method and the value is a dictionary   that contains one or more of the options described here. The available options are:   - `case_sensitive`: Indicates whether the method and its signature are case-sensitive. Case-sensitive methods must be double-quoted     when used in SQL. This option also allows non-alphabetic characters in method names. Default: `False`.   - `max_batch_size`: Maximum batch size that the method will accept when called in the warehouse. Default: `None` (the batch     size is automatically determined).   - `function_type`: Set the method function type to “FUNCTION” or “TABLE\_FUNCTION”.   - `volatility`: Set the method volatility level to `IMMUTABLE` for deterministic functions or `VOLATILE` for non-deterministic functions. Deterministic functions always return the same result for the same input.   Copy code  ``` from snowflake.ml.model.volatility import Volatility  options = {   "embed_local_ml_library": True,   "relax_version": True,   "save_location": "/path/to/my/directory",   "function_type": "TABLE_FUNCTION",   "volatility": Volatility.IMMUTABLE,   "method_options": {     "predict": {       "case_sensitive": False,       "max_batch_size": 100,       "function_type": "TABLE_FUNCTION",       "volatility": Volatility.VOLATILE,     },   } ```  Individual model types may support additional options. See [Using built-in model types](/developer-guide/snowflake-ml/model-registry/built-in-models/overview). |
+| `options` | Dictionary that contains options for model creation. The following options are available for all model types:   - `embed_local_ml_library`: whether to embed a copy of the local Snowpark ML library into the model. Default: `False`. - `relax_version`: whether to relax the version constraints of the dependencies. This replaces version specifiers like   `==x.y.z` with specifiers like `<=x.y, <(x+1)`. Default: `True`. - `save_location`: A string specifying the location (directory path) to save the model and metadata (e.g. `"/path/to/my/directory"`). - `function_type`: Sets the method function type globally to either “FUNCTION” or “TABLE\_FUNCTION”. To set method function types   individually see `function_type` in `method_options`. - `volatility`: Set the volatility for all model methods. Custom models default to `VOLATILE` and all other models default to `IMMUTABLE`.   To set method volatility individually, see `volatility` in `method_options`.   Note  `VOLATILE` model methods require a full table refresh when used in Dynamic Tables. For more information, see [Supported queries for dynamic tables](/user-guide/dynamic-tables/supported-queries).   - `method_options`: A dictionary of per-method options, where the key is the name of a method and the value is a dictionary   that contains one or more of the options described here. The available options are:   - `case_sensitive`: Indicates whether the method and its signature are case-sensitive. Case-sensitive methods must be double-quoted     when used in SQL. This option also allows non-alphabetic characters in method names. Default: `False`.   - `max_batch_size`: Maximum batch size that the method will accept when called in the warehouse. Default: `None` (the batch     size is automatically determined).   - `function_type`: Set the method function type to “FUNCTION” or “TABLE\_FUNCTION”.   - `volatility`: Set the method volatility level to `IMMUTABLE` for deterministic functions or `VOLATILE` for non-deterministic functions. Deterministic functions always return the same result for the same input.   Copy code  ``` from snowflake.ml.model.volatility import Volatility  options = {   "embed_local_ml_library": True,   "relax_version": True,   "save_location": "/path/to/my/directory",   "function_type": "TABLE_FUNCTION",   "volatility": Volatility.IMMUTABLE,   "method_options": {     "predict": {       "case_sensitive": False,       "max_batch_size": 100,       "function_type": "TABLE_FUNCTION",       "volatility": Volatility.VOLATILE,     },   } } ```  Individual model types may support additional options. See [Using built-in model types](/developer-guide/snowflake-ml/model-registry/built-in-models/overview). |
 | `pip_requirements` | List of package specs for PyPI packages required by your model. To install those packages from an artifact repository (the built-in PyPI repository or a [customer-hosted repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories)), also set `artifact_repository_map`. Models that target a warehouse require an artifact repository for pip packages. For Snowpark Container Services (online or batch inference), specify a repository when the packages aren’t available on public PyPI, such as a private internal package. |
 | `artifact_repository_map` | Dictionary mapping the artifact repository type (must be `"pip"`) to a repository name. For the built-in PyPI artifact repository, specify `{"pip": "snowflake.snowpark.pypi_shared_repository"}`. For a private PyPI-compatible repository, use the fully qualified name of a [customer-hosted artifact repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories) (for example, `{"pip": "my_db.my_schema.my_python_repo"}`).  When specified, pip requirements are installed from that repository when the model runs in a warehouse and when Snowflake builds the container image for SPCS online or batch inference. See [Use a private PyPI artifact repository](#label-snowpark-model-registry-private-pypi).  Copy code  ``` mv = reg.log_model(     clf,     model_name="my_model",     artifact_repository_map={         "pip": "snowflake.snowpark.pypi_shared_repository"     },     pip_requirements=['scikit-learn'],     sample_input_data=train_features, ) ``` |
 | `resource_constraint` | Dictionary mapping of warehouse resource constraint keys and values, e.g. {“architecture”: “x86”}. This can be used to ensure the model runs in a warehouse with the necessary architecture. |
@@ -316,7 +316,7 @@ To retrieve one of these artifacts, use the SQL GET command:
 Copy code
 
 ```
-GET 'snow://model/model_my_model/versions/V3/MANIFEST.yml' file::///tmp/my_model/
+GET 'snow://model/my_model/versions/V3/MANIFEST.yml' file::///tmp/my_model/
 ```
 
 Or the equivalent with Snowpark Python:
@@ -638,12 +638,13 @@ from sklearn import metrics
 test_accuracy = metrics.accuracy_score(test_labels, prediction)
 ```
 
-The confusion matrix can be generated similarly using sklearn:
+The confusion matrix and F1 score can be generated similarly using sklearn:
 
 Copy code
 
 ```
 test_confusion_matrix = metrics.confusion_matrix(test_labels, prediction)
+f1_score = metrics.f1_score(test_labels, prediction)
 ```
 
 Then you can set these values as metrics:
@@ -734,8 +735,7 @@ from the model registry:
 Copy code
 
 ```
-conda_env = session.file.get("snow://model/<modelName>/versions/<versionName>/runtimes/python_runtime/env/conda.yml", ".")
-open("~/conda.yml", "w").write(conda_env)
+session.file.get("snow://model/<modelName>/versions/<versionName>/runtimes/python_runtime/env/conda.yml", "~/")
 ```
 
 Then create a new conda environment from this file:
