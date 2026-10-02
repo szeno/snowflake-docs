@@ -77,7 +77,7 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- By default, the total number of reader accounts a provider can create is 20. If you reach the limit and require creating additional
+- By default, the total number of reader accounts a provider can create is 75. If you reach the limit and require creating additional
   accounts, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
   If you dropped a reader account in order to create a new account without exceeding this limit, you cannot create the new reader account for

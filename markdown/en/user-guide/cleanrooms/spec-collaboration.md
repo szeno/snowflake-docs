@@ -61,7 +61,13 @@ analysis_runners:               # Required: Who can run analyses
 :   Alias of the collaboration owner, as defined in `collaborator_identifier_aliases`.
 
 `distribution: external` (*Optional*)
-:   Snowflake sets a collaboration’s
+:   Note
+
+    Skipping the scan applies only to collaborations created after the
+    [Clean Rooms API version 18.6 update](/release-notes/2026/other/2026-10-01-dcr). Same-organization
+    collaborations created before that update continue to run the scan.
+
+    Snowflake sets a collaboration’s
     [distribution](/developer-guide/native-apps/security-run-scan#label-native-apps-distribution-property-set) automatically from
     the organizations of its collaborators: `INTERNAL` when every collaborator is in one organization, and `EXTERNAL` when the
     collaborators span two or more. Only an `EXTERNAL` collaboration runs the

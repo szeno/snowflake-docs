@@ -37,7 +37,7 @@ You can specify multiple entities of the same type in the `snowflake.yml` file. 
     entity_b:
    ...
   ```
-- Specify an `identifier` name to each entity.
+- Specify an `identifier` name for each entity.
 
   The following example adds identifier names to the `entity_a` and `entity_b` entities:
 
@@ -50,7 +50,7 @@ You can specify multiple entities of the same type in the `snowflake.yml` file. 
    ...
     entity_b:
    identifier:
-     name: entity_a_name
+     name: entity_b_name
   ```
 - Add an `identifier` object to each entity.
 
@@ -71,13 +71,13 @@ If you don’t specify an identifier, the entity key is used as the name of the 
 
 ## Project mixins
 
-In many cases you might find it useful to define project-wide default values. Mixins provide a way to extract common attributes out of individual entities. You can specify multiple mixins. You need to declare which mixins should be used by each entity using `meta.use_mixins` property.
+In many cases you might find it useful to define project-wide default values. Mixins provide a way to extract common attributes out of individual entities. You can specify multiple mixins. You need to declare which mixins should be used by each entity using the `meta.use_mixins` property.
 
 When using mixins with an entity, you must ensure that all properties of a mixin can be applied to that entity. Applying a property that is not available on an entity causes an error. Consequently, in some cases you might need to use multiple mixins.
 
 Note
 
-Mixin values are overridden by explicitly-declared entity attributes.
+Mixin values are overridden by explicitly declared entity attributes.
 
 Without a mixin, you copy the same `stage` and `artifacts` onto every entity:
 
@@ -155,7 +155,7 @@ entities:
         - "stage_mixin"
 ```
 
-If an entity uses multiple mixins that specify the same property, the entity uses the value of later mixin. In the following example, the value of key on the `foo` entity will be `mixin_2_value`.
+If an entity uses multiple mixins that specify the same property, the entity uses the value of the later mixin. In the following example, the value of key on the `foo` entity will be `mixin_2_value`.
 
 Copy code
 
@@ -174,7 +174,7 @@ entities:
       - mixin_2
 ```
 
-The behavior of applying mixins values depends on value type. For scalar values (strings, numbers, Booleans) values are overridden.
+The behavior of applying mixin values depends on the value type. For scalar values (strings, numbers, Booleans) values are overridden.
 
 | Mixin notation | Explicit result |
 | --- | --- |
@@ -184,7 +184,7 @@ Expand
 
 Show lessSee more
 
-In case of sequences, values are merged to create a new sequence. This implementation avoids creating duplicate entries in the sequence.
+In the case of sequences, values are merged to create a new sequence. This implementation avoids creating duplicate entries in the sequence.
 
 | Mixin notation | Explicit result |
 | --- | --- |
@@ -194,7 +194,7 @@ Expand
 
 Show lessSee more
 
-For mapping values new keys are being added and existing values are updated. The update is recursive.
+For mapping values, new keys are added and existing values are updated. The update is recursive.
 
 | Mixin notation | Explicit result |
 | --- | --- |

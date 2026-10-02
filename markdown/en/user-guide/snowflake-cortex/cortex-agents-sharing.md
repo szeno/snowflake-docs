@@ -1,4 +1,4 @@
-# Share Cortex Agents
+# Share Cortex agents
 
 [Preview Feature](/release-notes/preview-features) — Open
 
@@ -14,7 +14,7 @@ As a consumer of a shared Cortex Agent, you gain access to an easy-to-use interf
 
 Sharing a Cortex Agent requires the following:
 
-- Sharing all linked objects such as semantic views or Cortex Search Services. For more information, see [Create and configure shares](/user-guide/data-sharing-provider) and [Sharing semantic views](/user-guide/views-semantic/sharing-semantic-views).
+- Sharing all linked objects such as semantic views or Cortex Search Services. For more information, see [Create and configure shares](/user-guide/data-sharing-provider) and [Share semantic views](/user-guide/views-semantic/sharing-semantic-views).
 - Shared linked objects must be in the same database as your shared Cortex Agent.
 - Only agents that use the following tool types can be shared: semantic views, Cortex Search Services, and functions. Agents that use other tool types, such as procedures, skills, or MCP connectors, can’t be shared.
 

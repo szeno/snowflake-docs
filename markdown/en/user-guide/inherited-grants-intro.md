@@ -359,7 +359,7 @@ When the [2026\_07 behavior change bundle](/release-notes/bcr-bundles/2026_07_bu
 [enabled in your account](/release-notes/bcr-bundles/managing-behavior-change-releases#label-manage-bcr-check-status),
 Information Schema views evaluate inherited grants (along with `MANAGE GRANTS` and caller grants) when determining
 object visibility, and return the same objects as an equivalent `SHOW` command. See
-[Information Schema views: Now honor MANAGE GRANTS privilege, caller grants, and inherited grants (Pending)](/release-notes/bcr-bundles/2026_07/bcr-2416).
+[Information Schema views: Now honor MANAGE GRANTS privilege, caller grants, and inherited grants (Disabled by default)](/release-notes/bcr-bundles/2026_07/bcr-2416).
 
 Before you opt in to the 2026\_07 behavior change bundle, Information Schema views do not consider inherited grants
 when determining whether an object is visible to the current role. As a result, an object for which the current role

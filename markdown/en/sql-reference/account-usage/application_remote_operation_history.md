@@ -3,10 +3,6 @@ Schema:
 
 # APPLICATION\_REMOTE\_OPERATION\_HISTORY view
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use the APPLICATION\_REMOTE\_OPERATION\_HISTORY view to query the history of remote app operation invocations for Snowflake Native Apps in your Snowflake account.
 
 The latency for this view is up to 1 hour, and the retention time is 365 days (1 year).

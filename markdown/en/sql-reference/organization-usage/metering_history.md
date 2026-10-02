@@ -62,4 +62,4 @@ Show lessSee more
 
 ## Usage notes
 
-- Latency for the view may be up to 180 minutes (3 hours).
+- Latency for the view may be up to 15 minutes.

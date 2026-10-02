@@ -270,7 +270,7 @@ For more information about external access integrations in Snowflake, see [Creat
 The following requirements, considerations, and limitations apply to dbt dependencies for dbt projects in dbt Projects on Snowflake:
 
 - You can specify public [Git packages](https://docs.getdbt.com/docs/build/packages#git-packages) in the `packages.yml` file. As a best practice, Snowflake recommends using private Git packages
-  only if they are stored securely. We don’t recommend embedding unencrypted Git tokens. To authenticate private Git packages securely, store the token in a Snowflake secret and reference it from an `env.yml` file as a `DBT_ENV_SECRET_` variable. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+  only if they are stored securely. We don’t recommend embedding unencrypted Git tokens. To authenticate private Git packages securely, store the token in a Snowflake secret and reference it from an `env.yml` file as a `DBT_ENV_SECRET_` variable. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 - A network rule and external access integration are required to allow Snowflake to access the repositories for the dependencies. For more
   information, see [Create an external access integration in Snowflake for dbt dependencies](#label-dbt-key-concepts-external-access-config).
 - With `AUTO_COMPILE = TRUE`, Snowflake runs `dbt compile` during deployment. If an external access integration is configured, Snowflake first

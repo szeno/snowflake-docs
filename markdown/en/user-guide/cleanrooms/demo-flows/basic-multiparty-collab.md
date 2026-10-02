@@ -588,7 +588,7 @@ Copy code
 -- Run this worksheet in a Snowflake account with access to the latest version of
 -- Snowflake Data Clean Rooms.
 
--- This file  demonstrates the following actions:
+-- This file demonstrates the following actions:
 -- * Joining a collaboration
 -- * Registering and adding a template and a data offering to an existing collaboration.
 -- * Running an analysis.

@@ -6,7 +6,7 @@ Available to all accounts.
 
 Custom runtime images let you use your own container images for machine learning workloads on Container Runtime,
 including [Snowflake Notebooks](/developer-guide/snowflake-ml/notebooks-on-spcs) and
-[ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview). You can extend the Snowflake-provided base images provided they meet platform compatibility requirements.
+[ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview). You can extend the Snowflake-provided base images as long as they meet platform compatibility requirements.
 
 ## Overview
 
@@ -30,7 +30,7 @@ Custom runtime images address the following needs:
 
 ### How it works
 
-You can create custom images by extending the base image: Build on one of the Snowflake-provided base ML runtime images, adding your own packages and configuration on top.
+You can create custom images by extending the base image. Build on one of the Snowflake-provided base ML runtime images, adding your own packages and configuration on top.
 
 After building a custom image, you push it to a Snowflake image repository, validate it, and register it as a
 Custom Runtime Environment (CRE). You can then reference the CRE when running ML Jobs or Notebooks.

@@ -20,10 +20,12 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER APPLICATION PACKAGE … VERSION](/sql-reference/sql/alter-application-package-version) | Modifies the versioning of an existing application package in the Snowflake Native App Framework. |
 | [ALTER APPLICATION ROLE](/sql-reference/sql/alter-application-role) | Modifies the properties for an existing application role. |
 | [ALTER APPLICATION … { APPROVE | DECLINE} SPECIFICATION](/sql-reference/sql/alter-application-sequence-number) | Approves or declines an [app specification](/developer-guide/native-apps/requesting-app-specs) using the specified sequence number. |
+| [ALTER APPLICATION SERVICE](/sql-reference/sql/alter-application-service) | Modifies the configuration or lifecycle state of an existing [Application Service](/sql-reference/sql/create-application-service). |
 | [ALTER APPLICATION SET SPECIFICATION](/sql-reference/sql/alter-application-set-app-spec) | Creates or updates an [app specification](/developer-guide/native-apps/requesting-app-specs) for a Snowflake Native App. |
 | [ALTER APPLICATION SET CONFIGURATION DEFINITION](/sql-reference/sql/alter-application-set-configuration-definition) | Creates or updates an [app configuration](/developer-guide/native-apps/inter-app-communication) for a Snowflake Native App. |
 | [ALTER APPLICATION SET CONFIGURATION VALUE](/sql-reference/sql/alter-application-set-configuration-value) | Sets a value in an [app configuration definition](/developer-guide/native-apps/inter-app-communication) for a Snowflake Native App. |
 | [ALTER APPLICATION UNSET CONFIGURATION](/sql-reference/sql/alter-application-unset-configuration) | Unsets an [app configuration definition](/developer-guide/native-apps/inter-app-communication) for a Snowflake Native App. |
+| [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository) | Modifies the properties of an existing [artifact repository](/sql-reference/sql/create-artifact-repository). |
 | [ALTER AUTHENTICATION POLICY](/sql-reference/sql/alter-authentication-policy) | Modifies the properties of an [authentication policy](/user-guide/authentication-policies). |
 | [ALTER BACKUP POLICY](/sql-reference/sql/alter-backup-policy) | Modifies the properties of a [backup](/user-guide/backups) policy. |
 | [ALTER BACKUP SET](/sql-reference/sql/alter-backup-set) | Modifies the properties for a [backup](/user-guide/backups) set. |
@@ -32,6 +34,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER CONNECTION](/sql-reference/sql/alter-connection) | Modifies the properties for an existing [connection](/user-guide/client-redirect). |
 | [ALTER CONTACT](/sql-reference/sql/alter-contact) | Modifies the properties of an existing [contact](/user-guide/contacts-using). |
 | [ALTER CORTEX SEARCH SERVICE](/sql-reference/sql/alter-cortex-search) | Suspends, resumes, or modifies the properties of an existing [Cortex Search service](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview). |
+| [ALTER DATA MOVEMENT POLICY](/sql-reference/sql/alter-data-movement-policy) | Modifies the properties of an existing [data movement policy](/user-guide/data-movement-policies). |
+| [ALTER DATA MOVEMENT RULE](/sql-reference/sql/alter-data-movement-rule) | Replaces the MAX\_ROWS expression of an existing [data movement rule](/user-guide/data-movement-policies), sets or unsets its comment, or renames the rule. |
 | [ALTER DATABASE](/sql-reference/sql/alter-database) | Modifies the properties for an existing database. |
 | [ALTER DATABASE (catalog-linked)](/sql-reference/sql/alter-database-catalog-linked) | Modifies the properties for an existing [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database). |
 | [ALTER DATABASE ROLE](/sql-reference/sql/alter-database-role) | Modifies the properties for an existing database role. |
@@ -41,8 +45,14 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER DBT PROJECT](/sql-reference/sql/alter-dbt-project) | Modifies the properties of an existing [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake). |
 | [ALTER DCM PROJECT](/sql-reference/sql/alter-dcm-project) | Modifies the properties of an existing [DCM project](/user-guide/dcm-projects/dcm-projects-overview). |
 | [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table) | Modifies the properties of a [dynamic table](/user-guide/dynamic-tables/overview). |
+| [ALTER EVENT ROUTING TABLE](/sql-reference/sql/alter-event-routing-table) | Alters an event routing table used to route events to a centralized location. |
 | [ALTER EXPERIMENT](/sql-reference/sql/alter-experiment) | Modifies the properties of an existing [experiment](/developer-guide/snowflake-ml/experiments). |
 | [ALTER EXTERNAL AGENT](/sql-reference/sql/alter-external-agent) | Modifies the properties of an existing [external agent](/user-guide/snowflake-cortex/ai-observability). |
+| [ALTER EXTERNAL CONSUMER](/sql-reference/sql/alter-external-consumer) | Modifies the properties of an existing external consumer, or manages its Programmatic Access Tokens (PATs). |
+| [ALTER EXTERNAL CONSUMER … ADD PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-add-programmatic-access-token) | Creates a Programmatic Access Token (PAT) for an external consumer. |
+| [ALTER EXTERNAL CONSUMER … MODIFY PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-modify-programmatic-access-token) | Modifies the properties of a Programmatic Access Token (PAT) for an external consumer. |
+| [ALTER EXTERNAL CONSUMER … REMOVE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-remove-programmatic-access-token) | Revokes a Programmatic Access Token (PAT) from an external consumer. |
+| [ALTER EXTERNAL CONSUMER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-rotate-programmatic-access-token) | Rotates a Programmatic Access Token (PAT) for an external consumer, generating a new token secret and expiring the existing one. |
 | [ALTER EXTERNAL ACCESS INTEGRATION](/sql-reference/sql/alter-external-access-integration) | Modifies the properties of an existing [external access integration](/developer-guide/external-network-access/creating-using-external-network-access). |
 | [ALTER EXTERNAL TABLE](/sql-reference/sql/alter-external-table) | Modifies the properties, columns, or constraints for an existing external table. |
 | [ALTER EXTERNAL VOLUME](/sql-reference/sql/alter-external-volume) | Modifies the properties for an existing [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def). |
@@ -70,6 +80,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER MODEL … DROP VERSION](/sql-reference/sql/alter-model-drop-version) | Removes a version from the specified machine learning model. |
 | [ALTER MODEL … MODIFY VERSION](/sql-reference/sql/alter-model-modify-version) | Modifies a version of a model, changing the version’s comment or metadata. |
 | [ALTER MODEL MONITOR](/sql-reference/sql/alter-model-monitor) | Modifies the properties of a [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability). |
+| [ALTER MULTI PARTY APPROVAL POLICY](/sql-reference/sql/alter-multi-party-approval-policy) | Modifies an existing Multi-party Approval policy by replacing its body with a new definition. |
 | [ALTER NETWORK POLICY](/sql-reference/sql/alter-network-policy) | Modifies the properties for an existing network policy. |
 | [ALTER NETWORK RULE](/sql-reference/sql/alter-network-rule) | Modifies an existing network rule. |
 | [ALTER NOTEBOOK](/sql-reference/sql/alter-notebook) | Modifies the properties of an existing [notebook](/user-guide/ui-snowsight/notebooks). |
@@ -83,8 +94,14 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER NOTIFICATION INTEGRATION (webhooks)](/sql-reference/sql/alter-notification-integration-webhooks) | Modifies the properties for an existing notification integration for a [webhook](/user-guide/notifications/webhook-notifications). |
 | [ALTER OPENFLOW DATA PLANE](/sql-reference/sql/alter-oflow-data-plane) | Modifies an Openflow data plane integration. |
 | [ALTER ONLINE FEATURE TABLE](/sql-reference/sql/alter-online-feature-table) | Modifies the properties of an existing [online feature table](/sql-reference/sql/create-online-feature-table). |
+| [ALTER OPENFLOW CONNECTOR](/sql-reference/sql/alter-openflow-connector) | Modifies connector configuration, metadata, or operational state. |
+| [ALTER OPENFLOW DEPLOYMENT](/sql-reference/sql/alter-openflow-deployment) | Modifies or changes the state of a gen 2 deployment. |
+| [ALTER OPENFLOW RUNTIME](/sql-reference/sql/alter-openflow-runtime) | Modifies properties or changes the state of a gen 2 runtime. |
+| [ALTER ORGANIZATION](/sql-reference/sql/alter-organization) | Modifies properties of a Snowflake [organization](/user-guide/organizations), including the default tenant type for new accounts and the allowlist of email domains for internal accounts. |
 | [ALTER ORGANIZATION ACCOUNT](/sql-reference/sql/alter-organization-account) | Modifies the properties of an existing [organization account](/user-guide/organization-accounts). |
 | [ALTER ORGANIZATION PROFILE](/sql-reference/sql/alter-organization-profile) | Modifies the properties of an [organization profile](/user-guide/collaboration/organization-profiles/org-profiles-create-manage) using an inline YAML manifest, or using a YAML manifest file located in a stage location. |
+| [ALTER ORGANIZATION SET EVENT ROUTING TABLE](/sql-reference/sql/alter-organization-set-event-routing-table) | Activates the event routing table for all application listings in the specified organization. |
+| [ALTER ORGANIZATION UNSET EVENT ROUTING TABLE](/sql-reference/sql/alter-organization-unset-event-routing-table) | Deactivates the event routing table for all application listings in the specified organization. |
 | [ALTER ORGANIZATION USER](/sql-reference/sql/alter-organization-user) | Modifies the properties of an existing [organization user](/user-guide/organization-users). |
 | [ALTER ORGANIZATION USER GROUP](/sql-reference/sql/alter-organization-user-group) | Modifies the properties of an existing [organization user group](/user-guide/organization-users#label-org-users-groups). |
 | [ALTER PACKAGES POLICY](/sql-reference/sql/alter-packages-policy) | Modifies the properties for an existing [packages policy](/developer-guide/udf/python/packages-policy). |
@@ -103,9 +120,11 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER SECRET](/sql-reference/sql/alter-secret) | Modifies the properties of an existing secret. |
 | [ALTER SECURITY INTEGRATION](/sql-reference/sql/alter-security-integration) | Modifies the properties for an existing security integration. |
 | [ALTER SECURITY INTEGRATION (External API Authentication)](/sql-reference/sql/alter-security-integration-api-auth) | Modifies the properties of an existing security integration created for External API Authentication. |
+| [ALTER SECURITY INTEGRATION (External secret provider)](/sql-reference/sql/alter-security-integration-api-auth-external-secret-provider) | Modifies an API authentication security integration used to access AWS Secrets Manager, Azure Key Vault, or Google Cloud Secret Manager. |
 | [ALTER SECURITY INTEGRATION (AWS IAM Authentication)](/sql-reference/sql/alter-security-integration-aws-iam) | Modifies the properties of an existing security integration created for authenticating with AWS IAM. |
 | [ALTER SECURITY INTEGRATION (External OAuth)](/sql-reference/sql/alter-security-integration-oauth-external) | Modifies the properties of an existing security integration created for External OAuth. |
 | [ALTER SECURITY INTEGRATION (Snowflake OAuth)](/sql-reference/sql/alter-security-integration-oauth-snowflake) | Modifies the properties of an existing security integration created for a Snowflake OAuth client. |
+| [ALTER SECURITY INTEGRATION (OIDC)](/sql-reference/sql/alter-security-integration-oidc) | Modifies the properties of an existing OIDC security integration. |
 | [ALTER SECURITY INTEGRATION (SAML2)](/sql-reference/sql/alter-security-integration-saml2) | Modifies the properties of an existing SAML2 security integration. |
 | [ALTER SECURITY INTEGRATION (SCIM)](/sql-reference/sql/alter-security-integration-scim) | Modifies the properties of an existing SCIM security integration. |
 | [ALTER SEMANTIC VIEW](/sql-reference/sql/alter-semantic-view) | Modifies the comment for an existing [semantic view](/user-guide/views-semantic/overview) or renames a semantic view. |
@@ -153,25 +172,32 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE ACCOUNT](/sql-reference/sql/create-account) | Creates a new account in your organization. |
 | [CREATE AGENT](/sql-reference/sql/create-agent) | Creates a new [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents) object with the specified attributes and specification. |
 | [CREATE AGGREGATION POLICY](/sql-reference/sql/create-aggregation-policy) | Creates a new [aggregation policy](/user-guide/aggregation-policies) in the current/specified schema or replaces an existing aggregation policy. |
+| [CREATE AI FUNCTION](/sql-reference/sql/create-ai-function) | CREATE AI FUNCTION lets you turn custom AI logic into a reusable, governed Snowflake function that can be used across applications, workflows, and SQL queries. |
 | [CREATE ALERT](/sql-reference/sql/create-alert) | Creates a new [alert](/user-guide/alerts) in the current schema. |
 | [CREATE API INTEGRATION](/sql-reference/sql/create-api-integration) | Creates a new API integration object in the account or replaces an existing API integration. |
 | [CREATE APPLICATION](/sql-reference/sql/create-application) | Creates a Snowflake Native App based on an application package or listing. |
 | [CREATE APPLICATION PACKAGE](/sql-reference/sql/create-application-package) | Creates a new application package that contains the data content and application logic of Snowflake Native App. |
 | [CREATE APPLICATION ROLE](/sql-reference/sql/create-application-role) | Creates a new application role or replaces an existing application role. |
+| [CREATE APPLICATION SERVICE](/sql-reference/sql/create-application-service) | Creates a new Application Service that deploys a packaged application build from an [artifact repository](/sql-reference/sql/create-artifact-repository). |
+| [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) | Creates a new artifact repository in the current or specified schema, or replaces an existing artifact repository. |
 | [CREATE AUTHENTICATION POLICY](/sql-reference/sql/create-authentication-policy) | Creates a new [authentication policy](/user-guide/authentication-policies) in the current or specified schema or replaces an existing authentication policy. |
 | [CREATE BACKUP POLICY](/sql-reference/sql/create-backup-policy) | Creates a [backup](/user-guide/backups) policy. |
 | [CREATE BACKUP SET](/sql-reference/sql/create-backup-set) | Creates a [backup](/user-guide/backups) set for a table, a schema, or a database. |
 | [CREATE CATALOG INTEGRATION](/sql-reference/sql/create-catalog-integration) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for [Apache Iceberg™ tables](/user-guide/tables-iceberg) in the account or replaces an existing catalog integration. |
+| [CREATE CATALOG INTEGRATION (Delta Sharing)](/sql-reference/sql/create-catalog-integration-delta-sharing) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) in the account, or replaces an existing catalog integration, for [Delta tables](/sql-reference/sql/create-iceberg-table-delta) that are shared from a remote [Delta Sharing](https://delta.io/sharing/) server. |
 | [CREATE CATALOG INTEGRATION (AWS Glue)](/sql-reference/sql/create-catalog-integration-glue) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) in the account or replaces an existing catalog integration for [Apache Iceberg™ tables](/user-guide/tables-iceberg) that use AWS Glue as the catalog. |
 | [CREATE CATALOG INTEGRATION (Object storage)](/sql-reference/sql/create-catalog-integration-object-storage) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) in the account or replaces an existing catalog integration for the following sources. |
 | [CREATE CATALOG INTEGRATION (Snowflake Open Catalog)](/sql-reference/sql/create-catalog-integration-open-catalog) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) for [Apache Iceberg™ tables](/user-guide/tables-iceberg) that integrate with [Snowflake Open Catalog](https://other-docs.snowflake.com/en/opencatalog/overview) in the account or replaces an existing catalog integration. |
 | [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) | Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) in the account or replaces an existing catalog integration for [Apache Iceberg™ tables](/user-guide/tables-iceberg) managed in a remote catalog that complies with the open source [Apache Iceberg™ REST OpenAPI specification](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml). |
+| [CREATE CATALOG INTEGRATION (Snowflake Postgres)](/sql-reference/sql/create-catalog-integration-snowflake-postgres) | Creates a new catalog integration in the account or replaces an existing catalog integration for Snowflake Postgres to access Apache Iceberg™ tables managed by a Snowflake Postgres instance. |
 | [CREATE <object> … CLONE](/sql-reference/sql/create-clone) | Creates a copy of an existing object in the system. |
 | [CREATE COMPUTE POOL](/sql-reference/sql/create-compute-pool) | Creates a new [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool) in the current account. |
 | [CREATE CONNECTION](/sql-reference/sql/create-connection) | Creates a new [connection](/user-guide/client-redirect) in the account. |
 | [CREATE CONTACT](/sql-reference/sql/create-contact) | Creates a new [contact](/user-guide/contacts-using) or replaces an existing contact. |
 | [CREATE CORTEX SEARCH SERVICE](/sql-reference/sql/create-cortex-search) | Creates a new [Cortex Search service](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) or replaces an existing one. |
 | [CREATE DATA METRIC FUNCTION](/sql-reference/sql/create-data-metric-function) | Creates a new data metric function (DMF) in the current or specified schema, or replaces an existing data metric function. |
+| [CREATE DATA MOVEMENT POLICY](/sql-reference/sql/create-data-movement-policy) | Creates a new [data movement policy](/user-guide/data-movement-policies) in the current/specified schema or replaces an existing data movement policy. |
+| [CREATE DATA MOVEMENT RULE](/sql-reference/sql/create-data-movement-rule) | Creates a new [data movement rule](/user-guide/data-movement-policies) in the current/specified schema or replaces an existing data movement rule. |
 | [CREATE DATABASE](/sql-reference/sql/create-database) | Creates a new database in the system. |
 | [CREATE DATABASE (catalog-linked)](/sql-reference/sql/create-database-catalog-linked) | Creates a new [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) for Apache Iceberg™ tables that use an external Iceberg REST catalog. |
 | [CREATE DATABASE ROLE](/sql-reference/sql/create-database-role) | Create a new [database role](/user-guide/security-access-control-considerations#label-access-control-considerations-database-roles) or replace an existing database role in the system. |
@@ -179,9 +205,11 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE DBT PROJECT](/sql-reference/sql/create-dbt-project) | Creates a new [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake) or replaces an existing dbt project. |
 | [CREATE DCM PROJECT](/sql-reference/sql/create-dcm-project) | Creates a new [DCM project](/user-guide/dcm-projects/dcm-projects-overview) or replaces an existing DCM project. |
 | [CREATE DYNAMIC TABLE](/sql-reference/sql/create-dynamic-table) | Creates a [dynamic table](/user-guide/dynamic-tables/overview), based on a specified query. |
+| [CREATE EVENT ROUTING TABLE](/sql-reference/sql/create-event-routing-table) | Creates a new event routing table in the current organization and region. |
 | [CREATE EVENT TABLE](/sql-reference/sql/create-event-table) | Creates an [event table](/developer-guide/logging-tracing/event-table-setting-up) that captures events, including logged messages from functions and procedures. |
 | [CREATE EXPERIMENT](/sql-reference/sql/create-experiment) | Creates a new [experiment](/developer-guide/snowflake-ml/experiments) or replaces an existing experiment. |
 | [CREATE EXTERNAL AGENT](/sql-reference/sql/create-external-agent) | Creates a new [external agent](/user-guide/snowflake-cortex/ai-observability) for use with AI Observability. |
+| [CREATE EXTERNAL CONSUMER](/sql-reference/sql/create-external-consumer) | Creates a new external consumer identity, or replaces an existing one, for use with [Open Data Sharing](/user-guide/open-data-sharing). |
 | [CREATE EXTERNAL ACCESS INTEGRATION](/sql-reference/sql/create-external-access-integration) | Creates an [external access integration](/developer-guide/external-network-access/creating-using-external-network-access) for access to external network locations from a UDF or procedure handler. |
 | [CREATE EXTERNAL FUNCTION](/sql-reference/sql/create-external-function) | Creates a new [external function](/sql-reference/external-functions). |
 | [CREATE EXTERNAL TABLE](/sql-reference/sql/create-external-table) | Creates a new [external table](/user-guide/tables-external-intro) in the current or specified schema or replaces an existing external table. |
@@ -214,6 +242,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE MCP SERVER](/sql-reference/sql/create-mcp-server) | Creates a new MCP (Model Context Protocol) server or replaces an existing MCP server. |
 | [CREATE MODEL](/sql-reference/sql/create-model) | Creates a new machine learning model in the current/specified schema or replaces an existing model. |
 | [CREATE MODEL MONITOR](/sql-reference/sql/create-model-monitor) | Create or replace a [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability) in the current or specified schema. |
+| [CREATE MULTI PARTY APPROVAL POLICY](/sql-reference/sql/create-multi-party-approval-policy) | Creates a new Multi-party Approval policy in the current or specified schema, or replaces an existing Multi-party Approval policy. |
 | [CREATE NETWORK POLICY](/sql-reference/sql/create-network-policy) | Creates a network policy or replaces an existing network policy. |
 | [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule) | Creates a network rule or replaces an existing network rule. |
 | [CREATE NOTEBOOK](/sql-reference/sql/create-notebook) | Creates a new [Snowflake notebook](/user-guide/ui-snowsight/notebooks) or replaces an existing notebook. |
@@ -228,6 +257,9 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE NOTIFICATION INTEGRATION (outbound to a Google Pub/Sub topic)](/sql-reference/sql/create-notification-integration-queue-outbound-gcp) | Creates a new notification integration in the account or replaces an existing integration for [sending a message to a Google Pub/Sub topic](/user-guide/notifications/creating-notification-integration-google-pubsub). |
 | [CREATE NOTIFICATION INTEGRATION (webhooks)](/sql-reference/sql/create-notification-integration-webhooks) | Creates a new notification integration or replaces an existing integration for a [webhook](/user-guide/notifications/webhook-notifications). |
 | [CREATE ONLINE FEATURE TABLE](/sql-reference/sql/create-online-feature-table) | Creates a new online feature table in the current/specified schema or replaces an existing table. |
+| [CREATE OPENFLOW CONNECTOR](/sql-reference/sql/create-openflow-connector) | Creates a connector in a gen 2 runtime. |
+| [CREATE OPENFLOW DEPLOYMENT](/sql-reference/sql/create-openflow-deployment) | Creates a gen 2 Openflow deployment in the account. |
+| [CREATE OPENFLOW RUNTIME](/sql-reference/sql/create-openflow-runtime) | Creates a runtime in a gen 2 deployment. |
 | [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter) | CREATE OR ALTER commands are DDL commands that combine the functionality of the CREATE command and the ALTER command, enabling you to define an object using the syntax supported by the CREATE <object> command with the limitations of the ALTER <object> command. |
 | [CREATE ORGANIZATION ACCOUNT](/sql-reference/sql/create-organization-account) | Creates a new [organization account](/user-guide/organization-accounts). |
 | [CREATE ORGANIZATION LISTING](/sql-reference/sql/create-organization-listing) | Create an organization listing to share data products securely within your organization. |
@@ -251,9 +283,11 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE SECRET](/sql-reference/sql/create-secret) | Creates a new secret in the current or specified schema or replaces an existing secret. |
 | [CREATE SECURITY INTEGRATION](/sql-reference/sql/create-security-integration) | Creates a new security integration in the account or replaces an existing integration. |
 | [CREATE SECURITY INTEGRATION (External API Authentication)](/sql-reference/sql/create-security-integration-api-auth) | Creates a new security integration for external API Authentication in the account or replaces an existing integration. |
+| [CREATE SECURITY INTEGRATION (External secret provider)](/sql-reference/sql/create-security-integration-api-auth-external-secret-provider) | Creates an API authentication security integration that uses workload identity federation to access AWS Secrets Manager, Azure Key Vault, or Google Cloud Secret Manager. |
 | [CREATE SECURITY INTEGRATION (AWS IAM Authentication)](/sql-reference/sql/create-security-integration-aws-iam) | Creates a new security integration for external authentication using Amazon Web Services (AWS) Identity and Access Management (IAM). |
 | [CREATE SECURITY INTEGRATION (External OAuth)](/sql-reference/sql/create-security-integration-oauth-external) | Creates a new External OAuth security integration in the account or replaces an existing integration. |
 | [CREATE SECURITY INTEGRATION (Snowflake OAuth)](/sql-reference/sql/create-security-integration-oauth-snowflake) | Creates a new Snowflake OAuth security integration in the account or replaces an existing integration. |
+| [CREATE SECURITY INTEGRATION (OIDC)](/sql-reference/sql/create-security-integration-oidc) | Creates a new OIDC security integration in the account or replaces an existing integration. |
 | [CREATE SECURITY INTEGRATION (SAML2)](/sql-reference/sql/create-security-integration-saml2) | Creates a new SAML2 security integration in the account or replaces an existing integration. |
 | [CREATE SECURITY INTEGRATION (SCIM)](/sql-reference/sql/create-security-integration-scim) | Creates a new SCIM security integration in the account or replaces an existing integration. |
 | [CREATE SEMANTIC VIEW](/sql-reference/sql/create-semantic-view) | Creates a new [semantic view](/user-guide/views-semantic/overview) in the current/specified schema. |
@@ -266,6 +300,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE SNAPSHOT SET — Deprecated](/sql-reference/sql/create-snapshot-set) | Creates a [snapshot](/user-guide/backups) set for a table, a schema, or a database. |
 | [CREATE STAGE](/sql-reference/sql/create-stage) | Creates a new named *internal* or *external* stage to use for loading data from files into Snowflake tables and unloading data from tables into files. |
 | [CREATE STORAGE INTEGRATION](/sql-reference/sql/create-storage-integration) | Creates a new storage integration in the account or replaces an existing integration. |
+| [CREATE STORAGE INTEGRATION (Postgres Internal Storage)](/sql-reference/sql/create-storage-integration-postgres-internal) | Creates a new storage integration in the account or replaces an existing storage integration for Postgres internal storage to access the managed storage associated with a Snowflake Postgres instance. |
 | [CREATE STORAGE LIFECYCLE POLICY](/sql-reference/sql/create-storage-lifecycle-policy) | Creates a new [storage lifecycle policy](/user-guide/storage-management/storage-lifecycle-policies) in the current or specified schema, or replaces an existing policy. |
 | [CREATE STREAM](/sql-reference/sql/create-stream) | Creates a new stream in the current/specified schema or replaces an existing [stream](/user-guide/streams-intro). |
 | [CREATE STREAMLIT](/sql-reference/sql/create-streamlit) | Creates a new Streamlit object in Snowflake or replaces an existing Streamlit object in the same schema. |
@@ -286,6 +321,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE ALERT](/sql-reference/sql/desc-alert) | Describes the properties of an [alert](/user-guide/alerts). |
 | [DESCRIBE APPLICATION](/sql-reference/sql/desc-application) | Displays information about a Snowflake Native App. |
 | [DESCRIBE APPLICATION PACKAGE](/sql-reference/sql/desc-application-package) | Displays information about an application package. |
+| [DESCRIBE APPLICATION SERVICE](/sql-reference/sql/desc-application-service) | Describes the properties of an [Application Service](/sql-reference/sql/create-application-service), including the deployed package and version and lifecycle state. |
+| [DESCRIBE ARTIFACT REPOSITORY](/sql-reference/sql/desc-artifact-repository) | Describes the properties of an [artifact repository](/sql-reference/sql/create-artifact-repository), including its type, owning role, and creation time. |
 | [DESCRIBE AUTHENTICATION POLICY](/sql-reference/sql/desc-authentication-policy) | Describes the properties of an [authentication policy](/user-guide/authentication-policies). |
 | [DESCRIBE AVAILABLE LISTING](/sql-reference/sql/desc-available-listing) | Describes the columns in the listings that are available to the user who runs the command. |
 | [DESCRIBE AVAILABLE ORGANIZATION PROFILE](/sql-reference/sql/desc-available-organization-profile) | Describes the active organization profile that can be associated with organizational listings. |
@@ -295,12 +332,15 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE COMPUTE POOL](/sql-reference/sql/desc-compute-pool) | Describes the properties of a [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool). |
 | [DESCRIBE CONFIGURATION](/sql-reference/sql/desc-configuration) | Describes the properties of a [configuration](/developer-guide/native-apps/inter-app-communication). |
 | [DESCRIBE CORTEX SEARCH SERVICE](/sql-reference/sql/desc-cortex-search) | Describes the properties of a [Cortex Search service](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview). |
+| [DESCRIBE DATA MOVEMENT POLICY](/sql-reference/sql/desc-data-movement-policy) | Describes the properties of a [data movement policy](/user-guide/data-movement-policies), including the creation date, name, and the rules in the policy’s `ENFORCE_RULES` and `ALERT_RULES` lists. |
+| [DESCRIBE DATA MOVEMENT RULE](/sql-reference/sql/desc-data-movement-rule) | Describes the properties of a [data movement rule](/user-guide/data-movement-policies), including the creation date, name, movement type, and the SQL expression that defines the maximum number of rows. |
 | [DESCRIBE DATABASE](/sql-reference/sql/desc-database) | Describes the database. |
 | [DESCRIBE DBT PROJECT](/sql-reference/sql/desc-dbt-project) | Describes the properties of a [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake). |
 | [DESCRIBE DCM PROJECT](/sql-reference/sql/desc-dcm-project) | Describes the properties of a [DCM project](/user-guide/dcm-projects/dcm-projects-overview). |
 | [DESCRIBE DYNAMIC TABLE](/sql-reference/sql/desc-dynamic-table) | Describes the columns in a [dynamic table](/user-guide/dynamic-tables/overview). |
 | [DESCRIBE EVENT TABLE](/sql-reference/sql/desc-event-table) | Describes the columns in an [event table](/developer-guide/logging-tracing/event-table-setting-up). |
 | [DESCRIBE EXTERNAL AGENT](/sql-reference/sql/desc-external-agent) | Describes the properties of an [external agent](/user-guide/snowflake-cortex/ai-observability). |
+| [DESCRIBE EXTERNAL CONSUMER](/sql-reference/sql/desc-external-consumer) | Describes an external consumer, including its properties and current configuration. |
 | [DESCRIBE EXTERNAL TABLE](/sql-reference/sql/desc-external-table) | Describes the VALUE column and virtual columns in an external table. |
 | [DESCRIBE EXTERNAL VOLUME](/sql-reference/sql/desc-external-volume) | Describes the properties of an [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def). |
 | [DESCRIBE FEATURE POLICY](/sql-reference/sql/desc-feature-policy) | Describes the properties of a [feature policy](/developer-guide/native-apps/ui-consumer-feature-policies). |
@@ -319,12 +359,16 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE MATERIALIZED VIEW](/sql-reference/sql/desc-materialized-view) | Describes the columns in a materialized view. |
 | [DESCRIBE MCP SERVER](/sql-reference/sql/desc-mcp-server) | Describes the properties of an MCP (Model Context Protocol) server. |
 | [DESCRIBE MODEL MONITOR](/sql-reference/sql/desc-model-monitor) | Displays information about a specific [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability). |
+| [DESCRIBE MULTI PARTY APPROVAL POLICY](/sql-reference/sql/desc-multi-party-approval-policy) | Returns the definition of a Multi-party Approval policy. |
 | [DESCRIBE NETWORK POLICY](/sql-reference/sql/desc-network-policy) | Describes the properties specified for a network policy. |
 | [DESCRIBE NETWORK RULE](/sql-reference/sql/desc-network-rule) | Describes the properties specified for a network rule. |
 | [DESCRIBE NOTEBOOK](/sql-reference/sql/desc-notebook) | Describes the properties of a [notebook](/user-guide/ui-snowsight/notebooks). |
 | [DESCRIBE NOTIFICATION INTEGRATION](/sql-reference/sql/desc-notification-integration) | Describes the properties of a notification integration. |
 | [DESCRIBE OPENFLOW DATA PLANE INTEGRATION](/sql-reference/sql/desc-oflow-data-plane-integration) | Describes the columns in an Openflow data plane integration. |
 | [DESCRIBE ONLINE FEATURE TABLE](/sql-reference/sql/desc-online-feature-table) | Describes the columns in an [online feature table](/sql-reference/sql/create-online-feature-table). |
+| [DESCRIBE OPENFLOW CONNECTOR](/sql-reference/sql/desc-openflow-connector) | Returns properties for a single connector, including status, runtime, connector definition, and version state. |
+| [DESCRIBE OPENFLOW DEPLOYMENT](/sql-reference/sql/desc-openflow-deployment) | Returns properties for a single deployment. |
+| [DESCRIBE OPENFLOW RUNTIME](/sql-reference/sql/desc-openflow-runtime) | Returns properties for a single runtime. |
 | [DESCRIBE ORGANIZATION PROFILE](/sql-reference/sql/desc-organization-profile) | Describes the properties of an organization profile. |
 | [DESCRIBE PACKAGES POLICY](/sql-reference/sql/desc-packages-policy) | Describes the details about a packages policy. |
 | [DESCRIBE PASSWORD POLICY](/sql-reference/sql/desc-password-policy) | Describes the details about a password policy. |
@@ -367,6 +411,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP APPLICATION](/sql-reference/sql/drop-application) | Removes an application from the system in the Native Apps Framework. |
 | [DROP APPLICATION PACKAGE](/sql-reference/sql/drop-application-package) | Removes an application package from the system in the Native Apps Framework. |
 | [DROP APPLICATION ROLE](/sql-reference/sql/drop-application-role) | Removes the specified application role from the system. |
+| [DROP APPLICATION SERVICE](/sql-reference/sql/drop-application-service) | Removes the specified [Application Service](/sql-reference/sql/create-application-service) from the current or specified schema and stops its containers. |
+| [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository) | Removes the specified [artifact repository](/sql-reference/sql/create-artifact-repository) from the current or specified schema. |
 | [DROP AUTHENTICATION POLICY](/sql-reference/sql/drop-authentication-policy) | Removes an [authentication policy](/user-guide/authentication-policies) from the system. |
 | [DROP BACKUP POLICY](/sql-reference/sql/drop-backup-policy) | Deletes a [backup](/user-guide/backups) policy. |
 | [DROP BACKUP SET](/sql-reference/sql/drop-backup-set) | Deletes a [backup](/user-guide/backups) set. |
@@ -375,13 +421,17 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP CONNECTION](/sql-reference/sql/drop-connection) | Removes a connection from the account. |
 | [DROP CONTACT](/sql-reference/sql/drop-contact) | Removes the specified [contact](/user-guide/contacts-using) from the current schema. |
 | [DROP CORTEX SEARCH SERVICE](/sql-reference/sql/drop-cortex-search) | Removes the specified [Cortex Search service](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) from the current schema. |
+| [DROP DATA MOVEMENT POLICY](/sql-reference/sql/drop-data-movement-policy) | Removes a [data movement policy](/user-guide/data-movement-policies) from the current/specified schema. |
+| [DROP DATA MOVEMENT RULE](/sql-reference/sql/drop-data-movement-rule) | Removes a [data movement rule](/user-guide/data-movement-policies) from the current/specified schema. |
 | [DROP DATABASE](/sql-reference/sql/drop-database) | Removes a database from the system. |
 | [DROP DATABASE ROLE](/sql-reference/sql/drop-database-role) | Removes the specified database role from the system. |
 | [DROP DBT PROJECT](/sql-reference/sql/drop-dbt-project) | Removes the specified [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake) from the current or specified schema. |
 | [DROP DCM PROJECT](/sql-reference/sql/drop-dcm-project) | Removes the specified [DCM project](/user-guide/dcm-projects/dcm-projects-overview) from the current/specified schema. |
 | [DROP DYNAMIC TABLE](/sql-reference/sql/drop-dynamic-table) | Removes a [dynamic table](/user-guide/dynamic-tables/overview) from the current/specified schema. |
+| [DROP EVENT ROUTING TABLE](/sql-reference/sql/drop-event-routing-table) | Drops an event routing table. |
 | [DROP EXPERIMENT](/sql-reference/sql/drop-experiment) | Removes the specified [experiment](/developer-guide/snowflake-ml/experiments) from the current/specified schema. |
 | [DROP EXTERNAL AGENT](/sql-reference/sql/drop-external-agent) | Removes the specified [external agent](/user-guide/snowflake-cortex/ai-observability) from the current/specified schema. |
+| [DROP EXTERNAL CONSUMER](/sql-reference/sql/drop-external-consumer) | Removes an external consumer from the account. |
 | [DROP EXTERNAL TABLE](/sql-reference/sql/drop-external-table) | Removes an external table from the current or specified schema. |
 | [DROP EXTERNAL VOLUME](/sql-reference/sql/drop-external-volume) | Removes an [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def) from the account, but retains a version of the external volume so that it can be recovered using [UNDROP EXTERNAL VOLUME](/sql-reference/sql/undrop-external-volume). |
 | [DROP FAILOVER GROUP](/sql-reference/sql/drop-failover-group) | Removes a [failover group](/user-guide/account-replication-intro#label-replication-and-failover-groups) from the account. |
@@ -405,10 +455,14 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP MCP SERVER](/sql-reference/sql/drop-mcp-server) | Removes the specified MCP (Model Context Protocol) server from the current/specified schema. |
 | [DROP MODEL](/sql-reference/sql/drop-model) | Removes a machine learning model from the current/specified schema. |
 | [DROP MODEL MONITOR](/sql-reference/sql/drop-model-monitor) | Removes the specified [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability) from the current or specified schema. |
+| [DROP MULTI PARTY APPROVAL POLICY](/sql-reference/sql/drop-multi-party-approval-policy) | Removes a Multi-party Approval policy from the system. |
 | [DROP NETWORK POLICY](/sql-reference/sql/drop-network-policy) | Removes the specified network policy from the system. |
 | [DROP NETWORK RULE](/sql-reference/sql/drop-network-rule) | Removes the specified network rule from the system. |
 | [DROP NOTEBOOK](/sql-reference/sql/drop-notebook) | Removes the specified [notebook](/user-guide/ui-snowsight/notebooks) from the current/specified schema, but retains a version of the notebook so that it can be recovered using [UNDROP NOTEBOOK](/sql-reference/sql/undrop-notebook). |
 | [DROP ONLINE FEATURE TABLE](/sql-reference/sql/drop-online-feature-table) | Removes the specified [online feature table](/sql-reference/sql/create-online-feature-table) from the current/specified schema. |
+| [DROP OPENFLOW CONNECTOR](/sql-reference/sql/drop-openflow-connector) | Removes a connector from a gen 2 runtime. |
+| [DROP OPENFLOW DEPLOYMENT](/sql-reference/sql/drop-openflow-deployment) | Removes the record for a terminated deployment. |
+| [DROP OPENFLOW RUNTIME](/sql-reference/sql/drop-openflow-runtime) | Removes a runtime from a gen 2 deployment. |
 | [DROP ORGANIZATION PROFILE](/sql-reference/sql/drop-organization-profile) | Removes an organization profile. |
 | [DROP ORGANIZATION USER](/sql-reference/sql/drop-organization-user) | Removes an [organization user](/user-guide/organization-users) from the organization. |
 | [DROP ORGANIZATION USER GROUP](/sql-reference/sql/drop-organization-user-group) | Removes an [organization user group](/user-guide/organization-users#label-org-users-groups) from the organization. |
@@ -457,6 +511,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) | Executes a Notebook Project. |
 | [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) | Executes a Code Bundle at the specified entrypoint. |
 | [EXECUTE TASK](/sql-reference/sql/execute-task) | Manually triggers an asynchronous single run of a task (either a standalone task or the root task in a [task graph](/user-guide/tasks-graphs#label-task-dag)) independent of the schedule defined for the task. |
+| [EXPERIMENT (CREATE / EXECUTE / SHOW / DROP)](/sql-reference/sql/experiment) | An experiment is a schema-level Snowflake object that packages an AI workload — either an evaluation or an optimization — and records its results as a set of runs. |
 | [EXPLAIN](/sql-reference/sql/explain) | Returns the logical execution plan for the specified SQL statement. |
 | **G** |  |
 | [GET](/sql-reference/sql/get) | Downloads data files from one of the following [internal stage](/user-guide/data-load-overview#label-data-load-overview-internal-stages) types to a local directory or folder on a client machine. |
@@ -505,7 +560,9 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW ALERTS](/sql-reference/sql/show-alerts) | Lists the [alerts](/user-guide/alerts) for which you have access privileges. |
 | [SHOW APPLICATION PACKAGES](/sql-reference/sql/show-application-packages) | Lists the application packages for which you have access privileges across your entire account in the Native Apps Framework. |
 | [SHOW APPLICATION ROLES](/sql-reference/sql/show-application-roles) | Lists the application roles in the specified app for which you have access privileges. |
+| [SHOW APPLICATION SERVICES](/sql-reference/sql/show-application-services) | Lists the [Application Services](/sql-reference/sql/create-application-service) for which you have access privileges. |
 | [SHOW APPLICATIONS](/sql-reference/sql/show-applications) | Lists the Snowflake Native Apps that you have access privileges for across your entire account. |
+| [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories) | Lists the [artifact repositories](/sql-reference/sql/create-artifact-repository) for which you have access privileges. |
 | [SHOW AUTHENTICATION POLICIES](/sql-reference/sql/show-authentication-policies) | Lists [authentication policy](/user-guide/authentication-policies) information, including the creation date, database and schema names, owner, and any available comments. |
 | [SHOW AVAILABLE LISTINGS](/sql-reference/sql/show-available-listings) | Lists the listings that are available to the user who runs the command. |
 | [SHOW AVAILABLE OFFERS](/sql-reference/sql/show-available-offers) | Lists the [offers](/user-guide/collaboration/listings/pricing-plans-offers/pricing-plans-and-offers#label-listings-offers) that are available to the user who runs the command. |
@@ -523,8 +580,11 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW CONFIGURATIONS](/sql-reference/sql/show-configurations) | Lists the [configurations](/developer-guide/native-apps/inter-app-communication) in the specified app for which you have access privileges. |
 | [SHOW CONNECTIONS](/sql-reference/sql/show-connections) | Lists the [connections](/user-guide/client-redirect) for which you have access privileges. |
 | [SHOW CONTACTS](/sql-reference/sql/show-contacts) | Lists the [contacts](/user-guide/contacts-using) for which you have access privileges. |
+| [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models) | Lists the Cortex Base Models available to your current role, along with their lifecycle status, in-region and cross-region availability, legacy date, and end-of-life date. |
 | [SHOW CORTEX SEARCH SERVICES](/sql-reference/sql/show-cortex-search) | Lists the [Cortex Search services](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview) for which you have access privileges. |
 | [SHOW DATA METRIC FUNCTIONS](/sql-reference/sql/show-data-metric-functions) | Lists the [data metric functions](/user-guide/data-quality-intro) (DMFs) for which you have access privileges. |
+| [SHOW DATA MOVEMENT POLICIES](/sql-reference/sql/show-data-movement-policies) | Lists the [data movement policies](/user-guide/data-movement-policies) for which you have access privileges. |
+| [SHOW DATA MOVEMENT RULES](/sql-reference/sql/show-data-movement-rules) | Lists the [data movement rules](/user-guide/data-movement-policies) for which you have access privileges. |
 | [SHOW DATABASE ROLES](/sql-reference/sql/show-database-roles) | Lists all the database roles in the specified database. |
 | [SHOW DATABASES](/sql-reference/sql/show-databases) | Lists the databases for which you have access privileges across your entire account, including dropped databases that are still within the Time Travel retention period and, therefore, can be undropped. |
 | [SHOW DATABASES IN FAILOVER GROUP](/sql-reference/sql/show-databases-in-failover-group) | Lists databases in a [failover group](/user-guide/account-replication-intro#label-replication-and-failover-groups). |
@@ -537,9 +597,13 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW DYNAMIC TABLES](/sql-reference/sql/show-dynamic-tables) | Lists the [dynamic tables](/user-guide/dynamic-tables/overview) for which you have access privileges. |
 | [SHOW ENDPOINTS](/sql-reference/sql/show-endpoints) | Lists the endpoints in a [Snowpark Container Services service](/developer-guide/snowpark-container-services/working-with-services) (or a job service). |
 | [SHOW ENTITIES IN DCM PROJECT](/sql-reference/sql/show-entities-in-dcm-project) | Shows all Snowflake objects that are currently managed by a specified [DCM project](/user-guide/dcm-projects/dcm-projects-overview). |
+| [SHOW EVENT ROUTING TABLE ON ORGANIZATION](/sql-reference/sql/show-event-routing-table-on-organization) | Returns the event routing table activated for the specified organization. |
+| [SHOW EVENT ROUTING TABLES](/sql-reference/sql/show-event-routing-tables) | Returns the list of event routing tables. |
 | [SHOW EVENT TABLES](/sql-reference/sql/show-event-tables) | Lists the [event tables](/developer-guide/logging-tracing/event-table-setting-up) for which you have access privileges, including dropped tables that are still within the Time Travel retention period and, therefore, can be undropped. |
 | [SHOW EXPERIMENTS](/sql-reference/sql/show-experiments) | Lists the [experiments](/developer-guide/snowflake-ml/experiments) for which you have access privileges. |
 | [SHOW EXTERNAL AGENTS](/sql-reference/sql/show-external-agents) | Lists the [external agents](/user-guide/snowflake-cortex/ai-observability) for which you have access privileges. |
+| [SHOW USER PROGRAMMATIC ACCESS TOKENS FOR EXTERNAL CONSUMER](/sql-reference/sql/show-external-consumer-programmatic-access-tokens) | Lists the Programmatic Access Tokens (PATs) associated with an external consumer. |
+| [SHOW EXTERNAL CONSUMERS](/sql-reference/sql/show-external-consumers) | Lists the external consumers defined in the account. |
 | [SHOW EXTERNAL FUNCTIONS](/sql-reference/sql/show-external-functions) | Lists all the external functions created for your account. |
 | [SHOW EXTERNAL TABLES](/sql-reference/sql/show-external-tables) | Lists the external tables for which you have access privileges. |
 | [SHOW EXTERNAL VOLUMES](/sql-reference/sql/show-external-volumes) | Lists the [external volumes](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def) in your account for which you have access privileges. |
@@ -561,6 +625,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW IMAGES IN IMAGE REPOSITORY](/sql-reference/sql/show-images-in-image-repository) | Lists the images in an [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository). |
 | [SHOW INDEXES](/sql-reference/sql/show-indexes) | Lists all the indexes in your account for which you have access privileges. |
 | [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations) | Lists the integrations in your account. |
+| [SHOW INTERACTIVE TABLES](/sql-reference/sql/show-interactive-tables) | Lists the [interactive tables](/user-guide/interactive) for which you have access privileges. |
 | [SHOW JOIN POLICIES](/sql-reference/sql/show-join-policies) | Lists information about existing [join policies](/user-guide/join-policies), including the creation date, database and schema names, owner, and any available comments. |
 | [SHOW LISTINGS](/sql-reference/sql/show-listings) | Lists the [listings](/collaboration/collaboration-listings-about) that you have privileges to access. |
 | [SHOW LISTINGS IN FAILOVER GROUP](/sql-reference/sql/show-listings-in-failover-group) | Shows the listings in a [failover group](/user-guide/account-replication-intro#label-replication-and-failover-groups). |
@@ -573,8 +638,10 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW MFA METHODS](/sql-reference/sql/show-mfa-methods) | Lists the [second factors of authentication](/user-guide/security-mfa-second-factor) that a user enrolled in multi-factor authentication uses to sign in to Snowflake. |
 | [SHOW MODEL MONITORS](/sql-reference/sql/show-model-monitors) | Lists all [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability) that you can access in the current or specified schema and displays information about each one. |
 | [SHOW MODELS](/sql-reference/sql/show-models) | Lists the machine learning models that you have privileges to access. |
+| [SHOW MULTI PARTY APPROVAL POLICIES](/sql-reference/sql/show-multi-party-approval-policies) | Lists the Multi-party Approval policies in your account, including the creation date, database and schema names, owner, and any available comments. |
 | [SHOW NETWORK POLICIES](/sql-reference/sql/show-network-policies) | Lists all network policies defined in the system. |
 | [SHOW NETWORK RULES](/sql-reference/sql/show-network-rules) | Lists all network rules defined in the system. |
+| [SHOW NODES IN COMPUTE POOL](/sql-reference/sql/show-nodes-compute-pool) | Lists the nodes currently provisioned in a specified [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool), including the instance family backing each node. |
 | [SHOW NOTEBOOK PROJECTS](/sql-reference/sql/show-notebook-projects) | Lists the Notebook Projects visible to the current role. |
 | [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles) | Lists the Code Bundles visible to the current role. |
 | [SHOW NOTEBOOKS](/sql-reference/sql/show-notebooks) | Lists the [notebooks](/user-guide/ui-snowsight/notebooks) for which you have access privileges. |
@@ -584,7 +651,12 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW OFFERS](/sql-reference/sql/show-offers) | Provides information about all [offers](/user-guide/collaboration/listings/pricing-plans-offers/pricing-plans-and-offers#label-listings-offers) added to a listing. |
 | [SHOW OPENFLOW DATA PLANE INTEGRATIONS](/sql-reference/sql/show-oflow-data-plane-integration) | List OPENFLOW DATA PLANE INTEGRATIONS. |
 | [SHOW ONLINE FEATURE TABLES](/sql-reference/sql/show-online-feature-tables) | Lists the [online feature tables](/sql-reference/sql/create-online-feature-table) for which you have access privileges. |
+| [SHOW OPENFLOW CONNECTOR DEFINITIONS](/sql-reference/sql/show-openflow-connector-definitions) | Lists the gen 2 connector definition IDs available in the account, which you use in `FROM DEFINITION` when you run `CREATE OPENFLOW CONNECTOR`. |
+| [SHOW OPENFLOW CONNECTORS](/sql-reference/sql/show-openflow-connectors) | Lists gen 2 connectors for which you have access privileges. |
+| [SHOW OPENFLOW DEPLOYMENTS](/sql-reference/sql/show-openflow-deployments) | Lists gen 2 deployments visible to the current user. |
+| [SHOW OPENFLOW RUNTIMES](/sql-reference/sql/show-openflow-runtimes) | Lists gen 2 runtimes for which you have access privileges. |
 | [SHOW ORGANIZATION ACCOUNTS](/sql-reference/sql/show-organization-accounts) | Lists the [organization account](/user-guide/organization-accounts) of the organization. |
+| [SHOW ORGANIZATION CONTRACTS](/sql-reference/sql/show-organization-contracts) | Lists all active contracts currently mapped to the Snowflake accounts within the customer’s organization. |
 | [SHOW ORGANIZATION PROFILES](/sql-reference/sql/show-organization-profiles) | Lists the organization profiles for which you have access privileges. |
 | [SHOW ORGANIZATION USER GROUPS](/sql-reference/sql/show-organization-user-groups) | Lists [organization user groups](/user-guide/organization-users#label-org-users-groups). |
 | [SHOW ORGANIZATION USERS](/sql-reference/sql/show-organization-users) | Lists [organization users](/user-guide/organization-users). |
@@ -611,6 +683,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW ROLES](/sql-reference/sql/show-roles) | Lists all the roles which you can view across your entire account, including the system-defined roles and any custom roles that exist. |
 | [SHOW ROLES IN SERVICE](/sql-reference/sql/show-roles-in-service) | Lists all the service roles associated with a service. |
 | [SHOW ROW ACCESS POLICIES](/sql-reference/sql/show-row-access-policies) | Lists the row access policies for which you have access privileges. |
+| [SHOW RULES IN EVENT ROUTING TABLE](/sql-reference/sql/show-rules-in-event-routing-table) | Returns the list of rules for the specified event routing table. |
 | [SHOW RUN … IN EXPERIMENT](/sql-reference/sql/show-run-in-experiment) | Displays logged parameters or metrics for [experiment runs](/developer-guide/snowflake-ml/experiments). |
 | [SHOW RUNS IN EXPERIMENT](/sql-reference/sql/show-runs-in-experiment) | Lists the runs in an [experiment](/developer-guide/snowflake-ml/experiments). |
 | [SHOW SCHEMAS](/sql-reference/sql/show-schemas) | Lists the schemas for which you have access privileges, including dropped schemas that are still within the Time Travel retention period and, therefore, can be undropped. |
@@ -657,6 +730,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW VERSIONS IN DBT PROJECT](/sql-reference/sql/show-versions-in-dbt-project) | Displays a list of all versions of a [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake). |
 | [SHOW VERSIONS IN LISTING](/sql-reference/sql/show-versions-in-listing) | Lists and provides details of all listing versions. |
 | [SHOW VERSIONS IN MODEL](/sql-reference/sql/show-versions-in-model) | Lists the versions in a machine learning model. |
+| [SHOW VERSIONS IN OPENFLOW CONNECTOR](/sql-reference/sql/show-versions-in-openflow-connector) | Lists the configuration versions of a connector, including the live version if one exists. |
 | [SHOW VERSIONS IN ORGANIZATION PROFILE](/sql-reference/sql/show-versions-in-organization-profile) | Lists the organization profile versions for which you have access privileges. |
 | [SHOW VIEWS](/sql-reference/sql/show-views) | Lists the views, including secure views, for which you have access privileges. |
 | [SHOW WAREHOUSES](/sql-reference/sql/show-warehouses) | Lists all the [virtual warehouses](/user-guide/warehouses-overview) in your account for which you have access privileges. |

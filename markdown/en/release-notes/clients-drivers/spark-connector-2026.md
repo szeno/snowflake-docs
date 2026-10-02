@@ -58,3 +58,20 @@ See [Snowflake Connector for Spark](/user-guide/spark-connector) for documentati
 ### Bug fixes
 
 - Fixed the `UnsupportedOperationException: Unexpected type: NullType` error that was raised when writing DataFrames with structured columns (StructType) containing all null values via the Parquet write path.
+
+## Version 3.1.7 (February 16, 2026)
+
+### Improvements
+
+- Added support for `WORKLOAD_IDENTITY` authentication.
+
+## Version 3.1.6 (January 14, 2026)
+
+### Bug fixes
+
+- Fixed handling of nested data structures when generating Avro data.
+
+### Improvements
+
+- Added support for user-specified stages during data loading and unloading.
+- Added read and write support for Iceberg tables protected by fine-grained access control.

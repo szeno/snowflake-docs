@@ -14,8 +14,8 @@ Copy code
 ```
 ALTER [ NOTIFICATION ] INTEGRATION [ IF EXISTS ] <name> SET
   [ ENABLED = { TRUE | FALSE } ]
-  AZURE_STORAGE_QUEUE_PRIMARY_URI = '<queue_URL>'
-  AZURE_TENANT_ID = '<directory_ID>';
+  [ AZURE_EVENT_GRID_TOPIC_ENDPOINT = '<event_grid_topic_endpoint>' ]
+  [ AZURE_TENANT_ID = '<directory_ID>' ]
   [ COMMENT = '<string_literal>' ]
 
 ALTER [ NOTIFICATION ] INTEGRATION <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]

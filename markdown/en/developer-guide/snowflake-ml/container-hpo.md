@@ -30,7 +30,7 @@ For more information, see [Running a workload on a multi-node cluster](/develope
 
 ## Optimize a model’s hyperparameters
 
-Use Snowflake ML HPO API to tune a model. The following steps illustrate the process:
+Use the Snowflake ML HPO API to tune a model. The following steps illustrate the process:
 
 1. Ingest the data.
 2. Use the search algorithm to define the strategy used to optimize the hyperparameters.
@@ -294,7 +294,7 @@ Copy code
 from snowflake.ml.modeling.tune import TunerConfig
 ```
 
-Use the following code to define configuration class for the tuner:
+Use the following code to define a configuration class for the tuner:
 
 Copy code
 
@@ -314,7 +314,7 @@ class TunerConfig:
         exploring the hyperparameter space. Defaults to random search.
 
     num_trials (int): The maximum number of parameter configurations to
-        try. Defaults to 5
+        try. Defaults to 5.
 
     max_concurrent_trials (Optional[int]): The maximum number of concurrently running trials per node. If   not specified, it defaults to the total number of nodes in the cluster. This value must be a positive
     integer if provided.

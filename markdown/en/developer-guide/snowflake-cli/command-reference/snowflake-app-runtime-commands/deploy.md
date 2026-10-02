@@ -142,7 +142,7 @@ None
 :   Turns off intermediate output to console. Default: False.
 
 `--enhanced-exit-codes`
-:   Differentiate exit error codes based on failure type. Default: False.
+:   Differentiates exit error codes based on failure type. Default: False.
 
 `--help`
 :   Displays the help text for this command.

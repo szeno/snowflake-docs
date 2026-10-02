@@ -132,7 +132,7 @@ The account and user values are placeholders because the CI/CD platform variable
 the role, warehouse, database, and schema names with the objects for your project.
 
 For more information about `env.yml`, including value precedence, see
-[Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+[Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ### Configure CI role access
 
@@ -1183,6 +1183,6 @@ DROP DATABASE IF EXISTS <per_pull_request_database>;
 ## Next steps
 
 - [Use dbt artifacts for Slim CI and defer to production](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod)
-- [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables)
+- [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables)
 - [Best practices for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices)
 - [Monitor dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability)

@@ -1,9 +1,5 @@
 # Use remote app operations
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 ## About remote app operations
 
 Remote app operations let a provider perform different types of operations on the consumer Snowflake Native App, such as running on-demand SQL statements for troubleshooting or disabling the application.
@@ -65,6 +61,28 @@ The system function returns a JSON string `{"request_id": "<uuid>"}`. This `requ
 
 The execution of the SQL statement is logged in the event table, with information on the status, query result, and execution time.
 See the [Querying operation results](#querying-operation-results) section below for more details.
+
+### Check consumer consent status
+
+You can view whether the consumer has granted consent for restricted remote app operations by querying the
+`AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL` column in the
+[APPLICATION\_STATE](/sql-reference/data-sharing-usage/application-state-view) view:
+
+Copy code
+
+```
+SELECT PACKAGE_NAME,
+       APPLICATION_NAME_HASH,
+       CONSUMER_ACCOUNT_NAME,
+       AUTHORIZE_RESTRICTED_PROVIDER_REMOTE_OPERATIONS_UNTIL
+FROM SNOWFLAKE.DATA_SHARING_USAGE.APPLICATION_STATE;
+```
+
+The column returns one of the following values:
+
+- `INDEFINITE`: The consumer has granted consent indefinitely.
+- A timestamp: The consumer has granted consent until the specified time.
+- `NEVER`: The consumer hasn’t granted consent or has withdrawn it.
 
 ## Operation type: `disable`
 

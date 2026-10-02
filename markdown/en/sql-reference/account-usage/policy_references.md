@@ -3,7 +3,7 @@ Schema:
 
 # POLICY\_REFERENCES view
 
-This Account Usage view lists policy objects and their references in your account.
+This Account Usage view lists references to policies that are applied to objects in your account.
 
 The view supports aggregation, feature, masking, network, projection, row access, and storage lifecycle policies.
 

@@ -40,6 +40,7 @@ You cannot perform the following tasks in a reader account:
 - Set a [data metric function](/user-guide/data-quality-intro) on objects in the reader account.
 - Upload new data.
 - Modify existing data.
+- Refresh dynamic tables. Refreshes fail with the error `Operation is not supported in reader account`, so `CREATE DYNAMIC TABLE` also fails with the default [`INITIALIZE = ON_CREATE`](/sql-reference/sql/create-dynamic-table#label-create-dt-initialize) setting. To build a dynamic table on shared data, use a standard consumer account. For more information, see [Consumer workflow: build a pipeline on shared data](/user-guide/dynamic-tables/sharing#label-dynamic-tables-sharing-consumer-pipeline).
 - Unload data using a storage integration. However, you can use the
   [COPY INTO <location>](/sql-reference/sql/copy-into-location) command with your connection credentials to unload data into a cloud storage location.
 
@@ -93,7 +94,7 @@ On this page, you can do the following:
 
 Note
 
-By default, the total number of reader accounts a provider can create is 20. If you reach the limit and require creating additional
+By default, the total number of reader accounts a provider can create is 75. If you reach the limit and require creating additional
 accounts, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 If you dropped a reader account in order to create a new account without exceeding this limit, you cannot create the new reader account for
@@ -157,7 +158,7 @@ After running the command, you see the account name and login URL for the accoun
 
 Note:
 
-- By default, the total number of reader accounts a provider can create is 20. If you reach the limit and require creating additional
+- By default, the total number of reader accounts a provider can create is 75. If you reach the limit and require creating additional
   accounts, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
   If you dropped a reader account in order to create a new account without exceeding this limit, you cannot create the new reader account for
@@ -206,7 +207,7 @@ To view all the reader accounts that have been created for your account, use the
 > SHOW MANAGED ACCOUNTS;
 > ```
 
-This command can be used to monitor the total number of reader accounts for your account. If the total number reaches the limit (20), you may need to drop some accounts or contact
+This command can be used to monitor the total number of reader accounts for your account. If the total number reaches the limit (75), you may need to drop some accounts or contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) to request the limit be increased.
 
 In addition, you can use the views in the READER\_ACCOUNT\_USAGE schema (in the SNOWFLAKE shared database) to query information about the reader accounts created for your account. For more details, see
@@ -222,3 +223,47 @@ In the event of an outage in a region, you can use [Client Redirect](/user-guide
 data consumers using reader accounts. Create two reader accounts in different regions and designate one to act as the primary connection.
 In the event of an outage in a region, you can redirect client connections to the reader account in another region. For more information,
 see [Configuring Client Redirect and reader accounts](/user-guide/client-redirect#label-client-redirect-reader-accounts).
+
+## FAQs
+
+**What is a reader account?**
+
+A reader account lets a provider share data with a consumer who isn’t a Snowflake customer. The provider creates, owns, and manages the
+reader account, and shares data with it by using shares. A reader account can consume data only from the provider account that created it.
+
+**How do I get started with reader accounts?**
+
+Using the ACCOUNTADMIN role or a role with the CREATE ACCOUNT global privilege, create a reader account in Snowsight or with
+[CREATE MANAGED ACCOUNT](/sql-reference/sql/create-managed-account). Wait up to five minutes for provisioning, then
+[add the account to one or more shares](/user-guide/data-sharing-provider#label-share-create) and [configure the account](/user-guide/data-sharing-reader-config).
+
+**Who pays for usage in a reader account?**
+
+The provider account pays for all credits consumed by warehouses in the reader account. Reader account warehouses can consume an unlimited
+number of credits, so set up a [resource monitor](/user-guide/data-sharing-reader-config#label-reader-create-resource-monitor) to limit usage.
+
+**What can users do in a reader account?**
+
+Users can query data shared by the provider and work with it, for example by creating materialized views. They can’t upload new data,
+modify existing data, or run commands such as INSERT, UPDATE, DELETE, MERGE, or CREATE SHARE, and they can’t load data into tables with COPY INTO. See
+[What is restricted/allowed in a reader account?](#label-reader-account-restrictions) earlier in this topic.
+
+**How many reader accounts can I create?**
+
+By default, a provider can create up to 75 reader accounts. To request more, contact
+[Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support). A dropped reader account counts against the limit for
+7 days.
+
+**Who supports users in a reader account?**
+
+The provider does. Because a reader account doesn’t have a licensing agreement with Snowflake, users in the account can’t contact
+Snowflake Support directly. The provider fields their questions and opens Snowflake Support tickets if needed.
+
+**Which edition and region does a reader account use?**
+
+A reader account uses the same Snowflake edition as the provider account and is created in the same region.
+
+**When should I use a third-party account instead of a reader account?**
+
+Use a [third-party (publisher–subscriber) account](/user-guide/third-party-publisher-subscriber-accounts) when the consumer needs a fully
+functional Snowflake account to load and combine their own data with the data you share.

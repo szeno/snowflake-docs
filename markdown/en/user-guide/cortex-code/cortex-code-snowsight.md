@@ -29,6 +29,24 @@ To use CoCo in Snowsight, follow these steps:
 
 You can rate a CoCo response with thumbs-up or thumbs-down and optionally add a comment. That rating is product feedback to Snowflake. Prompt traces for CoCo are stored in `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS`; the rating isn’t, because it goes to Snowflake rather than into account monitoring data. For how this differs from Cortex Agent feedback, see [Product feedback](/user-guide/cortex-code/observability#label-coco-product-feedback).
 
+### Restrict a chat
+
+Use a [Restricted Session Scope](/user-guide/restricted-session-scope) (RSS) to reduce what CoCo can
+do in the current chat. You can apply read-only access or restrict the chat to selected roles. An
+RSS only narrows the privileges available through your roles and any administrator-enforced scope.
+
+To restrict the current chat:
+
+1. In the CoCo panel, select **+**, then **Restrict this chat**.
+2. Select read-only access or restrict the chat to selected roles.
+3. Review and apply the restriction. The chat displays the active restriction.
+
+After an RSS is active, you can switch to another RSS, but you can’t remove or relax the
+restriction in the current chat. Start a new chat to run without the user-managed RSS.
+
+For RSS behavior, role inheritance details, and instructions for other CoCo clients, see
+[Restrict a CoCo chat](/user-guide/restricted-session-scope#label-agent-rss-user-managed).
+
 ### Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to access CoCo must have the following
@@ -58,6 +76,47 @@ On self-service [trial accounts](/user-guide/admin-trial-account), AI features a
 To enable them, an account administrator must
 [add a credit card to the account](/user-guide/admin-trial-account#label-trial-account-ai-features).
 Adding a credit card doesn’t upgrade the trial to a paid account or end the trial period.
+
+### Manage availability
+
+Access to CoCo in Snowsight requires both a qualifying database role and a non-zero daily credit
+limit. Administrators can restrict access through either mechanism.
+
+To remove access for specific roles, revoke the database roles that CoCo requires:
+
+Copy code
+
+```
+REVOKE DATABASE ROLE SNOWFLAKE.COPILOT_USER FROM ROLE analyst;
+```
+
+Because `SNOWFLAKE.COPILOT_USER` is required for all users, revoking it removes access to CoCo.
+`SNOWFLAKE.CORTEX_USER` is granted to the `PUBLIC` role by default, so every user in the account has
+it. To narrow that, revoke it from `PUBLIC` and grant either `SNOWFLAKE.CORTEX_USER` or
+`SNOWFLAKE.CORTEX_AGENT_USER` only to the roles that need it.
+
+To turn CoCo in Snowsight off for the entire account, set the account-level daily credit limit
+to `0`:
+
+Copy code
+
+```
+ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 0;
+```
+
+A user-level value takes precedence over the account-level value, so you can block the account and
+then allow individual users:
+
+Copy code
+
+```
+ALTER ACCOUNT SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 0;
+ALTER USER power_user SET CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER = 20;
+```
+
+For more information about the credit limit parameters and further examples, see
+[Daily credit usage limits for CoCo](/user-guide/cortex-code/credit-usage-limit). For other ways to control spend, see
+[Cost controls for CoCo](/user-guide/cortex-code/cost-controls).
 
 ## Use cases and benefits
 

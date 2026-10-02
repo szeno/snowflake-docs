@@ -1671,6 +1671,8 @@ For general information about roles and privilege grants for performing SQL acti
   - If you’re using a storage integration, you must configure the IAM policy for the integration
     to grant permission to your S3 access point. For more information, see [Option 1: Configure a Snowflake storage integration to access Amazon S3](/user-guide/data-load-s3-config-storage-integration).
   - Multi-region access points aren’t supported.
+  - COPY INTO an external stage that uses an S3 access point isn’t supported when the underlying S3 bucket and the IAM role
+    used in the storage integration belong to different AWS accounts (cross-account access).
 - Regarding metadata:
 
   Attention

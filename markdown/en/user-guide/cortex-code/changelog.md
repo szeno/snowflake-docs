@@ -156,7 +156,7 @@ This release is identical to version 1.1.53 and contains no new features, fixes,
 
 ### Added
 
-- Named Restricted Session Scope: Use `--with-restricted-session-scope`, `--with-default-restricted-session-scope`, and `/guardrails` to discover and apply named RSS objects.
+- Named Restricted Session Scope: Use `--with-restricted-session-scope` and `/guardrails` to discover and apply named RSS objects.
 - FIPS 140 mode: Government and FedRAMP accounts enforce FIPS 140 mode on Snowflake connections.
 - Windows signed CLI: Windows ships a signed single-file executable to reduce false positives from antivirus tools.
 - Sandbox AWS SigV4: Phased support for AWS SigV4 signing inside the sandbox for guest workloads.

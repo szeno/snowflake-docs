@@ -166,3 +166,60 @@ locations:
     - name: "PUBLIC.AWS_US_WEST_2"
 ...
 ```
+
+## FAQs
+
+**What is a listing?**
+
+A listing is an enhanced form of [Secure Data Sharing](/user-guide/data-sharing-intro). A listing packages a share or a Snowflake Native App
+with metadata, such as a title, description, and sample SQL queries, and lets you offer that data product to specific accounts or
+publicly on the Snowflake Marketplace.
+
+**How is a listing different from a direct share?**
+
+Listings add capabilities that direct shares don’t have: sharing with accounts in any region or cloud platform, offering data publicly on
+the Snowflake Marketplace, charging consumers for access, monitoring consumer interest and usage, and providing descriptive metadata. For a
+comparison, see [Data sharing and collaboration in Snowflake](/guides-overview-sharing).
+
+**How do I get started as a provider?**
+
+Make sure that you have the ACCOUNTADMIN role or a role with provider privileges, review and accept the required terms, and create a
+provider profile if you plan to publish on the Snowflake Marketplace. Then create and publish a listing. For details, see
+[Use listings as a provider](/collaboration/provider-becoming) and [Create and publish a listing](/collaboration/provider-listings-creating-publishing).
+
+**How do I get started as a consumer?**
+
+Review the consumer prerequisites, then find a listing on the Snowflake Marketplace or in the listings shared privately with your account, and
+get the data product. For details, see [Use listings as a consumer](/collaboration/consumer-becoming).
+
+**What terms do I need to accept?**
+
+To use listings and the Snowflake Marketplace, you need to accept additional terms. See [Legal requirements for providers and consumers of listings](/collaboration/collaboration-listings-legal).
+If you only create free private listings and have accepted the
+[Snowflake Customer-Controlled Data Sharing Functionality Terms](https://www.snowflake.com/legal/data-sharing-terms/), you don’t need
+to accept the Snowflake Provider and Consumer Terms.
+
+**Should I offer my listing privately or publicly?**
+
+Offer a listing privately when you want to share with specific consumers, such as existing business partners. Offer a listing publicly on
+the Snowflake Marketplace when you want to market a data product to many consumers at once. See [Listing availability options](#label-listing-availability).
+
+**Can I charge for my listing?**
+
+Yes. You can create paid listings, and for v2 paid listings you can use [pricing plans and offers](#label-listings-pricing-plans-and-offers).
+Paid listings are available only to consumers and providers in specific regions. See [Paid listings](#label-paid-listing).
+
+**Can consumers try my data product before they buy it?**
+
+Yes. A [limited trial listing](#label-trial-listing) gives consumers instant limited access for 1 to 90 days. Consumers can then request
+full access, and you decide whether and how to offer it.
+
+**Can I share a listing within my own organization?**
+
+Yes. Use an [organizational listing](/user-guide/collaboration/listings/organizational/org-listing-about) to share data products with
+other accounts in your organization.
+
+**What is the difference between V1 and V2 listings?**
+
+V1 listings target individual accounts and support basic private and public sharing. V2 listings use a newer manifest format that supports
+richer targeting (organizations, roles, locations) and features such as pricing plans and offers. See [V1 vs. V2 listings](#label-v1-vs-v2-listings).

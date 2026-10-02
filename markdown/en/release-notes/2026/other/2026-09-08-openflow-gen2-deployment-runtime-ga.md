@@ -12,7 +12,7 @@ supported connectors (PostgreSQL CDC, MySQL/MariaDB CDC) — remains in
 GCP support isn’t available yet.
 
 Gen 1 Openflow resources continue to work unchanged. Gen 1 and gen 2 resources can coexist in the
-same account. Migration from gen 1 to gen 2 is available separately in Private Preview; contact
-your Snowflake account representative to be included.
+same account. For migrating gen 1 deployments and runtimes to gen 2, see
+[Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga).
 
 For more information, see [Second generation Openflow objects and interfaces](/user-guide/data-integration/openflow/gen2/index).

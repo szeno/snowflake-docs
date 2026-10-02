@@ -1,9 +1,5 @@
 # Command Center 3rd party access configuration
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use **3rd party access configuration** in Organization Command Center to classify member accounts as internal or
 external, set the default tenant type for new accounts, and maintain allowed email domains. Logins from domains that
 aren’t on the allowlist can raise Trust Center security violations.

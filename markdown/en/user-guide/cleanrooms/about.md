@@ -72,3 +72,42 @@ Your next steps depend on how you got here and what you want to do:
    background.
 2. [Try out the API tutorial](/user-guide/cleanrooms/tutorials/collaboration-basic-api-tutorial).
 3. Don’t forget to check out the [developer guide](/user-guide/cleanrooms/developer-guide).
+
+## FAQs
+
+**What is a Snowflake Data Clean Room?**
+
+A Snowflake Data Clean Room is a secure, multi-party environment in Snowflake where collaborators can combine and analyze each other’s data
+without exposing the underlying raw data. Analyses run only through templates that collaborators approve, and results are returned as
+aggregated insights or activated to a collaborator’s account.
+
+**How is a clean room different from a share or a listing?**
+
+With a share or a listing, the consumer can directly query the shared data. With a clean room, the data provider controls which analyses
+can be run against their data, so other collaborators gain insights without unrestricted access to the data.
+
+**How do I get started?**
+
+A Snowflake administrator first installs the clean room environment in the account. Read the [overview](/user-guide/cleanrooms/overview)
+for background and requirements, then [install the clean room environment](/user-guide/cleanrooms/installing-dcr). Developers can then
+work through the [API tutorial](/user-guide/cleanrooms/tutorials/collaboration-basic-api-tutorial).
+
+**Which Snowflake edition do I need?**
+
+Data providers must use Snowflake Enterprise Edition. Owners and analysis runners can use Standard Edition. Activating results to another
+Snowflake account also requires Enterprise Edition. For details, see the requirements in [Overview of Snowflake Data Clean Rooms](/user-guide/cleanrooms/overview).
+
+**What roles can a collaborator have?**
+
+A collaborator can be an **Owner**, who creates the collaboration and assigns roles; a **Data Provider**, who provides data and specifies
+the policies that apply to it; or an **Analysis Runner**, who runs templates against the data. A collaborator can have more than one role.
+
+**Do I need to write code to use clean rooms?**
+
+No. You can use the [DCR UI in Snowsight](/user-guide/cleanrooms/collab-ui-overview), which also integrates with
+[Cortex Code](/user-guide/cortex-code/cortex-code) for natural-language management. Developers who need custom templates or applications
+can use the [developer APIs](/user-guide/cleanrooms/developer-guide).
+
+**How much do clean rooms cost?**
+
+For information about the costs of running clean rooms, see [Snowflake Data Clean Rooms operational costs](/user-guide/cleanrooms/cleanroom-cost).

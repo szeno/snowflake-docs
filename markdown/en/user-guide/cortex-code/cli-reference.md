@@ -46,6 +46,7 @@ Show lessSee more
 | `--effort <level>` | Thinking effort level: `minimal`, `low`, `medium`, `high`, or `max` |
 | `--max-turns <n>` | Maximum number of agentic turns per conversation round |
 | `--private` | Don’t save this session to history (disables conversation persistence and server-side logging) |
+| `--with-restricted-session-scope <name>` | Apply the specified named Restricted Session Scope when the session starts |
 | `--cloud [<workspace>]` | Run tools in a Snowflake-managed container |
 | `--no-workspace` | With `--cloud`, use an ephemeral workspace |
 | `--github <secret>` | With `--cloud`, allow authenticated GitHub access |
@@ -230,6 +231,8 @@ Show lessSee more
 | `/sql <query> --limit <n>` | Limit displayed rows |
 | `/table [<file>]`, `/csv` | Open table viewer |
 | `/connections`, `/conn` | Manage Snowflake connections |
+| `/guardrails` | Configure Restricted Session Scope |
+| `/guardrails status` | Show the active Restricted Session Scope |
 
 Expand
 

@@ -1,4 +1,4 @@
-# Sharing semantic views
+# Share semantic views
 
 Providers can share semantic views in [private listings](/collaboration/provider-listings-creating-publishing#label-listings-create), in public listings on the [Snowflake Marketplace](https://app.snowflake.com/_deeplink/marketplace), and in [organizational listings](/user-guide/collaboration/listings/organizational/org-listing-about).
 

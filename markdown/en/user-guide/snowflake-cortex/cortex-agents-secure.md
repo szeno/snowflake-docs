@@ -145,7 +145,7 @@ Important
 
 In accounts where secure agents are required for sharing, attempting to replace a shared agent with a non-secure definition returns error `093936` (`CANNOT_RECREATE_UNSECURE_SHARED_AGENT`). Preserve the secure designation on the replacement by using the `SECURE` modifier or setting `SECURE = TRUE`.
 
-For more information about sharing agents, see [Share Cortex Agents](/user-guide/snowflake-cortex/cortex-agents-sharing).
+For more information about sharing agents, see [Share Cortex agents](/user-guide/snowflake-cortex/cortex-agents-sharing).
 
 ## Security model
 

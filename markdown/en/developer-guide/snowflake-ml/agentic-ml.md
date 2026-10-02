@@ -269,7 +269,7 @@ The Auto ML skill builds a complete machine learning model from scratch. It expl
 space across multiple frameworks (XGBoost, LightGBM, AutoGluon, and others), runs hyperparameter
 optimization for each candidate, and engineers features to maximize performance. The full
 workflow runs autonomously: data exploration, quality gates, feature engineering, model training,
-hyperparameter tuning, and evaluation. You describe what machine learning task you want to perform and CoCo handles the
+hyperparameter tuning, and evaluation. You describe what machine learning task you want to perform, and CoCo handles the
 rest.
 
 ```

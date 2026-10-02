@@ -269,7 +269,7 @@ analysis_runners:
     - id: standard_audience_overlap_v0
 ```
 
-Bob’s data offerings lists are empty because he shares his data offering after he joins. For more information about
+Bob’s data offering lists are empty because he shares his data offering after he joins. For more information about
 what each section of the specification means, see [Collaboration specification](/user-guide/cleanrooms/spec-collaboration).
 
 To enable auto-join so Alice’s account joins the collaboration automatically after it’s created:
@@ -287,12 +287,12 @@ credits until the collaboration is ready. If your role isn’t SAMOOHA\_APP\_ROL
 account-level privilege. The role you select applies only to auto-join; the rest of the UI keeps using the role in your
 profile. For more information, see [Create a collaboration in Snowsight](/user-guide/cleanrooms/collab-ui-create).
 
-The collaboration is created and an invitation is sent to Bob. Because you enabled auto join, Alice’s account joins on
+The collaboration is created and an invitation is sent to Bob. Because you enabled auto-join, Alice’s account joins on
 its own.
 
 Note
 
-Creation and auto join run in the background and can take up to 10 minutes.
+Creation and auto-join run in the background and can take up to 10 minutes.
 
 You don’t have to wait. Switch to Bob’s account and set up his data offering while the collaboration is being created.
 
@@ -402,7 +402,7 @@ in the collaboration.
 ## Alice: Run the analysis
 
 Switch back to **Alice’s account**. Confirm that `ui_tutorial_collaboration` appears on the **Collaborations** tab
-» **Joined**, which means auto join finished. Now that both data offerings are available in the collaboration, run
+» **Joined**, which means auto-join finished. Now that both data offerings are available in the collaboration, run
 the overlap analysis.
 
 1. Select the **Collaborations** tab and open `ui_tutorial_collaboration`.

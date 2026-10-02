@@ -162,7 +162,7 @@ follows this workflow:
      [Overview of semantic views](/user-guide/views-semantic/overview).
    - **Cortex Search**: Search through your unstructured data to return relevant document text with [Cortex Search](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview).
    - **Custom Tools**: Execute user-defined functions or stored procedures to perform actions.
-5. **Reflection & response**: The orchestrator reviews and refines results, then generates
+5. **Reflection and response**: The orchestrator reviews and refines results, then generates
    the final answer, including summaries, tables, or charts, in the Snowflake CoWork UI.
 
 ## Cost considerations

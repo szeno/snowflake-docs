@@ -147,6 +147,10 @@ Set `AGENT_RESTRICTED_SESSION_SCOPE` on a session policy, then attach that polic
 to users. The ceiling applies only when an agent is active
 ([IS\_AGENT\_ACTIVATED](/sql-reference/functions/is_agent_activated) returns `TRUE`).
 
+Users can also apply an RSS to an individual chat in CoCo CLI, CoCo Desktop, or CoCo in Snowsight.
+For instructions, see
+[Restrict a CoCo chat](/user-guide/restricted-session-scope#label-agent-rss-user-managed).
+
 Typical ways to use RSS include:
 
 - Apply a read-only ceiling for agents that can still use AI-related objects, such as

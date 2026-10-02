@@ -50,10 +50,10 @@ agents that consume your data.
 Snowflake continuously gathers metadata from objects in your account. To cover the rest of your estate, Horizon Context adds two more
 sources:
 
-Metadata connectors
+[Metadata connectors](/LIMITEDACCESS/snowflake-horizon/connectors) (Private Preview)
 :   Depending on the connector and its configuration, out-of-the-box connectors collect schemas, query logs, dashboard definitions, and
     popularity data from external databases, BI tools, and data pipeline systems, including PostgreSQL, SQL Server, Tableau, Power BI, and
-    dbt. Metadata connectors are in private preview. Contact your account team for availability and setup details.
+    dbt.
 
 [External lineage](/user-guide/external-lineage)
 :   Any OpenLineage producer, such as Apache Airflow, can post lineage events to a Snowflake REST endpoint. Snowflake folds those events
@@ -105,7 +105,7 @@ definitions, and dashboard definitions from each system and indexes them alongsi
 is stitched into one column-level graph, so the team can start at a PostgreSQL column and follow it through dbt models and Snowflake
 tables to the Tableau dashboards that display it.
 
-Metadata connectors are in private preview. Contact your account team to find out which connectors are available to you. If your
+For the list of supported sources and setup steps, see [Metadata connectors](/LIMITEDACCESS/snowflake-horizon/connectors). If your
 pipelines emit OpenLineage events, you can send them to Snowflake today. For more information, see [External lineage](/user-guide/external-lineage).
 
 ### 2. Certify trusted assets so that search and AI point to them
@@ -150,7 +150,7 @@ skills available to CoCo, see [CoCo CLI bundled skills](/user-guide/cortex-code/
 1. Review what the catalog already knows about your Snowflake objects. Browse them in Snowsight and check the
    [lineage graph](/user-guide/ui-snowsight-lineage) for a table your team depends on.
 2. Fill in the gaps outside Snowflake. Configure [external lineage](/user-guide/external-lineage) for pipelines that emit OpenLineage
-   events, and ask your account team about metadata connectors for your external databases and BI tools.
+   events, and set up [metadata connectors](/LIMITEDACCESS/snowflake-horizon/connectors) for your external databases and BI tools.
 3. Enrich what you collected. Generate [descriptions](/user-guide/ui-snowsight-cortex-descriptions) for undocumented objects, and
    apply [Snowflake-provided tags](/user-guide/object-tagging/snowflake-provided-tags) to record project, sensitivity, and
    certification status.

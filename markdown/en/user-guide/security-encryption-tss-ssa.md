@@ -88,32 +88,32 @@ Tri-Secret Secure with secure share area accounts provides the following benefit
 
 ## Activate Tri-Secret Secure for secure share area accounts
 
-To activate Tri-Secret Secure for an SSA account, complete the following steps. These steps assume that you already [registered your CMK](/user-guide/security-encryption-tss#label-self-register-a-cmk).
+Important
 
-1. In Snowflake, call the [SYSTEM$GET\_CMK\_INFO](/sql-reference/functions/system_get_cmk_info) system function to view the details for the CMK that you
-   registered, and include the SSA account name.
-2. In Snowflake, call the [SYSTEM$GET\_CMK\_CONFIG](/sql-reference/functions/system_get_cmk_config) system function to generate the required information for
-   the cloud provider.
+Activating Tri-Secret Secure for an SSA account is not a self-service operation. You must
+[contact Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) to enable TSS for your SSA accounts.
+When you open a support ticket, provide the following information:
 
-   This policy allows Snowflake to access your CMK.
+- Your organization name and the SSA account name (see [Identify your SSA accounts](#identify-your-ssa-accounts)).
+- The cloud provider and region of the SSA account.
+- Your CMK details (key ARN for AWS, key vault URI for Azure, or key resource ID for GCP).
 
-   Note
+After Snowflake Support activates Tri-Secret Secure for your SSA account, you can use the following system functions to
+check the status of your CMK:
 
-   If Microsoft Azure hosts your Snowflake account, you must pass the `tenant_id` value into the function.
-3. On your cloud provider platform, use the output of the SYSTEM$GET\_CMK\_CONFIG function to authorize your CMK.
-4. In Snowflake, call the [SYSTEM$VERIFY\_CMK\_INFO](/sql-reference/functions/system_verify_cmk_info) system function, and include the SSA account name to
-   confirm the connectivity between your Snowflake account and your CMK.
-5. In Snowflake, call the [SYSTEM$ACTIVATE\_CMK\_INFO](/sql-reference/functions/system_activate_cmk_info) system function to activate Tri-Secret Secure for
-   your secure share area account.
+- Call the [SYSTEM$GET\_CMK\_INFO](/sql-reference/functions/system_get_cmk_info) system function with the SSA account name to view the details for the
+  registered CMK.
+- Call the [SYSTEM$VERIFY\_CMK\_INFO](/sql-reference/functions/system_verify_cmk_info) system function with the SSA account name to confirm the connectivity
+  between your Snowflake account and your CMK.
 
-   This system function activates Tri-Secret Secure with your registered CMK. This system function starts the rekeying process and
-   generates an email message that notifies system administrators when the process finishes. The rekeying process can complete in under an
-   hour, but might require up to 24 hours.
+Note
 
-   Warning
-
-   Snowflake uses the old CMK until the rekeying process is complete. Do not remove access to the old CMK until you receive an email
-   notification indicating that the rekeying process is complete.
+The following system functions are not available for SSA accounts:
+[SYSTEM$REGISTER\_CMK\_INFO](/sql-reference/functions/system_register_cmk_info),
+[SYSTEM$GET\_CMK\_CONFIG](/sql-reference/functions/system_get_cmk_config), and
+[SYSTEM$ACTIVATE\_CMK\_INFO](/sql-reference/functions/system_activate_cmk_info).
+To register, configure, or activate a CMK for an SSA account,
+[contact Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 ## View the status of your CMK
 
@@ -125,19 +125,11 @@ For example, depending on when you call SYSTEM$GET\_CMK\_INFO, the function retu
 - After the Tri-Secret Secure activation process completes, returns output that includes `...is activated...`. This means that your
   Snowflake account is using Tri-Secret Secure with the CMK that you registered.
 
-## Change the CMK for Tri-Secret Secure
+## Change, deactivate, or deregister the CMK for Tri-Secret Secure
 
-Snowflake system functions support changing your customer-managed key (CMK), based on your security needs. Use the same steps to register a new CMK as the
-steps that you followed to register your initial CMK. When you complete those steps again by using a new key, the output of the system functions
-differs. Read the output from each system function that you call during self-registration to confirm that you have changed your key. For
-example, when you change your CMK, calling the SYSTEM$GET\_CMK\_INFO function returns a message that contains `...is being rekeyed...`.
+To change, deactivate, or deregister your CMK for an SSA account,
+[contact Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-## Deactivate Tri-Secret Secure
-
-To deactivate Tri-Secret Secure in your secure share area account, call the [SYSTEM$DEACTIVATE\_CMK\_INFO](/sql-reference/functions/system_deactivate_cmk_info) system function.
-
-## Deregister your current CMK
-
-You can only register one CMK at a time with Tri-Secret Secure. When you register your CMK, if the
-[SYSTEM$REGISTER\_CMK\_INFO](/sql-reference/functions/system_register_cmk_info) function fails because a different CMK exists, call the
-[SYSTEM$DEREGISTER\_CMK\_INFO](/sql-reference/functions/system_deregister_cmk_info) system function, as prompted.
+The following system functions are not available for SSA accounts:
+[SYSTEM$DEACTIVATE\_CMK\_INFO](/sql-reference/functions/system_deactivate_cmk_info) and
+[SYSTEM$DEREGISTER\_CMK\_INFO](/sql-reference/functions/system_deregister_cmk_info).

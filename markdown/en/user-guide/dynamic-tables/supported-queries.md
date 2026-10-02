@@ -42,6 +42,8 @@ for both incremental and full refresh, except:
 The following table shows which SQL constructs are supported in each refresh mode. Where a construct is supported
 for incremental refresh with restrictions, the table describes the specific conditions.
 
+The table assumes that the dynamic table definition is otherwise valid Snowflake SQL. A definition that violates a general SQL restriction, such as an [unsupported subquery type](/user-guide/querying-subqueries#label-types-of-subqueries-supported-by-snowflake), fails to refresh even with `REFRESH_MODE = FULL`. With the [default](/sql-reference/sql/create-dynamic-table#label-create-dt-initialize) `INITIALIZE = ON_CREATE`, `CREATE DYNAMIC TABLE` fails during the initial refresh.
+
 | Construct | Incremental refresh | Full refresh |
 | --- | --- | --- |
 | [WITH](/sql-reference/constructs/with) | Supported when the CTE subquery uses only incrementally supported features.  WITH RECURSIVE is not supported. | Supported |

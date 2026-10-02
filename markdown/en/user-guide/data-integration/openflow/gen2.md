@@ -18,7 +18,7 @@ Gen 1 and gen 2 resources can coexist in the same account:
   gen 2 runtime.
 - **Gen 1 runtimes support gen 1 connectors only.** Don’t install gen 2 connectors on a gen 1
   runtime.
-- **Existing gen 1 resources stay gen 1** and continue to work unchanged. Migration from gen 1 to gen 2 is available in Private Preview; contact your Snowflake account representative to be included.
+- **Existing gen 1 resources stay gen 1** and continue to work unchanged until you migrate them. See [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime).
 
 Gen 2 introduces SQL-first lifecycle management, a revised security model, and connectors managed
 as [File Based Entities (FBEs)](/user-guide/data-integration/openflow/gen2/connector-versioning) with versioned
@@ -33,8 +33,9 @@ If you are new to gen 2 Openflow, read these topics in order:
 2. [About Openflow](/user-guide/data-integration/openflow/about) — Review Openflow concepts shared by gen 1 and
    gen 2 (deployment types, architecture, use cases).
 3. [Quickstart: gen 2 Openflow](/user-guide/data-integration/openflow/gen2/quickstart) — Set up privileges and create your first gen 2 deployment, runtime, and connector.
-4. **Migrating from gen 1?** Migration from gen 1 to gen 2 is available in Private Preview;
-   contact your Snowflake account representative to be included.
+4. **Migrating from gen 1?** [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) — Convert an
+   existing gen 1 deployment and its runtimes into gen 2 objects, then
+   [Migrate a gen 1 connector to gen 2](/user-guide/data-integration/openflow/gen2/migrate-connector).
 5. [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard) — Install and configure a gen 2 connector with
    the setup wizard (Public Preview).
 6. [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) — Create and configure a gen 2 connector with SQL and stage commands (Public Preview).
@@ -113,8 +114,8 @@ For how gen 2 differs from gen 1 in supported operations and lifecycle, see
 | [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) (Public Preview) | Create and configure gen 2 connectors with SQL and stage commands (programmatic setup). |
 | [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle) (Public Preview) | Start, stop, and remove gen 2 connectors after installation. |
 | [Monitor connectors using the Openflow Connectors Dashboard](/user-guide/data-integration/openflow/connectors-dashboard) | Monitor gen 2 connector health, throughput, and ingestion status. |
-| Migrate deployment and runtimes (Private Preview) | Migrate an existing gen 1 deployment and all its runtimes to gen 2 objects. Covers prerequisites, the migration wizard, post-migration access grants, rollback constraints, and troubleshooting. Contact your Snowflake account representative for access. |
-| Migrate connectors (Private Preview) | Migrate individual gen 1 connectors to gen 2 connector instances. Covers prerequisites, Snowflake Secrets rewiring, the disabled source connector, and failure recovery. Contact your Snowflake account representative for access. |
+| [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) | Migrate an existing gen 1 deployment and all its runtimes to gen 2 objects. Covers prerequisites, the migration wizard, post-migration access grants, rollback constraints, and troubleshooting. |
+| [Migrate a gen 1 connector to gen 2](/user-guide/data-integration/openflow/gen2/migrate-connector) | Migrate individual gen 1 connectors to gen 2 connector instances. Covers prerequisites, Snowflake Secrets rewiring, the disabled source connector, and failure recovery. The gen 2 connector you migrate to keeps its own release stage, which is Public Preview for the connectors that support migration. |
 
 Expand
 

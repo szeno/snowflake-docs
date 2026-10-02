@@ -1,14 +1,14 @@
 # Snowflake-managed MCP server
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 ## Overview
 
 Note
 
 Snowflake supports Model Context Protocol revision `2025-11-25`.
+
+Note
+
+The Snowflake-managed MCP server is available in government regions, except the Azure US Gov Virginia (non-FedRAMP High) region. In government regions, this feature hasn’t yet completed formal FedRAMP assessment. Under the FedRAMP shared responsibility model, evaluate whether the feature is appropriate for your workloads based on your data classification and your Authorizing Official’s risk acceptance requirements. For questions about authorization status, contact your Snowflake account team.
 
 Model Context Protocol (MCP) is an [open-source standard](https://modelcontextprotocol.io/docs/getting-started/intro) that lets AI agents securely interact with business applications and external data systems, such as databases and content repositories. MCP lets enterprise businesses reduce integration challenges and quickly deliver outcomes from models. Since its launch, MCP has become foundational for agentic applications, providing a consistent and secure mechanism for invoking tools and retrieving data.
 

@@ -19,7 +19,7 @@ This function is generally deprecated in favor of the
 which provides a more complete data set and supports longer date ranges.
 
 The `INDEX_ID`, `INDEX_NAME`, `INDEX_TYPE`, `BASE_TABLE_ID`, and `BASE_TABLE_NAME` columns replace `TABLE_NAME` when
-[SEARCH\_OPTIMIZATION\_HISTORY views: New columns and column changes (Pending)](/release-notes/bcr-bundles/2026_06/bcr-2384) is enabled. If you have scripts that query `TABLE_NAME`, update them to use the new
+[SEARCH\_OPTIMIZATION\_HISTORY views: New columns and column changes (Enabled by default)](/release-notes/bcr-bundles/2026_06/bcr-2384) is enabled. If you have scripts that query `TABLE_NAME`, update them to use the new
 column names.
 
 ## Syntax

@@ -31,7 +31,7 @@ SPCS-hosted MCP servers
 
 These capabilities are separate from, and complementary to, sharing agents
 created in the provider account. For information about sharing standalone
-agents, see [Share Cortex Agents](/user-guide/snowflake-cortex/cortex-agents-sharing).
+agents, see [Share Cortex agents](/user-guide/snowflake-cortex/cortex-agents-sharing).
 
 ### Security model
 

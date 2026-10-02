@@ -1,9 +1,5 @@
 # Manage remote app operations
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 ## About remote app operations
 
 Remote app operations let a provider perform different types of operations on the consumer Snowflake Native App, such as running on-demand SQL statements or disabling the application.

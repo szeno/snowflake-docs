@@ -69,3 +69,47 @@ Note
 **VPS:** In addition to the steps above, Snowflake Support must also disable the VPS provider/consumer relationship. Contact Support to confirm that VPS collaboration has been fully removed for your organization.
 
 The types of listings and data products that you can access from U.S. government regions are limited. See [Limitations for accessing listings from accounts in U.S. government regions](/collaboration/consumer-listings-access#label-listings-gov-consumer-limitations).
+
+## FAQs
+
+**What are restricted regions for collaboration?**
+
+Restricted regions are Snowflake deployments with additional compliance or isolation requirements: U.S. government regions, Kingdom of
+Saudi Arabia (KSA) regions, and Virtual Private Snowflake (VPS) environments. Accounts in these regions can collaborate through listings,
+but only after completing extra steps.
+
+**How do I get started with collaboration from a restricted region?**
+
+A user with the ORGADMIN or GLOBALORGADMIN role must review and acknowledge the cross-region disclaimer in Snowsight under
+**Admin** » **Terms**. See [Prepare to access listings from accounts in U.S. government regions, Kingdom of Saudi Arabia (KSA), and Virtual Private Snowflake (VPS)](#label-restricted-accept-terms). After that, follow the [provider guidance](#label-restricted-provider-guidance)
+or [consumer guidance](#label-restricted-consumer-guidance) for your region.
+
+**Why do I need to accept a cross-region disclaimer?**
+
+To share or get listings with customers outside your region, Snowflake shares organization and account metadata and usage analytics with
+the customers that you collaborate with. Compliance standards such as FedRAMP and ITAR might differ or be unavailable outside a U.S.
+government region, so review your compliance requirements before sharing data across regions.
+
+**How often do I need to accept the disclaimer?**
+
+You only need to accept the disclaimer once for your Snowflake account.
+
+**How does collaboration work in a VPS environment?**
+
+VPS collaboration uses private listings between one provider and one consumer, and Snowflake Support is always involved to enable the
+relationship. For details, see [About collaboration in VPS environments](/collaboration/virtual-private-snowflake/about-vps-collaboration).
+
+**What if I’m a provider in a U.S. government or KSA region?**
+
+After you accept the disclaimer, review the provider-specific limitations in
+[Government providers](/collaboration/provider-listings-government-providers).
+
+**Are all listing types available in U.S. government regions?**
+
+No. The types of listings and data products that you can access from U.S. government regions are limited. See
+[Limitations for accessing listings from accounts in U.S. government regions](/collaboration/consumer-listings-access#label-listings-gov-consumer-limitations).
+
+**How do I stop collaborating from a restricted region?**
+
+Delete your listings, drop the databases that you imported from listings, and contact Snowflake Support to disable data sharing and
+collaboration for your organization. See [Stop sharing and collaboration from a restricted region](#label-restricted-stop-collaboration).

@@ -7,7 +7,7 @@ Note
 
 An object that hasn’t been migrated to the mutable `live` version still lists numbered versions. For
 details about the live-version model and how to migrate an existing object, see
-[dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version (Pending)](/release-notes/bcr-bundles/2026_06/bcr-2362) and
+[dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version (Enabled by default)](/release-notes/bcr-bundles/2026_06/bcr-2362) and
 [SYSTEM$MIGRATE\_DBT\_PROJECT](/sql-reference/functions/system_migrate_dbt_project).
 
 See also:

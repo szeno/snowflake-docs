@@ -25,8 +25,10 @@ To find and install a listing for an app:
 
 ## Set up required privileges
 
-To access a listing, you must use the ACCOUNTADMIN role or another role with the IMPORT SHARE and
-CREATE DATABASE privileges.
+To access a listing, you must use the `ACCOUNTADMIN` role or another role
+with the `IMPORT SHARE` and `CREATE APPLICATION` privileges. These privileges
+are required to run
+[CREATE APPLICATION](/sql-reference/sql/create-application#access-control-requirements).
 
 After an app is installed, the app owner can grant access to the app
 using application roles. See [Grant application roles to account roles](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-grant-app-roles) for details.

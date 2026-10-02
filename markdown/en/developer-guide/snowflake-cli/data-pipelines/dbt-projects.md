@@ -95,7 +95,7 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
     --default-env prod
   ```
 
-  The `--env-file-dir` flag points the CLI at an `env.yml` file elsewhere in your repo (similar to `--profiles-dir`) and pulls it into the deployed object, overwriting the object’s root `env.yml` if one already exists. The `--default-env` flag sets the environment used for compilation and subsequent executions. These flags require Snowflake CLI 3.21 or later. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+  The `--env-file-dir` flag points the CLI at an `env.yml` file elsewhere in your repo (similar to `--profiles-dir`) and pulls it into the deployed object, overwriting the object’s root `env.yml` if one already exists. The `--default-env` flag sets the environment used for compilation and subsequent executions. These flags require Snowflake CLI 3.21 or later. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Listing all available dbt project objects
 

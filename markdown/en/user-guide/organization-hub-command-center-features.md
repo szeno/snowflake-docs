@@ -1,11 +1,7 @@
 # Organization Features
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use **Organization Features** in Organization Command Center to see which organization-level capabilities are enabled
-in the organization account. In preview, the main control is
+in the organization account. The main control is
 [premium views](/user-guide/organization-accounts-premium-views) for cross-account telemetry. Organizations that have a
 capacity contract have premium views enabled by default. To enable or disable premium views, contact
 [Snowflake Support](/user-guide/contacting-support). You can’t turn them on or off from the card.

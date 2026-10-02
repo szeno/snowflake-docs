@@ -6,7 +6,7 @@ You can use a workspace for dbt Projects on Snowflake to visualize, test, and ru
 
 Workspaces also provide a unified editor for you to create, organize, and manage code across multiple file types and projects within Snowflake. For more information, see [Workspaces](/user-guide/ui-snowsight/workspaces).
 
-If your project defines an `env.yml` file, Workspaces resolves it before each run and injects the environment variables into the run. Choose the active environment with the environment selector in the run panel, and override individual variables for a single run. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+If your project defines an `env.yml` file, Workspaces resolves it before each run and injects the environment variables into the run. Choose the active environment with the environment selector in the run panel, and override individual variables for a single run. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Configure and run dbt models from the editor
 

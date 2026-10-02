@@ -90,7 +90,7 @@ The server running the model that you’ve deployed uses defaults that work for 
 - *Number of worker threads*: For a CPU-powered model, the number of processes that the server uses is twice the number of CPUs plus one.
   GPU-powered models use one worker process. You can override this using the num\_workers argument in the create\_service call. It is
   **recommended** to specify the smallest GPU node where the model fits into memory. Scale by increasing the number of instances. For example,
-  if the model fits in the GPU\_NV\_S (GPU\_NV\_SM on Azure) instance type, use gpu\_requests=1 and scale up by increasing max\_instances. However
+  if the model fits in the GPU\_NV\_S (GPU\_NV\_SM on Azure) instance type, use gpu\_requests=1 and scale up by increasing max\_instances. However,
   if the smallest available node has 4 GPUs and you only need 2, use `num_workers=2` (that is, gpu available / gpus needed by the
   model).
 - *Thread safety*: Some models are not thread-safe. Therefore, the service loads a separate copy of the model for each worker process. This
@@ -167,7 +167,7 @@ All authorization failures such as an incorrect token or lack of network route t
 
 ## Authorization
 
-By default only service owners can use the endpoint. To allow another role to access the endpoint, service owners can
+By default, only service owners can use the endpoint. To allow another role to access the endpoint, service owners can
 [grant the service role](/sql-reference/sql/grant-service-role) ALL\_ENDPOINTS\_USAGE.
 
 ## Request body (or protocol or data format)

@@ -71,7 +71,7 @@ Show lessSee more
 
 ## Usage notes
 
-- Latency for the view may be up to 180 minutes (3 hours).
+- Latency for the view may be up to 15 minutes.
 
 - `INTERNAL_SNOWFLAKE_IP/0.0.0.0` appears as the client IP for login events triggered by internal Snowflake operations that support
   your usage. For example:

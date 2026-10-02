@@ -32,7 +32,7 @@ See also:
 | STATE | TEXT | State of the execution. Possible values include: - SUCCESS - HANDLED\_ERROR |
 | DBT\_VERSION | TEXT | The dbt version used for the execution. For example, `1.10.15`. |
 | DBT\_SNOWFLAKE\_VERSION | TEXT | The version of the dbt-snowflake adapter used for the execution. For example, `1.10.3`. |
-| ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
+| ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
 
 Expand
 

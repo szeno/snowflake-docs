@@ -75,7 +75,7 @@ GRANT APPLICATION ROLE SAMOOHA_BY_SNOWFLAKE.MANAGE_DCR_CONNECTORS TO ROLE dcr_ac
 -- Assign the role to a user.
 -- You must also grant access to a default warehouse to the role.
 GRANT USAGE ON WAREHOUSE <your_warehouse> TO ROLE dcr_access;
-ALTER USER <some_user> SET DEFAULT_WAREHOUSE  =  <your_warehouse>;
+ALTER USER <some_user> SET DEFAULT_WAREHOUSE = <your_warehouse>;
 GRANT ROLE dcr_access to USER <some_user>;
 ```
 

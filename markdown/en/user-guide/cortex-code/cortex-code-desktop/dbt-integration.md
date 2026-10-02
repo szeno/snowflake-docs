@@ -188,7 +188,7 @@ Use the **Environment** picker on the Project Action Bar to select a named envir
 individual environment variables for a single run. The resolved values flow into
 `dbt_projects_profiles.yml` when that file is present, or into `profiles.yml` otherwise.
 
-For env.yml authoring, environment selection, value precedence, secrets, and the full reference, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+For env.yml authoring, environment selection, value precedence, secrets, and the full reference, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ### Prerequisites for Snowflake-managed mode
 

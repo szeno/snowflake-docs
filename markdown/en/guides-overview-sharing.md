@@ -42,7 +42,7 @@ You can offer a listing privately to specific accounts, or publicly on the Snowf
 [About Snowflake Marketplace](/collaboration/collaboration-marketplace-about).
 
 After you accept the provider and consumer terms, you can start sharing and consuming data shared with you with a listing.
-For more information, see [About listings](https://other-docs.snowflake.com/en/collaboration/collaboration-listings-about).
+For more information, see [About listings](/collaboration/collaboration-listings-about).
 
 Note
 
@@ -58,13 +58,17 @@ If you want to convert a direct share with active consumers to a listing, see [C
 
 For more information, see [Share secure database objects](/user-guide/data-sharing-gs).
 
-## Open Data Sharing
+## Open Format Sharing
 
-Open Data Sharing in Snowflake expands traditional data sharing beyond the Snowflake ecosystem.
-This capability allows you to securely share live, read-only data assets with consumers who do not use Snowflake, eliminating the
-need for complex ETL pipelines, data duplication, or manual file exports.
+Open Format Sharing lets you share open table formats — including Apache Iceberg™ tables and Delta Lake
+tables — across regions, clouds, and engines, without building ETL pipelines or duplicating data. Open Format
+Sharing supports the following use cases:
 
-For more information, see [Open Data Sharing](/user-guide/open-data-sharing).
+- **Access Iceberg data in Snowflake** using a catalog-linked database or external volume.
+- **Share open table formats with Snowflake consumers** using direct shares, listings, or Cross-Cloud Auto-Fulfillment.
+- **Share data with non-Snowflake consumers** using standard Iceberg REST Catalog APIs.
+
+For more information, see [Open format sharing](/collaboration/open-format-sharing).
 
 ## Data Exchange
 

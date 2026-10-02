@@ -52,6 +52,7 @@ Show lessSee more
 | --- | --- | --- | --- |
 | [.NET Driver](/release-notes/clients-drivers/dotnet) | 6.1.0 | 03-Sep-2026 |  |
 | 6.2.0 | 17-Sep-2026 |  |
+| 6.3.0 | 30-Sep-2026 |  |
 | [Go Snowflake Driver](/release-notes/clients-drivers/golang) | 2.2.0 | 03-Sep-2026 |  |
 | 2.3.0 | 30-Sep-2026 |  |
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |

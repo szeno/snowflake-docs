@@ -75,8 +75,10 @@ For details about the CLI experience, see [CoCo CLI](/user-guide/cortex-code/cor
 - **Tool orchestration:** The CLI can invoke local `bash` commands, run `git` operations, and execute SQL directly against your Snowflake warehouse.
 - **Agent customization:** Support for `AGENTS.md` files and Agent Skills allows you to define custom behaviors for the agent within
   specific projects.
-- **Security:** Full support for Snowflake role-based access control (RBAC), OS-level sandboxing, a three-tier approval
-  system, and automatic risk assessment help ensure secure operation within your environment.
+- **Security:** Full support for Snowflake role-based access control (RBAC),
+  [Restricted Session Scope](/user-guide/restricted-session-scope), OS-level sandboxing, a
+  three-tier approval system, and automatic risk assessment help ensure secure operation within
+  your environment.
 - **Built-in Snowflake skills:** CoCo includes built-in skills that support key Snowflake workflows such as agent creation, machine
   learning, data engineering, and data governance.
 - **Extensibility:** The CLI can be extended with custom tools, skills, subagents, hooks, and profiles to fit your organization’s workflows.

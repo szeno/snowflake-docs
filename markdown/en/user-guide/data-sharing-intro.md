@@ -149,3 +149,54 @@ Users in a reader account can query data that has been imported with the reader 
 allowed in a full account, such as data loading, insert, update, and similar data manipulation operations.
 
 For more details, refer to [Manage reader accounts](/user-guide/data-sharing-reader-create).
+
+## FAQs
+
+**What is Secure Data Sharing?**
+
+Secure Data Sharing lets a provider account share selected database objects, such as tables, secure views, and secure UDFs, with other
+Snowflake accounts through a named object called a *share*. No data is copied or moved; consumers query the provider’s data in place
+through a read-only database that they create from the share.
+
+**How do I get started sharing data as a provider?**
+
+Create a share, grant privileges on the objects that you want to share (directly or through a database role), and then add one or more
+consumer accounts to the share. For a walkthrough, see [Share secure database objects](/user-guide/data-sharing-gs). For the full set of provider tasks, see
+[Create and configure shares](/user-guide/data-sharing-provider).
+
+**How do I get started consuming data that was shared with me?**
+
+Create a database from the share that the provider made available to your account, and then grant access to that database to roles in
+your account. For details, see [Consume imported data](/user-guide/data-share-consumers).
+
+**What does Secure Data Sharing cost?**
+
+Shared data doesn’t consume storage in the consumer account. Consumers pay only for the compute (virtual warehouses) that they use to
+query the imported data. Providers continue to pay for storage of the data that they share.
+
+**Can consumers modify shared data?**
+
+No. All database objects shared between accounts are read-only. Consumers can’t modify or delete shared objects or change the data in
+shared tables.
+
+**Can I share with accounts in other regions or on other cloud platforms?**
+
+A direct share works only with accounts in the same region. To share across regions or cloud platforms, use a
+[listing](/collaboration/collaboration-listings-about) with cross-cloud auto-fulfillment, or see
+[Share data securely across regions and cloud platforms](/user-guide/secure-data-sharing-across-regions-platforms).
+
+**Can I share with someone who doesn’t have a Snowflake account?**
+
+Yes. You can create a [reader account](/user-guide/data-sharing-reader-create) for the consumer. The reader account is owned and paid for by
+your provider account.
+
+**When should I use a listing instead of a direct share?**
+
+Use a listing when you want to share across regions, offer data publicly on the Snowflake Marketplace, charge for access, include metadata
+such as descriptions and sample queries, or view consumer usage metrics. For a comparison, see [Data sharing and collaboration in Snowflake](/guides-overview-sharing). You can also
+[convert a direct share to a listing](https://other-docs.snowflake.com/en/collaboration/provider-listings-creating-publishing#convert-a-direct-share-to-a-private-listing).
+
+**How do I stop sharing data?**
+
+You can revoke access to a share, or to any object in a share, at any time. Removing an account from a share immediately removes that
+account’s access to the shared data.

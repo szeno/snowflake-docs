@@ -38,7 +38,7 @@ Slim CI differs from incremental models:
 - Slim CI skips unchanged nodes in the project DAG.
 - Incremental models process only new or changed rows when a selected model runs.
 
-Slim CI also differs from dbt State Aware Orchestration. Slim CI uses dbt artifacts and selectors such as `--state` and `--select state:modified+`. State Aware Orchestration uses relation metadata to determine whether models need to run.
+Slim CI also differs from dbt State (formerly State Aware Orchestration). Slim CI uses dbt artifacts and selectors such as `--state` and `--select state:modified+`. dbt State, a dbt Labs service, decides which models need to be rebuilt and which models can be reused during an execution. For more information, see [Integrating dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration).
 
 The `--defer` option controls how dbt resolves an upstream `ref()` when the referenced model isn’t selected for the current execution. With production artifacts mounted as a state reference, dbt can use the existing production relation instead of rebuilding that model in the CI target.
 

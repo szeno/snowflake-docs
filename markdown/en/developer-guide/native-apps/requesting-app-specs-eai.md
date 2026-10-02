@@ -55,9 +55,9 @@ The app specification definition for an EAI contains the following entries:
 - `PRIVATE_HOST_PORTS`: A list of private host ports that allow private connectivity to
   resources outside Snowflake.
 
-Note
+Important
 
-Endpoints and ports mentioned in the application specification and those referenced in the [network rule value list](/sql-reference/sql/create-network-rule) must match.
+Endpoints and ports mentioned in the application specification and those referenced in the [network rule value list](/sql-reference/sql/create-network-rule) must match exactly. For example, if the application specification lists a port explicitly (e.g. `example.com:443`), the network rule must also include the port. When the port is omitted, it defaults to 443, so `example.com` and `example.com:443` are not considered equivalent. A mismatch between these values causes egress to fail.
 
 ## Set the version of the manifest file
 

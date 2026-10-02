@@ -75,7 +75,7 @@ Use Function Dispatch to run individual Python functions remotely on Snowflakeâ€
 
 Using `@remote`, you can:
 
-- Serializate the function and its dependencies.
+- Serialize the function and its dependencies.
 - Upload it to a specified Snowflake stage.
 - Execute it within a specific Container Runtime.
 
@@ -167,7 +167,7 @@ from snowflake.ml.jobs import submit_from_stage
 
 # Run from a directory
 job3 = submit_from_stage(
-  "@source_stage/ml_project/"
+  "@source_stage/ml_project/",
   "MY_COMPUTE_POOL",
   entrypoint="@source_stage/ml_project/train.py",
   stage_name="payload_stage",

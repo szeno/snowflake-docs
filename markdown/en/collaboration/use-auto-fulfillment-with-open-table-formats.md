@@ -1,5 +1,7 @@
 # Using auto-fulfillment with open table formats
 
+[![Cross-region, cross-cloud, and cross-engine access through Snowflake and other engines](/static/images/collaboration/open-format-sharing-snowflake-engines.png)](/static/images/collaboration/open-format-sharing-snowflake-engines.png)
+
 Cross-Cloud Auto-Fulfillment for listings enables you to share open table formats — including [Apache Iceberg™ tables](/user-guide/tables-iceberg) and Delta
 Lake tables — with internal and external consumers across cloud providers and regions. The tables can be managed by Snowflake or any other
 catalog provider. Cross-Cloud Auto-Fulfillment optimizes data transfer costs and ensures data availability across all regions, without

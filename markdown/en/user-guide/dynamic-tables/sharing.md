@@ -1,6 +1,6 @@
 # Share dynamic tables with other accounts
 
-Providers share dynamic tables by granting SELECT through a share. Consumers can query those tables directly or build their own pipelines on top. This page covers both workflows.
+Providers share dynamic tables by granting SELECT through a share. Consumers can query those tables directly, and consumers in standard consumer accounts can also build their own pipelines on top. This page covers both workflows.
 
 For the full syntax reference, see [CREATE SHARE](/sql-reference/sql/create-share).
 
@@ -80,7 +80,7 @@ The share boundary is a pipeline boundary: consumer and provider tables refresh 
 
 ## Consumer workflow: build a pipeline on shared data
 
-A consumer can create a dynamic table on top of shared data. The pattern depends on whether the provider shared a base table, a dynamic table, or a view.
+This workflow applies to standard consumer accounts. A [reader account](/user-guide/data-sharing-reader-create) can’t refresh dynamic tables, so this workflow isn’t available there. The pattern depends on whether the provider shared a base table, a dynamic table, or a view.
 
 ### On a shared base table
 
@@ -151,6 +151,8 @@ If you are unsure whether a shared view depends on a dynamic table, wrapping it 
 For the full explanation of pipeline boundaries, including same-account scenarios, see [Decouple pipelines with DYNAMIC\_TABLE\_REFRESH\_BOUNDARY()](/user-guide/dynamic-tables/data-consistency#label-dynamic-tables-data-consistency-boundary-function).
 
 ## Supported sharing patterns
+
+These patterns apply to standard consumer accounts. [Reader accounts](/user-guide/data-sharing-reader-create) can’t refresh dynamic tables.
 
 | Provider shares | Consumer can query? | Consumer can build a dynamic table on top? |
 | --- | --- | --- |

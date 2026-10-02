@@ -321,7 +321,7 @@ This grants the SELECT and REFERENCES privileges on the semantic view to the sel
 For more information about granting privileges on semantic views, including future grants and more complex scenarios,
 see [Granting privileges on semantic views](/user-guide/views-semantic/sql#label-semantic-views-privileges).
 
-To share a semantic view with other accounts, see [Sharing semantic views](/user-guide/views-semantic/sharing-semantic-views).
+To share a semantic view with other accounts, see [Share semantic views](/user-guide/views-semantic/sharing-semantic-views).
 
 ## Limitations
 

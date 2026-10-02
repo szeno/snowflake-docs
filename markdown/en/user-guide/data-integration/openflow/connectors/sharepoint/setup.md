@@ -568,7 +568,7 @@ def main(session: snowpark.Session):
 
 Execute the following code in a command-line interface to query the Cortex Search
 service with files ingested from your SharePoint.
-You will need to authentication through key pair authentication and OAuth to access the
+You will need to authenticate through key pair authentication and OAuth to access the
 Snowflake REST APIs. For more information,
 see [REST API](/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#label-cortex-search-query-syntax-rest)
 and [Authenticating Snowflake REST APIs with Snowflake](/developer-guide/snowflake-rest-api/authentication).

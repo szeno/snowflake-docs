@@ -106,13 +106,6 @@ import { readFileSync } from "node:fs";
 const apiKey = readFileSync("/secrets/API_KEY/secret_string", "utf8").trim();
 ```
 
-Copy code
-
-```
-with open("/secrets/API_KEY/secret_string") as f:
-    api_key = f.read().strip()
-```
-
 Read a password secret:
 
 Copy code
@@ -123,15 +116,6 @@ const username = readFileSync("/secrets/DB_CREDENTIALS/username", "utf8").trim()
 const password = readFileSync("/secrets/DB_CREDENTIALS/password", "utf8").trim();
 ```
 
-Copy code
-
-```
-with open("/secrets/DB_CREDENTIALS/username") as f:
-    username = f.read().strip()
-with open("/secrets/DB_CREDENTIALS/password") as f:
-    password = f.read().strip()
-```
-
 Read an OAuth2 access token:
 
 Copy code
@@ -139,13 +123,6 @@ Copy code
 ```
 import { readFileSync } from "node:fs";
 const oauthToken = readFileSync("/secrets/OAUTH_TOKEN/access_token", "utf8").trim();
-```
-
-Copy code
-
-```
-with open("/secrets/OAUTH_TOKEN/access_token") as f:
-    oauth_token = f.read().strip()
 ```
 
 Read secrets fresh on each use so a rotation takes effect without a

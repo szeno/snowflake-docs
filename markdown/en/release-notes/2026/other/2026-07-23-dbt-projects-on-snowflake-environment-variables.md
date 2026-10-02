@@ -8,4 +8,4 @@ Environment variable support for dbt Projects on Snowflake is now generally avai
 - **Private Git packages**: Authenticate `dbt deps` against private Git repositories by referencing a Snowflake secret from `env.yml` as a `DBT_ENV_SECRET_` variable, with a network rule and external access integration.
 - **Works across all surfaces**: Use `env.yml` in Workspaces, in deployed dbt project objects (through SQL and the Snowflake CLI), and in CoCo Desktop in Snowflake-managed mode. The Snowflake CLI flags `--env-file-dir`, `--default-env`, `--env`, `--env-vars`, and `--use-shell-env-vars` require Snowflake CLI 3.21 or later.
 
-For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).

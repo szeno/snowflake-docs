@@ -40,10 +40,10 @@ To run analysis from the collaboration details page:
 4. In the template details drawer, select one of the following:
    - **Open in Workspaces**: Generates a pre-configured SQL statement and opens it in
      a Snowflake workspace.
-   - **Run**: Opens Cortex Code to generate and help run a
+   - **Run**: Opens Cortex Code to generate and help run an
      analysis specification.
 
-## Run analysis in worksheets
+## Run analysis in Workspaces
 
 When you select **Open in Workspaces**, a new workspace opens with a pre-configured
 SQL statement that calls the collaboration’s `RUN` procedure. The generated SQL includes:

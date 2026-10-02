@@ -15,7 +15,7 @@ dbt Projects on Snowflake brings the full dbt lifecycle into Snowflake: develop,
 - **Concurrent executions:** Run the same deployed dbt project object concurrently to keep independent data slices in your pipeline fresh.
 - **Built-in observability:** Inspect run history, logs, and artifacts, with column-level lineage in Snowsight.
 - **AI-assisted development:** CoCo is integrated with the Snowflake Horizon Catalog, so it can inspect the files of a deployed dbt project object to debug production runs, generate `sources.yml` and `models.yml` documentation from catalog metadata, and scaffold dbt data quality tests in your `schema.yml`.
-- **No extra fees:** Executions use a virtual warehouse and incur standard compute costs, with no licensing or per-user fees.
+- **No extra fees:** Executions use a virtual warehouse and incur standard compute costs, with no additional Snowflake licensing or per-user fees.
 
 ## Get started
 
@@ -39,6 +39,7 @@ dbt Projects on Snowflake brings the full dbt lifecycle into Snowflake: develop,
 | --- | --- |
 | [Understand dbt project objects](/user-guide/data-engineering/dbt-projects-on-snowflake-understanding-dbt-project-objects) | Start here to learn what dbt project objects are and how they work. |
 | [Use dbt artifacts for Slim CI and defer to production](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod) | Use artifacts from earlier dbt runs to identify and run changed models, defer to production, and recover from a failed execution. |
+| [Integrate dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration) | Configure dbt State from dbt Labs to decide which models need to be rebuilt and which models can be reused during an execution. |
 | [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables) | Manage environment variables, secrets, and multiple environments with a Git-versioned `env.yml` file. |
 | [Understand CI/CD](/user-guide/data-engineering/dbt-projects-on-snowflake-ci-cd) | Automate testing and deployment with the Snowflake CLI and OIDC. |
 | [Deploy dbt project objects](/user-guide/data-engineering/dbt-projects-on-snowflake-deploy) | Create and update dbt project objects from Snowsight, SQL, or the Snowflake CLI. |

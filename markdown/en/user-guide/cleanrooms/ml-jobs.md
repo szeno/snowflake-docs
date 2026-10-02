@@ -304,7 +304,7 @@ The `action` field is case-insensitive. Valid actions are:
     spec **and** the collaboration owner has not disabled `ALLOW_ML_JOBS_MONITORING`.
 
     `get_logs` retrieves output through [`SYSTEM$GET_SERVICE_LOGS`](/sql-reference/functions/system_get_service_logs),
-    which returns only the most recent container output (up to 100 KB of the most recent log lines
+    which returns only the most recent container output (up to 100 KB of log lines
     by default). The beginning of a long-running job’s logs may therefore be missing, and logs
     can become unavailable after the job’s service expires.
 
@@ -446,7 +446,7 @@ ML Jobs container runtime includes a Ray cluster that distributed trainers use a
 
 Distributed training helps scale out to multiple nodes when the memory or compute requirements to
 train a model are beyond what can be supported in a single compute pool node, covering either a
-high memory CPU node or a large GPU node.
+high-memory CPU node or a large GPU node.
 
 **Code change: replace raw XGBoost with the distributed trainer:**
 

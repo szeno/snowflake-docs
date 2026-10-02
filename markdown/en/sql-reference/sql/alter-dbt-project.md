@@ -129,7 +129,7 @@ ALTER DBT PROJECT [ IF EXISTS ] <name> UNSET
         this per run with the `ENVIRONMENT` argument on the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project)
         command. Use the reserved name `NO_ENV` to run without any environment by default.
 
-        For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+        For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
     `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
     :   Specifies the external access integrations used to grant permissions to pull remote dependencies from dbt package hub or GitHub. When declared on an object, `dbt deps` will run automatically during deployment.

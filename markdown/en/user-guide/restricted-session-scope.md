@@ -10,13 +10,13 @@ A Restricted Session Scope (RSS) is a privilege ceiling that limits what an agen
 of a user. An RSS doesn’t replace RBAC and can’t grant privileges the user doesn’t already have
 through their roles.
 
-An administrator applies RSS as a standing governance control: set
-`AGENT_RESTRICTED_SESSION_SCOPE` on a [session policy](/user-guide/session-policies), then attach
-that policy to the account or to specific users. The ceiling applies whenever an agent is active for
-users covered by the session policy.
+You can apply an RSS in two ways:
 
-User-managed RSS in CoCo CLI and CoCo Desktop is still in private preview. For that client
-experience, see [Restricted Session Scope for agents](/LIMITEDACCESS/security/agent-restricted-session-scope).
+- **Admin-managed RSS:** An administrator sets `AGENT_RESTRICTED_SESSION_SCOPE` on a
+  [session policy](/user-guide/session-policies), then attaches that policy to the account or to
+  specific users. The ceiling applies whenever an agent is active for users covered by the policy.
+- **User-managed RSS:** A user restricts an individual chat in CoCo CLI, CoCo Desktop, or CoCo in
+  Snowsight. This restriction can only narrow the access allowed by RBAC and any admin-managed RSS.
 
 `AGENT_RESTRICTED_SESSION_SCOPE` on a session policy applies only when an agent is active. When no
 agent is active, that property is ignored. For when
@@ -27,12 +27,15 @@ agent is active, that property is ignored. For when
 
 Restricted Session Scope helps you:
 
-- Set a privilege ceiling for agents without changing user roles, or duplicating user’s RBAC for the Agent. For example, Agents should only read in production databases, but can write to personal databases.
+- Set a privilege ceiling for agents without changing user roles or duplicating the user’s RBAC.
+  For example, agents can be read-only in production databases but retain write access to personal
+  databases.
 - Reduce unintended production writes, privilege escalation through secondary roles, and access to
   sensitive data from agent workflows.
 - Keep full RBAC available when no agent is active in the session, or when no RSS is applied.
 - Apply different agent ceilings account-wide or to specific users through session policy
   attachment.
+- Let users further restrict individual CoCo chats to read-only access or selected roles.
 
 ## Configure Restricted Session Scope with a session policy
 
@@ -489,6 +492,64 @@ Pair this with masking policies that use
 databases. RSS controls which databases and operations the agent can reach; agent-aware masking
 controls which column values are visible within those databases.
 
+## Restrict a CoCo chat
+
+Use user-managed RSS to reduce what CoCo can do in an individual chat. You can apply read-only
+access, allow only selected roles, or block selected roles. If an admin-managed RSS also applies,
+Snowflake enforces the intersection of both ceilings. A user-managed RSS can’t expand the access
+allowed by RBAC or the admin-managed RSS.
+
+The CoCo role picker lists roles granted directly to you. Allowlists and blocklists match those
+role names exactly. They don’t walk the role hierarchy, and they don’t strip privileges that the
+current primary role already inherits. For example, if `R1` is primary and inherits `R2`, blocking
+`R2` prevents using `R2` as the primary or a secondary role, but the session still has the
+privileges `R1` inherits from `R2`. For details, see [Role scopes](#label-agent-rss-role-scopes).
+
+### CoCo CLI
+
+To restrict the current CoCo CLI session:
+
+1. Run `/guardrails`.
+2. Select **Restrict this session**, then apply an existing RSS or select read-only access.
+3. To create a reusable scope, select **Create new restricted session scope**, configure the role
+   allowlist or blocklist and read-only access, and enter a name. CoCo stores the definition in
+   `USER$<username>.RSS`.
+4. Run `/guardrails status` to see the active restriction.
+
+You can also apply a named scope when you start CoCo CLI:
+
+Copy code
+
+```
+cortex --with-restricted-session-scope=READONLY_PM
+```
+
+For a scope stored in `USER$<username>.RSS`, you can specify its unqualified name, as shown in this
+example.
+
+### CoCo Desktop
+
+To restrict the current chat:
+
+1. Select **+**, then **Restrict this session**.
+2. Select **Read only** to apply a read-only ceiling, or select **Restrict by role**.
+3. For a role restriction, apply a saved allowlist or blocklist, or create a custom restriction by
+   selecting roles and choosing **Allow** or **Block**. CoCo stores a custom definition in
+   `USER$<username>.RSS` so that you can reuse it in CoCo Desktop, CoCo CLI, or SQL.
+
+### CoCo in Snowsight
+
+To restrict the current chat:
+
+1. In the CoCo panel, select **+**, then **Restrict this chat**.
+2. Select read-only access or restrict the chat to selected roles.
+3. Review and apply the restriction. The chat displays the active restriction.
+
+### Change or clear a user-managed RSS
+
+After an RSS is active, you can switch to another RSS, but you can’t remove or relax the ceiling in
+the current chat. To clear the restriction, start a new chat without applying an RSS.
+
 ## Considerations
 
 - An RSS is a ceiling on the user’s existing RBAC privileges. It never grants additional privileges.
@@ -513,6 +574,8 @@ controls which column values are visible within those databases.
   details, see [Role scopes](#label-agent-rss-role-scopes).
 - RSS and agent-aware masking policies are complementary. RSS controls access scope; masking
   controls data visibility within that scope.
+- If an admin-managed RSS and a user-managed RSS both apply, Snowflake enforces their intersection.
+  A user-managed RSS can’t exceed the admin-managed ceiling.
 - For third-party agents, `IS_AGENT_ACTIVATED` returns `TRUE` when the connection goes through the
   Snowflake MCP Server or an OAuth security integration with `IS_AGENTIC = TRUE`. Agents that
   connect through REST APIs or SDKs with standard authentication (key pair or personal access token)

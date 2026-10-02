@@ -128,6 +128,36 @@ Use the @models/revenue.yaml semantic model to answer "What was revenue last mon
 Debug my semantic model at @models/revenue.yaml
 ```
 
+## Restrict a session
+
+Use a [Restricted Session Scope](/user-guide/restricted-session-scope) (RSS) to reduce what CoCo can
+do in the current session. You can apply read-only access, allow only selected roles, or block
+selected roles. An RSS only narrows the privileges available through your roles and any
+administrator-enforced scope.
+
+To restrict the current session:
+
+1. Run `/guardrails`.
+2. Select **Restrict this session**, then apply an existing RSS or select read-only access.
+3. To create a reusable scope, select **Create new restricted session scope**, configure the role
+   restrictions and read-only access, and enter a name. CoCo stores the definition in
+   `USER$<username>.RSS`.
+4. Run `/guardrails status` to see the active restriction.
+
+You can also apply a named scope when you start CoCo CLI:
+
+Copy code
+
+```
+cortex --with-restricted-session-scope=READONLY_PM
+```
+
+After an RSS is active, you can switch to another RSS, but you can’t remove or relax the
+restriction in the current session. Start a new session to run without the user-managed RSS.
+
+For RSS behavior, role inheritance details, and instructions for other CoCo clients, see
+[Restrict a CoCo chat](/user-guide/restricted-session-scope#label-agent-rss-user-managed).
+
 ## Prerequisites
 
 To use CoCo CLI, you need the following:

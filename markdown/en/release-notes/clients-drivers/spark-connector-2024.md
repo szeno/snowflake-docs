@@ -10,6 +10,24 @@ Snowflake uses semantic versioning for Snowflake Connector for Spark updates.
 
 See [Snowflake Connector for Spark](/user-guide/spark-connector) for documentation.
 
+## Version 3.1.1 (December 10, 2024)
+
+### Bug fixes
+
+- Fixed a URL resolution issue with China deployments.
+
+## Version 3.1.0 (December 04, 2024)
+
+### Improvements
+
+- Upgraded the Snowflake JDBC driver dependency to version 3.19.0.
+- Changed the internal transfer format for structured data from JSON to Parquet. Set `use_json_in_structured_data` to `true` to use the previous JSON format. The default is `false`.
+
+### New features
+
+- Added support for Parquet when writing data from Spark to Snowflake. Set `use_parquet_in_write` to `true` to use Parquet for the write path. The default is `false`.
+- Added the `parquet-avro` dependency, with a default version of 1.13.1. Its `parquet-column` dependency is also provided by Spark; incompatible versions can cause runtime errors. Adjust the `parquet-avro` version to match the Spark environment if needed.
+
 ## Version 3.0.0 (July 31, 2024)
 
 ### BCR (Behavior Change Release) changes

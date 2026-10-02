@@ -151,7 +151,7 @@ Show lessSee more
 
 ### General
 
-- Latency for the view may be up to 180 minutes (3 hours).
+- Latency for the view may be up to 15 minutes.
 
 - The values for the columns
   `external_function_total_invocations`, `external_function_total_sent_rows`,

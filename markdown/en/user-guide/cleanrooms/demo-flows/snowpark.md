@@ -148,7 +148,7 @@ When you host a container service in your clean room, your template and any cust
 Using Snowpark Container Services is similar to using UDFs in Snowpark, except that your UDFs are exposed as HTTP endpoints for the
 template to call. You will define the service and endpoints and upload it to the clean room.
 
-Internally-hosted endpoints are accessible only by templates within the clean room, and cannot be called directly by the clean room
+Internally hosted endpoints are accessible only by templates within the clean room, and cannot be called directly by the clean room
 collaborators.
 
 ### Prerequisites

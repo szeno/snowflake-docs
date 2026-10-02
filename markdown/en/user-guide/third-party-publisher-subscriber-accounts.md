@@ -238,10 +238,53 @@ Show lessSee more
 
 ## Configure tenant types and domains in Command Center
 
-In preview, you can classify member accounts and maintain allowed email domains from Organization Command Center in the
+You can classify member accounts and maintain allowed email domains from Organization Command Center in the
 organization account. For the Snowsight steps, see
 [Organization Command Center](/user-guide/organization-hub-command-center) and
 [Command Center 3rd party access configuration](/user-guide/organization-hub-command-center-third-party).
+
+## FAQs
+
+**What are third-party (publisher–subscriber) accounts?**
+
+They are fully functional Snowflake accounts that a publisher organization creates and governs for business partners or other
+organizations outside the company. Unlike reader accounts, third parties can load their own data and combine it with the data you share.
+
+**How is a third-party account different from a reader account?**
+
+A reader account is consumption-focused and has provider-controlled limits, such as no data loading. A third-party account is a full
+Snowflake account for workloads where the third party loads and combines their own data. See the comparison table earlier in this topic.
+
+**How do I get started?**
+
+Accept the [Snowflake Customer-Controlled Data Sharing Functionality Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/data-sharing-terms/).
+Then, as a user with the GLOBALORGADMIN or ORGADMIN role, create an account with `TENANT_TYPE = EXTERNAL` by using
+[CREATE ACCOUNT](/sql-reference/sql/create-account), and set the allowed email domains for the account. You can also use
+[Command Center](#label-third-party-command-center) in Snowsight.
+
+**Who can set or change the tenant type of an account?**
+
+Only users with the GLOBALORGADMIN or ORGADMIN role, or roles that have been granted the MANAGE TENANTS privilege. ACCOUNTADMIN can’t change
+tenant type.
+
+**What is the default tenant type?**
+
+If you don’t specify a tenant type, new accounts default to `INTERNAL`, unless your organization sets a different default with
+`ALTER ORGANIZATION SET DEFAULT_TENANT_TYPE`.
+
+**How are users monitored against the allowed domains?**
+
+Snowflake scans user login emails in each account and validates them against the configured domain allowlists. When the Security Essentials
+scanner package is enabled, violations are reported through the Trust Center.
+
+**Can each third party share an account?**
+
+No. Snowflake terms of service require each external tenant to have its own account.
+
+**Is this feature available in U.S. government regions?**
+
+Setting tenant type `EXTERNAL` isn’t available to organizations with a presence in a U.S. government region. The restriction applies across
+the organization, including accounts in commercial regions. See [Legal and contractual notice](#label-third-party-legal-notice).
 
 ## Related Snowflake documentation
 

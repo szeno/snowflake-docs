@@ -139,9 +139,9 @@ These examples use a sample dataset from the Snowflake Marketplace.
 
 ### Prerequisites
 
-The examples in this section use the [Cybersyn Github Archive dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KJ3/cybersyn-inc-cybersyn-github-archive) from the Snowflake Marketplace:
+The examples in this section use the Cybersyn Github Archive dataset from the Snowflake Marketplace:
 
-1. Install the [Cybersyn Github Archive dataset](https://app.snowflake.com/marketplace/listing/GZTSZAS2KJ3/cybersyn-inc-cybersyn-github-archive) in your account.
+1. Install the Cybersyn Github Archive dataset in your account.
 2. Open a Workspace. For information about Workspaces, see [Workspaces](/user-guide/ui-snowsight/workspaces).
 3. Select the Cybersyn Github Archive database and schema.
 

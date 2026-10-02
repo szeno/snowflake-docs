@@ -119,7 +119,7 @@ CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
 
     Default: No value
 
-    For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+    For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
 :   Specifies the external access integration used to grant permissions to pull remote dependencies from dbt package hub or GitHub. When declared on an object, `dbt deps` runs automatically during deployment.

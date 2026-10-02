@@ -8,7 +8,7 @@ Snowflake REST APIs provides the following APIs:
 
 - [Account API](/developer-guide/snowflake-rest-api/reference/account.html)
 - [Alert API](/developer-guide/snowflake-rest-api/reference/alert.html)
-- [API Integration API](/developer-guide/snowflake-rest-api/reference/api-integration)
+- [API Integration API](/developer-guide/snowflake-rest-api/reference/api-integration.html)
 - [Artifact Repository API](/developer-guide/snowflake-rest-api/reference/artifact-repository.html)
 - [Catalog Integration API](/developer-guide/snowflake-rest-api/reference/catalog-integration.html)
 - [Code Bundle API](/developer-guide/snowflake-rest-api/reference/code-bundle.html)

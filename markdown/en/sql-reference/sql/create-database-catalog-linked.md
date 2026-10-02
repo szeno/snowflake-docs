@@ -256,7 +256,7 @@ For general information about roles and privilege grants for performing SQL acti
   - Using UNDROP ICEBERG TABLE isn’t supported.
   - Sharing:
 
-    - Sharing with a listing isn’t currently supported
+    - [Sharing with a listing](/collaboration/use-auto-fulfillment-with-open-table-formats) is supported for catalog-linked databases that use Apache Iceberg™ REST catalog integrations.
     - Direct sharing is supported
 - For writing to tables in a catalog-linked database:
 

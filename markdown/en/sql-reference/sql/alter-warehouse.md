@@ -538,7 +538,6 @@ For general information about roles and privilege grants for performing SQL acti
 
   Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
 - Resuming a Snowpark-optimized virtual warehouse may take longer than for standard warehouses.
-- Snowpark-optimized warehouses don’t support [Query Acceleration](/user-guide/query-acceleration-service).
 - Specifying the `IF EXISTS` clause requires the role in use or a role in the active role hierarchy to have the appropriate
   [warehouse privileges](/user-guide/security-access-control-privileges#label-warehouse-privileges) on the warehouse.
 - The ADD TABLES and DROP TABLES clauses only apply to interactive warehouses created with the

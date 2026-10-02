@@ -61,7 +61,7 @@ Show lessSee more
 
 ### Models
 
-When creating an agent, we recommend selecting **auto** for the model. With this option, Cortex automatically selects the highest quality model for your account, and quality improves as new models become available.
+When creating an agent, we recommend selecting **auto** for the model. With this option, Cortex automatically selects the highest-quality model for your account, and quality improves as new models become available.
 
 Cortex Agents supports the following models. These models run through [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference), so availability is shown by cross-region routing scope (the value of the `CORTEX_ENABLED_CROSS_REGION` account parameter), not by individual region. A model is available to your account when your routing scope is marked for that model. Columns match the scopes listed in [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability) and [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability).
 

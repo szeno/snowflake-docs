@@ -76,7 +76,7 @@ In macOS or Linux:
     is useful for diagnosing network issues.
 
 `DisableOCSPCheck`
-:   Set to `true` to disable the TLS certificate revocation status check by the Online Certificate Status Protocol (OCSP). In normal circumstances, this flag should not set. But if the OCSP
+:   Set to `true` to disable the TLS certificate revocation status check by the Online Certificate Status Protocol (OCSP). In normal circumstances, this flag should not be set. But if the OCSP
     availability problem persists, the application might temporarily set this parameter in order to unblock connectivity issues and remove it when the OCSP availability problem is addressed.
 
 `DisableTelemetry`
@@ -87,9 +87,9 @@ In macOS or Linux:
 
     Possible values are: UnixODBC and iODBC.
 
-    If `DriverManagerOverride` is not specified, the driver uses auto-detection for the driver manage (call backtrace()) to get driver manager information. This is the default behavior.
+    If `DriverManagerOverride` is not specified, the driver uses auto-detection for the driver manager (call backtrace()) to get driver manager information. This is the default behavior.
 
-    The parameter works only on Linux and MacOS.
+    The parameter works only on Linux and macOS.
 
 `EnableAutoIpdByDefault`
 :   Set to `false` to configure the ODBC Driver to set SQL\_ATTR\_ENABLE\_AUTO\_IPD to `false` (which is the default value in the
@@ -192,7 +192,7 @@ In macOS or Linux:
 
     The Snowflake ODBC driver passes the `NoProxy` value to the curl option `CURLOPT_NOPROXY`.
 
-    The format of the `NoProxy` value can be found [CURLOPT\_NOPROXY explained”](https://curl.haxx.se/libcurl/c/CURLOPT_NOPROXY.html).
+    The format of the `NoProxy` value can be found in [CURLOPT\_NOPROXY explained](https://curl.haxx.se/libcurl/c/CURLOPT_NOPROXY.html).
 
 `Proxy`
 :   Specifies a proxy server in the form of `<host>:<port>` for clients that use the ODBC driver.
@@ -360,9 +360,9 @@ These options are available in driver versions 3.13.0 and later.
 
     The driver stores the cached CRLs in the following directories:
 
-    - MacOS: `$HOME/Library/Caches/Snowflake/crls`
+    - macOS: `$HOME/Library/Caches/Snowflake/crls`
     - Linux: `$HOME/.cache/snowflake/crls`
-    - Windows: `%LOCALAPPDATA%SnowflakeCachescrls`
+    - Windows: `%LOCALAPPDATA%\Snowflake\Caches\crls`
 
     Default is `true`.
 
@@ -427,7 +427,7 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     >
     >   Note
     >
-    >   The Snowflake ODBC driver does not support `externalbrowser` authentication using Microsoft Excel with MacOS.
+    >   The Snowflake ODBC driver does not support `externalbrowser` authentication using Microsoft Excel with macOS.
     > - `https://<okta_account_name>.okta.com` (i.e. the URL endpoint for your Okta account) to [authenticate through native Okta](/user-guide/admin-security-fed-auth-use#label-native-sso-okta) (only supported if your IdP is Okta).
     > - `oauth` to authenticate using OAuth. When OAuth is specified as the authenticator, you must also set the `token` parameter to specify the OAuth token ([see below](/developer-guide/odbc/odbc-parameters#label-odbc-additional-connection-parameters-token)).
     > - `username_password_mfa` to authenticate with MFA token caching. For more details, see [Using Multi-Factor Authentication](#using-multi-factor-authentication) (in this topic).
@@ -489,7 +489,7 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     Setting these values only changes the `SQL_DESC_LENGTH` field in Implementation Row Descriptor (IRD) and the
     corresponding values returned from `SQLDescribeCol/SQLColAttribute/SQLColAttributes`. The driver still returns the
-    entire data even when it’s length exceeds the setting.
+    entire data even when its length exceeds the setting.
 
     However, an application could allocate a data buffer based on the length
     specified in these parameters that could truncate the data because of insufficient space in the buffer. As the best practice,
@@ -747,9 +747,9 @@ The ODBC driver looks for the `connections.toml` file in the following locations
 You can generate the basic settings for the TOML configuration file in Snowsight. For information, see
 [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config).
 
-If you want to switch between multiple existing connections, you can configure them in the `connections.toml` file. The default key is `default`, but you change the name of the default connection by setting the `SNOWFLAKE_DEFAULT_CONNECTION_NAME` shell environment variable.
+If you want to switch between multiple existing connections, you can configure them in the `connections.toml` file. The default key is `default`, but you can change the name of the default connection by setting the `SNOWFLAKE_DEFAULT_CONNECTION_NAME` shell environment variable.
 
-The following sample `connections.toml` files defines two connections:
+The following sample `connections.toml` file defines two connections:
 
 Copy code
 
@@ -900,9 +900,9 @@ For example:
   set https_proxy=http://username:password@proxyserver.example.com:80
   ```
 
-Optional: To bypass the proxy for specific communications, set `no_proxy` (for example, to bypass Amazon S3 access , use `no_proxy=.amazonaws.com`).
+Optional: To bypass the proxy for specific communications, set `no_proxy` (for example, to bypass Amazon S3 access, use `no_proxy=.amazonaws.com`).
 
-When using a the `SPCS_TOKEN` service identifier token for SPCS containers, you can set the `SKIP_TOKEN_FILE_PERMISSIONS_VERIFICATION` parameter to `true` to bypass the permission verification for the token file.
+When using the `SPCS_TOKEN` service identifier token for SPCS containers, you can set the `SKIP_TOKEN_FILE_PERMISSIONS_VERIFICATION` parameter to `true` to bypass the permission verification for the token file.
 
 ## Using single sign-on (SSO) for authentication
 

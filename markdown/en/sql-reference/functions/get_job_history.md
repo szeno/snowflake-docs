@@ -82,7 +82,7 @@ The output only includes the jobs that are owned by the current role.
   Copy code
 
   ```
-  SELECT * FROM TABLE(SNOWFLAKE.SPCS.GET_JOB_HISTORY(());
+  SELECT * FROM TABLE(SNOWFLAKE.SPCS.GET_JOB_HISTORY());
   ```
 
   The following example output shows only one job:

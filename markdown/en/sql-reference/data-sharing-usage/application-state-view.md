@@ -50,6 +50,7 @@ this view displays information for installed apps across all regions.
 | ENABLED\_TELEMETRY\_EVENT\_DEFINITIONS | VARCHAR | A list of event definitions that the consumer has enabled. See [About event definitions](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging#about-event-sharing) for more information. |
 | UPGRADE\_STATE\_UPDATED\_ON | TIMESTAMP\_LTZ | The timestamp when the app entered its current upgrade state. This value is automatically set by Snowflake. |
 | DISABLEMENT\_REASONS | VARCHAR | An array containing the reasons why the Snowflake Native App was disabled. See [Reasons an app can become disabled](#label-app-state-view-disablement-reasons). |
+| AUTHORIZE\_RESTRICTED\_PROVIDER\_REMOTE\_OPERATIONS\_UNTIL | VARCHAR | Indicates the status of the consumer’s consent for [restricted remote app operations](/developer-guide/native-apps/remote-app-operation). Possible values are:   - `INDEFINITE`: The consumer has granted consent indefinitely. - `NEVER`: The consumer has not granted consent. - A timestamp: The consumer has granted consent until the specified time. |
 
 Expand
 

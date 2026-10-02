@@ -13,6 +13,13 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
+- [10.36 Release Notes (Preview)](/release-notes/2026/10_36)
+
+  - [Data governance updates](/release-notes/2026/10_36#data-governance-updates)
+
+    - [Schema-level data metric functions: exclude transient tables](/release-notes/2026/10_36#schema-level-data-metric-functions-exclude-transient-tables)
+  - [Release notes change log](/release-notes/2026/10_36#release-notes-change-log)
+
 ## Recent server releases
 
 - [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
@@ -44,12 +51,17 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
+- [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)
+- [Oct 1, 2026: Remote app operations for Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-10-01-remote-app-operations-ga)
 - [Sep 30, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-30-claude-sonnet-5-5-preview)
 - [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
 - [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
 - [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
+- [Sep 30, 2026: Organization Features in Organization Command Center (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-features-ga)
+- [Sep 30, 2026: Organization Command Center 3rd party access configuration (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-third-party-ga)
 - [Sep 30, 2026: Semantic Studio (General availability)](/release-notes/2026/other/2026-09-30-semantic-studio-ga)
 - [Sep 30, 2026: Spark Monitoring UI (Preview)](/release-notes/2026/other/2026-09-30-spark-monitoring-ui)
+- [.NET Driver (v6.3.0)](/release-notes/clients-drivers/dotnet-2026)
 - [Go Driver (v2.3.0)](/release-notes/clients-drivers/golang-2026)
 - [JDBC Driver (v4.4.0)](/release-notes/clients-drivers/jdbc-2026)
 - [Node.js Driver (v3.4.0)](/release-notes/clients-drivers/nodejs-2026)
@@ -73,6 +85,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)
 - [Sep 23, 2026: Account posture reporting in the Trust Center (Preview)](/release-notes/2026/other/2026-09-23-trust-center-account-posture-preview)
+- [Sep 22, 2026: Improved data freshness for selected ORGANIZATION\_USAGE history views](/release-notes/2026/other/2026-09-22-organization-usage-history-views-latency)
 - [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
 - [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
@@ -98,6 +111,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
 - [Sep 14, 2026: Catalog-linked databases: Write support for nested namespaces](/release-notes/2026/other/2026-09-14-cld-nested-namespace-write-support-open-catalog)
 - [Sep 14, 2026: Zero-copy support for all table formats in interactive warehouses (General availability)](/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
+- [Sep 14, 2026: User-managed Restricted Session Scope in CoCo (General availability)](/release-notes/2026/other/2026-09-14-restricted-session-scope-coco)
 - [Snowflake ML Python (v2.1.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Sep 11, 2026: CoCo Desktop v1.21.4](/release-notes/2026/other/2026-09-11-coco-desktop-v1-21-4)
 - [Sep 11, 2026: Automations in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-09-11-cowork-automations-ga)
@@ -137,9 +151,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 02, 2026: Data lineage for Cortex Agents](/release-notes/2026/other/2026-09-02-cortex-agent-lineage)
 - [Sep 02, 2026: Data lineage for streams](/release-notes/2026/other/2026-09-02-lineage-streams)
 - [Sep 02, 2026: Openflow Connector for Jira Cloud: Core flow (General availability)](/release-notes/2026/other/2026-09-02-openflow-jira-core-ga)
-- [Sep 1, 2026: Snowflake Native Apps: Code execution tools for Cortex Agents](/release-notes/2026/other/2026-09-01-native-apps-agent-code-execution)
-- [Sep 01, 2026: Snowflake App Runtime (General availability)](/release-notes/2026/other/2026-09-01-snowflake-app-runtime-ga)
-- [ODBC Driver (v4.0.0-rc2)](/release-notes/clients-drivers/odbc-2026)
-- [Spark Connector (v3.2.2)](/release-notes/clients-drivers/spark-connector-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -60,8 +60,9 @@ processors, controller services, and parameter contexts on the canvas.
 Gen 2 runtimes and connectors are schema-scoped objects with standard Snowflake RBAC. Control who
 can see deployments, operate runtimes, or manage connectors using `GRANT USAGE` and `GRANT OPERATE`.
 
-**To get started:** Migration from gen 1 to gen 2 is available in Private Preview. Contact your
-Snowflake account representative to be included.
+**To get started:** See [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) to convert an
+existing gen 1 deployment and its runtimes, then
+[Migrate a gen 1 connector to gen 2](/user-guide/data-integration/openflow/gen2/migrate-connector) for the connectors running on them.
 
 ## Comparison by resource type
 
@@ -310,8 +311,8 @@ rules:
 
 - **New deployments are gen 2 only.** You can no longer create new gen 1 deployments (BYOC or
   Snowflake) — all new deployments use `CREATE OPENFLOW DEPLOYMENT`. Existing gen 1 deployments
-  continue to work unchanged and can be migrated. Migration from gen 1 to gen 2 is available in
-  Private Preview; contact your Snowflake account representative to be included.
+  continue to work unchanged and can be migrated. See
+  [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime).
 - **Gen 2 runtimes** — Support both gen 1 and gen 2 connectors; both types can coexist on the
   same runtime. Install gen 2 connectors from the connector catalog in the Openflow UI (using the
   setup wizard).
@@ -330,8 +331,9 @@ rules:
   follows the same public connector setup documentation for gen 1 and gen 2. Gen 2 topics link to
   those instructions where applicable.
 
-Migration from gen 1 to gen 2 is available in Private Preview. Contact your Snowflake account
-representative to be included.
+To move existing resources to gen 2, see
+[Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) and
+[Migrate a gen 1 connector to gen 2](/user-guide/data-integration/openflow/gen2/migrate-connector).
 
 ## Which documentation to follow
 
@@ -341,6 +343,8 @@ Use this decision guide to choose the right topic:
 | --- | --- |
 | Understand gen 1 vs gen 2 (this page) | [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations) |
 | Get started with gen 2 (privileges, first gen 2 resources) | [Second generation Openflow objects and interfaces](/user-guide/data-integration/openflow/gen2/index), [Quickstart: gen 2 Openflow](/user-guide/data-integration/openflow/gen2/quickstart) |
+| Migrate a gen 1 deployment and its runtimes to gen 2 | [Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) |
+| Migrate a gen 1 connector to gen 2 | [Migrate a gen 1 connector to gen 2](/user-guide/data-integration/openflow/gen2/migrate-connector) |
 | Manage an existing **gen 1** deployment, or create a gen 1 runtime | Public Openflow setup and [Manage Openflow](/user-guide/data-integration/openflow/manage) topics |
 | Install a **gen 1** catalog connector (**Install** or **Import from Registry** on the canvas) | [Openflow connectors](/user-guide/data-integration/openflow/connectors/about-openflow-connectors) and the connector’s setup topic |
 | Install a **gen 2** connector with the setup wizard | [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard) |

@@ -9,11 +9,11 @@ The ORGANIZATION\_USAGE schema contains the following views:
 
 | View | Type | Latency [1] | Notes |
 | --- | --- | --- | --- |
-| [ACCESS\_HISTORY](/sql-reference/organization-usage/access_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [ACCESS\_HISTORY](/sql-reference/organization-usage/access_history) | Historical | under 15 minutes | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [ACCOUNTS](/sql-reference/organization-usage/accounts) | Object | 24 hours |  |
 | [AGGREGATE\_QUERY\_HISTORY](/sql-reference/organization-usage/aggregate_query_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [AGGREGATION\_POLICIES](/sql-reference/organization-usage/aggregation_policies) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [ALERT\_HISTORY](/sql-reference/organization-usage/alert_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [ALERT\_HISTORY](/sql-reference/organization-usage/alert_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [ANOMALIES\_IN\_CURRENCY\_DAILY](/sql-reference/organization-usage/anomalies_in_currency_daily) | Historical | 24 hours |  |
 | [AUTOMATIC\_CLUSTERING\_HISTORY](/sql-reference/organization-usage/automatic_clustering_history) | Historical | 24 hours | Data retained for 1 year. |
 | [BACKUP\_OPERATION\_HISTORY](/sql-reference/organization-usage/backup_operation_history) | Historical | 6 hours | Data retained for 1 year. |
@@ -22,11 +22,11 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [BACKUPS](/sql-reference/organization-usage/backups) | Object | 6 hours |  |
 | [BLOCK\_STORAGE\_HISTORY](/sql-reference/organization-usage/block_storage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CATALOG\_LINKED\_DATABASE\_USAGE\_HISTORY](/sql-reference/organization-usage/catalog_linked_database_usage_history) | Historical | 5 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [CLASSES](/sql-reference/organization-usage/classes) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [CLASS\_INSTANCES](/sql-reference/organization-usage/class_instances) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [COLUMNS](/sql-reference/organization-usage/columns) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [CLASSES](/sql-reference/organization-usage/classes) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [CLASS\_INSTANCES](/sql-reference/organization-usage/class_instances) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [COLUMNS](/sql-reference/organization-usage/columns) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [COLUMN\_QUERY\_PRUNING\_HISTORY](/sql-reference/organization-usage/column_query_pruning_history) | Historical | 6 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [COMPLETE\_TASK\_GRAPHS](/sql-reference/organization-usage/complete_task_graphs) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [COMPLETE\_TASK\_GRAPHS](/sql-reference/organization-usage/complete_task_graphs) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [COMPUTE\_POOLS](/sql-reference/organization-usage/compute_pools) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CONTACTS](/sql-reference/organization-usage/contacts) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CONTACT\_REFERENCES](/sql-reference/organization-usage/contact_references) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
@@ -38,21 +38,21 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_code_desktop_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_code_snowsight_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CORTEX\_SEARCH\_SERVING\_USAGE\_HISTORY](/sql-reference/organization-usage/cortex_search_serving_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [COPY\_HISTORY](/sql-reference/organization-usage/copy_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [COPY\_HISTORY](/sql-reference/organization-usage/copy_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [CREDENTIALS](/sql-reference/organization-usage/credentials) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [DATA\_CLASSIFICATION\_HISTORY](/sql-reference/organization-usage/data_classification_history) | Historical | 5 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [DATA\_CLASSIFICATION\_LATEST](/sql-reference/organization-usage/data_classification_latest) | Object | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [DATA\_TRANSFER\_DAILY\_HISTORY](/sql-reference/organization-usage/data_transfer_daily_history) | Historical | 2 hours | Data retained for 1 year. |
 | [DATA\_TRANSFER\_HISTORY](/sql-reference/organization-usage/data_transfer_history) | Historical | 24 hours | Data retained for 1 year. |
 | [DATABASE\_STORAGE\_USAGE\_HISTORY](/sql-reference/organization-usage/database_storage_usage_history) | Historical | 24 hours | Data retained for 1 year. |
-| [DATABASES](/sql-reference/organization-usage/databases) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [DATABASES](/sql-reference/organization-usage/databases) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [DYNAMIC\_TABLE\_REFRESH\_HISTORY](/sql-reference/organization-usage/dynamic_table_refresh_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [FEATURE\_POLICIES](/sql-reference/organization-usage/feature_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [FILE\_FORMATS](/sql-reference/organization-usage/file_formats) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [FUNCTIONS](/sql-reference/organization-usage/functions) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [GRANTS\_TO\_ROLES](/sql-reference/organization-usage/grants_to_roles) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [FEATURE\_POLICIES](/sql-reference/organization-usage/feature_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [FILE\_FORMATS](/sql-reference/organization-usage/file_formats) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [FUNCTIONS](/sql-reference/organization-usage/functions) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [GRANTS\_TO\_ROLES](/sql-reference/organization-usage/grants_to_roles) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [GRANTS\_TO\_SHARES](/sql-reference/organization-usage/grants_to_shares) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [GRANTS\_TO\_USERS](/sql-reference/organization-usage/grants_to_users) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [GRANTS\_TO\_USERS](/sql-reference/organization-usage/grants_to_users) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [HYBRID\_TABLES](/sql-reference/organization-usage/hybrid_tables) | Object | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [INDEX\_COLUMNS](/sql-reference/organization-usage/index_columns) | Object | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [INDEXES](/sql-reference/organization-usage/indexes) | Object | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
@@ -60,14 +60,14 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [LISTING\_AUTO\_FULFILLMENT\_USAGE\_HISTORY](/sql-reference/organization-usage/listing_auto_fulfillment_usage_history) | Historical | 72 hours | Data retained for 1 year. |
 | [LISTINGS](/sql-reference/organization-usage/listings) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [LOAD\_HISTORY](/sql-reference/organization-usage/load_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [LOCK\_WAIT\_HISTORY](/sql-reference/organization-usage/lock_wait_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [LOGIN\_HISTORY](/sql-reference/organization-usage/login_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [LOCK\_WAIT\_HISTORY](/sql-reference/organization-usage/lock_wait_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [LOGIN\_HISTORY](/sql-reference/organization-usage/login_history) | Historical | under 15 minutes | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [MARKETPLACE\_DISBURSEMENT\_REPORT](/collaboration/views/marketplace-disbursement-report-org) | Historical | 24 hours | Data retained for 1 year. |
 | [MARKETPLACE\_PAID\_USAGE\_DAILY](/collaboration/views/marketplace-paid-usage-daily-org) | Historical | 24 hours | Data retained for 1 year. |
-| [MASKING\_POLICIES](/sql-reference/organization-usage/masking_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [MASKING\_POLICIES](/sql-reference/organization-usage/masking_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [MATERIALIZED\_VIEW\_REFRESH\_HISTORY](/sql-reference/organization-usage/materialized_view_refresh_history) | Historical | 24 hours | Data retained for 1 year. |
 | [METERING\_DAILY\_HISTORY](/sql-reference/organization-usage/metering_daily_history) | Historical | 2 hours | Data retained for 1 year. |
-| [METERING\_HISTORY](/sql-reference/organization-usage/metering_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [METERING\_HISTORY](/sql-reference/organization-usage/metering_history) | Historical | under 15 minutes | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [MODEL\_SERVING\_USAGE\_HISTORY](/sql-reference/organization-usage/model_serving_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [MONETIZED\_USAGE\_DAILY](/collaboration/views/monetized-usage-daily-org) | Historical | 24 hours | Data retained for 1 year. |
 | [NETWORK\_POLICIES](/sql-reference/organization-usage/network_policies) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
@@ -75,34 +75,34 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [NETWORK\_RULES](/sql-reference/organization-usage/network_rules) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [NOTEBOOKS\_CONTAINER\_RUNTIME\_HISTORY](/sql-reference/organization-usage/notebooks_container_runtime_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [OBJECT\_ACCESS\_REQUEST\_HISTORY](/sql-reference/organization-usage/object_access_request_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [OBJECT\_DEPENDENCIES](/sql-reference/organization-usage/object_dependencies) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [OBJECT\_DEPENDENCIES](/sql-reference/organization-usage/object_dependencies) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [ORGANIZATION\_USAGE\_STORAGE\_HISTORY](/sql-reference/organization-usage/organization_usage_storage_history) | Historical | 24 hours | Data retained for 1 year. |
 | [OUTBOUND\_PRIVATELINK\_ENDPOINTS](/sql-reference/organization-usage/outbound_privatelink_endpoints) | Object | 2 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). Business Critical (or higher). Data for deleted endpoints is retained for 1 year. |
-| [PASSWORD\_POLICIES](/sql-reference/organization-usage/password_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [PASSWORD\_POLICIES](/sql-reference/organization-usage/password_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [PIPE\_USAGE\_HISTORY](/sql-reference/organization-usage/pipe_usage_history) | Historical | 24 hours | Data retained for 1 year. |
-| [PIPES](/sql-reference/organization-usage/pipes) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [POLICY\_REFERENCES](/sql-reference/organization-usage/policy_references) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [PIPES](/sql-reference/organization-usage/pipes) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [POLICY\_REFERENCES](/sql-reference/organization-usage/policy_references) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [POSTGRES\_COMPUTE\_USAGE\_HISTORY](/sql-reference/organization-usage/postgres_compute_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). Data retained for 1 year. |
 | [PRIVACY\_POLICIES](/sql-reference/organization-usage/privacy_policies) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [PROCEDURES](/sql-reference/organization-usage/procedures) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [PROCEDURES](/sql-reference/organization-usage/procedures) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [PROJECTION\_POLICIES](/sql-reference/organization-usage/projection_policies) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [QUERY\_ACCELERATION\_ELIGIBLE](/sql-reference/organization-usage/query_acceleration_eligible) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [QUERY\_ACCELERATION\_ELIGIBLE](/sql-reference/organization-usage/query_acceleration_eligible) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [QUERY\_ACCELERATION\_HISTORY](/sql-reference/organization-usage/query_acceleration_history) | Historical | 24 hours | Data retained for 1 year. |
-| [QUERY\_ATTRIBUTION\_HISTORY](/sql-reference/organization-usage/query_attribution_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [QUERY\_HISTORY](/sql-reference/organization-usage/query_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [QUERY\_ATTRIBUTION\_HISTORY](/sql-reference/organization-usage/query_attribution_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [QUERY\_HISTORY](/sql-reference/organization-usage/query_history) | Historical | under 15 minutes | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [QUERY\_INSIGHTS](/sql-reference/organization-usage/query_insights) | Historical | 3.5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [QUERY\_METERING\_HISTORY](/sql-reference/organization-usage/query_metering_history) | Historical | 24 hours | Coming soon. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [RATE\_SHEET\_DAILY](/sql-reference/organization-usage/rate_sheet_daily) [2] | Historical | 24 hours |  |
-| [REFERENTIAL\_CONSTRAINTS](/sql-reference/organization-usage/referential_constraints) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [REFERENTIAL\_CONSTRAINTS](/sql-reference/organization-usage/referential_constraints) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [REMAINING\_BALANCE\_DAILY](/sql-reference/organization-usage/remaining_balance_daily) [2] | Historical | 72 hours |  |
 | [REPLICATION\_GROUPS](/sql-reference/organization-usage/replication_groups) | Object | 4 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [REPLICATION\_GROUP\_REFRESH\_HISTORY](/sql-reference/organization-usage/replication_group_refresh_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [REPLICATION\_GROUP\_REFRESH\_HISTORY](/sql-reference/organization-usage/replication_group_refresh_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [REPLICATION\_GROUP\_USAGE\_HISTORY](/sql-reference/organization-usage/replication_group_usage_history) | Historical | 24 hours | Data retained for 1 year. |
 | [REPLICATION\_USAGE\_HISTORY](/sql-reference/organization-usage/replication_usage_history) | Historical | 24 hours | Data retained for 1 year. |
-| [RESOURCE\_MONITORS](/sql-reference/organization-usage/resource_monitors) |  | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [ROLES](/sql-reference/organization-usage/roles) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [ROW\_ACCESS\_POLICIES](/sql-reference/organization-usage/row_access_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [SCHEMATA](/sql-reference/organization-usage/schemata) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [RESOURCE\_MONITORS](/sql-reference/organization-usage/resource_monitors) |  | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [ROLES](/sql-reference/organization-usage/roles) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [ROW\_ACCESS\_POLICIES](/sql-reference/organization-usage/row_access_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [SCHEMATA](/sql-reference/organization-usage/schemata) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SEARCH\_OPTIMIZATION\_BENEFITS](/sql-reference/organization-usage/search_optimization_benefits) | Historical | 8 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SEARCH\_OPTIMIZATION\_HISTORY](/sql-reference/organization-usage/search_optimization_history) | Historical | 24 hours | Data retained for 1 year. |
 | [SECRETS](/sql-reference/organization-usage/secrets) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
@@ -116,8 +116,8 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [SEMANTIC\_VIEW\_IMPORTS](/sql-reference/organization-usage/semantic_view_imports) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SEQUENCES](/sql-reference/organization-usage/sequences) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SERVICES](/sql-reference/organization-usage/services) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [SESSION\_POLICIES](/sql-reference/organization-usage/session_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [SESSIONS](/sql-reference/organization-usage/sessions) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [SESSION\_POLICIES](/sql-reference/organization-usage/session_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [SESSIONS](/sql-reference/organization-usage/sessions) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SHARES](/sql-reference/organization-usage/shares) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SNAPSHOT\_OPERATION\_HISTORY](/sql-reference/organization-usage/snapshot_operation_history) | Historical | 6 hours | Data retained for 1 year. This view is deprecated. Use the [BACKUP\_OPERATION\_HISTORY](/sql-reference/organization-usage/backup_operation_history) view instead. |
 | [SNAPSHOT\_POLICIES](/sql-reference/organization-usage/snapshot_policies) | Object | 6 hours | This view is deprecated. Use the [BACKUP\_POLICIES](/sql-reference/organization-usage/backup_policies) view instead. |
@@ -129,31 +129,31 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY](/sql-reference/organization-usage/snowpipe_streaming_channel_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SNOWPIPE\_STREAMING\_CLIENT\_HISTORY](/sql-reference/organization-usage/snowpipe_streaming_client_history) | Historical | 4 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [SNOWPIPE\_STREAMING\_FILE\_MIGRATION\_HISTORY](/sql-reference/organization-usage/snowpipe_streaming_file_migration_history) | Historical | 14 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [STAGES](/sql-reference/organization-usage/stages) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [STAGES](/sql-reference/organization-usage/stages) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [STAGE\_STORAGE\_USAGE\_HISTORY](/sql-reference/organization-usage/stage_storage_usage_history) | Historical | 24 hours | Data retained for 1 year. |
 | [STORAGE\_DAILY\_HISTORY](/sql-reference/organization-usage/storage_daily_history) | Historical | 2 hours | Data retained for 1 year. |
-| [STORAGE\_LIFECYCLE\_POLICIES](/sql-reference/organization-usage/storage_lifecycle_policies) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [STORAGE\_LIFECYCLE\_POLICY\_HISTORY](/sql-reference/organization-usage/storage_lifecycle_policy_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). Data retained for 1 year. |
+| [STORAGE\_LIFECYCLE\_POLICIES](/sql-reference/organization-usage/storage_lifecycle_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [STORAGE\_LIFECYCLE\_POLICY\_HISTORY](/sql-reference/organization-usage/storage_lifecycle_policy_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). Data retained for 1 year. |
 | [STORAGE\_USAGE](/sql-reference/organization-usage/storage_usage) | Historical | 4 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TABLE\_CONSTRAINTS](/sql-reference/organization-usage/table_constraints) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TABLE\_CONSTRAINTS](/sql-reference/organization-usage/table_constraints) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [TABLE\_DML\_HISTORY](/sql-reference/organization-usage/table_dml_history) | Historical | 8 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [TABLE\_PRUNING\_HISTORY](/sql-reference/organization-usage/table_pruning_history) | Historical | 8 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [TABLE\_QUERY\_PRUNING\_HISTORY](/sql-reference/organization-usage/table_query_pruning_history) | Historical | 6 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TABLE\_STORAGE\_METRICS](/sql-reference/organization-usage/table_storage_metrics) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TABLES](/sql-reference/organization-usage/tables) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TAG\_REFERENCES](/sql-reference/organization-usage/tag_references) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TAGS](/sql-reference/organization-usage/tags) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TASKS](/sql-reference/organization-usage/tasks) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TASK\_HISTORY](/sql-reference/organization-usage/task_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TASK\_VERSIONS](/sql-reference/organization-usage/task_versions) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TABLE\_STORAGE\_METRICS](/sql-reference/organization-usage/table_storage_metrics) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TABLES](/sql-reference/organization-usage/tables) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TAG\_REFERENCES](/sql-reference/organization-usage/tag_references) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TAGS](/sql-reference/organization-usage/tags) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TASKS](/sql-reference/organization-usage/tasks) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TASK\_HISTORY](/sql-reference/organization-usage/task_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TASK\_VERSIONS](/sql-reference/organization-usage/task_versions) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [TRI\_SECRET\_SECURE\_HISTORY](/sql-reference/organization-usage/tri-secret-secure-history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [TRUST\_CENTER\_FINDINGS](/sql-reference/organization-usage/trust_center_findings) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [TRUST\_CENTER\_FINDINGS](/sql-reference/organization-usage/trust_center_findings) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [TYPES](/sql-reference/organization-usage/types) | Object | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [USAGE\_IN\_CURRENCY\_DAILY](/sql-reference/organization-usage/usage_in_currency_daily) [2] | Historical | 72 hours |  |
-| [USERS](/sql-reference/organization-usage/users) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [VIEWS](/sql-reference/organization-usage/views) | Object | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [WAREHOUSE\_EVENTS\_HISTORY](/sql-reference/organization-usage/warehouse_events_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
-| [WAREHOUSE\_LOAD\_HISTORY](/sql-reference/organization-usage/warehouse_load_history) | Historical | 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [USERS](/sql-reference/organization-usage/users) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [VIEWS](/sql-reference/organization-usage/views) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [WAREHOUSE\_EVENTS\_HISTORY](/sql-reference/organization-usage/warehouse_events_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [WAREHOUSE\_LOAD\_HISTORY](/sql-reference/organization-usage/warehouse_load_history) | Historical | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [WAREHOUSE\_METERING\_HISTORY](/sql-reference/organization-usage/warehouse_metering_history) | Historical | 24 hours | Data retained for 1 year. |
 
 Expand

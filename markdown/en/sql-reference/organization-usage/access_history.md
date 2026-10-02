@@ -220,6 +220,8 @@ Show lessSee more
 
 ## Usage notes
 
+- Latency for the view may be up to 15 minutes.
+
 General notes:
 :   - For increased performance, filter queries on the `query_start_time` column and choose narrower time ranges. For sample queries,
       see [Querying the ACCESS\_HISTORY View](/user-guide/access-history#label-access-history-query).

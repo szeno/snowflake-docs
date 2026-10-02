@@ -2708,8 +2708,8 @@ SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_RATE_LIMIT_POLICIES;
 ### Troubleshooting rate limit events
 
 Offending either the TPM or RPM limits will result in a 429 response code. If
-your REST API usage is below the request per minute rate limit but still
-received a 429 response code, double-check the token usage rate.
+your REST API usage is below the requests per minute rate limit but still
+receives a 429 response code, double-check the token usage rate.
 
 Cortex REST API implements rate limits using the
 [Sliding Window Counter](https://blog.cloudflare.com/counting-things-a-lot-of-different-things/#sliding-windows-to-the-rescue)

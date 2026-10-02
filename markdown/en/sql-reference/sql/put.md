@@ -90,6 +90,10 @@ Where:
     > - `<path>` is an optional case-sensitive path for files in the cloud storage location that limits access to a set of files. Paths are alternatively called *prefixes* or *folders* by different cloud storage services.
     >
     > If the stage name or path includes spaces or special characters, enclose it in single quotes. For example, use `'@"my stage"'` for a stage named `"my stage"`.
+    >
+    > Note
+    >
+    > Non-English (Unicode) characters aren’t supported in the folder or subpath portion of the target stage path when you upload files using the PUT command or client tools (for example, Snowpark, Snowsight, the Python Connector, or the Snowflake CLI). Folder names (specified as the `<path>` in `@stage/<path>`) must consist of English letters, numbers, and a limited set of allowed special characters. Only file names can include non-English (Unicode) characters. Using Unicode characters in the folder portion of the stage path results in a SQL compilation error.
 
 ## Optional parameters
 

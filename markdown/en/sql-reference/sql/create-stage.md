@@ -135,7 +135,8 @@ Copy code
 directoryTableParams (for Amazon S3) ::=
   [ DIRECTORY = ( ENABLE = { TRUE | FALSE }
                   [ REFRESH_ON_CREATE =  { TRUE | FALSE } ]
-                  [ AUTO_REFRESH = { TRUE | FALSE } ] ) ]
+                  [ AUTO_REFRESH = { TRUE | FALSE } ]
+                  [ AWS_SNS_TOPIC = '<sns_topic_arn>' ] ) ]
 ```
 
 Copy code
@@ -706,6 +707,10 @@ Preview support for this feature is only available to Snowflake accounts hosted 
 > >         list of files in the stage path.
 > >
 > >     Default: `FALSE`
+> >
+> > `AWS_SNS_TOPIC = '<sns_topic_arn>'`
+> > :   Specifies the ARN for the SNS topic for your S3 bucket. The CREATE directory table statement subscribes the Snowflake SQS queue to the
+> >     specified SNS topic. For more information, see [Automatically refresh a directory table (Amazon S3)](/user-guide/data-load-dirtables-auto-s3).
 >
 > **Google Cloud Storage**
 >
@@ -2041,6 +2046,8 @@ Recreating a stage (using CREATE OR REPLACE STAGE) has the following additional,
   - If you’re using a storage integration, you must configure the IAM policy for the integration
     to grant permission to your S3 access point. For more information, see [Option 1: Configure a Snowflake storage integration to access Amazon S3](/user-guide/data-load-s3-config-storage-integration).
   - Multi-region access points aren’t supported.
+  - COPY INTO an external stage that uses an S3 access point isn’t supported when the underlying S3 bucket and the IAM role
+    used in the storage integration belong to different AWS accounts (cross-account access).
 - Regarding metadata:
 
   Attention

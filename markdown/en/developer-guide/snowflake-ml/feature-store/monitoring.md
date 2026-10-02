@@ -8,7 +8,7 @@ You can monitor the health of your feature store pipelines, online serving endpo
 Snowsight. The monitoring view is available under **AI & ML** » **Features** and is organized into three tabs:
 
 - **Offline Refresh**: Status of offline refresh jobs for all feature views in the feature store.
-- **Online Serving**: Visualize metrics related to online serving, including latency percentiles, query volume, error rates for online feature retrieval.
+- **Online Serving**: Visualize metrics related to online serving, including latency percentiles, query volume, and error rates for online feature retrieval.
 - **Stream Ingest**: Visualize metrics related to ingestion for stream feature views, including throughput, latency, and concurrency for streaming feature pipelines.
 
 ## Prerequisites

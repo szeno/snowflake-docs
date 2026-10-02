@@ -118,7 +118,7 @@ snow dbt deploy
 :   External access integration to be used by the dbt object.
 
 `--env-file-dir TEXT`
-:   Path to a directory containing an `env.yml` file. The CLI pulls this file into the deployed dbt project object, overwriting the object’s root `env.yml` if one already exists. Requires Snowflake CLI 3.21 or later. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+:   Path to a directory containing an `env.yml` file. The CLI pulls this file into the deployed dbt project object, overwriting the object’s root `env.yml` if one already exists. Requires Snowflake CLI 3.21 or later. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `--unset-default-env`
 :   Unset the default environment for the dbt project. Mutually exclusive with `--default-env`. Default: False.

@@ -53,6 +53,12 @@ my_target:
 
 Choose a thread count that matches your warehouse’s available compute capacity without causing queuing.
 
+### Use dbt State
+
+dbt executions often rebuild models even when nothing upstream has changed. dbt State, a dbt Labs service, decides which models need to be rebuilt and which models can be reused during an execution. This aims to reduce wall-clock time and warehouse use on every scheduled run without needing to change your models or selectors. Use `lag_tolerance` to control how often models rebuild after upstream data changes. dbt State is billed separately by dbt Labs.
+
+For setup, see [Integrating dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration).
+
 For more details about costs, see [Understanding costs for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-cost).
 
 ## Choosing a dbt version
@@ -85,7 +91,7 @@ This two-role model applies whether you run dbt interactively (a human running `
 - **Interactive execution:** Your active session role is the calling role.
 - **Task execution:** The task runs as a system service with the privileges of the **task owner role** (the role that has OWNERSHIP on the task). No specific user is associated with the run.
 
-You can simplify this setup with an `env.yml` file instead of hardcoding a role in `dbt_projects_profiles.yml` or `profiles.yml`. Define a variable such as `DBT_CURRENT_ROLE: "{{ select CURRENT_ROLE() }}"` in `env.yml`, then reference it from the profile file with `role: "{{ env_var('DBT_CURRENT_ROLE') }}"`. The profile role then resolves to the calling role on every run. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+You can simplify this setup with an `env.yml` file instead of hardcoding a role in `dbt_projects_profiles.yml` or `profiles.yml`. Define a variable such as `DBT_CURRENT_ROLE: "{{ select CURRENT_ROLE() }}"` in `env.yml`, then reference it from the profile file with `role: "{{ env_var('DBT_CURRENT_ROLE') }}"`. The profile role then resolves to the calling role on every run. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ### Use a dedicated service account
 
@@ -263,7 +269,7 @@ env_config:
 
 Values resolve highest priority first: `ENV_VARS` on `EXECUTE DBT PROJECT` (or `--env-vars` in the CLI), then shell variables (with `--use-shell-env-vars`), then the active environment in `env.yml`.
 
-For env.yml authoring, environment selection, private Git packages, and the full reference, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+For env.yml authoring, environment selection, private Git packages, and the full reference, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Cross-project references and shared macros
 
@@ -364,7 +370,7 @@ This design keeps your security boundary clean: the ability to build a pipeline 
 
 ### Use Snowflake secrets for private Git packages
 
-Teams that depend on private dbt packages (shared macros, internal utilities) can use Snowflake secrets to authenticate against private Git repositories during `dbt deps`. This eliminates the need to store Git tokens in credential managers or developer environments. An admin creates a Snowflake secret containing a read-only Git personal access token, then references it in the `env.yml` file as a `DBT_ENV_SECRET_` variable. dbt uses this variable to authenticate when installing packages from `packages.yml`, and masks the value wherever it appears. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+Teams that depend on private dbt packages (shared macros, internal utilities) can use Snowflake secrets to authenticate against private Git repositories during `dbt deps`. This eliminates the need to store Git tokens in credential managers or developer environments. An admin creates a Snowflake secret containing a read-only Git personal access token, then references it in the `env.yml` file as a `DBT_ENV_SECRET_` variable. dbt uses this variable to authenticate when installing packages from `packages.yml`, and masks the value wherever it appears. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Hybrid development
 
@@ -397,7 +403,7 @@ The `dbt_projects_profiles.yml` file solves this:
 
 Hybrid teams can maintain both workflows side by side: some engineers can use the local dbt CLI with their personal `~/.dbt/profiles.yml`, while others use Workspaces or Cortex Code Desktop with the in-project `dbt_projects_profiles.yml`. Both groups can share one Git-versioned project without reconfiguring connections and can switch between local and Snowflake-managed development. The deployed dbt project object also uses `dbt_projects_profiles.yml`, so admins can configure production connection settings in a single version-controlled file.
 
-After your team deploys with `dbt_projects_profiles.yml`, pair it with `env.yml` to take advantage of Snowflake’s SQL in YAML capability, which standard dbt Core doesn’t offer on its own. Use SQL functions to compute time intervals for incremental processing, query control tables for orchestration metadata, or call stored procedures to retrieve runtime parameters. Both files remain version controlled, and Snowflake resolves the values dynamically at execution time without external tooling. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+After your team deploys with `dbt_projects_profiles.yml`, pair it with `env.yml` to take advantage of Snowflake’s SQL in YAML capability, which standard dbt Core doesn’t offer on its own. Use SQL functions to compute time intervals for incremental processing, query control tables for orchestration metadata, or call stored procedures to retrieve runtime parameters. Both files remain version controlled, and Snowflake resolves the values dynamically at execution time without external tooling. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 For more information about developing in Workspaces, see [Workspaces for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-using-workspaces). For Cortex Code Desktop, see [dbt integration](/user-guide/cortex-code/cortex-code-desktop/dbt-integration).
 

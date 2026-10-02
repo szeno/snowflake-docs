@@ -20,18 +20,18 @@ The Snowflake Model Registry provides the following capabilities:
 
 - Stores and manages model versions, model metrics, and model metadata.
 - Serves models and runs distributed inference at scale using Python, SQL, or REST API endpoints.
-- Manages model life cycle with flexible governance options and working with models from dev to prod environments.
+- Manages model life cycle with flexible governance options and support for working with models from dev to prod environments.
 - Monitors model performance and drift using Snowflake ML Observability.
-- Securely manages model access with role based access control (RBAC).
+- Securely manages model access with role-based access control (RBAC).
 
 The model registry stores machine learning models as first-class schema-level objects in Snowflake.
 
 After you have logged a model, you can invoke its methods (equivalent to functions or stored procedures) to perform
-model operations, such as [inference](/developer-guide/snowflake-ml/inference/native-batch-inference-sql)
-, in a Snowflake [virtual warehouse](/user-guide/warehouses),
+model operations, such as [inference](/developer-guide/snowflake-ml/inference/native-batch-inference-sql),
+in a Snowflake [virtual warehouse](/user-guide/warehouses),
 or serve the model in Snowpark Container Services for [GPU-based inference](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api).
 
-The Snowflake Model Registry has [built-in types](/developer-guide/snowflake-ml/model-registry/built-in-models/overview) support for the most common model
+The Snowflake Model Registry has [built-in type](/developer-guide/snowflake-ml/model-registry/built-in-models/overview) support for the most common model
 types, including [scikit-learn](/developer-guide/snowflake-ml/model-registry/built-in-models/scikit-learn),
 [xgboost](/developer-guide/snowflake-ml/model-registry/built-in-models/xgboost),
 [LightGBM](/developer-guide/snowflake-ml/model-registry/built-in-models/lightgbm),
@@ -71,7 +71,7 @@ To use a model, you must either own the model or have either USAGE or READ privi
 
 To give users USAGE access to all existing models in a schema, use
 `GRANT USAGE ON ALL MODELS IN SCHEMA <schema> TO ROLE <role>;` You can also give users access to future models created in a schema
-automatically via `GRANT USAGE ON FUTURE MODELS IN SCHEMA <schema> TO ROLE <role>;`. .
+automatically via `GRANT USAGE ON FUTURE MODELS IN SCHEMA <schema> TO ROLE <role>;`.
 
 Similarly, you can give users READ access to all existing or future models in a schema by using the same syntax, but replacing
 `USAGE` with `READ`.
@@ -176,7 +176,7 @@ The combination of model name and version must be unique in the schema.
 | `pip_requirements` | List of package specs for PyPI packages required by your model. To install those packages from an artifact repository (the built-in PyPI repository or a [customer-hosted repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories)), also set `artifact_repository_map`. Models that target a warehouse require an artifact repository for pip packages. For Snowpark Container Services (online or batch inference), specify a repository when the packages aren’t available on public PyPI, such as a private internal package. |
 | `artifact_repository_map` | Dictionary mapping the artifact repository type (must be `"pip"`) to a repository name. For the built-in PyPI artifact repository, specify `{"pip": "snowflake.snowpark.pypi_shared_repository"}`. For a private PyPI-compatible repository, use the fully qualified name of a [customer-hosted artifact repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories) (for example, `{"pip": "my_db.my_schema.my_python_repo"}`).  When specified, pip requirements are installed from that repository when the model runs in a warehouse and when Snowflake builds the container image for SPCS online or batch inference. See [Use a private PyPI artifact repository](#label-snowpark-model-registry-private-pypi).  Copy code  ``` mv = reg.log_model(     clf,     model_name="my_model",     artifact_repository_map={         "pip": "snowflake.snowpark.pypi_shared_repository"     },     pip_requirements=['scikit-learn'],     sample_input_data=train_features, ) ``` |
 | `resource_constraint` | Dictionary mapping of warehouse resource constraint keys and values, e.g. {“architecture”: “x86”}. This can be used to ensure the model runs in a warehouse with the necessary architecture. |
-| `target_platforms` | List of target platforms to run the model. The only acceptable inputs are a combination of `"WAREHOUSE"` and `"SNOWPARK_CONTAINER_SERVICES"`, or a target platform constant. If `WAREHOUSE` is specified in `target_platforms`, and the model is not runnable in the warehouse (due to dependencies, gpu requirement, model size etc), `log_model()` fails. Default value in [Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml) is `["SNOWPARK_CONTAINER_SERVICES"]` and both elsewhere. For partitioned models, the value must be `["WAREHOUSE"]` or `snowflake.ml.model.target_platform.WAREHOUSE_ONLY`. |
+| `target_platforms` | List of target platforms to run the model. The only acceptable inputs are a combination of `"WAREHOUSE"` and `"SNOWPARK_CONTAINER_SERVICES"`, or a target platform constant. If `WAREHOUSE` is specified in `target_platforms`, and the model is not runnable in the warehouse (due to dependencies, gpu requirement, model size etc), `log_model()` fails. Default value in [Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml) is `["SNOWPARK_CONTAINER_SERVICES"]` and both platforms elsewhere. For partitioned models, the value must be `["WAREHOUSE"]` or `snowflake.ml.model.target_platform.WAREHOUSE_ONLY`. |
 | `python_version` | The version of Python under which the model will run. Defaults to `None`, which designates the latest version available in the warehouse. |
 | `sample_input_data` | A DataFrame that contains sample input data. The feature names required by the model and their types are extracted from this DataFrame. Either this argument or `signatures` must be provided for all models except Snowpark ML and MLFlow models and Hugging Face pipelines. |
 | `signatures` | Model method signatures as a mapping from target method name to signatures of input and output. Either this argument or `sample_input_data` must be provided for all models except Snowpark ML and MLFlow models and Hugging Face pipelines. |
@@ -290,7 +290,7 @@ However, you cannot address model artifacts using the usual stage path syntax. I
 general way to specify the location of objects in Snowflake. For example, a version inside a model can be specified by a
 URL of the form `snow://model/<model_name>/versions/<version_name>/`.
 
-Knowing the of name of the model and the version you want, you can use the
+Knowing the name of the model and the version you want, you can use the
 [LIST command](/sql-reference/sql/list) to view the artifacts of the model as follows:
 
 Copy code
@@ -817,7 +817,7 @@ Models can both be shared and replicated. The following privileges are grantable
 Using the Snowflake Model Registry incurs standard Snowflake consumption-based costs. These include:
 
 - Cost of storing model artifacts, metadata, and functions. For general information about storage costs, see [Exploring storage cost](/user-guide/cost-exploring-data-storage).
-- Cost of copying files between stages to Snowflake. See [COPY FILES](/sql-reference/sql/copy-files).
+- Cost of copying files between stages in Snowflake. See [COPY FILES](/sql-reference/sql/copy-files).
 - Cost of serverless model object operations through the Snowsight UI or the SQL or Python interface, such as
   showing models and model versions and altering model comments, tags, and metrics.
 - Warehouse compute costs, which vary depending on the type of model and the quantity of data used in inference.

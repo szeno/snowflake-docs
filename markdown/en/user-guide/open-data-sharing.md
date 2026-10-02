@@ -1,8 +1,10 @@
-# Open Data Sharing
+# Share data with non-Snowflake consumers
 
 [Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
+
+[![Open Data Sharing — share data with non-Snowflake consumers via IRC endpoint](/static/images/collaboration/open-format-sharing-non-snowflake.png)](/static/images/collaboration/open-format-sharing-non-snowflake.png)
 
 Open Data Sharing in Snowflake expands traditional data sharing beyond the Snowflake ecosystem.
 This capability allows you to securely share live, read-only data assets with consumers who do not use Snowflake, eliminating the

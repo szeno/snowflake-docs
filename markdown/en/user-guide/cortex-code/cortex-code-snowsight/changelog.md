@@ -52,6 +52,16 @@ ALTER ACCOUNT SET COCO_SNOWSIGHT_ALLOW_ALL_PERMISSION_OPTIONS_DISABLED = TRUE;
 This also hides **Allow <tool> in this chat** and **Always allow <tool>**
 on individual consent prompts. Users must approve each tool call individually.
 
+### Restrict this chat
+
+You can apply a [Restricted Session Scope](/user-guide/restricted-session-scope) (RSS) to an
+individual CoCo chat. Select **+**, then **Restrict this chat** to apply read-only access or restrict
+the chat to selected roles. The restriction can only narrow the access allowed by your roles and
+any administrator-enforced RSS.
+
+For instructions, see
+[Restrict a chat](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-restricted-session-scope).
+
 ## August 2026
 
 | Date | Feature | Phase |

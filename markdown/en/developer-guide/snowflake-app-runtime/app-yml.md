@@ -69,7 +69,7 @@ required. Every other key is optional.
 | --- | --- |
 | [`version`](#label-snowflake-apps-manifest-version) | Schema the CLI reads. Set `2` |
 | [`name`](#label-snowflake-apps-manifest-name) | Application Service name |
-| [`database`](#label-snowflake-apps-manifest-database) | Destination database. Use `USER$` for the caller’s [personal database](/developer-guide/snowflake-app-runtime/deploy-targets) |
+| [`database`](#label-snowflake-apps-manifest-database) | Destination database. Use `USER$` for the caller’s [personal database](/user-guide/personal-databases) |
 | [`schema`](#label-snowflake-apps-manifest-schema) | Destination schema |
 | [`query_warehouse`](#label-snowflake-apps-manifest-query-warehouse) | Warehouse the service uses for queries |
 

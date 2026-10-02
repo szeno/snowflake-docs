@@ -308,13 +308,13 @@ Now analyze this data by calling the GET\_DRIVERS method of a TOP\_INSIGHTS inst
 Copy code
 
 ```
-CREATE OR REPLACE SNOWFLAKE.ML.TOP_INSIGHTS my_insights_model()
+CREATE OR REPLACE SNOWFLAKE.ML.TOP_INSIGHTS my_insights_model();
 
 CALL my_insights_model!GET_DRIVERS(
   INPUT_DATA => TABLE(input_view),
   LABEL_COLNAME => 'label',
   METRIC_COLNAME => 'metric'
-)
+);
 ```
 
 The output resembles the following:

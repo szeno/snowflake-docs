@@ -1,4 +1,4 @@
-# Using SQL environment variables in dbt Projects on Snowflake
+# Use SQL environment variables in dbt Projects on Snowflake
 
 Environment variables have been part of dbt Core for years, but managing them at scale has always meant stitching together `.env` files across a growing team of engineers. These files live on individual machines, drift out of sync, and can’t be reviewed or audited. The dbt Projects on Snowflake `env.yml` is a single, Git-versioned file that provides SQL in YAML capabilities alongside Snowflake secrets support to let admins manage per-developer schemas, dynamic runtime values, secrets, and CI/CD configurations in one place, unlocking workflows dbt Core can’t offer on its own.
 
@@ -85,7 +85,7 @@ These rules are enforced on every run. If you break them, the run fails.
 
 - Every key in `env:` and in any override must be prefixed with `DBT_` (this includes `DBT_ENV_CUSTOM_ENV_` and `DBT_ENV_SECRET_`).
 - Every key must be UPPERCASE.
-- Every key in the `secrets:` section must be prefixed with `DBT_ENV_SECRET_`. dbt masks the value of any `DBT_ENV_SECRET_` variable to `****` in logs and error messages.
+- Every key in the `secrets:` section must be prefixed with `DBT_ENV_SECRET_`, except for the dbt State credential `DBT_CLOUD_TOKEN`. dbt masks the values of both `DBT_ENV_SECRET_` variables and `DBT_CLOUD_TOKEN` to `****` in logs and error messages.
 - Key names (the left-hand side) must be plain text. They can’t be SQL.
 
 Environment names are case sensitive and can contain English letters, numbers, and underscores, up to 256 characters.

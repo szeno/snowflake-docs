@@ -194,7 +194,7 @@ Providers perform the following clean room actions:
 - Specify which templates are used in a clean room, and create custom templates for the clean room
 - Run queries on consumer data, if the consumer consents
 - Permit chained templates
-- Load python script into a clean room to use in a template
+- Load Python script into a clean room to use in a template
 - Permit provider data from this clean room to be queried with data from other specified clean rooms in a consumer query
 - Enable or disable differential privacy for the clean room or consumer
 - Manage versioning of the clean room
@@ -214,7 +214,7 @@ Consumers perform the following clean room actions (according to the clean room 
 - Specify whether providers can run a template in the clean room (by default, only consumers can run a template)
 - Allow the clean room provider to run queries against the consumer’s data
 - Run a query that spans their data and provider data from multiple clean rooms, if the providers in all the affected clean rooms agree.
-- Load python script into the clean room (with the permission of the provider)
+- Load Python script into the clean room (with the permission of the provider)
 - Set column and join policies on their own data
 - Set differential privacy settings for provider-run queries
 

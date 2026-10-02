@@ -576,7 +576,7 @@ If your dbt Core project calls `env_var()` in models, macros, or `profiles.yml`,
 3. **Rename each variable to UPPERCASE with the `DBT_` prefix:** For example, `my_schema` becomes `DBT_MY_SCHEMA`. Your values stay the same.
 4. **Update the references in your project files:** Ask CoCo to replace every `env_var('OLD_NAME')` call with `env_var('DBT_OLD_NAME')` across your models, macros, and `profiles.yml` in one pass.
 
-For env.yml authoring, environment selection, private Git packages, and the full reference, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+For env.yml authoring, environment selection, private Git packages, and the full reference, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Step 7: Deploy the project and schedule it with a task
 

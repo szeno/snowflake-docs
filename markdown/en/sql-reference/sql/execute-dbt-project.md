@@ -83,7 +83,7 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
 :   Specifies the external access integration that grants dbt outbound network access to external endpoints. Most commonly, this lets dbt pull remote packages from the dbt package hub or a Git provider such as GitHub when `dbt deps` runs during execution.
 
-    If a command needs external access during execution (for example, `dbt deps`), specify `EXTERNAL_ACCESS_INTEGRATIONS` on the EXECUTE DBT PROJECT command. This also applies when your project resolves a Snowflake secret from an `env.yml` file to authenticate private Git packages. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+    If a command needs external access during execution (for example, `dbt deps`), specify `EXTERNAL_ACCESS_INTEGRATIONS` on the EXECUTE DBT PROJECT command. This also applies when your project resolves a Snowflake secret from an `env.yml` file to authenticate private Git packages. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
     For more information, see [Understand dependencies for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dependencies).
 
@@ -94,7 +94,7 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 
     Default: The dbt project object’s `DEFAULT_ENVIRONMENT`, or the `default_environment:` in `env.yml` if `DEFAULT_ENVIRONMENT` isn’t set.
 
-    For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+    For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `ENV_VARS = ( 'key' = 'value' [ , ... ] )`
 :   Overrides individual environment variables for a single execution. These overrides merge into the selected environment and take final precedence over values in `env.yml`.
@@ -103,7 +103,7 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 
     Default: No value
 
-    For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+    For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `IMPORTS = ( { 'source_location' | system_function } [ AS 'alias' ] [ , ... ] )`
 :   When executing a deployed dbt project object, makes files from one or more source locations
@@ -401,4 +401,4 @@ EXECUTE DBT PROJECT my_database.my_schema.my_dbt_project
   ENV_VARS = ( 'DBT_DATABASE' = 'tasty_bytes_staging_db' );
 ```
 
-For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).

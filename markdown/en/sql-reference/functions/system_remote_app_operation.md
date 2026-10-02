@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Categories:
 :   [System functions](/sql-reference/functions-system) (Control)
 

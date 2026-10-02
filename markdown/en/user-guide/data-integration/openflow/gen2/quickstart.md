@@ -7,8 +7,8 @@ This topic walks through what’s needed to get your first gen 2 connector up an
 background on how gen 2 Openflow differs from gen 1, see [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations).
 
 **If you already have gen 1 deployments and runtimes** that you want to bring into gen 2, follow
-the migration path instead of creating new resources here. Migration from gen 1 to gen 2 is
-available in Private Preview; contact your Snowflake account representative to be included.
+[Migrate a gen 1 deployment and runtimes to gen 2](/user-guide/data-integration/openflow/gen2/migrate-deployment-runtime) instead of creating new
+resources here.
 Return to this quickstart to set up privileges if you haven’t done that yet (the privilege
 grants in [Set up privileges](#label-openflow-gen2-quickstart-privileges) apply regardless of
 how you create your gen 2 resources).

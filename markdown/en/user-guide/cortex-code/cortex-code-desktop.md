@@ -60,6 +60,27 @@ Adding a credit card doesn’t upgrade the trial to a paid account or end the tr
 See [Release notes](/user-guide/cortex-code/cortex-code-desktop/release-notes) for the latest features,
 improvements, and fixes in each version.
 
+## Restrict a chat
+
+Use a [Restricted Session Scope](/user-guide/restricted-session-scope) (RSS) to reduce what CoCo can
+do in the current chat. You can apply read-only access, allow only selected roles, or block selected
+roles. An RSS only narrows the privileges available through your roles and any
+administrator-enforced scope.
+
+To restrict the current chat:
+
+1. Select **+**, then **Restrict this session**.
+2. Select **Read only** to apply a read-only ceiling, or select **Restrict by role**.
+3. For a role restriction, apply a saved allowlist or blocklist, or create a custom restriction by
+   selecting roles and choosing **Allow** or **Block**. CoCo stores a custom definition in
+   `USER$<username>.RSS` so that you can reuse it in CoCo Desktop, CoCo CLI, or SQL.
+
+After an RSS is active, you can switch to another RSS, but you can’t remove or relax the
+restriction in the current chat. Start a new chat to run without the user-managed RSS.
+
+For RSS behavior, role inheritance details, and instructions for other CoCo clients, see
+[Restrict a CoCo chat](/user-guide/restricted-session-scope#label-agent-rss-user-managed).
+
 ## Supported models
 
 CoCo can use the Cortex large language models your role has access to, including Claude,

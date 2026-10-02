@@ -66,10 +66,10 @@ Using the clean rooms UI to work with your data in a Snowflake Data Clean Room c
 different cloud platform and region than your Snowflake account.
 
 The following table summarizes which cloud platform and region are used to process data for Snowflake accounts in a particular region of
-Amazon Web Service (AWS), Microsoft Azure (Azure), and Google Cloud (GCP). It includes the following columns:
+Amazon Web Services (AWS), Microsoft Azure (Azure), and Google Cloud (GCP). It includes the following columns:
 
 - **Snowflake account region**: The cloud region where your Snowflake account is registered.
-- **UI gateway region**: The region that hosts the clean rooms UI for your account. Use this address to log into clean rooms UI.
+- **UI gateway region**: The region that hosts the clean rooms UI for your account. Use this address to log in to the clean rooms UI.
 - **Network addresses used by clean rooms UI**: These are the network addresses used by the clean rooms UI to communicate with your
   Snowflake account. If your Snowflake account uses a [network policy](/user-guide/network-policies) to control network traffic, your
   account administrator must explicitly allow traffic from all IP addresses in this column for your row. If your account has no externally
@@ -77,7 +77,7 @@ Amazon Web Service (AWS), Microsoft Azure (Azure), and Google Cloud (GCP). It in
 
 | Snowflake account region | UI gateway region | Network addresses used by clean rooms UI |
 | --- | --- | --- |
-| - AWS South America (Sao Paulo) - AWS US East (N. Virginia) - AWS US East (Ohio) - AWS US West (Oregon) - Azure Central US (Iowa) - Azure East US 2 (Virginia) - Azure Mexico Central (Querétaro) - Azure South Central US (Texas) - Azure West US 2 (Washington) - GCP US Central1 (Iowa) - GCP US East4 (N. Virginia) | [AWS US East (N. Virginia)](https://cleanroom.c1.us-east-1.aws.app.snowflake.com/) | 52.7.249.136 34.195.16.248 52.7.210.215 |
+| - AWS South America (São Paulo) - AWS US East (N. Virginia) - AWS US East (Ohio) - AWS US West (Oregon) - Azure Central US (Iowa) - Azure East US 2 (Virginia) - Azure Mexico Central (Querétaro) - Azure South Central US (Texas) - Azure West US 2 (Washington) - GCP US Central1 (Iowa) - GCP US East4 (N. Virginia) | [AWS US East (N. Virginia)](https://cleanroom.c1.us-east-1.aws.app.snowflake.com/) | 52.7.249.136 34.195.16.248 52.7.210.215 |
 | - AWS Canada (Central) - Azure Canada Central (Toronto) | [AWS Canada (Central)](https://cleanroom.c1.ca-central-1.aws.app.snowflake.com/) | 15.223.145.218 3.96.6.109 15.222.142.44 |
 | - AWS Europe (London) - AWS EU (Ireland) - AWS EU (Frankfurt) - AWS EU (Paris) - AWS EU (Stockholm) - AWS EU (Zurich) - AWS Africa (Cape Town) - Azure North Europe (Ireland) - Azure Sweden Central (Gavie) - Azure Switzerland North (Zurich) - Azure UAE North (Dubai) - Azure UK South (London) - Azure West Europe (Netherlands) - GCP Middle East Central2 (Dammam) - GCP Europe West (Frankfurt) - GCP Europe West2 (London) - GCP Europe West4 (Netherlands) | [AWS EU (Frankfurt)](https://cleanroom.c1.eu-central-1.aws.app.snowflake.com/) | 54.93.86.99 3.126.238.8 3.127.143.168 |
 | - AWS Asia Pacific (Mumbai) - Azure Central India (Pune) | [AWS Asia Pacific (Mumbai)](https://cleanroom.c1.ap-south-1.aws.app.snowflake.com/) | 35.154.94.29 13.235.168.249 15.206.48.175 |

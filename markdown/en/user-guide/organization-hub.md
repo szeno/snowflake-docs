@@ -5,8 +5,8 @@ Hub, choose one of the following:
 
 - **Insights** (generally available): Monitor and analyze cost, security posture, query health, and storage across all
   accounts. See [Organization Hub Insights](/user-guide/organization-hub-insights).
-- **Command center** (preview): Configure organization-wide settings, including Organization Features and 3rd party
-  access configuration. See [Organization Command Center](/user-guide/organization-hub-command-center).
+- **Command center** (generally available): Configure organization-wide settings, including Organization Features and
+  3rd party access configuration. See [Organization Command Center](/user-guide/organization-hub-command-center).
 
 Organization Hub requires an [organization account](/user-guide/organization-accounts).
 [Insights](/user-guide/organization-hub-insights) also requires
@@ -29,6 +29,6 @@ signals in Cortex Code. For tile descriptions, access control, and Cortex Code p
 
 ## Command Center
 
-Use **Command center** to configure organization-wide settings. Command Center is in preview. For access requirements
-and the Organization Features and 3rd party access configuration tiles, see
+Use **Command center** to configure organization-wide settings. For access requirements and the Organization Features
+and 3rd party access configuration tiles, see
 [Organization Command Center](/user-guide/organization-hub-command-center).

@@ -10,7 +10,7 @@ Available to all accounts.
 Returns the catalog URL and catalog URI for an external listing, enabling an external consumer to connect using an Iceberg REST Catalog client.
 
 See also:
-:   [Open Data Sharing](/user-guide/open-data-sharing)
+:   [Share data with non-Snowflake consumers](/user-guide/open-data-sharing)
 
 ## Syntax
 

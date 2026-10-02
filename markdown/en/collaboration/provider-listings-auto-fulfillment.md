@@ -66,13 +66,15 @@ Multiple listings can use the same database, but the database is only auto-fulfi
 
 Note
 
-For Business Critical Edition (BCE), the handling of shared data differs from high-security deployments like VPS.
-While BCE does not require creating a separate SSA for the region, it enforces strict data security and compliance with
-features like Tri-Secret Secure encryption.
+Snowflake creates one secure share area for your organization in each commercial region. If your account is
+[Business Critical Edition](/user-guide/intro-editions#label-snowflake-editions-business-critical), auto-fulfillment
+uses that same secure share area. You can protect the data with Business Critical Edition security features, such as
+[Tri-Secret Secure](/user-guide/security-encryption-tss).
 
-For deployments such as Virtual Private Snowflake (VPS) and government-specific Snowflake environments, there is a separate
-secure share area (SSA) for each deployment. This ensures that auto-fulfillment remains compliant with strict security and
-data isolation requirements unique to those environments.
+[Virtual Private Snowflake (VPS)](/user-guide/intro-editions#label-snowflake-editions-vps) and
+[government regions](/user-guide/intro-regions#label-us-gov-regions) are isolated from commercial regions. Snowflake
+creates a separate secure share area for each Virtual Private Snowflake environment and each government region so
+that auto-fulfilled data stays inside that environment.
 
 ## How auto-fulfillment refreshes data
 

@@ -10,6 +10,28 @@ Snowflake uses semantic versioning for Snowflake Connector for Spark updates.
 
 See [Snowflake Connector for Spark](/user-guide/spark-connector) for documentation.
 
+## Version 3.1.5 (September 23, 2025)
+
+### Bug fixes
+
+- Fixed an issue that prevented temporary AWS credentials from accessing the S3 bucket and directory used to exchange data between Spark and Snowflake.
+
+## Version 3.1.4 (August 20, 2025)
+
+### Bug fixes
+
+- Updated the S3 client to explicitly use BASIC authentication for proxy connections when a user and password are provided, preventing connection failures caused by unsupported authentication methods.
+
+### Improvements
+
+- Upgraded the suggested `commons-lang` version.
+
+## Version 3.1.3 (June 18, 2025)
+
+### New features
+
+- Added a force option when writing DataFrames to tables.
+
 ## Version 3.1.2 (June 03, 2025)
 
 ### New features

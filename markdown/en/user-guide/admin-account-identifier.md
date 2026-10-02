@@ -310,8 +310,6 @@ Snowsight:
 
        The **Account Details** dialog displays information about the account, including the account identifier and the account URL.
 
-    You can copy the full account locator from the **Full Account Locator** field.
-
 SQL:
 :   If you can connect to your Snowflake account, call the following context functions to identify the region and account locator
     for the Snowflake account you are connected to:

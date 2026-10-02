@@ -1289,6 +1289,59 @@ The temporary view is only available in the session in which it is created.
 This section explains how to query data in a file in a Snowflake stage. For other operations on files,
 [use SQL statements](#label-snowpark-python-dataframe-execute-sql).
 
+### Upload local files before querying them
+
+For a Python application running outside Snowflake, use `session.file.put` to upload local files to an internal stage. Uploading places files in stage storage; it doesn’t insert their contents into a table. After uploading, use `session.read` to query the staged files, or [COPY INTO a table](/sql-reference/sql/copy-into-table) to load them into a table.
+
+The following example assumes that `session` is connected, the local file `data.csv` exists, and you have permission to upload to an existing internal stage named `my_stage`:
+
+Copy code
+
+```
+results = session.file.put(
+    "data.csv",
+    "@my_stage",
+    parallel=4,
+    auto_compress=False,
+    overwrite=False,
+)
+for result in results:
+    print(result.source, result.target, result.status, result.message)
+```
+
+This example keeps the file uncompressed and doesn’t overwrite an existing staged file. Inspect the returned upload statuses before proceeding. For upload options, see [PUT](/sql-reference/sql/put).
+
+### Troubleshoot insufficient temporary disk space during uploads
+
+If a client-side upload fails with `OSError: [Errno 28] No space left on device`, check the filesystem used for temporary files by the Python process. It can differ from the filesystem containing the source file. Free space on the source-file volume doesn’t establish that the temporary filesystem has enough space.
+
+The Python connector can create temporary files while preparing uploads, including compressed or encrypted copies. Disabling `auto_compress` doesn’t guarantee that no temporary files are needed. Simultaneous upload jobs can increase peak temporary disk use. There isn’t a single disk-space multiplier that applies to every combination of files and upload settings.
+
+Run this diagnostic in the same environment as the upload process:
+
+Copy code
+
+```
+import shutil
+import tempfile
+
+temporary_directory = tempfile.gettempdir()
+usage = shutil.disk_usage(temporary_directory)
+print("Temporary directory:", temporary_directory)
+print("Free space (GiB):", round(usage.free / (1024 ** 3), 2))
+```
+
+To investigate and reduce temporary-storage pressure:
+
+- Check free space and any applicable quotas on that filesystem, not just the source-file volume. Account for other jobs using the same temporary storage.
+- Retry one upload job at a time. Reduce simultaneous application jobs and try a lower `parallel` value for `session.file.put`. The `parallel` option controls upload threads; it isn’t a limit on temporary disk use or all file-preparation work.
+- On a client machine that you manage, configure Python’s temporary directory to use an existing, writable filesystem with sufficient capacity. Set the appropriate `TMPDIR`, `TEMP`, or `TMP` environment variable before starting the Python process. Restart an existing process after changing its environment, then verify the effective location with `tempfile.gettempdir()`. See the [Python temporary-directory selection rules](https://docs.python.org/3/library/tempfile.html#tempfile.gettempdir).
+- If the error persists, collect the full traceback, Snowpark and Python Connector versions, effective temporary directory, and upload/concurrency settings for troubleshooting. Remove credentials and sensitive file information before sharing logs.
+
+For uploads from a client machine, resizing a Snowflake warehouse doesn’t increase that machine’s temporary disk capacity. These diagnostics concern the client upload process, not SQL queries over files already stored in a stage or the filesystem inside a Snowflake-hosted Python handler.
+
+### Query files in a stage
+
 To query data in files in a Snowflake stage, use the `DataFrameReader` class:
 
 1. Call the `read` method in the `Session` class to access a `DataFrameReader` object.

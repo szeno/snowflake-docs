@@ -370,7 +370,7 @@ with DAG(
     )
 ```
 
-Airflow substitutes the macros at run time, so Snowflake receives ordinary string values (for example, `'DBT_RUN_START' = '2026-07-15T00:00:00+00:00'`). You don’t need the `{{ select ... }}` SQL template here. That template is only for reading values at run time from a source like `SYSTEM$GET_TASK_GRAPH_CONFIG`, as in the [Snowflake task example](#label-dbt-orchestration-pass-dynamic-config). For the full `ENV_VARS` syntax and precedence rules, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+Airflow substitutes the macros at run time, so Snowflake receives ordinary string values (for example, `'DBT_RUN_START' = '2026-07-15T00:00:00+00:00'`). You don’t need the `{{ select ... }}` SQL template here. That template is only for reading values at run time from a source like `SYSTEM$GET_TASK_GRAPH_CONFIG`, as in the [Snowflake task example](#label-dbt-orchestration-pass-dynamic-config). For the full `ENV_VARS` syntax and precedence rules, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 #### Sensor-triggered DAG: wait for upstream data
 
@@ -495,7 +495,7 @@ with DAG(
     )
 ```
 
-When the run starts, Snowflake CLI resolves values highest priority first: `--env-vars`, then the `DBT_`-prefixed shell variables that `--use-shell-env-vars` pulls in, then the active environment in the project’s `env.yml`. Because this example passes no `--env-vars`, the Airflow shell variables win over any matching keys in `env.yml`. For the full syntax and precedence rules, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+When the run starts, Snowflake CLI resolves values highest priority first: `--env-vars`, then the `DBT_`-prefixed shell variables that `--use-shell-env-vars` pulls in, then the active environment in the project’s `env.yml`. Because this example passes no `--env-vars`, the Airflow shell variables win over any matching keys in `env.yml`. For the full syntax and precedence rules, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 Note
 

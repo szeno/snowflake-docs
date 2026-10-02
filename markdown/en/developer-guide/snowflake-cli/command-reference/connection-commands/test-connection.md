@@ -146,7 +146,7 @@ None
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV]`
 :   Specifies the output format. Default: TABLE.
 
 `--verbose, -v`
@@ -180,7 +180,7 @@ To supply a passcode directly instead of using the push mechanism, use the `--mf
 
 ## Examples
 
-To test particular connection you can run the following command:
+To test a particular connection you can run the following command:
 
 Copy code
 

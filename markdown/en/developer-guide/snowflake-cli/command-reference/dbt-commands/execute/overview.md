@@ -61,7 +61,7 @@ The following examples show how to invoke `snow dbt execute`. The NAME argument 
   snow dbt execute --use-shell-env-vars my_dbt_project run
   ```
 
-  `--env-vars` applies inline `DBT_`-prefixed overrides for a single execution, and `--use-shell-env-vars` pulls `DBT_`-prefixed shell variables into the run (excluding `DBT_ENV_SECRET_*` variables). To select an environment defined in the project’s `env.yml` file, add the `--env` flag. These flags are generally available in Snowflake CLI 3.28.0. For more information, see [Using SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+  `--env-vars` applies inline `DBT_`-prefixed overrides for a single execution, and `--use-shell-env-vars` pulls `DBT_`-prefixed shell variables into the run (excluding `DBT_ENV_SECRET_*` variables). To select an environment defined in the project’s `env.yml` file, add the `--env` flag. These flags are generally available in Snowflake CLI 3.28.0. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 - Run without writing generated target and log files back to the live version:
 
   Copy code

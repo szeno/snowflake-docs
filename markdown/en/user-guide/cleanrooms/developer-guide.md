@@ -72,6 +72,12 @@ When every collaborator in a collaboration belongs to the same organization, Sno
 and each time you add a template that references a code spec. The scan accounts for most of the wait time in both cases, so a
 same-organization collaboration is a much faster environment for developing and testing code specs and templates.
 
+Note
+
+Skipping the scan applies only to collaborations created after the
+[Clean Rooms API version 18.6 update](/release-notes/2026/other/2026-10-01-dcr). Same-organization
+collaborations created before that update continue to run the scan.
+
 A development cycle in a same-organization collaboration looks like this:
 
 1. Create a collaboration whose collaborators are all accounts in your own organization. For guidance on which accounts to use, see
