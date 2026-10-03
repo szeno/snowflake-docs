@@ -214,7 +214,7 @@ the provider and consumer, each with the clean rooms API installed. Replace the 
 - [Provider example code](/static/samples/clean-rooms/c-run-p-activation-p.sql)
 - [Consumer example code](/static/samples/clean-rooms/c-run-p-activation-c.sql)
 
-Here is how a provider can push results their own Snowflake account. This combines several techniques, including custom templates,
+Here is how a provider can push results to their own Snowflake account. This combines several techniques, including custom templates,
 provider-run analysis, and provider activation, and so involves several rounds of request and approval between the provider and
 consumer.
 
@@ -254,7 +254,7 @@ consumer.
 **5. Provider**
 
 > 1. Enable consumer data to be shared in a provider activation by calling `provider.mount_request_logs_for_all_consumers`.
-> 2. Run the activation template by calling `provider.submit_analysis_request`). The request takes several minutes to appear in
+> 2. Run the activation template by calling `provider.submit_analysis_request`. The request takes several minutes to appear in
 >    the logs; check status by calling `provider.check_analysis_status`. Note that even after status is reported as
 >    SUCCESS, additional time is required for results to be decrypted and written to the provider’s Snowflake table.
 >    All decrypted data is appended at one time to the results table. Keep checking the results table periodically for your segment

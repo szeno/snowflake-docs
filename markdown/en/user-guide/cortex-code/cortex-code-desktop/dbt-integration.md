@@ -51,7 +51,7 @@ for the run.
 
 | Field | Purpose |
 | --- | --- |
-| **dbt Version** | The Snowflake-managed runtime for the run, for example dbt Core 1.11.11 or a dbt Fusion engine build. |
+| **dbt Version** | The Snowflake-managed runtime for the run, for example dbt Core 1.12.3 or dbt 2.0.0. |
 | **External Access Integration** | The EAI to attach when dbt needs network access to fetch packages declared in `packages.yml`. The list shows the integrations that `SHOW EXTERNAL ACCESS INTEGRATIONS` returns for your active role. Leave it empty if your project uses only local packages. |
 
 Expand

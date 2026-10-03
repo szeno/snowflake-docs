@@ -313,7 +313,7 @@ If delete-then-insert of the same row should be invisible to your merge logic (f
 - Upstream schema changes cause the next refresh to fail with a compile error. If the upstream object was altered (not replaced or dropped), use `CREATE OR ALTER` with an updated `REFRESH USING` definition to recover. The next refresh continues from the last successful refresh. If the upstream used `CREATE OR REPLACE`, change tracking is broken and you must recreate the downstream with `CREATE OR REPLACE`.
 - [Frozen regions (`FROZEN WHERE`)](/user-guide/dynamic-tables/frozen-regions) and `INSERT ONLY INPUTS` can’t be combined with `REFRESH USING`.
 - Cloning: if a custom incremental dynamic table’s base tables are swapped after it has refreshed, the cloned table doesn’t refresh. Refresh the clone source first (manually if needed), then clone.
-- Replication has the following limitations:
+- After failover, custom incremental dynamic tables always continue incrementally refreshing. Replication has the following limitations:
   - Custom incremental dynamic tables and their base tables in different failover groups aren’t supported.
   - Replication of custom incremental dynamic tables with Apache Iceberg™ base tables, or of custom incremental dynamic tables that are themselves dynamic Iceberg tables, isn’t supported.
   - If a custom incremental dynamic table’s base tables are swapped or recreated, the replica is usable only after up to two replication refresh cycles.

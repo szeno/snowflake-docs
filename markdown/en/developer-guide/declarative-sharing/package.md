@@ -96,7 +96,7 @@ For more information about how to download and use the tool, see the [Snowflake 
 
 Note
 
-The Manifest from Share tool only creates the manifest file using the data share’s databases, schemas, tables and views. The tool doesn’t include any other objects in the generated manifest file.
+The Manifest from Share tool only creates the manifest file using the data share’s databases, schemas, tables, and views. The tool doesn’t include any other objects in the generated manifest file.
 
 ### Get notebook files
 

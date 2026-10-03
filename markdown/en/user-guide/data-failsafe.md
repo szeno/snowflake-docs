@@ -20,6 +20,8 @@ Snowflake to recover data that may have been lost or damaged due to extreme oper
 
 Data recovery through Fail-safe may take from several hours to several days to complete.
 
+To recover data from Fail-safe, open a case with Snowflake Support.
+
 ## View Fail-safe storage for your account
 
 When you review the total data storage usage for your account in Snowsight, you can view the
@@ -46,6 +48,10 @@ through Fail-safe, use the following metering history views. Filter for the FAIL
 
 ## Considerations
 
-For fail-safe and Snowpipe Streaming Classic, be aware of the following limitations:
+Snowpipe Streaming has two architectures: the
+[classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview), which is the original implementation and is
+planned for future deprecation, and the
+[high-performance architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview), which Snowflake recommends
+for new implementations. Be aware of the following limitation for Fail-safe and the classic architecture:
 
-- Fail-safe doesn’t support tables that contain data ingested by Snowpipe Streaming Classic. For such tables, you can’t use fail-safe for recovery because fail-safe operations on that table will fail completely. For more information, see [Snowpipe Streaming limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-limitations#label-snowpipe-streaming-limitations).
+- Fail-safe doesn’t support tables that contain data ingested by the Snowpipe Streaming classic architecture. For such tables, you can’t use Fail-safe for recovery because Fail-safe operations on that table will fail completely. For more information, see [Snowpipe Streaming limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-limitations#label-snowpipe-streaming-limitations).

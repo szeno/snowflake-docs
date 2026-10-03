@@ -21,7 +21,7 @@ When Cross-Cloud Auto-Fulfillment is used in a collaboration:
 
 ## Enabling Cross-Cloud Auto-Fulfillment
 
-Cross-Cloud Auto-Fulfillment must be enabled in the account of any collaborator that needs to share data with an account in another cloud hosting region. If this feature isn’t enabled for an account or role in an account, follow the below steps:
+Cross-Cloud Auto-Fulfillment must be enabled in the account of any collaborator that needs to share data with an account in another cloud hosting region. If this feature isn’t enabled for an account or role in an account, follow these steps:
 
 1. Enable Cross-Cloud Auto-Fulfillment for an account
 

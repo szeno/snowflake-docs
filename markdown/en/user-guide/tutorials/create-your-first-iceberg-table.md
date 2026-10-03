@@ -48,12 +48,6 @@ You need:
   Users with the ACCOUNTADMIN role can create new users and grant them the required privileges.
 - Administrator access for your cloud storage provider in order to configure an external volume.
 - A storage bucket (or container) with the same cloud provider, in the same region that hosts your Snowflake account.
-
-  Note
-
-  Snowflake can’t support external volumes with S3 bucket names that contain dots (for example, `my.s3.bucket`).
-  S3 doesn’t support SSL for virtual-hosted-style buckets with dots in the name, and
-  Snowflake uses virtual-host-style paths and HTTPS to access data in S3.
 - Access to the SNOWFLAKE\_SAMPLE\_DATA database in your account. Snowflake creates the sample database in new accounts by default.
   If the database has not been created in your account, see [Use the sample database](/user-guide/sample-data-using).
 

@@ -15,7 +15,7 @@ This tutorial is not meant to be exhaustive. Please review
 Note
 
 This tutorial assumes you do not have a ServiceNow® account, so it guides you through
-the steps of creating a developer account. If you do have a Servicenow® account,
+the steps of creating a developer account. If you do have a ServiceNow® account,
 feel free to try it out, with the caveat that the Snowflake connector for ServiceNow®
 is subject to the [Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms).
 
@@ -75,7 +75,7 @@ Connectors require a virtual warehouse. To create the required warehouse perform
 Change to the `ACCOUNTADMIN` role.
 
 1. Navigate to **Admin -> Warehouses** and select **+ Warehouse**.
-2. Specify `CONNECTOR_UI_WH` as warehouse name, size XS, and, and leaving all other the defaults.
+2. Specify `CONNECTOR_UI_WH` as warehouse name, size XS, and leave all other defaults.
 3. Select **Create Warehouse**.
 
 ### Install the ServiceNow® connector

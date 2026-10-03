@@ -4,12 +4,15 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
+- [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
 - [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)
 - [Oct 1, 2026: Remote app operations for Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-10-01-remote-app-operations-ga)
 - [Sep 30, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-30-claude-sonnet-5-5-preview)
 - [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
 - [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
+- [Sep 30, 2026: Dynamic tables continue incrementally refreshing after failover (General availability)](/release-notes/2026/other/2026-09-30-dynamic-tables-incremental-refresh-after-failover)
 - [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
 - [Sep 30, 2026: Organization Features in Organization Command Center (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-features-ga)
 - [Sep 30, 2026: Organization Command Center 3rd party access configuration (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-third-party-ga)

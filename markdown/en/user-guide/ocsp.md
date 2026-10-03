@@ -35,7 +35,7 @@ Currently, the fail-open default approach applies to the following client and dr
 | SnowSQL | v1.1.79 or later |
 | Python Connector | v1.8.0 or later |
 | JDBC Driver | v3.8.0 or later |
-| ODBC Driver | v2.19.0 or later |
+| ODBC Driver | v2.19.0 through 3.x |
 | SQL Alchemy | Upgrade Python Connector to v1.8.0 or later |
 | Spark | v2.4.14 or later if using Maven or SBT to build the Spark application.   JDBC v3.8.0 or later if attaching JAR files to Spark cluster.   Request Databricks to upgrade their Spark connector if using the Databricks built-in Spark connector. |
 | Go Driver | v1.2.0 or later |
@@ -46,6 +46,10 @@ Expand
 Show lessSee more
 
 Note
+
+ODBC 4.x does not implement OCSP. Certificate revocation list (CRL) checking is available but disabled by default
+(`CRL_MODE=DISABLED`). Set `CRL_MODE=ENABLED` for fail-close checking or `CRL_MODE=ADVISORY` for advisory checking.
+See [ODBC 4.x](/developer-guide/odbc/odbc-parameters#label-odbc-crl-4x).
 
 Snowflake does not support OCSP checking for the .NET driver. Instead, .NET uses its own framework to check the validity of the HTTPS certificate.
 
@@ -62,7 +66,7 @@ To preserve the fail-close behavior, set the corresponding `ocsp_fail_open` para
 | SnowSQL | `snowsql -o ocsp_fail_open=false` |
 | Python Connector | For details, see [Choosing fail-open or fail-close mode](/developer-guide/python-connector/python-connector-connect#label-python-ocsp-choosing-fail-open-or-fail-close-mode) in the Python Connector documentation. |
 | JDBC Driver | For details, see [Choosing fail-open or fail-close mode](/developer-guide/jdbc/jdbc-configure#label-jdbc-ocsp-choosing-fail-open-or-fail-close-mode) in the JDBC Driver documentation. |
-| ODBC Driver | Choose one of the following:   Set the connection parameter to `OCSP_FAIL_OPEN=false`   Use the environment variable $SIMBAINI to locate the corresponding file. Then set `OCSPFailOpen=false` |
+| ODBC Driver | For ODBC 3.x, set the connection parameter `OCSP_FAIL_OPEN=false`, or use `$SIMBAINI` to locate the configuration file and set `OCSPFailOpen=false` there. ODBC 4.x does not implement OCSP; set `CRL_MODE=ENABLED` for fail-close [CRL checking](/developer-guide/odbc/odbc-parameters#label-odbc-crl-4x). `CRL_MODE=ADVISORY` is not fail-close. |
 | SQL Alchemy | See JDBC Driver settings |
 | Spark | The Spark Connector does not have an `ocsp_fail_open` parameter.   Fail-close can only be preserved with Spark if using the JDBC driver. |
 | Go Driver | Do either of the following:   - Set the connection parameter `OCSPFailOpen` in Config to `ocspFailOpenTrue` or `ocspFailOpenFalse`, for example:   `import ( ... sf "github.com/snowflakedb/gosnowflake ... ")`   `config: &Config{ Account: "xy12345", ..., OCSPFailOpen: sf.ocspFailOpenFalse, ... }`   - Set the `ocspFailOpen` connection parameter in the connect string to `true` or `false`, for example,   `user:pass@account/db/s?ocspFailOpen=false`.   Note the differences in case (uppercase / lowercase).   For more information on Go connection parameters, see the GoDoc [gosnowflake documentation](https://godoc.org/github.com/snowflakedb/gosnowflake). |

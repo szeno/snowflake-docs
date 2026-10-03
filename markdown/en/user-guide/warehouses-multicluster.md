@@ -32,7 +32,7 @@ Additionally, multi-cluster warehouses support all the same properties and actio
 
 ### Upper limit on number of clusters for a multi-cluster warehouse
 
-The maximum number of clusters for a multi-cluster warehouse depends on the warehouse size. Larger warehouse sizes have lower limits on the number of clusters. By default, all warehouses are limited to a maximum of ten clusters. You can override that setting to allow more clusters, depending on your warehouse size. The following table shows the maximum number of clusters for each warehouse size:
+The maximum number of clusters for a multi-cluster warehouse depends on the warehouse size. Larger warehouse sizes have lower limits on the number of clusters. The following table shows the maximum number of clusters for each warehouse size:
 
 | Warehouse size | Allowed maximum cluster count |
 | --- | --- |

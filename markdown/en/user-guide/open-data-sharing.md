@@ -4,17 +4,16 @@
 
 Available to all accounts.
 
-[![Open Data Sharing — share data with non-Snowflake consumers via IRC endpoint](/static/images/collaboration/open-format-sharing-non-snowflake.png)](/static/images/collaboration/open-format-sharing-non-snowflake.png)
+[![Greater access to non-Snowflake customers — directly share with non-Snowflake consumers using the IRC endpoint](/static/images/collaboration/open-format-sharing-non-snowflake.png)](/static/images/collaboration/open-format-sharing-non-snowflake.png)
 
-Open Data Sharing in Snowflake expands traditional data sharing beyond the Snowflake ecosystem.
-This capability allows you to securely share live, read-only data assets with consumers who do not use Snowflake, eliminating the
+Snowflake Sharing allows you to securely share live, read-only data assets with consumers who do not use Snowflake, eliminating the
 need for complex ETL pipelines, data duplication, or manual file exports.
 
 Note
 
 During Public Preview, the only supported target region for shared data is the region where your provider account is located.
 
-## Why use Open Data Sharing?
+## Why use Snowflake Sharing?
 
 - **Universal access:** Consumers query live data using standard, open-source Iceberg REST Catalog APIs from any analytical tool or
   platform where this protocol is supported.
@@ -27,7 +26,7 @@ During Public Preview, the only supported target region for shared data is the r
 
 ## Secure data sharing with external consumers
 
-The following steps walk through a minimal Open Data Sharing workflow: create an external consumer and access token, prepare shared
+The following steps walk through how to share with non-Snowflake customers: create an external consumer and access token, prepare shared
 Iceberg table data, create a share and listing, and retrieve the catalog URL for the external consumer.
 
 ## Determine your account region

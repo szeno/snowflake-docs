@@ -1,6 +1,14 @@
-# Installing and configuring the ODBC Driver for macOS
+# Installing and configuring the ODBC Driver 4.x for macOS
+
+**Version: 4.x.** [Switch to ODBC 3.x](/developer-guide/odbc/odbc-mac-3x) · [Choose another task](/developer-guide/odbc/odbc).
 
 Similar to Windows, macOS utilizes named data sources (DSNs) for connecting ODBC-based client applications to Snowflake.
+
+Important
+
+These instructions install ODBC 4.x. Installing 4.x replaces 3.x on the machine. If you currently use 3.x,
+read the [migration guide](/developer-guide/odbc/odbc-migration) and validate on a separate host first.
+To stay on 3.x, use the [3.x macOS instructions](/developer-guide/odbc/odbc-mac-3x).
 
 ## Prerequisites
 
@@ -8,11 +16,9 @@ Similar to Windows, macOS utilizes named data sources (DSNs) for connecting ODBC
 
 For a list of the operating systems supported by Snowflake clients, see [Operating system support](/release-notes/requirements#label-client-operating-system-support).
 
-With ODBC version 3.0.1, the driver no longer supports MacOS 10.14 and 10.15 versions.
-
 ### iODBC
 
-The Snowflake ODBC driver for Mac requires iODBC.
+The following instructions use iODBC. If your application uses unixODBC, configure the driver-manager encoding as described below.
 
 You can download the iODBC from:
 
@@ -26,18 +32,13 @@ To install iODBC:
    By default, the package installs the software in the `/Library/Application Support/iODBC/bin` directory. You can add this directory to the
    `$PATH` environment variable to avoid needing to specify the full pathname to execute any of the iODBC commands.
 
-Note
-
-iODBC provides a GUI administrator tool for configuring drivers and DSNs; however, this tool has not been tested for use with Snowflake and,
-therefore, should not be used to create or manage DSNs.
-
 ## Step 1: Install the ODBC Driver
 
 To install the Snowflake ODBC driver for macOS:
 
-1. If you haven’t already downloaded the driver, download it now. For details, see [Downloading the ODBC Driver](/developer-guide/odbc/odbc-download).
-2. Open the downloaded .dmg file, `snowflake_odbc_mac-<version>.dmg`.
-3. Open the installer file, `snowflakeODBC_<version>.pkg`, and follow the prompts.
+1. If you haven’t already downloaded the driver, download it now. For details, see [Downloading the ODBC Driver 4.x](/developer-guide/odbc/odbc-download).
+2. Open the downloaded disk image, `snowflake-odbc-<version>.universal.dmg`.
+3. Open the `.pkg` installer in the disk image, and follow the prompts.
 
    You will likely be prompted for the administrator/sudo password for the machine on which you are installing the driver.
 
@@ -46,6 +47,11 @@ If you choose the default directory when prompted, the installer installs the OD
 > `/opt/snowflake/snowflakeodbc`
 >
 > `/Library/ODBC`
+
+The 4.x installer places a default `sf.odbc.ini` at `/opt/snowflake/snowflakeodbc/` with `DriverManagerEncoding=UTF-32`,
+which matches macOS’s stock iODBC. If you use unixODBC on macOS, create a user-level file at
+`~/.snowflake/sf.odbc.ini` and set `DriverManagerEncoding=UTF-16`. See
+[Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
 
 ## Step 2: Configure the ODBC Driver
 
@@ -63,8 +69,8 @@ for the driver, you must manually create the `odbc.ini` file and add the entry t
 
 For each DSN, specify:
 
-- DSN name and driver name (Snowflake), in the form of `<dsn_name> = <driver_name>`.
-- Directory path and name of the driver file, in the form of `Driver = /opt/snowflake/snowflakeodbc/lib/universal/libSnowflake.dylib`.
+- DSN name and driver name (**Snowflake ODBC**), in the form of `<dsn_name> = <driver_name>`.
+- Directory path and name of the driver file. Version 4.x installs `libsfodbc.dylib` under `/opt/snowflake/snowflakeodbc/`.
 - Connection parameters, such as `server` and `uid` (user login name). Any connection parameters you add to the DSN do not need to be specified in the ODBC connect string.
 - Any additional parameters, such as default `role`, `database`, and `warehouse`.
 
@@ -85,18 +91,18 @@ The following example illustrates an `odbc.ini` file that configures two data so
 
   ```
   [ODBC Data Sources]
-  testodbc1 = Snowflake
-  testodbc2 = Snowflake
+  testodbc1 = Snowflake ODBC
+  testodbc2 = Snowflake ODBC
 
   [testodbc1]
-  Driver      = /opt/snowflake/snowflakeodbc/lib/universal/libSnowflake.dylib
+  Driver      = Snowflake ODBC
   Description =
   uid         = peter
   server      = myorganization-myaccount.snowflakecomputing.com
   role        = sysadmin
 
   [testodbc2]
-  Driver      = /opt/snowflake/snowflakeodbc/lib/universal/libSnowflake.dylib
+  Driver      = Snowflake ODBC
   Description =
   uid         = mary
   server      = xy12345.snowflakecomputing.com
@@ -122,22 +128,13 @@ Note
 
 If you set the server and user login name in the DSN, the only required parameters in the connect string are the DSN name and user password.
 
-For example:
+Start the test utility:
 
 Copy code
 
 ```
-$ "/Library/Application Support/iODBC/bin/iodbctest"
-
-iODBC Demonstration program
-This program shows an interactive SQL processor
-Driver Manager: 03.52.0607.1008
-
-Enter ODBC connect string (? shows list): dsn=testodbc2;pwd=<password>
-
-Dec 14 20:16:08 INFO  1299 SFConnection::connect: Tracing level: 4
-
-Driver: 2.12.36 (Snowflake - Latest version supported by Snowflake: 2.12.38)
-
-SQL>
+"/Library/Application Support/iODBC/bin/iodbctest"
 ```
+
+Enter your DSN and authentication parameters when prompted. After connecting, confirm that the driver reports
+version 4.x. For an application-level check, call `SQLGetInfo(SQL_DRIVER_VER)`; 4.0.0 reports `04.00.0000`.

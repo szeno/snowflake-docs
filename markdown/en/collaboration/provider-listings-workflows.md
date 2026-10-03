@@ -86,3 +86,7 @@ Snowflake recommends that you test your application by privately sharing it with
 
      If you submitted your listing using manual publishing, the listing will not be published. The listing will remain approved until you manually publish the listing. For more information, see [Submit your listing for approval](/collaboration/provider-listings-creating-publishing#label-submit-sm-listing-for-approval).
    - If your listing is rejected, Snowflake will reach out using the emails listed in the profile contacts (business and technical) with feedback on the application. Reviews may take up to 14 days.
+
+## Billing workflow for paid listings
+
+To set up billing and receive payouts for paid listings, see [Set up Stripe to get paid for listings](/collaboration/provider-becoming#label-set-up-stripe-listings).

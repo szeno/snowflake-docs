@@ -348,7 +348,7 @@ Where:
     Note
 
     - JSON can only be used to unload data from columns of type VARIANT (i.e. columns containing JSON data).
-    - Currently, nested data in VARIANT columns cannot be unloaded successfully in Parquet format.
+    - Nested data in `VARIANT` columns is unloaded to Parquet as a JSON-encoded string. For more information, see [Unload a relational table to Parquet with multiple columns](/user-guide/data-unload-considerations#label-unload-relational-table-to-parquet).
 
 `copyOptions`
 :   Specifies one or more copy options for the unloaded data. For more details, see [Copy Options](#label-copy-into-location-copyoptions)

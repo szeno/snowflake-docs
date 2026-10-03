@@ -205,6 +205,11 @@ resolution can become complex if the secondary database has a different name tha
 can lead to unexpected refresh results depending on how the source object is referenced. To prevent this, avoid
 renaming the database during replication setup or use failover group replication instead.
 
+A dynamic table that fails over through database replication always reinitializes with a full refresh; it isn’t
+eligible to continue incrementally refreshing. For failover-group replication, where a dynamic table configured for
+incremental refresh can continue incrementally refreshing without reinitializing, see
+[Continuing incremental refresh after failover](/user-guide/dynamic-tables/replication#label-continue-incremental-refresh-eligibility).
+
 In the following diagram, the dynamic table `dt` references a source object `source_table` using a fully qualified
 name. For example:
 

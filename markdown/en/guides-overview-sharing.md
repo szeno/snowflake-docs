@@ -58,17 +58,17 @@ If you want to convert a direct share with active consumers to a listing, see [C
 
 For more information, see [Share secure database objects](/user-guide/data-sharing-gs).
 
-## Open Format Sharing
+## Open Data Sharing
 
-Open Format Sharing lets you share open table formats — including Apache Iceberg™ tables and Delta Lake
-tables — across regions, clouds, and engines, without building ETL pipelines or duplicating data. Open Format
+Open Data Sharing lets you share open table formats — including Apache Iceberg™ tables and Delta Lake
+tables — across regions, clouds, and engines, without building ETL pipelines or duplicating data. Open Data
 Sharing supports the following use cases:
 
 - **Access Iceberg data in Snowflake** using a catalog-linked database or external volume.
 - **Share open table formats with Snowflake consumers** using direct shares, listings, or Cross-Cloud Auto-Fulfillment.
 - **Share data with non-Snowflake consumers** using standard Iceberg REST Catalog APIs.
 
-For more information, see [Open format sharing](/collaboration/open-format-sharing).
+For more information, see [Open Data Sharing](/collaboration/open-format-sharing).
 
 ## Data Exchange
 

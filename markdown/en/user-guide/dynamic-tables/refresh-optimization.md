@@ -461,9 +461,14 @@ can remove duplicates, but they perform differently with incremental refresh.
 
 **QUALIFY with ROW\_NUMBER = 1**: Snowflake optimizes the pattern
 `QUALIFY ROW_NUMBER() ... = 1` when it appears at the top-level projection of the
-dynamic table. This pattern consistently performs faster than full refresh.
+dynamic table.
 
 Include all PARTITION BY and ORDER BY columns from the OVER() clause in the dynamic table’s SELECT list. This lets the engine track changed partitions without a full table scan.
+
+Use `QUALIFY` when you need the entire row for each key. If you need only one value per
+key, such as the latest `updated_at`, use a top-level `GROUP BY` with `MAX` or `MIN` instead.
+That pattern is eligible for the
+[optimization for top-level aggregates](#label-dynamic-tables-refresh-optimization-top-level-aggregates).
 
 #### Recommendation: Use QUALIFY instead of DISTINCT
 
@@ -489,14 +494,13 @@ CREATE OR REPLACE DYNAMIC TABLE dt_unique_customers
   TARGET_LAG = '1 hour'
   WAREHOUSE = transform_wh
 AS
-  SELECT customer_id, customer_name, region, segment
+  SELECT customer_id, customer_name, region, segment, updated_at
   FROM dim_customers
   QUALIFY ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC) = 1;
 ```
 
-The QUALIFY version is explicit about which duplicate to keep and performs consistently
-well with incremental refresh. Also remove redundant DISTINCT clauses when your data
-is already unique or you eliminate duplicates upstream.
+The QUALIFY version is explicit about which duplicate to keep. Also remove redundant
+DISTINCT clauses when your data is already unique or you eliminate duplicates upstream.
 
 ### Limit blocking operators per dynamic table
 

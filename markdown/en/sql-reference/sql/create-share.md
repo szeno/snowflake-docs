@@ -24,6 +24,7 @@ Copy code
 
 ```
 CREATE [ OR REPLACE ] SHARE [ IF NOT EXISTS ] <name>
+  [ SECURE_OBJECTS_ONLY = { TRUE | FALSE } ]
   [ COMMENT = '<string_literal>' ]
 ```
 
@@ -62,6 +63,17 @@ CREATE OR ALTER SHARE <name>
     For more details, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
 ## Optional parameters
+
+`SECURE_OBJECTS_ONLY = { TRUE | FALSE }`
+:   Specifies whether the share can have only secure objects granted to it.
+
+    - `TRUE` allows only secure objects to be granted to the share.
+    - `FALSE` also allows non-secure objects, such as non-secure views, to be granted to the share. For
+      more information, see [Share data in non-secured views](/user-guide/data-sharing-views).
+
+    After you set this parameter to `FALSE`, you can’t set it to `TRUE` or unset it.
+
+    Default: TRUE
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the share.

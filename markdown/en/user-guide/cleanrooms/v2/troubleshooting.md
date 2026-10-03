@@ -252,7 +252,7 @@ Error:
 :   `SpecValidationError: preset_tables reference(s) use reserved SQL alias(es)`
 
 Cause:
-:   A preset table may not be given the SQL alias `p`, `c`, or `p` or `c` followed by a number in the template body. Those aliases are
+:   A preset table may not be given the SQL alias `p`, `c`, or `p<N>` or `c<N>` (where N is a number) in the template body. Those aliases are
     reserved for the `source_table` and `my_table` datasets that the analysis runner supplies.
 
 Solution:

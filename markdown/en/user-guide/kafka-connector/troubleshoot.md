@@ -87,6 +87,18 @@ that the connector is actively ingesting into.
 - **Role privileges**: The connector uses the role in `snowflake.role.name`. Verify that this role
   has `USAGE` on the OAuth security integration and the required privileges on target objects.
 
+**SPCS workload-identity authentication** (version 4.2.0 and later)
+
+- **Error 395090 at startup (“Please use OAuth”)**: The service specification is missing
+  `capabilities.securityContext.enableCustomCredentials: true`. Despite the error message,
+  configuring OAuth is not the fix — add the capability to the service spec. See
+  [SPCS authentication](/user-guide/kafka-connector/setup-kafka).
+- **Table does not exist (unexpected)**: `snowflake.role.name` is accepted but overridden under
+  SPCS authentication; the connector uses the service owner’s role instead. If that role lacks
+  access to the target table, ingestion fails with a “table does not exist” error rather than an
+  access-denied error. See
+  [Role behavior](/user-guide/kafka-connector/setup-kafka).
+
 ### Authorization errors
 
 If the connector encounters authorization errors from Snowflake, the behavior depends on the

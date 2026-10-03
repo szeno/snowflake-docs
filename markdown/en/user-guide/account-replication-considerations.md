@@ -383,10 +383,7 @@ Data Retention Period:
 :   The data retention period for tables in a secondary database begins when the secondary database is refreshed with the DML operations
     (i.e. changing or deleting data) written to tables in the primary database.
 
-    Note
-
-    The data retention period parameter, [DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-data-retention-time-in-days), is only replicated to database objects in the secondary
-    database, not to the database itself. For more details about parameter replication, see [Parameters](/user-guide/db-replication-intro#label-database-replication-parameters).
+    For more details about parameter replication, see [Parameters](/user-guide/db-replication-intro#label-database-replication-parameters).
 
 ## Replication and materialized views
 
@@ -438,19 +435,21 @@ happen on these read-only dynamic tables.
 ### Dynamic tables and failover groups
 
 A database that contains a dynamic table can be replicated using a failover group. If a dynamic table references
-source objects outside the failover group or database replication, it can still be replicated. After a failover, the
-dynamic table resolves source objects using name resolution during refresh. The refresh might succeed or fail,
-depending on the state of the source objects. If successful, the dynamic table is reinitialized with the latest data
-from the source objects.
+base objects outside the failover group, or that rely on database replication instead of a failover group, it can
+still be replicated, but it may need to reinitialize after failover. After a failover, the dynamic table resolves
+base objects using name resolution during refresh. The refresh might succeed or fail, depending on the state of the
+base objects.
 
 Secondary dynamic tables are read-only and do not get refreshed. After a failover occurs and a secondary dynamic
-table is promoted to primary dynamic table, the first refresh is a reinitialization followed by incremental
-refreshes if the dynamic table is configured for incremental refresh of data.
+table is promoted to primary dynamic table, the first refresh might be a reinitialization or an incremental
+refresh. For the eligibility criteria, see
+[Continuing incremental refresh after failover](/user-guide/dynamic-tables/replication#label-continue-incremental-refresh-eligibility).
+A dynamic table configured for full refresh always runs a full refresh.
 
 Note
 
-The reinitialized dynamic table might differ from the original replica because the source objects and dynamic table
-are not guaranteed to share the same replication snapshot.
+If reinitialization occurs, the resulting dynamic table might differ from the original replica because the base
+objects and dynamic table are not guaranteed to share the same replication snapshot.
 
 **Example: Refresh failure due to missing source objects**
 

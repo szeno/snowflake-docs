@@ -572,7 +572,7 @@ Copy code
 ```
 EXECUTE DBT PROJECT tasty_bytes_dbt_db.dev.tasty_bytes_dbt_project
   ARGS = 'run --target prod'
-  DBT_VERSION = '1.11.11'
+  DBT_VERSION = '1.12.3'
   ENVIRONMENT = 'prod';   -- Optional.
 ```
 
@@ -587,7 +587,7 @@ Copy code
 ```
 EXECUTE DBT PROJECT tasty_bytes_dbt_db.dev.tasty_bytes_dbt_project
   ARGS = 'run --target prod'
-  DBT_VERSION = '1.11.11'
+  DBT_VERSION = '1.12.3'
   ENV_VARS = ('DBT_KEY1' = 'VALUE1', 'DBT_KEY2' = '{{ select (DATE_TRUNC(\'DAY\', CURRENT_TIMESTAMP()) - INTERVAL \'1 SECOND\')::string }}');   -- Optional. Override keys must be DBT_-prefixed and uppercase.
 ```
 
@@ -686,7 +686,7 @@ snow dbt deploy tasty_bytes_dbt_project --source ./tasty_bytes \
 Copy code
 
 ```
-snow dbt execute --dbt-version '1.11.11' --env staging \
+snow dbt execute --dbt-version '1.12.3' --env staging \
   --env-vars '{"DBT_DATABASE": "tasty_bytes_staging_db", "DBT_OTHER_KEY": "value"}' tester_tasty_bytes_dbt_project run
 ```
 

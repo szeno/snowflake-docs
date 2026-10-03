@@ -140,7 +140,7 @@ Show all shares that have been created in your account or are available to consu
 > +-------------------------------+----------+----------------------+---------------+-----------------------+------------------+--------------+----------------------------------------+---------------------+
 > ```
 
-Show all shares that have been created in your account or are available to consume by your account that include the string ‘SNOW’:
+Show up to five shares, starting from the first share whose name matches ‘SNOW’:
 
 > Copy code
 >

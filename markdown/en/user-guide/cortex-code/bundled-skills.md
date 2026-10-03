@@ -4,6 +4,10 @@ CoCo CLI includes a set of built-in skills that cover common Snowflake workflows
 
 To invoke a skill, describe what you want to do and CoCo automatically loads the appropriate skill. You can also invoke a skill by name using the `/skill` command.
 
+For community-contributed skills that extend this catalog, see
+[Snowflake-Labs/coco-skills](https://github.com/Snowflake-Labs/coco-skills). Those skills aren’t
+installed by default; to add them, see [CoCo CLI extensibility](/user-guide/cortex-code/extensibility).
+
 ## Getting started
 
 ### `cortex-code-guide`

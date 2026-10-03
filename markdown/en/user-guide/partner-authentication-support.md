@@ -20,7 +20,7 @@ password field accepts 256 characters. However, be aware that PATs aren’t as s
 | [PowerBI Cloud (BI)](https://learn.microsoft.com/en-us/fabric/data-factory/connector-snowflake#authentication) | **Yes** (Only Microsoft Entra ID is supported) | No | **Yes** | No |
 | [PowerBI Desktop (BI)](https://learn.microsoft.com/en-us/fabric/data-factory/connector-snowflake#authentication) | **Yes** (Only Microsoft Entra ID is supported) | No | **Yes** | No |
 | [Tableau Cloud (BI)](https://help.tableau.com/current/pro/desktop/en-us/examples_snowflake.htm) | **Yes** | **Yes** | **Yes** | **Yes** |
-| [Tableau Server (BI)](https://help.tableau.com/current/server/en-us/config_oauth_snowflake.htm) | **Yes** | **Yes** | No | No |
+| [Tableau Server (BI)](https://help.tableau.com/current/server/en-us/config_oauth_snowflake.htm) | **Yes** | **Yes** | **Yes** | No |
 | [DBT Cloud (Transform)](https://docs.getdbt.com/docs/cloud/connect-data-platform/connect-snowflake) | No | **Yes** | **Yes** | **Yes** |
 | [DBT Core (Transform)](https://docs.getdbt.com/docs/core/connect-data-platform/snowflake-setup) | No | **Yes** | **Yes** | **Yes** |
 | [Airflow (Workflow orchestration)](/developer-guide/python-connector/python-connector-connect) | N/A | N/A | **Yes** | **Yes** |

@@ -92,11 +92,14 @@ ALTER SHARE [ IF EXISTS ] <name> UNSET COMMENT
 
 ## Usage notes
 
-- One of the following privileges is required to alter a share:
+- To alter a share, a role must have the OWNERSHIP privilege on the share. The role that creates a share owns it.
+- To add or remove accounts (share targets), a role must have both of the following privileges:
 
-  - The OWNERSHIP privilege which is granted to the role that creates the share.
-  - The MANAGE SHARE TARGET privilege determines which roles can add or remove accounts from a share.
-    Only roles granted MANAGE SHARE TARGET can add or remove share account access.
+  - OWNERSHIP on the share.
+  - MANAGE SHARE TARGET on the account.
+
+  CREATE SHARE doesn’t include the ability to add or remove accounts. For more information, see
+  [MANAGE SHARE TARGET privilege](/user-guide/security-access-privileges-shares#label-manage-share-target-privilege).
 - Keywords `ACCOUNT` and `ACCOUNTS` are both supported and can be used interchangeably.
 - Regarding metadata:
 
@@ -106,12 +109,12 @@ ALTER SHARE [ IF EXISTS ] <name> UNSET COMMENT
 
 ## Examples
 
-Add two accounts to the existing share named `sales_s`:
+Add accounts `org1.consumer1` and `org1.consumer2` to the existing share named `sales_s`:
 
 > Copy code
 >
 > ```
-> ALTER SHARE sales_s ADD ACCOUNTS=<orgname.accountname1>,<orgname.accountname2>;
+> ALTER SHARE sales_s ADD ACCOUNTS = org1.consumer1, org1.consumer2;
 >
 > +----------------------------------+
 > | status                           |
@@ -120,12 +123,12 @@ Add two accounts to the existing share named `sales_s`:
 > +----------------------------------+
 > ```
 
-Remove account `<orgname.accountname>;` from `sales_s`:
+Remove account `org1.consumer1` from `sales_s`:
 
 > Copy code
 >
 > ```
-> ALTER SHARE sales_s REMOVE ACCOUNT=<orgname.accountname>;
+> ALTER SHARE sales_s REMOVE ACCOUNT = org1.consumer1;
 >
 > +----------------------------------+
 > | status                           |
@@ -134,18 +137,19 @@ Remove account `<orgname.accountname>;` from `sales_s`:
 > +----------------------------------+
 > ```
 
-Grant MANAGE SHARE TARGET to a role, and use that role manage share targets:
+Grant the `MANAGE SHARE TARGET` privilege to the `share_admin` role, grant that role to user `jsmith`, and use the role to add accounts to
+`sales_s`. The `share_admin` role must also own `sales_s`:
 
 Copy code
 
 ```
-GRANT MANAGE SHARE TARGET ON ACCOUNT TO ROLE <role_name>;
+GRANT MANAGE SHARE TARGET ON ACCOUNT TO ROLE share_admin;
 
-GRANT ROLE <role_name> TO USER <user_name>;
+GRANT ROLE share_admin TO USER jsmith;
 
-USE ROLE <role_name>;
+USE ROLE share_admin;
 
-ALTER SHARE <data_share_name> ADD ACCOUNTS = <orgname.accountname1>,<orgname.accountname2>;
+ALTER SHARE sales_s ADD ACCOUNTS = org1.consumer1, org1.consumer2;
 ```
 
 Set a new comment for `sales_s`:

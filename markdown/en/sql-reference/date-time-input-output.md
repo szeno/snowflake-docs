@@ -172,21 +172,25 @@ strongly recommends specifying the format explicitly rather than relying on auto
 
 For descriptions of the elements used in the formats below, see [About the elements used in input and output formats](#label-date-time-input-output-format-elements).
 
-| Format | Example | Notes |
-| --- | --- | --- |
-| **ISO Date Formats** |  |  |
-| `YYYY-MM-DD` | `2013-04-28` |  |
-| **Other Date Formats** |  |  |
-| `DD-MON-YYYY` | `17-DEC-1980` |  |
-| `MM/DD/YYYY` | `12/17/1980` | Could produce incorrect dates when loading or operating on dates in common European formats (that is, `DD/MM/YYYY`). For example, 05/02/2013 could be interpreted as May 2, 2013 instead of February 5, 2013. |
+| Format | Example | ISO format | Notes |
+| --- | --- | --- | --- |
+| `YYYY-MM-DD` | `2013-04-28` | Yes |  |
+| `DD-MON-YYYY` | `17-DEC-1980` | No |  |
+| `MM/DD/YYYY` | `12/17/1980` | No | Could produce incorrect dates when loading or operating on dates in common European formats (that is, `DD/MM/YYYY`). For example, 05/02/2013 could be interpreted as May 2, 2013 instead of February 5, 2013. |
 
 Expand
 
 Show lessSee more
 
+Warning
+
 When using AUTO date formatting, dashes and slashes aren’t interchangeable. Slashes imply `MM/DD/YYYY` format,
 and dashes imply `YYYY-MM-DD` format. Strings such as `'2019/01/02'` or `'01-02-2019'` aren’t interpreted as you might
-expect.
+expect. Year-first slash formats such as `YYYY/MM/DD` aren’t among the formats that AUTO detection supports, so strings in
+these formats aren’t recognized as DATE values. For example, during schema inference with INFER\_SCHEMA or when you load
+data from a file in Snowsight, columns that contain these values are inferred as VARCHAR. To load or convert these
+values as dates, specify the format explicitly. For example, set the DATE\_FORMAT file format option or the
+DATE\_INPUT\_FORMAT session parameter to `'YYYY/MM/DD'`.
 
 ### Time formats
 

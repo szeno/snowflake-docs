@@ -78,6 +78,9 @@ Custom configuration properties specific to Snowpark Connect for Spark.
 | `snowpark.connect.sql.returnDmlMetadata` | `false` | When `true`, DML operations (INSERT, UPDATE, DELETE, MERGE) return a DataFrame with row count metadata instead of an empty result. [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-sql-return-dml-metadata) | 1.20.0 |
 | `snowpark.connect.artifact_repository` | (none) | Specifies the name of a Snowflake artifact repository for UDF/UDTF package resolution. When set, packages are resolved from the specified repository instead of Anaconda. [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-artifact-repository) | 1.14.0 |
 | `snowpark.connect.udf.resource_constraint.architecture` | (none) | When set to `x86`, UDFs, UDTFs, and `applyInPandas` operations are created with an x86 architecture constraint. Requires a warehouse with an x86 resource constraint. [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-udf-resource-constraint-architecture) | 1.13.0 |
+| `snowpark.connect.cast.stringToIntegralHighPrecision` | `true` | When `true`, casting a string to `LongType` produces correct results across the full Long value range. When `false`, values near `Long.MIN`/`Long.MAX` can be silently rounded to wrong results. [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-cast-string-to-integral-high-precision) | 1.46.0 |
+| `snowpark.connect.use2000AsTwoDigitCenturyStart` | `true` | When `true`, sets `TWO_DIGIT_CENTURY_START = 2000` for the session so a standalone two-digit year (`'yy'`) maps to the 2000-2099 window, matching Spark. When `false`, leaves Snowflake’s native 1970 default in place (00-69 map to 2000-2069, 70-99 map to 1970-1999). [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-use-2000-as-two-digit-century-start) | 1.46.0 |
+| `snowpark.connect.useUdfForUnsupportedDateTimeFormats` | `true` | When `true`, datetime format patterns that Snowflake’s native `TO_CHAR`/`TO_TIMESTAMP` can’t reproduce are routed through the `DatetimeFormatUdfs` Java UDF, and format validation matches Spark’s behavior exactly. When `false`, uses native Snowflake datetime functions for all patterns. [More](/developer-guide/snowpark-connect/snowpark-connect-parameters#label-spconnect-use-udf-for-unsupported-date-time-formats) | 1.46.0 |
 
 Expand
 
@@ -542,3 +545,61 @@ df.select(add_one(df["value"]).alias("result")).show()
 ```
 
 For more information on warehouses and resource constraints, see [Snowpark-optimized warehouses](/user-guide/warehouses-snowpark-optimized).
+
+### `snowpark.connect.cast.stringToIntegralHighPrecision`
+
+When `true`, casting a string to `LongType` produces correct results across the full Long value range. When `false`, values near `Long.MIN`/`Long.MAX` can be silently rounded to wrong results.
+
+Default: `true`
+
+Since: 1.46.0
+
+#### Comments
+
+Before this flag was enabled by default, casting a string containing a value near `Long.MAX_VALUE` or `Long.MIN_VALUE` — for example, `"9223372036854775807"` — could silently return a wrong number. The cast succeeded without any error or warning; the result was simply incorrect.
+
+With this configuration set to `true`, string-to-Long casts are exact across the full Long value range. Values that exceed the Long range now raise an `ArithmeticException`, matching Spark’s ANSI overflow behavior.
+
+Warning
+
+Setting this to `false` is not recommended. It restores the prior behavior where casts near the Long range boundaries silently return wrong values without raising an error. Only set this to `false` if your workload explicitly depends on those incorrect results.
+
+### `snowpark.connect.use2000AsTwoDigitCenturyStart`
+
+When `true`, sets Snowflake’s `TWO_DIGIT_CENTURY_START` session parameter to `2000` so a standalone two-digit year (`'yy'`) maps to the 2000-2099 window, matching Spark. When `false`, leaves `TWO_DIGIT_CENTURY_START` at Snowflake’s native default of 1970.
+
+Default: `true`
+
+Since: 1.46.0
+
+#### Comments
+
+Spark maps a standalone `'yy'` pattern to a fixed 2000-2099 window: year `23` resolves to `2023`, year `99` resolves to `2099`. Snowflake’s behavior is controlled by the `TWO_DIGIT_CENTURY_START` session parameter, which defaults to `1970`. With that default, years `00`-`69` map to `2000`-`2069`, but years `70`-`99` map to `1970`-`1999` — so year `99` resolves to `1999`, which diverges from Spark.
+
+When this configuration is `true`, Snowpark Connect for Spark issues `ALTER SESSION SET TWO_DIGIT_CENTURY_START = 2000` at session startup, giving Spark-compatible parsing for all two-digit years.
+
+Warning
+
+Setting this to `false` is not recommended. It restores the pre-BCR Snowflake-native behavior, where two-digit years in the 70-99 band resolve to the 1900s rather than the 2000s. Only set this to `false` if your workload explicitly depends on that incorrect date interpretation.
+
+### `snowpark.connect.useUdfForUnsupportedDateTimeFormats`
+
+When `true`, datetime format patterns that Snowflake’s native `TO_CHAR`/`TO_TIMESTAMP` can’t reproduce are routed through the `DatetimeFormatUdfs` Java UDF, and format validation matches Spark’s behavior exactly. When `false`, uses native Snowflake datetime functions for all patterns.
+
+Default: `true`
+
+Since: 1.46.0
+
+#### Comments
+
+Spark uses `java.time.DateTimeFormatter` patterns, while Snowflake uses its own format syntax for `TO_CHAR`/`TO_TIMESTAMP`. Most common patterns (`yyyy`, `MM`, `dd`, `HH`, `mm`, `ss`) work the same in both systems. Spark-specific patterns — such as `u` for week-year or the literal-text escape `''T''` — have no Snowflake equivalent.
+
+When set to `false`, Snowpark Connect for Spark passes all format strings directly to Snowflake’s native functions. Unsupported patterns may silently produce incorrect output or succeed where Spark would raise a validation error.
+
+When `true`, Snowpark Connect for Spark validates each format string against Spark’s pattern rules, then routes any unsupported patterns through the `DatetimeFormatUdfs` Java UDF. The UDF uses `java.time.DateTimeFormatter` internally, so output matches Spark exactly — including proper error handling. For example, `''T''` now raises `IllegalArgumentException: Unknown pattern letter: T`, matching Spark 3.5.3.
+
+The UDF path applies only to patterns that can’t be handled natively; workloads using only standard patterns are unaffected.
+
+Warning
+
+Setting this to `false` is not recommended. It restores the pre-BCR native-only path, where unsupported datetime format patterns can silently produce incorrect output or fail to raise errors that Spark would raise. Only set this to `false` if your workload explicitly depends on that behavior.

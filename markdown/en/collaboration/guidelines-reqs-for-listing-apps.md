@@ -119,8 +119,8 @@ Snowflake uses the following requirements to determine if a Snowflake Native App
    7. If an application package contains a Streamlit app but does not contain a readme file, you must configure a default [Streamlit app](/developer-guide/native-apps/adding-streamlit#label-streamlit-add-to-manifest).
    8. Apps that use Snowflake Cortex must comply with the following standards:
 
-      1. Apps that call Cortex functions with a specific model (rather than ‘auto’ or a Snowflake-managed model) must document the model name(s) in the listing, application or readme, enabling consumers to evaluate availability in their region. See [Cross-region inference](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cross-region-inference).
-      2. Apps must declare SNOWFLAKE.CORTEX\_USER as a required privilege in the application package manifest.yml, rather than requesting broad IMPORTED PRIVILEGES on the SNOWFLAKE database. See [Manifest file privileges](https://docs.snowflake.com/en/developer-guide/native-apps/manifest-reference#privileges-field) and [Calling Cortex functions from an app](https://docs.snowflake.com/en/user-guide/snowflake-cortex/aisql).
+      1. Apps that call Cortex functions with a specific model (rather than ‘auto’ or a Snowflake-managed model) must document the model name(s) in the listing, application or readme, enabling consumers to evaluate availability in their region. See [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
+      2. Apps must declare SNOWFLAKE.CORTEX\_USER as a required privilege in the application package manifest.yml, rather than requesting broad IMPORTED PRIVILEGES on the SNOWFLAKE database. See [Manifest file privileges](/developer-guide/native-apps/manifest-reference#label-manifest-native-app-manifest-fields-privileges) and [Calling Cortex functions from an app](/user-guide/snowflake-cortex/aisql).
 
 ### Best practices when publishing a Snowflake Native App
 
@@ -147,7 +147,7 @@ In addition to the requirements for submitting an application package to Snowfla
 
 ### Recommendations for trial listings
 
-- When an app trial listing expires, Snowflake automatically suspends the app to avoid consumers incurring extra compute costs to the consumer. Snowflake only suspends the objects owned by the app that are currently active. Snowflake does not modify the status of objects that are already suspended.
+- When an app trial listing expires, Snowflake automatically suspends the app to avoid consumers incurring extra compute costs. Snowflake only suspends the objects owned by the app that are currently active. Snowflake does not modify the status of objects that are already suspended.
 - When a trial listing is converted to a full or paid listing, Snowflake attempts to re-enable the app by resuming tasks, containers, and compute pools. Snowflake only resumes services and compute pools that have the `auto_resume` property set to false.
 
 ### Recommendations for apps with containers
@@ -161,7 +161,7 @@ In addition to the requirements for submitting an application package to Snowfla
 - Providers should configure an app to emit log messages and trace events that conform to
   [supported event definitions](/developer-guide/native-apps/ui-consumer-enable-logging#label-nativeapps-consumer-logging-about-event-sharing) to ensure that consumers understand what information is collected.
 - Mandatory event definitions should be limited to the log messages and trace events required by the app. Excessive or unnecessary mandatory event definitions should be avoided.
-- Adding new mandatory event definitions in a version upgrade must require the consumer re-enable event definitions for the app.
+- Adding new mandatory event definitions in a version upgrade must require the consumer to re-enable event definitions for the app.
 - Use the Python Permission SDK to allow consumers to share optional events.
 
 ## 3. Connected Applications
@@ -178,7 +178,7 @@ Snowflake allows SaaS providers to list their Connected Applications on Snowflak
 ### Ongoing standards for Connected Applications on Snowflake Marketplace
 
 1. **Ecosystem contribution:** Connected Applications should meaningfully contribute to the **Snowflake Data Cloud ecosystem**, helping drive data collaboration, consumption, or workload adoption.
-2. **Active partnership:** Providers must be **active contributors** to the Snowflake ecosystem. To remain listed on the Marketplace, providers must maintain their standing within the Partner Network at the **Connected Application Select** tier designation or higher within the AI Data Cloud Products Partner Program, and their application must continue to benefit the ecosystem. Snowflake may remove a listing if the provider is no longer contributing to the ecosystem (per Snowflake’s discretion) or no longer meets partner eligibility standards.
+2. **Active partnership:** Providers must be **active contributors** to the Snowflake ecosystem. To remain listed on the Marketplace, providers must maintain their standing within the Partner Network at the **Connected Application Select** tier designation or higher within the AI Data Cloud Products Partner Program, and their application must continue to benefit the ecosystem. Snowflake may remove a listing if the provider is no longer contributing to the ecosystem (at Snowflake’s discretion) or no longer meets partner eligibility standards.
 
 First-time Connected Application providers must meet the [requirements above](#label-guidelines-reqs-connected-apps-publish) for listing eligibility. To verify eligibility and enable your account for listing, complete the [listing enablement steps](#label-connected-apps-pre-enablement) below. Connected Application providers must continually meet the ongoing standards for ecosystem contribution and active partnership.
 

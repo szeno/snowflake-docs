@@ -1,4 +1,4 @@
-# Sample Worksheets and Videos
+# Sample worksheets and videos
 
 Feature — Generally Available
 
@@ -19,11 +19,11 @@ Here are tutorials to try out using Snowflake Data Clean Rooms when you’re jus
 
 The DCR team has created the following videos to walk you through the collaboration resources and how to manage collaborations:
 
-- [Register Data Offerings](https://www.youtube.com/watch?v=J2CDeha0WVM) This tutorial walks through creating sample datasets, defining data offering specifications, and leveraging standardized schemas to streamline collaboration. Discover how to use join keys, metadata columns, and category types to prepare your data for secure, governed analysis across multiple parties.
-- [Register Templates](https://www.youtube.com/watch?v=ZiFLqPcw9Ao) Learn how to build templates that enable secure multi-party data collaboration, from simple overlap analysis to complex three-party joins with aggregations to unlock advanced measurement use cases across multiple organizations while maintaining governance and control.
-- [Manage Collaborations](https://www.youtube.com/watch?v=Z4wa69kfU8o) Learn how to manage secure data collaborations using Snowflake Data Clean Rooms across one, two, and three-party scenarios.
+- [Register Data Offerings](https://www.youtube.com/watch?v=J2CDeha0WVM): This tutorial walks through creating sample datasets, defining data offering specifications, and leveraging standardized schemas to streamline collaboration. Discover how to use join keys, metadata columns, and category types to prepare your data for secure, governed analysis across multiple parties.
+- [Register Templates](https://www.youtube.com/watch?v=ZiFLqPcw9Ao): Learn how to build templates that enable secure multi-party data collaboration, from simple overlap analysis to complex three-party joins with aggregations to unlock advanced measurement use cases across multiple organizations while maintaining governance and control.
+- [Manage Collaborations](https://www.youtube.com/watch?v=Z4wa69kfU8o): Learn how to manage secure data collaborations using Snowflake Data Clean Rooms across one, two, and three-party scenarios.
 
-## Sample Worksheets
+## Sample worksheets
 
 Many of the use case topics include full running samples of Snowflake Data Clean Rooms as downloadable notebooks or worksheets. You
 need a Snowflake account with the clean rooms API environment installed to run any of these samples, and you must be able to use the

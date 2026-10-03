@@ -48,7 +48,7 @@ Expand
 
 Show lessSee more
 
-The contact responsible for access approval on the `ac_sch` has been replaced with a contact directly associated with `t1`, but
+The contact responsible for access approval on the `ac_sch` schema has been replaced with a contact directly associated with `t1`, but
 `t1` continues to inherit the `data_stewards` contact from the schema.
 
 All objects inherit contacts set on the account unless overridden by an association further down in the inheritance hierarchy.
@@ -254,7 +254,7 @@ Snowsight:
     7. Select **Save**.
 
 SQL:
-:   ALTER … UNSET CONTACT command lets you detach a contact from an object. The syntax to detach the contact is the same for all
+:   The ALTER … UNSET CONTACT command lets you detach a contact from an object. The syntax to detach the contact is the same for all
     objects that can be associated with a contact:
 
     Copy code

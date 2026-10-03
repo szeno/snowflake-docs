@@ -640,7 +640,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
          - name: Create a new tester dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
-           run: snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action --source ./tasty_bytes --dbt-version 1.11.11 -x
+           run: snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action --source ./tasty_bytes --dbt-version 1.12.3 -x
 
          - name: List all of the snowflake dbt project objects in your account
            run: snow dbt list -x
@@ -688,7 +688,7 @@ ci-test-dbt:
     - >-
       snow dbt deploy tester_tasty_bytes_dbt_project_object_gitlab
       --source ./tasty_bytes
-      --dbt-version 1.11.11
+      --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
@@ -742,7 +742,7 @@ steps:
   - script: |
       snow dbt deploy tester_tasty_bytes_dbt_project_object_ado \
         --source ./tasty_bytes \
-        --dbt-version 1.11.11 \
+        --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(System.PullRequest.SourceBranch)" \
@@ -863,7 +863,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
          # The --default-target flag ensures the dbt project object compiles and executes with your prod target
          - name: Create a new dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
-           run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes --default-target prod --dbt-version 1.11.11 -x
+           run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes --default-target prod --dbt-version 1.12.3 -x
 
          - name: List all of the snowflake dbt project objects on your account
            run: snow dbt list -x
@@ -900,7 +900,7 @@ cd-deploy-dbt:
       snow dbt deploy tasty_bytes_dbt_object_gitlab
       --source ./tasty_bytes
       --default-target prod
-      --dbt-version 1.11.11
+      --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
@@ -956,7 +956,7 @@ steps:
       snow dbt deploy tasty_bytes_dbt_object_ado \
         --source ./tasty_bytes \
         --default-target prod \
-        --dbt-version 1.11.11 \
+        --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(Build.SourceBranchName)" \

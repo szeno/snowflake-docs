@@ -189,7 +189,7 @@ The following example sets a new dbt version to a dbt project object:
 Copy code
 
 ```
-ALTER DBT PROJECT finance_analytics SET dbt_version = '1.11.11';
+ALTER DBT PROJECT finance_analytics SET dbt_version = '1.12.3';
 ```
 
 ### Deploy an update to the live version

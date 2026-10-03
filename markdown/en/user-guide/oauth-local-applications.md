@@ -10,7 +10,7 @@ and you don’t have to configure a third-party identity provider like External 
 To simplify how a local application uses Snowflake OAuth to authenticate, your account has a built-in
 security integration called `SNOWFLAKE$LOCAL_APPLICATION`. Because the security integration already exists, if a local application
 uses a Snowflake client like the Python driver or Snowflake CLI, the application can authenticate to Snowflake by setting a property or
-parameter of the client. No further set up is required. The built-in integration also simplifies the setup for local applications that call
+parameter of the client. No further setup is required. The built-in integration also simplifies the setup for local applications that call
 the OAuth endpoints directly rather than use a Snowflake client.
 
 An administrator can change the parameters of the `SNOWFLAKE$LOCAL_APPLICATION` integration to adjust its behavior, such as specifying
@@ -21,7 +21,7 @@ Snowflake OAuth for local applications has the following additional advantages:
 - Unlike user-created Snowflake OAuth integrations, in-role session switching *is* supported.
 - It is a straightforward replacement for applications that are currently using passwords only to authenticate users. Snowflake is
   [deprecating single-factor passwords](/user-guide/security-mfa-rollout), so Snowflake OAuth for local applications provides a path to
-  using a more secure form of authentication without requiring a lot of set up.
+  using a more secure form of authentication without requiring a lot of setup.
 
 Note
 
@@ -111,7 +111,7 @@ Your local application can use the following Snowflake clients to authenticate w
 | --- | --- | --- |
 | .NET | v4.8.0 | Set `authenticator=oauth_authorization_code` in the connection string. |
 | Go | v1.14.1 | Set `authenticator=oauth_authorization_code` in the connection configuration. |
-| JDBC | v3.24.1 | Set ``` authenticator=``oauth_authorization_code ``` in the connection string for the driver. |
+| JDBC | v3.24.1 | Set `authenticator=oauth_authorization_code` in the connection string for the driver. |
 | Node.js | v2.1.0 | Set `authenticator: 'oauth_authorization_code'` in the connection options. |
 | ODBC | v3.9.0 | - For Linux and macOS, set `authenticator=oauth_authorization_code` in the `odbc.ini` file. - For Windows, in the ODBC Data Source Administrator tool, edit the DSN for Snowflake and set Authenticator to   `oauth_authorization_code`. |
 | Python | v3.16.0 | Pass `AUTHENTICATOR=OAUTH_AUTHORIZATION_CODE` to the `snowflake.connector.connect()` function. |

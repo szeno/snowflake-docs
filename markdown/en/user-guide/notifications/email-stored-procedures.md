@@ -40,6 +40,13 @@ Note
 If you set the ALLOWED\_RECIPIENTS property of the notification integration, and any email address in the recipient list is not
 on that list, no email notifications are sent.
 
+The email message body must be between 1 and 128,000 characters. If the content length is outside that range, Snowflake returns an error
+similar to the following:
+
+```
+Invalid email content length <n>. Should be between 1 and 128,000.
+```
+
 If you are on the Amazon Web Services (AWS) cloud platform, then the email notification message is sent from
 `no-reply@snowflake.net`. If you are on the Google Cloud Platform (GCP) or Microsoft Azure (Azure)
 cloud platform, the email notification message is sent from `do-not-reply@snowflake.net`.

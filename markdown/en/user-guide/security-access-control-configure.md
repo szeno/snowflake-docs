@@ -283,6 +283,23 @@ SQL:
        TO ROLE sysadmin;
     ```
 
+    To let `sysadmin` grant `r1` to other roles, include `WITH GRANT OPTION`:
+
+    Copy code
+
+    ```
+    GRANT ROLE r1
+       TO ROLE sysadmin
+       WITH GRANT OPTION;
+    ```
+
+    A role granted without `WITH GRANT OPTION` still inherits the granted role’s privileges. A grant that
+    includes `WITH GRANT OPTION` also lets the recipient role grant that role to other roles.
+    `WITH GRANT OPTION` applies to grants from one role to another role. For syntax, who can grant the
+    option, and how to revoke it, see [GRANT ROLE](/sql-reference/sql/grant-role) and
+    [REVOKE ROLE](/sql-reference/sql/revoke-role). Database roles use the same clause. See
+    [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
+
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
     2. In the navigation menu, select **Governance & security** » **Users & roles**, and then select **Roles**.

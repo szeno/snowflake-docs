@@ -2,6 +2,11 @@
 
 Use this topic for Cortex Agents deployed through Snowflake Intelligence or the Agent API. Observability shows **live** conversation history and execution traces: planning, tool calls, responses, and user feedback.
 
+For Cortex Agents created by a Snowflake Native App, Snowflake redacts provider implementation details
+from `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` before writing a record for an app-initiated run.
+For more information, see
+[Intellectual property protection during event logging](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-ip-protection).
+
 For **batch test runs** and GPA-style metrics, see [Cortex Agent evaluations](/user-guide/snowflake-cortex/cortex-agents-evaluations). For **custom AI applications** (agents, RAG pipelines, AI workflows on Snowflake compute or other hosts) observed with TruLens, see [Trace and monitor applications with TruLens](/user-guide/snowflake-cortex/ai-observability/trace-applications-trulens).
 
 ## Observability vs evaluations (Cortex Agents)

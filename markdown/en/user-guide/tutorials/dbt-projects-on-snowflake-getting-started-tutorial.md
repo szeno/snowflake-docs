@@ -306,14 +306,14 @@ The first command you must execute for any dbt project is `deps`, which updates 
    Uploading /tmp/dbt/package-lock.yml to snow://workspace/USER$ADMIN.PUBLIC."tasty_bytes_dbt"/versions/live/dbt//package-lock.yml
    ```
 
-   The `package_lock.yml` file is created and appears in your list of workspace files with an **A** next to it. This indicates that the file was added in the workspace for your dbt project, with contents that are similar to the following example:
+   The `package-lock.yml` file is created and appears in your list of workspace files with an **A** next to it. This indicates that the file was added in the workspace for your dbt project, with contents that are similar to the following example:
 
    Copy code
 
    ```
    packages:
      - package: dbt-labs/dbt_utils
-    version: 1.3.0
+       version: 1.3.0
    ```
 
 ## Compile the dbt project, view the DAG, and view compiled SQL
@@ -440,7 +440,7 @@ The following steps set up a schedule to execute the dbt project object every 12
 2. In the **Schedule a dbt run** dialog box, do the following:
 
    - For **Schedule name**, enter a name for the task; for example, *run\_prepped\_data\_dbt*.
-   - For **Frequency**, select **Custom**, and then enter the Cron expression `1 */12 * * *` for your time zone selected.
+   - For **Frequency**, select **Custom**, and then enter the Cron expression `1 */12 * * *` for your selected time zone.
    - Under **dbt properties**:
      - For **Operation**, select **run**.
      - For **Profile**, select **dev**.

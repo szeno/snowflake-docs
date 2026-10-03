@@ -50,12 +50,15 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
+- [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
 - [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)
 - [Oct 1, 2026: Remote app operations for Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-10-01-remote-app-operations-ga)
 - [Sep 30, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-30-claude-sonnet-5-5-preview)
 - [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
 - [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
+- [Sep 30, 2026: Dynamic tables continue incrementally refreshing after failover (General availability)](/release-notes/2026/other/2026-09-30-dynamic-tables-incremental-refresh-after-failover)
 - [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
 - [Sep 30, 2026: Organization Features in Organization Command Center (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-features-ga)
 - [Sep 30, 2026: Organization Command Center 3rd party access configuration (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-third-party-ga)
@@ -65,6 +68,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Go Driver (v2.3.0)](/release-notes/clients-drivers/golang-2026)
 - [JDBC Driver (v4.4.0)](/release-notes/clients-drivers/jdbc-2026)
 - [Node.js Driver (v3.4.0)](/release-notes/clients-drivers/nodejs-2026)
+- [ODBC Driver (v4.0.0)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0rc4)](/release-notes/clients-drivers/python-connector-2026)
 - [Python Connector (v4.8.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Sep 29, 2026: Response caching for Cortex AI Functions](/release-notes/2026/other/2026-09-29-cortex-response-caching)
@@ -148,8 +152,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [ODBC Driver (v3.20.0)](/release-notes/clients-drivers/odbc-2026)
 - [PHP PDO Driver (v4.2.0)](/release-notes/clients-drivers/php-pdo-2026)
 - [Python Connector (v4.7.3)](/release-notes/clients-drivers/python-connector-2026)
-- [Sep 02, 2026: Data lineage for Cortex Agents](/release-notes/2026/other/2026-09-02-cortex-agent-lineage)
-- [Sep 02, 2026: Data lineage for streams](/release-notes/2026/other/2026-09-02-lineage-streams)
-- [Sep 02, 2026: Openflow Connector for Jira Cloud: Core flow (General availability)](/release-notes/2026/other/2026-09-02-openflow-jira-core-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

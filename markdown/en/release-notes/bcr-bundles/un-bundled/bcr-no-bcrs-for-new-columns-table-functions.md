@@ -19,4 +19,4 @@ these approaches:
 
 - As a workaround, you can [temporarily exclude that column](/release-notes/behavior-changes-new-columns) from the output of
   the table function.
-- As a long term solution, update your scripts to select specific columns from the table function output.
+- As a long-term solution, update your scripts to select specific columns from the table function output.

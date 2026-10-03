@@ -23,14 +23,14 @@ This topic provides details about provisioning users and groups from Microsoft E
 
 ### Limitations
 
-- Snowflake supports a maximum of 500 concurrent requests per account per SCIM endpoint (e.g. the `/Users` endpoint, the `/Groups` endpoint). After your account exceeds this threshold, Snowflake returns a `429` HTTP status code (i.e. too many requests). Note that this request limit usually only occurs during the initial provisioning when relatively large numbers of requests (i.e. more than 10 thousand) occur to provision users or groups.
+- Snowflake supports a maximum of 500 concurrent requests per account per SCIM endpoint (for example, the `/Users` endpoint, the `/Groups` endpoint). After your account exceeds this threshold, Snowflake returns a `429` HTTP status code (that is, too many requests). Note that this request limit usually only occurs during the initial provisioning when relatively large numbers of requests (that is, more than 10,000) occur to provision users or groups.
 
 ### Not supported
 
 - AWS PrivateLink and Google Cloud Private Service Connect. Customers wanting to provision users and groups to Snowflake from
-  Microsoft Entra ID without traversing the public Internet need to have their Snowflake account in Microsoft Azure.
+  Microsoft Entra ID without traversing the public internet need to have their Snowflake account in Microsoft Azure.
 - If you are using Azure Private Link to access Snowflake, ensure that you are not using the Azure Private Link URL in the integration
-  settings. Enter the public endpoint (i.e. without `.privatelink`), and ensure that the network policy allows access from the
+  settings. Enter the public endpoint (that is, without `.privatelink`), and ensure that the network policy allows access from the
   Azure IP addresses as shown in the [Prerequisites](#label-scim-azure-prereq) section. Otherwise, you cannot use this integration.
 - Transferring ownership of existing users and roles. Microsoft Entra ID is the authoritative source for its users and groups. Group membership
   can be updated in Microsoft Entra ID. However, existing users and groups in Snowflake cannot be transferred to Microsoft Entra ID.
@@ -53,7 +53,7 @@ Before using SCIM to provision Microsoft Entra ID users and groups to Snowflake,
 1. An existing Microsoft Entra ID tenant.
 2. An existing Snowflake tenant.
 
-   - During the configuration process in Microsoft, you will need to input the URL of the Snowflake SCIM endpoint (i.e. **Tenant URL**
+   - During the configuration process in Microsoft, you will need to input the URL of the Snowflake SCIM endpoint (that is, **Tenant URL**
      in the Microsoft Entra ID SCIM configuration guide). The Snowflake SCIM endpoint consists of the Snowflake account URL appended with
      `/scim/v2/`. For example, if you use the account name URL format, the SCIM endpoint is
      `https://myorg-myaccount.snowflakecomputing.com/scim/v2/`. For a list of supported formats for the Snowflake account URL, see
@@ -121,7 +121,7 @@ These errors could be the result of the less-privileged role not having sufficie
 2. Use a role with the global MANAGE GRANTS privilege.
 3. If neither of these first two options are desirable, use a custom role that has the OWNERSHIP privilege on all of the roles that will be managed using SCIM.
 
-1. Login to Snowflake as an administrator and execute the following from either the Snowflake worksheet interface, Snowflake CLI, or SnowSQL.
+1. Log in to Snowflake as an administrator and execute the following from either the Snowflake worksheet interface, Snowflake CLI, or SnowSQL.
 2. Use the ACCOUNTADMIN role.
 
    Copy code

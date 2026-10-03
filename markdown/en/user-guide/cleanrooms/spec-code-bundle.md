@@ -6,7 +6,7 @@ Currently available in [these regions](/user-guide/cleanrooms/installing-dcr#lab
 
 Not available in government and VPS deployments.
 
-This specification defines one or more code functions, procedures, or ML Jobs that can be called by a template.
+This specification defines one or more code functions, procedures, or ML jobs that can be called by a template.
 
 A code specification can contain a maximum of 5 ML jobs, and a maximum of 5 functions and procedures combined.
 At least one of `ml_jobs`, `functions`, or `procedures` must be defined.
@@ -103,9 +103,7 @@ ml_jobs:                        # Required if no functions or procedures defined
     [optionally exposed via handler functions](/user-guide/cleanrooms/resources-code-specs#label-dcr-collab-code-specs-staged-artifacts). Maximum of 5 per spec.
 
     `alias: identifier`
-    :   An alias for referencing this artifact in imports. When referencing this alias within this spec, use the bare alias name rather than
-
-        `cleanroom.spec_name$alias`.
+    :   An alias for referencing this artifact in imports. When referencing this alias within this spec, use the bare alias name rather than `cleanroom.spec_name$alias`.
 
     `stage_path: stage_path`
     :   Full stage path to the artifact file. For example, `@DB.SCHEMA.STAGE/path/file.whl`.
@@ -215,7 +213,7 @@ ml_jobs:                        # Required if no functions or procedures defined
 
         Note
 
-        ML Jobs code specs registered before the
+        ML jobs code specs registered before the
         [June 18, 2026 release](/release-notes/2026/other/2026-06-18-dcr) (Clean Rooms API Version 16.3)
         don’t have content hashes and can’t be added to a collaboration. For resolution steps, see
         [ML Jobs troubleshooting](/user-guide/cleanrooms/v2/troubleshooting#ml-jobs).
@@ -223,7 +221,7 @@ ml_jobs:                        # Required if no functions or procedures defined
     `pip_requirements` (*Optional*)
     :   A list of pip package requirements to install in the container at runtime. For example:
         `scikit-learn>=1.0`, `xgboost`, `pandas`. Unlike function and procedure code specs, ML jobs can use
-        any pip-installable package — not just the Anaconda-approved bundle.
+        any pip-installable package, not just the Anaconda-approved bundle.
 
     `description: description_text` (*Optional*)
     :   A description of the ML job (maximum 1,000 characters).
@@ -272,5 +270,5 @@ ml_jobs:                        # Required if no functions or procedures defined
     $$);
     ```
 
-    Templates that reference ML Jobs code specs call the generated procedure using the pattern
+    Templates that reference ML jobs code specs call the generated procedure using the pattern
     `cleanroom.<code_spec_name>$<ml_job_name>(compute_pool, num_instances, warehouse, args_json)`.

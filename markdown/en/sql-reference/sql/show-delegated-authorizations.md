@@ -1,7 +1,9 @@
 # SHOW DELEGATED AUTHORIZATIONS
 
-Lists the active delegated authorizations for which you have access privileges. This command can be used to list the
-delegated authorizations for a specified user or integration (or the current user), or your entire account.
+Lists the active delegated authorizations for which you have access privileges. With no variant, the command lists only
+the current user’s delegated authorizations, even when you use the ACCOUNTADMIN role. A user who has not approved any
+delegated authorizations gets zero rows. Use `BY USER` to list authorizations for a specified user, or
+`TO SECURITY INTEGRATION` to list authorizations for a specified integration.
 
 ## Syntax
 
@@ -18,8 +20,9 @@ SHOW DELEGATED AUTHORIZATIONS TO SECURITY INTEGRATION <integration_name>
 ## Variants
 
 `SHOW DELEGATED AUTHORIZATIONS BY USER username`
-:   Lists all the active delegated authorizations that have been approved by a user. This variant requires the MODIFY privilege
-    on the user.
+:   Lists all the active delegated authorizations that have been approved by a user. This variant requires the MONITOR privilege
+    on the user, the account-level MONITOR USER privilege, or the MANAGE GRANTS privilege. To review authorizations across the
+    account, run this variant for each user.
 
 `SHOW DELEGATED AUTHORIZATIONS TO SECURITY INTEGRATION integration_name`
 :   Lists all the active delegated authorizations that have been approved for an integration. This variant requires the
@@ -76,7 +79,7 @@ information, see [Letting users select roles during authorization](/user-guide/o
 
 ## Examples
 
-List all delegated authorizations for your account:
+List the current user’s delegated authorizations:
 
 > Copy code
 >
@@ -87,7 +90,6 @@ List all delegated authorizations for your account:
 > | created_on                    | user_name | role_name | integration_name  | integration_status |
 > |-------------------------------+-----------+-----------+-------------------+--------------------|
 > | 2018-11-27 07:43:10.914 -0800 | JSMITH    | PUBLIC    | MY_OAUTH_INT1     | ENABLED            |
-> | 2018-11-27 08:14:56.123 -0800 | MJONES    | PUBLIC    | MY_OAUTH_INT2     | ENABLED            |
 > +-------------------------------+-----------+-----------+-------------------+--------------------+
 > ```
 

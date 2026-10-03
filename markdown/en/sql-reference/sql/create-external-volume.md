@@ -155,12 +155,6 @@ For more information, see [Encrypting table files](/user-guide/tables-iceberg-ma
 >       for an S3 bucket access point. For an S3 access point, you must also specify a value for the `STORAGE_AWS_ACCESS_POINT_ARN` parameter.
 >     - `path` is an optional path that can be used to provide granular control over objects in the bucket.
 >
->     Note
->
->     Snowflake can’t support external volumes with S3 bucket names that contain dots (for example, `my.s3.bucket`).
->     S3 doesn’t support SSL for virtual-hosted-style buckets with dots in the name, and
->     Snowflake uses virtual-host-style paths and HTTPS to access data in S3.
->
 >     Important
 >
 >     To create an Iceberg table that uses an external catalog, your Parquet data files

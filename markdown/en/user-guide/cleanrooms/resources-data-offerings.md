@@ -24,7 +24,7 @@ Important
 If you move, rename, or change access permissions to the underlying tables, the data offering will become unusable through any previously
 registered links.
 
-If you use Snowflake Standard Edition, you can’t share data through a data clean room with policy enforcement. Hence, you are not able to share data with other parties or leverage the data clean room policies specified in the offerings even for users in your own account.
+If you use Snowflake Standard Edition, you can’t share data through a data clean room with policy enforcement. As a result, you are not able to share data with other parties or leverage the data clean room policies specified in the offerings even for users in your own account.
 However, you can access data offerings from other collaborators, or [use your own data as a local data offering](/user-guide/cleanrooms/demo-flows/basic-multiparty-collab#label-dcr-using-local-data) without policies.
 
 **Data offering requirements:**

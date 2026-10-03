@@ -469,8 +469,10 @@ affect incremental refresh as follows:
 >   when the dynamic table refresh role is explicitly allowed access. Previously, only
 >   [CURRENT\_ROLE](/sql-reference/functions/current_role) and [IS\_ROLE\_IN\_SESSION](/sql-reference/functions/is_role_in_session) were supported
 >   incrementally.
-> - Policy changes on base objects can trigger reinitialization. For details, see
->   [Modify dynamic tables](/user-guide/dynamic-tables/modify).
+> - Changing a policy on a base object can trigger reinitialization, and so can recreating a table used by a
+>   [row access policy](/user-guide/security-row-intro) on a base table or by a
+>   [masking policy](/user-guide/security-column-ddm-intro) on a column that the definition reads. For details,
+>   see [What triggers reinitialization](/user-guide/dynamic-tables/modify#label-dynamic-tables-evolving-reinitialization-triggers).
 > - `CURRENT_AVAILABLE_ROLES()` returns an empty string set during refresh by default, because the refresh
 >   runs without a named user’s role context. If a masking or row access policy references this
 >   function, set `EXECUTE AS USER` on the dynamic table so the function evaluates the correct roles
@@ -479,10 +481,7 @@ affect incremental refresh as follows:
 
 ### Replication
 
-Replicated dynamic tables with incremental refresh reinitialize after failover before they can resume incremental
-refresh.
-
-For more information, see [Replication and dynamic tables](/user-guide/account-replication-considerations#label-replication-and-dynamic-tables).
+For replication and failover behavior, see [Replication and failover behavior for dynamic tables](/user-guide/dynamic-tables/replication).
 
 ### Cloning
 

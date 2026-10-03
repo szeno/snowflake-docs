@@ -48,6 +48,9 @@ Setting the account-level `CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER` 
 blocks all users, and you can then selectively allow access for individual users by assigning
 them a positive value. See [Daily credit usage limits for CoCo](/user-guide/cortex-code/credit-usage-limit).
 
+For information about how CoCo Desktop is billed, including subscription and pay-as-you-go
+options, see [CoCo Desktop billing](/user-guide/cortex-code/cortex-code#label-cortex-code-desktop-billing).
+
 Note
 
 On self-service [trial accounts](/user-guide/admin-trial-account), AI features are disabled by default.

@@ -1404,10 +1404,10 @@ Data Type:
 :   String
 
 Description:
-:   Specifies the dbt version used for a dbt project object when no `DBT_VERSION` is specified in the CREATE DBT PROJECT statement. Changing this parameter doesn’t affect existing dbt project objects. It only applies to projects created afterward when an explicit `DBT_VERSION` attribute is not specified. This allows organization administrators to opt into newer versions (for example, changing the default to `1.11.11`) without requiring users to manually update CREATE DBT PROJECT DDL statements for every individual project. For more information, see [Set the account-level default version](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions#label-dbt-projects-set-account-level-default).
+:   Specifies the dbt version used for a dbt project object when no `DBT_VERSION` is specified in the CREATE DBT PROJECT statement. Changing this parameter doesn’t affect existing dbt project objects. It only applies to projects created afterward when an explicit `DBT_VERSION` attribute is not specified. This allows organization administrators to opt into newer versions (for example, changing the default to `1.12.3`) without requiring users to manually update CREATE DBT PROJECT DDL statements for every individual project. For more information, see [Set the account-level default version](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions#label-dbt-projects-set-account-level-default).
 
 Values:
-:   `1.9.4`, `1.10.15`, `1.11.11`, `2.0.0-preview.175`, `2.0.0-preview.186`, or `2.0.0-preview.210`
+:   `1.9.4`, `1.10.15`, `1.11.11`, `1.12.3`, `2.0.0-preview.175`, `2.0.0-preview.186`, `2.0.0-preview.210`, or `2.0.0`
 
 Default:
 :   `1.9.4`

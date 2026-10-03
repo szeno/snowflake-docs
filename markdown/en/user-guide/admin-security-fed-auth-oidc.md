@@ -30,7 +30,7 @@ The following steps describe the SP-initiated OIDC authentication flow when a us
 
 1. The user navigates to the Snowflake login page and selects the OIDC login option. For custom providers, the button label comes from
    `OIDC_LOGIN_PAGE_LABEL` (or the integration name if not set). For managed providers, Snowflake displays the official provider logo and a
-   default label (for example, Sign in with Microsoft).
+   default label (for example, `Sign in with Microsoft`).
 2. Snowflake generates cryptographic security parameters:
 
    - A `state` parameter (256-bit random value) to prevent CSRF attacks.

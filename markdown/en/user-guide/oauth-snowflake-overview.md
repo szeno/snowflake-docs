@@ -55,7 +55,7 @@ You can use single-use refresh tokens to mitigate theft or reuse of refresh toke
 
 ## Local applications
 
-Snowflake provides a simplified way to set up local applications — that is, desktop applications — to use Snowflake OAuth to
+Snowflake provides a simplified way to set up local applications (that is, desktop applications) to use Snowflake OAuth to
 authenticate. The application can authenticate by setting a single connection option; no additional setup is required. For more information,
 see [Using Snowflake OAuth for local applications](/user-guide/oauth-local-applications).
 
@@ -120,7 +120,7 @@ the authorization code flow runs across two different network contexts:
   to Snowflake. Because that server is on the public internet, it can’t resolve a PrivateLink
   hostname. The token endpoint must therefore be a public Snowflake URL.
 
-When configuring a SaaS MCP client, use the **public** Snowflake account URL — not a
+When configuring a SaaS MCP client, use the **public** Snowflake account URL, not a
 PrivateLink URL. If you want Snowflake to redirect the user’s browser to the PrivateLink
 authorization endpoint during the authorization step, enable
 `USE_PRIVATELINK_FOR_AUTHORIZATION_ENDPOINT = TRUE` on the OAuth security integration.

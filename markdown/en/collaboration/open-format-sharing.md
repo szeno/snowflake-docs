@@ -1,10 +1,10 @@
-# Open format sharing
+# Open Data Sharing
 
 Snowflake supports sharing open table formats — including Apache Iceberg™ tables and Delta Lake tables — across
 regions, clouds, and engines, without requiring you to build ETL pipelines or duplicate data. Data stays in place
 while Snowflake handles governance, replication, and access control.
 
-Open format sharing supports the following use cases:
+Open Data Sharing supports the following use cases:
 
 - **Access Iceberg data in Snowflake.** Bring external Iceberg tables into Snowflake using a catalog-linked
   database or an external volume. Query tables managed by external catalogs such as Apache Polaris™, Databricks

@@ -62,7 +62,7 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
   snow dbt deploy jaffle_shop --source /path/to/dbt/directory \
     --profiles-dir ~/my_profiles/ \
     --default-target prod \
-    --dbt-version 1.11.11 \
+    --dbt-version 1.12.3 \
     --external-access-integration dbthub-integration \
     --external-access-integration github-integration
   ```
@@ -71,7 +71,7 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
   Copy code
 
   ```
-  snow dbt deploy jaffle_shop --dbt-version '1.11.11'
+  snow dbt deploy jaffle_shop --dbt-version '1.12.3'
   ```
 
 ## Deploy a dbt project object using Snowsight

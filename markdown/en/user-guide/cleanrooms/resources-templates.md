@@ -49,7 +49,7 @@ The process to request template addition depends on whether the collaboration al
 
      - If any collaborator rejects the request, the update request is rejected.
      - Collaborators can’t later change an approval to a rejection, or a rejection to an approval.
-     - The template would not be shared until *all* requested parties approve the request.
+     - The template will not be shared until *all* requested parties approve the request.
      - After you approve, the status changes to PENDING\_PARTNER\_APPROVAL if other collaborators still need to approve.
   3. When all required collaborators have approved, the status changes to APPROVED and the update is applied automatically. The terminal statuses for an update request are COMPLETED and FAILED. When the request status is COMPLETED, the template is available to the users specified in the add template request. If the request is FAILED, see the DETAILS column in VIEW\_UPDATE\_REQUESTS for failure details. If any collaborator rejects the request, the status is REJECTED and any reason supplied by the rejecting party is visible in the request report.
   4. There might be a short delay after a template is approved by all users before the template is available. Call VIEW\_TEMPLATES to confirm that the template is available to use.

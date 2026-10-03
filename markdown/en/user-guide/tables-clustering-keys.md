@@ -317,6 +317,20 @@ For example:
 - Defining a clustering key directly on top of VARIANT columns is not supported; however, you can specify a VARIANT column in a clustering key if you provide an expression consisting of
   the path and the target type.
 
+- **Loading CSV files with `COPY INTO`:** When you load CSV files with [COPY INTO <table>](/sql-reference/sql/copy-into-table) into a table that has a clustering key, Snowflake validates the clustering key expressions during compilation. If the clustering key uses a function that isn’t supported within a `COPY` command, such as `DATE_TRUNC` or `UPPER`, the command fails with the following error: `002300 (0A000): SQL compilation error: Function 'DATE_TRUNC' not supported within a COPY`. This validation doesn’t apply when the source files are JSON, Parquet, Avro, or ORC. For the functions that a `COPY` command supports, see [Transform data during a load](/user-guide/data-load-transform).
+
+  To load the CSV files, drop the clustering key, run `COPY INTO`, and then add the clustering key again. Adding the key again can start reclustering, which consumes credits. For more information, see [Credit and Storage Impact of Reclustering](#label-clustering-keys-reclustering-credit-storage).
+
+  Copy code
+
+  ```
+  ALTER TABLE my_table DROP CLUSTERING KEY;
+
+  COPY INTO my_table FROM @my_stage;
+
+  ALTER TABLE my_table CLUSTER BY (my_expression);
+  ```
+
 ### Changing the Clustering Key for a Table
 
 At any time, you can add a clustering key to an existing table or change the existing clustering key for a table using [ALTER TABLE](/sql-reference/sql/alter-table):

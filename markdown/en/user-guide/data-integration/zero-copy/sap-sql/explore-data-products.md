@@ -42,7 +42,8 @@ SELECT SYSTEM$ZEROCOPY_CONNECTOR_LIST_SHARES('my_db.my_schema.my_sap_connector')
 ```
 
 The function returns a JSON array. Each element represents one shared data
-product:
+product. Pass the `name` value as `SHARE_NAME` when you create a
+catalog-linked database, and copy that value exactly:
 
 ```
 [
@@ -162,7 +163,9 @@ SHOW SCHEMAS IN DATABASE my_sales_order;
 SHOW TABLES IN DATABASE my_sales_order;
 ```
 
-Query the data:
+Query the data. Schema, table, and column names come from the data product, so
+replace the names in these examples with the names returned by `SHOW SCHEMAS`,
+`SHOW TABLES`, and `DESC TABLE`:
 
 Copy code
 
@@ -185,7 +188,7 @@ SELECT
 FROM my_sales_order.salesorder.salesorder s
 JOIN my_customers.customer.customer c
   ON s.soldtoparty = c.customer
-WHERE s.overallsdprocessingstatus != 'C'
+WHERE s.overallsdprocessstatus != 'C'
 ORDER BY s.totalnetamount DESC
 LIMIT 10;
 ```
@@ -193,7 +196,8 @@ LIMIT 10;
 ## Create table as select (CTAS)
 
 To persist query results as a native Snowflake table, use CREATE TABLE AS
-SELECT (CTAS). Create a new database to hold the results:
+SELECT (CTAS). Create a new database to hold the results, and replace the
+source table and column names with the names from your data products:
 
 Copy code
 

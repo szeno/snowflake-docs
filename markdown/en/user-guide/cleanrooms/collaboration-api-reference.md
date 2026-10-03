@@ -43,7 +43,7 @@ Here is how to find some commonly sought information about a collaboration:
 | How do I edit an existing collaboration? | The collaboration owner can call [EDIT](#label-dcr-collaboration-edit-reference) to add or remove collaborators, change collaborator roles, or re-share resources that are already registered or linked in the collaboration. All collaborators (including the owner) can share new resources into the collaboration by calling [LINK\_DATA\_OFFERING](#label-dcr-collaboration-link-data-offering-reference) (data offerings) or [ADD\_TEMPLATE\_REQUEST](#label-dcr-collaboration-add-template-request-reference) (templates). |
 | Is the spec up to date? | There is no way to tell if a given spec has changes in progress, but you can call VIEW\_COLLABORATIONS to see when the latest updates were applied. |
 | What pending update requests do I have? | `VIEW_UPDATE_REQUESTS`. Look for rows where STATUS = PENDING\_MY\_APPROVAL. |
-| Show me the spec for a given collaboration | REVIEW returns the collaboration spec. If you have already called REVIEW or joined the collaboration, call the following SQL command with your collaboration name as indicated:  Copy code  ``` CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.COLLABORATION.   VIEW_COLLABORATIONS() ->>     SELECT "COLLABORATION_SPEC" FROM $1       WHERE "SOURCE_NAME" = <collaboration name>; ``` |
+| Show me the spec for a given collaboration | REVIEW returns the collaboration spec. If you have already called REVIEW or joined the collaboration, call the following SQL command with your collaboration name as indicated:  Copy code  ``` CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.COLLABORATION.   VIEW_COLLABORATIONS() ->>     SELECT "COLLABORATION_SPEC" FROM $1       WHERE "SOURCE_NAME" = $collaboration_name; ``` |
 
 Expand
 
@@ -319,7 +319,7 @@ If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was 
 
   - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('CREATE COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
   - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('JOIN COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
-- If the template is in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE( 'READ', '{registry name}', '{role name}')`
+- If the template is in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('READ', 'REGISTRY', '{registry name}', '{role name}')`
 
 ---
 
@@ -377,7 +377,7 @@ If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was 
 
   - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('CREATE COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
   - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('JOIN COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
-- If the template is in a custom registry, or references a code spec in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE( 'READ', '{registry name}', '{role name}')`
+- If the template is in a custom registry, or references a code spec in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('READ', 'REGISTRY', '{registry name}', '{role name}')`
 
 ---
 
@@ -709,7 +709,7 @@ If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was 
 - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('CREATE COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
 - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('JOIN COLLABORATION', '{role name}')`, plus all additional account-level privileges that must be manually granted to the role.
 
-If the data offering is in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE( 'READ', '{registry name}', '{role name}')`.
+If the data offering is in a custom registry, you must also have `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('READ', 'REGISTRY', '{registry name}', '{role name}')`.
 
 ---
 
@@ -2476,11 +2476,11 @@ A table containing activity records that the caller is permitted to see.
 
 The table includes the following columns:
 
-- `ACTIVITY_ID`: Unique identifier for the activity record. Also added as a Query Tag into the underlying query so callers can correlate an entry with [account-level query history](https://docs.snowflake.com/en/sql-reference/account-usage/query_history).
+- `ACTIVITY_ID`: Unique identifier for the activity record. Also added as a Query Tag into the underlying query so callers can correlate an entry with [account-level query history](/sql-reference/account-usage/query_history).
 - `ANALYSIS_RUNNER_ALIAS`: Alias of the collaborator that ran the analysis.
 - `START_TS`: Timestamp when the run started.
 - `TOTAL_DURATION`: Total run duration, in milliseconds.
-- `STATUS`: `SUCCESS` or `ERROR`. For activation template runs, `SUCCESS` reflects only that the template query executed successfully - failures during the export of activation results are not surfaced.
+- `STATUS`: `SUCCESS` or `ERROR`. For activation template runs, `SUCCESS` reflects only that the template query executed successfully: failures during the export of activation results are not surfaced.
 - `FAILURE_REASON`: Populated when `STATUS` is `ERROR`. The analysis runner sees the full error message. Other accounts see a redacted message.
 - `ACTIVITY_TYPE`: The type of activity. Currently always `RUN`.
 - `ACTIVITY_INFO`: A `VARIANT` column whose contents depend on what the caller contributed to the collaboration. Possible sub-keys:

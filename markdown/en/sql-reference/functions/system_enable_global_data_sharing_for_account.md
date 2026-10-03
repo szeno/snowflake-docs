@@ -53,9 +53,9 @@ SELECT SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account');
 ```
 
 ```
-+--------------------------------------------------------------------+
-| SYSTEM$SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account') |
-|--------------------------------------------------------------------|
-| Statement executed successfully                                    |
-+--------------------------------------------------------------------+
++-------------------------------------------------------------+
+| SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account') |
+|-------------------------------------------------------------|
+| Statement executed successfully                             |
++-------------------------------------------------------------+
 ```

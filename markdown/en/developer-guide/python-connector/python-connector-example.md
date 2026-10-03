@@ -160,16 +160,14 @@ completes, you can get the results.
 
 Note
 
-To perform asynchronous queries, you must ensure the `ABORT_DETACHED_QUERY` configuration parameter is `FALSE` (default value).
+If connectivity is lost unexpectedly, such as when a client process terminates or a network outage occurs, the [ABORT\_DETACHED\_QUERY](/sql-reference/parameters#label-abort-detached-query) session parameter controls whether in-progress queries continue running. This applies to both synchronous and asynchronous queries:
 
-If the connection to client is lost:
+- If `ABORT_DETACHED_QUERY` is `FALSE` (the default), queries can continue running until they complete or reach an applicable timeout.
+- If `ABORT_DETACHED_QUERY` is `TRUE`, Snowflake aborts in-progress queries five minutes after connectivity is lost.
 
-- For synchronous queries, all in-progress synchronous queries are aborted immediately regardless of the parameter value.
-- For asynchronous queries:
-  - If ABORT\_DETACHED\_QUERY is set to `FALSE`, in-progress asynchronous queries continue to run until they end normally.
-  - If ABORT\_DETACHED\_QUERY is set to `TRUE`, Snowflake automatically aborts all in-progress asynchronous queries when a client connection is not re-established after five minutes.
+Losing connectivity is different from explicitly logging out of the Snowflake session. Session logout can cancel running queries even when `ABORT_DETACHED_QUERY` is `FALSE`. A driver’s connection-close method might log out the session; see the connection-close behavior described later in this section.
 
-    You can prevent the asynchronous query from being aborted at the five minute mark by calling `cursor.query_result(queryId)`. While this call does not retrieve the actual query result as the query is still running, it does prevent the query from being canceled. Invoking `query_result` is a synchronous operation, which might or might not be appropriate for your particular use case.
+If `ABORT_DETACHED_QUERY` is `TRUE`, you can prevent an asynchronous query from being aborted at the five-minute mark by calling `cursor.query_result(queryId)`. This call does not retrieve the result while the query is still running, but it prevents cancellation. The call is synchronous, which might not be appropriate for your use case.
 
 With this feature, you can submit multiple queries in parallel without waiting for each query to complete. You can also run a
 combination of synchronous and asynchronous queries during the same session.

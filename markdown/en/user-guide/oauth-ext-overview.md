@@ -119,7 +119,7 @@ if you do not define a scope, the connection attempt to Snowflake will fail.
 
 | Scope/Role Connection Parameter | Description |
 | --- | --- |
-| `session:role-any` | Maps to the ANY role in Snowflake.  Use this scope if the user’s default role in Snowflake is desirable.  The `external_oauth_any_role_mode` security integration parameter must be configured in order to enable ANY role for a given External OAuth Provider. For configuration details, refer to the ANY role section in [Okta](/user-guide/oauth-okta#label-any-role-okta), [Microsoft Entra ID](/user-guide/oauth-azure#label-any-role-aad), [PingFederate](/user-guide/oauth-pingfed#label-any-role-pingfed), or [Custom](/user-guide/oauth-ext-custom#label-any-role-ext-oauth-custom).  Note that with a [Power BI to Snowflake integration](/user-guide/oauth-powerbi), a Power BI user cannot switch roles using this scope. |
+| `session:role-any` | Maps to the ANY role in Snowflake.  Use this scope if the user’s default role in Snowflake is desirable.  The `external_oauth_any_role_mode` security integration parameter must be configured in order to enable ANY role for a given External OAuth Provider. For configuration details, refer to the ANY role section in [Okta](/user-guide/oauth-okta#label-any-role-okta), [Microsoft Entra ID](/user-guide/oauth-azure#label-any-role-aad), [PingFederate](/user-guide/oauth-pingfed#label-any-role-pingfed), or [Custom](/user-guide/oauth-ext-custom#label-any-role-ext-oauth-custom). |
 | `session:role:custom_role` | Maps to a custom Snowflake role. For example, if your custom role is ANALYST, your scope is `session:role:analyst`. |
 | `session:role:public` | Maps to the PUBLIC Snowflake role. |
 
@@ -191,6 +191,6 @@ Show lessSee more
   valid or needs to be regenerated.
 - If you encounter an error message associated with a failed External OAuth login attempt, and the error message has a UUID, you can
   ask an
-  administrator that has a MONITOR privilege assigned to their role to use the UUID from the error message to get a more detailed
+  administrator who has a MONITOR privilege assigned to their role to use the UUID from the error message to get a more detailed
   description of the error using the [SYSTEM$GET\_LOGIN\_FAILURE\_DETAILS](/sql-reference/functions/system_get_login_failure_details#label-system-get-login-failure-details-example)
   function.

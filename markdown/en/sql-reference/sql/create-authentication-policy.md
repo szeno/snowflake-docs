@@ -124,7 +124,7 @@ CREATE OR ALTER AUTHENTICATION POLICY <name>
 
         Caution
 
-        If `SNOWFLAKE_UI` is not included in the `CLIENT_TYPES` list while `MFA_ENROLLMENT` is set to `REQUIRED`, or `MFA_ENROLLMENT` is unspecified, MFA enrollment doesn’t work.
+        `CLIENT_TYPES` must include `SNOWFLAKE_UI` only for interactive authentication through the Snowflake login UI. This requirement does not apply to non-interactive authentication.
 
     `DRIVERS`
     :   Drivers allow access to Snowflake from applications written in
@@ -193,9 +193,9 @@ CREATE OR ALTER AUTHENTICATION POLICY <name>
     Default: `ALL`.
 
 `MFA_ENROLLMENT = { 'REQUIRED' | 'REQUIRED_PASSWORD_ONLY' | 'OPTIONAL' }`
-:   Determines whether a user must enroll in multi-factor authentication. If this value is used, then
-    the `CLIENT_TYPES` parameter must include `SNOWFLAKE_UI`, because Snowsight is the only place users can
-    [enroll in multi-factor authentication (MFA)](/user-guide/ui-snowsight-profile#label-snowsight-set-up-mfa).
+:   Determines whether a user must enroll in multi-factor authentication. `CLIENT_TYPES` must include `SNOWFLAKE_UI` only for
+    interactive authentication, when users sign in through the Snowflake login UI. This requirement does not apply to
+    non-interactive authentication.
 
     It’s possible for the value of the `MFA_ENROLLMENT` parameter to be `REQUIRED_SNOWFLAKE_UI_PASSWORD_ONLY`. This value is part
     of Snowflake’s gradual deprecation of single-factor passwords, and cannot be set directly. If you run a
@@ -212,10 +212,13 @@ CREATE OR ALTER AUTHENTICATION POLICY <name>
     `OPTIONAL`
     :   Retained for backward compatibility only.
 
-    Default: `OPTIONAL`. For backward compatibility, you can create an authentication policy without specifying an
-    `MFA_ENROLLMENT` value, but the actual value that is enforced won’t be `OPTIONAL` because Snowflake is moving toward requiring
-    MFA for all human users. To determine which value is being enforced for an existing authentication policy, run the
-    [DESCRIBE AUTHENTICATION POLICY](/sql-reference/sql/desc-authentication-policy) command.
+    Default: `OPTIONAL`.
+
+    On accounts created after the [Multi-factor authentication enrollment enforced by default for new Snowflake accounts](/release-notes/bcr-bundles/2024_08/bcr-1784) behavior change, Snowflake applies a built-in
+    authentication policy that enforces MFA enrollment. If you omit `MFA_ENROLLMENT` on one of those accounts, the enforced value is
+    `REQUIRED`, not `OPTIONAL`. Include `SNOWFLAKE_UI` in `CLIENT_TYPES` only when that policy is for interactive authentication
+    through the Snowflake login UI. The requirement does not apply to non-interactive clients, such as `DRIVERS`. To see the value
+    enforced on an existing policy, run the [DESCRIBE AUTHENTICATION POLICY](/sql-reference/sql/desc-authentication-policy) command.
 
 `MFA_POLICY= ( list_of_properties )`
 :   Specifies the policies that affect how multi-factor authentication (MFA) is enforced. Set this to a space-delimited list of one or more

@@ -391,8 +391,7 @@ enable provider-run analysis in a clean room before the consumer can call this p
 many times as they want. Any provider calls to `provider.submit_analysis_request` are against the last approved version of the template;
 if the provider later modifies the template, the last approved version will be run when `provider.submit_analysis_request` is called.
 
-Providers run enabled templates in the consumer’s account, with the usage billed to the consumer. If you want to limit the warehouse type or
-sizes allowed to a provider when running a given template, call `set_provider_run_configuration`.
+Providers run enabled templates in the consumer’s account, with the usage billed to the consumer. If you want to limit the warehouse type or sizes allowed to a provider when running a given template, call `set_provider_run_configuration`.
 
 **Arguments:**
 
@@ -482,7 +481,6 @@ the template for provider-run analyses by calling `consumer.approve_template`.
     - ALL - (*Default*) Allow any warehouse type.
     - STANDARD - Allow only a standard warehouse.
     - SNOWPARK-OPTIMIZED - Allow only a Snowpark-optimized warehouse.
-      XLARGE or X-LARGE) is supported.
     - ALL - (*Default*) Any warehouse size allowed.
     - Any size defined for [WAREHOUSE\_SIZE](/sql-reference/sql/create-warehouse), or their synonyms (for example, either
       XLARGE or X-LARGE) is supported.

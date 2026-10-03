@@ -263,4 +263,4 @@ This includes:
 - Product issues
 
 If your issue remains unresolved, file a case with Marketplace Operations:
-[Report an issue with a Data Marketplace Listing or Provider](https://snowflakecommunity.force.com/s/consumer-reporting).
+[Report an issue with a Data Marketplace Listing or Provider](https://snowforce.my.site.com/s/consumer-reporting).

@@ -545,7 +545,7 @@ CALL samooha_by_snowflake_local_db.collaboration.view_collaborations() ->>
 CALL samooha_by_snowflake_local_db.collaboration.view_data_offerings(
   $collaboration_name
 );
-SET $bob_data_offering = '<bob data offering ID>';
+SET bob_data_offering = '<bob data offering ID>';
 
 CALL samooha_by_snowflake_local_db.collaboration.view_templates(
   $collaboration_name
@@ -761,7 +761,7 @@ Copy code
 --
 -- The user creates two sample datasets, registers two data offerings and two
 -- templates, then creates a collaboration with one data offering and one template each.
---  After the collaboration is created, the user links the remaining data offering and
+-- After the collaboration is created, the user links the remaining data offering and
 -- template, then runs an analysis with each template. Finally, the code
 -- cleans up all resources used.
 --

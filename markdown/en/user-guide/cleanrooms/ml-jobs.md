@@ -75,7 +75,7 @@ The template provider defines and submits the ML Job spec and the template for e
 
 ### 1. Stage artifacts
 
-Stage your code, model files, and private libraries into an internal stage. The stage must have directory enabled and
+Stage your code, model files, and private libraries into an internal stage. The stage must have a directory enabled and
 use Snowflake-managed encryption:
 
 Copy code

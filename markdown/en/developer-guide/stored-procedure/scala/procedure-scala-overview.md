@@ -54,7 +54,7 @@ the following Java versions:
 If you’re developing your code locally, set up your development environment to use the Snowpark library. See
 [Setting Up Your Development Environment for Snowpark Scala](/developer-guide/snowpark/scala/setup).
 
-### Structure and building handler code
+### Structuring and building handler code
 
 You can keep handler source code inline with the SQL that creates the procedure or keep the handler’s compiled results in a separate location
 and reference it from the SQL. For more information, see [Keeping handler code in-line or on a stage](/developer-guide/inline-or-staged).
@@ -81,8 +81,6 @@ When writing the method or function for a stored procedure, note the following:
 - For the rest of the arguments and for the return value, use the [Scala types](/developer-guide/udf-stored-procedure-data-type-mapping#label-sql-types-to-scala-types) that
   correspond to [Snowflake data types](/sql-reference-data-types).
 - Your method or function must return a value.
-- Stored procedure execution times out unless the timer is reset by the code’s activity. In particular, the timeout timer is reset
-  by the code’s interactions with data, including file operations, queries, and iterating through a result set.
 - When you run an [asynchronous child job](/developer-guide/snowpark/scala/working-with-dataframes#label-snowpark-dataframe-action-method-async) from within a procedure’s handler, “fire
   and forget” is not supported.
 
@@ -91,7 +89,7 @@ When writing the method or function for a stored procedure, note the following:
 
 ## Guidelines for handler performance and security
 
-To ensure that your code runs well on Snowflake, follow these guidelines:
+Follow these guidelines when writing handler code for stored procedures:
 
 - Limit the amount of memory consumed.
 

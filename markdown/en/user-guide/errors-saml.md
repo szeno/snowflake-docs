@@ -45,6 +45,10 @@ Troubleshooting a login failure differs depending on whether the error message h
 If you encounter an error message associated with a failed SAML SSO login attempt, and the error message does not have a UUID, then ensure
 the user exists. If the user exists, then the SAML response is invalid and the number of login attempts is too high.
 
+Use an admin role to run [SHOW USERS](/sql-reference/sql/show-users) in Snowsight and confirm the user’s `LOGIN_NAME`.
+
+To capture the SAML response, see [How to obtain a SAML response and use it to troubleshoot SSO issues](https://community.snowflake.com/s/article/How-To-Obtain-a-SAML-Response-And-Use-It-To-Troubleshoot-SSO-Issues).
+
 If you encounter an error message associated with a failed SAML SSO login attempt, and the error message has a UUID, you can ask an
 administrator that has MONITOR privilege assigned to their role to get a more detailed description of the error by following the steps
 below:

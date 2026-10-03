@@ -69,6 +69,7 @@ Because the alert operates only on newly inserted rows in a table or view, there
 specify:
 
 - In the SELECT statement, the FROM clause can specify only one regular table, view, or event table.
+  Iceberg tables aren’t supported, even if change tracking is enabled on the Iceberg table.
 - You must [enable change tracking](/user-guide/streams-manage#label-enabling-change-tracking-views) on that table or view.
 - You cannot use:
   - [Common table expressions (CTEs)](/user-guide/queries-cte)

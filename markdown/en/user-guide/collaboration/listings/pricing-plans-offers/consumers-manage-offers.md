@@ -40,7 +40,7 @@ The following steps describe the checkout experience for consumers who accept a 
      Note
 
      There can be a delay of up to 2 hours for the MCD balance to update. If you purchase multiple listings in a short amount of time and use MCD funds, this value might not be the most up-to-date value.
-   - **Pricing details**: Review the total contact value, including applicable taxes based on today’s date.
+   - **Pricing details**: Review the total contract value, including applicable taxes based on today’s date.
 
      Note
 
@@ -93,7 +93,7 @@ You can’t add a purchase order to a historical invoice.
 3. In the right pane, select a paid listing.
 4. Select **Manage Purchase**.
 5. Select **Edit** next to **PO Number**.
-6. Enter the purchase order number and click **Save** list.
+6. Enter the purchase order number and click **Save**.
 7. Select **X (Close)** to close the dialog.
 
 ## Cancel a paid listing purchase

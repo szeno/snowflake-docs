@@ -138,8 +138,7 @@ ALTER [ SECURITY ] INTEGRATION <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
         > ```
 
     `EXTERNAL_OAUTH_ANY_ROLE_MODE = { DISABLE | ENABLE | ENABLE_FOR_PRIVILEGE }`
-    :   Specifies whether the OAuth client or user can use a role that is not defined in the OAuth access token. Note that with a
-        [Power BI to Snowflake integration](/user-guide/oauth-powerbi), the PowerBI user cannot switch roles even when this parameter is enabled.
+    :   Specifies whether the OAuth client or user can use a role that is not defined in the OAuth access token.
 
         - `DISABLE` does not allow the OAuth client or user to switch roles (i.e. `USE ROLE role;`). Default.
         - `ENABLE` allows the OAuth client or user to switch roles.

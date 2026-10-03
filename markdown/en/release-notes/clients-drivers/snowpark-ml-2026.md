@@ -703,7 +703,7 @@ job = mv.run_batch(
 ### New Features
 
 - Experiment Tracking: Added `list_params` and `list_metrics` methods to retrieve parameters and metrics
-  for runs within an experiment. Both methods return a Dataframe and accept an optional `run_name` argument
+  for runs within an experiment. Both methods return a DataFrame and accept an optional `run_name` argument
   to filter to a specific run.
 
 ### Bug Fixes

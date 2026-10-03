@@ -13,7 +13,9 @@ See also:
 Copy code
 
 ```
-GRANT DATABASE ROLE <name> TO { DATABASE ROLE <parent_role_name> | ROLE <parent_role_name> | USER <user_name> }
+GRANT DATABASE ROLE <name> TO { DATABASE ROLE <parent_role_name> | ROLE <parent_role_name> } [ WITH GRANT OPTION ]
+
+GRANT DATABASE ROLE <name> TO USER <user_name>
 
 GRANT DATABASE ROLE <name> TO APPLICATION <app_name>
 ```
@@ -44,6 +46,20 @@ GRANT DATABASE ROLE <name> TO APPLICATION <app_name>
 `USER user_name`
 :   Grants the database role to the specified user.
 
+`WITH GRANT OPTION`
+:   If specified, allows the recipient role to grant the database role to other roles. The recipient can
+    include `WITH GRANT OPTION` on those grants.
+
+    Default: No value, which means the recipient role can’t grant the database role to other roles. The
+    recipient still inherits the privileges of the granted database role.
+
+    Note
+
+    `WITH GRANT OPTION` is valid on a grant to an account role or a database role.
+    `GRANT DATABASE ROLE ... TO USER ... WITH GRANT OPTION` isn’t supported.
+
+    For revoke behavior, see [REVOKE DATABASE ROLE](/sql-reference/sql/revoke-database-role).
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -56,6 +72,9 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 Expand
 
 Show lessSee more
+
+A role that was granted the database role with `WITH GRANT OPTION` can also grant that database role
+to other roles.
 
 ## Examples
 
@@ -89,4 +108,13 @@ Copy code
 
 ```
 GRANT DATABASE ROLE dr3 TO USER user1;
+```
+
+Grant the database role `analyst` to the account role `data_steward` and allow `data_steward` to
+grant `analyst` to other roles:
+
+Copy code
+
+```
+GRANT DATABASE ROLE mydb.analyst TO ROLE data_steward WITH GRANT OPTION;
 ```

@@ -204,7 +204,7 @@ Copy code
 ```
 CREATE DBT PROJECT sales_db.dbt_projects_schema.sw_region_sales_model
   FROM '@sales_db.integrations_schema.sales_dbt_git_stage/branches/main/sales_dbt_projects_parent/sw_region_dbt_project'
-  DBT_VERSION = '1.11.11'
+  DBT_VERSION = '1.12.3'
   DEFAULT_TARGET = 'prod'
   EXTERNAL_ACCESS_INTEGRATIONS = 'my_external_access_integration'
   COMMENT = 'Generates data models for SW sales region.';

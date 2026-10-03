@@ -56,8 +56,7 @@ for an existing account, see [Renaming an account](/user-guide/organizations-man
 While an account name uniquely identifies an account within your organization, it is *not* a unique identifier of an account
 across Snowflake organizations.
 
-Account names with underscores also have a dashed version of the URL for features that don’t accept URLs with underscores, such as
-Okta SSO/SCIM.
+Account names can include underscores. They can’t include hyphens. If an account name includes underscores, Snowflake automatically accepts the same identifier with each underscore replaced by a hyphen. Use that form for features that don’t accept underscores, such as Okta SSO and SCIM.
 
 The next sections explain the format to use and how to find your account identifier:
 
@@ -142,7 +141,7 @@ Snowsight. For more information, see [Configuring a client, driver, library, or 
 
 Note
 
-For scenarios/features where underscores in an account name are not supported, use hyphens instead of underscores.
+If a feature doesn’t accept underscores in an account name, use the form Snowflake provides automatically, with a hyphen in place of each underscore. Don’t rename the account to replace underscores with hyphens.
 
 For example, in a [configuration file for Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-cli), if your
 organization is `myorganization` and your account is `myaccount`, set `account` to:
@@ -200,11 +199,9 @@ example:
 
 `orgname-account_name`
 
-Consistent with SQL standards for identifiers, account names can include underscores as separators between words, such as `MARKETING_TEST_ACCOUNT`.
+Account names can include underscores as separators between words, such as `MARKETING_TEST_ACCOUNT`. An account name can’t contain a hyphen.
 
-URLs that include underscores can sometimes cause issues for certain features, such as Okta SSO/SCIM. For this reason, Snowflake also
-supports a version of the account name that substitutes the hyphen character (`-`) in place of the underscore character. For example
-both of the following URLs are supported:
+If the account name includes underscores, Snowflake automatically accepts a second form that replaces each underscore with a hyphen. You don’t create or rename the account to get this form. Use it when a URL or feature doesn’t accept underscores, such as Okta SSO and SCIM. The hyphen between the organization name and the account name is the identifier separator. The extra hyphens in the second URL stand in for the underscores in the account name. For example, both of the following URLs connect to the same account:
 
 > URL with underscores: `https://acme-marketing_test_account.snowflakecomputing.com`
 >

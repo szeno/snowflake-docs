@@ -31,6 +31,10 @@ Connect to your account using private connectivity, then run the [SYSTEM$ENFORCE
 command. Any SaaS service that does not support private connectivity cannot connect to Snowflake after you have disabled public access to
 your privatelink-only accounts.
 
+Before you enable privatelink-only access, verify that your identity provider supports connecting to the Snowflake SCIM endpoint through
+PrivateLink. If the identity provider sends SCIM requests over the public internet, enabling privatelink-only access blocks those requests
+and can stop user and role provisioning.
+
 Disabling public access to your privatelink-only accounts:
 
 - Disables **public** access to all Snowflake service endpoints only.

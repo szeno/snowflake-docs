@@ -41,7 +41,7 @@ the following steps, remains the same:
    your workload’s identity. This attestation is often, but not always, a JSON Web Token (JWT).
 2. As a Snowflake administrator, create a Snowflake service user for your workload. You set the properties of this user to values found in
    the attestation sent by the provider. For example, a user property might specify the name of an IAM role or the issuer URL of the
-   provider.
+   provider. The combination of `ISSUER` and `SUBJECT` must be unique in the account. See [Limitations and considerations](#label-wif-limitations).
 3. As a workload developer, configure your workload to use a [Snowflake driver](#label-wif-supported-drivers). Drivers send the
    attestation to Snowflake for verification.
 
@@ -1167,6 +1167,7 @@ SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS FOR USER my_custom_service;
   Snowflake region of your account.
 - The SUBJECT property in WORKLOAD\_IDENTITY can’t exceed 255 characters.
 - The ISSUER property in WORKLOAD\_IDENTITY can’t exceed 2048 characters.
+- The combination of `ISSUER` and `SUBJECT` must be unique in the account. Snowflake rejects a second workload identity authentication method that uses the same issuer and subject, even when it belongs to a different user. The error is `099706` (`OIDC Authenticator for Issuer '...' and Subject '...' already exists`). To find the user that already has that pair, run [SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS](/sql-reference/sql/show-user-workload-identity-authentication-methods) for the users in the account.
 - ID tokens must include the `iat` (issued at) claim. Snowflake rejects tokens that omit this claim.
 - Snowflake supports the following JWT signature algorithms: RS256, RS384, RS512, ES256, ES384, and ES512. Tokens signed with other
   algorithms (such as PS256, PS384, or PS512) are rejected.

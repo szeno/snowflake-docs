@@ -385,7 +385,7 @@ Copy code
 
 ```
 EXECUTE DBT PROJECT finance_analytics
-  DBT_VERSION = '1.11.11'
+  DBT_VERSION = '1.12.3'
 ```
 
 ### Select an environment and override variables at execution time

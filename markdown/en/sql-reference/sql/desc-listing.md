@@ -107,7 +107,7 @@ The command output provides listing properties and metadata in the following col
 | `trial_details` | Details associated with trial listings. |
 | `approver_contact` | Approver contact information. |
 | `support_contact` | Support contact information. |
-| `live_version_uri` | Full uniform resource indictor (URI) of the live version of the listing, against which stage operations can be performed. NULL if no live version exists for the listing. |
+| `live_version_uri` | Full uniform resource indicator (URI) of the live version of the listing, against which stage operations can be performed. NULL if no live version exists for the listing. |
 | `last_committed_version_uri` | Full URI of the last committed version of the listing. |
 | `last_committed_version_name` | System-generated name for the last committed version of the listing. |
 | `last_committed_version_alias` | User-specified alias for the last committed version of the listing. |

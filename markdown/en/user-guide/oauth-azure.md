@@ -63,9 +63,9 @@ flow in use. After determining which OAuth flow to use:
 
    > Important
    >
-   > The `Application ID URI` must be unique within your organization’s directory, such as
-   > `https://your.example.com/4d2a8c2b-a5f4-4b86-93ca-294185f45f2e`. This value will be referred to as the
-   > `<SNOWFLAKE_APPLICATION_ID_URI>` in the subsequent configuration steps.
+   > The Application ID URI must be unique within your organization’s directory. When you select **Set**, Microsoft Entra ID proposes `api://<application-registration-id>`. Use that value. Later steps refer to it as the `<SNOWFLAKE_APPLICATION_ID_URI>`, and `EXTERNAL_OAUTH_AUDIENCE_LIST` on the Snowflake security integration must match it exactly.
+   >
+   > Some clients, including Power Automate, can’t obtain a token when this URI is a custom HTTPS value such as `https://your.example.com/4d2a8c2b-a5f4-4b86-93ca-294185f45f2e`. If you change the URI, copy the exact string that Microsoft Entra ID shows into Snowflake.
    >
    > For help obtaining your Application ID URI, please contact your internal Microsoft Entra ID administrator.
    >

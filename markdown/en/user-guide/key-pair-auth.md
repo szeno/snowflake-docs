@@ -82,12 +82,12 @@ Copy code
 openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out rsa_key.p8 -nocrypt
 ```
 
-To generate an encrypted version, use the following command, which omits `-nocrypt`:
+To generate an encrypted version, use the following command, which omits `-nocrypt`. Use AES-256-CBC. Triple DES (`des3`) is not recommended, and the High Performance Snowpipe Streaming SDK rejects private keys encrypted with it.
 
 Copy code
 
 ```
-openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 des3 -inform PEM -out rsa_key.p8
+openssl genrsa 2048 | openssl pkcs8 -topk8 -v2 aes-256-cbc -inform PEM -out rsa_key.p8
 ```
 
 The commands generate a private key in PEM format.

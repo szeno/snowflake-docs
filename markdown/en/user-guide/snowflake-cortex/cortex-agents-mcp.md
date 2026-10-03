@@ -576,6 +576,10 @@ can reach it. For details, see
 
 1. First, create the security integration. For information about this command, see [CREATE SECURITY INTEGRATION (Snowflake OAuth)](/sql-reference/sql/create-security-integration-oauth-snowflake).
 
+   Use `OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'` when the client can store and send a client secret, such as VS Code or Cursor. Use `OAUTH_CLIENT_TYPE = 'PUBLIC'` when the client can’t send a client secret and uses PKCE instead, such as Claude Desktop. For Claude Desktop, set the redirect URI to `https://claude.ai/api/mcp/auth_callback`.
+
+   Confidential client:
+
    Copy code
 
    ```
@@ -585,6 +589,21 @@ can reach it. For details, see
      ENABLED = TRUE
      OAUTH_CLIENT_TYPE = 'CONFIDENTIAL'
      OAUTH_REDIRECT_URI = '<redirect_URI>'
+     OAUTH_USE_SECONDARY_ROLES = NONE
+     ALLOWED_ROLES_LIST = ('<mcp_access_role>')
+   ```
+
+   Public client (PKCE):
+
+   Copy code
+
+   ```
+   CREATE [ OR REPLACE ] SECURITY INTEGRATION [IF NOT EXISTS] <integration_name>
+     TYPE = OAUTH
+     OAUTH_CLIENT = CUSTOM
+     ENABLED = TRUE
+     OAUTH_CLIENT_TYPE = 'PUBLIC'
+     OAUTH_REDIRECT_URI = 'https://claude.ai/api/mcp/auth_callback'
      OAUTH_USE_SECONDARY_ROLES = NONE
      ALLOWED_ROLES_LIST = ('<mcp_access_role>')
    ```

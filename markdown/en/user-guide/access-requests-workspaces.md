@@ -129,7 +129,7 @@ roles in the account (including database roles) that can satisfy the request, an
 ### Step 5: Access is resolved and the user retries the query
 
 If the administrator grants access in Snowflake or externally, the requester receives a notification and can
-rerun the query successfully. If the administrator rejected the request, the requester receives a notification
+rerun the query successfully. If the administrator rejects the request, the requester receives a notification
 along with the reason for rejection.
 
 ## Manage requests

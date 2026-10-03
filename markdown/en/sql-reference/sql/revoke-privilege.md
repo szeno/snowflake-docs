@@ -32,7 +32,7 @@ Copy code
 REVOKE [ GRANT OPTION FOR ]
     {
        { globalPrivileges         | ALL [ PRIVILEGES ] } ON ACCOUNT
-     | { accountObjectPrivileges  | ALL [ PRIVILEGES ] } ON { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME } <object_name>
+     | { accountObjectPrivileges  | ALL [ PRIVILEGES ] } ON { RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME } <object_name>
      | { schemaPrivileges         | ALL [ PRIVILEGES ] } ON { SCHEMA <schema_name> | ALL SCHEMAS IN DATABASE <db_name> }
      | { schemaPrivileges         | ALL [ PRIVILEGES ] } ON { FUTURE SCHEMAS IN DATABASE <db_name> }
      | { schemaObjectPrivileges   | ALL [ PRIVILEGES ] } ON { <object_type> <object_name> | ALL <object_type_plural> IN SCHEMA <schema_name> }
@@ -102,6 +102,8 @@ accountObjectPrivileges ::=
    { MODIFY | MONITOR | OPERATE | USAGE } [ , ... ]
 -- For CONNECTION
    { FAILOVER } [ , ... ]
+-- For DATA EXCHANGE LISTING
+   { MODIFY | USAGE } [ , ... ]
 -- For DATABASE
    { APPLYBUDGET | CREATE { DATABASE ROLE | SCHEMA }
    | IMPORTED PRIVILEGES | MODIFY | MONITOR | USAGE } [ , ... ]
@@ -432,6 +434,14 @@ Revoking grants on future objects of a specified type:
 ## Examples
 
 ### Roles
+
+Revoke the USAGE privilege on the `mylisting` listing from the `myrole` role. The object type is `DATA EXCHANGE LISTING`:
+
+Copy code
+
+```
+REVOKE USAGE ON DATA EXCHANGE LISTING mylisting FROM ROLE myrole;
+```
 
 Revoke the privilege to create a warehouse in the account from the `analyst` role:
 

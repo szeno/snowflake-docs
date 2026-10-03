@@ -56,6 +56,7 @@ GRANT OWNERSHIP
     - `AUTHENTICATION POLICY`
     - `COMPUTE POOL`
     - `CORTEX SEARCH SERVICE`
+    - `DATA EXCHANGE LISTING`
     - `DATA METRIC FUNCTION`
     - `DATABASE`
     - `DATABASE ROLE`
@@ -229,6 +230,10 @@ GRANT OWNERSHIP
   To give the target role full control over the table and its related objects,
   you must grant the OWNERSHIP privilege on the external volume and catalog integration to the role.
 - After the ownership of a notebook is transferred to a new role, the original owner role loses all access to the notebook.
+- When you transfer ownership of a listing with `REVOKE CURRENT GRANTS`, Snowflake revokes all existing grants on that
+  listing. The new owner must grant those privileges again. If the listing already has outbound grants, specify
+  `REVOKE CURRENT GRANTS` or `COPY CURRENT GRANTS`. Otherwise the statement fails. For more information, see
+  [OWNERSHIP privilege on a listing](/user-guide/data-exchange-marketplace-privileges#label-ownership-on-data-exchange-listing).
 - **Database roles:**
 
   Ownership can only be transferred on objects in the same database as the database role.
@@ -239,6 +244,16 @@ GRANT OWNERSHIP
 ## Examples
 
 ### Roles
+
+Transfer ownership of the `mylisting` listing to the `myrole` role and revoke the listing’s current grants. The object
+type is `DATA EXCHANGE LISTING`:
+
+> Copy code
+>
+> ```
+> GRANT OWNERSHIP ON DATA EXCHANGE LISTING mylisting TO ROLE myrole
+>   REVOKE CURRENT GRANTS;
+> ```
 
 Revoke all outbound privileges on the `mydb` database, currently owned by the `manager` role, before transferring ownership
 to the `analyst` role:

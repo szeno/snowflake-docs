@@ -39,7 +39,7 @@ AS
     WHERE order_status != 'returned';
 ```
 
-CREATE OR ALTER updates the definition of the existing dynamic table. The next refresh is a full reinitialization after a definition update. Consumers can still read from the existing dynamic table during this process.
+CREATE OR ALTER updates the definition of the existing dynamic table. After a definition update, the next refresh is a full reinitialization. Consumers can still read from the existing dynamic table during this process.
 
 ### CREATE OR REPLACE DYNAMIC TABLE
 
@@ -113,17 +113,18 @@ For the full `dt_orders` column list, see [Create a dynamic table](/user-guide/d
 
 ## What triggers reinitialization
 
-Reinitialization is a forced full refresh that reprocesses all data from scratch. The following changes trigger
+Reinitialization is a forced full refresh that reprocesses all data from scratch. The following changes can trigger
 reinitialization:
 
 | Trigger | Notes |
 | --- | --- |
 | CREATE OR REPLACE on the dynamic table itself | Changing the definition, adding columns |
-| CREATE OR REPLACE on an upstream base table, dynamic table, view, or UDF | Recreating a base table in a dbt run |
+| CREATE OR REPLACE on an upstream base table, dynamic table, view, or UDF | Even if the recreated object has the same name and columns |
 | Dropping and re-adding a referenced column on a base table | Even with the same name and type |
 | Adding or removing a row access or masking policy on a base table | Incremental dynamic tables only |
+| `CREATE OR REPLACE` on a table used in a row access or masking policy on a base table | For masking policies, only when the definition reads the masked column. To avoid this, update the table in place, such as with `DELETE` and `INSERT` or `MERGE`. |
 | Changing REFRESH\_MODE across structural boundaries (for example, FULL to INCREMENTAL) | See [Refresh mode transitions](#label-dynamic-tables-refresh-mode-transitions) below |
-| Failover of a replicated incremental dynamic table | Internal change-tracking state doesn’t transfer during failover, so a full refresh is required |
+| Failover of an ineligible replicated dynamic table | Reinitializes when the dynamic table isn’t eligible to continue incrementally refreshing. See [Continuing incremental refresh after failover](/user-guide/dynamic-tables/replication#label-continue-incremental-refresh-eligibility). |
 | Removing or modifying a frozen region on the dynamic table | The previously frozen region must be reprocessed. For details, see [Frozen regions and backfill](/user-guide/dynamic-tables/frozen-regions). |
 | Removing or modifying a storage lifecycle policy on the dynamic table | Previously expired rows must be reprocessed. The refresh-history `REINIT_REASON` column identifies the change. For details, see [Use storage lifecycle policies with dynamic tables](/user-guide/dynamic-tables/storage-lifecycle-policies). |
 
@@ -288,7 +289,7 @@ feature is enabled for your account.
 
 For most schema changes, use CREATE OR ALTER DYNAMIC TABLE or CREATE OR REPLACE DYNAMIC TABLE.
 
-CREATE OR ALTER performs schema updates immediately: added columns are visible right away but contain null values until the next refresh, and renamed columns (last columns only) are also immediately visible with null values until the next refresh.
+CREATE OR ALTER performs schema updates immediately: added columns are visible right away but contain NULL values until the next refresh, and renamed columns (last columns only) are also immediately visible with NULL values until the next refresh.
 
 CREATE OR REPLACE is atomic: Snowflake creates the replacement as a hidden table, runs the initial refresh, then atomically swaps it in. Downstream tables see either the old or new version, never a partial state. Downstream incremental dynamic tables reinitialize automatically on their next refresh.
 

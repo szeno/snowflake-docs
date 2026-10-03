@@ -36,7 +36,7 @@ Copy code
 
 ```
 GRANT {  { globalPrivileges         | ALL [ PRIVILEGES ] } ON ACCOUNT
-       | { accountObjectPrivileges  | ALL [ PRIVILEGES ] } ON { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME | APPLICATION PACKAGE | APPLICATION } <object_name>
+       | { accountObjectPrivileges  | ALL [ PRIVILEGES ] } ON { USER | RESOURCE MONITOR | WAREHOUSE | COMPUTE POOL | DATABASE | DATA EXCHANGE LISTING | INTEGRATION | CONNECTION | FAILOVER GROUP | REPLICATION GROUP | EXTERNAL VOLUME | APPLICATION PACKAGE | APPLICATION } <object_name>
        | { schemaPrivileges         | ALL [ PRIVILEGES ] } ON { SCHEMA <schema_name> | ALL SCHEMAS IN DATABASE <db_name> }
        | { schemaPrivileges         | ALL [ PRIVILEGES ] } ON { FUTURE SCHEMAS IN DATABASE <db_name> }
        | { schemaObjectPrivileges   | ALL [ PRIVILEGES ] } ON { <object_type> <object_name> | ALL <object_type_plural> IN { DATABASE <db_name> | SCHEMA <schema_name> } }
@@ -102,6 +102,8 @@ accountObjectPrivileges ::=
    { MODIFY | MONITOR | OPERATE | USAGE } [ , ... ]
 -- For CONNECTION
    { FAILOVER } [ , ... ]
+-- For DATA EXCHANGE LISTING
+   { MODIFY | USAGE } [ , ... ]
 -- For DATABASE
    { APPLYBUDGET | CREATE { DATABASE ROLE | SCHEMA }
    | IMPORTED PRIVILEGES | MODIFY | MONITOR | USAGE } [ , ... ]
@@ -334,6 +336,24 @@ For more details about the privileges supported for each object type, see [Acces
   grant [instance roles](/sql-reference/snowflake-db-classes#label-instance-roles) to an account role. Grant the CREATE <class\_name> privilege on the schema to enable a
   role to create an instance of a class.
 - OWNERSHIP is a valid privilege across all object types that support future grants.
+- `APPLY` and `APPLY MASKING POLICY` are different privileges.
+
+  - Grant `APPLY` on a specific masking policy:
+
+    Copy code
+
+    ```
+    GRANT APPLY ON MASKING POLICY <policy_name> TO ROLE <role_name>;
+    ```
+  - Grant `APPLY MASKING POLICY` only on the account. This is a global privilege:
+
+    Copy code
+
+    ```
+    GRANT APPLY MASKING POLICY ON ACCOUNT TO ROLE <role_name>;
+    ```
+
+  You can’t grant `APPLY MASKING POLICY` on a table.
 - To grant the OWNERSHIP privilege on an object (or all objects of a specified type in a schema) to a role, transferring ownership of the
   object from one role to another role, use [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) instead. The GRANT OWNERSHIP command has a different
   syntax.
@@ -523,6 +543,25 @@ For more information, see [managed access schemas](/user-guide/security-access-c
 ## Examples
 
 ### Roles
+
+Grant the USAGE privilege on the `mylisting` listing to the `myrole` role. The object type is `DATA EXCHANGE LISTING`:
+
+> Copy code
+>
+> ```
+> GRANT USAGE ON DATA EXCHANGE LISTING mylisting TO ROLE myrole;
+> ```
+
+Grant the MODIFY privilege on the same listing:
+
+> Copy code
+>
+> ```
+> GRANT MODIFY ON DATA EXCHANGE LISTING mylisting TO ROLE myrole;
+> ```
+
+For the privileges you can grant on a listing, see
+[Listing-level privileges](/user-guide/data-exchange-marketplace-privileges#label-listing-level-privileges).
 
 Grant the necessary privileges to operate (that is, suspend or resume) the `report_wh` warehouse to the `analyst` role:
 

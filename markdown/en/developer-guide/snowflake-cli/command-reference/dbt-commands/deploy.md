@@ -130,7 +130,7 @@ snow dbt deploy
 :   Installs local dependencies from project that don’t require external access. Default: False.
 
 `--dbt-version TEXT`
-:   dbt version to use for the project, for example ’1.11.11’. Full list of supported versions can be found at <https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions>.
+:   dbt version to use for the project, for example ’1.12.3’. Full list of supported versions can be found at <https://docs.snowflake.com/en/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions>.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your *config.toml* file. Default: *default*.
@@ -323,7 +323,7 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
   Copy code
 
   ```
-  snow dbt deploy jaffle_shop --dbt-version '1.11.11'
+  snow dbt deploy jaffle_shop --dbt-version '1.12.3'
   ```
 - Deploy a project named `jaffle_shop`, pull in an `env.yml` file from a separate directory, and set the default environment for compilation and later executions:
 

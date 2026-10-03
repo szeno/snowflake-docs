@@ -280,6 +280,40 @@ Show lessSee more
 Open the command palette and run **Reset Onboarding** to see the setup flow again on the
 next launch.
 
+### Collect diagnostic logs
+
+CoCo Desktop writes diagnostic logs to disk. When you report a connection or startup problem to
+Snowflake Support, include the most recent `main.log`, which is where connection errors are
+recorded.
+
+#### macOS
+
+- `~/Library/Application Support/Cortex Code/logs/<timestamp>/main.log`: the primary log, including
+  connection errors.
+- `~/.snowflake/cortex/logs/coco.log`: the shared CoCo log.
+
+#### Windows
+
+- `%APPDATA%\Cortex Code\logs\<timestamp>\main.log`: the primary log, including connection errors.
+- `%APPDATA%\Cortex Code\logs\<timestamp>\window<N>\exthost\`: the extension host logs.
+
+Note
+
+On Windows, CoCo Desktop doesn’t create a `%USERPROFILE%\.snowflake\cortex\logs\` directory. Use the
+`%APPDATA%` paths instead.
+
+To find the log entries for a failed connection:
+
+1. Open the log directory for your operating system.
+2. Open the most recent timestamped subdirectory, for example `20260625T221146`.
+3. Open `main.log` and search for `[error]` entries.
+
+Connection failures are recorded in the following form:
+
+```
+[error] [SnowflakeSdk] Connection failed: <error message>
+```
+
 ## Best practices
 
 - **Use OAuth or SSO** for the most secure sign-in experience: no passwords stored on disk.

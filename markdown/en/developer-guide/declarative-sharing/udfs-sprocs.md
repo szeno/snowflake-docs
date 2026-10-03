@@ -17,7 +17,7 @@ procedures (sprocs) in a Declarative Native App:
   For more information, see [Understanding caller’s rights and owner’s rights stored procedures](/developer-guide/stored-procedure/stored-procedures-rights).
 - All types of UDFs, except EXTERNAL functions
 - Snowpark UDFs and stored procedures written in Python, Java, JavaScript, and
-  Scala. Snowpark Container Service functions are not supported.
+  Scala. Snowpark Container Services functions are not supported.
 
 ## Including User-Defined Functions and Stored Procedures in your application
 
@@ -106,7 +106,7 @@ be included in the `manifest.yaml` file for the view to access them.
 
 Supported languages and types
 :   Snowpark UDFs and stored procedures written in Python, Java, JavaScript, and
-    Scala. Snowpark Container Service functions are not supported.
+    Scala. Snowpark Container Services functions are not supported.
 
 Schemas for data objects and logic objects
 :   You must use separate schemas for data objects (tables and views) and logic
@@ -117,7 +117,7 @@ Schemas for data objects and logic objects
 Referencing private objects
 :   Your UDFs and stored procedures must reference private objects by their
     schema-qualified names. Your logic objects can’t reference private objects by
-    their fully-qualified names.
+    their fully qualified names.
 
 Object count
 :   A Declarative Native App can include up to 100 UDFs and stored procedures. To

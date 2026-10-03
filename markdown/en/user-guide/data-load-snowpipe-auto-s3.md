@@ -396,9 +396,13 @@ The following example creates a stage named `mystage` in the active schema for t
 > USE SCHEMA snowpipe_db.public;
 >
 > CREATE STAGE mystage
->   URL = 's3://mybucket/load/files'
+>   URL = 's3://mybucket/load/files/'
 >   STORAGE_INTEGRATION = my_storage_int;
 > ```
+
+Important
+
+Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `s3://mybucket/path` also includes files from `s3://mybucket/path1` and `s3://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
 
 ### Step 2: Create a pipe with auto-ingest enabled
 
@@ -424,6 +428,8 @@ Important
 Compare the stage reference in the pipe definition with existing pipes. Verify that the directory paths for the same S3 bucket do not overlap; otherwise, multiple pipes could load the same set of data files multiple times, into one or more target tables. This can happen, for example, when multiple stages reference the same S3 bucket with different levels of granularity, such as `s3://mybucket/path1` and `s3://mybucket/path1/path2`. In this use case, if files are staged in `s3://mybucket/path1/path2`, the pipes for both stages would load a copy of the files.
 
 This is different from the manual Snowpipe setup (with auto-ingest *disabled*), which requires users to submit a named set of files to a REST API to queue the files for loading. With auto-ingest enabled, each pipe receives a generated file list from the S3 event notifications. Additional care is required to avoid data duplication.
+
+If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path1` and `path2`.
 
 ### Step 3: Configure security
 
@@ -751,9 +757,13 @@ The following example creates a stage named `mystage` in the active schema for t
 >
 > ```
 > CREATE STAGE mystage
->   URL = 's3://mybucket/load/files'
+>   URL = 's3://mybucket/load/files/'
 >   STORAGE_INTEGRATION = my_storage_int;
 > ```
+
+Important
+
+Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `s3://mybucket/path` also includes files from `s3://mybucket/path1` and `s3://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
 
 ### Step 3: Create a pipe with auto-ingest enabled
 
@@ -794,6 +804,8 @@ occur when multiple pipe definitions reference the same storage location with di
 View the COPY INTO *<table>* statements in the definitions of all pipes in the account by executing [SHOW PIPES](/sql-reference/sql/show-pipes)
 or by querying either the [PIPES](/sql-reference/account-usage/pipes) view in Account Usage or the
 [PIPES](/sql-reference/info-schema/pipes) view in the Information Schema.
+
+If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path1` and `path2`.
 
 ### Step 4: Configure security
 

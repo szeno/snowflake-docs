@@ -9,7 +9,7 @@ This topic provides an [architecture overview](#label-client-troubleshooting-arc
 
 Note
 
-The term client as used in this article refers to any custom or third-party application using a Snowflake command-line client (e.g., [Snowflake CLI](/developer-guide/snowflake-cli/index)), driver (e.g., [Go](/developer-guide/golang/go-driver), [JDBC](/developer-guide/jdbc/jdbc), [NodeJs](/developer-guide/node-js/nodejs-driver), [ODBC](/developer-guide/odbc/odbc), [PHP](/developer-guide/php-pdo/php-pdo-driver), [Python](/developer-guide/python-connector/python-connector)), or API (e.g., [Snowpipe REST API](/user-guide/data-load-snowpipe-rest-apis), [SQL API](/developer-guide/sql-api/index)). For completeness, it also includes browser access to the [Snowflake Web Interface](/user-guide/ui-snowsight).
+The term client as used in this article refers to any custom or third-party application using a Snowflake command-line client (e.g., [Snowflake CLI](/developer-guide/snowflake-cli/index)), driver (e.g., [Go](/developer-guide/golang/go-driver), [JDBC](/developer-guide/jdbc/jdbc), [Node.js](/developer-guide/node-js/nodejs-driver), [ODBC](/developer-guide/odbc/odbc), [PHP](/developer-guide/php-pdo/php-pdo-driver), [Python](/developer-guide/python-connector/python-connector)), or API (e.g., [Snowpipe REST API](/user-guide/data-load-snowpipe-rest-apis), [SQL API](/developer-guide/sql-api/index)). For completeness, it also includes browser access to the [Snowflake Web Interface](/user-guide/ui-snowsight).
 
 ## Architecture
 

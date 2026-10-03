@@ -19,6 +19,11 @@ As a provider, you are responsible for the following observability tasks:
 - **Emit telemetry from your app code.** Configure log, trace, metric, and event levels in the manifest, with
   optional object-level overrides for individual schemas, stored procedures, and UDFs. See
   [Configure event definitions for an app](/developer-guide/native-apps/event-definition).
+- **Understand Cortex Agent observability.** Snowflake redacts provider implementation
+  details from the consumer event table for app-initiated agent runs. When the consumer enables
+  event sharing, the provider receives agent telemetry at the `AI_METADATA` or `AI_CONTENT`
+  sharing level. For more information, see
+  [Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing).
 - **Centralize event sharing across regions (recommended).** Use centralized event sharing to route telemetry
   from every region to a single destination account, without operating per-region event accounts. See
   [Configure centralized event sharing for an app](/developer-guide/native-apps/event-central).

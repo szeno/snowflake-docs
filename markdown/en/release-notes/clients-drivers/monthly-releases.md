@@ -62,6 +62,7 @@ Show lessSee more
 | 3.4.0 | 30-Sep-2026 |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 3.20.0 | 03-Sep-2026 |  |
 | 3.21.0 | 10-Sep-2026 |  |
+| 4.0.0 | 30-Sep-2026 |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | 4.2.0 | 03-Sep-2026 |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | 3.27.0 | 09-Sep-2026 |  |
 | 3.28.0 | 28-Sep-2026 |  |

@@ -891,7 +891,7 @@ For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snow
 - Fix `createDataFrame` for interval types
 - Change logic for `Literal _IntegralType` in multiplication and division operations
 - Widen and coerce type for `Set` operations
-- Fix `neo4j` multi label support
+- Fix `neo4j` multi-label support
 - Modify JAR metadata so that Grype does not detect Netty vulnerability
 - Return correct type for `ANY_VALUE` function
 - Return widened type for sequence

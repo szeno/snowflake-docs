@@ -927,7 +927,7 @@ Consider the following items when you access Iceberg tables with an external que
     - Only Snowflake-managed Iceberg tables are supported.
 - Listings:
 
-  - Iceberg tables that you share through [auto-fulfillment for listings](/collaboration/provider-listings-auto-fulfillment) aren’t
+  - Iceberg tables that you share through [auto-fulfillment for listings](/collaboration/provider-listings-auto-fulfillment) are
     accessible through the consumer account’s Horizon Iceberg REST Catalog API.
 - Network and private connectivity:
 

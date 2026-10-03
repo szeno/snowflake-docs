@@ -89,7 +89,7 @@ To revoke a user’s consent to switch roles for an integration, use
 
 Available to all accounts.
 
-When a client omits a `session:role:role_name` scope in the authorization requests, the session uses the user’s
+When a client omits a `session:role:role_name` scope in the authorization request, the session uses the user’s
 default role. To let the user pick the session role(s) during the OAuth authorization flow, set
 the OAUTH\_ENABLE\_ROLE\_SELECTION parameter to TRUE when you create the integration (using
 [CREATE SECURITY INTEGRATION](/sql-reference/sql/create-security-integration-oauth-snowflake)) or later (using
@@ -225,7 +225,7 @@ The following parameters should be URL encoded.
 | Parameter | Data Type | Required? | Description |
 | --- | --- | --- | --- |
 | `client_id` | String | Yes | Client ID (provided by Snowflake when the client is registered) |
-| `response_type` | String | Yes | Response type created. Currently supports `code` value, because Snowflake only issues authorization codes. |
+| `response_type` | String | Yes | Response type created. Currently supports the `code` value, because Snowflake only issues authorization codes. |
 | `redirect_uri` | String | Yes | URI where the user is redirected to after successfully authorizing. In general, this should match the value of the OAUTH\_REDIRECT\_URI parameter of the security integration. If the integration also defines OAUTH\_ALTERNATE\_REDIRECT\_URIS, the URI can match OAUTH\_REDIRECT\_URI or any URI in that list.  However, if the `redirect_uri` includes query parameters, do not include those query parameters when defining the OAUTH\_REDIRECT\_URI parameter of the security integration. For example, if the value of the `redirect_uri` query parameter in the request to the authorization endpoint is `https://www.example.com/connect?authType=snowflake`, make sure the OAUTH\_REDIRECT\_URI parameter in the security integration is set to `https://www.example.com/connect`. |
 | `state` | String | No | String of no more than 2048 ASCII characters that is returned with the response from the Snowflake authorization server. Typically used to prevent cross-site request forgery attacks. |
 | `scope` | String | No | Space-delimited string that is used to limit the scope of the access request. For more information, refer to [Scope](#scope) (in this topic). |
@@ -376,7 +376,7 @@ token-request parameters. See [Request body](#request-body).
 | `client_secret` | String | Conditional | Client secret for the integration. Required when using `client_secret_post` client authentication. Don’t include this parameter when using `client_secret_basic`. |
 | `client_assertion` | String | Conditional | Signed JWT that authenticates the client. Required when using `private_key_jwt` client authentication with a client assertion. For more information, see [Authenticate with a client assertion](#label-oauth-client-assertion). |
 | `client_assertion_type` | String | Conditional | Format of the `client_assertion` value. Required whenever `client_assertion` is present, and must be set to `urn:ietf:params:oauth:client-assertion-type:jwt-bearer`. |
-| `code` | String | Yes | Authorization code returned from the token endpoint. Used and required when `grant_type` is set to `authorization_code`. |
+| `code` | String | Yes | Authorization code returned from the authorization endpoint. Used and required when `grant_type` is set to `authorization_code`. |
 | `refresh_token` | String | Yes | Refresh token returned from an earlier request to the token endpoint when redeeming the authorization code. Used and required when `grant_type` is set to `refresh_token`. |
 | `redirect_uri` | String | Yes | Redirect URI as used in the authorization URL when requesting an authorization code. Used and required when `grant_type` is set to `authorization_code`. |
 | `code_verifier` | String | No | Required only if the authorization request was sent to the [Authorization Endpoint](#authorization-endpoint) with a `code_challenge` parameter value. Code verifier for PKCE. For more information, see [Proof key for code exchange](#label-proof-key-for-code-exchange) (in this topic). |
@@ -470,8 +470,8 @@ Content-type: application/x-www-form-urlencoded
 
 | Parameter | Data Type | Required | Description |
 | --- | --- | --- | --- |
-| `grant_type` | String | Yes | Pass this as string `urn:ietf:params:oauth:grant-type:jwt-bearer` |
-| `scope` | String | Yes | Pass this as string `session:role:role_name <ingress-endpoint-url>`. Note that the `role_name` is case-sensitive. Use the [SHOW ENDPOINTS IN SERVICE](/sql-reference/sql/show-endpoints) command to find the ingress endpoint URL. |
+| `grant_type` | String | Yes | Pass this as a string `urn:ietf:params:oauth:grant-type:jwt-bearer` |
+| `scope` | String | Yes | Pass this as a string `session:role:role_name <ingress-endpoint-url>`. Note that the `role_name` is case-sensitive. Use the [SHOW ENDPOINTS IN SERVICE](/sql-reference/sql/show-endpoints) command to find the ingress endpoint URL. |
 | `assertion` | String | Yes | Pass the JWT token. |
 
 Expand

@@ -119,7 +119,7 @@ all available versions, go to the [SnowSQL Download](https://developers.snowflak
 |  | SNOW-64053 | Added an option to automatically print query ids. |
 | **SnowSQL 1.1.72** |  |  |
 |  | SNOW-37156 | Added new SQL functions to the keyword list for auto-completion and syntax highlighting. |
-|  | SNOW-54514 | Fixed issue with explicitly-specified default region causing SnowSQL to hanging indefinitely. |
+|  | SNOW-54514 | Fixed issue with explicitly-specified default region causing SnowSQL to hang indefinitely. |
 | **SnowSQL 1.1.71** |  |  |
 |  | SNOW-36812 | Added the `!pause` command to pause and continue running queries. |
 |  | SNOW-56234 | For Snowflake accounts hosted on Azure, fixed the PUT/GET progress bar. |
@@ -247,7 +247,7 @@ all available versions, go to the [SnowSQL Download](https://developers.snowflak
 |  | SNOW-29714 | Added check to make sure file isn’t empty when checking to see if compression type is zstd. |
 |  | SNOW-29933 | Driver suppresses ‘No data returned’ message when no data is returned and `friendly=false`. |
 | **SnowSQL 1.1.28** |  |  |
-|  | SNOW-27327 | Added support for brotli and zstd in PUT statements for the python connector. |
+|  | SNOW-27327 | Added support for brotli and zstd in PUT statements for the Python connector. |
 |  | SNOW-29584 | Implemented timeout OCSP server requests to mitigate hang. |
 | **SnowSQL 1.1.27** |  |  |
 |  | SNOW-29146 | Fixed issue with the bootstrap process that may cause invalid literal for `int()` with base 10. |

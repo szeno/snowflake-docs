@@ -71,7 +71,7 @@ Copy code
   "expires_in": 600,
   "refresh_token": "<your_new_refresh_token>",
   "token_type": "Bearer",
-  "username": "<user1>",
+  "username": "<user1>"
 }
 ```
 
@@ -98,7 +98,7 @@ Copy code
   "access_token":  "<your_new_access_token>",
   "expires_in": 600,
   "refresh_token": "<your_new_refresh_token>",
-  "token_type": "Bearer",
+  "token_type": "Bearer"
 }
 ```
 

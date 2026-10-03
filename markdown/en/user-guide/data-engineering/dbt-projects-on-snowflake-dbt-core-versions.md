@@ -8,9 +8,11 @@ to pin specific versions for governance and reproducibility while providing a cl
 
 | dbt Version Supported | Snowflake Support Level | dbt Labs Support |
 | --- | --- | --- |
+| dbt 2.0.0 | Active support | Active |
 | dbt Fusion 2.0.0-preview.210 | Active support | Active |
 | dbt Fusion 2.0.0-preview.186 | Active support | Active |
 | dbt Fusion 2.0.0-preview.175 | Active support | Active |
+| dbt Core 1.12.3 | Active support | Active support until Jul 15, 2027 |
 | dbt Core 1.11.11 | Active support | Active support until Dec 18, 2026 |
 | dbt Core 1.10.15 | Active support | Deprecated |
 | dbt Core 1.9.4 | Active support | Deprecated |
@@ -44,7 +46,7 @@ SELECT SYSTEM$SUPPORTED_DBT_VERSIONS();
 ```
 
 ```
-[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"}]
+[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"},{"dbt_version":"1.12.3","type":"dbt Core"}]
 ```
 
 ## Set the account-level default version
@@ -57,7 +59,7 @@ without requiring users to specify `DBT_VERSION` in every CREATE DBT PROJECT sta
 Copy code
 
 ```
-ALTER ACCOUNT SET DEFAULT_DBT_VERSION = '1.11.11';
+ALTER ACCOUNT SET DEFAULT_DBT_VERSION = '1.12.3';
 ```
 
 This default version is also used by workspaces to set the initial dbt workspace runtime version.
@@ -74,19 +76,19 @@ in the following example:
 Copy code
 
 ```
-ALTER DBT PROJECT my_dbt_project SET DBT_VERSION = '1.11.11';
+ALTER DBT PROJECT my_dbt_project SET DBT_VERSION = '1.12.3';
 ```
 
 ## Create a dbt project object pinned to a version
 
-The following example creates a dbt project object pinned to the 1.11.11 dbt version:
+The following example creates a dbt project object pinned to the 1.12.3 dbt version:
 
 Copy code
 
 ```
 CREATE OR REPLACE DBT PROJECT my_dbt_project
   FROM '@my_stage/dbt_files'
-  DBT_VERSION = '1.11.11';
+  DBT_VERSION = '1.12.3';
 ```
 
 Note

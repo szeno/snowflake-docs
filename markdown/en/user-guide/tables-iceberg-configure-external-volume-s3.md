@@ -20,9 +20,6 @@ Before you configure an external volume, you need the following:
 
   - To use the external volume for externally managed Iceberg tables, all of your table data and metadata files must
     be located in a bucket that hosts your Snowflake account.
-  - Snowflake can’t support external volumes with S3 bucket names that contain dots (for example, `my.s3.bucket`).
-    S3 doesn’t support SSL for virtual-hosted-style buckets with dots in the name, and
-    Snowflake uses virtual-host-style paths and HTTPS to access data in S3.
   - To support data recovery, [enable versioning for your external cloud storage location](/user-guide/tables-iceberg-managing-external-volumes#label-tables-iceberg-enable-storage-versioning).
 - Permissions in AWS to create and manage IAM policies and roles. If you aren’t an AWS administrator, ask your AWS administrator to perform these tasks.
 

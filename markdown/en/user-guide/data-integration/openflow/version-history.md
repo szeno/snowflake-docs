@@ -6,6 +6,26 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 1, 2026
+
+### Runtime Server 2026.10.1.11
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.10.1.13
+
+- SQL Server: Added support for Microsoft Entra access token authentication for Azure SQL Server in DBCP services.
+- Protobuf: Added a record writer for Protobuf messages.
+- Snowpipe Streaming: Reduced unnecessary framework triggering of PublishSnowpipeStreaming processors when checking channel status.
+- Salesforce: Added support for incremental loading of objects that use `EventDate` or `Timestamp` as their timestamp field.
+- Snowflake Parameter Provider: Skipped individual native secrets that can’t be read and continued fetching the remaining secrets. Configuration verification now reports how many secrets were listed and how many values were fetched successfully.
+- CDC SQL Server: Fixed catalog queries failing with a collation conflict (error 468) when an Azure SQL Database uses a different catalog collation than the database data collation. Change data capture could stop with error 468 while loading a table’s capture-instance schema.
+
+### Connectors 2026.10.1.11
+
+- SQL Server CT 0.55.0:
+  - Removed the Private Preview connector events publishing (Table Consolidation, now discontinued) from the SQL Server Change Tracking flow, including the `Connector Events Table FQN` parameter. Change Tracking snapshot and incremental behavior is unchanged.
+
 ## September 25, 2026
 
 ### Control Plane Core 0.134.0

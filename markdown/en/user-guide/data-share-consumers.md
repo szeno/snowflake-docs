@@ -422,5 +422,5 @@ For example:
 >
 > USE DATABASE snow_sales;
 >
-> SELECT * FROM aggregates_1;
+> SELECT * FROM aggregate_1;
 > ```

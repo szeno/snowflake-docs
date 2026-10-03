@@ -290,9 +290,6 @@ The following considerations and limitations apply to Iceberg tables, and are su
 >   integrations.
 > - After you create a Snowflake-managed table,
 >   the path to its files in external storage does not change, even if you rename the table.
-> - Snowflake can’t support external volumes with S3 bucket names that contain dots (for example, `my.s3.bucket`).
->   S3 doesn’t support SSL for virtual-hosted-style buckets with dots in the name, and
->   Snowflake uses virtual-host-style paths and HTTPS to access data in S3.
 
 **Metadata files**
 
@@ -513,7 +510,7 @@ Consider the following items when you access Iceberg tables with an external que
     - Only Snowflake-managed Iceberg tables are supported.
 - Listings:
 
-  - Iceberg tables that you share through [auto-fulfillment for listings](/collaboration/provider-listings-auto-fulfillment) aren’t
+  - Iceberg tables that you share through [auto-fulfillment for listings](/collaboration/provider-listings-auto-fulfillment) are
     accessible through the consumer account’s Horizon Iceberg REST Catalog API.
 - Network and private connectivity:
 

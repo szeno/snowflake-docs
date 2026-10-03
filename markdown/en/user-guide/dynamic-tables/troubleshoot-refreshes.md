@@ -314,7 +314,10 @@ the offset and avoid processing this large change set. See
 2. Identify the trigger. The most common causes are `CREATE OR REPLACE` on the dynamic table itself
    (appears as `refresh_trigger = CREATION` in refresh history)
    or on an upstream base table, and schema changes (dropping or renaming a column) on a base table
-   that the dynamic table references.
+   that the dynamic table references. Failover of a replicated dynamic table is another possible
+   cause, but it doesn’t always trigger reinitialization; see
+   [Continuing incremental refresh after failover](/user-guide/dynamic-tables/replication#label-continue-incremental-refresh-eligibility)
+   for eligibility criteria.
 
    For the complete list of reinitialization triggers, see
    [Modify dynamic tables](/user-guide/dynamic-tables/modify#label-dynamic-tables-evolving-reinitialization-triggers).

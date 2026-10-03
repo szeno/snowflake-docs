@@ -15,21 +15,21 @@ These topics provide reference information for the APIs available in Snowflake.
 | Snowflake Connector for Kafka | - [Developer Guide](/user-guide/kafka-connector/index) - [Source code in GitHub](https://github.com/snowflakedb/snowflake-kafka-connector) |
 | Snowflake Connector for Python | - [Developer Guide](/developer-guide/python-connector/python-connector) - [API Reference](/developer-guide/python-connector/python-connector-api) - [Getting Started With Python](https://quickstarts.snowflake.com/guide/getting_started_with_python/index.html?index=..%2F..index) |
 | Snowflake Connector for Spark | - [Developer Guide](/user-guide/spark-connector) - [Source code in GitHub](https://github.com/snowflakedb/spark-snowflake) |
-| Snowflake Python APIs | - [Developer Guide](/developer-guide/snowflake-python-api/snowflake-python-overview) - [API Reference](developer-guide/snowflake-python-api/reference/latest/index) |
-| Snowflake REST APIs | - [Developer Guide](/developer-guide/snowflake-rest-api/snowflake-rest-api) - [API Reference](developer-guide/snowflake-rest-api/reference) |
+| Snowflake Python APIs | - [Developer Guide](/developer-guide/snowflake-python-api/snowflake-python-overview) - [API Reference](/developer-guide/snowflake-python-api/reference/latest/index) |
+| Snowflake REST APIs | - [Developer Guide](/developer-guide/snowflake-rest-api/snowflake-rest-api) - [API Reference](/developer-guide/snowflake-rest-api/reference) |
 | Snowflake SQL API | - [Developer Guide](/developer-guide/sql-api/index) - [API Reference](/developer-guide/sql-api/reference) - [SQL API Playground](https://api.developers.snowflake.com/) |
 
 Expand
 
 Show lessSee more
 
-**APIs for extending Snowflake:**
+**APIs for extending Snowflake**
 
 | Extensibility Feature | Resources |
 | --- | --- |
 | User-Defined Functions (UDFs) | - [Developer Guide](/developer-guide/udf/udf-overview) - [Getting Started With User-Defined Functions](https://quickstarts.snowflake.com/guide/getting_started_with_user_defined_functions/index.html?index=..%2F..index) |
-| Snowpark for Scala | - [Developer Guide](/developer-guide/snowpark/scala/index) - [API Reference](developer-guide/snowpark/reference/scala/com/snowflake/snowpark/index.html) - [Getting Started With Snowpark in Scala](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_scala/index.html) |
-| Snowpark for Java | - [Developer Guide](/developer-guide/snowpark/java/index) - [API Reference](developer-guide/snowpark/reference/java/index.html) |
+| Snowpark for Scala | - [Developer Guide](/developer-guide/snowpark/scala/index) - [API Reference](/developer-guide/snowpark/reference/scala/com/snowflake/snowpark/index.html) - [Getting Started With Snowpark in Scala](https://quickstarts.snowflake.com/guide/getting_started_with_snowpark_scala/index.html) |
+| Snowpark for Java | - [Developer Guide](/developer-guide/snowpark/java/index) - [API Reference](/developer-guide/snowpark/reference/java/index.html) |
 | Snowpark for Python | - [Developer Guide](/developer-guide/snowpark/python/index) - [API Reference](/developer-guide/snowpark/reference/python/latest/index.html) |
 | Snowflake ML for Python | - [Developer Guide](/developer-guide/snowflake-ml/overview) - [API Reference](/developer-guide/snowpark-ml/reference/latest/index.html) |
 | External Functions | - [Developer Guide](/sql-reference/external-functions) |

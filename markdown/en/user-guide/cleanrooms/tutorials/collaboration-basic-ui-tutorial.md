@@ -544,4 +544,4 @@ In this tutorial, you learned how to use the Snowflake Data Clean Rooms UI in Sn
 - Explore the full [Data Clean Rooms UI in Snowsight](/user-guide/cleanrooms/collab-ui-overview) and its workflows.
 - Learn more about the overlap analysis and activation in [Overlap and activation](/user-guide/cleanrooms/collab-overlap-and-activation).
 - Learn about [collaboration roles](/user-guide/cleanrooms/roles) and how to [manage access](/user-guide/cleanrooms/manage-access).
-- Find more tutorials, sample worksheets, and video walkthroughs in [Sample Worksheets and Videos](/user-guide/cleanrooms/tutorials-and-samples).
+- Find more tutorials, sample worksheets, and video walkthroughs in [Sample worksheets and videos](/user-guide/cleanrooms/tutorials-and-samples).

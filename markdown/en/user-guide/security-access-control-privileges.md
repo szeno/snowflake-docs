@@ -467,6 +467,9 @@ Expand
 
 Show lessSee more
 
+Grant these privileges with [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege). The object type is `DATA EXCHANGE LISTING`.
+For syntax and examples, see [Listing-level privileges](/user-guide/data-exchange-marketplace-privileges#label-listing-level-privileges).
+
 ## Organization profile privileges
 
 | Privilege | Usage |

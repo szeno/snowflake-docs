@@ -122,7 +122,9 @@ Before setting up event tracing for an app, you must consider the following:
   your account.
 - After you [enable event sharing](#label-nativeapps-consumer-logging-enabling), a masked and redacted
   copy of the trace events and log messages is automatically inserted in the event table of the designated
-  provider account.
+  provider account. Cortex Agent telemetry is shared at the `AI_METADATA` sharing level by default,
+  or at the `AI_CONTENT` sharing level if you approve the `SHARE_AI_OBSERVABILITY_CONTENT` app specification. For more information, see
+  [Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing).
 - Snowflake does not charge you to enable event sharing. However, you are responsible for the
   cost of ingesting trace events and log messages in the event table as well as storage
   costs for the event table.

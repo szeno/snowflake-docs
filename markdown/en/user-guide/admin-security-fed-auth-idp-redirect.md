@@ -51,11 +51,17 @@ interfaces. Each interface can be mapped to a different SAML2 security
 integration.
 
 `DEFAULT`
-:   Applies to two situations:
+:   Applies to these situations:
 
     - Login flows that start at `app.snowflake.com` (the Snowsight
       sign-in page). When `DEFAULT` is set, those flows redirect to
       the IdP instead of presenting the Snowflake sign-in screen.
+    - Login flows that start at the PrivateLink Snowsight URL,
+      `https://app.<region>.privatelink.snowflakecomputing.com/<org>/<account>/`.
+      This URL is the PrivateLink equivalent of `app.snowflake.com`, so
+      `DEFAULT` redirects those flows to the IdP. The account-specific
+      PrivateLink URL, `<locator>.<region>.privatelink.snowflakecomputing.com`,
+      doesn’t use this redirect.
     - Any other interface key listed below that you don’t explicitly
       configure. For example, if you set `DEFAULT` but not
       `STREAMLIT`, Streamlit in Snowflake app-viewer URLs use the

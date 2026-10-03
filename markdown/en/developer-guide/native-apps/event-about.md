@@ -52,6 +52,12 @@ consumer account are also inserted into the event table in the provider account.
 Providers can also use [centralized event sharing](/developer-guide/native-apps/event-central) to route
 telemetry from multiple regions to a central location.
 
+Cortex Agent telemetry is written to `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` and is shared
+only when the consumer has already enabled a row filter such as `TRACES` or `ALL`. The
+provider receives agent telemetry at the `AI_METADATA` or `AI_CONTENT` sharing level, not the
+full consumer row. For more information, see
+[Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing).
+
 Note
 
 The only events with a `RECORD_TYPE` of `EVENT` that support event

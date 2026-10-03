@@ -19,7 +19,12 @@ SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT( '<account_name>' )
 ## Arguments
 
 `account_name`
-:   Specifies the account on which to disable Cross-Cloud Auto-Fulfillment. To learn more about Snowflake account identifiers and how to locate them, see [Account identifiers](/user-guide/admin-account-identifier).
+:   The name of the account on which to disable Cross-Cloud Auto-Fulfillment.
+    This is the account name only (for example, `my_account`), which is the
+    value returned by `CURRENT_ACCOUNT_NAME()`. Do not pass the full account
+    identifier used in account URLs or SQL (such as `myorg-my_account` or
+    `myorg.my_account`). To learn more about Snowflake account identifiers,
+    see [Account identifiers](/user-guide/admin-account-identifier).
 
 ## Returns
 
@@ -31,6 +36,14 @@ Returns the VARCHAR value `Statement executed successfully` if the function succ
 
 ## Examples
 
+To retrieve the account name to pass to this function, call [CURRENT\_ACCOUNT\_NAME()](/sql-reference/functions/current_account_name):
+
+Copy code
+
+```
+SELECT CURRENT_ACCOUNT_NAME();
+```
+
 The following example disables Cross-Cloud Auto-Fulfillment on the account named `my_account`:
 
 Copy code
@@ -40,9 +53,9 @@ SELECT SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account');
 ```
 
 ```
-+--------------------------------------------------------------------+
-| SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account') |
-|--------------------------------------------------------------------|
-| Statement executed successfully                                    |
-+--------------------------------------------------------------------+
++--------------------------------------------------------------+
+| SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('my_account') |
+|--------------------------------------------------------------|
+| Statement executed successfully                              |
++--------------------------------------------------------------+
 ```

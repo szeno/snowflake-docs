@@ -62,7 +62,7 @@ To push the results of an analysis to Google Ads for activation:
 4. In the **Account ID** field, enter the identifier for the account where you want to push the segment.
 5. In the **Segment Name** field, enter a descriptive name for your results.
 6. In the **Description** field, enter a description of the data you are pushing to Google Ads.
-7. In the **Activation IDs** section, select the columns that contain hashed email and/or hashed phone identifiers.
+7. In the **Activation IDs** section, select the columns that contain hashed email or hashed phone identifiers.
 8. Select **Push Data**.
 
 ## Meta Ads Manager connector

@@ -1,9 +1,5 @@
 # Grant restricted caller’s rights to an executable in an app
 
-Preview Feature — Private
-
-Support for this feature is currently not in production and is available only to selected accounts.
-
 This topic describes how a consumer can grant caller grants to an executable
 in a Snowflake Native App.
 

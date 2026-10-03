@@ -1,8 +1,12 @@
 # Replication and failover behavior for dynamic tables
 
 Dynamic tables can be replicated to secondary accounts for disaster recovery using failover groups
-or replication groups. After failover, dynamic tables reinitialize on the promoted secondary. The refresh schedule, warehouse assignment, and definition are preserved.
-After failover, the promoted dynamic table runs a full refresh against the current state of base objects on the secondary. Because replication lag may leave base tables at slightly different points in time, the reinitialized result might differ from the last-known state on the former primary.
+or replication groups. After failover, the first refresh on the promoted secondary can be a full refresh, a
+reinitialization, or an incremental refresh. The refresh schedule, warehouse assignment, and definition are
+preserved. For the eligibility criteria that determine which outcome applies, see
+[Continuing incremental refresh after failover](#label-continue-incremental-refresh-eligibility).
+
+When reinitialization does happen, the promoted dynamic table runs a full refresh against the current state of base objects on the secondary. Because replication lag may leave base tables at slightly different points in time, the reinitialized result might differ from the last-known state on the former primary.
 
 ## Failover groups and replication groups
 
@@ -15,7 +19,7 @@ without failover support.
 | --- | --- | --- |
 | Dynamic tables refresh on secondary | No (read-only until promoted) | No (permanently read-only) |
 | Supports failover/promotion | Yes | No |
-| Reinitialization required after failover | Yes | N/A (failover not supported) |
+| Reinitialization required after failover | No, if [eligibility criteria](#label-continue-incremental-refresh-eligibility) are met | N/A (failover not supported) |
 | Edition requirement | Business Critical (or higher) | Standard (or higher) |
 
 Expand
@@ -37,12 +41,36 @@ CREATE FAILOVER GROUP myfg
   REPLICATION_SCHEDULE = '10 MINUTE';
 ```
 
+### Continuing incremental refresh after failover
+
+An INCREMENTAL or ADAPTIVE dynamic table continues incrementally refreshing after failover,
+without reinitializing, when all of the following are true:
+
+- The dynamic table is replicated using a failover group.
+- The dynamic table’s base objects, including any policies on those base objects, haven’t changed since the
+  dynamic table’s last successful refresh in the primary account.
+- The base objects are included in the same failover group as the dynamic table.
+
+If any condition isn’t met, the dynamic table reinitializes with a full refresh on the first refresh after
+promotion. A dynamic table configured for FULL refresh always runs a full refresh, whether or not failover
+occurred. Custom incremental dynamic tables do not reinitialize, and they always refresh
+incrementally, subject to the limitations in
+[Limitations](/user-guide/dynamic-tables/custom-incrementalization#label-dynamic-tables-custom-incremental-limitations).
+
 Warning
 
-If a dynamic table references base objects outside the failover group, it can still be replicated. However, after failover, the dynamic table’s definition references whatever objects exist with the same names in the promoted account. If the referenced objects were not replicated (because they belong to a different database or group), the refresh fails with an object-not-found error.
+For an INCREMENTAL or ADAPTIVE dynamic table, if it references base objects outside the failover group, or
+base objects that rely on database replication instead of a failover group, it can still be replicated, but it
+doesn’t meet the eligibility criteria and reinitializes after failover. The dynamic table’s definition
+references whatever objects exist with the same names in the promoted account. If the referenced objects were
+not replicated (because they belong to a different database or group), the refresh fails with an object-not-found
+error instead.
 
-After failover, dynamic tables on the promoted secondary reinitialize with a full refresh. The
-definition, refresh schedule, and warehouse assignment carry over from the primary.
+After failover, INCREMENTAL and ADAPTIVE dynamic tables either reinitialize or continue incrementally refreshing,
+depending on eligibility. A dynamic table configured for FULL refresh runs a full refresh. Custom incremental
+dynamic tables continue incrementally refreshing, subject to their
+[replication limitations](/user-guide/dynamic-tables/custom-incrementalization#label-dynamic-tables-custom-incremental-limitations).
+The definition, refresh schedule, and warehouse assignment carry over from the primary.
 
 ## Dynamic tables on read-only secondaries
 
@@ -96,24 +124,28 @@ SELECT name, scheduling_state
 +------------------+------------------+
 ```
 
-Check the refresh history for reinitialization events:
+Check the refresh history for reinitialization events and their cause:
 
 Copy code
 
 ```
-SELECT name, refresh_action, refresh_trigger, state_message
+SELECT name, refresh_action, refresh_trigger, reinit_reason
   FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_REFRESH_HISTORY())
   WHERE refresh_action = 'REINITIALIZE'
   ORDER BY data_timestamp DESC;
 ```
 
 ```
-+------------------+----------------+-----------------+-------------------------------------+
-| NAME             | REFRESH_ACTION | REFRESH_TRIGGER | STATE_MESSAGE                       |
-|------------------+----------------+-----------------+-------------------------------------|
-| DT_ORDERS       | REINITIALIZE   | SCHEDULED       | Reinitialize after database failover|
-+------------------+----------------+-----------------+-------------------------------------+
++------------------+----------------+-----------------+----------------------------------------------+
+| NAME             | REFRESH_ACTION | REFRESH_TRIGGER | REINIT_REASON                                |
+|------------------+----------------+-----------------+----------------------------------------------|
+| DT_ORDERS        | REINITIALIZE   | SCHEDULED       | Reinitialize after failover group promotion  |
++------------------+----------------+-----------------+----------------------------------------------+
 ```
+
+This query lists reinitialization events only. If no `REINITIALIZE` row appears after failover, the
+dynamic table continued incrementally refreshing. Query `DYNAMIC_TABLE_REFRESH_HISTORY` without the
+`refresh_action` filter to confirm that the post-failover `refresh_action` is `INCREMENTAL`.
 
 ## What’s next
 

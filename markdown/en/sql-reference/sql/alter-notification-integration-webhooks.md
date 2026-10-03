@@ -59,7 +59,7 @@ ALTER [ NOTIFICATION ] INTEGRATION [ IF EXISTS ] <name> UNSET {
         You can only specify the following URLs:
 
         - URLs for Slack webhooks. These URLs must start with `https://hooks.slack.com/services/`.
-        - URLs for Microsoft Teams webhooks. These URLs must use the following general format:
+        - URLs for Microsoft Teams webhooks. These URLs must use one of the following formats:
 
           - Up until November 30, 2025, Microsoft Teams supports URLs in the following format:
 

@@ -124,7 +124,7 @@ Example: Identify top warehouses in current account
     ```
 
 Example: Identify top warehouses in a different account
-:   To find the top three warehouses in the account `my_acct` in terms of change in consumption when comparing November 8, 2024, and November 9,
+:   To find the top five warehouses in the account `my_acct` in terms of change in consumption when comparing November 8, 2024, and November 9,
     2024, sign in to the organization account or an ORGADMIN-enabled account and execute the following:
 
     Copy code

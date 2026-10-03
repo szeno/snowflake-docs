@@ -125,6 +125,8 @@ ALTER [ API ] INTEGRATION [ IF EXISTS ] <name>  UNSET {
 ## Usage notes
 
 - The API\_PROVIDER cannot be changed.
+- API\_USER\_AUTHENTICATION cannot be changed with ALTER API INTEGRATION. To change the OAuth settings, run
+  CREATE OR REPLACE API INTEGRATION.
 - Regarding metadata:
 
   Attention

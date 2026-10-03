@@ -2,6 +2,11 @@
 
 The Snowflake ODBC driver utilizes both configuration and connection parameters. The methods for setting the parameters are different depending on the environment in which the driver is installed.
 
+This reference covers both version lines. Version-specific settings are identified in their descriptions.
+For installation and driver configuration, use the [4.x guides](/developer-guide/odbc/odbc-download) or
+[3.x guides](/developer-guide/odbc/odbc-download-3x). For changed names and behavior, see the
+[migration guide](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
+
 Note
 
 You cannot set the [SEARCH\_PATH](/sql-reference/parameters#label-search-path) parameter within an ODBC client connection string. You must
@@ -11,7 +16,10 @@ establish a session before setting a search path.
 
 In Windows:
 
-- [Configuration parameters](#label-odbc-configuration-parameters) are set in the Windows registry using **regedit**
+- In ODBC 4.x, configure logging and driver-manager encoding in `sf.odbc.ini`, not in the driver registry key.
+  Use `%APPDATA%\snowflake\sf.odbc.ini`, or set `SF_ODBC_INI` to the full path of your file before starting the application.
+  See [4.x configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config) for the search order and supported keys.
+- In ODBC 3.x, [configuration parameters](#label-odbc-configuration-parameters) are set in the Windows registry using **regedit**
   and the following registry path:
 
   Copy code
@@ -51,8 +59,9 @@ In Windows:
 
 In macOS or Linux:
 
-- [Configuration parameters](#label-odbc-configuration-parameters) are set in the configuration file
-  (`simba.snowflake.ini`).
+- In ODBC 4.x, `sf.odbc.ini` contains logging and driver-manager encoding settings. Use the
+  [4.x configuration keys](/developer-guide/odbc/odbc-migration#label-odbc-migration-config), not the 3.x logging keys or numeric log levels.
+- In ODBC 3.x, [configuration parameters](#label-odbc-configuration-parameters) are set in `simba.snowflake.ini`.
 - [Connection parameters](#label-odbc-connection-parameters) are set in the data source name (DSN) file (`odbc.ini`).
 
 ## Configuration parameters
@@ -69,15 +78,25 @@ In macOS or Linux:
     A manual installation requires you to download the file from <https://curl.haxx.se/docs/caextract.html> and set the location of the file.
 
 `client_config_file`
-:   Specifies the path of a [logging configuration file](#label-configuring-odbc-logging-config) that you can use to define the logging level and directory for saving log files.
+:   ODBC 3.x only. In 4.x, configure logging in `sf.odbc.ini`; this connection parameter is accepted but ignored.
+
+    Specifies the path of a [logging configuration file](#label-configuring-odbc-logging-config) that you can use to define the logging level and directory for saving log files.
 
 `CURLVerboseMode`
-:   Set to `true` to enable cURL verbose logging. The log file `snowflake_odbc_curl.dmp` is created and updated. The Snowflake ODBC driver uses cURL as the HTTP and TLS library. This parameter
+:   ODBC 3.x only. In 4.x, use the [logging configuration](/developer-guide/odbc/odbc-migration#label-odbc-migration-config) instead.
+
+    Set to `true` to enable cURL verbose logging. The log file `snowflake_odbc_curl.dmp` is created and updated. The Snowflake ODBC driver uses cURL as the HTTP and TLS library. This parameter
     is useful for diagnosing network issues.
 
 `DisableOCSPCheck`
 :   Set to `true` to disable the TLS certificate revocation status check by the Online Certificate Status Protocol (OCSP). In normal circumstances, this flag should not be set. But if the OCSP
     availability problem persists, the application might temporarily set this parameter in order to unblock connectivity issues and remove it when the OCSP availability problem is addressed.
+
+    Note
+
+    ODBC 4.x accepts but ignores `DisableOCSPCheck` and `OCSP_FAIL_OPEN`, with a deprecation warning.
+    It does not implement OCSP. To configure certificate revocation checking in 4.x, see
+    [ODBC 4.x](#label-odbc-crl-4x).
 
 `DisableTelemetry`
 :   Specifies whether toggling the in-band telemetry handler is enabled or not. If this driver configuration setting is set to `true`, the telemetry handler is not created in the driver.
@@ -92,7 +111,9 @@ In macOS or Linux:
     The parameter works only on Linux and macOS.
 
 `EnableAutoIpdByDefault`
-:   Set to `false` to configure the ODBC Driver to set SQL\_ATTR\_ENABLE\_AUTO\_IPD to `false` (which is the default value in the
+:   ODBC 3.x only. ODBC 4.x doesn’t populate the implementation parameter descriptor automatically and ignores this parameter. See [Snowflake-specific behavior](/developer-guide/odbc/odbc-api#label-odbc-api-sqlsetconnectattr-specific-behavior).
+
+    Set to `false` to configure the ODBC Driver to set SQL\_ATTR\_ENABLE\_AUTO\_IPD to `false` (which is the default value in the
     ODBC standard).
 
     Otherwise, by default, the ODBC Driver sets SQL\_ATTR\_ENABLE\_AUTO\_IPD to true for compatibility with third-party tools.
@@ -100,7 +121,9 @@ In macOS or Linux:
     This parameter was introduced in version 2.22.0 of the ODBC Driver.
 
 `EnablePidLogFileNames`
-:   Set to `true` to include the process ID in the name of the log file. For example, if the process ID is 7394, the log files
+:   ODBC 3.x only. For 4.x logging keys, see [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
+
+    Set to `true` to include the process ID in the name of the log file. For example, if the process ID is 7394, the log files
     will be named:
 
     - `snowflake_odbc_connection_7394_0.log`
@@ -132,16 +155,24 @@ In macOS or Linux:
     - `7.00` is changed to `7`
 
 `LogFileCount`
-:   Sets the maximum number of log files to keep before rotating older files to make room for new log files.
+:   ODBC 3.x only. Sets the maximum number of log files to keep before rotating older files to make room for new log files.
+    In 4.x, use `LogMaxCount` in `sf.odbc.ini`.
 
 `LogFileSize`
-:   Specifies the maximum size, in bytes, of a log file. When a log file reaches the specified size,
+:   ODBC 3.x only. Size-based log rotation is not implemented in 4.x; `LogMaxSize` is accepted but ignored.
+
+    Specifies the maximum size, in bytes, of a log file. When a log file reaches the specified size,
     the ODBC driver automatically creates a new log file.
 
     Default is **20971520**.
 
 `LogLevel`
-:   Specifies the level of detail logged for clients that use the ODBC driver:
+:   Specifies the level of detail logged for clients that use the ODBC driver.
+
+    In ODBC 4.x, set this key in `sf.odbc.ini` to `OFF`, `ERROR`, `WARN` (or `WARNING`), `INFO`, `DEBUG`, or `TRACE`.
+    Numeric log levels and `FATAL` are not accepted in this file.
+
+    In ODBC 3.x, use the following numeric values:
 
     - 0 = Off
     - 1 = Fatal
@@ -154,6 +185,8 @@ In macOS or Linux:
 `LogPath`
 :   Specifies the location of the Snowflake log files for clients that use the ODBC
     driver.
+
+    In ODBC 4.x, set this key in `sf.odbc.ini`, not in a DSN or connection string.
 
 `MapToLongVarchar`
 :   Specifies the length of a string at which to begin mapping string values to an ODBC `SQL_LONGVARCHAR` data type
@@ -263,10 +296,19 @@ Beginning with Snowflake version 8.24, network administrators have the option to
 
 ### Optional connection parameters
 
+`AUTHENTICATION_TIMEOUT`
+:   Specifies the number of seconds to wait for an authentication response in an external browser. ODBC 4.x name for the 3.x `BROWSER_RESPONSE_TIMEOUT` parameter.
+
+    Default is 120.
+
 `BROWSER_RESPONSE_TIMEOUT`
 :   Specifies the number of seconds to wait for an authentication response in an external browser.
 
     Default is 120.
+
+    Note
+
+    ODBC 3.x name. ODBC 4.x uses `AUTHENTICATION_TIMEOUT`. See [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
 
 `CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED=<Boolean>`
 :   Specifies whether to enable out-of-band telemetry.
@@ -333,12 +375,51 @@ Beginning with Snowflake version 8.24, network administrators have the option to
     - 5 = Debug tracing
     - 6 = Detailed tracing
 
+    Note
+
+    ODBC 3.x only. ODBC 4.x ignores `TRACING` in a DSN or connection string. Configure `LogLevel` and `LogPath` in `sf.odbc.ini`. See [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
+
 `warehouse` (Warehouse)
 :   Specifies the default warehouse to use for sessions initiated by the driver.
 
 ### Certificate revocation list (CRL) options
 
-These options are available in driver versions 3.13.0 and later.
+ODBC 4.x and 3.x use different parameters for CRL checking. Checking is off by default in both version lines.
+
+#### ODBC 4.x
+
+Set `CRL_MODE=ENABLED` in the DSN or connection string to enable fail-close revocation checking.
+`CRL_MODE=ADVISORY` fails for a revoked certificate but allows the connection when the revocation check cannot
+complete, for example because a CRL download fails. `CRL_MODE=DISABLED` is the default.
+
+The canonical parameter name is `crl_check_mode`. The ODBC alias `CRL_ENABLED` also accepts `true` or `false`
+to select `ENABLED` or `DISABLED`. The 3.x parameters `CRL_CHECK` and `CRL_ADVISORY` do not configure CRL checking
+in 4.x. Validate the selected mode and network access to the certificate’s CRL distribution points before
+cutting over production workloads.
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `crl_enable_disk_caching` | `true` | Cache CRLs on disk. |
+| `crl_enable_memory_caching` | `true` | Cache CRLs in memory. |
+| `crl_cache_dir` | Platform cache directory under `snowflake/crls` | Override the CRL cache directory. |
+| `crl_allow_certificates_without_crl_url` | `false` | Allow certificates without a CRL distribution URL. |
+| `crl_http_timeout` | `10` | HTTP timeout in seconds for CRL requests. |
+| `crl_connection_timeout` | `10` | Connection timeout in seconds for CRL endpoints. |
+| `crl_max_download_size` | `20971520` | Maximum CRL download size in bytes. |
+| `crl_validity_time` | `86400` | Maximum cache age in seconds before a CRL must be fetched again. |
+| `crl_on_disk_cache_removal_delay` | `604800` | Seconds after a CRL’s next-update time before disk-cache cleanup removes it. |
+| `crl_cache_start_cleanup` | `false` | Enable background cache cleanup. |
+| `crl_cache_cleanup_interval` | `3600` | Positive interval in seconds between background cleanup passes. |
+
+Expand
+
+Show lessSee more
+
+Use these connection parameters for 4.x rather than the 3.x CRL parameters and environment variables below.
+
+#### ODBC 3.x
+
+The following parameters are available starting with version 3.13.0 and apply to the 3.x driver.
 
 `CRL_CHECK`
 :   Specifies whether to enable or disable CRL checking. When set to `true`, the driver checks the CRL to verify the server certificate has not been revoked. The connection fails if the server’s certificate is revoked or another revocation check issue (such as downloading or parsing) occurs.
@@ -507,12 +588,14 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     Cannot get the current row value of column
     ```
 
-    You can specify these parameters as connection
+    In 3.x, you can specify these parameters as connection
     [configuration parameters](#label-odbc-setting-parameters-windows) (for example, in the `simba.snowflake.ini` on
     [macOS and Linux](#label-odbc-setting-parameters-macos-linux)). If this is set as both a connection parameter and
     a configuration parameter, the connection parameter in the DSN (or connection string) takes precedence.
 
     These parameters were introduced in version 2.23.2 of the ODBC Driver.
+
+    ODBC 4.x accepts these connection-string parameters but ignores them and posts a deprecation warning.
 
 `get_size_threshold`
 :   Specifies the minimum file size, in megabytes (MB), to break files into smaller parts when downloading files with the [GET](/sql-reference/sql/get) command.
@@ -606,12 +689,15 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     compression rate and `9` uses a higher compression rate. Using a higher compression rate results in slower data
     transfer speeds.
 
-    You can also specify this parameter as a
+    In 3.x, you can also specify this parameter as a
     [configuration parameter](#label-odbc-setting-parameters-windows) (for example, in the `simba.snowflake.ini` on
     [macOS and Linux](#label-odbc-setting-parameters-macos-linux)). If this is set as both a connection parameter and
     a configuration parameter, the connection parameter in the DSN (or connection string) takes precedence.
 
     This parameter was introduced in version 2.23.3 of the ODBC Driver.
+
+    In 4.x, set `PUT_COMPRESSLV` in the DSN or connection string, not `sf.odbc.ini`. Values `0` through `9` select
+    the compression level; unset or out-of-range values use level `6`.
 
 `put_fastfail`
 :   If you are using wildcard characters with the [PUT](/sql-reference/sql/put) command to upload multiple files at once and you
@@ -622,10 +708,12 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     This parameter was introduced in version 2.22.3 of the ODBC Driver.
 
-    As of version 2.22.5 of the ODBC Driver, you can also specify this parameter as a
+    In 3.x, you can also specify this parameter as a
     [configuration parameter](#label-odbc-setting-parameters-windows) (for example, in the `simba.snowflake.ini` on
     [macOS and Linux](#label-odbc-setting-parameters-macos-linux)). If this is set as both a connection parameter and
     a configuration parameter, the connection parameter in the DSN (or connection string) takes precedence.
+
+    In 4.x, set this parameter in the DSN or connection string, not `sf.odbc.ini`.
 
 `put_maxretries`
 :   Specifies the number of times that the driver should retry the [PUT](/sql-reference/sql/put) command if the command fails.
@@ -637,10 +725,14 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     This parameter was introduced in version 2.22.3 of the ODBC Driver.
 
-    As of version 2.22.5 of the ODBC Driver, you can also specify this parameter as a
+    In 3.x, you can also specify this parameter as a
     [configuration parameter](#label-odbc-setting-parameters-windows) (for example, in the `simba.snowflake.ini` on
     [macOS and Linux](#label-odbc-setting-parameters-macos-linux)). If this is set as both a connection parameter and
     a configuration parameter, the connection parameter in the DSN (or connection string) takes precedence.
+
+    In 4.x, `PUT_MAXRETRIES` and `GET_MAXRETRIES` are deprecated aliases of the shared `PUT_GET_MAX_ATTEMPTS`
+    connection parameter. The value counts total attempts, not retries, and defaults to `6`. Set it in the DSN or
+    connection string, not `sf.odbc.ini`.
 
 `put_tempdir`
 :   Specifies the temporary directory to use for [PUT](/sql-reference/sql/put) command requests. The driver uses this temporary
@@ -649,12 +741,15 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     If this parameter is not set, the driver creates and uses the temporary directory `/tmp/snowflakeTmp_username`, where
     `username` is the username of the current user in the operating system.
 
-    You can also specify this parameter as a
+    In 3.x, you can also specify this parameter as a
     [configuration parameter](#label-odbc-setting-parameters-windows) (for example, in the `simba.snowflake.ini` on
     [macOS and Linux](#label-odbc-setting-parameters-macos-linux)). If this is set as both a connection parameter and
     a configuration parameter, the connection parameter in the DSN (or connection string) takes precedence.
 
     This parameter was introduced in version 2.23.1 of the ODBC Driver.
+
+    In 4.x, set `PUT_TEMPDIR` in the DSN or connection string, not `sf.odbc.ini`. An unset or empty value uses the
+    process temporary directory.
 
 `token=<string>`
 :   Specifies the token for OAuth or PAT authentication, where `<string>` is the token. This parameter is required only when the `authenticator=oauth` or `authenticator=programmatic_access_token` parameter is set.
@@ -722,14 +817,50 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     This argument is supported for AWS and Google Cloud workloads and only applies when `authenticator=WORKLOAD_IDENTITY`.
 
-`wif_host`
-:   Overrides the STS/IAM endpoint used for Workload Identity Federation. You can specify either a bare hostname (for example, `sts.us-gov-east-1.amazonaws.com`) or a full base URL (for example, `https://iamcredentials.privategoogleapis.com/v1`). The driver normalizes the value to the format required by the configured provider. This parameter only applies when `authenticator=WORKLOAD_IDENTITY`.
+`wif_host` (ODBC 3.x only)
+:   Overrides the STS/IAM endpoint used for AWS or Google Cloud Workload Identity Federation in ODBC 3.x. The DSN key is `WORKLOAD_IDENTITY_HOST_KEY`.
+
+    ODBC 4.x does not support this endpoint override and has no equivalent replacement. `WORKLOAD_IDENTITY_AUDIENCE` is not a supported ODBC 4.x connection parameter.
 
 `PRIV_KEY_BASE64`
 :   Base64-encoded private key.
 
 `PRIV_KEY_PWD`
 :   Base64-encoded private key password.
+
+`TOKEN_FILE_PATH`
+:   Path to a file that contains a PAT, legacy OAuth, or OIDC bearer token. When both `TOKEN` and `TOKEN_FILE_PATH` are set, the file contents are used. An unreadable or empty file reports SQLSTATE `28000`.
+
+`UseCurrentCatalog`
+:   When `true`, a NULL `CatalogName` on `SQLTables`, `SQLColumns`, `SQLPrimaryKeys`, `SQLForeignKeys`, `SQLProcedures`, and `SQLProcedureColumns` is replaced with the current database. Default is `false` in ODBC 4.x. You can also restore the 3.x substitution by enabling `CLIENT_METADATA_REQUEST_USE_CONNECTION_CTX`.
+
+`PUT_GET_MAX_ATTEMPTS`
+:   Shared attempt limit for PUT and GET. The 3.x `PUT_MAXRETRIES` and `GET_MAXRETRIES` spellings are accepted as aliases and post SQLSTATE `01000` on use.
+
+`PUT_COMPRESSLV`
+:   Gzip compression level (0–9) used when PUT `AUTO_COMPRESS` is enabled. Unset and out-of-range values keep gzip level 6.
+
+`PUT_TEMPDIR`
+:   Directory for gzip tempfiles created by PUT `AUTO_COMPRESS`. Unset and empty values keep the process temp directory. Nested directories are created.
+
+`INCLUDE_RETRY_REASON`
+:   When `true` (the default), retried query requests send `retryReason` (the HTTP status that triggered the retry, or `0` for transport failures) alongside `retryCount`.
+
+`WORKLOAD_IDENTITY_AWS_USE_OUTBOUND_TOKEN`
+:   When `true`, AWS Workload Identity Federation attestation uses outbound STS `GetWebIdentityToken` instead of the default pre-signed `GetCallerIdentity` token. This connection parameter takes precedence over `SNOWFLAKE_ENABLE_AWS_WIF_OUTBOUND_TOKEN`.
+
+`USE_PROXY_ENV`
+:   When `true`, ODBC 4.x reads the `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment variables. The alias `PROXYWITHENV` is also accepted. Explicit `PROXY` / `NO_PROXY` connection parameters still apply. Version 3.x read those environment variables automatically when no DSN or configuration-file proxy was set.
+
+### Private-key connection attributes
+
+To pass PEM-encoded private key content directly from application code, call `SQLSetConnectAttr` with
+`SQL_SF_CONN_ATTR_PRIV_KEY_CONTENT` before connecting. For a base64-encoded key, use
+`SQL_SF_CONN_ATTR_PRIV_KEY_BASE64`. These are connection attributes, not DSN or connection-string keywords.
+In a DSN or connection string, use `PRIV_KEY_BASE64` or `PRIV_KEY_FILE`; do not use `PRIV_KEY_CONTENT`.
+
+ODBC 4.x does not support the 3.x `SQL_SF_CONN_ATTR_PRIV_KEY` attribute, which takes a raw `EVP_PKEY*` pointer.
+See [Snowflake-specific connection attributes](/developer-guide/odbc/odbc-api#label-odbc-api-sqlsetconnectattr-specific-behavior).
 
 ## Connecting using the `connections.toml` file
 
@@ -739,10 +870,15 @@ A connection definition refers to a collection of connection-related parameters.
 For more information about `toml` file formats, see [TOML (Tom’s Obvious Minimal Language)](https://toml.io/en/).
 
 The connection string containing only the `Driver` parameter tells the driver to look for the connection configuration within the predefined (default) files.
-The ODBC driver looks for the `connections.toml` file in the following locations, in order:
+ODBC 4.x selects the directory for `connections.toml` as follows:
 
-- The location specified by the `SNOWFLAKE_HOME` environment variable.
-- The `~/.snowflake/connections.toml` file, if the `~/.snowflake` directory exists.
+1. Use the directory specified by `SNOWFLAKE_HOME`, or `~/.snowflake` if the variable is unset, when that directory exists.
+2. If that directory does not exist, use the platform configuration directory:
+   - Linux: `$XDG_CONFIG_HOME/snowflake/connections.toml`, or `~/.config/snowflake/connections.toml` if `XDG_CONFIG_HOME` is unset.
+   - Windows: `%USERPROFILE%\AppData\Local\snowflake\connections.toml`
+   - macOS: `~/Library/Application Support/snowflake/connections.toml`
+
+The fallback depends on whether the directory exists, not whether it contains `connections.toml`.
 
 You can generate the basic settings for the TOML configuration file in Snowsight. For information, see
 [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config).
@@ -785,7 +921,7 @@ an equals sign (`=`) between each parameter and value, and using a semicolon (`;
 Copy code
 
 ```
-driver={SnowflakeDSIIDriver};server=myorganization-myaccount.snowflakecomputing.com;uid=myloginname;pwd=mypassword;database=mydatabase;schema=myschema;warehouse=mywarehouse;role=myrole;...
+driver={Snowflake ODBC};server=myorganization-myaccount.snowflakecomputing.com;uid=myloginname;pwd=mypassword;database=mydatabase;schema=myschema;warehouse=mywarehouse;role=myrole;...
 ```
 
 You can generate the basic connection string in Snowsight. For information, see [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config).
@@ -835,7 +971,7 @@ For example:
 > ```
 > [connection]
 > Description = SnowflakeDB
-> Driver      = SnowflakeDSIIDriver
+> Driver      = Snowflake ODBC
 > Locale      = en-US
 > server      = myorganization-myaccount.snowflakecomputing.com
 > proxy       = http://proxyserver.company:80
@@ -854,6 +990,11 @@ To connect through a proxy server, add the following configuration parameters:
 See [Configuration Parameters](#configuration-parameters) for parameter descriptions.
 
 ### Using environment variables
+
+Note
+
+ODBC 4.x does not read `HTTP_PROXY`, `HTTPS_PROXY`, or `NO_PROXY` unless you set `USE_PROXY_ENV=true` (or `PROXYWITHENV=true`)
+on the connection. Explicit `PROXY` and `NO_PROXY` connection parameters still apply.
 
 To connect through a proxy server, configure the following environment variables:
 
@@ -922,8 +1063,8 @@ The ODBC driver supports key pair authentication and key rotation.
 1. To start, complete the initial configuration for key pair authentication as shown in [Key-pair authentication and key-pair rotation](/user-guide/key-pair-auth).
 2. Modify the data source name (DSN) entries for the driver. For information about the DSN entries, see the appropriate topic for your operating system:
 
-   - [Installing and configuring the ODBC Driver for Linux](/developer-guide/odbc/odbc-linux)
-   - [Installing and configuring the ODBC Driver for Windows](/developer-guide/odbc/odbc-windows)
+   - [Installing and configuring the ODBC Driver 4.x for Linux](/developer-guide/odbc/odbc-linux)
+   - [Installing and configuring the ODBC Driver 4.x for Windows](/developer-guide/odbc/odbc-windows)
 
    Add the following (case-sensitive) parameters: - `AUTHENTICATOR = SNOWFLAKE_JWT`
 
@@ -992,6 +1133,15 @@ To enable the workload identity federation authenticator, do the following:
 
 ## Managing log files
 
+### ODBC 4.x
+
+Configure logging in `sf.odbc.ini`. Set `LogPath` to a writable directory and `LogLevel` to a string value such as `INFO` or `DEBUG`.
+Use `LogRotation` for time-based rotation and `LogMaxCount` to limit retained files. Size-based rotation is not implemented.
+The 3.x `sf_client_config.json` logging mechanism does not apply to 4.x.
+For supported keys and platform-specific file locations, see [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
+
+### ODBC 3.x
+
 To help you to track issues that might arise, you can enable logging in the ODBC driver.
 The ODBC driver provides the following configuration options that you can use to set up logging and manage log files:
 
@@ -1013,7 +1163,7 @@ LogFileSize = 30,145,728      # Sets log files size to 30MB
 LogFileCount = 100            # Saves the 100 most recent log files
 ```
 
-### Logging configuration file
+#### Logging configuration file (3.x only)
 
 Alternatively, you can easily specify the log level and
 the directory in which to save log files in the `sf_client_config.json` configuration file.
@@ -1058,13 +1208,19 @@ Note
 
 ## Verifying the OCSP connector or driver version
 
+Note
+
+ODBC 4.x does not implement OCSP. Revocation checking uses CRLs and is off by default. See
+[ODBC 4.x](#label-odbc-crl-4x).
+The following OCSP information applies to ODBC 3.x.
+
 Snowflake uses OCSP to evaluate the certificate chain when making a connection to Snowflake. The driver or connector version and its configuration both determine the OCSP behavior. For more information about the driver or connector version, their configuration, and OCSP behavior, see [OCSP Configuration](/user-guide/ocsp).
 
 ## OCSP response cache server
 
 Note
 
-The OCSP response cache server is currently supported by the Snowflake ODBC Driver 2.15.0 and higher.
+The OCSP response cache server is supported by the Snowflake ODBC Driver 2.15.0 through 3.x. ODBC 4.x does not implement OCSP.
 
 Snowflake clients initiate every connection to a Snowflake service endpoint with a “handshake” that establishes a secure connection before actually transferring data. As part of the handshake, a
 client authenticates the TLS certificate for the service endpoint. The revocation status of the certificate is checked by sending a client certificate request to one of the OCSP

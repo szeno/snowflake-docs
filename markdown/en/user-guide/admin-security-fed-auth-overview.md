@@ -28,7 +28,7 @@ The following vendors provide native Snowflake support for federated authenticat
 
 In addition to the native Snowflake support provided by Okta and Entra ID, Snowflake supports using most SAML 2.0-compliant vendors as an IdP, including:
 
-- [Google G Suite](https://gsuite.google.com/)
+- [Google Workspace](https://workspace.google.com/)
 - [Microsoft Entra ID](https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id)
 - [OneLogin](https://www.onelogin.com/product/sso)
 - [Ping Identity PingOne](https://www.pingidentity.com/en/products/pingone.html)

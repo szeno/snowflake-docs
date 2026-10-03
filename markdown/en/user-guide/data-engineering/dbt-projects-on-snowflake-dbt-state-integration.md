@@ -10,17 +10,19 @@ For how dbt State decides what to rebuild, see [How dbt State works](https://doc
 
 ## Supported dbt versions
 
-dbt State is supported only on the following dbt version in dbt Projects on Snowflake:
+dbt State is supported on the following dbt versions in dbt Projects on Snowflake:
 
 | Supported dbt version | dbt State support |
 | --- | --- |
+| dbt 2.0.0 | Supported |
 | dbt Fusion 2.0.0-preview.210 | Supported |
+| dbt Core 1.12.3 | Supported |
 
 Expand
 
 Show lessSee more
 
-Support for dbt v1 versions and dbt 2.0.0 and later is coming soon. To run with dbt State today, set `DBT_VERSION = '2.0.0-preview.210'` on your dbt project object or Workspace execution. For all versions that dbt Projects on Snowflake supports, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
+To run with dbt State, set `DBT_VERSION` to one of the supported versions shown above. For new dbt project objects and Workspace executions, use `1.12.3` or `2.0.0`. Support for earlier dbt v1 versions, including `1.9.4`, `1.10.15`, and `1.11.11`, is coming soon. For all versions that dbt Projects on Snowflake supports, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
 
 ## Prerequisites
 
@@ -182,7 +184,7 @@ For all dbt State settings, see [dbt State configurations](https://docs.getdbt.c
 
 ### Step 6: Run your project with dbt State
 
-In Workspaces, select dbt Fusion 2.0.0-preview.210, the environment that contains your dbt State settings, and the `dbt_ext_access` external access integration, and then run `dbt run` or `dbt build`.
+In Workspaces, select dbt Core 1.12.3, the environment that contains your dbt State settings, and the `dbt_ext_access` external access integration, and then run `dbt run` or `dbt build`.
 
 For a dbt project object, pass the dbt version, the external access integration, and the environment on `EXECUTE DBT PROJECT`:
 
@@ -191,7 +193,7 @@ Copy code
 ```
 EXECUTE DBT PROJECT tasty_bytes_dbt_db.prod.tasty_bytes_dbt_project
   ARGS = 'build --target prod'
-  DBT_VERSION = '2.0.0-preview.210'
+  DBT_VERSION = '1.12.3'
   EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access)
   ENVIRONMENT = 'prod';
 ```
@@ -203,7 +205,7 @@ Copy code
 ```
 EXECUTE DBT PROJECT tasty_bytes_dbt_db.prod.tasty_bytes_dbt_project
   ARGS = 'build --target prod'
-  DBT_VERSION = '2.0.0-preview.210'
+  DBT_VERSION = '1.12.3'
   EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access)
   ENVIRONMENT = 'prod'
   ENV_VARS = ('DBT_ENGINE_MANAGE_STATE' = 'false');
@@ -214,7 +216,7 @@ EXECUTE DBT PROJECT tasty_bytes_dbt_db.prod.tasty_bytes_dbt_project
 After a run, check the dbt log for dbt State messages. If dbt State can’t authenticate, the failure behavior differs by dbt version:
 
 - **dbt v1:** dbt State disables itself, logs an authentication warning, and the execution continues without dbt State.
-- **dbt v2 (Fusion):** The execution fails with a dbt State authentication error.
+- **dbt v2:** The execution fails with a dbt State authentication error.
 
 If authentication fails, check that the environment includes the service-token secret, the run uses the external access integration, and the executing role has `READ` on the secret.
 

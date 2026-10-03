@@ -48,9 +48,14 @@ RESULT_SCAN ( [ { '<query_id>' | <query_index>  | LAST_QUERY_ID() } ] )
 
 ## Usage notes
 
-- If the original query was run manually, only the user who ran the original query can use the RESULT\_SCAN function to process
-  the output of the query. Even a user with the ACCOUNTADMIN privilege can’t access the results of another user’s query by calling
-  RESULT\_SCAN.
+- If the original query was run manually, access to its results is scoped to the user identity, not the active role.
+  Only the user who ran the original query can use `RESULT_SCAN` to process its output. The same user can access these results
+  after switching to another role assigned to them, regardless of which role was active when the original query ran.
+  `RESULT_SCAN` doesn’t check the active role’s privileges on the source objects when retrieving these results.
+  Even a user with the `ACCOUNTADMIN` role can’t access another user’s query results by calling `RESULT_SCAN`.
+
+  When assigning multiple roles to a user, account for this user-scoped access to persisted query results. Switching roles
+  doesn’t isolate the results of that user’s manually run queries.
 - If the original query was run by using [a task](/user-guide/tasks-intro), the role that owns the task, instead of a specific user,
   triggered and ran the query. If a user or a task is operating with the same role, they can use RESULT\_SCAN to access the query results.
 - Snowflake stores all query results for 24 hours. This function only returns results for queries that were run within this time period.

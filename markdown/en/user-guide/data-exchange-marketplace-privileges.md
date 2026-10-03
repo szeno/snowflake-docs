@@ -66,9 +66,9 @@ on the Snowflake Marketplace, or data in a Data Exchange.
 | [CREATE SHARE privilege](#label-create-share-on-account) | ACCOUNT | ACCOUNTADMIN | Grants the ability to create a share. |
 | [IMPORT SHARE privilege](#label-import-share-on-account) | ACCOUNT | ACCOUNTADMIN | Grants the ability to view an inbound share shared with the account and create a database from the share. |
 | [PURCHASE DATA EXCHANGE LISTING privilege](#label-purchase-data-exchange-listing-account) | ACCOUNT | ACCOUNTADMIN | Grants the ability to purchase a paid listing. |
-| [MODIFY privilege on a listing](#label-modify-on-data-exchange-listing) | LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to modify listing properties. |
-| [USAGE privilege on a listing](#label-usage-on-data-exchange-listing) | LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to view a listing. |
-| [OWNERSHIP privilege on a listing](#label-ownership-on-data-exchange-listing) | LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to transfer the OWNERSHIP privilege on the listing. |
+| [MODIFY privilege on a listing](#label-modify-on-data-exchange-listing) | DATA EXCHANGE LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to modify listing properties. |
+| [USAGE privilege on a listing](#label-usage-on-data-exchange-listing) | DATA EXCHANGE LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to view a listing. |
+| [OWNERSHIP privilege on a listing](#label-ownership-on-data-exchange-listing) | DATA EXCHANGE LISTING | Role with the OWNERSHIP privilege on the listing. | Grants the ability to transfer the OWNERSHIP privilege on the listing. |
 | [MODIFY privilege on a provider profile](#label-modify-on-provider-profile) | PROVIDER PROFILE | Role with the OWNERSHIP privilege on the profile. | Grants the ability to modify properties for a provider profile. |
 | [OWNERSHIP privilege on a provider profile](#label-ownership-on-provider-profile) | PROVIDER PROFILE | Role with the OWNERSHIP privilege on the profile. | Grants the ability to transfer the OWNERSHIP privilege on the profile. |
 
@@ -143,7 +143,8 @@ If the CREATE SHARE privilege is granted to a role, any user with the role can c
 share, the role can also be used to perform all tasks on the share, including:
 
 - Granting privileges on objects to or revoking privileges on objects from the share.
-- Adding accounts to or removing consumer accounts from the share.
+- Adding accounts to or removing consumer accounts from the share, if the role is also granted the MANAGE SHARE TARGET privilege on the
+  account.
 
 For more information, see [Enable non-ACCOUNTADMIN roles to perform data sharing tasks](/user-guide/security-access-privileges-shares).
 
@@ -176,6 +177,52 @@ on the listing.
 - [USAGE privilege on a listing](#label-usage-on-data-exchange-listing)
 - [OWNERSHIP privilege on a listing](#label-ownership-on-data-exchange-listing)
 
+To grant the `USAGE` or `MODIFY` privilege with SQL, use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) command. The object type is
+`DATA EXCHANGE LISTING`:
+
+Copy code
+
+```
+GRANT { USAGE | MODIFY }
+  ON DATA EXCHANGE LISTING <listing_name>
+  TO ROLE <role_name>;
+```
+
+For example, grant the `USAGE` privilege on the `mylisting` listing to the `myrole` role:
+
+Copy code
+
+```
+GRANT USAGE ON DATA EXCHANGE LISTING mylisting TO ROLE myrole;
+```
+
+`CREATE LISTING`, `ALTER LISTING`, `SHOW LISTINGS`, and `DESCRIBE LISTING` use `LISTING` as the object type. In
+[GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) and [REVOKE <privileges> … FROM ROLE](/sql-reference/sql/revoke-privilege), the object type is `DATA EXCHANGE LISTING`.
+
+To transfer the `OWNERSHIP` privilege, use the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command. Provider Studio
+transfers ownership with `REVOKE CURRENT GRANTS`. If the listing already has outbound `USAGE` or `MODIFY` grants,
+include `REVOKE CURRENT GRANTS` or `COPY CURRENT GRANTS`. Otherwise the statement fails:
+
+Copy code
+
+```
+GRANT OWNERSHIP
+  ON DATA EXCHANGE LISTING <listing_name>
+  TO ROLE <role_name>
+  REVOKE CURRENT GRANTS;
+```
+
+To revoke the `USAGE` or `MODIFY` privilege, use the [REVOKE <privileges> … FROM ROLE](/sql-reference/sql/revoke-privilege) command. You can’t revoke the
+`OWNERSHIP` privilege.
+
+Copy code
+
+```
+REVOKE { USAGE | MODIFY }
+  ON DATA EXCHANGE LISTING <listing_name>
+  FROM ROLE <role_name>;
+```
+
 #### MODIFY privilege on a listing
 
 If the MODIFY privilege on a listing is granted to a role, any user with the role can perform the following tasks for a listing:
@@ -189,6 +236,14 @@ If the MODIFY privilege on a listing is granted to a role, any user with the rol
 
 Only the role with the OWNERSHIP privilege on the listing can grant this privilege.
 
+To grant the `MODIFY` privilege with SQL:
+
+Copy code
+
+```
+GRANT MODIFY ON DATA EXCHANGE LISTING <listing_name> TO ROLE <role_name>;
+```
+
 To grant the MODIFY privilege on a listing shared with specific consumers or published on the Snowflake Marketplace:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -196,7 +251,7 @@ To grant the MODIFY privilege on a listing shared with specific consumers or pub
 3. Select **Listings**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Usage** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Modify Listing** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 
@@ -207,7 +262,7 @@ To grant the MODIFY privilege on a listing in a Data Exchange:
 3. Select **Shared by your account**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Usage** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Modify Listing** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 
@@ -216,6 +271,14 @@ To grant the MODIFY privilege on a listing in a Data Exchange:
 If the USAGE privilege on a listing is granted to a role, any user with the role can view listings and incoming listing requests.
 Only the role with the OWNERSHIP privilege on the listing can grant this privilege.
 
+To grant the `USAGE` privilege with SQL:
+
+Copy code
+
+```
+GRANT USAGE ON DATA EXCHANGE LISTING <listing_name> TO ROLE <role_name>;
+```
+
 To grant the USAGE privilege on a listing shared with specific consumers or published on the Snowflake Marketplace:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -223,7 +286,7 @@ To grant the USAGE privilege on a listing shared with specific consumers or publ
 3. Select **Listings**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Ownership** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Usage** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 
@@ -234,7 +297,7 @@ To grant the USAGE privilege on a listing in a Data Exchange:
 3. Select **Shared by your account**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Ownership** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Usage** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 
@@ -248,6 +311,15 @@ Important
 
 When listing ownership is transferred, all existing grants get revoked. All roles that have been granted privileges immediately lose access to this listing, and their privileges are revoked. The new listing owner must re-grant these privileges.
 
+To transfer the `OWNERSHIP` privilege with SQL, use the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command:
+
+Copy code
+
+```
+GRANT OWNERSHIP ON DATA EXCHANGE LISTING <listing_name> TO ROLE <role_name>
+  REVOKE CURRENT GRANTS;
+```
+
 To grant the OWNERSHIP privilege on a listing shared with specific consumers or published on the Snowflake Marketplace:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -255,7 +327,7 @@ To grant the OWNERSHIP privilege on a listing shared with specific consumers or 
 3. Select **Listings**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Modify Listing** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Ownership** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 
@@ -266,7 +338,7 @@ To grant the OWNERSHIP privilege on a listing in a Data Exchange:
 3. Select **Shared by your account**.
 4. Locate the listing that you want to modify and select the row to open the listing details.
 5. In the listing details page, select **Settings**.
-6. In the **Privileges** section, select the pencil icon next to the **Modify Listing** privilege.
+6. In the **Privileges** section, select the pencil icon next to the **Ownership** privilege.
 7. Select **Add Role** and add required roles.
 8. Save your changes.
 

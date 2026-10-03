@@ -595,7 +595,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
              snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action_pr_${{ github.event.number }} \
                --source ./tasty_bytes \
                --no-auto-compile \
-               --dbt-version 1.11.11 \
+               --dbt-version 1.12.3 \
                -x
 
          - name: List all of the snowflake dbt project objects in your account
@@ -656,7 +656,7 @@ ci-test-dbt-slim-ci:
       snow dbt deploy tester_tasty_bytes_dbt_project_object_gitlab_mr_${CI_MERGE_REQUEST_IID}
       --source ./tasty_bytes
       --no-auto-compile
-      --dbt-version 1.11.11
+      --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
@@ -744,7 +744,7 @@ steps:
       snow dbt deploy tester_tasty_bytes_dbt_project_object_ado_pr_$(System.PullRequest.PullRequestId) \
         --source ./tasty_bytes \
         --no-auto-compile \
-        --dbt-version 1.11.11 \
+        --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(System.PullRequest.SourceBranch)" \
@@ -925,7 +925,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
                --source ./tasty_bytes \
                --default-target prod \
                --no-auto-compile \
-               --dbt-version 1.11.11 \
+               --dbt-version 1.12.3 \
                -x
 
          - name: List all of the snowflake dbt project objects on your account
@@ -1004,7 +1004,7 @@ cd-deploy-dbt-slim-ci:
       --source ./tasty_bytes
       --default-target prod
       --no-auto-compile
-      --dbt-version 1.11.11
+      --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
@@ -1061,7 +1061,7 @@ steps:
         --source ./tasty_bytes \
         --default-target prod \
         --no-auto-compile \
-        --dbt-version 1.11.11 \
+        --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
         --git-branch "$(Build.SourceBranchName)" \

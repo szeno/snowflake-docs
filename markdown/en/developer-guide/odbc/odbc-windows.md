@@ -1,6 +1,14 @@
-# Installing and configuring the ODBC Driver for Windows
+# Installing and configuring the ODBC Driver 4.x for Windows
+
+**Version: 4.x.** [Switch to ODBC 3.x](/developer-guide/odbc/odbc-windows-3x) · [Choose another task](/developer-guide/odbc/odbc).
 
 Windows utilizes named data sources (DSNs) for connecting ODBC-based client applications to Snowflake.
+
+Important
+
+These instructions install ODBC 4.x. Installing 4.x replaces 3.x on the machine. If you currently use 3.x,
+read the [migration guide](/developer-guide/odbc/odbc-migration) and validate on a separate host first.
+To stay on 3.x, use the [3.x Windows instructions](/developer-guide/odbc/odbc-windows-3x).
 
 ## Prerequisites
 
@@ -11,24 +19,24 @@ For a list of the operating systems supported by Snowflake clients, see [Operati
 ### Administrator privileges
 
 To install the ODBC driver, you need administrator-level privileges so
-that the driver can be installed in the `C:Program Files` directory.
+that the driver can be installed in the `C:\Program Files` directory.
 
-### Visual C++ Redistributable for Visual Studio 2015
+### Microsoft Visual C++ Redistributable
 
-To use Snowflake ODBC Driver in a Windows environment, you have to first install Visual C++ Redistributable for Visual Studio 2015.
+To use the Snowflake ODBC Driver on Windows, install the latest supported Microsoft Visual C++ v14 Redistributable for your application and driver architecture.
 
 You can download the installation file from:
 
-> <https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist?view=msvc-170#visual-studio-2015-2017-2019-and-2022>
+> [Microsoft Visual C++ Redistributable latest supported downloads](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
 
 ## Step 1: Install the ODBC Driver
 
-1. If you haven’t already downloaded the latest driver version, download it now. For details, see [Downloading the ODBC Driver](/developer-guide/odbc/odbc-download).
-2. Double-click on the downloaded .msi file:
+1. If you haven’t already downloaded the latest driver version, download it now. For details, see [Downloading the ODBC Driver 4.x](/developer-guide/odbc/odbc-download).
+   Use `snowflake-odbc-<version>.x86_64.msi`, `snowflake-odbc-<version>.x86_32.msi`, or
+   `snowflake-odbc-<version>.aarch64.msi` to match the application architecture.
+2. Double-click the downloaded `.msi` file.
 
-   Note
-
-   The driver is installed in `C:Program Files`.
+   The driver is installed in `%ProgramFiles%\Snowflake ODBC Driver\`.
 
 ## Step 2: Configure the ODBC Driver
 
@@ -38,27 +46,19 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
 
    Search on your Windows machine for the launcher for the ODBC Data Source Administration Tool:
 
-   ![Configuring ODBC for Windows](/static/images/screens/odbc1.png)
-
    Once you find the ODBC administration tool, click on the tool to launch it and display the set up window.
 2. Verify that the Snowflake ODBC driver is installed:
 
-   Navigate to the **Drivers** tab in the set up window and verify that the driver (SnowflakeDSIIDriver) appears:
+   Navigate to the **Drivers** tab in the set up window and verify that the driver (**Snowflake ODBC**) appears:
 
-   ![Configuring ODBC for Windows](/static/images/screens/odbc2.png)
-
-   If you do not see **SnowflakeDSIIDriver**, then the Snowflake ODBC driver installation did not complete successfully and you need to re-install it.
+   If you do not see **Snowflake ODBC**, then the Snowflake ODBC driver installation did not complete successfully and you need to re-install it.
 3. Create a new DSN:
 
    1. Navigate to the **User DSN** or **System DSN** tab and click the **Add** button:
-
-      ![Configuring ODBC for Windows](/static/images/screens/odbc3.png)
-   2. Select **SnowflakeDSIIDriver** from the list of installed drivers.
+   2. Select **Snowflake ODBC** from the list of installed drivers.
    3. Enter the connection parameters for the driver.
 
       In the fields provided in **Snowflake Configuration** dialog, enter the parameters for the DSN:
-
-      ![Configuring ODBC for Windows](/static/images/screens/odbc4.png)
 
       When entering parameters, note the following:
 
@@ -72,6 +72,8 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
         [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters)
         and, in particular, [Optional connection parameters](/developer-guide/odbc/odbc-parameters#label-odbc-optional-connection-parameters).
       - The **Password** field accepts a value, but does not store the value. This is a security precaution to ensure passwords are never stored directly in the driver.
+      - Version 4.x no longer shows a `Tracing(0-6)` field. Configure driver logging in `sf.odbc.ini`. See
+        [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
 
       Note
 
@@ -82,3 +84,25 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
    4. Click **OK** to create the DSN.
 
 You can now reference this DSN in ODBC-based client applications for connecting to Snowflake.
+
+### Configure logging
+
+For ODBC 4.x, create `%APPDATA%\snowflake\sf.odbc.ini` for the user running the application, or set
+`SF_ODBC_INI` to the full path of your configuration file before starting the application. `%APPDATA%` is the
+Roaming AppData directory. Create the directory if it does not exist, and ensure the user can write to `LogPath`.
+
+Copy code
+
+```
+LogLevel=INFO
+LogPath=C:\Users\<user>\snowflake-logs
+```
+
+Do not use the 3.x driver registry key or numeric log levels for 4.x logging. See
+[configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config) for all supported keys and the file search order.
+
+## Step 3: Test the connection
+
+Connect from the ODBC application using the DSN you configured. Use an application and driver with matching architectures.
+Confirm that the application reports the installed 4.x driver version. If you are migrating an existing application,
+continue with the [migration validation steps](/developer-guide/odbc/odbc-migration#label-odbc-migration-steps).

@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — drivers built on the Universal Core
 
-Snowflake ODBC Driver 4.x and Snowflake Connector for Python 5.x are in public preview. Preview versions are not listed on this page and are not covered by the support policy described here. The recommended and minimum supported versions below refer to the generally available drivers.
+Snowflake Connector for Python 5.x is in public preview. Preview versions are not listed on this page and are not covered by the support policy described here. The recommended and minimum supported versions below refer to the generally available drivers.
 
 See [Universal Core](/developer-guide/universal-core/universal-core).
 
@@ -46,6 +46,8 @@ Snowflake’s support policy generally provides a minimum two-year window for cl
 To help you track supported versions, the following table includes the minimum version of clients and drivers Snowflake currently
 supports. If you use a version older than the minimum, Snowflake makes no commitment to provide support.
 
+For current client version information, including minimum supported versions and versions nearing the end of support, see [SYSTEM$CLIENT\_VERSION\_INFO](/sql-reference/functions/system_client_version_info). A version nearing the end of support is not necessarily already unsupported.
+
 Once a client is installed, you are not required to upgrade each time a new version is released; however, to stay current with the
 latest fixes, updates, and features, we recommend monitoring for new versions and upgrading at regular intervals (for example, monthly,
 quarterly, semiannually).
@@ -54,15 +56,15 @@ quarterly, semiannually).
 | --- | --- | --- | --- | --- | --- |
 | CLI (Command-line Interface) | [Snowflake CLI](/developer-guide/snowflake-cli/index) | 3.18.0 (or later) | 2.4.0 | [Release Notes](/release-notes/clients-drivers/snowflake-cli) | [Snowflake CLI Download](https://sfc-repo.snowflakecomputing.com/snowflake-cli/index.html) page |
 |  | [SnowSQL](/user-guide/snowsql) | 1.5.0 (or later) | 1.4.0 | [Release Notes](/release-notes/clients-drivers/snowsql) | [SnowSQL Download](https://developers.snowflake.com/snowsql/) page |
-| Connectors and Drivers | [.NET Driver](/developer-guide/dotnet/dotnet-driver) | 6.3.0 (or later) | 2.2.0 | [Release Notes](/release-notes/clients-drivers/dotnet) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
+| Connectors and Drivers | [.NET Driver](/developer-guide/dotnet/dotnet-driver) | 6.3.0 (or later) | 4.2.0 (as of October 2, 2026) | [Release Notes](/release-notes/clients-drivers/dotnet) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Go Snowflake Driver](/developer-guide/golang/go-driver) | 2.3.0 (or later) | 1.11.2 (as of Sep 30, 2026) | [Release Notes](/release-notes/clients-drivers/golang) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Ingest Java SDK](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview) | 4.4.2 (or later) | 2.2.0 | [Release Notes](/release-notes/clients-drivers/ingest-java-sdk) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | Ingest Python SDK | 1.0.10 (or later) | 1.0.5 | [Release Notes](https://github.com/snowflakedb/snowflake-ingest-python/releases) (in GitHub) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Snowpipe Streaming SDK (for high-performance architecture)](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview) | 1.2.0 (or later) | 1.0.0 | [Release Notes](/release-notes/clients-drivers/snowpipe-streaming-sdk) | [Java SDK](https://central.sonatype.com/artifact/com.snowflake/snowpipe-streaming) | [Python SDK](https://pypi.org/project/snowpipe-streaming/) |
 |  | [JDBC Driver](/developer-guide/jdbc/jdbc) | 4.4.0 (or later) | 3.19.1 (as of Sep 30, 2026) | [Release Notes](/release-notes/clients-drivers/jdbc) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Node.js Driver](/developer-guide/node-js/nodejs-driver) | 3.4.0 (or later) | 1.14.0 (as of Sep 30, 2026) | [Release Notes](/release-notes/clients-drivers/nodejs) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page [3] |
-|  | [ODBC Driver](/developer-guide/odbc/odbc) | 3.21.0 (or later) | 3.2.0 | [Release Notes](/release-notes/clients-drivers/odbc) | [ODBC Download](https://developers.snowflake.com/odbc/) page |
-|  | [PHP PDO Driver](/developer-guide/php-pdo/php-pdo-driver) | 4.2.0 (or later) | 2.0.1 | [Release Notes](/release-notes/clients-drivers/php-pdo) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
+|  | [ODBC Driver](/developer-guide/odbc/odbc) | 4.0.0 (or later) | 3.5.0 (as of October 2, 2026) | [Release Notes](/release-notes/clients-drivers/odbc) | [ODBC Download](https://developers.snowflake.com/odbc/) page |
+|  | [PHP PDO Driver](/developer-guide/php-pdo/php-pdo-driver) | 4.2.0 (or later) | 3.0.3 (as of October 2, 2026) | [Release Notes](/release-notes/clients-drivers/php-pdo) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) | 3.3.0 (or later) | 2.1.2 | [Release Notes](/release-notes/clients-drivers/kafka-connector) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |
 |  | [Snowflake Connector for Python](/developer-guide/python-connector/python-connector) | 4.8.0 (or later) | 3.12.3 (as of Sep 30, 2026) | [Release Notes](/release-notes/clients-drivers/python-connector) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page [3] |
 |  | [Snowflake Connector for Spark](/user-guide/spark-connector) | 3.2.2 (or later) | 2.14.0 | [Release Notes](/release-notes/clients-drivers/spark-connector) | [Drivers and Libraries](https://developers.snowflake.com/drivers-and-libraries/) page |

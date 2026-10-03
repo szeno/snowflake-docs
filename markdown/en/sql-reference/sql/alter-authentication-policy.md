@@ -111,7 +111,7 @@ ALTER AUTHENTICATION POLICY [ IF EXISTS ] <name> UNSET
 
             Caution
 
-            If `SNOWFLAKE_UI` is not included in the `CLIENT_TYPES` list while `MFA_ENROLLMENT` is set to `REQUIRED`, or `MFA_ENROLLMENT` is unspecified, MFA enrollment doesn’t work.
+            `CLIENT_TYPES` must include `SNOWFLAKE_UI` only for interactive authentication through the Snowflake login UI. This requirement does not apply to non-interactive authentication.
 
         `DRIVERS`
         :   Drivers allow access to Snowflake from applications written in

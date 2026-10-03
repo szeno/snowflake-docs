@@ -34,5 +34,5 @@ SELECT SYSTEM$SUPPORTED_DBT_VERSIONS();
 ```
 
 ```
-[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"},{"dbt_version":"2.0.0-preview","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.175","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.186","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.210","type":"dbt Fusion"}]
+[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"},{"dbt_version":"1.12.3","type":"dbt Core"},{"dbt_version":"2.0.0-preview","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.175","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.186","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.210","type":"dbt Fusion"},{"dbt_version":"2.0.0","type":"dbt Fusion"}]
 ```

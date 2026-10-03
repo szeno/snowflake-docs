@@ -23,6 +23,7 @@ The following settings are available for `SETTING` app specifications:
 | Setting name | Permission granted when approved |
 | --- | --- |
 | `ENABLE_UNLOAD_TO_INTERNAL_STAGES` | Allows the app to copy data to internal stages contained within the application, even when the `PREVENT_UNLOAD_TO_INTERNAL_STAGES` account parameter is enabled on the consumer account. When the consumer declines or drops the specification, the app loses this permission and the account-level restriction applies again. |
+| `SHARE_AI_OBSERVABILITY_CONTENT` | Raises shared Cortex Agent telemetry from the `AI_METADATA` sharing level to the `AI_CONTENT` sharing level, so the provider can receive prompts, responses, and tool inputs and outputs with consumer identity redacted. Approving this setting doesn’t start event sharing. The consumer must still enable a row filter such as `TRACES` or `ALL`. If the consumer declines the specification or the app removes it, subsequent shared records return to `AI_METADATA`. Records that were already shared aren’t rewritten. For more information, see [Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing). |
 
 Expand
 

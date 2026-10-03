@@ -10,7 +10,10 @@ See also:
 Copy code
 
 ```
-REVOKE DATABASE ROLE <name> FROM { ROLE | DATABASE ROLE } <parent_role_name>
+REVOKE [ GRANT OPTION FOR ]
+  DATABASE ROLE <name>
+  FROM { ROLE | DATABASE ROLE } <parent_role_name>
+  [ RESTRICT | CASCADE ]
 
 REVOKE DATABASE ROLE <name> FROM APPLICATION <app_name>
 ```
@@ -29,6 +32,29 @@ REVOKE DATABASE ROLE <name> FROM APPLICATION <app_name>
 
 `APPLICATION app_name`
 :   Revokes the database role from the specified Snowflake Native App.
+
+## Optional parameters
+
+`GRANT OPTION FOR`
+:   If specified, removes the ability for the recipient role to grant the database role to another role.
+    The database role grant itself remains, so the recipient role still inherits the granted database
+    role’s privileges.
+
+    Default: No value, which revokes the database role grant.
+
+`RESTRICT | CASCADE`
+:   Determines whether the revoke operation succeeds when the database role has been re-granted to
+    another role. These clauses apply to `REVOKE DATABASE ROLE ... FROM ROLE` and
+    `REVOKE DATABASE ROLE ... FROM DATABASE ROLE`.
+
+    - `RESTRICT`: If the database role being revoked has been re-granted to another role, the REVOKE
+      command fails.
+    - `CASCADE`: If the database role being revoked has been re-granted, the REVOKE command recursively
+      revokes these dependent grants. `GRANT OPTION FOR ... CASCADE` revokes the dependent grants and
+      leaves the database role grant in place without the grant option. `CASCADE` without
+      `GRANT OPTION FOR` revokes the database role grant and the dependent grants.
+
+    Default: `RESTRICT`
 
 ## Examples
 
@@ -54,4 +80,21 @@ Copy code
 
 ```
 REVOKE DATABASE ROLE dr1 FROM APPLICATION hello_snowflake_app;
+```
+
+Remove only the grant option from the `data_steward` role. `data_steward` keeps the database role:
+
+Copy code
+
+```
+REVOKE GRANT OPTION FOR DATABASE ROLE mydb.analyst FROM ROLE data_steward;
+```
+
+Revoke the database role from `data_steward`, including grants of that database role that
+`data_steward` made:
+
+Copy code
+
+```
+REVOKE DATABASE ROLE mydb.analyst FROM ROLE data_steward CASCADE;
 ```

@@ -53,6 +53,14 @@ in the following contexts:
 
 Additionally, for views owned by the app, information about the base table is redacted.
 
+## Information redacted from Cortex Agent observability events
+
+When an app initiates a Cortex Agent run, Snowflake redacts orchestrator-authored content
+from `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` before the row is written. Consumer-initiated
+runs aren’t redacted. For more information, see
+[Intellectual property protection during event logging](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-ip-protection)
+and [Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing).
+
 ## Considerations when granting the MONITOR or OPERATE privilege on dynamic tables
 
 Providers should use caution when granting the MONITOR or OPERATE privilege on dynamic tables to an

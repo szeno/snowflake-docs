@@ -1,14 +1,20 @@
-# Installing and configuring the ODBC Driver for Linux
+# Installing and configuring the ODBC Driver 4.x for Linux
 
-Linux uses named data sources (DSNs) for connecting ODBC-based client applications to Snowflake. You can choose to install the ODBC driver using the TGZ file, RPM package, or DEB package provided in the Snowflake Client Repository.
+**Version: 4.x.** [Switch to ODBC 3.x](/developer-guide/odbc/odbc-linux-3x) · [Choose another task](/developer-guide/odbc/odbc).
+
+Linux uses named data sources (DSNs) for connecting ODBC-based client applications to Snowflake. You can choose to install the ODBC driver using the `.tar.gz` archive, RPM package, or DEB package.
+
+Important
+
+These instructions install ODBC 4.x. Installing 4.x replaces 3.x on the machine. If you currently use 3.x,
+read the [migration guide](/developer-guide/odbc/odbc-migration) and validate on a separate host first.
+To stay on 3.x, use the [3.x Linux instructions](/developer-guide/odbc/odbc-linux-3x).
 
 ## Prerequisites
 
 ### Operating system
 
 For a list of the operating systems supported by Snowflake clients, see [Operating system support](/release-notes/requirements#label-client-operating-system-support).
-
-With ODBC version 3.0.1, the driver no longer supports CentOS 6 versions.
 
 ### Driver manager: iODBC or unixODBC
 
@@ -56,78 +62,48 @@ If unixODBC is not installed:
    odbcinst -j
    ```
 
-   The location should be `/etc`.
+   Use the file locations reported by this command in the configuration steps below.
 
 ## Step 1: Verify the package signature (RPM or DEB only) — *Optional*
 
 Note
 
 If you are installing the ODBC driver by using `yum` or the
-[TGZ file](#label-odbc-linux-install-tgz), skip this step.
+[`.tar.gz` archive](#label-odbc-linux-install-tgz), skip this step.
 
 If you are installing the ODBC driver using the RPM or DEB package and wish to verify the package signature before installation, perform the following tasks:
 
 ### 1.1: Download and import the latest Snowflake public key
 
-From the public keyserver, download and import the Snowflake GPG public key for the version of the ODBC driver that you are using:
+For ODBC 4.x, download and import the Snowflake GPG public key:
 
-- For version 3.17.0 and higher:
+```
+$ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 3C98F63C9292CE02
+```
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 3C98F63C9292CE02
-  ```
-- For version 3.6.0 through 3.16.x:
+Note
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 2A3149C82551A34A
-  ```
-- For version 3.5.0:
+If this command fails with the following error:
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 5A125630709DD64B
-  ```
-- For version 2.25.6 through 3.4.1:
+> Copy code
+>
+> ```
+> gpg: keyserver receive failed: Server indicated a failure
+> ```
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 630D9F3CAB551AF3
-  ```
-- For version 2.22.1 through 2.25.5:
+then specify that you want to use port 80 for the keyserver:
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 37C7086698CB005C
-  ```
-- For version 2.18.2 through 2.22.0:
+> Copy code
+>
+> ```
+> gpg --keyserver hkp://keyserver.ubuntu.com:80  ...
+> ```
 
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys EC218558EABB25A1
-  ```
-- For version 2.18.1 and lower:
-
-  ```
-  $ gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 93DB296A69BE019A
-  ```
-
-  Note
-
-  If this command fails with the following error:
-
-  > Copy code
-  >
-  > ```
-  > gpg: keyserver receive failed: Server indicated a failure
-  > ```
-
-  then specify that you want to use port 80 for the keyserver:
-
-  > Copy code
-  >
-  > ```
-  > gpg --keyserver hkp://keyserver.ubuntu.com:80  ...
-  > ```
+For an older installer, see [historical signing keys](/developer-guide/odbc/odbc-linux-3x#label-odbc-driver-gpg-key-list-3x).
 
 ### 1.2: Download the RPM or DEB driver package
 
-Download the package from the Snowflake Client Repository. For details, see [Downloading the ODBC Driver](/developer-guide/odbc/odbc-download).
+Download the package from the Snowflake Client Repository. For details, see [Downloading the ODBC Driver 4.x](/developer-guide/odbc/odbc-download).
 
 ### 1.3: Verify the signature for the RPM or DEB driver package
 
@@ -159,20 +135,6 @@ Download the package from the Snowflake Client Repository. For details, see [Dow
 
    ```
    rpm -K snowflake-odbc-<version>.x86_64.rpm
-   ```
-
-   ```
-   snowflake-odbc-<version>.x86_64.rpm: digests SIGNATURES NOT OK
-
-   rpm -Kv snowflake-odbc-<version>.x86_64.rpm
-   ```
-
-   ```
-   snowflake-odbc-<version>.rpm:
-    Header V4 RSA/SHA1 Signature, key ID 98cb005c: NOKEY
-    Header SHA1 digest: OK
-    V4 RSA/SHA1 Signature, key ID 98cb005c: NOKEY
-    MD5 digest: OK
    ```
 
    If this occurs, run the following commands to export the GPG key, import the key into `rpm`, and verify the
@@ -221,21 +183,21 @@ Download the package from the Snowflake Client Repository. For details, see [Dow
 
    Store the policy in a file named `policy_name.pol`, where `policy_name` is your name for the policy. For the policy name, you can use any text string, however the string cannot contain blank spaces.
 
-   Here is a sample policy file for a key with the ID 2A3149C82551A34A:
+   Here is a sample policy file for a key with the ID 3C98F63C9292CE02:
 
    ```
    <?xml version="1.0"?>
    <!DOCTYPE Policy SYSTEM "http://www.debian.org/debsig/1.0/policy.dtd">
    <Policy xmlns="https://www.debian.org/debsig/1.0/">
-   <Origin Name="Snowflake Computing" id="2A3149C82551A34A"
+   <Origin Name="Snowflake Computing" id="3C98F63C9292CE02"
    Description="Snowflake ODBC Driver DEB package"/>
 
    <Selection>
-   <Required Type="origin" File="debsig.gpg" id="2A3149C82551A34A"/>
+   <Required Type="origin" File="debsig.gpg" id="3C98F63C9292CE02"/>
    </Selection>
 
    <Verification MinOptional="0">
-   <Required Type="origin" File="debsig.gpg" id="2A3149C82551A34A"/>
+   <Required Type="origin" File="debsig.gpg" id="3C98F63C9292CE02"/>
    </Verification>
 
    </Policy>
@@ -271,13 +233,13 @@ To delete the key:
 Install the driver using one of the following approaches:
 
 - [Use yum to download and install the driver](#label-odbc-linux-install-yum).
-- [Install the driver by using the downloaded TGZ file (TAR file compressed using .GZIP)](#label-odbc-linux-install-tgz).
+- [Install the driver by using the downloaded `.tar.gz` archive](#label-odbc-linux-install-tgz).
 - [Install the downloaded RPM package](#label-odbc-linux-install-rpm).
 - [Install the downloaded DEB package](#label-odbc-linux-install-deb).
 
 ### Using yum to download and install the driver
 
-With version 2.21.1 of the ODBC Driver (and later versions), you can use `yum` to download and install the driver.
+You can use `yum` to download and install the driver.
 
 To download and install the Snowflake ODBC driver for Linux using `yum`:
 
@@ -292,27 +254,12 @@ To download and install the Snowflake ODBC driver for Linux using `yum`:
    gpgkey=https://sfc-repo.snowflakecomputing.com/odbc/Snowkey-<GPG_KEY_ID>-gpg
    ```
 
-   where `VERSION_NUMBER` is the specific version number of the driver (for example, 3.21.0) and `GPG_KEY_ID` is one of the
-   following key IDs:
+   Set `VERSION_NUMBER` to the 4.x version to install, for example 4.0.0.
+   Set `GPG_KEY_ID` to 3C98F63C9292CE02.
+   For aarch64, use `odbc/linuxaarch64/<VERSION_NUMBER>/` in `baseurl`.
 
-   | ODBC Driver Version | GPG Key ID |
-   | --- | --- |
-   | 3.17.0 and higher | 3C98F63C9292CE02 |
-   | 3.6.0 through 3.16.x | 2A3149C82551A34A |
-   | 3.5.0 | 5A125630709DD64B |
-   | 2.25.6 through 3.4.1 | 630D9F3CAB551AF3 |
-   | 2.22.1 through 2.25.5 | 37C7086698CB005C |
-   | In the settings above, `baseurl` and `gpgkey` point to the [Snowflake Client Repository](/user-guide/snowflake-client-repository#label-client-download-repository) on Amazon S3. If |  |
-   | you want to use the mirror on Azure Blob instead, change the hostname to `https://sfc-repo.azure.snowflakecomputing.com/`: |  |
-   |  |  |
-   | [snowflake-odbc] |  |
-   | name=snowflake-odbc |  |
-   | baseurl=<https://sfc-repo.azure.snowflakecomputing.com/odbc/linux/&lt;VERSION_NUMBER&gt;/> |  |
-   | gpgkey=<https://sfc-repo.azure.snowflakecomputing.com/odbc/Snowkey-&lt;GPG_KEY_ID&gt;-gpg> |  |
-
-   Expand
-
-   Show lessSee more
+   To use the Azure mirror, replace `sfc-repo.snowflakecomputing.com` with
+   `sfc-repo.azure.snowflakecomputing.com` in both URLs. See [Downloading Snowflake Clients, Connectors, Drivers, and Libraries](/user-guide/snowflake-client-repository).
 2. Run the following command to install the driver:
 
    Copy code
@@ -321,29 +268,23 @@ To download and install the Snowflake ODBC driver for Linux using `yum`:
    yum install snowflake-odbc
    ```
 
-### Installing the TGZ file
+### Installing the tar.gz archive
 
-To install the Snowflake ODBC driver for Linux using
-[the TGZ file that you downloaded earlier](/developer-guide/odbc/odbc-download).
+Download the `.tar.gz` package for your architecture from [Downloading the ODBC Driver 4.x](/developer-guide/odbc/odbc-download).
+Extract `snowflake-odbc-<version>.<arch>.tar.gz` into a working directory. For example, for `x86_64`:
 
-1. Copy the downloaded file (`snowflake_linux_x8664_odbc-version.tgz`) to a working directory.
-2. Unzip the file:
+Copy code
 
-> Copy code
->
-> ```
-> gunzip snowflake_linux_x8664_odbc-<version>.tgz
-> ```
+```
+tar -xzf snowflake-odbc-<version>.x86_64.tar.gz
+```
 
-1. Extract the files from the .tar file:
+The archive contains `usr/lib64/snowflake/odbc/`, with `lib`, `include`, and `templates` subdirectories.
+Move the extracted driver directory to your chosen installation location and use its absolute path when
+registering `lib/libsfodbc.so`. The archive does not run an installer or include the 3.x setup scripts.
+Register the driver and configure a DSN as described in [Step 3: Configure the ODBC Driver](#label-odbc-configure-driver).
 
-> Copy code
->
-> ```
-> tar -xvf snowflake_linux_x8664_odbc-<version>.tar
-> ```
-
-1. Copy the resulting `snowflake_odbc` folder to the directory where you want to install the driver. Make note of this directory. You’ll need the location later in the instructions.
+On aarch64 hosts, extract `snowflake-odbc-<version>.aarch64.tar.gz` instead.
 
 ### Installing the RPM package
 
@@ -360,14 +301,12 @@ To install the Snowflake ODBC driver for Linux using
 > ```
 > yum install snowflake-odbc-<version>.x86_64.rpm
 > ```
+>
+> On aarch64 hosts, install `snowflake-odbc-<version>.aarch64.rpm`.
 
 Note
 
 The installation directory is `/usr/lib64/snowflake/odbc/`. You’ll need the location later in the instructions.
-
-If the driver cannot find the library, it displays an `Unable to locate SQLGetPrivateProfileString function` error. In this case, you must set `ODBCInstLib=<driver_manager_path>` manually in the `simba.snowflake.ini` configuration file with the name of the driver manager on your system. For more information, see [Configure the ODBC Driver](#label-odbc-configure-driver).
-
-For example, `ODBCInstLib=/usr/lib/x86_64-linux-gnu/libodbcinst.so.2`.
 
 ### Installing the DEB package
 
@@ -385,6 +324,8 @@ Copy code
 sudo SF_ACCOUNT="<account>" dpkg -i snowflake-odbc-<version>.x86_64.deb
 ```
 
+On aarch64 hosts, install `snowflake-odbc-<version>.aarch64.deb`.
+
 If the `SF_ACCOUNT` variable is unset, the `dpkg` command shows a warning. When you set the variable as shown, a Snowflake connection is added to the `odbc.ini` file.
 
 The command might fail if any required dependencies for the package manager are not installed. If that happens, install them now:
@@ -397,109 +338,41 @@ sudo apt-get install -f
 
 Note
 
-The installation directory is `/usr/lib/snowflake/odbc/`. You’ll need the location later in the instructions.
+The installation directory is `/usr/lib64/snowflake/odbc/`. You’ll need the location later in the instructions.
 
-## Step 3: Configure the environment (TGZ only)
-
-Note
-
-If you installed the ODBC driver using the RPM or DEB package file, skip this step.
-
-If you installed using the TGZ file, configure the environment using the installed driver manager (either iODBC or unixODBC).
-
-### Configuring with iODBC
-
-In a terminal window, change to the `snowflake_odbc` directory, and run the following command to install Snowflake ODBC:
-
-Copy code
-
-```
-./iodbc_setup.sh
-```
-
-This script completes the following steps:
-
-> - Adds one Snowflake connection to your system-level `/etc/odbc.ini` file.
-> - Adds the Snowflake driver information to your system-level `/etc/odbcinst.ini` file.
-> - Adds all certificate authority (CA) certificates required by the Snowflake ODBC driver to your system-level `simba.snowflake.ini` file.
-
-By running `iodbc_setup.sh`, you don’t need to set any environment variables.
-
-Alternatively, if you don’t want Snowflake to change your system configurations, add the following environment variables to your shell configuration file (for example, `.profile` or `.bash_profile`):
-
-> - `ODBCINI = <path>/conf/odbc.ini`
-> - `ODBCINSTINI = <path>/conf/odbcinst.ini`
-
-Where `path` is the location of the `snowflake_odbc` directory. If you have configured other ODBC drivers in your system and plan to add the Snowflake ODBC entries to your existing `odbc.ini` and
-`odbcinst.ini` files in the next step, then point ODBCINI and ODBCINSTINI to the location of those files.
-
-### Configuring with unixODBC
-
-In a terminal window, change to the `snowflake_odbc` directory, and run the following command to install Snowflake ODBC:
-
-Copy code
-
-```
-./unixodbc_setup.sh
-```
-
-This script completes the following steps:
-
-> - Adds a Snowflake connection to your system-level `/etc/odbc.ini` file.
-> - Adds the Snowflake driver information to your system-level `/etc/odbcinst.ini` file.
-> - Adds all certificate authority (CA) certificates required by the Snowflake ODBC driver to your system-level `simba.snowflake.ini` file.
-
-By running `unixodbc_setup.sh`, you don’t need to set any environment variables.
-
-Alternatively, if you don’t want Snowflake to change your system configurations, add the following environment variables to your shell configuration file, for example `.profile` or `.bash_profile`:
-
-> - `ODBCSYSINI = <path>/conf/`
-
-Where `path` is the location of the `snowflake_odbc` directory. If you have configured other ODBC drivers in your system and plan to add the Snowflake ODBC entries to your existing `odbc.ini` and
-`odbcinst.ini` files in the next step, then point ODBCSYSINI to the location of those files.
-
-## Step 4: Configure the ODBC Driver
+## Step 3: Configure the ODBC Driver
 
 Configuring the ODBC driver requires adding entries to the following files:
 
-- `<path>/lib/simba.snowflake.ini`
-- `/etc/odbcinst.ini` (or `<path>/conf/odbc.ini`, if you are using environment variables)
-- `/etc/odbc.ini` (or `<path>/conf/odbcinst.ini`, if you are using environment variables)
+- For 4.x logging and driver-manager encoding, a user-level `sf.odbc.ini`, as described below.
+- Your driver manager’s `odbcinst.ini` file for driver registration.
+- Your driver manager’s `odbc.ini` file for DSNs.
 
-Where `path` is the location of the `snowflake_odbc` directory.
+For RPM and DEB installations, the installer registers the 4.x driver with unixODBC. For a 4.x archive,
+`<path>` in the registration example below is the absolute path to the extracted driver directory containing
+`lib/libsfodbc.so`.
 
-### 4.1: `simba.snowflake.ini` file (driver manager and logging)
+### 3.1: Driver configuration and logging
 
-Add the following entries to the `simba.snowflake.ini` file:
+For 4.x, create `~/.snowflake/sf.odbc.ini` for logging or encoding settings, or set `SF_ODBC_INI` to the
+absolute path of your configuration file. The Linux driver does not search its installation directory for
+this file. Set file permissions to `0600`. For example:
 
-> Copy code
->
-> ```
-> ErrorMessagesPath=<path>/ErrorMessages/
-> LogPath=/tmp/
-> ODBCInstLib=<driver_manager_path>
-> CABundleFile=<path>/lib/cacert.pem
-> ANSIENCODING=UTF-8
-> ```
+Copy code
 
-Where:
+```
+LogLevel=INFO
+LogPath=/path/to/writable/log/directory
+DriverManagerEncoding=UTF-16
+```
 
-> - `path` is the location of the `snowflake_odbc` directory.
-> - `driver_manager_path` is the location of your driver manager directory:
->
->   > - iODBC: `ODBCInstLib=libiodbcinst.so.2`
->   > - unixODBC: `ODBCInstLib=libodbcinst.so`
->   >
->   > Note
->   >
->   > If your driver manager directory is not included in the `LD_LIBRARY_PATH` environment variable, specify the full path to the driver manager library here.
+Use `UTF-16` for unixODBC and `UTF-32` for iODBC when `SQLWCHAR` is four bytes. See
+[Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config) for the complete search order and
+recognized keys. Connection settings belong in the DSN or connection string, not in this logging file.
 
 Verify that you have write permissions on the log path.
 
-The `ANSIENCODING` parameter specifies the application’s character encoding. The default is `UTF-8`. The
-parameter is intended for use only by Snowflake; customers should not change the value.
-
-### 4.2: `odbcinst.ini` file (driver registration)
+### 3.2: `odbcinst.ini` file (driver registration)
 
 Add the following entries to the `odbcinst.ini` file:
 
@@ -507,24 +380,24 @@ Add the following entries to the `odbcinst.ini` file:
 >
 > ```
 > [ODBC Drivers]
-> SnowflakeDSIIDriver=Installed
+> Snowflake ODBC=Installed
 >
-> [SnowflakeDSIIDriver]
+> [Snowflake ODBC]
 > APILevel=1
 > ConnectFunctions=YYY
-> Description=Snowflake DSII
-> Driver=/<path>/lib/libSnowflake.so
-> DriverODBCVer=03.52
+> Description=Snowflake ODBC
+> Driver=<path>/lib/libsfodbc.so
+> DriverODBCVer=03.80
 > SQLLevel=1
 > ```
 
-Where `path` is the location of the `snowflake_odbc` directory.
+Replace `<path>` with the absolute installation directory containing `lib/libsfodbc.so`.
 
-### 4.3: `odbc.ini` file (DSN entries)
+### 3.3: `odbc.ini` file (DSN entries)
 
 For each DSN, add the following entries to the `odbc.ini` file:
 
-- DSN Name and driver name (SnowflakeDSIIDriver), in the form of `<dsn_name> = <driver_name>`.
+- DSN Name and driver name (**Snowflake ODBC**), in the form of `<dsn_name> = <driver_name>`.
 - Parameters:
 
   - Required connection parameters, such as `server`.
@@ -547,17 +420,17 @@ The following example illustrates an `odbc.ini` file that configures two data so
 
   ```
   [ODBC Data Sources]
-  testodbc1 = SnowflakeDSIIDriver
-  testodbc2 = SnowflakeDSIIDriver
+  testodbc1 = Snowflake ODBC
+  testodbc2 = Snowflake ODBC
 
   [testodbc1]
-  Driver      = /usr/jsmith/snowflake_odbc/lib/libSnowflake.so
+  Driver      = Snowflake ODBC
   Description =
   server      = myorganization-myaccount.snowflakecomputing.com
   role        = sysadmin
 
   [testodbc2]
-  Driver      = /usr/jsmith/snowflake_odbc/lib/libSnowflake.so
+  Driver      = Snowflake ODBC
   Description =
   server      = xy12345.snowflakecomputing.com
   role        = analyst
@@ -570,7 +443,7 @@ Note the following:
 - Both `testodbc1` and `testodbc2` have default roles.
 - `testodbc2` also has a default database and warehouse.
 
-## Step 5: Test the ODBC Driver
+## Step 4: Test the ODBC Driver
 
 Test the driver using the installed driver manager (either iODBC or unixODBC).
 
@@ -588,14 +461,7 @@ Copy code
 iodbctest "DSN=testodbc2;UID=mary;PWD=password"
 ```
 
-```
-iODBC Demonstration program
-This program shows an interactive SQL processor
-Driver Manager: 03.52.0709.0909
-Driver: 2.12.70 (Snowflake)
-
-SQL>
-```
+After connecting, confirm that the client reports a 4.x driver version.
 
 ### Testing with unixODBC
 
@@ -611,18 +477,4 @@ Copy code
 isql -v testodbc2 mary <password>
 ```
 
-```
-Dec 14 22:57:50 INFO  2022078208 Driver::LogVersions: SDK Version: 09.04.09.1013
-Dec 14 22:57:50 INFO  2022078208 Driver::LogVersions: DSII Version: 2.12.36
-Dec 14 22:57:50 INFO  2022078208 SFConnection::connect: Tracing level: 4
-
-+---------------------------------------+
-| Connected!                            |
-|                                       |
-| sql-statement                         |
-| help [tablename]                      |
-| quit                                  |
-|                                       |
-+---------------------------------------+
-SQL>
-```
+After connecting, confirm that the client reports a 4.x driver version.

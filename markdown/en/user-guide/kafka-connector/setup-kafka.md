@@ -53,6 +53,37 @@ The instructions in this topic specify which steps apply only to either version 
 
 For a list of the operating systems supported by Snowflake clients, see [Operating system support](/release-notes/requirements#label-client-operating-system-support).
 
+## Configure proxy access
+
+Kafka Connector v4 uses separate networking stacks:
+
+- Java and JDBC clients use the JVM proxy settings configured by the `jvm.proxy.*` connector properties or equivalent Java system properties supplied through `KAFKA_OPTS`.
+- Streaming data traffic uses the native Rust Snowpipe Streaming SDK. This includes file-mode uploads to Snowflake-managed cloud storage.
+
+The native SDK doesn’t read the connector-level JVM proxy settings or Java system properties such
+as `https.proxyHost`. Consequently, setting these properties doesn’t configure native SDK traffic.
+
+To route native SDK traffic through a system proxy, set standard proxy environment variables on
+every Kafka Connect worker before its JVM starts:
+
+Copy code
+
+```
+export HTTP_PROXY=http://proxy.example.com:3128
+export HTTPS_PROXY=http://proxy.example.com:3128
+export NO_PROXY=localhost,127.0.0.1,.svc.cluster.local
+```
+
+You can also set `ALL_PROXY` as a fallback. Restart the Kafka Connect worker after changing these
+variables so the worker process inherits the updated environment. Restarting only a connector or
+task doesn’t change the worker process environment.
+
+The worker must be able to reach both Snowflake service endpoints and the cloud-storage stage
+endpoints returned by Snowflake. To identify the required hostnames, see
+[Allowing hostnames](/user-guide/hostname-allowlist). Configure `NO_PROXY` according to which
+destinations should bypass the proxy. Separate `NO_PROXY` entries with commas. The Java
+`http.nonProxyHosts` property uses pipes (`|`) instead.
+
 ## Installing the connector
 
 This section provides instructions for installing and configuring the Kafka connector for Confluent.
@@ -434,7 +465,7 @@ SPCS authentication is supported by the Kafka connector version 4.2.0 and later.
 
 For a connector running inside [Snowpark Container Services (SPCS)](/developer-guide/snowpark-container-services/overview), set `snowflake.authenticator` to `spcs`. The connector uses the SPCS service identity instead of a private key or OAuth client credential.
 
-The SPCS runtime supplies `snowflake.url.name`, `snowflake.user.name`, `snowflake.database.name`, and `snowflake.schema.name` when those properties are absent or blank. Configure the connector properties that are specific to your topics and converters. For a minimal configuration, use:
+The SPCS runtime supplies `snowflake.url.name`, `snowflake.user.name`, `snowflake.database.name`, and `snowflake.schema.name` when those properties are absent or blank. Any value you set explicitly is preserved. Configure the connector properties that are specific to your topics and converters. For a minimal configuration, use:
 
 Copy code
 
@@ -782,16 +813,19 @@ channels. They’re only relevant when migrating from a v3 connector that used
 :   If loading Avro data from the Schema Registry Service, this property determines if the Kafka connector should stop consuming records if it encounters an error while fetching the schema id. The default value is `false`. Set the value to `true` to enable this behavior.
 
 `jvm.proxy.host`
-:   To enable the Snowflake Kafka Connector to access Snowflake through a proxy server, set this parameter to specify the host of that proxy server.
+:   Specifies the proxy host for Java and JDBC traffic. This property doesn’t configure the native
+    Snowpipe Streaming SDK used by Kafka Connector v4. For more information, see
+    [Configure proxy access](#label-kafkahp-proxy-configuration).
 
 `jvm.proxy.port`
-:   To enable the Snowflake Kafka Connector to access Snowflake through a proxy server, set this parameter to specify the port of that proxy server.
+:   Specifies the proxy port for Java and JDBC traffic. This property doesn’t configure the native
+    Snowpipe Streaming SDK.
 
 `jvm.proxy.username`
-:   Username that authenticates with the proxy server.
+:   Specifies the username that Java and JDBC clients use to authenticate with the proxy server.
 
 `jvm.proxy.password`
-:   Password for the username that authenticates with the proxy server.
+:   Specifies the password that Java and JDBC clients use to authenticate with the proxy server.
 
 `snowflake.jdbc.map`
 :   Example: `"snowflake.jdbc.map": "networkTimeout:20,tracing:WARNING"`

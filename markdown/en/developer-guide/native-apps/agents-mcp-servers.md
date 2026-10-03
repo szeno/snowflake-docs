@@ -418,6 +418,156 @@ is available in all the same places as a standalone agent. For example:
   For more information, see [Cortex Agents REST API](/user-guide/snowflake-cortex/cortex-agents-rest-api).
 - SQL. Call [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex).
 
+### Intellectual property protection during event logging
+
+Snowflake redacts orchestrator-authored content before writing a record for an
+app-initiated run to `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS`. A run is
+app-initiated when the app calls the REST `agent:run` API or SQL
+`DATA_AGENT_RUN` in the app’s owner’s-rights context.
+
+The request context, not agent ownership, determines whether Snowflake redacts
+the record:
+
+- An app-initiated run is redacted, even if the consumer owns the agent.
+- A consumer-initiated run isn’t redacted, even if the app owns the agent.
+
+Snowflake replaces each redacted value with `<redacted - Native apps>`.
+
+In the event `VALUE`, only these keys remain visible:
+
+- `snow.ai.observability.response_status_code`
+- `snow.ai.observability.response_time_ms`
+
+Every other `VALUE` key, including `snow.ai.observability.request_body`,
+`snow.ai.observability.response`, `snow.ai.observability.spans`, and
+`snow.ai.observability.client_metadata`, is replaced with the marker.
+
+In `RECORD_ATTRIBUTES`, these exact scalar keys remain visible:
+
+- `ai.observability.input_id`
+- `ai.observability.record_id`
+- `ai.observability.span_type`
+- `snow.ai.observability.agent.duration`
+- `snow.ai.observability.agent.message_id`
+- `snow.ai.observability.agent.parent_message_id`
+- `snow.ai.observability.agent.request_id`
+- `snow.ai.observability.agent.status`
+- `snow.ai.observability.agent.status.code`
+- `snow.ai.observability.agent.thread_id`
+- `snow.ai.observability.object.version.alias`
+- `snow.ai.observability.object.version.id`
+- `snow.ai.observability.object.version.name`
+- `snow.ai.observability.response_status_code`
+- `snow.ai.observability.response_time_ms`
+- `snow.ai.observability.run.id`
+- `snow.ai.observability.run.name`
+- `snow.ai.observability.span_kind`
+
+These additional `snow.ai.observability.agent.*` patterns remain visible:
+
+- Nested `duration` and `duration_ms`
+- Nested `request_id`
+- Nested `status` and `status.code`
+- Nested `token_count.*`
+
+Everything else in `RECORD_ATTRIBUTES` is replaced, including prompts,
+responses, planning text, tool arguments, tool results, and error
+descriptions.
+
+When testing a development-mode app, set `DISABLE_APPLICATION_REDACTION = TRUE`
+to leave app-initiated records unredacted. For more information, see
+[Disable information redaction of provider data](/developer-guide/native-apps/installing-testing-application#label-native-apps-disable-application-redaction).
+
+### Event sharing for agent telemetry
+
+The Snowflake Native App Framework supports sharing Cortex Agent telemetry through the existing
+[event sharing](/developer-guide/native-apps/event-about) mechanism. The
+consumer enables a row filter that includes agent telemetry, such as `TRACES`
+or `ALL`. Snowflake then forwards matching `snow.cortex.agent` records from
+the consumer account to the provider event table.
+
+Before forwarding an agent record, Snowflake redacts the shared record by
+filtering `RECORD_ATTRIBUTES` and `VALUE` and clearing the span
+`status.message`. A provider can request one of two sharing levels that
+determine which data the provider receives.
+
+**`AI_METADATA`** uses an allowlist. Only these scalar keys are shared:
+
+- `ai.observability.input_id`
+- `ai.observability.record_id`
+- `ai.observability.span_type`
+- `snow.ai.observability.agent.duration`
+- `snow.ai.observability.agent.message_id`
+- `snow.ai.observability.agent.parent_message_id`
+- `snow.ai.observability.agent.request_id`
+- `snow.ai.observability.agent.status`
+- `snow.ai.observability.agent.status.code`
+- `snow.ai.observability.agent.thread_id`
+- `snow.ai.observability.database.id`
+- `snow.ai.observability.object.id`
+- `snow.ai.observability.object.name`
+- `snow.ai.observability.object.type`
+- `snow.ai.observability.object.version.alias`
+- `snow.ai.observability.object.version.id`
+- `snow.ai.observability.object.version.name`
+- `snow.ai.observability.operation_type`
+- `snow.ai.observability.response_status_code`
+- `snow.ai.observability.response_time_ms`
+- `snow.ai.observability.run.id`
+- `snow.ai.observability.run.name`
+- `snow.ai.observability.schema.id`
+- `snow.ai.observability.span_kind`
+
+These additional `snow.ai.observability.agent.*` patterns are also
+forwarded:
+
+- Nested `duration` and `duration_ms`
+- Nested `request_id`
+- Nested `status` and `status.code`
+- Nested `token_count.*`
+
+For `AI_METADATA`, Snowflake applies the allowlist to both
+`RECORD_ATTRIBUTES` and `VALUE`. Prompts, responses, SQL, and tool inputs and
+outputs aren’t shared.
+
+**`AI_CONTENT`** uses a denylist. These consumer identity keys aren’t shared:
+
+- `snow.ai.observability.role.id`
+- `snow.ai.observability.role.name`
+- `snow.ai.observability.session.id`
+- `snow.ai.observability.user.id`
+- `snow.ai.observability.user.name`
+
+For `AI_CONTENT`, Snowflake applies the denylist to both `RECORD_ATTRIBUTES`
+and `VALUE`. All other data is shared, including prompts, responses, SQL, and
+tool inputs and outputs.
+
+`AI_METADATA` is the default sharing level.
+
+To request `AI_CONTENT`, declare a `TYPE = SETTING` app specification with
+`SETTING = SHARE_AI_OBSERVABILITY_CONTENT`. The app manifest must use
+`manifest_version: 2`.
+
+Copy code
+
+```
+ALTER APPLICATION SET SPECIFICATION share_ai_content_spec
+  TYPE = SETTING
+  LABEL = 'Share AI observability content'
+  DESCRIPTION = 'Allows the provider to receive agent prompts, responses, and tool I/O with consumer identity redacted'
+  SETTING = SHARE_AI_OBSERVABILITY_CONTENT;
+```
+
+Approving the specification doesn’t enable event sharing by itself or rewrite
+records that were already shared. The consumer must still enable an applicable
+row filter. If the consumer declines the specification or the app removes it,
+subsequent shared records use `AI_METADATA`.
+
+For the `SETTING` app specification workflow, see
+[Request permission for restricted operations](/developer-guide/native-apps/requesting-app-specs-setting). To enable event
+sharing, see
+[Set up event tracing for an app](/developer-guide/native-apps/ui-consumer-enable-logging).
+
 ## MCP servers in a Native App
 
 A Snowflake Native App can create two kinds of MCP servers:
@@ -706,7 +856,10 @@ practices:
   procedure removes `code_execution` and `code_toolset_all`.
 - **Use event logging and event sharing for observability.** For more
   information, see [Logging messages from functions and procedures](/developer-guide/logging-tracing/logging) and
-  [Use logging and event tracing for an app](/developer-guide/native-apps/event-about).
+  [Use logging and event tracing for an app](/developer-guide/native-apps/event-about). Snowflake automatically
+  redacts sensitive content from app-initiated and shared agent records. See
+  [Intellectual property protection during event logging](#label-native-apps-agent-ip-protection) and
+  [Event sharing for agent telemetry](#label-native-apps-agent-event-sharing).
 
 For best practices that apply to consumers (auditing, granting caller
 privileges, monitoring, and feature policies), see

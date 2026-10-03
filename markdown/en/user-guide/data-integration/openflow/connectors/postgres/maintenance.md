@@ -48,6 +48,10 @@ Note
 
 This procedure re-snapshots the table in place. It requires Runtime Extensions version `2026.6.18.9` or later and connector version `0.55.0` or later. On earlier versions, re-snapshotting a table that already exists in Snowflake fails instead of reloading in place. Upgrade Runtime Extensions first, and then upgrade the connector flow before you use this procedure.
 
+Note
+
+For gen 2 connectors, this feature is available with Runtime Extensions version `2026.9.29.2` or later. To re-snapshot a table from the Openflow UI, on **Installed Connectors**, open the menu for the connector and select **View details**. Select **Reload tables**, select the tables that you want to reload, and then select **Reload selected tables**. The canvas procedure in this topic still applies to gen 1 connectors.
+
 A table in a FAILED state (for example, due to a missing primary key or an unsupported schema change) does not restart automatically. If a table enters a FAILED state or you need to restart replication from scratch, use the following procedure to remove and re-add the table to replication.
 
 Note

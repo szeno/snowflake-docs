@@ -21,6 +21,13 @@ Expand
 
 Show lessSee more
 
+## Protocol version
+
+When CoCo Desktop connects to an MCP server, it requests MCP protocol version `2025-11-25` in its
+`initialize` request. If your server restricts which protocol versions it accepts, for example through
+a `supportedVersions` setting, ensure that list includes the version CoCo Desktop requests.
+Otherwise the connection fails with an error such as `Unsupported MCP protocol version`.
+
 ## Managing MCP servers
 
 You manage MCP servers through the **Agent Settings** panel in CoCo Desktop.

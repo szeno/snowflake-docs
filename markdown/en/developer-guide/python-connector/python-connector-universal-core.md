@@ -141,9 +141,7 @@ Most connection parameters behave as they do in the 4.x connector. The items bel
 
 ### Certificate revocation checking
 
-Drivers built on the Universal Core do not support OCSP-based certificate revocation checking. Starting with the public preview versions, revocation checking is available only through CRLs (certificate revocation lists), and it is off by default.
-
-This aligns with the broader move away from OCSP, which has been a frequent cause of production outages and offers little real security in its default fail-open mode.
+Drivers built on the Universal Core do not support OCSP-based certificate revocation checking. Revocation checking is available only through CRLs (certificate revocation lists), and it is off by default.
 
 If you require revocation checking, enable CRL checking and evaluate it in a non-production environment under a realistic workload. Confirm that your network allows outbound access to the CRL distribution points named in Snowflake’s certificate chain: a driver that cannot reach a distribution point cannot complete a revocation check.
 

@@ -39,7 +39,12 @@ follow these practices:
   [Provider: Add a Sandbox tool for Python or SQL execution](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-code-execution)
   and [GRANT CALLER](/sql-reference/sql/grant-caller).
 - **Monitor agent activity.** Review conversation threads, tool invocations,
-  and execution traces in your account.
+  and execution traces in your account. Snowflake redacts provider
+  implementation details from the event table for app-initiated runs. If you
+  enable event sharing, the provider receives agent telemetry at the selected
+  sharing level, not your full local row. For more information, see
+  [Intellectual property protection during event logging](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-ip-protection)
+  and [Event sharing for agent telemetry](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-event-sharing).
 - **Use feature policies to control agent and MCP server creation.** If you
   don’t want apps to create agents or MCP servers, use feature policies to
   block those object types at the account level or application level. See

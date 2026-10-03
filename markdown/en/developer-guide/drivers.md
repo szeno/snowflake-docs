@@ -2,7 +2,9 @@
 
 [Preview Feature](/release-notes/preview-features) — drivers built on the Universal Core
 
-New major versions of two Snowflake drivers are in public preview: [Snowflake ODBC Driver 4.x](/developer-guide/odbc/odbc-universal-core) and [Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-universal-core). Both are built on the Universal Core, a shared Rust library used by every new Snowflake driver. The generally available drivers documented in this section remain the default.
+[Snowflake ODBC Driver 4.x](/developer-guide/odbc/odbc) is generally available, and
+[Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-universal-core) is in public preview.
+Both are built on the Universal Core, a shared Rust library. Python Connector 4.x remains the generally available default for Python.
 
 See [Universal Core](/developer-guide/universal-core/universal-core).
 

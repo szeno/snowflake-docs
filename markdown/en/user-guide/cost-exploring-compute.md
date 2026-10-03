@@ -165,7 +165,7 @@ the ACCOUNT\_USAGE schema is preferred, the Information Schema can be faster in 
 
 ### Example queries
 
-The following queries drill-down into data in ACCOUNT\_USAGE views to gain insight into compute costs.
+The following queries drill down into data in ACCOUNT\_USAGE views to gain insight into compute costs.
 
 Note
 

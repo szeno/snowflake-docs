@@ -43,7 +43,7 @@ The following examples show how to invoke `snow dbt execute`. The NAME argument 
   Copy code
 
   ```
-  snow dbt execute --dbt-version '1.11.11' my_dbt_project test --select my_model+
+  snow dbt execute --dbt-version '1.12.3' my_dbt_project test --select my_model+
   ```
 - Execute the `run` dbt command with inline environment variable overrides for this run:
 

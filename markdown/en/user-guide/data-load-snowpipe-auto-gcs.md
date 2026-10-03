@@ -344,6 +344,10 @@ path `files`. The stage references a storage integration named `my_storage_int`.
 >   STORAGE_INTEGRATION = my_storage_int;
 > ```
 
+Important
+
+Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `gcs://mybucket/path` also includes files from `gcs://mybucket/path1` and `gcs://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
+
 ### Step 4: Create a pipe with auto-ingest enabled
 
 Create a pipe using the [CREATE PIPE](/sql-reference/sql/create-pipe) command. The pipe defines the [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement used by Snowpipe to load data from the ingestion queue into the target table.
@@ -358,7 +362,7 @@ CREATE PIPE snowpipe_db.public.mypipe
   INTEGRATION = 'MY_NOTIFICATION_INT'
   AS
     COPY INTO snowpipe_db.public.mytable
-      FROM @snowpipe_db.public.mystage/path2;
+      FROM @snowpipe_db.public.mystage/path2/;
 ```
 
 The INTEGRATION parameter references the `my_notification_int` notification integration you created in [Step 1: Create a Notification Integration in Snowflake](#step-1-create-a-notification-integration-in-snowflake). The integration name must be provided in all uppercase.
@@ -374,6 +378,8 @@ occur when multiple pipe definitions reference the same storage location with di
 View the COPY INTO *<table>* statements in the definitions of all pipes in the account by executing [SHOW PIPES](/sql-reference/sql/show-pipes)
 or by querying either the [PIPES](/sql-reference/account-usage/pipes) view in Account Usage or the
 [PIPES](/sql-reference/info-schema/pipes) view in the Information Schema.
+
+If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path2/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path20` and `path2_archive`.
 
 Snowpipe with auto-ingest is now configured!
 

@@ -352,7 +352,7 @@ In other words, an outer join with a filter might not act like an outer join.
 ### Natural join
 
 A natural join joins two tables on columns that have the same names and compatible data types. Both the
-`employees` and the `projects` table created previously, have a column named `project_ID`. A natural
+`employees` and the `projects` tables created previously have a column named `project_ID`. A natural
 join implicitly constructs the `ON` clause: `ON projects.project_ID = employees.project_ID`.
 
 If two tables have multiple columns in common, then a natural join uses all of the common columns in the constructed
@@ -366,8 +366,8 @@ ON table2.city = table1.city AND table2.province = table1.province
 ```
 
 The output of a natural join includes only one copy of each of the shared columns. For example, the following query
-produces a natural join that contains all of columns in the two tables, except that it omits all but one copy of the
-redundant `project_id` columns:
+produces a natural join that contains all of the columns in the two tables, except that it omits all but one copy of the
+redundant `project_ID` columns:
 
 Copy code
 
@@ -389,7 +389,7 @@ SELECT *
 
 You can combine a natural join with an outer join.
 
-You can’t combine a natural join `ON` clause because the join condition is already implied. However, you
+You can’t combine a natural join with an `ON` clause because the join condition is already implied. However, you
 can use a `WHERE` clause to filter the results of a natural join.
 
 ## Implementing joins

@@ -92,7 +92,7 @@ CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.REGISTRY.REGISTER_TEMPLATE(
     description: Column to join on from second table specified under source_tables, aliased with p2
     required: true
   - name: group_by_col
-    description: Column which results should be grouped group aliased with respective table p1 or p2
+    description: Column by which results should be grouped, aliased with the respective table (p1 or p2)
     required: true
 
   template:
@@ -681,7 +681,7 @@ Learn how to implement activation in a collaboration: [Activating query results]
 
 After you’ve mastered the templating system, read the specifics for implementing a clean room with your template type:
 
-- [Activation templates](/user-guide/cleanrooms/activation) create a results table after a successful run and is shared outside of the clean room. Depending on the collaboration specification, the results table can be shared to the analysis runner or other collaborators.
+- [Activation templates](/user-guide/cleanrooms/activation) create a results table after a successful run and are shared outside of the clean room. Depending on the collaboration specification, the results table can be shared to the analysis runner or other collaborators.
 - [Code specs](/user-guide/cleanrooms/resources-code-specs) are used to upload custom Python UDFs and UDTFs into a collaboration. Templates in the collaboration can run these functions to perform complex data actions.
 - [Internal tables](/user-guide/cleanrooms/multistep-flows) are used to store intermediary or persistent results, which can be used downstream to support multistep workflows. These tables are accessible to templates or custom uploaded code inside the clean room.
 

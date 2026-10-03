@@ -6,7 +6,7 @@ on a user’s role. For specific considerations about user-based access control 
 
 ## Using the ACCOUNTADMIN Role
 
-The account administrator (users with the ACCOUNTADMIN system role) role is the most powerful role in the system. This role alone is
+The account administrator (users with the ACCOUNTADMIN system role) is the most powerful role in the system. This role alone is
 responsible for configuring parameters at the account level. Users with the ACCOUNTADMIN role can view and manage Snowflake billing
 and credit data, and can stop any running SQL statements.
 
@@ -67,7 +67,7 @@ change to the appropriate role for performing a given task, particularly account
 
 Snowflake recommends using a role other than ACCOUNTADMIN for automated scripts. If, as recommended, you create a role hierarchy under the
 SYSADMIN role, all warehouse and database object operations can be performed using the SYSADMIN role or lower roles in the hierarchy. The
-only limitations you would encounter is creating or modifying users or roles. These operations must be performed by a user with the
+only limitations you would encounter are creating or modifying users or roles. These operations must be performed by a user with the
 SECURITYADMIN role or another role with sufficient object privileges.
 
 ## Accessing database objects
@@ -310,13 +310,20 @@ For more information on future grants, see [Assigning future grants on objects](
 
 ## Viewing query results
 
-A user cannot view the result set from a query that another user executed. This behavior is intentional. For security reasons, only the user
-who executed a query can access the query results.
+For manually run queries, access to persisted query results is scoped to the user identity, not the active role. A user can’t view the
+result set from a query that another user ran.
+
+The same user can use [RESULT\_SCAN](/sql-reference/functions/result_scan) to access their persisted query results after switching to
+another role assigned to them. `RESULT_SCAN` doesn’t check the active role’s privileges on the source objects when retrieving these results.
+Switching roles therefore doesn’t isolate a user’s persisted query results. Account for this behavior when assigning multiple roles to a user.
+
+The results remain available to `RESULT_SCAN` for 24 hours after the original query ran. Queries run by tasks use a different access rule
+based on the task owner’s role. For more information, see [RESULT\_SCAN usage notes](/sql-reference/functions/result_scan#usage-notes).
 
 Note
 
-This behavior is not connected to the Snowflake access control model for objects. Even a user with the ACCOUNTADMIN role cannot
-view the results for a query run by another user.
+This behavior is not connected to the Snowflake access control model for objects. Even a user with the `ACCOUNTADMIN` role can’t
+view the results for a manually run query from another user.
 
 ## Understanding cloned objects and granted privileges
 

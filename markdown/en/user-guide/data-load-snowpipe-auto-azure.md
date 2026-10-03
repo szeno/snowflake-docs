@@ -484,6 +484,10 @@ The following example creates a stage named `mystage` in the active schema for t
 >   STORAGE_INTEGRATION = my_storage_int;
 > ```
 
+Important
+
+Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, a URL ending in `path` also includes `path1` and `path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
+
 Note
 
 Use the `blob.core.windows.net` endpoint for all supported types of Azure blob storage accounts, including Data Lake Storage Gen2.
@@ -522,6 +526,9 @@ Important
   View the COPY INTO *<table>* statements in the definitions of all pipes in the account by executing [SHOW PIPES](/sql-reference/sql/show-pipes)
   or by querying either the [PIPES](/sql-reference/account-usage/pipes) view in Account Usage or the
   [PIPES](/sql-reference/info-schema/pipes) view in the Information Schema.
+- If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path/`, end the path with a forward
+  slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path1` and
+  `path2`.
 
 Snowpipe with auto-ingest is now configured!
 

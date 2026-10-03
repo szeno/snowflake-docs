@@ -332,10 +332,6 @@ as the application package.
 
 ## Session debug mode
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Session debug mode allows providers to view and modify all of the objects within the app and
 execute statements using the same privileges that the app has when installed in the consumer account.
 Objects that are not visible to a consumer, for example, objects that are not granted to an application
@@ -446,7 +442,7 @@ Disabling redaction of provider data for an app requires the following privilege
 
 ### Disable information redaction of provider data
 
-To disable information for an app, use the [ALTER APPLICATION](/sql-reference/sql/alter-application) command as shown in the following example:
+To disable information redaction for an app, use the [ALTER APPLICATION](/sql-reference/sql/alter-application) command as shown in the following example:
 
 Copy code
 
@@ -463,6 +459,11 @@ Copy code
 ```
 ALTER APPLICATION hello_snowflake_app SET DISABLE_APPLICATION_REDACTION = FALSE;
 ```
+
+This override also leaves Cortex Agent observability records unredacted in the development
+account, so you can inspect app-initiated runs while you test. For more information about
+redaction in production consumer accounts, see
+[Intellectual property protection during event logging](/developer-guide/native-apps/agents-mcp-servers#label-native-apps-agent-ip-protection).
 
 ## Test event sharing in development mode
 
