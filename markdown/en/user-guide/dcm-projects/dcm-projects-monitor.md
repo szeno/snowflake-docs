@@ -126,7 +126,7 @@ doesn’t automatically remediate it.
 
 ### Deployment history
 
-The `DCM_DEPLOYMENT_HISTORY` Information Schema table function provides role-based access and low-latency ways to see successful and failed deployments for a selected DCM project.
+The `DCM_DEPLOYMENT_HISTORY` Information Schema table function provides low-latency, role-based access to successful and failed deployments for a selected DCM project.
 
 For the full syntax, arguments, output columns, and examples, see the
 [DCM\_DEPLOYMENT\_HISTORY](/sql-reference/info-schema/dcm_deployment_history) reference.

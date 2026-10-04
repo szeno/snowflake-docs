@@ -142,15 +142,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 04, 2026: Prompt injection guardrails now available in AWS\_EU, AWS\_JP, and AWS\_APJ](/release-notes/2026/other/2026-09-04-prompt-injection-guardrails-aws-eu-jp)
 - [Sep 4, 2026: SAS to Snowflake migration (Preview)](/release-notes/2026/other/2026-09-04-sas-to-snowflake-migration-preview)
 - [Python Connector (v5.0.0rc2)](/release-notes/clients-drivers/python-connector-2026)
-- [Sep 3, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-09-03-dcr)
-- [Sep 03, 2026: External lineage (General availability)](/release-notes/2026/other/2026-09-03-external-lineage-ga)
-- [Sep 3, 2026: Restricted Session Scope for agents (General availability)](/release-notes/2026/other/2026-09-03-restricted-session-scope)
-- [.NET Driver (v6.1.0)](/release-notes/clients-drivers/dotnet-2026)
-- [Go Driver (v2.2.0)](/release-notes/clients-drivers/golang-2026)
-- [JDBC Driver (v4.3.4)](/release-notes/clients-drivers/jdbc-2026)
-- [Node.js Driver (v3.3.0)](/release-notes/clients-drivers/nodejs-2026)
-- [ODBC Driver (v3.20.0)](/release-notes/clients-drivers/odbc-2026)
-- [PHP PDO Driver (v4.2.0)](/release-notes/clients-drivers/php-pdo-2026)
-- [Python Connector (v4.7.3)](/release-notes/clients-drivers/python-connector-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

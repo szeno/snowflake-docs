@@ -811,7 +811,7 @@ DCM Projects uses `GRANT` statements to assign privileges and roles within a pro
 
 ### GRANT
 
-Just like each object can be defined only once in DCM Projects, each privilege-grantee relationship can only be defined once across all DCM Projects.
+Just like each object can be defined only once in DCM Projects, each privilege-grantee relationship can only be defined once across all projects.
 
 DCM Projects is only aware of grants that were defined and deployed through DCM Projects. Any grants that were added outside of DCM Projects coexist,
 and DCM Projects doesn’t remove them.

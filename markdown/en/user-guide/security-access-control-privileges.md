@@ -77,7 +77,7 @@ to which it is applied, and not all objects support all privileges:
 | MANAGE USER SUPPORT CASES | Global | Grants the ability to view, comment on, and manage all Support cases for the current user in Snowsight. |
 | MANAGE VISIBILITY | Global | Grants the ability to set the OBJECT\_VISIBILITY property, which controls the [discoverability of the objects](/user-guide/ui-snowsight/object-visibility-universal-search) in the account. |
 | MANAGE WAREHOUSES | Global | Grants the ability to perform operations that require the [MODIFY, MONITOR, and OPERATE privileges on warehouses](#label-warehouse-privileges) in the same account. |
-| MODIFY | Resource Monitor, Warehouse, Data Exchange Listing, Database, Schema, Failover Group, Replication Group, Compute Pool | Grants the ability to change the settings or properties of an object (for example, on a virtual warehouse, provides the ability to change the size of a virtual warehouse). |
+| MODIFY | Resource Monitor, Warehouse, Data Exchange Listing, Database, Schema, Failover Group, Replication Group, Compute Pool, Model Monitor | Grants the ability to change the settings or properties of an object (for example, on a virtual warehouse, provides the ability to change the size of a virtual warehouse). |
 | MODIFY EVENT TABLE | Global | Grants the ability to set the [EVENT\_TABLE](/sql-reference/parameters#label-event-table) parameter on any object in the account. |
 | MODIFY LOG EVENT LEVEL | Global | Enables setting the level of log events captured for stored procedures and UDFs in the current account. For more information, see [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level). |
 | MODIFY LOG LEVEL | Global | Enables setting the level of log messages captured for stored procedures and UDFs in the current account. For more information, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). |
@@ -110,7 +110,7 @@ to which it is applied, and not all objects support all privileges:
 | UPDATE | Table, hybrid table, Iceberg table | Grants the ability to execute an [UPDATE](/sql-reference/sql/update) command on the table. |
 | USE AI FUNCTION <name> | Global | Grants the ability to use a specific Snowflake Cortex AI function (for example, `GRANT USE AI FUNCTION AI_COMPLETE ON ACCOUNT`). For the list of supported per-function privilege names, see [USE AI FUNCTION <name> — per-function privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-ai-function-per-function-privileges). |
 | USE AI FUNCTIONS | Global | Grants the ability to use Snowflake Cortex AI Functions. Users need both the USE AI FUNCTIONS account privilege and the CORTEX\_USER database role to use all Snowflake Cortex AI Functions. For more information, see [Snowflake Cortex AI Functions (including LLM functions)](/user-guide/snowflake-cortex/aisql). |
-| USAGE | Warehouse, Dataset, Data Exchange Listing, Integration, Database, Schema, Stage (external only), File Format, Sequence, Stored Procedure, User-Defined Types, User-Defined Function, External Function, Compute Pool, Snapshot, Backup Policy, Backup Set, Model, dbt project object, Agent, MCP Server | Grants the ability to execute a [USE <object>](/sql-reference/sql/use) command on the object. Also grants the ability to execute a [SHOW <objects>](/sql-reference/sql/show) command on the object. Usage on a compute pool is required to create a Snowpark Container Services service. For models, USAGE grants the ability to run inference methods. It doesn’t grant access to the model’s underlying artifacts. For dbt Projects on Snowflake, grants the ability to SHOW, DESCRIBE, view execution history, and execute the dbt project object. |
+| USAGE | Warehouse, Dataset, Data Exchange Listing, Integration, Database, Schema, Stage (external only), File Format, Sequence, Stored Procedure, User-Defined Types, User-Defined Function, External Function, Compute Pool, Snapshot, Backup Policy, Backup Set, Model, Model Monitor, dbt project object, Agent, MCP Server | Grants the ability to execute a [USE <object>](/sql-reference/sql/use) command on the object. Also grants the ability to execute a [SHOW <objects>](/sql-reference/sql/show) command on the object. Usage on a compute pool is required to create a Snowpark Container Services service. For models, USAGE grants the ability to run inference methods. It doesn’t grant access to the model’s underlying artifacts. For dbt Projects on Snowflake, grants the ability to SHOW, DESCRIBE, view execution history, and execute the dbt project object. |
 | VIEW LINEAGE | Global | Grants the [ability to view data lineage](/user-guide/ui-snowsight-lineage), including upstream and downstream lineage objects and dependencies. |
 | WRITE | Stage (internal only), image repository, Git Repository | Grants the ability to perform any operations that require writing to an internal stage ([PUT](/sql-reference/sql/put), [REMOVE](/sql-reference/sql/remove), [COPY INTO <location>](/sql-reference/sql/copy-into-location), etc.). Grants the ability to upload an image to an image repository. |
 
@@ -1428,6 +1428,18 @@ Show lessSee more
 | --- | --- |
 | OWNERSHIP | Enables full control over the model. Only one role at a time can hold this privilege on a given model. |
 | USAGE | Enables displaying information about a model and invoking its methods. It does not allow users to see model weights or the artifacts that define the model. This privilege is also supported `ON FUTURE MODELS`. |
+
+Expand
+
+Show lessSee more
+
+## Model monitor privileges
+
+| Privilege | Usage |
+| --- | --- |
+| OWNERSHIP | Enables full control over the model monitor. Only one role at a time can hold this privilege on a given model monitor. |
+| MODIFY | Enables modifying an existing model monitor using [ALTER MODEL MONITOR](/sql-reference/sql/alter-model-monitor). |
+| USAGE | Enables viewing and querying model monitor metrics, including querying monitoring tables and viewing the model monitor dashboard. |
 
 Expand
 
