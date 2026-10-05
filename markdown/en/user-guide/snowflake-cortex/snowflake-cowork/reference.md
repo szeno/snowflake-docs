@@ -4,7 +4,6 @@ This page provides reference information about working with Snowflake CoWork. It
 
 - REST API endpoints and SQL commands available for creating, managing, and interacting with Cortex Agents
 - The supported AI models and their regional availability
-- Legal notices about model usage and data classification
 
 ## SQL commands and API reference
 

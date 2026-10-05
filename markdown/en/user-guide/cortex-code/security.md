@@ -55,7 +55,11 @@ Use appropriate roles per environment
 ## Conversation history
 
 Conversations are stored in `~/.snowflake/cortex/conversations/`. Use `cortex --private` when starting CoCo to disable session saving for sensitive work.
-Alternatively, use the `/clear` command to clear the current session before exiting CoCo CLI.
+To remove a conversation that was already saved, run `cortex conversations delete <session_id>`. To find the session ID, run `cortex conversations list`.
+
+Important
+
+The `/clear` command only clears the screen. It doesn’t delete the current conversation from `~/.snowflake/cortex/conversations/`.
 
 Use mode 700 to restrict access to conversation history to only your user.
 

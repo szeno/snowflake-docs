@@ -81,15 +81,15 @@ In Snowsight, select **AI & ML** » **Models**, then open the **Gateways** tab. 
 
 On the gateway details page:
 
-- **Overview** — Review services behind the gateway and each service’s traffic percentage. Use **Edit Gateway** to change the traffic split during the test.
-- **Metrics** — View gateway-level operational and system metrics for inference services behind the gateway: request count, error rate, latency (p50, p90, and p99), and resource utilization (CPU, memory, and GPU when available). Select a service, method, and time range to compare services on the same gateway, and cross-check those results against drift and performance metrics on the **Monitoring** tab for the same period.
-- **Monitoring** — View gateway model monitors for that gateway. Select a monitor to open its dashboard. Use **Create gateway monitor** to open a dialog and create a monitor from the UI.
+- **Overview**: Review services behind the gateway and each service’s traffic percentage. Use **Edit Gateway** to change the traffic split during the test.
+- **Metrics**: View gateway-level operational and system metrics for inference services behind the gateway: request count, error rate, latency (p50, p90, and p99), and resource utilization (CPU, memory, and GPU when available). Select a service, method, and time range to compare services on the same gateway, and cross-check those results against drift and performance metrics on the **Monitoring** tab for the same period.
+- **Monitoring**: View gateway model monitors for that gateway. Select a monitor to open its dashboard. Use **Create gateway monitor** to open a dialog and create a monitor from the UI.
 
 On the monitor dashboard:
 
-- **Metrics overview** — A table of services with their latest drift and performance metrics. Use **Set as baseline** to designate the control service; drift metrics for challenger services are computed relative to that baseline. When a confidence interval is available, it appears under the metric value. For supported metrics and `CI_VALUE` details, see [MODEL\_MONITOR\_DRIFT\_METRIC](/sql-reference/functions/model-monitor-drift-metric) and [MODEL\_MONITOR\_PERFORMANCE\_METRIC](/sql-reference/functions/model-monitor-performance-metric).
-- **Charts** — Time-series charts for the selected metrics and services.
-- **Control bar** — Filter by **Metrics** and **Services**, change the time range, and refresh data. Open **Monitor details** to view monitor metadata (description, status, refresh interval, aggregation window, warehouse, and ground truth table). Suspend, resume, edit (refresh interval, warehouse, and comment), or drop the monitor from the control bar and actions menu.
+- **Metrics overview**: A table of services with their latest drift and performance metrics. Use **Set as baseline** to designate the control service; drift metrics for challenger services are computed relative to that baseline. When a confidence interval is available, it appears under the metric value. For supported metrics and `CI_VALUE` details, see [MODEL\_MONITOR\_DRIFT\_METRIC](/sql-reference/functions/model-monitor-drift-metric) and [MODEL\_MONITOR\_PERFORMANCE\_METRIC](/sql-reference/functions/model-monitor-performance-metric).
+- **Charts**: Time-series charts for the selected metrics and services.
+- **Control bar**: Filter by **Metrics** and **Services**, change the time range, and refresh data. Open **Monitor details** to view monitor metadata (description, status, refresh interval, aggregation window, warehouse, and ground truth table). Suspend, resume, edit (refresh interval, warehouse, and comment), or drop the monitor from the control bar and actions menu.
 
 Gateway model monitors are not shown on a model’s **Monitoring** tab; that view is for [model version monitors](/developer-guide/snowflake-ml/model-registry/model-observability). For general Model Registry UI tasks, see [Using the Snowflake Model Registry in Snowsight](/developer-guide/snowflake-ml/model-registry/snowsight-ui).
 

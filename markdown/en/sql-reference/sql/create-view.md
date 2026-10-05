@@ -42,12 +42,6 @@ Creates a new view if it doesn’t already exist, or updates the properties of a
 A CREATE OR ALTER VIEW statement follows the syntax rules of a CREATE VIEW statement and has the same limitations as an
 [ALTER VIEW](/sql-reference/sql/alter-view) statement.
 
-The following modifications are supported:
-
-- Converting to (or reverting from) a secure view.
-- Adding, overwriting, removing a comment for a view or a view’s columns.
-- Enabling or disabling change tracking for a view.
-
 For more information, see [CREATE OR ALTER VIEW usage notes](#label-create-or-alter-view-usage-notes) and [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
 
 Copy code

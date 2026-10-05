@@ -31,7 +31,7 @@ ML training in Snowflake runs in [Container Runtime](/developer-guide/snowflake-
 
 ## Manage and Serve Features
 
-The [Snowflake Feature Store](/developer-guide/snowflake-ml/feature-store/overview) is an integrated solution for defining, managing, storing and discovering ML features derived from your data. The Snowflake Feature Store supports automated, incremental refresh from batch and streaming data sources, so that feature pipelines need only be defined once to be continuously updated with new data. It supports both batch and low-latency online feature retrieval, and ensures consistency between training and inference to reduce training-serving skew.
+The [Snowflake Feature Store](/developer-guide/snowflake-ml/feature-store/overview) is an integrated solution for defining, managing, storing and discovering ML features derived from your data. The Snowflake Feature Store supports automated, incremental refresh from batch and streaming data sources, so that feature pipelines need to be defined only once to be continuously updated with new data. It supports both batch and low-latency online feature retrieval, and ensures consistency between training and inference to reduce training-serving skew.
 
 ## Orchestrate and Automate
 

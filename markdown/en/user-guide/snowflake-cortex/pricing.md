@@ -2,7 +2,7 @@
 
 Snowflake AI features use **AI Credit pricing**, a flat, simplified pricing model for AI services.
 AI Credits are separate from Platform Credits and provide consistent pricing regardless of your
-Snowflake edition. AI costs scale with your usage. Each service is charged per the relevant table in the Consumption table. There are no per-seat fees. Automatic AI Credit discounts apply based on your annual contract value (ACV).
+Snowflake edition. AI costs scale with your usage. Each service is charged at the rates listed in the Consumption table. There are no per-seat fees. Automatic AI Credit discounts apply based on your annual contract value (ACV).
 
 ## AI Credits compared to Platform Credits
 

@@ -64,8 +64,8 @@ For PowerPoint generation, you can upload a `.pptx` template so the generated de
 style and branding. Attach the template in the chat, then ask Snowflake CoWork to generate the presentation
 using that template.
 
-You can also upload a PDF as a reference when generating a PDF. The generated PDF isn’t guaranteed to follow
-the uploaded file’s layout or formatting strictly.
+You can also upload a PDF as a reference when generating a PDF. The generated PDF isn’t guaranteed to strictly follow
+the uploaded file’s layout or formatting.
 
 For supported upload file types and size limits, see
 [Zero-setup file upload](/user-guide/snowflake-cortex/snowflake-cowork#label-snowflake-cowork-zero-setup-file-upload).

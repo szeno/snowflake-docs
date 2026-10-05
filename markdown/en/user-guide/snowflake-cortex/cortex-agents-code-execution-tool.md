@@ -10,7 +10,7 @@ You enable the code execution tool by configuring it in an agent specification. 
 
 There are two tool types that provide code execution capabilities:
 
-- **`code_execution`**: A single code execution tool for running Python in a sandbox. Use this when you want basic code execution alongside other agent tools (Cortex Analyst, Cortex Search, etc.). This tool type is documented on this page.
+- **`code_execution`**: A single code execution tool for running Python in a sandbox. Use this when you want basic code execution alongside other agent tools (Cortex Analyst, Cortex Search, and others). This tool type is documented on this page.
 - **`code_toolset_all`**: The full Cortex Code sandbox toolset, which includes bash, file read/write/edit, grep, glob, web search, SQL execution, and skills. Use this when you want an autonomous coding agent with the full suite of development tools. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
 
 These two tool types are **mutually exclusive** — you cannot include both in a single request. Specifying both returns an error.

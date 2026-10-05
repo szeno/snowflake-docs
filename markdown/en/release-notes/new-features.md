@@ -139,8 +139,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 08, 2026: Second generation Openflow deployments and runtimes (General availability)](/release-notes/2026/other/2026-09-08-openflow-gen2-deployment-runtime-ga)
 - [Sep 8, 2026: Shadow traffic for gateways (Preview)](/release-notes/2026/other/2026-09-08-shadow-traffic-gateways)
 - [Sep 08, 2026: Trust Center, secure by default approach for scanner package enablement](/release-notes/2026/other/2026-09-08-trust-center-secure-by-default)
-- [Sep 04, 2026: Prompt injection guardrails now available in AWS\_EU, AWS\_JP, and AWS\_APJ](/release-notes/2026/other/2026-09-04-prompt-injection-guardrails-aws-eu-jp)
-- [Sep 4, 2026: SAS to Snowflake migration (Preview)](/release-notes/2026/other/2026-09-04-sas-to-snowflake-migration-preview)
-- [Python Connector (v5.0.0rc2)](/release-notes/clients-drivers/python-connector-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

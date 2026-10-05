@@ -52,7 +52,7 @@ You must create a new thread, then pass it as part of a request to `agent:run`.
 >         }
 >       ]
 >     }
->   ],
+>   ]
 > }
 > ```
 
@@ -106,8 +106,7 @@ Copy code
         }
       ]
     }
-  ],
-
+  ]
 }
 ```
 

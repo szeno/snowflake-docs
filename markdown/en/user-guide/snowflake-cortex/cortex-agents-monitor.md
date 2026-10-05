@@ -71,7 +71,7 @@ Cortex Agent logs include the following information:
 To view Cortex Agent conversation logs in Snowsight, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **AI & ML** » **Agents**.
+2. In the navigation menu, select **AI & ML** → **Agents**.
 3. Select the agent whose logs you want to view.
 4. Navigate to the **Observability** pane of the agent view.
 

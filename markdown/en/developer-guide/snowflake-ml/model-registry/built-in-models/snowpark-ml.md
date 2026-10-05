@@ -1,6 +1,6 @@
-# Snowpark ML
+# Snowflake ML models
 
-The registry supports models created using [Snowpark ML modeling APIs](/developer-guide/snowflake-ml/modeling) (models derived from
+The registry supports models created using [Snowflake ML modeling APIs](/developer-guide/snowflake-ml/modeling) (models derived from
 `snowpark.ml.modeling.framework.base.BaseEstimator`).
 
 The following additional options can be used in the `options` dictionary when you call `log_model`:
@@ -13,12 +13,12 @@ Expand
 
 Show lessSee more
 
-You do not need to specify `sample_input_data` or `signatures` when logging a Snowpark ML model;
+You do not need to specify `sample_input_data` or `signatures` when logging a Snowflake ML model;
 these are automatically inferred during fitting.
 
 Note
 
-Snowpark ML pipelines require an estimator. You can’t register a transformer-only Snowpark ML pipeline. Use a scikit-learn pipeline to register your transformers.
+Snowflake ML pipelines require an estimator. You can’t register a transformer-only Snowflake ML pipeline. Use a scikit-learn pipeline to register your transformers.
 
 ## Example
 
