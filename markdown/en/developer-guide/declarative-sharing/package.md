@@ -2,9 +2,9 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-As a provider, you create an application package to bundle your data content and notebooks into a Declarative Native App.
+As a provider, you create an application package to bundle your data content and notebooks into a Declarative Share.
 This topic explains what an app package is and describes the high-level steps to create one, from creating the initial package to adding your manifest and notebook files.
 
 ## The application package and the live version
@@ -34,13 +34,13 @@ The process involves the following steps:
 5. **Commit the app package**: creates a new immutable version of the app that can be published.
 6. **Release the app package**. With a released package, you can create a new listing, either privately or publicly on the Snowflake Marketplace.
 
-This process is described in the [Tutorial: Getting started with Declarative Native Apps](/developer-guide/declarative-sharing/tutorials/getting-started). This section includes additional details of options available at the different stages of development.
+This process is described in the [Tutorial: Getting started with Declarative Shares](/developer-guide/declarative-sharing/tutorials/getting-started). This section includes additional details of options available at the different stages of development.
 
 ![Diagram showing the steps of creating an application package: Add live package, build, commit, and release. The diagram also shows the optional steps to skip ahead to build, commit, and release a live version all at once.](/static/images/ds-native-apps/dsna-lifecycle.png)
 
 ### Create a new application package
 
-First, create a new Declarative Native App package to hold the app’s files, either via Snowsight or SQL commands from [Snowflake CLI](/developer-guide/snowflake-cli/index), using the *snow://package/<DECL\_SHARE\_APP\_PKG>/versions/LIVE/* URL scheme.
+First, create a new Declarative Share package to hold the app’s files, either via Snowsight or SQL commands from [Snowflake CLI](/developer-guide/snowflake-cli/index), using the *snow://package/<DECL\_SHARE\_APP\_PKG>/versions/LIVE/* URL scheme.
 
 SnowsightSnowflake CLI
 
@@ -53,7 +53,7 @@ To use Snowsight to create a new app package:
 
 To use SQL in [Snowflake CLI](/developer-guide/snowflake-cli/index) to create a new app package:
 
-- Create a Declarative Native App package using the [CREATE APPLICATION PACKAGE … TYPE=DATA](/developer-guide/declarative-sharing/command-reference#label-dsna-create-application-package) command, replacing *<DECL\_SHARE\_APP\_PKG>* with the name you want to give the app package:
+- Create a Declarative Share package using the [CREATE APPLICATION PACKAGE … TYPE=DATA](/developer-guide/declarative-sharing/command-reference#label-dsna-create-application-package) command, replacing *<DECL\_SHARE\_APP\_PKG>* with the name you want to give the app package:
 
 Copy code
 
@@ -79,7 +79,7 @@ You can create or update a [manifest](/developer-guide/declarative-sharing/manif
 
 The manifest file must be named `manifest.yml`, and must be added to the root level of the app package.
 
-For more information, see [Declarative Native App manifest reference](/developer-guide/declarative-sharing/manifest-reference). The associated [Tutorial: Getting started with Declarative Native Apps](/developer-guide/declarative-sharing/tutorials/getting-started) includes an example manifest file.
+For more information, see [Declarative Share manifest reference](/developer-guide/declarative-sharing/manifest-reference). The associated [Tutorial: Getting started with Declarative Shares](/developer-guide/declarative-sharing/tutorials/getting-started) includes an example manifest file.
 
 #### Create or update a manifest file from a Snowflake data share
 
@@ -111,7 +111,7 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 If [Snowflake Notebooks](/user-guide/ui-snowsight/notebooks) are to be included in the app, download a copy of each notebook file so you can include it in the app package.
 
@@ -260,7 +260,7 @@ Copy code
 ALTER APPLICATION <DECL_SHARE_APP> UPGRADE USING VERSION LIVE;
 ```
 
-To test some features, such as app roles, you must first release a new version of the app package, and then test using a separate consumer account. For more information, see [Install a Declarative Native App](/developer-guide/declarative-sharing/consumer/install) and [Access content in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-app-content).
+To test some features, such as app roles, you must first release a new version of the app package, and then test using a separate consumer account. For more information, see [Install a Declarative Share](/developer-guide/declarative-sharing/consumer/install) and [Access content in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-app-content).
 
 #### Optional: Reset edits on a live version
 

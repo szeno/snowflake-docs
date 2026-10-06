@@ -22,6 +22,8 @@ For the privileges required for each operation, see [SAP® BDC Connect for Snowf
 
 Before creating a Zerocopy Connector:
 
+- Use a Snowflake account that isn’t a trial account. SAP® BDC Connect for Snowflake is not available for
+  Snowflake trial accounts.
 - An `ORGADMIN` must accept the SAP® BDC Connect for Snowflake Terms.
   This only needs to be done once per Snowflake organization. Terms of Service
   cannot be self-revoked — contact Snowflake support and legal to revoke them.

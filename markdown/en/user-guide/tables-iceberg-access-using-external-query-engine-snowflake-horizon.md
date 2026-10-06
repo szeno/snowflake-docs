@@ -303,37 +303,35 @@ GRANT ROLE ENGINEER to user my_service_user;
 
 #### Step 3: Generate a JSON Web Token (JWT)
 
-In this step, you use SnowSQL to generate a JSON Web Token (JWT) for key-pair authentication.
+In this step, you use Snowflake CLI to generate a JSON Web Token (JWT) for key-pair authentication.
 
 Note
 
-- You must have [SnowSQL](https://www.snowflake.com/developers/downloads/snowsql/) installed on your machine.
-- Alternatively, you can use Python, Snowflake CLI, Java, or Node.js to generate a JWT. For an example, see the following sections:
+- You must have [Snowflake CLI](/developer-guide/snowflake-cli/installation/installation) installed on your machine.
+- You can also use Python, Java, or Node.js to generate a JWT. For an example, see the following sections:
   - [Python example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-python)
-  - [Snowflake CLI example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-snowcli)
   - [Java example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-java)
   - [Node.js example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-nodejs)
 
-Use SnowSQL to generate a JWT:
+Use [`snow connection generate-jwt`](/developer-guide/snowflake-cli/command-reference/connection-commands/generate-jwt) to generate a JWT:
 
 Copy code
 
 ```
-snowsql --private-key-path "<private_key_file>" \
-  --generate-jwt \
-  -h "<account_identifier>.snowflakecomputing.com" \
-  -a "<account_locator>" \
-  -u "<user_name>"
+snow connection generate-jwt \
+  --account "<account_locator>" \
+  --user "<user_name>" \
+  --private-key-file "<private_key_file>"
 ```
+
+These options override the account, user, and private key in your Snowflake CLI connection, so the JWT is issued for the key-pair user from the previous steps.
 
 Where:
 
 - `<private_key_file>` is the path to your private key file that corresponds to the public key assigned to your Snowflake user.
   For example: `/Users/jsmith/.ssh/rsa_key.p8`.
-- `<account_identifier>` is the account identifier for your Snowflake account, in the format `<organization_name>-<account_name>`.
-  To find the account identifier, see [Supported external engines and catalogs](#label-tables-iceberg-query-using-external-query-engine-snowflake-horizon-before-you-begin).
-  An example of an account identifier is `myorg-myaccount`.
-- `<account_locator>` is the account locator for your Snowflake account.
+- `<account_locator>` is the account locator for your Snowflake account. The JWT is issued from `--account`, not from a host
+  name.
 
   To find your account locator, see
   [Locate your Snowflake account information in Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-account-details) and view the *Account locator* in the **Account Details** dialog.
@@ -977,7 +975,10 @@ Consider the following items when you query (read) Iceberg tables with an extern
     information, see [Enforce data protection policies on Iceberg tables from external query engines](/user-guide/tables-iceberg-query-using-external-query-engine-snowflake-horizon-enforce-access-policies).
 - Cloned and converted tables:
 
-  - Reading and writing cloned or converted tables is not supported with vended credentials. To read these tables, use direct access to
+  - To read a cloned table with vended credentials, the role must also have access to the source table and to any other clones of the
+    same source table. Otherwise, the request fails with an authorization error (HTTP 403). For more information, see
+    [Credential vending](/user-guide/object-clone#label-cloning-iceberg-tables-credential-vending).
+  - Reading and writing converted tables is not supported with vended credentials. To read these tables, use direct access to
     object storage.
 
 Consider the following items when you write to Iceberg tables with an external query engine:
@@ -1000,7 +1001,9 @@ Consider the following items when you write to Iceberg tables with an external q
   - You can’t upgrade an Iceberg table from v2 to v3.
 - Cloned and converted tables:
 
-  - Writing to cloned or converted tables is not supported with vended credentials. To write to these tables, connect your external query
+  - To write to a cloned table with vended credentials, the role must also have access to the source table and to any other clones of
+    the same source table.
+  - Writing to converted tables is not supported with vended credentials. To write to these tables, connect your external query
     engine directly to the object storage where your tables are stored.
   - You can’t write to an Iceberg table that was converted from externally managed to Snowflake managed.
 - Streams:

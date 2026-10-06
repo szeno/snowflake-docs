@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 Declarative Sharing in the Snowflake Native App Framework enables providers to share not just data,
 but code objects: workspaces containing notebooks, stored procedures, and user-defined

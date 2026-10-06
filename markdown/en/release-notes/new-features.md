@@ -50,6 +50,9 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
+- [Oct 5, 2026: Change the type of an organization user](/release-notes/2026/other/2026-10-05-change-organization-user-type)
+- [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
 - [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
@@ -85,6 +88,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 24, 2026: Snowpipe Streaming: Partitioned Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-09-24-snowpipe-streaming-partitioned-iceberg-ga)
 - [Sep 24, 2026: Programmatic notifications for Trust Center findings (Preview)](/release-notes/2026/other/2026-09-24-trust-center-programmatic-notifications)
 - [Sep 24, 2026: VALUES clause is supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-24-values-clause-incremental-dynamic-tables)
+- [Snowflake Python API (v1.13.2)](/release-notes/clients-drivers/snowapi-python-2026)
 - [Snowpipe Streaming SDK (v1.8.1)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)

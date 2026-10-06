@@ -134,7 +134,7 @@ Use the following command to understand the functions available and the signatur
 Copy code
 
 ```
-SHOW FUNCTION IN MODEL mymodel VERSION myversion;
+SHOW FUNCTIONS IN MODEL mymodel VERSION myversion;
 ```
 
 ### To run model on warehouse

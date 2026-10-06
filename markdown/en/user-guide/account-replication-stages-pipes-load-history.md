@@ -13,6 +13,11 @@ pipelines across [regions](/user-guide/intro-regions) and across [cloud platform
 Before you get started, we recommend that you have familiarity with Snowflake support for replication and failover/failback.
 For more information, see [Introduction to replication and failover across multiple accounts](/user-guide/account-replication-intro).
 
+By default, an external stage references a single cloud storage location, and an auto-ingest pipe reads notifications from a single cloud
+message queue. With Business Critical Edition (or higher), you can configure a second storage location and, for auto-ingest pipes, a second
+queue for the target account, so that your pipelines keep loading after a region-wide cloud provider outage. For more information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
 ## Requirements
 
 Important
@@ -86,8 +91,13 @@ Show lessSee more
 
 Note
 
-To associate a secondary stage or pipe with a different cloud storage location than the one associated with the primary object,
-contact the support team. For example, you might choose a location in another region.
+To associate a secondary stage or pipe with a cloud storage location that’s different from the one associated with the primary object,
+such as a location in another region, use a Multi-Location Storage Integration. For an auto-ingest pipe, you must also redirect the pipe’s
+notifications to a queue for that location. Stages that use a Multi-Location Storage Integration don’t support directory tables. For more
+information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
+If a Multi-Location Storage Integration doesn’t meet your needs, contact [Snowflake Support](/user-guide/contacting-support).
 
 ### Considerations
 
@@ -133,8 +143,13 @@ Snowflake supports replication for the following:
 
 Note
 
-To associate a secondary stage or pipe with a different cloud storage location than the one associated with the primary object,
-contact the support team. For example, you might choose a location in another region.
+To associate a secondary stage or pipe with a cloud storage location that’s different from the one associated with the primary object,
+such as a location in another region, use a Multi-Location Storage Integration. For an auto-ingest pipe, you must also redirect the pipe’s
+notifications to a queue for that location. Stages that use a Multi-Location Storage Integration don’t support directory tables. For more
+information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
+If a Multi-Location Storage Integration doesn’t meet your needs, contact [Snowflake Support](/user-guide/contacting-support).
 
 ### Pipes in secondary databases
 
@@ -173,7 +188,9 @@ The following constraints apply to pipe objects:
 - Snowflake currently supports pipe replication as part of group-based replication (replication and failover groups).
   Pipe replication is not supported for database replication.
 - Snowflake replicates the copy history of a pipe only when the pipe belongs to the same replication group as its target table.
-- Replication of notification integrations is not supported.
+- Inbound notification integrations with `TYPE = QUEUE` aren’t replicated. Multi-Queue Notification Integrations (`TYPE = MULTI_QUEUE`) are
+  replicated when the replication or failover group includes `NOTIFICATION INTEGRATIONS` in its `ALLOWED_INTEGRATION_TYPES` list. For the notification integration
+  types that are replicated, see [Integration replication](/user-guide/account-replication-intro#label-account-replication-integrations).
 - Snowflake only replicates load history after the latest table truncate.
 - To receive notifications, you must configure a secondary auto-ingest pipe in a target account prior to failover.
   For more information, see [Configure notifications for secondary auto-ingest pipes](/user-guide/account-replication-config#label-configure-notifications-secondary-pipes).
@@ -424,7 +441,7 @@ queue to using an Amazon Simple Notification Service (SNS) topic for the followi
 - [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3)
 
 When you replicate a directory table or pipe,
-Snowflake creates a new SQS queue in your target account to handle automation. You can configure a single SNS topic to
+Snowflake binds it to a Snowflake-managed SQS queue in your target account, and creates the queue if needed, to handle automation. You can configure a single SNS topic to
 deliver event notifications from your S3 bucket to all SQS queues across multiple accounts.
 By broadcasting your S3 event notification(s) to every SQS queue, you reduce the risk of losing notifications and data after failover.
 
@@ -456,22 +473,28 @@ To migrate, you must meet the following conditions:
    For instructions, see the [AWS SNS documentation](https://docs.aws.amazon.com/sns/latest/dg/sns-create-subscribe-endpoint-to-topic.html).
 3. Update the access policy for your topic with the following permissions:
 
-   - Allow the Snowflake IAM user to subscribe the SQS queue that is in your *target* account
-     to your topic.
+   - Allow the Snowflake IAM user of your *source* account and of each *target* account to subscribe the SQS queue in its own account to your topic. To get the policy statement for an account, run
+     [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) in that account.
    - Allow Amazon S3 to publish event notifications from your bucket to the SNS topic.
 
-   For instructions, see [Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription).
-4. In your target Snowflake account, call the [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns) function.
-   The function subscribes the SQS queue in your *target* account to your SNS topic without interrupting metadata
-   synchronization or ingestion work.
+   For instructions, see “Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic” in
+   [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+4. In your *source* account, where the directory tables and pipes are primary, call the
+   [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns) function. The function subscribes that account’s SQS queue
+   to your SNS topic without interrupting metadata synchronization or ingestion work. At the next refresh, Snowflake
+   subscribes the SQS queue in each *target* account to the topic.
 
    Specify your S3 bucket name and SNS topic ARN.
 
    Copy code
 
    ```
-   SELECT SYSTEM$CONVERT_PIPES_SQS_TO_SNS('s3_mybucket', 'arn:aws:sns:us-west-2:001234567890:MySNSTopic')
+   SELECT SYSTEM$CONVERT_PIPES_SQS_TO_SNS('my-s3-bucket', 'arn:aws:sns:us-west-2:001234567890:MySNSTopic');
    ```
+
+   Before you continue, run `DESCRIBE PIPE` for each auto-ingest pipe that loads from the bucket, and confirm that `notification_channel` shows
+   the topic ARN for every pipe. For pipes that still show an Amazon SQS queue ARN, see the usage notes in
+   [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns).
 5. Update your S3 event notifications to use your SNS topic as a destination. For instructions, see the
    [Amazon S3 User Guide](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html).
 

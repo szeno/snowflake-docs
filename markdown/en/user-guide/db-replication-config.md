@@ -229,7 +229,7 @@ SHOW REPLICATION DATABASES;
 +------------------+-------------------------------+-----------------+----------+---------+------------+----------------------------+---------------------------------+------------------------------+-------------------+-----------------+
 | snowflake_region | created_on                    | account_name    | name     | comment | is_primary | primary                    | replication_allowed_to_accounts | failover_allowed_to_accounts | organization_name | account_locator |
 |------------------+-------------------------------+-----------------+----------+---------+------------+----------------------------+---------------------------------+------------------------------+-------------------+-----------------|
-| AWS_US_WEST_2    | 2019-11-15 00:51:45.473 -0700 | ACCOUNT1        | MYDB1    | NULL    | true       | MYORG.ACCOUNT1.MYDB1       | MYORG.ACCOUNT2, MYORG,ACCOUNT1  | MYORG.ACCOUNT1               | MYORG             | MYACCOUNT1      |
+| AWS_US_WEST_2    | 2019-11-15 00:51:45.473 -0700 | ACCOUNT1        | MYDB1    | NULL    | true       | MYORG.ACCOUNT1.MYDB1       | MYORG.ACCOUNT2, MYORG.ACCOUNT1  | MYORG.ACCOUNT1               | MYORG             | MYACCOUNT1      |
 +------------------+-------------------------------+-----------------+----------+---------+------------+----------------------------+---------------------------------+------------------------------+-------------------+-----------------+
 
 -- Create a replica of the 'mydb1' primary database
@@ -260,7 +260,7 @@ of a very large primary database, we recommend [increasing the statement timeout
 Note
 
 - To refresh a secondary database, the role used to perform the operation must have the OWNERSHIP privilege on the database or the role
-  must be a granted a role that has the OWNERSHIP privilege on the database.
+  must be granted a role that has the OWNERSHIP privilege on the database.
 - The role that executes the refresh operation owns any new objects added as a result of a database refresh.
 
 To verify the current region after you log into an account, query the [CURRENT\_REGION](/sql-reference/functions/current_region) function.
@@ -280,7 +280,7 @@ The frequency with which you refresh a secondary database depends on the Recover
 Note
 
 - We recommend that you execute the initial replication of a primary database manually (using [ALTER DATABASE](/sql-reference/sql/alter-database) … REFRESH), and only schedule subsequent refreshes.
-- There is a 60 minute default limit on a single run of a task. This limitation was implemented as a safeguard against non-terminating tasks. In rare circumstances, a refresh of a very large database could exceed the default task run limit. To determine if this occurred, query the [TASK\_HISTORY](/sql-reference/functions/task_history) table function. Consider increasing the timeout limit for the task by executing [ALTER TASK](/sql-reference/sql/alter-task) … SET USER\_TASK\_TIMEOUT\_MS = *<num>*.
+- There is a 60-minute default limit on a single run of a task. This limitation was implemented as a safeguard against non-terminating tasks. In rare circumstances, a refresh of a very large database could exceed the default task run limit. To determine if this occurred, query the [TASK\_HISTORY](/sql-reference/functions/task_history) table function. Consider increasing the timeout limit for the task by executing [ALTER TASK](/sql-reference/sql/alter-task) … SET USER\_TASK\_TIMEOUT\_MS = *<num>*.
 
 Complete the steps in this section to start a database refresh automatically on a specified schedule.
 

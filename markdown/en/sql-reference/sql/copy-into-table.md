@@ -1678,7 +1678,7 @@ You can specify one or more of the following copy options (separated by blank sp
 
   - Specifying the DISTINCT keyword in SELECT statements.
   - Using COPY with clustered tables.
-- When you load CSV files into a table that has a clustering key, Snowflake validates the clustering key expressions during compilation. If the clustering key uses a function that isn’t supported within a `COPY` command, the command fails with error `002300 (0A000)`. This validation doesn’t apply to JSON, Parquet, Avro, or ORC files. For details and a workaround, see [- Loading CSV files with COPY INTO: When you load CSV files with…](/user-guide/tables-clustering-keys#label-clustering-key-copy-csv).
+- When you load CSV files into a table that has a clustering key, Snowflake validates the clustering key expressions during compilation. If the clustering key uses a function that isn’t supported within a `COPY` command, such as `DATE_TRUNC` or `UPPER`, the command fails with error `002300 (0A000)`. This validation doesn’t apply when the source files are JSON, Parquet, Avro, or ORC. For details and a workaround, see [Important Usage Notes](/user-guide/tables-clustering-keys#label-clustering-key-copy-csv).
 - For [partitioned Iceberg tables](/user-guide/tables-iceberg-metadata#label-tables-iceberg-partitioning):
 
   - A COPY job fails if Snowflake encounters an error on a partition transform, even if

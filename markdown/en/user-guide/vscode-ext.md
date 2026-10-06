@@ -89,8 +89,10 @@ Show lessSee more
 
 ## Use the VS Code extension with SnowSQL configuration files
 
-The Snowflake Extension for Visual Studio Code can use [Snow SQL configuration files](/user-guide/snowsql-config#label-configuring-snowsql)
-for loading connection configurations.
+The Snowflake Extension for Visual Studio Code can use [SnowSQL configuration files](/user-guide/snowsql-config#label-configuring-snowsql)
+for loading connection configurations. For new work, Snowflake recommends
+[Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-connections) `config.toml` connections. To move existing
+SnowSQL connections to Snowflake CLI, see [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
 
 Note
 

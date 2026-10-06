@@ -168,10 +168,10 @@ A default warehouse can be specified when creating or modifying the user, either
 
 ### Default warehouse for client utilities/drivers/connectors
 
-In addition to default warehouses for users, any of the Snowflake clients (Snowflake CLI, SnowSQL, JDBC driver, ODBC driver, Python connector, etc.) can
+In addition to default warehouses for users, Snowflake clients such as Snowflake CLI, JDBC driver, ODBC driver, and Python connector can
 have a default warehouse:
 
-- Snowflake CLI and SnowSQL support both a configuration file and command line options for specifying a default warehouse.
+- Snowflake CLI supports both a configuration file and command-line options for specifying a default warehouse.
 - The drivers and connectors support specifying a default warehouse as a connection parameter when initiating a session.
 
 For more information, see [Applications and tools for connecting to Snowflake](/guides-overview-connecting).
@@ -210,7 +210,7 @@ When a user connects to Snowflake and start a session, Snowflake determines the 
 1. Default warehouse for the user,
 
    » **overridden by…**
-2. Default warehouse in the configuration file for the client utility (SnowSQL, JDBC driver, etc.) used to connect to Snowflake (if the
+2. Default warehouse in the configuration file for the client utility (Snowflake CLI, JDBC driver, and others) used to connect to Snowflake (if the
    client supports configuration files),
 
    » **overridden by…**

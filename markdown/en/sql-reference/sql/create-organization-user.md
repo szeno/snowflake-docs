@@ -68,6 +68,9 @@ Where:
 `FIRST_NAME = 'string'` , `MIDDLE_NAME = string` , `LAST_NAME = 'string'`
 :   First, middle, and last name of the user.
 
+    If the organization user is a `SERVICE` user, Snowflake doesn’t apply these properties to the corresponding user objects in regular
+    accounts, because a `SERVICE` user can’t have them.
+
     Default: `NULL`
 
 `TYPE = { PERSON | SERVICE }`
@@ -89,8 +92,9 @@ Where:
     creates when the organization user is imported into a regular account. For more information, see
     [Organization user types](/user-guide/organization-users#label-org-users-types).
 
-    You can’t change the type after you create the organization user. The [ALTER ORGANIZATION USER](/sql-reference/sql/alter-organization-user) command doesn’t
-    accept the `TYPE` property.
+    To change the type after you create the organization user, use the [ALTER ORGANIZATION USER](/sql-reference/sql/alter-organization-user) command. Changing the
+    type of the organization user also changes the type of the corresponding user objects in the regular accounts that imported the
+    organization user.
 
     Default: `PERSON`
 

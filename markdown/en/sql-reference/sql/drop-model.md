@@ -30,3 +30,24 @@ DROP MODEL <name>
 
 - All versions in the model are dropped along with the model.
 - There is no UNDROP MODEL command. To restore a dropped model, train and log it again.
+- DROP MODEL removes models from the [Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview).
+  It does not control access to Cortex AI LLM functions. To restrict which Cortex LLM models are available,
+  see [Available models and model deprecation](/user-guide/snowflake-cortex/llm-functions#available-models).
+
+## Examples
+
+Drop a model in the current schema:
+
+Copy code
+
+```
+DROP MODEL my_model;
+```
+
+Drop a model using a fully-qualified name:
+
+Copy code
+
+```
+DROP MODEL my_db.my_schema.my_model;
+```

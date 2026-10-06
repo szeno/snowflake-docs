@@ -66,14 +66,14 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Replication and references across replication groups
 
-Objects in a replication (or failover) group that have dangling references (i.e. references to objects in another replication or failover
+Objects in a replication (or failover) group that have dangling references (that is, references to objects in another replication or failover
 group) might successfully replicate to a target account in some circumstances. If the replication operation results in behavior in the
 target account consistent with behavior that can occur in the source account, replication succeeds.
 
 For example, if a column in a table in failover group `fg_a` references a sequence in failover group `fg_b`, replication of both
 groups succeeds. If `fg_a` is replicated before `fg_b`, insert operations (after failover) on the table that references the
-sequence fails if `fg_b` was not replicated. This behavior can occur in a source account. If a sequence is dropped in a
-source account, insert operations on a table with a column referencing the dropped sequence fails.
+sequence fail if `fg_b` was not replicated. This behavior can occur in a source account. If a sequence is dropped in a
+source account, insert operations on a table with a column referencing the dropped sequence fail.
 
 When the dangling reference is a security policy that protects data, the replication (or failover) group with the security policy
 must be replicated before any replication group that contains objects that reference the policy is replicated.
@@ -227,7 +227,7 @@ Consider the following when replicating privacy policies and privacy-protected t
 
 - If a privacy policy is assigned to a table or view in the source account, the policy needs to be replicated in the target account.
 - Cumulative privacy loss for a privacy budget is not replicated.
-- Cumulative privacy loss in the target and source accounts are tracked separately.
+- Cumulative privacy loss in the target and source accounts is tracked separately.
 - Administrators in the target account cannot adjust the replicated privacy budget. The privacy budget is synced with the one in the source
   account.
 - If an analyst has access to the privacy-protected table or view in both the source account and the target account, they can incur twice
@@ -291,7 +291,7 @@ different replication or failover group, then:
 
 ## Replication and cloning
 
-Historically [Cloned objects](/user-guide/object-clone) were replicated physically rather than logically to secondary databases. That is,
+Historically, [Cloned objects](/user-guide/object-clone) were replicated physically rather than logically to secondary databases. That is,
 cloned tables in a standard database don’t contribute to the overall data storage unless or until DML operations on the clone
 add to or modify existing data. However, when a cloned table is replicated to a secondary database, the physical data is also replicated,
 increasing the data storage usage for your account.
@@ -590,7 +590,9 @@ The following constraints apply to pipe objects:
 - Snowflake currently supports pipe replication as part of group-based replication (replication and failover groups).
   Pipe replication is not supported for database replication.
 - Snowflake replicates the copy history of a pipe only when the pipe belongs to the same replication group as its target table.
-- Replication of notification integrations is not supported.
+- Inbound notification integrations with `TYPE = QUEUE` aren’t replicated. Multi-Queue Notification Integrations (`TYPE = MULTI_QUEUE`) are
+  replicated when the replication or failover group includes `NOTIFICATION INTEGRATIONS` in its `ALLOWED_INTEGRATION_TYPES` list. For the notification integration
+  types that are replicated, see [Integration replication](/user-guide/account-replication-intro#label-account-replication-integrations).
 - Snowflake only replicates load history after the latest table truncate.
 - To receive notifications, you must configure a secondary auto-ingest pipe in a target account prior to failover.
   For more information, see [Configure notifications for secondary auto-ingest pipes](/user-guide/account-replication-config#label-configure-notifications-secondary-pipes).

@@ -151,7 +151,7 @@ The cost of using Cortex Data Quality consists of the following:
 
 Cortex Data Quality leverages third-party models and/or services, as previously described on this page.
 
-The data classification of inputs and outputs are as set forth in the following table.
+The data classification of inputs and outputs is as set forth in the following table.
 
 | Input data classification | Output data classification | Designation |
 | --- | --- | --- |

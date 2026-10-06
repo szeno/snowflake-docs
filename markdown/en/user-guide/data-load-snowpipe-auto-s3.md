@@ -359,6 +359,8 @@ The following options for automating Snowpipe using Amazon SQS are supported:
   option 2 after you create a replication or failover group. For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns).
 - **Option 3. Setting up Amazon EventBridge for automating Snowpipe:** Similar to option 2, you can also enable [Amazon EventBridge](https://aws.amazon.com/eventbridge/) for S3 buckets and create rules to send notifications to SNS topics.
 
+If you plan to set up multi-location resilience so that your pipes keep loading after a region-wide cloud provider outage, your choice of Option 1 (Amazon SQS only) or Option 2 or 3 (Amazon SNS) also determines how you point notifications at your target account. For more information, see [Choose a notification path for Amazon S3](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-choose-aws-notification-path).
+
 ## Option 1: Creating a new S3 event notification to automate Snowpipe
 
 This section describes the most common option for triggering Snowpipe data loads automatically using [Amazon SQS (Simple Queue Service)](https://aws.amazon.com/sqs/) notifications for an S3 bucket. The steps explain how to create an event notification for the target path (or “prefix,” in AWS terminology) in your S3 bucket where your data files are stored.
@@ -513,7 +515,7 @@ For ease of use, Snowpipe SQS queues are created and managed by Snowflake. The S
 
    Note
 
-   Following AWS guidelines, Snowflake designates no more than one SQS queue per AWS S3 region. An SQS queue can be shared among multiple buckets in the same region from the same AWS account. The SQS queue coordinates notifications for all pipes connecting the external stages for the S3 buckets to the target tables. When a data file is uploaded into the bucket, all pipes that match the stage directory path perform a one-time load of the file into their corresponding target tables.
+   Snowflake reuses an existing SQS queue in the bucket’s region while that queue’s access policy is under the size limit, and creates another queue in the region when the policy reaches the limit. To find the queue for a pipe, check the `notification_channel` column in the output of `DESCRIBE PIPE`. Each SQS queue coordinates notifications for all the pipes that use it. These pipes connect the external stages for the S3 buckets to the target tables. When a data file is uploaded into the bucket, all pipes that match the stage directory path perform a one-time load of the file into their corresponding target tables.
 2. Log into the Amazon S3 console.
 3. Configure an event notification for your S3 bucket using the instructions provided in the [Amazon S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-event-notifications.html). Complete the fields as follows:
 

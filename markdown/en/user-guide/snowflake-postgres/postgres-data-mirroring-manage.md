@@ -7,7 +7,7 @@ Currently, this feature is only available on Amazon Web Services (AWS) and Micro
 
 Use the procedures in the `snowflake.postgres` schema to alter, drop, inspect, and monitor mirrors after they’re created. These procedures take a mirror name but not an instance name;
 mirror names are unique across all Postgres instances in the account, and the instance association is stored when the mirror is created.
-To see all mirrors visible to the current role, or to find which instance a mirror belongs to, call `list_mirrors` without arguments:
+To see all mirrors visible to the current role, or to find which instance a mirror belongs to, query `list_mirrors` without arguments:
 
 Copy code
 

@@ -40,7 +40,7 @@ For setup and examples, see [Use dbt artifacts for Slim CI and defer to producti
 
 ### Increase parallelism with threads
 
-Configure the `threads` parameter in [`dbt_projects_profiles.yml`](#label-dbt-projects-profiles-file) or `profiles.yml` to control how many models dbt runs concurrently within a single execution. To be compatible with most Snowflake warehouses, Snowflake recommends setting your threads to 8. A higher thread count than 1 allows independent models to execute in parallel, reducing total wall-clock time for a given run.
+Configure the `threads` parameter in [`dbt_projects_profiles.yml`](#label-dbt-projects-profiles-file) or `profiles.yml` to control how many models dbt runs concurrently within a single execution. To be compatible with most Snowflake warehouses, Snowflake recommends setting your threads to 8. A thread count greater than 1 allows independent models to execute in parallel, reducing total wall-clock time for a given run.
 
 Copy code
 
@@ -95,7 +95,7 @@ You can simplify this setup with an `env.yml` file instead of hardcoding a role 
 
 ### Use a dedicated service account
 
-Create a dedicated service account (for example, `github_actions_service_user`), assign them narrow privileges, and use this user to create and own your tasks. This ensures:
+Create a dedicated service account (for example, `github_actions_service_user`), assign it narrow privileges, and use this user to create and own your tasks. This ensures:
 
 - Task privileges are governed and auditable in one place.
 - The service account role can be granted only the minimum permissions needed.
@@ -409,7 +409,7 @@ For more information about developing in Workspaces, see [Workspaces for dbt Pro
 
 ## Documenting sources and models
 
-Well-documented dbt projects are easier to onboard new engineers, debug failures, and audit for compliance. dbt provides three key documentation surfaces that integrate with Snowflake’s tooling, and CoCo can accelerate all of them by reading the Snowflake Horizon Catalog to generate accurate documentation from existing metadata.
+Well-documented dbt projects make it easier to onboard new engineers, debug failures, and audit for compliance. dbt provides three key documentation surfaces that integrate with Snowflake’s tooling, and CoCo can accelerate all of them by reading the Snowflake Horizon Catalog to generate accurate documentation from existing metadata.
 
 ### Document your sources (sources.yml)
 

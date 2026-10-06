@@ -5,6 +5,29 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.45.0 (October 01, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Emit Iceberg `TABLE_PROPERTIES` by default and forward spec properties verbatim
+- Raise an error for non-atomic overwrites of unmanaged Iceberg tables
+
+#### Bug fixes
+
+- Honor `pathGlobFilter` and Spark file-selection rules when reading files
+- Fix nested column order for XML reads with an explicit schema
+- Fix XML `charset`, `nullValue`, `dateFormat`, and `timestampFormat` options
+- Support `CREATE TEMPORARY VIEW ... USING` with file sources such as XML
+- Preserve the session query tag when adding per-statement query tags
+
+#### New features
+
+- Support `SHOW TBLPROPERTIES` for Iceberg tables, including qualified names
+- Support `ALTER TABLE ... SET/DROP IDENTIFIER FIELDS` for Iceberg tables
+- Add opt-in `write.spark.accept-any-schema` check for Iceberg `mergeSchema`
+
 ## 1.44.0 (September 24, 2026)
 
 ### Snowpark Connect for Spark

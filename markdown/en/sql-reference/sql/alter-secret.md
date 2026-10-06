@@ -14,8 +14,6 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ OAUTH_SCOPES = ( '<scope_1>' [ , '<scope_2>' ... ] ) ]
                                       [ COMMENT = '<string_literal>' ]
-
-ALTER SECRET [ IF EXISTS ] <name> UNSET COMMENT
 ```
 
 **OAuth with authorization code grant flow:**
@@ -26,8 +24,6 @@ Copy code
 ALTER SECRET [ IF EXISTS ] <name> SET [ OAUTH_REFRESH_TOKEN = '<token>' ]
                                       [ OAUTH_REFRESH_TOKEN_EXPIRY_TIME = '<string_literal>' ]
                                       [ COMMENT = '<string_literal>' ]
-
-ALTER SECRET [ IF EXISTS ] <name> UNSET COMMENT
 ```
 
 **Cloud provider:**
@@ -41,8 +37,6 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ API_AUTHENTICATION = '<cloud_provider_security_integration>' ]
                                       [ COMMENT = '<string_literal>' ]
-
-ALTER SECRET [ IF EXISTS ] <name> UNSET COMMENT
 ```
 
 **Basic authentication:**
@@ -53,8 +47,6 @@ Copy code
 ALTER SECRET [ IF EXISTS ] <name> SET [ USERNAME = '<username>' ]
                                       [ PASSWORD = '<password>' ]
                                       [ COMMENT = '<string_literal>' ]
-
-ALTER SECRET [ IF EXISTS ] <name> UNSET COMMENT
 ```
 
 **Generic string:**
@@ -64,8 +56,6 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ SECRET_STRING = '<string_literal>' ]
                                       [ COMMENT = '<string_literal>' ]
-
-ALTER SECRET [ IF EXISTS ] <name> UNSET COMMENT
 ```
 
 ## OAuth with client credentials flow parameters
@@ -159,11 +149,6 @@ Available to all accounts.
 
         Default: No value
 
-`UNSET ...`
-:   Specifies one (or more) properties/parameters to unset for the secret, which resets them back to their defaults:
-
-    - `COMMENT`
-
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -186,6 +171,14 @@ For general information about roles and privilege grants for performing SQL acti
 [securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
 
 ## Usage notes
+
+- ALTER SECRET doesn’t support UNSET. To remove the comment from a secret, set it to an empty string:
+
+  Copy code
+
+  ```
+  ALTER SECRET <name> SET COMMENT = '';
+  ```
 
 Regarding metadata:
 

@@ -4,6 +4,9 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
+- [Oct 5, 2026: Change the type of an organization user](/release-notes/2026/other/2026-10-05-change-organization-user-type)
+- [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
 - [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
@@ -124,7 +127,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Aug 7, 2026: Snowflake Native Apps: Cortex Agents and MCP servers (General availability)](/release-notes/2026/other/2026-08-07-native-apps-agents-mcp-ga)
 - [Aug 6, 2026: Automations in Snowflake CoWork (Public Preview)](/release-notes/2026/other/2026-08-06-cowork-automations)
 - [Aug 5, 2026: Openflow Connector for SQL Server (CDC) (General availability)](/release-notes/2026/other/2026-08-05-openflow-sql-server-cdc-ga)
-- [August 4, 2026: Workspace sharing in Declarative Native Apps (Public Preview)](/release-notes/2026/other/2026-08-04-declarative-sharing-workspace-sharing)
+- [August 4, 2026: Workspace sharing in Declarative Shares (Public Preview)](/release-notes/2026/other/2026-08-04-declarative-sharing-workspace-sharing)
 - [Aug 4, 2026: Gateway Monitoring & A/B Testing (General availability)](/release-notes/2026/other/2026-08-04-gateway-monitoring-ab-testing-ga)
 - [Aug 4, 2026: Multi-party Approval (General availability)](/release-notes/2026/other/2026-08-04-multi-party-approval-ga)
 - [Aug 3, 2026: ACCESS\_HISTORY view: New agents\_info column](/release-notes/2026/other/2026-08-03-access-history-agents-info-column)

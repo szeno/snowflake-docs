@@ -95,7 +95,8 @@ When an outage in a region results in full or partial loss of Snowflake availabi
    are writable, you can use your ETL processes to prioritize writes and reconcile data.
 
    If you use Snowflake data pipeline objects for ETL processes, you can replicate and fail over those objects. For more information,
-   see [Stage, pipe, and load history replication](/user-guide/account-replication-stages-pipes-load-history).
+   see [Stage, pipe, and load history replication](/user-guide/account-replication-stages-pipes-load-history). To keep Snowpipe auto-ingest and `COPY INTO <table>` loading from a storage
+   location in the new region after you fail over, see [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
 
    Otherwise, configure separate connection URLs for your data ingestion pipeline and one for your clients (for example, a BI
    dashboard). After failing over the failover group, fail over the connection URL for data ingestion, and write data to the newly

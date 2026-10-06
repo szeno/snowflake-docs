@@ -203,7 +203,10 @@ Specifying an external ID lets you use the same IAM role (and external ID) acros
 
 Note
 
-Specify ARNs exactly as provided by AWS. ARNs are case-sensitive.
+- Specify ARNs exactly as provided by AWS. ARNs are case-sensitive.
+- If your Snowflake account is in the [China region](/user-guide/intro-regions#label-asia-pacific-regions) and your S3 bucket is in a public AWS
+  region in China, specify `STORAGE_PROVIDER = 'S3CHINA'` and use the `s3china://` protocol for `STORAGE_BASE_URL`; for example,
+  `STORAGE_BASE_URL = 's3china://<my_bucket>/'`. `S3CHINA` isn’t supported for accounts in other regions.
 
 ### Retrieve the AWS IAM user for your Snowflake account
 

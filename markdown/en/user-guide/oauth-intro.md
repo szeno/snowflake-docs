@@ -81,11 +81,10 @@ Note the following:
 - When passing the `token` value as a URL query parameter, it is necessary to URL-encode the `oauth_access_token` value.
 - When passing the `token` value to a Properties object (e.g. JDBC Driver), no modifications are necessary.
 
-For more information about connection parameters, refer to the reference
+For more information about connection parameters, see the reference
 documentation for the following clients, drivers, or connectors:
 
-- [Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-snow-connection-command)
-- [SnowSQL](/user-guide/snowsql-start#label-snowsql-auth)
+- [Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-oauth)
 - [Python](/developer-guide/python-connector/python-connector-connect#label-oauth-python)
 - [Go](https://godoc.org/github.com/snowflakedb/gosnowflake#hdr-Connection_Parameters)
 - [JDBC](/developer-guide/jdbc/jdbc-configure#label-jdbc-connection-parameters)

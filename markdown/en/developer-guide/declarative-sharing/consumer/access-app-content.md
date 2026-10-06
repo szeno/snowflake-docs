@@ -1,10 +1,10 @@
-# Access content in a Declarative Native App
+# Access content in a Declarative Share
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-If you have installed a Snowflake Declarative Native App, or have had a Declarative Native App shared with you by a member of your organization, you can access the data and functionality through Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
+If you have installed a Snowflake Declarative Share, or have had a Declarative Share shared with you by a member of your organization, you can access the data and functionality through Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
 
 ## Access app content from Snowsight
 
@@ -13,13 +13,13 @@ If you have installed a Snowflake Declarative Native App, or have had a Declarat
 3. Select the app you want to access.
 4. Browse the app’s content, which includes:
 
-   - **Workspaces**: If the app shares a workspace, you can browse its files and run any notebooks it contains. For more information, see [Access a shared workspace in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-shared-workspace).
+   - **Workspaces**: If the app shares a workspace, you can browse its files and run any notebooks it contains. For more information, see [Access a shared workspace in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-shared-workspace).
    - **Notebooks**: If the app includes notebooks, you can run them to see visualizations and other content.
    - **Tables and views**: You can query the tables and views that are part of the app.
 
    Note
 
-   Notebooks in Declarative Native Apps are read-only. You can run the cells in a notebook, or run the entire notebook, but you can’t modify it.
+   Notebooks in Declarative Shares are read-only. You can run the cells in a notebook, or run the entire notebook, but you can’t modify it.
 
 ## Access app notebooks
 
@@ -34,7 +34,7 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 You can access the app’s notebooks either through Snowsight or through [Snowflake CLI](/developer-guide/snowflake-cli/index).
 
@@ -146,6 +146,6 @@ Tables and views are available in the app’s schema. You can access them using 
 
 ### Considerations
 
-Notebooks in Declarative Native Apps are interactive but read-only. They can’t be modified, copied, or cloned.
+Notebooks in Declarative Shares are interactive but read-only. They can’t be modified, copied, or cloned.
 
 To view past notebook executions, select **Schedule notebook run** » **View run history**.

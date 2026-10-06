@@ -163,7 +163,7 @@ Copy code
 ALTER POSTGRES INSTANCE <name> ENABLE PRIVATELINK;
 ```
 
-That asynchronous operation can take up to 10 minutes. To track its status check the value of the `privatelink_service_identifier`
+That asynchronous operation can take up to 10 minutes. To track its status, check the value of the `privatelink_service_identifier`
 returned by DESCRIBE POSTGRES INSTANCE:
 
 Copy code
@@ -207,7 +207,7 @@ You can accept one or more pending Private Link connection requests by running a
 Copy code
 
 ```
-ALTER POSTGRES INSTANCE [IF EXISTS] <name> AUTHORIZE PRIVATELINK CONNECTIONS = ('<connection_id' [ , ... ]);
+ALTER POSTGRES INSTANCE [IF EXISTS] <name> AUTHORIZE PRIVATELINK CONNECTIONS = ('<connection_id>' [ , ... ]);
 ```
 
 You can revoke one or more pending or previously approved Private Link connection requests by running this command:
@@ -215,7 +215,7 @@ You can revoke one or more pending or previously approved Private Link connectio
 Copy code
 
 ```
-ALTER POSTGRES INSTANCE [IF EXISTS] <name> REVOKE PRIVATELINK CONNECTIONS = ('<connection_id' [ , ... ]);
+ALTER POSTGRES INSTANCE [IF EXISTS] <name> REVOKE PRIVATELINK CONNECTIONS = ('<connection_id>' [ , ... ]);
 ```
 
 ### Connecting to Snowflake Postgres instances over Private Links

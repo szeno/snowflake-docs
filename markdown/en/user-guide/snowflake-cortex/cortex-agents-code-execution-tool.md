@@ -1,9 +1,5 @@
 # Cortex Agent code execution tool
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Cortex Agent code execution tool is a built-in tool that enables an agent to execute code during a conversation. With access to a code execution tool enabled, your agents can execute scripts to process data, perform calculations, and produce visualizations. By default, the code execution tool runs in a sandboxed, isolated environment that can only access data in the current agent session.
 
 You enable the code execution tool by configuring it in an agent specification. The agent then decides during orchestration when to generate and run code based on the user’s query. The code execution tool is also used when executing Python scripts as part of an agent skill.

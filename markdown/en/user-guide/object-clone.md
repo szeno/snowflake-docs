@@ -122,6 +122,19 @@ For cloned tables, Snowflake generates Iceberg metadata files that are distinct 
 For example, a cloned Iceberg table has its own `metadata.json` file with a unique `table-uuid`, `last-sequence-number`, and other properties.
 Cloned table backups don’t include any backup information from the source table.
 
+#### Credential vending
+
+The Horizon Iceberg REST Catalog API vends credentials for cloned Iceberg tables. Because a clone shares underlying storage with
+its source table, the role that accesses the clone with vended credentials must also have access to the following related tables:
+
+- The source table.
+- Any other cloned tables that reference the same source table.
+
+If the role doesn’t have access to all of the related tables, the credential request fails with an authorization error (HTTP 403).
+
+For other considerations when you access Iceberg tables through the Horizon Iceberg REST Catalog API, see
+[Considerations for accessing Iceberg tables with an external query engine](/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon#label-tables-iceberg-query-using-external-query-engine-snowflake-horizon-considerations).
+
 #### Apache Iceberg™ tables with Snowflake storage
 
 [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open

@@ -1,41 +1,41 @@
-# Tutorial: Getting started with Declarative Native Apps
+# Tutorial: Getting started with Declarative Shares
 
 [Preview Feature — Open](/release-notes/preview-features)
 
-Workspace sharing in Declarative Native Apps is available to all accounts.
+Workspace sharing in Declarative Shares is available to all accounts.
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 ## Introduction
 
-This tutorial takes Snowflake data providers through the process of creating, publishing, and accessing a Snowflake Declarative Native App.
+This tutorial takes Snowflake data providers through the process of creating, publishing, and accessing a Snowflake Declarative Share.
 The tutorial uses [Snowflake CLI](/developer-guide/snowflake-cli/index) as well
-as a provided workspace directory and a partially complete manifest file to create a Declarative Native App.
+as a provided workspace directory and a partially complete manifest file to create a Declarative Share.
 
 This tutorial includes two personas:
 
-- **Provider**: The provider creates a Declarative Native App, creates a listing for it, and shares it with a consumer
-- **Consumer**: The consumer installs the Declarative Native App and uses its features and functionality.
+- **Provider**: The provider creates a Declarative Share, creates a listing for it, and shares it with a consumer
+- **Consumer**: The consumer installs the Declarative Share and uses its features and functionality.
 
 ### What you’ll learn
 
 As a provider, you will learn how to:
 
-- Create a manifest that declares the data and logic of a Declarative Native App.
+- Create a manifest that declares the data and logic of a Declarative Share.
 - Package and test the app locally.
 - Create and share a listing for the app that a consumer can see.
 
 and as a consumer:
 
-- Install a Declarative Native App listing into a test consumer account and explore its features.
+- Install a Declarative Share listing into a test consumer account and explore its features.
 
 ### Prerequisites
 
 Before getting started, make sure that you meet the following requirements:
 
-- You are familiar with YAML. YAML is the language used to define the manifest of a Declarative Native App.
+- You are familiar with YAML. YAML is the language used to define the manifest of a Declarative Share.
 
   If you are not familiar with YAML, see <https://yaml.org/spec/>.
 - You have installed Snowflake CLI.
@@ -45,11 +45,11 @@ Before getting started, make sure that you meet the following requirements:
   For more information on Snowflake CLI installation, see the [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
 - You’ll require access to two Snowflake accounts:
 
-  - **Provider account**, used to create and publish the Declarative Native App.
+  - **Provider account**, used to create and publish the Declarative Share.
     This account should have the necessary privileges to create and manage Snowflake objects
     such as databases, schemas, tables, and virtual warehouses.
   - **Consumer account**, a separate test account representing a consumer,
-    used to test the Declarative Native App consumer experience.
+    used to test the Declarative Share consumer experience.
     This account should have the necessary privileges to install apps and access shared data.
 
 Each section in the tutorial specifies whether the steps should be completed using the provider or consumer account.
@@ -91,8 +91,8 @@ unzip /tmp/tutorial-getting-started.zip -d /tmp/tutorial
 These files include:
 
 - SQL files for creating all required artifacts. These files can be used to speed the process of setting up and tearing down your tutorial environment.
-- A workspace directory (*app/workspace*) that contains the content shared by the Declarative Native App: a notebook (`.ipynb`) file and a readme.
-- A manifest file that contains the metadata for the Declarative Native App, which you will need to make minor modifications to during the tutorial.
+- A workspace directory (*app/workspace*) that contains the content shared by the Declarative Share: a notebook (`.ipynb`) file and a readme.
+- A manifest file that contains the metadata for the Declarative Share, which you will need to make minor modifications to during the tutorial.
 - A sample configuration file for Snowflake CLI, which you can use to configure your Snowflake connection.
 
 ### Snowflake CLI configuration
@@ -272,23 +272,23 @@ Copy code
 snow sql  -f /tmp/tutorial/sql/1.create-database-artifacts.sql
 ```
 
-## Create and package a Declarative Native App
+## Create and package a Declarative Share
 
-As a provider, create and package the Declarative Native App. Note that this step uses:
+As a provider, create and package the Declarative Share. Note that this step uses:
 
-- A provided workspace directory, *app/workspace*, that contains the content shared by the Declarative Native App.
+- A provided workspace directory, *app/workspace*, that contains the content shared by the Declarative Share.
   The directory holds a notebook that queries the table created in the previous step, and a readme that describes
   what the app shares.
 
-Creating a Declarative Native App involves:
+Creating a Declarative Share involves:
 
-1. Defining a YAML manifest representing the data and logic in the Declarative Native App.
+1. Defining a YAML manifest representing the data and logic in the Declarative Share.
    A starting point for the manifest is provided in the `manifest.yml` file.
-2. Creating the Declarative Native App package.
+2. Creating the Declarative Share package.
 3. Packaging the app with its manifest and the associated workspace directory.
-4. Validating the Declarative Native App package.
+4. Validating the Declarative Share package.
 
-See the [Declarative Native App manifest reference](/developer-guide/declarative-sharing/manifest-reference) for a complete list of all required and optional fields.
+See the [Declarative Share manifest reference](/developer-guide/declarative-sharing/manifest-reference) for a complete list of all required and optional fields.
 
 ### Create the application package
 
@@ -450,7 +450,7 @@ To use SQL in Snowflake CLI to populate the app package:
    ```
 
 To create, package, and test the app in one step, use the provided `2.create-package-build-app.sql` file
-containing all SQL commands to create, package, test a Declarative Native App.
+containing all SQL commands to create, package, test a Declarative Share.
 
 Copy code
 
@@ -493,7 +493,7 @@ To release a new version of the app package using SQL in Snowflake CLI:
   +---------------------------------------------------------------------------------------------+
   ```
 
-  You can also use the provided `3.release-app.sql` file containing SQL commands to release a Declarative Native App.
+  You can also use the provided `3.release-app.sql` file containing SQL commands to release a Declarative Share.
 
   Copy code
 
@@ -501,9 +501,9 @@ To release a new version of the app package using SQL in Snowflake CLI:
   snow sql  -f /tmp/tutorial/sql/3.release-app.sql
   ```
 
-## Test a Declarative Native App
+## Test a Declarative Share
 
-Once a Declarative Native App is packaged and released, the database and logic it contains can be tested locally.
+Once a Declarative Share is packaged and released, the database and logic it contains can be tested locally.
 
 This section describes how to complete the following tasks:
 
@@ -527,7 +527,7 @@ These steps are used by providers to test their app before it is published.
 
 ### Examine app contents
 
-You can test your Declarative Native App by examining the contents using either SQL commands or the Snowsight.
+You can test your Declarative Share by examining the contents using either SQL commands or the Snowsight.
 
 Snowflake CLISnowsight
 
@@ -555,7 +555,7 @@ snow sql -q "USE DATABASE DECL_SHARE;
    SHOW WORKSPACES IN APPLICATION DECL_SHARE;
    ```
 
-Declarative Native Apps include a special schema, `APP$UI`, which holds the app’s bundled content, including its workspaces.
+Declarative Shares include a special schema, `APP$UI`, which holds the app’s bundled content, including its workspaces.
 
 To open the workspace shared by the app:
 
@@ -566,9 +566,9 @@ To open the workspace shared by the app:
 5. Run the notebook cells. The notebook queries the table that the app shares.
 
 The workspace is read-only, so you can run the notebook but you can’t change it. For more information, see
-[Access a shared workspace in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-shared-workspace).
+[Access a shared workspace in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-shared-workspace).
 
-Use the provided `4.test-locally-app.sql` file which contains commands to examine the content of a Declarative Native App.
+Use the provided `4.test-locally-app.sql` file which contains commands to examine the content of a Declarative Share.
 In addition, the file, `4.test-only-app.sql`, contains commands to test the app but does not attempt to create a database
 from the application package.
 
@@ -578,9 +578,9 @@ Copy code
 snow sql  -f /tmp/tutorial/sql/4.test-locally-app.sql
 ```
 
-## Share your Declarative Native App using a listing
+## Share your Declarative Share using a listing
 
-After successfully creating and testing a Declarative Native App, we can create a listing and add the app as a data product for that listing.
+After successfully creating and testing a Declarative Share, we can create a listing and add the app as a data product for that listing.
 Making the app available as a listing allows other Snowflake users to discover and install the app.
 
 This allows you to share your app with other Snowflake users and allows them to install and use the app in their account.
@@ -589,8 +589,8 @@ This allows you to share your app with other Snowflake users and allows them to 
 
 Note
 
-The following steps are performed by a provider to create a listing for the Declarative Native App.
-The listing is then used by consumers to install the Declarative Native App.
+The following steps are performed by a provider to create a listing for the Declarative Share.
+The listing is then used by consumers to install the Declarative Share.
 
 To create a listing for your app:
 
@@ -640,7 +640,7 @@ To install your app from the listing:
 8. Select **Open** to view your listing or **Done** to finish.
 9. Explore the listing as you would any other listing.
 
-   For more information see [Access content in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-app-content).
+   For more information see [Access content in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-app-content).
 
 ## Summary, clean up, and additional resources
 
@@ -652,7 +652,7 @@ You might also want to consider cleaning up by dropping any objects you created 
 
 ### Summary and key points
 
-In summary, Declarative Native Apps:
+In summary, Declarative Shares:
 
 - Can be easily used to expose databases, tables, views, and schemas.
 - Have a well-defined lifecycle.
@@ -660,7 +660,7 @@ In summary, Declarative Native Apps:
 
 ### Clean up (optional)
 
-On the consumer account used to install the Declarative Native App, to uninstall the listing, follow these steps:
+On the consumer account used to install the Declarative Share, to uninstall the listing, follow these steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Apps**.
@@ -691,6 +691,6 @@ For simplicity, you can use the provided `teardown-tutorial.sql` file containing
 
 ## Learn more
 
-To learn more about Declarative Native Apps, see the following topics:
+To learn more about Declarative Shares, see the following topics:
 
 - [About Declarative Sharing in the Native Application Framework](/developer-guide/declarative-sharing/about)

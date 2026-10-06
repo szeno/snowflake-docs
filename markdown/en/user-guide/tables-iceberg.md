@@ -560,7 +560,10 @@ Consider the following items when you query (read) Iceberg tables with an extern
     information, see [Enforce data protection policies on Iceberg tables from external query engines](/user-guide/tables-iceberg-query-using-external-query-engine-snowflake-horizon-enforce-access-policies).
 - Cloned and converted tables:
 
-  - Reading and writing cloned or converted tables is not supported with vended credentials. To read these tables, use direct access to
+  - To read a cloned table with vended credentials, the role must also have access to the source table and to any other clones of the
+    same source table. Otherwise, the request fails with an authorization error (HTTP 403). For more information, see
+    [Credential vending](/user-guide/object-clone#label-cloning-iceberg-tables-credential-vending).
+  - Reading and writing converted tables is not supported with vended credentials. To read these tables, use direct access to
     object storage.
 
 Consider the following items when you write to Iceberg tables with an external query engine:
@@ -583,7 +586,9 @@ Consider the following items when you write to Iceberg tables with an external q
   - You can’t upgrade an Iceberg table from v2 to v3.
 - Cloned and converted tables:
 
-  - Writing to cloned or converted tables is not supported with vended credentials. To write to these tables, connect your external query
+  - To write to a cloned table with vended credentials, the role must also have access to the source table and to any other clones of
+    the same source table.
+  - Writing to converted tables is not supported with vended credentials. To write to these tables, connect your external query
     engine directly to the object storage where your tables are stored.
   - You can’t write to an Iceberg table that was converted from externally managed to Snowflake managed.
 - Streams:

@@ -82,7 +82,6 @@ by Snowflake.
 - [Snowsight](/user-guide/ui-snowsight-quick-tour) for account and general management, monitoring of resources and system usage, and
   querying data.
 - [Snowflake CLI (open source command-line client)](/developer-guide/snowflake-cli/index).
-- [SnowSQL (Python-based command line client)](/user-guide/snowsql).
 - Virtual warehouse management from the GUI or command line, including
   [creating, resizing (with zero downtime), suspending, and dropping](/user-guide/warehouses) warehouses.
 - [Snowflake Extension for Visual Studio Code](/user-guide/vscode-ext) - Detailed instructions for installing, configuring and using the Snowflake Extension for Visual Studio Code.

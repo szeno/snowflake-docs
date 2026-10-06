@@ -21,28 +21,29 @@ insights, which include:
 - Details about the part of the query that produced the condition.
 - A suggested next step to address the condition, if the condition negatively affects performance.
 
-The following table lists the types of insights by type ID.
+The following table lists the types of insights by topic. The topic is the value in the `INSIGHT_TOPIC` column of
+the QUERY\_INSIGHTS view.
 
-| Type ID | Insight |
-| --- | --- |
-| `QUERY_INSIGHT_NO_FILTER_ON_TOP_OF_TABLE_SCAN` | [No filter on table scan](#label-query-insight-no-filter-on-top-of-table-scan) |
-| `QUERY_INSIGHT_INAPPLICABLE_FILTER_ON_TABLE_SCAN` | [Filter not applicable](#label-query-insight-inapplicable-filter-on-table-scan) |
-| `QUERY_INSIGHT_UNSELECTIVE_FILTER` | [Filter not selective](#label-query-insight-unselective-filter) |
-| `QUERY_INSIGHT_LIKE_WITH_LEADING_WILDCARD` | [LIKE filter with leading wildcard](#label-query-insight-like-with-leading-wildcard) |
-| `QUERY_INSIGHT_FILTER_WITH_CLUSTERING_KEY` | [Filter uses clustering key](#label-query-insight-filter-with-clustering-key) |
-| `QUERY_INSIGHT_SEARCH_OPTIMIZATION_USED` | [Query benefited from search optimization](#label-query-insight-search-optimization-used) |
-| `QUERY_INSIGHT_SNOWFLAKE_OPTIMA` | [Query benefited from Snowflake Optima](#label-query-insight-snowflake-optima) |
-| `QUERY_INSIGHT_SNOWFLAKE_OPTIMA_PLANNING_USED` | [Query benefited from Snowflake Optima Planning](#label-query-insight-optima-planning-used) |
-| `QUERY_INSIGHT_SNOWFLAKE_OPTIMA_PLANNING_OPPORTUNITY` | [Query could benefit from Snowflake Optima Planning](#label-query-insight-snowflake-optima-planning-opportunity) |
-| `QUERY_INSIGHT_SEARCH_OPTIMIZATION_AND_SNOWFLAKE_OPTIMA` | [Query benefited from search optimization and Snowflake Optima](#label-query-insight-search-optimization-and-snowflake-optima) |
-| `QUERY_INSIGHT_JOIN_WITH_NO_JOIN_CONDITION` | [Join with no join condition](#label-query-insight-join-with-no-join-condition) |
-| `QUERY_INSIGHT_INEFFICIENT_JOIN_CONDITION` | [Join with inefficient join condition](#label-query-insight-inefficient-join-condition) |
-| `QUERY_INSIGHT_NESTED_EXPLODING_JOIN` | [Exploding join (nested join)](#label-query-insight-nested-exploding-join) |
-| `QUERY_INSIGHT_EXPLODING_JOIN` | [Exploding join (not nested)](#label-query-insight-exploding-join) |
-| `QUERY_INSIGHT_INEFFICIENT_AGGREGATE` | [Unnecessary aggregation](#label-query-insight-inefficient-aggregate) |
-| `QUERY_INSIGHT_UNNECESSARY_UNION_DISTINCT` | [Unnecessary UNION [ DISTINCT ] clause](#label-query-insight-unnecessary-union-distinct) |
-| `QUERY_INSIGHT_REMOTE_SPILLAGE` | [Remote spillage](#label-query-insight-remote-spillage) |
-| `QUERY_INSIGHT_QUEUED_OVERLOAD` | [Query was in the queue for the warehouse for too long](#label-query-insight-queued-overload) |
+| Topic | Type ID | Insight |
+| --- | --- | --- |
+| `TABLE_SCAN` | `QUERY_INSIGHT_NO_FILTER_ON_TOP_OF_TABLE_SCAN` | [No filter on table scan](#label-query-insight-no-filter-on-top-of-table-scan) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_INAPPLICABLE_FILTER_ON_TABLE_SCAN` | [Filter not applicable](#label-query-insight-inapplicable-filter-on-table-scan) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_UNSELECTIVE_FILTER` | [Filter not selective](#label-query-insight-unselective-filter) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_LIKE_WITH_LEADING_WILDCARD` | [LIKE filter with leading wildcard](#label-query-insight-like-with-leading-wildcard) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_FILTER_WITH_CLUSTERING_KEY` | [Filter uses clustering key](#label-query-insight-filter-with-clustering-key) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_SEARCH_OPTIMIZATION_USED` | [Query benefited from search optimization](#label-query-insight-search-optimization-used) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_SNOWFLAKE_OPTIMA` | [Query benefited from Snowflake Optima](#label-query-insight-snowflake-optima) |
+| `TABLE_SCAN` | `QUERY_INSIGHT_SEARCH_OPTIMIZATION_AND_SNOWFLAKE_OPTIMA` | [Query benefited from search optimization and Snowflake Optima](#label-query-insight-search-optimization-and-snowflake-optima) |
+| `TABLE_SCAN` or `JOIN` | `QUERY_INSIGHT_SNOWFLAKE_OPTIMA_PLANNING_USED` | [Query benefited from Snowflake Optima Planning](#label-query-insight-optima-planning-used) |
+| `JOIN` | `QUERY_INSIGHT_SNOWFLAKE_OPTIMA_PLANNING_OPPORTUNITY` | [Query could benefit from Snowflake Optima Planning](#label-query-insight-snowflake-optima-planning-opportunity) |
+| `JOIN` | `QUERY_INSIGHT_JOIN_WITH_NO_JOIN_CONDITION` | [Join with no join condition](#label-query-insight-join-with-no-join-condition) |
+| `JOIN` | `QUERY_INSIGHT_INEFFICIENT_JOIN_CONDITION` | [Join with inefficient join condition](#label-query-insight-inefficient-join-condition) |
+| `JOIN` | `QUERY_INSIGHT_NESTED_EXPLODING_JOIN` | [Exploding join (nested join)](#label-query-insight-nested-exploding-join) |
+| `JOIN` | `QUERY_INSIGHT_EXPLODING_JOIN` | [Exploding join (not nested)](#label-query-insight-exploding-join) |
+| `AGGREGATION` | `QUERY_INSIGHT_INEFFICIENT_AGGREGATE` | [Unnecessary aggregation](#label-query-insight-inefficient-aggregate) |
+| `UNION` | `QUERY_INSIGHT_UNNECESSARY_UNION_DISTINCT` | [Unnecessary UNION [ DISTINCT ] clause](#label-query-insight-unnecessary-union-distinct) |
+| `WAREHOUSE` | `QUERY_INSIGHT_REMOTE_SPILLAGE` | [Remote spillage](#label-query-insight-remote-spillage) |
+| `WAREHOUSE` | `QUERY_INSIGHT_QUEUED_OVERLOAD` | [Query was in the queue for the warehouse for too long](#label-query-insight-queued-overload) |
 
 Expand
 

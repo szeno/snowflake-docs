@@ -31,7 +31,7 @@ Where:
 >
 > ```
 > cloudProviderParams (for Amazon S3) ::=
->   STORAGE_PROVIDER = '{ S3 | S3GOV }'
+>   STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }'
 >   STORAGE_AWS_ROLE_ARN = '<iam_role>'
 >   STORAGE_BASE_URL = '<protocol>://<bucket>[/<path>/]'
 >   [ STORAGE_AWS_ACCESS_POINT_ARN = '<string>' ]
@@ -134,10 +134,12 @@ For more information, see [Encrypting table files](/user-guide/tables-iceberg-ma
 
 **Amazon S3**
 
-> `STORAGE_PROVIDER = '{ S3 | S3GOV }'`
+> `STORAGE_PROVIDER = '{ S3 | S3CHINA | S3GOV }'`
 > :   Specifies the cloud storage provider that stores your data files.
 >
 >     - `'S3'`: S3 storage in public AWS regions outside of China.
+>     - `'S3CHINA'`: S3 storage in public AWS regions in China. Supported only for Snowflake accounts in the
+>       [China region](/user-guide/intro-regions#label-asia-pacific-regions); you can’t use `S3CHINA` from accounts in other regions.
 >     - `'S3GOV'`: S3 storage in AWS [government regions](/user-guide/intro-regions#label-us-gov-regions).
 >
 > `STORAGE_AWS_ROLE_ARN = 'iam_role'`
@@ -150,6 +152,7 @@ For more information, see [Encrypting table files](/user-guide/tables-iceberg-ma
 >     - `protocol` is one of the following:
 >
 >       - `s3` refers to S3 storage in public AWS regions outside of China.
+>       - `s3china` refers to S3 storage in public AWS regions in China.
 >       - `s3gov` refers to S3 storage in [government regions](/user-guide/intro-regions#label-us-gov-regions).
 >     - `bucket` is the name of an S3 bucket that stores your data files or the [bucket-style alias](https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-alias.html)
 >       for an S3 bucket access point. For an S3 access point, you must also specify a value for the `STORAGE_AWS_ACCESS_POINT_ARN` parameter.

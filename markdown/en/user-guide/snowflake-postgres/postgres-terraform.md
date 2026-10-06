@@ -147,7 +147,7 @@ configured separately:
 
 For more information about connecting, see [Connecting to Snowflake Postgres](/user-guide/snowflake-postgres/connecting-to-snowflakepg).
 
-## Async operations
+## Asynchronous operations
 
 Some changes to Postgres instances, including compute family changes, version upgrades, and
 enabling high availability, complete asynchronously after Terraform reports success. The

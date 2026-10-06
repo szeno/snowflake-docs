@@ -136,8 +136,8 @@ Snowflake, the user must change their password.
 
   As a workaround, grant the APPLY PASSWORD POLICY privilege to a custom role to allow that role to apply password policies on the user or
   the Snowflake account.
-- The password policy can be managed with SQL using [Snowflake CLI](/developer-guide/snowflake-cli/index), [SnowSQL](/user-guide/snowsql) or a
-  supported [driver or connector](/guides-overview-connecting), or using Snowsight.
+- The password policy can be managed with SQL using [Snowflake CLI](/developer-guide/snowflake-cli/index), a supported
+  [driver or connector](/guides-overview-connecting), or Snowsight.
 - When you reset or change a password, Snowflake evaluates the password policy to ensure that the newly created password matches the
   password policy requirements.
 - Tracking password policy usage:

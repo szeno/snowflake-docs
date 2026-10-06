@@ -23,6 +23,11 @@ GROUPING is not an aggregate function, but rather a utility function that can be
 - GROUPING(`expr`) returns 0 for a row that is grouped on `expr`, and 1 for a row that is not grouped on `expr`.
 - GROUPING(`expr1`, `expr2` , … , `exprN`) returns the integer representation of a bit-vector containing GROUPING(`expr1`) , GROUPING(`expr2`) , … , GROUPING(`exprN`).
 
+  The first expression is the most significant bit. For example, GROUPING(col\_x, col\_y) returns 0 when the row is grouped
+  on both columns, 1 when it is grouped on `col_x` only, 2 when it is grouped on `col_y` only, and 3 for the grand total row.
+
+Use GROUPING to tell apart a NULL that marks a subtotal or grand total row from a NULL that is stored in the data.
+
 ## Examples
 
 Group by sets:
@@ -73,3 +78,27 @@ Group by sets:
 > > |  NULL |  NULL |         28 |               1 |               1 |                      3 |
 > > +-------+-------+------------+-----------------+-----------------+------------------------+
 > > ```
+
+Group by ROLLUP:
+
+> This example uses the same table. ROLLUP produces a row for each (col\_x, col\_y) pair, a subtotal row for each
+> `col_x` value, and a grand total row. The GROUPING values identify which kind of row each one is:
+>
+> Copy code
+>
+> ```
+> SELECT col_x, col_y, SUM(col_z),
+>        GROUPING(col_x), GROUPING(col_y), GROUPING(col_x, col_y)
+>     FROM aggr2 GROUP BY ROLLUP (col_x, col_y)
+>     ORDER BY 1, 2;
+> +-------+-------+------------+-----------------+-----------------+------------------------+
+> | COL_X | COL_Y | SUM(COL_Z) | GROUPING(COL_X) | GROUPING(COL_Y) | GROUPING(COL_X, COL_Y) |
+> |-------+-------+------------+-----------------+-----------------+------------------------|
+> |     1 |     2 |          4 |               0 |               0 |                      0 |
+> |     1 |  NULL |          4 |               0 |               1 |                      1 |
+> |     2 |     1 |         10 |               0 |               0 |                      0 |
+> |     2 |     2 |         14 |               0 |               0 |                      0 |
+> |     2 |  NULL |         24 |               0 |               1 |                      1 |
+> |  NULL |  NULL |         28 |               1 |               1 |                      3 |
+> +-------+-------+------------+-----------------+-----------------+------------------------+
+> ```

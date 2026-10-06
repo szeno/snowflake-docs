@@ -2,19 +2,19 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 ## Versioning Application Packages in Declarative Sharing
 
-With Declarative Sharing, versioning of your Declarative Native App is handled automatically, so providers and consumers don’t need to manually track version numbers. This simplifies the development and release process.
+With Declarative Sharing, versioning of your Declarative Share is handled automatically, so providers and consumers don’t need to manually track version numbers. This simplifies the development and release process.
 
 As a provider, you can iterate on your application in a live development environment and release new versions.
 
-This topic describes how versioning works in the Snowflake Native App Framework for Declarative Native Apps and how new versions are made available to consumers.
+This topic describes how versioning works in the Snowflake Native App Framework for Declarative Shares and how new versions are made available to consumers.
 
 ### Make new versions of the application package
 
-With Declarative Native Apps, versioning is handled automatically.
+With Declarative Shares, versioning is handled automatically.
 
 Providers can make changes to the new live version of the app, update the contents, and re-release the application package.
 

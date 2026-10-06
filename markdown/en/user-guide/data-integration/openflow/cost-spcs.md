@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 When running Openflow - Snowflake Deployment, you must be aware of the cost considerations associated with multiple Snowflake components, including, but not limited to, the following cost categories:
 

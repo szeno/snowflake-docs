@@ -37,6 +37,12 @@ Snowflake recommends that you enable cloud event filtering for Snowpipe to reduc
 - [Understand event filtering for Event Grid subscriptions - Azure](https://docs.microsoft.com/en-us/azure/event-grid/event-filtering)
 - [Filtering messages - Google Pub/Sub](https://cloud.google.com/pubsub/docs/filtering)
 
+An auto-ingest pipe reads notifications about files in one storage location from one cloud message queue. With Business Critical Edition (or
+higher), you can replicate the pipe to an account in another region or on another cloud provider and configure that account to use a second storage
+location and queue,
+so that the pipe keeps loading after a region-wide cloud provider outage. For more information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
 **Next Topics:**
 
 - [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3)

@@ -1,6 +1,6 @@
-# August 4, 2026: Workspace sharing in Declarative Native Apps (*Public Preview*)
+# August 4, 2026: Workspace sharing in Declarative Shares (*Public Preview*)
 
-Workspace sharing is now available in public preview for Declarative Native Apps. Providers can share a whole directory of
+Workspace sharing is now available in public preview for Declarative Shares. Providers can share a whole directory of
 files and folders by declaring a workspace in the application package manifest. Consumers get a read-only
 [workspace](/user-guide/ui-snowsight/workspaces) when they install the app, and can browse the folder structure and open the files.
 
@@ -16,6 +16,6 @@ Legacy Notebooks removal timeline, see [Disable Legacy Notebook creations](/rele
 
 For more information, see:
 
-- [Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces)
-- [Access a shared workspace in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-shared-workspace)
-- [Declarative Native App manifest reference](/developer-guide/declarative-sharing/manifest-reference)
+- [Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces)
+- [Access a shared workspace in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-shared-workspace)
+- [Declarative Share manifest reference](/developer-guide/declarative-sharing/manifest-reference)

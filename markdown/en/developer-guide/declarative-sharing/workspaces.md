@@ -1,15 +1,15 @@
-# Share a workspace in a Declarative Native App
+# Share a workspace in a Declarative Share
 
 [Preview Feature — Open](/release-notes/preview-features)
 
-Workspace sharing in Declarative Native Apps is available to all accounts.
+Workspace sharing in Declarative Shares is available to all accounts.
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 With workspace sharing, you can share a whole directory of files and folders as part of your
-Declarative Native App. You point a workspace at a directory in your application package, and
+Declarative Share. You point a workspace at a directory in your application package, and
 consumers get a read-only [workspace](/user-guide/ui-snowsight/workspaces) when they install the
 app.
 
@@ -237,4 +237,4 @@ in their own account. Notebooks run on the consumer’s compute, not yours, and 
 create is scoped to your app’s instance.
 
 For the consumer’s view of this experience, see
-[Access a shared workspace in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-shared-workspace).
+[Access a shared workspace in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-shared-workspace).

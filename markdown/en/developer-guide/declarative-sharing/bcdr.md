@@ -1,6 +1,6 @@
 # Business Continuity and Disaster Recovery for Declarative Sharing
 
-Business Continuity and Disaster Recovery (BCDR) for Declarative Native Apps allows providers to include app packages of type `DATA` in [failover groups](/user-guide/account-replication-intro). When a regional outage occurs, your app package, reference databases, and listing automatically replicate to a secondary provider account, keeping consumers connected to your data with minimal disruption.
+Business Continuity and Disaster Recovery (BCDR) for Declarative Shares allows providers to include app packages of type `DATA` in [failover groups](/user-guide/account-replication-intro). When a regional outage occurs, your app package, reference databases, and listing automatically replicate to a secondary provider account, keeping consumers connected to your data with minimal disruption.
 
 Without BCDR, providers must manually re-create listings after a failover, which causes extended downtime for consumers and requires them to remount to new listing URLs.
 

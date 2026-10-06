@@ -1,14 +1,14 @@
-# Editing notebooks in a Declarative Native App
+# Editing notebooks in a Declarative Share
 
 [Preview Feature — Open](/release-notes/preview-features)
 
-Workspace sharing in Declarative Native Apps is available to all accounts.
+Workspace sharing in Declarative Shares is available to all accounts.
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-Declarative Native Apps share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
+Declarative Shares share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a [workspace](/developer-guide/declarative-sharing/workspaces). As a provider, you can edit those
 notebooks in place while you develop the app, instead of editing them elsewhere and rebuilding the
 application package for every change.

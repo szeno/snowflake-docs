@@ -92,8 +92,8 @@ To view these columns, you must use a role with the MONITOR privilege.
 | ERROR\_MESSAGE | TEXT | If applicable, error message stating why the run failed. |
 | WAREHOUSE | TEXT | Warehouse used for the object. |
 | STATE | TEXT | State of run, such as HANDLED\_ERROR or SUCCESS. |
-| DBT\_VERSION | TEXT | The specific version used for this run. For example, `1.9.4`. |
-| DBT\_SNOWFLAKE\_VERSION | TEXT | The specific dbt Projects on Snowflake version with patch version used for this run. For example, `1.9.4`. |
+| DBT\_VERSION | TEXT | The dbt Core version used for the run, such as `1.9.4`. |
+| DBT\_SNOWFLAKE\_VERSION | TEXT | The dbt-snowflake adapter version used for the run, such as `1.9.2`. |
 
 Expand
 

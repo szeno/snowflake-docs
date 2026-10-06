@@ -694,7 +694,7 @@ For details on this feature, see [Model Explainability](/developer-guide/snowfla
 
 ### Exporting a model version
 
-Use `mv.export` to export a model’s files to a local directory; the directory is created if it does not exist:
+Use `mv.export` to export a model’s files to a local directory. The directory must already exist and be empty:
 
 Copy code
 

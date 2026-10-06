@@ -11,7 +11,7 @@ Both leverage SAP® Business Data Cloud to enable zero-copy data sharing between
 
 ### SAP® Snowflake
 
-Designed for new Snowflake customers, SAP® Snowflake makes Snowflake available in SAP® Business Data Cloud as a certified SAP® Solution Extension. From advanced analytics and ML to data engineering, applications, and marketplace it puts the Snowflake platform directly in the hands of SAP® users. For more information, see [SAP Snowflake](https://help.sap.com/docs/business-data-cloud/introducing-sap-snowflake/introducing-sap-snowflake) in the SAP® documentation.
+Designed for new Snowflake customers, SAP® Snowflake makes Snowflake available in SAP® Business Data Cloud as a certified SAP® Solution Extension. From advanced analytics and ML to data engineering, applications, and marketplace it puts the Snowflake platform directly in the hands of SAP® users. For more information, see [SAP Snowflake](https://help.sap.com/docs/business-data-cloud/sap-snowflake/introducing-sap-snowflake) in the SAP® documentation.
 
 ![SAP® Snowflake architecture](/static/images/openflow/sap-snowflake.png)
 

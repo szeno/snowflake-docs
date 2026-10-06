@@ -83,10 +83,37 @@ The type of an organization user determines the following:
   that contains `etl_pipeline` creates a `SERVICE` user named `etl_pipeline` in the regular account.
 - The existing users that the organization user is eligible to link to, when an account administrator resolves a conflict. For more
   information, see [Resolve conflicts after importing users](#label-org-users-conflicts).
+- The properties of the organization user that Snowflake applies to the corresponding user objects in regular accounts. Because a
+  `SERVICE` user can’t have the `FIRST_NAME`, `MIDDLE_NAME`, or `LAST_NAME` properties, Snowflake doesn’t apply these properties of a
+  `SERVICE` organization user.
 
 `PERSON` and `SERVICE` are the only types available to an organization user. Other user types, such as `SERVICE_AGENT` and
-`LEGACY_SERVICE`, are only available to users in a regular account. You also can’t change the type after you create the organization user,
-so create the organization user with the type that the corresponding users in your accounts need.
+`LEGACY_SERVICE`, are only available to users in a regular account.
+
+## Change the type of an organization user
+
+To change the type of an existing organization user, run the [ALTER ORGANIZATION USER](/sql-reference/sql/alter-organization-user) command in the
+organization account. For example, if you created the organization user `report_loader` without specifying a type, it’s a `PERSON` user.
+The following command changes it to a `SERVICE` user:
+
+Copy code
+
+```
+USE ROLE GLOBALORGADMIN;
+
+ALTER ORGANIZATION USER report_loader SET TYPE = SERVICE;
+```
+
+When you change the type of an organization user, Snowflake also changes the type of the corresponding user object in every regular
+account that imported the organization user, including existing users that were linked to it. Administrators in a regular account can’t
+change the type of these users.
+
+Important
+
+The type of a user determines which authentication methods it can use. For example, a `SERVICE` user can’t authenticate with a password,
+and you can’t set up [workload identity federation](/user-guide/workload-identity-federation) for a `PERSON` user. Before you change the
+type of an organization user, make sure that the corresponding users in each regular account authenticate with a method that the new type
+supports.
 
 ## Organization user groups
 
@@ -268,9 +295,9 @@ Use one of the following strategies to resolve a conflict between an organizatio
 
   The two users must have compatible types. A `SERVICE` organization user can only be linked to a `SERVICE` local user. A `PERSON`
   organization user can only be linked to a local user that is a `PERSON` user or whose `TYPE` property is `NULL`. If the types aren’t
-  compatible, the function returns an error and the local user isn’t linked. Because you can’t change the type of an organization user, use
-  [ALTER USER](/sql-reference/sql/alter-user) to change the type of the local user, then link it. For example, to link a service user that predates
-  the organization user to the `SERVICE` organization user `etl_pipeline`:
+  compatible, the function returns an error and the local user isn’t linked. To resolve the error, use [ALTER USER](/sql-reference/sql/alter-user)
+  to change the type of the local user, then link it. For example, to link a service user that predates the organization user to the
+  `SERVICE` organization user `etl_pipeline`:
 
   Copy code
 
@@ -279,6 +306,10 @@ Use one of the following strategies to resolve a conflict between an organizatio
 
   SELECT SYSTEM$LINK_ORGANIZATION_USER('legacy_loader', 'etl_pipeline');
   ```
+
+  Alternatively, if the organization user has the wrong type, the organization administrator can
+  [change the type of the organization user](#label-org-users-types-change). That change applies to the corresponding users in every
+  regular account that imported the organization user, not only the account where you’re linking the local user.
 - **Drop the existing user**: If you want the organization user to completely replace the local user, run a
   [DROP USER](/sql-reference/sql/drop-user) command to delete the local user. After the local object is dropped, Snowflake automatically adds the
   new user object that corresponds to the organization user.

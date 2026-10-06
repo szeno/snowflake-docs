@@ -2,9 +2,9 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-Shows all of the objects for which you have access privileges that have been shared from a Declarative Native App application package.
+Shows all of the objects for which you have access privileges that have been shared from a Declarative Share application package.
 
 ## Syntax
 
@@ -44,7 +44,7 @@ This command requires a role with the relevant privilege on the entities returne
 
 ## Examples
 
-The following example shows how to use the SHOW SHARED CONTENT IN APPLICATION PACKAGE command to list all of the objects in a specific version of a Declarative Native App application package.
+The following example shows how to use the SHOW SHARED CONTENT IN APPLICATION PACKAGE command to list all of the objects in a specific version of a Declarative Share application package.
 
 Copy code
 

@@ -43,10 +43,14 @@ Expand
 Show lessSee more
 
 If the types aren’t compatible, the function returns an error and the local user isn’t linked. For example, you can’t link a `SERVICE`
-local user to a `PERSON` organization user. Because the type of an organization user can’t be changed, resolve this kind of conflict by
-creating the organization user with the type you need, or by using [ALTER USER](/sql-reference/sql/alter-user) to change the type of the local user
-before you link it. After a local user is linked, its `TYPE` property can no longer be changed in the regular account. For more
-information about organization user types, see [Organization user types](/user-guide/organization-users#label-org-users-types).
+local user to a `PERSON` organization user. To resolve this kind of conflict, use [ALTER USER](/sql-reference/sql/alter-user) to change the type of
+the local user before you link it, or use [ALTER ORGANIZATION USER](/sql-reference/sql/alter-organization-user) to change the type of the organization user.
+Changing the type of the organization user also changes the type of the corresponding users in every regular account that imported the
+organization user.
+
+After a local user is linked, its `TYPE` property can no longer be changed in the regular account. Instead, whenever the organization user
+is modified, Snowflake changes the type of the linked user to match the type of the organization user. For more information about
+organization user types, see [Organization user types](/user-guide/organization-users#label-org-users-types).
 
 ## Examples
 

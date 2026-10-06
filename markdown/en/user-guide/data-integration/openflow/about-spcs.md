@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 Openflow - Snowflake Deployment runs on [Snowpark Container Services (SPCS)](/developer-guide/snowpark-container-services/overview) and
 provides a streamlined and integrated solution for data integration and connectivity across interoperable storage like Iceberg and Snowflake native storage.
@@ -72,6 +72,13 @@ Openflow separates management from execution:
 - A **runtime** hosts your data flows within a deployment. Each deployment can host multiple runtimes, and each runtime has its own execute-as role and network access configuration. See [Create runtime](/user-guide/data-integration/openflow/setup-openflow-spcs-create-runtime).
 
 For definitions of all Openflow components, see [Openflow components](/user-guide/data-integration/openflow/about#label-openflow-components).
+
+## Available regions and considerations
+
+Openflow - Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with the
+following exceptions and considerations:
+
+- Currently, Openflow - Snowflake Deployment in the GCP Dammam region uses the global endpoints for Google Cloud APIs.
 
 ## Limitations
 

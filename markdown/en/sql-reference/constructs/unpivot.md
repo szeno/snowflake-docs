@@ -70,6 +70,14 @@ FROM ...
 
 ## Usage notes
 
+- UNPIVOT applies to a single table or subquery, so you must specify it immediately after that table or subquery
+  in the FROM clause. If you specify UNPIVOT after a JOIN, the query returns a `syntax error ... unexpected 'UNPIVOT'`
+  error. To combine UNPIVOT with a join, use one of the following approaches:
+
+  - Specify UNPIVOT immediately after the table that you want to unpivot, and then join the result to other tables.
+  - Perform the join in a subquery, and then specify UNPIVOT after the subquery.
+
+  For examples, see [Use UNPIVOT with joins](#label-unpivot-examples-join).
 - You can’t use a [LATERAL join](/sql-reference/constructs/join-lateral) to directly reference the
   result set of an UNPIVOT operation. Attempting to do so returns an error. As a workaround, materialize the UNPIVOT
   result into a temporary table first, then reference that table in the LATERAL join. To create and load the
@@ -280,4 +288,88 @@ SELECT dept, month, sales
 | electronics | MAR   |   300 |
 | electronics | APR   |   100 |
 +-------------+-------+-------+
+```
+
+### Use UNPIVOT with joins
+
+The following examples combine UNPIVOT with a join. Create an `employees` table to join with the
+`monthly_sales` table:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE employees(
+  empid INT,
+  last_name TEXT,
+  region TEXT);
+
+INSERT INTO employees VALUES
+  (1, 'Smith', 'West'),
+  (2, 'Jones', 'East'),
+  (3, 'Garcia', 'West'),
+  (4, 'Lee', 'East');
+```
+
+The following query unpivots the `monthly_sales` table, joins the result to the `employees` table,
+and calculates the total sales for each region by month. UNPIVOT immediately follows the `monthly_sales` table,
+and the alias `u` refers to the result of the UNPIVOT operation:
+
+Copy code
+
+```
+SELECT e.region, u.month, SUM(u.sales) AS total_sales
+  FROM monthly_sales
+    UNPIVOT (sales FOR month IN (jan, feb, mar, apr)) u
+  JOIN employees e
+    ON u.empid = e.empid
+  GROUP BY e.region, u.month
+  ORDER BY e.region, u.month;
+```
+
+```
++--------+-------+-------------+
+| REGION | MONTH | TOTAL_SALES |
+|--------+-------+-------------|
+| East   | APR   |         250 |
+| East   | FEB   |         300 |
+| East   | JAN   |         200 |
+| East   | MAR   |         250 |
+| West   | APR   |         150 |
+| West   | FEB   |         600 |
+| West   | JAN   |         300 |
+| West   | MAR   |         400 |
++--------+-------+-------------+
+```
+
+The following query performs the join in a subquery, and then unpivots the result of the subquery. The subquery
+selects only the columns to keep in the output and the columns to unpivot:
+
+Copy code
+
+```
+SELECT last_name, region, month, sales
+  FROM (
+    SELECT e.last_name, e.region, s.jan, s.feb, s.mar, s.apr
+      FROM monthly_sales s
+      JOIN employees e
+        ON s.empid = e.empid
+      WHERE e.region = 'West'
+  )
+    UNPIVOT (sales FOR month IN (jan, feb, mar, apr))
+  ORDER BY last_name;
+```
+
+```
++-----------+--------+-------+-------+
+| LAST_NAME | REGION | MONTH | SALES |
+|-----------+--------+-------+-------|
+| Garcia    | West   | JAN   |   200 |
+| Garcia    | West   | FEB   |   400 |
+| Garcia    | West   | MAR   |   100 |
+| Garcia    | West   | APR   |    50 |
+| Smith     | West   | JAN   |   100 |
+| Smith     | West   | FEB   |   200 |
+| Smith     | West   | MAR   |   300 |
+| Smith     | West   | APR   |   100 |
++-----------+--------+-------+-------+
 ```

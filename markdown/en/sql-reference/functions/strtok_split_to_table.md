@@ -48,6 +48,16 @@ The query can also access the columns of the original (correlated) table that se
 from the original table resulted in multiple rows in the flattened view, the values in this input row are replicated to match the number of
 rows produced by this function.
 
+## Usage notes
+
+- If *string* is an empty string, NULL, or contains only delimiter characters, the function returns no rows.
+  This behavior differs from [SPLIT\_TO\_TABLE](/sql-reference/functions/split_to_table), which returns one row for an
+  empty string.
+- Because the function returns no rows for these inputs, the corresponding input rows are omitted from the
+  result of a lateral join, even when you specify `LEFT JOIN LATERAL`. To keep every input row, use
+  [STRTOK\_TO\_ARRAY](/sql-reference/functions/strtok_to_array) with [FLATTEN](/sql-reference/functions/flatten) and specify
+  `OUTER => TRUE`. For an example, see [Keep input rows that produce no tokens](#keep-input-rows-that-produce-no-tokens).
+
 ## Examples
 
 Here is a simple example on constant input.
@@ -178,4 +188,60 @@ SELECT author, TRIM(value) AS title
 | Nathaniel Hawthorne | The House of the Seven Gables |
 | Nathaniel Hawthorne | The Blithedale Romance        |
 +---------------------+-------------------------------+
+```
+
+### Keep input rows that produce no tokens
+
+STRTOK\_SPLIT\_TO\_TABLE returns no rows when the input string is empty or NULL, so a lateral join omits those
+input rows, even with `LEFT JOIN LATERAL`. Create a table that contains an empty string and a NULL value:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE strtok_outer_test (id INT, s VARCHAR);
+INSERT INTO strtok_outer_test VALUES (1, ''), (2, 'a b c'), (3, NULL);
+```
+
+The following query returns rows only for `id` 2:
+
+Copy code
+
+```
+SELECT t.id, s.value
+  FROM strtok_outer_test t
+    LEFT JOIN LATERAL STRTOK_SPLIT_TO_TABLE(t.s, ' ') s
+  ORDER BY t.id, s.value;
+```
+
+```
++----+-------+
+| ID | VALUE |
+|----+-------|
+|  2 | a     |
+|  2 | b     |
+|  2 | c     |
++----+-------+
+```
+
+To keep every input row, use STRTOK\_TO\_ARRAY with FLATTEN and specify `OUTER => TRUE`:
+
+Copy code
+
+```
+SELECT t.id, f.value::VARCHAR AS value
+  FROM strtok_outer_test t,
+    LATERAL FLATTEN(INPUT => STRTOK_TO_ARRAY(t.s, ' '), OUTER => TRUE) f
+  ORDER BY t.id, value;
+```
+
+```
++----+-------+
+| ID | VALUE |
+|----+-------|
+|  1 | NULL  |
+|  2 | a     |
+|  2 | b     |
+|  2 | c     |
+|  3 | NULL  |
++----+-------+
 ```

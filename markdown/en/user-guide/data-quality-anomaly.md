@@ -12,7 +12,7 @@ Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading,
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 Returning a value from a data metric function (DMF) provides useful information, but it might be hard to know whether it indicates a data
-quality issue. You can define an [expectation](/user-guide/data-quality-expectations) if you know what is an acceptable value, but it might be
+quality issue. You can define an [expectation](/user-guide/data-quality-expectations) if you know what an acceptable value is, but it might be
 difficult to define enough manual rules to identify all possible data quality issues.
 
 As a solution, Snowflake provides an algorithm that can detect anomalies in the values returned by a DMF. Snowflake trains this algorithm

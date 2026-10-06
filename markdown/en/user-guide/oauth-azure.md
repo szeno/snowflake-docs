@@ -366,7 +366,7 @@ curl -X POST -H "Content-Type: application/x-www-form-urlencoded;charset=UTF-8" 
 
 After configuring your security integration and obtaining your access token, you can connect to Snowflake using one of the following:
 
-- [SnowSQL](/user-guide/snowsql-start#label-snowsql-auth)
+- [Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-oauth)
 - [Python Connector](/developer-guide/python-connector/python-connector-connect#label-oauth-python)
 - [Go Driver](https://godoc.org/github.com/snowflakedb/gosnowflake#hdr-Connection_Parameters)
 - [JDBC Driver](/developer-guide/jdbc/jdbc-configure#label-jdbc-connection-parameters)

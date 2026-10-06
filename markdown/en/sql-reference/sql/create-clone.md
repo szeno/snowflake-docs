@@ -254,6 +254,10 @@ To create a clone, your current role must have the following privilege(s) on the
 - For [Apache Iceberg™ tables](/user-guide/tables-iceberg), cloning is currently supported for Snowflake-managed tables only. For more information, see
   [Cloning and Apache Iceberg™ tables](/user-guide/object-clone#label-cloning-and-iceberg-tables).
 
+  To access a cloned Iceberg table with credentials vended by the Horizon Iceberg REST Catalog API, the role must also have
+  access to the source table and to any other clones of the same source table. For more information, see
+  [Credential vending](/user-guide/object-clone#label-cloning-iceberg-tables-credential-vending).
+
 - For named internal stages:
 
   - Cloning is supported only at the database or schema level.

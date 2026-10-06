@@ -1,18 +1,18 @@
-# Declarative Native App manifest reference
+# Declarative Share manifest reference
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-A manifest file is a text-based [YAML](https://yaml.org/spec/) file with the filename: `manifest.yml`. The manifest file is used to define a Declarative Native App and its associated data and logic. It also defines [app roles](/developer-guide/declarative-sharing/app-roles), which app owners can use to share a subset of the app’s data and features to teams in their organization by role.
+A manifest file is a text-based [YAML](https://yaml.org/spec/) file with the filename: `manifest.yml`. The manifest file is used to define a Declarative Share and its associated data and logic. It also defines [app roles](/developer-guide/declarative-sharing/app-roles), which app owners can use to share a subset of the app’s data and features with teams in their organization by role.
 
 Providers create a manifest file as part of a [package](/developer-guide/declarative-sharing/package). This topic describes the structure and fields of the manifest file.
 
 For information about developing an application package, see [Application Packages in Declarative Sharing in the Native Application Framework](/developer-guide/declarative-sharing/package).
 
-## Declarative Native App manifest
+## Declarative Share manifest
 
-The general format of a Declarative Native App manifest is:
+The general format of a Declarative Share manifest is:
 
 Copy code
 
@@ -25,7 +25,7 @@ application_content: # optional app logic (for example, workspaces) shared by th
 
 ## Manifest fields
 
-Declarative Native App manifests include the following fields. Each section describes a field’s purpose, structure, and an example.
+Declarative Share manifests include the following fields. Each section describes a field’s purpose, structure, and an example.
 
 ### `manifest_version` field
 
@@ -256,11 +256,11 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 Each named notebook supports the following name value pairs:
 
-- `main_file` (string, required) the path to the interactive Python notebook (.ipynb) file, relative to the root of the package version.
+- `main_file` (string, required): the path to the interactive Python notebook (.ipynb) file, relative to the root of the package version.
 - `comment` (string, optional): A comment describing the notebook.
 - `runtime_environment_version` (string, optional): Specifies a particular [runtime environment version](/user-guide/ui-snowsight/notebooks#label-notebook-runtime-descriptions)
   for the notebook execution context, if applicable within the platform.
@@ -321,7 +321,7 @@ Note
 You can’t include `.pdf` files in a workspace. The framework rejects them when you build, commit,
 or release the application package, and again when a consumer installs the app.
 
-For more information about sharing a workspace, see [Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+For more information about sharing a workspace, see [Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 ##### `application_content.workspaces` field example
 
@@ -344,7 +344,7 @@ application_content:
 
 ## Manifest file example
 
-The following code block is an example of a Declarative Native App manifest file.
+The following code block is an example of a Declarative Share manifest file.
 
 Note that data and code objects must be in different schemas.
 

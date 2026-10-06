@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 ## Introduction
 
@@ -99,7 +99,7 @@ editor can corrupt notebook JSON, so don’t ask CoCo Web to write
 `.ipynb` files. To bundle a notebook with your package from CoCo Web,
 create the notebook directly in Snowsight and then add it to a
 workspace directory in your package. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 ## Run the prompt
 
@@ -391,10 +391,10 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 - Share notebooks in a workspace directory, not with `application_content.notebooks`. For more
-  information, see [Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+  information, see [Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 - Notebooks can only access data inside the same application package.
 - Ensure each code cell has correct `language` metadata; otherwise SQL cells
   may be interpreted as Python and fail.
@@ -469,10 +469,10 @@ CoCo can generate the cleanup SQL for you.
 
 ### Learn more
 
-To learn more about Declarative Native Apps, see the following topics:
+To learn more about Declarative Shares, see the following topics:
 
 - [About Declarative Sharing in the Native Application Framework](/developer-guide/declarative-sharing/about)
-- [Tutorial: Getting started with Declarative Native Apps](/developer-guide/declarative-sharing/tutorials/getting-started)
+- [Tutorial: Getting started with Declarative Shares](/developer-guide/declarative-sharing/tutorials/getting-started)
 - [Manifest reference](/developer-guide/declarative-sharing/manifest-reference)
 - [Application packages](/developer-guide/declarative-sharing/package)
 - [Creating a listing](/developer-guide/declarative-sharing/listing)

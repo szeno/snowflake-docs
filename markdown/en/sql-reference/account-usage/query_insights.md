@@ -41,18 +41,17 @@ For the `insight_topic` column, the label can be one of the following:
   - [QUERY\_INSIGHT\_FILTER\_WITH\_CLUSTERING\_KEY](/user-guide/query-insights#label-query-insight-filter-with-clustering-key)
   - [QUERY\_INSIGHT\_SEARCH\_OPTIMIZATION\_USED](/user-guide/query-insights#label-query-insight-search-optimization-used)
   - [QUERY\_INSIGHT\_SNOWFLAKE\_OPTIMA](/user-guide/query-insights#label-query-insight-snowflake-optima)
-  - [QUERY\_INSIGHT\_SEARCH\_OPTIMIZATION\_AND\_SNOWFLAKE\_OPTIMA](/user-guide/query-insights#label-query-insight-search-optimization-and-snowflake-optima)
-- `QUERY`: Insights about the efficiency of query execution plans. This label applies to the following types of insights:
-
   - [QUERY\_INSIGHT\_SNOWFLAKE\_OPTIMA\_PLANNING\_USED](/user-guide/query-insights#label-query-insight-optima-planning-used)
-  - [QUERY\_INSIGHT\_SNOWFLAKE\_OPTIMA\_PLANNING\_OPPORTUNITY](/user-guide/query-insights#label-query-insight-snowflake-optima-planning-opportunity)
+  - [QUERY\_INSIGHT\_SEARCH\_OPTIMIZATION\_AND\_SNOWFLAKE\_OPTIMA](/user-guide/query-insights#label-query-insight-search-optimization-and-snowflake-optima)
 - `JOIN`: Insights about the efficiency of JOIN operations in the query. This label applies to the following types of insights:
 
   - [QUERY\_INSIGHT\_JOIN\_WITH\_NO\_JOIN\_CONDITION](/user-guide/query-insights#label-query-insight-join-with-no-join-condition)
   - [QUERY\_INSIGHT\_INEFFICIENT\_JOIN\_CONDITION](/user-guide/query-insights#label-query-insight-inefficient-join-condition)
   - [QUERY\_INSIGHT\_NESTED\_EXPLODING\_JOIN](/user-guide/query-insights#label-query-insight-nested-exploding-join)
   - [QUERY\_INSIGHT\_EXPLODING\_JOIN](/user-guide/query-insights#label-query-insight-exploding-join)
-- `AGGREGATE`: Insights about the efficiency of aggregate operations in the query. This label applies to the following types of
+  - [QUERY\_INSIGHT\_SNOWFLAKE\_OPTIMA\_PLANNING\_USED](/user-guide/query-insights#label-query-insight-optima-planning-used)
+  - [QUERY\_INSIGHT\_SNOWFLAKE\_OPTIMA\_PLANNING\_OPPORTUNITY](/user-guide/query-insights#label-query-insight-snowflake-optima-planning-opportunity)
+- `AGGREGATION`: Insights about the efficiency of aggregate operations in the query. This label applies to the following types of
   insights:
 
   - [QUERY\_INSIGHT\_INEFFICIENT\_AGGREGATE](/user-guide/query-insights#label-query-insight-inefficient-aggregate)

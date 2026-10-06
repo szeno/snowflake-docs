@@ -51,6 +51,33 @@ Copy code
 
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
+## Access control requirements
+
+A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
+[privilege](/user-guide/security-access-control-overview#label-access-control-overview-privileges) on the integration at a minimum:
+
+| Integration | Minimum privilege |
+| --- | --- |
+| API integration | USAGE |
+| Catalog integration | USAGE |
+| External access integration | USAGE |
+| Notification integration (`QUEUE` or `WEBHOOK`) | USAGE |
+| Notification integration (`EMAIL`) | Any privilege on the integration. `USAGE` is sufficient. |
+| Security integration with `TYPE = API_AUTHENTICATION` | USAGE |
+| Other security integrations, including Snowflake OAuth, External OAuth, SAML2, SCIM, and OIDC | OWNERSHIP |
+| Storage integration | USAGE |
+
+Expand
+
+Show lessSee more
+
+`OWNERSHIP` also allows DESCRIBE for every integration type. For a security integration that isn’t `API_AUTHENTICATION`, `USAGE` isn’t enough.
+
+For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).
+
+For general information about roles and privilege grants for performing SQL actions on
+[securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
+
 ## Usage notes
 
 - To post-process the output of this command, you can use the [pipe operator](/sql-reference/operators-flow)

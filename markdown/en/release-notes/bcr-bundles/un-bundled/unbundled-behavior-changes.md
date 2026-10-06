@@ -69,6 +69,7 @@ still in progress.
 
 | Planned Release | Functional Area | Pending Behavior Change | Additional Notes |
 | --- | --- | --- | --- |
+| October 13, 2026 | Cortex Agent and Cortex Analyst evaluations | [Cortex Agent and Cortex Analyst evaluations: Default metric version and judge model changes (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2442) | Default system metric version changes from `v1` to `v3`; default custom metric judge changes to `claude-sonnet-4-6`. Explicit pins don’t change. |
 | Pending | Snowsight — Notebooks | [Snowflake Notebooks: Notebook Project Objects are now Code Bundles (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2393) | Notebook Project Objects have been renamed to Code Bundles. Existing `CREATE`/`EXECUTE NOTEBOOK PROJECT` statements continue to work; no migration is required. |
 | **Week of October 19, 2026** | Snowflake Cortex Code | [Cortex Code: CoCo in Snowsight no longer requires COPILOT\_USER (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2445) | CoCo in Snowsight no longer requires `SNOWFLAKE.COPILOT_USER`. Access uses `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER`. The role isn’t removed. No testing or opt-out period. |
 | **October 19, 2026** | Behavior Changes | [New columns in DESCRIBE command output are no longer treated as behavior changes](/release-notes/bcr-bundles/un-bundled/bcr-no-bcrs-for-new-columns-describe) |  |

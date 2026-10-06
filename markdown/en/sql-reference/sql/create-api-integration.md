@@ -486,6 +486,14 @@ to connect to a remote Git repository by setting the integration’s API\_PROVID
       - `OAUTH_REFRESH_TOKEN_VALIDITY = integer`
 
         Specifies the value, in seconds, to determine the validity of the refresh token obtained from the OAuth server.
+
+        When this parameter is set, the supported minimum and maximum values are as follows:
+
+        - Minimum: `3600` (1 hour)
+        - Maximum: `7776000` (90 days)
+
+        If you have a business need to lower the minimum value or raise the maximum value, ask your account administrator to send a request to
+        [Snowflake Support](/user-guide/contacting-support).
       - `OAUTH_ALLOWED_SCOPES = ( { 'read_api' | 'read_repository' | 'write_repository' } [ , ... ] )`
         Specifies the scope to use when making a request from the provider. Specify the following values:
 

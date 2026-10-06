@@ -4,7 +4,7 @@
 
 - Backups are available for all Snowflake editions.
 - Backups with retention lock and backups with legal holds are available for Business Critical Edition (or higher).
-  To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+  To inquire about upgrading, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 Backups help organizations protect critical data against modification or deletion.
 
@@ -39,7 +39,7 @@ Recovery:
 
 Cyber resilience:
 :   Backups with retention lock are part of an overall cyber-resilience strategy. They help organizations
-    protect business-critical data during cyber attacks, especially ransomware attacks. The retention lock ensures that this data
+    protect business-critical data during cyberattacks, especially ransomware attacks. The retention lock ensures that this data
     can’t be deleted by the attacker, even if they gain access to the account by using the ACCOUNTADMIN or ORGADMIN roles.
 
 ## Key concepts
@@ -66,13 +66,13 @@ Snowflake has SQL commands to CREATE, ALTER, DROP, SHOW, and DESCRIBE backup set
 
 You can have multiple backup sets for the same object.
 
-The life cycle of the backups within a set is determined by an optional *backup policy* that you can attach to the backup set.
+The lifecycle of the backups within a set is determined by an optional *backup policy* that you can attach to the backup set.
 You can also add or delete backups manually in a backup set. Your ability to delete backups is affected by
 other factors, in particular *retention lock* and *legal hold*.
 
 ### Backup policy
 
-A *backup policy* is a schema-level object that contains the settings that define the life cycle of the backups within a backup
+A *backup policy* is a schema-level object that contains the settings that define the lifecycle of the backups within a backup
 set. These settings include schedule, expiration, and retention lock.
 
 - The *schedule* determines when backups are created. The schedule can be defined as
@@ -184,7 +184,7 @@ features, such as replication and Time Travel:
 - Retention lock ensures that backups can’t be deleted by any user, including account administrators.
 - You can schedule backups on a different timeframe than you use for other data transfer operations, such as
   replication refreshes.
-- You can backup and restore individual table objects, or container objects such as entire schemas or databases.
+- You can back up and restore individual table objects, or container objects such as entire schemas or databases.
 - You can prevent the retention time for backups from being reduced after the backup is taken, by using a backup
   policy that includes a retention lock. That’s different from the Time Travel feature, where you can reduce the
   retention interval to zero.
@@ -195,7 +195,7 @@ features, such as replication and Time Travel:
   objects, devise a naming scheme to keep track of the cloned objects, or implement a scheduling mechanism to delete
   old clones. Also, unlike with cloned objects, backups can’t be modified after you create them.
 - Each backup represents a single table, schema, or a database as of the specified point in time.
-  backups don’t include account-level objects such as users or roles.
+  Backups don’t include account-level objects such as users or roles.
   Some kinds of tables and other database-level objects aren’t included in schema and database backups.
   For more information, see [backup objects](#label-backup-objects).
 - Backup-related objects are stored in the same cloud service provider (CSP) region as the associated database, schema, or
@@ -251,8 +251,8 @@ The following table lists the objects that are included in a database or schema 
 | Temporary stages | No |  |
 | Directory tables | No |  |
 | Pipes | No |  |
-| Stored procedures | Yes | SQL, Javascript, Python, Java, and Scala procedures are all supported. |
-| User-defined functions (UDFs) | Yes | SQL, Javascript, Python, Java, and Scala functions are all supported. Both scalar UDFs and user-defined table functions (UDTFs) are included in the backup. Java UDFs in backups have the same requirements as in [Limitations on cloning](/developer-guide/udf/java/udf-java-limitations#label-limitations-on-cloning-java-udfs). |
+| Stored procedures | Yes | SQL, JavaScript, Python, Java, and Scala procedures are all supported. |
+| User-defined functions (UDFs) | Yes | SQL, JavaScript, Python, Java, and Scala functions are all supported. Both scalar UDFs and user-defined table functions (UDTFs) are included in the backup. Java UDFs in backups have the same requirements as in [Limitations on cloning](/developer-guide/udf/java/udf-java-limitations#label-limitations-on-cloning-java-udfs). |
 | Streams | No |  |
 | Tasks | Yes | Tasks are included in the backup. Tasks restored from a backup are suspended and must be resumed. |
 | Data metric functions (DMFs) | No |  |
@@ -262,14 +262,14 @@ The following table lists the objects that are included in a database or schema 
 | Object tagging | Yes |  |
 | Alerts | Yes |  |
 | Network rules | Yes |  |
-| Github repos | No |  |
+| GitHub repos | No |  |
 | Models | No |  |
 | Model monitors | No |  |
 | Datasets | No |  |
 | Notebooks | No |  |
 | Contacts | No |  |
 | Cortex search services | No |  |
-| Dbt projects | No |  |
+| dbt projects | No |  |
 | Image repositories | No |  |
 | Listings | No |  |
 | Organization listings | No |  |
@@ -381,7 +381,7 @@ Note
   or it must have the CREATE BACKUP SET or CREATE BACKUP POLICY privilege WITH GRANT OPTION.
 - You can grant the following privileges to a custom account role or a database role.
 
-To enable the role `myrole` to create a backup policy in schema `myschema`, execute the following statement:
+To enable the role `myrole` to create a backup policy in schema `policy_schema`, execute the following statement:
 
 Copy code
 
@@ -389,7 +389,7 @@ Copy code
 GRANT CREATE BACKUP POLICY ON SCHEMA policy_schema TO ROLE myrole;
 ```
 
-To enable the role `myrole` to create a backup set in schema `myschema`, execute the following statement:
+To enable the role `myrole` to create a backup set in schema `policy_schema`, execute the following statement:
 
 Copy code
 
@@ -606,7 +606,7 @@ You can resume suspended backup policies. Doing so resumes the creation and expi
 policy. If any backups reached their expiration time while the policy was suspended, Snowflake deletes those backups as soon as
 the policy is resumed.
 
-The following example resumes a backup policy on the backup set `t1_backup`:
+The following example resumes a backup policy on the backup set `t1_backups`:
 
 Copy code
 

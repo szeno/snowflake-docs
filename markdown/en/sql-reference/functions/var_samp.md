@@ -5,6 +5,11 @@ Categories:
 
 Returns the sample variance of non-NULL records in a group. If all records inside a group are NULL, a NULL is returned.
 
+Variance measures how far a set of values is spread out from their mean. The sample variance is the sum of the squared
+differences between each value and the mean of the values, divided by the number of values minus one (*n* - 1). Use the
+sample variance when the values are a sample drawn from a larger population. When the values are the entire population, use
+[VAR\_POP](/sql-reference/functions/var_pop), which divides by the number of values (*n*).
+
 Aliases:
 :   [VARIANCE , VARIANCE\_SAMP](/sql-reference/functions/variance)
 

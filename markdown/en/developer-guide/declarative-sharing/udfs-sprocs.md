@@ -2,16 +2,16 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-Declarative Native Apps can include [stored procedures](/developer-guide/stored-procedure/stored-procedures-overview) and [user-defined functions](/developer-guide/udf/udf-overview) (UDFs) to
+Declarative Shares can include [stored procedures](/developer-guide/stored-procedure/stored-procedures-overview) and [user-defined functions](/developer-guide/udf/udf-overview) (UDFs) to
 query, visualize, and explore the data. This topic describes how to include
 these logic objects in your app.
 
 ## Supported User-Defined Functions and Stored Procedures
 
 You can share the following types of user-defined functions (UDFs) and stored
-procedures (sprocs) in a Declarative Native App:
+procedures (sprocs) in a Declarative Share:
 
 - Stored procedures that have owner’s rights or restricted caller’s rights.
   For more information, see [Understanding caller’s rights and owner’s rights stored procedures](/developer-guide/stored-procedure/stored-procedures-rights).
@@ -21,7 +21,7 @@ procedures (sprocs) in a Declarative Native App:
 
 ## Including User-Defined Functions and Stored Procedures in your application
 
-To include UDFs and stored procedures in your Declarative Native App, add the
+To include UDFs and stored procedures in your Declarative Share, add the
 names of the objects and their permissions to the `manifest.yaml` file.
 You don’t need to add the objects using separate files, as you do with
 workspace files.
@@ -120,7 +120,7 @@ Referencing private objects
     their fully qualified names.
 
 Object count
-:   A Declarative Native App can include up to 100 UDFs and stored procedures. To
+:   A Declarative Share can include up to 100 UDFs and stored procedures. To
     raise this limit, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 Dynamic tables

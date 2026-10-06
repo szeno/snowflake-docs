@@ -21,7 +21,6 @@ For example:
   machine. In addition, you must create a Snowflake CLI connection for Open Catalog. To create this connection, see
   [Create a Snowflake CLI connection for Open Catalog](#create-a-snowflake-cli-connection-for-open-catalog) below.
 - To configure key pair authentication, you must have the service admin role in Open Catalog. For more information, see [User roles](https://other-docs.snowflake.com/en/opencatalog/access-control#user-roles). In Snowflake CLI, this role is printed as POLARIS\_ACCOUNT\_ADMIN.
-- You must have [SnowSQL](https://www.snowflake.com/en/developers/downloads/snowsql/) installed on your machine.
 - You need a service admin access token. You need this token to configure key pair authentication programmatically and it’s required to grant
   a user with catalog admin privileges. To generate this token, see [Generate your service admin access token](#generate-your-service-admin-access-token) below.
 
@@ -202,25 +201,20 @@ If you need to retrieve your public key, run: `cat rsa_key.pub`.
 
 In this section, you generate a JSON Web Token (JWT), which you need in order to generate an access token.
 
-1. To use SnowSQL to generate a JWT, run:
+1. To use [`snow connection generate-jwt`](/developer-guide/snowflake-cli/command-reference/connection-commands/generate-jwt) to generate a JWT, run:
 
    Copy code
 
    ```
-   snowsql --private-key-path rsa_key.p8 --generate-jwt -h <your_org_name>-<your_open_catalogaccount_name>.snowflakecomputing.com -a <account-identifier> -u <your_user_name>
+   snow connection generate-jwt -c myopencatalogconnection --private-key-file rsa_key.p8
    ```
 
    Where:
 
-   - `<your_org_name>-<your_open_catalogaccount_name>` is your organization name and Snowflake Open Catalog account name, separated by
-     a hyphen.
-
-     For example: `ABCDEFG-MYACCOUNT1`.
-
-     To retrieve these values in this format, see [Retrieve your organization and account name](#step-2-retrieve-your-organization-and-account-name).
-   - `<account-identifier>` is the account identifier for your Snowflake Open Catalog account. To retrieve it, refer to your Open Catalog
-     account URL. For example, `abc12345`in `https://app.snowflake.com/us-west-2/abc12345/#/`.
-   - `<your_user_name>` is your Open Catalog username.
+   - `myopencatalogconnection` is the Snowflake CLI connection you created for Open Catalog. If you used a different connection name,
+     replace `myopencatalogconnection` with that name. The connection supplies the user and the account in
+     `<orgname>-<open-catalog-account-name>` format (the same value you entered for **Account name** when you added the connection).
+   - `rsa_key.p8` is the private key file you generated.
 2. If you encrypted it, enter the passkey or else select Enter to continue. It may take a few seconds for you to receive your JWT.
 
 ### Generate a service admin access token
@@ -758,25 +752,22 @@ If you need to retrieve your public key, run: `cat rsa_key.pub`.
 
 In this step, you generate a JWT, which you need in order to generate an access token.
 
-1. To use SnowSQL to generate a JWT, run:
+1. To use [`snow connection generate-jwt`](/developer-guide/snowflake-cli/command-reference/connection-commands/generate-jwt) to generate a JWT, run:
 
    Copy code
 
    ```
-   snowsql --private-key-path rsa_key.p8 --generate-jwt -h <your_org_name>-<your_open_catalogaccount_name>.snowflakecomputing.com -a <account-identifier> -u <user_name>
+   snow connection generate-jwt -c myopencatalogconnection --user <user_name> --private-key-file rsa_key.p8
    ```
 
    Where:
 
-   - `<your_org_name>-<your_open_catalogaccount_name>` is your organization name and Snowflake Open Catalog account name, separated by
-     a hyphen.
-
-     For example: `ABCDEFG-MYACCOUNT1`.
-
-     To retrieve these values in this format, see [Retrieve your organization and account name](#step-2-retrieve-your-organization-and-account-name).
-   - `<account-identifier>` is the account identifier for your Snowflake Open Catalog account. To retrieve it, refer to your Open Catalog
-     account URL. For example, `abc12345`in `https://app.snowflake.com/us-west-2/abc12345/#/`.
-   - `<user_name>` is the user name for an Open Catalog user with the public key assigned to the user.
+   - `myopencatalogconnection` is the Snowflake CLI connection you created for Open Catalog. If you used a different connection name,
+     replace `myopencatalogconnection` with that name. The connection supplies the account in
+     `<orgname>-<open-catalog-account-name>` format (the same value you entered for **Account name** when you added the connection).
+   - `<user_name>` is the user name for an Open Catalog user with the public key assigned to the user. Pass `--user` when that user
+     isn’t the user stored in the connection.
+   - `rsa_key.p8` is the private key file that corresponds to the public key assigned to that user.
 2. If you encrypted it, enter the passkey or else select Enter to continue. It may take a few seconds for you to receive your JWT.
 
 ### Generate an access token for the user

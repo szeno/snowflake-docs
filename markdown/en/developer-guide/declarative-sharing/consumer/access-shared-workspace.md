@@ -1,14 +1,14 @@
-# Access a shared workspace in a Declarative Native App
+# Access a shared workspace in a Declarative Share
 
 [Preview Feature — Open](/release-notes/preview-features)
 
-Workspace sharing in Declarative Native Apps is available to all accounts.
+Workspace sharing in Declarative Shares is available to all accounts.
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-Some Declarative Native Apps share a workspace, which is a directory of files and folders
+Some Declarative Shares share a workspace, which is a directory of files and folders
 that the provider packages with the app. When you install the app, the shared workspace appears
 alongside your own [workspaces](/user-guide/ui-snowsight/workspaces) as read-only content.
 
@@ -39,7 +39,7 @@ from your account when the app upgrades.
 ## Open a shared workspace
 
 You need access to the app, and to an app role that the provider assigned to the workspace. For
-information about app roles, see [Install a Declarative Native App](/developer-guide/declarative-sharing/consumer/install).
+information about app roles, see [Install a Declarative Share](/developer-guide/declarative-sharing/consumer/install).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Projects** » **Workspaces**.
@@ -112,8 +112,8 @@ install into the notebook’s environment for that session.
 
 - You can’t share a workspace from an app with other members of your organization. Access follows
   the app roles that the app owner grants. For more information, see
-  [Install a Declarative Native App](/developer-guide/declarative-sharing/consumer/install).
+  [Install a Declarative Share](/developer-guide/declarative-sharing/consumer/install).
 - You can’t move or copy files out of a shared workspace into your own workspace.
 - Shared workspaces don’t contain `.pdf` files. Providers can’t share PDFs in a workspace.
 - To query the tables and views the app shares, see
-  [Access content in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-app-content).
+  [Access content in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-app-content).

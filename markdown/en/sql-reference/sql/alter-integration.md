@@ -10,10 +10,12 @@ See also:
 Copy code
 
 ```
-ALTER <integration_type> INTEGRATION <object_name> <actions>
+ALTER [ <integration_type> ] INTEGRATION <object_name> <actions>
 ```
 
-Where `actions` are specific to the object type.
+Where `actions` are specific to the object type. If you omit
+`integration_type`, Snowflake applies the actions to the integration named
+`object_name`, regardless of its type.
 
 For specific syntax, usage notes, and examples, see:
 

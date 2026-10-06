@@ -44,6 +44,21 @@ The query can also access the columns of the original (correlated) table that se
 from the original table resulted in multiple rows in the flattened view, the values in this input row are replicated to match the number of
 rows produced by this function.
 
+## Usage notes
+
+- If *string* is an empty string, the function returns one row with an empty string in the `VALUE` column.
+- If *string* is NULL, the function returns no rows. As a result, input rows with a NULL value are omitted
+  from the result of a lateral join, even when you specify `LEFT JOIN LATERAL`. To keep every input row, use
+  [SPLIT](/sql-reference/functions/split) with [FLATTEN](/sql-reference/functions/flatten) and specify `OUTER => TRUE`:
+
+  Copy code
+
+  ```
+  SELECT t.id, f.value::VARCHAR AS value
+    FROM my_table t,
+      LATERAL FLATTEN(INPUT => SPLIT(t.s, ' '), OUTER => TRUE) f;
+  ```
+
 ## Examples
 
 Here is a simple example on constant input.

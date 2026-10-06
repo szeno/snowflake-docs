@@ -62,6 +62,7 @@ CREATE SECURITY INTEGRATION <name>
   [ OAUTH_CLIENT_AUTH_METHOD = { CLIENT_SECRET_BASIC | CLIENT_SECRET_POST } ]
   [ OAUTH_CLIENT_ID = '<string_literal>' ]
   [ OAUTH_CLIENT_SECRET = '<string_literal>' ]
+  OAUTH_ASSERTION_ISSUER = '<string_literal>'
   [ OAUTH_GRANT = 'JWT_BEARER']
   [ OAUTH_ACCESS_TOKEN_VALIDITY = <integer> ]
   [ OAUTH_REFRESH_TOKEN_VALIDITY = <integer> ]
@@ -143,7 +144,12 @@ parameters that you configure when [creating a secret](/sql-reference/sql/create
 
     - `'CLIENT_CREDENTIALS'` when the integration will use client credentials.
     - `'AUTHORIZATION_CODE'` when the integration will use an authorization code.
-    - `'JWT_BEARER'` when the integration will use a JWT bearer token.
+    - `'JWT_BEARER'` when the integration will use a JWT bearer token. `OAUTH_ASSERTION_ISSUER` is required for this grant.
+
+`OAUTH_ASSERTION_ISSUER = 'string_literal'`
+:   Specifies the issuer of the JWT assertion. Required when `OAUTH_GRANT = 'JWT_BEARER'`. Snowflake returns an error if you omit it for that grant.
+
+    For a Google service account, set this to the `client_email` value from the service account JSON key file. For an example, see the security integration in [Configure the using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
 
 `OAUTH_ACCESS_TOKEN_VALIDITY = integer`
 :   Specifies the default lifetime of the OAuth access token (in seconds) issued by an OAuth server.

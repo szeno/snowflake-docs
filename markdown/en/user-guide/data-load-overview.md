@@ -25,6 +25,8 @@ Upload (i.e. *stage*) files to your cloud storage account using the tools provid
 
 A named external stage is a database object created in a schema. This object stores the URL to files in cloud storage, the settings used to access the cloud storage account, and convenience settings such as the options that describe the format of staged files. Create stages using the [CREATE STAGE](/sql-reference/sql/create-stage) command.
 
+With Business Critical Edition (or higher) and account replication, pipelines that bulk load with `COPY INTO <table>` or load continuously with Snowpipe auto-ingest can fail over to a storage location in another region or on another cloud provider, so that your pipelines keep loading after a region-wide cloud provider outage. Snowpipe Streaming and Openflow don’t support this capability. For more information, see [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
 Note
 
 Some data transfer billing charges may apply when loading data from files in a cloud storage service in a different region or cloud platform from your Snowflake account. For more information, see [Understanding data transfer cost](/user-guide/cost-understanding-data-transfer).

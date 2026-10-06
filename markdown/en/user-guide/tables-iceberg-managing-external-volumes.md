@@ -289,7 +289,7 @@ STORAGE_BASE_URL
 
 This section describes the hierarchical layout in Snowflake for data and metadata directories for Snowflake-managed tables.
 
-When you create a Snowflake-managed table that uses the default flat directory layout (PATH\_LAYOUT = HIERARCHICAL), Snowflake writes all
+When you create a Snowflake-managed table that uses the hierarchical directory layout (PATH\_LAYOUT = HIERARCHICAL), Snowflake writes all
 Parquet data files by organizing them in a hierarchical directory structure under the `data/` directory that is based on transforms that
 you define when you create a
 table. For instructions on how to enable this layout, see [Partitioning with hierarchical paths](/user-guide/tables-iceberg-metadata#label-tables-iceberg-partitioning-hierarchical-paths). Snowflake writes all
@@ -498,7 +498,7 @@ STORAGE_BASE_URL
 This section describes the hierarchical layout for data and metadata directories for externally managed Iceberg tables that you
 create in a catalog-linked database.
 
-When you create an externally managed Iceberg table in a catalog-linked database that uses the default flat directory layout
+When you create an externally managed Iceberg table in a catalog-linked database that uses the hierarchical directory layout
 (PATH\_LAYOUT = HIERARCHICAL), Snowflake writes all
 Parquet data files by organizing them in a hierarchical directory structure under the `data/` directory that is based on transforms that you
 define when you create a table. For instructions on

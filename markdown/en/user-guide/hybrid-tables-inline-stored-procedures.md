@@ -153,7 +153,8 @@ CREATE [ OR REPLACE ] INLINE PROCEDURE <name> (
 
 Note
 
-When creating an Inline Stored Procedure in [SnowSQL](/user-guide/snowsql) or
+When creating an Inline Stored Procedure in [Snowflake CLI](/developer-guide/snowflake-cli/index),
+[SnowSQL](/user-guide/snowsql), or
 [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in), use `$$` as the string literal delimiter around the procedure body.
 
 When writing the procedure body:

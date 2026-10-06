@@ -13,6 +13,9 @@ You can also retry the notification binding by refreshing the replication group 
 
 For more information, see [Snowpipe](/user-guide/data-load-snowpipe-intro) and [Stage, pipe, and load history replication](/user-guide/account-replication-stages-pipes-load-history).
 
+If you configure multi-location resilience and need a replicated pipe that uses only Amazon Simple Queue Service (SQS) notifications to switch to the queue in a different region, use
+[SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe) instead.
+
 ## Syntax
 
 Copy code

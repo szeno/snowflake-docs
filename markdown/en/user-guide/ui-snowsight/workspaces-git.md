@@ -9,7 +9,7 @@ SQL editor. For more information, see [Defaulting accounts from Worksheets to Wo
 
 Workspaces can be local to Snowflake, or you can sync workspaces in development with a branch in a Git repository. In Workspaces, you can:
 
-- [Create a workspace that is connected to a Git repository](#label-create-a-git-workspace).
+- [Create a workspace that is connected to a Git repository](#label-create-a-git-workspace), including [from a URL with pre-filled fields](#label-create-a-git-workspace-from-a-url).
 - [Create a new branch](#label-create-a-new-branch), [switch branches](#label-switch-branches-workspace), or [fetch a remote branch](#label-fetch-remote-branches-workspace).
 - Pull the latest changes from your Git repository into your workspace.
 - [Track any added, updated, or deleted files](#label-view-updated-workspace-files).
@@ -64,6 +64,33 @@ To create a new Git-synced workspace, follow these steps:
    - **Public repository** - Select this option if you are using a public repository that doesn’t require authentication. Note that it isn’t
      possible to commit and push any changes from your workspace to this public repository.
 8. Select **Create**.
+
+### Open the create Git workspace dialog from a URL
+
+You can deep-link into Snowsight to open the **Create workspace from Git repository** dialog with fields pre-filled, instead of entering the repository details manually.
+
+To do this, append the following query parameters to your Snowsight URL:
+
+| Parameter | Description |
+| --- | --- |
+| `action` | (Required) Must be set to `create_workspace_from_git_repo`. |
+| `remoteUrl` | The URL of the Git repository (for example, `https://github.com/my-user/my-repo-name`). |
+| `workspaceName` | (Optional) The name for the new workspace. If omitted, Snowflake derives a name from `remoteUrl` when possible. |
+| `apiIntegration` | (Optional) The name of the API integration to use to connect to the repository. |
+| `authType` | (Optional) The authentication method to preselect: `OAUTH`, `PAT`, or `NONE`. |
+| `secretDatabase` | (Optional) The database that contains the secret for the personal access token. Used only when `authType` is `PAT`. |
+| `secretSchema` | (Optional) The schema that contains the secret for the personal access token. Used only when `authType` is `PAT`. |
+| `secretName` | (Optional) The name of the secret that contains the personal access token. Used only when `authType` is `PAT`. |
+
+Expand
+
+Show lessSee more
+
+For example:
+
+```
+https://app.snowflake.com/<organization>/<account>/#/workspaces?action=create_workspace_from_git_repo&remoteUrl=https%3A%2F%2Fgithub.com%2Fmy-user%2Fmy-repo-name&authType=PAT&secretDatabase=my_db&secretSchema=my_schema&secretName=my_secret
+```
 
 ### Update author details and credentials for a branch
 

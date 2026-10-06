@@ -11,7 +11,7 @@ You can upload data from the following locations:
 - An existing stage.
 
 You can upload up to 250 files at a time. Each file can be up to 250 MB.
-To load larger files, or a large number of files, use the [Snowflake CLI](/developer-guide/snowflake-cli/index) or [SnowSQL](/user-guide/snowsql) client.
+To load larger files, or a large number of files, use [Snowflake CLI](/developer-guide/snowflake-cli/index).
 For more information, see [Bulk loading from a local file system](/user-guide/data-load-local-file-system).
 
 ## Load data using Snowsight

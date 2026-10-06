@@ -7,6 +7,7 @@ following topics explain the syntax for altering notification integrations for d
 
 - [ALTER NOTIFICATION INTEGRATION (inbound from an Azure Event Grid topic)](/sql-reference/sql/alter-notification-integration-queue-inbound-azure)
 - [ALTER NOTIFICATION INTEGRATION (inbound from a Google Pub/Sub topic)](/sql-reference/sql/alter-notification-integration-queue-inbound-gcp)
+- [ALTER NOTIFICATION INTEGRATION (inbound from multiple queues)](/sql-reference/sql/alter-notification-integration-multi-queue)
 - [ALTER NOTIFICATION INTEGRATION (outbound to an Amazon SNS topic)](/sql-reference/sql/alter-notification-integration-queue-outbound-aws)
 - [ALTER NOTIFICATION INTEGRATION (outbound to an Azure Event Grid topic)](/sql-reference/sql/alter-notification-integration-queue-outbound-azure)
 - [ALTER NOTIFICATION INTEGRATION (outbound to a Google Pub/Sub topic)](/sql-reference/sql/alter-notification-integration-queue-outbound-gcp)

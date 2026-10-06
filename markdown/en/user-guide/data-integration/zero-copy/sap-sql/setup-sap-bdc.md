@@ -8,6 +8,8 @@ The Snowflake account must be Standard, Enterprise, or Business Critical edition
 AWS commercial or Azure commercial in a supported region as described in
 [Supported Cloud Regions](/user-guide/intro-regions).
 
+SAP® BDC Connect for Snowflake is not available for Snowflake trial accounts.
+
 For more information, see [Provisioning SAP Business Data Cloud Connect](https://help.sap.com/docs/business-data-cloud/administering-sap-business-data-cloud/provision-sap-business-data-cloud-connector-for-supported-external-systems).
 
 As an SAP® administrator, perform the following steps:

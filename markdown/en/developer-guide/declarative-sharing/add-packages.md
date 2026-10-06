@@ -11,7 +11,7 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 This topic applies only to Legacy Notebooks shared with `application_content.notebooks`. Notebooks
 shared in a workspace install their Python packages at run time with `!pip install`, so they don’t
@@ -20,7 +20,7 @@ need an `environment.yml` file or an Anaconda package list. For more information
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 The notebook environment includes a set of pre-installed Anaconda packages, such as Python and Streamlit.
 
@@ -46,7 +46,7 @@ To add packages while editing the notebook:
 2. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 3. In the navigation menu, select **Projects** » **Notebooks**.
 4. Open your notebook file.
-5. Make sure the notebook is in development mode. For information about development mode, see [Editing notebooks in a Declarative Native App](/developer-guide/declarative-sharing/live-editing).
+5. Make sure the notebook is in development mode. For information about development mode, see [Editing notebooks in a Declarative Share](/developer-guide/declarative-sharing/live-editing).
 6. Select the **Packages** button in the top center of the notebook editor.
 7. Search for the package you want to add, and select it.
 

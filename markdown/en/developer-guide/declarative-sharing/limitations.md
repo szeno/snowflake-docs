@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 Declarative sharing is a feature in Snowflake Native Apps that allows providers to quickly define and share objects across multiple
 databases using a simple YAML configuration file. While this feature significantly simplifies data sharing workflows, it has limitations
@@ -80,7 +80,7 @@ November 2026, Legacy Notebooks can no longer be run or edited. For the full tim
 Share [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview)
 in a workspace instead. Consumers can run and interact with those notebooks the same way, and a
 workspace can also share documentation, images, and sample data files. For more information, see
-[Share a workspace in a Declarative Native App](/developer-guide/declarative-sharing/workspaces).
+[Share a workspace in a Declarative Share](/developer-guide/declarative-sharing/workspaces).
 
 Read-only for consumers
 :   Consumers can’t edit provider notebooks in place, nor can they clone them.
@@ -137,7 +137,7 @@ Schemas for data objects and logic objects
 ## Monitoring
 
 Auditability
-:   Declarative Native Apps don’t provide monitoring resources (such as audit trails) to let the provider receive information from the consumer about how the shared data is being used. If a consumer has compliance or regulatory requirements that require auditing, the consumer must work with the provider to implement their own monitoring solutions.
+:   Declarative Shares don’t provide monitoring resources (such as audit trails) to let the provider receive information from the consumer about how the shared data is being used. If a consumer has compliance or regulatory requirements that require auditing, the consumer must work with the provider to implement their own monitoring solutions.
 
 ## Cortex Agents
 

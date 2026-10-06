@@ -1,18 +1,18 @@
-# Install a Declarative Native App
+# Install a Declarative Share
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-Snowflake Declarative Native Apps are databases that you can use to gain access to data and functionality shared by Snowflake data providers.
+Snowflake Declarative Shares are databases that you can use to gain access to data and functionality shared by Snowflake data providers.
 
-You can use Snowsight to install and access Declarative Native Apps, or you can use SQL commands to access the data directly.
+You can use Snowsight to install and access Declarative Shares, or you can use SQL commands to access the data directly.
 
 After you install an app, you can share it with other members of your organization.
 
 # Security
 
-Declarative Native Apps have a similar security model to secure data sharing:
+Declarative Shares have a similar security model to secure data sharing:
 
 - Apps only have access to the data included in the app.
 - Apps can’t access the consumer’s private data.
@@ -20,7 +20,7 @@ Declarative Native Apps have a similar security model to secure data sharing:
 
 ## Prerequisites
 
-To install a Declarative Native App, you must have a Snowflake account and a role with either of the following:
+To install a Declarative Share, you must have a Snowflake account and a role with either of the following:
 
 - The **ACCOUNTADMIN** role
 - A role with both **CREATE APPLICATION** and **IMPORT LISTING** privileges
@@ -30,7 +30,7 @@ To purchase a paid listing, the role must also have the **PURCHASE DATA EXCHANGE
 ### Grant installation privileges
 
 An ACCOUNTADMIN can allow members of the organization to install
-Declarative Native Apps by granting privileges to the member’s role,
+Declarative Shares by granting privileges to the member’s role,
 using the [GRANT privileges TO ROLE](/sql-reference/sql/grant-privilege) command:
 
 Copy code
@@ -42,7 +42,7 @@ GRANT IMPORT LISTING ON ACCOUNT TO ROLE <role_name>;
 
 ## Install an app
 
-Roles with installation privileges can install a Declarative Native App from the Snowflake Marketplace, or from a privately shared listing.
+Roles with installation privileges can install a Declarative Share from the Snowflake Marketplace, or from a privately shared listing.
 
 Snowflake MarketplaceFrom a privately shared listingFrom SQL
 
@@ -83,7 +83,7 @@ The user who installs the app is the app owner. The app owner and the ACCOUNTADM
 
 ## Share access to the app
 
-The app owner (or the ACCOUNTADMIN) can share access to the data and features in a Snowflake Declarative Native App
+The app owner (or the ACCOUNTADMIN) can share access to the data and features in a Snowflake Declarative Share
 with members of their organization by their organization role.
 
 They can share access to the entire app, or for some apps, they can share access to a subset of the data and features in the app, defined by app roles.
@@ -108,7 +108,7 @@ Sharing app access doesn’t share the ability to share app privileges with othe
 
 ### App roles: Share access to a portion of the data and features in an app
 
-Some Declarative Native Apps include app roles, which provide access to a subset of the data and features in an app. App owners can assign app roles to their organization roles. This grants members of the organization roles access to the data and features defined in the app roles.
+Some Declarative Shares include app roles, which provide access to a subset of the data and features in an app. App owners can assign app roles to their organization roles. This grants members of the organization roles access to the data and features defined in the app roles.
 
 1. List the available roles with the command: [SHOW APPLICATION ROLES](/sql-reference/sql/show-application-roles). For example:
 
@@ -135,4 +135,4 @@ Considerations:
 
 ## Access the app
 
-For information about using the app, see [Access content in a Declarative Native App](/developer-guide/declarative-sharing/consumer/access-app-content).
+For information about using the app, see [Access content in a Declarative Share](/developer-guide/declarative-sharing/consumer/access-app-content).

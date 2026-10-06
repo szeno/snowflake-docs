@@ -1,8 +1,8 @@
-# Declarative Native App command reference
+# Declarative Share command reference
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
 The following commands include new parameters to support creating and publishing application packages:
 
@@ -13,7 +13,7 @@ The following commands include new parameters to support creating and publishing
 ## CREATE APPLICATION PACKAGE
 
 The [CREATE APPLICATION PACKAGE](/sql-reference/sql/create-application-package)
-command supports a new optional parameter, `TYPE = DATA`, which specifies that the app will be a Declarative Native App.
+command supports a new optional parameter, `TYPE = DATA`, which specifies that the app will be a Declarative Share.
 
 ### Syntax
 
@@ -28,7 +28,7 @@ New optional parameter:
 `TYPE = [ DATA | NATIVE ]`
 :   Specifies which type of application package to create:
 
-    - `DATA`: indicates that the application package will contain a Declarative Native App.
+    - `DATA`: indicates that the application package will contain a Declarative Share.
     - `NATIVE`: indicates that the application package will contain a Snowflake Native App. This is the default value.
 
     After you specify an application package type, you cannot use ALTER APPLICATION PACKAGE to change the type later.
@@ -42,7 +42,7 @@ New optional parameter:
 ## ALTER APPLICATION PACKAGE
 
 The [ALTER APPLICATION PACKAGE](/sql-reference/sql/alter-application-package) command
-supports the following new optional parameters to support creating and publishing Declarative Native Apps. These new parameters are not supported for Snowflake Native Apps.
+supports the following new optional parameters to support creating and publishing Declarative Shares. These new parameters are not supported for Snowflake Native Apps.
 
 ### Syntax
 
@@ -94,7 +94,7 @@ If you iterate on the files after creating the live version, you’ll need to ma
 
 ### Existing parameters
 
-These parameters are supported for both Declarative Native Apps and Snowflake Native Apps.
+These parameters are supported for both Declarative Shares and Snowflake Native Apps.
 
 `<name>`
 :   Specifies the identifier for the application package.
@@ -178,9 +178,9 @@ This command requires a role with the OWNERSHIP privilege for the application pa
 
 The [GRANT IMPORTED PRIVILEGES](/sql-reference/sql/grant-privilege) command supports a new optional parameter, `ON APPLICATION <name>`.
 
-This command allows consumers to grant access to all of the data and views in a Declarative Native App to other members of their organization.
+This command allows consumers to grant access to all of the data and views in a Declarative Share to other members of their organization.
 
-This command can be used on any Declarative Native App, and does not require app roles to be defined for the application package.
+This command can be used on any Declarative Share, and does not require app roles to be defined for the application package.
 
 ### Access control requirements
 

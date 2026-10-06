@@ -6,6 +6,53 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 5, 2026
+
+### Control Plane Core 0.136.0
+
+- Endpoint management in Gen 2 Deployments now uses deployment-level role-based access control instead of a legacy security integration authorization.
+- Gen 2 Deployments can now be terminated even when there are Runtimes in unhealthy states present.
+- Forward connector task failure reasons to GS for improved diagnostics.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.136.0
+
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.95.0
+
+- Retire connector Terms of Service gating.
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.25.0
+
+- Show endpoint permission check failures and support retry.
+- Retire connector Terms of Service gating.
+- Security patches and dependency upgrades.
+
+### Runtime Operator 0.82.0
+
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.10.1-23
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.52.0
+
+- Improved reliability of Deployment provisioning and upgrades.
+- Security patches and dependency upgrades.
+
+### Openflow Token Refresher 1.21.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.69.0
+
+- Reduced overall CPU utilization on the EC2 Agent host.
+- Improved reliability of Deployment provisioning and upgrades.
+- Security patches and dependency upgrades.
+
 ## October 1, 2026
 
 ### Runtime Server 2026.10.1.11

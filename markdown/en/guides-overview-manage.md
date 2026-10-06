@@ -19,7 +19,8 @@ The following topics describe how to manage Snowflake organizations and accounts
     its Snowflake edition.
 
 [Connecting to your accounts](/user-guide/organizations-connect)
-:   Connect to accounts in your organization from SnowSQL, connectors, drivers, and through Snowsight.
+:   Connect to accounts in your organization from [Snowflake CLI](/developer-guide/snowflake-cli/index), connectors, drivers, and through
+    Snowsight.
 
 ## Organization accounts
 

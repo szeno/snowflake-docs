@@ -30,6 +30,7 @@ Where:
 >   FIRST_NAME = '<string>'
 >   MIDDLE_NAME = '<string>'
 >   LAST_NAME = '<string>'
+>   TYPE = { PERSON | SERVICE }
 >   COMMENT = '<string>'
 > ```
 
@@ -46,11 +47,10 @@ Where:
 `SET ...`
 :   Set object properties. For a description of the object properties, see [CREATE ORGANIZATION USER](/sql-reference/sql/create-organization-user).
 
-    The `TYPE` property isn’t included in the object properties that this command accepts. You choose whether an organization user is a
-    `PERSON` or a `SERVICE` user when you create it, and you can’t change the type afterward.
-
 `UNSET ...`
 :   Unset object properties. For a description of the object properties, see [CREATE ORGANIZATION USER](/sql-reference/sql/create-organization-user).
+
+    Unsetting the `TYPE` property makes the organization user a `PERSON` user, which is the default type.
 
 ## Access control requirements
 
@@ -70,11 +70,43 @@ For instructions on creating a custom role with a specified set of privileges, s
 For general information about roles and privilege grants for performing SQL actions on
 [securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
 
+## Usage notes
+
+- When you change the `TYPE` property of an organization user, Snowflake also changes the type of the corresponding user object in every
+  regular account that imported the organization user. This change also applies to existing users that were linked to the organization
+  user with [SYSTEM$LINK\_ORGANIZATION\_USER](/sql-reference/functions/system_link_organization_user). Administrators in a regular account can’t change the type of these
+  users.
+- The type of a user determines which authentication methods it can use. For example, a `SERVICE` user can’t authenticate with a
+  password, and you can’t set up [workload identity federation](/user-guide/workload-identity-federation) for a `PERSON` user. Before you
+  change the type of an organization user, make sure that the corresponding users in each regular account authenticate with a method that
+  the new type supports. For more information, see [Types of users](/user-guide/admin-user-management#label-user-management-types).
+
 ## Examples
+
+Change the email address of the organization user `alice`:
 
 Copy code
 
 ```
 ALTER ORGANIZATION USER alice
-  SET LOGIN_NAME = 'asmith';
+  SET EMAIL = 'asmith@example.com';
+```
+
+Change the organization user `report_loader` to a `SERVICE` user. The corresponding user object in each regular account that imported
+`report_loader` also becomes a `SERVICE` user:
+
+Copy code
+
+```
+ALTER ORGANIZATION USER report_loader
+  SET TYPE = SERVICE;
+```
+
+Change `report_loader` back to a `PERSON` user, which is the default type:
+
+Copy code
+
+```
+ALTER ORGANIZATION USER report_loader
+  UNSET TYPE;
 ```

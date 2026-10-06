@@ -2,9 +2,9 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-With Snowflake Declarative Native Apps, providers can share data products using a manifest-driven model. In many apps, secure views reference objects in other provider databases. In classic secure sharing, you (the provider) grant REFERENCE\_USAGE on each referenced database to the share. In Declarative Native Apps, you declare those dependency databases in the manifest using `required_databases`, thus ensuring that installs, especially in other regions, can resolve cross-database references reliably. This also applies to semantic views, user-defined functions (UDFs), or procedures used by secure views.
+With Snowflake Declarative Shares, providers can share data products using a manifest-driven model. In many apps, secure views reference objects in other provider databases. In classic secure sharing, you (the provider) grant REFERENCE\_USAGE on each referenced database to the share. In Declarative Shares, you declare those dependency databases in the manifest using `required_databases`, thus ensuring that installs, especially in other regions, can resolve cross-database references reliably. This also applies to semantic views, user-defined functions (UDFs), or procedures used by secure views.
 
 ## When to use required\_databases
 

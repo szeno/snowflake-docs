@@ -7,7 +7,7 @@ Currently, this feature is only available on Amazon Web Services (AWS) and Micro
 
 The following are known issues and limitations, with workarounds.
 
-### Postgres instance needs to be refreshed
+## Postgres instance needs to be refreshed
 
 [`create_mirror`](/user-guide/snowflake-postgres/postgres-data-mirroring-reference#create_mirror-parameters) can fail on an existing Postgres instance with an error similar to:
 
@@ -25,7 +25,7 @@ the latest extensions, then retry `create_mirror`. See
 [prepare your Postgres instance](/user-guide/snowflake-postgres/postgres-data-mirroring-create#step-1-prepare-your-postgres-instance)
 for details.
 
-### Mirror names are folded to lowercase
+## Mirror names are folded to lowercase
 
 Mirror names containing uppercase letters are folded to lowercase.
 
@@ -40,14 +40,14 @@ This call will succeed, but will silently fold the mirror name to `uppermirror`.
 **Solution:** Prefer lowercase characters in mirror names. For example, use `mymirror` instead
 of `MyMirror`.
 
-### Target database names can’t be reused
+## Target database names can’t be reused
 
 After a database has been used as a mirror target, the same name can’t be reused for a new mirror,
 even if the mirror is dropped and the database itself is dropped.
 
 **Solution:** Pick a new `target_database` name when creating a replacement mirror.
 
-### Active mirrors break if usage is revoked from the snowflake application
+## Active mirrors break if usage is revoked from the snowflake application
 
 Apply runs will fail with error `POSTGRES INSTANCE ... does not exist or not authorized` if
 the `USAGE` grant on the Postgres instance has been revoked from the `snowflake` application.
@@ -66,7 +66,7 @@ Copy code
 GRANT USAGE ON POSTGRES INSTANCE "my_instance" TO APPLICATION SNOWFLAKE;
 ```
 
-### Changing a column type on a mirrored table fails
+## Changing a column type on a mirrored table fails
 
 `ALTER TABLE ... ALTER COLUMN ... TYPE` is not supported on tables tracked by a mirror (see
 [DDL updates in $changes](/user-guide/snowflake-postgres/postgres-data-mirroring-query#ddl-updates-in-changes)). Postgres rejects the statement with an error:
@@ -80,7 +80,7 @@ DETAIL:  Table is tracked by snowflake_cdc publication "<mirror_name>".
 
 **Solution:** Build a new column in Postgres and migrate that data to the new type, instead of changing the column type.
 
-### Adding a virtual generated column to a mirrored table fails
+## Adding a virtual generated column to a mirrored table fails
 
 `ALTER TABLE ... ADD COLUMN ... GENERATED ALWAYS AS ...` is not supported on tables tracked by a
 mirror (see [DDL updates in $changes](/user-guide/snowflake-postgres/postgres-data-mirroring-query#ddl-updates-in-changes)). Postgres rejects the statement with an error:
@@ -95,7 +95,7 @@ DETAIL:  Table "<table_name>" is tracked by a snowflake_cdc publication. ALTER T
 **Solution:** To use a computed value alongside a mirrored table, create the equivalent expression as a view in
 Snowflake against the target table rather than as a generated column in Postgres.
 
-### CREATE MIRROR fails if max\_replication\_slots is too low
+## CREATE MIRROR fails if max\_replication\_slots is too low
 
 Each mirror uses one PostgreSQL replication slot. When the instance is close to the
 [`max_replication_slots`](/user-guide/snowflake-postgres/postgres-server-settings) limit, which defaults to 10, `CREATE MIRROR` fails with:
@@ -120,7 +120,7 @@ ALTER POSTGRES INSTANCE "my_instance"
     );
 ```
 
-### Mirroring setup fails on newly created Snowflake accounts
+## Mirroring setup fails on newly created Snowflake accounts
 
 On newly created Snowflake accounts, the `snowflake` application might not be fully provisioned
 immediately. Attempting to grant the
@@ -135,7 +135,7 @@ SQL compilation error: Application role 'SNOWFLAKE.POSTGRES_MIRROR_ADMIN' does n
 
 **Solution:** Wait up to one hour after account creation before setting up mirroring.
 
-### Dropping the source Postgres database fails while mirrors are active
+## Dropping the source Postgres database fails while mirrors are active
 
 Postgres blocks dropping a database that has active `snowflake_cdc` replication slots:
 
@@ -148,7 +148,7 @@ HINT:  Drop the snowflake_cdc mirrors and publications in database "<database_na
 
 **Solution:** Drop all mirrors on the database using [`drop_mirror`](/user-guide/snowflake-postgres/postgres-data-mirroring-manage#drop-a-mirror), then drop the database.
 
-### Renaming the source database causes mirrors to fail
+## Renaming the source database causes mirrors to fail
 
 Renaming the source Postgres database on a mirrored instance is not supported. Doing
 so will cause existing mirrors to fail.
@@ -156,7 +156,7 @@ so will cause existing mirrors to fail.
 **Solution:** If you need to rename the database, drop existing mirrors first,
 rename the database, then create new mirrors.
 
-### Mirror re-snapshots all tables after a WAL-lag spike
+## Mirror re-snapshots all tables after a WAL-lag spike
 
 If the Snowflake apply procedure falls behind and the write-ahead log (WAL) backlog grows beyond
 [`max_slot_wal_keep_size`](/user-guide/snowflake-postgres/postgres-server-settings), Postgres invalidates the replication slot to prevent the instance

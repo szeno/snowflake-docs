@@ -2,9 +2,9 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-As a provider, you can enhance the consumer experience by including application roles in your Declarative Native App. An application role is a credential created within the context of a Declarative Native App. For information about application roles, see [About application roles](/developer-guide/native-apps/creating-setup-script#label-native-apps-app-roles-about).
+As a provider, you can enhance the consumer experience by including application roles in your Declarative Share. An application role is a credential created within the context of a Declarative Share. For information about application roles, see [About application roles](/developer-guide/native-apps/creating-setup-script#label-native-apps-app-roles-about).
 
 Application roles isolate security for the application, so that the application’s specific security credentials don’t need to be managed within the consumer’s broader organizational security model. Using application roles, providers can control access to application resources simply. Consumer accounts can then grant access to application logic and data using simple SQL `GRANT` statements.
 

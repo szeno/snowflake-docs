@@ -54,7 +54,7 @@ We currently support PL/PgSQL.
 | Cron | Functions | Create scheduled tasks | `CREATE EXTENSION pg_cron;` |
 | Crypto | Functions | Functions for encrypting data inside columns | `CREATE EXTENSION pgcrypto;` |
 | Cube | Data type | Data type for multi-dimensional cubes | `CREATE EXTENSION cube;` |
-| DDL Extractor | Functions | DDL eXtractor functions | `CREATE EXTENSION ddlx;` |
+| DDL Extractor | Functions | DDL extractor functions | `CREATE EXTENSION ddlx;` |
 | dict-int | Dictionaries | Full text search dictionary template for integers | `CREATE EXTENSION dict_int;` |
 | dict-xsyn | Dictionaries | Full text search dictionary template for extended synonym processing | `CREATE EXTENSION dict_xsyn;` |
 | Earth Distance | Functions | Functions that assist with computing the distance between points. | `CREATE EXTENSION earthdistance;` |

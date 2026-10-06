@@ -191,8 +191,7 @@ Show lessSee more
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | [Snowsight](/user-guide/ui-snowsight), the next-generation SQL worksheet for advanced query development, data analysis, and visualization. | ✔ | ✔ | ✔ | ✔ |
-| [Snowflake CLI](/developer-guide/snowflake-cli/index), Open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations, including querying, executing DDL/DML commands, and bulk loading/unloading of data. | ✔ | ✔ | ✔ | ✔ |
-| [SnowSQL](/user-guide/snowsql), a command line client for building/testing queries, loading/unloading bulk data, and automating DDL operations. | ✔ | ✔ | ✔ | ✔ |
+| [Snowflake CLI](/developer-guide/snowflake-cli/index), an open-source command-line tool for developing, deploying, and managing Snowflake applications and workloads. It supports developer workflows for Snowpark, Streamlit in Snowflake, Snowflake Native Apps, Snowpark Container Services, notebooks, Git repositories, and data pipelines, including dbt and DCM projects, in addition to executing SQL and managing Snowflake objects and stages. | ✔ | ✔ | ✔ | ✔ |
 | [SnowCD](/user-guide/snowcd), a command line diagnostic tool for identifying and fixing client connectivity issues. | ✔ | ✔ | ✔ | ✔ |
 | Programmatic interfaces for [Python](/developer-guide/python-connector/python-connector), [Spark](/user-guide/spark-connector), [Node.js](/developer-guide/node-js/nodejs-driver), [.NET](/developer-guide/dotnet/dotnet-driver), [PHP](/developer-guide/php-pdo/php-pdo-driver), and [Go](/developer-guide/golang/go-driver). | ✔ | ✔ | ✔ | ✔ |
 | Native support for [JDBC](/developer-guide/jdbc/jdbc) and [ODBC](/developer-guide/odbc/odbc). | ✔ | ✔ | ✔ | ✔ |

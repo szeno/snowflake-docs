@@ -84,6 +84,20 @@ To specify the data retention period for Time Travel:
   may change the effective data retention time. When this parameter is set at the account level, the effective minimum data retention
   period for an object is determined by MAX(DATA\_RETENTION\_TIME\_IN\_DAYS, MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS).
 
+#### Example: When historical data leaves Time Travel
+
+The retention period for a piece of historical data starts when that data is changed or dropped, not when the object was created. Each
+change has its own end time:
+
+```
+End of Time Travel = time of the change + data retention period
+```
+
+For example, a permanent table has a 1-day retention period, and you update a row on Day 5 at 1:00 PM:
+
+- Until Day 6 at 1:00 PM, you can use Time Travel to query the row as it was before the update.
+- After Day 6 at 1:00 PM, that version of the row moves into Fail-safe for 7 days. During that time, only Snowflake can recover it.
+
 ### Limitations
 
 When using Time Travel, the following object types are not cloned:

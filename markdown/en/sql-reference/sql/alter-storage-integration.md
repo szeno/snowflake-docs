@@ -13,6 +13,7 @@ Copy code
 ALTER [ STORAGE ] INTEGRATION [ IF EXISTS ] <name> SET
   [ cloudProviderParams ]
   [ ENABLED = { TRUE | FALSE } ]
+  [ ACTIVE = '<storage_location_name>' ]
   [ STORAGE_ALLOWED_LOCATIONS = ('<cloud>://<bucket>/<path>/' [ , '<cloud>://<bucket>/<path>/' ... ] ) ]
   [ STORAGE_BLOCKED_LOCATIONS = ('<cloud>://<bucket>/<path>/' [ , '<cloud>://<bucket>/<path>/' ... ] ) ]
   [ COMMENT = '<string_literal>' ]
@@ -65,6 +66,18 @@ Where:
         >   normally.
         > - `FALSE` prevents users from creating new stages that reference this integration. Existing stages that reference this integration
         >   cannot access the storage location in the stage definition.
+
+    `ACTIVE = 'storage_location_name'`
+    :   Specifies the active storage location of a Multi-Location Storage Integration (MLSI) in the current account. Stages that use the
+        MLSI resolve their `RELATIVE_URL` against the active location. The value must match the `NAME` of a location in the integration’s
+        `STORAGE_LOCATIONS` list exactly, including case. To see the location names, run [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration).
+
+        You can set `ACTIVE` only on an MLSI, and you can’t unset it. Changing `ACTIVE` doesn’t rebind the auto-ingest pipes on stages
+        that use the MLSI. After you change it, rebind them: for pipes that use a Multi-Queue Notification Integration (MQNI), set the
+        MQNI’s active queue, as described in [ALTER NOTIFICATION INTEGRATION (inbound from multiple queues)](/sql-reference/sql/alter-notification-integration-multi-queue). For auto-ingest pipes
+        on Amazon S3 that use only Amazon Simple Queue Service (SQS) notifications, with no Amazon Simple Notification Service (SNS) topic and no MQNI, call
+        [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe). For more information, see
+        [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
 
     `STORAGE_ALLOWED_LOCATIONS = ( 'cloud_specific_url' )`
     :   Explicitly limits external stages that use the integration to reference one or more storage locations (Amazon S3, Google Cloud Storage, or
@@ -199,6 +212,11 @@ Where:
 
 ## Usage notes
 
+- In a secondary account, such as the target account before a failover or the source account before a failback, a replicated MLSI
+  is read-only, except that you can set its active location. Set only `ACTIVE` in the
+  statement. On a replica, an `ALTER STORAGE INTEGRATION` statement that sets any other property fails with the error
+  `Cannot ALTER STORAGE integration "<name>" because it is a read-only secondary.`
+
 Regarding metadata:
 
 > Attention
@@ -213,4 +231,12 @@ Copy code
 
 ```
 ALTER STORAGE INTEGRATION myint SET ENABLED = TRUE;
+```
+
+The following example sets the active storage location of the MLSI `my_mlsi` to the location named `my-s3-us-east-1`:
+
+Copy code
+
+```
+ALTER STORAGE INTEGRATION my_mlsi SET ACTIVE = 'my-s3-us-east-1';
 ```

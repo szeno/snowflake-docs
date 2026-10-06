@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 A runtime hosts your data integration flows within a deployment: connectors and custom flow definitions. Each runtime is isolated for security and resource
 control, and can scale from one node up to fifty to handle varying data volumes.

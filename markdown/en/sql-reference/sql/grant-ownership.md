@@ -184,6 +184,25 @@ GRANT OWNERSHIP
   - Machine learning objects (that is, models, model versions, and model monitors).
   - `SERVICE`
   - `SHARE`
+- `GRANT OWNERSHIP ON FUTURE ... IN SCHEMA` is not supported for every object type. The following types return an error:
+
+  - `AUTHENTICATION POLICIES`
+  - `EXPERIMENTS`
+  - `GATEWAYS`
+  - `NOTEBOOKS`
+  - `PASSWORD POLICIES`
+  - `PRIVACY POLICIES`
+  - `SNAPSHOT POLICIES`
+  - `SNAPSHOT SETS`
+  - `STREAMLITS`
+  - `SERVICES`
+
+  `ON FUTURE ... IN SCHEMA` is supported for `TABLES`, `INTERACTIVE TABLES`, `VIEWS`, `MATERIALIZED VIEWS`,
+  `EXTERNAL TABLES`, `DYNAMIC TABLES`, `EVENT TABLES`, `FILE FORMATS`, `FUNCTIONS`, `PROCEDURES`, `SEQUENCES`,
+  `STREAMS`, `TASKS`, `STAGES`, `SECRETS`, `SEMANTIC VIEWS`, `NETWORK RULES`, `ALERTS`, `TYPES`, `AGENTS`,
+  `CORTEX SEARCH SERVICES`, `CONTACTS`, `DATA METRIC FUNCTIONS`, `DBT PROJECTS`, `GIT REPOSITORIES`,
+  `ICEBERG TABLES`, `IMAGE REPOSITORIES`, `MCP SERVERS`, `MODELS`, `ONLINE FEATURE TABLES`, `PIPES`, and
+  `WORKSPACES`.
 - The GRANT OWNERSHIP statement is blocked if outbound (that is, dependent) privileges exist on the object. The object owner (or a higher role)
   can explicitly copy all current privileges to the new owning role (using the `COPY CURRENT GRANTS` option) or revoke all outbound
   privileges on the object before transferring ownership (using the `REVOKE CURRENT GRANTS` option).
@@ -197,8 +216,7 @@ GRANT OWNERSHIP
 
   Snowflake prevents the GRANT OWNERSHIP … REVOKE CURRENT GRANTS command on a shared database. For details, see the [Shared database](#shared-database)
   example in this topic.
-- The transfer of ownership only affects existing objects at the time the command is issued. Any objects created after the command is
-  issued are owned by the role in use when the object is created.
+- Transferring ownership of objects that already exist affects only those objects. Objects created later are owned by the role in use when they’re created. A future ownership grant (`GRANT OWNERSHIP ON FUTURE`) applies to objects of that type that are created after the grant.
 - Transferring ownership of objects of the following types is blocked unless additional conditions are met:
 
   Pipes:

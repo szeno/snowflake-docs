@@ -211,9 +211,14 @@ Account replication supports the replication of integrations for the following f
   external functions. For more information, see [Updating the remote service for API integrations](/user-guide/account-replication-config#label-update-remote-service-for-api-integrations).
 - Notification integrations of the following types:
 
-  - TYPE = EMAIL
-  - TYPE = QUEUE with DIRECTION = OUTBOUND
-  - TYPE = WEBHOOK
+  - `TYPE = EMAIL`
+  - `TYPE = QUEUE` with `DIRECTION = OUTBOUND`
+  - `TYPE = WEBHOOK`
+  - `TYPE = MULTI_QUEUE` with `DIRECTION = INBOUND`
+
+  After you replicate a Multi-Queue Notification Integration, you must grant Snowflake permission to access the queue that you want to use
+  in the target account, and then set that queue as active. For more information, see
+  [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
 - Storage integrations.
 
   When you replicate a storage integration, you must establish a new trust relationship for your cloud storage in the target
@@ -543,7 +548,7 @@ If either of the following conditions is true, Snowflake displays an error messa
 - A primary replication or failover group with any [object types](/sql-reference/sql/create-replication-group#label-create-replication-group-object-types) is in a
   Business Critical (or higher) account and a signed business associate agreement is in place to store PHI data in the account per HIPAA
   and [HITRUST CSF](/user-guide/intro-cloud-platforms#label-hitrust-csf-cert) regulations. However, no such agreement is in place for one or more of the accounts
-  enabled for replication, regardless if they are Business Critical (or higher) accounts.
+  enabled for replication, regardless of whether they are Business Critical (or higher) accounts.
 
 This behavior is implemented in an effort to help prevent account administrators for Business Critical (or higher) accounts from
 inadvertently replicating sensitive data to accounts on lower editions.

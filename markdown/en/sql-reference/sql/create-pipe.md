@@ -122,13 +122,17 @@ For internal stages, using this parameter to automatically load data is only sup
     Amazon Simple Queue Service (SQS) queue to the specified SNS topic. The pipe copies files to the ingest queue triggered by event
     notifications via the SNS topic. For more information, see [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
-`INTEGRATION = 'string'`
-:   Required only when configuring AUTO\_INGEST for Google Cloud Storage or Microsoft Azure external stages.
+    You can’t specify both `AWS_SNS_TOPIC` and `INTEGRATION` for an Amazon S3 stage.
 
-    Specifies the existing notification integration used to access the storage queue. For more information, see:
+`INTEGRATION = 'string'`
+:   Required only when configuring `AUTO_INGEST` for Google Cloud Storage or Microsoft Azure external stages, or for an Amazon S3 external stage when the pipe uses a Multi-Queue Notification Integration.
+
+    Specifies the existing notification integration used to access the storage queue. For an Amazon S3 stage, specify a
+    Multi-Queue Notification Integration, and don’t specify `AWS_SNS_TOPIC`. For more information, see:
 
     - [Automating Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
     - [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
+    - [Create a Multi-Queue Notification Integration for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-mqni-scenario-a)
 
     The integration name must be typed in all uppercase.
 

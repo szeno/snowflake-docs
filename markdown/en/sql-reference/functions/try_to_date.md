@@ -92,4 +92,24 @@ SELECT
 +------------+--------------+
 ```
 
+The following example uses the optional `format` argument. The first string matches the
+specified format, so it is converted to a date. The second string doesn’t match the format,
+so the function returns NULL:
+
+Copy code
+
+```
+SELECT
+  TRY_TO_DATE('05/10/2024', 'MM/DD/YYYY') AS matching_format,
+  TRY_TO_DATE('2024-05-10', 'MM/DD/YYYY') AS non_matching_format;
+```
+
+```
++-----------------+---------------------+
+| MATCHING_FORMAT | NON_MATCHING_FORMAT |
+|-----------------+---------------------|
+| 2024-05-10      | NULL                |
++-----------------+---------------------+
+```
+
 See [TO\_DATE , DATE](/sql-reference/functions/to_date) for examples that convert an input expression to a date.

@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 [Workload Identity Federation](/user-guide/workload-identity-federation-outbound) (WIF) lets an Openflow runtime
 authenticate to external cloud services on Amazon Web Services (AWS), Microsoft Azure, and Google Cloud without storing

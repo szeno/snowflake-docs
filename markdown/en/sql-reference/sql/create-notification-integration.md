@@ -14,6 +14,7 @@ following topics explain the syntax for creating notification integrations for d
 - [CREATE NOTIFICATION INTEGRATION (outbound to a Google Pub/Sub topic)](/sql-reference/sql/create-notification-integration-queue-outbound-gcp)
 - [CREATE NOTIFICATION INTEGRATION (email)](/sql-reference/sql/create-notification-integration-email)
 - [CREATE NOTIFICATION INTEGRATION (webhooks)](/sql-reference/sql/create-notification-integration-webhooks)
+- [Create a Multi-Queue Notification Integration for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-mqni-scenario-a)
 
 See also:
 :   [ALTER NOTIFICATION INTEGRATION](/sql-reference/sql/alter-notification-integration) , [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) , [DROP INTEGRATION](/sql-reference/sql/drop-integration) , [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations)

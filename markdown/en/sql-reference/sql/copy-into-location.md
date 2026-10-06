@@ -558,7 +558,7 @@ The specified delimiter must be a valid UTF-8 character and not a random sequenc
 :   String that specifies the extension for files unloaded to a stage. Accepts any extension. The user is responsible for specifying a valid file extension that can be read by the desired software or
     service.
 
-    Default: null, meaning the file extension is determined by the format type (e.g. `.csv[compression]`), where `compression` is the extension added by the compression method, if
+    Default: null, meaning the file extension is determined by the format type (e.g. `.json[compression]`), where `compression` is the extension added by the compression method, if
     `COMPRESSION` is set.
 
 ## TYPE = PARQUET
@@ -634,7 +634,7 @@ You can specify one or more of the following copy options (separated by blank sp
 
 `MAX_FILE_SIZE = num`
 :   Definition:
-    :   Specifies the maximum size (in bytes) of each file to be generated in parallel per thread.
+    :   Specifies the target maximum size (in bytes) of each file to be generated in parallel per thread.
         Snowflake utilizes parallel execution to optimize performance. The number of threads can’t be modified.
 
         Note
@@ -644,8 +644,7 @@ You can specify one or more of the following copy options (separated by blank sp
         - The warehouse size and available resources.
         - The number of concurrent queries running on the warehouse.
 
-        MAX\_FILE\_SIZE sets an upper limit but does not guarantee that files reach this size. Files might be smaller than
-        the specified MAX\_FILE\_SIZE when memory constraints require earlier file completion.
+        `MAX_FILE_SIZE` doesn’t enforce a hard cap. Snowflake tries to keep each unloaded file at or below the size you set, but a file can be smaller when memory constraints require earlier completion. A file can also be slightly larger than that size, including when you set `MAX_FILE_SIZE` to the maximum of 5368709120 (5 GB). A storage provider that enforces a strict size limit can reject a file that exceeds the provider’s limit. If that happens, set `MAX_FILE_SIZE` to a value slightly smaller than the provider’s size limit.
 
         The COPY command unloads one set of table rows at a time. If you set a very small `MAX_FILE_SIZE` value (for example, less than 1 MB), the amount of data in a set of rows could exceed the specified size.
 

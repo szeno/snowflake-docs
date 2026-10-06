@@ -2,22 +2,22 @@
 
 Feature — Generally Available
 
-Support for Snowflake Declarative Native Apps is available to all accounts.
+Support for Snowflake Declarative Shares is available to all accounts.
 
-When you install a Declarative Native App as a consumer, the Native App Framework isolates the app’s data access and code execution in a controlled environment, preventing the app from accessing data or otherwise affecting resources in the consumer account.
+When you install a Declarative Share as a consumer, the Native App Framework isolates the app’s data access and code execution in a controlled environment, preventing the app from accessing data or otherwise affecting resources in the consumer account.
 
-The Native App Framework enforces sandbox-style security boundaries for Declarative Native Apps, so that the app can only
+The Native App Framework enforces sandbox-style security boundaries for Declarative Shares, so that the app can only
 access data included in the app package. This ensures that the app cannot access any other data, code resources, or system resources in the consumer account, providing a secure environment for running the app, and protecting the consumer’s assets.
 
-The security boundaries for Declarative Native Apps are more restrictive than those for Native App Framework apps, which can access additional resources in the consumer account when given the appropriate permissions.
+The security boundaries for Declarative Shares are more restrictive than those for Native App Framework apps, which can access additional resources in the consumer account when given the appropriate permissions.
 
-## Embedded code objects in Declarative Native Apps
+## Embedded code objects in Declarative Shares
 
-Declarative Native Apps support Snowflake Notebooks as embedded code objects. Providers
+Declarative Shares support Snowflake Notebooks as embedded code objects. Providers
 share notebooks in a [workspace](/developer-guide/declarative-sharing/workspaces). Sharing
 individual notebooks with `application_content.notebooks` is deprecated.
 
-Currently, Declarative Native Apps can’t use other types of code resources for logic, such as Streamlits, stored procedures, or UDFs. The embedded code objects in a Declarative Native App can only do the following:
+Currently, Declarative Shares can’t use other types of code resources for logic, such as Streamlits, stored procedures, or UDFs. The embedded code objects in a Declarative Share can only do the following:
 
 - Access data or code objects from inside the app package.
 - Run queries, visualizations, and functions on the tables and views exposed by the app package. The app has SELECT access to these tables, views, and functions.

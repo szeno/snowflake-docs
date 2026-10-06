@@ -122,6 +122,7 @@ To view these columns, you must use a role with the MONITOR privilege. Otherwise
 | LAST\_COMPLETED\_REFRESH\_STATE\_CODE | TEXT | Code representing the current state of the refresh.  If the LAST\_COMPLETED\_REFRESH\_STATE is FAILED, this column shows the error code associated with the failure. |
 | LAST\_COMPLETED\_REFRESH\_STATE\_MESSAGE | TEXT | Description of the current state of the refresh.  If the LAST\_COMPLETED\_REFRESH\_STATE is FAILED, this column shows the error message associated with the failure. |
 | EXECUTING\_REFRESH\_QUERY\_ID | TEXT | If present, this represents the query ID of the refresh job. If null, there is no refresh job in progress. |
+| RECOMMENDATIONS | OBJECT | If present, this represents the recommendations detected by [Dynamic Tables Insights](/user-guide/dynamic-tables/insights). |
 
 Expand
 

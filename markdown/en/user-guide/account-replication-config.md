@@ -800,6 +800,10 @@ See the following pages for more information:
 - [Configure an integration for Google Cloud Storage](/user-guide/data-load-gcs-config)
 - [Configuring a Snowflake storage integration for Azure](/user-guide/data-load-azure-config#label-configuring-azure-storage-integration)
 
+If the storage integration is a Multi-Location Storage Integration, grant the replicated integration access only to the storage location that you plan to
+set as active in the target account. Don’t change the access for the location that’s active in your source account. For more information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
 ## Configure automated refresh for directory tables on secondary stages
 
 If you replicate an external stage with a directory table, and you have configured automated refresh for the source directory table,
@@ -832,17 +836,23 @@ Important
 You must take additional steps to configure cloud notifications for secondary auto-ingest pipes before failover.
 This section covers why this additional configuration is required, and how to complete it for each supported cloud provider.
 
+The steps in this section apply to a pipe that reads from a single storage location. To let a pipe fail over to a storage location in
+another region or on another cloud provider, use a Multi-Location Storage Integration. To redirect the pipe’s notifications, use a Multi-Queue Notification Integration. If both storage locations are on Amazon S3 and the pipe uses
+only Amazon SQS notifications, you can instead call [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe) once for each existing pipe during setup. Pipes that you create later bind automatically when they replicate. For more information, see
+[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+
 ### Amazon S3
 
 The configuration process depends on how you set up event notifications. For example,
 suppose you have an auto-ingest pipe that relies on an Amazon Simple Notification Service (SNS) topic
 to publish messages about the Snowflake stage location.
 
-When you replicate the pipe to a target account, Snowflake automatically creates a new Amazon Simple Queue Service (SQS) queue.
+When you replicate the pipe to a target account, Snowflake binds the replica to a Snowflake-managed Amazon Simple Queue Service (SQS) queue
+in that account, and creates the queue if none is available in the bucket’s region.
 You must subscribe this SQS queue for your target account to the SNS topic to get notifications about the stage location.
 
 - If you use Amazon S3 Event Notifications with Amazon Simple Queue Service (SQS),
-  follow the instructions in [Step 4: Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs).
+  follow the instructions in [Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs) in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
   Important
 

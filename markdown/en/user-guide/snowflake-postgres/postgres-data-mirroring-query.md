@@ -109,7 +109,7 @@ You can query `$changes` directly to build pipelines, audit trails, or point-in-
 
 ### Snapshotting
 
-When a table is **added to a mirror for the first time,** whether by creating the mirror, adding a table explicitly, or creating a new table inside a schema that is already mirrored, the mirror needs a full baseline copy of any existing rows before the change feed can start. During this period the table shows as `SNAPSHOTTING` in `list_mirrored_tables`. No changes are lost; the feed starts automatically once the copy completes.
+When a table is **added to a mirror for the first time**, whether by creating the mirror, adding a table explicitly, or creating a new table inside a schema that is already mirrored, the mirror needs a full baseline copy of any existing rows before the change feed can start. During this period the table shows as `SNAPSHOTTING` in `list_mirrored_tables`. No changes are lost; the feed starts automatically once the copy completes.
 
 Adding a table triggers its initial snapshot. Recovery operations, such as restarting a mirror
 after unapplied operations age out, can trigger a later re-snapshot.

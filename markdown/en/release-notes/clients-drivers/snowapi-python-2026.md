@@ -8,6 +8,17 @@ This article contains the release notes for the Snowflake Python APIs, including
 
 See [Snowflake Python APIs: Managing Snowflake objects with Python](/developer-guide/snowflake-python-api/snowflake-python-overview) for documentation.
 
+## Version 1.13.2 (Sep 24, 2026)
+
+### New features and updates
+
+- None.
+
+### Bug fixes
+
+- `simple_file_logging` now creates its log file with owner-only permissions. It won’t write to a symlink or to a file owned by another user, and it raises `PermissionError` in those cases.
+- Each `Root` now connects using the TLS, proxy, and connection pool settings of its own `Configuration`, rather than those of the first `Configuration` used in the process. Connections are still shared between configurations whose settings match. `SSL_CERT_FILE` and `HTTPS_PROXY` continue to take precedence over `Configuration`.
+
 ## Version 1.13.1 (Aug 12, 2026)
 
 ### New features and updates

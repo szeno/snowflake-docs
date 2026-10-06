@@ -63,6 +63,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$ENFORCE\_PRIVATELINK\_ACCESS\_ONLY](/sql-reference/functions/system_enforce_privatelink_access_only) |  |
 | [SYSTEM$FINISH\_OAUTH\_FLOW](/sql-reference/functions/system_finish_oauth_flow) |  |
 | [SYSTEM$GLOBAL\_ACCOUNT\_SET\_PARAMETER](/sql-reference/functions/system_global_account_set_parameter) |  |
+| [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe) |  |
 | [SYSTEM$INITIATE\_MOVE\_ORGANIZATION\_ACCOUNT](/sql-reference/functions/system_initiate_move_organization_account) |  |
 | [SYSTEM$ISSUE\_PER\_ACCOUNT\_APP\_SERVICE\_CERTIFICATE](/sql-reference/functions/system_issue_per_account_app_service_certificate) |  |
 | [SYSTEM$ISSUE\_PER\_ACCOUNT\_CERTIFICATES](/sql-reference/functions/system_issue_per_account_certificates) |  |
