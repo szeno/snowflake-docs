@@ -14,6 +14,8 @@ Managed settings are read from a JSON file placed in a platform-specific system 
 
 Administrators typically deploy the managed settings file using MDM tools (Jamf, Intune, SCCM), configuration management systems (Ansible, Chef, Puppet), or manual deployment during device provisioning.
 
+To make account, authentication, and version controls tamper-resistant, deliver them as keys in an MDM profile rather than only in this file. For more information, see [Enforce CoCo policy with MDM](/user-guide/cortex-code/mdm-policy).
+
 ## File locations
 
 Place the `managed-settings.json` file in the following system directory for your operating system:

@@ -133,6 +133,7 @@ Objects that are *not* supported for replication are skipped during replication 
 |  | Data movement rules | ✔ |  |
 |  | Column-level Security (masking) | ✔ | For masking, row access, and tag-based masking policies, see [policy replication considerations](/user-guide/database-replication-considerations#label-database-replication-considerations-masking-row-policies). |
 |  | Join policies | ✔ |  |
+|  | Multi-party Approval policies |  | Supported for replication and failover groups only. Not supported for database replication. For more information, see [Database replication and security objects](/user-guide/database-replication-considerations#label-db-replication-considerations-security-policies). |
 |  | Password policies | ✔ |  |
 |  | Privacy policies | ✔ | For more information, see [Privacy policies](/user-guide/account-replication-considerations#label-account-replication-considerations-privacy-policy). |
 |  | Projection policies | ✔ |  |
@@ -218,7 +219,7 @@ Account replication supports the replication of integrations for the following f
 
   After you replicate a Multi-Queue Notification Integration, you must grant Snowflake permission to access the queue that you want to use
   in the target account, and then set that queue as active. For more information, see
-  [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+  [Point your target account at your secondary location](/user-guide/multi-location-resilience-data-pipelines-setup-target-account#label-mlsi-target-setup) in [Configure your target account for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-target-account).
 - Storage integrations.
 
   When you replicate a storage integration, you must establish a new trust relationship for your cloud storage in the target

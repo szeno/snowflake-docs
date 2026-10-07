@@ -37,15 +37,26 @@ SNOWFLAKE.CORE.GET_LINEAGE(
 :   Name of the object for which data lineage information is retrieved. Use the fully qualified name if the object is in a
     schema different from the current schema in the session.
 
+    Specify a storage integration by its unqualified name, because integrations are account-level objects.
+
 `'object_domain'`
 :   The domain of the object. Supported domains are ‘COLUMN’, ‘TABLE’ (which includes all table-like objects including
-    views and dynamic tables), ‘SEMANTIC\_VIEW’ (for [semantic views](/user-guide/views-semantic/overview)), ‘STAGE’, and
-    ‘CORTEX\_AGENT’ (for [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents)).
+    views and dynamic tables), ‘SEMANTIC\_VIEW’ (for [semantic views](/user-guide/views-semantic/overview)), ‘STAGE’,
+    ‘INTEGRATION’ (for [storage integrations](/sql-reference/sql/create-storage-integration)), ‘STREAM’, ‘TASK’,
+    ‘TASK\_GRAPH’, ‘CORTEX\_SEARCH\_SERVICE’
+    (for [Cortex Search services](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)), ‘MODEL MONITOR’ (for
+    [model monitors](/developer-guide/snowflake-ml/model-registry/model-observability)), and ‘CORTEX\_AGENT’ (for
+    [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents)).
+
+    Specify an external table as ‘TABLE’. The output reports its domain as ‘EXTERNAL\_TABLE’.
+
+    Specify a model monitor as ‘MODEL MONITOR’, with a space rather than an underscore. This is the same value that the
+    output reports for a model monitor.
 
     Specify an agent as ‘CORTEX\_AGENT’. ‘AGENT’ isn’t a valid domain, even though the object type is displayed as **Agent**
     in Snowsight.
 
-    For ML lineage, use *TABLE* for feature views (which are dynamic tables and views internally), ‘DATASET’, or ‘MODULE’ for
+    For ML lineage, use *TABLE* for feature views (which are dynamic tables and views internally), ‘DATASET’, or ‘MODEL’ for
     models.
 
     To retrieve lineage for an object that isn’t in Snowflake, use ‘EXTERNAL’, or ‘EXTERNAL\_COLUMN’ for a column of such an
@@ -90,14 +101,14 @@ Relationships are between objects designated as source and target in each row. T
 | `SOURCE_OBJECT_DATABASE` | VARCHAR | The database that contains the source object. |
 | `SOURCE_OBJECT_SCHEMA` | VARCHAR | The schema that contains the source object. |
 | `SOURCE_OBJECT_NAME` | VARCHAR | The unqualified name of the source object. |
-| `SOURCE_OBJECT_DOMAIN` | VARCHAR | The domain of the target object. Possible values are ‘COLUMN’, ‘TABLE’, ‘SEMANTIC\_VIEW’, ‘DATASET’, ‘MODULE’ (for ML models), ‘STAGE’, and ‘CORTEX\_AGENT’. |
+| `SOURCE_OBJECT_DOMAIN` | VARCHAR | The domain of the source object. Possible values include ‘COLUMN’, ‘TABLE’, ‘EXTERNAL\_TABLE’, ‘SEMANTIC\_VIEW’, ‘DATASET’, ‘MODEL’ (for ML models), ‘MODEL MONITOR’, ‘STAGE’, ‘INTEGRATION’, ‘STREAM’, ‘TASK’, ‘TASK\_GRAPH’, ‘CORTEX\_SEARCH\_SERVICE’, and ‘CORTEX\_AGENT’. |
 | `SOURCE_OBJECT_VERSION` | VARCHAR | The version of the source object, for versioned objects such as datasets and models. NULL if the source object is not versioned. |
 | `SOURCE_COLUMN_NAME` | VARCHAR | The name of the source column, if the source object is a column. NULL if the source object is not a column. |
 | `SOURCE_STATUS` | VARCHAR | The status of the source object. Possible values are ‘ACTIVE’ and ‘MASKED’. |
 | `TARGET_OBJECT_DATABASE` | VARCHAR | The database that contains the target object. |
 | `TARGET_OBJECT_SCHEMA` | VARCHAR | The schema that contains the target object. |
 | `TARGET_OBJECT_NAME` | VARCHAR | The unqualified name of the target object. |
-| `TARGET_OBJECT_DOMAIN` | VARCHAR | The domain of the target object. Possible values are ‘COLUMN’, ‘TABLE’, ‘SEMANTIC\_VIEW’, ‘DATASET’, ‘MODULE’ (for ML models), ‘STAGE’, and ‘CORTEX\_AGENT’. |
+| `TARGET_OBJECT_DOMAIN` | VARCHAR | The domain of the target object. Possible values include ‘COLUMN’, ‘TABLE’, ‘EXTERNAL\_TABLE’, ‘SEMANTIC\_VIEW’, ‘DATASET’, ‘MODEL’ (for ML models), ‘MODEL MONITOR’, ‘STAGE’, ‘INTEGRATION’, ‘STREAM’, ‘TASK’, ‘TASK\_GRAPH’, ‘CORTEX\_SEARCH\_SERVICE’, and ‘CORTEX\_AGENT’. |
 | `TARGET_OBJECT_VERSION` | VARCHAR | The version of the target object, for versioned objects such as datasets and models. NULL if the target object is not versioned. |
 | `TARGET_COLUMN_NAME` | VARCHAR | The name of the target column, if the target object is a column. NULL if the target object is not a column. |
 | `TARGET_STATUS` | VARCHAR | The status of the target object. Possible values are ‘ACTIVE’ and ‘MASKED’. |

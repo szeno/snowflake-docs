@@ -50,6 +50,7 @@ without reinitializing, when all of the following are true:
 - The dynamic table’s base objects, including any policies on those base objects, haven’t changed since the
   dynamic table’s last successful refresh in the primary account.
 - The base objects are included in the same failover group as the dynamic table.
+- The dynamic table isn’t a dynamic Iceberg table, and its base objects aren’t Apache Iceberg™ tables.
 
 If any condition isn’t met, the dynamic table reinitializes with a full refresh on the first refresh after
 promotion. A dynamic table configured for FULL refresh always runs a full refresh, whether or not failover

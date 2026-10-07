@@ -180,6 +180,24 @@ For dual-stack networks where clients connect over both IPv4 and IPv6, create se
 
 For more information, see [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule).
 
+### Compute pools
+
+Network rules of type `COMPUTE_POOL` control ingress traffic from [Snowpark Container Services](/developer-guide/snowpark-container-services/overview)
+compute pools. They support only the `INGRESS` mode. Specify compute pool names in the value list, or use `'ALL'` to match
+all compute pools in the account:
+
+Copy code
+
+```
+CREATE NETWORK RULE allow_pool TYPE = COMPUTE_POOL MODE = INGRESS VALUE_LIST = ('my_compute_pool');
+
+CREATE NETWORK RULE allow_all_pools TYPE = COMPUTE_POOL MODE = INGRESS VALUE_LIST = ('ALL');
+```
+
+Requests from services that use customer-provided credentials match only `COMPUTE_POOL` network rules. IPv4 and IPv6
+network rules don’t match these requests, even if they include the service’s source IP address. For how this affects
+network policy evaluation, see [Allow requests from Snowpark Container Services](/user-guide/network-policies#label-network-policy-compute-pool).
+
 ## Identifying network rules in your account
 
 You can identify the network rules in your account using Snowsight or SQL.

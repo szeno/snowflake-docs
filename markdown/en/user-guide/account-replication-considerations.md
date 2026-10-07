@@ -185,6 +185,7 @@ groups. Security policies include:
 - [Authentication policies](/user-guide/authentication-policies)
 - [Data movement policies](/user-guide/data-movement-policies), including data movement rules
 - [Masking policies](/user-guide/security-column-intro)
+- [Multi-party Approval policies](/user-guide/multi-party-approval)
 - [Password policies](/user-guide/password-authentication#label-password-policies)
 - [Privacy policies](/user-guide/diff-privacy/differential-privacy-admin-privacy-policies)
 - [Projection policies](/user-guide/projection-policies)

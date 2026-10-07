@@ -202,6 +202,10 @@ Attention
 
 Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
 
+- You can’t create a backup set for a transient table, including a dynamic transient
+  table. The statement fails with an error. For more information, see
+  [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).
+
 Important
 
 If the backup policy has a retention lock applied to it, and there are any

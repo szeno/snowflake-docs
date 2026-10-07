@@ -128,6 +128,10 @@ Incremental data loading vs full data reloading:
     these processes causes those tables to be re-cached, which incurs a
     higher cost than modifying the data by using less resource-intensive methods.
 
+    The egress cost optimizer is most effective for data with a low rate of change, such as data that’s updated
+    incrementally or infrequently. Data that changes heavily between refreshes, including tables that are fully reloaded,
+    requires more re-caching and reduces the savings.
+
 Greater savings with many regions or clouds:
 :   Sharing data across more regions increases your savings on total egress costs.
     The more regions where data is shared, the greater the savings with the egress cost optimizer.

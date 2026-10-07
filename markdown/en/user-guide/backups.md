@@ -173,6 +173,8 @@ Snowflake enforces the following restrictions for backups:
 - You can’t modify the retention lock for a backup policy.
 - When a policy has a retention lock, you can increase the expiration period, but you can’t decrease it.
 - The minimum schedule interval for scheduled backups is one hour (60 minutes).
+- Transient tables, including dynamic transient tables, aren’t supported in backups. For details, see
+  [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).
 
 ## Comparison of backups with other disaster recovery and business continuity features
 
@@ -233,9 +235,9 @@ The following table lists the objects that are included in a database or schema 
 | Object | Included in backup | Notes |
 | --- | --- | --- |
 | Permanent tables | Yes | Time Travel information for tables isn’t stored as part of a backup. |
-| Transient tables | Yes | Such tables continue to be transient tables after you restore them. Transient schemas and transient databases also retain the transient property after you restore them. |
+| Transient tables | No | Transient tables, including dynamic transient tables, aren’t supported in backups. You can’t create a backup set for a transient table, and you can’t add a backup to an existing backup set that targets a transient table. When you add a backup to a database or schema backup set that contains transient tables, Snowflake skips those tables. They aren’t included in the backup and don’t appear when you restore it.  Existing backups that already captured a transient table can still be restored. Restored transient tables continue to be transient tables. Transient schemas and transient databases also retain the transient property after you restore them.  For more information, see [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360). |
 | Temporary tables | No | Temporary tables are session scoped and aren’t included in backups. |
-| Dynamic tables | Yes | When you restore a dynamic table from a backup, the table is restored in a suspended state. Snowflake [automatically initializes](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization) the new table during its first refresh. |
+| Dynamic tables | Yes | Permanent dynamic tables are included in backups. Dynamic transient tables aren’t supported. For more information, see [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).  When you restore a dynamic table from a backup, the table is restored in a suspended state. Snowflake [automatically initializes](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization) the new table during its first refresh. |
 | External tables | No |  |
 | Hybrid tables | No |  |
 | Apache Iceberg™ tables | No | Dynamic Iceberg tables are also not included in backups. |

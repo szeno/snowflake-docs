@@ -77,7 +77,7 @@ Where:
         MQNI’s active queue, as described in [ALTER NOTIFICATION INTEGRATION (inbound from multiple queues)](/sql-reference/sql/alter-notification-integration-multi-queue). For auto-ingest pipes
         on Amazon S3 that use only Amazon Simple Queue Service (SQS) notifications, with no Amazon Simple Notification Service (SNS) topic and no MQNI, call
         [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe). For more information, see
-        [Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+        [Set the active queue](/user-guide/multi-location-resilience-data-pipelines-setup-target-account#label-mlsi-target-set-queue) in [Configure your target account for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-target-account).
 
     `STORAGE_ALLOWED_LOCATIONS = ( 'cloud_specific_url' )`
     :   Explicitly limits external stages that use the integration to reference one or more storage locations (Amazon S3, Google Cloud Storage, or

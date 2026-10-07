@@ -70,6 +70,20 @@ SHOW LISTINGS [ LIKE '<pattern>' ]
 ## Usage notes
 
 - You can show a listing only if you use a role that has the USAGE, MODIFY, or OWNERSHIP privilege on the listing.
+- To query listings with a SELECT statement instead of a SHOW command, use one of the following views:
+
+  - [INFORMATION\_SCHEMA.LISTINGS](/sql-reference/info-schema/listings): Listings that the current role has privileges on,
+    with no latency. Doesn’t include dropped listings.
+  - [ACCOUNT\_USAGE.LISTINGS](/sql-reference/account-usage/listings): Listings owned by the current account, including
+    dropped listings, with up to 3 hours of latency.
+
+  For example:
+
+  Copy code
+
+  ```
+  SELECT * FROM my_db.INFORMATION_SCHEMA.LISTINGS;
+  ```
 
 - The value for `LIMIT rows` can’t exceed `10000`. If `LIMIT rows` is omitted, the command results in an error
   if the result set is larger than ten thousand rows.

@@ -21,8 +21,10 @@ None.
 
 ## Returns
 
-TIMESTAMP\_LTZ value that represents when the most recent successful evaluation of the alert condition was scheduled, or NULL
-if there are no recent successful evaluations of the alert condition.
+TIMESTAMP\_LTZ value that represents when the most recent successful evaluation of the alert condition was scheduled. If there
+are no recent successful evaluations of the alert condition, the function returns the UNIX epoch timestamp
+(`1970-01-01 00:00:00`), adjusted for the local time zone. For example, for Pacific Standard Time, this is
+`1969-12-31 16:00:00.000 -0800`.
 
 ## Usage notes
 

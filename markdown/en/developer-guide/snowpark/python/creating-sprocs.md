@@ -3,6 +3,9 @@
 The Snowpark API provides methods that you can use to create a stored procedure in Python.
 This topic explains how to create stored procedures.
 
+To build and deploy stored procedures from a command-line project, see
+[Deploying Snowpark projects with Snowflake CLI](/developer-guide/snowflake-cli/command-reference/snowpark-commands/deploy).
+
 ## Introduction
 
 With Snowpark, you can create stored procedures for your custom lambdas and functions, and you can call these

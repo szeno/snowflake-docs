@@ -84,6 +84,12 @@ CREATE DATABASE <name> FROM LISTING '<listing_global_name>';
 
 The following example shows how to use the SQL commands described above to manage listings as a consumer. The example assumes that the consumer has already been granted access to a listing for COVID-19 data named *GZ1MXZFTF1* and that the listing is available in the consumer’s region. The example also assumes that the consumer has been granted the *sysadmin* role, which is required to create a database from a listing.
 
+Note
+
+Run these commands as a human user (TYPE = PERSON, or a user with no TYPE set), not a service user. To get a listing, the
+user profile must include a first name, last name, and email address, and SERVICE and SERVICE\_AGENT users can’t have a
+first name or last name. For more information, see [Types of users](/user-guide/admin-user-management#label-user-management-types).
+
 Copy code
 
 ```

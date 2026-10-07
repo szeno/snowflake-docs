@@ -39,6 +39,7 @@ Where:
 >   AUTO_RESUME = { TRUE | FALSE }
 >   INITIALLY_SUSPENDED = { TRUE | FALSE }
 >   RESOURCE_MONITOR = <monitor_name>
+>   FALLBACK_WAREHOUSE = <warehouse_name>
 >   COMMENT = '<string_literal>'
 > ```
 >
@@ -143,6 +144,20 @@ Where:
     Default:
     :   No value (no resource monitor assigned)
 
+`FALLBACK_WAREHOUSE = warehouse_name`
+:   Specifies the identifier of a standard warehouse to use as a fallback warehouse. When a query
+    exceeds the statement timeout on the interactive warehouse, Snowflake automatically re-runs the
+    query on the fallback warehouse. This fallback behavior is transparent to the client that issues
+    the query.
+
+    The fallback warehouse must be a standard warehouse, and can be shared with non-interactive
+    workloads. Choose a warehouse size that is the same as or larger than the interactive warehouse.
+
+    For more information, see [Automatically handling statement timeouts](/user-guide/interactive#automatically-handling-statement-timeouts).
+
+    Default:
+    :   No value (no fallback warehouse assigned)
+
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the interactive warehouse.
 
@@ -200,6 +215,9 @@ For general information about roles and privilege grants for performing SQL acti
 - Interactive warehouses support multi-cluster configuration for handling high-concurrency workloads.
 - If you don’t specify the `TABLES` clause during creation, you can associate interactive tables
   later using [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) with the ADD TABLES clause.
+- You can configure a fallback warehouse to automatically re-run queries that exceed the statement
+  timeout on an interactive warehouse. Set the fallback warehouse with [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse).
+  For more information, see [Automatically handling statement timeouts](/user-guide/interactive#automatically-handling-statement-timeouts).
 - Regarding metadata:
 
   Attention
@@ -256,4 +274,32 @@ ALTER WAREHOUSE sales_interactive_wh RESUME;
 
 -- Add additional tables if needed
 ALTER WAREHOUSE sales_interactive_wh ADD TABLES (inventory);
+```
+
+Configure a fallback warehouse so that queries which exceed the statement timeout on an interactive
+warehouse are automatically re-run. For more information, see
+[Automatically handling statement timeouts](/user-guide/interactive#automatically-handling-statement-timeouts).
+
+Set a fallback warehouse:
+
+Copy code
+
+```
+ALTER WAREHOUSE interactive_demo SET FALLBACK_WAREHOUSE = <fallback_warehouse_name>;
+```
+
+Remove a fallback warehouse:
+
+Copy code
+
+```
+ALTER WAREHOUSE interactive_demo UNSET FALLBACK_WAREHOUSE;
+```
+
+View the fallback warehouse for an interactive warehouse, then inspect the `FALLBACK_WAREHOUSE` column:
+
+Copy code
+
+```
+SHOW WAREHOUSES LIKE '%interactive_demo%';
 ```

@@ -126,3 +126,24 @@ When you use auto-fulfillment for your listings, consider the following:
 - If you use [Tri-Secret Secure](/user-guide/security-encryption-tss), you must contact
   [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) to enable Tri-Secret Secure for the secure share areas used for auto-fulfillment.
   - With Tri-Secret Secure, query results are encrypted using one key from the provider, one from Snowflake, and one from the consumer. Each key independently governs access. If a key is revoked, only its owner loses access. For example, revoking the provider key does not prevent the consumer from accessing data that has already been retrieved.
+
+## FAQs
+
+**How do I find out if an auto-fulfillment refresh fails?**
+
+Snowflake sends a daily email that summarizes failed listing refreshes to the email address specified on the listing.
+To check refreshes yourself, call the [LISTING\_REFRESH\_HISTORY](/sql-reference/functions/listing_refresh_history) function, which returns the
+past 14 days of refresh history for each target region. For troubleshooting steps, see
+[Troubleshooting auto-fulfillment](/collaboration/provider-listings-auto-fulfillment-troubleshooting).
+
+**How often can auto-fulfillment refresh my data product?**
+
+The refresh interval can be as long as 8 days. For the shortest supported interval and how to set it for a listing or for
+your account, see [Set the account-level refresh interval](/collaboration/provider-listings-auto-fulfillment-set-refresh-interval) and the
+[`auto_fulfillment`](/progaccess/listing-manifest-reference#label-listing-api-manifest-auto-fulfillment) manifest field.
+
+**Can I refresh a data product outside its schedule?**
+
+Yes. Call [SYSTEM$TRIGGER\_LISTING\_REFRESH](/sql-reference/functions/system_trigger_listing_refresh) to start a one-time refresh. You can track it with
+[LISTING\_REFRESH\_HISTORY](/sql-reference/functions/listing_refresh_history), and consumers can track it with
+[AVAILABLE\_LISTING\_REFRESH\_HISTORY](/sql-reference/functions/available_listing_refresh_history).

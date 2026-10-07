@@ -359,7 +359,7 @@ The following options for automating Snowpipe using Amazon SQS are supported:
   option 2 after you create a replication or failover group. For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns).
 - **Option 3. Setting up Amazon EventBridge for automating Snowpipe:** Similar to option 2, you can also enable [Amazon EventBridge](https://aws.amazon.com/eventbridge/) for S3 buckets and create rules to send notifications to SNS topics.
 
-If you plan to set up multi-location resilience so that your pipes keep loading after a region-wide cloud provider outage, your choice of Option 1 (Amazon SQS only) or Option 2 or 3 (Amazon SNS) also determines how you point notifications at your target account. For more information, see [Choose a notification path for Amazon S3](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-choose-aws-notification-path).
+If you plan to set up multi-location resilience so that your pipes keep loading after a region-wide cloud provider outage, your choice of Option 1 (Amazon SQS only) or Option 2 or 3 (Amazon SNS) also determines how you point notifications at your target account. For more information, see [Choose a notification path for Amazon S3](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-choose-aws-notification-path).
 
 ## Option 1: Creating a new S3 event notification to automate Snowpipe
 

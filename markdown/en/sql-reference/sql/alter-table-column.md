@@ -1,7 +1,8 @@
 # ALTER TABLE … ALTER COLUMN
 
 This topic describes how to modify one or more column properties for a table using an `ALTER COLUMN` clause in a
-[ALTER TABLE](/sql-reference/sql/alter-table) statement.
+[ALTER TABLE](/sql-reference/sql/alter-table) statement. To delete a column, use `ALTER TABLE ... DROP COLUMN` instead. See
+[Dropping columns](/sql-reference/sql/alter-table#label-alter-table-examples-columns-dropping) for an example.
 
 The following table describes the supported/unsupported actions for modifying column properties:
 
@@ -17,6 +18,7 @@ The following table describes the supported/unsupported actions for modifying co
 | **Data Types** |  |  |  |
 | Change a column [data type](/sql-reference-data-types) to a synonymous type (for example, `STRING` to `VARCHAR`). | ✔ |  |  |
 | Change a column [data type](/sql-reference-data-types) to a different type (for example, `STRING` to `NUMBER`). |  | ✔ |  |
+| Change a `NUMBER(38,0)` column to `VARCHAR(250)`. |  | ✔ | `ALTER COLUMN ... SET DATA TYPE` doesn’t convert existing columns between different data types. |
 | Increase the length of a [text string column](/sql-reference/data-types-text#label-character-datatypes) (for example, `VARCHAR(50)` to `VARCHAR(100)`). | ✔ |  |  |
 | Decrease the length of a [text string column](/sql-reference/data-types-text#label-character-datatypes) (for example, `VARCHAR(50)` to `VARCHAR(25)`). |  | ✔ |  |
 | Increase the length of a [binary string column](/sql-reference/data-types-text#label-binary-datatypes) (for example, `BINARY(50)` to `BINARY(100)`). |  | ✔ |  |
@@ -128,11 +130,48 @@ ALTER TABLE <name> { ALTER | MODIFY } [ COLUMN ] dataGovnPolicyTagAction
 
 ## Examples
 
-Example setup:
+To increase the length of an existing `VARCHAR` column, use `SET DATA TYPE` after the column name:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE example_table (example_column VARCHAR(20));
+
+ALTER TABLE example_table ALTER COLUMN example_column SET DATA TYPE VARCHAR(50);
+```
+
+`SET DATA TYPE` can increase the length of a text column, but it can’t change a `NUMBER(38,0)` column to `VARCHAR(250)`.
+To make that change, add a column with the new type, populate it, verify the converted values, then drop the old column
+and rename the new one:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE conversion_example (old_value NUMBER(38,0));
+INSERT INTO conversion_example (old_value) VALUES (123), (456);
+
+ALTER TABLE conversion_example ADD COLUMN new_value VARCHAR(250);
+UPDATE conversion_example SET new_value = TO_VARCHAR(old_value);
+
+-- Verify the converted values before dropping the original column.
+SELECT old_value, new_value FROM conversion_example;
+
+ALTER TABLE conversion_example DROP COLUMN old_value;
+ALTER TABLE conversion_example RENAME COLUMN new_value TO old_value;
+```
+
+Before dropping the original column, account for writes that occur during the conversion and check dependencies such as
+views, constraints, policies, tags, and defaults. The new column doesn’t automatically inherit the original column’s
+properties. Dropping the original column removes its data from the current table.
+
+Example setup (create both sequences before creating and modifying the table):
 
 > Copy code
 >
 > ```
+> CREATE OR REPLACE SEQUENCE seq1;
+> CREATE OR REPLACE SEQUENCE seq5;
+>
 > CREATE OR REPLACE TABLE t1 (
 >    c1 NUMBER NOT NULL,
 >    c2 NUMBER DEFAULT 3,

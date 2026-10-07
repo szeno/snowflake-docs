@@ -186,14 +186,33 @@ For more information on registering a UDTF, see [Registering a UDTF](/developer-
 
 ## Calling Stored Procedures
 
-To call a stored procedure, use the call method of the `Session` class.
+To call an existing stored procedure, use
+[Session.call](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.Session.call).
+The result depends on the procedure’s declared return type:
+
+- A procedure with a scalar return type returns a Python value.
+- A procedure with a table return type returns a Snowpark DataFrame. Use `collect()` to retrieve its rows or `show()` to display them.
+
+For example, if `your_proc_name` accepts an integer and returns a scalar value:
 
 Copy code
 
 ```
-session.call("your_proc_name", 1)
+result = session.call("your_proc_name", 1)
+print(result)
 ```
 
+If `your_table_proc` accepts an integer and is declared with `RETURNS TABLE`, retrieve its rows as follows:
+
+Copy code
+
 ```
-0
+result_df = session.call("your_table_proc", 1, return_dataframe=True)
+rows = result_df.collect()
 ```
+
+These examples assume that the procedures already exist and that the session’s role can call them.
+The `return_dataframe=True` argument specifies table-return handling; it does not change a procedure’s declared return type.
+A `SELECT` executed inside a procedure is not automatically its return value. The handler must explicitly return the result.
+For Python table-returning procedures, see
+[Returning tabular data from a Python stored procedure](/developer-guide/stored-procedure/python/procedure-python-tabular-data).

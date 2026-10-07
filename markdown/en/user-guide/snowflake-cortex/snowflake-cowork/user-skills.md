@@ -1,9 +1,5 @@
 # User skills in Snowflake CoWork
 
-[Preview Feature](/release-notes/preview-features)  — Open
-
-Available to all accounts.
-
 Snowflake CoWork helps you answer questions in the moment. With **user skills**, you can go further: capture a
 repeatable workflow once, then reuse it whenever you need that same outcome. A user skill packages the steps,
 data sources, and output style you care about so Snowflake CoWork can run the workflow for you on demand.
@@ -24,16 +20,12 @@ User skills are created and used by business users inside Snowflake CoWork.
 
 ## Prerequisites
 
-Creating a skill through chat, or from **+** > **Skills** > **Create new**, requires the Cortex Agent
+Running skills that execute scripts or assemble deliverables such as presentations requires the Cortex Agent
 [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) (code sandbox) on the agent
-you use in Snowflake CoWork. Code execution is also required to run skills that execute scripts or assemble
-deliverables such as presentations.
+you use in Snowflake CoWork. Skills that don’t run scripts can run without it.
 
-Uploading a skill folder on **Capabilities** > **Skills** doesn’t require code execution. Skills that don’t run
-scripts can also run without it.
-
-Ask your administrator to enable the [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) on the agent if chat-based skill creation isn’t
-available or a skill that needs scripts fails to run.
+Ask your administrator to enable the [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) on the agent if a skill that
+needs scripts fails to run.
 
 ## How user skills work
 
@@ -55,7 +47,7 @@ You can create a user skill from a conversation, from the UI, or by uploading a 
 
 ### Create from a conversation
 
-Create a skill in the flow of a normal conversation. This path requires code execution on the agent:
+Create a skill in the flow of a normal conversation:
 
 1. Describe the workflow you want to reuse, for example:
 
@@ -71,7 +63,7 @@ Create a skill in the flow of a normal conversation. This path requires code exe
 ### Create from the UI
 
 The **+** menu doesn’t include a form to fill out. Instead, select **Create new** to start a guided skill that
-interviews you and builds the new skill from your answers. This path also requires code execution on the agent:
+interviews you and builds the new skill from your answers:
 
 1. In the message bar, select the **+** menu.
 2. Select **Skills**, then select **Create new**.
@@ -88,8 +80,7 @@ interviews you and builds the new skill from your answers. This path also requir
 
 ### Upload a skill folder
 
-You can also add a skill by uploading a skill folder on **Capabilities** > **Skills**. Upload doesn’t require
-code execution on the agent.
+You can also add a skill by uploading a skill folder on **Capabilities** > **Skills**.
 
 1. Open **Capabilities** > **Skills**.
 2. Upload the skill folder that contains the skill definition and any related files.
@@ -168,11 +159,10 @@ Skills you create are scoped to you.
 
 ## Known limitations
 
-During this preview, the following limitations apply:
+The following limitations apply:
 
-- **Code execution for chat creation and scripted skills.** Creating a skill through chat or **Create new**, and
-  running skills that execute scripts or assemble files, require the Cortex Agent
-  [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool). Uploading a skill folder,
-  and running skills that don’t need scripts, don’t require code execution.
+- **Code execution for scripted skills.** Running skills that execute scripts or assemble files requires the
+  Cortex Agent [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool). Creating a
+  skill, and running skills that don’t need scripts, don’t require code execution.
 - **Agent-configured tools only.** A skill can only use data sources and tools that the agent already has access
   to, such as Cortex Analyst, Cortex Search, and connected collaboration sources your administrator has enabled.

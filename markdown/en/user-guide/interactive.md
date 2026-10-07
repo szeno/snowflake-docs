@@ -227,10 +227,10 @@ To view the fallback warehouse for an interactive warehouse, you can use the fol
 Copy code
 
 ```
-SHOW WAREHOUSES like '%interactive_demo%';
+SHOW PARAMETERS LIKE 'FALLBACK_WAREHOUSE' FOR WAREHOUSE interactive_demo;
 ```
 
-and inspect the *FALLBACK\_WAREHOUSE* column.
+The `value` column shows the fallback warehouse. An empty value means none is set.
 
 ### Auto-scaling for high-concurrency
 

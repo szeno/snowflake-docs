@@ -10,9 +10,9 @@ For more information, see [Migrate to Amazon Simple Notification Service (SNS)](
 [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
 If you’re configuring multi-location resilience, converting pipes to SNS is one step in moving pipes that use only Amazon SQS notifications (SQS-only pipes) onto a Multi-Queue
-Notification Integration (MQNI). If you need to recreate pipes for multi-location resilience, finish recreating them before you convert them, because recreating a converted pipe from its original definition, which specifies neither `AWS_SNS_TOPIC` nor `INTEGRATION`, makes the pipe an SQS-only pipe again. Follow the procedure in [Move existing SQS-only pipes to Amazon SNS](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-sqs-to-sns). Then use `SYSTEM$CONVERT_PIPES_TO_MULTI_QUEUE` to create an MQNI from the SNS
+Notification Integration (MQNI). If you need to recreate pipes for multi-location resilience, finish recreating them before you convert them, because recreating a converted pipe from its original definition, which specifies neither `AWS_SNS_TOPIC` nor `INTEGRATION`, makes the pipe an SQS-only pipe again. Follow the procedure in [Move existing SQS-only pipes to Amazon SNS](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-sqs-to-sns). Then use `SYSTEM$CONVERT_PIPES_TO_MULTI_QUEUE` to create an MQNI from the SNS
 topic that you passed to this function and an SNS topic in your secondary region, as described in
-[Scenario B: Create an MQNI from your existing pipes’ queues](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-mqni-scenario-b).
+[Create the MQNI from your pipes’ queues](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-mqni-scenario-b-create).
 
 See also:
 :   [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) , [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe)
@@ -74,8 +74,12 @@ Using a role that inherits `ACCOUNTADMIN`, or activating `ACCOUNTADMIN` only as 
   For instructions, see [Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription) in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 - The function converts every SQS-only pipe in the current account that loads from the bucket, including directory table
   auto-refresh pipes. It sets the SNS topic on each converted pipe and on the stage of each directory table auto-refresh pipe.
+  You can’t run `DESCRIBE PIPE` on a directory table auto-refresh pipe, so to confirm its conversion, run
+  [DESCRIBE STAGE](/sql-reference/sql/desc-stage) and check that the `AWS_SNS_TOPIC` property in the `DIRECTORY` group shows the
+  topic ARN.
 - Call this function *before* you update your S3 bucket to send notifications to the SNS topic. Don’t update the bucket until
-  `DESCRIBE PIPE` shows the topic ARN in `notification_channel` for every pipe, as described in the next note.
+  `DESCRIBE PIPE` shows the topic ARN in `notification_channel` for every pipe, as described in the next note, and `DESCRIBE STAGE`
+  shows it for every directory table that refreshes from the bucket, as described in the previous note.
 - If a pipe was created before Snowflake began storing the metadata that this function requires, the pipe stays on Amazon SQS and the
   function returns no error. To find such pipes, run `DESCRIBE PIPE` after the call for each pipe that loads from the bucket, and
   check whether `notification_channel` still shows an Amazon SQS queue ARN instead of the topic ARN. Recreate each of those pipes by

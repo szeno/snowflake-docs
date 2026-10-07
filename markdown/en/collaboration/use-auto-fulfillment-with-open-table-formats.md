@@ -52,7 +52,7 @@ When a consumer in another region or cloud gets the listing, Cross-Cloud Auto-Fu
 replicates it to the consumer’s region as a **Snowflake-managed Iceberg table**. Consumers query the table like any other shared table,
 and changes in the source catalog are synced to consumers based on your auto-fulfillment refresh frequency. Consumers don’t need access to your catalog or storage.
 
-To share a catalog-linked database with consumers in other regions or clouds:
+To share the tables in a catalog-linked database with consumers in other regions or clouds:
 
 1. Create a catalog-linked database that uses an Apache Iceberg™ REST catalog integration. For more information, see
    [Create a catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database#label-catalog-linked-db-create).
@@ -75,7 +75,10 @@ Cross-Cloud Auto-Fulfillment for listings is subject to the following limitation
 
 - You cannot replicate CATALOG or any CATALOG-related information.
 - Catalog integrations and external volumes that use private connectivity are not supported.
-- Catalog-linked databases (CLDs) with other catalog integrations are not supported.
+- Iceberg tables in a catalog-linked database (CLD) are supported only when the CLD uses an Apache Iceberg™ REST catalog
+  integration. Tables in CLDs that use other catalog integrations aren’t supported.
+- You share the tables in a CLD, not the CLD itself. Add the CLD’s tables to your listing’s data product, as described in
+  [Catalog-linked database sharing](#label-catalog-linked-database-sharing).
 - Tables in a CLD must be queried at least once before being shared. Otherwise, they might not be replicated correctly.
 - You cannot access the secure share area created in consumer regions by Cross-Cloud Auto-Fulfillment.
 - Iceberg tables have the following considerations:

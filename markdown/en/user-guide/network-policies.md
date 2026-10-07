@@ -57,6 +57,12 @@ When a network policy includes both IPV4 and IPV6 network rules, Snowflake evalu
 request. If a request arrives over IPv6 and no IPv6 network rules are present in the policy, the request is evaluated against IPv4
 rules only.
 
+Requests from [Snowpark Container Services](/developer-guide/snowpark-container-services/overview) services that use
+customer-provided credentials (`enableCustomCredentials: true`) are evaluated only against network rules of type
+`COMPUTE_POOL`. IPV4 and IPV6 network rules, including `0.0.0.0/0`, are never evaluated for these requests, and there is no
+fallback to IPV4 rules. If the network policy has no `COMPUTE_POOL` network rule that allows the compute pool, the request
+is rejected with error `390422`. To allow these requests, see [Allow requests from Snowpark Container Services](#label-network-policy-compute-pool).
+
 A network rule that uses private endpoint identifiers such as Azure LinkIDs or AWS VPCE IDs to restrict access has no effect
 on requests coming from the public network. If you want to restrict access based on private endpoint identifiers, and then completely
 block requests from public IPv4 addresses, you must create two separate network rules, one for the allowed list and another for the blocked
@@ -189,6 +195,27 @@ To restrict access to the Snowflake service, set the `MODE` property of the netw
 
 You can then use the `TYPE` property to specify the [identifiers](/user-guide/network-rules#label-network-rule-identifiers) that should be allowed or
 blocked.
+
+### Allow requests from Snowpark Container Services
+
+To allow services in a compute pool to connect to Snowflake when a network policy is active, create a network rule of type
+`COMPUTE_POOL` and add it to the network policy. Use the fully qualified rule name in parentheses:
+
+Copy code
+
+```
+CREATE NETWORK RULE securitydb.myrules.allow_my_compute_pool
+  TYPE = COMPUTE_POOL
+  MODE = INGRESS
+  VALUE_LIST = ('my_compute_pool');
+
+ALTER NETWORK POLICY my_policy
+  ADD ALLOWED_NETWORK_RULE_LIST = ('securitydb.myrules.allow_my_compute_pool');
+```
+
+To allow all compute pools in the account, use `VALUE_LIST = ('ALL')` instead. For more information,
+see [Compute pools](/user-guide/network-rules#label-network-rule-compute-pools) and
+[Allow account access](/developer-guide/snowpark-container-services/spcs-execute-sql#allow-account-access).
 
 ### Protecting internal stages on AWS
 
@@ -467,6 +494,8 @@ network policy properties:
 
 - The network rule `TYPE` property for `AWSVPCEID` and `AZURELINKID` takes precedence over any `TYPE = IPV4`
   value.
+- For requests from Snowpark Container Services services that use customer-provided credentials, only network rules with
+  `TYPE = COMPUTE_POOL` are evaluated. `TYPE = IPV4` and `TYPE = IPV6` rules don’t apply to these requests.
 - If there are no network rules, the network policy evaluation considers the `ALLOWED_IP_LIST` and `BLOCKED_IP_LIST`
   network policy properties and their values.
 

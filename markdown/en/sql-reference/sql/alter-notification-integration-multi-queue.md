@@ -5,7 +5,7 @@ queue for each of your cloud storage locations, and its active queue determines 
 receive notifications from in the current account.
 
 See also:
-:   [CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration) , [DESCRIBE NOTIFICATION INTEGRATION](/sql-reference/sql/desc-notification-integration) , [DROP INTEGRATION](/sql-reference/sql/drop-integration) ,
+:   [CREATE NOTIFICATION INTEGRATION (inbound from multiple queues)](/sql-reference/sql/create-notification-integration-multi-queue) , [DESCRIBE NOTIFICATION INTEGRATION](/sql-reference/sql/desc-notification-integration) , [DROP INTEGRATION](/sql-reference/sql/drop-integration) ,
     [SHOW NOTIFICATION INTEGRATIONS](/sql-reference/sql/show-notification-integrations)
 
 ## Syntax
@@ -78,10 +78,14 @@ ALTER [ NOTIFICATION ] INTEGRATION <name> UNSET TAG <tag_name> [ , <tag_name> ..
   exactly, so that the pipe receives notifications from the active queue. The rebind uses the current storage location of each pipe’s
   stage, so if the stage uses a Multi-Location Storage Integration (MLSI), set the MLSI’s active location first. If you change the
   MLSI’s active location later, set `ACTIVE` again. Snowflake rebinds the pipes even if the active queue doesn’t change. If Snowflake can’t rebind a pipe, the statement fails, and some pipes might be left without a queue. For more
-  information, see [Change the active queue later](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-change-active-queue).
+  information, see [Change the active queue later](/user-guide/multi-location-resilience-data-pipelines-manage#label-mlsi-change-active-queue).
 - The active queue is a setting for each account. Replication doesn’t copy the active queue from the source account, and a refresh
   doesn’t change it in a target account. When Snowflake first replicates an MQNI to a target account, the replica has no active
   queue until you set one.
+- A pipe that a refresh replicates to a target account doesn’t load there until you set `ACTIVE` in that account, even if the MQNI
+  already has an active queue and the pipe’s status looks normal. Set `ACTIVE` again, with the name of the queue that’s already
+  active, after each refresh that replicates new pipes that use the integration. For more information, see
+  [Add pipes after setup](/user-guide/multi-location-resilience-data-pipelines-manage#label-mlsi-add-pipes-later).
 - In a secondary account, such as the target account before a failover or the source account before a failback, the replicated MQNI is
   read-only, except that you can set its active queue. Omit the `NOTIFICATION` keyword
   and set only `ACTIVE`:

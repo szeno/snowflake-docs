@@ -4,11 +4,16 @@
 
 Available to all accounts.
 
-The Snowflake Marketplace **Discover** page in Snowsight offers two ways to find products: use **Agentic discovery** to describe your needs to CoCo in natural language and get matching listings, or switch to **Marketplace search** to search for providers or listings directly. In Agentic discovery, you can ask CoCo to compare products and, from the conversation, install listings, start trials, or initiate sales requests for products on the public Snowflake Marketplace.
+Agentic Marketplace Discovery lets you find products on the public Snowflake Marketplace by describing what you need to CoCo in natural language. CoCo returns matching listings, helps you compare them, and lets you install listings, start trials, or initiate sales requests without leaving the conversation.
 
-CoCo is also available throughout Snowsight. You can continue the conversation you started on the Marketplace Discover page as you work elsewhere in Snowsight to evaluate, try, and implement the products you find. Natural language Marketplace discovery with CoCo elsewhere in Snowsight is generally available; see [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight). This topic covers the Discover-page experience and its listing actions, which are available in public preview.
+The Marketplace Discover page in Snowsight offers two modes, and you can switch between them at any time:
 
-This feature applies to the public Snowflake Marketplace only. It doesn’t apply to the Internal Marketplace.
+- **Agentic discovery:** Describe your problem or use case, and CoCo finds and compares listings for you.
+- **Marketplace search:** Search for providers or listings by name or keyword.
+
+Because CoCo is available throughout Snowsight, the conversation you start on the Discover page continues with you as you evaluate, try, and implement the products you find. For more information, see [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+Agentic Marketplace Discovery applies to the public Snowflake Marketplace only. It doesn’t apply to the Internal Marketplace.
 
 ## Prerequisites
 
@@ -44,10 +49,8 @@ CoCo uses the same consumer agreements and access rules as the Snowflake Marketp
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace**.
-3. On the **Discover** tab, select **Agentic discovery** to use CoCo. To search for providers or listings directly instead, switch to **Marketplace search**. You can toggle between the two at any time.
-4. In **Agentic discovery**, use the prompt field (**Let’s solve a problem**) to describe what you’re working on.
-
-   You can also select a suggested prompt under the field, such as **Find data & apps**, **Connect my systems**, **Build with AI**, or **Get tailored recommendations**.
+3. On the **Discover** tab, select **Agentic discovery**.
+4. In the prompt field, describe what you’re working on, or select one of the suggested prompts.
 5. Review the CoCo response. Matching listings appear as cards that can include the listing title, provider, short description, and labels such as **Free to try**, **Paid**, **Secure share**, or **Native App**.
 6. Optionally select **Tell me more** on a listing card, or ask follow-up questions in the CoCo conversation to refine results, compare options, or get more detail.
 

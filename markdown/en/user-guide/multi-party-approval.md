@@ -171,7 +171,9 @@ required quorum.
 When a request requires attention, Approvers receive email notifications
 with a link to the Snowsight Requests & Approvals page. An Approver casts either an
 Approve or Reject vote. A single Reject vote immediately terminates the request.
-Approvers must use an active Snowsight session to cast their votes.
+Approvers can cast their votes in Snowsight or by calling the
+[SYSTEM$CAST\_MULTI\_PARTY\_APPROVAL\_VOTE](/sql-reference/functions/system_cast_multi_party_approval_vote)
+system function from a worksheet in an active Snowsight session.
 
 ## Policy structure
 
@@ -271,6 +273,20 @@ To activate a policy using SQL instead, see
 7. Select the request you want to review.
 8. Select **Approve** or **Reject**.
 
+To approve or reject a pending request using SQL, use a worksheet in an active Snowsight session to call the
+[SYSTEM$CAST\_MULTI\_PARTY\_APPROVAL\_VOTE](/sql-reference/functions/system_cast_multi_party_approval_vote)
+system function. Specify the request ID, the `APPROVE` or `REJECT` decision, and a comment that explains your vote. For example:
+
+Copy code
+
+```
+SELECT SYSTEM$CAST_MULTI_PARTY_APPROVAL_VOTE(
+  'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  'APPROVE',
+  'Reviewed and approved for the scheduled maintenance window.'
+);
+```
+
 ### View requests created by me
 
 1. Sign in to Snowsight.
@@ -303,9 +319,10 @@ To activate a policy using SQL instead, see
    system function.
 
    This transitions the request to `PENDING` and notifies the designated Approvers.
-3. **Review:** Approvers evaluate the request independently in Snowsight. Once the
-   required quorum of Approve votes is reached, the request status changes to
-   `APPROVED`.
+3. **Review:** Approvers evaluate the request independently and cast their votes in Snowsight or by calling the
+   [SYSTEM$CAST\_MULTI\_PARTY\_APPROVAL\_VOTE](/sql-reference/functions/system_cast_multi_party_approval_vote) system function from a worksheet
+   in an active Snowsight session. Once the
+   required quorum of Approve votes is reached, the request status changes to `APPROVED`.
 4. **Replay:** The system does not auto-execute the operation. The Requester is
    notified and must replay the exact same SQL statement. The engine matches the
    statement to the approved request and executes the change. The replay window is
@@ -385,7 +402,10 @@ This transitions the request to `PENDING` and notifies the designated Approvers.
 
 The Approver receives an email notification. They navigate to the Snowsight
 Requests & Approvals page, review the request and justification, and cast an Approve
-vote. Once the required quorum is reached, the request status changes to `APPROVED`.
+vote. Alternatively, they can cast an `APPROVE` vote by calling
+[SYSTEM$CAST\_MULTI\_PARTY\_APPROVAL\_VOTE](/sql-reference/functions/system_cast_multi_party_approval_vote) from a worksheet in an active
+Snowsight session.
+Once the required quorum is reached, the request status changes to `APPROVED`.
 
 **Step 4: Replay the statement (Requester)**
 

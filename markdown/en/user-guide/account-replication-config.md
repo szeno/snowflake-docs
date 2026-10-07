@@ -802,7 +802,7 @@ See the following pages for more information:
 
 If the storage integration is a Multi-Location Storage Integration, grant the replicated integration access only to the storage location that you plan to
 set as active in the target account. Don’t change the access for the location that’s active in your source account. For more information, see
-[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+[Point your target account at your secondary location](/user-guide/multi-location-resilience-data-pipelines-setup-target-account#label-mlsi-target-setup) in [Configure your target account for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-target-account).
 
 ## Configure automated refresh for directory tables on secondary stages
 
@@ -837,9 +837,9 @@ You must take additional steps to configure cloud notifications for secondary au
 This section covers why this additional configuration is required, and how to complete it for each supported cloud provider.
 
 The steps in this section apply to a pipe that reads from a single storage location. To let a pipe fail over to a storage location in
-another region or on another cloud provider, use a Multi-Location Storage Integration. To redirect the pipe’s notifications, use a Multi-Queue Notification Integration. If both storage locations are on Amazon S3 and the pipe uses
-only Amazon SQS notifications, you can instead call [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe) once for each existing pipe during setup. Pipes that you create later bind automatically when they replicate. For more information, see
-[Multi-Location Resilience for Data Pipelines](/user-guide/multi-location-resilience-data-pipelines).
+another region or on another cloud provider, use a Multi-Location Storage Integration. To redirect the pipe’s notifications, use a Multi-Queue Notification Integration: set its active queue in the target account, and set it again after each refresh that replicates new pipes. If both storage locations are on Amazon S3 and the pipe uses
+only Amazon SQS notifications, you can instead call [SYSTEM$INGEST\_REBIND\_PIPE](/sql-reference/functions/system_ingest_rebind_pipe) once for each pipe in the target account: for existing pipes during setup, and for each pipe that you create later, after the refresh that replicates it. For more information, see
+[Configure your target account for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-target-account).
 
 ### Amazon S3
 

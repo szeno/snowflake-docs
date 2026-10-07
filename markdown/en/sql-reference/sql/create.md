@@ -37,6 +37,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE STORAGE INTEGRATION](/sql-reference/sql/create-storage-integration)
 > - [CREATE USER](/sql-reference/sql/create-user)
 > - [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse)
+> - [CREATE INTERACTIVE WAREHOUSE](/sql-reference/sql/create-interactive-warehouse)
 
 **Database Objects:**
 
@@ -67,7 +68,6 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE HYBRID TABLE](/sql-reference/sql/create-hybrid-table)
 > - [CREATE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table)
 > - [CREATE INTERACTIVE TABLE](/sql-reference/sql/create-interactive-table)
-> - [CREATE INTERACTIVE WAREHOUSE](/sql-reference/sql/create-interactive-warehouse)
 > - [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository)
 > - [CREATE JOIN POLICY](/sql-reference/sql/create-join-policy)
 > - [CREATE LISTING](/sql-reference/sql/create-listing)

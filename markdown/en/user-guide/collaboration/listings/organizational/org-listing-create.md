@@ -109,6 +109,16 @@ Expand
 
 Show lessSee more
 
+Note
+
+If you test consumer access, for example after revoking an object from the share, make sure the role you test with
+doesn’t have its own grants on the object. A role with direct privileges on an object can still access it through those
+grants, even after the object is revoked from the share. To test as a consumer would:
+
+1. Run `USE SECONDARY ROLES NONE;`.
+2. Use a role that has no direct grants on the shared objects.
+3. Query the listing through its ULL.
+
 ### Manage listing auto-fulfillment settings
 
 Before managing auto-fulfillment settings for your organization listing, ensure that you have the necessary roles to manage auto-fulfilling the listing. See the auto-fulfillment [required privileges](/collaboration/provider-listings-auto-fulfillment-manage-privileges) for more information.

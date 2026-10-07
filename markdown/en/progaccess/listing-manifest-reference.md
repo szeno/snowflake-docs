@@ -669,8 +669,8 @@ Contains the following name value pairs:
         - MONTHS
         - YEARS
       - `value` (required when `time_frame` is NEXT/LAST, integer), range 1-100.
-      - `start_time` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
-      - `end_time` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
+      - `start_date` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
+      - `end_date` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
 
 ### `data_attributes` example
 
@@ -752,6 +752,19 @@ data_dictionary:
 ## `data_preview`
 
 The `data_preview` field allows providers to identify and hide Personally identifiable information (PII) in the data preview samples generated from listing data. PII data is data that could directly or indirectly reveal an individual’s identity. Required for public listings, and optional for all other listing types.
+
+Including the `data_preview` field in the manifest also enables the **Data Preview** tab on the listing page. If you
+omit the field, the tab shows *Data preview hasn’t been enabled*, even if your listing data contains no PII. To enable
+data preview for a listing without PII, include the field with only `has_pii` set:
+
+Copy code
+
+```
+data_preview:
+  has_pii: FALSE
+```
+
+After you enable data preview, you must contact [Snowflake Support](/user-guide/contacting-support) to disable it.
 
 The `data_preview` field includes the following entries:
 

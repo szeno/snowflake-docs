@@ -47,6 +47,7 @@ CREATE [ OR REPLACE ] INTERACTIVE TABLE [ IF NOT EXISTS ] <table_name>
   CLUSTER BY ( <expr> [ , <expr> , ... ] )
   [ TARGET_LAG = '<num> { seconds | minutes | hours | days }' ]
   [ WAREHOUSE = <warehouse_name> ]
+  [ INITIALIZATION_WAREHOUSE = <warehouse_name> ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
@@ -139,6 +140,12 @@ CREATE [ OR REPLACE ] INTERACTIVE TABLE [ IF NOT EXISTS ] <table_name>
 `WAREHOUSE = warehouse_name`
 :   **Required when TARGET\_LAG is specified.** Specifies the standard warehouse used for refresh operations when TARGET\_LAG is set. This must be a standard warehouse, not an interactive warehouse.
 
+`INITIALIZATION_WAREHOUSE = warehouse_name`
+:   Specifies the standard warehouse used for initial refreshes when TARGET\_LAG is set. Initial refreshes often process more data than
+    later refreshes, so you can use a larger warehouse here than for WAREHOUSE.
+
+    If not specified, the table uses the WAREHOUSE warehouse for all refreshes.
+
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the interactive table.
 
@@ -197,7 +204,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 | SELECT | Table, external table, view | Required on queried tables and/or views in the AS SELECT clause. |
 | APPLY | Masking policy, row access policy, tag, storage lifecycle policy | Required only when applying a masking policy, row access policy, object tags, storage lifecycle policy, or any combination of these [governance](/guides-overview-govern) features when creating tables. |
 | USAGE | Database, Schema | Required on the database and schema containing the interactive table. |
-| USAGE | Warehouse | Required on the warehouse specified in the WAREHOUSE parameter (when TARGET\_LAG is used). |
+| USAGE | Warehouse | Required on the warehouses specified in the WAREHOUSE and INITIALIZATION\_WAREHOUSE parameters (when TARGET\_LAG is used). |
 
 Expand
 
@@ -280,6 +287,7 @@ CREATE [ OR REPLACE ] INTERACTIVE TABLE <table_name>
   CLUSTER BY ( <expr> [ , <expr> , ... ] )
   TARGET_LAG = '<num> { seconds | minutes | hours | days }'
   WAREHOUSE = <warehouse_name>
+  [ INITIALIZATION_WAREHOUSE = <warehouse_name> ]
   [ COMMENT = '<string_literal>' ]
   AS <query>
 ```

@@ -111,7 +111,9 @@ After creation, temporary tables cannot be converted to any other table type.
 Snowflake supports creating transient tables that persist until explicitly dropped and are available to all users with the appropriate privileges.
 Transient tables are similar to permanent tables with the key difference that they do not have a Fail-safe period. As a result, transient tables
 are specifically designed for transitory data that needs to be maintained beyond each session (in contrast to temporary tables), but does not
-need the same level of data protection and recovery provided by permanent tables.
+need the same level of data protection and recovery provided by permanent tables. [Snowflake Backups](/user-guide/backups) also don’t support
+transient tables. For more information, see
+[Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).
 
 ### Data Storage Usage for Transient Tables
 

@@ -56,6 +56,7 @@ cancel a request, you must be the user who created it.
 
 ## Usage notes
 
+- You must call this function from a worksheet in an active Snowsight session. You can’t call it from another SQL client.
 - Approvers can also review and vote on requests from the Snowsight Requests & Approvals
   page. Casting a vote through the UI is equivalent to calling this function.
 - A single `REJECT` vote terminates a request immediately, regardless of how many

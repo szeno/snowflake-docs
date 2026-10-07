@@ -255,7 +255,9 @@ For more recent releases and feature updates, see [Snowflake server release note
 ## Feature updates earlier in 2026
 
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
+- [Oct 6, 2026: Data lineage for storage integrations, external tables, model monitors, and Cortex Search services](/release-notes/2026/other/2026-10-06-lineage-integrations-monitors-search)
 - [Oct 5, 2026: Change the type of an organization user](/release-notes/2026/other/2026-10-05-change-organization-user-type)
+- [Oct 05, 2026: Enforce CoCo policy with MDM (Preview)](/release-notes/2026/other/2026-10-05-coco-mdm-policy-preview)
 - [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
 - [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)

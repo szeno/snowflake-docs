@@ -2,14 +2,6 @@
 
 ## Overview
 
-Note
-
-Snowflake supports Model Context Protocol revision `2025-11-25`.
-
-Note
-
-The Snowflake-managed MCP server is available in government regions, except the Azure US Gov Virginia (non-FedRAMP High) region. In government regions, this feature hasn’t yet completed formal FedRAMP assessment. Under the FedRAMP shared responsibility model, evaluate whether the feature is appropriate for your workloads based on your data classification and your Authorizing Official’s risk acceptance requirements. For questions about authorization status, contact your Snowflake account team.
-
 Model Context Protocol (MCP) is an [open-source standard](https://modelcontextprotocol.io/docs/getting-started/intro) that lets AI agents securely interact with business applications and external data systems, such as databases and content repositories. MCP lets enterprise businesses reduce integration challenges and quickly deliver outcomes from models. Since its launch, MCP has become foundational for agentic applications, providing a consistent and secure mechanism for invoking tools and retrieving data.
 
 The Snowflake-managed MCP server lets AI agents securely retrieve data from Snowflake accounts without needing to deploy separate infrastructure. You can configure the MCP server to serve Cortex Analyst, Cortex Search, and Cortex Agents as tools, along with custom tools and SQL executions on the standards-based interface. MCP clients discover and invoke these tools, and retrieve data required for the application. With managed MCP servers on Snowflake, you can build scalable enterprise-grade applications while maintaining access and privacy controls. The MCP server on Snowflake provides:
@@ -1070,6 +1062,9 @@ Copy code
 ```
 
 ## Limitations
+
+- Snowflake supports Model Context Protocol revision `2025-11-25`.
+- The Snowflake-managed MCP server is available in government regions, except Azure US Gov Virginia (non-FedRAMP High), and hasn’t yet completed formal FedRAMP assessment. For authorization status, contact your Snowflake account team.
 
 Snowflake-managed MCP server does not support the following constructs in the MCP protocol: resources, prompts, roots, notifications, version negotiations, life cycle phases, and sampling.
 

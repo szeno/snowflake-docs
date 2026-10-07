@@ -13,6 +13,11 @@ Note
 This [Snowflake Scripting](/developer-guide/snowflake-scripting/index) construct is valid only within a
 [Snowflake Scripting block](/developer-guide/snowflake-scripting/blocks).
 
+If you run a `LET` statement outside a block (for example, directly in a worksheet), you get an error
+similar to `syntax error ... unexpected 'LET'`. To fix this, wrap the statement in a
+`BEGIN ... END` block. For details, see
+[Understanding Snowflake Scripting blocks](/developer-guide/snowflake-scripting/blocks).
+
 See also:
 :   [DECLARE](/sql-reference/snowflake-scripting/declare)
 
@@ -55,19 +60,19 @@ Where:
 >
 >     If both `type` and `expression` are specified, the expression must evaluate to a data type that matches.
 
-For example, the following `LET` statements declare three variables of type [NUMBER](/sql-reference/data-types-numeric#label-data-type-number),
-with precision set to `38` and scale set to `2`. All three variables have a default value, using either `DEFAULT`
-or `:=` to specify it.
+For example, the following block declares three variables of type [NUMBER](/sql-reference/data-types-numeric#label-data-type-number),
+with precision set to `38` and scale set to `2`, computes a result, and returns it.
+The variables use either `DEFAULT` or `:=` to specify a value.
 
 Copy code
 
 ```
 BEGIN
-  ...
-  LET profit NUMBER(38, 2) DEFAULT 0.0;
   LET revenue NUMBER(38, 2) DEFAULT 110.0;
   LET cost NUMBER(38, 2) := 100.0;
-  ...
+  LET profit NUMBER(38, 2) := :revenue - :cost;
+  RETURN :profit;
+END;
 ```
 
 For more examples, see:
@@ -107,15 +112,47 @@ Where:
 > `resultset_name`
 > :   The name of the [RESULTSET](/developer-guide/snowflake-scripting/resultsets) for the cursor to operate on.
 
-For example, the following `LET` statement declares cursor `c1` for a query:
+The following examples use this table:
 
 Copy code
 
 ```
+CREATE OR REPLACE TABLE invoices (price NUMBER);
+INSERT INTO invoices (price) VALUES (11.11), (22.22), (33.33);
+```
+
+For example, the following block declares a cursor for a query, opens it, fetches each row, and
+accumulates a total:
+
+Copy code
+
+```
+DECLARE
+  total_price FLOAT DEFAULT 0.0;
+  c1 CURSOR FOR SELECT price FROM invoices;
 BEGIN
-  ...
-  LET c1 CURSOR FOR SELECT price FROM invoices;
-  ...
+  OPEN c1;
+  FOR record IN c1 DO
+    total_price := total_price + record.price;
+  END FOR;
+  CLOSE c1;
+  RETURN total_price;
+END;
+```
+
+You can also declare a cursor that iterates over a RESULTSET:
+
+Copy code
+
+```
+DECLARE
+  res RESULTSET DEFAULT (SELECT price FROM invoices);
+  c1 CURSOR FOR res;
+BEGIN
+  FOR record IN c1 DO
+    RETURN record.price;
+  END FOR;
+END;
 ```
 
 For more examples, see [Working with cursors](/developer-guide/snowflake-scripting/cursors).
@@ -127,7 +164,7 @@ Use the following syntax to assign an expression to a [RESULTSET](/developer-gui
 Copy code
 
 ```
-<resultset_name> := ( <query> ) ;
+LET <resultset_name> RESULTSET { DEFAULT | := } ( <query> ) ;
 ```
 
 Where:
@@ -142,15 +179,15 @@ Where:
 > `DEFAULT query` or `:= query`
 > :   Assigns the value of `query` to the RESULTSET.
 
-For example, the following `LET` statement declares RESULTSET `res` for a query:
+For example, the following block declares a RESULTSET and returns it as a table result:
 
 Copy code
 
 ```
 BEGIN
-  ...
-  LET res RESULTSET := (SELECT price FROM invoices);
-  ...
+  LET res RESULTSET := (SELECT price FROM invoices WHERE price > 20);
+  RETURN TABLE(res);
+END;
 ```
 
 For more examples, see [Working with RESULTSETs](/developer-guide/snowflake-scripting/resultsets).

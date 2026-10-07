@@ -164,8 +164,11 @@ Snowflake Spark Connector that you are using.
 The Snowflake JDBC driver is provided as a standard Java package through the [JDBC Driver page in the Maven Central Repository](https://central.sonatype.com/search?q=g%3Anet.snowflake%20snowflake-jdbc). You
 can either download the package as a `.jar` file or you can directly reference the package. These instructions assume you are referencing the package.
 
-To find the supported version of the Snowflake JDBC Driver for the version of the Snowflake Spark Connector that you are using,
-see the  [release notes](/release-notes/clients-drivers/spark-connector).
+To find the JDBC driver version declared by your connector release, open that release’s
+[Spark Connector artifact in Maven Central](https://central.sonatype.com/search?q=g%3Anet.snowflake%20spark-snowflake).
+Select the artifact that matches your Scala version and the connector version you are installing, then inspect its
+dependencies or POM file. Use the version listed for the `net.snowflake:snowflake-jdbc` dependency.
+Release notes describe changes but do not list the JDBC dependency for every connector release.
 
 For more details on downloading and installing the Snowflake JDBC Driver, see [Downloading / integrating the JDBC Driver](/developer-guide/jdbc/jdbc-download).
 

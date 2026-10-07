@@ -175,7 +175,7 @@ SELECT timestamp,
        value
 FROM   snowflake.telemetry.events
 WHERE  SCOPE['name'] = 'snow.application.remote_app_operation'
-AND    RECORD_ATTRIBUTES['snow.application.hash'] = '<application_hash>'
+AND    RESOURCE_ATTRIBUTES['snow.application.hash'] = '<application_hash>'
 LIMIT  10;
 ```
 

@@ -184,6 +184,11 @@ For general information about roles and privilege grants for performing SQL acti
   Attention
 
   Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
+- You can’t add a backup to a backup set that targets a transient table, including a
+  dynamic transient table. The statement fails with an error. When you add a backup to
+  a database or schema backup set that contains transient tables, Snowflake skips those
+  tables. For more information, see
+  [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).
 
 Important
 

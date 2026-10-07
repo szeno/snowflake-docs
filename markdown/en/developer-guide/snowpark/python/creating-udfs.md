@@ -3,6 +3,9 @@
 The Snowpark API provides methods that you can use to create a user-defined function from a lambda or function in Python.
 This topic explains how to create these types of functions.
 
+To build and deploy UDFs from a command-line project, see
+[Deploying Snowpark projects with Snowflake CLI](/developer-guide/snowflake-cli/command-reference/snowpark-commands/deploy).
+
 ## Introduction
 
 With Snowpark, you can create user-defined functions (UDFs) for your custom lambdas and functions, and you can call these

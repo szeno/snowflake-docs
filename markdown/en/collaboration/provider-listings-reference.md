@@ -270,8 +270,10 @@ Previews provide a representative sample of the data, allowing:
 
 Note
 
-Data in a listing is automatically made available for preview.
-Providers needn’t do anything special to enable preview.
+Data preview is opt-in. Until you enable it, the **Data Preview** tab on the listing page shows
+*Data preview hasn’t been enabled*. To enable it, select **Enable preview** in Snowsight, or, for listings that you
+manage with a manifest, include the [`data_preview`](/progaccess/listing-manifest-reference#label-listings-manifest-data-preview) field. After you enable data
+preview, you must contact [Snowflake Support](/user-guide/contacting-support) to disable it.
 
 ##### Set up a data dictionary for your listing
 

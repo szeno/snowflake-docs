@@ -132,7 +132,7 @@ For internal stages, using this parameter to automatically load data is only sup
 
     - [Automating Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
     - [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
-    - [Create a Multi-Queue Notification Integration for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines#label-mlsi-mqni-scenario-a)
+    - [Create a Multi-Queue Notification Integration for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-mqni-scenario-a)
 
     The integration name must be typed in all uppercase.
 

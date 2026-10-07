@@ -47,6 +47,10 @@ Password, Session, & Authentication Policies:
 
     For details, refer to [Replication and security policies](/user-guide/account-replication-considerations#label-account-replication-considerations-security-policies).
 
+Multi-party Approval policies:
+:   You can’t replicate a Multi-party Approval policy using database replication. Use a replication or failover group to replicate a
+    Multi-party Approval policy. For details, see [Replication and security policies](/user-guide/account-replication-considerations#label-account-replication-considerations-security-policies).
+
 Secrets:
 :   You cannot replicate a secret using database replication. Use a replication or failover group to replicate a secret. For details, see
     [Replication and secrets](/user-guide/account-replication-considerations#label-account-replication-considerations-secrets).

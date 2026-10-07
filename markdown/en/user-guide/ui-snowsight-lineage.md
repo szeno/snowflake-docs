@@ -205,11 +205,15 @@ table). Table-like objects include:
 - Materialized views
 - Semantic views
 
-Stages can also participate in data lineage relationships, as can the following machine learning objects.
+Stages and [storage integrations](/sql-reference/sql/create-storage-integration) can also participate in data
+lineage relationships. For more information, see [Lineage for storage integrations and external tables](#label-lineage-storage-integrations).
+
+The following machine learning objects can also participate in data lineage relationships:
 
 - [Datasets](/developer-guide/snowflake-ml/dataset)
 - [Feature Views](/developer-guide/snowflake-ml/feature-store/feature-views) (which are actually dynamic tables or views inside Snowflake)
 - [Models](/developer-guide/snowflake-ml/model-registry/overview)
+- [Model monitors](/developer-guide/snowflake-ml/model-registry/model-observability)
 
 Column lineage is supported between columns in any two table-like objects. You can, for example, select a column in a table
 to view downstream column lineage, which shows the other table-like objects where that column appears.
@@ -220,6 +224,17 @@ Column lineage is not currently supported for semantic views.
 
 Additionally, you can see tag and masking policy associations if you are using a role that has privileges for managing
 tags and masking policies.
+
+### Lineage for storage integrations and external tables
+
+Data lineage includes the following relationships:
+
+- A storage integration is upstream of each stage that uses it.
+- A stage is upstream of each [external table](/user-guide/tables-external-intro) created on it.
+
+Together, these relationships let you trace an external table through its stage to the storage integration associated
+with that stage. Lineage includes these relationships only for stages and external tables created after this support
+was introduced.
 
 ### Lineage for objects from external data sources
 
@@ -237,6 +252,28 @@ relationships. Relationships between the following types of objects are supporte
 - [Datasets](/developer-guide/snowflake-ml/dataset)
 - [Feature Views](/developer-guide/snowflake-ml/feature-store/feature-views) (which is actually a dynamic table or a view inside Snowflake)
 - [Models](/developer-guide/snowflake-ml/model-registry/overview)
+
+Data lineage also tracks [model monitors](/developer-guide/snowflake-ml/model-registry/model-observability). When you run
+[CREATE MODEL MONITOR](/sql-reference/sql/create-model-monitor), the model version that the monitor observes appears upstream of the
+monitor. Lineage includes this relationship only for model monitors created after this support was introduced.
+
+### Lineage for Cortex Search services created from a stage
+
+Creating a Cortex Search service from a stage is in preview.
+
+When you [create a Cortex Search service from files on a stage](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-example-ui) in
+Snowsight, Snowflake creates a table or dynamic table that holds the processed content of those files. Data
+lineage records the relationships between the objects that Snowflake creates, so you can trace a Cortex Search service
+back to the stage that its content comes from:
+
+- The stage is upstream of one or more tables or dynamic tables that hold the processed content.
+- The last of those tables or dynamic tables is upstream of the Cortex Search service.
+
+Depending on how the files are processed, lineage can also show a stream on the stage and a task that refreshes the
+processed content.
+
+Snowflake records these relationships when the service is created. Lineage includes these relationships only for
+Cortex Search services created from a stage after this support was introduced.
 
 ### Lineage for Cortex Agents
 
@@ -349,3 +386,14 @@ Historical information is retained as follows:
   - Agent lineage is recorded only in the account that owns the agent. A shared or replicated agent doesn’t have
     lineage in other accounts.
   - Agent relationships don’t appear in [OBJECT\_DEPENDENCIES view](/sql-reference/account-usage/object_dependencies).
+- Lineage for stages, external tables, model monitors, and Cortex Search services created from a stage is recorded only
+  when the object is created:
+
+  - For a stage created before this support was introduced, its relationship to its storage integration doesn’t
+    appear until you recreate the stage. For an external table, its relationship to its stage doesn’t appear until
+    you recreate the external table.
+  - For a model monitor created before this support was introduced, the model version that it observes doesn’t appear
+    upstream of it until you recreate the monitor with [CREATE MODEL MONITOR](/sql-reference/sql/create-model-monitor).
+  - For a Cortex Search service created from a stage before this support was introduced, the relationships to its stage
+    and processing objects don’t appear until you create the service from the stage again in Snowsight.
+    Creating a service with [CREATE CORTEX SEARCH SERVICE](/sql-reference/sql/create-cortex-search) doesn’t record these relationships.

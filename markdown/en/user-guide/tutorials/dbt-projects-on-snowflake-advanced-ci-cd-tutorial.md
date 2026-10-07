@@ -176,6 +176,15 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
 The GitHub environment in the subject must match the `environment` value in both workflow files:
 
+Note
+
+GitHub uses an immutable subject format for repositories created after July 15, 2026 (and for older repositories whose
+administrators opt in). In that format, the owner and repository names are followed by their numeric IDs, for example
+`repo:<org>@<owner_id>/<repo>@<repo_id>:environment:<environment_name>`. If your repository uses this format, set
+`SUBJECT` to match it exactly; otherwise the GitHub Actions token doesn’t match the service user and authentication fails.
+For more information, see the GitHub documentation on
+[OpenID Connect reference](https://docs.github.com/en/actions/reference/security/oidc).
+
 Copy code
 
 ```
