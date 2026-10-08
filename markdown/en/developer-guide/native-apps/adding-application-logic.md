@@ -29,6 +29,8 @@ When developing procedures and functions for use within a Snowflake Native App, 
 that all SQL commands requiring input from users be run using bound parameters. This includes
 input provided through procedure arguments.
 
+To prevent error messages from exposing application code, see [Handle errors in application code](#label-native-apps-handle-errors).
+
 See [Creating a stored procedure](/developer-guide/stored-procedure/stored-procedures-creating) for more information.
 
 ### About caller’s rights and owner’s rights
@@ -297,7 +299,7 @@ CREATE FUNCTION PY_PROCESS_DATA_FUNC()
     '/python_modules/data.csv')
 ```
 
-See to [Reference external code files](#label-native-apps-reference-app-files) for more information on relative paths.
+See [Reference external code files](#label-native-apps-reference-app-files) for more information on relative paths.
 
 #### Restrictions on Python UDFs
 
@@ -312,45 +314,67 @@ Snowflake Native App Framework imposes the following restrictions on Python UDFs
 The Snowflake Native App Framework supports using JavaScript in stored procedures and user-defined
 functions using the [JavaScript API](/developer-guide/stored-procedure/stored-procedures-javascript).
 
-### Handle JavaScript errors
+## Handle errors in application code
 
-When using JavaScript within an application package, Snowflake recommends that you catch and
-handle errors. If not, the error message and stack trace that the
-error returns are visible to the consumer. To ensure that data content and application logic
-are kept private, use try/catch blocks in situations where sensitive objects or data is
-being accessed.
-
-The following example shows a JavaScript stored procedure that catches an error and returns
-a message:
+An uncaught error can include a stack trace that shows the provider’s code to the consumer. For Python
+and JavaScript, use `SnowflakeUserException` with a message written for the consumer. Snowflake returns
+that message and doesn’t include the stack trace. For example, calling the following Python procedure
+fails with the error `210012 (P0000): User error`:
 
 Copy code
 
 ```
-CREATE OR REPLACE PROCEDURE APP_SCHEMA.ERROR_CATCH()
+CREATE OR REPLACE PROCEDURE app_schema.error_proc()
+  RETURNS STRING
+  LANGUAGE PYTHON
+  RUNTIME_VERSION = '3.11'
+  PACKAGES = ('snowflake-snowpark-python')
+  HANDLER = 'run'
+AS
+$$
+from _snowflake import SnowflakeUserException
+
+def run(session):
+  raise SnowflakeUserException('User error')
+$$;
+```
+
+In JavaScript, throw the same exception:
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION app_schema.error_js_udf()
   RETURNS STRING
   LANGUAGE JAVASCRIPT
-  EXECUTE AS OWNER
-  AS $$
+AS
+$$
+  throw snowflake.SnowflakeUserException("User error");
+$$;
+```
+
+`SnowflakeUserException` isn’t available for Java or Scala. Catch the error and return a message that
+doesn’t include the provider’s code:
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION app_schema.error_java_udf()
+  RETURNS VARCHAR
+  LANGUAGE JAVA
+  HANDLER = 'TestFunc.error'
+AS
+'class TestFunc {
+  public static String error() {
     try {
-      let x = y.length;
-    }
-    catch(err){
+      int a = 1 / 0;
+    } catch (Exception e) {
       return "There is an error.";
     }
     return "Done";
-  $$;
+  }
+}';
 ```
-
-This example creates a JavaScript stored procedure that contains a try/catch block. If the
-stored procedure encounters an error when running the statement in the `try` block, it
-returns the message “There is an error” which is visible to the consumer.
-
-Without the try/catch block, the stored procedure would return the original error message
-and the full stack trace which would be visible to the consumer.
-
-Note
-
-Other languages supported by the Snowflake Native App Framework return redact error messages that occur in a Snowflake Native App.
 
 ## Add external functions to an application package
 

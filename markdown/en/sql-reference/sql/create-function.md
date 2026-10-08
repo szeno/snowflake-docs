@@ -25,6 +25,7 @@ Show lessSee more
 This command supports the following variants:
 
 - [CREATE OR ALTER FUNCTION](#label-create-or-alter-function-syntax): Creates a function if it doesn’t exist or alters an existing function.
+- [DEFINE FUNCTION](#label-define-function-syntax): Declarative definition of a function’s target state inside a DCM project.
 
 See also:
 :   [ALTER FUNCTION](/sql-reference/sql/alter-function), [DROP FUNCTION](/sql-reference/sql/drop-function), [SHOW USER FUNCTIONS](/sql-reference/sql/show-user-functions), [DESCRIBE FUNCTION](/sql-reference/sql/desc-function)
@@ -234,6 +235,15 @@ CREATE [ OR ALTER ] FUNCTION ...
 Note
 
 The COPY GRANTS parameter is not supported with this variant syntax.
+
+### DEFINE FUNCTION
+
+DCM Projects uses `DEFINE FUNCTION` statements to create and manage functions declaratively inside a DCM project, in every handler
+language that DCM Projects supports (SQL, Java, JavaScript, Python, and Scala). A `DEFINE FUNCTION` statement uses the same syntax
+as [CREATE OR ALTER FUNCTION](#label-create-or-alter-function-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE FUNCTION` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

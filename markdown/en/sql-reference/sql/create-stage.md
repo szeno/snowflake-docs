@@ -25,6 +25,7 @@ of staged files in cloud storage.
 Additionally, this command supports the following variants:
 
 - [CREATE OR ALTER STAGE](#label-create-or-alter-stage-syntax): Creates a new stage if it doesn’t exist or alters an existing stage.
+- [DEFINE STAGE](#label-define-stage-syntax): Declarative definition of a stage’s target state inside a DCM project.
 - [CREATE STAGE … CLONE](#label-create-stage-clone-syntax): Creates a clone of an existing stage. For more information, see [Cloning considerations](/user-guide/object-clone).
 
 See also:
@@ -262,6 +263,14 @@ CREATE OR ALTER [ { TEMP | TEMPORARY } ] STAGE <external_stage_name>
   [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM } [ formatTypeOptions ] } ) ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE STAGE
+
+DCM Projects uses `DEFINE STAGE` statements to create and manage both external and internal stages declaratively inside a
+DCM project. A `DEFINE STAGE` statement uses the same syntax as [CREATE OR ALTER STAGE](#label-create-or-alter-stage-syntax),
+with the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE STAGE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ### CREATE STAGE … CLONE
 

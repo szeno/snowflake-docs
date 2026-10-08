@@ -67,7 +67,7 @@ During this step the `IS_COMPLETED` column is set to false for all records in th
 
 During this step, `connector_configuration` is deleted from the internal `APP_CONFIG` table.
 
-### Delete connector configuration
+### Delete connection configuration
 
 During this step, `connection_configuration` is deleted from the internal `APP_CONFIG` table.
 
@@ -125,7 +125,7 @@ Possible error codes include:
 - `INVALID_CONNECTOR_CONFIGURATION_STATUS` - Invalid connector status. Expected statuses: `[INSTALLED, PREREQUISITES_DONE, CONFIGURED, CONNECTED]`.
 - `INTERNAL_ERROR` - Something went wrong internally, the message should be descriptive.
 - `PROCEDURE_NOT_FOUND` - The procedure that was called does not exist.
-- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happen when calling internal procedures.
+- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happens while calling internal procedures.
 - `INVALID_RESPONSE` - This error occurs when response received from internal procedure does not contain `response_code` or an error response does not contain `message`, but contains `response_code`.
 - `UNKNOWN_ERROR` - It means that something unexpected went wrong (message of thrown exception is forwarded).
 - Custom error codes received from `RESET_CONFIGURATION_INTERNAL` and `RESET_CONFIGURATION_VALIDATE` procedures - defined by the connector developer.

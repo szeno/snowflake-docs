@@ -91,19 +91,20 @@ Columns include: `TYPE`, `APPLICATION_NAME`, `STATE`, `STARTED_ON`, `COMPLETED_O
 ## Event logging and sharing with the provider
 
 The app’s log messages and trace events can be shared with the provider to assist with
-troubleshooting. This sharing is not enabled by default: you must actively set up an event table
-and opt in to sharing.
+troubleshooting. This sharing is not enabled by default: you must opt in to sharing.
 
 **When event sharing is enabled:**
 
-- Log messages and trace events emitted by the app are written to your event table.
-- Snowflake shares a subset of those events with the provider’s account.
+- If you have an active event table, log messages and trace events emitted by the app are written
+  to that table.
+- Snowflake shares a subset of the app’s log messages and trace events with the provider’s account.
+  If you set the event table to `NONE`, the events are not stored in your account. They are still
+  shared with the provider.
 - The shared events include app-context attributes (the app package name, your account region, and
   similar metadata) but do not include your raw data or the content of your queries.
 - Your account name and certain identifiers are hashed before sharing to protect your privacy.
 
-You can enable or disable event sharing at any time. If you do not have an active event table
-configured, log and trace data emitted by the app is discarded.
+You can enable or disable event sharing at any time.
 
 For full instructions, see
 [Set up event tracing for an app](/developer-guide/native-apps/ui-consumer-enable-logging).

@@ -13,6 +13,7 @@ After creating a DMF, apply it to a table column using an
 This command supports the following variants:
 
 - [CREATE OR ALTER DATA METRIC FUNCTION](#label-create-or-alter-dmf-function-syntax): Creates a new data metric function if it doesn’t exist or alters an existing data metric function.
+- [DEFINE DATA METRIC FUNCTION](#label-define-dmf-function-syntax): Declarative definition of a data metric function’s target state inside a DCM project.
 
 ## Syntax
 
@@ -50,6 +51,16 @@ Copy code
 ```
 CREATE [ OR ALTER ] DATA METRIC FUNCTION ...
 ```
+
+### DEFINE DATA METRIC FUNCTION
+
+DCM Projects uses `DEFINE DATA METRIC FUNCTION` statements to create and manage data metric functions declaratively inside a
+DCM project. A `DEFINE DATA METRIC FUNCTION` statement uses the same syntax as
+[CREATE OR ALTER DATA METRIC FUNCTION](#label-create-or-alter-dmf-function-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE DATA METRIC FUNCTION` only inside DCM project definition files,
+not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

@@ -69,7 +69,7 @@ that ingests the data from an external data source into Snowflake. The provided 
 of the connector application and allow for customization and exclusion of some features.
 As of now the Snowflake Native SDK for Connectors is provided as code to be built locally and only in Java.
 Additionally, a second library containing useful helper and utility classes for writing unit tests is provided.
-Those libraries can be found in the maven central repository:
+Those libraries can be found in the Maven Central repository:
 
 - [Native SDK for Connectors library](https://central.sonatype.com/artifact/com.snowflake/connectors-native-sdk)
 - [Native SDK for Connectors Test library](https://central.sonatype.com/artifact/com.snowflake/connectors-native-sdk-test/overview)

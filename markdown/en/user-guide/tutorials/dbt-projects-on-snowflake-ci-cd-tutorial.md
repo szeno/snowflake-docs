@@ -652,7 +652,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
            run: snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action --source ./tasty_bytes --dbt-version 1.12.3 -x
 
          - name: List all of the snowflake dbt project objects in your account
-           run: snow dbt list -x
+           run: snow dbt list --format JSON -x
 
          # Builds all models and runs tests in DAG order, failing early if any upstream test breaks
          - name: Build and test dbt project in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
@@ -702,7 +702,7 @@ ci-test-dbt:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
       -x
-    - snow dbt list -x
+    - snow dbt list --format JSON -x
     # Builds all models and runs tests in DAG order, failing early if any upstream test breaks
     - snow dbt execute -x tester_tasty_bytes_dbt_project_object_gitlab build --target dev
 ```
@@ -760,7 +760,7 @@ steps:
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
-  - script: snow dbt list -x
+  - script: snow dbt list --format JSON -x
     displayName: 'List dbt project objects'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
@@ -810,8 +810,7 @@ Regardless of which platform you chose, the pipeline follows the same pattern:
 
 ## Create your Continuous Deployment (CD) pipeline
 
-The CD workflow runs after code is merged to main (or any direct push to main), ensuring the dbt project object in Snowflake reflects the
-latest code.
+The CD workflow runs after code is merged to `main`, ensuring the dbt project object in Snowflake reflects the latest code.
 
 ### Create your CD workflow file
 
@@ -833,8 +832,9 @@ GitHub ActionsGitLab CI/CDAzure DevOps
    name: PR Accepted Deployment
    run-name: PR from ${{ github.actor }} accepted - triggered a ${{ github.event_name }}
    on:
-     push:
-       branches: [ main ]
+     pull_request:
+       types: [closed]
+       branches: [main]
 
    permissions:
      contents: read
@@ -842,6 +842,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
    jobs:
      run-snowflake-dbt-job:
+       if: github.event.pull_request.merged == true
        name: "Run on Accepted PR"
        runs-on: ubuntu-latest
        environment: prod # Must match the OIDC subject's environment
@@ -874,15 +875,16 @@ GitHub ActionsGitLab CI/CDAzure DevOps
          - name: Create a new dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
            run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes --default-target prod --dbt-version 1.12.3 -x
 
-         - name: List all of the snowflake dbt project objects on your account
-           run: snow dbt list -x
+         - name: List all of the snowflake dbt project objects in your account
+           run: snow dbt list --format JSON -x
 
          # (optional) Uncomment the lines below and follow Step 7 if you want to manage Task orchestration via source control
          # - name: Run schedules.sql to create or alter tasks for tasty_bytes_dbt_object_gh_action
          #   run: snow sql -f ${{ github.workspace }}/tasty_bytes/schedules.sql -x
    ```
 6. Select **Commit changes** to save the file to `.github/workflows/pr_merged.yml`.
-7. Navigate to the **Actions** tab of your repository to see your `pr_merged.yml` action start to run.
+7. After you merge a pull request into `main`, navigate to the **Actions** tab of your repository to see your `pr_merged.yml` action start
+   to run.
 
 Add the following deploy job to your `.gitlab-ci.yml` file (after the CI test job you created earlier):
 
@@ -914,7 +916,7 @@ cd-deploy-dbt:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
       -x
-    - snow dbt list -x
+    - snow dbt list --format JSON -x
     # (optional) Uncomment to manage Task orchestration via source control
     # - snow sql -f ./tasty_bytes/schedules.sql -x
 ```
@@ -974,7 +976,7 @@ steps:
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
-  - script: snow dbt list -x
+  - script: snow dbt list --format JSON -x
     displayName: 'List dbt project objects'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
@@ -990,7 +992,7 @@ Create a second pipeline in Azure DevOps pointing to this YAML file.
 
 ### Key pieces from the workflow file
 
-- **Trigger**: Runs on pushes to `main` (after a merge).
+- **Trigger**: Runs after a merge to `main`.
 - **Same OIDC authentication and `-x` flag** as the CI pipeline.
 - **Steps**:
 

@@ -81,5 +81,5 @@ when evaluating the CVE vulnerabilities for an app:
 
 - [NVD Vulnerabilities](https://nvd.nist.gov/vuln)
 - [Vulnerability metrics](https://nvd.nist.gov/vuln-metrics/cvss)
-- [Exploited Protection Scoring System](https://nvd.nist.gov/vuln-metrics/cvss)
+- [Exploit Prediction Scoring System](https://nvd.nist.gov/vuln-metrics/cvss)
 - [Enhancing Vulnerability Prioritization](https://arxiv.org/abs/2302.14172)

@@ -854,7 +854,7 @@ the callbacks that are dedicated to:
 3. Perform custom operations after the resource is enabled. Look for the `TODO: IMPLEMENT ME post enable resource`
    comment in the code to provide the custom implementation.
 
-Learn more from the `PUBLIC.ENABLE_RESOURCE()` procedure detailed documentations:
+Learn more from the `PUBLIC.ENABLE_RESOURCE()` procedure detailed documentation:
 
 - [Enable resource](/developer-guide/native-apps/connector-sdk/flow/ingestion-management/enable_resource)
 - [Enable resource reference](/developer-guide/native-apps/connector-sdk/reference/enable_resource_reference)
@@ -869,7 +869,7 @@ dedicated to:
 2. Perform custom operations before the resource is disabled. Look for the `TODO: IMPLEMENT ME pre disable resource`
    comment in the code in order to provide the custom implementation.
 
-Learn more from the `PUBLIC.DISABLE_RESOURCE()` procedure detailed documentations:
+Learn more from the `PUBLIC.DISABLE_RESOURCE()` procedure detailed documentation:
 
 - [Disable resource](/developer-guide/native-apps/connector-sdk/flow/ingestion-management/disable_resource)
 - [Disable resource reference](/developer-guide/native-apps/connector-sdk/reference/disable_resource_reference)
@@ -886,7 +886,7 @@ the callbacks that are dedicated to:
 3. Perform custom operations after the resource is updated. Look for the `TODO: IMPLEMENT ME post update resource`
    comment in the code to provide the custom implementation.
 
-Learn more from the `PUBLIC.UPDATE_RESOURCE()` procedure detailed documentations:
+Learn more from the `PUBLIC.UPDATE_RESOURCE()` procedure detailed documentation:
 
 - [Update resource](/developer-guide/native-apps/connector-sdk/flow/ingestion-management/update_resource)
 - [Update resource reference](/developer-guide/native-apps/connector-sdk/reference/update_resource_reference)

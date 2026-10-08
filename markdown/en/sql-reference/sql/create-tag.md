@@ -5,6 +5,7 @@ Creates a new tag or replaces an existing tag in the system.
 This command supports the following variants:
 
 - [CREATE OR ALTER TAG](#label-create-or-alter-tag-syntax): Creates a tag if it doesn’t exist or alters an existing tag.
+- [DEFINE TAG](#label-define-tag-syntax): Declarative definition of a tag’s target state inside a DCM project.
 
 See also:
 :   [ALTER TAG](/sql-reference/sql/alter-tag), [SHOW TAGS](/sql-reference/sql/show-tags), [DROP TAG](/sql-reference/sql/drop-tag), [UNDROP TAG](/sql-reference/sql/undrop-tag), [Multi-value tags](/user-guide/object-tagging/multi-value-tags)
@@ -41,6 +42,14 @@ CREATE OR ALTER TAG <name>
   [ ALLOWED_VALUES '<val_1>' [ , '<val_2>' [ , ... ] ] ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE TAG
+
+DCM Projects uses `DEFINE TAG` statements to create and manage tags declaratively inside a DCM project. A `DEFINE TAG` statement
+uses the same syntax as [CREATE OR ALTER TAG](#label-create-or-alter-tag-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE TAG` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

@@ -10,6 +10,7 @@ columns, with each column definition consisting of a name, data type, and option
 In addition, this command supports the following variants:
 
 - [CREATE OR ALTER TABLE](#label-create-or-alter-table-syntax) (creates a table if it doesn’t exist, or alters it according to the table definition)
+- [DEFINE TABLE](#label-define-table-syntax) (declarative definition of a table’s target state inside a DCM project)
 - [CREATE TABLE … AS SELECT](#label-ctas-syntax) (creates a populated table; also referred to as CTAS)
 - [CREATE TABLE … USING TEMPLATE](#label-create-table-using-template-syntax) (creates a table with the column definitions derived from a set of staged files)
 - [CREATE TABLE … LIKE](#label-create-table-like) (creates an empty copy of an existing table)
@@ -195,6 +196,14 @@ CREATE OR ALTER
   [ COMMENT = '<string_literal>' ]
   [ ROW_TIMESTAMP = { TRUE | FALSE } ]
 ```
+
+### DEFINE TABLE
+
+DCM Projects uses `DEFINE TABLE` statements to create and manage tables declaratively inside a DCM project. A `DEFINE TABLE`
+statement uses the same syntax as [CREATE OR ALTER TABLE](#label-create-or-alter-table-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE TABLE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ### CREATE TABLE … AS SELECT (also referred to as CTAS)
 

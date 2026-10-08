@@ -115,7 +115,7 @@ SHOW VERSIONS IN APPLICATION PACKAGE hello_snowflake_package;
 
 To remove a version from an application package, you must verify that there are no
 [release directives](/developer-guide/native-apps/update-app-release-directive) currently
-pointing that the version you want to remove.
+pointing to the version you want to remove.
 
 See [View the release directives for an application package](/developer-guide/native-apps/update-app-release-directive#label-native-apps-release-dir-view-legacy) for information on viewing the release directives.
 

@@ -544,6 +544,8 @@ Registers a data offering so that it can be linked to a collaboration definition
 
 Every data offering must have a unique name-version combination for all data offerings in all registries in your account.
 
+When you register a data offering, Snowflake validates hashed columns in the specification by sampling rows from the source table or view to confirm that the data is in the declared [`column_type`](/user-guide/cleanrooms/spec-data-offering#label-dcr-collaboration-data-yaml) format. If the specification declares no hashed `column_type` values, Snowflake skips the sampling step.
+
 If you want to share this table with others in the collaboration, include the table in the collaboration specification before the collaboration is created.
 
 You must have the REFERENCE\_USAGE privilege with GRANT OPTION on any data that you share in a collaboration. If you do not, you will get a “missing reference usage grant” error when you try to join the collaboration or register the object. [Learn how to handle this issue.](/user-guide/cleanrooms/v2/troubleshooting#label-dcr-database-missing-reference-usage-error)

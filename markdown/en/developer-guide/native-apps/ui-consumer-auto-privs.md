@@ -57,7 +57,7 @@ For restrictions on the CREATE EXTERNAL ACCESS INTEGRATION privilege, see
 
 ## Restrictions on the CREATE EXTERNAL ACCESS INTEGRATION and CREATE SECURITY INTEGRATION
 
-The CREATE EXTERNAL ACCESS INTEGRATION and CREATE SECURITY INTEGRATION privileges allows an app
+The CREATE EXTERNAL ACCESS INTEGRATION and CREATE SECURITY INTEGRATION privileges allow an app
 to create the objects in the consumer account that are required to connect to an external endpoint.
 However, to allow connections to an external endpoint, consumers must also approve the app specification
 which allows the app to connect to external hosts. If a consumer does not approve the app specification,

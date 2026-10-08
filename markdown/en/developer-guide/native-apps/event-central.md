@@ -23,7 +23,7 @@ HIPAA, and PCI DSS.
 
 1. Create an event routing table for the organization.
 2. Activate the event routing table for the organization.
-3. After the application starts to produce events, query the event routing table to retrieve the telemetry data.
+3. After the application starts to produce events, query the destination event table to retrieve the telemetry data.
 
 ### Routing rules
 
@@ -80,7 +80,7 @@ Where:
 `DESTINATION_ACCOUNT`
 :   The account to which the events are routed. You specify the routing account
     in the format `org.account_name`, or `account_name` for accounts in the
-    current account’s organization.
+    current account’s organization. Specify the account name, not the account locator.
 
 Each organization can have only one event routing table activated for it. Each
 event routing table can have a maximum of 200 rules.
@@ -113,7 +113,7 @@ The following command activates the event routing table for the organization:
 Copy code
 
 ```
-ALTER ORGANIZATION SET EVENT ROUTING TABLE 'org_table' FOR ALL APPLICATION LISTINGS;
+ALTER ORGANIZATION SET EVENT ROUTING TABLE org_table FOR ALL APPLICATION LISTINGS;
 ```
 
 When you activate an event routing table for the organization, the events are routed
@@ -170,7 +170,7 @@ The following command shows the rules in an event routing table:
 Copy code
 
 ```
-SHOW RULES IN EVENT ROUTING TABLE 'table_1';
+SHOW RULES IN EVENT ROUTING TABLE table_1;
 ```
 
 ```
@@ -235,6 +235,49 @@ Events are routed using the existing event sharing configuration if either of th
 - The event routing table has no default rule and no rule for the current region.
 
 For information about the existing event sharing feature, see [About event sharing](/developer-guide/native-apps/event-about#label-nativeapps-provider-logging-about-events).
+
+## Find routed events
+
+An event routing table stores only routing rules. It doesn’t store events. Events routed by a rule are ingested
+into the active event table of the destination account for that rule. The destination account must have an active
+event table. For more information, see
+[Set the event table as the active event table](/developer-guide/native-apps/event-manage-provider#label-nativeapps-provider-event-table-set-active).
+
+To find and validate routed events, do the following:
+
+1. Run [SHOW RULES IN EVENT ROUTING TABLE](/sql-reference/sql/show-rules-in-event-routing-table) and check the `destination_account` column to
+   identify the destination account for the source region.
+2. In the destination account, run the following command to identify the active event table:
+
+   Copy code
+
+   ```
+   SHOW PARAMETERS LIKE 'EVENT_TABLE' IN ACCOUNT;
+   ```
+3. Query the event table returned by the command. For example:
+
+   Copy code
+
+   ```
+   SELECT
+     TIMESTAMP,
+     RECORD_TYPE,
+     RESOURCE_ATTRIBUTES:"snow.application.consumer.organization"::STRING AS consumer_organization,
+     RESOURCE_ATTRIBUTES:"snow.application.consumer.account_name"::STRING AS consumer_account,
+     VALUE
+   FROM <event_table>
+   WHERE RESOURCE_ATTRIBUTES:"snow.application.consumer.organization" IS NOT NULL
+   ORDER BY TIMESTAMP DESC;
+   ```
+
+   The `snow.application.consumer.organization` and `snow.application.consumer.account_name` attributes identify
+   the consumer associated with an event. For more information about fields shared with the provider, see
+   [Set up and manage an event table in the provider account](/developer-guide/native-apps/event-manage-provider). For more information about querying event tables, see
+   [Viewing log messages](/developer-guide/logging-tracing/logging-accessing-messages) and
+   [Viewing trace data](/developer-guide/logging-tracing/tracing-accessing-events).
+4. To verify that centralized event sharing is working, confirm that new events from consumers in the routed
+   source region appear in the destination event table. If you also query an event table in a source region, don’t
+   expect new routed events there when the centralized routing rule sends them to a different destination account.
 
 ## Troubleshooting
 

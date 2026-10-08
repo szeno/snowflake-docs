@@ -1,6 +1,6 @@
 # Sep 25, 2026: OpenAI GPT-5.6 and GPT-6 Astra models (*General availability*)
 
-The following OpenAI models are now generally available in Cortex Inference:
+The following OpenAI models are now generally available in the Cortex REST API:
 
 - `openai-gpt-5.6-luna`
 - `openai-gpt-5.6-sol`

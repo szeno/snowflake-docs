@@ -42,7 +42,7 @@ However, it is possible to implement a custom handler, which will not have this 
 ## Input validation
 
 Input needs to be a valid `Variant`. IN addition, there are custom validations that need to be satisfied. One stored procedure,
-`PUBLIC.FINALIZE_CONNECTOR_CONFIGURATION_VALIDATE(CUSTOM_CONFIGURATION VARIANT)` stored can be customized by the user.
+`PUBLIC.FINALIZE_CONNECTOR_CONFIGURATION_VALIDATE(CUSTOM_CONFIGURATION VARIANT)` can be customized by the user.
 By default, this procedure just returns `'response_code': 'OK'`.
 Customize it by overwriting the SQL or by using `FinalizeConnectorHandlerBuilder` and providing a custom implementation of the
 `FinalizeConnectorValidator` interface.

@@ -7,7 +7,7 @@ Available to accounts in all regions in all cloud providers (including governmen
 Disabling a resource is used to stop ingesting data for a given resource.
 `PUBLIC.DISABLE_RESOURCE` procedure is the entry point from the UI or worksheet to disable a resource.
 
-Calling this procedure requires the user to have the been assigned the `ADMIN` application role.
+Calling this procedure requires the user to have been assigned the `ADMIN` application role.
 
 The disable resource process consists of several phases. Several of which are customizable but include reasonable defaults.
 Phases are:
@@ -38,7 +38,7 @@ If custom logic returns error, the next steps will not be executed and given err
 
 ## Finishing active ingestion processes and marking resource ingestion definition as disabled
 
-Within this step all ingestion processes with state `SCHEDULED` or `IN_PROGRESS` are completed so and the next iteration of ingestion will not be executed for a given resource.
+Within this step all ingestion processes with state `SCHEDULED` or `IN_PROGRESS` are completed, and the next iteration of ingestion will not be executed for a given resource.
 Then the resource ingestion definition’s `enabled` flag is changed to `false`.
 
 Note

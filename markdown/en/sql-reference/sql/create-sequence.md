@@ -11,6 +11,7 @@ For more details, see [Using Sequences](/user-guide/querying-sequences).
 This command supports the following variant:
 
 - [CREATE OR ALTER SEQUENCE](#label-create-or-alter-sequence-syntax): Creates a sequence if it doesn’t exist or alters an existing sequence.
+- [DEFINE SEQUENCE](#label-define-sequence-syntax): Declarative definition of a sequence’s target state inside a DCM project.
 
 See also:
 :   [DROP SEQUENCE](/sql-reference/sql/drop-sequence), [ALTER SEQUENCE](/sql-reference/sql/alter-sequence), [SHOW SEQUENCES](/sql-reference/sql/show-sequences), [DESCRIBE SEQUENCE](/sql-reference/sql/desc-sequence)
@@ -48,6 +49,14 @@ CREATE OR ALTER SEQUENCE <name>
   [ { ORDER | NOORDER } ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE SEQUENCE
+
+DCM Projects uses `DEFINE SEQUENCE` statements to create and manage sequences declaratively inside a DCM project. A
+`DEFINE SEQUENCE` statement uses the same syntax as [CREATE OR ALTER SEQUENCE](#label-create-or-alter-sequence-syntax), with
+the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE SEQUENCE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

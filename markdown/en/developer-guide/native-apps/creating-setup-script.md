@@ -293,9 +293,23 @@ ensure that these updates are compatible with existing running code from the pre
 
 ## About application roles
 
-By default, the consumer has no privileges on objects created within the app. Even the ACCOUNTADMIN role
-cannot view the objects **within** an app. Objects that the app creates outside itself,
-such as a database, are visible only to the ACCOUNTADMIN role of the consumer account.
+By default, the consumer has no privileges on objects created within the app. Even the `ACCOUNTADMIN` role
+can’t view the objects **within** an app.
+
+When the app creates an object outside itself, such as a database:
+
+- Roles with the MANAGE GRANTS privilege can see it.
+- If the app grants privileges on the object to an application role, the app owner can also see it, and so can any consumer
+  role that has been granted that application role.
+
+Snowflake doesn’t transfer ownership of objects that the app owns outside itself when the app is uninstalled.
+If the app owns any of those objects, [DROP APPLICATION](/sql-reference/sql/drop-application) without `CASCADE`
+returns an error. To keep the objects, a role with the MANAGE GRANTS privilege must
+[transfer ownership](/sql-reference/sql/grant-ownership) to a consumer role before the app is dropped. The new
+owner doesn’t have to be `ACCOUNTADMIN` or hold the MANAGE GRANTS privilege. To remove the objects instead, run
+`DROP APPLICATION ... CASCADE`. `CASCADE` also drops objects that consumer roles own inside an object the app
+still owns, such as a schema or table in a database the app owns. For more information, see
+[Uninstall a Native App](/developer-guide/native-apps/consumer-guide-uninstall).
 
 Application roles are similar to database roles, but may only be created within the app. Unlike database
 roles, application roles can be granted privileges on objects that exist outside of the app.

@@ -18,7 +18,7 @@ Copy code
 
 ```
 CREATE EVENT ROUTING TABLE <table_name>
-   WITH RULES
+  WITH RULES
     {rule name} = (REGION_GROUP={region group}, REGIONS=('{region1}', '{region2}', ...), DESTINATION_ACCOUNT = {organization}.{account_name})
     ...
 ```
@@ -49,7 +49,7 @@ Each rule has the following required parameters:
 > :   Specifies the organization to route the events to.
 >
 > `DESTINATION_ACCOUNT`
-> > Specifies the account to which the events are routed. You specify the routing account in the format *org.account\_name*.
+> > Specifies the account to which the events are routed. You specify the routing account in the format *org.account\_name*. Specify the account name, not the account locator.
 
 ## Optional parameters
 
@@ -79,7 +79,7 @@ Copy code
 
 ```
 CREATE EVENT ROUTING TABLE org_table
-   WITH RULES
-     default = (REGION_GROUP='PUBLIC', REGIONS=('ALL'), DESTINATION_ACCOUNT = org.account1)
-     aws_us = (REGION_GROUP='PUBLIC', REGIONS=('AWS_US_EAST_1', 'AWS_US_WEST_2'), DESTINATION_ACCOUNT = org.account1)
+  WITH RULES
+    default = (REGION_GROUP='PUBLIC', REGIONS=('ALL'), DESTINATION_ACCOUNT = org.account1)
+    aws_us = (REGION_GROUP='PUBLIC', REGIONS=('AWS_US_EAST_1', 'AWS_US_WEST_2'), DESTINATION_ACCOUNT = org.account1)
 ```

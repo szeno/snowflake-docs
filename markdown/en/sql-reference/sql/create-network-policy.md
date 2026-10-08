@@ -5,6 +5,7 @@ Creates a network policy or replaces an existing network policy.
 This command supports the following variants:
 
 - [CREATE OR ALTER NETWORK POLICY](#label-create-or-alter-network-policy-syntax): Creates a network policy if it doesn’t exist or alters an existing network policy.
+- [DEFINE NETWORK POLICY](#label-define-network-policy-syntax): Declarative definition of a network policy’s target state inside a DCM project.
 
 Note
 
@@ -54,6 +55,16 @@ CREATE OR ALTER NETWORK POLICY <name>
   [ BLOCKED_IP_LIST = ( [ '<ip_address>' ] [ , '<ip_address>' , ... ] ) ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE NETWORK POLICY
+
+DCM Projects uses `DEFINE NETWORK POLICY` statements to create and manage network policies declaratively inside a DCM project. A
+`DEFINE NETWORK POLICY` statement uses the same syntax as
+[CREATE OR ALTER NETWORK POLICY](#label-create-or-alter-network-policy-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE NETWORK POLICY` only inside DCM project definition files,
+not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

@@ -141,7 +141,7 @@ CREATE APPLICATION hello_snowflake_app FROM APPLICATION PACKAGE hello_snowflake_
 After defining a version or patch in an application package, you can create an app
 based on that version or patch.
 
-To create a an app from a specific version, use the [CREATE APPLICATION](/sql-reference/sql/create-application)
+To create an app from a specific version, use the [CREATE APPLICATION](/sql-reference/sql/create-application)
 command as shown in the following example:
 
 Copy code
@@ -190,7 +190,7 @@ ALTER APPLICATION HelloSnowflake
 
 ### Upgrade an app from a version or patch
 
-To upgrade an app that was created using a specific a version or patch, use the
+To upgrade an app that was created using a specific version or patch, use the
 [ALTER APPLICATION](/sql-reference/sql/alter-application) command as shown in the following example:
 
 Copy code
@@ -279,6 +279,35 @@ In development mode, for example, running the SHOW or DESC commands on objects w
 display those objects that the consumer has been granted permissions to view. However, in debug mode, you
 can see all objects within the app.
 
+### Check the mode of an app
+
+To check the mode from code inside the app, read the `IS_DEV_MODE` property of
+[SYS\_CONTEXT (SNOWFLAKE$APPLICATION namespace)](/sql-reference/functions/sys_context_snowflake_application).
+For example, the setup script can define the following procedure:
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE core.check_mode()
+  RETURNS VARCHAR
+  LANGUAGE SQL
+  AS 'BEGIN RETURN SYS_CONTEXT(''SNOWFLAKE$APPLICATION'', ''IS_DEV_MODE''); END';
+```
+
+`CALL hello_snowflake_app.core.check_mode();` returns `TRUE` for an app created from files on a stage or
+from a version, and `FALSE` for an app created from a release directive, which includes every app that a
+consumer installs from a listing.
+
+`IS_DEV_MODE` reports how the app was created. It doesn’t change when you turn debug mode or session debug
+mode on or off. Called from your own session, it returns `NULL` unless session debug mode is on, because
+session debug mode runs your statements as the app.
+
+To check the debug state from your own session:
+
+- Debug mode: run `DESC APPLICATION hello_snowflake_app;` and read the `debug_mode` row.
+- Session debug mode: run `SELECT SYSTEM$GET_DEBUG_STATUS();`. See
+  [View the session debug status for an app in the current session](#label-native-apps-session-debug-mode-status).
+
 ### About debug mode
 
 In debug mode, you can view and modify all of the objects within an app. Objects that are not visible to a
@@ -329,6 +358,56 @@ You must also have the DEVELOP privilege on the application package.
 
 Additionally, the app must be created in development mode and in the same account
 as the application package.
+
+#### Find objects that aren’t granted to an application role
+
+If an object is visible in debug mode but not when debug mode is off, the setup script doesn’t grant
+privileges on it to an application role. Consumers can’t see or use the object.
+
+For example, the following setup script creates the `core.config` table but grants nothing on it:
+
+Copy code
+
+```
+CREATE APPLICATION ROLE IF NOT EXISTS app_public;
+CREATE OR ALTER VERSIONED SCHEMA core;
+GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
+
+CREATE TABLE IF NOT EXISTS core.config (k VARCHAR, v VARCHAR);
+```
+
+With debug mode off, `SHOW TABLES IN APPLICATION hello_snowflake_app;` returns no rows, and querying the
+table fails:
+
+Copy code
+
+```
+SELECT * FROM hello_snowflake_app.core.config;
+```
+
+```
+002003 (42S02): SQL compilation error: Object 'HELLO_SNOWFLAKE_APP.CORE.CONFIG' does not exist or not authorized.
+```
+
+After you run `ALTER APPLICATION hello_snowflake_app SET DEBUG_MODE = TRUE;`, the same `SHOW TABLES`
+command lists `CONFIG` and the query succeeds.
+
+To fix the app, add the grant to the setup script and upgrade the app from the updated files:
+
+Copy code
+
+```
+GRANT SELECT ON TABLE core.config TO APPLICATION ROLE app_public;
+```
+
+Copy code
+
+```
+ALTER APPLICATION hello_snowflake_app
+  UPGRADE USING '@hello_snowflake_code.core.hello_snowflake_stage';
+```
+
+After the upgrade, roles granted `app_public` can see and query the table.
 
 ## Session debug mode
 

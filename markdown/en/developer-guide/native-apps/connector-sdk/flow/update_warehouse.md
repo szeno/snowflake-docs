@@ -102,11 +102,11 @@ Possible error codes include:
 - `INVALID_CONNECTOR_STATUS` - Invalid connector status. Expected status: `[PAUSED]`
 - `INTERNAL_ERROR` - Something went wrong internally, the message should be descriptive
 - `PROCEDURE_NOT_FOUND` - Procedure which was called does not exist
-- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happen when calling internal procedures
+- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happens while calling internal procedures
 - `INVALID_RESPONSE` - This error occurs when response received from internal procedure does not contain `response_code` or an error response does not contain `message`, but contains `response_code`
 - `UNKNOWN_ERROR` - It means that something unexpected went wrong (message of thrown exception is forwarded)
 - `EMPTY_IDENTIFIER` - Provided identifier is a NULL value or an empty String
 - `INVALID_IDENTIFIER` - Provided warehouse identifier is not valid
 - `WAREHOUSE_ALREADY_USED` - Provided warehouse is already used by the application
-- `INACCESSIBLE_WAREHOUSE` - Provided warehouse cannot be used access by the application instance
+- `INACCESSIBLE_WAREHOUSE` - Provided warehouse cannot be accessed by the application instance
 - Custom error codes received from `UPDATE_WAREHOUSE_INTERNAL` procedure - defined by the connector developer

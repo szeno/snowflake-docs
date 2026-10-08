@@ -86,7 +86,7 @@ Possible errors include:
 
 ### PUBLIC.MARK\_ALL\_PREREQUISITES\_AS\_DONE()
 
-This procedures sets the `is_completed` column for all the prerequisites to `true`. The validations are similar to the `COMPLETE_PREREQUISITES_STEP()` procedure.
+This procedure sets the `is_completed` column for all the prerequisites to `true`. The validations are similar to the `COMPLETE_PREREQUISITES_STEP()` procedure.
 
 Possible errors include:
 

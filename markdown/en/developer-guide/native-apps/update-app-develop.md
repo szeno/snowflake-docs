@@ -98,7 +98,7 @@ Providers should consider the following best practices when developing a new ver
 
 - Use caution when setting the timeout value for the [SYSTEM$WAIT\_FOR\_SERVICES](/sql-reference/functions/system_wait_for_services) system function.
 
-  Setting this value to value that is too long may cause other part of the app to fail if they are expecting a service to be
+  Setting this value to a value that is too long may cause other parts of the app to fail if they are expecting a service to be
   available. See [Pause setup script execution](#label-native-apps-container-upgrade-pause) for more information.
 - Snowflake recommends creating the version initializer stored procedure within a versioned schema. If the version initializer
   is not created within a versioned schema, the version initializer may not exist from one version to the next.

@@ -120,6 +120,56 @@ Expand
 
 Show lessSee more
 
+## Oracle RAC
+
+If your source database is an Oracle Real Application Clusters (RAC) database, a
+connection through Single Client Access Name (SCAN) can land on any instance in the
+cluster. Only one instance can run the XStream outbound server: the instance that owns
+the outbound server’s `ANYDATA` queue.
+
+Queue ownership can move between instances, for example, during failover or after a
+manual ownership change.
+If the connector uses a generic database service, SCAN can send the XStream session to
+an instance that doesn’t own the queue. The connector then fails with
+`ORA-01031: insufficient privileges`, even when the Oracle user has the required
+privileges. Connect to the instance that currently owns the queue by using the queue
+service for that `ANYDATA` queue as the service name in the `XStream Out Server URL`.
+
+To configure the connector for Oracle RAC, do the following:
+
+1. Query the `network_name` of the `ANYDATA` queue for your XStream outbound server.
+   Run the query in the container where the outbound server was created. Replace
+   `<outbound_server>` with the value of the `XStream Out Server Name` connector
+   parameter:
+
+   Copy code
+
+   ```
+   SELECT q.network_name
+     FROM dba_queues q, dba_xstream_outbound ob
+    WHERE q.owner = ob.queue_owner
+      AND q.name = ob.queue_name
+      AND ob.server_name = '<outbound_server>';
+   ```
+
+   The result is the queue service name. Oracle creates and manages this service,
+   and the service runs only on the instance that owns the queue. Don’t modify the
+   service manually.
+2. In the `XStream Out Server URL`, replace only the service name with the queue
+   service returned by the previous query. Keep the OCI driver, host, and port
+   already used for this URL.
+
+   For example:
+
+   ```
+   jdbc:oracle:oci:@//<host>:<port>/<xstream_queue_network_name>
+   ```
+
+   Leave the `Oracle Connection URL` unchanged.
+
+To start capture automatically when queue ownership moves, configure
+[Oracle RAC](/user-guide/data-integration/openflow/connectors/oracle/setup-oracledb#label-oracle-rac-setup).
+
 ## Replicate a subset of columns in a table
 
 The connector can filter the data replicated per table to a subset of configured columns.

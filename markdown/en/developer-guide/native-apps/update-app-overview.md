@@ -138,7 +138,7 @@ version in the application package:
 
 Figure 2 - upload files to the stage
 
-This figures shows the following:
+This figure shows the following:
 
 - After testing version `v2.0` of the app locally, the provider uploads the `v2.0` file to the stage
 - The provider creates a new version for the app in the application package.

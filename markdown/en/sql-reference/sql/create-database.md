@@ -5,6 +5,7 @@ Creates a new database in the system.
 This command supports the following variants:
 
 - [CREATE OR ALTER DATABASE](#label-create-or-alter-database-syntax): Creates a database if it doesn’t exist or alters an existing database.
+- [DEFINE DATABASE](#label-define-database-syntax): Declarative definition of a database’s target state inside a DCM project.
 - [CREATE DATABASE … CLONE](#label-create-database-clone-syntax): Creates a clone of an existing database, either in its current state or at a specific time or point in the past
   (using Time Travel). For more information about cloning a database, see [Cloning considerations](/user-guide/object-clone).
 - [CREATE DATABASE … FROM BACKUP SET](#label-create-database-from-backup-set-syntax) (restores a database from a backup under a new name)
@@ -137,6 +138,14 @@ CREATE OR ALTER [ TRANSIENT ] DATABASE <name>
     [ COMMENT = '<string_literal>' ]
     [ OBJECT_VISIBILITY = { <object_visibility_spec> | PRIVILEGED } ]
 ```
+
+### DEFINE DATABASE
+
+DCM Projects uses `DEFINE DATABASE` statements to create and manage databases declaratively inside a DCM project. A `DEFINE DATABASE`
+statement uses the same syntax as [CREATE OR ALTER DATABASE](#label-create-or-alter-database-syntax), with the keyword
+`DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE DATABASE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ### CREATE DATABASE … CLONE
 

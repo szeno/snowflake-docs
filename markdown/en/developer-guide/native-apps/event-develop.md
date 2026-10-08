@@ -6,7 +6,11 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 [Support for private connectivity, VPS, and government regions](/developer-guide/native-apps/limitations#label-native-apps-supported-clouds).
 
 This topic describes how a provider can set up an app to determine if a consumer has enabled
-event sharing in their account.
+event sharing in their account. The checks on this page run in the consumer account. To see which
+event definitions each installed app has enabled, query `ENABLED_TELEMETRY_EVENT_DEFINITIONS` in the
+[APPLICATION\_STATE view](/sql-reference/data-sharing-usage/application-state-view) from the provider
+account. See
+[Monitor application health](/developer-guide/native-apps/monitoring#label-nativeapps-monitor-consumer-app-health).
 
 ## Verify event definitions by using system functions
 
@@ -48,7 +52,7 @@ $$;
 
 ## Verify event definitions by using the Permissions SDK
 
-The Python Permission SDK provides the following functions to determine if even sharing is enabled
+The Python Permission SDK provides the following functions to determine if event sharing is enabled
 in a consumer account:
 
 - `is_application_authorized_for_telemetry_event_sharing()`

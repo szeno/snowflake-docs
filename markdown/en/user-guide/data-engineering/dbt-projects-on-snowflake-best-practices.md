@@ -4,6 +4,8 @@ This guide provides opinionated best practices for data engineering teams runnin
 
 dbt Projects on Snowflake eliminates infrastructure you’d otherwise manage yourself. There’s no Python environment to maintain, no Airflow cluster to scale, no dbt CLI version drift across developer machines. Snowflake handles the runtime, orchestration (through [tasks](/user-guide/tasks-intro)), and dbt version management natively. This lets your team focus on transformation logic and data quality rather than infrastructure operations.
 
+If your team is new to these patterns, start with the [`dbt-projects-on-snowflake`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-dbt-projects-on-snowflake) bundled skill in [Cortex Code](/user-guide/cortex-code/cortex-code). We recommend invoking the skill with `/dbt-projects-on-snowflake` and describing what you want in plain language.
+
 ## Cost optimization
 
 Reducing warehouse compute time is one of the highest-impact best practices for teams running dbt at scale. The following patterns help you avoid unnecessary processing.
@@ -58,6 +60,18 @@ Choose a thread count that matches your warehouse’s available compute capacity
 dbt executions often rebuild models even when nothing upstream has changed. dbt State, a dbt Labs service, decides which models need to be rebuilt and which models can be reused during an execution. This aims to reduce wall-clock time and warehouse use on every scheduled run without needing to change your models or selectors. Use `lag_tolerance` to control how often models rebuild after upstream data changes. dbt State is billed separately by dbt Labs.
 
 For setup, see [Integrating dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration).
+
+### Configure warehouse auto-suspension
+
+Reduce idle compute costs by setting your dbt warehouse to suspend after one minute of inactivity and resume automatically when needed. Adjust the interval to match your workload. For example:
+
+Copy code
+
+```
+ALTER WAREHOUSE my_dbt_wh SET AUTO_SUSPEND = 60 AUTO_RESUME = TRUE;
+```
+
+For more information, see [Automating warehouse suspension](/user-guide/warehouses-considerations#label-warehouse-auto-suspension).
 
 For more details about costs, see [Understanding costs for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-cost).
 

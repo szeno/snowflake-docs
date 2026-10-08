@@ -35,7 +35,7 @@ This tutorial walks you through the following steps:
    - Uses `dbt build` to run and test only changed models and their downstream dependencies in DAG order.
    - Defers unchanged upstream references to production relations.
 6. Create a production deployment workflow that:
-   - Deploys code pushed to `main` to the production dbt project object.
+   - Deploys code merged into `main` to the production dbt project object.
    - Optionally recreates or updates scheduled Snowflake tasks.
 7. Remove the tester object and per-pull-request database after validation or when the pull request closes, depending on the CI/CD platform.
 
@@ -608,7 +608,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
                -x
 
          - name: List all of the snowflake dbt project objects in your account
-           run: snow dbt list -x
+           run: snow dbt list --format JSON -x
 
          # Builds changed models and runs their tests in DAG order, failing early if any upstream test breaks
          - name: Build and test dbt project in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
@@ -670,7 +670,7 @@ ci-test-dbt-slim-ci:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
       -x
-    - snow dbt list -x
+    - snow dbt list --format JSON -x
     # Builds changed models and runs their tests in DAG order, failing early if any upstream test breaks
     - >-
       snow dbt execute -x
@@ -762,7 +762,7 @@ steps:
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
-  - script: snow dbt list -x
+  - script: snow dbt list --format JSON -x
     displayName: 'List dbt project objects'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
@@ -832,7 +832,7 @@ Regardless of which platform you chose, the pipeline follows the same pattern:
   4. Create a zero-copy clone whose name includes the pull-request or merge-request number.
   5. Deploy a tester dbt project object using `snow dbt deploy ... --no-auto-compile -x` (with `--source` if the dbt project is in a
      subfolder).
-  6. List the dbt project objects with `snow dbt list -x`.
+  6. List the dbt project objects with `snow dbt list --format JSON -x`.
   7. Build and test the changed portion of the dbt project in DAG order with production state, defer, and `state:modified+`.
   8. Remove the tester object and clone when the platform’s cleanup workflow runs.
 
@@ -860,10 +860,11 @@ The incoming workflow combines the Slim CI operations in one selective `dbt buil
 
 ## Create your Continuous Deployment (CD) pipeline
 
-The production workflow deploys code pushed to `main` and optionally recreates or updates scheduled tasks. Resource cleanup differs by
+The production workflow deploys code merged to `main` and optionally recreates or updates scheduled tasks. Resource cleanup differs by
 platform:
 
-- GitHub Actions uses a second event in the production workflow to clean up when a pull request closes.
+- In GitHub Actions, the production workflow includes a separate cleanup job that runs whenever a pull request closes, whether or not the
+  pull request was merged.
 - The GitLab and Azure incoming workflows clean up after each validation run.
 
 ### Create your CD workflow file
@@ -886,8 +887,6 @@ GitHub ActionsGitLab CI/CDAzure DevOps
    name: PR Accepted Deployment - Slim CI
    run-name: PR from ${{ github.actor }} accepted - triggered a ${{ github.event_name }}
    on:
-     push:
-       branches: [ main ]
      pull_request:
        types: [closed]
        branches: [main]
@@ -898,7 +897,7 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
    jobs:
      run-snowflake-dbt-job:
-       if: github.event_name == 'push'
+       if: github.event.pull_request.merged == true
        name: "Run on Accepted PR - Slim CI"
        runs-on: ubuntu-latest
        environment: prod # Must match the OIDC subject's environment
@@ -937,15 +936,14 @@ GitHub ActionsGitLab CI/CDAzure DevOps
                --dbt-version 1.12.3 \
                -x
 
-         - name: List all of the snowflake dbt project objects on your account
-           run: snow dbt list -x
+         - name: List all of the snowflake dbt project objects in your account
+           run: snow dbt list --format JSON -x
 
          # (optional) Uncomment the lines below and follow Step 7 if you want to manage Task orchestration via source control
          # - name: Run schedules.sql to create or alter tasks for tasty_bytes_dbt_object_gh_action
          #   run: snow sql -f ${{ github.workspace }}/tasty_bytes/schedules.sql -x
 
      clean-up-pull-request:
-       if: github.event_name == 'pull_request'
        name: Clean up pull-request resources - Slim CI
        runs-on: ubuntu-latest
        environment: prod # Must match the OIDC subject's environment
@@ -980,12 +978,15 @@ GitHub ActionsGitLab CI/CDAzure DevOps
            run: snow dbt list -x
    ```
 6. Select **Commit changes** to save the file to `.github/workflows/pr_merged_slim_ci.yml`.
-7. Navigate to the **Actions** tab of your repository to see your `pr_merged_slim_ci.yml` action start to run.
+7. After you merge a pull request into `main`, navigate to the **Actions** tab of your repository to see your `pr_merged_slim_ci.yml`
+   action start to run.
 
 If you use PAT authentication, remove each `with` block that contains `use-oidc: true`, and uncomment the `SNOWFLAKE_USER` and
 `SNOWFLAKE_PASSWORD` lines in both jobs.
 
-Pull-request cleanup runs from the separate `closed` event, so it doesn’t depend on the production deployment job succeeding.
+Both jobs are triggered when a pull request targeting `main` closes. The `if: github.event.pull_request.merged == true` condition limits the production
+deployment to merged pull requests, while the cleanup job runs for every closed pull request. Because cleanup is a separate job, it doesn’t
+depend on the production deployment job succeeding.
 
 Add the following deploy job to your `.gitlab-ci.yml` file (after the CI test and cleanup jobs you created earlier):
 
@@ -1018,7 +1019,7 @@ cd-deploy-dbt-slim-ci:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
       -x
-    - snow dbt list -x
+    - snow dbt list --format JSON -x
     # (optional) Uncomment to manage Task orchestration via source control
     # - snow sql -f ./tasty_bytes/schedules.sql -x
 ```
@@ -1079,7 +1080,7 @@ steps:
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
-  - script: snow dbt list -x
+  - script: snow dbt list --format JSON -x
     displayName: 'List dbt project objects'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
@@ -1095,14 +1096,14 @@ Create a second pipeline named `PR Accepted Deployment - Slim CI` in Azure DevOp
 
 ### Key pieces from the workflow file
 
-- **Trigger**: Runs on updates to `main` after a merge or direct push.
+- **Trigger**: Runs after a merge to `main`.
 - **Same OIDC authentication and `-x` flag** as the CI pipeline.
 - **Steps**:
   1. Check out the repository code.
   2. Install Snowflake CLI with OIDC.
   3. Check the Snowflake CLI version and verify the connection with `snow connection test -x`.
   4. Deploy or update the production dbt project object with `snow dbt deploy ... --default-target prod --no-auto-compile -x`.
-  5. List the dbt project objects with `snow dbt list -x`.
+  5. List the dbt project objects with `snow dbt list --format JSON -x`.
   6. Optionally run a `schedules.sql` file to manage tasks.
 - **Cleanup**: GitHub cleans up resources when the pull request closes. GitLab and Azure clean up at the end of their CI pipelines.
 
@@ -1141,15 +1142,15 @@ Open a pull request or merge request that changes a model. In the CI run, verify
 
 1. The incoming workflow creates a database whose name contains the pull-request or merge-request number.
 2. Snowflake CLI deploys a tester dbt project object with `--no-auto-compile`.
-3. The workflow lists the tester dbt project object with `snow dbt list -x`.
+3. The workflow lists the tester dbt project object with `snow dbt list --format JSON -x`.
 4. The build step imports production state.
 5. dbt selects changed models and their downstream dependencies.
 6. Selected models write to the per-pull-request database.
 
 Merge the pull request or merge request and verify that:
 
-1. The pipeline triggered by the update to `main` deploys the production dbt project object.
-2. The workflow lists the production dbt project object with `snow dbt list -x`.
+1. The pipeline triggered by the merge deploys the production dbt project object.
+2. The workflow lists the production dbt project object with `snow dbt list --format JSON -x`.
 3. If task deployment is enabled, the workflow recreates or updates the tasks.
 
 Verify cleanup for your platform:

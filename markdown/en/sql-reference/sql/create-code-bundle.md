@@ -12,6 +12,10 @@ schema. The Code Bundle can then be executed using [EXECUTE CODE BUNDLE](/sql-re
 You can create a Code Bundle from an internal or temporary stage, a private workspace, or a shared workspace.
 External stages aren’t supported.
 
+This command supports the following variant:
+
+- [DEFINE CODE BUNDLE](#label-define-code-bundle-syntax): Declarative definition of a Code Bundle’s target state inside a DCM project. (Public Preview)
+
 See also:
 :   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook)
 
@@ -36,6 +40,36 @@ CREATE [ OR REPLACE ] CODE BUNDLE [ IF NOT EXISTS ] <database_name>.<schema_name
   FROM '@<database_name>.<schema_name>.<stage_name>'
   [ COMMENT = '<string_literal>' ];
 ```
+
+## Variant syntax
+
+### DEFINE CODE BUNDLE
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+DCM Projects uses `DEFINE CODE BUNDLE` statements to create and manage Code Bundles declaratively inside a DCM project, including
+the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across environments. To learn more about DCM Projects, see
+[Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
+
+`DEFINE CODE BUNDLE` uses the same parameters as [CREATE CODE BUNDLE](#label-create-code-bundle-syntax), except `FROM`
+must be an `asset://` URI that resolves to a
+[project asset](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle)
+declared in the DCM project manifest:
+
+Copy code
+
+```
+DEFINE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
+  FROM 'asset://my_job'
+  COMMENT = 'Python job managed by DCM';
+```
+
+In a `DEFINE CODE BUNDLE` statement, the source must be a project asset. A stage reference, a workspace URL, or a relative
+path fails at compile time.
+
+You can use `DEFINE CODE BUNDLE` only inside DCM project definition files, not as standalone SQL.
 
 ## Required parameters
 

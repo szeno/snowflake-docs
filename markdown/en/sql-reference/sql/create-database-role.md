@@ -8,6 +8,7 @@ roles or account roles to enable access control security for objects in the syst
 This command supports the following variants:
 
 - [CREATE OR ALTER DATABASE ROLE](#label-create-or-alter-db-role-syntax): Creates a new database role if it doesn’t exist or alters an existing database role.
+- [DEFINE DATABASE ROLE](#label-define-database-role-syntax): Declarative definition of a database role’s target state inside a DCM project.
 
 See also:
 :   [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege), [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role), [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership), [DROP DATABASE ROLE](/sql-reference/sql/drop-database-role), [ALTER DATABASE ROLE](/sql-reference/sql/alter-database-role),
@@ -38,6 +39,14 @@ CREATE OR ALTER DATABASE ROLE <name>
 ```
 
 For more information, see [CREATE OR ALTER DATABASE ROLE usage notes](#label-create-or-alter-db-role-usage-notes) and [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
+
+### DEFINE DATABASE ROLE
+
+DCM Projects uses `DEFINE DATABASE ROLE` statements to create and manage database roles declaratively inside a DCM project. A
+`DEFINE DATABASE ROLE` statement uses the same syntax as [CREATE OR ALTER DATABASE ROLE](#label-create-or-alter-db-role-syntax),
+with the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE DATABASE ROLE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

@@ -311,6 +311,8 @@ differences:
 
 - The order and location of DEFINE statements don’t matter. Snowflake collects and sorts all statements from all definition
   files during project execution.
+- Each object can be defined only once across all definition files in a project. Defining the same object more than once, even
+  in separate files, causes the run to fail.
 - If you remove a DEFINE statement, Snowflake drops the corresponding object the next time you deploy the project.
 - Only a subset of Snowflake objects is supported. For details, see [Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
 - Qualify object names according to the object’s scope. Account-level objects use account-level identifiers, database-level objects use

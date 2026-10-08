@@ -44,11 +44,11 @@ Input parameters:
 - `EXPIRED_WORK_SELECTOR_NAME` `VARCHAR`
 
 Procedure creates all of instance objects required for accurate `Task reactor` flow and validates the ones who should
-not be already initialized. At the end of process it insert new instance registry record to the table.
+not be already initialized. At the end of process it inserts new instance registry record to the table.
 
 Possible errors include:
 
-- `INSTANCE_NOT_FOUND` - Instance with this name does not exists.
+- `INSTANCE_NOT_FOUND` - Instance with this name does not exist.
 - `INSTANCE_ALREADY_INITIALIZED` - Instance with this name is already initialized.
 - `DEFAULT_PROCEDURE_VALIDATION_EXCEPTION` - Procedure not found.
 - `SCHEMA_WITH_THE_SAME_NAME_ALREADY_EXISTS` - Schema with the same name already exists.
@@ -65,8 +65,8 @@ Input parameters:
 - `DT_ALLOW_OVERLAPPING_EXECUTION` `BOOLEAN`
 - `DT_USER_TASK_TIMEOUT_MS` `VARCHAR`
 
-Procedure starts all non initialized instances within the same database instance. It consist of checking instance exists,
-or whether it is not already initialized and then creates dispatcher tasks and starts this task if was required.
+Procedure starts all non initialized instances within the same database instance. It consists of checking whether the instance exists
+and whether it is not already initialized. Then, it creates dispatcher tasks and starts this task if required.
 
 Procedure ends successfully with:
 
@@ -199,7 +199,7 @@ Input parameters:
 - `PROCEDURE_NAME` `VARCHAR`
 - `PROCEDURE_TYPE` `VARCHAR`
 
-This procedure validates whether defined procedures does not exists and then throws new exception.
+This procedure validates whether defined procedures do not exist and then throws new exception.
 
 Possible errors include:
 

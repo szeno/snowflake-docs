@@ -185,7 +185,9 @@ property of the network rules used by the EAI.
 
 ## Creating an app specification for an EAI
 
-The following example shows how to create an app specification for an EAI:
+To create an app specification for an EAI, add an
+[ALTER APPLICATION SET SPECIFICATION](/sql-reference/sql/alter-application-set-app-spec)
+statement to the app’s setup script, not to the manifest file, as shown in the following example:
 
 Copy code
 

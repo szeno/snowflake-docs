@@ -98,7 +98,7 @@ ALTER APPLICATION my_client_app_name
 
 ### Request and approve a connection
 
-Once the client app has the name of the server app, it creates an `APPLICATION SPECIFICATION` to request a connection to the server app. Note that the application role names are obtained through offline communication outside of snowflake.
+Once the client app has the name of the server app, it creates an `APPLICATION SPECIFICATION` to request a connection to the server app. Note that the application role names are obtained through offline communication outside of Snowflake.
 
 The following example shows how to create an `APPLICATION SPECIFICATION` for a connection to the server app named `my_server_app_name`:
 

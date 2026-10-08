@@ -106,7 +106,7 @@ security best practices apply to an app with containers:
 - Use secure communication protocols and encryption for all inter-container and external communication.
 - Generate comprehensive logging and auditing of container activities and data access patterns.
 - Update and patch container images regularly to address known vulnerabilities and security issues.
-- Implement only required privileges to minimizing the attack surface of containerized apps.
+- Implement only required privileges to minimize the attack surface of containerized apps.
 - Managing secrets and sensitive data securely, using appropriate encryption and access controls.
 - Conduct thorough security testing and vulnerability assessments before submitting apps for review.
 - Respond promptly to security incidents and collaborate with Snowflake during incident response.

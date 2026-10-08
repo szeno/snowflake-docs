@@ -53,6 +53,19 @@ in the following contexts:
 
 Additionally, for views owned by the app, information about the base table is redacted.
 
+## Information redacted from TASK\_HISTORY
+
+A consumer can see past executions of a task owned by the app, including whether each execution succeeded.
+In [TASK\_HISTORY](/sql-reference/functions/task_history) and the
+[ACCOUNT\_USAGE TASK\_HISTORY](/sql-reference/account-usage/task_history) view, the `QUERY_TEXT` column is redacted.
+
+## Information redacted from SHOW TASKS and DESCRIBE TASK
+
+A consumer can see a task owned by the app only after the provider grants the `OPERATE` privilege on that task
+to an application role, and the consumer has that application role. In the output of
+[SHOW TASKS](/sql-reference/sql/show-tasks) and [DESCRIBE TASK](/sql-reference/sql/desc-task), the `condition`
+and `definition` columns are redacted.
+
 ## Information redacted from Cortex Agent observability events
 
 When an app initiates a Cortex Agent run, Snowflake redacts orchestrator-authored content
@@ -102,7 +115,7 @@ implements the following restriction:
   view that is installed when the setup script runs during the Snowflake Native App installation or upgrade.
 - Only the provider can update the shared content.
 - Only the following objects can be shared with an application object or installed Snowflake Native App. These
-  object must have certain privileges:
+  objects must have certain privileges:
   - Schemas: Only the USAGE privilege can be granted to the shared content of an application package.
   - Tables: Only the SELECT privilege can be granted to the shared content of an application package.
     Tables with defined policies (row access, masking, tag based, etc.) cannot be shared. Policies can be

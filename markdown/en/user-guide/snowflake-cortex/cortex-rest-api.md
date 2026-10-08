@@ -308,7 +308,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `claude-fable-5-1` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-sonnet-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-5-5` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-sonnet-5-5` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-sonnet-4-6` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |
 | `claude-4-sonnet` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
@@ -316,6 +316,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-luna` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6.1-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-luna` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-sol` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-terra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
@@ -334,7 +335,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `deepseek-v4-flash` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `deepseek-r1` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `glm-5.3` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `kimi-k3` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
+| `kimi-k3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-7b` | ✔ | ✔ |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |
 | `mistral-large` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-large2` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |

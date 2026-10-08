@@ -24,9 +24,9 @@ For objects, grants, and attachments in preview, the changeset format in `plan_r
 - [Network rule](#label-dcm-projects-object-type-network-rule)
 - [Pipe](#label-dcm-projects-object-type-pipe)
 - [Policies](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-policies)
-  - [Authentication policy](/sql-reference/sql/create-authentication-policy)
+  - [Authentication policy](/sql-reference/sql/create-authentication-policy#label-define-authentication-policy-syntax)
   - [Masking policy](/sql-reference/sql/create-masking-policy)
-  - [Network policy](/user-guide/network-policies)
+  - [Network policy](/sql-reference/sql/create-network-policy#label-define-network-policy-syntax)
   - [Row access policy](/user-guide/security-row-intro)
 - [Procedures](#label-dcm-projects-object-type-procedure)
 - [Roles](#label-dcm-projects-object-type-role)
@@ -69,13 +69,15 @@ For objects, grants, and attachments in preview, the changeset format in `plan_r
 
 DCM Projects uses `DEFINE` statements to create and manage Snowflake objects. A `DEFINE` statement runs as a
 [CREATE OR ALTER](/sql-reference/sql/create-or-alter) command for the corresponding object type, so all `CREATE OR ALTER` usage
-notes and limitations for that object type apply, even where not called out again below. The following object types are
-supported.
+notes and limitations for that object type apply, even where not called out again below. Each object can be defined only once
+across all definition files in a project; defining the same object more than once causes the run to fail. The following object
+types are supported.
 
 ### Alert
 
 DCM Projects supports defining alerts that run a SQL statement on a schedule and notify you when a condition is met. For more
-information, see [Setting up alerts based on data in Snowflake](/user-guide/alerts).
+information, see [Setting up alerts based on data in Snowflake](/user-guide/alerts). For syntax, see
+[DEFINE ALERT](/sql-reference/sql/create-alert#label-define-alert-syntax).
 
 Newly deployed alerts are suspended by default.
 
@@ -120,7 +122,8 @@ Available to all accounts.
 
 You can define [Code Bundles](/developer-guide/code-bundles/code-bundles) directly in DCM Projects. Code Bundles package and run
 non-SQL jobs, such as Python, on Snowflake compute. DCM Projects manages the bundle lifecycle (`CREATE`, `ALTER`, and `DROP`) across
-environments using Jinja templating.
+environments using Jinja templating. For syntax and examples, see
+[DEFINE CODE BUNDLE](/sql-reference/sql/create-code-bundle#label-define-code-bundle-syntax).
 
 #### Import Code Bundle files as a project asset
 
@@ -194,9 +197,13 @@ EXECUTE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
 
 ### Database
 
-DCM Projects supports defining databases.
+DCM Projects supports defining databases. For syntax, see
+[DEFINE DATABASE](/sql-reference/sql/create-database#label-define-database-syntax).
 
 ### Dynamic table
+
+DCM Projects supports defining dynamic tables. For syntax, see
+[DEFINE DYNAMIC TABLE](/sql-reference/sql/create-dynamic-table#label-define-dynamic-table-syntax).
 
 **Supported changes:**
 
@@ -224,7 +231,8 @@ With re-initialization or a full refresh:
 
 ### File format
 
-DCM Projects supports defining file formats.
+DCM Projects supports defining file formats. For syntax, see
+[DEFINE FILE FORMAT](/sql-reference/sql/create-file-format#label-define-file-format-syntax).
 
 ### Functions
 
@@ -235,6 +243,9 @@ DCM Projects supports defining functions in every handler language:
 - JavaScript
 - Python
 - Scala
+
+For syntax, see
+[DEFINE FUNCTION](/sql-reference/sql/create-function#label-define-function-syntax).
 
 **Limitations:**
 
@@ -275,10 +286,13 @@ $$;
 To attach a UDMF (or a system DMF) to a table, view, or dynamic table, see
 [ATTACH Data Metric Function](#label-dcm-projects-object-type-dmf).
 
+For syntax, see
+[DEFINE DATA METRIC FUNCTION](/sql-reference/sql/create-data-metric-function#label-define-dmf-function-syntax).
+
 ### Network rule
 
 DCM Projects supports defining network rules, which control network traffic for network policies, external access integrations, and
-other network-aware objects. For more information, see [Network rules](/user-guide/network-rules).
+other network-aware objects. For more information, see [Network rules](/user-guide/network-rules). For syntax, see [DEFINE NETWORK RULE](/sql-reference/sql/create-network-rule#label-define-network-rule-syntax).
 
 **Limitations:**
 
@@ -289,7 +303,8 @@ other network-aware objects. For more information, see [Network rules](/user-gui
 ### Pipe
 
 DCM Projects supports defining Snowflake pipes. DCM Projects manages the pipe lifecycle (`CREATE`, `ALTER`, `DROP`) across environments using Jinja
-templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/create-pipe) are available in `DEFINE PIPE`.
+templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/create-pipe) are available in `DEFINE PIPE`. For syntax, see
+[DEFINE PIPE](/sql-reference/sql/create-pipe#label-define-pipe-syntax).
 
 **Limitations:**
 
@@ -301,9 +316,9 @@ templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/cr
 
 DCM Projects supports defining the following types of policies:
 
-- [Authentication policy](/sql-reference/sql/create-authentication-policy)
+- [Authentication policy](/sql-reference/sql/create-authentication-policy#label-define-authentication-policy-syntax)
 - [Masking policy](/sql-reference/sql/create-masking-policy) (Public Preview)
-- [Network policy](/user-guide/network-policies)
+- [Network policy](/sql-reference/sql/create-network-policy#label-define-network-policy-syntax)
 - [Row access policy](/user-guide/security-row-intro) (Public Preview)
 
 [Preview Feature](/release-notes/preview-features) — Open
@@ -315,7 +330,7 @@ Available to all accounts.
 - `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are still in Public Preview.
 - **Masking policy:** `DEFINE MASKING POLICY` doesn’t support attaching a masking policy inline as part of an object
   definition. Use [ATTACH Masking Policy](#label-dcm-attach-masking-policy) to manage the attachment separately.
-- **Network policy:**
+- **Network policy:** For more information, see [Controlling network traffic with network policies](/user-guide/network-policies).
   - You can’t replace an existing network policy while it’s assigned to an account, security integration, or user. Unassign
     the policy before redeploying a replacement.
   - Assigning the policy to an account, user, or integration must be done outside of DCM Projects, using `ALTER ACCOUNT`,
@@ -334,6 +349,9 @@ DCM Projects supports defining stored procedures in every handler language:
 - Python
 - Scala
 
+For syntax, see
+[DEFINE PROCEDURE](/sql-reference/sql/create-procedure#label-define-procedure-syntax).
+
 **Limitations:**
 
 - `PLAN` only validates that the procedure can be created or altered successfully. It doesn’t check whether it will run
@@ -346,7 +364,8 @@ DCM Projects supports defining stored procedures in every handler language:
 
 ### Roles
 
-DCM Projects supports defining roles and database roles.
+DCM Projects supports defining roles and database roles. For syntax, see
+[DEFINE ROLE](/sql-reference/sql/create-role#label-define-role-syntax).
 
 **Unsupported types:**
 
@@ -354,15 +373,19 @@ DCM Projects supports defining roles and database roles.
 
 #### Database role
 
-Database roles are scoped to a specific database and can be granted to account roles or other database roles within the same database.
+Database roles are scoped to a specific database and can be granted to account roles or other database roles within the
+same database. For syntax, see
+[DEFINE DATABASE ROLE](/sql-reference/sql/create-database-role#label-define-database-role-syntax).
 
 ### Schema
 
-DCM Projects supports defining schemas.
+DCM Projects supports defining schemas. For syntax, see
+[DEFINE SCHEMA](/sql-reference/sql/create-schema#label-define-schema-syntax).
 
 ### Semantic view
 
-DCM Projects supports defining [semantic views](/user-guide/views-semantic/overview). Every deployment of a definition change reconciles the full semantic view definition: tables, relationships, facts, dimensions, metrics, AI instructions, and verified queries.
+DCM Projects supports defining [semantic views](/user-guide/views-semantic/overview). Every deployment of a definition change reconciles the full semantic view definition: tables, relationships, facts, dimensions, metrics, AI instructions, and verified queries. For syntax, see
+[DEFINE SEMANTIC VIEW](/sql-reference/sql/create-semantic-view#label-define-semantic-view-syntax).
 
 Copy code
 
@@ -396,14 +419,16 @@ DEFINE SEMANTIC VIEW DEMO{{env_suffix}}.ANALYTICS.SALES_METRICS
 ### Sequence
 
 DCM Projects supports defining sequences that generate unique numbers across sessions and statements. For more information, see
-[Using Sequences](/user-guide/querying-sequences).
+[Using Sequences](/user-guide/querying-sequences). For syntax, see
+[DEFINE SEQUENCE](/sql-reference/sql/create-sequence#label-define-sequence-syntax).
 
 ### Share
 
 DCM Projects supports defining shares, which let you manage the share object and all `GRANT` statements on it declaratively,
 controlling which objects are exposed to the share. All share properties supported by
 [CREATE SHARE](/sql-reference/sql/create-share) are available in `DEFINE SHARE`. For more information, see
-[Create and configure shares](/user-guide/data-sharing-provider).
+[Create and configure shares](/user-guide/data-sharing-provider). For syntax, see
+[DEFINE SHARE](/sql-reference/sql/create-share#label-define-share-syntax).
 
 **Limitations:**
 
@@ -414,7 +439,8 @@ controlling which objects are exposed to the share. All share properties support
 ### Stages
 
 DCM Projects supports both [external](#label-dcm-projects-object-type-external-stage) and
-[internal](#label-dcm-projects-object-type-internal-stage) stages.
+[internal](#label-dcm-projects-object-type-internal-stage) stages. For syntax, see
+[DEFINE STAGE](/sql-reference/sql/create-stage#label-define-stage-syntax).
 
 **Supported changes:**
 
@@ -444,7 +470,7 @@ An internal stage stores data files within Snowflake.
 
 DCM Projects supports defining streams. All stream variants supported by
 [CREATE OR ALTER STREAM](/sql-reference/sql/create-stream#create-or-alter-stream) are available in `DEFINE STREAM`,
-including streams on tables, views, directory tables, and external tables.
+including streams on tables, views, directory tables, and external tables. For syntax, see [DEFINE STREAM](/sql-reference/sql/create-stream#label-define-stream-syntax).
 
 **Limitations:**
 
@@ -458,7 +484,8 @@ including streams on tables, views, directory tables, and external tables.
 Available to all accounts.
 
 You can define one or more Streamlit apps, their infrastructure, underlying tables, and access control together in a single
-DCM project folder, then deploy everything to any environment with one command.
+DCM project folder, then deploy everything to any environment with one command. For syntax and examples, see
+[DEFINE STREAMLIT](/sql-reference/sql/create-streamlit#label-define-streamlit-syntax).
 
 This approach is especially useful for dashboard and data app deployments that depend on objects such as tables, views, and
 dynamic tables that are also managed by DCM Projects. You can version and promote the data pipeline and the app that consumes it
@@ -603,6 +630,9 @@ Removing the `DEFINE STREAMLIT` statement drops the Streamlit object on the next
 
 ### Table
 
+DCM Projects supports defining tables. For syntax, see
+[DEFINE TABLE](/sql-reference/sql/create-table#label-define-table-syntax).
+
 To define a table column with a default value and comment, specify the column name and data type, followed by the `DEFAULT` and `COMMENT`
 clauses:
 
@@ -626,7 +656,7 @@ DEFINE TABLE MY_DB.MY_SCHEMA.ORDERS (
 
 ### Tag
 
-DCM Projects supports defining tags. For more information, see [Introduction to object tagging](/user-guide/object-tagging/introduction).
+DCM Projects supports defining tags. For more information, see [Introduction to object tagging](/user-guide/object-tagging/introduction). For syntax, see [DEFINE TAG](/sql-reference/sql/create-tag#label-define-tag-syntax).
 
 **Limitations:**
 
@@ -634,6 +664,9 @@ DCM Projects supports defining tags. For more information, see [Introduction to 
   apply to `DEFINE TAG`.
 
 ### Task
+
+DCM Projects supports defining tasks. For syntax, see
+[DEFINE TASK](/sql-reference/sql/create-task#label-define-task-syntax).
 
 When definition changes are deployed for a task that is already started, Snowflake automatically suspends that task (or its root task)
 temporarily, applies the change, and then resumes it again.
@@ -679,6 +712,9 @@ AS
 
 ### View
 
+DCM Projects supports defining views. For syntax, see
+[DEFINE VIEW](/sql-reference/sql/create-view#label-define-view-syntax).
+
 Note
 
 To add comments to view columns, list every output column in parentheses immediately after the view name. Add `COMMENT '<comment>'` after
@@ -701,6 +737,9 @@ AS
 - Reordering columns
 
 ### Warehouse
+
+DCM Projects supports defining warehouses. For syntax, see
+[DEFINE WAREHOUSE](/sql-reference/sql/create-warehouse#label-define-warehouse-syntax).
 
 **Immutable attributes:**
 
@@ -811,7 +850,7 @@ DCM Projects uses `GRANT` statements to assign privileges and roles within a pro
 
 ### GRANT
 
-Just like each object can be defined only once in DCM Projects, each privilege-grantee relationship can only be defined once across all projects.
+Just like [each object can be defined only once](#label-dcm-projects-objects) in a project, each privilege-grantee relationship can only be defined once across all projects.
 
 DCM Projects is only aware of grants that were defined and deployed through DCM Projects. Any grants that were added outside of DCM Projects coexist,
 and DCM Projects doesn’t remove them.

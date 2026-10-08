@@ -24,7 +24,7 @@ To install and configure the Snowflake CLI, follow these steps:
 
 When using the Snowflake CLI to develop your Snowflake Native App, you work within a project. A project is a directory
 that contains all the files and directories required for your Snowflake Native App. Like other code repositories,
-these files can be version-controlled using technologies like Git and shared on platforms like Github.
+these files can be version-controlled using technologies like Git and shared on platforms like GitHub.
 
 Snowflake provides app templates that you can use to set up your project. These templates are available
 in the [snowflake-cli-templates GitHub repository](https://github.com/snowflakedb/snowflake-cli-templates).

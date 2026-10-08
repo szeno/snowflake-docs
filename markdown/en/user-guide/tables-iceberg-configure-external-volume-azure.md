@@ -170,8 +170,10 @@ Note
    > `ALLOW_WRITES = FALSE` instead. See [Azure roles and Delta Direct on this external volume](#label-tables-iceberg-azure-ev-delta-read-only) and
    > [Read-only vs write access for Delta Direct on each storage provider](/user-guide/tables-iceberg-metadata#label-tables-iceberg-ev-delta-read-write-options).
 8. Select **+ Select members**.
-9. Search for the Snowflake service principal. This is the identity in the AZURE\_MULTI\_TENANT\_APP\_NAME property in the
-   DESC EXTERNAL VOLUME output (in Step 1). Search for the string before the underscore in the AZURE\_MULTI\_TENANT\_APP\_NAME property.
+9. Search for the Snowflake service principal. This is the identity in the `AZURE_MULTI_TENANT_APP_NAME` property in the
+   DESC EXTERNAL VOLUME output (in Step 1). The value has the form `<APP_NAME>_<timestamp>`.
+   Search for `<APP_NAME>`, the string before the underscore.
+   For example, if the value is `myapp_1735689600123`, search for `myapp`.
 
    Important
 

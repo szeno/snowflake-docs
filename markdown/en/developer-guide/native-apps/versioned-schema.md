@@ -56,8 +56,8 @@ versions.
 ## Restrictions on versioned schemas
 
 - Snowpark Container Services is not supported in versioned schemas.
-- Versioned schema are only available within the context of an application object. They are created only within the setup script.
-  Each version of an app has its own setup script and contains versioned schema that are specific to that version.
+- Versioned schemas are only available within the context of an application object. They are created only within the setup script.
+  Each version of an app has its own setup script and contains versioned schemas that are specific to that version.
 - A versioned schema can only be used within the setup script of an application package. They can only be created within the
   context of an application object.
 - Tasks are not supported on versioned schemas. For example, providers cannot include tags when creating or altering a
@@ -76,9 +76,9 @@ must create them in a normal schema.
 
 ## Internal implementation of versioned schemas
 
-Internally, versioned schemas contain subschema that correspond to each version of the app.
+Internally, versioned schemas contain subschemas that correspond to each version of the app.
 
-However, these subschema are not directly accessible to the consumer within the application object. A consumer will only see
+However, these subschemas are not directly accessible to the consumer within the application object. A consumer will only see
 objects within the versioned schema that correspond to the version of the app they have installed in their account.
 
 For example, if a consumer uses the [SHOW OBJECTS](/sql-reference/sql/show-objects) command to view the objects
@@ -93,9 +93,9 @@ To manage the state of an app during upgrades, the Snowflake Native App Framewor
 is similar to regular database schema with added functionality to handle multiple versions of objects
 created by different application versions.
 
-Versioned schema are only available within the context of an application object. They are created
+Versioned schemas are only available within the context of an application object. They are created
 only within the setup script. Each version of an app has its own setup script and contains versioned
-schema that are specific to that version.
+schemas that are specific to that version.
 
 When developing a new version of an app, providers must account for changes to the objects that the
 app creates using the setup script.
@@ -141,7 +141,7 @@ versioned schemas are compatible across versions and patches.
 ## Use non-versioned schemas for stateful objects
 
 Objects within an app may need to preserve state across versions. For example, configuration
-data or data collected while the app has been running may be to be preserved.
+data or data collected while the app has been running may need to be preserved.
 
 These types of objects must reside in a normal database schema and they should be created to persist
 during initial installation and upgrades.

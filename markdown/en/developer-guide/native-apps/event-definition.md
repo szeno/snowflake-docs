@@ -61,7 +61,7 @@ Show lessSee more
 
 Note
 
-Snowsight only displays the all event **All** type to the consumer if the provider has not configured the app to
+Snowsight only displays the **All** event type to the consumer if the provider has not configured the app to
 use event definitions.
 
 ## Limitations of event definitions in apps with containers
@@ -140,7 +140,7 @@ This example specifies the following event definitions:
 
 See [Supported event definitions](#label-nativeapps-provider-logging-available-events) for more information.
 
-After a consumer installs an app, the event definitions appears in the **Events and logs** tab on the
+After a consumer installs an app, the event definitions appear in the **Events and logs** tab on the
 **Security** page of the app. See
 [Enable logging and event sharing for an app](https://other-docs.snowflake.com/en/native-apps/consumer-enable-logging)
 for more information.
@@ -191,7 +191,7 @@ following order of precedence:
 
   If an override is set for the specific stored procedure or user-defined function,
   it takes precedence.
-- Schemas and version schemas
+- Schemas and versioned schemas
 
   If no overrides are set for stored procedures or user-defined functions, overrides
   for schemas and versioned schemas take precedence.

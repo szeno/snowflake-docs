@@ -7,7 +7,7 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 
 The Snowflake Native App Framework enables providers to update a Snowflake Native App to add new functionality,
 fix bugs, and make other changes. Providers can create new versions or patches of
-and app and upgrade the app in the consumer account.
+an app and upgrade the app in the consumer account.
 
 ## Workflow for updating an app
 
@@ -16,7 +16,7 @@ and app and upgrade the app in the consumer account.
    Before developing a new version or patch of an app, providers should understand the version
    lifecycle for an app and how the upgrade process works. See [Overview of app versions and upgrades (Legacy)](/developer-guide/native-apps/update-app-overview) for
    information.
-2. Develop and test the updated app local.
+2. Develop and test the updated app locally.
 
    Providers develop and test new versions or patches locally before publishing them to consumers. See
    [Develop a new version of an app](/developer-guide/native-apps/update-app-develop) for guidelines on how to develop a new version or patch. See [Use versioned schema to manage app objects across versions](/developer-guide/native-apps/versioned-schema)

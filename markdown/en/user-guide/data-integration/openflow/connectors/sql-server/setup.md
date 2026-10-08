@@ -125,7 +125,33 @@ You must perform these tasks as a database administrator.
    ```
 
    Without this permission, columns using UDDT are silently excluded from replication.
-6. (Optional) Configure SSL connection.
+6. (Optional) Grant permissions to record source commit timestamps.
+
+   These permissions let the connector record the source commit time of replicated changes by reading
+   `sys.dm_tran_commit_table`. Replication continues if you skip them. The connector omits the source
+   commit timestamp.
+
+   Grant `VIEW DATABASE STATE` in each database that you replicate:
+
+   Copy code
+
+   ```
+   USE <source_database>;
+   GRANT VIEW DATABASE STATE TO <user_name>;
+   ```
+
+   If the login is not a member of the `sysadmin` fixed server role, also grant the server-level
+   `VIEW SERVER STATE` permission. With only `VIEW DATABASE STATE`, `sys.dm_tran_commit_table` can be
+   queried but returns no rows:
+
+   Copy code
+
+   ```
+   GRANT VIEW SERVER STATE TO <user_name>;
+   ```
+
+   Restart the connector or the **Read SQLServer Change Tracking tables** processor after you grant these permissions.
+7. (Optional) Configure SSL connection.
 
    If you use an SSL connection to connect to SQL Server, create the root certificate for your database
    server. This is required when configuring the connector.

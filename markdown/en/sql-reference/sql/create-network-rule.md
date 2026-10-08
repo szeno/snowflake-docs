@@ -5,6 +5,7 @@ Creates a network rule or replaces an existing network rule.
 This command supports the following variants:
 
 - [CREATE OR ALTER NETWORK RULE](#label-create-or-alter-network-rule-syntax): Creates a network rule if it doesn’t exist or alters an existing network rule.
+- [DEFINE NETWORK RULE](#label-define-network-rule-syntax): Declarative definition of a network rule’s target state inside a DCM project.
 
 See also:
 :   [ALTER NETWORK RULE](/sql-reference/sql/alter-network-rule), [DROP NETWORK RULE](/sql-reference/sql/drop-network-rule), [SHOW NETWORK RULES](/sql-reference/sql/show-network-rules),
@@ -46,6 +47,15 @@ CREATE OR ALTER NETWORK RULE <name>
    MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }
    [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE NETWORK RULE
+
+DCM Projects uses `DEFINE NETWORK RULE` statements to create and manage network rules declaratively inside a DCM project. A
+`DEFINE NETWORK RULE` statement uses the same syntax as
+[CREATE OR ALTER NETWORK RULE](#label-create-or-alter-network-rule-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE NETWORK RULE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

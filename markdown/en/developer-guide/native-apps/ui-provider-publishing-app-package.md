@@ -9,7 +9,7 @@ After developing and testing the application package containing your app, you ca
 publish the app to consumers using
 [listings](/collaboration/collaboration-listings-about).
 
-As a provider, you add an application package as the data content of an listing. The consumer
+As a provider, you add an application package as the data content of a listing. The consumer
 installs the app in their account from the listing.
 
 ## Set up roles and privileges

@@ -28,7 +28,7 @@ When a resource is already enabled, nothing is done and success response is retu
 
 ## Custom validation
 
-Custom validation is executed after initial validation, and is designed to be support customized connector-specific logic.
+Custom validation is executed after initial validation and is designed to support customized connector-specific logic.
 For example, it can be used to verify that a given resource still exists in a source system.
 
 By default, it invokes `PUBLIC.ENABLE_RESOURCE_VALIDATE(resource_ingestion_definition_id)`,

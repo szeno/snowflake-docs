@@ -11,7 +11,8 @@ security fixes and product updates.
 
 ## Snowflake Container Runtime on CPU compute
 
-- [Snowflake Container Runtime CPU Version 2.9 (Latest)](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_9)
+- [Snowflake Container Runtime CPU Version 2.10 (Latest)](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_10)
+- [Snowflake Container Runtime CPU Version 2.9](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_9)
 - [Snowflake Container Runtime CPU Version 2.8](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_8)
 - [Snowflake Container Runtime CPU Version 2.7](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_7)
 - [Snowflake Container Runtime CPU Version 2.6](/developer-guide/snowflake-ml/container-runtime/releases/cpu/2_6)
@@ -21,7 +22,8 @@ security fixes and product updates.
 
 ## Snowflake Container Runtime on GPU compute
 
-- [Snowflake Container Runtime GPU Version 2.9 (Latest)](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_9)
+- [Snowflake Container Runtime GPU Version 2.10 (Latest)](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_10)
+- [Snowflake Container Runtime GPU Version 2.9](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_9)
 - [Snowflake Container Runtime GPU Version 2.8](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_8)
 - [Snowflake Container Runtime GPU Version 2.7](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_7)
 - [Snowflake Container Runtime GPU Version 2.6](/developer-guide/snowflake-ml/container-runtime/releases/gpu/2_6)

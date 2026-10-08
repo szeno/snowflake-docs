@@ -29,8 +29,8 @@ To keep it as generic as possible the system specific options are persisted as `
 in the underlying `STATE.RESOURCE_INGESTION_DEFINITION` table. However, the Java definition of the repository `ResourceIngestionDefinitionRepository`
 is a generic interface to have better control over typing.
 
-Since most of the resource ingestion definition can be customized by during the implementation,
-then it is up to the developer to decide how to use the generic fields and then make use of them during ingestion.
+Since most of the resource ingestion definition can be customized during the implementation,
+it is up to the developer to decide how to use the generic fields and make use of them during ingestion.
 
 The most important customizable properties of the resource ingestion definition are:
 

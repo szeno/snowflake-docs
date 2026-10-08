@@ -16,6 +16,11 @@ open **User Settings**, set `dbt.redesign` to `false`, and reload the window.
 
 ## Getting started
 
+For guided, in-context help while you work, use the
+[`dbt-projects-on-snowflake`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-dbt-projects-on-snowflake)
+bundled skill. We recommend invoking the skill with `/dbt-projects-on-snowflake` and describing what you
+want in plain language.
+
 CoCo Desktop scans your workspace for `dbt_project.yml` files. When it finds at least one project,
 the Project Action Bar appears at the bottom of the window with the first project it found selected.
 Use the project picker to switch. The bar shows in

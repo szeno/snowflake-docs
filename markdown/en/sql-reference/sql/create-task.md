@@ -5,6 +5,7 @@ Creates a new [task](/user-guide/tasks-intro) in the current/specified schema or
 This command supports the following variants:
 
 - [CREATE OR ALTER TASK](#label-create-or-alter-task-syntax): Creates a task if it doesn’t exist or alters an existing task.
+- [DEFINE TASK](#label-define-task-syntax): Declarative definition of a task’s target state inside a DCM project.
 - [CREATE TASK … CLONE](#label-create-task-clone-syntax): Creates a clone of an existing task.
 
 See also:
@@ -93,6 +94,31 @@ CREATE OR ALTER TASK <name>
   AS
     <sql>
 ```
+
+### DEFINE TASK
+
+DCM Projects uses `DEFINE TASK` statements to create and manage tasks declaratively inside a DCM project. A `DEFINE TASK`
+statement uses the same syntax as [CREATE OR ALTER TASK](#label-create-or-alter-task-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE TASK` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
+
+`DEFINE TASK` also accepts a `STARTED` or `SUSPENDED` target state keyword that isn’t part of `CREATE OR ALTER TASK`
+syntax. Place the keyword immediately before `AS`:
+
+Copy code
+
+```
+DEFINE TASK MY_DB.MY_SCHEMA.TSK_INGEST_DAILY_ORDERS
+    WAREHOUSE = 'MY_WH'
+    SCHEDULE = 'USING CRON 0 5 * * * UTC'
+    STARTED
+AS
+    SELECT 1
+;
+```
+
+The target state doesn’t appear in the task’s DDL after deployment.
 
 ### CREATE TASK … CLONE
 

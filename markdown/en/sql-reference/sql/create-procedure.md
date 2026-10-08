@@ -18,6 +18,7 @@ Creating an anonymous procedure does not require a role with CREATE PROCEDURE sc
 This command supports the following variants:
 
 - [CREATE OR ALTER PROCEDURE](#label-create-or-alter-procedure-syntax): Creates a new procedure if it doesn’t exist or alters an existing procedure.
+- [DEFINE PROCEDURE](#label-define-procedure-syntax): Declarative definition of a procedure’s target state inside a DCM project.
 
 See also:
 :   [ALTER PROCEDURE](/sql-reference/sql/alter-procedure), [DROP PROCEDURE](/sql-reference/sql/drop-procedure), [SHOW PROCEDURES](/sql-reference/sql/show-procedures), [DESCRIBE PROCEDURE](/sql-reference/sql/desc-procedure), [CALL](/sql-reference/sql/call),
@@ -282,6 +283,15 @@ Copy code
 ```
 CREATE [ OR ALTER ] PROCEDURE ...
 ```
+
+### DEFINE PROCEDURE
+
+DCM Projects uses `DEFINE PROCEDURE` statements to create and manage stored procedures declaratively inside a DCM project, in
+every handler language that DCM Projects supports (SQL, Java, JavaScript, Python, and Scala). A `DEFINE PROCEDURE` statement uses
+the same syntax as [CREATE OR ALTER PROCEDURE](#label-create-or-alter-procedure-syntax), with the keyword `DEFINE` in place
+of `CREATE OR ALTER`.
+You can use `DEFINE PROCEDURE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

@@ -83,6 +83,9 @@ Snowflake supports:
 >
 > Show lessSee more
 
+For how private connectivity applies when you install or use an app, see
+[Private connectivity for Snowflake Native Apps](/developer-guide/native-apps/private-connectivity).
+
 ## Limitations on Snowflake Native Apps in government regions
 
 The following limitations apply to Snowflake Native App support for government regions:

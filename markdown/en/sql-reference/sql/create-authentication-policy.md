@@ -7,6 +7,7 @@ for accounts or users.
 This command supports the following variants:
 
 - [CREATE OR ALTER AUTHENTICATION POLICY](#label-create-or-alter-auth-policy-syntax): Creates an authentication policy if it doesn’t exist, or alters an existing authentication policy.
+- [DEFINE AUTHENTICATION POLICY](#label-define-authentication-policy-syntax): Declarative definition of an authentication policy’s target state inside a DCM project.
 
 See also:
 :   [ALTER AUTHENTICATION POLICY](/sql-reference/sql/alter-authentication-policy), [DESCRIBE AUTHENTICATION POLICY](/sql-reference/sql/desc-authentication-policy), [DROP AUTHENTICATION POLICY](/sql-reference/sql/drop-authentication-policy), [SHOW AUTHENTICATION POLICIES](/sql-reference/sql/show-authentication-policies)
@@ -52,6 +53,16 @@ CREATE OR ALTER AUTHENTICATION POLICY <name>
   [ WORKLOAD_IDENTITY_POLICY = ( <list_of_properties> ) ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE AUTHENTICATION POLICY
+
+DCM Projects uses `DEFINE AUTHENTICATION POLICY` statements to create and manage authentication policies declaratively inside a
+DCM project. A `DEFINE AUTHENTICATION POLICY` statement uses the same syntax as
+[CREATE OR ALTER AUTHENTICATION POLICY](#label-create-or-alter-auth-policy-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE AUTHENTICATION POLICY` only inside DCM project definition files,
+not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

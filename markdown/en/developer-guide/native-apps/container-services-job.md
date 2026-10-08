@@ -75,11 +75,11 @@ CALL SYSTEM$GET_SERVICE_STATUS('schema.job_name')
 ```
 
 This system function returns a JSON object that contains information about the specified job service
-within the app. Providers can call this system function from within the app to determine if the services
+within the app. Providers can call this system function from within the app to determine if the service
 has started or failed.
 
 Consumers can also call this system function to determine the status of a service. This requires
-that providers grant the MONITOR privilege on the service an application role. See
+that providers grant the MONITOR privilege on the service to an application role. See
 [Execute a job service in an app](#label-native-apps-container-service-job) for more information.
 
 ## Accessing local container logs

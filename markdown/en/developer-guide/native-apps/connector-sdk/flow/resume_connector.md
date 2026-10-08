@@ -78,7 +78,7 @@ For the whole diagram of state transitions, see [Connector flow](/developer-guid
 
 #### Successful response
 
-When the procedure successfully resumes all tasks in the background and changes status tocSTARTED, then the `Connector successfully resumed.`
+When the procedure successfully resumes all tasks in the background and changes status to STARTED, then the `Connector successfully resumed.`
 message will be returned directly from ResumeConnectorHandler method body. It is recommended to use the following format:
 
 > Copy code

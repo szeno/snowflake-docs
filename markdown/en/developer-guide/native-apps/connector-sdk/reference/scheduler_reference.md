@@ -54,7 +54,7 @@ We recommend customizing only the latter one.
 ### Builder approach
 
 `RunSchedulerIterationHandler` can be customized using `RunSchedulerIterationHandlerBuilder`.
-This helper objects allows for custom implementations of the underlying interfaces:
+This helper object allows for custom implementations of the underlying interfaces:
 
 - `ConnectorErrorHelper`
 - `OnIngestionScheduledCallback`

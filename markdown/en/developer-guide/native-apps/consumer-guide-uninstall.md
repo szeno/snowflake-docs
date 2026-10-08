@@ -29,8 +29,13 @@ want to keep:
 
 **Transfer ownership of objects the app created outside the APPLICATION boundary.** If the app
 created warehouses, databases, stages, or other objects in your account (using Category 1 or
-Category 3 grants), those objects belong to you, but they may be owned by the app object. Transfer
-ownership to one of your own roles before dropping the app, or they may become inaccessible.
+Category 3 grants), the app might still own them. [DROP APPLICATION](/sql-reference/sql/drop-application)
+without `CASCADE` returns an error when the app owns objects outside itself. To keep those objects,
+use a role with the MANAGE GRANTS privilege to [transfer ownership](/sql-reference/sql/grant-ownership)
+to one of your own roles before you drop the app. The new owner doesn’t have to be `ACCOUNTADMIN` or
+hold the MANAGE GRANTS privilege. To remove the objects instead, run
+`DROP APPLICATION ... CASCADE`. `CASCADE` also drops objects that your roles own inside an object
+the app still owns, such as a schema or table in a database the app owns.
 
 **For apps with containers: drop or transfer ownership of compute pools the app created.** If the
 app is dropped while a compute pool still exists and is bound to it, the compute pool becomes
@@ -51,7 +56,8 @@ When the app is dropped:
 
 - The APPLICATION object and all objects inside it (schemas, tables, procedures, Streamlit apps,
   services) are removed.
-- Objects the app created outside the APPLICATION boundary (warehouses, databases, stages) remain
-  in your account and are now fully owned by you.
+- Objects the app owned outside the APPLICATION boundary are dropped if you used `CASCADE`,
+  including objects your roles own inside them. Objects whose ownership you transferred remain
+  in your account.
 - Your event table, if configured, is not affected: it belongs to you.
 - Paid listing subscriptions must be canceled separately.

@@ -9,7 +9,7 @@ The following database objects are created through the file `setup_external_inte
 ## PUBLIC.SETUP\_EXTERNAL\_INTEGRATION\_WITH\_NAMES()
 
 The procedure alters other procedures or functions, whose signatures are passed as procedure argument in an array, with
-an `EXTERNAL ACCESS INTEGRATION` and a `SECRET` objects names that are stored in the connection configuration under the
+an `EXTERNAL ACCESS INTEGRATION` and a `SECRET` object names that are stored in the connection configuration under the
 following keys:
 
 > - `external_access_configuration` for an `EXTERNAL ACCESS INTEGRATION` object identifier.
@@ -31,7 +31,7 @@ of application user roles.
 
 Where:
 
-- `methods ARRAY` stand for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
+- `methods ARRAY` stands for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
 
 ### Returned values
 
@@ -79,7 +79,7 @@ In case of a failure:
 
 - `EAI_UNAVAILABLE` - an `EXTERNAL ACCESS INTEGRATION` object does not exist or an application does not have a `USAGE` privilege on it.
 - `SECRET_UNAVAILABLE` - a `SECRET` object does not exist or an application does not have at least a `READ` privilege on it.
-- `INTERNAL ERROR` - this response code is returned in case of unexpected errors occurrences.
+- `INTERNAL ERROR` - this response code is returned in case of unexpected error occurrences.
 
 ### Example usage
 
@@ -118,7 +118,7 @@ of application user roles.
 
 Where:
 
-- `methods ARRAY` stand for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
+- `methods ARRAY` stands for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
 
 ### Returned values
 
@@ -166,7 +166,7 @@ In case of a failure:
 
 - `EAI_UNAVAILABLE` - an `EXTERNAL ACCESS INTEGRATION` object does not exist or an application does not have a `USAGE` privilege on it.
 - `SECRET_UNAVAILABLE` - a `SECRET` object does not exist or an application does not have at least a `READ` privilege on it.
-- `INTERNAL ERROR` - this response code is returned in case of unexpected errors occurrences.
+- `INTERNAL ERROR` - this response code is returned in case of unexpected error occurrences.
 
 ### Example usage
 
@@ -207,8 +207,8 @@ with predefined names or object names stored under predefined keys in connection
 Where:
 
 - `eai_idf VARCHAR` - stands for an identifier of an `EXTERNAL_ACCESS_INTEGRATION` object. If you want to pass there a reference name, you need to wrap it as follows: `'reference(\'<reference_name>\')'`
-- `secret_idf VARCHAR` - stands for an identifier of aa `SECRET` object. If you want to pass there a reference name, you need to wrap it as follows: `'reference(\'<reference_name>\')'`
-- `methods ARRAY` stand for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
+- `secret_idf VARCHAR` - stands for an identifier of a `SECRET` object. If you want to pass there a reference name, you need to wrap it as follows: `'reference(\'<reference_name>\')'`
+- `methods ARRAY` stands for an array of procedure/function signatures as varchar, e.g. `ARRAY_CONSTRUCT('PUBLIC.PROC_1(VARIANT)', 'PUBLIC.PROC_2()')`.
 
 ### Returned values
 
@@ -256,7 +256,7 @@ In case of a failure:
 
 - `EAI_UNAVAILABLE` - an `EXTERNAL ACCESS INTEGRATION` object does not exist or an application does not have a `USAGE` privilege on it.
 - `SECRET_UNAVAILABLE` - a `SECRET` object does not exist or an application does not have at least a `READ` privilege on it.
-- `INTERNAL ERROR` - this response code is returned in case of unexpected errors occurrences.
+- `INTERNAL ERROR` - this response code is returned in case of unexpected error occurrences.
 
 ### Example usage
 

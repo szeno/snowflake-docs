@@ -16,6 +16,7 @@ security posture so that inbound network traffic uses private connectivity when 
 - [To internal stages](#label-private-connect-internal-stages)
 - [To Snowflake-managed storage volumes](#label-private-connect-managed-volumes)
 - [To Snowpark Container Services](#label-private-connect-spcs)
+- [To Snowflake Native Apps](#label-private-connect-native-apps)
 - [To Snowflake CoWork](#label-private-connect-si)
 
 ## To the Snowflake Service
@@ -55,6 +56,10 @@ the following:
 ## To Snowpark Container Services
 
 You can use private connectivity to connect to Snowpark Container Services. For information, see [Inbound connectivity](/developer-guide/snowpark-container-services/private-connectivity#label-spcs-private-connectivity-inbound).
+
+## To Snowflake Native Apps
+
+You can use private connectivity with a Snowflake Native App. For information, see [Private connectivity for Snowflake Native Apps](/developer-guide/native-apps/private-connectivity).
 
 ## To Snowflake CoWork
 

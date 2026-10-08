@@ -5,6 +5,7 @@ Creates a named file format that describes a set of staged data to access or loa
 This command supports the following variants:
 
 - [CREATE OR ALTER FILE FORMAT](#label-create-or-alter-file-format-syntax): Creates a named file format if it doesn’t exist or alters an existing file format.
+- [DEFINE FILE FORMAT](#label-define-file-format-syntax): Declarative definition of a file format’s target state inside a DCM project.
 
 See also:
 :   [ALTER FILE FORMAT](/sql-reference/sql/alter-file-format) , [DROP FILE FORMAT](/sql-reference/sql/drop-file-format) , [SHOW FILE FORMATS](/sql-reference/sql/show-file-formats) , [DESCRIBE FILE FORMAT](/sql-reference/sql/desc-file-format)
@@ -115,6 +116,15 @@ CREATE OR ALTER [ { TEMP | TEMPORARY | VOLATILE } ] FILE FORMAT <name>
   [ TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML } [ formatTypeOptions ] ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE FILE FORMAT
+
+DCM Projects uses `DEFINE FILE FORMAT` statements to create and manage file formats declaratively inside a DCM project. A
+`DEFINE FILE FORMAT` statement uses the same syntax as
+[CREATE OR ALTER FILE FORMAT](#label-create-or-alter-file-format-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE FILE FORMAT` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

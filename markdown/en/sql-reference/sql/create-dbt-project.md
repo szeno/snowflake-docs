@@ -197,7 +197,7 @@ This example also sets the following properties:
 
 - dbt version
 - Default execution target (for example, `prod` or `dev`) used by dbt commands executed through Snowflake.
-- External access integrations the dbt project object is permitted to use to pull remote dependencies from dbt package hub or Github.
+- External access integrations the dbt project object is permitted to use to pull remote dependencies from dbt package hub or GitHub.
 
 Copy code
 

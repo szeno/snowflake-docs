@@ -15,7 +15,7 @@ must first grant the following privileges:
 
 - CREATE COMPUTE POOL
 
-  This privileges is required for all services. One or more compute pools are required
+  This privilege is required for all services. One or more compute pools are required
   to create a service in the consumer account.
 - BIND SERVICE ENDPOINT
 
@@ -30,7 +30,7 @@ The following considerations apply when creating a service within a Snowflake Na
 - References to warehouses. See [Best practices when using services within an app](#label-native-apps-container-service-best) for
   information on using in a Snowflake Native App with Snowpark Container Services.
 - Quoted names for a service within an app are not supported.
-- Services cannot not be created in a versioned schema.
+- Services cannot be created in a versioned schema.
 - Services may not be created outside of the application using a container image
   created within the app.
 
@@ -74,7 +74,7 @@ Within an app with containers, services can be created using specification file 
 
 ### Create a service from a specification file
 
-To create a service a service from a specification file, use the [CREATE SERVICE](/sql-reference/sql/create-service)
+To create a service from a specification file, use the [CREATE SERVICE](/sql-reference/sql/create-service)
 command and include a reference to the service specification file:
 
 Copy code
@@ -148,7 +148,7 @@ configuration:
   grant_callback: core.grant_callback
 ```
 
-Then, in the setup script, define a call back function as shown in the following example:
+Then, in the setup script, define a callback function as shown in the following example:
 
 Copy code
 
@@ -200,7 +200,7 @@ For more information on using references in an app, see
 
 An app can use the `register_callback` of the reference to create a service after all the
 required references are bound. If a service is created before all the references to an external access
-integrations or secret is allowed, the service creation fails.
+integration or secret is allowed, the service creation fails.
 
 ### Create a service using a stored procedure
 
@@ -211,6 +211,19 @@ on the stored procedure to an application role.
 
 The consumer would call this stored procedure to create the service in their account
 after they have given the app the required privileges and references.
+
+## Access files on an internal stage
+
+A service in an app can access files on an app-owned internal stage, including files written to the stage by the setup script.
+Use any of the following methods:
+
+- Mount the stage as a volume and read the files from the container’s file system. See
+  [Configure a Snowflake stage as a storage volume](/developer-guide/snowpark-container-services/snowflake-stage-volume#label-spcs-stage-volume-specifying).
+- Run [LIST](/sql-reference/sql/list) and [GET](/sql-reference/sql/get) through a Snowflake driver or connector in the container
+  to list and download files. See [Using Snowflake-provided service user credentials](/developer-guide/snowpark-container-services/spcs-execute-sql#label-snowpark-containers-connect-to-snowflake-service-user-credentials)
+  for connection instructions.
+- Use Snowpark Python’s `session.file.get` method to download files to the container. See
+  [FileOperation.get](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/snowpark/api/snowflake.snowpark.FileOperation.get).
 
 ## Determine the status of a service
 

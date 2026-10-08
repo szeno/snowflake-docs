@@ -192,7 +192,7 @@ The following functions and models are available in any region via [cross-region
 | `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-5-5` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-sonnet-5-5` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-opus-5-5` | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
@@ -206,7 +206,7 @@ The following functions and models are available in any region via [cross-region
 | `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.8-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `llama4-maverick [legacy]` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
@@ -216,6 +216,7 @@ The following functions and models are available in any region via [cross-region
 | `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6.1-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -231,7 +232,7 @@ The following functions and models are available in any region via [cross-region
 | `openai-gpt-4.1 [legacy]` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `mistral-large2 [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `mistral-large3` | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |
-| `kimi-k3` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
+| `kimi-k3` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `qwen3-32b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-next-80b-a3b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-vl-235b-a22b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |

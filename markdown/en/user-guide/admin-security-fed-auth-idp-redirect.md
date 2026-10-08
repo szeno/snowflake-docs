@@ -80,13 +80,17 @@ integration.
     [Redirect users to your identity provider](/user-guide/snowflake-cortex/snowflake-cowork/deploy-agents#label-snowflake-intelligence-configure-redirect).
 
 `STREAMLIT`
-:   Applies to Streamlit in Snowflake app-viewer URLs. Overrides the `DEFAULT` mapping
+:   Applies to Streamlit in Snowflake app-viewer URLs, including the app-viewer URLs of
+    Streamlit apps in a Snowflake Native App. Overrides the `DEFAULT` mapping
     for app-viewer URLs. Set this key to `NULL` to opt Streamlit
     app-viewer URLs out of the `DEFAULT` fallback. For
     interface-specific guidance, see [Redirect app viewers to your identity provider](/developer-guide/streamlit/object-management/security#label-streamlit-redirect-idp).
+    To give users a direct link to an installed Snowflake Native App, see
+    [Give users a direct link to an app](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-share-url).
 
 `SPCS`
-:   Applies to Snowpark Container Services ingress endpoints. Overrides
+:   Applies to Snowpark Container Services ingress endpoints, including
+    the ingress endpoints of services in a Snowflake Native App. Overrides
     the `DEFAULT` mapping for SPCS ingress URLs. Set this key to
     `NULL` to opt SPCS ingress URLs out of the `DEFAULT` fallback.
     For interface-specific guidance, see

@@ -246,6 +246,7 @@ The notes in these sections apply when assigning future grants on objects in a s
 
     - Aggregation policy
     - Join policy
+    - Maintenance policy
     - Masking policy
     - Packages policy
     - Projection policy

@@ -93,7 +93,7 @@ The command output provides table properties and metadata about a dbt project ob
 | `is_last` | Deprecated column. Returns `FALSE` because dbt project objects don’t have ordered numbered versions. |
 | `comment` | Comment set on the dbt Project. |
 | `source_location_uri` | The source location URI where this dbt project version is created from. |
-| `git_commit_hash` | The git commit hash, if the dbt project version was created from a git source. |
+| `git_commit_hash` | The Git commit hash, if the dbt project version was created from a Git source. |
 
 Expand
 

@@ -17,7 +17,7 @@ To find and install a listing for an app:
    - If you are installing a privately shared listing, see [Install an app from a privately shared listing](#label-nativeapps-consumer-listings-install)
    - If you are installing a listing shared on the Snowflake Marketplace, see
      [Working with Snowflake Marketplace listings for an app](/developer-guide/native-apps/ui-consumer-installing-container#label-nativeapps-consumer-listings-install-marketplace-container).
-   - If a provider has published multiple version of an app, see [Install an app using release channels](#label-nativeapps-consumer-listings-install-rc).
+   - If a provider has published multiple versions of an app, see [Install an app using release channels](#label-nativeapps-consumer-listings-install-rc).
 3. [View the installed listing](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-listings-view).
 
    See [Allow access to a consumer account](/developer-guide/native-apps/ui-consumer-granting-privs) for information on tasks related to managing an app.
@@ -63,7 +63,7 @@ To install an app from a private listing:
 
    If the provider includes required
    [event definitions](/developer-guide/native-apps/ui-consumer-enable-logging#label-nativeapps-consumer-logging-available-events)
-   in the app, the consumer must set up an event table before installing the app. Even sharing
+   in the app, the consumer must set up an event table before installing the app. Event sharing
    and the required event definitions are enabled during installation and cannot be disabled later.
 6. Enter a name for the app.
 7. Select the warehouse that you want to use to install the app.
@@ -90,7 +90,7 @@ To install an app from a Snowflake Marketplace listing:
 
    If the provider includes required
    [event definitions](/developer-guide/native-apps/ui-consumer-enable-logging#label-nativeapps-consumer-logging-available-events)
-   in the app, the consumer must set up an event table before installing the app. Even sharing
+   in the app, the consumer must set up an event table before installing the app. Event sharing
    and the required event definitions are enabled during installation and cannot be disabled later.
 6. Select the warehouse that you want to use to install the app.
 7. (Optional) Enter a name for **Application name**.
@@ -138,7 +138,7 @@ Providers can configure an app so that multiple instances of an app can be insta
 
 Note
 
-Apps installed from a trial listing or a monetized listings cannot have multiple instances.
+Apps installed from a trial listing or a monetized listing cannot have multiple instances.
 
 If an app is configured to allow multiple installs, consumers can install additional instances after
 installing the app from a [private listing](#label-nativeapps-consumer-listings-install) or from

@@ -5,6 +5,7 @@ Creates a [dynamic table](/user-guide/dynamic-tables/overview), based on a speci
 This command supports the following variants:
 
 - [CREATE OR ALTER DYNAMIC TABLE](#label-create-or-alter-dt-syntax): Creates a dynamic table if it doesn’t exist or alters an existing dynamic table.
+- [DEFINE DYNAMIC TABLE](#label-define-dynamic-table-syntax): Declarative definition of a dynamic table’s target state inside a DCM project.
 - [CREATE DYNAMIC TABLE FROM BACKUP SET](#label-create-dt-backup-syntax): Restores a dynamic table from a backup.
 - [CREATE DYNAMIC TABLE … CLONE](#label-create-dt-clone-syntax): Creates a clone of an existing dynamic table.
 - [CREATE DYNAMIC ICEBERG TABLE](#label-create-dt-iceberg-syntax): Creates a dynamic Apache Iceberg™ table.
@@ -116,6 +117,14 @@ Changes to the following dynamic table properties and parameters trigger a [rein
 - Removing existing FROZEN WHERE or shrinking the frozen region. For more information, see [Add or remove a frozen region](/user-guide/dynamic-tables/frozen-regions#label-dynamic-tables-frozen-alter).
 
 Changes to the other dynamic table properties and parameters preserve data.
+
+### DEFINE DYNAMIC TABLE
+
+DCM Projects uses `DEFINE DYNAMIC TABLE` statements to create and manage dynamic tables declaratively inside a DCM project. A
+`DEFINE DYNAMIC TABLE` statement uses the same syntax as [CREATE OR ALTER DYNAMIC TABLE](#label-create-or-alter-dt-syntax),
+with the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE DYNAMIC TABLE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 #### CREATE OR ALTER DYNAMIC ICEBERG TABLE
 

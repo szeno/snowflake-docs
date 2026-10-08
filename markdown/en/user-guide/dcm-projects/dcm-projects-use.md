@@ -600,9 +600,9 @@ unchanged.
 If `DEPLOY` fails, you can see in the error message if it failed during the `RENDER`, `COMPILE`, `PLAN` or `DEPLOY` step.
 Failure during any step before `DEPLOY` step is similar to `PLAN`: No DDL changes are executed.
 
-Important
+Warning
 
-Failure during the DEPLOY step can result in partial execution of the defined changes. This can potentially cause some of the
+In the rare case of failure during the `DEPLOY` step, the defined changes can be partially executed. This can potentially cause some of the
 managed objects to be in an undefined state. In most cases, fixing the root cause and executing DEPLOY again restores the
 defined target state. To apply an earlier definition state through a new reconciliation, see
 [Recover an earlier defined state](/user-guide/dcm-projects/dcm-projects-monitor#label-dcm-projects-recover-state).

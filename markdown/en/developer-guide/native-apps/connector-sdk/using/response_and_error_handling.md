@@ -12,7 +12,7 @@ Additionally it provides a way to ensure that exceptions are mapped to valid res
 The SDK procedures, both high-level ones and internal ones, use `variant` of a certain structure to pass information.
 The requirement for such a `variant` is that it has to contain a `response_code` field,
 and in some cases the response code is different than `OK`, in the required `message` field.
-Any additional field can be included, but it requires further custom handling. THe response format is:
+Any additional field can be included, but it requires further custom handling. The response format is:
 
 Copy code
 

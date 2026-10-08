@@ -52,7 +52,7 @@ Procedures:
 By default, procedures provided by the SDK that are implemented in Java use
 `ConnectorErrorHelper` to wrap thrown exceptions during the particular procedure execution. Apart from
 wrapping the thrown exception and mapping it to `ConnectorResponse` with an error
-code, the default implementation of `ConnectorErrorHelper` logs events basing on the thrown
+code, the default implementation of `ConnectorErrorHelper` logs events based on the thrown
 exceptions to the Event Table if it’s set up in the customer’s account. If you
 want to learn more about using Event Table, see the
 [Logging, tracing, and metrics](/developer-guide/logging-tracing/logging-tracing-overview).

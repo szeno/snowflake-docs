@@ -5,6 +5,7 @@ Creates a new schema in the current database.
 This command supports the following variants:
 
 - [CREATE OR ALTER SCHEMA](#label-create-or-alter-schema-syntax): Creates a schema if it doesn’t exist or alters an existing schema.
+- [DEFINE SCHEMA](#label-define-schema-syntax): Declarative definition of a schema’s target state inside a DCM project.
 - [CREATE SCHEMA … CLONE](#label-create-schema-clone-syntax): Creates a clone of an existing schema, either at its current state or at a specific
   time/point in the past (using Time Travel). For more information about cloning a schema, see [Cloning considerations](/user-guide/object-clone).
 - [CREATE SCHEMA … FROM BACKUP SET](#label-create-schema-from-backup-set-syntax) (restores a schema from a backup under a new name)
@@ -84,6 +85,14 @@ CREATE OR ALTER [ TRANSIENT ] SCHEMA <name>
   [ COMMENT = '<string_literal>' ]
   [ OBJECT_VISIBILITY = PRIVILEGED ]
 ```
+
+### DEFINE SCHEMA
+
+DCM Projects uses `DEFINE SCHEMA` statements to create and manage schemas declaratively inside a DCM project. A `DEFINE SCHEMA`
+statement uses the same syntax as [CREATE OR ALTER SCHEMA](#label-create-or-alter-schema-syntax), with the keyword `DEFINE`
+in place of `CREATE OR ALTER`.
+You can use `DEFINE SCHEMA` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ### CREATE SCHEMA … CLONE
 

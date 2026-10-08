@@ -27,6 +27,7 @@ to which it is applied, and not all objects support all privileges:
 | APPLY FEATURE POLICY | Global | Grants the ability to apply a feature policy for an account or on a specific object. |
 | APPLY JOIN POLICY | Global | Grants the ability to add and drop a join policy on a table or view. |
 | APPLY LEGAL HOLD | Global | Grants the ability to add and remove legal holds from [WORM backups](/user-guide/backups) for Snowflake databases, schemas, and tables. |
+| APPLY MAINTENANCE POLICY | Global | Grants the ability to apply a [maintenance policy](/developer-guide/native-apps/consumer-maintenance-policies) to an account or a Snowflake Native App. |
 | APPLY MASKING POLICY | Global | Grants the ability to set a Column-level Security masking policy on a table or view column and to set a masking policy on a tag. This global privilege also allows executing the DESCRIBE operation on tables and views. |
 | APPLY PACKAGES POLICY | Global | Grants the ability to add or drop a packages policy on the Snowflake account. |
 | APPLY PASSWORD POLICY | Global | Grants the ability to add or drop a password policy on the Snowflake account or a user in the Snowflake account. |
@@ -88,7 +89,7 @@ to which it is applied, and not all objects support all privileges:
 | MODIFY SESSION METRIC LEVEL | Global | Enables setting the level of metrics data captured for stored procedures and UDFs invoked in the current session. For more information, see [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level). |
 | MODIFY SESSION TRACE LEVEL | Global | Enables setting the level of trace events captured for stored procedures and UDFs invoked in the current session. When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
 | MODIFY TRACE LEVEL | Global | Enables setting the level of trace events captured for stored procedures and UDFs in the current account. When tracing events, you must also set the LOG\_LEVEL parameter to one of its supported values. For more information, see [TRACE\_LEVEL](/sql-reference/parameters#label-trace-level). |
-| MONITOR | User, Resource Monitor, Warehouse, Database, Schema, Task, Failover Group, Replication Group, Alert, Compute Pool, Service, Dynamic Table, Semantic View, Snowflake Native App, Agent, dbt Projects on Snowflake | Grants the ability to see details within an object (for example, queries and usage within a warehouse).     For semantic views, the MONITOR privilege also allows you to view Cortex Analyst [monitoring and observability data](/user-guide/snowflake-cortex/cortex-analyst/admin-observability). |
+| MONITOR | User, Resource Monitor, Warehouse, Database, Schema, Task, Failover Group, Replication Group, Alert, Compute Pool, Service, Dynamic Table, Semantic View, Snowflake Native App, Agent, dbt Projects on Snowflake, DCM project | Grants the ability to see details within an object (for example, queries and usage within a warehouse).     For semantic views, the MONITOR privilege also allows you to view Cortex Analyst [monitoring and observability data](/user-guide/snowflake-cortex/cortex-analyst/admin-observability). |
 | MONITOR EXECUTION | Global | Grants the ability to monitor pipes (Snowpipe) or tasks in the account. |
 | MONITOR ROLE | Global | Grants the ability to view roles in the account. |
 | MONITOR SECURITY | Global | Grants the ability to call system functions pertaining to [Customer-managed keys](/user-guide/security-encryption-manage#label-customer-managed-keys). |
@@ -97,7 +98,7 @@ to which it is applied, and not all objects support all privileges:
 | OPERATE | Warehouse, Task, Dynamic table, Alert, Compute Pool, Service | Grants the ability to start, stop, suspend, or resume a virtual warehouse. Grants the ability to suspend or resume a task. Grants the ability to suspend, resume, or refresh a dynamic table. Grants the ability to suspend or resume a compute pool. Grants the ability to suspend or resume a Snowpark Container Services service, upgrade service, set, and unset service properties. |
 | OWNERSHIP | All | Grants the ability to drop, alter, and grant or revoke access to an object. Required to rename an object and create a temporary object with the same name as the object itself. OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role or any role with the MANAGE GRANTS privilege. |
 | PURCHASE DATA EXCHANGE LISTING | Global | Grants the ability to purchase a paid listing. |
-| READ | Stage (internal only), Compute Pool, Git Repository, Image Repository | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
+| READ | Stage (internal only), Compute Pool, Git Repository, Image Repository, DCM project | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
 | READ SESSION | Global | Grants the ability to read session context. |
 | READ UNREDACTED AI OBSERVABILITY EVENTS TABLE | Global | Grants the ability to read the unredacted data in an AI observability events table. |
 | READ UNREDACTED ERROR TABLE | Global | Grants the ability to read the unredacted data in an error table. Required when the error table is associated with a base table that has security policies, such as a [masking policy](/user-guide/security-column-intro). For more information about error tables, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging). |
@@ -131,6 +132,7 @@ The remaining sections in this topic describe the specific privileges available 
 | APPLY DATA MOVEMENT POLICY | Grants the ability to set a [data movement policy](/user-guide/data-movement-policies) on a tag or on the account. |  |
 | APPLY FEATURE POLICY | Grants the ability to apply a feature policy for an account or on a specific object. |  |
 | APPLY JOIN POLICY | Grants the ability to add and drop a join policy on a table or view. | This global privilege also allows executing the DESCRIBE operation on tables and views. |
+| APPLY MAINTENANCE POLICY | Grants the ability to apply a [maintenance policy](/developer-guide/native-apps/consumer-maintenance-policies) to an account or a Snowflake Native App. |  |
 | APPLY MASKING POLICY | Grants the ability to set a Column-level Security masking policy on a table or view column and to set a masking policy on a tag. | This global privilege also allows executing the DESCRIBE operation on tables and views. |
 | APPLY ROW ACCESS POLICY | Grants the ability to add and drop a row access policy on a table or view. | This global privilege also allows executing the DESCRIBE operation on tables and views. |
 | APPLY PACKAGES POLICY | Grants the ability to add or drop a packages policy on the Snowflake account. |  |
@@ -549,6 +551,7 @@ Note
 | CREATE DATA MOVEMENT POLICY | Enables creating a new [data movement policy](/user-guide/data-movement-policies) in a schema. |
 | CREATE DATA MOVEMENT RULE | Enables creating a new [data movement rule](/user-guide/data-movement-policies) in a schema. |
 | CREATE DBT PROJECT | Enables creating a new dbt project object in a schema. |
+| CREATE DCM PROJECT | Enables creating a new [DCM project](/user-guide/dcm-projects/dcm-projects-overview) in a schema. |
 | CREATE EXPERIMENT | Enables creating a new [machine learning experiment](/developer-guide/snowflake-ml/experiments) in a schema. |
 | CREATE TABLE | Enables creating a new table in a schema, including by cloning.     This privilege is not required to create temporary tables, which are scoped to the current user session and are automatically dropped when the session ends. |
 | CREATE DYNAMIC TABLE | Enables creating a new [dynamic table](/user-guide/dynamic-tables/overview) in a schema. |
@@ -559,6 +562,7 @@ Note
 | CREATE ICEBERG TABLE | Enables creating a new [Iceberg table](/user-guide/tables-iceberg) in a schema. |
 | CREATE INTERACTIVE TABLE | Enables creating a new [interactive table](/user-guide/interactive) in a schema. |
 | CREATE VIEW | Enables creating a new view in a schema. |
+| CREATE MAINTENANCE POLICY | Enables creating a new [maintenance policy](/developer-guide/native-apps/consumer-maintenance-policies) in a schema. |
 | CREATE MASKING POLICY | Enables creating a new masking policy in a schema. |
 | CREATE MATERIALIZED VIEW | Enables creating a new materialized view in a schema. |
 | CREATE MCP SERVER | Enables creating a new [MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) in a schema. |
@@ -1007,6 +1011,18 @@ To separate deployment from execution, you can use one role to deploy the dbt pr
 another role to execute it. For role and privilege requirements, see
 [Optionally separate deployment from execution](/user-guide/data-engineering/dbt-projects-on-snowflake-access-control#label-dbt-project-separate-deployment-execution).
 
+## DCM project privileges
+
+| Privilege | Usage |
+| --- | --- |
+| READ | Enables viewing details about a DCM project using DESCRIBE DCM PROJECT and SHOW DCM PROJECTS, and contributes to the visibility requirement for SHOW ENTITIES IN DCM PROJECT (together with the appropriate privilege on each managed object). |
+| MONITOR | Enables listing deployments using SHOW DEPLOYMENTS IN DCM PROJECT, and listing, reading, copying, or downloading files inside a specific deployment. |
+| OWNERSHIP | Grants full control over the DCM project, including executing (PLAN and DEPLOY), altering, and dropping the project, and manually dropping a deployment. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
+
+Expand
+
+Show lessSee more
+
 ## Secret privileges
 
 | Privilege | Usage |
@@ -1049,6 +1065,19 @@ Show lessSee more
 Note
 
 Operating on an object in a schema requires at least one privilege on the parent database and at least one privilege on the parent schema.
+
+## Maintenance policy privileges
+
+These privileges apply to [maintenance policies](/developer-guide/native-apps/consumer-maintenance-policies):
+
+| Privilege | Usage |
+| --- | --- |
+| APPLY | Enables executing the unset and set operations for a maintenance policy on an account or a Snowflake Native App. Also enables viewing the maintenance policy. |
+| OWNERSHIP | Grants full control over the maintenance policy. Required to alter or drop the policy. Only a single role can hold this privilege on a specific object at a time. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
+
+Expand
+
+Show lessSee more
 
 ## Masking policy privileges
 

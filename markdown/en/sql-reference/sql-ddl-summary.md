@@ -17,6 +17,11 @@ The following commands serve as the base for all DDL commands:
 - [SHOW <objects>](/sql-reference/sql/show)
 - [USE <object>](/sql-reference/sql/use)
 
+DCM Projects also supports [`DEFINE`](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-objects) and
+[`ATTACH`](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-attachments) statements, which parallel
+this syntax but can be used only inside DCM project definition files, not as standalone SQL statements. For syntax and usage,
+see [Supported entities in DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities).
+
 Each command takes an *object type* and *identifier*, as well as additional parameters and options. The descriptions for the
 [individual commands](/sql-reference/sql-all) provide the syntax and full list of parameters that can be specified for each
 command. The descriptions also provide detailed usage notes and examples.

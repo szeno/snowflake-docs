@@ -8,6 +8,7 @@ access control security for objects in the system.
 This command supports the following variants:
 
 - [CREATE OR ALTER ROLE](#label-create-or-alter-role-syntax): Creates a role if it doesn’t exist or alters an existing role.
+- [DEFINE ROLE](#label-define-role-syntax): Declarative definition of a role’s target state inside a DCM project.
 
 See also:
 :   [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege), [GRANT ROLE](/sql-reference/sql/grant-role), [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership), [DROP ROLE](/sql-reference/sql/drop-role), [ALTER ROLE](/sql-reference/sql/alter-role), [SHOW ROLES](/sql-reference/sql/show-roles)
@@ -38,6 +39,14 @@ CREATE OR ALTER ROLE <name>
 ```
 
 For more information, see [CREATE OR ALTER ROLE usage notes](#label-create-or-alter-role-usage-notes) and [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
+
+### DEFINE ROLE
+
+DCM Projects uses `DEFINE ROLE` statements to create and manage roles declaratively inside a DCM project. A `DEFINE ROLE`
+statement uses the same syntax as [CREATE OR ALTER ROLE](#label-create-or-alter-role-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE ROLE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

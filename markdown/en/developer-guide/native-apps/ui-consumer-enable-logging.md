@@ -30,9 +30,10 @@ their account to collect this information. See
 
 ## About event sharing
 
-Consumers can also enable event sharing to share event data with providers. When a provider enables
-event sharing, the log messages and trace events that are inserted into the event table in
-the consumer account are also inserted into an event table in provider account.
+Consumers can also enable event sharing to share event data with providers. When event sharing is
+enabled, the log messages and trace events are inserted into an event table in the provider account.
+If the consumer sets the event table to `NONE`, the events are not stored in the consumer account.
+They are still shared with the provider.
 
 Event sharing allows the provider to collect information about the app’s performance and behavior. See
 [About event sharing for an app](#label-nativeapps-consumer-logging-enabling) for more information.
@@ -147,13 +148,14 @@ store the information.
 Note
 
 If a provider includes required event definitions in the app, they are enabled by default during
-installation. However, if the consumer does not have an active event table, the log messages and
-trace events emitted by the app are discarded.
+installation. If the consumer does not have an active event table, the log messages and trace
+events are not stored in the consumer account. When event sharing is enabled, the events are
+inserted into an event table in the provider account.
 
 An account can have multiple event tables, but only one of them can be set as the active event table in a
 Snowflake account at a time. Without an active event table, log messages and trace events that the app emits
-are not captured. This is true even if the functions and procedures in an app call the logging and trace
-event APIs directly.
+are not stored in the consumer account. This is true even if the functions and procedures in an app call the logging and trace
+event APIs directly. They are still shared with the provider when event sharing is enabled.
 
 To create an event table, run the [CREATE EVENT TABLE](/sql-reference/sql/create-event-table) command as shown in the following example:
 
@@ -176,17 +178,19 @@ ALTER ACCOUNT SET EVENT_TABLE=event_db.event_schema.my_event_table;
 
 ## Enable event sharing for an app
 
-The Snowflake Native App Framework supports sharing log messages and trace events stored in the consumer event table with the
+The Snowflake Native App Framework supports sharing log messages and trace events with the
 app provider. To share logs and event information with a provider, the consumer must enable event
 sharing for an app.
 
 ### Prerequisites for enabling event sharing for an app
 
-The following prerequisites must be met to enable event sharing for an app instance:
+To enable event sharing for an app instance:
 
 - Use a role with the MANAGE EVENT SHARING global privilege. The ACCOUNTADMIN role has this privilege by
   default and can grant it to other roles.
-- [Set up an event table in the consumer account](#label-nativeapps-consumer-logging-setting-up).
+
+To view the log messages and trace events in your account,
+[set up an event table](#label-nativeapps-consumer-logging-setting-up).
 
 ### Enable event sharing using Snowsight
 
@@ -310,7 +314,7 @@ During upgrades, event definitions behave as follows:
 > | No change to an event definition | The event definition retains the same status as the previous version or patch. |
 > | A new event definition | Not enabled automatically. This is true for both required and optional event definitions. The consumer must manually enable new event definitions. |
 > | Changes from required to optional or optional to required | The event definition retains the same status as the previous version or patch. |
-> | Deleted event definition | Event sharing stops after upgrade for log messages or trace events filter in the previous version or patch. |
+> | Deleted event definition | Event sharing stops after upgrade for log messages or trace events filtered in the previous version or patch. |
 >
 > Expand
 >

@@ -8,6 +8,7 @@ In addition, this command supports the following variants:
 
 - [CREATE STREAM … CLONE](#label-create-stream-clone-syntax): Creates a clone of an existing stream.
 - [CREATE OR ALTER STREAM](#label-create-or-alter-stream-syntax): Creates a stream if it doesn’t exist or alters an existing stream.
+- [DEFINE STREAM](#label-define-stream-syntax): Declarative definition of a stream’s target state inside a DCM project.
 
 See also:
 :   [ALTER STREAM](/sql-reference/sql/alter-stream), [DROP STREAM](/sql-reference/sql/drop-stream), [SHOW STREAMS](/sql-reference/sql/show-streams), [DESCRIBE STREAM](/sql-reference/sql/desc-stream)
@@ -117,6 +118,14 @@ CREATE OR ALTER STREAM <name>
   [ SHOW_INITIAL_ROWS = TRUE | FALSE ]
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE STREAM
+
+DCM Projects uses `DEFINE STREAM` statements to create and manage streams declaratively inside a DCM project, including streams
+on tables, views, directory tables, and external tables. A `DEFINE STREAM` statement uses the same syntax as
+[CREATE OR ALTER STREAM](#label-create-or-alter-stream-syntax), with the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE STREAM` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

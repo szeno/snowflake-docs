@@ -48,7 +48,7 @@ However, it is possible to implement a custom handler, which will not have this 
 Input needs to be a `variant` containing a map of properties, however this might not work for all cases. For that reason the SDK provides
 an internal stored procedure called: `PUBLIC.SET_CONNECTION_CONFIG_VALIDATE(config VARIANT)`. By default,
 this procedure just returns `'responseCode': 'OK'`, overwriting it can update the provided config during validation.
-This feature enables for custom logic. For example, trimming the input or conversion to upper/lower case.
+This feature enables custom logic. For example, trimming the input or conversion to upper/lower case.
 To return config transformed in any way the response needs to contain an additional `"config"` property in the response `Variant`,
 this property should contain the updated config as `Variant`.
 The procedure can be customized by overwriting through the SQL or by using `ConnectionConfigurationHandlerBuilder` and providing custom implementation of the
@@ -83,7 +83,7 @@ It can be overwritten through the SQL script or by using a `ConnectionConfigurat
 
 ### Connection validation
 
-This step triggers a `PUBLIC.TEST_CONNECTION` procedure. This procedures tries to query the source system for the data.
+This step triggers a `PUBLIC.TEST_CONNECTION` procedure. This procedure tries to query the source system for the data.
 This procedure is not implemented by default and needs to be provided by the SDK user. Additionally, `ConnectionValidator` interface
 implementation can be provided to the `ConnectionConfigurationHandlerBuilder` to customize this phase, in this case,
 there is no need to implement a stored procedure. The recommendation is
@@ -144,7 +144,7 @@ Possible error codes include:
 - `INVALID_CONNECTOR_CONFIGURATION_STATUS` - Invalid connector configuration status. Expected status: `CONFIGURED`
 - `INTERNAL_ERROR` - Something went wrong internally, the message should be descriptive
 - `PROCEDURE_NOT_FOUND` - Procedure which was called does not exist. In this case it’s about `TEST_CONNECTION` procedure mostly
-- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happen when calling internal procedures
+- `UNKNOWN_SQL_ERROR` - This error occurs when something unexpected happens while calling internal procedures
 - `INVALID_RESPONSE` - This error occurs when response received from internal procedure does not contain `response_code` or an error response does not contain `message`, but contains `response_code`
 - `UNKNOWN_ERROR` - It means that something unexpected went wrong - message of thrown exception is forwarded
 - Custom error codes received from `TEST_CONNECTION()` procedure - defined by connector developer

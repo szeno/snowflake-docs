@@ -3,9 +3,10 @@ Categories:
 
 # H3\_TRY\_COVERAGE
 
-A special version of [H3\_COVERAGE](/sql-reference/functions/h3_coverage) that returns NULL if an error occurs when it
-attempts to return an [array](/sql-reference/data-types-semistructured#label-data-type-array) of IDs (as INTEGER values) identifying the minimal
-set of [H3](/sql-reference/data-types-geospatial#label-data-types-geospatial-h3) cells that completely cover a shape (specified by a
+A special version of [H3\_COVERAGE](/sql-reference/functions/h3_coverage) that returns NULL instead of reporting an
+error when the number of H3 cells that cover a shape exceeds the allowed limit. The function returns an
+[array](/sql-reference/data-types-semistructured#label-data-type-array) of IDs (as INTEGER values) identifying the minimal set of
+[H3](/sql-reference/data-types-geospatial#label-data-types-geospatial-h3) cells that completely cover a shape (specified by a
 [GEOGRAPHY](/sql-reference/data-types-geospatial#label-data-types-geography) object).
 
 ## Syntax
@@ -32,11 +33,19 @@ Returns an array of INTEGER values or NULL.
 
 - If the function can perform a successful calculation, returns an array of INTEGER values for the IDs of
   the minimal set of H3 cells that completely cover the specified input shape.
-- If the function cannot perform a successful calculation, returns NULL without reporting an error.
+- If the number of H3 cells that cover the input shape exceeds the allowed limit, or if it isn’t possible
+  to compute the coverage for an invalid GEOGRAPHY object, the function returns NULL without reporting an
+  error.
 
 ## Usage notes
 
-See [H3\_COVERAGE](/sql-reference/functions/h3_coverage) for the usage notes.
+- For spherical approximation, cell inclusion, and flattening the returned array, see
+  [H3\_COVERAGE](/sql-reference/functions/h3_coverage).
+- If it isn’t possible to compute the coverage for an invalid GEOGRAPHY object, the function returns NULL.
+  [H3\_COVERAGE](/sql-reference/functions/h3_coverage) also returns NULL in this case. For more information, see
+  [Effects on GEOGRAPHY objects](/sql-reference/data-types-geospatial#label-geospatial-invalid-shape-handling-effects-geography).
+- If the number of H3 cells that cover the input shape exceeds the allowed limit, the function returns NULL
+  without reporting an error. [H3\_COVERAGE](/sql-reference/functions/h3_coverage) reports an error in this case.
 
 ## Examples
 

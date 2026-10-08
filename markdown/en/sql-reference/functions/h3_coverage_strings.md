@@ -8,7 +8,8 @@ the minimal set of [H3](/sql-reference/data-types-geospatial#label-data-types-ge
 (specified by a [GEOGRAPHY](/sql-reference/data-types-geospatial#label-data-types-geography) object).
 
 See also:
-:   [H3\_COVERAGE](/sql-reference/functions/h3_coverage) , [H3\_POLYGON\_TO\_CELLS\_STRINGS](/sql-reference/functions/h3_polygon_to_cells_strings)
+:   [H3\_COVERAGE](/sql-reference/functions/h3_coverage) , [H3\_TRY\_COVERAGE\_STRINGS](/sql-reference/functions/h3_try_coverage_strings) ,
+    [H3\_POLYGON\_TO\_CELLS\_STRINGS](/sql-reference/functions/h3_polygon_to_cells_strings)
 
 ## Syntax
 
@@ -38,6 +39,10 @@ specified input shape.
 - The function uses spherical approximation, which treats points on the Earth’s surface as if they were connected by arcs, rather
   than straight lines. If you need a planar approximation, use [H3\_POLYGON\_TO\_CELLS\_STRINGS](/sql-reference/functions/h3_polygon_to_cells_strings) instead.
 - A cell is included in the result set if its boundary intersects the input shape.
+- If it isn’t possible to compute the coverage for an invalid GEOGRAPHY object, the function returns NULL.
+  For more information, see [Effects on GEOGRAPHY objects](/sql-reference/data-types-geospatial#label-geospatial-invalid-shape-handling-effects-geography).
+- If the number of H3 cells that cover the input shape exceeds the allowed limit, the function reports an error.
+  To return NULL instead of reporting an error, use [H3\_TRY\_COVERAGE\_STRINGS](/sql-reference/functions/h3_try_coverage_strings).
 
 ## Examples
 

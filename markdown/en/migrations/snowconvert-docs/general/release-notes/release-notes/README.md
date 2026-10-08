@@ -1,5 +1,427 @@
 # SnowConvert AI - Recent Release Notes
 
+## Version 2.49.0 (October 7, 2026)
+
+### CLI
+
+#### New Features
+
+- Added AIM conversion-issues Jira export.
+- Added `scai --consolidate-dbt-projects` CLI flag for merging dbt projects.
+- Added `--json` result payloads to all `scai test` commands.
+- Added `-c`/`--connection` binding on every command that requires Snowflake authentication.
+- Added Redshift workload insights artifact.
+- Added support for Snowflake OAuth client-id authentication flows.
+- Enabled secondary roles for SCAI Snowflake sessions.
+- Enabled Azure Synapse SPCS Data Exchange Worker setup.
+- Added local-only capture mode without requiring Snowflake telemetry.
+- Added `ConversionSummary.txt` output after conversion.
+- Wired PostgreSQL and Synapse into data validation.
+
+#### Improvements
+
+- `scai arrange` now warns about files left out of `source/` and counts only added files.
+- `scai init` now asks for `-c` when no default connection is found.
+- Moved scai user state from `~/.scai` to the Snowflake CLI config directory.
+- Data doctor now warns instead of failing when the worker config is missing.
+- Data doctor now fails when an extraction stage is missing or unreadable.
+- Reused one Snowflake session across data doctor diagnostics for improved performance.
+- Preserved config when setting the default connection.
+- Kept the chosen connection on a failed login test, and surfaced the error reason.
+- Required TLS on Redshift standard-auth connections.
+- Applied Teradata database filters to object catalog DatabaseName queries.
+- Accepted a path or a name for `--database-bindings`.
+- Reported unsupported `source_language` and flagged AI-First ETL output.
+- Added warnings when partition columns cannot prune source scans.
+- Substituted error context in `scai_error.log`.
+- Gave each cloud workflow a unique name.
+- Aligned ETL dbt schemas.
+- Bounded the operands of an ETL derived expression to its target’s precision.
+- Recorded the deployed database in the registry target FQN.
+- Fell back to legacy reports when effort-estimate misses `.scai/reports`.
+
+#### Bug Fixes
+
+- Fixed an issue where `scai init -i --code-already-split` reported ADD0007 file conflict against ETL files it just promoted.
+- Fixed an issue where `scai code add` removed `etl_target` from `project.yml`.
+- Fixed an issue where `scai code convert` ignored `etl_target: snowflake_scripting` and wrote dbt projects instead.
+- Fixed an issue where scai lost terms acceptance once `~/.snowflake` was created.
+- Fixed an issue where data lineage omitted `script` units (BTEQ).
+- Fixed an issue where scai did not include `vcruntime140.dll` and two .NET assemblies, preventing users without admin rights from using the migration plugin on Windows.
+- Fixed an issue where the data worker could not resolve the SQL Server source connection.
+- Fixed an issue where BigQuery `export_data` extraction never received its GCS bucket in the worker config.
+- Fixed an issue where the DB2 connection test always failed.
+- Fixed an issue where `scai init` failed in offline mode when `config.toml` was missing.
+- Fixed an issue where `scai test capture/validate` failed because `tof_requirements.txt` pinned a removed package.
+- Fixed an issue where the assessment treated empty SQL Server principal-owned schemas as wave-1 seeds.
+- Fixed an issue where the Workload Inventory counted every SSIS package twice when the source drop had nested duplicate copies.
+- Fixed an issue where `scai code add` of SSIS/ETL files intermittently hung.
+- Fixed an issue where scai could not connect to Snowflake hosts whose account label contained underscores.
+- Fixed an issue where `code deploy` failed to count an existing container as ensured when `CREATE IF NOT EXISTS` was refused.
+- Fixed an issue where custom metadata database/schema environment variables did not propagate into the on-the-fly virtualenv for local services.
+- Fixed an issue where `scai code add` after a failed add still left its ETL packages registered.
+- Fixed an issue where the assessment report showed different table counts in Workload Inventory versus Effort Estimates.
+- Fixed an issue where `scai --json` envelope had parse errors printed as plain text, dropped warnings, and returned empty assessment report results.
+- Fixed an issue where orchestrator provisioning accepted mismatched shared artifacts.
+- Fixed an issue where `scai data worker/orchestrator start --local` did not forward SIGTERM or Ctrl+C to its Python child.
+- Fixed an issue where `scai data worker setup` on Windows failed with a “cannot load linux image on windows” error.
+
+### Desktop App
+
+#### Improvements
+
+- Added the Snowflake AIM header title and moved the Conversations dropdown.
+- Capped the landing screen’s “Your projects” row to the five most recent projects.
+- Scoped the non-production source warning to the data paths.
+- Scoped the claim picker’s “all” to the page it shows.
+- Added a validation-only setup route.
+
+### Conversion Engine
+
+#### New Features
+
+##### General
+
+- Retargeted database-ingestion reads and writes to landing tables.
+- Enabled Hybrid CREATE TABLE conversion for BigQuery, Databricks, Greenplum, Hive, Netezza, and Spark SQL platforms.
+- Supported CDC landing retargeting for SQL Server.
+
+##### IBM DB2
+
+- Enabled Hybrid CREATE TABLE conversion.
+
+##### Oracle
+
+- Converted mixed constructor and member OBJECT types to OBJECT type plus UDF stubs.
+- Converted supported `DBMS_SQL` cursor protocols.
+
+##### PostgreSQL
+
+- Enabled Hybrid CREATE TABLE conversion.
+
+##### Redshift
+
+- Converted dynamic `COPY` with runtime location to parameterized `COPY INTO`.
+- Mapped `START TRANSACTION` to Snowflake `BEGIN`.
+- Translated `text_to_numeric_alt` to `TRY_TO_NUMBER`.
+- Parsed `RESET` session GUC in procedures.
+- Preserved referenced `FOR` loop labels.
+- Converted `(+)` outer joins to ANSI `JOIN` and preserved `OUT` on `RETURN`.
+- Added native exception-handler pipeline and `RAISE` helpers.
+- Enabled Hybrid CREATE TABLE conversion.
+
+##### SQL Server
+
+- Converted `DIFFERENCE` with a helper UDF.
+- Replaced `sys.SYSFOREIGNKEYS` with a `GET_DDL`-foldable derived table.
+- Replaced the generic marker on `sys.data_spaces` with no-equivalent guidance.
+- Resolved XML `modify` insert-attribute with a deterministic Python UDF rewrite.
+- Converted `TRY`/`CATCH` `ROLLBACK TRANSACTION` into an executable Snowflake handler.
+- Converted `sys.dm_exec_procedure_stats` to `QUERY_HISTORY` `CALL` aggregates.
+- Converted `OBJECTPROPERTY` with recoverable object names to `INFORMATION_SCHEMA` SQL.
+- Redirected `sys.dm_exec_query_stats` telemetry to `QUERY_HISTORY`.
+- Converted `sys.dm_hadr_availability_replica_states` to an empty relation.
+- Converted `geography` type-method constructors and selected instance methods.
+- Converted `READONLY` table-valued parameters to `ARRAY` and `FLATTEN`.
+- Replaced `sys.partition_functions` lookups with empty derived tables.
+- Converted `sys.availability_groups` to an empty relation.
+- Added a targeted EWI for unsupported task-space usage.
+- Converted two-argument `EncryptByKey` to `ENCRYPT` keyed by `$SSC_ENCRYPTION_KEY`.
+- Lowered a flat `FOR XML EXPLICIT` to a Snowflake-equivalent `LISTAGG` template.
+- Converted a proved-safe `sys.dm_tran_locks` existence read to `SHOW LOCKS`.
+- Implemented `CROSS`/`OUTER APPLY` lowering to Snowflake `LATERAL` joins.
+- Gave `sys.filegroups` its own unconvertible-object issue.
+- Lowered an immediate `@@ERROR` check to an `EXCEPTION` block.
+- Resolved `XMLNAMESPACES` prefixes on `value()` and `exist()`, and kept the marker on string attributes and `UPDATE SET modify()`.
+
+##### Teradata
+
+- Enabled Hybrid CREATE TABLE conversion.
+- Added native `CONTINUE` exception handlers for Snowflake Scripting.
+- Mapped `NEXT` datetime successors to `DATEADD` by resolved type and precision.
+- Rewrote multi-aggregate `PIVOT` as `GROUP BY` plus `IFF`.
+- Commented `ALTER TABLE RELEASE ROWS` with an extractable SSC-FDM-0027.
+
+##### Vertica
+
+- Handled Hybrid CREATE TABLE `TIMESTAMPTZ` and `ORDER BY`.
+
+##### SSIS
+
+- Translated the Microsoft Merge component to Snowflake SQL.
+
+#### Bug Fixes
+
+##### General
+
+- Stopped telling users that `ORDER BY` pins sequence `NEXTVAL`.
+- Linked incremental registry dependencies to existing units.
+- Kept registry units whose source was unchanged on a parse-and-assess pass.
+- Replaced persisted context symbols instead of emitting SSC-FDM-0019.
+- Kept independent sibling CTEs out of promoted temp tables.
+
+##### IBM DB2
+
+- Fixed `SqlSplitTask` export for DB2 so `arrange` seeds the code unit registry.
+
+##### Oracle
+
+- Fixed `SELECT INTO` lift when assignment preceded read, and preserved bind-target line breaks.
+- Reported `TO_NCHAR` masks outside both format models.
+- Stabilized `COUNT` existence preprocessing.
+- Restructured a runtime `DBMS_LOCK.SLEEP` delay into `EXECUTE IMMEDIATE`.
+- Hoisted associative-array element `USING` arguments and kept the `EXECUTE IMMEDIATE INTO` marker.
+- Parsed `IS` entries in `JSON_OBJECT` and `JSON_OBJECTAGG`.
+- Kept aliases out of cross-schema synonym binding.
+- Parsed SQL\*Plus `SET`/`SPOOL` commands so the trailing SQL in a script is no longer skipped.
+- Converted `INSTR` with a literal position below -1.
+- Kept a UDT column whole in `SELECT ... INTO`.
+
+##### Redshift
+
+- Converted parenthesized `CTAS` in procedures.
+- Converted quoted `VARCHAR` casts.
+- Converted PartiQL comma-list unnest to `LATERAL FLATTEN`.
+- Fixed `RECORD` declaration conversion.
+- Preserved `PIVOT` literal aliases.
+- Converted epoch arithmetic to Snowflake timestamps.
+- Diagnosed unresolved dynamic `UNLOAD` with quoted identifiers.
+- Converted `JSON_ARRAY_LENGTH` `VARCHAR` inputs.
+- Stopped keyword-less PartiQL unnest from hanging nested view parses.
+- Supported identifier-held `EXECUTE INTO` for scalar targets.
+- Mapped `COPY GZIP` to Snowflake compression.
+- Converted `COPY REMOVEQUOTES`, `QUOTE`, and `REGION` options.
+- Converted `DROP PROCEDURE` overload signatures.
+- Fixed `UNLOAD ALLOWOVERWRITE` with `PARTITION BY`.
+- Supported `UNLOAD EXTENSION` for CSV and JSON.
+
+##### SQL Server
+
+- Gave `sys.master_files` its own storage-redirect EWI.
+- Dropped the `BEGIN TRANSACTION` label instead of flagging it.
+- Redirected `sys.dm_exec_requests` to `ACCOUNT_USAGE.QUERY_HISTORY`.
+- Rewrote the ranking-CTE dedupe `DELETE` as a constraint-preserving swap.
+- Stopped over-warning SSC-EWI-0108 on provably-safe correlated scalar subqueries.
+- Replaced `sys.database_mirroring` with an empty relation.
+- Guarded scalar-UDF variable inlining against self-referential parameter writes.
+- Confined the `sys.default_constraints` reroute to its own query.
+- Gave the partition-function catalog views their own issues.
+- Preserved line breaks in string-literal column aliases.
+- Localized approved linked-server execution.
+- Preserved `sp_addextendedproperty` arguments and comments.
+- Translated empty-string defaults by column type.
+- Gave the filegroup/partition-scheme views their own no-equivalent EWI.
+- Supported dynamic procedure dispatch in anonymous blocks.
+- Flagged SQL CLR `EXTERNAL NAME` routines instead of raising a generic warning.
+- Renamed table names in schema-less double-dot identifiers.
+- Lowered resolvable `EXEC` and `sp_executesql` dynamic SQL to native Snowflake Scripting.
+- Redirected `sys.tables` storage-size and row-count joins to `INFORMATION_SCHEMA.TABLES`.
+- Mapped procedure `RETURN` onto Snowflake’s single return channel.
+- Stopped parsing a local variable as a callable function.
+- Rendered `FORMAT(v, '#,0%')` as SQL Server does for exact, `FLOAT`, and unresolved values.
+- Fixed the `FOR_XML_UDF` helper to write the closing XML tag with its slash.
+- Converted T-SQL XML base64 idiom, implicit conversion, and XML method lowering.
+- Fixed `FORMAT(date, 'dddd')` to convert to full day names instead of abbreviated ones.
+- Rerouted system catalog queries.
+- Converted `ERROR_SEVERITY()` to `NULL` with an FDM marker instead of a non-compilable EWI.
+- Stopped ETL replatform duplicate counts from climbing.
+
+##### Teradata
+
+- Rewrote `HASHROW ^= HASHROW` as `HASH <> HASH`.
+- Converted unresolved matching-width `FORMAT '99999999999'` without SSC-EWI-0033.
+- Lowered `EXTRACT` from `DATE`-literal minus integer through `DATEADD(DAY)`.
+- Converted `EXTRACT(SECOND)` multiplied by `INTERVAL` timestamp arithmetic without SSC-EWI-0013.
+- Wrapped string-literal `CAST AS INTEGER` with `TRUNC`.
+- Dispatched handler-only `SQLSTATE 02000` as a `SQLSTATE` comparison.
+- Mapped unquoted `DBC.TablesV` existence `COUNT` to `INFORMATION_SCHEMA.TABLES`.
+- Converted postfix `DATE FORMAT` on unresolved `NAMED` aliases.
+- Dropped `DATE FORMAT` on `DATE` values and applied pictures in character consumers.
+- Parsed conditional `SAMPLE WHEN` and kept SSC-EWI-0021 live.
+- Parsed `INSERT table@server` and marked the remote `INSERT` with SSC-EWI-TD0076.
+- Rewrote `REGEXP_REPLACE` flag `x`, replacements, and literal class brackets.
+- Converted inner labeled compound `LEAVE` to a skip flag.
+- Converted `SELECT`-list output `FORMAT` phrases to `TO_CHAR`.
+- Registered `PRIOR` as a built-in and kept SSC-EWI-0031.
+- Rewrote an unformatted year-01 date slice as year 1901.
+- Applied the nested-query boundary at every clause.
+- Parsed unqualified unicode `'identifier'n` names as Snowflake delimited identifiers.
+- Parsed DML temporal qualifiers as one statement and marked with SSC-FDM-TD0025.
+- Rewrote resolved `MM/DD/YYYY` `DATE` casts and kept SSC-EWI-0033 on unresolved day arithmetic.
+- Fixed `arrange` to keep a BTEQ-only input instead of dropping it.
+
+##### DataStage
+
+- Kept parameterized connector tables out of nested `source()` Jinja.
+
+##### SSIS
+
+- Emitted dot-free aliases for Derived Column name collisions.
+
+### Data Validation
+
+#### New Features
+
+- Added Direct DMV mode with support for parallel small tables.
+- Added full-replace data-migration synchronization strategy.
+- Added Iceberg v3 compatible data validation normalization.
+- Enabled SQL Server Iceberg ODBC extraction.
+- Added Iceberg v3 compatible profile and `ICEBERG_VERSION=3`.
+- Added normalized comparison collation core.
+- Added a platform identifier API for parse, SQL write, and catalog write.
+
+#### Improvements
+
+- Defaulted to a 500,000-row cap for data migration partitions with `maxPartitionSizeRows`.
+- Removed `isCaseSensitive` from the data validation config.
+- Used Snowflake catalog column names in L2/L3 SQL.
+- Displayed readable `FLOAT` and encoded text values in L3 results.
+- Detected DV object types on both sides and allowed source view versus target table.
+- Treated L1 character-length capacity mismatch as a warning, not a failure.
+- Reported source string capacity for unbounded SQLite and BigQuery types.
+- Translated include/exclude lists per side for `columnMapping`.
+- Matched L2 `columnMapping` case-insensitively.
+- Reduced startup time for DMVF Python code.
+- Drove Iceberg load orchestration from `LoadPolicy`.
+- Aligned Iceberg dump aliases with `CASE_SENSITIVE` DDL.
+- Scaled sampled partition row counts to the full table.
+- Honored `PREFER_NATIVE_DRIVER` environment variable in SPCS worker config.
+- Temporarily dropped target `CHECK` constraints during data load.
+- Removed DEA dual-cursor row-hash compare.
+- Reported unbounded Postgres varchar length as `MaxAllocSize` (1 GB minus 1).
+- Normalized BigQuery, DB2, Oracle, PostgreSQL, Redshift, SQL Server, Synapse, and Teradata collation comparisons.
+
+#### Bug Fixes
+
+- Fixed `TABLESAMPLE` plus `NTILE` collapsing low-cardinality date keys into empty partitions.
+- Fixed T-SQL integer `stddev` false L2 mismatch.
+- Fixed false positives related to TAB characters in `VARCHAR` columns in Redshift.
+- Fixed Teradata PERIOD timezone cast width and SQL Server `CHECK` assertion.
+- Fixed Teradata S19 charset handling.
+- Fixed ODBC output converters corrupting binary SQL Server types.
+- Fixed Redshift REAL `NaN` and infinities aborting extract.
+- Fixed Synapse quoted and bracketed identifiers with collation-driven case sensitivity versus `sys.*` and `INFORMATION_SCHEMA` filters.
+- Fixed S3 upload timeout handling.
+- Fixed SQL Server text length metrics to count characters, not bytes.
+- Fixed row hashing on SQL Server to hash the whole row, not its first 4,000 characters.
+- Fixed Teradata L3 normalization to cast `JSON`/`XML`/`VARGRAPHIC` to `VARCHAR`, not `CLOB`.
+- Fixed Teradata `NUMBER` rounding on Iceberg `cloud_direct` extracts.
+- Fixed PostgreSQL `NULL` versus empty string preservation through staged CSV.
+- Fixed Oracle native JSON serialization at extraction.
+- Fixed Redshift `TIMESTAMPTZ` and Snowflake `TIMESTAMP_LTZ` comparison to use UTC instants.
+- Fixed Redshift timezone offset preservation in data validation.
+- Fixed Redshift `TIMETZ` UTC semantics validation.
+- Fixed PostgreSQL `TIMETZ` preservation.
+- Fixed Teradata `TIME WITH TIME ZONE` preservation.
+- Fixed Oracle local timezone extraction preservation.
+- Fixed timezone precision in shared data migration staging.
+- Fixed digit-only hybrid cell keys for character columns to be properly quoted.
+- Fixed row pairing when the validation key was `NULL`.
+- Fixed dotted table names to stay as one identifier through data validation.
+- Fixed the BCP empty-string sentinel from entering `VARIANT`.
+- Fixed L3 join key normalization with the same datatype templates as hashed values.
+- Fixed L3 signature pushdown compare text codecs.
+- Fixed Redshift hybrid L3 row hashes segmented to avoid `VARCHAR CONCAT` overflow.
+- Fixed Iceberg `DOUBLE` treated as Snowflake catalog `FLOAT` in L1.
+- Fixed Teradata view L1 when `ColumnsQV` was unavailable.
+- Fixed BigQuery and Redshift `Inf`/`NaN` survival through the `DOUBLE` migration path.
+- Fixed Redshift `SUPER` parsed into `VARIANT` instead of wrapping it as a string.
+- Fixed Redshift Iceberg `TIMESTAMPTZ` landed as `TIMESTAMP_LTZ`.
+- Fixed PostgreSQL Parquet writing from `COPY` to preserve `NULL` values and control characters.
+- Fixed DEA DB2 source connection test to use `pyodbc` and bare `SELECT 1`.
+- Fixed `COUNT_BIG` usage in T-SQL date-part period queries.
+- Fixed the staged-CSV `NULL` sentinel from eating a literal `\N`.
+
+### Others
+
+#### Testing Framework
+
+##### New Features
+
+- Added support for scoring a split statement on every converted target with partial coverage.
+- Added `etl-validate` support for `database-bindings.yaml`.
+- Added `--vars` support for dbt single-model seed.
+- Added validation of SSIS `snowflakeSQL` orchestration parts, fixing false green results.
+- Added existence probes for `CREATE DATABASE`/`CREATE SCHEMA` so least-privilege roles can run.
+
+##### Improvements
+
+- Moved scai source connections from `snowct` to `scai/connections`.
+- Routed target validation through explicit CUR table pairs.
+- Activated all secondary roles on testing-infrastructure Snowflake sessions.
+- Resolved each ETL unit’s own test YAML when units share `files.artifacts.path`.
+- Defaulted ETL execution log to the `VALIDATION` schema.
+- Preserved already-computed deltas on mid-loop capture failure.
+- Preserved source database identity throughout capture.
+- Kept enrichment and execution on the same effective bindings.
+- Rejected regex entries in dbt part-override `excluded_columns`.
+- Preserved the binding token in seed and added `--vars` for dbt single-model.
+
+##### Bug Fixes
+
+- Fixed an issue where the test runner refused to clone a CUR logical database on the validate path.
+- Fixed an issue where binding tokens in validate stage SQL were not properly quoted.
+- Fixed an issue where the validate session lacked a schema when the database had no `PUBLIC`.
+- Fixed an issue where ETL test seed `project_dir` was not resolved from registry part path.
+
+#### Migration Plugin
+
+##### New Features
+
+- Added Object Lineage explorer with Stellar Canvas.
+- Added Data Lineage inspector and object-lineage hop.
+- Added Discovery Extract Log tab to the dashboard and HTML report.
+- Added Redshift workload insights dashboard and HTML report.
+- Added Teradata workload insights dashboard.
+- Added dbt workflow to the SCAI plugin.
+- Added SAS assessment support for Enterprise Guide projects, name-literal tables, and `%include` tracking.
+- Added conversion reports download to the dashboard and HTML Assessment report.
+- Added flow-aware ETL validation repair loop.
+- Moved optimization opportunities into Discovery.
+
+##### Improvements
+
+- Migration plugin now sets up its tools automatically on corporate networks and Windows terminals.
+- Recommended SPCS as the default data-infrastructure orchestrator.
+- Scoped the testable denominator to the wave and guarded the vacuous zero case.
+- Named the entry-mode options by whether conversion is needed.
+- Passed the chosen Snowflake connection to `scai init`.
+- Asked the ETL routing question only when there is ETL.
+- Diagnosed a target database that no unquoted reference can reach.
+- Surfaced a project already initialized in a subfolder.
+- Kept file modes when finishing from a nested project dir.
+- Applied the selected extraction method during data setup.
+- Let a hand-started local orchestrator claim a dispatch, and reaped children on hang-up.
+- Guided L3 pushdown extract setup in the migration plugin.
+- Assessment now only marks an object as Require Attention for EWI and out-of-scope issues.
+- Updated Dashboard home page with dark mode and new progress indicator in the Objects progress table.
+- Updated Dashboard Testing page to use the latest design.
+- Fixed the scai CLI installer for Windows with isolated `uv`, channel-correct install/update, and ZIP fallback.
+- Scoped the data-migration denominator to the active wave.
+
+##### Bug Fixes
+
+- Fixed an issue where the Waves report labeled BTEQ scripts and ETL `$$` parameter references as `UNKNOWN`.
+- Fixed an issue where `split_code` scanned only `.sql` files and disagreed with `scai code add` about SC tags.
+- Fixed an issue where `migrateData` did not auto-fail on zero-row or `TASK_QUEUE` failures.
+- Fixed an issue where the agent silently switched the source connection instead of asking the user to confirm.
+- Fixed an issue where `Plugin configure(source_language)` overwrote a legacy `project_type: code_conversion_only`.
+- Fixed an issue where `migration_status(health_check)` always reported `errored_count` as zero.
+- Fixed an issue where `migration_status` timed out at 300 seconds on a large project, preventing the migration from being resumed.
+- Fixed an issue where the agent asked for unnecessary parameters before consulting Data Doctor.
+- Fixed an issue where configuring a project silently created a metadata database that nothing reused or removed.
+- Fixed an issue where custom metadata schemas did not reach `scai`/`mcp-server` through the plugin.
+- Fixed an issue where metadata setup failed every session on a legacy `OBJECT_CLAIMS` hybrid table.
+- Fixed an issue where tables were not validated after data migration completed.
+- Fixed an issue where resuming a migration after restarting the app skipped back to assessment/setup instead of the validation step.
+- Fixed an issue where `mcp-server` ignored the project’s `snowflake_role`/`snowflake_warehouse` override.
+- Fixed an issue where the Dependencies Report Temporal Tables card count did not match the All Objects table data.
+- Fixed an issue where the Dashboard “Converted objects” tile showed 0/11 procedures while the procedure list showed all 11 converted.
+- Fixed an issue where a vanished metadata database was silently recreated instead of being reported.
+- Fixed an issue where the Cortex Search feature pinned the customer warehouse.
+- Fixed an issue where a validation job with tables that found mismatches was not properly finished.
+- Fixed an issue where the `mcp-server` adopted an enclosing git repo, and failed when its remote was unreachable.
+
 ## Version 2.46.0 (Sep 23, 2026)
 
 ### CLI

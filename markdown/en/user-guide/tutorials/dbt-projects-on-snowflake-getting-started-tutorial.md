@@ -15,6 +15,20 @@ To follow the tutorial with another provider, import the sample repository into 
 use your own repository URL in the setup steps. For provider-specific API integration examples, see
 [Step 3: Connect your Git repository with OAuth2](/user-guide/data-engineering/dbt-projects-on-snowflake-migrate-from-dbt-core#label-dbt-migrate-step3).
 
+### Quick start: Use the Snowsight app template
+
+The fastest way to start using dbt Projects on Snowflake is our
+[Workspaces app template](https://app.snowflake.com/templates?template=getting_started_with_dbt_projects). The template is Git-free. You
+don’t need to fork a repository, have a Git provider account, or create an API integration or secret. It also includes everything the
+project needs to run, so you don’t need to create a warehouse, database, or schema first.
+
+When you open the template, choose the workspace where you want to add the project, and then follow the `README.md` in the new
+`tasty_bytes` folder to compile and run it. After you set up and run the template project, you can
+[deploy it as a dbt project object](#label-dbt-get-started-deploy-project) and [schedule it with a task](#label-dbt-get-started-create-task).
+
+Follow the rest of this tutorial instead if you want repository integration, branch workflows, and the ability to push and pull changes
+from a workspace.
+
 ### Prerequisites
 
 - **Git provider**

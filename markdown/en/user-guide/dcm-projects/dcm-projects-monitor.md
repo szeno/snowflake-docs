@@ -57,6 +57,8 @@ information:
 
 - The manifest file (`manifest.yml`)
 - All object definition and macro files (`.sql` files) inside the `sources` folder
+- A copy of all [project assets](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-project-assets) referenced in
+  the manifest
 - The output of the PLAN operation (`plan_result.json`) and the DEPLOY operation (`deploy_result.json`), including:
   - The templating variables used for this deployment
   - Deployment metadata, including timestamp, object name, and query ID

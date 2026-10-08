@@ -83,12 +83,13 @@ GRANT SELECT ON TABLE app_package.shared_schema.shared_table
 ```
 
 In this example, the first command grants the USAGE privilege on the `shared_schema` schema to the
-application package. This command allows the schema to be shared with consumers. The second command
+application package. This command allows the schema to be shared with the app. The second command
 grants the SELECT privilege on the `shared_table` table within `shared_schema` to the application
-package. This command allows consumers to query the table.
+package. This command allows the app to query the table.
 
-After a consumer installs an app from the application package `app_package`, they can access the
-`shared_schema` and query the `shared_table`.
+After a consumer installs an app from the application package `app_package`, the app can access
+`shared_schema` and query `shared_table`. Consumers can’t query `shared_table` directly. For more
+information, see [Access shared content from an app](#label-native-apps-access-shared-content-from-app).
 
 Note
 
@@ -114,7 +115,7 @@ GRANT REFERENCE_USAGE ON DATABASE other_db
 ```
 
 After granting the REFERENCE\_USAGE on the external database, a provider must create a view within the
-application to references the shared objects as shown in the following example:
+application to reference the shared objects as shown in the following example:
 
 Copy code
 
@@ -138,6 +139,45 @@ GRANT USAGE ON SCHEMA app_pkg.shared_schema
 GRANT SELECT ON VIEW app_pkg.shared_schema.shared_view
   TO SHARE IN APPLICATION PACKAGE app_pkg;
 ```
+
+## Access shared content from an app
+
+After a consumer installs an app, the app can query the objects that the provider shares with the
+application package. Code in the app refers to a shared object by its schema and object name, as if the
+schema were in the app. For example, the setup script, or a stored procedure or function that the app
+owns, can query a shared table as follows:
+
+Copy code
+
+```
+SELECT * FROM shared_schema.shared_table;
+```
+
+You can also use the name of the app to qualify the object, for example
+`my_app.shared_schema.shared_table`. You can’t use the name of the application package to refer to
+shared objects from within the app.
+
+Only objects that the app owns, such as views, stored procedures, functions, and tasks, can access
+shared content. Roles in the consumer account can’t query shared content directly. To give consumers
+access to shared content, see [Allow consumers to access shared objects in an app](#label-native-apps-exposing-shared-objects-to-consumers).
+
+### Shared content is live
+
+An app reads shared content from the application package each time that it runs a query. Snowflake
+doesn’t copy or snapshot shared content when a consumer installs or upgrades an app. When a provider
+changes the data in a shared object, for example by inserting rows into a shared table, the app
+sees the change the next time that it queries the object, without an upgrade. Because shared content
+isn’t versioned, all versions and patches of an app see the same data.
+
+Changes to the structure of a shared object behave differently. A view that the setup script defines
+with an explicit list of columns doesn’t include columns that are added to the underlying table later.
+To expose new columns, create a new version or patch of the app that updates the view definition.
+
+Note
+
+For an app that’s available in other regions through
+[Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment), consumers in those
+regions see shared content as of the most recent refresh of the listing, not live.
 
 ## Allow consumers to access shared objects in an app
 

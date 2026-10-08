@@ -159,7 +159,10 @@ following situations:
 - The user has been granted the MANAGE GRANTS privilege.
 - The app grants access to the compute pool using application roles.
 
-Application developers can allow users with active roles specific privileges on applications owned by compute pools. In addition, administrators with the ACCOUNTADMIN role can grant themselves the privileges necessary to control the applications owned by compute pools. For more information about compute pool access requirements, see [ALTER COMPUTE POOL](/sql-reference/sql/alter-compute-pool).
+Providers can grant specific privileges on compute pools owned by the app to application roles. In addition,
+administrators with the `ACCOUNTADMIN` role can grant themselves the privileges necessary to control compute pools
+owned by an app. For example, to suspend or resume a compute pool, a role requires the `OPERATE` privilege on the
+compute pool. For more information about compute pool access requirements, see [ALTER COMPUTE POOL](/sql-reference/sql/alter-compute-pool).
 
 ### Prefix the compute pool within the setup script
 

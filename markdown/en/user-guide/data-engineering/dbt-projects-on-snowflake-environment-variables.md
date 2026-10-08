@@ -381,7 +381,7 @@ Before you start, make sure you have:
 - A warehouse you can use to run the project. This warehouse runs the `env.yml` file at the start of the run.
 - A role with the `READ` privilege or `OWNERSHIP` on any Snowflake secret you reference in `env.yml`.
 - A dbt project (this guide uses a `tasty_bytes` dbt project and imports a private `jaffle_shop` package as a dependency).
-- [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/index) version 3.21 or later, if you’re using the CLI for CI/CD workflows.
+- [Snowflake CLI](/developer-guide/snowflake-cli/index) version 3.21 or later, if you’re using the CLI for CI/CD workflows.
 
 ### If your project already uses environment variables
 

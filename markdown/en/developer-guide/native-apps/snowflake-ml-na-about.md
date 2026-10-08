@@ -7,13 +7,13 @@ model in a Snowflake Native App. It also describes how to call
 ## Overview of using Snowpark ML in a Snowflake Native App
 
 Snowflake ML is an integrated set of capabilities for end-to-end machine learning
-in a single platform on top of your governed data. You can this functionality within
+in a single platform on top of your governed data. You can use this functionality within
 a Snowflake Native App.
 
 The Snowflake Native App Framework supports the following use cases:
 
 - Providers include a training algorithm in the app, but the trained model is not included.
-  Providers include the source code for the model, for example linear regression or logistical
+  Providers include the source code for the model, for example linear regression or logistic
   regression, in the app.
 
   After the app is installed, training occurs on data in the consumer account, for example by calling the
@@ -26,7 +26,7 @@ The Snowflake Native App Framework supports the following use cases:
   For more information, see [Create, train and use a Snowflake ML model in an app](/developer-guide/native-apps/snowflake-ml-na-no-model).
 - Providers train a model based on data in their account and include these models in the app. When the app
   is installed, consumers can use the model directly, for example by calling the model’s
-  :predict() method.
+  `predict()` method.
 
   For more information, see [Include a trained model in an app](/developer-guide/native-apps/snowflake-ml-na-with-model).
 

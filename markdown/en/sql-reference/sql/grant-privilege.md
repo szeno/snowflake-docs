@@ -74,7 +74,7 @@ globalPrivileges ::=
        }
       | ATTACH POLICY | AUDIT | BIND SERVICE ENDPOINT
       | APPLY {
-         { AGGREGATION | AUTHENTICATION | JOIN | MASKING | PACKAGES | PASSWORD
+         { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD
            | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY
          | CONTACT
          | TAG }
@@ -133,10 +133,10 @@ schemaPrivileges ::=
     ADD SEARCH OPTIMIZATION | APPLYBUDGET
   | CREATE {
        AGENT | ALERT | APPLICATION SERVICE | ARTIFACT REPOSITORY | CONTACT | CORTEX SEARCH SERVICE | DATA METRIC FUNCTION | DATASET
-      | DBT PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION
+      | DBT PROJECT | DCM PROJECT | EVENT TABLE | EXPERIMENT | FILE FORMAT | FUNCTION
       | GATEWAY | { GIT | IMAGE } REPOSITORY | MCP SERVER
       | MODEL | NETWORK RULE | NOTEBOOK | PIPE | PROCEDURE
-      | { AGGREGATION | AUTHENTICATION | MASKING | PACKAGES
+      | { AGGREGATION | AUTHENTICATION | MAINTENANCE | MASKING | PACKAGES
          | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION
          | STORAGE LIFECYCLE } POLICY
       | SECRET | SEQUENCE | SERVICE | SNAPSHOT | SNAPSHOT POLICY | SNAPSHOT SET
@@ -178,6 +178,8 @@ schemaObjectPrivileges ::=
      USAGE [ , ... ]
   -- For DBT PROJECT
      USAGE, MONITOR [ , ... ]
+  -- For DCM PROJECT
+     READ, MONITOR [ , ... ]
   -- For DYNAMIC TABLE
      MONITOR, OPERATE, SELECT [ , ... ]
   -- For EXPERIMENT
@@ -204,7 +206,7 @@ schemaObjectPrivileges ::=
      { MONITOR | SELECT } [ , ... ]
   -- For PIPE
      { APPLYBUDGET | MONITOR | OPERATE } [ , ... ]
-  -- For { AGGREGATION | AUTHENTICATION | MASKING | JOIN | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY or TAG
+  -- For { AGGREGATION | AUTHENTICATION | JOIN | MAINTENANCE | MASKING | PACKAGES | PASSWORD | PRIVACY | PROJECTION | ROW ACCESS | SESSION | STORAGE LIFECYCLE } POLICY or TAG
      APPLY [ , ... ]
   -- For SECRET
      { READ | USAGE } [ , ... ]
@@ -250,6 +252,7 @@ For more details about the privileges supported for each object type, see [Acces
     - `DATA METRIC FUNCTION`
     - `DATASET`
     - `DBT PROJECT`
+    - `DCM PROJECT`
     - `DYNAMIC TABLE`
     - `EVENT TABLE`
     - `EXPERIMENT`
@@ -262,6 +265,7 @@ For more details about the privileges supported for each object type, see [Acces
     - `IMAGE REPOSITORY`
     - `INTERACTIVE TABLE`
     - `JOIN POLICY`
+    - `MAINTENANCE POLICY`
     - `MASKING POLICY`
     - `MATERIALIZED VIEW`
     - `MCP SERVER`
@@ -300,7 +304,7 @@ For more details about the privileges supported for each object type, see [Acces
 `object_type_plural`
 :   Plural form of `object_type` (for example, `TABLES`, `VIEWS`).
 
-    Note that bulk grants on pipes are not allowed.
+    Note that bulk grants on maintenance policies and pipes are not allowed.
 
 `role_name`
 :   Specifies the identifier for the recipient role (that is, the role to which the privileges are granted).
@@ -515,6 +519,7 @@ For more information, see [managed access schemas](/user-guide/security-access-c
 
     - Aggregation policy
     - Join policy
+    - Maintenance policy
     - Masking policy
     - Packages policy
     - Projection policy

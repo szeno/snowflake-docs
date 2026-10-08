@@ -34,6 +34,8 @@ ALTER APPLICATION PACKAGE [ IF EXISTS ] <name> UNSET
   [ COMMENT  = <string-literal> ]
   [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]
 
+ALTER APPLICATION PACKAGE [ IF EXISTS ] <name> RENAME TO <new_package_name>
+
 ALTER APPLICATION PACKAGE <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER APPLICATION PACKAGE <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
@@ -140,6 +142,15 @@ ALTER APPLICATION PACKAGE <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 
     You can reset multiple properties/parameters with a single ALTER statement; however, each property/parameter must be separated by a
     comma. When resetting a property/parameter, specify only the name; specifying a value for the property will return an error.
+
+`RENAME TO new_package_name`
+:   Specifies a new identifier for the application package. This identifier must be unique for
+    your account.
+
+    For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
+
+    When you rename an application package, update any references that use the application package name. For example, update the application package
+    `identifier` in the [Snowflake CLI project definition file](/developer-guide/snowflake-cli/native-apps/project-definitions).
 
 ## Usage notes
 

@@ -61,6 +61,7 @@ GRANT OWNERSHIP
     - `DATABASE`
     - `DATABASE ROLE`
     - `DBT PROJECT`
+    - `DCM PROJECT`
     - `DYNAMIC TABLE`
     - `EVENT TABLE`
     - `EXPERIMENT`
@@ -75,6 +76,7 @@ GRANT OWNERSHIP
     - `IMAGE REPOSITORY`
     - `INTEGRATION`
     - `JOIN POLICY`
+    - `MAINTENANCE POLICY`
     - `MASKING POLICY`
     - `MATERIALIZED VIEW`
     - `MCP SERVER`
@@ -116,7 +118,7 @@ GRANT OWNERSHIP
 `object_type_plural`
 :   Plural form of `object_type` (e.g. `TABLES`, `VIEWS`).
 
-    Note that bulk grants on pipes and data metric functions are not allowed.
+    Note that bulk grants on data metric functions, maintenance policies, and pipes are not allowed.
 
 `role_name`
 :   The identifier for the role to which the object ownership is transferred.
@@ -189,6 +191,7 @@ GRANT OWNERSHIP
   - `AUTHENTICATION POLICIES`
   - `EXPERIMENTS`
   - `GATEWAYS`
+  - `MAINTENANCE POLICIES`
   - `NOTEBOOKS`
   - `PASSWORD POLICIES`
   - `PRIVACY POLICIES`

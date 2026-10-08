@@ -106,5 +106,5 @@ On error a response resembling the following is returned:
 
 Possible error codes include:
 
-- `INVALID_INPUT` - Provided procedure’s arguments are invalid and it is not possible to update resource ingestion configurations or a resource with given does not exists.
+- `INVALID_INPUT` - Provided procedure’s arguments are invalid and it is not possible to update resource ingestion configurations or a resource with given does not exist.
 - `UPDATE_RESOURCE_ERROR` - Something unexpected happened when updating the resource ingestion definition with new ingestion configurations or when managing ingestion processes. All changes are rolled back.

@@ -12,13 +12,18 @@ This topic provides information on how to upgrade a Snowflake Native App using r
 The Snowflake Native App Framework allows providers to upgrade an app to a new version or patch.
 
 Providers can initiate an upgrade of an app to a new version or patch by setting the release directive
-on a release channel. When the release directive is modified, Snowflake automatically upgrades all
-installed instances of the current version of the app to the version specified by the release directive.
+on a release channel. Changing the default release directive targets installed app instances that use the
+default directive. It doesn’t target accounts assigned to a custom release directive. Changing a custom
+release directive targets installed app instances in the accounts assigned to that directive.
 
 When the provider initiates an upgrade, Snowflake adds each app to be upgraded to a queue. Each app is
 upgraded as resources are available. The upgrade process can take a while to complete across all installed
 versions of the app. To expedite the upgrade process, consumers can also manually initiate an upgrade of
 an app when a new version or patch is available.
+
+For each targeted app instance, Snowflake runs the setup script for the target version or patch. If the app
+defines a version initializer, Snowflake calls it after the setup script succeeds. For more information about
+setup scripts and version initializers, see [Develop a new version of an app](/developer-guide/native-apps/update-app-develop).
 
 Note
 
@@ -64,7 +69,7 @@ A provider upgrades an app by using the following workflow:
 2. Test the new version by installing the app in your test account.
 3. Update the release directive for the version or patch.
 
-   This initiates an automated upgrade that will update all installed instances of the previous version. A provider can notify the consumer that an upgrade is available and ask them to manually upgrade the app.
+   This initiates an automated upgrade for the app instances targeted by the default or custom release directive. A provider can notify the consumer that an upgrade is available and ask them to manually upgrade the app.
 
 ## Set a start date and time for an upgrade
 
@@ -236,6 +241,11 @@ for information on setting the account-level refresh frequency.
 During the upgrade process, the app passes through different states. The following diagram shows the possible
 states when upgrading from the previous version, v1, to a new version, v2.
 
+After the setup script succeeds, Snowflake calls the target version’s initializer, if one is defined. If the setup
+script or target version’s initializer fails, Snowflake calls the previous version’s initializer before reporting
+the upgrade failure. The previous initializer can restore resources that aren’t in versioned schemas, such as
+services.
+
 Note
 
 Although this diagram shows an upgrade for a version, it also applies to patch upgrades.
@@ -252,7 +262,7 @@ package is located:
 | 3 | Eligible to upgrade | Snowflake performs checks to verify that the app is eligible to upgrade. These checks include verifying that the app is not disabled, that application package is available, that the version and patch is valid for upgrade, the consumer account is valid, etc. |
 | 4 | Obtain upgrade slot? | Depending on the number of apps being upgraded, the number of consumer accounts, etc. they may have to wait to begin the upgrade process. |
 | 5 | Setup script run successfully? | When the upgrade begins, Snowflake runs setup script. If any uncaught errors occur, the setup script execution stops. Snowflake queues the app for upgrade again based on the number of retries configured. |
-| 6 | Is version updated? | Snowflake checks to see if the upgrade is for a version or patch. If the upgrade is for a version, Snowflake performs additional checks and waits until all jobs from the older version of the app have completed. |
+| 6 | Is version updated? | After a successful version upgrade, the target version becomes current. The previous version remains in the `FINALIZING` state until jobs that use the previous version finish. |
 
 Expand
 
@@ -277,7 +287,8 @@ The following table describes each of the possible states of the upgrade process
 | DISABLED | The app is disabled and not eligible for upgrade. |
 | QUEUED | The app is in the queue to be upgraded based on the number of apps and consumer accounts. |
 | UPGRADING | The app is in the process of being upgraded. |
-| COMPLETED | The app has upgraded successfully. |
+| COMPLETE | The app has upgraded successfully. |
+| QUEUED\_DELAYED | The app is queued for an upgrade that is scheduled for a future time. |
 | QUEUED\_RETRY | The setup script or other check failed and the app is returned to the upgrade queue. |
 | FAILED | The app upgrade failed. Upgrades can fail on the provider side, for example due to an error in the setup script. Upgrades can also fail on the consumer side if the app is disabled, the consumer account is inactive, etc. |
 
@@ -348,7 +359,7 @@ period of time. Disabled apps can become unusable and must be reinstalled
 ### Upgrade a disabled app
 
 Disabled apps are not part of the normal upgrade process and cannot be upgraded. If a disabled app becomes
-reenabled, it is automatically upgraded to the version and patch of the release directive. However, if the
+re-enabled, it is automatically upgraded to the version and patch of the release directive. However, if the
 version or patch is no longer available, the app cannot be upgraded and must be reinstalled.
 
 For example, if a disabled app is on version `v1`, but the current and previous versions in the release channel are `v2` and `v3`, the app cannot be upgraded and is unusable.

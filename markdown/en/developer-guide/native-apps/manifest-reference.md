@@ -210,7 +210,7 @@ The `configuration` field (block, optional) specifies runtime configuration for 
 
 #### `configuration.log_level` field
 
-Specifies the logging level to use for the app Snowflake Native App.
+Specifies the logging level to use for the Snowflake Native App.
 
 If you do not set a value for this property, the default log data is
 not captured.
@@ -462,7 +462,7 @@ Example: `register_callback: my_schema.my_register_callback`
 Specifies the name of the callback function that provides the desired configuration for the object to bind to this reference.
 
 This property is required if `object_type` is
-`EXTERNAL ACCESS INTEGRATION` or `SECRET`. This property is not applicable to other types of objects.
+`EXTERNAL ACCESS INTEGRATION`, `SECRET`, or `CATALOG INTEGRATION`. This property is not applicable to other types of objects.
 
 #### `references.\<reference_name\>.required_at_setup` field
 

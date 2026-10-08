@@ -235,7 +235,8 @@ The following table describes each of the possible states of the upgrade process
 | DISABLED | The app is disabled and not eligible for upgrade. |
 | QUEUED | The app is in the queue to be upgraded based on the number of apps and consumer accounts. |
 | UPGRADING | The app is in the process of being upgraded. |
-| COMPLETED | The app has upgraded successfully. |
+| COMPLETE | The app has upgraded successfully. |
+| QUEUED\_DELAYED | The app is queued for an upgrade that is scheduled for a future time. |
 | QUEUED\_RETRY | The setup script or other check failed and the app is returned to the upgrade queue. |
 | FAILED | The app upgrade failed. Upgrades can fail on the provider side, for example due to an error in the setup script. Upgrades can also fail on the consumer side if the app is disabled, the consumer account is inactive, and so on. |
 
@@ -305,7 +306,7 @@ period of time. Disabled apps can become unusable and must be reinstalled.
 
 ### Upgrade a disabled app
 
-Disabled apps are not part of the normal upgrade process and cannot be upgraded. If a disabled app becomes reenabled,
+Disabled apps are not part of the normal upgrade process and cannot be upgraded. If a disabled app becomes re-enabled,
 it is automatically upgraded to the version and patch of the release directive. However, if the version or patch is no
 longer available the app cannot be upgraded and must be reinstalled.
 

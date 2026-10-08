@@ -3,6 +3,10 @@
 Creates a new Streamlit object in Snowflake or replaces an existing Streamlit
 object in the same schema.
 
+This command supports the following variant:
+
+- [DEFINE STREAMLIT](#label-define-streamlit-syntax): Declarative definition of a Streamlit app’s target state inside a DCM project. (Public Preview)
+
 See also:
 :   [SHOW STREAMLITS](/sql-reference/sql/show-streamlits), [DESCRIBE STREAMLIT](/sql-reference/sql/desc-streamlit), [ALTER STREAMLIT](/sql-reference/sql/alter-streamlit),
     [DROP STREAMLIT](/sql-reference/sql/drop-streamlit), [UNDROP STREAMLIT](/sql-reference/sql/undrop-streamlit)
@@ -45,6 +49,35 @@ CREATE [ OR REPLACE ] STREAMLIT [ IF NOT EXISTS ] <name>
   [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] ) ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
 ```
+
+## Variant syntax
+
+### DEFINE STREAMLIT
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+DCM Projects uses `DEFINE STREAMLIT` statements to create and manage Streamlit apps declaratively inside a DCM project, alongside
+the app’s source files, infrastructure, and access control. To learn more about DCM Projects, see
+[Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
+
+A `DEFINE STREAMLIT` statement uses the same parameters as [CREATE STREAMLIT](#label-create-streamlit-syntax), except
+`FROM` must be an `asset://` URI that resolves to a
+[project asset](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-project-assets) declared in the
+DCM project manifest:
+
+Copy code
+
+```
+DEFINE STREAMLIT DEMO{{env_suffix}}.SERVE.MY_DASHBOARD
+    FROM 'asset://my_dashboard/'
+    MAIN_FILE = 'streamlit_app.py'
+    QUERY_WAREHOUSE = DEMO_WH{{env_suffix}}
+;
+```
+
+You can use `DEFINE STREAMLIT` only inside DCM project definition files, not as standalone SQL.
 
 ## Required parameters
 

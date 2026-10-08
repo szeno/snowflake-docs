@@ -14,6 +14,7 @@ objects from the database (schemas, tables, and views) in the share using the [G
 This command supports the following variants:
 
 - [CREATE OR ALTER SHARE](#label-create-or-alter-share-syntax): Creates a share if it doesn’t exist or alters an existing share.
+- [DEFINE SHARE](#label-define-share-syntax): Declarative definition of a share’s target state inside a DCM project.
 
 See also:
 :   [DROP SHARE](/sql-reference/sql/drop-share), [ALTER SHARE](/sql-reference/sql/alter-share), [SHOW SHARES](/sql-reference/sql/show-shares), [DESCRIBE SHARE](/sql-reference/sql/desc-share)
@@ -51,6 +52,14 @@ Copy code
 CREATE OR ALTER SHARE <name>
   [ COMMENT = '<string_literal>' ]
 ```
+
+### DEFINE SHARE
+
+DCM Projects uses `DEFINE SHARE` statements to create and manage shares declaratively inside a DCM project, including all `GRANT`
+statements on the share. A `DEFINE SHARE` statement uses the same syntax as
+[CREATE OR ALTER SHARE](#label-create-or-alter-share-syntax), with the keyword `DEFINE` in place of `CREATE OR ALTER`.
+You can use `DEFINE SHARE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

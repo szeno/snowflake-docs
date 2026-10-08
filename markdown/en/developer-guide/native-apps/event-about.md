@@ -43,11 +43,11 @@ more information.
 
 Event sharing allows the provider to collect information about an app’s performance and behavior.
 A provider can configure an app to request that the consumers share the log messages
-and trace events with the provider. Event sharing requires that the provider and consumer configure an
-event table in their account to store the log messages and trace events emitted by the app.
+and trace events with the provider.
 
-When event sharing is enabled, the log messages and trace events that are inserted into the event table in the
-consumer account are also inserted into the event table in the provider account.
+When event sharing is enabled, the log messages and trace events are inserted into the event table
+in the provider account. If the consumer sets the event table to `NONE`, the events are not stored
+in the consumer account. They are still shared with the provider.
 
 Providers can also use [centralized event sharing](/developer-guide/native-apps/event-central) to route
 telemetry from multiple regions to a central location.
@@ -88,7 +88,7 @@ file. This is applicable to new apps as well as new versions and patches of exis
 
 Note
 
-To being begin requesting more granular log and event sharing, providers only have to add
+To begin requesting more granular log and event sharing, providers only have to add
 event definitions to the manifest file. No other actions are required for providers.
 
 ## Workflow - Set up event sharing for an app

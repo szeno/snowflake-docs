@@ -22,15 +22,17 @@ This view delivers:
 
 - Centralized health across all consumer regions, with no per-region login required.
 - Automatic health reporting that does not require consumers to enable event sharing.
-- A minimal data footprint: only health and upgrade state columns are replicated, which keeps replication cost low
-  and prevents data exfiltration.
+- A minimal data footprint: health and upgrade state are sent to the provider account without event
+  data, which keeps the volume of data small and prevents data exfiltration.
 
 Note
 
-`APPLICATION_STATE` centralizes health and upgrade state only. Log, trace, metric, and lifecycle event data
-stay in each consumer’s event table and (if shared) replicate to the provider’s event account in the same
-region. To route shared events from multiple regions to a central location, see
-[Configure centralized event sharing for an app](/developer-guide/native-apps/event-central).
+`APPLICATION_STATE` centralizes health and upgrade state. The `ENABLED_TELEMETRY_EVENT_DEFINITIONS`
+column lists the [event definitions](/developer-guide/native-apps/event-definition) each installed app
+has enabled. Log, trace, metric, and lifecycle event data stay in each consumer’s event table and, if
+the consumer shares them, are inserted into the provider’s event account in the same region. To route
+shared events from
+multiple regions to a central location, see [Configure centralized event sharing for an app](/developer-guide/native-apps/event-central).
 
 ### Set up health reporting
 

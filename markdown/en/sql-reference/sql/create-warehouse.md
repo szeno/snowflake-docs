@@ -8,6 +8,7 @@ in a `SUSPENDED` state.
 This command supports the following variants:
 
 - [CREATE OR ALTER WAREHOUSE](#label-create-or-alter-warehouse-syntax): Creates a new warehouse if it doesn’t exist or alters an existing warehouse.
+- [DEFINE WAREHOUSE](#label-define-warehouse-syntax): Declarative definition of a warehouse’s target state inside a DCM project.
 
 See also:
 :   [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse), [DESCRIBE WAREHOUSE](/sql-reference/sql/desc-warehouse), [DROP WAREHOUSE](/sql-reference/sql/drop-warehouse), [SHOW WAREHOUSES](/sql-reference/sql/show-warehouses)
@@ -96,6 +97,15 @@ objectParams ::=
   STATEMENT_QUEUED_TIMEOUT_IN_SECONDS = <num>
   STATEMENT_TIMEOUT_IN_SECONDS = <num>
 ```
+
+### DEFINE WAREHOUSE
+
+DCM Projects uses `DEFINE WAREHOUSE` statements to create and manage warehouses declaratively inside a DCM project. A
+`DEFINE WAREHOUSE` statement uses the same syntax as
+[CREATE OR ALTER WAREHOUSE](#label-create-or-alter-warehouse-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE WAREHOUSE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

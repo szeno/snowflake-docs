@@ -457,7 +457,7 @@ When the test succeeds, application will proceed into the finalization step.
 
 ## Configuration Finalization
 
-Finalization is the last step of the Wizard. In this step you will be asked to provide an organisation
+Finalization is the last step of the Wizard. In this step you will be asked to provide an organization
 and a repository name. This repository must be accessible with the OAuth token obtained during the
 connection configuration step. The provided repository will be used only for connection validation
 purposes.
@@ -493,7 +493,7 @@ Next steps will explain:
 To configure resources go to the `Data Sync` tab. This tab displays a list of the repositories
 already configured for ingestion. When opened for the first time the list will be empty.
 
-To configure a resource enter the organisation and repository names in the designated fields, then
+To configure a resource enter the organization and repository names in the designated fields, then
 press the `Queue ingestion` button. For example:
 
 ![Defining resources](/static/images/developer-guide/native-apps/connector-sdk/assets/example-connector-tutorial/define_resource.png)

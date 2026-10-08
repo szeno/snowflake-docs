@@ -215,7 +215,7 @@ Manual upgrades
 
     Note
 
-    This tutorials describes how to perform a manual upgrade for an app with containers.
+    This tutorial describes how to perform a manual upgrade for an app with containers.
 
 When a new version or patch is available, the provider modifies the release directive on the
 application package and then notifies the consumer that a new version is available.
@@ -229,6 +229,17 @@ installed app faster than automated upgrades.
 A version initializer is used to start or upgrade services or other related processes. The version initializer
 is a callback stored procedure defined in the manifest file and implemented in the setup script. The version
 initializer callback function is invoked in the following contexts:
+
+Run the [ALTER SERVICE](/sql-reference/sql/alter-service) command that upgrades a service in the version initializer instead
+of directly in the setup script. Services aren’t created in versioned schemas, so changes to a service aren’t
+rolled back automatically with the versioned objects in an app. Also, `ALTER SERVICE` runs asynchronously, so the
+setup script can continue before the service finishes starting. If a later step of the upgrade fails, Snowflake
+rolls back the versioned objects, but the service can remain on the new specification. If the service fails to
+start, it might not be running at all. In either case, the service might not function correctly.
+
+When `ALTER SERVICE` runs in the version initializer, a failed setup script or new version initializer causes
+Snowflake to call the previous version’s initializer. That initializer can run `ALTER SERVICE` using the previous
+version’s service specification file to restore the service to the app version that remains active.
 
 - During installation, the version initializer is called as soon as the setup script of the app finishes without
   errors.

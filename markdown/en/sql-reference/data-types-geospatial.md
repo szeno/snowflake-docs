@@ -881,6 +881,10 @@ For GEOGRAPHY objects:
   - [ST\_MAKEPOLYGONORIENTED](/sql-reference/functions/st_makepolygonoriented)
 - The following functions return NULL if it isn’t possible to compute the value:
 
+  - [H3\_COVERAGE](/sql-reference/functions/h3_coverage)
+  - [H3\_COVERAGE\_STRINGS](/sql-reference/functions/h3_coverage_strings)
+  - [H3\_TRY\_COVERAGE](/sql-reference/functions/h3_try_coverage)
+  - [H3\_TRY\_COVERAGE\_STRINGS](/sql-reference/functions/h3_try_coverage_strings)
   - [ST\_AREA](/sql-reference/functions/st_area)
   - [ST\_CENTROID](/sql-reference/functions/st_centroid)
   - [ST\_CONTAINS](/sql-reference/functions/st_contains)

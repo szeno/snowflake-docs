@@ -151,6 +151,7 @@ For more information about the privileges supported for each object type, see [A
     - `DATA METRIC FUNCTION`
     - `DATASET`
     - `DBT PROJECT`
+    - `DCM PROJECT`
     - `DYNAMIC TABLE`
     - `EVENT TABLE`
     - `EXPERIMENT`
@@ -163,6 +164,7 @@ For more information about the privileges supported for each object type, see [A
     - `IMAGE REPOSITORY`
     - `INTERACTIVE TABLE`
     - `JOIN POLICY`
+    - `MAINTENANCE POLICY`
     - `MASKING POLICY`
     - `MATERIALIZED VIEW`
     - `MCP SERVER`

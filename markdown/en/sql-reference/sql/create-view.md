@@ -5,6 +5,7 @@ Creates a new view in the current/specified schema, based on a query of one or m
 This command supports the following variants:
 
 - [CREATE OR ALTER VIEW](#label-create-or-alter-view-syntax): Creates a view if it doesn’t exist or alters an existing view.
+- [DEFINE VIEW](#label-define-view-syntax): Declarative definition of a view’s target state inside a DCM project.
 
 See also:
 :   [ALTER VIEW](/sql-reference/sql/alter-view) , [DROP VIEW](/sql-reference/sql/drop-view) , [SHOW VIEWS](/sql-reference/sql/show-views) , [DESCRIBE VIEW](/sql-reference/sql/desc-view)
@@ -53,6 +54,14 @@ CREATE OR ALTER [ SECURE ] [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | VOLATIL
   [ COMMENT = '<string_literal>' ]
   AS <select_statement>
 ```
+
+### DEFINE VIEW
+
+DCM Projects uses `DEFINE VIEW` statements to create and manage views declaratively inside a DCM project. A `DEFINE VIEW`
+statement uses the same syntax as [CREATE OR ALTER VIEW](#label-create-or-alter-view-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE VIEW` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

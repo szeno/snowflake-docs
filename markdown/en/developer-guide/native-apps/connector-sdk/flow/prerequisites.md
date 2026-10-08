@@ -8,7 +8,7 @@ The prerequisites step is the first step of the wizard phase of the connector. T
 but it is recommended, if the end user needs to perform some additional setup outside of the native app or even whole Snowflake context.
 An example of this could be setting up authentication and authorization in the source system from which the data will be ingested.
 
-To setup prerequisites they must be inserted to the `STATE.PREREQUISITES` table during the connector installation.
+To set up prerequisites they must be inserted to the `STATE.PREREQUISITES` table during the connector installation.
 Most of the columns in that table should be self-explanatory. The URL columns should be used to provide
 the end user with more information on the required setups. In case there is a need to provide something more
 custom in the prerequisites the `custom_properties` column should be used.

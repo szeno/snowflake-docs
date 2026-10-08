@@ -147,13 +147,18 @@ In this step, you configure an external volume for Azure with your Azure OneLake
    | Property | Description |
    | --- | --- |
    | `AZURE_CONSENT_URL` | URL to the Microsoft permissions request page. |
-   | `AZURE_MULTI_TENANT_APP_NAME` | Name of the Snowflake client application created for your account. In a later step in this section, you grant this application permission to obtain an access token on your allowed storage location. |
+   | `AZURE_MULTI_TENANT_APP_NAME` | Name of the Snowflake client application created for your account. The value has the form `<APP_NAME>_<timestamp>`. In a later step in this section, you grant `<APP_NAME>` permission to obtain an access token on your allowed storage location. |
 
    Expand
 
    Show lessSee more
 
    You use these values in the following steps.
+
+   Note
+
+   `AZURE_MULTI_TENANT_APP_NAME` has the form `<APP_NAME>_<timestamp>`.
+   Grant access in Microsoft Fabric to `<APP_NAME>`, which is the portion of the value before the underscore.
 3. In a web browser, navigate to the Microsoft permissions request page (the `AZURE_CONSENT_URL`).
 4. Select **Accept**. This action allows the Azure service principal created for your Snowflake account to obtain an
    access token on a specified resource inside your tenant. Obtaining an access token succeeds only if you grant the service principal the
@@ -164,7 +169,7 @@ In this step, you configure an external volume for Azure with your Azure OneLake
    2. Open your Microsoft Fabric workspace.
    3. Select **Manage access**.
    4. Select **+ Add people or groups**.
-   5. In the **Enter name or email** field, paste the value you recorded for AZURE\_MULTI\_TENANT\_APP\_NAME.
+   5. In the **Enter name or email** field, enter `<APP_NAME>`, which is the portion of `AZURE_MULTI_TENANT_APP_NAME` before the underscore.
    6. From the drop-down menu, select **Contributor** access or higher to allow the app to create the necessary Fabric item.
    7. Select **Add**.
 

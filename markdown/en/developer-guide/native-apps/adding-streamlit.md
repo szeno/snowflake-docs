@@ -90,9 +90,8 @@ Unsupported Streamlit features depend on the runtime. The following additional r
 when using Streamlit in a Snowflake Native App:
 
 - Custom components are not supported.
-- Using [Azure Private Link](/user-guide/privatelink-azure) and
-  [Google Cloud Private Service Connect](/user-guide/private-service-connect-google) to access a Streamlit app is
-  not supported.
+- Using [Google Cloud Private Service Connect](/user-guide/private-service-connect-google) to access a
+  Streamlit app is not supported.
 
 ### Warehouse runtime unsupported features
 
@@ -187,8 +186,7 @@ The following workflow describes how to add a warehouse-runtime Streamlit app to
 
    See [Add a Streamlit app to the manifest file](#label-streamlit-add-to-manifest) for more information.
 8. Upload the Streamlit files, `environment.yml` file, setup
-   script, and manifest file.
-   files to a named stage. To include Streamlit code files in an application package, the files must be
+   script, and manifest file to a named stage. To include Streamlit code files in an application package, the files must be
    uploaded to a named stage.
 9. Test the application package.
 
@@ -866,6 +864,14 @@ To test the Streamlit app, view the app in [Snowsight](/user-guide/ui-snowsight-
 
    The main Streamlit app opens in the Snowsight.
 4. Optional: If you are viewing a multipage Streamlit app, select a tab to view additional pages.
+
+## Consumers can open your Streamlit app from a shared URL
+
+A consumer can [give users a direct link](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-share-url) that opens your
+Streamlit app on its own. When a user opens the Streamlit app from that app-viewer URL, the app
+runs in a standalone context instead of in Snowsight, and the `request_*()` functions of the
+Permission SDK can’t display their dialogs. To detect this context in your app code and adjust, for
+example by hiding permission-request controls, use [is\_viewer\_mode()](/developer-guide/native-apps/requesting-permission-sdk-ref#label-native-apps-is-viewer-mode).
 
 ## Troubleshoot a Streamlit app in the Snowflake Native App Framework
 

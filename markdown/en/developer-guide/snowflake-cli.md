@@ -13,6 +13,12 @@ With Snowflake CLI, developers can create, manage, update, and view apps running
 Streamlit in Snowflake, the Snowflake Native App Framework, Snowpark Container Services, and Snowpark. It supports a range of Snowflake features,
 including user-defined functions, stored procedures, Streamlit in Snowflake, and SQL execution.
 
+## Get started
+
+To start using Snowflake CLI, [install it](/developer-guide/snowflake-cli/installation/installation), then configure a connection.
+For details, including the supported authentication methods, see
+[Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
+
 ## What’s in this guide?
 
 This guide introduces and explains how to install and use Snowflake CLI. It includes the following sections:

@@ -14,6 +14,19 @@ Warning
 
 Because Python 3.8 has reached its [End of Life](https://devguide.python.org/versions/), deprecation warnings will be triggered when you use `snowpark-python` with Python 3.8. For more information, see [Snowflake Python Runtime Support](/developer-guide/python-runtime-support-policy). Snowpark Python 1.24.0 will be the last client and server version to support Python 3.8, in accordance with [Anaconda’s policy](https://forum.anaconda.com/t/python-3-8-reaches-end-of-life/87265). Upgrade your existing Python 3.8 objects to Python 3.9 or later.
 
+## Version 1.55.1: Oct 05, 2026
+
+### Bug fixes
+
+- Fixed a bug where `pandas_udf` with an explicit `packages` list omitted pandas when using a non-conda artifact repository, such as PyPI, which is the default for Python 3.14.
+- Fixed a bug where `Session.write_pandas` raised a connector error instead of the Snowpark table-does-not-exist message when the target table was missing and `auto_create_table=False`.
+- Fixed a bug where `ai_extract` routed `FILE`-type inputs to the `TEXT` overload when `scores` or `config` were also supplied.
+- Fixed the schema expression for nullable `FILE` columns.
+
+### Documentation
+
+- Updated `ai_redact(..., mode="detect")` and `DataFrame.ai.redact(..., mode="detect")` to document that detect mode returns an `ARRAY` of span objects, not an `OBJECT` with a `spans` field.
+
 ## Version 1.55.0: Sep 10, 2026
 
 ### Snowpark Python API updates

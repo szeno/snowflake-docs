@@ -70,6 +70,14 @@ For instructions on creating a custom role with a specified set of privileges, s
 For general information about roles and privilege grants for performing SQL actions on
 [securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
 
+## Usage notes
+
+- Regarding metadata:
+
+  Attention
+
+  Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
+
 ## Examples
 
 The following example changes the maintenance policy schedule to Sundays at 3 AM UTC:

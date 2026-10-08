@@ -15,7 +15,7 @@ app is automatically upgraded in the consumer account. The automated upgrade occ
 for all instances of the app across all Snowflake accounts where the app is installed.
 
 It may take some time for all app instances to be upgraded. However, consumers can
-manually upgrade an app after a new version of patch has been published as long
+manually upgrade an app after a new version or patch has been published as long
 as the upgrade of the instance installed in their account has not started. Also,
 providers can specify a date and time when an automated upgrade occurs.
 

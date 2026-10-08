@@ -37,7 +37,7 @@ Connector configuration is related to and dependent on the objects from the foll
 ### PUBLIC.TEST\_CONNECTION()
 
 This procedure is not provided by default in any file, but is necessary for the `Connection Configuration` feature.
-This procedure will be used as a light weight way to check access to the external source system.
+This procedure will be used as a lightweight way to check access to the external source system.
 
 ## Related Java objects
 

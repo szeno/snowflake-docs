@@ -172,7 +172,7 @@ privileges:
 
 When the app is installed, Snowflake automatically grants the CREATE TABLE and CREATE WAREHOUSE privileges to the app.
 
-### Example manifest file files for an app with containers
+### Example manifest file for an app with containers
 
 Snowflake Native Apps supports entries in the manifest file that are specific to
 an app with containers. The following example manifest file

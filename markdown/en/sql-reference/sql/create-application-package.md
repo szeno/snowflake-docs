@@ -26,11 +26,12 @@ CREATE APPLICATION PACKAGE [ IF NOT EXISTS ] <name>
   [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]
   [ DEFAULT_DDL_COLLATION = '<collation_specification>' ]
   [ COMMENT = '<string_literal>' ]
-  [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , ... ] ) ]
   [ DISTRIBUTION = { INTERNAL | EXTERNAL } ]
   [ LISTING_AUTO_REFRESH = { TRUE | FALSE } ]
   [ MULTIPLE_INSTANCES = TRUE ]
   [ ENABLE_RELEASE_CHANNELS = { TRUE | FALSE } ]
+  [ AUTOMATIC_APPLICATION_MAINTENANCE = { TRUE | FALSE } ]
+  [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , ... ] ) ]
 ```
 
 ## Required parameters
@@ -119,6 +120,8 @@ CREATE APPLICATION PACKAGE [ IF NOT EXISTS ] <name>
 `LISTING_AUTO_REFRESH = { TRUE | FALSE}`
 :   When set to TRUE, initiates replication to all remote regions when there is a change to the release directive of the application package. When a release directive changes, the application package does not wait for the Cross-Cloud Auto-Fulfillment schedule.
 
+    Default: `TRUE`
+
 `MULTIPLE_INSTANCES = TRUE`
 :   Enables the consumer to install multiple instances of an app from the application package. This property cannot be
     set for applications packages that are included in a trial or paid listing.
@@ -138,6 +141,15 @@ CREATE APPLICATION PACKAGE [ IF NOT EXISTS ] <name>
     Caution
 
     After this property is set to `TRUE`, it cannot be set to `FALSE` or unset later.
+
+`AUTOMATIC_APPLICATION_MAINTENANCE = { TRUE | FALSE }`
+:   When set to `TRUE`, aligns Snowpark Container Services compute pool node software upgrades with the consumer’s maintenance
+    window. The application upgrades first, then any compute pool node maintenance follows within the
+    same maintenance window.
+
+    Default: `FALSE`
+
+    For more information, see [Consumer-controlled maintenance policies: Provider guide](/developer-guide/native-apps/consumer-maintenance-policies-provider).
 
 ## Access control requirements
 

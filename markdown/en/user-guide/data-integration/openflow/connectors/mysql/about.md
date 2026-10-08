@@ -52,7 +52,7 @@ The following table lists the tested and officially supported MariaDB versions.
 |  | 11.4 or later |
 | --- | --- |
 | [Standard MariaDB](https://mariadb.org/) | Yes |
-| [AWS RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MariaDB.html) | Not applicable. AWS RDS for MariaDB isn’t currently supported. |
+| [AWS RDS](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_MariaDB.html) | Yes |
 
 Expand
 

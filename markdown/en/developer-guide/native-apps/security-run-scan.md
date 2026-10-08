@@ -20,7 +20,7 @@ This workflow includes the following steps:
 2. Update the application code and related files.
 
    Before running the automated security scan, ensure that the app conforms to the security
-   requirements and best practices outline in [Security requirements and best practices for a Snowflake Native App](/developer-guide/native-apps/security-app-requirements). If the app is
+   requirements and best practices outlined in [Security requirements and best practices for a Snowflake Native App](/developer-guide/native-apps/security-app-requirements). If the app is
    a Snowflake Native App with Snowpark Container Services, review the additional security requirements outlined in [Secure a Snowflake Native App with Snowpark Container Services](/developer-guide/native-apps/security-na-spcs).
 3. Add a version or patch to the application package.
 4. Run the automated security scan. How the scan is initiated depends on whether release channels are

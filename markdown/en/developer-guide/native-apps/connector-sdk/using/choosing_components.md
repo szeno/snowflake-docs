@@ -120,11 +120,11 @@ The ingestion component provides abstraction and persistence to define the data 
 
 #### Dependencies
 
-This component has no dependencies to other component, however requires multiple sql files to be executed.
+This component has no dependencies to other components, however requires multiple sql files to be executed.
 
 ### Scheduler component
 
-The scheduler component allows provides a mechanism of triggering tasks inside a connector
+The scheduler component provides a mechanism of triggering tasks inside a connector
 according to the configuration using Snowflake tasks underneath.
 
 #### Dependencies

@@ -6,6 +6,7 @@ Creates a new pipe in the system for defining the [COPY INTO <table>](/sql-refer
 This command supports the following variants:
 
 - [CREATE OR ALTER PIPE](#label-create-or-alter-pipe-syntax): Creates a pipe if it doesn’t exist or alters an existing pipe.
+- [DEFINE PIPE](#label-define-pipe-syntax): Declarative definition of a pipe’s target state inside a DCM project.
 
 See also:
 :   [ALTER PIPE](/sql-reference/sql/alter-pipe), [DROP PIPE](/sql-reference/sql/drop-pipe), [SHOW PIPES](/sql-reference/sql/show-pipes), [DESCRIBE PIPE](/sql-reference/sql/desc-pipe)
@@ -58,6 +59,14 @@ You can use the `<copy_statement>` with two different types of data sources:
 
 - A staged location: `COPY INTO mytable FROM @mystage ...`
 - A streaming source: `COPY INTO mytable FROM (SELECT ... FROM TABLE(DATA_SOURCE(TYPE => 'STREAMING')))`
+
+### DEFINE PIPE
+
+DCM Projects uses `DEFINE PIPE` statements to create and manage pipes declaratively inside a DCM project. A `DEFINE PIPE`
+statement uses the same syntax as [CREATE OR ALTER PIPE](#label-create-or-alter-pipe-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE PIPE` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## Required parameters
 

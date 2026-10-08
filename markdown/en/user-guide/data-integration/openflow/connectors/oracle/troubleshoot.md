@@ -404,51 +404,15 @@ Verify the following:
   to the database instance with the XStream outbound server, not a different PDB.
 - XStream has been created on this instance and has the same name.
 
-## Insufficient privileges error in an Oracle RAC environment
+## Error ORA-01031: insufficient privileges in an Oracle RAC environment
 
-The connector reports an insufficient privileges error even though the Oracle user has the required permissions. In an Oracle RAC environment, this can happen when the connection is routed to a node that doesn’t host the XStream outbound server.
-
-To confirm, first check which RAC instance the connector is connected to. You can run this query directly from the Openflow UI by adding a temporary **ExecuteSQL** processor that uses the same JDBC connection as the connector, then comparing the result with the same query run on the Oracle server. This `SYS_CONTEXT` check only tells you which node the connector landed on; the `V$` vs `GV$` check further down confirms which node XStream actually runs on:
-
-Copy code
-
-```
-SELECT SYS_CONTEXT('USERENV', 'INSTANCE_NAME') AS instance_name,
-       SYS_CONTEXT('USERENV', 'INSTANCE')      AS instance_number,
-       SYS_CONTEXT('USERENV', 'SERVER_HOST')   AS host_name,
-       SYS_CONTEXT('USERENV', 'SERVICE_NAME')  AS service_name
-FROM DUAL;
-```
-
-If the values differ between the two, the connector is connecting to a different node than expected.
-
-Alternatively, run the following queries directly on the Oracle node that the runtime is connected to. Query the local view, which returns a row only on the node hosting the XStream capture process:
-
-Copy code
-
-```
-SELECT STATE FROM V$XSTREAM_CAPTURE
-WHERE CAPTURE_NAME = (SELECT CAPTURE_NAME FROM DBA_CAPTURE WHERE CLIENT_NAME = 'XOUT1');
-```
-
-Query the global view, which spans all RAC nodes:
-
-Copy code
-
-```
-SELECT STATE, INST_ID FROM GV$XSTREAM_CAPTURE
-WHERE CAPTURE_NAME = (SELECT CAPTURE_NAME FROM DBA_CAPTURE WHERE CLIENT_NAME = 'XOUT1');
-```
-
-If `GV$XSTREAM_CAPTURE` returns a row but `V$XSTREAM_CAPTURE` returns nothing, the XStream outbound server is running on a different RAC node than the one the connector is connected to.
-
-Note
-
-Querying `GV$` views requires `SELECT ANY DICTIONARY` or an explicit grant on the view. If the query returns a privileges error, ask your DBA to grant the privilege or run the query as a DBA.
+The connector reports `ORA-01031: insufficient privileges` even though the Oracle user has the required privileges. In an Oracle RAC environment, this can happen when the connection is routed to an instance that doesn’t own the XStream outbound server’s `ANYDATA` queue.
 
 **Solution**
 
-Use Oracle Connection Manager (CMAN) as a proxy between the connector and the Oracle RAC cluster. CMAN routes connections to the correct RAC node transparently and supports failover. Update both `Oracle Connection URL` and `XStream Out Server URL` in `Oracle Source Parameters` to point to your CMAN host and port.
+To resolve this issue,
+[configure the connector for Oracle RAC](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-rac)
+so the `XStream Out Server URL` uses the queue service.
 
 ## Error ORA-16224: Database Guard is enabled
 

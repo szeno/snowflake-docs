@@ -60,7 +60,11 @@ allowed for each object:
 | WAREHOUSE | MODIFY, MONITOR, USAGE, OPERATE |
 | API INTEGRATION | USAGE |
 | EXTERNAL ACCESS INTEGRATION | USAGE |
+| CATALOG INTEGRATION | USAGE |
 | SECRET | USAGE, READ |
+| STAGE | READ, WRITE |
+| GIT REPOSITORY | READ |
+| EXTERNAL VOLUME | USAGE |
 
 Expand
 
@@ -86,7 +90,7 @@ references:
       register_callback: config.register_single_reference
 ```
 
-This example defines an reference named `consumer_table` that requires the INSERT and SELECT
+This example defines a reference named `consumer_table` that requires the INSERT and SELECT
 privileges on a table in the consumer account. The `register_callback` property specifies a stored
 procedure used to bind a consumer table to this reference definition.
 
@@ -214,7 +218,8 @@ SECRET reference. The entries in the CASE statement should map to the reference 
 
 Note
 
-This callback function is required by references of type EXTERNAL ACCESS INTEGRATION and SECRET.
+This callback stored procedure is required by references of type EXTERNAL ACCESS INTEGRATION, SECRET, and
+CATALOG INTEGRATION.
 It is only applicable to these types of references.
 
 ## View the references defined in an application
@@ -480,10 +485,64 @@ CREATE ROW ACCESS POLICY app_policy
       );
 ```
 
+### Use references in an Iceberg table
+
+To use a reference to a catalog integration, specify the reference as a string literal in the `CATALOG` parameter:
+
+Copy code
+
+```
+CREATE ICEBERG TABLE app_schema.app_iceberg_table
+  ...
+  CATALOG = 'reference(''consumer_catalog_integration'')'
+  ...;
+```
+
+### Use references in a stage path
+
+Copy code
+
+```
+LIST @reference('consumer_stage')/path/to/dir/;
+```
+
+### Use references in an external table
+
+Copy code
+
+```
+CREATE EXTERNAL TABLE app_schema.app_external_table
+  LOCATION = @reference('consumer_stage')/path/to/dir/
+  ...;
+```
+
+If a consumer rebinds the stage reference to a different stage, the external table becomes invalid.
+
+### Use references in a pipe
+
+Copy code
+
+```
+CREATE PIPE app_schema.app_pipe
+  AS COPY INTO app_schema.app_table
+  FROM @reference('consumer_stage')/path/to/dir/;
+```
+
+Note
+
+If a consumer rebinds the source stage reference of a pipe to a different stage, the pipe becomes
+invalid the next time [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) is called
+on the pipe. The pipe remains invalid even if the reference is later bound to the original stage again.
+
+To handle this, providers can do either of the following:
+
+- Prevent the reference from being rebound in the register callback.
+- Call SYSTEM$PIPE\_STATUS to detect that the reference was rebound, and then re-create the pipe.
+
 ## JSON format for the configuration callback response
 
-The configuration callback function returns a response in JSON format. The JSON
-format returned is different for external access integration and secret references.
+The configuration callback stored procedure returns a response in JSON format. The JSON
+format returned is different for external access integration, secret, and catalog integration references.
 
 ### JSON format for external access integration
 
@@ -562,6 +621,32 @@ Copy code
 - `payload.security_integration`
   :   Specifies the values required to configure the
       [API Authentication](/sql-reference/sql/create-security-integration-api-auth) for an OAuth secret.
+
+### JSON format for catalog integration references
+
+For CATALOG INTEGRATION references, the expected structure of the JSON response is:
+
+Copy code
+
+```
+{
+  "type": "CONFIGURATION",
+  "payload": {
+    "catalog_source": "object_store",
+    "table_format": "iceberg",
+    "enabled": true
+  }
+}
+```
+
+- `catalog_source`
+  The source of the catalog integration. The only valid value is `object_store`.
+  See [CREATE CATALOG INTEGRATION (Object storage)](/sql-reference/sql/create-catalog-integration-object-storage) for more information.
+- `table_format`
+  The table format of the catalog integration. The only valid value is `iceberg`.
+- `enabled`
+  A Boolean that specifies whether the catalog integration is available to use for Iceberg tables.
+  This property is required.
 
 ### JSON format error responses
 

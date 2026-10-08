@@ -54,6 +54,40 @@ GRANT APPLICATION ROLE hello_snowflake_app.app_public TO ROLE data_manager;
 4. Select the **Settings** icon in the toolbar.
 5. Click **Launch App**.
 
+## Give users a direct link to an app
+
+You can give business users a direct link that opens only the app, as a standalone web page, without
+the rest of Snowsight, such as worksheets, the catalog, or navigation. Unlike
+**Launch App**, which opens the app inside Snowsight for you, the link is for other users
+in your account.
+
+Each person who opens the link must be a Snowflake user in your account and must have a role with
+access to the app. The link doesn’t grant access on its own. The app opens with the recipient’s
+default role and default secondary roles, so one of those roles must have access to the app.
+Recipients don’t need to use Snowsight.
+
+To get the link:
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. In the navigation menu, select **Catalog** » **Apps**.
+3. Select the app, and then select **Share** in the app toolbar.
+4. In the **Share app URL** dialog, select **Copy** to copy the URL.
+
+   If the app has more than one shareable target, such as several Streamlit apps or a service
+   that exposes an endpoint, select one from the **Share target** list.
+
+The **Share** button appears only for apps that have a Streamlit app or a service endpoint to link
+to. For a Streamlit app, the link is an app-viewer URL. For a service, the link is the URL of the
+service endpoint.
+
+You can also configure the following account settings:
+
+- To give a user access to Streamlit apps only, with no access to SQL or Snowsight, set
+  the `ALLOWED_INTERFACES` user property to `STREAMLIT`. See [Limit a user’s access to only Streamlit in Snowflake](/developer-guide/streamlit/object-management/security#label-limit-access-streamlit-only).
+- To sign users in through your organization’s identity provider (IdP) without showing the
+  Snowflake sign-in page, set the `STREAMLIT` key of the `LOGIN_IDP_REDIRECT` account property. For
+  a service endpoint, set the `SPCS` key. See [Automatically redirecting users to your identity provider](/user-guide/admin-security-fed-auth-idp-redirect).
+
 ## Use custom budgets to monitor credit usage for an app
 
 [Budgets](/user-guide/budgets) allow you to define a monthly spending limit on the
@@ -246,5 +280,5 @@ must use a role that has the MANAGE GRANTS privilege on the objects. See
 
    Note
 
-   If you do not transfer ownership of the objects owned by the app to a different role, you must used the `CASCADE` option. If objects owned
+   If you do not transfer ownership of the objects owned by the app to a different role, you must use the `CASCADE` option. If objects owned
    by the app still exist you can’t drop the app without using the `CASCADE` option.

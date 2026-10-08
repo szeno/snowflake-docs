@@ -212,6 +212,16 @@ ALTER APPLICATION PACKAGE my_app_package
   VERSION=V1 PATCH=11 ACCOUNTS=(ORG1.ACCOUNT1);
 ```
 
+Note
+
+If the app is available in remote regions through
+[Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment), a change to a release
+directive takes effect in a remote region only after the application package is replicated to that region.
+When the application package property `LISTING_AUTO_REFRESH` is `TRUE` (the default), Snowflake initiates
+replication to all remote regions whenever a release directive changes, without waiting for the
+Cross-Cloud Auto-Fulfillment schedule. When `LISTING_AUTO_REFRESH` is `FALSE`, changes require a scheduled
+or on-demand refresh. For more information, see [ALTER APPLICATION PACKAGE](/sql-reference/sql/alter-application-package).
+
 ## Enable multiple instances using release channels
 
 You can allow consumers to create multiple instances of an app in their account. Providers can

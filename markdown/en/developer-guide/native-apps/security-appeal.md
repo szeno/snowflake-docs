@@ -103,7 +103,7 @@ human readable. This requirement includes minified JavaScript code.
 **Reason for the rejection**
 
 Your application includes obfuscated code that could not be reviewed by Snowflake. This could be
-due to minified javascript or other forms of obfuscation like encryption or encoding. Please update
+due to minified JavaScript or other forms of obfuscation like encryption or encoding. Please update
 the app to remove all obfuscated code.
 
 Additional context is provided in the rejection reason.

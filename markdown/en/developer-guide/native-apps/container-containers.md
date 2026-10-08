@@ -33,10 +33,10 @@ If the application package is attached to a listing and the listing is configure
 an image repository within the application package would be replicated and additional costs incurred.
 
 The images uploaded to this repository are accessible to the application package when adding a version
-definition. The app has can only access the images in this repository that are specified in the manifest
+definition. The app can only access the images in this repository that are specified in the manifest
 file of the application package.
 
-The following consideration apply to image repositories in the context of an app with containers:
+The following considerations apply to image repositories in the context of an app with containers:
 
 - External image repositories are not supported. Image repositories that are outside Snowflake cannot be
   referenced by any services within the container. This is applicable to services that exist in or outside

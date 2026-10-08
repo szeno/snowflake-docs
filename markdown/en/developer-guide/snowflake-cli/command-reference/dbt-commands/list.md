@@ -154,7 +154,7 @@ None
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV]`
 :   Specifies the output format. Default: TABLE.
 
 `--verbose, -v`
@@ -177,7 +177,7 @@ None
 
 ## Usage notes
 
-The `snow dbt list` command lists all available dbt project objects on Snowflake.
+The `snow dbt list` command lists all available dbt project objects on Snowflake. In CI/CD pipelines, add `--format JSON` to make the listed dbt project objects easier to read in job logs.
 
 ## Examples
 
@@ -187,6 +187,13 @@ The `snow dbt list` command lists all available dbt project objects on Snowflake
 
   ```
   snow dbt list
+  ```
+- List dbt project objects as JSON in a CI/CD job that uses a temporary connection:
+
+  Copy code
+
+  ```
+  snow dbt list --format JSON -x
   ```
 - List dbt project objects in the `product` database whose names begin with `JAFFLE`:
 

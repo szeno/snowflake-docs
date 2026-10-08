@@ -8,7 +8,8 @@ Returns an [array](/sql-reference/data-types-semistructured#label-data-type-arra
 [GEOGRAPHY](/sql-reference/data-types-geospatial#label-data-types-geography) object).
 
 See also:
-:   [H3\_COVERAGE\_STRINGS](/sql-reference/functions/h3_coverage_strings) , [H3\_POLYGON\_TO\_CELLS](/sql-reference/functions/h3_polygon_to_cells)
+:   [H3\_COVERAGE\_STRINGS](/sql-reference/functions/h3_coverage_strings) , [H3\_TRY\_COVERAGE](/sql-reference/functions/h3_try_coverage) ,
+    [H3\_POLYGON\_TO\_CELLS](/sql-reference/functions/h3_polygon_to_cells)
 
 ## Syntax
 
@@ -40,6 +41,10 @@ shape.
 - A cell is included in the result set if its boundary intersects the input shape.
 - When you apply [FLATTEN](/sql-reference/functions/flatten) to the ARRAY returned by the function,
   [cast](/sql-reference/data-type-conversion#label-data-type-explicit-casting) each value explicitly to an integer.
+- If it isn’t possible to compute the coverage for an invalid GEOGRAPHY object, the function returns NULL.
+  For more information, see [Effects on GEOGRAPHY objects](/sql-reference/data-types-geospatial#label-geospatial-invalid-shape-handling-effects-geography).
+- If the number of H3 cells that cover the input shape exceeds the allowed limit, the function reports an error.
+  To return NULL instead of reporting an error, use [H3\_TRY\_COVERAGE](/sql-reference/functions/h3_try_coverage).
 
 ## Examples
 

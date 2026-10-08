@@ -7,6 +7,7 @@ The semantic view must comply with [these validation rules](/user-guide/views-se
 This command supports the following variants:
 
 - [CREATE OR ALTER SEMANTIC VIEW](#label-create-or-alter-semantic-view-syntax): Creates a semantic view if it doesn’t exist or alters an existing semantic view.
+- [DEFINE SEMANTIC VIEW](#label-define-semantic-view-syntax): Declarative definition of a semantic view’s target state inside a DCM project.
 
 See also:
 :   [ALTER SEMANTIC VIEW](/sql-reference/sql/alter-semantic-view) , [DESCRIBE SEMANTIC VIEW](/sql-reference/sql/desc-semantic-view) , [DROP SEMANTIC VIEW](/sql-reference/sql/drop-semantic-view) , [SHOW SEMANTIC VIEWS](/sql-reference/sql/show-semantic-views) , [SHOW SEMANTIC DIMENSIONS](/sql-reference/sql/show-semantic-dimensions) , [SHOW SEMANTIC DIMENSIONS FOR METRIC](/sql-reference/sql/show-semantic-dimensions-for-metric) , [SHOW SEMANTIC FACTS](/sql-reference/sql/show-semantic-facts) , [SHOW SEMANTIC METRICS](/sql-reference/sql/show-semantic-metrics) , [SYSTEM$CREATE\_SEMANTIC\_VIEW\_FROM\_YAML](/sql-reference/stored-procedures/system_create_semantic_view_from_yaml)
@@ -645,6 +646,15 @@ CREATE OR ALTER SEMANTIC VIEW <name>
 For the definitions of `logicalTable`, `relationshipDef`, `factExpression`, `dimensionExpression`,
 `metricExpression`, `windowFunctionMetricExpression`, and `verifiedQuery`, see the
 [syntax](#label-create-semantic-view-syntax) for the CREATE SEMANTIC VIEW command.
+
+### DEFINE SEMANTIC VIEW
+
+DCM Projects uses `DEFINE SEMANTIC VIEW` statements to create and manage semantic views declaratively inside a DCM project. A
+`DEFINE SEMANTIC VIEW` statement uses the same syntax as
+[CREATE OR ALTER SEMANTIC VIEW](#label-create-or-alter-semantic-view-syntax), with the keyword `DEFINE` in place of
+`CREATE OR ALTER`.
+You can use `DEFINE SEMANTIC VIEW` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
 ## CREATE OR ALTER SEMANTIC VIEW usage notes
 

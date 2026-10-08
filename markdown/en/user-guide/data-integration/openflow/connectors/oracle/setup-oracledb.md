@@ -39,8 +39,9 @@ As an Oracle database administrator, perform the following procedures on your so
 6. [Create XStream Outbound Server](#label-create-xstream-outbound-server)
 7. [Set up the XStream Outbound Server Connect User](#label-set-xstream-outbound-server-connect-user)
 8. [Set up the XStream Outbound Server Capture User](#label-set-xstream-outbound-server-capture-user)
-9. (Optional) [Data Guard or standby capture (optional)](#label-oracle-standby-setup)
-10. (Optional) [Configure SSL connections (optional)](#label-configure-ssl-connections)
+9. (Oracle RAC only) [Oracle RAC](#label-oracle-rac-setup)
+10. (Optional) [Data Guard or standby capture (optional)](#label-oracle-standby-setup)
+11. (Optional) [Configure SSL connections (optional)](#label-configure-ssl-connections)
 
 Note
 
@@ -393,6 +394,57 @@ BEGIN
 END;
 /
 ```
+
+## Oracle RAC
+
+Important
+
+Each RAC instance writes to a separate redo thread. If queue ownership and the capture
+process move to another instance, that instance must be able to read archived redo logs
+from all threads. Ensure that these logs are available to every instance on which
+capture can run.
+
+If the source database is an Oracle Real Application Clusters (RAC) database, moving
+the `ANYDATA` queue to another instance does not start the XStream capture process on
+that instance. To start capture automatically on the instance that owns the queue, set
+the capture parameter `use_rac_service` to `Y`.
+
+To check the current value, replace `<outbound_server>` with the name of your
+XStream outbound server:
+
+Copy code
+
+```
+SELECT ob.server_name,
+       ob.capture_name,
+       p.value AS use_rac_service
+  FROM dba_xstream_outbound ob
+  LEFT JOIN dba_capture_parameters p
+    ON p.capture_name = ob.capture_name
+   AND p.parameter = 'USE_RAC_SERVICE'
+ WHERE ob.server_name = '<outbound_server>';
+```
+
+If `use_rac_service` is `N` or empty, set it to `Y`. Replace `<capture_name>` with the
+capture name returned by the previous query:
+
+Copy code
+
+```
+BEGIN
+   DBMS_CAPTURE_ADM.SET_PARAMETER(
+      capture_name => '<capture_name>',
+      parameter    => 'use_rac_service',
+      value        => 'Y');
+END;
+/
+```
+
+If the value is already `Y`, no change is required.
+
+To ensure that the connector connects to the instance that runs the XStream outbound
+server, configure the queue service in the
+[XStream Out Server URL](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-rac).
 
 ## Set up XStream for single-tenant databases
 

@@ -14,12 +14,12 @@ dbt Projects on Snowflake brings the full dbt lifecycle into Snowflake: develop,
 - **Native orchestration:** Schedule executions with Snowflake tasks or integrate with Apache Airflow. No external orchestrator required.
 - **Concurrent executions:** Run the same deployed dbt project object concurrently to keep independent data slices in your pipeline fresh.
 - **Built-in observability:** Inspect run history, logs, and artifacts, with column-level lineage in Snowsight.
-- **AI-assisted development:** CoCo is integrated with the Snowflake Horizon Catalog, so it can inspect the files of a deployed dbt project object to debug production runs, generate `sources.yml` and `models.yml` documentation from catalog metadata, and scaffold dbt data quality tests in your `schema.yml`.
+- **AI-assisted development:** CoCo is integrated with the Snowflake Horizon Catalog, so it can inspect the files of a deployed dbt project object to debug production runs, generate `sources.yml` and `models.yml` documentation from catalog metadata, and scaffold dbt data quality tests in your `schema.yml`. Invoke the [`dbt-projects-on-snowflake`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-dbt-projects-on-snowflake) bundled skill with `/dbt-projects-on-snowflake` for guided help with deploying, executing, and scheduling dbt project objects.
 - **No extra fees:** Executions use a virtual warehouse and incur standard compute costs, with no additional Snowflake licensing or per-user fees.
 
 ## Get started
 
-- **New to dbt Projects on Snowflake?** Follow the [Tutorial: Get started with dbt Projects on Snowflake](/user-guide/tutorials/dbt-projects-on-snowflake-getting-started-tutorial).
+- **New to dbt Projects on Snowflake?** Follow the [Tutorial: Get started with dbt Projects on Snowflake](/user-guide/tutorials/dbt-projects-on-snowflake-getting-started-tutorial). For the fastest start with no Git setup, use the [app template](https://app.snowflake.com/templates?template=getting_started_with_dbt_projects), which adds a sample dbt project to a workspace. For more information, see [Quick start: Use the Snowsight app template](/user-guide/tutorials/dbt-projects-on-snowflake-getting-started-tutorial#label-dbt-get-started-app-template).
 - **Migrating an existing dbt Core project?** See the [Migrate from dbt Core to dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-migrate-from-dbt-core).
 - **Running dbt at scale?** See [Best practices for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices).
 

@@ -4,6 +4,21 @@ This topic provides release notes for the Snowflake Connector for ServiceNow® V
 information, see
 [Snowflake Connector for ServiceNow](https://other-docs.snowflake.com/en/connectors/servicenow/v2/about).
 
+## Version 5.28.3 (October 7, 2026)
+
+### Behavior changes
+
+Not applicable.
+
+### New features
+
+Not applicable.
+
+### Bug fixes
+
+- Fixed an issue where the `CHECK_ROW_COUNT` procedure’s `max_sys_created_on` filter always reported a Snowflake row
+  count of 0 if global display value fetching was enabled.
+
 ## Version 5.28.2 (September 11, 2026)
 
 ### Behavior changes
