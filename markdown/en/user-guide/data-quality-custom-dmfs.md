@@ -12,6 +12,9 @@ checks, then you can use the [CREATE DATA METRIC FUNCTION](/sql-reference/sql/cr
 
 The following examples demonstrate how to use the [CREATE DATA METRIC FUNCTION](/sql-reference/sql/create-data-metric-function) command to create a custom DMF.
 
+To use the scheduled evaluation time in the body of a custom DMF, for example to define a custom freshness metric, call
+[DATA\_METRIC\_SCHEDULED\_TIME](/sql-reference/functions/dmf_data_metric_schedule_time).
+
 Example: User-defined DMF with single table argument
 
 > Create a DMF that calls the [COUNT](/sql-reference/functions/count) function to return the total number of rows that

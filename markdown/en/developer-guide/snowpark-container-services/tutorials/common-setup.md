@@ -14,17 +14,14 @@ documentation.
 Review the following prerequisites to ensure you can complete the tutorials:
 
 - **A Snowflake account:** Note that trial accounts are not supported.
-- **SnowSQL, the command-line client for executing SQL commands (optional):** You can use any Snowflake client that supports
-  executing SQL commands and uploading files to a Snowflake stage. The tutorials are tested using the SnowSQL and the
-  [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) web interface. For instructions to install this command-line client, see
-  [Installing SnowSQL](/user-guide/snowsql-install-config).
+- **[Snowflake CLI](/developer-guide/snowflake-cli/index) (optional):** An open-source command-line tool for developing, deploying, and managing Snowflake applications and workloads. It supports developer workflows for Snowpark, Streamlit in Snowflake, Snowflake Native Apps, Snowpark Container Services, notebooks, Git repositories, and data pipelines, including dbt and DCM Projects, in addition to executing SQL and managing Snowflake objects and stages. These tutorials are tested using the [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) web interface and [Snowflake CLI](/developer-guide/snowflake-cli/index). For installation instructions, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
 - **Docker Desktop:** These tutorials provide instructions for using Docker Desktop. For installation instructions, see
   <https://docs.docker.com/get-docker/>. Note that you can use any OCI-compliant clients to create images, such as Docker, Podman,
   or Nerdctl.
 
 ## Create Snowflake objects
 
-Execute the SQL provided using either the SnowSQL or the Snowsight.
+Run the SQL provided using either [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or [Snowflake CLI](/developer-guide/snowflake-cli/index).
 
 1. Login to Snowflake as a user with the ACCOUNTADMIN role.
 2. Using the ACCOUNTADMIN role, execute the following script, replacing `user_name` with the name of your Snowflake user who will test the tutorials. For these tutorials, you might choose the same user who executes this script or another user in your Snowflake account. The script does the following:
@@ -118,8 +115,8 @@ Execute the SQL provided using either the SnowSQL or the Snowsight.
 2. To verify that you have your account information (organization and account names), use one of the following methods:
 
    - Find the information on the Snowsight web interface, in the lower left corner of the Home page.
-   - In the SnowSQL CLI, execute SHOW IMAGE REPOSITORIES. The command returns the repository URL, including the organization and
-     account names.
+   - In [`snow sql`](/developer-guide/snowflake-cli/sql/execute-sql), run `SHOW IMAGE REPOSITORIES`. The command returns the
+     repository URL, including the organization and account names.
 
      **Example**
 

@@ -23,8 +23,8 @@ With this setup, you can perform the following tasks:
 - Use Snowflake to create Iceberg tables that are managed by Unity Catalog.
 - Use Databricks to work with Unity Catalog-managed Iceberg tables that you created or modified from Snowflake.
 
-To complete the steps in this tutorial for working with Snowflake, use a worksheet in Snowsight or use a Snowflake client such
-as [SnowSQL](/user-guide/snowsql).
+To complete the steps in this tutorial for working with Snowflake, use a worksheet in Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
+Snowflake CLI is an open-source command-line tool for running SQL and for developing, deploying, and managing Snowflake applications and workloads.
 You can copy and paste the code examples, and then run them. To complete the steps in this tutorial for working with Databricks,
 use your Databricks workspace to copy and paste the code examples or follow the instructions in the linked Databricks documentation.
 

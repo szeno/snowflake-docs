@@ -56,14 +56,16 @@ State changes should only be made when updating the version of an app.
 
 When creating objects from the setup script, consider the following best practices:
 
-- Use CREATE IF NOT EXISTS:
+- Use the command that matches how the object retains state:
 
-  You should always use CREATE OR REPLACE, CREATE IF NOT EXISTS or CREATE OR ALTER, whichever is applicable,
-  when creating database objects such as tables, views, functions, or procedures. This prevents errors when
-  trying to create objects that already exist during upgrade.
-
-  Snowflake recommends using CREATE OR REPLACE only for stateless objects, such as functions or procedures,
-  but not for stateful objects, such as tables.
+  - For stateless objects, use `CREATE OR REPLACE`. Each app version has its own copy of these objects in a
+    versioned schema.
+  - For stateful objects that don’t support `CREATE OR ALTER`, use `CREATE IF NOT EXISTS` followed by idempotent
+    `ALTER` statements. This approach preserves the object’s existing state during an upgrade.
+  - For stateful objects that support `CREATE OR ALTER`, you can use that command to describe the complete target
+    state. Review the command’s object-specific behavior before using it. Omitted properties can be reset, and
+    omitted table columns and their data can be dropped. For more information, see
+    [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
 - Ensure that the setup script of each app is self-contained
 
   Each version of the app must be complete and independent. For example, if a table was created in version v2.0
@@ -112,34 +114,27 @@ See [Update an app with containers](#label-native-apps-container-upgrade-about) 
 ## Update an app with containers
 
 Updating an app with containers to a new version adds additional considerations during upgrade.
-The process of upgrading an app with containers has two main stages:
+An upgrade of an app with containers can involve the following operations:
 
-- Upgrade the services in the containers managed by the app.
+- Create or modify other app objects by running the setup script.
+- Start or upgrade services by running [CREATE SERVICE](/sql-reference/sql/create-service) or
+  [ALTER SERVICE](/sql-reference/sql/alter-service). These commands run asynchronously.
 
-  Like other Snowpark Container Services, container apps use the
-  [ALTER SERVICE](/sql-reference/sql/alter-service) command to modify a service
-  based on a service specification file for the new version. This command
-  runs asynchronously.
-- Upgrade other objects in the app.
+These operations don’t have a fixed order. A service begins upgrading at the point where the provider runs the service
+command. The provider can run the command from the setup script or from the version initializer, which Snowflake calls
+after the setup script finishes.
 
-  After the services are successfully upgraded, other object within the app are
-  upgraded. This is similar to the normal Snowflake Native App upgrade process. See
-  [About app upgrades](/developer-guide/native-apps/update-app-overview#label-native-apps-upgrades-about) for more information.
+Services aren’t supported in versioned schemas because they have their own version management. A service can be
+stateful or stateless. The [CREATE SERVICE](/sql-reference/sql/create-service) and [ALTER SERVICE](/sql-reference/sql/alter-service) commands
+run asynchronously, so the script that runs either command continues while the service upgrade is in progress.
 
-The Snowflake Native App Framework allows users to continue using an app even during major version upgrades, ensuring no downtime for
-a normal app. However, for apps with containers, as both [CREATE SERVICE](/sql-reference/sql/create-service) and
-[ALTER SERVICE](/sql-reference/sql/alter-service) are asynchronous. This means that even after the upgrade finishes,
-the new version of the service may not be immediately available.
+For an app without containers, the Snowflake Native App Framework lets users continue using the current app version during a major version
+upgrade without downtime. For an app with containers, the asynchronous service upgrade might still be in progress
+when the app upgrade finishes, so the target version of the service might not be immediately available.
 
-The potential issue when upgrading an app with containers is that the
-[ALTER SERVICE](/sql-reference/sql/alter-service) command runs asynchronously. If this command adds
-the [ALTER SERVICE](/sql-reference/sql/alter-service) directly to the setup script, the setup script continues to run while the
-service upgrade is in progress.
-
-Providers should write their setup script assuming that service upgrades may not yet be complete or
-they should use [SYSTEM$WAIT\_FOR\_SERVICES](/sql-reference/functions/system_wait_for_services) and
-[Use a version initializer to manage service upgrades](#label-native-apps-container-upgrade-version-init) to guarantee the correct version of the service is
-ready for use.
+Providers must account for this asynchronous behavior before other parts of the upgrade depend on the new service.
+They can use [SYSTEM$WAIT\_FOR\_SERVICES](/sql-reference/functions/system_wait_for_services) to wait for services from a setup script, or use
+[Use a version initializer to manage service upgrades](#label-native-apps-container-upgrade-version-init) to coordinate service upgrades with the app version.
 
 To handle service upgrades correctly, the Snowflake Native App Framework provides features that allow the app to:
 
@@ -167,27 +162,27 @@ This command causes the setup script to pause until one of the following occurs:
 - Any of the named services has the FAILED status.
 - 600 seconds has passed.
 
-This system function ensures the app installation or upgrade waits until the service is available or until
-a failure occurs, ensuring that the service state is in sync with the version upgrade.
+Because the setup script pauses while this function runs, Snowflake doesn’t complete the app installation or upgrade
+before the services become ready, a service fails, or the timeout expires.
 
 ### Considerations when upgrading services
 
 The Snowflake Native App Framework provides the version initializer callback function that allows providers to synchronize upgrading
 services with the rest of the upgrade procedure.
 
-During the upgrade of a basic app, the setup script upgrades to the new version
-of the app by modifying objects within a versioned schema. If an error occurs during
-upgrade, the objects within the versioned schema revert back to the previous version of the
-app.
+During an upgrade, the setup script creates or modifies the objects for the target app version. If the setup script
+or target version initializer fails, Snowflake doesn’t make the target version’s objects in versioned schemas active.
+The previous version remains active.
 
 In the case of an app with containers, services that are created or modified by running the
 [CREATE SERVICE](/sql-reference/sql/create-service) or [ALTER SERVICE](/sql-reference/sql/alter-service) commands in the setup
 script use a service specification file for the new version.
 
-Because services are not created within versioned schemas, a service is upgraded as soon as
-the [CREATE SERVICE](/sql-reference/sql/create-service) or [ALTER SERVICE](/sql-reference/sql/alter-service) command run successfully.
-If there is a failure later in the setup script, for example, the objects in versioned schemas are reverted back to the
-previous version, but the modified services are the services of the new version.
+Because services aren’t created within versioned schemas, a service begins upgrading after the
+[CREATE SERVICE](/sql-reference/sql/create-service) or [ALTER SERVICE](/sql-reference/sql/alter-service) command is accepted. The asynchronous
+service upgrade might finish before or after the script that issued the command. If a later part of the app upgrade
+fails, the service might already use the specification for the target app version while the previous app version
+remains active.
 
 ### Use a version initializer to manage service upgrades
 
@@ -200,12 +195,10 @@ The version initializer is invoked in the following contexts:
 - During installation, the version initializer is called as soon as the setup script of
   the app finishes without errors.
 - During upgrade, there are two possible scenarios where the version initializer is called:
-  - If the setup script of the new version succeeds, then the
-    version initializer of the new version of the app is called.
-  - If the setup script or the version initializer of the new version fails, then
-    the version initializer of the previous version of the app is called. This allows the version
-    initializer of the previous version to use the [ALTER SERVICE](/sql-reference/sql/alter-service)
-    to revert the services to the previous version.
+  - If the setup script of the target version succeeds, Snowflake calls the target version’s initializer.
+  - If the setup script or target version’s initializer fails, Snowflake calls the previous version’s initializer
+    before reporting the upgrade failure. The previous initializer can use [ALTER SERVICE](/sql-reference/sql/alter-service) to
+    restore the service specification for the previous version.
 
 ### Add the version initializer to an app
 

@@ -163,10 +163,11 @@ The **Connect** menu now displays the name of the dbt project object that you cr
 - **Edit project**: Update the comment, default target, and external access integration for the dbt project object.
 - **View project**: Opens the dbt project object in the object explorer, where you can view the CREATE DBT PROJECT command for the dbt
   project object and run history for the project.
-- **Create schedule**: Provides options for you to create a task that runs the dbt project object on a schedule. For more information,
+- **Create schedule**: Select the calendar icon next to the dbt project menu, and then select **+ Create new** to create a task that runs
+  the dbt project object on a schedule. For more information,
   see [Schedule execution of dbt project objects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-schedule-project-execution).
-- **View schedules**: Opens a list of schedules (tasks) that run the dbt project object, with the option to view task details in the
-  object explorer.
+- **View schedules**: Select the calendar icon next to the dbt project menu to see the schedules (tasks) that run the dbt project object.
+  To open a task’s details page, select the **…** menu for the schedule, and then select **View**.
 
 To automatically run `dbt deps` during deployment, run the CREATE DBT PROJECT or ALTER DBT PROJECT command with the
 EXTERNAL\_ACCESS\_INTEGRATIONS parameter, as shown in the following example.

@@ -6,6 +6,37 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 6, 2026
+
+### Runtime Server 2026.10.6.13
+
+- Applied security patches and dependency upgrades.
+- Added support for configuring in-memory FlowFile processing in Process Groups that use the Stateless engine.
+- Upgraded the Runtime UI to version 0.92.0:
+  - Added confirmation before clearing all component state or a single state entry.
+  - Added optional in-memory FlowFile content limits to Edit Process Group for Stateless Process Groups.
+
+### Runtime Extensions 2026.10.6.14
+
+- CDC PostgreSQL: Added remaining source and snapshot work reporting, including the last time the connector was caught up.
+- CDC PostgreSQL: Added record throughput and capture, processing, and end-to-end latency metrics for replicated tables in the gen 2 connector.
+- CDC MySQL: Added record throughput and capture, processing, and end-to-end latency metrics for replicated tables in the gen 2 connector.
+- CDC Oracle: Added XStream capture health checks after attach on a two-minute cadence. If capture isn’t enabled, the processor surfaces an actionable error instead of stalling silently. Insufficient monitoring privileges disable only the health check.
+- CDC SQL Server: Added the earliest source commit timestamp per captured DML batch and a configuration-verification permission check.
+- CDC PostgreSQL: Added configurable source JDBC connect and read timeouts, defaulting to 10 and 30 seconds respectively. A value of 0 disables either timeout; the read timeout does not apply to the WAL replication connection.
+- CDC Databases: Logged retryable I/O errors at `WARN` instead of `ERROR`.
+- CDC MySQL: Prevented failed writes or commits from advancing the saved replication position. The connector reconnects and rereads from the last saved position instead of silently skipping changes. Interrupted batches might be delivered more than once, and schema-change storage failures no longer mark the table failed.
+- CDC MySQL and PostgreSQL: Kept each table locked until the enrich session commits, preventing out-of-order or duplicated journal entries.
+- CDC Databases: Prevented internal DDL housekeeping rows from reaching Snowflake-managed or adaptive merge destinations after source schema changes. Affected tables could enter `FAILED` with Snowflake error 100072.
+- CDC SQL Server: Fixed mutable configuration changes on running connectors failing with `UPDATE_FAILED`.
+
+### Connectors 2026.10.6.1
+
+- CDC MySQL 0.59.0:
+  - Added latency and throughput metrics to the gen 1 connector flow.
+- CDC PostgreSQL 0.67.0:
+  - Added connector-level maximum commit-to-merge latency reporting.
+
 ## October 5, 2026
 
 ### Control Plane Core 0.136.0

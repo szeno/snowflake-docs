@@ -8,6 +8,19 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 This topic provides reference information for the functions supported by the `snowflake.permissions`
 module of the Python Permission SDK. For information on using the Python Permission SDK to request privileges in the consumer account, see [Create a user interface to request privileges and references](/developer-guide/native-apps/requesting-ui).
 
+To use these functions in a Streamlit app, add the `snowflake-native-apps-permission` package as a
+dependency in the `environment.yml` file of the app. For more information, see
+[Create a user interface to request privileges and references](/developer-guide/native-apps/requesting-ui).
+
+The examples in this topic assume that the Streamlit app includes the following import statements:
+
+Copy code
+
+```
+import streamlit as st
+import snowflake.permissions as permissions
+```
+
 ## get\_application\_configurations()
 
 Returns all application configurations defined for the app.
@@ -54,6 +67,18 @@ Returns:
     - `label`: Name of the configuration that is displayed to the consumer in Snowsight.
     - `description`: Description of the configuration that is displayed to the consumer in Snowsight.
     - `application_roles`: The application roles that have access to the configuration.
+
+Example:
+:   Copy code
+
+    ```
+    configs = permissions.get_application_configurations()
+    pending = [config["name"] for config in configs if config["status"] == "PENDING"]
+    if pending:
+        config_name = st.selectbox("Configuration to set", pending)
+        if st.button("Set configuration value"):
+            permissions.request_application_configuration_value([config_name])
+    ```
 
 ## get\_application\_specifications()
 
@@ -107,6 +132,14 @@ Returns:
       [app specification definition](/developer-guide/native-apps/requesting-app-specs#label-native-apps-app-spec-definition). The values of
       this column depend on the type of app specification.
 
+Example:
+:   Copy code
+
+    ```
+    for spec in permissions.get_application_specifications():
+        st.write(f"{spec['name']}: {spec['status']}")
+    ```
+
 ## get\_detailed\_reference\_associations()
 
 Provides detailed information about a reference to an object in the consumer account.
@@ -122,7 +155,7 @@ Arguments:
 :   A string value containing the name of a reference.
 
 Returns:
-:   Returns a JSON object representing a list of dictionaries. Each dictionary contains the following
+:   Returns a list of dictionaries. Each dictionary contains the following
     key/value pairs:
 
     Copy code
@@ -145,6 +178,14 @@ Returns:
       null.
     - `name`: The name of the consumer object.
 
+Example:
+:   Copy code
+
+    ```
+    for obj in permissions.get_detailed_reference_associations("consumer_table"):
+        st.write(f"{obj['database']}.{obj['schema']}.{obj['name']}")
+    ```
+
 ## get\_held\_account\_privileges()
 
 Returns the privileges that have been granted to the app.
@@ -163,6 +204,15 @@ Returns:
 :   Returns a list containing the privileges that have been granted to the Snowflake Native App
     based on the list of privileges passed to the function.
 
+Example:
+:   Copy code
+
+    ```
+    held = permissions.get_held_account_privileges(["CREATE DATABASE", "EXECUTE TASK"])
+    if "EXECUTE TASK" not in held:
+        st.warning("Grant the EXECUTE TASK privilege to enable scheduled refreshes.")
+    ```
+
 ## get\_missing\_account\_privileges()
 
 Returns the privileges that have not been granted to the app.
@@ -180,6 +230,15 @@ Arguments:
 Returns:
 :   Returns a list containing the privileges that have **not** been granted to the app
     based on the list of privileges passed to the function.
+
+Example:
+:   Copy code
+
+    ```
+    missing = permissions.get_missing_account_privileges(["CREATE DATABASE", "EXECUTE TASK"])
+    if missing:
+        permissions.request_account_privileges(missing)
+    ```
 
 ## get\_reference\_associations()
 
@@ -202,6 +261,14 @@ Returns:
 :   Returns a list containing Snowflake-generated aliases of objects in the consumer account
     that are bound to the reference.
 
+Example:
+:   Copy code
+
+    ```
+    if not permissions.get_reference_associations("consumer_table"):
+        permissions.request_reference("consumer_table")
+    ```
+
 ## is\_application\_all\_mandatory\_telemetry\_event\_definitions\_enabled()
 
 Checks if all mandatory telemetry event definitions are enabled for the app.
@@ -223,6 +290,14 @@ Returns:
 :   Returns TRUE if all mandatory telemetry event definitions are enabled for the app.
     Returns FALSE, otherwise.
 
+Example:
+:   Copy code
+
+    ```
+    if not permissions.is_application_all_mandatory_telemetry_event_definitions_enabled():
+        permissions.request_event_sharing()
+    ```
+
 ## is\_application\_authorized\_for\_telemetry\_event\_sharing()
 
 Checks if the current application is authorized for telemetry event sharing.
@@ -243,6 +318,14 @@ Returns:
 :   Returns TRUE if the application is authorized for telemetry event sharing.
     Returns FALSE, otherwise.
 
+Example:
+:   Copy code
+
+    ```
+    if not permissions.is_application_authorized_for_telemetry_event_sharing():
+        permissions.request_event_sharing()
+    ```
+
 ## is\_application\_local\_to\_package()
 
 Checks if the app is installed in the same account as the application package.
@@ -260,6 +343,14 @@ Arguments:
 Returns:
 :   Returns TRUE if the app is installed in the same account as the application package.
     Returns FALSE, otherwise.
+
+Example:
+:   Copy code
+
+    ```
+    if permissions.is_application_local_to_package():
+        st.info("This app is installed in the same account as its application package.")
+    ```
 
 ## is\_event\_sharing\_enabled()
 
@@ -279,6 +370,14 @@ Returns:
 :   Returns TRUE if the SHARE\_EVENTS\_WITH\_PROVIDER property is true and the consumer account has an
     active event table configured. Returns FALSE, otherwise.
 
+Example:
+:   Copy code
+
+    ```
+    if not permissions.is_event_sharing_enabled():
+        permissions.request_event_sharing()
+    ```
+
 ## is\_external\_data\_enabled()
 
 Checks if the current application is enabled to use external and iceberg tables.
@@ -296,6 +395,14 @@ Arguments:
 Returns:
 :   Returns TRUE if the app is enabled to use external and iceberg tables.
     Returns FALSE, otherwise.
+
+Example:
+:   Copy code
+
+    ```
+    if not permissions.is_external_data_enabled():
+        permissions.request_external_data()
+    ```
 
 ## is\_viewer\_mode()
 
@@ -323,6 +430,16 @@ Returns:
     functions can’t display a dialog. Returns FALSE, otherwise. If the context can’t be determined,
     this function returns TRUE.
 
+Example:
+:   Copy code
+
+    ```
+    if permissions.is_viewer_mode():
+        st.info("Open this app in Snowsight to grant the privileges that it requires.")
+    else:
+        permissions.request_account_privileges(["CREATE DATABASE"])
+    ```
+
 ## request\_application\_specification\_review()
 
 Opens a dialog in a Streamlit app that allows the consumer to review an app specification, and then
@@ -342,6 +459,14 @@ Arguments:
 Returns:
 :   This method does not return a value.
 
+Example:
+:   Copy code
+
+    ```
+    if st.button("Review app specifications"):
+        permissions.request_application_specification_review()
+    ```
+
 ## request\_application\_configuration\_value()
 
 Opens a dialog in a Streamlit app that allows the consumer to review and set values for
@@ -355,11 +480,20 @@ Signature:
     ```
 
 Arguments:
-:   An optional list of string values containing the names of the configurations to review. If this
-    parameter is not specified, the dialog shows all configurations defined for the app.
+:   A list that contains the name of exactly one configuration to review. The dialog handles one
+    configuration at a time. If the list is empty or contains more than one name, Snowsight
+    displays an error instead of opening the dialog.
 
 Returns:
 :   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    if st.button("Set configuration values"):
+        permissions.request_application_configuration_value(["api_key_config"])
+    ```
 
 ## request\_application\_connection\_review()
 
@@ -379,6 +513,14 @@ Arguments:
 
 Returns:
 :   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    if st.button("Review connection"):
+        permissions.request_application_connection_review("connection_config")
+    ```
 
 ## request\_aws\_api\_integration()
 
@@ -412,7 +554,19 @@ Arguments:
     See [CREATE API INTEGRATION](/sql-reference/sql/create-api-integration) for information on other possible parameters.
 
 Returns:
-:   A string value containing the name of a reference.
+:   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    permissions.request_aws_api_integration(
+        "aws_api_integration",
+        ["https://<api_id>.execute-api.<region>.amazonaws.com/<stage>/"],
+        permissions.AwsGateway.API_GATEWAY,
+        "arn:aws:iam::<account_id>:role/<role_name>",
+    )
+    ```
 
 ## request\_azure\_api\_integration()
 
@@ -440,6 +594,18 @@ Arguments:
 Returns:
 :   This method does not return a value.
 
+Example:
+:   Copy code
+
+    ```
+    permissions.request_azure_api_integration(
+        "azure_api_integration",
+        ["https://<api_management_service>.azure-api.net/"],
+        "<tenant_id>",
+        "<application_id>",
+    )
+    ```
+
 ## request\_event\_sharing()
 
 Opens a dialog in a Streamlit app that allows the consumer to share events with the app.
@@ -457,6 +623,14 @@ Arguments:
 Returns:
 :   This method does not return a value.
 
+Example:
+:   Copy code
+
+    ```
+    if st.button("Configure event sharing"):
+        permissions.request_event_sharing()
+    ```
+
 ## request\_external\_data()
 
 Requests consent from the consumer to use external and iceberg tables.
@@ -473,6 +647,14 @@ Arguments:
 
 Returns:
 :   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    if st.button("Allow external data"):
+        permissions.request_external_data()
+    ```
 
 ## request\_google\_api\_integration()
 
@@ -499,6 +681,17 @@ Arguments:
 Returns:
 :   This method does not return a value.
 
+Example:
+:   Copy code
+
+    ```
+    permissions.request_google_api_integration(
+        "google_api_integration",
+        ["https://<gateway_id>.uc.gateway.dev/"],
+        "<audience>",
+    )
+    ```
+
 ## request\_account\_privileges()
 
 Requests privileges from the consumer specified by a list of strings passed to the function that
@@ -516,6 +709,14 @@ Arguments:
 
 Returns:
 :   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    if st.button("Grant privileges"):
+        permissions.request_account_privileges(["CREATE DATABASE", "EXECUTE TASK"])
+    ```
 
 ## request\_reference()
 
@@ -537,3 +738,11 @@ Arguments:
 
 Returns:
 :   This method does not return a value.
+
+Example:
+:   Copy code
+
+    ```
+    if st.button("Select a table"):
+        permissions.request_reference("consumer_table")
+    ```

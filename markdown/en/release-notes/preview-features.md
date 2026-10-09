@@ -36,6 +36,7 @@ The following features are currently available for preview, listed roughly in th
 
 | Feature | Availability | Introduced | Additional reading | Notes |
 | --- | --- | --- | --- | --- |
+| Claude Haiku 5.5 model | Open | October 2026 | [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability) | Use `claude-haiku-5-5` in the Cortex REST API with cross-region inference. |
 | Kimi K3 model | Open | October 2026 | [Models and regional availability for Cortex AI Functions](/user-guide/snowflake-cortex/aisql-regional-availability), [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability) | Use `kimi-k3` in AI Functions and the Cortex REST API with cross-region inference set to `AWS_GLOBAL` or `ANY_REGION`. |
 | OpenAI GPT-6.1 Sol model | Open | October 2026 | [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability) | Use `openai-gpt-6.1-sol` with cross-region inference set to `AWS_US`, `AWS_GLOBAL`, or `ANY_REGION`. |
 | Enforce CoCo policy with MDM | Open | October 2026 | [Enforce CoCo policy with MDM](/user-guide/cortex-code/mdm-policy) | Deliver CoCo account, authentication, and minimum version controls through an MDM profile (Jamf, Intune, or Group Policy) or `managed-settings.json` so that standard users can’t change or remove them. |

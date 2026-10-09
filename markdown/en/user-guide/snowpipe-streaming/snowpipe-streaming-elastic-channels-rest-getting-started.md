@@ -33,19 +33,18 @@ For the Named Channel REST path (ordered, exactly-once ingestion), see [Tutorial
       ts STRING
   );
   ```
-- `curl`, `jq`, and SnowSQL installed.
+- `curl` and `jq`.
+- [Snowflake CLI](/developer-guide/snowflake-cli/index): For generating the JWT. The REST API streams the rows. It doesn’t generate that token, and it doesn’t develop or deploy Snowpark code, Streamlit in Snowflake apps, Snowflake Native Apps, Snowpark Container Services services, notebooks, Git repositories, or dbt and DCM Projects projects.
 - Your Snowflake account identifier (Format 1: `myorg-account123`). For details, see [Account identifiers](/user-guide/admin-account-identifier).
 
 ## Step 1: Generate a JWT and set environment variables
 
-Generate a JWT using SnowSQL:
+Generate a JWT using Snowflake CLI:
 
 Copy code
 
 ```
-snowsql --private-key-path rsa_key.p8 --generate-jwt \
-  -a <ACCOUNT_IDENTIFIER> \
-  -u MY_USER
+snow connection generate-jwt --account <ACCOUNT_IDENTIFIER> --user MY_USER --private-key-file rsa_key.p8
 ```
 
 Caution

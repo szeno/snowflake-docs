@@ -10,14 +10,13 @@ When uploading JSON data into a table, you have these options:
 
 The COPY command in this tutorial uses a SELECT statement to query for individual elements in a staged JSON file.
 
-The example commands provided in this tutorial include a [PUT](/sql-reference/sql/put) statement.
-We recommend executing these commands in SnowSQL which supports the PUT command.
-Clients such as [Snowsight](/user-guide/ui-snowsight-gs) do not support the PUT command.
+Run the SQL in one interactive [Snowflake CLI](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode) session (`snow sql`). Upload the sample file with [`snow stage copy`](/developer-guide/snowflake-cli/command-reference/stage-commands/copy) from a second terminal so the SQL session stays open.
 
 ## Prerequisites
 
 For this tutorial you need to:
 
+- [Install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
 - Download a Snowflake provided JSON data file.
 - Create a database, a table, and a virtual warehouse for this tutorial.
 
@@ -50,17 +49,39 @@ Copy code
 }
 ```
 
+### Open one Snowflake CLI session
+
+Start an interactive `snow sql` session and run every SQL statement in this tutorial at that prompt. Keep the session open until you finish the tutorial, including the clean-up commands. The temporary table lasts only for this session, and the `USE` statements apply only here.
+
+Copy code
+
+```
+snow sql
+```
+
+End each SQL statement with a semicolon (`;`). To leave the session after the tutorial, enter `exit`.
+
+The file upload later in this tutorial uses `snow stage copy` in a second terminal. Leave this `snow sql` session running while you upload, then return to it for the `COPY INTO` statement.
+
 ### Creating the database, table, and virtual warehouse
 
-The following commands create objects specifically for use with this tutorial.
+In the `snow sql` session, run the following commands to create objects for this tutorial.
 When you have completed the tutorial, you can drop the objects.
 
 Copy code
 
 ```
- create or replace database mydatabase;
+CREATE OR REPLACE DATABASE mydatabase;
 
- use schema mydatabase.public;
+CREATE OR REPLACE WAREHOUSE mywarehouse WITH
+  WAREHOUSE_SIZE='X-SMALL'
+  AUTO_SUSPEND = 120
+  AUTO_RESUME = TRUE
+  INITIALLY_SUSPENDED=TRUE;
+
+USE DATABASE mydatabase;
+USE SCHEMA public;
+USE WAREHOUSE mywarehouse;
 
 CREATE OR REPLACE TEMPORARY TABLE home_sales (
   city STRING,
@@ -70,17 +91,10 @@ CREATE OR REPLACE TEMPORARY TABLE home_sales (
   sale_date timestamp_ntz,
   price STRING
   );
-
-create or replace warehouse mywarehouse with
-  warehouse_size='X-SMALL'
-  auto_suspend = 120
-  auto_resume = true
-  initially_suspended=true;
-
-use warehouse mywarehouse;
 ```
 
-Note these commands create a temporary table. Temporary tables persist only for
+The `USE` statements set the database, schema, and warehouse for the rest of this session.
+The `CREATE TABLE` statement creates a temporary table. Temporary tables persist only for
 the duration of the user session and are not visible to other users.
 
 ## Create file format object
@@ -105,31 +119,33 @@ internal `sf_tut_stage` stage.
 > Copy code
 >
 > ```
-> CREATE OR REPLACE TEMPORARY STAGE sf_tut_stage
+> CREATE OR REPLACE STAGE sf_tut_stage
 >  FILE_FORMAT = sf_tut_json_format;
 > ```
 
-Similar to temporary tables, temporary stages are automatically dropped
-at the end of the session.
+Create this stage without `TEMPORARY` so the upload command in the other terminal can write to `mydatabase.public.sf_tut_stage`. The `DROP DATABASE` command at the end of the tutorial removes the stage.
 
 ## Stage the data file
 
-Execute the [PUT](/sql-reference/sql/put) command to upload the JSON file from your local file system to the
-named stage.
+In a second terminal, upload the JSON file from your local file system to the named stage.
+Leave the `snow sql` session open.
+
+`snow stage copy` gzips a file only when you pass `--auto-compress`. The COPY INTO step
+later in this tutorial loads `sales.json.gz`, so include that option.
 
 - Linux or macOS
 
   Copy code
 
   ```
-  PUT file:///tmp/load/sales.json @sf_tut_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "/tmp/load/sales.json" @mydatabase.public.sf_tut_stage --auto-compress
   ```
 - Windows
 
   Copy code
 
   ```
-  PUT file://C:\temp\load\sales.json @sf_tut_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "C:\temp\load\sales.json" @mydatabase.public.sf_tut_stage --auto-compress
   ```
 
 ## Copy data into the target table

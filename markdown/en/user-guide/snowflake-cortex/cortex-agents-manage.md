@@ -554,7 +554,7 @@ Cortex Agents use the Brave Web Search API to retrieve real-time information dur
 
 Note that the query and the results leave Snowflake and traverse the public internet. However, Snowflake has enabled zero data retention (ZDR) with Brave: Brave does not store the search query text, the results returned, or any metadata associated with the request, for any length of time.
 
-Before agents can use the web search tool, an ACCOUNTADMIN must enable web search at the account level:
+Before Cortex Agents, CoCo, or Snowflake CoWork can use web search, an `ACCOUNTADMIN` must enable it at the account level:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **AI & ML** » **Agents**.

@@ -851,9 +851,18 @@ For general information about roles and privilege grants for performing SQL acti
 - Snowflake doesn’t support using ORDER BY to create a view that selects from a dynamic
   table.
 - To influence the order in which rows are stored in a dynamic table, consider enabling [clustering](/sql-reference/sql/create-dynamic-table#label-cluster-dts).
-- To enable efficient updates, the initial refresh pre-clusters the data by the dynamic table’s clustering key if one is defined.
-  Otherwise, the initial refresh pre-clusters by an internal metadata column, which can make the initial refresh of a dynamic table
-  take longer than an equivalent [CREATE TABLE … AS SELECT](/sql-reference/sql/create-table#label-ctas-syntax) statement.
+- The way Snowflake pre-clusters the data in a dynamic table depends on the table’s refresh mode:
+
+  - Incremental dynamic tables, including those that use the ADAPTIVE refresh mode: Snowflake pre-clusters the dynamic
+    table only on creation and reinitialization, and only if the query contains an operator that can reorder rows,
+    such as GROUP BY, PARTITION BY, or JOIN. In that case, Snowflake pre-clusters the data by:
+
+    - The CLUSTER BY keys, if a clustering key is defined.
+    - Otherwise, the primary key, if one can be derived, for example, from the base table’s primary key or from a
+      GROUP BY or QUALIFY clause.
+    - Otherwise, an internal row identifier.
+  - Full-refresh dynamic tables: Snowflake doesn’t currently pre-cluster the data by the clustering key. To influence
+    the order in which rows are stored, add an ORDER BY clause at the top level of the dynamic table’s query.
 - Some expressions, clauses, and functions are not currently supported in dynamic tables.
   For a complete list, see [Don’t use dynamic tables when your pipeline has any of the following…](/user-guide/dynamic-tables/decision-guide#label-dynamic-tables-limitations).
 - You can use `DYNAMIC_TABLE_REFRESH_BOUNDARY()` in the definition query to prevent an upstream dynamic table from being refreshed together

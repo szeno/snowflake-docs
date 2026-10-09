@@ -85,6 +85,7 @@ CREATE OR REPLACE CATALOG INTEGRATION my_onelake_catalog_int
    )
    REST_AUTHENTICATION = (
       TYPE = OAUTH
+      OAUTH_API_TYPE = PUBLIC
       OAUTH_TOKEN_URI = '<azure_active_directory_token_endpoint>'
       OAUTH_CLIENT_ID = '<entra_application_client_id>'
       OAUTH_CLIENT_SECRET = '<entra_application_client_secret>'
@@ -98,6 +99,7 @@ Where:
 - `https://onelake.table.fabric.microsoft.com/iceberg` is the base URL at the OneLake table endpoint.
 - `<fabric_data_item_scope>` is the Fabric data item scope, in the form `<workspaceID>`/`<dataItemID>`, such as
   `12345678-abcd-1abc-1a11-111111ab1111/11111111-abcd-1111-1ab1-1111a1a1ab91`. To find your `<workspaceID>` and `<dataItemID>`, see [Prerequisites](#label-tables-iceberg-configure-catalog-integration-rest-onelake-before-you-begin).
+- `OAUTH_API_TYPE = PUBLIC` obtains the OAuth token from the public Microsoft Entra endpoint.
 - `<azure_active_directory_token_endpoint_>` is your Azure Active Directory OAuth 2.0 token endpoint URL, in the form of `https://login.microsoftonline.com/<entra_tenant_id>/oauth2/v2.0/token`.
   For `<entra_tenant_id>` you specify your Entra tenant ID, which you copied when you [configured access permissions for OneLake](#label-configure-access-permissions-onelake).
 - `<entra_application_client_id>` is your Entra application client ID, which you copied when you [configured access permissions for OneLake](#label-configure-access-permissions-onelake), such as `11111111-aabb-1a11-abc1-ab11111a11a1`.

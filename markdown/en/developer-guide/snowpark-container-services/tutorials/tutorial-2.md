@@ -94,7 +94,7 @@ You will need information about the repository (the repository URL and the regis
          to authenticate your local Docker instance with the image
          registry for your Snowflake account. Make sure that you configured Snowflake CLI to connect to Snowflake. For more information,
          see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
-      2. To authenticate, execute the following Snowflake CLI command:
+      2. To authenticate, run the following Snowflake CLI command:
 
          Copy code
 
@@ -119,51 +119,45 @@ You will need information about the repository (the repository URL and the regis
 
 ## 3: Stage the specification file
 
-- To upload your service specification file (`my_job_spec.yaml`) to the stage, use one of the following options:
-  - **The Snowsight web interface:** For instructions, see [Choosing an internal stage for local files](/user-guide/data-load-local-file-system-create-stage).
-  - **The SnowSQL CLI:** Execute the following [PUT](/sql-reference/sql/put) command:
+Upload `my_job_spec.yaml` to `@tutorial_stage` using one of these methods:
 
-    Copy code
+- **[Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in):** For instructions, see [Choosing an internal stage for local files](/user-guide/data-load-local-file-system-create-stage).
+- **[Snowflake CLI](/developer-guide/snowflake-cli/index) (recommended):**
 
-    ```
-    PUT file://<file-path>[/\]my_job_spec.yaml @tutorial_stage
-      AUTO_COMPRESS=FALSE
-      OVERWRITE=TRUE;
-    ```
+  Copy code
 
-    For example:
+  ```
+  snow stage copy ./my_job_spec.yaml @tutorial_stage --overwrite
+  ```
 
-    - Linux or macOS
+  `snow stage copy` does not compress uploads by default, so the staged file retains the name `my_job_spec.yaml`.
+- **[`snow sql`](/developer-guide/snowflake-cli/sql/execute-sql):** Run a `PUT` statement with `snow sql`.
 
-      Copy code
+  Linux or macOS:
 
-      ```
-      PUT file:///tmp/my_job_spec.yaml @tutorial_stage
-        AUTO_COMPRESS=FALSE
-        OVERWRITE=TRUE;
-      ```
-    - Windows
+  Copy code
 
-      Copy code
+  ```
+  snow sql -q "PUT file:///tmp/my_job_spec.yaml @tutorial_stage AUTO_COMPRESS=FALSE OVERWRITE=TRUE;"
+  ```
 
-      ```
-      PUT file://C:\temp\my_job_spec.yaml @tutorial_stage
-        AUTO_COMPRESS=FALSE
-        OVERWRITE=TRUE;
-      ```
+  Windows:
 
-    You can also specify a relative path.
+  Copy code
 
-    Copy code
+  ```
+  snow sql -q "PUT file://C:\temp\my_job_spec.yaml @tutorial_stage AUTO_COMPRESS=FALSE OVERWRITE=TRUE;"
+  ```
 
-    ```
-    PUT file://./my_job_spec.yaml @tutorial_stage
-      AUTO_COMPRESS=FALSE
-      OVERWRITE=TRUE;
-    ```
+  You can also use a path relative to the directory from which you run `snow sql`:
 
-    The command sets OVERWRITE=TRUE so that you can upload the file again, if needed (for example, if you fixed an error in
-    your specification file). If the PUT command is executed successfully, information about the uploaded file is printed out.
+  Copy code
+
+  ```
+  snow sql -q "PUT file://./my_job_spec.yaml @tutorial_stage AUTO_COMPRESS=FALSE OVERWRITE=TRUE;"
+  ```
+
+  `AUTO_COMPRESS=FALSE` preserves the required filename instead of uploading it as `my_job_spec.yaml.gz`. `OVERWRITE=TRUE` lets you replace the staged file after you modify the specification. After a successful upload, `snow sql` displays the upload status.
 
 ## 4: Execute the job service
 

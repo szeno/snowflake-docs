@@ -429,8 +429,8 @@ When you deploy your dbt project object from the workspace to a Snowflake databa
    - **Redeploy dbt project** - Updates the dbt project object’s mutable `live` version with the current workspace contents by using ALTER. For more information, see [How dbt project objects get updated](/user-guide/data-engineering/dbt-projects-on-snowflake-understanding-dbt-project-objects#label-dbt-key-concepts-dbt-project-updating).
    - **Disconnect** - Disconnects the workspace from the dbt project object, but doesn’t delete the dbt project object.
    - **View project** - Opens the dbt project object in the object explorer, where you can view the CREATE DBT PROJECT command for the dbt project object and run history for the project.
-   - **Create schedule** - Provides options for you to create a task that executes the dbt project object on a schedule. For more information, see [Create a task to schedule dbt project execution](#label-dbt-get-started-create-task).
-   - **View schedules** - Opens a list of schedules (tasks) that execute the dbt project object, with the option to view task details in the object explorer.
+   - **Create schedule**: Select the calendar icon next to the dbt project menu, and then select **+ Create new** to create a task that executes the dbt project object on a schedule. For more information, see [Create a task to schedule dbt project execution](#label-dbt-get-started-create-task).
+   - **View schedules**: Select the calendar icon next to the dbt project menu to see the schedules (tasks) that execute the dbt project object. To open a task’s details page, select the **…** menu for the schedule, and then select **View**.
 5. To verify the creation of the project, do one or both of the following tasks:
 
    - From the menu for the dbt project, select **View project** to open the dbt project object in the object explorer.
@@ -450,7 +450,7 @@ Now that you have deployed your dbt project object, you can use the workspace or
 
 The following steps set up a schedule to execute the dbt project object every 12 hours at one minute after the hour. The task executes the dbt `run` command with the `--select` option to run the `customer_loyalty_metrics` model in the dbt project.
 
-1. From the dbt project menu on the right side of the project pane, choose **Create schedule**.
+1. Select the calendar icon next to the dbt project menu, and then select **+ Create new**.
 2. In the **Schedule a dbt run** dialog box, do the following:
 
    - For **Schedule name**, enter a name for the task; for example, *run\_prepped\_data\_dbt*.
@@ -462,9 +462,9 @@ The following steps set up a schedule to execute the dbt project object every 12
 3. Choose **Create**.
 
    Snowflake creates a task that executes an EXECUTE DBT PROJECT command using these parameters. For more information about tasks and task options, see [Introduction to tasks](/user-guide/tasks-intro) and [CREATE TASK](/sql-reference/sql/create-task).
-4. From the dbt project menu, select **View schedules**, and then choose your schedule from the list.
+4. Select the calendar icon next to the dbt project menu. Select the **…** menu for your schedule, and then select **View**.
 
-   The object explorer opens to your database with the **Task Details** pane opened for the task. The **Task Definition** shows a [CREATE TASK](/sql-reference/sql/create-task) command similar to the following:
+   The task details page opens. The **Task Definition** shows a [CREATE TASK](/sql-reference/sql/create-task) command similar to the following:
 
    Copy code
 

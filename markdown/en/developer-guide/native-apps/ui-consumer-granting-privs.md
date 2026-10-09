@@ -86,15 +86,16 @@ If a provider implements a user interface in a Snowflake Native App, a consumer 
 ### Grant global privileges
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Apps**.
+2. In the navigation menu, select **Apps**.
 3. Select an app.
 4. Select the **Settings** icon in the toolbar.
-5. Select the **Privileges** tab.
+5. Select the **Permissions** tab.
 
    The account level permissions requested by the app appear under
    **Account level privileges**.
-6. In the **Account level privileges** pane, select the **Edit** icon and then move the slider for each privilege that you want to grant.
-7. Select **Update Privileges**.
+6. In the **Account level privileges** pane, select **Review**.
+7. Turn on the **Granted** toggle for each privilege that you want to grant, and then select
+   **Update Privileges**.
 
 ### Authorize access to specific objects
 
@@ -102,13 +103,12 @@ If a provider implements a user interface for a Snowflake Native App, a consumer
 to authorize access on objects in their account.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Apps**.
+2. In the navigation menu, select **Apps**.
 3. Select an app.
 4. Select the **Settings** icon in the toolbar.
-5. Select the **Privileges** tab.
-6. In the **Object access privileges** pane, select **Add** next to the object to which
-   you want to authorize access.
-7. Select **Select Data** and choose the data product to which you want to authorize access.
+5. Select the **Permissions** tab.
+6. In the **Object access privileges** pane, select **Add** next to the object that the app requests.
+7. Select **Select Data**, choose the object that you want the app to access, and then select **Done**.
 8. Select **Save**.
 
 ### Revoke privileges and access to objects
@@ -116,11 +116,11 @@ to authorize access on objects in their account.
 Revoking privileges or removing access from objects can cause the application to become unstable or stop working.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Apps**.
+2. In the navigation menu, select **Apps**.
 3. Select an app.
 4. Select the **Settings** icon in the toolbar.
-5. Select the **Privileges** tab.
-6. In the **Account level privileges** pane, select the **Edit** icon and then move the slider for the privilege you want to revoke.
+5. Select the **Permissions** tab.
+6. In the **Account level privileges** pane, select **Review**, and then turn off the **Granted** toggle for the privilege that you want to revoke.
 7. Select **Update Privileges**.
 
 ### View, grant, and revoke roles in the SNOWFLAKE database
@@ -129,7 +129,7 @@ If a provider requests roles in the SNOWFLAKE database, you can review the reque
 revoke them using [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Apps**.
+2. In the navigation menu, select **Apps**.
 3. Select an app.
 4. Locate the **Role grants for SNOWFLAKE database** section.
 
@@ -375,10 +375,10 @@ an external or Iceberg table.
 To allow an app to access an external or Iceberg table:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Catalog** » **Apps**.
+2. In the navigation menu, select **Apps**.
 3. Select the app.
 4. In the toolbar, select **Settings**.
-5. Select the **Privileges** tab.
+5. Select the **Permissions** tab.
 6. Under **External data access**, select **Review**.
 7. Select **Enable**.
 

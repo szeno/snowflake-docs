@@ -56,9 +56,8 @@ Returns a value of type TIMESTAMP\_NTZ, TIMESTAMP\_TZ, or NULL:
     current session time zone, and that session time zone is used as the source.
   - **DATE:** The value is cast to TIMESTAMP\_NTZ with the time set to midnight (`00:00:00`), and then
     handled the same way as TIMESTAMP\_NTZ (the current session time zone is used as the source).
-- For `source_tz` and `target_tz`, you can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from release
-  2026c of the [IANA Time Zone Database](https://www.iana.org/time-zones) (for example, `America/Los_Angeles`, `Europe/London`, `UTC`,
-  `Etc/GMT`, and so on).
+- For `source_tz` and `target_tz`, you can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from the currently active [IANA Time Zone Database](https://www.iana.org/time-zones) release (for example, `America/Los_Angeles`, `Europe/London`, `UTC`,
+  `Etc/GMT`, and so on). To determine that release, call the [SYSTEM$GET\_TZDB\_VERSION](/sql-reference/functions/system_get_tzdb_version) function.
 
   Note
 

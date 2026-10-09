@@ -95,15 +95,17 @@ for more information.
 ### Create a service with a specification template
 
 To create a service using a [specification template](/developer-guide/snowpark-container-services/working-with-services#label-spcs-working-with-services-using-specification-templates),
-use the FROM SPECIFICATION\_TEMPLATE\_FILE clause of the [CREATE SERVICE](/sql-reference/sql/create-service) command as shown
-in the following example:
+use the `FROM SPECIFICATION_TEMPLATE_FILE` clause of the [CREATE SERVICE](/sql-reference/sql/create-service) command and supply values
+for the template variables with the `USING` clause. The following example uses the `container_name` variable from the
+[template example](/developer-guide/native-apps/container-containers#use-a-specification-template):
 
 Copy code
 
 ```
 CREATE SERVICE IF NOT EXISTS app_service
   IN COMPUTE POOL app_compute_pool
-  FROM SPECIFICATION_TEMPLATE_FILE = '/containers/service1_spec.yaml';
+  FROM SPECIFICATION_TEMPLATE_FILE = '/containers/service1_spec.yaml'
+  USING (container_name => 'main');
 ```
 
 See [specification template](/developer-guide/snowpark-container-services/working-with-services#label-spcs-working-with-services-using-specification-templates) for more information.

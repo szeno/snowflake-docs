@@ -9,7 +9,8 @@ With budgets, you can monitor credit usage for the compute costs of supported ob
 background maintenance tasks and serverless features. Budgets enables you to set a monthly spending limit for each budget
 and sends a notification email when your current spending is projected to exceed the monthly spending limit.
 
-You can complete this tutorial using a worksheet in Snowsight or using a CLI client such as [SnowSQL](/user-guide/snowsql).
+You can complete this tutorial using a worksheet in Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
+Snowflake CLI is an open-source command-line tool for running SQL and for developing, deploying, and managing Snowflake applications and workloads.
 Some portions of this tutorial can be completed using Snowsight.
 
 By the end of this tutorial, you will learn how to do the following:

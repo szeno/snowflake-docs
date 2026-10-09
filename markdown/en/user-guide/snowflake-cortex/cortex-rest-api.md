@@ -312,6 +312,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `claude-sonnet-4-6` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |
 | `claude-4-sonnet` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
+| `claude-haiku-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-luna` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
@@ -321,7 +322,7 @@ Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
 | `openai-gpt-5.6-sol` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-terra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.4` | \* |  |  | \* | \* | \* |  |  |  |  | \* | \* | † | \* |
+| `openai-gpt-5.4` | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ | † | ✔ |
 | `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
 | `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
 | `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |

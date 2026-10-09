@@ -4508,8 +4508,8 @@ Description:
 :   Specifies the time zone for the session.
 
 Values:
-:   You can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from release 2026c of the [IANA Time Zone Database](https://www.iana.org/time-zones) (e.g.
-    `America/Los_Angeles`, `Europe/London`, `UTC`, `Etc/GMT`, etc.).
+:   You can specify a [time zone name](https://data.iana.org/time-zones/tzdb/zone1970.tab) or a [link name](https://data.iana.org/time-zones/tzdb/backward) from the currently active [IANA Time Zone Database](https://www.iana.org/time-zones) release (for example,
+    `America/Los_Angeles`, `Europe/London`, `UTC`, `Etc/GMT`, and so on). To determine that release, call the [SYSTEM$GET\_TZDB\_VERSION](/sql-reference/functions/system_get_tzdb_version) function.
 
 Default:
 :   `America/Los_Angeles`

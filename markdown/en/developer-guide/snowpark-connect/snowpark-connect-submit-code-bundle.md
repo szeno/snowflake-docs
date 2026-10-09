@@ -18,7 +18,7 @@ and poll jobs.
 
 ## Overview
 
-A Spark job runs your packaged Spark application (a `.jar` or `.py` on a stage) as a single batch run on warehouse
+A Spark job runs your packaged Spark application (a `.jar` file on a stage, or a `.py` file in a stage directory) as a single batch run on warehouse
 compute and returns a job ID you use to [monitor and manage the run](#monitor-and-manage).
 
 This guide focuses on submitting a complete job in a single call: you pass the application, entrypoint, arguments, and
@@ -52,7 +52,7 @@ For accepted runtime version and language runtime values, see
 Before you submit a Spark job, make sure you have:
 
 - A warehouse to run the job on.
-- A stage containing your packaged application (a fat JAR or `.py` file) and any dependencies. To develop and package an
+- A stage containing your packaged application (a fat JAR, or a `.py` file uploaded to a stage directory that `FROM` points at) and any dependencies. To develop and package an
   application, see [Run Spark workloads on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-overview) and
   [Spark application examples](/developer-guide/snowpark-connect/snowpark-connect-samples).
 
@@ -83,7 +83,8 @@ This is the shortest path to running a packaged Spark application and checking i
 [Submit a job with the REST API](#submit-with-rest).
 
 1. Package your application as a fat JAR (Scala/Java) or a `.py` file, and upload it to a stage. For a Scala or Java
-   application, note the fully-qualified main class.
+   application, note the fully-qualified main class. For a Python application, upload the `.py` file to a stage
+   directory; `FROM` points at that directory and `ENTRYPOINT` is the file name.
 
    Copy code
 
@@ -233,7 +234,7 @@ Copy code
 
 ```
 {
-  "from_location": "@my_db.my_schema.my_stage/python_jobs/job.py",
+  "from_location": "@my_db.my_schema.my_stage/python_jobs",
   "entrypoint": "job.py",
   "arguments": ["--input", "@my_db.my_schema.my_stage/input.csv", "--partitions", "10"],
   "execution_name": "my_spark_application",
@@ -337,7 +338,7 @@ $$;
 Copy code
 
 ```
-EXECUTE CODE BUNDLE FROM '@my_db.my_schema.my_stage/python_jobs/job.py'
+EXECUTE CODE BUNDLE FROM '@my_db.my_schema.my_stage/python_jobs'
   ENTRYPOINT = 'job.py'
   ARGUMENTS = ('--input', '@my_db.my_schema.my_stage/input.csv', '--partitions', '10')
   EXECUTION_NAME = 'my_spark_application'
@@ -358,7 +359,7 @@ $$;
 
 | Parameter | Description |
 | --- | --- |
-| `FROM` | Stage path to the main application file: a `.jar` (Scala/Java) or `.py` (Python). |
+| `FROM` | Stage path to the application. For Scala or Java, the `.jar` file. For Python, the stage directory that contains the entrypoint file, with no trailing slash. `ENTRYPOINT` is the file name relative to that directory. |
 | `ENTRYPOINT` | For Scala/Java, the fully-qualified main class. For Python, the main `.py` file name. |
 | `ARGUMENTS` | Optional. A parenthesized, comma-separated list of argument strings passed to your application’s `main` method. |
 | `EXECUTION_NAME` | Optional. A name for the run, recorded with the run so you can identify it later. |
@@ -772,7 +773,7 @@ EXECUTE CODE BUNDLE { <name> | FROM '<stage_path>' }
 | Parameter | Description |
 | --- | --- |
 | `<name>` | Runs a persisted Spark job definition by name. Mutually exclusive with `FROM`. |
-| `FROM '<stage_path>'` | Stage path to the main application file: a `.jar` (Scala/Java) or `.py` (Python). |
+| `FROM '<stage_path>'` | Stage path to the application. For Scala or Java, the `.jar` file. For Python, the stage directory that contains the entrypoint file, with no trailing slash. `ENTRYPOINT` is the file name relative to that directory. |
 | `ENTRYPOINT` | For Scala/Java, the fully-qualified main class; for Python, the `.py` file name. |
 | `ARGUMENTS` | Optional list of argument strings passed to your application’s `main` method. |
 | `EXECUTION_NAME` | Optional name recorded with the run so you can identify it later. |
@@ -821,7 +822,7 @@ CREATE [ OR REPLACE ] CODE BUNDLE [ IF NOT EXISTS ] <name>
 ```
 
 `FROM` must reference a stage **directory** (the bundle is created from the files under that path), not an individual
-file. This differs from `EXECUTE CODE BUNDLE FROM '<stage_path>'`, which accepts a single `.jar` or `.py` file.
+file. This differs from `EXECUTE CODE BUNDLE FROM '<stage_path>'`, which accepts a single `.jar` file (Scala or Java) or a directory (Python).
 
 ### ALTER CODE BUNDLE
 

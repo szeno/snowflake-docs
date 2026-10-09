@@ -86,13 +86,18 @@ upgrades fit in the overall workflow for developing a new version or patch of an
 [Workflow for updating an app](/developer-guide/native-apps/update-app#label-update-workflow-legacy).
 
 Providers can initiate an upgrade of an app to a new version or patch by setting a release directive
-on the application package. When the release directive is modified, Snowflake automatically upgrades
-all installed instances of the current version of the app to the version specified by the release directive.
+on the application package. Changing the default release directive targets installed app instances that use the
+default directive. It doesn’t target accounts assigned to a custom release directive. Changing a custom release
+directive targets installed app instances in the accounts assigned to that directive.
 
 When the provider initiates an upgrade, Snowflake adds each app to be upgraded to a queue. Each
 app is upgraded as resources are available. The upgrade process can take a while to complete across all
 installed versions of the app. To expedite the upgrade process, consumers can also manually initiate an upgrade
 of an app when a new version or patch is available.
+
+For each targeted app instance, Snowflake runs the setup script for the target version or patch. If the app defines
+a version initializer, Snowflake calls it after the setup script succeeds. For more information about setup scripts
+and version initializers, see [Develop a new version of an app](/developer-guide/native-apps/update-app-develop).
 
 Note
 

@@ -147,22 +147,21 @@ the following information:
 - The [Query Profile](/user-guide/ui-snowsight-activity) graph for the service’s query is collapsed
   into a single empty node instead of displaying the full query profile tree.
 
-## Multi-factor requirements for users in a provider account
+## Multi-factor authentication requirements
 
-Depending on the type of user, Snowflake requires different types of authentication for
-users in the provider account.
+Snowflake requires [multi-factor authentication (MFA)](/user-guide/security-mfa) for all human
+users in both provider and consumer accounts. This is a Snowflake-wide security requirement, not
+specific to Native Apps.
 
-### Non-service users
+### Human users
 
-Snowflake recommends that users in a provider account enroll in
-[multi-factor authentication (MFA)](/user-guide/security-mfa) if they do not have the
-[TYPE](/sql-reference/sql/create-user#label-user-type-property) property set to SERVICE. In a future update, multi-factor
-authentication will be mandatory for these types of users. Non-service users who use
+All users who do not have the [TYPE](/sql-reference/sql/create-user#label-user-type-property) property set to SERVICE must
+enroll in MFA. Users who use
 [federated authentication](/user-guide/admin-security-fed-auth-overview) and single sign-on (SSO)
 must have MFA enabled as part of their authentication process.
 
 ### Service users
 
-Users who have the TYPE parameter set to SERVICE must use
+Users who have the TYPE property set to SERVICE must use
 [key-pair authentication](/user-guide/key-pair-auth) or
 [OAuth](/user-guide/oauth-intro).

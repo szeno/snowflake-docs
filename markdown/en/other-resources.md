@@ -13,11 +13,9 @@ granted these roles and the account has the virtual warehouse.
 
 For new users, we recommend you start with these tutorials:
 
-- [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes) — A simple tutorial using SnowSQL, the Snowflake command-line client, to introduce key concepts and tasks.
-- [Getting Started with Snowflake - Zero to Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html) — A comprehensive tutorial that uses both SnowSQL and [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) covers data loading,
-  querying, working with semi-structured data, accessing
-  historical data using Snowflake’s Time Travel feature, sharing, and so on.
-- [Getting Started with Python](https://quickstarts.snowflake.com/guide/getting_started_with_python/index.html) — A tutorial in which you set up the Python Connector and then explore the basic operations you can do with it.
+- [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes): A simple tutorial using [Snowflake CLI](/developer-guide/snowflake-cli/index) to introduce key concepts and tasks.
+- [Getting Started with Snowflake - Zero to Snowflake](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake/index.html): A comprehensive tutorial in [Snowsight](/user-guide/ui-snowsight) that covers how to load data, query, work with semi-structured data, use Time Travel, and share data.
+- [Getting Started with Python](https://quickstarts.snowflake.com/guide/getting_started_with_python/index.html): A tutorial in which you set up the Python Connector and then explore the basic operations you can do with it.
 
 For tutorials on bulk loading, see:
 

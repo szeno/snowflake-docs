@@ -13,15 +13,17 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
-- [10.36 Release Notes (Preview)](/release-notes/2026/10_36)
+## Recent server releases
 
+- [10.36 Release Notes: Oct 3, 2026 - Oct 7, 2026](/release-notes/2026/10_36)
+
+  - [Native App Framework updates](/release-notes/2026/10_36#native-app-framework-updates)
+
+    - [Give users a direct link to an installed Snowflake Native App](/release-notes/2026/10_36#give-users-a-direct-link-to-an-installed-snowflake-native-app)
   - [Data governance updates](/release-notes/2026/10_36#data-governance-updates)
 
     - [Schema-level data metric functions: exclude transient tables](/release-notes/2026/10_36#schema-level-data-metric-functions-exclude-transient-tables)
   - [Release notes change log](/release-notes/2026/10_36#release-notes-change-log)
-
-## Recent server releases
-
 - [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
 
   - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)
@@ -38,13 +40,6 @@ If you have questions about any of these features, contact
 
     - [Data metric function FILTER: Modify or clear a filter on an existing association](/release-notes/2026/10_32#data-metric-function-filter-modify-or-clear-a-filter-on-an-existing-association)
   - [Release notes change log](/release-notes/2026/10_32#release-notes-change-log)
-- [10.29 Release Notes: Aug 15, 2026 - Aug 19, 2026](/release-notes/2026/10_29)
-
-  - [Cost management updates](/release-notes/2026/10_29#cost-management-updates)
-
-    - [Per-user quotas (General availability)](/release-notes/2026/10_29#per-user-quotas-general-availability)
-    - [Anomaly monitors for cost anomalies (Preview)](/release-notes/2026/10_29#anomaly-monitors-for-cost-anomalies-preview)
-  - [Release notes change log](/release-notes/2026/10_29#release-notes-change-log)
 
 For earlier server releases, see [Server releases earlier in 2026](/release-notes/weekly-releases-2026).
 
@@ -53,6 +48,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
 - [Oct 7, 2026: Snowflake Decision with AI\_COMPLETE (Private Preview)](/release-notes/2026/other/2026-10-07-ai-complete-snowflake-decision-preview)
+- [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)
 - [Oct 7, 2026: Zero-copy integration for Workday Data Cloud (General availability)](/release-notes/2026/other/2026-10-07-workday-data-cloud-zerocopy-ga)
 - [ServiceNow® V2 (v5.28.3)](/release-notes/connectors/servicenow-v2-2026)
 - [Oct 06, 2026: Kimi K3 model (Preview)](/release-notes/2026/other/2026-10-06-kimi-k3-preview)
@@ -147,10 +143,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [SnowSQL (v1.5.2)](/release-notes/clients-drivers/snowsql-2026)
 - [Sep 09, 2026: Openflow gen 1 deployment creation retired](/release-notes/2026/other/2026-09-09-openflow-gen1-deployment-retirement)
 - [Snowflake CLI (v3.27.0)](/release-notes/clients-drivers/snowflake-cli-2026)
-- [Sep 8, 2026: CoCo Desktop v1.21.3](/release-notes/2026/other/2026-09-08-coco-desktop-v1-21-3)
-- [Sep 08, 2026: Add and drop hybrid table constraints online (General availability)](/release-notes/2026/other/2026-09-08-hybrid-tables-online-constraints-ga)
-- [Sep 08, 2026: Second generation Openflow deployments and runtimes (General availability)](/release-notes/2026/other/2026-09-08-openflow-gen2-deployment-runtime-ga)
-- [Sep 8, 2026: Shadow traffic for gateways (Preview)](/release-notes/2026/other/2026-09-08-shadow-traffic-gateways)
-- [Sep 08, 2026: Trust Center, secure by default approach for scanner package enablement](/release-notes/2026/other/2026-09-08-trust-center-secure-by-default)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

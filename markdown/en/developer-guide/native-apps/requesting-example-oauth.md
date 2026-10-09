@@ -58,12 +58,12 @@ Note
 These references cannot have the `multi_valued` property set to true.
 
 References to secrets and external access objects also require a `configuration_callback` function
-in the setup script. See [Add the configuration\_callback function to the setup script](#label-native-apps-refs-example-setup) for more information.
+in the setup script. See [Add the configuration\_callback stored procedure to the setup script](#label-native-apps-refs-example-setup) for more information.
 
-## Add the configuration\_callback function to the setup script
+## Add the configuration\_callback stored procedure to the setup script
 
 After adding references for the secret and external access integration, you must add the
-`configuration_callback` function to the setup script. To create an external access integration or
+`configuration_callback` stored procedure to the setup script. To create an external access integration or
 secret, the application must be able to determine values for host port, secret type, the authorization
 and token endpoint for OAuth, etc. The `configuration_callback` provides this information from
 the consumer account to the application.
@@ -73,14 +73,14 @@ user to configure the objects. The procedure needs to be granted to an app role 
 
 Note
 
-The configuration\_callback is only supported for external access integration and secret
-objects.
+The configuration\_callback is only supported for external access integration, secret, and
+catalog integration objects.
 
-The callback function has the following requirements:
+The callback stored procedure has the following requirements:
 
-- The callback function must accept an argument containing a reference name. This allows the same
-  callback function to handle multiple references.
-- The callback function must return a well-formed JSON object. The JSON object contains the following
+- The callback stored procedure must accept an argument containing a reference name. This allows the same
+  callback stored procedure to handle multiple references.
+- The callback stored procedure must return a well-formed JSON object. The JSON object contains the following
   properties:
   - `type`
 
@@ -117,12 +117,12 @@ GRANT USAGE ON PROCEDURE configuration_callback_name(string)
   TO APPLICATION ROLE app_role;
 ```
 
-The callback function returns a JSON object. See [JSON format for the configuration callback response](/developer-guide/native-apps/requesting-refs#label-native-apps-reference-json-format) for
+The callback stored procedure returns a JSON object. See [JSON format for the configuration callback response](/developer-guide/native-apps/requesting-refs#label-native-apps-reference-json-format) for
 more information.
 
-The following example shows a typical callback function for handling external access and secret references.
+The following example shows a typical callback stored procedure for handling external access and secret references.
 
-This function does the following:
+This stored procedure does the following:
 
 - For a reference to an external access integration, the procedure returns a JSON object containing the
   required configuration information. See [JSON format for external access integration](/developer-guide/native-apps/requesting-refs#label-native-apps-reference-json-format-eai) for more

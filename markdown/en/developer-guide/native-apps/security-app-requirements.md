@@ -6,7 +6,7 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 [Support for private connectivity, VPS, and government regions](/developer-guide/native-apps/limitations#label-native-apps-supported-clouds).
 
 This topic describes the security requirements and best practices that providers must
-follow when developing a Snowflake Native App. All apps that meet the conditions described in
+follow when developing a Snowflake Native App shared through Listings. All apps that meet the conditions described in
 [Automated security reviews](/developer-guide/native-apps/security-overview#label-native-apps-security-scan-initiate) must conform to the security requirements
 outlined in the following sections:
 
@@ -16,7 +16,10 @@ outlined in the following sections:
 
 Note
 
-Security requirements are subject to change as Snowflake continues to monitor new potential risks.
+While Snowflake scans providers’ app packages for security risks prior to sharing, consumers should
+independently review the permissions, access, and functionality of the provider’s app to ensure it meets
+their security requirements and standards. Security requirements are subject to change as Snowflake
+continues to monitor new potential risks.
 
 ## Security requirements for application code
 
@@ -41,10 +44,13 @@ The following security requirements apply to the functionality of your app:
 
 1. All apps must provide the following information to customers as part of a listing:
 
-   1. All app functionality and features.
-   2. All Internet endpoints and URLs that the app connects to.
-   3. All external functions in the app.
-   4. Any consumer data logged, collected, or stored by the app.
+   1. App installation and setup instructions.
+   2. All app functionality and features.
+   3. Any use of consumer data (including any inputs or outputs) to train or optimize artificial
+      intelligence models.
+   4. All Internet endpoints and URLs that the app connects to.
+   5. All external functions in the app.
+   6. Any consumer data, queries, prompts, or responses logged, collected, or stored by the app.
       1. Apps should prohibit all non-essential cookies.
       2. Apps should communicate all essential cookies to consumers
 2. Apps should function as advertised in the app listing.
@@ -55,11 +61,11 @@ The following security requirements apply to the functionality of your app:
 6. Apps must not have any functionality that could result in harm to Snowflake, its customers, or third
    parties. Harm includes but is not limited to:
 
-   1. Data leakage and/or loss;
+   1. Unauthorized data egress, data leakage, and/or data loss;
    2. Restricting consumer access to their data unless explicitly designed as part of the app
       functionality, for example, data masking for data access policies.
    3. Excessive resource consumption.
-   4. Arbitrary code injection/execution.
+   4. Arbitrary or malicious code injection/execution.
 7. All connections to an app, including web-based user interfaces and APIs, must first authenticate using a
    Snowflake-provided method of authentication. Any app-specific authentication must be presented to users
    after Snowflake authentication has succeeded.

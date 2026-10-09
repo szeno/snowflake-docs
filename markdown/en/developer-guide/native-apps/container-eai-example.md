@@ -61,8 +61,8 @@ This example specifies the following properties, among others, under `references
     authorize access on the object before the app can create the object when set to `true`.
   - `register_callback`: Specifies the callback stored procedure used to register the reference
     with the app.
-  - `configuration_callback`: Specifies the configuration callback function for the secret. See
-    [Add the configuration\_callback function to the setup script](#label-na-spcs-config-callback) for more information.
+  - `configuration_callback`: Specifies the configuration callback stored procedure for the secret. See
+    [Add the configuration\_callback stored procedure to the setup script](#label-na-spcs-config-callback) for more information.
 
 ## Add a secret reference to the manifest file.
 
@@ -91,15 +91,15 @@ This example specifies the following properties, among others, under `references
   - `object_type: SECRET`: Indicates that the reference is a secret.
   - `register_callback`: Specifies the callback stored procedure used to register the reference
     with the app.
-  - `configuration_callback`: Specifies the configuration callback function for the secret. See
-    [Add the configuration\_callback function to the setup script](#label-na-spcs-config-callback) for more information.
+  - `configuration_callback`: Specifies the configuration callback stored procedure for the secret. See
+    [Add the configuration\_callback stored procedure to the setup script](#label-na-spcs-config-callback) for more information.
 
-## Add the configuration\_callback function to the setup script
+## Add the configuration\_callback stored procedure to the setup script
 
 After adding references for the secret and external access integration, you must add the
-`configuration_callback` function to the setup script. To create an external access integration
+`configuration_callback` stored procedure to the setup script. To create an external access integration
 or secret, the app must be able to determine values for the host port, secret type, the authorization and
-token endpoint for OAuth, and so on. The `configuration_callback` function provides this information
+token endpoint for OAuth, and so on. The `configuration_callback` stored procedure provides this information
 from the consumer account to the app.
 
 Copy code

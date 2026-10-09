@@ -9,11 +9,12 @@ This topic describes how providers can create and test a Snowflake Native App lo
 
 ## About creating and testing apps
 
-With the Snowflake Native App Framework, providers can create an app within the same account as the
-application package, so they can test the app before publishing it to consumers.
+With the Snowflake Native App Framework, you can create an app in the same account as its application package and test it
+before you publish it to consumers.
 
-Providers can also test the app in a single account without having to
-alternate between provider and consumer accounts.
+[Cortex Code](/user-guide/cortex-code/cortex-code-cli) (CoCo) includes the
+[`native-app-provider`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-native-app-provider)
+skill, which can run the steps in this topic. Some sections include an example CoCo prompt.
 
 ## Privileges required to create and test an app
 
@@ -24,7 +25,7 @@ granted to your role:
 - The INSTALL object-level privilege granted on the application package.
 
 The following examples show how to use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) command
-to grant these privileges to an account:
+to grant these privileges to a role:
 
 Copy code
 
@@ -40,9 +41,8 @@ By default, the role used to create an application package has permissions to us
 [CREATE APPLICATION](/sql-reference/sql/create-application) command to create an app based on the
 application package.
 
-However, in some development environments you may need to allow users with other roles to
-create and test an application package. To do this, grant the DEVELOP object-level privilege
-on the application package to a role.
+To let other roles create and test apps from an application package, grant them the DEVELOP
+object-level privilege on the application package.
 
 The DEVELOP privilege grants the privileges required to create and test an
 app based on an application package. This privilege allows a user to perform
@@ -70,44 +70,24 @@ to assign the DEVELOP privilege for.
 
 ## Workflow for creating and testing an app
 
-The Snowflake Native App Framework provides different ways of creating an app from an application
-package. This allows you to test a Snowflake Native App before publishing it to consumers. The method you
-use depends on what parts of the app you want to test.
+To test an app, follow these steps:
 
-The following steps outline a typical workflow for testing an app:
+1. [Create the app from files on a stage](#label-native-apps-application-creating-stage). The app is in
+   [development mode](#label-native-apps-dev-mode-about), so you see only what a consumer would see.
+2. If an object is missing or a statement fails, turn on [debug mode](#label-native-apps-testing-debug-mode)
+   to see every object in the app, or [session debug mode](#label-native-apps-session-debug-mode) to run
+   statements as the app.
+3. Fix the files on the stage and [upgrade the app](#label-native-apps-application-upgrade-stage).
+4. Register a version and [create an app from that version](#label-native-apps-application-creating-version).
+5. Set a release directive and [create an app from it](#label-native-apps-application-creating-directive).
+   This app isn’t in development mode, so it behaves like a consumer install.
+6. Add the application package to a listing and
+   [install the app from the listing](/developer-guide/native-apps/ui-provider-publishing-app-package)
+   in a test consumer account.
 
-1. Create the app.
-
-   You can create an app locally based on the following:
-
-   - Files on a stage
-
-     This allows you to quickly test a new version of a setup script or application code files.
-     See [Create an app using staged files](#label-native-apps-application-creating-stage) for more information.
-   - A version or patch defined in the application package
-
-     After defining a version or patch for an application package, you can test this version by
-     creating an app based on it. For
-     more information, see [Create an app from a version or patch](#label-native-apps-application-creating-version).
-2. Upgrade an app.
-
-   After verifying that an app is working correctly, you can upgrade it to a new version in one of two ways:
-
-   - From a file on a stage
-   - From a version or patch defined in the application package
-3. Create an app based on a release directive.
-
-   After testing an app using specific files or a version or patch, you can create an app
-   based on the release directive defined for the application package. Using the release directive,
-   you do not need to specify a stage or version of the app.
-
-   For more information, see [Create an app using staged files](#label-native-apps-application-creating-stage).
-4. Install an app from a listing.
-
-   After testing that the application package and app are working correctly in your local account, you
-   can add the application package to a listing and test the installation using Snowsight.
-
-   For more information, see [Create an app using staged files](#label-native-apps-application-creating-stage).
+CoCo prompt: “Create an app named hello\_snowflake\_app from application package hello\_snowflake\_package using
+the files on @hello\_snowflake\_code.core.hello\_snowflake\_stage, then list the objects in the app that my role
+can see.”
 
 ## Create an app
 
@@ -165,10 +145,8 @@ CREATE APPLICATION hello_snowflake_app
 
 ### Create an app based on a release directive
 
-After specifying a release directive — either custom or default — in an application package, you can create an app based on that release directive.
-
-To create an app based on a release directive, use the
-[CREATE APPLICATION](/sql-reference/sql/create-application) command as shown in the following example:
+After you set a release directive for an application package, you can create an app from it. Omit the
+`USING` clause:
 
 Copy code
 
@@ -176,28 +154,35 @@ Copy code
 CREATE APPLICATION hello_snowflake_app FROM APPLICATION PACKAGE hello_snowflake_package;
 ```
 
+The app uses the version and patch that the release directive specifies. If the application package uses
+release channels, set the release directive on a channel. See
+[Set the release directive using a release channel](/developer-guide/native-apps/release-channels#label-native-apps-relchan-release-directive).
+
+An app created from a release directive isn’t in development mode, so you can’t use debug mode, session
+debug mode, or `DISABLE_APPLICATION_REDACTION` with it.
+
 ### Upgrade an app using a stage
 
-To upgrade an app using files on a named stage, use the [ALTER APPLICATION](/sql-reference/sql/alter-application)
-command, as shown in the following example:
+To upgrade an app from files on a named stage, use the [ALTER APPLICATION](/sql-reference/sql/alter-application)
+command:
 
 Copy code
 
 ```
-ALTER APPLICATION HelloSnowflake
-  UPGRADE USING @CODEDATABASE.CODESCHEMA.AppCodeStage;
+ALTER APPLICATION hello_snowflake_app
+  UPGRADE USING '@hello_snowflake_code.core.hello_snowflake_stage';
 ```
 
 ### Upgrade an app from a version or patch
 
-To upgrade an app that was created using a specific version or patch, use the
-[ALTER APPLICATION](/sql-reference/sql/alter-application) command as shown in the following example:
+To upgrade an app created from a version to another version, use the
+[ALTER APPLICATION](/sql-reference/sql/alter-application) command:
 
 Copy code
 
 ```
-ALTER APPLICATION HelloSnowflake
- UPGRADE USING VERSION "v1_1";
+ALTER APPLICATION hello_snowflake_app
+  UPGRADE USING VERSION v1_1;
 ```
 
 ## Set an app as the active context
@@ -207,7 +192,7 @@ To set an app as the active context for a session, run the USE APPLICATION comma
 Copy code
 
 ```
-USE APPlICATION hello_snowflake_app;
+USE APPLICATION hello_snowflake_app;
 ```
 
 Note
@@ -244,40 +229,28 @@ the app.
 
 ## Use development, debug, and session debug modes to test an app
 
-With the Snowflake Native App Framework, providers can use the following modes to create an app and test its functionality:
+The following table compares the three modes:
 
-[Development mode](#label-native-apps-dev-mode-about)
-:   An app installed in the same account as its application package from a specific version or from files on a named stage is in development mode.
-    The provider can test and troubleshoot the app in a single account, but can only access objects
-    granted to application roles, similar to the consumer perspective.
+| Mode | How to turn it on | Applies to | What you can see | Objects you create are owned by | How to check |
+| --- | --- | --- | --- | --- | --- |
+| [Development mode](#label-native-apps-dev-mode-about) | Create the app from files on a stage or from a version. | The app | Objects granted to an application role, as a consumer sees them. | Not applicable | `IS_DEV_MODE` from app code; see [Check the mode of an app](#label-native-apps-dev-mode-check) |
+| [Debug mode](#label-native-apps-testing-debug-mode) | `ALTER APPLICATION ... SET DEBUG_MODE = TRUE` | The app, in every session, until you turn it off | Every object in the app. | Your current role | The `debug_mode` row of `DESC APPLICATION` |
+| [Session debug mode](#label-native-apps-session-debug-mode) | `SELECT SYSTEM$BEGIN_DEBUG_APPLICATION(...)` | The current session only | Every object that the app owns. | The app | `SELECT SYSTEM$GET_DEBUG_STATUS()` |
 
-[Debug mode](#label-native-apps-testing-debug-mode)
-:   The provider can view and modify all objects within the app, including objects not granted to
-    an application role. Because the session’s primary role is used, objects created in debug mode
-    are not owned by the app.
+Expand
 
-[Session debug mode](#label-native-apps-session-debug-mode)
-:   The provider can view and modify all objects within the app using the same privileges as the
-    app or the setup script. Objects created in this mode are owned by the app.
+Show lessSee more
 
 ### About development mode
 
-When you create an app locally from an application package by
-[specifying a version](#label-native-apps-application-creating-version) or
-[application files on a named stage](#label-native-apps-application-creating-stage),
-the app is considered to be in development mode.
+An app is in development mode when you create it in the same account as its application package from
+[files on a named stage](#label-native-apps-application-creating-stage) or from a
+[version](#label-native-apps-application-creating-version). Use development mode to test the app as a
+consumer sees it: SHOW and DESC commands and queries reach only objects granted to an application role.
 
-Use development mode to test and troubleshoot an app within a single account.
-In development mode you can create and test an app based on a specific version of an
-application package. You can also create and test an app using application files on a stage.
-This enables you to quickly test changes to the setup script or application logic.
-
-Development mode provides an additional [debug mode](#label-native-apps-testing-debug-mode) that
-you can use to view and test all of the objects within an app that a consumer would not be able to view.
-
-In development mode, for example, running the SHOW or DESC commands on objects within the app will only
-display those objects that the consumer has been granted permissions to view. However, in debug mode, you
-can see all objects within the app.
+You can use development mode without enabling debug mode or session debug mode. You can enable either mode
+only for an app in development mode. Disabling [redaction](#label-native-apps-disable-application-redaction)
+also requires development mode.
 
 ### Check the mode of an app
 
@@ -310,29 +283,16 @@ To check the debug state from your own session:
 
 ### About debug mode
 
-In debug mode, you can view and modify all of the objects within an app. Objects that are not visible to a
-consumer, for example, objects not granted to an application role or shared content objects, are visible while in
-this mode.
+In debug mode, you can view and modify every object in the app, including objects that the setup script
+doesn’t grant to an application role. Debug mode is a property of the app, so it stays on in every session
+until you turn it off.
 
-Note
+Objects that you create in debug mode are owned by your current role, not by the app. To create objects
+owned by the app, use [session debug mode](#label-native-apps-session-debug-mode).
 
-When you create objects, such as a table, in debug mode, the object will not have the same ownership
-as the app. If you need to create new objects while testing an app, use
-[session debug mode](#label-native-apps-session-debug-mode).
-
-Testing an app in debug mode requires the following:
-
-- The app must be created in development mode, meaning it must be based on a specific version or
-  files on a stage.
-- You must explicitly enable debug mode on the app.
-
-Note
-
-Debug mode can only be toggled on and off for an app created in development mode within
-the same account containing the application package.
-
-To enable debug mode on an app, use the [ALTER APPLICATION](/sql-reference/sql/alter-application)
-command as shown in the following example:
+To turn debug mode on or off, you need the OWNERSHIP privilege on the app and the DEVELOP privilege on the
+application package. Use the
+[ALTER APPLICATION](/sql-reference/sql/alter-application) command:
 
 Copy code
 
@@ -340,24 +300,20 @@ Copy code
 ALTER APPLICATION hello_snowflake_app SET DEBUG_MODE = TRUE;
 ```
 
-This command turns on debug mode for an app named `hello_snowflake_app`.
-Similarly, to turn off debug mode, use the same command, as shown in the following example:
-
 Copy code
 
 ```
 ALTER APPLICATION hello_snowflake_app SET DEBUG_MODE = FALSE;
 ```
 
-This command turns off debug mode for the app named `hello_snowflake_app`.
+For an app that isn’t in development mode, the command fails with the following error:
 
-Note
+```
+093039 (0A000): DEBUG_MODE can only be set/unset if the application is created directly from a particular version or stage in the same account as the application package.
+```
 
-To run this command, you must have the OWNERSHIP privilege on the app.
-You must also have the DEVELOP privilege on the application package.
-
-Additionally, the app must be created in development mode and in the same account
-as the application package.
+CoCo prompt: “Turn on debug mode for hello\_snowflake\_app, list the objects that are visible only in debug
+mode, then turn debug mode off.”
 
 #### Find objects that aren’t granted to an application role
 
@@ -411,24 +367,17 @@ After the upgrade, roles granted `app_public` can see and query the table.
 
 ## Session debug mode
 
-Session debug mode allows providers to view and modify all of the objects within the app and
-execute statements using the same privileges that the app has when installed in the consumer account.
-Objects that are not visible to a consumer, for example, objects that are not granted to an application
-role, are also visible in session debug mode.
+Session debug mode runs your statements as the app, in the current session only. Use it to see every
+object that the app owns and to test what the app can do with its own privileges. Objects that you create in
+this mode are owned by the app. While session debug mode is on, `CURRENT_ROLE()` returns the name of the app.
 
-Unlike debug mode, session debug mode only applies to the current session to reduce security risks. You
-must [enable session debug mode](#label-native-apps-session-debug-mode-enable) for an app each time you
-start a new session. Session debug mode also differs from debug mode in that it allows you to test an app
-using the same privileges as the app or the setup script. To use these privileges, you can specify one of the
-following when enabling session debug mode. For more information, see [Enable session debug mode for an app](#label-native-apps-session-debug-mode-enable).
+When you [turn on session debug mode](#label-native-apps-session-debug-mode-enable), choose whose
+privileges your statements use:
 
-- `AS_APPLICATION`: all statements are executed using the same privileges as the app has when it is created
-  in the consumer account.
-- `AS_SETUP_SCRIPT`: all statements are executed using the same privileges as the setup script has when it is
-  run in the consumer account when an app is created or upgraded.
+- `AS_APPLICATION` (default): the privileges that the app has in a consumer account.
+- `AS_SETUP_SCRIPT`: the privileges that the setup script has when it runs during install or upgrade.
 
-When a provider creates objects, such as a table, using session debug mode, the object is created with
-the same privileges as the app.
+Session debug mode applies to one app at a time. End it before you start it for a different app.
 
 ### Privileges required to use session debug mode
 
@@ -440,16 +389,11 @@ Using session debug mode to view objects in an app has the following requirement
 - You must have the OWNERSHIP privilege on the app.
 - You must have the DEVELOP privilege on the application package.
 
-Note
-
-Enabling session debug mode applies only to the current session. For example, if you enable session
-debug mode in one worksheet tab, it is not active in another worksheet tab.
-
 ### Enable session debug mode for an app
 
-To enable session debug mode on an app in the current session, use the
-[SYSTEM$BEGIN\_DEBUG\_APPLICATION](/sql-reference/functions/system_begin_debug_application)
-system function as shown in the following example:
+To turn on session debug mode in the current session, call the
+[SYSTEM$BEGIN\_DEBUG\_APPLICATION](/sql-reference/functions/system_begin_debug_application) system function. The default execution mode is
+`AS_APPLICATION`:
 
 Copy code
 
@@ -457,26 +401,21 @@ Copy code
 SELECT SYSTEM$BEGIN_DEBUG_APPLICATION('hello_snowflake_app');
 ```
 
-This function enables session debug mode for the app named `hello_snowflake_app`.
-
-You can also enable session debugging by specifying the execution mode for the app
-as shown in the following example:
+To use the privileges of the setup script, pass the execution mode as the second argument:
 
 Copy code
 
 ```
-SYSTEM$BEGIN_DEBUG_APPLICATION( 'hello_snowflake_app', execution_mode ='AS_APPLICATION')
+SELECT SYSTEM$BEGIN_DEBUG_APPLICATION('hello_snowflake_app', 'AS_SETUP_SCRIPT');
 ```
 
-This function sets the execution mode of the `hello_snowflake_app` app to `AS_APPLICATION`.
-This mode executes all statements using the same privileges as the app has when created in the
-consumer account.
+CoCo prompt: “Start session debug mode for hello\_snowflake\_app as the setup script, show which objects the app
+owns, then end session debug mode.”
 
 ### View the session debug status for an app in the current session
 
-To view the session debug status in the current session, use the
-[SYSTEM$GET\_DEBUG\_STATUS](/sql-reference/functions/system_get_debug_status) system function, as
-shown in the following example:
+To check session debug mode in the current session, call the
+[SYSTEM$GET\_DEBUG\_STATUS](/sql-reference/functions/system_get_debug_status) system function:
 
 Copy code
 
@@ -484,11 +423,20 @@ Copy code
 SELECT SYSTEM$GET_DEBUG_STATUS();
 ```
 
+When session debug mode is on, the function returns the app and the execution mode:
+
+Copy code
+
+```
+{"instance_name":"HELLO_SNOWFLAKE_APP","domain":"APPLICATION_INSTANCE","execution_mode":"AS_SETUP_SCRIPT"}
+```
+
+When session debug mode is off, the function returns `{}`.
+
 ### Disable session debug mode for an app
 
-To disable session debug mode for an app in the current session, use the
-[SYSTEM$END\_DEBUG\_APPLICATION](/sql-reference/functions/system_end_debug_application) system
-function, as shown in the following example:
+To turn off session debug mode in the current session, call the
+[SYSTEM$END\_DEBUG\_APPLICATION](/sql-reference/functions/system_end_debug_application) system function:
 
 Copy code
 
@@ -506,13 +454,13 @@ profile and query history.
 
 Note
 
-When session debug mode is used, all objects and data within an app are visible to the provider, even if the information is
-redacted for the consumer. For example, information returned by the [SHOW APPLICATIONS](/sql-reference/sql/show-applications) and
+When session debug mode is used, objects and data that the app owns are visible to the provider, even if the
+information is redacted for the consumer. For example, information returned by the [SHOW APPLICATIONS](/sql-reference/sql/show-applications) and
 [DESCRIBE APPLICATION](/sql-reference/sql/desc-application) commands is not redacted when session debug mode is used.
 
-### Privileges required to disable redaction of provider data when testing an app
+### Requirements to disable redaction of provider data
 
-Disabling redaction of provider data for an app requires the following privileges:
+Disabling redaction of provider data for an app has the following requirements:
 
 - The app must be created in development mode, meaning it must be based on a specific version or files on a stage.
 - The app must be created within the same account containing the application package.

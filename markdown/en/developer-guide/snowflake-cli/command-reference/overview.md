@@ -3,6 +3,9 @@
 Snowflake CLI supports commands for the following objects and activities:
 
 - [snow](/developer-guide/snowflake-cli/command-reference/snow) command
+- AI commands
+
+  - [snow ai commands](/developer-guide/snowflake-cli/command-reference/ai-commands/overview)
 - Bootstrap commands
 
   - [snow bootstrap commands](/developer-guide/snowflake-cli/command-reference/bootstrap-commands/overview)

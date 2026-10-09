@@ -6,7 +6,8 @@ This tutorial covers how to create [Apache Iceberg™ tables](/user-guide/tables
 and support read and write operations. Iceberg tables for Snowflake combine the performance and query semantics
 of regular Snowflake tables with external cloud storage that you manage.
 
-Complete this tutorial using a worksheet in Snowsight or using a Snowflake client such as [SnowSQL](/user-guide/snowsql).
+Complete this tutorial using a worksheet in Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
+Snowflake CLI is an open-source command-line tool for running SQL and for developing, deploying, and managing Snowflake applications and workloads.
 You can copy and paste the code examples, and then run them.
 
 ### What you’ll learn

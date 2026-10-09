@@ -27,7 +27,7 @@ leverage the Query Acceleration Service (QAS) to improve your overall workload p
 
     - [MONITOR USAGE](/user-guide/security-access-control-configure#label-allow-other-users-to-monitor-usage-billing-history)
 - Intermediate knowledge of SQL.
-- [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or [SnowSQL (CLI client)](/user-guide/snowsql) for executing SQL commands.
+- [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or [Snowflake CLI](/developer-guide/snowflake-cli/index) for running SQL commands. Snowflake CLI is an open-source command-line tool for running SQL and for developing, deploying, and managing Snowflake applications and workloads.
 
 ### What You Will Learn
 
@@ -106,7 +106,7 @@ This tutorial needs two warehouses to execute the query: one with the query acce
 Executing the same query in new, separate warehouses will allow you to compare both performance and cost for the query acceleration
 service in this tutorial.
 
-To create the warehouses, connect to Snowflake and run the following command in Snowsight or using SnowSQL. Replace the
+To create the warehouses, connect to Snowflake and run the following command using Snowsight or Snowflake CLI. Replace the
 `warehouse_size` and `upper_limit_scale_factor` with the values selected in the previous step:
 
 Copy code

@@ -12,8 +12,8 @@ The Native Apps Framework allows consumers to perform the following:
 
 - Use the app by accessing data via Snowflake worksheets.
 - View Streamlit apps created by the provider.
-- [Give users a direct link](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-share-url) that opens an installed app on
-  its own, without the rest of Snowsight.
+- [Give users a direct link](/developer-guide/native-apps/ui-consumer-managing-applications#label-nativeapps-consumer-share-url) that opens a Streamlit app or
+  service endpoint in an installed app on its own, without the rest of Snowsight.
 - Grant privileges on the app object to users in your organization.
 - Associate references that allow access to object required by the app.
 - Share event and logging information with the provider.

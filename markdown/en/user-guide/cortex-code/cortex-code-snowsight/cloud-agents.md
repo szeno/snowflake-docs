@@ -10,7 +10,7 @@ Cloud Agents is available at no additional cost. Pricing may be introduced in a 
 
 ### Web search
 
-CoCo can search the web as part of answering your questions or completing tasks.
+CoCo can search the web as part of answering your questions or completing tasks. An `ACCOUNTADMIN` must [enable web search at the account level](/user-guide/snowflake-cortex/cortex-agents-manage#label-cortex-agents-web-search) before CoCo can use it. This setting also enables web search for Cortex Agents and Snowflake CoWork.
 
 To test: ask CoCo to “search the web for [topic]” and it will use a live web search as part of its response.
 
@@ -24,7 +24,7 @@ Full Python execution is available inside the container runtime. CoCo can run Py
 
 ## How to use it
 
-Open CoCo in Snowsight as you normally would. Each session runs in the Cloud Agents sandbox automatically, so shell commands, Python execution, and web search are available without additional configuration.
+Open CoCo in Snowsight as you normally would. Each session runs in the Cloud Agents sandbox automatically, so shell commands and Python execution are available without additional configuration. For web search setup, see [Web search](#label-cloud-agents-web-search).
 
 ## Security and isolation
 

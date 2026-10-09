@@ -117,7 +117,7 @@ You will need information about the repository (the repository URL and the regis
          to authenticate your local Docker instance with the image
          registry for your Snowflake account. Make sure that you configured Snowflake CLI to connect to Snowflake. For more information,
          see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
-      2. To authenticate, execute the following Snowflake CLI command:
+      2. To authenticate, run the following Snowflake CLI command:
 
          Copy code
 
@@ -142,21 +142,20 @@ You will need information about the repository (the repository URL and the regis
 
 ## 3: Stage the specification file
 
-- To upload your service specification file (`service_to_service_spec.yaml`) to the stage, use one of the following options:
+Upload `service_to_service_spec.yaml` to the stage using either of the following options:
 
-  - **The Snowsight web interface**. For instructions, see [Choosing an internal stage for local files](/user-guide/data-load-local-file-system-create-stage).
-  - **The SnowSQL CLI.** Execute the following [PUT](/sql-reference/sql/put) command:
+- **[Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in):** For instructions, see [Choosing an internal stage for local files](/user-guide/data-load-local-file-system-create-stage).
+- **[Snowflake CLI](/developer-guide/snowflake-cli/index):**
 
-    Copy code
+  Copy code
 
-    ```
-    PUT file://<absolute-path-to-spec.yaml> @tutorial_stage
-      AUTO_COMPRESS=FALSE
-      OVERWRITE=TRUE;
-    ```
+  ```
+  snow stage copy <path-to-service_to_service_spec.yaml> @tutorial_stage --overwrite
+  ```
 
-  The command sets OVERWRITE=TRUE so that you can upload the file again, if needed (for example, if you fixed an error in your
-  specification file). If the PUT command is executed successfully, information about the uploaded file is printed out.
+  Replace the placeholder with the path to your local specification file. The command does not compress the file by default, so it retains its `.yaml` name on the stage. The `--overwrite` option lets you upload a corrected version later.
+
+  After the command succeeds, Snowflake CLI displays the upload result.
 
 ## 4: Execute the job service
 

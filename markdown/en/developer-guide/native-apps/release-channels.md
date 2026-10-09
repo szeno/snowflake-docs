@@ -38,7 +38,7 @@ After release channels are enabled for an application package, they cannot be di
 By default, only the DEFAULT release channel is available to all consumers and enables them to install
 an app from a listing to which they have access.
 
-To use the QA and ALPHA release channels providers must explicitly enable them on the application package for
+To use the QA and ALPHA release channels, providers must explicitly enable them on the application package for
 specific accounts. For these channels, the application package maintains a list of accounts that have been
 added to each channel.
 
@@ -76,8 +76,8 @@ Note
 
 Apps installed from the QA or ALPHA release channels are meant for testing. Only apps installed from the DEFAULT release channel are meant for production. For limited trial and paid (with trial) listings, the following limitations apply:
 
-- **For an app installed from a listing using the QA or ALPHA release channels**: These apps are free, and will be disabled after the trial period ends. If these apps are installed from a paid listing, they will still be available to the consumer after the trial period ends. If the provider would like to revoke access to these apps after the trial period ends, they can do so by removing the consumer from the active targets of the release channel.
-- **For an app installed from a listing using the DEFAULT release channel**: These apps are disabled after the trial period ends. If the consumer wants to continue using the app, they must accept an offer, and select the app from the default release channel.
+- **For an app installed from a listing using the QA or ALPHA release channels**: These apps are free and will be disabled after the trial period ends. If these apps are installed from a paid listing, they will still be available to the consumer after the trial period ends. If the provider would like to revoke access to these apps after the trial period ends, they can do so by removing the consumer from the active targets of the release channel.
+- **For an app installed from a listing using the DEFAULT release channel**: These apps are disabled after the trial period ends. If the consumer wants to continue using the app, they must accept an offer and select the app from the DEFAULT release channel.
 
 ## Monitoring release channels
 
@@ -108,13 +108,13 @@ the SNOWFLAKE.DATA\_SHARING\_USAGE.APPLICATION\_STATE view.
 
 ## Manage versions and patches using release channels
 
-Providers must add a version or patch to a specific release channel before they can be used by release directives
+Providers must add a version or patch to a specific release channel before it can be used by release directives
 inside a release channel. After a version has been added to a release channel, subsequent patches for that version are also
-bound to that release channel to be used.
+bound to that release channel.
 
 Note
 
-The `ADD VERSION USING ‘@stage/path’` clause of the [ALTER APPLICATION PACKAGE](/sql-reference/sql/alter-application-package) command is not supported for application packages that have release
+The `ADD VERSION USING '@stage/path'` clause of the [ALTER APPLICATION PACKAGE](/sql-reference/sql/alter-application-package) command is not supported for application packages that have release
 channels enabled. Providers must register and deregister a version in the application package.
 
 ### Register a version
@@ -224,10 +224,11 @@ or on-demand refresh. For more information, see [ALTER APPLICATION PACKAGE](/sql
 
 ## Enable multiple instances using release channels
 
-You can allow consumers to create multiple instances of an app in their account. Providers can
-also create multiple instances of an app in their test account.
+You can allow consumers to create multiple instances of an app in their account by setting the
+package’s MULTIPLE\_INSTANCES property. Note, this property only applies to apps installed from a
+listing.
 
-To enable multiple instances use the MULTIPLE\_INSTANCES property of the application package as shown in the
+To enable multiple instances, use the MULTIPLE\_INSTANCES property of the application package as shown in the
 following commands:
 
 Copy code
@@ -244,7 +245,7 @@ package.
 
 Note
 
-A consumer can have multiple instances of an app using the QA or ALPHA release channels. If your app package is deployed to a paid listing, a consumer can only have one instance of an app using the DEFAULT release channel. Consumers can still install multiple app instances using the DEFAULT release channel from app packages in a free listing.
+A consumer can have multiple instances of an app using the QA or ALPHA release channels. If the app package is deployed to a paid listing, a consumer can only have one instance of an app using the DEFAULT release channel. Consumers can still install multiple app instances using the DEFAULT release channel from app packages in a free listing.
 
 ## Monetization and release channels
 
@@ -275,7 +276,7 @@ CREATE APPLICATION my_app
 
 If you do not explicitly use the `USING RELEASE CHANNEL` clause, the DEFAULT release channel is used.
 
-- To install an app in another account from a listing, run the following command:
+To install an app in another account from a listing, run the following command:
 
 Copy code
 

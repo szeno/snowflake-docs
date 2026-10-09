@@ -255,8 +255,7 @@ CoCo saves your effort level for each chat, along with the selected model. You c
 
 ## Web search
 
-An ACCOUNTADMIN role can configure CoCo to search the web, and use the results in generating responses and
-planning tasks. To properly enable web search in an account, follow these steps:
+An `ACCOUNTADMIN` must enable web search at the account level before CoCo can use it. This setting also enables web search for Cortex Agents and Snowflake CoWork. To enable it:
 
 1. Navigate to **AI/ML > Agents**.
 2. Select **Settings**.

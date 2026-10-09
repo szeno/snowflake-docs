@@ -12,7 +12,7 @@ In this tutorial, you will learn how to:
 - Load your data into tables.
 - Resolve errors in your data files.
 
-The tutorial covers how to load both CSV and JSON data using SnowSQL.
+The tutorial covers how to load both CSV and JSON data using Snowflake CLI.
 
 ## Prerequisites
 
@@ -20,7 +20,7 @@ The tutorial assumes the following:
 
 - You have a Snowflake account and a user with a role that grants the necessary
   privileges to create a database, tables, and virtual warehouse objects.
-- You have SnowSQL installed.
+- You have [Snowflake CLI](/developer-guide/snowflake-cli/index) installed.
 
 The [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes) tutorial provides the related step-by-step instructions to meet these requirements.
 
@@ -43,7 +43,7 @@ To download and unzip the sample data files:
    to the following directories:
 
 > - Linux/macOS: `/tmp/load`
-> - Windows: `C:\tempload`
+> - Windows: `C:\temp\load`
 
 These data files include sample contact data in the following formats:
 
@@ -80,9 +80,23 @@ These data files include sample contact data in the following formats:
   ]
   ```
 
+### Open one Snowflake CLI session
+
+Start an interactive [Snowflake CLI](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode) session and run every SQL statement in this tutorial at that prompt. Keep the session open until you finish the tutorial, including the clean-up commands. The temporary tables in this tutorial last only for this session, and the `USE` statements apply only here.
+
+Copy code
+
+```
+snow sql
+```
+
+End each SQL statement with a semicolon (`;`). To leave the session after the tutorial, enter `exit`.
+
+File uploads later in this tutorial use [`snow stage copy`](/developer-guide/snowflake-cli/command-reference/stage-commands/copy) in a second terminal. Leave this `snow sql` session running while you upload. The named stages are stored in `mydatabase`, so the upload command can write to them. When the upload finishes, return to this same session for the next SQL statement.
+
 ### Create the database, tables, and warehouse
 
-Execute the following statements to create a database, two tables
+In the `snow sql` session, execute the following statements to create a database, two tables
 (for csv and json data), and a virtual warehouse needed for this tutorial.
 After you complete the tutorial, you can drop these objects.
 
@@ -92,6 +106,20 @@ After you complete the tutorial, you can drop these objects.
 > -- Create a database. A database automatically includes a schema named 'public'.
 >
 > CREATE OR REPLACE DATABASE mydatabase;
+>
+> -- Create a warehouse
+>
+> CREATE OR REPLACE WAREHOUSE mywarehouse WITH
+>   WAREHOUSE_SIZE='X-SMALL'
+>   AUTO_SUSPEND = 120
+>   AUTO_RESUME = TRUE
+>   INITIALLY_SUSPENDED=TRUE;
+>
+> -- Set the database, schema, and warehouse for the rest of this session.
+>
+> USE DATABASE mydatabase;
+> USE SCHEMA public;
+> USE WAREHOUSE mywarehouse;
 >
 > /* Create target tables for CSV and JSON data. The tables are temporary, meaning they persist only for the duration of the user session and are not visible to other users. */
 >
@@ -109,19 +137,13 @@ After you complete the tutorial, you can drop these objects.
 >
 > CREATE OR REPLACE TEMPORARY TABLE myjsontable (
 >   json_data VARIANT);
->
-> -- Create a warehouse
->
-> CREATE OR REPLACE WAREHOUSE mywarehouse WITH
->   WAREHOUSE_SIZE='X-SMALL'
->   AUTO_SUSPEND = 120
->   AUTO_RESUME = TRUE
->   INITIALLY_SUSPENDED=TRUE;
 > ```
 
 The `CREATE WAREHOUSE` statement sets up the warehouse to be suspended initially.
 The statement also sets `AUTO_RESUME = true`, which starts the warehouse automatically
 when you execute SQL statements that require compute resources.
+The `USE` statements set the database, schema, and warehouse for the rest of this session.
+Later SQL in this tutorial uses unqualified object names, so run those statements here.
 
 ## Create file format objects
 
@@ -220,35 +242,41 @@ CREATE OR REPLACE STAGE my_json_stage
 
 ## Stage the data files
 
-Execute [PUT](/sql-reference/sql/put) to upload (stage) sample data files from your local
-file system to the stages you created in [Tutorial: Bulk loading from a local file system using COPY](/user-guide/tutorials/data-load-internal-tutorial).
+Upload the sample data files from your local file system to the stages you created
+earlier in this tutorial. In a second terminal, run
+[`snow stage copy`](/developer-guide/snowflake-cli/command-reference/stage-commands/copy).
+Leave the `snow sql` session open.
+
+`snow stage copy` gzips files only when you pass `--auto-compress`. The COPY INTO steps
+later in this tutorial load the `.gz` file names that gzip produces, so include that option.
+Quote the local path so the shell passes the `*` glob to the command.
 
 ### Staging the CSV sample data files
 
-Execute the PUT command to upload the CSV files from your local file system.
+Upload the CSV files from your local file system.
 
 - Linux or macOS
 
   Copy code
 
   ```
-  PUT file:///tmp/load/contacts*.csv @my_csv_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "/tmp/load/contacts*.csv" @mydatabase.public.my_csv_stage --auto-compress
   ```
 - Windows
 
   Copy code
 
   ```
-  PUT file://C:\temp\load\contacts*.csv @my_csv_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "C:\temp\load\contacts*.csv" @mydatabase.public.my_csv_stage --auto-compress
   ```
 
 Let us take a closer look at the command:
 
-- `file://<file-path>[/]contacts*.csv` specifies the full directory path and names of the files on your local machine to stage. Note that file system wildcards are allowed.
-- `@my_csv_stage` is the stage name where to stage the data.
-- `auto_compress=true;` directs the command to compress the data when staging. This is also the default.
+- `"/tmp/load/contacts*.csv"` (or the Windows path) specifies the full directory path and names of the files on your local machine. Quote the path because it contains a wildcard.
+- `@mydatabase.public.my_csv_stage` is the fully qualified stage. The upload runs outside the `snow sql` session, so the stage name includes the database and schema.
+- `--auto-compress` gzips each file during the upload. The command leaves files uncompressed unless you set this option.
 
-The command returns the following result, showing the staged files:
+The command reports the staged files. With `--auto-compress`, the target names end in `.gz`, as in this result:
 
 ```
 +---------------+------------------+-------------+-------------+--------------------+--------------------+----------+---------+
@@ -264,24 +292,24 @@ The command returns the following result, showing the staged files:
 
 ### Stage the JSON sample data files
 
-Execute the PUT command to upload the JSON file from your local file system to the named stage.
+Upload the JSON file from your local file system to the named stage. Use the same second terminal, and leave the `snow sql` session open.
 
 - Linux or macOS
 
   Copy code
 
   ```
-  PUT file:///tmp/load/contacts.json @my_json_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "/tmp/load/contacts.json" @mydatabase.public.my_json_stage --auto-compress
   ```
 - Windows
 
   Copy code
 
   ```
-  PUT file://C:\temp\load\contacts.json @my_json_stage AUTO_COMPRESS=TRUE;
+  snow stage copy "C:\temp\load\contacts.json" @mydatabase.public.my_json_stage --auto-compress
   ```
 
-The command returns the following result, showing the staged files:
+The command reports the staged files. With `--auto-compress`, the target names end in `.gz`, as in this result:
 
 ```
 +---------------+------------------+-------------+-------------+--------------------+--------------------+----------+---------+
@@ -393,7 +421,25 @@ To load the data from the sample CSV files:
      The next step in this tutorial addresses how to validate and fix
      the errors.
 
+   Before you run another statement, record the query ID of this `COPY INTO`. Run the following statement next and copy the query ID from the result:
+
+   Copy code
+
+   ```
+   SELECT LAST_QUERY_ID();
+   ```
+
+   At the `snow sql` prompt, you can also list COPY query IDs from this session. `!` commands do not end with a semicolon:
+
+   Copy code
+
+   ```
+   !queries amount=5 type=COPY session
+   ```
+
 ### JSON
+
+Copy the query ID from the CSV `COPY INTO` before you run this step. After this statement, `LAST_QUERY_ID()` returns this JSON load.
 
 Load the `contacts.json.gz` staged data file into the `myjsontable` table.
 
@@ -419,30 +465,28 @@ and related information:
 
 ## Resolve data load errors
 
-In the preceding step, the COPY INTO command skipped loading one of the files when
+In the CSV load, the COPY INTO command skipped one file when
 it encountered the first error. You need to find all the errors and fix them.
 In this step, you use the [VALIDATE](/sql-reference/functions/validate) function
 to validate the previous execution of the COPY INTO command and returns all errors.
 
 ### Validate the sample data files and retrieve any errors
 
-You first need the query ID associated with the COPY INTO command
-that you previously executed. You then call the `VALIDATE` function,
-specifying the query ID.
+You need the query ID of the COPY INTO command that skipped `contacts3.csv.gz`.
+Use the query ID you copied with `LAST_QUERY_ID()` after that statement.
+Stay in the same `snow sql` session, then call the `VALIDATE` function with that query ID.
 
-1. Retrieve the query ID.
+1. If you still need the query ID, list COPY queries from this session at the `snow sql` prompt. `!` commands do not end with a semicolon. Copy the query ID for the earlier `COPY INTO mycsvtable` that reported a load error for `contacts3.csv.gz`. Skip the later `COPY INTO` that loaded `contacts.json.gz`.
 
-   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-   2. Make sure the role in Snowsight is the same as the role you are using
-      in SnowSQL to run SQL statements for this tutorial.
-   3. In the navigation menu, select **Monitoring** » **Query History**.
-   4. Select the row for the specific COPY INTO command to open the query
-      information pane.
-   5. Copy the **Query ID** value.
+   Copy code
+
+   ```
+   !queries amount=5 type=COPY session
+   ```
 2. Validate the COPY INTO command execution, represented by the query ID,
    and save errors to a new table named `save_copy_errors`.
 
-   1. In SnowSQL, execute the following command. Replace `query_id` with the **Query ID** value.
+   1. In the same `snow sql` session, run the following command. Replace `query_id` with the query ID you copied.
 
       Copy code
 
@@ -484,21 +528,21 @@ The result shows two data errors in `mycsvtable/contacts3.csv.gz`:
 ### Fix the errors and load the data files again
 
 1. Fix the errors in the records manually in the `contacts3.csv` file in your local environment.
-2. Use the [PUT](/sql-reference/sql/put) command to upload the modified data file to the stage. The modified file overwrites the existing staged file.
+2. Upload the modified data file with `snow stage copy` in the second terminal. `--overwrite` replaces the existing staged file. Leave the `snow sql` session open, then return to it for the next `COPY INTO` statement.
 
    - Linux or macOS:
 
      Copy code
 
      ```
-     PUT file:///tmp/load/contacts3.csv @my_csv_stage AUTO_COMPRESS=TRUE OVERWRITE=TRUE;
+     snow stage copy "/tmp/load/contacts3.csv" @mydatabase.public.my_csv_stage --auto-compress --overwrite
      ```
    - Windows:
 
      Copy code
 
      ```
-     PUT file://C:\temp\load\contacts3.csv @my_csv_stage AUTO_COMPRESS=TRUE OVERWRITE=TRUE;
+     snow stage copy "C:\temp\load\contacts3.csv" @mydatabase.public.my_csv_stage --auto-compress --overwrite
      ```
 3. Copy the data from the staged files into the tables.
 

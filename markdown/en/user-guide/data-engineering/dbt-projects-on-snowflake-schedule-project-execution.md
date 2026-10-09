@@ -17,7 +17,7 @@ When you create a schedule from within a workspace, Snowflake creates a user-man
 
 **To create a task that schedules execution of a dbt project object from within a workspace:**
 
-1. From the dbt project menu on the right side of the project pane, under **Scheduled runs**, choose **Create schedule**.
+1. Select the calendar icon next to the dbt project menu, and then select **+ Create new**.
 2. In the **Schedule a dbt run** dialog box, do the following:
 
    - For **Schedule name**, enter a name for the task.
@@ -36,8 +36,8 @@ From within a workspace, you can view all tasks in the database and schema that 
 
 **To view tasks associated with a dbt project object from within a workspace:**
 
-- From the dbt project menu, select **View schedules** and then choose your schedule (task) from the list.
-  The **Task Details** for the task opens in the object explorer. Task details, the SQL statement that comprises the task definition, and the privileges granted on the task object are shown.
+- Select the calendar icon next to the dbt project menu. Select the **…** menu for your schedule (task), and then select **View**.
+  The task details page opens. Task details, the SQL statement that comprises the task definition, and the privileges granted on the task object are shown.
 
   Choose the **Run History** tab to view the task run history, or choose the **Task Graph** tab to view the relationship of this task to other tasks in a [task graph](/user-guide/tasks-graphs), if applicable.
 

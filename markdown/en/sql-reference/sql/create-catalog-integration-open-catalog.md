@@ -31,6 +31,7 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [ IF NOT EXISTS ]
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ]
     [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]
     OAUTH_CLIENT_ID = '<oauth_client_id>'
     OAUTH_CLIENT_SECRET = '<oauth_secret>'
@@ -62,6 +63,7 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [ IF NOT EXISTS ]
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ]
     OAUTH_CLIENT_ID = '<oauth_client_id>'
     OAUTH_CLIENT_SECRET = '<oauth_secret>'
     OAUTH_ALLOWED_SCOPES = ('<scope 1>', '<scope 2>')
@@ -148,6 +150,12 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [ IF NOT EXISTS ]
 
     `TYPE = OAUTH`
     :   Specifies OAuth as the authentication type to use.
+
+    `OAUTH_API_TYPE = { PUBLIC | PRIVATE }`
+    :   Specifies whether Snowflake reaches the OAuth token endpoint through a public endpoint or a private endpoint.
+
+        - `PUBLIC`: the OAuth token endpoint is a public endpoint.
+        - `PRIVATE`: the OAuth token endpoint is a private endpoint.
 
     `OAUTH_TOKEN_URI = token_server_uri`
     :   Optional URL for your third-party identity provider. To configure a third-party identity provider, see [External OAuth](https://other-docs.snowflake.com/en/opencatalog/oauth-ext-overview)
@@ -286,6 +294,7 @@ CREATE OR REPLACE CATALOG INTEGRATION open_catalog_int
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    OAUTH_API_TYPE = PUBLIC
     OAUTH_CLIENT_ID = 'my_client_id'
     OAUTH_CLIENT_SECRET = 'my_client_secret'
     OAUTH_ALLOWED_SCOPES = ('PRINCIPAL_ROLE:ALL')
@@ -309,6 +318,7 @@ CREATE OR REPLACE CATALOG INTEGRATION open_catalog_int2
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    OAUTH_API_TYPE = PUBLIC
     OAUTH_CLIENT_ID = 'my_client_id'
     OAUTH_CLIENT_SECRET = 'my_client_secret'
     OAUTH_ALLOWED_SCOPES = ('PRINCIPAL_ROLE:my-principal-role', 'PRINCIPAL_ROLE:my-principal-role2', 'PRINCIPAL_ROLE:my-principal-role3')

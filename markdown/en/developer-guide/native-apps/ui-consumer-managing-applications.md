@@ -62,9 +62,14 @@ the rest of Snowsight, such as worksheets, the catalog, or navigation. Unlike
 in your account.
 
 Each person who opens the link must be a Snowflake user in your account and must have a role with
-access to the app. The link doesn’t grant access on its own. The app opens with the recipient’s
-default role and default secondary roles, so one of those roles must have access to the app.
-Recipients don’t need to use Snowsight.
+access to the app. The link doesn’t grant access on its own. The role doesn’t need to be the
+recipient’s default role. A user without access sees an **App not found** page. Recipients don’t
+need to use Snowsight.
+
+For a Streamlit app, if the app doesn’t set a warehouse, each recipient also needs a default
+warehouse. Set the `DEFAULT_WAREHOUSE` user property, and make sure that one of the user’s roles has
+the USAGE privilege on that warehouse. Otherwise, the app fails to load with the error
+“No active warehouse found in the session”.
 
 To get the link:
 
@@ -80,10 +85,12 @@ The **Share** button appears only for apps that have a Streamlit app or a servic
 to. For a Streamlit app, the link is an app-viewer URL. For a service, the link is the URL of the
 service endpoint.
 
-You can also configure the following account settings:
+You can also configure the following settings:
 
 - To give a user access to Streamlit apps only, with no access to SQL or Snowsight, set
   the `ALLOWED_INTERFACES` user property to `STREAMLIT`. See [Limit a user’s access to only Streamlit in Snowflake](/developer-guide/streamlit/object-management/security#label-limit-access-streamlit-only).
+  A user restricted to `STREAMLIT` can’t open a link to a service endpoint. There’s no setting that
+  restricts a user to service endpoints only.
 - To sign users in through your organization’s identity provider (IdP) without showing the
   Snowflake sign-in page, set the `STREAMLIT` key of the `LOGIN_IDP_REDIRECT` account property. For
   a service endpoint, set the `SPCS` key. See [Automatically redirecting users to your identity provider](/user-guide/admin-security-fed-auth-idp-redirect).

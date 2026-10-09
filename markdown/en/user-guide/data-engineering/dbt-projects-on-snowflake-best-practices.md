@@ -77,7 +77,7 @@ For more details about costs, see [Understanding costs for dbt Projects on Snowf
 
 ## Choosing a dbt version
 
-Snowflake supports both dbt Core (Python-based, versions 1.x) and dbt Fusion (Rust-based, versions 2.x). For most teams, start with the latest supported dbt Core version in dbt Projects on Snowflake (1.11.x). It has the broadest Snowflake materialization and dbt package support.
+Snowflake supports both dbt Core (Python-based, versions 1.x) and dbt Fusion (Rust-based, versions 2.x). For most teams, start with the latest supported dbt Core version in dbt Projects on Snowflake (1.12.x). It has the broadest Snowflake materialization and dbt package support.
 
 If your project becomes very large (more than 5,000 models) or your team wants to future-proof for performance improvements, consider moving to dbt Fusion. Keep in mind:
 

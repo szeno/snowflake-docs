@@ -14,7 +14,7 @@ Enables [session debug mode](/developer-guide/native-apps/installing-testing-app
 Copy code
 
 ```
-SYSTEM$BEGIN_DEBUG_APPLICATION( '<app_name>' [ , <execution_mode>] )
+SYSTEM$BEGIN_DEBUG_APPLICATION( '<app_name>' [ , '<execution_mode>' ] )
 ```
 
 ## Arguments
@@ -22,7 +22,7 @@ SYSTEM$BEGIN_DEBUG_APPLICATION( '<app_name>' [ , <execution_mode>] )
 `'app_name'`
 :   The name of the app on which session debug mode is being enabled.
 
-`{execution_mode = }`
+`'execution_mode'`
 :   The behavior of commands run during session debug mode. Possible values are:
 
     - `'AS_APPLICATION'` (DEFAULT)
@@ -34,6 +34,8 @@ SYSTEM$BEGIN_DEBUG_APPLICATION( '<app_name>' [ , <execution_mode>] )
       All statements are executed using the same privileges as the setup script of the app. This
       allows providers to test the setup script using session debug mode.
 
+    This function doesn’t support named arguments.
+
 ## Usage notes
 
 - Providers can use this function to enable session debug mode on an app created using development mode.
@@ -41,18 +43,18 @@ SYSTEM$BEGIN_DEBUG_APPLICATION( '<app_name>' [ , <execution_mode>] )
 
 ## Examples
 
-The following example shows how to set the execution mode to `AS_APPLICATION`:
+The following example sets the execution mode to `AS_APPLICATION`:
 
 Copy code
 
 ```
-SELECT SYSTEM$BEGIN_DEBUG_APPLICATION( 'hello_snowflake_app', execution_mode ='AS_APPLICATION')
+SELECT SYSTEM$BEGIN_DEBUG_APPLICATION('hello_snowflake_app', 'AS_APPLICATION');
 ```
 
-The following example show how to set the execution mode to *AS\_SETUP\_SCRIPT*:
+The following example sets the execution mode to `AS_SETUP_SCRIPT`:
 
 Copy code
 
 ```
-SELECT SYSTEM$BEGIN_DEBUG_APPLICATION( 'hello_snowflake_app', execution_mode = 'AS_SETUP_SCRIPT')
+SELECT SYSTEM$BEGIN_DEBUG_APPLICATION('hello_snowflake_app', 'AS_SETUP_SCRIPT');
 ```

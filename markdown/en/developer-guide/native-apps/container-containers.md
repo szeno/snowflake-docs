@@ -113,8 +113,9 @@ name in the provider account.
 
 ## Use a specification template
 
-Providers can also use a [specification template](/developer-guide/snowpark-container-services/working-with-services#label-spcs-working-with-services-using-specification-templates)
-by adding a reference to a template in the service specification file:
+Providers can also use a [specification template](/developer-guide/snowpark-container-services/working-with-services#label-spcs-working-with-services-using-specification-templates).
+In a specification template, use the `{{ variable_name }}` syntax for field values that you want to set when the app
+creates the service. For example, the following template uses a variable named `container_name` for the container name:
 
 Copy code
 
@@ -122,7 +123,7 @@ Copy code
 spec:
   containers:
   - image: /provider_db/provider_schema/provider_repo/server:prod
-    name: my_app_container
+    name: {{ container_name }}
   endpoints:
   - name: invoke
     port: 8000
@@ -131,5 +132,20 @@ spec:
     public: true
 ```
 
-See [Create a service with a specification template](/developer-guide/native-apps/container-services#label-native-apps-container-service-create-template) for an example of creating a service in an app using a
+Save this template as `containers/service1_spec.yaml`, relative to the app root directory. When the app creates the
+service, the `USING` clause of the [CREATE SERVICE](/sql-reference/sql/create-service) command sets the value of each variable:
+
+Copy code
+
+```
+CREATE SERVICE IF NOT EXISTS app_service
+  IN COMPUTE POOL app_compute_pool
+  FROM SPECIFICATION_TEMPLATE_FILE = '/containers/service1_spec.yaml'
+  USING (container_name => 'main');
+```
+
+In this example, the `USING` clause sets `container_name` to `main`, which becomes the container name in the service
+specification.
+
+See [Create a service with a specification template](/developer-guide/native-apps/container-services#label-native-apps-container-service-create-template) for more information about creating a service in an app using a
 specification template.

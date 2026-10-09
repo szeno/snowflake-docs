@@ -50,6 +50,10 @@ DROP APPLICATION [ IF EXISTS ] <name> [ CASCADE ]
 - All app roles are dropped when the application object is dropped. Any access granted
   by those roles on objects in the consumer account is lost.
 - UNDROP is not supported for APPLICATION objects. Once dropped, an application cannot be recovered.
+- If the role that owns the app is dropped (using [DROP ROLE](/sql-reference/sql/drop-role)), the app
+  becomes non-functional even though ownership transfers to the role that executed the DROP ROLE
+  command. The app cannot be recovered and must be reinstalled. To avoid this, transfer ownership
+  of the app before dropping the owner role.
 
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully
   without returning an error.

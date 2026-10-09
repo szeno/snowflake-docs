@@ -43,6 +43,11 @@ DROP ROLE [ IF EXISTS ] <name>
   For more information, see [Active roles](/user-guide/security-access-control-overview#label-access-control-overview-active-roles) and [Authorization through primary role and secondary roles](/user-guide/security-access-control-overview#label-access-control-role-enforcement).
 - A role cannot be dropped if it has the OWNERSHIP privilege on a shared database. Use the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to transfer the
   OWNERSHIP privilege on the shared database first, and then drop the role.
+- Do not drop a role that owns an installed Native App (APPLICATION object). Although ownership
+  transfers to the role executing the DROP ROLE command, the app becomes non-functional and cannot
+  be recovered. You must drop the broken app and reinstall it. To safely remove a role that owns an
+  app, first transfer ownership of the app using
+  [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership), then drop the role.
 - Ownership of any objects owned by the dropped role is transferred to the role that executes the DROP ROLE command. To transfer
   ownership of each of these objects to a different role, use
   [GRANT OWNERSHIP … COPY CURRENT GRANTS](/sql-reference/sql/grant-ownership).

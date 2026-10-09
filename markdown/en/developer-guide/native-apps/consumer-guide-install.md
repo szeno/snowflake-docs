@@ -29,6 +29,13 @@ details.
 
 ## Installation overview
 
+Note
+
+All human users in your account must have
+[multi-factor authentication (MFA)](/user-guide/security-mfa) enrolled. This is a Snowflake-wide
+requirement, not specific to Native Apps. Verify that account administrators have enforced MFA
+enrollment before proceeding with installation.
+
 Installing a Snowflake Native App creates an APPLICATION object in your account and runs the app’s setup
 script, which creates the objects the app needs inside its boundary. The app is not fully
 operational at this point: you will need to approve any App Specs and configure the explicit data
@@ -45,6 +52,14 @@ At installation time, the app presents:
 Review these before clicking through. If something in the list is unexpected (a privilege or App
 Spec you were not told about during procurement), pause and ask the provider to clarify before
 proceeding.
+
+Caution
+
+The role you use to install a Snowflake Native App becomes the owner of the APPLICATION object. Do not
+drop this role. If the owner role is dropped, the app becomes non-functional and cannot be
+recovered — you must drop the broken app and reinstall it. If you need to change the owner, use
+[GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) to transfer ownership to a different role before dropping
+the original role.
 
 ## Apps with containers (SPCS)
 

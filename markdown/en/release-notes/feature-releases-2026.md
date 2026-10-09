@@ -7,6 +7,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
 - [Oct 7, 2026: Snowflake Decision with AI\_COMPLETE (Private Preview)](/release-notes/2026/other/2026-10-07-ai-complete-snowflake-decision-preview)
+- [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)
 - [Oct 7, 2026: Zero-copy integration for Workday Data Cloud (General availability)](/release-notes/2026/other/2026-10-07-workday-data-cloud-zerocopy-ga)
 - [Oct 06, 2026: Kimi K3 model (Preview)](/release-notes/2026/other/2026-10-06-kimi-k3-preview)
 - [Oct 6, 2026: Data lineage for storage integrations, external tables, model monitors, and Cortex Search services](/release-notes/2026/other/2026-10-06-lineage-integrations-monitors-search)

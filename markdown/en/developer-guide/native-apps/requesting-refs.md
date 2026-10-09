@@ -179,7 +179,7 @@ shown in [Define a reference in the manifest file](#label-native-apps-reference-
 Copy code
 
 ```
-CREATE OR REPLACE CONFIG.GET_CONFIGURATION_FOR_REFERENCE(ref_name STRING)
+CREATE OR REPLACE PROCEDURE CONFIG.GET_CONFIGURATION_FOR_REFERENCE(ref_name STRING)
   RETURNS STRING
   LANGUAGE SQL
   AS

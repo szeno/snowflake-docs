@@ -57,6 +57,7 @@ Copy code
 restAuthenticationParams (for OAuth) ::=
 
   TYPE = OAUTH
+  [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ]
   [ OAUTH_TOKEN_URI = 'https://<token_server_uri>' ]
   OAUTH_CLIENT_ID = '<oauth_client_id>'
   OAUTH_CLIENT_SECRET = '<oauth_client_secret>'
@@ -201,6 +202,12 @@ restAuthenticationParams (for SigV4) ::=
 > `TYPE = OAUTH`
 > :   Specifies OAuth as the authentication type for Snowflake to use to connect to your Iceberg REST catalog.
 >
+> `OAUTH_API_TYPE = { PUBLIC | PRIVATE }`
+> :   Specifies whether Snowflake reaches the OAuth token endpoint through a public endpoint or a private endpoint.
+>
+>     - `PUBLIC`: the OAuth token endpoint is a public endpoint.
+>     - `PRIVATE`: the OAuth token endpoint is a private endpoint.
+>
 > `OAUTH_TOKEN_URI = token_server_uri`
 > :   Optional URL for your third-party identity provider. If not specified, Snowflake assumes that the remote catalog provider is the OAuth identity provider.
 >
@@ -320,6 +327,7 @@ CREATE OR REPLACE CATALOG INTEGRATION tabular_catalog_int
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    OAUTH_API_TYPE = PUBLIC
     OAUTH_TOKEN_URI = 'https://api.tabular.io/ws/v1/oauth/tokens'
     OAUTH_CLIENT_ID = '<oauth_client_id>'
     OAUTH_CLIENT_SECRET = '<oauth_client_secret>'

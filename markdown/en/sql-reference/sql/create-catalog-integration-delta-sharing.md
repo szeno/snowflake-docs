@@ -62,6 +62,7 @@ Copy code
 restAuthenticationParams (for OAuth) ::=
 
   TYPE = OAUTH
+  [ OAUTH_API_TYPE = { PUBLIC | PRIVATE } ]
   OAUTH_CLIENT_ID = '<oauth_client_id>'
   OAUTH_CLIENT_SECRET = '<oauth_client_secret>'
   OAUTH_TOKEN_URI = 'https://<token_server_uri>'
@@ -159,6 +160,12 @@ Delta Sharing catalog integrations support bearer-token, OIDC federation, or OAu
 
 > `TYPE = OAUTH`
 > :   Specifies OAuth client-credentials as the authentication type. Snowflake exchanges the client ID and secret with the configured token endpoint for an access token, then uses that token to authenticate to the Delta Sharing server.
+>
+> `OAUTH_API_TYPE = { PUBLIC | PRIVATE }`
+> :   Specifies whether Snowflake reaches the OAuth token endpoint through a public endpoint or a private endpoint.
+>
+>     - `PUBLIC`: the OAuth token endpoint is a public endpoint.
+>     - `PRIVATE`: the OAuth token endpoint is a private endpoint.
 >
 > `OAUTH_CLIENT_ID = 'oauth_client_id'`
 > :   Your OAuth2 client ID, as issued by the Delta Sharing provider’s identity provider.
@@ -281,6 +288,7 @@ CREATE OR REPLACE CATALOG INTEGRATION my_delta_sharing_int_oauth
   )
   REST_AUTHENTICATION = (
     TYPE = OAUTH
+    OAUTH_API_TYPE = PUBLIC
     OAUTH_CLIENT_ID = '<oauth_client_id>'
     OAUTH_CLIENT_SECRET = '<oauth_client_secret>'
     OAUTH_TOKEN_URI = 'https://<token_server_uri>'

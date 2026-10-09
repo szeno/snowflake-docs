@@ -28,7 +28,7 @@ The DBT\_VERSION parameter implicitly defines the execution engine based on the 
 | User Input (DBT\_VERSION) | Condition | Resulting Engine |
 | --- | --- | --- |
 | `'1.x'` (for example, `1.9.4`) | Version `< 2.0` | dbt Core (Python-based) |
-| `'2.x'` (for example, `2.0.0-preview.175`) | Version `>= 2.0` | dbt Fusion (Rust-based) |
+| `'2.x'` (for example, `2.0.0`) | Version `>= 2.0` | dbt Fusion (Rust-based) |
 
 Expand
 
@@ -46,7 +46,7 @@ SELECT SYSTEM$SUPPORTED_DBT_VERSIONS();
 ```
 
 ```
-[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"},{"dbt_version":"1.12.3","type":"dbt Core"}]
+[{"dbt_version":"1.9.4","type":"dbt Core"},{"dbt_version":"1.10.15","type":"dbt Core"},{"dbt_version":"1.11.11","type":"dbt Core"},{"dbt_version":"1.12.3","type":"dbt Core"},{"dbt_version":"2.0.0-preview","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.175","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.186","type":"dbt Fusion"},{"dbt_version":"2.0.0-preview.210","type":"dbt Fusion"},{"dbt_version":"2.0.0","type":"dbt Fusion"}]
 ```
 
 ## Set the account-level default version
@@ -100,7 +100,7 @@ For more information and examples, see [CREATE DBT PROJECT](/sql-reference/sql/c
 
 ## Migrate to dbt Fusion
 
-dbt Fusion 2.0.0-preview.175 is a ground-up Rust rewrite of the dbt runtime, designed to deliver significantly faster parse and compile times. The “preview” in the name reflects dbt Labs’ versioning convention, not the release status. This version is generally available on both dbt Platform and Snowflake.
+dbt Fusion is a ground-up Rust rewrite of the dbt runtime, designed to deliver significantly faster parse and compile times. Fusion runs dbt 2.x versions, including dbt 2.0.0. The “preview” in earlier `2.0.0-preview` version names reflects dbt Labs’ versioning convention, not the release status. These versions are generally available on both dbt Platform and Snowflake.
 
 To migrate from dbt Core to dbt Fusion, use the following resources:
 

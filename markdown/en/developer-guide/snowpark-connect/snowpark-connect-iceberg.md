@@ -106,6 +106,108 @@ Copy code
 INSERT INTO prod.db.events SELECT * FROM staging.raw_events;
 ```
 
+**Example — create a Snowflake-managed Iceberg table using Spark SQL**
+
+Copy code
+
+```
+spark.sql(
+    """
+    CREATE TABLE my_db.my_schema.events (
+      id INT,
+      payload STRING
+    )
+    USING iceberg
+    """
+)
+```
+
+**Example — append to an existing Iceberg table without restating the format**
+
+When the target already exists as Iceberg, you do not need `.format("iceberg")` on append.
+Creating a new Iceberg table still requires an explicit Iceberg provider.
+
+Copy code
+
+```
+# table already exists as Iceberg
+df.write.mode("append").saveAsTable("my_db.my_schema.events")
+df.write.insertInto("my_db.my_schema.events")
+```
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.43.0
+
+**Refresh Iceberg metadata**
+
+`spark.sql("REFRESH TABLE t")` and `spark.catalog.refreshTable("t")` emit
+`ALTER ICEBERG TABLE t REFRESH` so Snowflake re-reads Iceberg catalog metadata that changed
+outside the session. Standard (non-Iceberg) Snowflake tables do not emit `REFRESH` DDL.
+
+Copy code
+
+```
+spark.sql("REFRESH TABLE my_db.my_schema.events")
+spark.catalog.refreshTable("my_db.my_schema.events")
+```
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.44.0
+
+**ALTER TABLE**
+
+Spark SQL `ALTER TABLE` against a Snowflake-managed Iceberg table is executed as
+`ALTER ICEBERG TABLE` so Snowflake applies the change on the Iceberg table.
+
+**Iceberg reference:** [Spark DDL](https://iceberg.apache.org/docs/latest/spark-ddl/)
+
+**Snowflake reference:** [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table)
+
+Copy code
+
+```
+spark.sql("ALTER TABLE my_db.my_schema.events RENAME COLUMN old_name TO new_name")
+spark.sql("ALTER TABLE my_db.my_schema.events DROP COLUMN to_drop")
+spark.sql("ALTER TABLE my_db.my_schema.events RENAME TO my_db.my_schema.events_v2")
+```
+
+DataFrame `withColumnRenamed()` and `drop()` still only project columns. Use `ALTER TABLE` to
+change the stored Iceberg schema.
+
+| Capability | Managed | CLD |
+| --- | --- | --- |
+| `ALTER TABLE t RENAME TO t2` | ✅ | Use catalog-native rename |
+| `ALTER TABLE t RENAME COLUMN old TO new` | ✅ | Use catalog-native rename |
+| `ALTER TABLE t DROP COLUMN col` | ✅ | Use catalog-native drop |
+| DataFrame `withColumnRenamed` / `drop` (projection only) | ✅ | ✅ |
+
+Expand
+
+Show lessSee more
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.42.0
+
+**Snapshot ancestry (`CALL system.ancestors_of`)**
+
+`CALL system.ancestors_of` returns the live snapshot ancestry (`snapshot_id` and `timestamp`
+in epoch milliseconds) for a Snowflake-managed Iceberg table.
+
+Copy code
+
+```
+spark.sql("CALL my_db.system.ancestors_of('my_db.my_schema.events')").show()
+```
+
+Catalog-linked databases are not supported.
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.40.0
+
 ## Working with externally managed Iceberg tables
 
 You need to create a catalog-linked database to work with externally managed tables. A
@@ -171,6 +273,51 @@ Tip
 
 **Minimum Snowpark Connect for Spark version with CLD support:** 1.27.0
 
+**Example — create and drop a catalog-linked Iceberg table**
+
+Create a CLD Iceberg table with DataFrameWriterV2 (the recommended create path on CLD).
+Spark SQL `DROP TABLE … PURGE` is translated to `DROP ICEBERG TABLE … PURGE` so data files
+in the linked catalog can be purged. Requires `DROP` privilege on the CLD schema.
+
+For Snowflake-managed Iceberg tables, you can also create the table with Spark SQL
+`CREATE TABLE … USING iceberg` as shown in
+[Working with Snowflake-managed Iceberg tables](#working-with-snowflake-managed-iceberg-tables).
+On CLD, prefer WriterV2 `create()`; Spark SQL `CREATE TABLE … USING iceberg` still has gaps.
+
+Copy code
+
+```
+(
+    source_df.writeTo("cldglue.my_schema.events")
+    .using("iceberg")
+    .create()
+)
+
+spark.sql("DROP TABLE cldglue.my_schema.events PURGE")
+```
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.37.0 (`DROP TABLE PURGE`); 1.29.0 (WriterV2 `create`)
+
+**Refresh Iceberg metadata**
+
+`spark.sql("REFRESH TABLE t")` and `spark.catalog.refreshTable("t")` emit
+`ALTER ICEBERG TABLE t REFRESH` so Snowflake re-reads Iceberg catalog metadata that changed
+outside the session, including metadata updates in the external catalog. Standard
+(non-Iceberg) Snowflake tables do not emit `REFRESH` DDL.
+
+Copy code
+
+```
+spark.sql("REFRESH TABLE cldglue.my_schema.sales")
+spark.catalog.refreshTable("cldglue.my_schema.sales")
+```
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.44.0
+
 | Capability | Managed | CLD (Unity/Glue) |
 | --- | --- | --- |
 | `spark.read.format("iceberg").load("table")` | ✅ | ✅ |
@@ -182,6 +329,10 @@ Expand
 Show lessSee more
 
 ## DataFrameWriterV2 — Iceberg writes
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 **Spark reference:**
 [DataFrameWriterV2](https://spark.apache.org/docs/3.5.6/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrameWriterV2.html)
@@ -237,6 +388,10 @@ Copy code
     .create()
 )
 ```
+
+Appending with DataFrameWriter V1 also works without restating `.format("iceberg")` when the
+CLD table already exists as Iceberg (`insertInto` / `mode("append").saveAsTable`). Creating a
+new table still requires `.format("iceberg")` or `.using("iceberg")`.
 
 Tip
 
@@ -342,11 +497,14 @@ Tip
 
 **Minimum Snowpark Connect for Spark version:** 1.34.0
 
-### Iceberg table properties: `comment`, `format-version`, `max-snapshot-age`
+### Iceberg table properties
 
-`tableProperty("comment", …)`, `tableProperty("format-version", "2")`, and
-`tableProperty("max-snapshot-age.ms", "86400000")` are forwarded into
-`CREATE ICEBERG TABLE` DDL.
+Set Iceberg table properties through DataFrameWriterV2 `.tableProperty(...)` and through
+Spark SQL `TBLPROPERTIES` on `CREATE TABLE`, `CREATE TABLE … AS SELECT`, and
+`ALTER TABLE … SET / UNSET TBLPROPERTIES`. Known keys such as `comment`, `format-version`,
+`max-snapshot-age.ms`, and `location` map to Snowflake Iceberg DDL. Additional Iceberg keys
+(for example `write.delete.mode`) are forwarded as table properties. Unknown keys may be
+ignored or rejected by Snowflake or the external catalog.
 
 Copy code
 
@@ -357,13 +515,21 @@ Copy code
     .tableProperty("comment", "Daily events")
     .tableProperty("format-version", "2")
     .tableProperty("max-snapshot-age.ms", "86400000")  # ms
+    .tableProperty("write.delete.mode", "merge-on-read")
     .create()
+)
+
+spark.sql(
+    "ALTER TABLE my_db.my_schema.events SET TBLPROPERTIES "
+    "('read.split.target-size' = '268435456')"
 )
 ```
 
 Tip
 
-**Minimum Snowpark Connect for Spark version:** 1.35.0, 1.36.0 (`max-snapshot-age`)
+**Minimum Snowpark Connect for Spark version:** 1.35.0 (`comment` / `format-version`); 1.36.0
+(`max-snapshot-age`); 1.42.0 (Spark SQL `TBLPROPERTIES` / extra Iceberg keys); 1.43.0
+(managed `ALTER TABLE … TBLPROPERTIES`)
 
 Note
 
@@ -398,15 +564,29 @@ Tip
 | External volume (1.14.0) | `external_volume`, `iceberg.external_volume` | ✅ | ✅ (1.36.0) |
 | Storage serialization (1.14.0) | `storage_serialization_policy`, `iceberg.storage_serialization_policy` | ✅ | ✅ (1.36.0) |
 | Target file size (1.14.0) | `write.target-file-size`, `target_file_size` | ✅ | ✅ (1.36.0) |
+| Spark SQL `TBLPROPERTIES` / extra Iceberg keys (1.42.0) | `write.delete.mode` and other leftover Iceberg keys | ✅ (1.43.0 for ALTER) | ✅ |
 
 Expand
 
 Show lessSee more
 
-### Iceberg write options: `merge-schema`
+### Iceberg write options
 
-Pass `mergeSchema` or (`merge-schema` / `merge_schema`) to evolve the Iceberg table schema
-during a V2 `overwrite()` or `overwritePartitions()`:
+Pass per-write DataFrame `.option(key, value)` settings on `append`, `overwrite`, or
+`overwritePartitions`.
+
+- **merge-schema** (`mergeSchema` / `merge-schema` / `merge_schema`) — evolve the Iceberg
+  table schema. Supported on `append`, `overwrite`, and `overwritePartitions`, including
+  CLD-backed tables.
+- **check-ordering** (default `true`) — verifies the data’s column order matches the target
+  table. Iceberg only; ignored on standard Snowflake tables.
+- **check-nullability** (default follows `snowpark.connect.nullability.trackColumns`, that
+  is, off) — blocks writing a nullable column into a NOT NULL column. Set
+  `snowpark.connect.nullability.trackColumns=true` or pass `check-nullability=true`
+  explicitly.
+- **Other Iceberg write options** such as `target-file-size-bytes` are forwarded to
+  Snowflake. Unrecognized keys are ignored (Spark-compatible). `check-ordering` and
+  `check-nullability` stay local to Snowpark Connect for Spark and are not forwarded.
 
 Copy code
 
@@ -414,30 +594,7 @@ Copy code
 (
     df.writeTo("my_db.my_schema.events")
     .option("merge-schema", "true")
-    .overwrite()
-)
-```
-
-Previously only supported for `append()`. CLD-backed Iceberg tables (for example, Glue) are
-supported.
-
-Tip
-
-**Minimum Snowpark Connect for Spark version:** 1.35.0
-
-### Iceberg write options: `check-ordering`, `check-nullability`
-
-Per-write validation for Iceberg V2 writes, passed via `.option(...)` on `append`,
-`overwrite`, or `overwritePartitions`.
-
-- **check-ordering** (default `true`) — verifies the data’s column order matches the target table.
-- **check-nullability** (default follows `snowpark.connect.nullability.trackColumns`, that is, off) — blocks writing a nullable column into a NOT NULL column.
-
-Copy code
-
-```
-(
-    df.writeTo("cldglue.my_schema.events")
+    .option("target-file-size-bytes", "67108864")
     .option("check-ordering", "false")
     .option("check-nullability", "false")
     .append()
@@ -446,24 +603,73 @@ Copy code
 
 Tip
 
-**Minimum Snowpark Connect for Spark version:** 1.36.0
+**Minimum Snowpark Connect for Spark version:** 1.35.0 (`merge-schema`); 1.36.0 (`check-ordering` /
+`check-nullability`); 1.42.0 (additional forwarded write options)
 
 | Write option | Accepted key | Default | Managed | CLD |
 | --- | --- | --- | --- | --- |
+| Schema evolution | `merge-schema`, `mergeSchema`, `merge_schema` | off | ✅ | ✅ |
 | Column-order check | `check-ordering` | `true` | ✅ | ✅ |
 | Nullability check | `check-nullability` | off (`trackColumns`) | ✅ | ✅ |
+| Other Iceberg write options | `target-file-size-bytes`, and so on | — | ✅ | ✅ |
 
 Expand
 
 Show lessSee more
 
-**Notes:**
+## Tags
 
-- Iceberg only — both options are ignored on standard Snowflake tables.
-- For `check-nullability` enforcement, set `snowpark.connect.nullability.trackColumns=true`
-  or pass `check-nullability=true` explicitly.
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Create named tags on a Snowflake-managed Iceberg table before you use those tags for
+time travel. A tag is an immutable pointer to one snapshot (like a Git tag). You cannot
+write DML against a tag; use the table (or a branch, where supported) for writes.
+
+**Iceberg reference:**
+[Historical tags](https://iceberg.apache.org/docs/latest/branching/#historical-tags)
+
+| Capability | Managed | CLD |
+| --- | --- | --- |
+| `ALTER TABLE … CREATE TAG` (current snapshot) | ✅ (1.41.0) | Create the tag in the external catalog |
+| `ALTER TABLE … CREATE TAG … AS OF VERSION` | ✅ (1.31.0) | External catalog |
+| `ALTER TABLE … REPLACE TAG` / `RETAIN N DAYS` / `DROP TAG` | ✅ (1.41.0) | External catalog |
+
+Expand
+
+Show lessSee more
+
+Copy code
+
+```
+spark.sql("ALTER TABLE my_db.my_schema.events CREATE TAG release_v1")
+spark.sql(
+    "ALTER TABLE my_db.my_schema.events CREATE TAG release_v1 "
+    "AS OF VERSION 5129038471029384756 RETAIN 30 DAYS"
+)
+spark.sql(
+    "ALTER TABLE my_db.my_schema.events REPLACE TAG release_v1 "
+    "AS OF VERSION 5129038471029384756"
+)
+spark.sql("ALTER TABLE my_db.my_schema.events DROP TAG release_v1")
+```
+
+Note
+
+On catalog-linked tables, create and manage tags in Glue or Unity (or with OSS Spark Iceberg)
+before you read the tag through Snowpark Connect for Spark.
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.31.0 (tag DDL); 1.41.0 (bare `CREATE TAG`, `REPLACE TAG`,
+`RETAIN`)
 
 ## Time travel
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 ### Snapshot-id based time travel
 
@@ -578,11 +784,7 @@ Tip
 
 ### Version tag-based time travel
 
-Tags can be used for retaining important historical snapshots for auditing purposes.
-Read about tags in the
-[Iceberg branching documentation](https://iceberg.apache.org/docs/latest/branching/#historical-tags).
-
-Snowpark Connect for Spark version 1.30.0 (tag reads); 1.31.0 (tag DDL mapping).
+After you create a tag (see [Tags](#tags)), you can time travel to that snapshot.
 
 **What it does:** Read an Iceberg table at a named version tag. Maps to Snowflake
 `AT(VERSION_TAG => '<name>')`.
@@ -595,7 +797,6 @@ Snowpark Connect for Spark version 1.30.0 (tag reads); 1.31.0 (tag DDL mapping).
 | --- | --- | --- |
 | `option("tag", "release_v1")` | ✅ | ✅ (tag must exist in catalog) |
 | `SELECT * FROM t VERSION AS OF 'release_v1'` | ✅ | ✅ |
-| `ALTER TABLE … CREATE TAG` (Spark SQL) | ✅ via Snowpark Connect for Spark DDL mapping (1.31+) | Tag created in external catalog |
 
 Expand
 
@@ -626,12 +827,12 @@ spark.sql(
 
 Note
 
-On CLD tables, tags are catalog-side metadata. Create the tag in Glue/Unity (or via OSS
-Spark Iceberg) before reading through Snowpark Connect for Spark.
+On CLD tables, the tag must already exist in Glue or Unity before you read it through
+Snowpark Connect for Spark.
 
 Tip
 
-**Minimum Snowpark Connect for Spark version:** 1.30.0 (reads); 1.31.0 (tag DDL)
+**Minimum Snowpark Connect for Spark version:** 1.30.0 (reads)
 
 ## Incremental reads
 
@@ -650,7 +851,7 @@ Snowflake `CHANGES (INFORMATION => APPEND_ONLY) AT (VERSION => ...) [END (VERSIO
 
 | Capability | Managed | CLD |
 | --- | --- | --- |
-| `start-snapshot-id` / `end-snapshot-id` | ✅ (`CHANGE_TRACKING`) | ❌ Not supported |
+| `start-snapshot-id` / `end-snapshot-id` | ✅ (`CHANGE_TRACKING`) | ✅ |
 
 Expand
 
@@ -681,9 +882,120 @@ CREATE ICEBERG TABLE my_db.my_schema.events (
 ) CHANGE_TRACKING = TRUE;
 ```
 
+The same `start-snapshot-id` / `end-snapshot-id` options work on catalog-linked (Glue /
+Unity) Iceberg tables. `CHANGE_TRACKING` is required only for Snowflake-managed tables.
+
 Tip
 
-**Minimum Snowpark Connect for Spark version:** 1.34.0
+**Minimum Snowpark Connect for Spark version:** 1.34.0 (managed); CLD incremental reads use the same
+options
+
+### Changelog reads (`.changes`)
+
+Read Iceberg row-level changes (inserts and deletes) through the Spark metadata-table suffix
+`table.changes`. This is the changelog / CDC surface. Append-only incremental reads via
+`start-snapshot-id` / `end-snapshot-id` on the base table remain as documented above.
+
+| Capability | Managed | CLD |
+| --- | --- | --- |
+| `spark.table("t.changes")` / `SELECT * FROM t.changes` | ✅ | ❌ Not supported |
+| `start-snapshot-id` / `end-snapshot-id` bounds on `.changes` | ✅ | ❌ Not supported |
+
+Expand
+
+Show lessSee more
+
+Copy code
+
+```
+# Full changelog
+spark.sql("SELECT * FROM my_db.my_schema.events.changes").show()
+
+# Bounded changelog (exclusive start, inclusive end)
+(
+    spark.read.format("iceberg")
+    .option("start-snapshot-id", 1001)
+    .option("end-snapshot-id", 1005)
+    .table("my_db.my_schema.events.changes")
+    .filter("_change_type = 'INSERT'")
+    .show()
+)
+```
+
+Managed Iceberg only. Requires a Snowflake release that supports Iceberg changelog scan
+(10.34.100 or later). Version tags and branch refs are not valid bounds on `.changes`.
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.43.0
+
+## Iceberg metadata sub-tables
+
+Read Iceberg inspection tables through Spark SQL the same way OSS Iceberg does
+(`table.files`, `table.partitions`, and so on). These queries work on Snowflake-managed
+Iceberg tables. Catalog-linked tables follow the same functions when the catalog can
+resolve Iceberg metadata.
+
+**Supported:** `.files`, `.snapshots`, `.manifests`, `.refs`, `.history`,
+`.metadata_log_entries`, `.entries`, `.data_files`, `.delete_files`, `.all_entries`,
+`.all_data_files`, `.all_manifests`, `.all_delete_files`, `.all_files`, `.partitions`,
+and so on
+
+**Unsupported:** `.position_deletes`
+
+Copy code
+
+```
+spark.sql("SELECT file_path, record_count FROM my_db.my_schema.events.files").show()
+spark.sql("SELECT * FROM my_db.my_schema.events.partitions").show()
+spark.sql("SELECT snapshot_id, operation FROM my_db.my_schema.events.snapshots").show()
+```
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.35.0–1.36.0 (original tables); 1.37.0–1.39.0
+(additional metadata tables)
+
+**Iceberg reference:** [Inspecting tables](https://iceberg.apache.org/docs/latest/spark-queries/#inspecting-tables)
+
+## Iceberg V3 VARIANT columns (Spark 3.5)
+
+Spark 3.5 (Snowpark Connect V1) has no `VariantType`, so you cannot declare `VARIANT` in Spark
+SQL DDL. Create the Iceberg V3 table on Snowflake with `ICEBERG_VERSION = 3`, then read the
+column through Snowpark Connect for Spark as JSON text (`StringType`). Wrap JSON text in `PARSE_JSON` on
+write so the value is stored as an object, not a string.
+
+Copy code
+
+```
+CREATE OR REPLACE ICEBERG TABLE my_db.my_schema.t (
+    id INT,
+    payload VARIANT
+)
+CATALOG = 'SNOWFLAKE'
+EXTERNAL_VOLUME = '<your external volume>'
+BASE_LOCATION = 'v3_variant/'
+ICEBERG_VERSION = 3;
+```
+
+Copy code
+
+```
+df = spark.read.table("my_db.my_schema.t")
+# payload is string (JSON text)
+spark.sql("""
+    INSERT INTO my_db.my_schema.t
+    SELECT 2, PARSE_JSON('{"name": "bob", "age": 25}')
+""")
+```
+
+You can use Spark JSON functions such as `from_json` and `get_json_object` on the string
+column. Native Spark 4 Variant APIs (`variant_get`, `parse_json`, `schema_of_variant`) remain
+a later Spark 4 / Snowpark Connect V2 surface.
+
+Tip
+
+**Minimum Snowpark Connect for Spark version:** 1.44.0
 
 ## Support matrix (summary)
 
@@ -695,13 +1007,23 @@ Tip
 | `partitionedBy` transforms | ✅ | ✅ | 1.33.0 |
 | `overwrite(condition)` | ✅ | ✅ | 1.36.0 |
 | `overwritePartitions` | ✅ | ✅ | 1.34.0 |
-| `tableProperty` comment / format-version | ✅ | ✅ | 1.35.0 |
+| Iceberg table properties | ✅ | ✅ (`max-snapshot-age` ❌) | 1.35.0 / 1.42.0 |
 | Snapshot-id | ✅ | ✅ | 1.29.0 |
 | Timestamp (DataFrame) | ✅ | ✅ + `TIME_TRAVEL_TIMESTAMP_SOURCE` | 1.29.0 |
 | Timestamp (SQL) | ✅ | ✅ + table param | 1.30.0 |
 | Version tag read | ✅ | ✅ | 1.30.0 |
 | Tag DDL | ✅ | external catalog | 1.31.0 |
-| Incremental read | ✅ + `CHANGE_TRACKING` | ❌ Not supported | 1.34.0 |
+| Incremental read | ✅ + `CHANGE_TRACKING` | ✅ | 1.34.0 |
+| Changelog read (`.changes`) | ✅ | ❌ Not supported | 1.43.0 |
+| Bare `CREATE TAG` / `REPLACE TAG` / `RETAIN` | ✅ | external catalog | 1.41.0 |
+| Iceberg metadata sub-tables | ✅ | ✅ when the catalog can resolve Iceberg metadata | 1.37.0–1.39.0 |
+| `CALL system.ancestors_of` | ✅ | ❌ Not supported | 1.40.0 |
+| `ALTER TABLE` rename / drop column | ✅ | catalog-native | 1.42.0 |
+| Iceberg write options | ✅ | ✅ | 1.35.0 / 1.42.0 |
+| `insertInto` / append without restating format | ✅ | ✅ | 1.43.0 |
+| `DROP TABLE PURGE` | ✅ | ✅ | 1.37.0 |
+| `REFRESH TABLE` | ✅ | ✅ | 1.44.0 |
+| Iceberg V3 `VARIANT` as JSON string (Spark 3.5) | ✅ | — | 1.44.0 |
 
 Expand
 
@@ -713,7 +1035,7 @@ To use every feature in this guide, install:
 
 | Component | Minimum version |
 | --- | --- |
-| `snowpark-connect` | 1.35.0 |
+| `snowpark-connect` | 1.44.0 |
 | `snowflake-snowpark-python` | >= 1.53.1 |
 | `snowpark-connect-deps-iceberg` (optional extra) | >= 1.0.2 for SQL VERSION/TIMESTAMP AS OF client parsing |
 
@@ -726,13 +1048,13 @@ Show lessSee more
 Copy code
 
 ```
-pip install 'snowpark-connect[iceberg]>=1.35.0'
+pip install 'snowpark-connect[iceberg]>=1.44.0'
 # snowflake-snowpark-python>=1.53.1 is pulled in as a dependency
 ```
 
 ## Known limitations
 
-Most read and DataFrameWriterV2 write paths are closed as of Snowpark Connect for Spark version 1.35.0.
+Most read and DataFrameWriterV2 write paths are closed as of Snowpark Connect for Spark version 1.44.0.
 The items below are the main customer-visible limitations still worth knowing.
 
 ### Prefer DataFrameWriterV2 over Spark SQL DDL on CLD
@@ -748,61 +1070,13 @@ Expand
 
 Show lessSee more
 
-### Iceberg metadata sub-tables (`.snapshots`, `.files`, `.manifests`, `.refs`)
-
-`.snapshots`, `.files`, `.manifests`, and `.refs` are supported on Managed, Glue CLD,
-Unity CLD, and Horizon. Other sub-tables (`.entries`, `.all_manifests`, etc.) return
-`UNSUPPORTED_OPERATION`.
-
-**Supported:** `.files`, `.snapshots`, `.manifests`, `.refs`, `.history`, `.metadata_log_entries`
-
-**Unsupported:** `.all_data_files`, `.all_delete_files`, `.all_entries`, `.all_manifests`,
-`.delete_files`, `.entries`, `.partitions`, `.position_deletes`
-
-### Iceberg incremental and changelog reads
-
-Reading catalog-linked (Glue / Unity) Iceberg tables is supported, including time travel
-(`VERSION AS OF` / `TIMESTAMP AS OF`) and metadata tables. Incremental reads
-(`start-snapshot-id` / `end-snapshot-id`) and changelog/CDC reads are not supported on
-catalog-linked databases. They are only available on managed Iceberg tables.
-
-Tip
-
-**Minimum Snowpark Connect for Spark version:** 1.36.0
-
-For sub-tables that remain unsupported (`.history`, `.entries`, etc.): read `metadata.json`
-directly from object storage.
-
-**Iceberg reference:** [Inspecting tables](https://iceberg.apache.org/docs/latest/spark-queries/#inspecting-tables)
-
 ### Schema evolution on CLD
 
 Nested struct schema evolution (adding nested fields) on CLD Iceberg tables is not supported.
-
-### SQL time-travel — extensions gate
-
-SQL `VERSION AS OF` and `TIMESTAMP AS OF` require `spark.sql.extensions` to include
-`org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions`. Install
-`snowpark-connect[iceberg]` and set the config on the Snowpark Connect for Spark server. Snowpark Connect for Spark
-implements execution natively on Snowflake; the config is the customer-visible support
-contract.
-
-### Tag writes
-
-| Surface | Status |
-| --- | --- |
-| Tag create via Spark SQL on CLD | Create tags in Glue/Unity catalog externally |
-
-Expand
-
-Show lessSee more
 
 ### Format version 3
 
 Iceberg `format-version` V3 on Unity CLD is not fully functional. Use `format-version` 2
 unless your account team confirms V3 support for your catalog type.
 
-Note
-
-Iceberg V3-specific capabilities like `VARIANT` data type and deletion vectors need Spark v4
-and will be supported in an upcoming release.
+Deletion vectors remain a later Spark 4 / Snowpark Connect V2 surface.

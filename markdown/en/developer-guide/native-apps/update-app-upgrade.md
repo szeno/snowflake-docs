@@ -14,13 +14,18 @@ upgrades fit in the overall workflow for developing a new version or patch of an
 [Workflow for updating an app](/developer-guide/native-apps/update-app#label-update-workflow-legacy).
 
 Providers can initiate an upgrade of an app to a new version or patch by setting a release directive
-on the application package. When the release directive is modified, Snowflake automatically upgrades
-all installed instances of the current version of the app to the version specified by the release directive.
+on the application package. Changing the default release directive targets installed app instances that use the
+default directive. It doesn’t target accounts assigned to a custom release directive. Changing a custom release
+directive targets installed app instances in the accounts assigned to that directive.
 
 When the provider initiates an upgrade, Snowflake adds each app to be upgraded to a queue. Each
 app is upgraded as resources are available. The upgrade process can take a while to complete across all
 installed versions of the app. To expedite the upgrade process, consumers can also manually initiate an upgrade
 of an app when a new version or patch is available.
+
+For each targeted app instance, Snowflake runs the setup script for the target version or patch. If the app defines
+a version initializer, Snowflake calls it after the setup script succeeds. For more information about setup scripts
+and version initializers, see [Develop a new version of an app](/developer-guide/native-apps/update-app-develop).
 
 Note
 
@@ -44,8 +49,8 @@ A provider upgrades an installed app by using the following workflow:
 4. Test the new version or patch by installing the app in your test account.
 5. Update the release directive for the version or patch.
 
-   This initiates an automated upgrade that will update all installed instances of the previous version or patch.
-   A provider can notify the consumer that an upgrade is available and ask them to
+   This initiates an automated upgrade for the app instances targeted by the default or custom release directive.
+   A provider can notify consumers that an upgrade is available and ask them to
    [manually upgrade](#native-apps-upgrade-manual-legacy) the app.
 
 ## Set a start date and time for an upgrade
@@ -194,6 +199,11 @@ for information on setting the account-level refresh frequency.
 During the upgrade process, the app passes through different states. The following diagram shows the possible
 states when upgrading from the previous version, v1, to a new version, v2.
 
+After the setup script succeeds, Snowflake calls the target version’s initializer, if one is defined. If the setup
+script or target version’s initializer fails, Snowflake calls the previous version’s initializer before reporting
+the upgrade failure. The previous initializer can restore resources that aren’t in versioned schemas, such as
+services.
+
 Note
 
 Although this diagram shows an upgrade for a version, it also applies to patch upgrades.
@@ -210,7 +220,7 @@ package is located:
 | 3 | Eligible to upgrade | Snowflake performs checks to verify that the app is eligible to upgrade. These checks include verifying that the app is not disabled, that the application package is available, that the version and patch are valid for upgrade, the consumer account is valid, and so on. |
 | 4 | Obtain upgrade slot? | Depending on the number of apps being upgraded, the number of consumer accounts, and so on, they may have to wait to begin the upgrade process. |
 | 5 | Setup script run successfully? | When the upgrade begins, Snowflake runs the setup script. If any uncaught errors occur, the setup script execution stops. Snowflake queues the app for upgrade again based on the number of retries configured. |
-| 6 | Is version updated? | Snowflake checks to see if the upgrade is for a version or patch. If the upgrade is for a version, Snowflake performs additional checks and waits until all jobs from the older version of the app have completed. |
+| 6 | Is version updated? | After a successful version upgrade, the target version becomes current. The previous version remains in the `FINALIZING` state until jobs that use the previous version finish. |
 
 Expand
 

@@ -4,7 +4,7 @@ Note
 
 Where possible, use the Snowpipe Streaming SDK instead of the REST API to benefit from automatic batching and simpler integration. Use direct REST when an SDK isn’t suitable for your environment.
 
-This guide shows you how to stream data into Snowflake using the [Snowpipe Streaming REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api) and a JSON Web Token (JWT) generated with SnowSQL. It covers Named Channel REST ingestion for ordered, exactly-once workloads.
+This guide shows you how to stream data into Snowflake using the [Snowpipe Streaming REST API](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api) and a JSON Web Token (JWT) generated with [Snowflake CLI](/developer-guide/snowflake-cli/command-reference/connection-commands/generate-jwt). It covers Named Channel REST ingestion for ordered, exactly-once workloads.
 
 For the Elastic Channel REST path (simpler, recommended for most new applications), see [Tutorial: Get started with Elastic Channels (REST)](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-rest-getting-started).
 
@@ -47,18 +47,16 @@ We suggest that you use Format 1 for the ACCOUNT\_IDENTIFIER, which uses the acc
 
 - `curl`: For making HTTP requests.
 - `jq`: For parsing JSON responses.
-- `SnowSQL`: For running commands, Snowflake’s command-line client.
+- [Snowflake CLI](/developer-guide/snowflake-cli/index): For generating a JWT. The REST API streams the rows. It doesn’t generate that token, and it doesn’t develop or deploy Snowpark code, Streamlit in Snowflake apps, Snowflake Native Apps, Snowpark Container Services services, notebooks, Git repositories, or dbt and DCM Projects projects.
 
 **Generated JWT:**
 
-Generate your JWT by using SnowSQL:
+Generate your JWT by using Snowflake CLI:
 
 Copy code
 
 ```
-snowsql --private-key-path rsa_key.p8 --generate-jwt \
-  -a <ACCOUNT_IDENTIFIER> \
-  -u MY_USER
+snow connection generate-jwt --account <ACCOUNT_IDENTIFIER> --user MY_USER --private-key-file rsa_key.p8
 ```
 
 Caution
@@ -76,7 +74,7 @@ Set up the necessary environment variables for your Snowflake account and the st
 Copy code
 
 ```
-# Paste the JWT token obtained from SnowSQL
+# Paste the JWT token obtained from Snowflake CLI
 export JWT_TOKEN="PASTE_YOUR_JWT_TOKEN_HERE"
 
 # Configure your Snowflake account and resources:

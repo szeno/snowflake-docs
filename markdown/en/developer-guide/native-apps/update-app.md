@@ -7,7 +7,9 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 
 The Snowflake Native App Framework enables providers to update a Snowflake Native App to add new functionality,
 fix bugs, and make other changes. Providers can create new versions or patches of
-an app and upgrade the app in the consumer account.
+an app and upgrade the app in the consumer account. In this workflow, an update is the
+end-to-end process of developing and releasing a version or patch. An upgrade moves an
+installed app instance to the target version or patch.
 
 ## Workflow for updating an app
 
@@ -44,8 +46,9 @@ an app and upgrade the app in the consumer account.
    Upgrades are initiated when the provider updates the
    [release directive](/developer-guide/native-apps/update-app-release-directive) of the application package.
 
-   This initiates the upgrade process for all installed apps that are on the previous
-   version. However, a provider can ask a consumer to perform a manual upgrade
+   Updating the default release directive targets installed app instances that use the default directive. It doesn’t
+   target accounts assigned to a custom release directive. Updating a custom release directive targets installed app
+   instances in the accounts assigned to that directive. A provider can ask a consumer to perform a manual upgrade
    if the consumer needs to upgrade their app before the automated upgrade is complete.
 6. Monitor the upgrade.
 

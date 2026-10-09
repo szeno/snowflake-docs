@@ -4,6 +4,15 @@ This topic lists the release notes for server releases that occurred earlier in 
 
 For more recent releases, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [10.36 Release Notes: Oct 3, 2026 - Oct 7, 2026](/release-notes/2026/10_36)
+
+  - [Native App Framework updates](/release-notes/2026/10_36#native-app-framework-updates)
+
+    - [Give users a direct link to an installed Snowflake Native App](/release-notes/2026/10_36#give-users-a-direct-link-to-an-installed-snowflake-native-app)
+  - [Data governance updates](/release-notes/2026/10_36#data-governance-updates)
+
+    - [Schema-level data metric functions: exclude transient tables](/release-notes/2026/10_36#schema-level-data-metric-functions-exclude-transient-tables)
+  - [Release notes change log](/release-notes/2026/10_36#release-notes-change-log)
 - [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
 
   - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)

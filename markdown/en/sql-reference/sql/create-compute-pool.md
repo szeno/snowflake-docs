@@ -54,6 +54,10 @@ CREATE COMPUTE POOL [ IF NOT EXISTS ] <name>
 `FOR APPLICATION app_name`
 :   Specifies the Snowflake Native App name. If specified, the compute pool can only be used by the native app. The [SHOW COMPUTE POOLS](/sql-reference/sql/show-compute-pools) command output includes the `is_exclusive` and `application` columns to indicate whether the compute pool is created exclusively for an app and provides the app name.
 
+    Important
+
+    If the application associated with a `FOR APPLICATION` compute pool is dropped, the compute pool becomes unusable and cannot be repurposed for other workloads. You must drop and recreate the compute pool if the application is removed.
+
 `AUTO_RESUME = { TRUE | FALSE }`
 :   Specifies whether to automatically resume a compute pool when a service or job is submitted to it.
 

@@ -205,6 +205,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$GET\_TAG\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_get_tag_on_current_column) |  |
 | [SYSTEM$GET\_TAG\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_get_tag_on_current_table) |  |
 | [SYSTEM$GET\_TASK\_GRAPH\_CONFIG](/sql-reference/functions/system_get_task_graph_config) |  |
+| [SYSTEM$GET\_TZDB\_VERSION](/sql-reference/functions/system_get_tzdb_version) |  |
 | [SYSTEM$HOLD\_PRIVILEGE\_ON\_ACCOUNT](/sql-reference/functions/system_hold_privilege_on_account) |  |
 | [SYSTEM$INTERNAL\_STAGES\_PUBLIC\_ACCESS\_STATUS](/sql-reference/functions/system_internal_stages_public_access_status) |  |
 | [SYSTEM$IS\_APPLICATION\_ALL\_MANDATORY\_TELEMETRY\_EVENT\_DEFINITIONS\_ENABLED](/sql-reference/functions/system_is_application_all_mandatory_telemetry_event_definitions_enabled) |  |

@@ -120,6 +120,10 @@ Note
 Only privileges defined in the manifest file are valid arguments to
 [get\_held\_account\_privileges()](/developer-guide/native-apps/requesting-permission-sdk-ref#label-native-apps-get-held-account-privileges). Passing other arguments results in an error.
 
+When the app calls [request\_account\_privileges()](/developer-guide/native-apps/requesting-permission-sdk-ref#label-native-apps-request-account-privileges), Snowsight displays a
+dialog that asks the consumer to grant the requested privileges. The consumer selects
+**Grant Privileges** to grant them to the app.
+
 ## Request privileged actions from the consumer
 
 Providers can use the Python Permission SDK to request privileged actions required by the Snowflake Native App.

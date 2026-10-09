@@ -90,8 +90,9 @@ $$;
 See [Change the specification](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-change-specification).
 
 The gateway then accepts OTLP traces over `http/protobuf` or `http/json` at
-`<gateway-endpoint>/telemetry/v1/traces`, authenticated with the same programmatic access token you use
-for inference. Get the endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE`, as described in
+`<gateway-endpoint>/telemetry/v1/traces`, authenticated with a token, the same as for
+inference. See
+[Setting up authentication](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-authentication). Get the endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE`, as described in
 [Gateway endpoint](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-url-format).
 
 Client-exported spans land in `AGENT_TRACE_TABLE` alongside the spans the gateway records, so a single
@@ -110,7 +111,7 @@ Whatever client you’re configuring, its OTLP trace exporter needs these three 
 | --- | --- |
 | Protocol | `http/protobuf` or `http/json`. |
 | Endpoint | `<gateway-endpoint>/telemetry/v1/traces`. |
-| Authorization header | `Bearer <SNOWFLAKE_PAT>`, the same credential inference uses. |
+| Authorization header | `Bearer <token>`, the same as for inference. |
 
 Expand
 
@@ -137,7 +138,7 @@ Copy code
         "enabled": true,
         "protocol": "http/protobuf",
         "endpoint": "<gateway-endpoint>/telemetry",
-        "otlpHeaders": "Authorization=Bearer <SNOWFLAKE_PAT>",
+        "otlpHeaders": "Authorization=Bearer {env:SNOWFLAKE_TOKEN}",
         "tracePropagationProviders": ["snowflake-cortex"]
       }
     ]
@@ -146,7 +147,8 @@ Copy code
 ```
 
 `endpoint` takes the base, and the exporter appends the OTLP path, so requests arrive at
-`<gateway-endpoint>/telemetry/v1/traces`.
+`<gateway-endpoint>/telemetry/v1/traces`. `{env:SNOWFLAKE_TOKEN}` reads the token from an environment
+variable, so it isn’t stored in the file.
 
 ### Trace context propagation
 

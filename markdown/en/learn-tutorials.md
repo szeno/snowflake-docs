@@ -35,7 +35,7 @@ The following sections contain links to tutorials that get you started with Snow
 Snowflake provides the following tutorial to introduce you to key concepts and tasks:
 
 [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes)
-:   Use SnowSQL, a Snowflake command-line client, to learn about key concepts and tasks.
+:   Use [Snowflake CLI](/developer-guide/snowflake-cli/index) to learn about key concepts and tasks.
 
 ## Tutorials to get started with data engineering
 

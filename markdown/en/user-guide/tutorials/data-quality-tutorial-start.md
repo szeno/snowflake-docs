@@ -7,7 +7,8 @@
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-You can complete this tutorial using a worksheet in Snowsight or using a CLI client such as [SnowSQL](/user-guide/snowsql).
+You can complete this tutorial using a worksheet in Snowsight or [Snowflake CLI](/developer-guide/snowflake-cli/index).
+Snowflake CLI is an open-source command-line tool for running SQL and for developing, deploying, and managing Snowflake applications and workloads.
 Simply paste the code examples and run them.
 
 By the end of this tutorial, you will learn how to:

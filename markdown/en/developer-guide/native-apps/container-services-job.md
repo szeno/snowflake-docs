@@ -6,7 +6,7 @@ The Snowflake Native App Framework is generally available on supported cloud pla
 [Support for private connectivity, VPS, and government regions](/developer-guide/native-apps/limitations#label-native-apps-supported-clouds).
 
 This topic describes how to create and manage job services within a Snowflake Native App with Snowpark Container Services. For information
-on using services in an app, see [Add job services to an app](/developer-guide/native-apps/container-services-job).
+on using services in an app, see [Add services to an app](/developer-guide/native-apps/container-services).
 
 A Snowflake Native App with Snowpark Container Services can run a Snowpark Container Services job service.
 

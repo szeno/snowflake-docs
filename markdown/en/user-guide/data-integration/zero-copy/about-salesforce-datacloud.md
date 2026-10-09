@@ -1,5 +1,11 @@
 # About Salesforce Data Cloud and Snowflake
 
+Feature — Generally Available
+
+This integration is generally available to accounts in all AWS, Azure, and GCP commercial regions. It is not available in VPS deployments, government regions, or the People’s Republic of China.
+
+For details, see [Supported regions](#supported-regions).
+
 Snowflake and Salesforce have partnered to offer customers a seamless zero-copy integration between Salesforce Data Cloud and Snowflake. The integration enables customers to access semantically rich Salesforce data products directly from their existing Snowflake accounts, without ETL pipelines, data replication, or moving data out of Salesforce.
 
 Leveraging zero-copy data access, data and AI teams can work with real-time Salesforce customer, engagement, and business data in Snowflake, building analytics, machine learning models, and AI applications grounded in the full context of their mission-critical Salesforce data.
@@ -16,12 +22,24 @@ The Salesforce Data Cloud Zero-Copy integration is designed for existing Snowfla
 
 As a Snowflake account administrator, you create a Zerocopy Connector in your account and retrieve an Enrollment ID. You then provide that Enrollment ID to your Salesforce administrator, who creates a Data Share Target in Salesforce Data Cloud to authorize the connection. Once connected, Salesforce administrators can share data products from the Salesforce Data Cloud catalog with your connector, and you can immediately query them in Snowflake.
 
+## Supported regions
+
+On the Snowflake side, the integration is available to accounts in all AWS, Azure, and GCP commercial regions. For the full list, see [Supported cloud regions](/user-guide/intro-regions).
+
+The integration is not available in the following Snowflake deployments:
+
+- [Virtual Private Snowflake (VPS)](/user-guide/intro-editions)
+- [Government regions](/user-guide/intro-regions#label-us-gov-regions)
+- The People’s Republic of China
+
+On the Salesforce side, Salesforce Data Cloud runs on AWS only. Your Snowflake account doesn’t have to be on AWS or in the same region. The integration supports cross-cloud and cross-region connections.
+
 ## Prerequisites
 
 Before starting, ensure:
 
 - You have an existing Snowflake account (Standard, Enterprise, or Business Critical edition).
-- Your Snowflake account is in a supported region. For details, see [Supported Cloud Regions](/user-guide/intro-regions).
+- Your Snowflake account is in a supported region and deployment. For details, see [Supported regions](#label-salesforce-supported-regions).
 - Your Salesforce administrator has access to Salesforce Data Cloud and can provision a connector and share data products.
 
 ## Set up the integration

@@ -459,7 +459,7 @@ Example: `register_callback: my_schema.my_register_callback`
 
 #### `references.\<reference_name\>.configuration_callback` field
 
-Specifies the name of the callback function that provides the desired configuration for the object to bind to this reference.
+Specifies the name of the callback stored procedure that provides the desired configuration for the object to bind to this reference.
 
 This property is required if `object_type` is
 `EXTERNAL ACCESS INTEGRATION`, `SECRET`, or `CATALOG INTEGRATION`. This property is not applicable to other types of objects.

@@ -82,8 +82,8 @@ Before you begin, you need:
    [Gateway endpoint](#label-cortex-ai-gateway-url-format).
 2. The **USAGE privilege** on the gateway. See
    [Access control](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-access-control).
-3. A **programmatic access token (PAT)** for authentication. See
-   [Using programmatic access tokens for authentication](/user-guide/programmatic-access-tokens).
+3. A **token** for authentication: an OAuth access token, a key-pair JSON Web Token (JWT), or a
+   programmatic access token (PAT). See [Setting up authentication](#label-cortex-ai-gateway-authentication).
 4. A **model name** to use in requests. See
    [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability).
 5. **Access to the model itself.** The gateway respects model access control: a request still needs
@@ -94,10 +94,15 @@ Before you begin, you need:
 
 ## Setting up authentication
 
-The gateway expects the token as a bearer token:
+The gateway accepts the same tokens as other Snowflake REST APIs, using the methods described in
+[Authenticating Snowflake REST APIs with Snowflake](/developer-guide/snowflake-rest-api/authentication): OAuth, key-pair authentication with a JWT, or a
+programmatic access token. It’s recommended to use a short-lived token, such as an OAuth access token,
+rather than a PAT, which stays valid until it expires or is revoked.
+
+Send the token as a bearer token in the `Authorization` header:
 
 ```
-Authorization: Bearer <SNOWFLAKE_PAT>
+Authorization: Bearer <token>
 ```
 
 ## Quickstart
@@ -107,10 +112,11 @@ OpenAI PythonOpenAI JavaScriptAnthropic Pythoncurl
 Copy code
 
 ```
+import os
 from openai import OpenAI
 
 client = OpenAI(
-  api_key="<SNOWFLAKE_PAT>",
+  api_key=os.environ["SNOWFLAKE_TOKEN"],
   base_url="<gateway-endpoint>/v1"
 )
 
@@ -130,7 +136,7 @@ Copy code
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  apiKey: "<SNOWFLAKE_PAT>",
+  apiKey: process.env.SNOWFLAKE_TOKEN,
   baseURL: "<gateway-endpoint>/v1"
 });
 
@@ -150,20 +156,21 @@ The Anthropic SDK sends credentials in an `x-api-key` header by default, but the
 Copy code
 
 ```
+import os
 import httpx
 import anthropic
 
-PAT = "<SNOWFLAKE_PAT>"
+token = os.environ["SNOWFLAKE_TOKEN"]
 
 http_client = httpx.Client(
-  headers={"Authorization": f"Bearer {PAT}"},
+  headers={"Authorization": f"Bearer {token}"},
 )
 
 client = anthropic.Anthropic(
   api_key="not-used",
   base_url="<gateway-endpoint>",
   http_client=http_client,
-  default_headers={"Authorization": f"Bearer {PAT}"},
+  default_headers={"Authorization": f"Bearer {token}"},
 )
 
 response = client.messages.create(
@@ -184,7 +191,7 @@ Copy code
 ```
 curl "<gateway-endpoint>/v1/chat/completions" \
   -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <SNOWFLAKE_PAT>" \
+  -H "Authorization: Bearer $SNOWFLAKE_TOKEN" \
   -d '{
     "model": "openai-gpt-5",
     "messages": [
@@ -217,10 +224,42 @@ For the complete field-level request and response reference, see
 
 ## Instrument a coding agent
 
+You can launch the agent with Snowflake CLI or configure it yourself:
+
+- **[Snowflake CLI](#label-cortex-ai-gateway-snow-ai)** launches a coding agent, such as OpenCode, with its
+  traffic already routed, using the endpoint and credential from a Snowflake CLI connection.
+- **[Manual setup](#label-cortex-ai-gateway-manual-setup)** means configuring the base URL and the
+  credential in the agent yourself. Use it for an agent Snowflake CLI doesn’t launch, or when the
+  configuration needs to persist outside the CLI.
+
+### Snowflake CLI
+
+The `snow ai` commands launch a coding agent that’s already installed on your machine, with its model
+requests routed through the gateway. The Snowflake CLI connection can authenticate with OAuth or with a PAT:
+
+Copy code
+
+```
+snow ai opencode
+```
+
+To pass arguments to the agent, put them after `--agent-args`:
+
+Copy code
+
+```
+snow ai opencode -c <connection> --agent-args -m snowflake-cortex/openai-gpt-5.4
+```
+
+For how `snow ai` works, the supported authenticators, and what each command configures in its agent,
+see [snow ai commands](/developer-guide/snowflake-cli/command-reference/ai-commands/overview).
+
+### Manual setup
+
 Agents differ in which API format they use, where their configuration lives, and how they send
 credentials. Use the section for your agent.
 
-### OpenCode
+#### OpenCode
 
 To point OpenCode at the gateway, define a custom provider in your
 `~/.config/opencode/opencode.json` file. OpenCode uses the **Chat Completions API** through the
@@ -247,7 +286,7 @@ Copy code
       "options": {
         "baseURL": "<gateway-endpoint>/v1",
         "account": "<account-host>",
-        "apiKey": "<SNOWFLAKE_PAT>",
+        "apiKey": "{env:SNOWFLAKE_TOKEN}",
         "headers": {
           "snow-agent-name": "opencode"
         }
@@ -261,6 +300,8 @@ Where:
 
 - `baseURL` is the gateway endpoint from `DESCRIBE AI GATEWAY SNOWFLAKE` with `/v1` appended.
 - `account` is the host part of that endpoint, without the path.
+- `apiKey` uses OpenCode’s `{env:...}` substitution to read the token from the `SNOWFLAKE_TOKEN`
+  environment variable, so the token isn’t stored in the file.
 - `model` and `small_model` are both qualified by the provider name, so they read
   `snowflake-cortex/<model>`. Setting `small_model` as well keeps OpenCode’s lightweight calls on the
   gateway rather than falling back to its default.
@@ -269,11 +310,11 @@ Where:
   to. Naming `snowflake-cortex` in `tracePropagationProviders` makes OpenCode send a `traceparent`
   header on its gateway requests.
 
-### Other clients
+#### Other clients
 
 Any client that lets you set a custom base URL and bearer token, and connects using either the **Chat Completions API** or **Messages API** can use the gateway. Set the base URL
 according to the API format the client uses, as described in [Gateway endpoint](#label-cortex-ai-gateway-url-format),
-and supply your PAT as the bearer token.
+and supply your token as the bearer token. See [Setting up authentication](#label-cortex-ai-gateway-authentication).
 
 ## Monitor gateway inference
 

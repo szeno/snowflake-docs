@@ -22,15 +22,27 @@ The tutorial assumes the following:
 - You have a Snowflake account that is configured to use Amazon AWS and a user with
   a role that grants the necessary privileges to create a database, tables, and
   virtual warehouse objects.
-- You have [SnowSQL (CLI client)](/user-guide/snowsql) installed.
+- You have [Snowflake CLI](/developer-guide/snowflake-cli/index) installed.
 
 The [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes) tutorial provides the related
 step-by-step instructions to meet these requirements.
 
 Snowflake provides sample data files in a public S3 bucket for use in this tutorial.
-But before you start, you need to create a database, tables, a virtual warehouse,
+But before you start, you need to create a database, a table, a virtual warehouse,
 and an external stage for this tutorial. These are the basic Snowflake objects
 needed for most Snowflake activities.
+
+### Open one Snowflake CLI session
+
+Start an interactive [Snowflake CLI](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode) session and run every SQL statement in this tutorial at that prompt. Keep the session open until you finish the tutorial, including the clean-up commands. The `USE` statements apply only in this session.
+
+Copy code
+
+```
+snow sql
+```
+
+End each SQL statement with a semicolon (`;`). To leave the session after the tutorial, enter `exit`.
 
 ### About the sample data file
 
@@ -117,7 +129,7 @@ The sample data illustrates the following concepts:
 
 ### Creating the database, table, warehouse, and external stage
 
-Execute the following statements to create a database, a table, a virtual warehouse,
+In the `snow sql` session, execute the following statements to create a database, a table, a virtual warehouse,
 and an external stage needed for this tutorial. After you complete the tutorial,
 you can drop these objects.
 
@@ -126,18 +138,18 @@ you can drop these objects.
 > ```
 > CREATE OR REPLACE DATABASE mydatabase;
 >
-> USE SCHEMA mydatabase.public;
->
-> CREATE OR REPLACE TABLE raw_source (
->   SRC VARIANT);
->
 > CREATE OR REPLACE WAREHOUSE mywarehouse WITH
 >   WAREHOUSE_SIZE='X-SMALL'
 >   AUTO_SUSPEND = 120
 >   AUTO_RESUME = TRUE
 >   INITIALLY_SUSPENDED=TRUE;
 >
+> USE DATABASE mydatabase;
+> USE SCHEMA public;
 > USE WAREHOUSE mywarehouse;
+>
+> CREATE OR REPLACE TABLE raw_source (
+>   SRC VARIANT);
 >
 > CREATE OR REPLACE STAGE my_stage
 >   URL = 's3://snowflake-docs/tutorials/json';
@@ -147,15 +159,13 @@ Note the following:
 
 - The `CREATE DATABASE` statement creates a database. The database automatically
   includes a schema named ‘public’.
-- The `USE SCHEMA` statement specifies an active database and schema for the current user session.
-  Specifying a database now enables you to perform your work in this database without having
-  to provide the name each time it is requested.
-- The `CREATE TABLE` statement creates a target table for JSON data.
 - The `CREATE WAREHOUSE` statement creates an initially suspended warehouse. The
-  statement also sets AUTO\_RESUME = true, which starts the warehouse automatically
+  statement also sets `AUTO_RESUME = true`, which starts the warehouse automatically
   when you execute SQL statements that require compute resources.
-  The `USE WAREHOUSE` statement specifies the warehouse you created as the active
-  warehouse for the current user session.
+- The `USE DATABASE`, `USE SCHEMA`, and `USE WAREHOUSE` statements set the database,
+  schema, and warehouse for this session. Later statements use unqualified names, so
+  run them in this same session.
+- The `CREATE TABLE` statement creates a target table for JSON data.
 - The `CREATE STAGE` statement creates an external stage that points to the S3 bucket
   containing the sample file for this tutorial.
 

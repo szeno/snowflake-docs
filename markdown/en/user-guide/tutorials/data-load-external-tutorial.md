@@ -17,7 +17,7 @@ The tutorial assumes the following:
 
 - You have a Snowflake account that is configured to use Amazon Web Services (AWS) and a user with a role that grants the necessary
   privileges to create a database, tables, and virtual warehouse objects.
-- You have SnowSQL installed.
+- You have [Snowflake CLI](/developer-guide/snowflake-cli/index) installed.
 
 Refer to the [Snowflake in 20 minutes](/user-guide/tutorials/snowflake-in-20minutes)
 for instructions to meet these requirements.
@@ -25,6 +25,18 @@ for instructions to meet these requirements.
 Snowflake provides sample data files in a public Amazon S3 bucket for use in this tutorial.
 But before you start, you need to create a database, tables, and a virtual warehouse for
 this tutorial. These are the basic Snowflake objects needed for most Snowflake activities.
+
+### Open one Snowflake CLI session
+
+Start an interactive [Snowflake CLI](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode) session and run every SQL statement in this tutorial at that prompt. Keep the session open until you finish the tutorial, including the clean-up commands. The temporary tables in this tutorial last only for this session, and the `USE` statements apply only here.
+
+Copy code
+
+```
+snow sql
+```
+
+End each SQL statement with a semicolon (`;`). To leave the session after the tutorial, enter `exit`.
 
 ### About the sample data files
 
@@ -72,7 +84,7 @@ The sample data files include sample contact information in the following format
 
 ### Create the database, tables, and warehouse
 
-Execute the following statements to create a database, two tables (for csv and json data),
+In the `snow sql` session, execute the following statements to create a database, two tables (for csv and json data),
 and a virtual warehouse needed for this tutorial. After you complete the tutorial, you can
 drop these objects.
 
@@ -80,6 +92,16 @@ Copy code
 
 ```
 CREATE OR REPLACE DATABASE mydatabase;
+
+CREATE OR REPLACE WAREHOUSE mywarehouse WITH
+     WAREHOUSE_SIZE='X-SMALL'
+     AUTO_SUSPEND = 120
+     AUTO_RESUME = TRUE
+     INITIALLY_SUSPENDED=TRUE;
+
+USE DATABASE mydatabase;
+USE SCHEMA public;
+USE WAREHOUSE mywarehouse;
 
 CREATE OR REPLACE TEMPORARY TABLE mycsvtable (
      id INTEGER,
@@ -95,22 +117,17 @@ CREATE OR REPLACE TEMPORARY TABLE mycsvtable (
 
 CREATE OR REPLACE TEMPORARY TABLE myjsontable (
      json_data VARIANT);
-
-CREATE OR REPLACE WAREHOUSE mywarehouse WITH
-     WAREHOUSE_SIZE='X-SMALL'
-     AUTO_SUSPEND = 120
-     AUTO_RESUME = TRUE
-     INITIALLY_SUSPENDED=TRUE;
 ```
 
 Note the following:
 
 - The `CREATE DATABASE` statement creates a database. The database automatically includes a schema named ‘public’.
-- The `CREATE TABLE` statements create target tables for CSV and JSON data. The tables are temporary, that is, they
-  persist only for the duration of the user session and are not visible to other users.
 - The `CREATE WAREHOUSE` statement creates an initially suspended warehouse. The
   statement also sets `AUTO_RESUME = true`, which starts the warehouse automatically when
   you execute SQL statements that require compute resources.
+- The `USE DATABASE`, `USE SCHEMA`, and `USE WAREHOUSE` statements set the database, schema, and warehouse for this session. Later statements use unqualified names, so run them in this same session.
+- The `CREATE TABLE` statements create target tables for CSV and JSON data. The tables are temporary, that is, they
+  persist only for the duration of the user session and are not visible to other users.
 
 ## Create file format objects
 
@@ -302,7 +319,25 @@ To load the data from the sample CSV files:
      The next step in this tutorial addresses how to validate and fix
      the errors.
 
+   Before you run another statement, record the query ID of this `COPY INTO`. Run the following statement next and copy the query ID from the result:
+
+   Copy code
+
+   ```
+   SELECT LAST_QUERY_ID();
+   ```
+
+   At the `snow sql` prompt, you can also list COPY query IDs from this session. `!` commands do not end with a semicolon:
+
+   Copy code
+
+   ```
+   !queries amount=5 type=COPY session
+   ```
+
 ### JSON
+
+Copy the query ID from the CSV `COPY INTO` before you run this step. After this statement, `LAST_QUERY_ID()` returns this JSON load.
 
 Load the `contacts.json` staged data file into the `myjsontable` table.
 
@@ -326,30 +361,28 @@ The COPY returns a result showing the name of the file copied and related inform
 
 ## Resolve data load errors related to data issues
 
-In the preceding step, the COPY INTO command skipped loading one of the files when
+In the CSV load, the COPY INTO command skipped one file when
 it encountered the first error. You need to find all the errors.
 In this step, you use the [VALIDATE](/sql-reference/functions/validate) function
 to validate the previous execution of the COPY INTO command and return all errors.
 
 ### Validate the sample data files and retrieve any errors
 
-You first need the retrieve query ID associated with the COPY INTO command
-that you previously executed. You then call the `VALIDATE` function,
-specifying the query ID.
+You need the query ID of the COPY INTO command that skipped `contacts3.csv`.
+Use the query ID you copied with `LAST_QUERY_ID()` after that statement.
+Stay in the same `snow sql` session, then call the `VALIDATE` function with that query ID.
 
-1. Retrieve the query ID.
+1. If you still need the query ID, list COPY queries from this session at the `snow sql` prompt. `!` commands do not end with a semicolon. Copy the query ID for the earlier `COPY INTO mycsvtable` that reported a load error for `contacts3.csv`. Skip the later `COPY INTO` that loaded `contacts.json`.
 
-   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-   2. Make sure the role in Snowsight is the same as the role you are using
-      in SnowSQL to run SQL statements for this tutorial.
-   3. In the navigation menu, select **Monitoring** » **Query History**.
-   4. Select the row for the specific COPY INTO command to open the query
-      information pane.
-   5. Copy the **Query ID** value.
+   Copy code
+
+   ```
+   !queries amount=5 type=COPY session
+   ```
 2. Validate the COPY INTO command execution, represented by the query ID,
    and save errors to a new table named `save_copy_errors`.
 
-   1. In SnowSQL, execute the following command. Replace `query_id` with the **Query ID** value.
+   1. In the same `snow sql` session, run the following command. Replace `query_id` with the query ID you copied.
 
       Copy code
 
@@ -367,15 +400,15 @@ specifying the query ID.
       The query returns the following results:
 
       ```
-      +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
-      | ERROR                                                                                                                                                                | FILE                                | LINE | CHARACTER | BYTE_OFFSET | CATEGORY |   CODE | SQL_STATE | COLUMN_NAME                   | ROW_NUMBER | ROW_START_LINE | REJECTED_RECORD                                                                                                                                     |
-      |----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------|
-      | Number of columns in file (11) does not match that of the corresponding table (10), use file format option error_on_column_count_mismatch=false to ignore this error | mycsvtable/contacts3.csv.gz         |    3 |         1 |         234 | parsing  | 100080 |     22000 | "MYCSVTABLE"[11]              |          1 |              2 | 11%Ishmael%Burnett|Dolor Elit Pellentesque Ltd|vitae.erat@necmollisvitae.ca%1-872%600-7301%1-513-592-6779%P.O. Box 975, 553 Odio, Road%Hulste%63345 |
-      | Field delimiter '|' found while expecting record delimiter '\n'                                                                                                      | mycsvtable/contacts3.csv.gz         |    5 |       125 |         625 | parsing  | 100016 |     22000 | "MYCSVTABLE"["POSTALCODE":10] |          4 |              5 | 14|Sophia%Christian%Turpis Ltd|lectus.pede@non.ca|1-962-503-3253%1-157-%850-3602|P.O. Box 824, 7971 Sagittis Rd.|Chattanooga|56188                  |
-      +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+      +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
+      | ERROR                                                                                                                                                                | FILE                                                   | LINE | CHARACTER | BYTE_OFFSET | CATEGORY |   CODE | SQL_STATE | COLUMN_NAME                   | ROW_NUMBER | ROW_START_LINE | REJECTED_RECORD                                                                                                                                     |
+      |----------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------|
+      | Number of columns in file (11) does not match that of the corresponding table (10), use file format option error_on_column_count_mismatch=false to ignore this error | s3://snowflake-docs/tutorials/dataloading/contacts3.csv|    3 |         1 |         234 | parsing  | 100080 |     22000 | "MYCSVTABLE"[11]              |          1 |              2 | 11%Ishmael%Burnett|Dolor Elit Pellentesque Ltd|vitae.erat@necmollisvitae.ca%1-872%600-7301%1-513-592-6779%P.O. Box 975, 553 Odio, Road%Hulste%63345 |
+      | Field delimiter '|' found while expecting record delimiter '\n'                                                                                                      | s3://snowflake-docs/tutorials/dataloading/contacts3.csv|    5 |       125 |         625 | parsing  | 100016 |     22000 | "MYCSVTABLE"["POSTALCODE":10] |          4 |              5 | 14|Sophia%Christian%Turpis Ltd|lectus.pede@non.ca|1-962-503-3253%1-157-%850-3602|P.O. Box 824, 7971 Sagittis Rd.|Chattanooga|56188                  |
+      +----------------------------------------------------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------+------+-----------+-------------+----------+--------+-----------+-------------------------------+------------+----------------+-----------------------------------------------------------------------------------------------------------------------------------------------------+
       ```
 
-The result shows two data errors in `mycsvtable/contacts3.csv.gz`:
+The result shows two data errors in `s3://snowflake-docs/tutorials/dataloading/contacts3.csv`:
 
 - `Number of columns in file (11) does not match that of the corresponding table (10)`
 

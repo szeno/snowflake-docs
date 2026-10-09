@@ -26,7 +26,7 @@ ALTER SCHEMA my_db.my_dbt_project_schema SET METRIC_LEVEL = 'ALL';
 
 ## Monitor scheduled executions of dbt project objects
 
-If you execute a deployed dbt project object on a schedule using a task, and the task is in the same schema as the dbt project object, you can view scheduled tasks directly from the workspace by selecting **Connect** and then **View Schedules**.
+If you execute a deployed dbt project object on a schedule using a task, and the task is in the same schema as the dbt project object, you can view scheduled tasks directly from the workspace by selecting the calendar icon next to the dbt project menu.
 
 Note
 
@@ -34,10 +34,10 @@ This feature is only available for workspaces that are connected to a dbt projec
 
 **To monitor scheduled execution of a dbt project object from a workspace:**
 
-1. From the dbt project menu on the right side of the project pane, under **Scheduled runs**, choose **View schedules**.
-2. From the list, select the schedule (task) that you want to inspect, and then choose **View details**.
+1. Select the calendar icon next to the dbt project menu.
+2. Select the **…** menu for the schedule (task) that you want to inspect, and then select **View**.
 
-   The information pane for the task opens, where you can view **Task details**, the task **Graph** (if applicable), and **Run History** of this task. For more information, see [View tasks and task graphs in Snowsight](/user-guide/ui-snowsight-tasks).
+   The task details page opens, where you can view **Task details**, the task **Graph** (if applicable), and **Run History** of this task. For more information, see [View tasks and task graphs in Snowsight](/user-guide/ui-snowsight-tasks).
 3. From the **Run History** for any scheduled dbt project object execution in the list, select the Open query history button on the far right to view query details, the query profile, and the query telemetry for the run. For more information, see [Review details and profile of a specific query](/user-guide/ui-snowsight-activity#label-snowsight-specific-query-details).
 
 ## Monitor dbt project objects in Snowsight

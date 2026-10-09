@@ -151,7 +151,7 @@ During snapshot replication, the product of `fetchSize * rowSize * concurrentQue
 
 - `fetchSize` is the number of rows fetched per query, set on the **Fetch Table Rows** processor (default: 100).
 - `rowSize` is the size of a single row being fetched.
-- `concurrentQueries` is the number of concurrent queries, set on the **Fetch Table Rows** processor (default: 2).
+- `concurrentQueries` is the Concurrent Snapshot Queries parameter (default: 2): how many tables snapshot at once. Raising it does not run multiple snapshot queries against the same table. See [Set up the Openflow Connector for MySQL](/user-guide/data-integration/openflow/connectors/mysql/setup).
 
 This memory requirement applies even when **Oversized Value Strategy** is set to **Set Null**, because the connector must load each oversized value into memory before it can replace the value with `NULL`.
 

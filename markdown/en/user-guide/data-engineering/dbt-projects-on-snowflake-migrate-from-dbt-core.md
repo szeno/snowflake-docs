@@ -711,7 +711,7 @@ Copy code
 EXECUTE DBT PROJECT prod_db.analytics.my_dbt_project ARGS = 'run --select my_model --target prod';
 ```
 
-**Using the UI**: From the dbt project menu, select **Create schedule**, set the frequency,
+**Using the UI**: Select the calendar icon next to the dbt project menu, and then select **+ Create new**. Set the frequency,
 operation (`run`), profile, and any flags (for example, `--select customer_metrics`). Snowflake
 creates the same `CREATE TASK` for you.
 

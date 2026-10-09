@@ -1,5 +1,11 @@
 # About Workday Data Cloud and Snowflake
 
+Feature — Generally Available
+
+This integration is generally available to accounts in all AWS, Azure, and GCP commercial regions. It is not available in VPS deployments, government regions, or the People’s Republic of China.
+
+For details, see [Supported regions](#supported-regions).
+
 Snowflake and Workday have partnered to offer a zero-copy integration between Workday Data Cloud and Snowflake. The integration lets you query Workday Data Cloud tables directly from your existing Snowflake account, without ETL pipelines, data replication, or moving data out of Workday.
 
 ## How it works
@@ -18,12 +24,24 @@ The Workday Data Cloud zero-copy integration is designed for existing Snowflake 
 
 As a Snowflake account administrator, you create a Zerocopy Connector in your account and connect it with the credentials that your Workday administrator supplies. The connector authenticates outbound to your Workday tenant. After the connector is connected, you can mount the catalog and immediately query Workday tables in Snowflake.
 
+## Supported regions
+
+On the Snowflake side, the integration is available to accounts in all AWS, Azure, and GCP commercial regions. For the full list, see [Supported cloud regions](/user-guide/intro-regions).
+
+The integration is not available in the following Snowflake deployments:
+
+- [Virtual Private Snowflake (VPS)](/user-guide/intro-editions)
+- [Government regions](/user-guide/intro-regions#label-us-gov-regions)
+- The People’s Republic of China
+
+On the Workday side, Snowflake supports Workday Data Cloud on AWS only. Your Snowflake account doesn’t have to be on AWS or in the same region. The integration supports cross-cloud and cross-region connections.
+
 ## Prerequisites
 
 Before starting, ensure:
 
 - You have an existing Snowflake account, and the account is enabled for the Workday connector. If the `CREATE ZEROCOPY CONNECTOR` command isn’t recognized, contact your Snowflake account team.
-- Your Snowflake account is in a supported region. For details, see [Supported Cloud Regions](/user-guide/intro-regions).
+- Your Snowflake account is in a supported region and deployment. For details, see [Supported regions](#label-workday-supported-regions).
 - Your Workday administrator has access to Workday Data Cloud and can register an API client for integrations. The API client supplies the tenant, host, and credential values that the connector needs. For the full list, see [Set up the Workday Data Cloud Zerocopy Connector](/user-guide/data-integration/zero-copy/workday-data-cloud/setup).
 
 ## Set up the integration

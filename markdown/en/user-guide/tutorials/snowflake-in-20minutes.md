@@ -67,7 +67,7 @@ To set up Snowflake for this tutorial, complete the following before continuing:
       file, [getting-started.zip](/static/samples/getting-started.zip), and save the link/file to your local file system.
    2. Unzip the sample files. The tutorial assumes you unpacked files into one of the following directories:
    - Linux/macOS: `/tmp`
-   - Windows: `C:\\temp`
+   - Windows: `C:\temp`
 
    Each file has five data records. The data uses a comma (,) character as field
    delimiter. The following is an example record:
@@ -83,7 +83,9 @@ fields in each record. This is the default that Snowflake expects when loading C
 
 ## Run SQL with Snowflake CLI
 
-After you have installed Snowflake CLI and [configured a connection](/developer-guide/snowflake-cli/connecting/connect), confirm the connection, then run SQL.
+Install Snowflake CLI and [configure a connection](/developer-guide/snowflake-cli/connecting/connect) if you have not already. This section uses one SQL session. Enter the later statements at that session’s `>` prompt, or run them from a file as described below.
+
+### Run the statements at the prompt
 
 1. Open a command-line window.
 2. Confirm the connection:
@@ -99,71 +101,43 @@ After you have installed Snowflake CLI and [configured a connection](/developer-
    If you have not defined a connection yet, see [Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
 
    If your account uses an identity provider (IdP), configure the connection for browser-based authentication first. See [Use an external browser](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-externalbrowser).
-3. When the client prompts you, complete any remaining authentication steps, such as entering your password or approving MFA.
 
-You can run SQL statements in any of these ways:
+   `snow connection test` signs in on its own. It does not keep a session for the steps that follow.
+3. Start a session:
 
-- Pass a SQL string (`snow sql -q`)
-- Run statements from a file (`snow sql -f`)
-- Enter statements in interactive mode (`snow sql`)
+   Copy code
 
-This tutorial uses `snow sql -q` so you can copy each step and get a result.
+   ```
+   snow sql
+   ```
 
-### Pass a SQL string
+   To use a named connection, add `-c <connection_name>`. When the client prompts you, complete authentication once: enter your password, approve MFA, or sign in through the browser.
 
-Use `-q` to pass one or more statements as a string. End each statement with a semicolon (`;`):
+   The command opens a `>` prompt and keeps that session until you enter `exit`, `quit`, or `CTRL-D`. Enter each statement from the following sections at this prompt, and end each statement with a semicolon (`;`).
+
+   Creating a database sets it as the current database for the session. Creating a warehouse sets it as the current warehouse. Later statements in this session use that context.
+
+### Run the statements from a file
+
+To run the statements without typing them, copy the SQL from [Create Snowflake objects](#label-tutorial-snowflake-in-20-mins-create-snowflake-objects) through [Query loaded data](#label-tutorial-snowflake-in-20-mins-query-loaded-data) into a file named `tutorial.sql`, in the same order. Include only the `PUT` statement for your operating system. Leave the cleanup `DROP` statements out of `tutorial.sql`. Then run:
+
+Copy code
+
+```
+snow sql -f tutorial.sql
+```
+
+That command runs in one session. Context from `CREATE DATABASE` and `CREATE WAREHOUSE` applies to the statements that follow in the file.
+
+A separate `snow sql -q` command is a new session. On a trial account, or with browser sign-in, the client might prompt again on every command: for a password, for MFA approval, or to open the browser. Run this tutorial as one `snow sql` session or as one `snow sql -f` command.
+
+To run a single statement on its own, pass it with `-q`:
 
 Copy code
 
 ```
 snow sql -q "SELECT CURRENT_USER();"
 ```
-
-To run several statements in one command:
-
-Copy code
-
-```
-snow sql -q "SELECT CURRENT_USER(); SELECT CURRENT_VERSION();"
-```
-
-### Run SQL from a file
-
-Save one or more statements in a file, then pass the path with `-f`. For example, save the following statements in `queries.sql`:
-
-Copy code
-
-```
-SELECT CURRENT_USER();
-SELECT CURRENT_VERSION();
-```
-
-Copy code
-
-```
-snow sql -f queries.sql
-```
-
-### Interactive mode
-
-To enter SQL one statement at a time, run `snow sql` with no `-q` or `-f`:
-
-Copy code
-
-```
-snow sql
-```
-
-At the `>` prompt, enter a statement and press ENTER. End each statement with a semicolon (`;`). To leave interactive mode, enter `exit`, `quit`, or `CTRL-D`:
-
-```
-> SELECT CURRENT_USER();
-> exit
-```
-
-Each `snow sql -q` or `snow sql -f` invocation is a new session. After you create the database and warehouse in the next step, later commands pass `--database sf_tuts` and `--warehouse sf_tuts_wh` so they use those objects. You can also set `database` and `warehouse` in your `connections.toml` file instead of passing those options on every command. For more information, see [Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
-
-Interactive mode keeps one session until you exit.
 
 Note
 
@@ -188,12 +162,13 @@ At the completion of this tutorial, you will remove these objects.
 
 ### Create a database
 
-Create the `sf_tuts` database using the [CREATE DATABASE](/sql-reference/sql/create-database) command. Both statements run in the same invocation, so the context functions see the database you just created:
+Create the `sf_tuts` database using the [CREATE DATABASE](/sql-reference/sql/create-database) command. Creating the database sets it as the current database for this session:
 
 Copy code
 
 ```
-snow sql -q "CREATE OR REPLACE DATABASE sf_tuts; SELECT CURRENT_DATABASE(), CURRENT_SCHEMA();"
+CREATE OR REPLACE DATABASE sf_tuts;
+SELECT CURRENT_DATABASE(), CURRENT_SCHEMA();
 ```
 
 In this tutorial, you use the default schema (`public`) available for each database, rather than creating a new schema.
@@ -210,43 +185,41 @@ The following is an example result:
 
 ### Create a table
 
-Create a table named `emp_basic` in `sf_tuts.public` using the [CREATE TABLE](/sql-reference/sql/create-table) command. Pass `--database sf_tuts` so this new session uses that database:
+Create a table named `emp_basic` in `sf_tuts.public` using the [CREATE TABLE](/sql-reference/sql/create-table) command:
 
 Copy code
 
 ```
-snow sql -q "CREATE OR REPLACE TABLE emp_basic (
+CREATE OR REPLACE TABLE emp_basic (
    first_name STRING ,
    last_name STRING ,
    email STRING ,
    streetaddress STRING ,
    city STRING ,
    start_date DATE
-   );" --database sf_tuts
+   );
 ```
 
 Note that the number of columns in the table, their positions, and their data types correspond to the fields in the sample CSV data files that you stage in the next step in this tutorial.
 
 ### Create a virtual warehouse
 
-Create an X-Small warehouse named `sf_tuts_wh` using the [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse) command:
+Create an X-Small warehouse named `sf_tuts_wh` using the [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse) command. Creating the warehouse sets it as the current warehouse for this session:
 
 Copy code
 
 ```
-snow sql -q "CREATE OR REPLACE WAREHOUSE sf_tuts_wh WITH
+CREATE OR REPLACE WAREHOUSE sf_tuts_wh WITH
    WAREHOUSE_SIZE='X-SMALL'
    AUTO_SUSPEND = 180
    AUTO_RESUME = TRUE
    INITIALLY_SUSPENDED=TRUE;
-SELECT CURRENT_WAREHOUSE();"
+SELECT CURRENT_WAREHOUSE();
 ```
 
-The `sf_tuts_wh` warehouse is initially suspended, but the DML statement also sets
+The `sf_tuts_wh` warehouse is initially suspended, but the statement also sets
 `AUTO_RESUME = true`. The AUTO\_RESUME setting causes a warehouse to automatically start
 when SQL statements that require compute resources are executed.
-
-Later commands that need compute pass `--warehouse sf_tuts_wh`.
 
 The following is an example result:
 
@@ -274,37 +247,31 @@ to upload the sample data files to that stage.
 
 ### Staging sample data files
 
-Execute the [PUT](/sql-reference/sql/put) command with `snow sql -q` to upload local data files to the table stage
-provided for the `emp_basic` table you created. Use `snow sql` for PUT, not `snow stage copy`. PUT compresses files with gzip by default, which matches the `PATTERN` in the next step.
+Run the [PUT](/sql-reference/sql/put) command below to upload the sample files to the table stage
+for `emp_basic`. `PUT` compresses files with gzip by default, which matches the `PATTERN` in the next step.
 
-Copy code
-
-```
-snow sql -q "PUT file://<file-path>[/\]employees0*.csv @sf_tuts.public.%emp_basic;" --database sf_tuts
-```
-
-For example:
+Use forward slashes in the file URI, including on Windows. A backslash in a `PUT` path is an escape character. Run the command for your operating system:
 
 - Linux or macOS
 
   Copy code
 
   ```
-  snow sql -q "PUT file:///tmp/employees0*.csv @sf_tuts.public.%emp_basic;" --database sf_tuts
+  PUT file:///tmp/employees0*.csv @%emp_basic;
   ```
 - Windows
 
   Copy code
 
   ```
-  snow sql -q "PUT file://C:\temp\employees0*.csv @sf_tuts.public.%emp_basic;" --database sf_tuts
+  PUT file://C:/temp/employees0*.csv @%emp_basic;
   ```
 
 Let’s take a closer look at the command:
 
-- `file://<file-path>[/]employees0*.csv` specifies the full directory path and
+- `file://<file-path>/employees0*.csv` specifies the full directory path and
   names of the files on your local machine to stage. Note that file system wildcards are allowed, and if multiple files fit the pattern they are all displayed.
-- `@<namespace>.%<table_name>` indicates to use the stage for the specified table, in this case the `emp_basic` table.
+- `@%<table_name>` indicates to use the stage for the specified table, in this case the `emp_basic` table. The session is already using the `sf_tuts.public` schema.
 
 The command returns the following result, showing the staged files:
 
@@ -329,7 +296,7 @@ You can list the staged files using the [LIST](/sql-reference/sql/list) command.
 Copy code
 
 ```
-snow sql -q "LIST @sf_tuts.public.%emp_basic;" --database sf_tuts
+LIST @%emp_basic;
 ```
 
 The following is an example result:
@@ -356,11 +323,11 @@ in [Create Snowflake objects](#label-tutorial-snowflake-in-20-mins-create-snowfl
 Copy code
 
 ```
-snow sql -q "COPY INTO emp_basic
+COPY INTO emp_basic
   FROM @%emp_basic
-  FILE_FORMAT = (type = csv field_optionally_enclosed_by='\"')
+  FILE_FORMAT = (type = csv field_optionally_enclosed_by='"')
   PATTERN = '.*employees0[1-5].csv.gz'
-  ON_ERROR = 'skip_file';" --database sf_tuts --warehouse sf_tuts_wh
+  ON_ERROR = 'skip_file';
 ```
 
 Where:
@@ -407,7 +374,7 @@ Return all rows and columns from the table:
 Copy code
 
 ```
-snow sql -q "SELECT * FROM emp_basic;" --database sf_tuts --warehouse sf_tuts_wh
+SELECT * FROM emp_basic;
 ```
 
 The following is a partial result:
@@ -437,9 +404,9 @@ For example, to insert two additional rows into the table:
 Copy code
 
 ```
-snow sql -q "INSERT INTO emp_basic VALUES
+INSERT INTO emp_basic VALUES
    ('Clementine','Adamou','cadamou@sf_tuts.com','10510 Sachs Road','Klenak','2017-9-22') ,
-   ('Marlowe','De Anesy','madamouc@sf_tuts.co.uk','36768 Northfield Plaza','Fangshan','2017-1-26');" --database sf_tuts --warehouse sf_tuts_wh
+   ('Marlowe','De Anesy','madamouc@sf_tuts.co.uk','36768 Northfield Plaza','Fangshan','2017-1-26');
 ```
 
 ### Query rows based on email address
@@ -449,7 +416,7 @@ Return a list of email addresses with United Kingdom top-level domains using the
 Copy code
 
 ```
-snow sql -q "SELECT email FROM emp_basic WHERE email LIKE '%.uk';" --database sf_tuts --warehouse sf_tuts_wh
+SELECT email FROM emp_basic WHERE email LIKE '%.uk';
 ```
 
 The following is an example result:
@@ -472,7 +439,7 @@ dates using the [DATEADD](/sql-reference/functions/dateadd) function. Filter the
 Copy code
 
 ```
-snow sql -q "SELECT first_name, last_name, DATEADD('day',90,start_date) FROM emp_basic WHERE start_date <= '2017-01-01';" --database sf_tuts --warehouse sf_tuts_wh
+SELECT first_name, last_name, DATEADD('day',90,start_date) FROM emp_basic WHERE start_date <= '2017-01-01';
 ```
 
 The following is an example result:
@@ -539,7 +506,8 @@ you can remove them from the system with [DROP <object>](/sql-reference/sql/drop
 Copy code
 
 ```
-snow sql -q "DROP DATABASE IF EXISTS sf_tuts; DROP WAREHOUSE IF EXISTS sf_tuts_wh;"
+DROP DATABASE IF EXISTS sf_tuts;
+DROP WAREHOUSE IF EXISTS sf_tuts_wh;
 ```
 
 ### What’s next?
