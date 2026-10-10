@@ -63,10 +63,6 @@ Copy code
 }
 ```
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Support for this function on Azure is in preview.
-
 Additionally, in Azure regions you see a more detailed output:
 
 Copy code
@@ -132,7 +128,15 @@ Copy code
 On Azure, the output includes the standard `ipv4_prefix`, `effective`, and `expires` fields. The output also includes two additional fields:
 
 - `published`: The date when Snowflake published this IP range. Refresh your allowlist if you last updated it before this date.
-- `usage`: Describes how Snowflake uses the range. Values can include network identifiers for Azure services such as Storage and Key Vault, and stable egress IPs for endpoints hosted outside of Azure.
+- `usage`: An array that describes how Snowflake uses the range. A single prefix can list more than one value. Typical values are:
+
+  - `Network Identifier - use for Azure services such as Storage, Key Vault`: Allowlist these prefixes on Azure Storage and Azure Key
+    Vault when your Snowflake account is on Azure. For more information, see [Use Snowflake Network Identifiers in Azure allowlists for Azure Storage and Azure Key Vault (August 2026) (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2391).
+  - `Stable Egress IP - use for endpoints hosted outside of Azure`: Allowlist these prefixes on customer-hosted servers and other
+    endpoints that aren’t Azure PaaS.
+
+  For a scenario table, see
+  [Choose which IP ranges to allowlist](/user-guide/egress-ip/network-egress#label-network-egress-choose-ranges).
 
 ## Usage notes
 

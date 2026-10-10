@@ -3,11 +3,7 @@
 This topic describes how to create a tag and assign it to a Snowflake object. It also contains instructions on how to delete a tag.
 To assign a predefined tag that Snowflake creates in every account, see [Snowflake-provided tags](/user-guide/object-tagging/snowflake-provided-tags).
 
-## Create a tag in Snowsight (public preview)
-
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
+## Create a tag in Snowsight
 
 Use the following steps to create a tag in Snowsight. To create a tag using SQL instead, see [Create a tag in SQL](#label-object-tagging-create-tag-sql).
 For the prerequisites to open the **Tags & policies** area, see [Use Snowsight to set tags](#label-object-tagging-assign-ui).

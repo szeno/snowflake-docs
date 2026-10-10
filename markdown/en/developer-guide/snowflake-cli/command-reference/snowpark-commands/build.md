@@ -1,6 +1,6 @@
 # snow snowpark build
 
-Builds artifacts required for the Snowpark project. The artifacts can be used by `deploy` command. For each directory in artifacts a .zip file is created. All non-anaconda dependencies are packaged in a `dependencies.zip` file. When the project has no `requirements.txt`, dependencies are collected from the PEP 621 `[project]` table in `pyproject.toml`. Optional extras are not included. If `requirements.txt` is present, it is used and `pyproject.toml` is ignored.
+Builds artifacts required for the Snowpark project. The artifacts can be used by `deploy` command. For each directory in artifacts a .zip file is created. All non-anaconda dependencies are packaged in dependencies.zip file. Dependencies are collected from requirements.txt, or from [project] dependencies in pyproject.toml if there is no requirements.txt.
 
 ## Syntax
 
@@ -17,6 +17,7 @@ snow snowpark build
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -44,6 +45,8 @@ snow snowpark build
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -77,13 +80,16 @@ None
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -155,25 +161,31 @@ None
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -215,17 +227,7 @@ None
     Creating: app.zip
   Build done.
   ```
-- Build a project located in a different directory:
-
-  Copy code
-
-  ```
-  ls
-  ```
-
-  ```
-  project_dir    some_other_dir    some_file.txt
-  ```
+- Build a project located in a different directory when the current directory contains `project_dir`, `some_other_dir`, and `some_file.txt`:
 
   Copy code
 
@@ -240,17 +242,7 @@ None
     Creating: app.zip
   Build done.
   ```
-- Build a project in a directory with no `snowflake.yml` project definition:
-
-  Copy code
-
-  ```
-  ls
-  ```
-
-  ```
-  project_dir    some_other_dir    some_file.txt
-  ```
+- Build a project in a directory with no `snowflake.yml` project definition when the current directory contains `project_dir`, `some_other_dir`, and `some_file.txt`:
 
   Copy code
 

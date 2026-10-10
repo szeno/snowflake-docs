@@ -6,6 +6,12 @@ this API to develop custom applications and integrations that:
 - Perform queries.
 - Manage your deployment (e.g. provision users and roles, create tables, etc.).
 
+For an example request, including the headers and the JSON body, see
+[Example of a request](/developer-guide/sql-api/submitting-requests#label-sql-api-executing-statement-request-example).
+For an example of the response that Snowflake returns, see
+[Getting the results from the response](/developer-guide/sql-api/handling-responses#label-sql-api-getting-results).
+To authenticate the request first, see [Authenticating to the server](/developer-guide/sql-api/authenticating).
+
 ## Capabilities of the SQL API
 
 The Snowflake SQL API provides operations that you can use to:

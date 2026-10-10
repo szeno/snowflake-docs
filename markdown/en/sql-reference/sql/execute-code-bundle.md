@@ -21,7 +21,8 @@ object names. For more information, see [Editing and running notebooks in Worksp
 See also:
 [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE TASK](/sql-reference/sql/create-task), [CI/CD workflow scenario](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-workflow-scenarios#label-nb-in-ws-schedule-scenario-b),
 [Observability and logging for Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-observability-logging), [Running notebooks with parameters](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-parameters),
-[Using secrets in Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-using-secrets)
+[Using secrets in Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-using-secrets),
+[Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles)
 
 ## Syntax
 

@@ -1,6 +1,6 @@
 # snow helpers generate-project-schema
 
-Generates a JSON Schema for the Snowflake CLI project definition file (`snowflake.yml`). Save the output and reference it from your editor (for example, the YAML extension for VS Code, using a `# yaml-language-server: $schema=...` modeline or the extension’s schema mapping) or from a CI pipeline to get completion and to catch structural mistakes such as unknown keys, wrong types, or missing required fields before a deploy. The schema is generated from the CLI’s own models, so it stays in sync with the structural rules the CLI enforces. Some cross-field and semantic checks are only applied at load or deploy time.
+Generate a JSON Schema for the Snowflake CLI project definition file (snowflake.yml).
 
 ## Syntax
 
@@ -24,20 +24,20 @@ None
 
 ## Options
 
-`--definition-version [1%1.1%2]`
-:   Project definition version to generate the schema for. Default: 2.
+`--definition-version [1|1.1|2]`
+:   Project definition version to generate the schema for. Default: ProjectDefinitionVersion.V2.
 
 `--output-file, -o FILE`
-:   Writes the JSON Schema to this file. When omitted, the schema is printed to standard output.
+:   Write the JSON Schema to this file. When omitted, schema is printed to stdout.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.

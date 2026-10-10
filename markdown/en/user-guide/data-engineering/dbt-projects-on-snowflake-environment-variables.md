@@ -7,6 +7,7 @@ This guide covers:
 - **[Concepts](#concepts):** How the `env.yml` file works, the `env:` and `secrets:` sections, environments and value precedence, and the naming and casing rules.
 - **[Admin setup](#admin-setup):** Importing private Git packages (shared macros, sub-projects in a monorepo, or another team’s dbt project) by configuring a Snowflake secret, network rule, and external access integration. This is how cross-project references work at the dbt Core level.
 - **[Using environment variables](#start-using-environment-variables):** Authoring an `env.yml` file to define one or more environments (for example, dev and prod), configuring [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file) or `profiles.yml` to read them, writing a model that consumes them, and running your project in Workspaces and as a dbt project object with SQL.
+- **[Call stored procedures from env.yml](#call-stored-procedures-from-envyml):** Reusing stored procedure logic to compute `env:` values, such as a per-developer schema.
 - **[Use the Snowflake CLI](#label-dbt-env-vars-cli):** Wiring environment variables into CI/CD workflows.
 - **[Observability](#observability):** Seeing which environment and variable overrides each run used.
 - **[Reference](#reference):** Supported context functions and Jinja helpers, environment selection and value precedence tables, and naming rules.
@@ -401,7 +402,7 @@ The `env:` section supports any SQL query as long as it resolves into a single r
 Copy code
 
 ```
-env_config: # Top-level: name is required for YAML - currently "env_config:"
+env_config: # Top-level: name is required for YAML
   default_environment: dev
   environments: # The list of available environments
     - name: dev # User defines environment names
@@ -603,7 +604,7 @@ EXECUTE DBT PROJECT tasty_bytes_dbt_db.dev.tasty_bytes_dbt_project
   ENV_VARS = ('DBT_CURRENT_USER' = $my_user_var);
 ```
 
-### Call stored procedures from env.yml
+## Call stored procedures from env.yml
 
 You can call stored procedures from `env:` values using the `SELECT * FROM TABLE(...)` syntax. The CALL syntax is not supported. This is useful when your logic is too complex for inline SQL or when you want to reuse the same transformation across multiple environments.
 
@@ -611,7 +612,7 @@ Because `env.yml` values must resolve to a single row and one VARCHAR column, th
 
 For more information about calling stored procedures with SELECT, see [Calling a stored procedure with SELECT](https://docs.snowflake.com/en/developer-guide/stored-procedure/stored-procedures-selecting-from).
 
-#### Example: per-developer schema from a stored procedure
+### Example: per-developer schema from a stored procedure
 
 This stored procedure takes an email or username string, strips everything at and after the `@`, and replaces `.` with `_`. The result is a clean schema name for each developer.
 
@@ -638,7 +639,7 @@ SELECT * FROM TABLE(tasty_bytes_dbt_db.public.clean_username('johndoe@company.co
 -- Result: johndoe
 ```
 
-#### Call the stored procedure in env.yml
+### Call the stored procedure in env.yml
 
 In your `env.yml`, call the stored procedure with `CURRENT_USER()` as the input so each engineer gets their own schema automatically:
 
@@ -825,13 +826,13 @@ Expand
 
 Show lessSee more
 
-### Naming and casing rules
+### Where each naming rule applies
 
 | Rule | Applies to |
 | --- | --- |
 | Prefix with `DBT_` (includes `DBT_ENV_CUSTOM_ENV_`, `DBT_ENV_SECRET_`) | All keys in `env:` and `secrets:`, and all overrides |
 | UPPERCASE keys | All keys in `env:` and `secrets:`, and all overrides |
-| Prefix with `DBT_ENV_SECRET_` | All keys in `secrets:` (value masked to `****`) |
+| Prefix with `DBT_ENV_SECRET_` | All keys in `secrets:` except `DBT_CLOUD_TOKEN` (values masked to `****`) |
 | Must be plain text, not SQL | All environment names, keys in `env:` and `secrets:`, and secret values |
 | Must be English letters, numbers, and underscores, up to 256 characters. | All keys in `env:` and `secrets:` and environment names |
 | Case sensitive | Environment names |

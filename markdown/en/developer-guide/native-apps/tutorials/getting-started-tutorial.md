@@ -757,7 +757,7 @@ To add an external Python module to your app:
    CREATE or REPLACE FUNCTION code_schema.multiply(num1 float, num2 float)
      RETURNS float
      LANGUAGE PYTHON
-     RUNTIME_VERSION = 3.11
+     RUNTIME_VERSION = '3.11'
      IMPORTS = ('/python/hello_python.py')
      HANDLER='hello_python.multiply';
 

@@ -5,6 +5,47 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.46.0 (October 07, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Enable high-precision string-to-integer casts by default with `snowpark.connect.cast.stringToIntegralHighPrecision`
+- Interpret two-digit years as 2000–2099 by default with `snowpark.connect.use2000AsTwoDigitCenturyStart`
+- Enable Spark-compatible datetime format handling by default with `snowpark.connect.useUdfForUnsupportedDateTimeFormats`
+- Enable Iceberg table-property emission by default with `snowpark.connect.iceberg.enable_table_properties_ddl`
+
+#### Bug fixes
+
+- Preserve special characters and case-sensitive struct fields in `*` expansion
+- Avoid copying large structured values when checking nested JSON fields for nulls
+- Fix `NullType` handling in explicit schemas for native Spark sandbox reads
+- Preserve catalog-linked Iceberg tables when replacement source queries fail
+- Fix `create_changelog_view` for catalog-linked Iceberg tables
+- Return empty results for `SHOW TBLPROPERTIES` on temporary views
+- Resolve DataFrame-bound columns in `writeTo().overwrite(condition)`
+- Fix nested field drops and renames in Snowflake-managed Iceberg tables
+- Fix `ALTER TABLE DROP COLUMN` with multiple or backtick-quoted column names
+- Honor `check-ordering` for `replace()` and `createOrReplace()` writes
+- Validate JAR filenames before generating stored-procedure handlers
+- Reduce large-file read and table-write overhead when Parquet Direct is enabled
+- Reduce join setup latency by registering Parquet Direct inputs concurrently
+- Correct Iceberg telemetry attribution for target catalogs and API usage
+- Warn when non-greedy regular expressions can produce results unlike Spark
+
+#### New features
+
+- Add opt-in Java regex handling with `snowpark.connect.useJavaRegexSemantics` for supported literal patterns in `regexp_extract`, `regexp_substr`, `regexp_count`, and `rlike`
+
+### Snowpark Submit
+
+#### Bug fixes
+
+- Prevent application arguments from overriding launcher options or shell commands
+- Reject unsafe paths in `--snowflake-stage` values
+- Redact connection secrets from Airflow status-operator command logs
+
 ## 1.45.0 (October 01, 2026)
 
 ### Snowpark Connect for Spark

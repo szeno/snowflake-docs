@@ -1,4 +1,4 @@
-# Option 2: Automate Snowpipe with AWS Lambda
+# Call the Snowpipe REST API from AWS Lambda
 
 AWS Lambda is a compute service that runs when triggered by an event and executes code that has been loaded into the system. You can adapt the sample Python code provided in this topic and create a Lambda
 function that calls the Snowpipe REST API to load data from your external stage (i.e. S3 bucket; Azure containers are not supported). The function is deployed to your AWS account, where it is hosted. Events
@@ -6,9 +6,13 @@ you define in Lambda (e.g. when files in your S3 bucket are updated) invoke the 
 
 This topic describes the steps necessary to configure a Lambda function to automatically load data in micro-batches continuously using Snowpipe.
 
+If you don’t need custom logic in a function, consider [automated loading for Amazon S3](/user-guide/data-load-snowpipe-auto-s3) instead. It loads files when S3 event notifications arrive, without any code to run.
+
+For an overview of the REST API, including authentication, status codes, and ways to check load results, see [Load data with the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-overview).
+
 Note
 
-This topic assumes you have configured Snowpipe using the instructions in [Data loading preparation using the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs).
+This topic assumes you have configured Snowpipe using the instructions in [Set up the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs).
 
 ## Step 1: Write Python code invoking the Snowpipe REST API
 
@@ -72,7 +76,7 @@ Before using the sample code, make the following changes:
 1. Update the security parameter:
 
    `private_key=""" / -----BEGIN RSA PRIVATE KEY----- / ... / -----END RSA PRIVATE KEY----- """`
-   :   Specifies the content of the private key file you created in [Use key pair authentication & key rotation](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys) (in [Data loading preparation using the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs)).
+   :   Specifies the content of the private key file that you created when you [set up key pair authentication](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys).
 
    Specify the passphrase for decrypting the private key file using the `PRIVATE_KEY_PASSPHRASE` environment variable:
 
@@ -113,7 +117,7 @@ Before using the sample code, make the following changes:
 3. Specify the path to your files to import in the file objects list:
 
    `staged_file_list = []`
-   :   The path you specify must be relative to the stage where the files are located. Include the complete name for each file, including the file extension. For example, a CSV file that is
+   :   The path you specify must be relative to the location in the pipe’s `COPY INTO` statement: the stage, plus any path in the `FROM` clause. The sample code submits the S3 object key from the event, which is relative to the root of the bucket. If your stage URL or the pipe’s `FROM` clause includes a path, remove that path from the start of the key before you add it to `staged_file_list`. For example, if the stage URL is `s3://mybucket/orders/`, remove `orders/` from the key. S3 event keys are also URL-encoded, so decode the key first with a function such as `urllib.parse.unquote_plus(key)`. Include the complete name for each file, including the file extension. For example, a CSV file that is
        gzip-compressed might have the extension `.csv.gz`.
 4. Save the file in a convenient location.
 

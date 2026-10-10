@@ -112,5 +112,5 @@ For general information about roles and privilege grants for performing SQL acti
 
 See the following topics:
 
-- [Enabling Snowpipe error notifications for Amazon SNS](/user-guide/data-load-snowpipe-errors-sns)
+- [Snowpipe error notifications](/user-guide/data-load-snowpipe-errors)
 - [Creating a notification integration to send notifications to an Amazon SNS topic](/user-guide/notifications/creating-notification-integration-amazon-sns)

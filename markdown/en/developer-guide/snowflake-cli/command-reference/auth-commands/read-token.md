@@ -26,14 +26,14 @@ None
 `--type [auto|github]`
 :   Type of OIDC provider to use. Default: auto.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.

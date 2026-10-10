@@ -64,7 +64,9 @@ snow spcs service events
 ## Arguments
 
 `name`
-:   Identifier of the service; for example: my\_service.
+:   *Required*
+
+    Identifier of the service; for example: my\_service.
 
 ## Options
 
@@ -189,7 +191,7 @@ snow spcs service events
 :   Keep the session active indefinitely, even if there is no activity from the user.
 
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.
@@ -211,12 +213,16 @@ snow spcs service events
 
 ## Usage notes
 
-- Only the `name` argument is required. By default, the command returns all platform events for the service.
-- Use the scope filters to narrow the results:
-  - `--instance-id <ID>` returns events for a single service instance.
-  - `--container-name <name>` returns events for a single container. This option requires `--instance-id`.
-- You can use the `--since` and `--until` time-based filters to return events for a specified period of time. You can specify the time as a relative time, such as `1h` (hour) or `2d` (days).
-- You can use the `--first` and `--last` options to return only a specified number of events. Note that these options are mutually exclusive.
+Only the `name` argument is required. By default, the command returns all platform events for the service.
+
+Use the scope filters to narrow the results:
+
+- `--instance-id <ID>` returns events for a single service instance.
+- `--container-name <name>` returns events for a single container. This option requires `--instance-id`.
+
+You can use the `--since` and `--until` time-based filters to return events for a specified period of time. You can specify the time as a relative time, such as `1h` (hour) or `2d` (days).
+
+You can use the `--first` and `--last` options to return only a specified number of events. Note that these options are mutually exclusive.
 
 ## Examples
 

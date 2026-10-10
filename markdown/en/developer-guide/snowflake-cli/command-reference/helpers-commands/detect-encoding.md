@@ -1,6 +1,6 @@
 # snow helpers detect-encoding
 
-Shows the encoding configuration for the current environment. The command displays the platform encoding settings and flags any discrepancies that could cause file corruption when sharing projects across platforms. Run this command after you see an encoding warning to get the full details and recommended remediation steps.
+Show the encoding configuration for the current environment.
 
 ## Syntax
 
@@ -22,14 +22,14 @@ None
 
 ## Options
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.

@@ -33,7 +33,9 @@ Where:
 >
 > ```
 > objectProperties ::=
+>   ERROR_INTEGRATION = <integration_name>
 >   PIPE_EXECUTION_PAUSED = TRUE | FALSE
+>   LOG_EVENT_LEVEL = <log_event_level>
 > ```
 
 ## Parameters
@@ -45,7 +47,7 @@ Where:
 `SET ...`
 :   Specifies one (or more) properties to set for the pipe (separated by blank spaces, commas, or new lines):
 
-    `ERROR_INTEGRATION = 'integration_name'`
+    `ERROR_INTEGRATION = integration_name`
     :   Required only when configuring Snowpipe to send error notifications to a cloud messaging service. Specifies the name of the notification
         integration used to communicate with the messaging service. For more information, see [Snowpipe error notifications](/user-guide/data-load-snowpipe-errors).
 
@@ -63,11 +65,13 @@ Where:
 
           - Transferring ownership of the pipe to another role. This requirement allows the new owner to evaluate the pipe status and
             determine how many files are waiting to be loaded by calling the [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) function.
-          - Allowing a pipe object that leverages cloud messaging to trigger data loads (i.e. where `AUTO_INGEST = TRUE` in the pipe
-            definition) to become stale. A pipe is considered stale when it is paused for longer than the limited retention period for event
-            messages received for the pipe (14 days by default).
+          - Allowing the pipe to become stale. A pipe is considered stale when it’s paused for longer than the limited retention period for
+            files in the pipe’s queue (14 days by default).
 
         Default: `FALSE` (the pipe is running by default)
+
+    `LOG_EVENT_LEVEL = log_event_level`
+    :   Specifies the severity level of [Snowpipe events](/user-guide/data-load-snowpipe-monitor-events) that the pipe records in the active event table. For the supported values, see [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level). If you don’t set this parameter on the pipe, the pipe inherits the value from its schema, database, or account. The default is `OFF`.
 
     `TAG tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ]`
     :   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
@@ -84,11 +88,14 @@ Where:
 
     - `ERROR_INTEGRATION`
     - `PIPE_EXECUTION_PAUSED`
+    - `LOG_EVENT_LEVEL`
     - `TAG tag_name [ , tag_name ... ]`
     - `COMMENT`
 
     You can reset multiple properties with a single ALTER statement; however, each property must be separated by a comma. When resetting
     a property, specify only the name; specifying a value for the property will return an error.
+
+    After you unset `LOG_EVENT_LEVEL`, the pipe inherits the value from its schema, database, or account.
 
 `REFRESH`
 :   Copies a set of staged data files to the Snowpipe ingest queue for loading into the target table. This clause accepts an optional path and can
@@ -123,25 +130,39 @@ Where:
 
         The default and maximum allowed value is 7 days.
 
-## Usage notes
+## Access control requirements
 
-- Only the pipe owner (i.e. the role with the OWNERSHIP privilege on the pipe) can set or unset properties on a pipe.
+Executing this SQL command requires [roles](/user-guide/security-access-control-overview#label-access-control-overview-roles) with the following
+[privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
 
-  A non-owner role with the following minimum privileges can refresh a pipe (using ALTER PIPE … REFRESH …):
+- To set or unset properties on a pipe, the role must have the `OWNERSHIP` privilege on the pipe, with the following exceptions:
+
+  - To pause or resume the pipe (using `ALTER PIPE ... SET PIPE_EXECUTION_PAUSED = TRUE | FALSE`), the `OPERATE` privilege on the pipe is enough.
+  - To set `LOG_EVENT_LEVEL`, the role needs the `OPERATE` or `OWNERSHIP` privilege on the pipe and the `MODIFY LOG EVENT LEVEL` privilege on the account.
+  - To set `ERROR_INTEGRATION`, the role needs the `OPERATE` or `OWNERSHIP` privilege on the pipe and the `USAGE` privilege on the notification integration.
+- To refresh a pipe (using `ALTER PIPE ... REFRESH`), a role that doesn’t own the pipe needs the following privileges:
 
   | Privilege | Object | Notes |
   | --- | --- | --- |
   | OPERATE | Pipe |  |
   | USAGE | Stage in the pipe definition | External stages only |
   | READ | Stage in the pipe definition | Internal stages only |
+  | USAGE | Named file format in the pipe definition | Only if the pipe uses a named file format |
   | SELECT, INSERT | Table in the pipe definition |  |
-  | A non-owner role with the OPERATE privilege on the pipe can pause or resume a pipe (using ALTER PIPE … SET PIPE\_EXECUTION\_PAUSED = TRUE |  |  |
-  |  | FALSE). |  |
-  | SQL operations on schema objects also require USAGE or any other privilege on the database and schema that contain the object. |  |  |
 
   Expand
 
   Show lessSee more
+
+Operating on an object in a schema requires at least one privilege on the parent database and at least one privilege on the parent schema.
+
+For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).
+
+For general information about roles and privilege grants for performing SQL actions on
+[securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
+
+## Usage notes
+
 - Currently, it is not possible to modify the following pipe properties using an ALTER PIPE statement:
 
   - [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement
@@ -171,6 +192,14 @@ Add or modify the comment for pipe `mypipe`:
 >
 > ```
 > alter pipe mypipe SET COMMENT = "Pipe for North American sales data";
+> ```
+
+Record [Snowpipe events](/user-guide/data-load-snowpipe-monitor-events) at the `INFO` level and more severe levels for pipe `mypipe` in the active event table:
+
+> Copy code
+>
+> ```
+> ALTER PIPE mypipe SET LOG_EVENT_LEVEL = INFO;
 > ```
 
 ### Refreshing a pipe

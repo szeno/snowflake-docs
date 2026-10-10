@@ -73,17 +73,17 @@ There is no requirement for your data files to have the same number and ordering
 
 ### Continuous loading using Snowpipe
 
-This option is designed to load small volumes of data (i.e. micro-batches) and incrementally make them available for analysis. Snowpipe loads data within minutes after files are added to a stage and submitted for ingestion. This ensures users have the latest results, as soon as the raw data is available.
+Snowpipe loads files into standard tables or Apache Iceberg™ tables continuously as the files arrive in a stage, so new data is typically available for analysis within minutes. Use Snowpipe when files arrive throughout the day and you don’t want to schedule batch loads. For more information, see [Snowpipe](/user-guide/data-load-snowpipe-intro).
 
-#### Compute resources
+#### Snowpipe compute and billing
 
-Snowpipe uses compute resources provided by Snowflake (i.e. a serverless compute model). These Snowflake-provided resources are automatically resized and scaled up or down as required, and are charged and itemized using per-second billing. Data ingestion is charged based upon the actual workloads.
+Snowpipe uses serverless compute that Snowflake provides and scales automatically, so you don’t size or manage a warehouse. Snowpipe charges a fixed number of credits per GB of data loaded. For more information, see [Snowpipe costs](/user-guide/data-load-snowpipe-billing).
 
-#### Simple transformations during a load
+#### Transformations in a pipe
 
-The COPY statement in a pipe definition supports the same COPY transformation options as when bulk loading data.
+The `COPY INTO` statement in a pipe definition supports the same transformation options as bulk loading. For more information, see [Transform data during a load](/user-guide/data-load-transform).
 
-In addition, data pipelines can leverage Snowpipe to continuously load micro-batches of data into staging tables for transformation and optimization using automated tasks and the change data capture (CDC) information in streams.
+To transform the data after it loads, use [dynamic tables](/user-guide/dynamic-tables/overview) or [streams and tasks](/user-guide/streams-intro).
 
 ### Continuous loading using Snowpipe Streaming
 

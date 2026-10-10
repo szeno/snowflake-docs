@@ -53,11 +53,25 @@ To view end-to-end examples of this workflow for different types of workloads an
 
 ## Access control requirements
 
-To configure WIF for a Snowflake service user (that is, a user with their TYPE property set to `SERVICE` or `SERVICE_AGENT`)
+To configure WIF for a Snowflake service user (that is, a user with their `TYPE` property set to `SERVICE` or `SERVICE_AGENT`)
 you must grant your activated roles one of the following privileges:
 
 - OWNERSHIP on the service user.
 - MODIFY PROGRAMMATIC AUTHENTICATION METHODS on the service user.
+
+## Named workload identities
+
+A service user can have up to 10 workload identities by default. Setting the `WORKLOAD_IDENTITY` user property assigns one workload
+identity, which Snowflake names `DEFAULT`. To register additional workload identities, each with its own name and provider
+settings, use [ALTER USER … ADD WORKLOAD IDENTITY](/sql-reference/sql/alter-user-add-workload-identity).
+
+You can rename a named workload identity, disable it, or set a comment with
+[ALTER USER … MODIFY WORKLOAD IDENTITY](/sql-reference/sql/alter-user-modify-workload-identity). You can’t change `TYPE`, `ARN`, `ISSUER`, `SUBJECT`, or
+`OIDC_AUDIENCE_LIST` after the workload identity is created. To change those values, remove the workload identity with
+[ALTER USER … REMOVE WORKLOAD IDENTITY](/sql-reference/sql/alter-user-remove-workload-identity) and add it again.
+
+The named commands can’t manage the `DEFAULT` workload identity. Continue to use `SET WORKLOAD_IDENTITY` and
+`UNSET WORKLOAD_IDENTITY` for that identity.
 
 ## Supported Snowflake drivers
 
@@ -996,7 +1010,7 @@ The `iss` claim is the issuer URL and the `sub` claim is the SPIFFE ID.
 
    - `ISSUER` is the HTTPS URL of your SPIRE OIDC Discovery Provider.
    - `SUBJECT` is the SPIFFE ID of your workload (for example, `spiffe://trust-domain/workload/my-service`).
-   - `OIDC_AUDIENCE_LIST` is a list of audience values that the JWT-SVID must contain. Set this to a value scoped to your
+   - `OIDC_AUDIENCE_LIST` is the set of audiences the JWT-SVID is allowed to use. Every value in the token’s `aud` claim must be in this list. Set this to a value scoped to your
      Snowflake account, such as your account URL.
 
    To mark every session from this workload as agent-active, use `TYPE = SERVICE_AGENT` instead of `TYPE = SERVICE`. For the
@@ -1151,9 +1165,10 @@ If your workload needs a Python driver, complete the following steps:
 
 ## View service user settings
 
-Run the [SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS](/sql-reference/sql/show-user-workload-identity-authentication-methods) command to view the values of the WORKLOAD\_IDENTITY
-parameter for the service user. For example, to view the WIF settings that the service user `my_custom_service`
-uses to authenticate to Snowflake, run the following command:
+Run the [SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS](/sql-reference/sql/show-user-workload-identity-authentication-methods) command to list the workload identities
+for a service user, including identities registered with [ALTER USER … ADD WORKLOAD IDENTITY](/sql-reference/sql/alter-user-add-workload-identity) and the
+`DEFAULT` identity assigned with the `WORKLOAD_IDENTITY` user property. For example, to view the WIF settings that the
+service user `my_custom_service` uses to authenticate to Snowflake, run the following command:
 
 Copy code
 
@@ -1165,9 +1180,14 @@ SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS FOR USER my_custom_service;
 
 - Azure workloads can’t be located in Azure sovereign clouds, such as Azure China and Azure US Gov. This limitation isn’t related to the
   Snowflake region of your account.
-- The SUBJECT property in WORKLOAD\_IDENTITY can’t exceed 255 characters.
-- The ISSUER property in WORKLOAD\_IDENTITY can’t exceed 2048 characters.
-- The combination of `ISSUER` and `SUBJECT` must be unique in the account. Snowflake rejects a second workload identity authentication method that uses the same issuer and subject, even when it belongs to a different user. The error is `099706` (`OIDC Authenticator for Issuer '...' and Subject '...' already exists`). To find the user that already has that pair, run [SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS](/sql-reference/sql/show-user-workload-identity-authentication-methods) for the users in the account.
+- A user can have a maximum of 10 workload identities by default, including the `DEFAULT` identity assigned with the `WORKLOAD_IDENTITY` user property and any disabled workload identities.
+- The name `DEFAULT` is reserved for the workload identity assigned with the `WORKLOAD_IDENTITY` user property.
+- For Azure and OIDC, the `SUBJECT` property can’t exceed 255 characters. For GCP, `SUBJECT` must be 10 to 30 digits.
+- The `ISSUER` property can’t exceed 2048 characters.
+- For AWS, Snowflake rejects a second workload identity that uses the same AWS partition, account, principal type, and principal name, even when it belongs to a different user. For an assumed-role ARN, the principal name is the role name. The role session name isn’t part of this check. The error is `099704` (`AWS Authenticator for AWS Partition '...', Account '...', Type '...' and Name '...' already exists in this Snowflake account.`).
+- For Azure, the combination of `ISSUER` and `SUBJECT` must be unique in the account, even across users. The error is `099708` (`Azure Authenticator for Issuer '...' and Subject '...' already exists in this Snowflake account.`).
+- For GCP, `SUBJECT` must be unique in the account, even across users. The error is `099707` (`GCP Authenticator for Subject '...' already exists in this Snowflake account.`).
+- For OIDC, the combination of `ISSUER` and `SUBJECT` must be unique in the account, even across users. The error is `099706` (`OIDC Authenticator for Issuer '...' and Subject '...' already exists in this Snowflake account.`). To find the user that already has that pair, run [SHOW USER WORKLOAD IDENTITY AUTHENTICATION METHODS](/sql-reference/sql/show-user-workload-identity-authentication-methods) for the users in the account.
 - ID tokens must include the `iat` (issued at) claim. Snowflake rejects tokens that omit this claim.
 - Snowflake supports the following JWT signature algorithms: RS256, RS384, RS512, ES256, ES384, and ES512. Tokens signed with other
   algorithms (such as PS256, PS384, or PS512) are rejected.

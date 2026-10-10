@@ -8,29 +8,10 @@ You must add a data product to your listing before you can set up auto-fulfillme
 
 The following sections describe how to set up auto-fulfillment in Snowsight. To set up auto-fulfillment
 programmatically, include the [`auto_fulfillment`](/progaccess/listing-manifest-reference#label-listing-api-manifest-auto-fulfillment) field in the listing
-manifest when you run [CREATE LISTING](/sql-reference/sql/create-listing) or [ALTER LISTING](/sql-reference/sql/alter-listing). For example, the
-following statement creates a private listing for the `sales_s` share that auto-fulfills the data product to a consumer
-account in another region every 60 minutes:
+manifest when you run [CREATE LISTING](/sql-reference/sql/create-listing) or [ALTER LISTING](/sql-reference/sql/alter-listing).
 
-Copy code
-
-```
-CREATE EXTERNAL LISTING sales_listing
-SHARE sales_s AS
-$$
-  title: "Sales data"
-  description: "Daily sales data"
-  listing_terms:
-    type: "OFFLINE"
-  targets:
-    accounts: ["consumer_org.consumer_account"]
-  auto_fulfillment:
-    refresh_type: SUB_DATABASE
-    refresh_schedule: '60 MINUTE'
-$$;
-```
-
-For complete examples, see [Manage listings with SQL as a provider - examples](/progaccess/listing-progaccess-examples).
+For the SQL that creates a private listing and replicates it to another region, see
+[Share private listing and replicate](/progaccess/listing-progaccess-examples#share-private-listing-and-replicate).
 
 ## Set up auto-fulfillment for a secure share data product shared on the Snowflake Marketplace
 
@@ -52,7 +33,7 @@ Snowsight
    If you can’t use auto-fulfillment and the option is available, select **Manual** to manually replicate your data product. See [Manually replicate data to fulfill a listing request](https://other-docs.snowflake.com/en/collaboration/provider-listings-managing#label-manually-replicate-listing).
 7. If you select **Automatic** for auto-fulfillment:
 
-   1. Select a refresh interval from the drop-down list, then enter a value. The refresh interval can’t be longer than 8 days.
+   1. Select a refresh interval from the drop-down list, then enter a value. The refresh interval must be at least 1 minute and can’t be longer than 8 days.
    2. If you don’t have a default warehouse set, select a warehouse to use for auto-fulfillment.
    3. When you add a data product to your listing, Snowflake performs a compatibility check to validate that your data product can be auto-fulfilled to other regions. If the check returns any incompatibilities, you might need to update your data product. See [Troubleshooting auto-fulfillment](/collaboration/provider-listings-auto-fulfillment-troubleshooting).
    4. Select **Save and Enable Fulfillment**.

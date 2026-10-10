@@ -91,7 +91,7 @@ To create a new connection and add it to the [configuration file](/developer-gui
    ```
    snow connection add
    ```
-2. When prompted, supply the required connection, account, and username parameters, as well as any other desired optional parameters. Note that additional parameters might be required depending on the authentication method you choose.
+2. When prompted, supply the required connection, account, and username parameters, as well as any other desired optional parameters. Note that additional parameters might be required depending on the authentication method you choose. For a description and the expected format of each value, see [`snow connection add`](/developer-guide/snowflake-cli/command-reference/connection-commands/add-connection).
 
    ```
    Enter connection name: <connection_name>

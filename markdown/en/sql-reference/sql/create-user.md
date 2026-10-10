@@ -324,7 +324,7 @@ login name.
 
     `LEGACY_SERVICE`
     :   A user with their `TYPE` property set to `LEGACY_SERVICE` represents a non-interactive integration. It is similar to
-        `SERVICE`, but allows password and SAML authentication.
+        `SERVICE`, but allows password authentication.
 
         Note
 
@@ -336,6 +336,10 @@ login name.
 `WORKLOAD_IDENTITY = ( list_of_properties )`
 :   Configures the user to authenticate by using [workload identity federation](/user-guide/workload-identity-federation). You can set this
     property on users with their `TYPE` property set to `SERVICE` or `SERVICE_AGENT`.
+
+    This property assigns one workload identity, which Snowflake names `DEFAULT`. To register additional named workload identities
+    for the same user, use [ALTER USER … ADD WORKLOAD IDENTITY](/sql-reference/sql/alter-user-add-workload-identity). You manage the `DEFAULT` workload identity with
+    `SET WORKLOAD_IDENTITY` and `UNSET WORKLOAD_IDENTITY`. The named workload identity commands can’t add, modify, rename, or remove it.
 
     The following list shows the properties:
 
@@ -350,7 +354,7 @@ login name.
 
         - `arn:aws:iam::account:user/user_name_with_path`
         - `arn:aws:iam::account:role/role_name_with_path`
-        - `arn:aws:sts::account:assumed_role/role_name/role_session_name`
+        - `arn:aws:sts::account:assumed-role/role_name/role_session_name`
 
         For help obtaining the ARN, see [Configure Snowflake](/user-guide/workload-identity-federation#label-wif-aws-authentication-snowflake).
 
@@ -371,7 +375,7 @@ login name.
 
         - For `TYPE=AZURE`, specifies the case-sensitive Object ID (Principal ID) of the managed identity assigned to the Azure workload.
         - For `TYPE=GCP`, specifies the `uniqueId` property of the service account associated with the workload that is connecting to
-          Snowflake.
+          Snowflake. The value must be 10 to 30 digits.
 
           For help obtaining this identifier, see [Configure Snowflake](/user-guide/workload-identity-federation#label-wif-gcp-authentication-snowflake).
         - For `TYPE=OIDC`, specifies the identifier of the workload that is connecting to Snowflake. The format of the value is specific to the

@@ -32,7 +32,7 @@ Data Governance area in Snowsight
 :   Allows you to use **Governance & security** on Snowsight to access governance features. For details, see:
 
     - [Get started in Snowsight](/user-guide/data-protection-policies-snowsight#label-data-protection-policies-get-started)
-    - [Create a tag in Snowsight (public preview)](/user-guide/object-tagging/work#label-object-tagging-create-tag-snowsight)
+    - [Create a tag in Snowsight](/user-guide/object-tagging/work#label-object-tagging-create-tag-snowsight)
     - [Monitor tags with Snowsight](/user-guide/object-tagging/monitor#label-object-tagging-snowsight)
     - [Use Snowsight to set tags](/user-guide/object-tagging/work#label-object-tagging-assign-ui)
     - [Monitor masking policies with Snowsight](/user-guide/security-column-intro#label-security-column-intro-snowsight)

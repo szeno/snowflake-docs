@@ -8,22 +8,35 @@ represent Snowflake in allowing access through your external server’s network 
 
 ## Supported deployments
 
-Stable egress IP addresses are generally available on AWS Commercial deployments.
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Support for stable egress IP addresses on Azure is in preview.
+Stable egress IP addresses are generally available on AWS Commercial and Azure deployments.
 
 ## Supported uses
 
 Using egress IP addresses you generate with Snowflake, you can allow ingress access from the following Snowflake features:
 
 - External access from [UDFs and procedures](/developer-guide/external-network-access/external-network-access-overview)
-- [Snowpark Container Services external access](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress) and Snowflake Openflow on Snowpark Container Services
+- [Snowpark Container Services external access](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress)
+  and Snowflake Openflow on Snowpark Container Services
 - [Snowflake Git integration](/developer-guide/git/git-setting-up) with IP-restricted Git servers
 
 When the external resource is on a private network where IP allowlisting isn’t feasible (deny-all-inbound environments), use
 [Data Connectivity Proxy](/user-guide/data-connectivity-proxy) instead of stable egress IPs.
+
+## Choose which IP ranges to allowlist
+
+[SYSTEM$GET\_SNOWFLAKE\_EGRESS\_IP\_RANGES](/sql-reference/functions/system_get_snowflake_egress_ip_ranges) can return more than one kind of prefix. On Azure, each range includes a
+`usage` array. Allowlist only the prefixes that match your destination. Mixing `Network Identifier` and `Stable Egress IP` values can
+open the wrong path or fail to admit Snowflake traffic.
+
+| Snowflake account | Destination | Prefixes to allowlist | More information |
+| --- | --- | --- | --- |
+| AWS Commercial | Customer-hosted endpoint (Git, UDFs, SPCS, and similar) | The ranges the function returns. AWS output doesn’t include `usage`. | This topic |
+| Azure | Customer-hosted endpoint outside Azure | Ranges whose `usage` includes `Stable Egress IP` | This topic |
+| Azure | Azure Storage or Azure Key Vault | Ranges whose `usage` includes `Network Identifier` | [Use Snowflake Network Identifiers in Azure allowlists for Azure Storage and Azure Key Vault (August 2026) (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2391) |
+
+Expand
+
+Show lessSee more
 
 ## Generate egress IP address ranges
 
@@ -44,13 +57,26 @@ To generate and use Snowflake egress IP addresses, follow these steps:
 
    ```
    SELECT
-    value: "ipv4_prefix":: VARCHAR AS IP_CIDR_RANGE_FOR_REGION,
-    value: "effective":: TIMESTAMP AS IP_CIDR_RANGE_EFFECTIVE,
-    value: "expires":: TIMESTAMP AS IP_CIDR_RANGE_EXPIRATION
-   FROM TABLE(FLATTEN (INPUT => PARSE_JSON(SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES())));
+     value:"ipv4_prefix"::VARCHAR AS IP_CIDR_RANGE_FOR_REGION,
+     value:"effective"::TIMESTAMP AS IP_CIDR_RANGE_EFFECTIVE,
+     value:"expires"::TIMESTAMP AS IP_CIDR_RANGE_EXPIRATION
+   FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES())));
    ```
 
-   Note, for Azure, `SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES()` returns a JSON with inline comments. Use the `hideAnnotations` argument: `PARSE_JSON(SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES(TRUE))`.
+   On Azure, the function output can include inline comments, which `PARSE_JSON` rejects. Pass `TRUE` for the optional `hideAnnotations`
+   argument, and project `usage` so you can choose the right prefixes:
+
+   Copy code
+
+   ```
+   SELECT
+     value:"ipv4_prefix"::VARCHAR AS IP_CIDR_RANGE_FOR_REGION,
+     value:"effective"::TIMESTAMP AS IP_CIDR_RANGE_EFFECTIVE,
+     value:"expires"::TIMESTAMP AS IP_CIDR_RANGE_EXPIRATION,
+     value:"published"::TIMESTAMP AS IP_CIDR_RANGE_PUBLISHED,
+     value:"usage" AS IP_CIDR_RANGE_USAGE
+   FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES(TRUE))));
+   ```
 
    ```
    +--------------------------+-------------------------+--------------------------+

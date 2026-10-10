@@ -125,7 +125,10 @@ service runs.
 
 Each successful build adds a new immutable **package version**. The deploy phase
 loads a package from that repository (typically `LATEST`) into the Application
-Service in your deploy destination.
+Service in your deploy destination. To list the packages in a repository, run
+[SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository).
+To list the published versions of one package, run
+[SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository).
 
 ### Default outbound access during build
 

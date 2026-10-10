@@ -1,10 +1,6 @@
 # snow app setup
 
-Initializes an [`app.yml`](/developer-guide/snowflake-app-runtime/app-yml)
-manifest for a Snowflake App Runtime project. Creates an `app.yml`
-file in the current directory with deployment fields preconfigured from
-command-line flags, then Snowsight account defaults, then your personal
-database. This command doesn’t apply to Snowflake Native Apps projects.
+(Snowflake App Runtime only) Initializes an app.yml for a Snowflake App Runtime project. Creates an `app.yml` in the current directory: a flat `version: 2` manifest whose `name`, `database`, `schema`, and `query_warehouse` are preconfigured from account parameters and the current connection. This command does not apply to Native App projects.
 
 ## Syntax
 
@@ -18,6 +14,7 @@ snow app setup
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -35,11 +32,24 @@ snow app setup
   --enable-diag
   --diag-log-path <diag_log_path>
   --diag-allowlist-path <diag_allowlist_path>
+  --oauth-client-id <oauth_client_id>
+  --oauth-client-secret <oauth_client_secret>
+  --oauth-authorization-url <oauth_authorization_url>
+  --oauth-token-request-url <oauth_token_request_url>
+  --oauth-redirect-uri <oauth_redirect_uri>
+  --oauth-scope <oauth_scope>
+  --oauth-disable-pkce
+  --oauth-enable-refresh-tokens
+  --oauth-enable-single-use-refresh-tokens
+  --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
   --silent
   --enhanced-exit-codes
+  --decimal-precision <decimal_precision>
 ```
 
 ## Arguments
@@ -49,15 +59,13 @@ None
 ## Options
 
 `--app-name TEXT`
-:   Name of the Snowflake App Runtime application to initialize. Defaults to the current directory name.
+:   Name of the Snowflake App Runtime to initialize. Defaults to the current directory name.
 
 `--dry-run`
-:   Only print the resolved configuration values without writing `app.yml`. Default: False.
+:   Only print the resolved configuration values without writing app.yml. Default: False.
 
 `--build-eai TEXT`
-:   External access integration used during the app build. External access
-    integrations are account-level objects, so specify the integration name without
-    a database or schema qualifier.
+:   External access integration used during the app build.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your `config.toml` file. Default: `default`.
@@ -67,6 +75,9 @@ None
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -93,22 +104,16 @@ None
 :   Path to file with an OAuth token to use when connecting to Snowflake.
 
 `--database, --dbname TEXT`
-:   Database to use. In `snow app setup`, this value is written to the generated
-    `app.yml` as an explicit override, taking precedence over account
-    parameters and connection defaults.
+:   Database to use. Overrides the value specified for the connection.
 
 `--schema, --schemaname TEXT`
-:   Database schema to use. In `snow app setup`, this value is written to the
-    generated `app.yml` as an explicit override, taking precedence over
-    account parameters and connection defaults.
+:   Database schema to use. Overrides the value specified for the connection.
 
 `--role, --rolename TEXT`
 :   Role to use. Overrides the value specified for the connection.
 
 `--warehouse TEXT`
-:   Warehouse to use. In `snow app setup`, this value is written to the generated
-    `app.yml` as the `query_warehouse` override, taking precedence over
-    account parameters and connection defaults.
+:   Warehouse to use. Overrides the value specified for the connection.
 
 `--temporary-connection, -x`
 :   Uses a connection defined with command-line parameters, instead of one defined in config. Default: False.
@@ -120,13 +125,49 @@ None
 :   Whether to generate a connection diagnostic report. Default: False.
 
 `--diag-log-path TEXT`
-:   Path for the generated report. Defaults to system temporary directory.
+:   Path for the generated report. Defaults to system temporary directory. Default: <system\_temporary\_directory>.
 
 `--diag-allowlist-path TEXT`
 :   Path to a JSON file that contains allowlist parameters.
 
+`--oauth-client-id TEXT`
+:   Value of client id provided by the Identity Provider for Snowflake integration.
+
+`--oauth-client-secret TEXT`
+:   Value of the client secret provided by the Identity Provider for Snowflake integration.
+
+`--oauth-authorization-url TEXT`
+:   Identity Provider endpoint supplying the authorization code to the driver.
+
+`--oauth-token-request-url TEXT`
+:   Identity Provider endpoint supplying the access tokens to the driver.
+
+`--oauth-redirect-uri TEXT`
+:   URI to use for authorization code redirection.
+
+`--oauth-scope TEXT`
+:   Scope requested in the Identity Provider authorization request.
+
+`--oauth-disable-pkce`
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
+
+`--oauth-enable-refresh-tokens`
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
+
+`--oauth-enable-single-use-refresh-tokens`
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
+
+`--client-store-temporary-credential`
+:   Store the temporary credential.
+
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.
@@ -138,91 +179,40 @@ None
 :   Turns off intermediate output to console. Default: False.
 
 `--enhanced-exit-codes`
-:   Differentiates exit error codes based on failure type. Default: False.
+:   Differentiate exit error codes based on failure type. Default: False.
+
+`--decimal-precision INTEGER`
+:   Number of decimal places to display for decimal values. Uses Python’s default precision if not specified. [env var: SNOWFLAKE\_DECIMAL\_PRECISION].
 
 `--help`
 :   Displays the help text for this command.
 
 ## Usage notes
 
-The `snow app setup` command bootstraps a new Snowflake App Runtime project by
-generating an [`app.yml`](/developer-guide/snowflake-app-runtime/app-yml)
-file with default deployment details. Setup resolves the destination
-database, schema, and warehouse in this order: the explicit `--database`,
-`--schema`, and `--warehouse` options, then Snowsight account defaults from
-[account administrator setup](/developer-guide/snowflake-app-runtime/account-admin-setup),
-then your current connection settings. If those aren’t set, setup may target
-your personal database. Remote builds use the shared external access
-integration from Snowsight setup; you don’t add `build_eai` in `app.yml` for
-the usual path.
+The `snow app setup` command bootstraps a new Snowflake App Runtime project by generating an `app.yml` file. Edit `app.yml` after the command completes, then run `snow app deploy` to ship your changes.
 
-Existing projects that use a `snowflake.yml` with a `snowflake-app` entity keep
-working as before.
-
-We recommend completing
-[account administrator setup](/developer-guide/snowflake-app-runtime/account-admin-setup)
-before team deploys so setup uses shared account defaults. The managed build
-service packages your app when you run
-[`snow app deploy`](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/deploy).
-After `app.yml` exists, edit it only when you need to override defaults,
-then deploy to ship your changes.
-
-If account defaults aren’t configured, setup may target a
-[personal database](/user-guide/personal-databases). That path isn’t recommended
-for apps you plan to share. See
-[Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started).
-
-When a value can’t be resolved, setup errors and names the account parameter you
-can set. The `database`, `schema`, and `query_warehouse` fields are required and
-map to `DEFAULT_SNOWFLAKE_APPS_DESTINATION_DATABASE`,
-`DEFAULT_SNOWFLAKE_APPS_DESTINATION_SCHEMA`, and
-`DEFAULT_SNOWFLAKE_APPS_QUERY_WAREHOUSE`.
-
-Setup leaves `code_stage` and `code_workspace` out of the generated `app.yml`, so
-[`snow app deploy`](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/deploy)
-provisions temporary code storage for the build and drops it afterward. Set
-`code_stage` or `code_workspace` in `app.yml` to keep a persisted stage or
-workspace instead. Personal databases use a workspace.
-
-If `app.yml` already exists in the current directory (and you aren’t using
-`--dry-run`), setup prints a message and doesn’t overwrite the file.
-
-If you omit `--app-name`, setup uses the current directory name, converting
-spaces and hyphens to underscores and removing any other disallowed characters.
-The final name must match `[a-zA-Z0-9_]+` (letters, digits, and underscores) or
-the command errors.
-
-For the `app.yml` manifest fields, see
-[app.yml manifest for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/app-yml). For the `snowflake.yml`
-schema that existing projects use, see the
-[snowflake.yml reference](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/snowflake-yml).
-For a concrete example after setup, see
-[Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started).
-If the project still uses `snowflake.yml`, see
-[Migrate from snowflake.yml to app.yml](/developer-guide/snowflake-app-runtime/migrate-to-app-yml).
+Starting with Snowflake CLI version 3.17.0, `snow app` commands support both Snowflake Native Apps (`application` and `application package` entities) and Snowflake App Runtime (`snowflake-app` entities). Shared subcommands such as `bundle`, `deploy`, `validate`, `open`, `events`, and `teardown` select the correct flow automatically based on the entity type in the project file.
 
 ## Examples
 
-Initialize `app.yml` for a Snowflake App Runtime project in the current directory:
+- Initialize `app.yml` for a Snowflake App Runtime project in the current directory:
 
-Copy code
+  Copy code
 
-```
-snow app setup
-```
+  ```
+  snow app setup
+  ```
+- After running the command, edit `app.yml` to configure your app, then deploy it:
 
-After running the command, edit `app.yml` to configure your app, then deploy it:
+  Copy code
 
-Copy code
+  ```
+  snow app deploy
+  ```
+- Show the resolved configuration without writing `app.yml`:
 
-```
-snow app deploy
-```
+  Copy code
 
-Show the resolved configuration without writing `app.yml`:
-
-Copy code
-
-```
-snow app setup --dry-run
-```
+  ```
+  snow app setup --dry-run
+  ```

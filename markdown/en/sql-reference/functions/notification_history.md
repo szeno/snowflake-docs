@@ -63,9 +63,9 @@ The function returns the following columns:
 | --- | --- | --- |
 | CREATED | TIMESTAMP\_LTZ | Timestamp when the notification was created. |
 | PROCESSED | TIMESTAMP\_LTZ | Timestamp of the last attempt to send the notification. |
-| MESSAGE\_SOURCE | VARCHAR | Type of object or feature that generated the notification. Valid values include:   - `BUDGET` (for [notifications from budgets](/user-guide/budgets#label-budgets-notifications)) - `TASK` (for [notifications from tasks](/user-guide/tasks-errors)) - `SNOWPIPE` (for [notifications from Snowpipe](/user-guide/data-load-snowpipe-errors)) - `STORED_PROCEDURE` (for email notifications sent by   [calling the SYSTEM$SEND\_EMAIL or SYSTEM$SEND\_SNOWFLAKE\_NOTIFICATION stored procedure](/user-guide/notifications/about-notifications)) |
+| MESSAGE\_SOURCE | VARCHAR | Type of object or feature that generated the notification. Valid values include:   - `BUDGET` (for [notifications from budgets](/user-guide/budgets#label-budgets-notifications)) - `TASK` (for [notifications from tasks](/user-guide/tasks-errors)) - `SNOWPIPE` (for [notifications from Snowpipe](/user-guide/data-load-snowpipe-errors)) - `STORED_PROCEDURE` (for notifications sent by   [calling the SYSTEM$SEND\_EMAIL or SYSTEM$SEND\_SNOWFLAKE\_NOTIFICATION stored procedure](/user-guide/notifications/about-notifications),   including messages sent to a queue) |
 | INTEGRATION\_NAME | VARCHAR | Name of the [integration used for this notification](/sql-reference/sql/create-notification-integration). |
-| STATUS | VARCHAR | Status of the notification. Valid values are:   - `QUEUED`: The request to send the notification is being processed. - `SUCCESS`: The notification was sent successfully. - `RETRIABLE_FAILURE`: The attempt to send the notification failed, and the system will attempt to send the   notification again. - `FAILURE`: Multiple attempts to send the notification failed, and there will be no more attempts to send the   notification. |
+| STATUS | VARCHAR | Status of the notification. Valid values are:   - `QUEUED`: The request to send the notification is being processed. - `SUCCESS`: The notification was sent successfully. - `RETRIABLE_FAILURE`: The attempt to send the notification failed, and the system will attempt to send the   notification again. - `FAILURE`: The system stopped trying to send the notification, either because retrying can’t fix the error or   because all retries failed. |
 | ERROR\_MESSAGE | VARCHAR | If the notification failed, provides details about why the notification failed.  Note  For webhook notifications, this column contains the body of the HTTP response, which might contain sensitive data. Before using this data, make sure to sanitize it. |
 | ID | VARCHAR | Unique ID of a request to send a notification.  If Snowflake fails to send a notification and attempts to send the notification again, the function returns a row for each attempt. Each row for an attempt has the same value in the ID column but a different value in the ATTEMPT column. |
 | ATTEMPT | INTEGER | Number of the attempt made to send the notification. |
@@ -77,8 +77,9 @@ Show lessSee more
 
 ## Usage notes
 
-- Returns results only for the ACCOUNTADMIN role, the integration owner (i.e. the role with the OWNERSHIP privilege on the
-  integration) or a role with the USAGE privilege on the integration.
+- Returns results only for the integration owner (the role with the `OWNERSHIP` privilege on the integration) or a role with the
+  `USAGE` privilege on the integration. The `ACCOUNTADMIN` role doesn’t see results for an integration unless it has one of these
+  privileges.
 - When calling an Information Schema table function, the session must have an INFORMATION\_SCHEMA schema in use or the
   function name must be fully-qualified. For more details, see [Snowflake Information Schema](/sql-reference/info-schema).
 

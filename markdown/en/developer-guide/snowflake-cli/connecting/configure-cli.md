@@ -22,18 +22,27 @@ default_connection_name = "myconnection"
 [connections.myconnection]
 account = "myorganization-myaccount"
 user = "jdoe"
-...
+# authenticator = "SNOWFLAKE"
 
 [connections.testingconnection]
 account = "myorganization-myaccount"
 user = "jdoe"
-...
+# authenticator = "SNOWFLAKE"
 
 [cli.logs]
 save_logs = true
 level = "info"
 path = "/home/<username>/.snowflake/logs"
 ```
+
+A connection definition supports the same configuration options as
+the Snowflake Connector for Python, such as `password`, `role`, `warehouse`, `database`, `schema`, `authenticator`, and
+`private_key_file`. For more information about defining connections, and about the values that `snow connection add` prompts for, see
+[Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections) and
+[snow connection add](/developer-guide/snowflake-cli/command-reference/connection-commands/add-connection).
+
+For the full list of supported connection parameters, see the
+[Snowflake Connector for Python connection parameters](/developer-guide/python-connector/python-connector-api#connect).
 
 You can generate the basic settings for the TOML configuration file in Snowsight. For information, see
 [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config).
@@ -93,6 +102,8 @@ where:
 - `<config-section>` is the name of a section in the configuration file with periods (`.`) replaced with underscores (`_`), such as `CLI_LOGS`.
 - `<variable>` is the name of a variable defined in that section, such as `path`.
 
+Write environment variable names in uppercase, including the connection name. For a connection named `myconnection`, use the prefix `SNOWFLAKE_CONNECTIONS_MYCONNECTION_`, even though the connection name in the TOML file is lowercase. Use uppercase parameter suffixes, such as `PRIVATE_KEY_FILE`, consistently. This convention works without relying on platform- or configuration-provider-specific case handling.
+
 Some examples include:
 
 - Override the `path` parameter in the `[cli.logs]` section in the `config.toml` file:
@@ -102,13 +113,19 @@ Some examples include:
   ```
   export SNOWFLAKE_CLI_LOGS_PATH="/Users/jondoe/snowcli_logs"
   ```
-- Set the password for the `myconnection` connection:
+- Select key-pair authentication for an existing `myconnection` definition and override its private-key path:
 
   Copy code
 
   ```
-  export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PASSWORD="*******"
+  export SNOWFLAKE_CONNECTIONS_MYCONNECTION_AUTHENTICATOR="SNOWFLAKE_JWT"
+  export SNOWFLAKE_CONNECTIONS_MYCONNECTION_PRIVATE_KEY_FILE="/path/to/rsa_key.p8"
+  snow connection test -c myconnection
   ```
+
+  Replace the path with your existing private-key file. The corresponding public key must be configured for the Snowflake user. See [key-pair authentication](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-private-key).
+
+  To use a programmatic access token (PAT) instead, configure the connection as described in [PAT authentication](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-pat), then select it explicitly with `snow connection test -c myconnection`.
 - Set the default connection name:
 
   Copy code

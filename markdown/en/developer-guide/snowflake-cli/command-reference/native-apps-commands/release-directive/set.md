@@ -20,6 +20,7 @@ snow app release-directive set
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -47,6 +48,8 @@ snow app release-directive set
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -58,7 +61,9 @@ snow app release-directive set
 ## Arguments
 
 `directive`
-:   Name of the release directive to set.
+:   *Required*
+
+    Name of the release directive to set.
 
 ## Options
 
@@ -66,7 +71,7 @@ snow app release-directive set
 :   Name of the release channel to use. Default: DEFAULT.
 
 `--target-accounts TEXT`
-:   List of the accounts to apply the release directive to. Format must be *org1.account1,org2.account2*.
+:   List of the accounts to apply the release directive to. Format must be `org1.account1,org2.account2`.
 
 `--version TEXT`
 :   Version of the application package to use.
@@ -75,10 +80,10 @@ snow app release-directive set
 :   Patch number to use for the selected version.
 
 `--package-entity-id TEXT`
-:   The ID of the package entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the package entity on which to operate when the definition\_version is 2 or higher.
 
 `--app-entity-id TEXT`
-:   The ID of the application entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the application entity on which to operate when the definition\_version is 2 or higher.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.
@@ -87,13 +92,16 @@ snow app release-directive set
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -165,25 +173,31 @@ snow app release-directive set
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -211,7 +225,7 @@ Target accounts are provided in the format ORGANIZATION\_NAME.ACCOUNT\_NAME, sep
 When release channels are enabled in the application package, the release directive is scoped to the specified release channel; otherwise, it is scoped to the application package.
 
 Snowflake recommends using the [snow app publish](/developer-guide/snowflake-cli/command-reference/native-apps-commands/publish-app) command to publish the application package and using the `snow app release-directive set` command for creating custom release directives.
-See [Publishing a Snowflake Native App to customers](/developer-guide/snowflake-cli/native-apps/publish-app) for more information.`
+See [Publishing a Snowflake Native App to customers](/developer-guide/snowflake-cli/native-apps/publish-app) for more information.
 
 ## Examples
 

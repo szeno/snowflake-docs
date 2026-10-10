@@ -89,7 +89,7 @@ Create tables:
 > Copy code
 >
 > ```
-> CREATE TABLE leased_bicycles (bicycle_id INTEGER, customer_id INTEGER);
+> CREATE TABLE leased_bicycles (bicycle_id INTEGER, "customer_id" INTEGER);
 > CREATE TABLE returned_bicycles (bicycle_id INTEGER);
 > ```
 
@@ -98,7 +98,7 @@ Load data:
 > Copy code
 >
 > ```
-> INSERT INTO leased_bicycles (bicycle_ID, customer_ID) VALUES
+> INSERT INTO leased_bicycles (bicycle_ID, "customer_id") VALUES
 >     (101, 1111),
 >     (102, 2222),
 >     (103, 3333),
@@ -106,15 +106,16 @@ Load data:
 >     (105, 5555);
 > INSERT INTO returned_bicycles (bicycle_ID) VALUES
 >     (102),
->     (104);
+>     (104),
+>     (110);
 > ```
 
-This example shows how to use the `WHERE` clause to delete a specified row(s). This example deletes by bicycle\_ID:
+This example shows how to use the `WHERE` clause to delete a specified row(s). This example deletes by customer\_id:
 
 > Copy code
 >
 > ```
-> DELETE FROM leased_bicycles WHERE bicycle_ID = 105;
+> DELETE FROM leased_bicycles WHERE "customer_id" = 5555;
 > +------------------------+
 > | number of rows deleted |
 > |------------------------|
@@ -129,7 +130,7 @@ Show the data after the delete:
 > ```
 > SELECT * FROM leased_bicycles ORDER BY bicycle_ID;
 > +------------+-------------+
-> | BICYCLE_ID | CUSTOMER_ID |
+> | BICYCLE_ID | customer_id |
 > |------------+-------------|
 > |        101 |        1111 |
 > |        102 |        2222 |
@@ -164,7 +165,7 @@ Show the data after the delete:
 > ```
 > SELECT * FROM leased_bicycles ORDER BY bicycle_ID;
 > +------------+-------------+
-> | BICYCLE_ID | CUSTOMER_ID |
+> | BICYCLE_ID | customer_id |
 > |------------+-------------|
 > |        101 |        1111 |
 > |        103 |        3333 |
@@ -200,7 +201,7 @@ Show the data after the delete:
 > ```
 > SELECT * FROM leased_bicycles ORDER BY bicycle_ID;
 > +------------+-------------+
-> | BICYCLE_ID | CUSTOMER_ID |
+> | BICYCLE_ID | customer_id |
 > |------------+-------------|
 > |        101 |        1111 |
 > +------------+-------------+

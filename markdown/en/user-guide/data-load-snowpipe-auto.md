@@ -15,7 +15,7 @@ Note
   Snowpipe may process notifications older than 14 days on a best effort basis. Snowflake cannot guarantee that these older
   notifications are processed.
 
-  For information about resuming stale pipes, see [Managing Snowpipe](/user-guide/data-load-snowpipe-manage).
+  For information about resuming stale pipes, see [Manage Snowpipe](/user-guide/data-load-snowpipe-manage).
 
 The following table indicates which cloud storage services are supported for automatically loading data in external stages into your Snowflake account using cloud storage event notifications, based on the [cloud platform](/user-guide/intro-cloud-platforms) that hosts your account:
 

@@ -16,6 +16,7 @@ snow snowpark deploy
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -43,6 +44,8 @@ snow snowpark deploy
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -73,13 +76,16 @@ None
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -151,25 +157,31 @@ None
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -188,56 +200,55 @@ None
 The `snow snowpark deploy` command does the following:
 
 - Checks to see whether the objects listed for deployment already exist. If the objects exist, you must use the `--replace` option.
-
-  Note
-
-  If you want to update objects and files, even if they did not change, you can use the `--force-replace` option.
 - Creates a stage in the database specified for your connection. If no stage is defined, the command creates a stage named `deployments`.
 - If the `--prune` option was specified, removes existing content from the stage used by defined procedures and function objects.
 - Uploads the new artifacts.
 - Creates the objects specified then `snowflake.yml` file by executing the SQL CREATE PROCEDURE or CREATE FUNCTION queries.
 
+Note
+
+If you want to update objects and files, even if they did not change, you can use the `--force-replace` option.
+
 The command deploys the source code and dependencies from the most recent build. If you modified the code or added any requirements since the last build, you must run the [snow snowpark build](/developer-guide/snowflake-cli/command-reference/snowpark-commands/build) command again before deploying the new version.
 
-> Note
->
-> When deploying a Snowpark stored procedure, Snowflake CLI lets you upload artifacts to a folder within a stage. This makes it possible to deploy several procedures to a single stage.
->
-> If you are deploying to a different Snowflake account, you must run the [snow snowpark build](/developer-guide/snowflake-cli/command-reference/snowpark-commands/build) command again before deploying.
+Note
+
+When deploying a Snowpark stored procedure, Snowflake CLI lets you upload artifacts to a folder within a stage. This makes it possible to deploy several procedures to a single stage.
+
+If you are deploying to a different Snowflake account, you must run the [snow snowpark build](/developer-guide/snowflake-cli/command-reference/snowpark-commands/build) command again before deploying.
 
 ## Examples
 
-The following example shows how to deploy functions and procedures in the current directory.
+- The following example shows how to deploy functions and procedures in the current directory.
 
-Copy code
+  Copy code
 
-```
-snow snowpark deploy
-```
+  ```
+  snow snowpark deploy
+  ```
 
-```
-+-----------------------------------------------------------------------------------+
-| object                                             | type      | status           |
-|----------------------------------------------------+-----------+------------------|
-| MY_DATABASE.PUBLIC.HELLO_PROCEDURE(name string)    | procedure | packages updated |
-| MY_DATABASE.PUBLIC.TEST_PROCEDURE()                | procedure | created          |
-| MY_DATABASE.PUBLIC.HELLO_FUNCTION(name string)     | function  | packages updated |
-+-----------------------------------------------------------------------------------+
-```
+  ```
+  +-----------------------------------------------------------------------------------+
+  | object                                             | type      | status           |
+  |----------------------------------------------------+-----------+------------------|
+  | MY_DATABASE.PUBLIC.HELLO_PROCEDURE(name string)    | procedure | packages updated |
+  | MY_DATABASE.PUBLIC.TEST_PROCEDURE()                | procedure | created          |
+  | MY_DATABASE.PUBLIC.HELLO_FUNCTION(name string)     | function  | packages updated |
+  +-----------------------------------------------------------------------------------+
+  ```
+- The following example shows what happens when objects already exist and you deploy without specifying the `--replace` option.
 
-The following example shows what happens when objects already exist and you deploy without specifying the `--replace` option.
+  Copy code
 
-Copy code
+  ```
+  snow snowpark deploy
+  ```
 
-```
-snow snowpark deploy
-```
-
-```
-╭─ Error ──────────────────────────────────────────────────────────╮
-│ Following objects already exists. Consider using --replace.      |
-│ function: MY_DATABASE.PUBLIC.HELLO_FUNCTION(string)              |
-│ procedure: MY_DATABASE.PUBLIC.HELLO_PROCEDURE(string)            |
-│ procedure: MY_DATABASE.PUBLIC.TEST_PROCEDURE()                   |
-╰──────────────────────────────────────────────────────────────────╯
-```
+  ```
+  ╭─ Error ──────────────────────────────────────────────────────────╮
+  │ Following objects already exists. Consider using --replace.      |
+  │ function: MY_DATABASE.PUBLIC.HELLO_FUNCTION(string)              |
+  │ procedure: MY_DATABASE.PUBLIC.HELLO_PROCEDURE(string)            |
+  │ procedure: MY_DATABASE.PUBLIC.TEST_PROCEDURE()                   |
+  ╰──────────────────────────────────────────────────────────────────╯
+  ```

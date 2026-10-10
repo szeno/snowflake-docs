@@ -103,5 +103,5 @@ For general information about roles and privilege grants for performing SQL acti
 
 See the following topics:
 
-- [Enabling Snowpipe error notifications for Google Pub/Sub](/user-guide/data-load-snowpipe-errors-gcs)
+- [Snowpipe error notifications](/user-guide/data-load-snowpipe-errors)
 - [Creating a notification integration to send notifications to a Google Cloud Pub/Sub topic](/user-guide/notifications/creating-notification-integration-google-pubsub)

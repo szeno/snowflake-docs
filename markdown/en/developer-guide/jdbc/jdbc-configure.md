@@ -16,7 +16,7 @@ Use `net.snowflake.client.api.driver.SnowflakeDriver` as the driver class in you
 Note
 
 - Don’t reference any other Snowflake classes or methods in your application code because they are subject to change in the future to implement improvements and fixes.
-- The previous driver class, `net.snowflake.client.api.driver.SnowflakeDriver`, is still supported but is deprecated (meaning it will be removed in a future release). Any code that references the previous class name will continue to work, but you should update the code to reference the new class name because the change has been implemented.
+- The previous driver class, `net.snowflake.client.jdbc.SnowflakeDriver`, is still supported but is deprecated (meaning it will be removed in a future release). Any code that references the previous class name will continue to work, but you should update the code to reference the new class name because the change has been implemented.
 
 Use `net.snowflake.client.jdbc.SnowflakeDriver` as the driver class in your JDBC application.
 

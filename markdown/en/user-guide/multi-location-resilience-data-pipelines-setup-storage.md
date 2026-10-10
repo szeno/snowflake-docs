@@ -193,13 +193,13 @@ Choose the approach that matches your pipelines and stages:
   `URL`, Snowflake marks its pipes invalid, and
   [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) reports
   `STOPPED_STAGE_ALTERED`. Recreate each of those pipes by following
-  [Recreating pipes](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes). If the stage resolves to the
+  [Change or recreate a pipe](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes). If the stage resolves to the
   same location as before, its pipes keep working and keep their load history.
 - **Existing pipelines that you want to move one at a time:** Create a new stage
   whose `RELATIVE_URL` resolves to the same path as the existing stage’s `URL`.
   To find the value, remove your primary location’s `STORAGE_BASE_URL` from the
   start of the existing stage’s `URL`. Then recreate each pipe against the new
-  stage by following [Recreating pipes](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes). Pipes that
+  stage by following [Change or recreate a pipe](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes). Pipes that
   you haven’t moved yet keep loading from the existing stage.
 - **Stages that only `COPY INTO` statements read:** No pipe needs recreating.
   If you create a new stage, point each statement at it. For a standalone task,

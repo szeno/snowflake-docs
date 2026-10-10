@@ -12,6 +12,7 @@ snow connection test
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -39,6 +40,8 @@ snow connection test
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -57,13 +60,16 @@ None
 :   Print the full per-endpoint diagnostic to stdout. Without this flag, `--enable-diag` writes that diagnostic only to the report file. Default: False.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -135,25 +141,31 @@ None
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -169,35 +181,30 @@ None
 
 ## Usage notes
 
-The `snow connection test` command tests the connection in your default `config.toml` file.
-For more information, see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
+The `snow connection test` command tests the connection in your default `config.toml` file. For more information, see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
 
-If your account requires multi-factor authentication (MFA), this command prompts you to approve
-the login, and so does every subsequent `snow` command that opens a new connection. To approve
-once and reuse the cached token, enable [MFA caching](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-mfa-caching). On Linux,
-caching also requires secure credential storage.
-To supply a passcode directly instead of using the push mechanism, use the `--mfa-passcode` option.
+If your account requires multi-factor authentication (MFA), this command prompts you to approve the login, and so does every subsequent `snow` command that opens a new connection. To approve once and reuse the cached token, enable [MFA caching](/developer-guide/snowflake-cli/connecting/configure-connections#label-snowcli-mfa-caching). On Linux, caching also requires secure credential storage. To supply a passcode directly instead of using the push mechanism, use the `--mfa-passcode` option.
 
 ## Examples
 
-To test a particular connection you can run the following command:
+- To test particular connection you can run the following command:
 
-Copy code
+  Copy code
 
-```
-$ snow connection test --connection conn2
-```
+  ```
+  $ snow connection test --connection conn2
+  ```
 
-```
-+---------------------------------+
-| key             | value         |
-|-----------------+---------------|
-| Connection name | conn2         |
-| Status          | OK            |
-| Account         | foo           |
-| User            | jdoe          |
-| Role            | ACCOUNTADMIN  |
-| Database        | not set       |
-| Warehouse       | XSMALL        |
-+---------------------------------+
-```
+  ```
+  +---------------------------------+
+  | key             | value         |
+  |-----------------+---------------|
+  | Connection name | conn2         |
+  | Status          | OK            |
+  | Account         | foo           |
+  | User            | jdoe          |
+  | Role            | ACCOUNTADMIN  |
+  | Database        | not set       |
+  | Warehouse       | XSMALL        |
+  +---------------------------------+
+  ```

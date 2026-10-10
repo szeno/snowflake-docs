@@ -541,12 +541,12 @@ When new data files are added to the S3 bucket, the event notification informs S
 
 ### Step 5: Load historical files
 
-To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Loading historic data](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
+To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Load historical or missed files](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
 
 ### Step 6: Delete staged files
 
 Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Deleting staged files after Snowpipe loads the data](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
 
 ## Option 2: Configuring Amazon SNS to automate Snowpipe using SQS notifications
 
@@ -880,12 +880,12 @@ When new data files are added to the S3 bucket, the event notification informs S
 
 ### Step 5: Load historical files
 
-To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Loading historic data](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
+To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Load historical or missed files](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
 
 ### Step 6: Delete staged files
 
 Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Deleting staged files after Snowpipe loads the data](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
 
 ## Option 3: Setting up Amazon EventBridge to automate Snowpipe
 

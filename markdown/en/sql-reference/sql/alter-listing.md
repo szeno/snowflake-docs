@@ -136,10 +136,12 @@ Show lessSee more
 
 ## Usage notes
 
-- Listings can be renamed only in DRAFT state. A listing leaves the DRAFT state when you publish it, and doesn’t return to
-  DRAFT afterward. Unpublishing a listing with `ALTER LISTING ... UNPUBLISH` changes its state to UNPUBLISHED, not DRAFT.
-  To change the title that consumers see on a published listing, update the `title` field in the listing manifest
-  instead. If you need a different listing name, create a new listing.
+- The SQL name is the identifier in `CREATE EXTERNAL LISTING <name>`. You can rename that identifier with
+  `ALTER LISTING ... RENAME TO` only while the listing is in the DRAFT state. A listing leaves the DRAFT state when you
+  publish it, and doesn’t return to DRAFT afterward. Unpublishing a listing with `ALTER LISTING ... UNPUBLISH` changes its
+  state to UNPUBLISHED, not DRAFT. If you need a different SQL name after the listing is published, create a new listing.
+- The `title` field in the listing manifest is the name consumers see when they access the listing. You can change this
+  name at any time by updating the `title` field.
 - When setting the live version of the YAML format manifest for a listing, you must use *COMMIT* to apply the changes, or *ABORT* to discard the changes.
 
 ## Access control requirements

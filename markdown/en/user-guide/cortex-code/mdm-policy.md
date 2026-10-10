@@ -4,7 +4,7 @@
 
 Available to all accounts.
 
-Administrators can deliver CoCo policy through a Mobile Device Management (MDM) system, such as Jamf or Microsoft Intune, so that standard users can’t change or remove it. This applies to [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop).
+Administrators can deliver CoCo policy through a Mobile Device Management (MDM) system, such as Jamf or Microsoft Intune, so that standard users can’t change or remove it. This applies to the CoCo clients, [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop).
 
 The controls on this page add to the existing permission, sandbox, and UI settings described in [Managed settings (organization policy)](/user-guide/cortex-code/managed-settings). You can deliver them in the same `managed-settings.json` file and system paths, or through an MDM profile.
 
@@ -18,7 +18,7 @@ The following table lists each control and its key in `managed-settings.json` an
 | Allowed authentication methods | `auth.allowedMethods` | `CortexAllowedAuthMethods` | Restricts sign-in to the listed methods, for example `OAUTH_AUTHORIZATION_CODE`, `EXTERNALBROWSER`, `PROGRAMMATIC_ACCESS_TOKEN`, or `SNOWFLAKE`. |
 | Per-account authentication methods | `auth.accounts` | `CortexAllowedAuthMethodsByAccount` | Enforces allowed authentication methods for specific Snowflake accounts. |
 | Minimum client version | `required.minimumVersion` | `CortexMinimumVersion` | Blocks CoCo from starting if the installed version is older than the value. |
-| Per-application minimum version | `cli.required.minimumVersion`, `desktop.required.minimumVersion` | `CortexCliMinimumVersion`, `CortexDesktopMinimumVersion` | Sets a different minimum version for CoCo CLI and CoCo Desktop. Overrides the shared `required.minimumVersion` or `CortexMinimumVersion` for that application only. If an application has no application-specific value, the shared value applies. |
+| Per-client minimum version | `cli.required.minimumVersion`, `desktop.required.minimumVersion` | `CortexCliMinimumVersion`, `CortexDesktopMinimumVersion` | Sets a different minimum version for CoCo CLI and CoCo Desktop. Overrides the shared `required.minimumVersion` or `CortexMinimumVersion` for that client only. If a client has no client-specific value, the shared value applies. |
 | On/off switch | `enabled` | `CortexEnabled` | Turns the controls on or off. |
 
 Expand
@@ -33,8 +33,8 @@ The account lock checks the host that CoCo connects to, not only the [account na
 
 ## Requirements
 
-- macOS: CoCo CLI 1.1.89 or later, CoCo Desktop 1.21 or later.
-- Windows: Contact your Snowflake account team for the supported versions.
+- macOS: CoCo CLI 1.1.89 or later, CoCo Desktop 1.21.4 or later.
+- Windows: CoCo Desktop 1.21.6 or later. CoCo CLI 1.1.104 or later; CoCo CLI 1.2.0 or later to embed `managed-settings.json` (see [Option 2](#label-cortex-code-mdm-embed)).
 
 ## Deploy on macOS
 
@@ -61,7 +61,7 @@ Copy code
 <string>1.1.89</string>
 ```
 
-macOS delivers these keys as forced preferences. The Managed Client payload writes them to the `/Library/Managed Preferences/` directory, which [System Integrity Protection](https://support.apple.com/en-us/102149) protects, and marks them forced (`CFPreferencesAppValueIsForced`). Forced values take precedence over any value in the user’s or computer’s own preferences, so deleting or editing CoCo’s local preference file has no effect.
+macOS delivers these keys as forced preferences. The Managed Client payload writes them to the `/Library/Managed Preferences/` directory, which [System Integrity Protection](https://support.apple.com/en-us/102149) protects, and marks them forced (`CFPreferencesAppValueIsForced`). Forced values take precedence over any value in the user’s or computer’s own preferences, so deleting or editing CoCo’s local preferences has no effect.
 
 On a supervised device enrolled through [Automated Device Enrollment](https://support.apple.com/guide/deployment/automated-device-enrollment-management-dep73069dd57/web) with MDM profile removal disallowed, the profile can’t be removed and macOS continuously reasserts the forced values. Even a user with root or sudo access can’t override the policy. Removing the profile requires booting to Recovery and disabling System Integrity Protection, after which the device re-enrolls if it is still assigned in Apple Business Manager.
 
@@ -78,6 +78,10 @@ CoCo reads the following registry values:
 | `CortexAllowedAuthMethods` | REG\_SZ (JSON array) |
 | `CortexAllowedAuthMethodsByAccount` | REG\_SZ (JSON object) |
 | `CortexMinimumVersion` | REG\_SZ |
+| `CortexCliMinimumVersion` | REG\_SZ |
+| `CortexDesktopMinimumVersion` | REG\_SZ |
+| `CortexManagedSettingsBase64` | REG\_SZ (base64) |
+| `CortexManagedSettingsBase64Enabled` | REG\_DWORD (1 on, 0 off) |
 
 Expand
 
@@ -93,19 +97,19 @@ Windows Registry Editor Version 5.00
 "CortexAllowedAccounts"="[\"acme-prod\",\"acme-analytics\"]"
 "CortexAllowedAuthMethods"="[\"OAUTH_AUTHORIZATION_CODE\",\"EXTERNALBROWSER\"]"
 "CortexAllowedAuthMethodsByAccount"="{\"acme-prod\":[\"EXTERNALBROWSER\"]}"
-"CortexMinimumVersion"="1.1.89"
+"CortexMinimumVersion"="1.1.104"
 ```
 
 ## Deploy with managed-settings.json
 
-Place the file in the system location for your platform:
+Place `managed-settings.json` in the system location for your platform:
 
 - macOS: `/Library/Application Support/Cortex/managed-settings.json`
 - Windows: `%ProgramData%\Cortex\managed-settings.json`
 
-The file must be writable only by administrators. On macOS it must be owned by root and must not be group-writable or world-writable. On Windows, CoCo checks the access control list on the file and its folder. If these checks fail, CoCo ignores the file.
+`managed-settings.json` must be writable only by administrators. On macOS it must be owned by root and must not be group-writable or world-writable. On Windows, CoCo checks the access control list on `managed-settings.json` and its folder. If these checks fail, CoCo ignores `managed-settings.json`.
 
-The following file sets the same policy as the macOS profile example:
+The following `managed-settings.json` sets the same policy as the macOS profile example:
 
 Copy code
 
@@ -128,7 +132,7 @@ Copy code
 }
 ```
 
-## Scope controls by account or application
+## Scope controls by account or client
 
 ### Per-account authentication
 
@@ -154,9 +158,9 @@ Matching rules:
 - Account names are matched case-insensitively and support globs. An exact match takes priority over a glob.
 - Per-account scope applies to authentication methods only.
 
-### CLI and Desktop
+### Per-client minimum version
 
-To set different values for each application, use `cli` and `desktop` blocks in the file, or keys prefixed with `CortexCli` or `CortexDesktop` in MDM, for example `CortexCliAllowedAuthMethodsByAccount`. An application-specific value overrides the shared value for that application only.
+To set a different minimum version for each client, use `cli.required.minimumVersion` and `desktop.required.minimumVersion` in `managed-settings.json`, or `CortexCliMinimumVersion` and `CortexDesktopMinimumVersion` in MDM. A client-specific value overrides the shared value for that client only.
 
 ## How CoCo resolves policy
 
@@ -166,7 +170,7 @@ CoCo resolves each control separately, in this order:
 2. `managed-settings.json`
 3. Default
 
-Within a source, an application-specific value overrides the shared value, and a matching per-account entry overrides the global authentication list. User settings in `settings.json` can’t set or weaken these controls.
+Within a source, a client-specific minimum version overrides the shared minimum version, and a matching per-account entry overrides the global authentication list. User settings in `settings.json` can’t set or weaken these controls.
 
 If a managed policy is present but malformed, unreadable, or fails validation, CoCo denies connections until the policy is fixed.
 
@@ -204,17 +208,17 @@ Automatic reapplication corrects tampering on a schedule. It doesn’t prevent t
 
 ### Option 1: Deploy both
 
-Deliver the controls in the MDM profile and deploy `managed-settings.json` for everything else, such as permissions, [sandbox](/user-guide/cortex-code/sandbox), and MCP rules. The controls in the profile are tamper-resistant. Settings that exist only in the file are not, because any user with root or administrator access can edit it.
+Deliver the controls in the MDM profile and deploy `managed-settings.json` for everything else, such as permissions, [sandbox](/user-guide/cortex-code/sandbox), and MCP rules. The controls in the profile are tamper-resistant. Settings that exist only in `managed-settings.json` are not, because any user with root or administrator access can edit it.
 
 ### Option 2: Embed managed-settings.json in the MDM profile
 
-On macOS, you can embed the entire file in the profile so that every setting is tamper-resistant:
+You can embed the entire `managed-settings.json` in the MDM profile (macOS) or registry policy (Windows) so that every setting is tamper-resistant. On Windows, the embedded value has the same tamper resistance as other registry policy; see [Keep policy applied](#label-cortex-code-mdm-keep-policy-applied).
 
-1. Encode the file: `cortex managed-settings encode /path/to/managed-settings.json`
-2. Set the output as the value of `CortexManagedSettingsBase64`. To scope the policy to one application, use `CortexCliManagedSettingsBase64` or `CortexDesktopManagedSettingsBase64`.
-3. Optional: Set `CortexManagedSettingsBase64Enabled` to `false` to turn off the embedded policy without removing it.
+1. Encode `managed-settings.json`: `cortex managed-settings encode /path/to/managed-settings.json`
+2. Set the output as the value of `CortexManagedSettingsBase64`. On Windows, set it as a REG\_SZ value under `HKLM\Software\Policies\Microsoft\CortexCode`.
+3. Optional: Set `CortexManagedSettingsBase64Enabled` to `false` (`0` on Windows) to turn off the embedded policy without removing it.
 
-The following example shows the profile key:
+The following example shows the macOS profile key. Deliver the value as `<string>`, not `<data>`:
 
 Copy code
 
@@ -223,10 +227,20 @@ Copy code
 <string>OUTPUT_OF_ENCODE_COMMAND</string>
 ```
 
-A value that is invalid or larger than 256 KB causes CoCo to deny connections. On Windows, use Option 1.
+The following example shows the Windows registry value:
+
+```
+[HKEY_LOCAL_MACHINE\Software\Policies\Microsoft\CortexCode]
+"CortexManagedSettingsBase64"="OUTPUT_OF_ENCODE_COMMAND"
+```
+
+A value that is invalid or larger than 256 KB causes CoCo to deny connections.
+
+Note
+
+CoCo CLI on Windows reads the embedded value from version 1.2.0. Until a 1.2.x release reaches the stable channel, it is available only to users who install from the beta channel (`$env:CORTEX_CHANNEL="beta"` before running `install.ps1`). On earlier CLI versions, use Option 1 (deploy `managed-settings.json` alongside the registry policy).
 
 ## Limitations
 
-- Windows does not yet support embedding `managed-settings.json` in MDM.
 - Changes take effect the next time CoCo starts. Restart the CLI or fully quit and reopen Desktop.
-- On non-English editions of Windows, the file permission check can skip `managed-settings.json`. Use Group Policy or Intune on those devices.
+- On non-English editions of Windows, the permission check can skip `managed-settings.json`. Use Group Policy or Intune on those devices. A `managed-settings.json` embedded in registry policy (Option 2) isn’t affected.

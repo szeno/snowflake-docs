@@ -114,6 +114,7 @@ Currently, Snowflake supports these system DMFs to measure common metrics withou
 |  | [INVALID\_UUID\_PERCENT](/sql-reference/functions/dmf_invalid_uuid_percent) | Determine what percentage of values in a string column are not a valid UUID. |
 |  | [NOT\_IN\_FUTURE\_COUNT](/sql-reference/functions/dmf_not_in_future_count) | Determine how many values in a date/timestamp column are not in the future relative to the scheduled evaluation time. |
 |  | [NOT\_IN\_FUTURE\_PERCENT](/sql-reference/functions/dmf_not_in_future_percent) | Determine what percentage of values in a date/timestamp column are not in the future relative to the scheduled evaluation time. |
+|  | [REFERENTIAL\_INTEGRITY\_COUNT](/sql-reference/functions/dmf_referential_integrity_count) | Determine how many source rows have non-NULL column values that don’t match a row in the referenced table. |
 | Volume | [ROW\_COUNT](/sql-reference/functions/dmf_row_count) | Determine how many records are in the table or view. |
 
 Expand

@@ -215,6 +215,16 @@ This user requires specific privileges to facilitate replication:
   - CDB\_TABLES
   - CDB\_USERS
 
+  The connector also runs a periodic capture health check after it attaches to the
+  XStream Outbound Server. To allow this check to run, also grant SELECT access to:
+
+  - DBA\_CAPTURE
+  - V\_$XSTREAM\_CAPTURE
+  - V\_$LOGMNR\_SESSION
+
+  Without these grants, replication isn’t affected, but the connector logs a single
+  warning and disables the health check until you restart the processor.
+
   `ALL_INDEXES` and `ALL_IND_COLUMNS` are required so the connector can detect
   unique constraints and unique indexes as replication keys when a table has no
   primary key. For more information on the selection algorithm, see

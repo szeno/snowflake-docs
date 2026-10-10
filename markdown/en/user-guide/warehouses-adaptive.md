@@ -118,6 +118,7 @@ For more information about Snowflake regions, see [Supported cloud regions](/use
 #### Europe
 
 - EU Central 1 (Frankfurt)
+- EU Central 2 (Zurich)
 - EU North 1 (Stockholm)
 - EU West 1 (Ireland)
 - EU West 3 (Paris)
@@ -129,7 +130,9 @@ For more information about Snowflake regions, see [Supported cloud regions](/use
 - AP Northeast 2 (Seoul)
 - AP Northeast 3 (Osaka)
 - AP South 1 (Mumbai)
+- AP Southeast 1 (Singapore)
 - AP Southeast 2 (Sydney)
+- AP Southeast 3 (Jakarta)
 - AP Southeast 5 (Malaysia)
 - AP Southeast 7 (Thailand)
 - China (Ningxia)

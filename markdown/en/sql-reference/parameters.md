@@ -152,7 +152,7 @@ Snowflake provides the following object parameters:
 | [ICEBERG\_VERSION](#label-iceberg-version) | Apache Iceberg™ table |  |
 | [ICEBERG\_VERSION\_DEFAULT](#label-iceberg-version-default) | Account, Database, Schema |  |
 | [LOG\_LEVEL](#label-log-level) | Account, Database, Schema, DCM project, Stored Procedure, Function, Dynamic Table, Iceberg table, Task, Service. | Log messages from logging APIs. |
-| [LOG\_EVENT\_LEVEL](#label-log-event-level) | Account, Database, Schema, DCM project, Stored Procedure, Function, Dynamic Table, Iceberg table, Task, Service. | Log events (record type EVENT) written to the event table. |
+| [LOG\_EVENT\_LEVEL](#label-log-event-level) | Account, Database, Schema, DCM project, Stored Procedure, Function, Dynamic Table, Iceberg table, Task, Service, Pipe. | Log events (record type EVENT) written to the event table. |
 | [MAX\_CONCURRENCY\_LEVEL](#label-max-concurrency-level) | Warehouse |  |
 | [MAX\_DATA\_EXTENSION\_TIME\_IN\_DAYS](#label-max-data-extension-time-in-days) | Database, Schema, Table |  |
 | [METRIC\_LEVEL](#label-metric-level) | Account, Database, Schema, Stored Procedure, Function |  |
@@ -2948,7 +2948,7 @@ Additional Notes:
 Type:
 :   Session — Can be set for Account » User » Session
 
-    Object (for databases, schemas, DCM projects, stored procedures, UDFs, dynamic tables, Iceberg tables, tasks, services) — Can be set for:
+    Object (for databases, schemas, DCM projects, stored procedures, UDFs, dynamic tables, Iceberg tables, tasks, services, pipes) — Can be set for:
 
     - Account » Database » Schema » DCM project
     - Account » Database » Schema » Procedure
@@ -2957,6 +2957,7 @@ Type:
     - Account » Database » Schema » Iceberg table (externally managed)
     - Account » Database » Schema » Task
     - Account » Database » Schema » Service
+    - Account » Database » Schema » Pipe
 
 Data Type:
 :   String (Constant)

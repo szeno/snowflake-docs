@@ -30,14 +30,14 @@ None
 `-l, --migrate-local-overrides / --no-migrate-local-overrides`
 :   Merge values in snowflake.local.yml into the main project definition. The snowflake.local.yml file will not be migrated, instead its values will be reflected in the output snowflake.yml file. If unset and snowflake.local.yml is present, an error will be raised.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -59,9 +59,7 @@ You must run this command in the same directory as the `snowflake.yml` file.
 
 Attention
 
-With the change in how Snowflake CLI 3.0 handles project definition templates, Snowflake cannot guarantee that project definition files using
-[templates](/developer-guide/snowflake-cli/project-definitions/create-templates) will work correctly after conversion. By default, this command generates an error if you try convert a 1.x file that contains templates. You can force the command to convert these types of files by using the `--accept-templates` option. Then you
-must manually update any templates to their V2 equivalents.
+With the change in how Snowflake CLI 3.0 handles project definition templates, Snowflake cannot guarantee that project definition files using [templates](/developer-guide/snowflake-cli/project-definitions/create-templates) will work correctly after conversion. By default, this command generates an error if you try convert a 1.x file that contains templates. You can force the command to convert these types of files by using the `--accept-templates` option. Then you must manually update any templates to their V2 equivalents.
 
 ## Examples
 

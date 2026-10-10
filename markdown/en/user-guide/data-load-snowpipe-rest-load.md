@@ -1,7 +1,7 @@
-# Option 1: Load data with the Snowpipe REST API
+# Call the Snowpipe REST API with the Snowflake Ingest SDK for Java or Python
 
-This topic describes how to call the public REST endpoints to load data and retrieve load history reports. The instructions assume you have completed the setup instructions in
-[Data loading preparation using the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs).
+This topic shows how to use the Snowflake Ingest SDK for Java or Python to call the public REST endpoints to load data and retrieve load history reports. The SDKs build the requests and generate the JSON Web Token (JWT) for you. To call the endpoints with another HTTP client instead, see [Load data with the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-overview). The instructions assume you have completed the setup instructions in
+[Set up the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs). To install the SDK, see [Install the Snowflake Ingest SDK for Java or Python](/user-guide/data-load-snowpipe-rest-gs#label-snowpipe-rest-install-sdk).
 
 ## Load data
 
@@ -11,7 +11,7 @@ Step 1:
 :   Stage your data files:
 
     - Internal stage: Use the [PUT](/sql-reference/sql/put) command to stage your files.
-    - External stage: Use the client tools provided by the cloud provider to copy your files to the stage location (Amazon S3, Google Cloud Storage, or Microsoft Azure).
+    - External stage: Use the client tools provided by your cloud storage service to copy your files to the stage location (Amazon S3, Google Cloud Storage, Microsoft Azure, or [S3-compatible storage](/user-guide/data-load-s3-compatible-storage)).
 
 Step 2:
 :   Submit a request to the [insertFiles](/user-guide/data-load-snowpipe-rest-apis#label-rest-api-insertfiles) REST endpoint to load the staged data files.
@@ -164,8 +164,8 @@ public class SDKTest
       SimpleIngestManager manager = new SimpleIngestManager(host.split("\.")[0], user, pipe, privateKey, "https", host, 443);
       List<StagedFileWrapper> files = new ArrayList<>();
       // Add the paths and sizes the files that you want to load.
-      // Use paths that are relative to the stage where the files are located
-      // (the stage that is specified in the pipe definition)..
+      // Use paths that are relative to the location in the pipe's COPY INTO statement
+      // (the stage, plus any path in the FROM clause).
       files.add(new StagedFileWrapper("<path>/<filename>", <file_size_in_bytes> /* file size is optional but recommended, pass null when it is not available */));
       files.add(new StagedFileWrapper("<path>/<filename>", <file_size_in_bytes> /* file size is optional but recommended, pass null when it is not available */));
       ...
@@ -203,7 +203,7 @@ where `versions` specifies the versions of the JDK that the JAR file supports.
 Before you compile the sample code, replace the following placeholder values:
 
 > `PRIVATE_KEY_FILE = "/<path>/rsa_key.p8"`
-> :   Specify the local path to the private key file you created in [Use key pair authentication & key rotation](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys) (in [Data loading preparation using the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs)).
+> :   Specify the local path to the private key file that you created when you [set up key pair authentication](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys).
 >
 > `return "<private_key_passphrase>"` in `getPrivateKeyPassphrase()`
 > :   If you generated an encrypted key, implement the `getPrivateKeyPassphrase()` method to return the passphrase for decrypting that key.
@@ -229,7 +229,7 @@ Before you compile the sample code, replace the following placeholder values:
 >
 >     Optionally specify the size of each file, in bytes, to avoid delays when Snowpipe calculates the operations required to load the data.
 >
->     The path you specify must be relative to the stage where the files are located. Include the complete name for each file, including the file extension. For example, a CSV file that is gzip-compressed might have the extension `.csv.gz`.
+>     The path you specify must be relative to the location in the pipe’s `COPY INTO` statement: the stage, plus any path in the `FROM` clause. Include the complete name for each file, including the file extension. For example, a CSV file that is gzip-compressed might have the extension `.csv.gz`.
 
 ### Sample program for the Python SDK
 
@@ -319,7 +319,7 @@ while True:
 Before you execute the sample code, replace the following placeholder values:
 
 > `<private_key_path>`
-> :   Specify the local path to the private key file you created in [Use key pair authentication & key rotation](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys) (in [Data loading preparation using the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-gs)).
+> :   Specify the local path to the private key file that you created when you [set up key pair authentication](/user-guide/data-load-snowpipe-rest-gs#label-configuring-rsa-authentication-keys).
 >
 > `return "<private_key_passphrase>"` in `get_private_key_passphrase()`
 > :   If you generated an encrypted key, implement the `get_private_key_passphrase()` function to return the passphrase for decrypting that key.
@@ -346,7 +346,7 @@ Before you execute the sample code, replace the following placeholder values:
 > `file_list=['<path>/<filename>', '<path>/<filename>']` | `staged_file_list=[StagedFile('<path>/<filename>', <file_size_in_bytes>), StagedFile('<path>/<filename>', <file_size_in_bytes>)]`
 > :   Specify the path to your files to load in the file objects list.
 >
->     The path you specify must be relative to the stage where the files are located. Include the complete name for each file, including the file extension. For example, a CSV file that is gzip-compressed might have the extension `.csv.gz`.
+>     The path you specify must be relative to the location in the pipe’s `COPY INTO` statement: the stage, plus any path in the `FROM` clause. Include the complete name for each file, including the file extension. For example, a CSV file that is gzip-compressed might have the extension `.csv.gz`.
 >
 >     Optionally specify the size of each file, in bytes, to avoid delays when Snowpipe calculates the operations required to load the data.
 
@@ -370,4 +370,4 @@ Note that querying either the Information Schema table function or Account Usage
 ## Delete staged files
 
 Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Deleting staged files after Snowpipe loads the data](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).

@@ -102,9 +102,9 @@ You can load and unload data using an external stage configured for S3-compatibl
   COPY INTO t1
     FROM @my_s3compat_stage/load/;
   ```
-- [Calling Snowpipe REST endpoints to continuously load data](/user-guide/data-load-snowpipe-rest-overview).
+- Continuous data loading using the [Snowpipe REST API](/user-guide/data-load-snowpipe-rest-overview).
 
-  For sample programs, see [Option 1: Load data with the Snowpipe REST API](/user-guide/data-load-snowpipe-rest-load).
+  For sample programs, see [Call the Snowpipe REST API with the Snowflake Ingest SDK for Java or Python](/user-guide/data-load-snowpipe-rest-load).
 - Data unloading using the [COPY INTO <location>](/sql-reference/sql/copy-into-location) command.
 
   For example, unload data from table `t2` into files in the `unload` subpath in the bucket and path defined in a stage named `my_s3compat_stage`:

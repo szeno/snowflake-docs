@@ -14,6 +14,7 @@ snow stage execute
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -41,6 +42,8 @@ snow stage execute
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -52,7 +55,9 @@ snow stage execute
 ## Arguments
 
 `stage_path`
-:   Stage path with files to be execute. For example \*@stage/dev/\*\*.
+:   *Required*
+
+    Stage path with files to be execute. For example `@stage/dev/*`.
 
 ## Options
 
@@ -60,16 +65,19 @@ snow stage execute
 :   What to do when an error occurs. Defaults to break. Default: break.
 
 `--variable, -D TEXT`
-:   Variables for the execution context; for example: *-D “<key>=<value>”*. For SQL files, variables are used to expand the template, and any unknown variable will cause an error (consider embedding quoting in the file).For Python files, variables are used to update the os.environ dictionary. Provided keys are capitalized to adhere to best practices. In case of SQL files string values must be quoted in *‘’* (consider embedding quoting in the file).
+:   Variables for the execution context; for example: `-D "&lt;key&gt;=&lt;value&gt;"`. For SQL files, variables are used to expand the template, and any unknown variable will cause an error (consider embedding quoting in the file).For Python files, variables are used to update the os.environ dictionary. Provided keys are capitalized to adhere to best practices. In case of SQL files string values must be quoted in `''` (consider embedding quoting in the file).
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -141,25 +149,31 @@ snow stage execute
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -179,10 +193,11 @@ Note
 
 Snowflake CLI does not support executing Python files for Python versions 3.12 and above.
 
-- The command searches for files with a `.sql` extension in the specified `STAGE_PATH` and executes `EXECUTE IMMEDIATE` on each of them. `STAGE_PATH` can be:
-  - Only a stage name, such as `@scripts`, which executes all `.sql` files from the stage.
-  - Glob-like pattern, such as `@scripts/dir/*`, which executes `.sql` files from the *dir* directory.
-  - Direct file path, such as `@scripts/script.sql`, which executes only the `script.sql` file from the `scripts`.
+The command searches for files with a `.sql` extension in the specified `STAGE_PATH` and executes `EXECUTE IMMEDIATE` on each of them. `STAGE_PATH` can be:
+
+- Only a stage name, such as `@scripts`, which executes all `.sql` files from the stage.
+- Glob-like pattern, such as `@scripts/dir/*`, which executes `.sql` files from the `dir` directory.
+- Direct file path, such as `@scripts/script.sql`, which executes only the `script.sql` file from the `scripts`.
 
 The `--silent` options hides intermediate messages with file execution results.
 

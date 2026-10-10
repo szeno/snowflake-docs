@@ -123,6 +123,22 @@ SHOW SHARES [ LIKE '<pattern>' ]
 - For `OUTBOUND` shares, if accounts have been added to the share, the `to` column displays these accounts. The maximum number
   of accounts displayed in this column is three; however, there is no hard limit on the number of accounts that can be added to a share.
 
+  To retrieve the full list of accounts added to an outbound share, query the `TARGET_ACCOUNTS` column in the
+  [SHARES view](/sql-reference/account-usage/shares) view. Use that list to confirm that a specific account was added. Data in the
+  view can be up to 3 hours old.
+
+  Copy code
+
+  ```
+  SELECT name, target_accounts
+    FROM SNOWFLAKE.ACCOUNT_USAGE.SHARES
+    WHERE deleted_on IS NULL
+      AND name = 'SALES_S';
+  ```
+
+  `SHOW GRANTS OF SHARE` lists only accounts that have created a database from the share. It doesn’t include accounts that
+  were added but haven’t consumed the share yet. For more information, see [SHOW GRANTS](/sql-reference/sql/show-grants).
+
 ## Examples
 
 Show all shares that have been created in your account or are available to consume by your account:

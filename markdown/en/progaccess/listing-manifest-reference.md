@@ -764,7 +764,7 @@ data_preview:
   has_pii: FALSE
 ```
 
-After you enable data preview, you must contact [Snowflake Support](/user-guide/contacting-support) to disable it.
+If you want to disable data preview after you enable it, contact [Snowflake Support](/user-guide/contacting-support).
 
 The `data_preview` field includes the following entries:
 

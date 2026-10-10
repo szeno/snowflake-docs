@@ -22,14 +22,14 @@ None
 
 ## Options
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -49,33 +49,32 @@ This command helps you migrate from SnowSQL to Snowflake CLI by identifying your
 
 ## Examples
 
-This example assumes a user has defined the following environment variables:
-
+- This example assumes a user has defined the following environment variables:
 - `SNOWSQL_USER`: Username for the connection.
 - `SNOWSQL_ROLE`: Role for the connection.
 - `SNOWSQL_UNUSED`: Variable not used in Snowflake CLI.
 
-Copy code
+  Copy code
 
-```
-snow helpers check-snowsql-env-vars
-```
+  ```
+  snow helpers check-snowsql-env-vars
+  ```
 
-```
-+--------------------------------------------------------------------------------------------------------------------------------------------+
-| Found        | Suggested      | Additional info                                                                                            |
-|--------------+----------------+------------------------------------------------------------------------------------------------------------|
-| SNOWSQL_USER | SNOWFLAKE_USER | https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-environme |
-|              |                | nt-variables-for-snowflake-credentials                                                                     |
-| SNOWSQL_ROLE | SNOWFLAKE_ROLE | https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-environme |
-|              |                | nt-variables-for-snowflake-credentials                                                                     |
-+--------------------------------------------------------------------------------------------------------------------------------------------+
+  ```
+  +--------------------------------------------------------------------------------------------------------------------------------------------+
+  | Found        | Suggested      | Additional info                                                                                            |
+  |--------------+----------------+------------------------------------------------------------------------------------------------------------|
+  | SNOWSQL_USER | SNOWFLAKE_USER | https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-environme |
+  |              |                | nt-variables-for-snowflake-credentials                                                                     |
+  | SNOWSQL_ROLE | SNOWFLAKE_ROLE | https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/configure-connections#use-environme |
+  |              |                | nt-variables-for-snowflake-credentials                                                                     |
+  +--------------------------------------------------------------------------------------------------------------------------------------------+
 
-+----------------------------------------------+
-| Found          | Suggested | Additional info |
-|----------------+-----------+-----------------|
-| SNOWSQL_UNUSED | n/a       | Unused variable |
-+----------------------------------------------+
+  +----------------------------------------------+
+  | Found          | Suggested | Additional info |
+  |----------------+-----------+-----------------|
+  | SNOWSQL_UNUSED | n/a       | Unused variable |
+  +----------------------------------------------+
 
-Found 3 SnowSQL environment variables, 2 with replacements, 1 unused.
-```
+  Found 3 SnowSQL environment variables, 2 with replacements, 1 unused.
+  ```

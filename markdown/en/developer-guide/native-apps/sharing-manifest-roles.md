@@ -1,11 +1,5 @@
 # Declarative roles for shared content in a Snowflake Native App
 
-[Preview Feature — Private](/release-notes/preview-features)
-
-Declarative sharing in the Snowflake Native App Framework (Declarative Native Apps) is in Private Preview. Support isn’t in
-production and is available only to selected accounts. To request access, contact your Snowflake
-representative.
-
 Feature — Generally Available
 
 The Snowflake Native App Framework is generally available on supported cloud platforms. For additional information, see

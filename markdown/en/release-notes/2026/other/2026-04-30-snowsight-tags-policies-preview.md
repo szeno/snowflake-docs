@@ -5,4 +5,4 @@ selecting the **Tags** tab, and selecting **+ Create tag**.
 
 The **Tags & policies** **Dashboard** now summarizes tagging coverage across supported object types in the account.
 
-For more information, see [Create a tag in Snowsight (public preview)](/user-guide/object-tagging/work#label-object-tagging-create-tag-snowsight) and [Monitor tags with Snowsight](/user-guide/object-tagging/monitor#label-object-tagging-snowsight).
+For more information, see [Create a tag in Snowsight](/user-guide/object-tagging/work#label-object-tagging-create-tag-snowsight) and [Monitor tags with Snowsight](/user-guide/object-tagging/monitor#label-object-tagging-snowsight).

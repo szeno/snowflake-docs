@@ -96,13 +96,15 @@ A paused automation stops sending until you resume it. A deleted automation is r
 
 Each time an automation runs, it creates a new conversation thread. When you select the link in an email, Snowflake CoWork opens that thread with the report pre-loaded, and you can continue the conversation from there.
 
-You can also see your reports from the **Automations** tab, which lists each automation and its runs. You can view previous runs from the last two months.
+You can also see your reports from the **Automations** tab, which lists each automation and its runs. You can view previous runs for up to 60 days.
 
 ## Security and access control
 
 Automations follow a caller’s-rights model: each run executes with your own role and warehouse, without elevated permissions. As a result, every report respects role-based access control (RBAC), row-access policies, and column-masking policies. If you lose access to the underlying data, the report reflects your current permissions the next time it runs.
 
-Links in automation emails use time-limited tokens, results are encrypted at rest, and operations are logged.
+The link in an automation email opens the conversation for that run. Snowflake stores that conversation for up to 60 days after it is created. If you forward the email link, the recipient can’t open the report. To share the report, select **Share**. The recipient sees a snapshot of the report at the time you share it. See [Artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).
+
+Snowflake encrypts automation results at rest. If your account uses Tri-Secret Secure, at-rest encryption for these results includes your customer-managed key. Snowflake logs each run in [Account Usage](/sql-reference/account-usage).
 
 ## Enable or disable automations
 
@@ -130,7 +132,7 @@ GRANT EXECUTE AGENT TASK ON ACCOUNT TO ROLE <role_name>;
 When access is disabled:
 
 - The **Automations** tab remains visible, but surfaces a message explaining that access is disabled.
-- Prior run history is still viewable until its TTL (time to live) expires.
+- Prior run history remains viewable for up to 60 days.
 - If an administrator later re-enables access, existing automations can be resumed.
 
 ## Cost and limits

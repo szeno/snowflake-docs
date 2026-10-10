@@ -19,7 +19,7 @@ Create an SNS topic in your AWS account to handle the notifications. Record the 
 Note
 
 Only standard SNS topics are supported. Do not create SNS FIFO (first in, first out) topics for use with error notifications.
-Currently, error notifications sent to FIFO topics fail silently.
+Error notifications sent to FIFO topics fail, and the [NOTIFICATION\_HISTORY](/sql-reference/functions/notification_history) function shows them with the `FAILURE` status.
 
 To reduce latency and avoid [data egress](/user-guide/cost-understanding-data-transfer) charges for sending notifications
 across [regions](/user-guide/intro-regions), we recommend creating the SNS topic in the same region as your Snowflake

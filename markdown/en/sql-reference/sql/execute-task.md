@@ -154,7 +154,7 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
 
   If the EXECUTE TASK command is executed again before the next scheduled run starts, the requested run replaces the scheduled run.
 - If a task fails with an unexpected error, you can receive a notification about the error.
-  For more information on configuring task error notifications refer to [Set up error notifications for tasks](/user-guide/tasks-errors).
+  For more information on configuring task error notifications refer to [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 - To view the task information you can either:
 
   - In Snowsight, in the navigation menu, select **Transformation** » **Tasks**.

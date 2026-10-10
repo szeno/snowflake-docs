@@ -1751,8 +1751,10 @@ You can specify one or more of the following copy options (separated by blank sp
       not recommended if those files are already part of another Iceberg table. The best practice for converting externally managed Iceberg
       tables to Snowflake-managed Iceberg tables without rewriting files is to use the [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed)
       command.
-- To run this command with an external stage that uses a storage integration,
-  you must use a role that has or inherits the USAGE privilege on the storage integration.
+- To run this command with a named external stage that uses a storage integration, the role that owns the stage must have or inherit
+  the `USAGE` privilege on the storage integration. The role that runs the command doesn’t need this privilege. If a `COPY INTO`
+  statement specifies a storage integration directly with the `STORAGE_INTEGRATION` parameter instead of referencing a named stage, the
+  role that runs the statement must have or inherit the `USAGE` privilege on the storage integration.
 
   For more information, see [Stage privileges](/user-guide/security-access-control-privileges#label-access-control-privileges-stage).
 - For [outbound private connectivity](/user-guide/private-connectivity-outbound), loading directly from an external location (external

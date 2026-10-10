@@ -121,8 +121,10 @@ Where:
 
 ## Usage notes
 
-- To run this command with an external stage that uses a storage integration,
-  you must use a role that has or inherits the USAGE privilege on the storage integration.
+- To run this command with a named external stage that uses a storage integration, the role that owns the stage must have or inherit
+  the `USAGE` privilege on the storage integration. The role that runs the command doesn’t need this privilege. If a `COPY INTO`
+  statement specifies a storage integration directly with the `STORAGE_INTEGRATION` parameter instead of referencing a named stage, the
+  role that runs the statement must have or inherit the `USAGE` privilege on the storage integration.
 
   For more information, see [Stage privileges](/user-guide/security-access-control-privileges#label-access-control-privileges-stage).
 - In contrast to named stages, table and user stages are not first-class database objects; rather, they are implicit stages associated with

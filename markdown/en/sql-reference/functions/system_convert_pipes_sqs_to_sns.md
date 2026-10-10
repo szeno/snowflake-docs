@@ -83,7 +83,7 @@ Using a role that inherits `ACCOUNTADMIN`, or activating `ACCOUNTADMIN` only as 
 - If a pipe was created before Snowflake began storing the metadata that this function requires, the pipe stays on Amazon SQS and the
   function returns no error. To find such pipes, run `DESCRIBE PIPE` after the call for each pipe that loads from the bucket, and
   check whether `notification_channel` still shows an Amazon SQS queue ARN instead of the topic ARN. Recreate each of those pipes by
-  following [Recreating pipes](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes), and then call the function again. Recreating a pipe generates the
+  following [Change or recreate a pipe](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes), and then call the function again. Recreating a pipe generates the
   metadata that the conversion requires, but it also drops the pipe’s load history, so make sure that the recreated pipe doesn’t
   load files that the original pipe already loaded.
 - To prevent data loss, Snowpipe continues to consume messages from the SQS queue after the conversion.

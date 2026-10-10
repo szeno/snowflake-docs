@@ -73,8 +73,10 @@ Where:
 ## Usage notes
 
 - If you are loading data from a file on a stage, do not remove the staged files until the data has been loaded successfully. To check if the data has been loaded successfully, use the [COPY\_HISTORY](/sql-reference/functions/copy_history) command. Check the `STATUS` column to determine if the data from the file has been loaded. Note that if the status is `Load in progress`, removing the staged file can result in partial loads and data loss.
-- To run this command with an external stage that uses a storage integration,
-  you must use a role that has or inherits the USAGE privilege on the storage integration.
+- To run this command with a named external stage that uses a storage integration, the role that owns the stage must have or inherit
+  the `USAGE` privilege on the storage integration. The role that runs the command doesn’t need this privilege. If a `COPY INTO`
+  statement specifies a storage integration directly with the `STORAGE_INTEGRATION` parameter instead of referencing a named stage, the
+  role that runs the statement must have or inherit the `USAGE` privilege on the storage integration.
 
   For more information, see [Stage privileges](/user-guide/security-access-control-privileges#label-access-control-privileges-stage).
 - Removing files from an external stage requires granting the following role or permission to Snowflake in your cloud storage account:

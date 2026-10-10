@@ -8,13 +8,6 @@ needed. A data product is any share or application package that is attached to y
 By using auto-fulfillment, you can avoid manually replicating your data products and approving requests for your listings,
 helping consumers access your listings faster.
 
-Note
-
-Using Cross-Cloud Auto-Fulfillment in a Snowflake Native App with Snowpark Container Services is only supported on Amazon Web Services (AWS)
-and Microsoft Azure. See
-[Understand limitations in the Snowflake Native App Framework](/developer-guide/native-apps/limitations)
-for more information.
-
 ## Understanding auto-fulfillment
 
 Note
@@ -132,7 +125,8 @@ When you use auto-fulfillment for your listings, consider the following:
 **How do I find out if an auto-fulfillment refresh fails?**
 
 Snowflake sends a daily email that summarizes failed listing refreshes to the email address specified on the listing.
-To check refreshes yourself, call the [LISTING\_REFRESH\_HISTORY](/sql-reference/functions/listing_refresh_history) function, which returns the
+To check refreshes yourself, use the [`listing-observability`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-listing-observability)
+bundled skill in Cortex Code, or call the [LISTING\_REFRESH\_HISTORY](/sql-reference/functions/listing_refresh_history) function, which returns the
 past 14 days of refresh history for each target region. For troubleshooting steps, see
 [Troubleshooting auto-fulfillment](/collaboration/provider-listings-auto-fulfillment-troubleshooting).
 

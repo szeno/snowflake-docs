@@ -13,6 +13,7 @@ snow git list-tags
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -40,6 +41,8 @@ snow git list-tags
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -51,21 +54,26 @@ snow git list-tags
 ## Arguments
 
 `repository_name`
-:   Identifier of the git repository; for example: my\_repo.
+:   *Required*
+
+    Identifier of the git repository; for example: my\_repo.
 
 ## Options
 
 `--like, -l TEXT`
-:   SQL LIKE pattern for filtering objects by name. For example, *list-tags –like “v2.0%”* lists all tags that start with “v2.0”. Default: %%.
+:   SQL LIKE pattern for filtering objects by name. For example, `list-tags --like "v2.0%"` lists all tags that start with “v2.0”. Default: %%.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -137,25 +145,31 @@ snow git list-tags
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -175,24 +189,24 @@ None.
 
 ## Examples
 
-For example, to list all of the tags in a repository named `my_snow_git`, enter the following command:
+- For example, to list all of the tags in a repository named `my_snow_git`, enter the following command:
 
-Copy code
+  Copy code
 
-```
-snow git list-tags my_snow_git
-```
+  ```
+  snow git list-tags my_snow_git
+  ```
 
-```
-show git tags in my_snow_git
-+--------------------------------------------------------------------------------------------------------------+
-| name           | path                 | commit_hash                 | author                       | message |
-|----------------+----------------------+-----------------------------+------------------------------+---------|
-| v2.0.0rc3      | /tags/v2.0.0rc3      | 2b019d2841da823d8001f23c6f3 | None                         | None    |
-|                |                      | 064e5899142a0               |                              |         |
-| v2.1.0-rc0     | /tags/v2.1.0-rc0     | 829887b758b43b86959611dd612 | None                         | None    |
-|                |                      | 7638da75cf871               |                              |         |
-| v2.1.0-rc1     | /tags/v2.1.0-rc1     | b7efe1fe9c0925b95ba214e233b | None                         | None    |
-|                |                      | 18924fa0404b3               |                              |         |
-+--------------------------------------------------------------------------------------------------------------+
-```
+  ```
+  show git tags in my_snow_git
+  +--------------------------------------------------------------------------------------------------------------+
+  | name           | path                 | commit_hash                 | author                       | message |
+  |----------------+----------------------+-----------------------------+------------------------------+---------|
+  | v2.0.0rc3      | /tags/v2.0.0rc3      | 2b019d2841da823d8001f23c6f3 | None                         | None    |
+  |                |                      | 064e5899142a0               |                              |         |
+  | v2.1.0-rc0     | /tags/v2.1.0-rc0     | 829887b758b43b86959611dd612 | None                         | None    |
+  |                |                      | 7638da75cf871               |                              |         |
+  | v2.1.0-rc1     | /tags/v2.1.0-rc1     | b7efe1fe9c0925b95ba214e233b | None                         | None    |
+  |                |                      | 18924fa0404b3               |                              |         |
+  +--------------------------------------------------------------------------------------------------------------+
+  ```

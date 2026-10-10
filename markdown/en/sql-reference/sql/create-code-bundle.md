@@ -17,7 +17,7 @@ This command supports the following variant:
 - [DEFINE CODE BUNDLE](#label-define-code-bundle-syntax): Declarative definition of a Code Bundle’s target state inside a DCM project. (Public Preview)
 
 See also:
-:   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook)
+:   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook), [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles)
 
 ## Syntax
 

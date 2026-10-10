@@ -18,6 +18,7 @@ snow dcm purge
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -46,6 +47,7 @@ snow dcm purge
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
   --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -57,7 +59,9 @@ snow dcm purge
 ## Arguments
 
 `identifier`
-:   Identifier of DCM Project. Example: MY\_DB.MY\_SCHEMA.MY\_PROJECT. Supports fully qualified (recommended) or simple names. If unqualified, it defaults to the connection’s database and schema. Optional if `--target` or `default_target` is defined in the manifest.
+:   *Optional*
+
+    Identifier of DCM Project. Example: MY\_DB.MY\_SCHEMA.MY\_PROJECT. Supports fully qualified (recommended) or simple names. If unqualified, it defaults to the connection’s database and schema. Optional if `--target` or `default_target` is defined in the manifest.
 
 ## Options
 
@@ -77,7 +81,7 @@ snow dcm purge
 :   When enabled, this option displays prompts even if the standard input and output are not terminal devices. Defaults to True in an interactive shell environment, and False otherwise.
 
 `--force`
-:   When enabled, this option causes the command to implicitly approve any prompts that arise. You should enable this option if interactive mode is not specified and if you want to perform potentially destructive actions. Defaults to unset. Default: False.
+:   When enabled, this option causes the command to implicitly approve any prompts that arise. You should enable this option if interactive mode is not specified and if you want perform potentially destructive actions. Defaults to unset. Default: False.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your `config.toml` file. Default: `default`.
@@ -87,6 +91,9 @@ snow dcm purge
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -172,8 +179,11 @@ snow dcm purge
 `--secondary-roles TEXT`
 :   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
 
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.
@@ -195,11 +205,9 @@ snow dcm purge
 
 ## Usage notes
 
-The `snow dcm purge` command drops every entity, revokes every grant, and removes every attachment managed by the specified DCM project
-object, but doesn’t drop the DCM project object itself. The operation is recorded in the project’s deployment history and prints the
-computed changeset on completion.
+The `snow dcm purge` command drops every Snowflake object managed by the specified DCM project object, but does not drop the DCM project object itself. The operation is recorded in the project’s deployment history and prints the computed changeset on completion.
 
-Use the `--save-output` option to save the purge results to a local `out/purge_result.json` file.
+Use the `--save-output` option to save the purge results to a local `out/purge.json` file.
 
 Note
 

@@ -1,10 +1,10 @@
 # snow dbt copy
 
-Copies files between local directories, stages, or a dbt project object’s live version. This command behaves exactly like `snow stage copy`; it’s provided as a convenience when working with dbt project files.
-
 Note
 
 Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
+
+Copies files between local directories, stages, or a dbt project object’s live version. This command behaves exactly like `snow stage copy`; it’s provided as a convenience when working with dbt project files.
 
 ## Syntax
 
@@ -65,12 +65,12 @@ snow dbt copy
 `source_path`
 :   *Required*
 
-    Source path for the copy operation. Can be a local path, a stage path, or a `snow://dbt/.../versions/live` path. You can use a glob pattern for local files, but the pattern must be enclosed in quotes.
+    Source path for copy operation. Can be either stage path or local. You can use a glob pattern for local files but the pattern has to be enclosed in quotes.
 
 `destination_path`
 :   *Required*
 
-    Target directory path for the copy operation. Can be a local path, a stage path, or a `snow://dbt/.../versions/live` path.
+    Target directory path for copy operation.
 
 ## Options
 
@@ -87,7 +87,7 @@ snow dbt copy
 :   Specifies whether Snowflake uses gzip to compress files during upload. Ignored when downloading. Default: False.
 
 `--refresh / --no-refresh`
-:   Specifies whether `ALTER STAGE {name} REFRESH` should be executed after uploading. Default: False.
+:   Specifies whether ALTER STAGE {name} REFRESH should be executed after uploading. Default: False.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your `config.toml` file. Default: `default`.
@@ -189,7 +189,7 @@ snow dbt copy
 :   Keep the session active indefinitely, even if there is no activity from the user.
 
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.
@@ -211,11 +211,7 @@ snow dbt copy
 
 ## Usage notes
 
-Use the `versions/live` path to copy files into, out of, or between dbt project objects. A dbt project object path has the following form:
-
-```
-snow://dbt/<database>.<schema>.<dbt_project>/versions/live/<path>
-```
+Use the `versions/live` path to copy files into, out of, or between dbt project objects. A dbt project object path has the form `snow://dbt/<database>.<schema>.<dbt_project>/versions/live/<path>`.
 
 `snow dbt copy` moves files between locations. It can persist files in the live version when that path is the destination. In contrast, repeatable `snow dbt execute --import` options mount files under `./imports/<alias>` only for an execution. For more information, see [snow dbt execute commands](/developer-guide/snowflake-cli/command-reference/dbt-commands/execute/overview).
 

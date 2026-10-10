@@ -1124,7 +1124,7 @@ Next steps to improve your workflow:
 
   Configure Slack or email notifications in your CI/CD platform, or use Snowflake task error notifications.
 
-  For more information, see [Configure a task to send error notifications](/user-guide/tasks-errors-integrate).
+  For more information, see [Configure error alerts and notifications for tasks](/user-guide/tasks-errors-integrate).
 - Explore the platform-specific Snowflake CLI CI/CD reference guides for advanced configuration:
 
   - [Snowflake CLI CI/CD integration overview](/developer-guide/snowflake-cli/cicd/integrate-ci-cd)

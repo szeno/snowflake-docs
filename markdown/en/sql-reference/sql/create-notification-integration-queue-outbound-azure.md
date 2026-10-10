@@ -109,5 +109,5 @@ For general information about roles and privilege grants for performing SQL acti
 
 See the following topics:
 
-- [Enabling Snowpipe error notifications for Microsoft Azure Event Grid](/user-guide/data-load-snowpipe-errors-azure)
+- [Snowpipe error notifications](/user-guide/data-load-snowpipe-errors)
 - [Creating a notification integration to send notifications to a Microsoft Azure Event Grid topic](/user-guide/notifications/creating-notification-integration-azure-event-grid)

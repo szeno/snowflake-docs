@@ -2,6 +2,11 @@
 
 Snowflake can push success notifications to a cloud messaging service when a task graph completes successfully. This topic provides instructions for configuring success notification support for tasks using cloud messaging.
 
+Note
+
+To configure built-in success notifications for a task graph, use `SUCCESS_INTEGRATION`. The built-in task alert
+template monitors errors, not successful graph completion. See [Configure error alerts and notifications for tasks](/user-guide/tasks-errors-integrate).
+
 Success notification integration is only specified on a root task of a task graph. Snowflake only sends success notifications when the entire task graph is successfully executed and will not send notifications for any successfully executed standalone task, which is different from [error notification integration](/user-guide/tasks-errors-integrate).
 
 Note

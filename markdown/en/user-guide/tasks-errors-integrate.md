@@ -1,9 +1,38 @@
-# Configure a task to send error notifications
+# Configure error alerts and notifications for tasks
+
+There are two ways to be notified about task errors:
+
+- A [task alert](#label-tasks-errors-alert) notifies you by email or webhook when the cumulative error rate of your tasks
+  crosses a threshold that you choose.
+- [ERROR\_INTEGRATION](#label-tasks-errors-integration) pushes a message to a cloud messaging service for each failed
+  task run.
+
+## Monitor the task error rate with an alert
+
+Snowflake provides a built-in alert template, `TASKS_ERROR_RATE`, that notifies you by email or webhook when the
+cumulative error rate of your tasks crosses a threshold that you choose. The template defines the condition and the
+action for you, so you supply only the threshold, the scope, and the notification target.
+
+An alert tells you that your tasks are failing more often than you’re willing to tolerate. It doesn’t send a message for
+each failure. If you need that, use `ERROR_INTEGRATION` instead. See [Send a notification for each failed task run](#label-tasks-errors-integration).
+
+Task alerts require `LOG_EVENT_LEVEL` to be set to `INFO` on the tasks you want to monitor, so that both successful and
+failed runs are recorded. For details, see [Prerequisites for task alerts](/user-guide/tasks-errors#label-tasks-notifications-prerequisites).
+
+To create the alert, choose the **Error rate alert** template in the **TASKS** template group. See
+[Creating a new alert](/user-guide/alerts-ui#label-alerts-center-create) for the Snowsight steps, or
+[Creating an alert from a template with SQL](/user-guide/alerts#label-alerts-create-from-template) for the SQL equivalent.
+
+The template delivers notifications by email or webhook. To send alert notifications to a cloud provider queue instead,
+create a custom alert whose action calls `SYSTEM$SEND_SNOWFLAKE_NOTIFICATION` with a queue notification integration.
+See [Setting up alerts based on data in Snowflake](/user-guide/alerts) and [Sending notifications to cloud provider queues (Amazon SNS, Google Cloud PubSub, and Azure Event Grid)](/user-guide/notifications/queue-notifications).
+
+## Send a notification for each failed task run
 
 To enable a task to send error notifications, you must associate the task with a notification integration.
 You can do this when running the [CREATE TASK](/sql-reference/sql/create-task) command to create a new task or
 the [ALTER TASK](/sql-reference/sql/alter-task) command to modify an existing task.
-When running these commands, set ERROR\_INTEGRATION to the name of the notification integration.
+When running these commands, set `ERROR_INTEGRATION` to the name of the notification integration.
 
 You only specify the error notification integrations on a root task of a task graph. Any failed child task sends error notifications to
 the root task’s specified integration.
@@ -15,7 +44,7 @@ Note
 Creating or modifying a task that references a notification integration requires a role that has the USAGE privilege on the notification
 integration. In addition, the role must have either the CREATE TASK privilege on the schema or the OWNERSHIP privilege on the task.
 
-## Create a new task that sends error notifications
+### Create a new task that sends error notifications
 
 Create a new task using [CREATE TASK](/sql-reference/sql/create-task). For descriptions of all available task parameters, see the SQL command
 topic:
@@ -48,7 +77,7 @@ CREATE TASK mytask
   INSERT INTO mytable(ts) VALUES(CURRENT_TIMESTAMP);
 ```
 
-## Update an existing task to send error notifications
+### Update an existing task to send error notifications
 
 Modify an existing task using [ALTER TASK](/sql-reference/sql/alter-task):
 
@@ -69,7 +98,7 @@ Copy code
 ALTER TASK mytask SET ERROR_INTEGRATION = my_notification_int;
 ```
 
-## Task error notification message payload
+### Task error notification message payload
 
 The body of error messages identifies the task and the errors encountered during a task run.
 

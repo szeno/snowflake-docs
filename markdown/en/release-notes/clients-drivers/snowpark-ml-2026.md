@@ -162,11 +162,6 @@ default install footprint.
 
 ### Deprecations
 
-- Modeling: The `snowflake.ml.modeling` estimators and preprocessing transformers are deprecated and
-  will be removed in a future release. Importing a `snowflake.ml.modeling` subpackage now emits a
-  `DeprecationWarning`. Train models with the native scikit-learn, XGBoost, or LightGBM estimators
-  and log them to the Snowflake Model Registry (`snowflake.ml.registry`) instead.
-
 ### Breaking Changes
 
 - Generic: Require python >= 3.10. Python 3.9 is no longer supported.

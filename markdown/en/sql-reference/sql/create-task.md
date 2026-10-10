@@ -359,13 +359,13 @@ or
 :   Required only when configuring a task to send error notifications using Amazon Simple Notification Service (SNS), Microsoft Azure Event Grid, or Google Pub/Sub.
 
     Specifies the name of the notification integration used to communicate with Amazon SNS, MS Azure Event Grid, or Google Pub/Sub. For more information, see
-    [Set up error notifications for tasks](/user-guide/tasks-errors).
+    [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 
 `SUCCESS_INTEGRATION = 'integration_name'`
 :   Required only when configuring a task to send success notifications using Amazon Simple Notification Service (SNS), Microsoft Azure Event Grid, or Google Pub/Sub.
 
     Specifies the name of the notification integration used to communicate with Amazon SNS, MS Azure Event Grid, or Google Pub/Sub. For more information, see
-    [Set up error notifications for tasks](/user-guide/tasks-errors).
+    [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 
 `LOG_LEVEL = 'log_level'`
 :   Specifies the severity level of [events for this task](/user-guide/tasks-events) that are ingested and made available in
@@ -607,7 +607,7 @@ For general information about roles and privilege grants for performing SQL acti
   - Individual tasks in a task graph can use serverless or user-managed compute resources. Using the serverless compute for
     all tasks in the task graph isn’t required.
 - If a task fails with an unexpected error, you can receive a notification about the error.
-  For more information on configuring task error notifications, see [Set up error notifications for tasks](/user-guide/tasks-errors).
+  For more information on configuring task error notifications, see [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 - By default, a DML statement executed without explicitly starting a transaction is automatically committed on success or rolled back on
   failure at the end of the statement. This behavior is called *autocommit* and is controlled with the [AUTOCOMMIT](/sql-reference/parameters#label-autocommit) parameter.
   This parameter must be set to TRUE. If the AUTOCOMMIT parameter is set to FALSE at the account level, then set the parameter to

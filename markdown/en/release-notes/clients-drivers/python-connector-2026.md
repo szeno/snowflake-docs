@@ -198,7 +198,7 @@ Initial public preview release of the connector built on the Universal Core. Thi
 
 ### New features and updates
 
-- Rebuilt the connector on the Universal Core, a shared Rust library that implements networking, authentication, result-set fetching, and stage transfers for every Snowflake driver, replacing the pure-Python implementation.
+- Rebuilt the connector on the Universal Core, a shared Rust library that implements networking, authentication, result-set fetching, and stage transfers for every driver built on it, replacing the pure-Python implementation.
 - Published the connector and Universal Core source in the [Snowflake drivers repository](https://github.com/snowflakedb/drivers) on GitHub.
 - Added the `snowflake.connector.aio` module, which exposes the PEP 249 `Connection` and `Cursor` objects as asyncio coroutines.
 - Published wheels for CPython 3.11, 3.12, 3.13, and 3.14. Python 3.10 installs from the source distribution and compiles the Rust extension locally.

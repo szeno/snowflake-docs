@@ -21,7 +21,9 @@ snow custom-image validate
 ## Arguments
 
 `image`
-:   Local Docker image to validate. Accepts image name (e.g., ‘myimage:latest’) or image ID/hash.
+:   *Required*
+
+    Local Docker image to validate. Accepts image name (e.g., ‘myimage:latest’) or image ID/hash.
 
 ## Options
 
@@ -29,7 +31,7 @@ snow custom-image validate
 :   Run vulnerability scan using Grype. Requires Grype to be installed. Default: False.
 
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.

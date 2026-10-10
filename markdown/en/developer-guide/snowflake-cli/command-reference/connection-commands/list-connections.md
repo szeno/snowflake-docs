@@ -26,14 +26,14 @@ None
 `--all, -a`
 :   Include connections from all sources (environment variables, SnowSQL config). By default, only shows connections from configuration files. Default: False.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -49,25 +49,24 @@ None
 
 ## Usage notes
 
-The `snow connection list` command lists the connections in your default `config.toml` file.
-For more information, see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
+The `snow connection list` command lists the connections in your default `config.toml` file. For more information, see [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).
 
 ## Examples
 
-Copy code
+- Copy code
 
-```
-snow connection list
-```
+  ```
+  snow connection list
+  ```
 
-```
-+--------------------------------------------------------------------------------------------------------------------------------+
-| connection_name | parameters                                                                                                   |
-|-----------------+--------------------------------------------------------------------------------------------------------------|
-| my-prod         | {'account': 'po52878', 'user': 'JDOE', 'password': '****', 'role': 'integration_tests', 'database':          |
-|                 | 'SNOWFLAKE'}                                                                                                 |
-|-----------------+--------------------------------------------------------------------------------------------------------------|
-| my-test         | {'account': 'po52878', 'user': 'SSMITH', 'password': '****', 'role': 'integration_tests', 'database':        |
-|                 | 'SNOWFLAKE'}                                                                                                 |
-+--------------------------------------------------------------------------------------------------------------------------------+
-```
+  ```
+  +--------------------------------------------------------------------------------------------------------------------------------+
+  | connection_name | parameters                                                                                                   |
+  |-----------------+--------------------------------------------------------------------------------------------------------------|
+  | my-prod         | {'account': 'po52878', 'user': 'JDOE', 'password': '****', 'role': 'integration_tests', 'database':          |
+  |                 | 'SNOWFLAKE'}                                                                                                 |
+  |-----------------+--------------------------------------------------------------------------------------------------------------|
+  | my-test         | {'account': 'po52878', 'user': 'SSMITH', 'password': '****', 'role': 'integration_tests', 'database':        |
+  |                 | 'SNOWFLAKE'}                                                                                                 |
+  +--------------------------------------------------------------------------------------------------------------------------------+
+  ```

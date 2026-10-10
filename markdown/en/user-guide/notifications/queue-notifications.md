@@ -7,7 +7,7 @@ Azure Event Grid).
   notifications about errors to a queue, see the following topics:
 
   - [Snowpipe error notifications](/user-guide/data-load-snowpipe-errors)
-  - [Set up error notifications for tasks](/user-guide/tasks-errors)
+  - [Set up alerts and notifications for tasks](/user-guide/tasks-errors)
 - To call a stored procedure to send a notification to a queue:
 
   1. Create a notification integration for the cloud provider queue. For details, see the following topics:

@@ -22,6 +22,7 @@ snow app version create
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -49,6 +50,8 @@ snow app version create
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -60,15 +63,17 @@ snow app version create
 ## Arguments
 
 `version`
-:   Version to define in your application package. If the version already exists, an auto-incremented patch is added to the version instead. Defaults to the version specified in the *manifest.yml* file.
+:   *Optional*
+
+    Version to define in your application package. If the version already exists, an auto-incremented patch is added to the version instead. Defaults to the version specified in the `manifest.yml` file.
 
 ## Options
 
 `--patch INTEGER`
-:   The patch number you want to create for an existing version. Defaults to undefined if it is not set, which means the Snowflake CLI either uses the patch specified in the *manifest.yml* file or automatically generates a new patch number.
+:   The patch number you want to create for an existing version. Defaults to undefined if it is not set, which means the Snowflake CLI either uses the patch specified in the `manifest.yml` file or automatically generates a new patch number.
 
 `--label TEXT`
-:   A label for the version that is displayed to consumers. If unset, the version label specified in *manifest.yml* file is used.
+:   A label for the version that is displayed to consumers. If unset, the version label specified in `manifest.yml` file is used.
 
 `--skip-git-check`
 :   When enabled, the Snowflake CLI skips checking if your project has any untracked or stages files in git. Default: unset. Default: False.
@@ -83,10 +88,10 @@ snow app version create
 :   When enabled, this option causes the command to implicitly approve any prompts that arise. You should enable this option if interactive mode is not specified and if you want perform potentially destructive actions. Defaults to unset. Default: False.
 
 `--package-entity-id TEXT`
-:   The ID of the package entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the package entity on which to operate when the definition\_version is 2 or higher.
 
 `--app-entity-id TEXT`
-:   The ID of the application entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the application entity on which to operate when the definition\_version is 2 or higher.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.
@@ -95,13 +100,16 @@ snow app version create
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -173,25 +181,31 @@ snow app version create
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -227,38 +241,33 @@ This command creates an application package (if it does not exist) with a versio
 
 ## Examples
 
-These examples assume you have made the necessary changes to your code files and added them to your `snowflake.yml` or `snowflake.local.yml` files.
+- These examples assume you have made the necessary changes to your code files and added them to your `snowflake.yml` or `snowflake.local.yml` files.
+- If you want to create an application package and add a version V1 to it, use the following command:
 
-If you want to create an application package and add a version **V1** to it, use the following command:
+  Copy code
 
-Copy code
+  ```
+  snow app version create V1 --connection="dev"
+  ```
+- You can also use the command above to create a version V1 on an existing application package.
+- If you want to add a patch to version V1 using the auto-increment functionality and invoke the interactive mode, use the following command:
 
-```
-snow app version create V1 --connection="dev"
-```
+  Copy code
 
-You can also use the command above to create a version **V1** on an existing application package.
+  ```
+  snow app version create V1 --interactive --connection="dev"
+  ```
+- If you want to add a custom patch number to version `V1` and bypass the interactive mode, even if you are in an interactive shell, use the following command:
 
-If you want to add a patch to version **V1** using the auto-increment functionality and invoke the interactive mode, use the following command:
+  Copy code
 
-Copy code
+  ```
+  snow app version create V1 --patch 42 --force --connection="dev"
+  ```
+- To create a new version from the current content of the stage without syncing files to the stage first, use the following command:
 
-```
-snow app version create V1 --interactive --connection="dev"
-```
+  Copy code
 
-If you want to add a custom patch number to version `V1` and bypass the interactive mode, even if you are in an interactive shell, use the following command:
-
-Copy code
-
-```
-snow app version create V1 --patch 42 --force --connection="dev"
-```
-
-To create a new version from the current content of the stage without syncing files to the stage first, use the following command:
-
-Copy code
-
-```
-snow app version create V1 --from-stage --connection="dev"
-```
+  ```
+  snow app version create V1 --from-stage --connection="dev"
+  ```

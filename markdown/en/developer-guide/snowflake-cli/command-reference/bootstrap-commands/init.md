@@ -24,7 +24,9 @@ snow init
 ## Arguments
 
 `path`
-:   Directory to be initialized with the project. This directory must not already exist.
+:   *Required*
+
+    Directory to be initialized with the project. This directory must not already exist.
 
 ## Options
 
@@ -35,19 +37,19 @@ snow init
 :   local path to template directory or URL to git repository with templates. Default: <https://github.com/snowflakedb/snowflake-cli-templates>.
 
 `--variable, -D TEXT`
-:   String in *key=value* format. Provided variables will not be prompted for.
+:   String in `key=value` format. Provided variables will not be prompted for.
 
 `--no-interactive`
 :   Disable prompting. Default: False.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -71,9 +73,9 @@ By default, the command interactively prompts you for each parameter defined in 
 - Use the `--no-interactive` option to use default values, if defined, for each template parameter in the `template.yml` file.
 - Use a combination of the `-D` and `--no-interactive` options to define values for some parameters and use the specified default values for the template.
 
-  Note
+Note
 
-  If you do not provide a value using the `-D` option that does not have a corresponding default value defined, the snow init command terminates with an error.
+If you do not provide a value using the `-D` option that does not have a corresponding default value defined, the snow init command terminates with an error.
 
 ## Examples
 

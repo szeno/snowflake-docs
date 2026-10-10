@@ -19,7 +19,7 @@ The Node.js driver supports the following log levels:
 
 - OFF
 - ERROR
-- WARNING
+- WARN
 - INFO
 - DEBUG
 - TRACE

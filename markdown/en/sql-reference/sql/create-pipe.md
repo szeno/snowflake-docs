@@ -84,22 +84,13 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 
 Note
 
-We currently do not recommend using the following functions in the `copy_statement` for Snowpipe:
+Don’t use `CURRENT_DATE`, `CURRENT_TIME`, `CURRENT_TIMESTAMP`, `GETDATE`, `LOCALTIME`, `LOCALTIMESTAMP`, `SYSDATE`, or `SYSTIMESTAMP` in the `copy_statement` of a pipe that loads files from a stage, or as a default value for a column in that pipe’s target table.
 
-- CURRENT\_DATE
-- CURRENT\_TIME
-- CURRENT\_TIMESTAMP
-- GETDATE
-- LOCALTIME
-- LOCALTIMESTAMP
-- SYSDATE
-- SYSTIMESTAMP
-
-It is a known issue that the time values inserted using these functions can be a few hours earlier than the LOAD\_TIME values returned
+These functions return the time when Snowflake compiles the load, not when it commits the rows, so their values can be a few hours earlier than the `LAST_LOAD_TIME` values returned
 by the [COPY\_HISTORY function](/sql-reference/functions/copy_history) or the
 [COPY\_HISTORY view](/sql-reference/account-usage/copy_history).
 
-It is recommended to query [METADATA$START\_SCAN\_TIME](/user-guide/querying-metadata) instead, which provides a more accurate representation of record loading.
+Instead, to record when each row is loaded, enable [row timestamps](/user-guide/data-engineering/row-timestamps) on the target table (`ROW_TIMESTAMP = TRUE`) and query the `METADATA$ROW_LAST_COMMIT_TIME` metadata column, which records when each row was last committed. Row timestamps aren’t supported for Apache Iceberg™ tables. For more information, see [Load times recorded with CURRENT\_TIMESTAMP are earlier than expected](/user-guide/data-load-snowpipe-ts#label-load-times-inserted-snowpipe-ts).
 
 ## Optional parameters
 
@@ -118,7 +109,7 @@ It is recommended to query [METADATA$START\_SCAN\_TIME](/user-guide/querying-met
 
 For internal stages, using this parameter to automatically load data is only supported for Snowflake accounts hosted on AWS.
 
-`ERROR_INTEGRATION = 'integration_name'`
+`ERROR_INTEGRATION = integration_name`
 :   Required only when configuring Snowpipe to send error notifications to a cloud messaging service.
 
     Specifies the name of the notification integration used to communicate with the messaging service. For more information, see
@@ -175,6 +166,7 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
   | USAGE | Integration | Required for receiving Snowpipe error notifications |
   | READ | Stage in the pipe definition | Internal stages only |
   | SELECT, INSERT | Table in the pipe definition |  |
+  | USAGE | Named file format in the pipe definition | Only if the pipe uses a named file format |
   | OWNERSHIP | Pipe | Required to execute a [CREATE OR ALTER PIPE](#label-create-or-alter-pipe-syntax) statement for an *existing* pipe. |
   | SQL operations on schema objects also require USAGE or any other privilege on the database and schema that contain the object. |  |  |
 
@@ -191,6 +183,7 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
 
     Note that you can manually remove files from an internal (i.e. Snowflake) stage (after they’ve been loaded) using the
     [REMOVE](/sql-reference/sql/remove) command.
+  - `LOAD_UNCERTAIN_FILES = TRUE | FALSE`
   - `RETURN_FAILED_ONLY = TRUE | FALSE`
   - `VALIDATION_MODE = RETURN_n_ROWS | RETURN_ERRORS | RETURN_ALL_ERRORS`
 - The `PATTERN = 'regex_pattern'` copy option filters the set of files to load using a regular expression. Pattern matching
@@ -230,14 +223,14 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
 
 Important
 
-If you recreate a pipe (using the CREATE OR REPLACE PIPE syntax), see [Recreating pipes](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes) for related
+If you recreate a pipe (using the CREATE OR REPLACE PIPE syntax), see [Change or recreate a pipe](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes) for related
 considerations and best practices.
 
 ### CREATE OR ALTER PIPE
 
 - All limitations of the [ALTER PIPE](/sql-reference/sql/alter-pipe) command apply.
 - The pipe’s COPY INTO statement (`copy_statement`) can’t be changed for an existing pipe. If you need to change the pipe definition,
-  drop the existing pipe and create a new one. See [Recreating pipes](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes) for related considerations.
+  drop the existing pipe and create a new one. See [Change or recreate a pipe](/user-guide/data-load-snowpipe-manage#label-snowpipe-management-recreate-pipes) for related considerations.
 - The AUTO\_INGEST, AWS\_SNS\_TOPIC, and INTEGRATION properties can’t be changed for an existing pipe.
 - Setting or unsetting a tag is not supported.
 

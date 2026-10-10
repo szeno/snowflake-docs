@@ -83,7 +83,7 @@ to which it is applied, and not all objects support all privileges:
 | MODIFY LOG EVENT LEVEL | Global | Enables setting the level of log events captured for stored procedures and UDFs in the current account. For more information, see [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level). |
 | MODIFY LOG LEVEL | Global | Enables setting the level of log messages captured for stored procedures and UDFs in the current account. For more information, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). |
 | MODIFY METRIC LEVEL | Global | Enables setting the level of metrics data captured for stored procedures and UDFs in the current account. For more information, see [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level). |
-| MODIFY PROGRAMMATIC AUTHENTICATION METHODS | User | Grants the ability to create, modify, delete, rotate, and view information about the [programmatic access tokens](/user-guide/programmatic-access-tokens) and [key pairs](/user-guide/key-pair-auth) for the user. |
+| MODIFY PROGRAMMATIC AUTHENTICATION METHODS | User | Grants the ability to create, modify, delete, and view information about the [programmatic access tokens](/user-guide/programmatic-access-tokens), [key pairs](/user-guide/key-pair-auth), and [workload identities](/user-guide/workload-identity-federation) for the user, and to rotate programmatic access tokens and key pairs. |
 | MODIFY SESSION LOG EVENT LEVEL | Global | Enables setting the level of log events captured for stored procedures and UDFs invoked in the current session. For more information, see [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level). |
 | MODIFY SESSION LOG LEVEL | Global | Enables setting the level of log messages captured for stored procedures and UDFs invoked in the current session. For more information, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). |
 | MODIFY SESSION METRIC LEVEL | Global | Enables setting the level of metrics data captured for stored procedures and UDFs invoked in the current session. For more information, see [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level). |
@@ -236,7 +236,7 @@ Show lessSee more
 | Privilege | Usage |
 | --- | --- |
 | IMPERSONATE | Runs a task or dynamic table on behalf of a specified user account. |
-| MODIFY PROGRAMMATIC AUTHENTICATION METHODS | Grants the ability to create, modify, delete, rotate, and view information about the [programmatic access tokens](/user-guide/programmatic-access-tokens) and [key pairs](/user-guide/key-pair-auth) for the user. |
+| MODIFY PROGRAMMATIC AUTHENTICATION METHODS | Grants the ability to create, modify, delete, and view information about the [programmatic access tokens](/user-guide/programmatic-access-tokens), [key pairs](/user-guide/key-pair-auth), and [workload identities](/user-guide/workload-identity-federation) for the user, and to rotate programmatic access tokens and key pairs. |
 | MONITOR | Grants the ability to view the login history for the user. |
 | OWNERSHIP | Grants full control over a user/role. Only a single role can hold this privilege on a specific object at a time. |
 | ALL [ PRIVILEGES ] | Grants all privileges, except OWNERSHIP, on the user. |

@@ -18,6 +18,7 @@ snow streamlit deploy
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -45,6 +46,8 @@ snow streamlit deploy
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -56,7 +59,9 @@ snow streamlit deploy
 ## Arguments
 
 `entity_id`
-:   ID of streamlit entity.
+:   *Optional*
+
+    ID of streamlit entity.
 
 ## Options
 
@@ -79,13 +84,16 @@ snow streamlit deploy
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -157,25 +165,31 @@ snow streamlit deploy
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -193,12 +207,9 @@ snow streamlit deploy
 
 This command creates a Streamlit app object in the database and a schema configured in the specified `connection`.
 
-The command uploads local files to a specified stage and creates a Streamlit app using those files. You must
-specify the main Python file and query warehouse. By default, the command uploads the `environment.yml` and `pages/` folder if present.
-The Streamlit app is created in the database and schema configured in the specified `connection`.
+The command uploads local files to a specified stage and creates a Streamlit app using those files. You must specify the main Python file and query warehouse. By default, the command uploads the `environment.yml` and `pages/` folder if present. The Streamlit app is created in the database and schema configured in the specified `connection`.
 
-If you don’t specify a stage name, the `streamlit` stage is used. If the specified stage does not exist, the command
-creates it. You can modify the behavior by using [command-line options](/developer-guide/snowflake-cli/command-reference/streamlit-commands/deploy).
+If you don’t specify a stage name, the `streamlit` stage is used. If the specified stage does not exist, the command creates it. You can modify the behavior by using [command-line options](/developer-guide/snowflake-cli/command-reference/streamlit-commands/deploy).
 
 If you specify the `--replace` option, the command uploads new files and overwrites existing files. It does not remove any files already on the stage.
 
@@ -206,12 +217,12 @@ If you specify the `--prune` option, the command removes files that exist in the
 
 ## Examples
 
-Copy code
+- Copy code
 
-```
-snow streamlit deploy demo_app --replace
-```
+  ```
+  snow streamlit deploy demo_app --replace
+  ```
 
-```
-Streamlit successfully deployed and available under https://app.snowflake.com/myorg/myacc/#/streamlit-apps/JDOE.PUBLIC.DEMO_APP
-```
+  ```
+  Streamlit successfully deployed and available under https://app.snowflake.com/myorg/myacc/#/streamlit-apps/JDOE.PUBLIC.DEMO_APP
+  ```

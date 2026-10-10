@@ -38,42 +38,47 @@ Before you can use Snowsight to create, monitor, and manage alerts, you must ful
 
 If you plan to create, manage, and monitor alerts on [tasks](/user-guide/tasks-intro), you must do the following:
 
-- Set the severity level of logged messages that you want to capture for task events.
+- Set the severity level of task events that you want to capture.
 
-  The task alerts monitor error messages that are logged to the event table. You must set the [LOG\_LEVEL](/sql-reference/parameters#label-log-level) parameter to
-  at least `ERROR` for the tasks that you want to monitor. You can set this parameter on one of the following types of objects:
+  The task alerts monitor task execution events that are logged to the event table. The error rate alert divides the
+  number of failed runs by the number of recorded runs, so both successful and failed runs must be recorded. You must set
+  the [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level) parameter to `INFO` for the tasks that you want to monitor. At `WARN` or `ERROR`, only
+  failed runs are recorded, and the alert overstates the error rate. You can set this parameter on one of the following
+  types of objects:
 
-  - To set the severity level to ERROR on all objects in the account (including tasks), execute
-    [ALTER ACCOUNT SET LOG\_LEVEL](/sql-reference/sql/alter-account):
+  - To set the severity level to INFO on all objects in the account (including tasks), execute
+    [ALTER ACCOUNT SET LOG\_EVENT\_LEVEL](/sql-reference/sql/alter-account):
 
     Copy code
 
     ```
-    ALTER ACCOUNT SET LOG_LEVEL = ERROR;
+    ALTER ACCOUNT SET LOG_EVENT_LEVEL = INFO;
     ```
 
     Note
 
-    This setting also affects the messages logged by UDFs, stored procedures, and dynamic tables.
-  - To set the severity level to ERROR on all objects in a database containing the tasks, execute
-    [ALTER DATABASE … SET LOG\_LEVEL](/sql-reference/sql/alter-database):
+    This setting also affects the log events recorded for other supported objects, such as UDFs, stored procedures, and
+    dynamic tables.
+  - To set the severity level to INFO on all objects in a database containing the tasks, execute
+    [ALTER DATABASE … SET LOG\_EVENT\_LEVEL](/sql-reference/sql/alter-database):
 
     Copy code
 
     ```
-    ALTER DATABASE my_task_db SET LOG_LEVEL = ERROR;
+    ALTER DATABASE my_task_db SET LOG_EVENT_LEVEL = INFO;
     ```
 
     Note
 
-    This setting also affects the messages logged by UDFs, stored procedures, and dynamic tables in that database.
-  - To set the severity level to ERROR for specific tasks, execute
-    [ALTER TASK … SET LOG\_LEVEL](/sql-reference/sql/alter-task):
+    This setting also affects the log events recorded for other supported objects in that database, such as UDFs, stored
+    procedures, and dynamic tables.
+  - To set the severity level to INFO for specific tasks, execute
+    [ALTER TASK … SET LOG\_EVENT\_LEVEL](/sql-reference/sql/alter-task):
 
     Copy code
 
     ```
-    ALTER TASK my_task SET LOG_LEVEL = ERROR;
+    ALTER TASK my_task SET LOG_EVENT_LEVEL = INFO;
     ```
 - Verify the privileges that have been granted to the role that you plan to use to access Snowsight.
 

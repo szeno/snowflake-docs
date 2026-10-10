@@ -1,6 +1,6 @@
 # snow app run
 
-Creates an application package in your Snowflake account, uploads code files to its stage, then creates or upgrades an application object from the application package.
+(Native App only) Creates an application package in your Snowflake account, uploads code files to its stage, then creates or upgrades an application object from the application package.
 
 ## Syntax
 
@@ -22,6 +22,7 @@ snow app run
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -49,6 +50,8 @@ snow app run
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -67,13 +70,13 @@ None
 :   The version defined in an existing application package from which you want to create an application object. The application object and application package names are determined from the project definition file.
 
 `--patch INTEGER`
-:   The patch number under the given *–version* defined in an existing application package that should be used to create an application object. The application object and application package names are determined from the project definition file.
+:   The patch number under the given `--version` defined in an existing application package that should be used to create an application object. The application object and application package names are determined from the project definition file.
 
 `--from-release-directive`
 :   Creates or upgrades an application object to the version and patch specified by the release directive applicable to your Snowflake account. The command fails if no release directive exists for your Snowflake account for a given application package, which is determined from the project definition file. Default: unset. Default: False.
 
 `--channel TEXT`
-:   The name of the release channel to use when creating or upgrading an application instance from a release directive. Requires the *–from-release-directive* flag to be set. If unset, the default channel will be used.
+:   The name of the release channel to use when creating or upgrading an application instance from a release directive. Requires the `--from-release-directive` flag to be set. If unset, the default channel will be used.
 
 `--interactive / --no-interactive`
 :   When enabled, this option displays prompts even if the standard input and output are not terminal devices. Defaults to True in an interactive shell environment, and False otherwise.
@@ -85,10 +88,10 @@ None
 :   When enabled, this option triggers validation of a deployed Snowflake Native App’s setup script SQL. Default: True.
 
 `--package-entity-id TEXT`
-:   The ID of the package entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the package entity on which to operate when the definition\_version is 2 or higher.
 
 `--app-entity-id TEXT`
-:   The ID of the application entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the application entity on which to operate when the definition\_version is 2 or higher.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.
@@ -97,13 +100,16 @@ None
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -175,25 +181,31 @@ None
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -237,8 +249,7 @@ If you specify a `--version`, `--patch` or `--from-release-directive` option, th
 
 ## Examples
 
-These examples assume you have made the necessary changes to your code files and added them to your `snowflake.yml` or `snowflake.local.yml` files.
-
+- These examples assume you have made the necessary changes to your code files and added them to your `snowflake.yml` or `snowflake.local.yml` files.
 - If you want to create an application package and an application using staged files, you can execute:
 
   Copy code
@@ -255,8 +266,7 @@ These examples assume you have made the necessary changes to your code files and
   ```
   snow app run --version V1 --patch 12 --interactive --connection="dev"
   ```
-
-  Here, version `V1` and patch `12` are used as an example only.
+- Here, version `V1` and patch `12` are used as an example only.
 - If you have an existing release directive set on an application package, want to create an application from it and bypass the interactive mode, you can execute:
 
   Copy code

@@ -28,7 +28,6 @@ SERVICE:
     following characteristics:
 
     - They cannot log in using a password.
-    - They cannot log in using SAML SSO.
     - They cannot [enroll in MFA](/user-guide/ui-snowsight-profile#label-snowsight-set-up-mfa).
     - They are not subject to authentication policy MFA enforcement.
     - They cannot have the following properties:
@@ -86,7 +85,7 @@ SNOWFLAKE\_SERVICE:
 
 LEGACY\_SERVICE:
 :   A user with their `TYPE` property set to `LEGACY_SERVICE` represents a non-interactive integration. It is similar to
-    `SERVICE`, but allows password and SAML authentication.
+    `SERVICE`, but allows password authentication.
 
     Note
 

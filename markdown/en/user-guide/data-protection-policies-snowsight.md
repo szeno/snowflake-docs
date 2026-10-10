@@ -1,11 +1,5 @@
 # Manage data protection policies in Snowsight
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts that are Enterprise Edition (or higher).
-
-To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
-
 Data protection policies are Snowflake’s [fine-grained access control (FGAC)](/user-guide/security-access-control-overview) features. They
 complement role-based access control (RBAC) by governing what data users actually see at query time, not just which objects they can access.
 A role with `SELECT` on a table may still have its view of the data shaped by policies that mask values, filter rows, block column projection,

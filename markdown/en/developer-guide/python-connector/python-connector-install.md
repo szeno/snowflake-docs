@@ -23,6 +23,7 @@ If you won’t use Snowflake on AWS, you can exclude the `boto3` and `botocore` 
 > ```
 
 The source code for the Python driver is available on [GitHub](https://github.com/snowflakedb/snowflake-connector-python).
+You can download the package files directly from [PyPI](https://pypi.org/project/snowflake-connector-python/).
 
 ## Prerequisites
 

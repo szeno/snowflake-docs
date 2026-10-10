@@ -2,11 +2,17 @@
 
 Availability
 
-Notebook Project Objects have been renamed to **Code Bundles**. Scheduling notebooks on **compute pools (Snowpark Container Services)**, the capability previously delivered as Notebook Projects, is **generally available**. Running on **warehouses**, submitting **Spark jobs**, **inline specification** overrides, and the **REST API, Python API, and Snowflake CLI clients** are in **Public Preview**. For background on the rename, see the [behavior change announcement](/release-notes/bcr-bundles/un-bundled/bcr-2393). To schedule notebooks as Code Bundles, see [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
+Notebook Project Objects have been renamed to **Code Bundles**. Scheduling notebooks on **compute pools (Snowpark Container Services)**, the capability previously delivered as Notebook Projects, is **generally available**. Running on **warehouses**, submitting **Spark jobs**, running **ML Jobs** (`type: ml`), **inline specification** overrides, and the **REST API, Python API, and Snowflake CLI clients** are in **Public Preview**. For background on the rename, see the [behavior change announcement](/release-notes/bcr-bundles/un-bundled/bcr-2393). To schedule notebooks as Code Bundles, see [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
 
 Code Bundles let you package and execute non-SQL jobs, like Python, directly on Snowflake compute. Instead of building containers, wrapping logic in stored procedures, or porting your scripts into notebooks, you can upload your project code and run it with a single command. Snowflake automatically injects a Snowpark session at runtime, giving your code direct access to your data without managing connection credentials. You can orchestrate Code Bundles natively with Snowflake Tasks, or externally with the Snowflake CLI, the Snowflake Python API, or the Snowflake REST API.
 
-You can also use Code Bundles to run Spark jobs (Scala, Java, or Python) on Snowflake warehouse compute. See [Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle) for details.
+Code Bundles support three bundle types, which you set with `type` in your `code_bundle.yml` file:
+
+- **`custom`**: Run Python scripts on warehouse or compute pool compute. This is the type described on this page.
+- **`spark`**: Run Spark jobs (Scala, Java, or Python) on Snowflake warehouse compute. See [Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle) for details.
+- **`ml`**: Run a workload as a Snowflake ML Job on compute pool compute, in the [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml). See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles) for details.
+
+For the fields each type accepts, see the [`code_bundle.yml` reference](/developer-guide/code-bundles/code-bundle-yml-reference).
 
 Code Bundles support two compute targets:
 
@@ -242,11 +248,31 @@ bundle:
 
   compute_options:
     compute_pool: system_compute_pool_cpu
-    query_warehouse: MY_DB.MY_SCHEMA.MY_WAREHOUSE
+    query_warehouse: MY_WAREHOUSE
     runtime_version: 'V2.9-CPU-PY3.12'
 
   properties:
     requirements-file: requirements.txt
+```
+
+### ML compute (Container Runtime)
+
+To run the bundle as a Snowflake ML Job, set `type: ml` and `compute_type: compute_pool`. ML bundles run on Snowflake Container Runtime, mount their files and a result stage into the container, and can run on multiple nodes. See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles).
+
+Copy code
+
+```
+bundle:
+  type: ml
+  compute_type: compute_pool
+  language: python
+
+  compute_options:
+    compute_pool: MY_COMPUTE_POOL
+    query_warehouse: MY_WAREHOUSE
+
+  properties:
+    result_stage: '@MY_DB.MY_SCHEMA.MY_RESULT_STAGE'
 ```
 
 ### Other configurations
@@ -722,7 +748,7 @@ SELECT * FROM TABLE(SNOWFLAKE.INFORMATION_SCHEMA.CODE_BUNDLE_HISTORY(
 | `ENTRYPOINT` | STRING | Exact match on the path of the entrypoint file that was executed (for example, `main.py`). |
 | `START_TIME_RANGE_START` | TIMESTAMP\_LTZ | Start of the time window (inclusive). Returns only executions whose start time is on or after this timestamp. |
 | `START_TIME_RANGE_END` | TIMESTAMP\_LTZ | End of the time window (inclusive). Returns only executions whose start time is on or before this timestamp. |
-| `BUNDLE_TYPES` | STRING | Comma-separated list of bundle types to include. Case-insensitive. Allowed values: `custom` and `spark`. |
+| `BUNDLE_TYPES` | STRING | Comma-separated list of bundle types to include. Case-insensitive. Allowed values: `custom`, `spark`, and `ml`. |
 | `COMPUTE_TYPES` | STRING | Comma-separated list of compute types to include. Case-insensitive. Allowed values: `warehouse` and `compute_pool`. |
 | `LANGUAGE_TYPES` | STRING | Comma-separated list of language runtimes to include. Case-insensitive. Allowed values: `python`, `java`, `scala`. |
 | `STATUS` | STRING | Single status value to filter by. Allowed values: `pending`, `running`, `done` (succeeded), `failed`, `cancelled` (or `canceled`), `deleted`. |

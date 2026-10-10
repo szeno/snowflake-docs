@@ -19,7 +19,7 @@ SHOW PARAMETERS
   [ LIKE '<pattern>' ]
   [ { IN | FOR } {
         { SESSION | ACCOUNT }
-      | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK } [ <name> ]
+      | { USER | WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE } [ <name> ]
       | TABLE [ <table_or_view_name> ]
     } ]
 ```
@@ -57,7 +57,7 @@ SHOW PARAMETERS
         - An administrator with the appropriate user privileges can change the session parameter defaults for a user using [ALTER USER](/sql-reference/sql/alter-user).
         - Individual users can also change their session parameter defaults using [ALTER USER](/sql-reference/sql/alter-user).
 
-    `WAREHOUSE | DATABASE | SCHEMA | TASK [ name ]`
+    `WAREHOUSE | DATABASE | SCHEMA | TASK | PIPE [ name ]`
     :   Returns the object parameters that can be set for the current/specified object. Users with the appropriate privileges can change these
         parameters using the corresponding [ALTER <object>](/sql-reference/sql/alter) command.
 

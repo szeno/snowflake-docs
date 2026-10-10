@@ -13,6 +13,7 @@ snow git list-branches
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -40,6 +41,8 @@ snow git list-branches
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -51,21 +54,26 @@ snow git list-branches
 ## Arguments
 
 `repository_name`
-:   Identifier of the git repository; for example: my\_repo.
+:   *Required*
+
+    Identifier of the git repository; for example: my\_repo.
 
 ## Options
 
 `--like, -l TEXT`
-:   SQL LIKE pattern for filtering objects by name. For example, \_list-branches –like “%*test”* lists all branches that end with “\_test”. Default: %%.
+:   SQL LIKE pattern for filtering objects by name. For example, `list-branches --like "%_test"` lists all branches that end with “\_test”. Default: %%.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -137,25 +145,31 @@ snow git list-branches
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -175,23 +189,23 @@ None.
 
 ## Examples
 
-For example, to list all of the branches in a repository named `my_snow_git`, enter the following command:
+- For example, to list all of the branches in a repository named `my_snow_git`, enter the following command:
 
-Copy code
+  Copy code
 
-```
-snow git list-branches my_snow_git
-```
+  ```
+  snow git list-branches my_snow_git
+  ```
 
-```
-show git branches in my_snow_git
-+--------------------------------------------------------------------------------------------------------------------------------------------+
-| name                                     | path                                     | checkouts | commit_hash                              |
-|------------------------------------------+------------------------------------------+-----------+------------------------------------------|
-| SNOW-1011750-service-create-options      | /branches/SNOW-1011750-service-create-op |           | 729855df0104c8d0ef1c7a3e8f79fe50c6c8d2fa |
-|                                          | tions                                    |           |                                          |
-| SNOW-1011775-containers-to-spcs-int-test | /branches/SNOW-1011775-containers-to-spc |           | e81b00de6b0eb73a99a7baaa39b0afa5ea1202d0 |
-| s                                        | s-int-tests                              |           |                                          |
-| SNOW-1105629-git-integration-tests       | /branches/SNOW-1105629-git-integration-t |           | 712b07b5e692624c34caabe07d64801615ce5f0f |
-+--------------------------------------------------------------------------------------------------------------------------------------------+
-```
+  ```
+  show git branches in my_snow_git
+  +--------------------------------------------------------------------------------------------------------------------------------------------+
+  | name                                     | path                                     | checkouts | commit_hash                              |
+  |------------------------------------------+------------------------------------------+-----------+------------------------------------------|
+  | SNOW-1011750-service-create-options      | /branches/SNOW-1011750-service-create-op |           | 729855df0104c8d0ef1c7a3e8f79fe50c6c8d2fa |
+  |                                          | tions                                    |           |                                          |
+  | SNOW-1011775-containers-to-spcs-int-test | /branches/SNOW-1011775-containers-to-spc |           | e81b00de6b0eb73a99a7baaa39b0afa5ea1202d0 |
+  | s                                        | s-int-tests                              |           |                                          |
+  | SNOW-1105629-git-integration-tests       | /branches/SNOW-1105629-git-integration-t |           | 712b07b5e692624c34caabe07d64801615ce5f0f |
+  +--------------------------------------------------------------------------------------------------------------------------------------------+
+  ```

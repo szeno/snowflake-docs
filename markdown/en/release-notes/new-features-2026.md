@@ -263,8 +263,11 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
+- [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
+- [Oct 8, 2026: Stable egress IP addresses on Azure (General availability)](/release-notes/2026/other/2026-10-08-stable-egress-ip-azure-ga)
 - [Oct 7, 2026: Snowflake Decision with AI\_COMPLETE (Private Preview)](/release-notes/2026/other/2026-10-07-ai-complete-snowflake-decision-preview)
 - [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)
 - [Oct 7, 2026: Zero-copy integration for Workday Data Cloud (General availability)](/release-notes/2026/other/2026-10-07-workday-data-cloud-zerocopy-ga)

@@ -10,7 +10,9 @@ Before deploying a Streamlit app with Snowflake CLI, you should meet the followi
 
 - Ensure that you have a local Streamlit app with the correct directory structure and `snowflake.yml` project definition file must exist.
 - Ensure that your account has the correct privileges as described in [Privileges required to create and use a Streamlit app](/developer-guide/streamlit/object-management/privileges).
-- Ensure that you can create or have access to a named stage where you can upload your Streamlit app files.
+- If you use the `--legacy` option, ensure that you can create or have access to a named stage where you can upload your Streamlit app
+  files. You don’t need to create the stage yourself: if the stage doesn’t exist, `snow streamlit deploy` creates it. Without
+  `--legacy`, the command uploads your files to the Streamlit object’s own stage, so you don’t need a named stage.
 
 ## How to deploy a Streamlit app
 

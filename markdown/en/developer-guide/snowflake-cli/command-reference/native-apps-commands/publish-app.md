@@ -1,6 +1,6 @@
 # snow app publish
 
-Adds the version to the release channel and updates the release directive with the new version and patch.
+(Native App only) Adds the version to the release channel and updates the release directive with the new version and patch.
 
 ## Syntax
 
@@ -24,6 +24,7 @@ snow app publish
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -51,6 +52,8 @@ snow app publish
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -66,10 +69,10 @@ None
 ## Options
 
 `--version TEXT`
-:   The version to publish to the provided release channel and release directive. Version is required to exist unless *–create-version* flag is used.
+:   The version to publish to the provided release channel and release directive. Version is required to exist unless `--create-version` flag is used.
 
 `--patch INTEGER`
-:   The patch number under the given version. This will be used when setting the release directive. Patch is required to exist unless *–create-version* flag is used.
+:   The patch number under the given version. This will be used when setting the release directive. Patch is required to exist unless `--create-version` flag is used.
 
 `--channel TEXT`
 :   The name of the release channel to publish to. If not provided, the default release channel is used. Default: DEFAULT.
@@ -84,19 +87,19 @@ None
 :   When enabled, this option causes the command to implicitly approve any prompts that arise. You should enable this option if interactive mode is not specified and if you want perform potentially destructive actions. Defaults to unset. Default: False.
 
 `--create-version`
-:   Create a new version or patch based on the provided *–version* and *–patch* values. Fallback to the manifest values if not provided. Default: False.
+:   Create a new version or patch based on the provided `--version` and `--patch` values. Fallback to the manifest values if not provided. Default: False.
 
 `--from-stage`
-:   When enabled, the Snowflake CLI creates a version from the current application package stage without syncing to the stage first. Can only be used with *–create-version* flag. Default: False.
+:   When enabled, the Snowflake CLI creates a version from the current application package stage without syncing to the stage first. Can only be used with `--create-version` flag. Default: False.
 
 `--label TEXT`
-:   A label for the version that is displayed to consumers. Can only be used with *–create-version* flag.
+:   A label for the version that is displayed to consumers. Can only be used with `--create-version` flag.
 
 `--package-entity-id TEXT`
-:   The ID of the package entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the package entity on which to operate when the definition\_version is 2 or higher.
 
 `--app-entity-id TEXT`
-:   The ID of the application entity on which to operate when the definition\_version is 2 or higher.
+:   (Native App only) The ID of the application entity on which to operate when the definition\_version is 2 or higher.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.
@@ -105,13 +108,16 @@ None
 :   String in the format key=value. Overrides variables from the env section used for templates. Default: [].
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -183,25 +189,31 @@ None
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.

@@ -17,12 +17,15 @@ dbt State is supported on the following dbt versions in dbt Projects on Snowflak
 | dbt 2.0.0 | Supported |
 | dbt Fusion 2.0.0-preview.210 | Supported |
 | dbt Core 1.12.3 | Supported |
+| dbt Core 1.11.11 | Supported |
+| dbt Core 1.10.15 | Supported |
+| dbt Core 1.9.4 | Supported |
 
 Expand
 
 Show lessSee more
 
-To run with dbt State, set `DBT_VERSION` to one of the supported versions shown above. For new dbt project objects and Workspace executions, use `1.12.3` or `2.0.0`. Support for earlier dbt v1 versions, including `1.9.4`, `1.10.15`, and `1.11.11`, is coming soon. For all versions that dbt Projects on Snowflake supports, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
+To run with dbt State, set `DBT_VERSION` to one of the supported versions shown above. For all versions that dbt Projects on Snowflake supports, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
 
 ## Prerequisites
 

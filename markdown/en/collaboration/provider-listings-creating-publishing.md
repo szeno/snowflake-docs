@@ -2,6 +2,28 @@
 
 This topic contains procedures for creating and publishing a listing privately or on the Snowflake Marketplace.
 
+## Listing types
+
+A listing combines a product with a way for consumers to get it. For availability and access in more detail, see [About listings](/collaboration/collaboration-listings-about).
+
+The procedures on this page use the following names:
+
+| Type | What it means |
+| --- | --- |
+| Public free | A listing on the Snowflake Marketplace that gives consumers the full product immediately, at no charge. The product is a dataset (secure share) or a Snowflake Native App. |
+| Public paid | A listing on the Snowflake Marketplace that charges consumers for access. The product can be a dataset, a Snowflake Native App, or a Connected App. |
+| Public connected | A Connected App published on the Snowflake Marketplace. A Connected App is an external SaaS application that connects to the consumer’s Snowflake account to read or ingest data. Connected App listings on the Snowflake Marketplace must be public paid listings. See [3. Connected Applications](/collaboration/guidelines-reqs-for-listing-apps#label-guidelines-reqs-connected-apps). |
+| Snowflake Native App | An application that runs in the consumer’s Snowflake account. You can attach it to a private listing, or publish it as a public free listing or a public paid listing. |
+| Dataset | A secure share of database objects. In Provider Studio, the product type is **Secure share**. Consumers query the data live, without copying it. You can offer a dataset on a private listing, or publish it as a public free listing or a public paid listing. |
+
+Expand
+
+Show lessSee more
+
+In these docs, **data product** means whatever is attached to the listing: a dataset, a Snowflake Native App, or a Connected App. A dataset is one kind of data product.
+
+A limited trial is another way to offer a product on the Snowflake Marketplace. Consumers get limited access immediately and can request the full product. See [Limited trial listings](/collaboration/collaboration-listings-about#label-trial-listing).
+
 ## Prerequisites for listing creation
 
 - Agree to the [Snowflake Provider and Consumer Terms](https://other-docs.snowflake.com/en/collaboration/consumer-becoming#label-collaboration-consumer-terms). Acceptance of the Snowflake Provider and Consumer Terms is not required when creating free or paid off-platform private listings, but you must review and accept the [Snowflake Customer-Controlled Data Sharing Functionality Terms](https://www.snowflake.com/legal/data-sharing-terms/).
@@ -244,7 +266,7 @@ Before you create and publish a paid listing on Snowflake Marketplace, contact y
 If you do not have a business development partner, [submit a case with Marketplace Operations](https://snowforce.my.site.com/s/provider-onboarding-case).
 This step is required for listing approval.
 
-To publish data, Snowflake Native Apps, or Connected Apps on Snowflake Marketplace, your role must have the required privileges to create a listing. See [Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares).
+To publish data, Snowflake Native Apps, or Connected Apps on Snowflake Marketplace, your role must have the required privileges to create a listing. See [Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares). For how public free, public paid, public connected, Snowflake Native App, and dataset listings differ, see [Listing types](#label-listing-types-overview).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace** » **Provider Studio**.

@@ -10,13 +10,14 @@ Copy code
 snow dcm plan
   <identifier>
   --from <from_location>
-  --delta
   --variable <variables>
   --target <target>
   --save-output
+  --delta
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -44,6 +45,8 @@ snow dcm plan
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -55,34 +58,38 @@ snow dcm plan
 ## Arguments
 
 `identifier`
-:   Identifier of DCM Project. Example: MY\_DB.MY\_SCHEMA.MY\_PROJECT. Supports fully qualified (recommended) or simple names. If unqualified, it defaults to the connection’s database and schema. Optional if *–target* or *default\_target* is defined in the manifest.
+:   *Optional*
+
+    Identifier of DCM Project. Example: MY\_DB.MY\_SCHEMA.MY\_PROJECT. Supports fully qualified (recommended) or simple names. If unqualified, it defaults to the connection’s database and schema. Optional if `--target` or `default_target` is defined in the manifest.
 
 ## Options
 
 `--from PATH`
 :   Local directory path containing DCM project files. Omit to use current directory.
 
-`--delta`
-:   Only evaluates definitions that changed since the last deployment, and any downstream definitions that depend on
-    them, instead of comparing all definitions against the current account state. Default: False.
-
 `--variable, -D TEXT`
-:   Variables for the execution context; for example: *-D “<key>=<value>”*.
+:   Variables for the execution context; for example: `-D "&lt;key&gt;=&lt;value&gt;"`.
 
 `--target TEXT`
-:   Target profile from *manifest.yml* to use. Uses *default\_target* if not specified.
+:   Target profile from `manifest.yml` to use. Uses `default_target` if not specified.
 
 `--save-output`
 :   Save command response and artifacts to local ‘out/’ directory. Default: False.
 
+`--delta`
+:   Process only statements changed since the last `deploy`, plus statements potentially impacted by those changes. Default: False.
+
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -154,25 +161,31 @@ snow dcm plan
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -194,11 +207,9 @@ Note
 
 This command automatically uploads local source SQL files to a temporary stage in Snowflake so their content impacts the final result of the operation.
 
-Use the `--save-output` option to save the plan results to a local `out/plan_result.json` file.
+Use the `--save-output` option to save the plan results to a local `out/plan.json` file.
 
-Use `--delta` during active development to get faster feedback on incremental changes. Because it skips unchanged
-definitions, it doesn’t detect changes that happened outside of DCM Projects on your account since the last deployment.
-Always run a full `snow dcm plan` before deploying.
+Use `--delta` during active development to get faster feedback on incremental changes. Because it skips unchanged definitions, it doesn’t detect changes that happened outside of DCM Projects on your account since the last deployment. Always run a full `snow dcm plan` before deploying.
 
 ## Examples
 
@@ -209,7 +220,7 @@ Always run a full `snow dcm plan` before deploying.
   ```
   snow dcm plan
   ```
-- Plan a DCM project project where the project name is specified in the `DEV` target in the manifest:
+- Plan a DCM project where the project name is specified in the `DEV` target in the manifest:
 
   Copy code
 
@@ -223,13 +234,12 @@ Always run a full `snow dcm plan` before deploying.
   ```
   snow dcm plan MY_DB.MY_SCHEMA.MY_PROJECT
   ```
-- Plan a DCM project project using local files, where the project name is specified in the `DEV` target in the manifest, and set the value
-  for the `db_name` variable:
+- Plan a DCM project using local files, where the project name is specified in the `DEV` target in the manifest and set the value for the `db_name` variable:
 
   Copy code
 
   ```
-  snow dcm plan --target DEV --variable "db_name='jdoe'"
+  snow dcm plan --target DEV --variable db_name=jdoe
   ```
 - Plan a DCM project object and save the plan output locally:
 

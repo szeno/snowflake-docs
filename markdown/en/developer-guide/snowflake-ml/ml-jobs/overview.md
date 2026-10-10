@@ -351,6 +351,29 @@ model1 = job1.result()
 model2 = job2.result()
 ```
 
+### Run an ML job from a Code Bundle
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+You can also submit an ML job from SQL instead of Python, by packaging your payload as a
+[Code Bundle](/developer-guide/code-bundles/code-bundles) whose specification sets `type: ml`, then running it with
+`EXECUTE CODE BUNDLE`:
+
+Copy code
+
+```
+EXECUTE CODE BUNDLE MY_DB.MY_SCHEMA.MY_ML_BUNDLE
+  ENTRYPOINT = 'src/train.py'
+  ARGUMENTS = ('--source-table', 'MY_DB.MY_SCHEMA.MY_TRAINING_DATA');
+```
+
+This runs the same kind of payload on the same compute pool, but the job definition is versioned in
+Snowflake and submitted with SQL, so you can run it from any SQL client without installing
+`snowflake-ml-python`. For details and a comparison of the two interfaces, see
+[Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles).
+
 ## ML Job Definitions
 
 An ML Job Definition captures the reusable components of an ML Job—payload location, compute pool, and related configuration.

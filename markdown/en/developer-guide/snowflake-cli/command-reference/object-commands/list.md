@@ -15,6 +15,7 @@ snow object list
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -42,6 +43,8 @@ snow object list
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -53,27 +56,32 @@ snow object list
 ## Arguments
 
 `object_type`
-:   Type of object. For example table, database, compute-pool.
+:   *Required*
+
+    Type of object. For example table, database, compute-pool.
 
 ## Options
 
 `--like, -l TEXT`
-:   SQL LIKE pattern for filtering objects by name. For example, *list function –like “my%”* lists all functions that begin with “my”. Default: %%.
+:   SQL LIKE pattern for filtering objects by name. For example, `list function --like "my%"` lists all functions that begin with “my”. Default: %%.
 
-`--in {<TEXT TEXT>...}`
-:   Specifies the scope of this command using ‘–in <scope> <name>’, for example *list table –in database my\_db*. Some object types have specialized scopes (e.g. *list service –in compute-pool my\_pool*). Default: (None, None).
+`--in <TEXT TEXT>...`
+:   Specifies the scope of this command using ‘–in <scope> <name>’, for example `list table --in database my_db`. Some object types have specialized scopes (e.g. `list service --in compute-pool my_pool`). Default: (None, None).
 
 `--in-account`
 :   Lists objects across the entire account.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -145,25 +153,31 @@ snow object list
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -179,25 +193,24 @@ snow object list
 
 ## Usage notes
 
-The `--like [-l] <pattern>` option lets you specify a SQL LIKE pattern for filtering objects by name. For example, `snow object list function --like "my%"` lists all functions
-that begin with **my**. For more information about SQL patterns syntax, see [SQL LIKE Keyword](https://www.w3schools.com/sql/sql_ref_like.asp).
+The `--like` [`-l`] `<pattern>` option lets you specify a SQL LIKE pattern for filtering objects by name. For example, `snow object list function --like "my%"` lists all functions that begin with `my`. For more information about SQL patterns syntax, see [SQL LIKE Keyword](https://www.w3schools.com/sql/sql_ref_like.asp).
 
 ## Examples
 
-The following example lists all roles beginning with **public**. The `--like` option
+- The following example lists all roles beginning with `public`. The `--like` option
 
-Copy code
+  Copy code
 
-```
-snow object list role --like public%
-```
+  ```
+  snow object list role --like public%
+  ```
 
-```
-show roles like 'public%'
-+-------------------------------------------------------------------------------
-| created_on                       | name        | is_default | is_current | ...
-|----------------------------------+-------------+------------+------------+----
-| 2023-02-01 15:25:04.105000-08:00 | PUBLIC      | N          | N          | ...
-| 2024-01-15 12:55:05.840000-08:00 | PUBLIC_TEST | N          | N          | ...
-+-------------------------------------------------------------------------------
-```
+  ```
+  show roles like 'public%'
+  +-------------------------------------------------------------------------------+
+  | created_on                       | name        | is_default | is_current | ...
+  |----------------------------------+-------------+------------+------------+----
+  | 2023-02-01 15:25:04.105000-08:00 | PUBLIC      | N          | N          | ...
+  | 2024-01-15 12:55:05.840000-08:00 | PUBLIC_TEST | N          | N          | ...
+  +-------------------------------------------------------------------------------+
+  ```

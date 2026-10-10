@@ -322,7 +322,7 @@ The automatic task retry is disabled by default.
 To enable this feature, set TASK\_AUTO\_RETRY\_ATTEMPTS to a value greater than 0.
 
 Tasks that use error notifications send notifications for each failed retry attempt.
-For more information, see [Configure a task to send error notifications](/user-guide/tasks-errors-integrate).
+For more information, see [Configure error alerts and notifications for tasks](/user-guide/tasks-errors-integrate).
 
 When you set the [TASK\_AUTO\_RETRY\_ATTEMPTS](/sql-reference/parameters#label-task-auto-retry-attempts) parameter value at the account, database, or schema level, the change is applied to tasks contained in the modified object during their next scheduled run.
 

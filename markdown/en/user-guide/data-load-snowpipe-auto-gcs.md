@@ -392,7 +392,7 @@ To load any backlog of data files that existed in the external stage before Pub/
 ### Step 6: Delete staged files
 
 Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Deleting staged files after Snowpipe loads the data](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
 
 ## SYSTEM$PIPE\_STATUS output
 

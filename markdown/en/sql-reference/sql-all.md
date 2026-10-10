@@ -151,10 +151,13 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER USER](/sql-reference/sql/alter-user) | Modifies the properties and object/session parameters for an existing user in the system. |
 | [ALTER USER … ADD KEY PAIR](/sql-reference/sql/alter-user-add-key-pair) | Registers a named [key pair](/user-guide/key-pair-auth) for a user. |
 | [ALTER USER … ADD PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-add-programmatic-access-token) | Creates a [programmatic access token](/user-guide/programmatic-access-tokens) for a user. |
+| [ALTER USER … ADD WORKLOAD IDENTITY](/sql-reference/sql/alter-user-add-workload-identity) | Registers a named [workload identity](/user-guide/workload-identity-federation) for a user. |
 | [ALTER USER … MODIFY KEY PAIR](/sql-reference/sql/alter-user-modify-key-pair) | Changes the name of a [key pair](/user-guide/key-pair-auth) or a property of the key pair. |
 | [ALTER USER … MODIFY PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-modify-programmatic-access-token) | Changes the name of a [programmatic access token](/user-guide/programmatic-access-tokens) or a property of the token. |
+| [ALTER USER … MODIFY WORKLOAD IDENTITY](/sql-reference/sql/alter-user-modify-workload-identity) | Changes the name of a [workload identity](/user-guide/workload-identity-federation) or a property of the workload identity. |
 | [ALTER USER … REMOVE KEY PAIR](/sql-reference/sql/alter-user-remove-key-pair) | Removes a named [key pair](/user-guide/key-pair-auth) from a user. |
 | [ALTER USER … REMOVE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-remove-programmatic-access-token) | Revokes a [programmatic access token](/user-guide/programmatic-access-tokens) for a user. |
+| [ALTER USER … REMOVE WORKLOAD IDENTITY](/sql-reference/sql/alter-user-remove-workload-identity) | Removes a named [workload identity](/user-guide/workload-identity-federation) from a user. |
 | [ALTER USER … ROTATE KEY PAIR](/sql-reference/sql/alter-user-rotate-key-pair) | Rotates a [key pair](/user-guide/key-pair-auth) by replacing the stored public key with a new public key. |
 | [ALTER USER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-rotate-programmatic-access-token) | Rotates [programmatic access token](/user-guide/programmatic-access-tokens), generating a new token secret with an extended expiration time, and expiring the existing token secret. |
 | [ALTER VIEW](/sql-reference/sql/alter-view) | Modifies the properties for an existing view. |
@@ -663,6 +666,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW ORGANIZATION PROFILES](/sql-reference/sql/show-organization-profiles) | Lists the organization profiles for which you have access privileges. |
 | [SHOW ORGANIZATION USER GROUPS](/sql-reference/sql/show-organization-user-groups) | Lists [organization user groups](/user-guide/organization-users#label-org-users-groups). |
 | [SHOW ORGANIZATION USERS](/sql-reference/sql/show-organization-users) | Lists [organization users](/user-guide/organization-users). |
+| [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository) | Lists the packages in an APPLICATION artifact repository. |
 | [SHOW PACKAGES POLICIES](/sql-reference/sql/show-packages-policies) | Lists packages policy information. |
 | [SHOW PARAMETERS](/sql-reference/sql/show-parameters) | Lists all the account, session, and object parameters that can be set, as well as the current and default values for each parameter. |
 | [SHOW PASSWORD POLICIES](/sql-reference/sql/show-password-policies) | Lists password policy information, including the creation date, database and schema names, owner, and any available comments. |
@@ -729,6 +733,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW USERS](/sql-reference/sql/show-users) | Lists all [users](/user-guide/admin-user-management) in the system. |
 | [SHOW VARIABLES](/sql-reference/sql/show-variables) | Lists all [variables](/sql-reference/session-variables) defined in the current session. |
 | [SHOW VERSIONS IN APPLICATION PACKAGE](/sql-reference/sql/show-versions) | Lists the versions defined in the specified application package. |
+| [SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository) | Lists the published versions of a package in an APPLICATION artifact repository. |
 | [SHOW VERSIONS IN DATASET](/sql-reference/sql/show-versions-in-dataset) | Displays information about the datasets in your account at either the schema or database level. |
 | [SHOW VERSIONS IN DBT PROJECT](/sql-reference/sql/show-versions-in-dbt-project) | Displays a list of all versions of a [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake). |
 | [SHOW VERSIONS IN LISTING](/sql-reference/sql/show-versions-in-listing) | Lists and provides details of all listing versions. |

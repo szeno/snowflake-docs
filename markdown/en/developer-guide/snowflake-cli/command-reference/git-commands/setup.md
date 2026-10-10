@@ -12,6 +12,7 @@ snow git setup
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -39,6 +40,8 @@ snow git setup
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -50,18 +53,23 @@ snow git setup
 ## Arguments
 
 `repository_name`
-:   Identifier of the git repository; for example: my\_repo.
+:   *Required*
+
+    Identifier of the git repository; for example: my\_repo.
 
 ## Options
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -133,25 +141,31 @@ snow git setup
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -169,21 +183,15 @@ snow git setup
 
 The `snow git setup` command prompts for the following information:
 
-- **URL**: address of repository to use for `git clone` operation.
-- **Secret**: Snowflake secret containing authentication credentials. Not needed if origin repository does not require authentication for read-only operations, such as clone and fetch.
-- **API integration**: object allowing Snowflake to interact with a Git repository.
+- URL: address of repository to use for `git clone` operation.
+- Secret: Snowflake secret containing authentication credentials. Not needed if origin repository does not require authentication for read-only operations, such as clone and fetch.
+- API integration: object allowing Snowflake to interact with a Git repository.
 
-If the role or user specified in your [connection](/developer-guide/snowflake-cli/connecting/configure-connections) has not been granted, executing this command generates an error similar to the following:
-
-```
-003001 (42501): 01b2f095-0508-c66d-0001-c1be009a66ee: SQL access control error: Insufficient privileges to operate on account XXX
-```
-
-In this situation, you should check your connection configuration or ask your account administrator to give you the necessary privileges or to create the integration for you. For more information, see [Setting up Snowflake to use Git](/developer-guide/git/git-setting-up).
+If the role or user specified in your [connection](/developer-guide/snowflake-cli/connecting/configure-connections) has not been granted, executing this command generates an error similar to the following: `003001 (42501): 01b2f095-0508-c66d-0001-c1be009a66ee: SQL access control error: Insufficient privileges to operate on account XXX`. In this situation, you should check your connection configuration or ask your account administrator to give you the necessary privileges or to create the integration for you. For more information, see [Setting up Snowflake to use Git](/developer-guide/git/git-setting-up).
 
 ## Examples
 
-- Create a repository that requires a secret and credentials:
+- Create a repository that requires a secret and credentials
 
   Copy code
 
@@ -207,7 +215,7 @@ In this situation, you should check your connection configuration or ask your ac
   | Git Repository SNOWCLI_GIT was successfully created. |
   +------------------------------------------------------+
   ```
-- Create a repository without a secret and an existing API integration ID:
+- Create a repository without a secret and an existing API integration ID
 
   Copy code
 

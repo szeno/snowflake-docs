@@ -165,29 +165,23 @@ If you try to use a driver that doesn’t support larger objects, an error simil
 Actual length <actual_size> exceeds supported length of 16777216.
 ```
 
-## Continuous data loads — that is, Snowpipe — and file sizing
+## File sizing for Snowpipe
 
-Snowpipe is designed to load new data typically within a minute after a file notification is sent; however, loading can take significantly longer for really large files or in cases where an unusual amount of compute resources is necessary to decompress, decrypt, and transform the new data.
+Snowpipe is designed to load new data typically within a minute after it learns about a new file. However, loading can take significantly longer for very large files, or when decompressing, decrypting, or transforming the new data requires an unusual amount of compute resources.
 
-In addition to resource consumption, an overhead to manage files in the internal load queue is included in the utilization costs charged for Snowpipe. This overhead increases in relation to the number of files queued for loading. This overhead charge appears as Snowpipe charges in your billing statement
-because Snowpipe is used for event notifications for the automatic external table refreshes.
+Snowpipe charges a fixed number of credits per GB of data loaded, with no per-file charge, so the number of files that you use to deliver your data doesn’t change what you pay to load it. For more information, see [Snowpipe costs](/user-guide/data-load-snowpipe-billing).
 
-For the most efficient and cost-effective load experience with Snowpipe, we recommend following the file sizing recommendations in [File sizing best practices](#label-data-load-file-sizing-best-practices) (in this topic). Loading data files roughly 100-250 MB or larger reduces the overhead charge relative to the amount of total data loaded to the point where the overhead cost is immaterial.
+File size and staging frequency still affect load latency and throughput. For the most efficient load experience with Snowpipe, follow the file sizing recommendations in [File sizing best practices](#label-data-load-file-sizing-best-practices) (in this topic).
 
-If it takes longer than one minute to accumulate MBs of data in your source application, consider creating a new (potentially smaller) data file once per minute. This approach typically leads to a good balance between cost (that is, resources spent on Snowpipe queue management and the actual load) and performance (that is, load latency).
-
-Creating smaller data files and staging them in cloud storage more often than once per minute has the following disadvantages:
-
-- A reduction in latency between staging and loading the data can’t be guaranteed.
-- An overhead to manage files in the internal load queue is included in the utilization costs charged for Snowpipe. This overhead increases in relation to the number of files queued for loading.
+If it takes longer than one minute to accumulate 100 to 250 MB of compressed data in your source application, consider creating a new (potentially smaller) data file once per minute. This approach typically leads to a good balance between load latency and load efficiency. Creating smaller data files and staging them in cloud storage more often than once per minute doesn’t guarantee a reduction in latency between staging and loading the data.
 
 Various tools can aggregate and batch data files. One convenient option is Amazon Data Firehose. Firehose allows defining both the
-desired file size, called the *buffer size*, and the wait interval after which a new file is sent (to cloud storage in this case), called
+intended file size, called the *buffer size*, and the wait interval after which a new file is sent (to cloud storage in this case), called
 the *buffer interval*. For more information, see the
 [Amazon Data Firehose documentation](https://docs.aws.amazon.com/firehose/latest/dev/create-configure.html). If your source application
 typically accumulates enough data within a minute to populate files larger than the recommended maximum for optimal parallel processing,
-you could decrease the buffer size to trigger delivery of smaller files. Keeping the buffer interval setting at 60 seconds (the minimum
-value) helps avoid creating too many files or increasing latency.
+you can decrease the buffer size to trigger delivery of smaller files. If you set the buffer interval to 60 seconds, Firehose delivers buffered data within a
+minute, or sooner when the buffer reaches the buffer size. This setting helps you avoid creating too many files or increasing latency.
 
 ## Preparing delimited text files
 

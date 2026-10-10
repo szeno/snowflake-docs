@@ -19,6 +19,7 @@ snow logs
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -46,6 +47,8 @@ snow logs
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -57,18 +60,22 @@ snow logs
 ## Arguments
 
 `object_type`
-:   Type of object. For example table, database, compute-pool.
+:   *Required*
+
+    Type of object. For example table, database, compute-pool.
 
 `object_name`
-:   Name of the object.
+:   *Required*
+
+    Name of the object.
 
 ## Options
 
 `--from TEXT`
-:   The start time of the logs to retrieve. Accepts all ISO 8601 formats.
+:   The start time of the logs to retrieve. Accepts all ISO8061 formats.
 
 `--to TEXT`
-:   The end time of the logs to retrieve. Accepts all ISO 8601 formats.
+:   The end time of the logs to retrieve. Accepts all ISO8061 formats.
 
 `--refresh INTEGER`
 :   If set, the logs will be streamed with the given refresh time in seconds.
@@ -83,13 +90,16 @@ snow logs
 :   Enable partial, case-insensitive matching for object names. Default: False.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -161,25 +171,31 @@ snow logs
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -195,23 +211,15 @@ snow logs
 
 ## Usage notes
 
-The `snow logs` command accesses an event table and retrieves [logs](/developer-guide/logging-tracing/logging) for a specified entity. By default, the command looks for
-the logs in the default event table, which is SNOWFLAKE.TELEMETRY.EVENTS; however, you can select a different table with the
-`--table` option. For more information about event tables and default values, see [Create an event table](/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-custom-create).
+The `snow logs` command accesses an event table and retrieves [logs](/developer-guide/logging-tracing/logging) for a specified entity. By default, the command looks for the logs in the default event table, which is SNOWFLAKE.TELEMETRY.EVENTS; however, you can select a different table with the `--table` option. For more information about event tables and default values, see [Create an event table](/developer-guide/logging-tracing/event-table-setting-up#label-logging-event-table-custom-create).
 
-You can use the `--from` and `-to` options to filter the period during which to retrieve the logs.
-You can use one or both of these option, but if you use both, the `--from` time must be earlier than the `--to` time.
-The values for times you provide must comply with the [ISO 8601 standard](https://www.iso.org/iso-8601-date-and-time-format.html).
-For more information, you can also check the Python [datetime.fromisoformat()](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat) method documentation.
+You can use the `--from` and `-to` options to filter the period during which to retrieve the logs. You can use one or both of these option, but if you use both, the `--from` time must be earlier than the `-to` time. The values for times you provide must comply with the [ISO 8601 standard](https://www.iso.org/iso-8601-date-and-time-format.html). For more information, you can also check the Python [datetime.fromisoformat()](https://docs.python.org/3/library/datetime.html#datetime.datetime.fromisoformat) method documentation.
 
-The `--log-level` option lets you filter message by [severity level](/developer-guide/logging-tracing/event-table-columns#label-event-table-schema).
-Some logs do not include a severity level. In those cases, messages are display for all `--log-level` values.
+The `--log-level` option lets you filter message by [severity level](/developer-guide/logging-tracing/event-table-columns#label-event-table-schema). Some logs do not include a severity level. In those cases, messages are display for all `--log-level` values.
 
-The `--partial` option lets you retrieve logs that contain a specific string using a case-insensitive match. For example, if you searched for logs containing *myDb* with this option, the results would include logs for databases named *mydb*, *MYDB*, and *MyDb*. Without this option, it would return only logs for databases named exactly *myDb*.
+The `--partial` option lets you retrieve logs that contain a specific string using a case-insensitive match. For example, if you searched for logs containing `myDb` with this option, the results would include logs for databases named `mydb`, `MYDB`, and `MyDb`. Without this option, it would return only logs for databases named exactly `myDb`.
 
-If you want continuous updates for the logs, you can use the `--refresh` option and provide the number of seconds between retrievals.
-You cannot use both the `--refresh` and `--to` options together.
-To stop streaming the logs, use your system’s default `Keyboardinterrupt` key, such as `CTRL-c` in a Mac Terminal.
+If you want continuous updates for the logs, you can use the `--refresh` option and provide the number of seconds between retrievals. You cannot use both the `--refresh` and `--to` options together. To stop streaming the logs, use your system’s default `Keyboardinterrupt` key, such as `CTRL-c` in a Mac Terminal.
 
 ## Examples
 

@@ -8,6 +8,26 @@ This article contains the release notes for the Snowflake CLI, including the fol
 
 See [Snowflake CLI](/developer-guide/snowflake-cli/index) for documentation.
 
+## Version 3.29.0 (Oct 08, 2026)
+
+### New additions
+
+- Added `snow ai claude` and `snow ai opencode` to launch coding agents through the active connection’s Snowflake AI Gateway, with PAT and OAuth authentication. Supported authorization-code OAuth connections renew credentials while the agent runs; pass native agent arguments after `--agent-args`.
+- `snow bundle` manages Snowflake code bundles, with `create`, `list`, `alter`, `delete`, `execute`, `status`, `cancel`, and `history` subcommands. A bundle is created from a stage path, a workspace path, or a local directory, and runs at a given entrypoint either synchronously or asynchronously.
+- `snow sql` custom REPL prompts now support hexadecimal foreground (`[#rrggbb]`) and background (`[bg:#rrggbb]`) colours. Each directive styles the prompt text that follows it.
+- Interactive `snow sql` completes SQL keywords, functions, and data types when you press Tab. Completions appear only on Tab, not while typing. Set `[cli] auto_completion = false` in `config.toml` to turn this off.
+- Per-command `--help` now includes **Usage notes**, **Examples**, and **Related topics** when those sections are defined for the command. Disable them with `enable_command_docs_in_help = false` under `[cli.features]` in `config.toml` or `SNOWFLAKE_CLI_FEATURES_ENABLE_COMMAND_DOCS_IN_HELP=false`.
+- Per-command `--help` now lists global and connection flags by name instead of full option panels. Use `--help-all` on a command for the previous full option list, or `snow --help` for descriptions. Disable condensed help with `enable_condensed_command_help = false` or `SNOWFLAKE_CLI_FEATURES_ENABLE_CONDENSED_COMMAND_HELP=false`.
+- Tab in `snow sql` also completes databases, schemas, tables, views, and columns visible to the current session. An empty prefix does not run an unbounded SHOW. `!rehash` clears the in-session object cache.
+
+### Fixes and improvements
+
+- `snow sql` no longer aborts a statement whose text contains Rich-markup-like tokens (for example `[/x]`). The statement is echoed and executed as written. The same applies to streamed SPCS image-build and remote-build log lines.
+- `snow --info` now reports `snowflake_connector_python_version`, the installed `snowflake-connector-python` version, so support and debugging can see which connector the CLI is running against.
+- Upgraded the Python interpreter embedded in Linux binaries from 3.10.21 to 3.10.22.
+- Files the CLI creates and files downloaded from a stage (`snow stage get`, `snow git copy`, `snow dcm --save-output`) are now restricted to the current user, including on Windows. Existing files in the download directory are left unchanged.
+- The `installation_source` value on `snow --info` for a curl|sh / irm|iex install is now `direct-install` (was `snowflake-managed`). `snow --version` is unchanged.
+
 ## Version 3.28.0 (Sep 28, 2026)
 
 ### New additions

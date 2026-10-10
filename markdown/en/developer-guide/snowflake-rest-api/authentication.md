@@ -79,6 +79,37 @@ To generate a JWT token in your application code, use the following steps:
      - `OAUTH` (for OAuth)
      - `PROGRAMMATIC_ACCESS_TOKEN` (for [programmatic access tokens](/user-guide/programmatic-access-tokens))
 
+#### Generating the token
+
+Rather than constructing the token yourself, you can use the Snowflake CLI to generate one. This example
+generates a token for account `TEST` and user `JDOE`, using the private key in `rsa_key.p8`:
+
+Copy code
+
+```
+snow connection generate-jwt --user JDOE --account TEST --private-key-file=rsa_key.p8
+```
+
+The command prompts for the private key passphrase. You can avoid the prompt by setting the
+`PRIVATE_KEY_PASSPHRASE` environment variable. For details, see
+[snow connection generate-jwt](/developer-guide/snowflake-cli/command-reference/connection-commands/generate-jwt).
+
+For code that builds the same token programmatically, see the Python and JavaScript examples in
+[Using key-pair authentication](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair). The JWT payload is
+constructed the same way for both APIs.
+
+#### Using the token in a request
+
+Pass the generated token as a bearer token. For example, using cURL:
+
+Copy code
+
+```
+curl --location 'https://myorganization-myaccount.snowflakecomputing.com/api/v2/databases' \
+  --header "Authorization: Bearer <JWT>" \
+  --header "X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT"
+```
+
 ## Using OAuth
 
 To use OAuth, follow these steps:

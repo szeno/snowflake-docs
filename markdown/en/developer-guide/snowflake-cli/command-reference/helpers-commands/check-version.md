@@ -1,6 +1,6 @@
 # snow helpers check-version
 
-Reports the installed Snowflake CLI version alongside the latest published version and whether an upgrade is available. This command is the on-demand equivalent of the automatic upgrade banner shown after commands, and always reports its result regardless of the `ignore_new_version_warning` setting.
+Check whether a newer version of the Snowflake CLI is available.
 
 ## Syntax
 
@@ -27,7 +27,7 @@ None
 :   Query PyPI and Homebrew for the latest version instead of using the local cache. Default: False.
 
 `--format [TABLE|JSON|JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels `info` and higher. Default: False.

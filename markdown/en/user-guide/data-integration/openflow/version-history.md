@@ -6,6 +6,26 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 9, 2026
+
+### Runtime Server 2026.10.9.8
+
+- Applied security patches and dependency upgrades.
+- Gen 2 Connector configuration: Ensured connector settings automatically updated during an upgrade are saved and retained. This fixes potential upgrade failures seen in previous versions.
+- Gen 2 Connector configuration: New properties that have default values are no longer required when configuring gen 2 connectors using SQL and config.json
+- Gen 2 Connector configuration: Removed outdated settings that the connector no longer uses when saving its configuration.
+- Asset references: Fixed an error that prevented saving connector settings when a referenced resource had not yet been selected.
+
+## October 8, 2026
+
+### Data Plane Service 0.136.1
+
+- Connectors that fail to start, stop, or delete during workflow recovery now report a failed state instead of staying stuck in a transitional state, so they can be acted on again.
+
+### AWS Data Plane Agent 1.69.2
+
+- Fixed an issue that caused deployment upgrades from recent versions to fail.
+
 ## October 6, 2026
 
 ### Runtime Server 2026.10.6.13

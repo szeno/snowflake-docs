@@ -10,7 +10,9 @@ See also:
 :   [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) ,
     [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository) ,
     [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository) ,
-    [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories)
+    [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories) ,
+    [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository) ,
+    [SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository)
 
 ## Syntax
 

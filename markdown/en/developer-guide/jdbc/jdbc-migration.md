@@ -30,7 +30,7 @@ The driver class name has changed.
 
 | Before (3.x) | After (4.x) |
 | --- | --- |
-| `com.snowflake.client.jdbc.SnowflakeDriver` | `net.snowflake.client.api.driver.SnowflakeDriver` |
+| `net.snowflake.client.jdbc.SnowflakeDriver` | `net.snowflake.client.api.driver.SnowflakeDriver` |
 
 Expand
 

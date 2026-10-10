@@ -13,6 +13,7 @@ snow spcs image-repository list-images
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -40,6 +41,8 @@ snow spcs image-repository list-images
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -51,21 +54,26 @@ snow spcs image-repository list-images
 ## Arguments
 
 `name`
-:   Identifier of the image repository; for example: my\_repository.
+:   *Required*
+
+    Identifier of the image repository; for example: my\_repository.
 
 ## Options
 
 `--like, -l TEXT`
-:   SQL LIKE pattern for filtering objects by name. For example, *–like “my%”* lists all image repositories that begin with “my”.. Default: %%.
+:   SQL LIKE pattern for filtering objects by name. For example, `--like "my%"` lists all image repositories that begin with “my”.. Default: %%.
 
 `--connection, -c, --environment TEXT`
-:   Name of the connection, as defined in your *config.toml* file. Default: *default*.
+:   Name of the connection, as defined in your `config.toml` file. Default: `default`.
 
 `--host TEXT`
 :   Host address for the connection. Overrides the value specified for the connection.
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -137,25 +145,31 @@ snow spcs image-repository list-images
 :   Scope requested in the Identity Provider authorization request.
 
 `--oauth-disable-pkce`
-:   Disables Proof Key for Code Exchange (PKCE). Default: *False*.
+:   Disables Proof Key for Code Exchange (PKCE). Default: `False`.
 
 `--oauth-enable-refresh-tokens`
-:   Enables a silent re-authentication when the actual access token becomes outdated. Default: *False*.
+:   Enables a silent re-authentication when the actual access token becomes outdated. Default: `False`.
 
 `--oauth-enable-single-use-refresh-tokens`
-:   Whether to opt-in to single-use refresh token semantics. Default: *False*.
+:   Whether to opt-in to single-use refresh token semantics. Default: `False`.
 
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -175,21 +189,21 @@ None.
 
 ## Examples
 
-The following example lists the images and tags in a repository named `images` in the `my_db` database:
+- The following example lists the images and tags in a repository named `images` in the `my_db` database:
 
-Copy code
+  Copy code
 
-```
-snow spcs image-repository list-images images --database my_db
-```
+  ```
+  snow spcs image-repository list-images images --database my_db
+  ```
 
-```
-+--------------------------------------------------------------------------------------------------------------------------------------------------------+
-| created_on                | image_name            | tags   | digest                                         | image_path                               |
-|---------------------------+-----------------------+--------+------------------------------------------------+------------------------------------------|
-| 2024-10-11 14:23:49-07:00 | echo_service          | latest | sha256:a8a001fef406fdb3125ce8e8bf9970c35af7084 | my_db/test_schema/images/echo_service:   |
-|                           |                       |        | fc33b0886d7a8915d3082c781                      | latest                                   |
-| 2024-10-14 22:21:14-07:00 | test_counter          | latest | sha256:8cae96dac29a4a05f54bb5520003f964baf67fc | my_db/test_schema/images/test_counter:   |
-|                           |                       |        | 38dcad3d2c85d6c5aa7381174                      | latest                                   |
-+--------------------------------------------------------------------------------------------------------------------------------------------------------+
-```
+  ```
+  +--------------------------------------------------------------------------------------------------------------------------------------------------------+
+  | created_on                | image_name            | tags   | digest                                         | image_path                               |
+  |---------------------------+-----------------------+--------+------------------------------------------------+------------------------------------------|
+  | 2024-10-11 14:23:49-07:00 | echo_service          | latest | sha256:a8a001fef406fdb3125ce8e8bf9970c35af7084 | my_db/test_schema/images/echo_service:   |
+  |                           |                       |        | fc33b0886d7a8915d3082c781                      | latest                                   |
+  | 2024-10-14 22:21:14-07:00 | test_counter          | latest | sha256:8cae96dac29a4a05f54bb5520003f964baf67fc | my_db/test_schema/images/test_counter:   |
+  |                           |                       |        | 38dcad3d2c85d6c5aa7381174                      | latest                                   |
+  +--------------------------------------------------------------------------------------------------------------------------------------------------------+
+  ```

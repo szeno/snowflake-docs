@@ -20,18 +20,20 @@ snow connection remove
 ## Arguments
 
 `connection_name`
-:   Name of the connection to remove.
+:   *Required*
+
+    Name of the connection to remove.
 
 ## Options
 
-`--format [TABLE%JSON%JSON_EXT|CSV]`
-:   Specifies the output format. Default: TABLE.
+`--format [TABLE|JSON|JSON_EXT|CSV]`
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
-:   Displays log entries for log levels *info* and higher. Default: False.
+:   Displays log entries for log levels `info` and higher. Default: False.
 
 `--debug`
-:   Displays log entries for log levels *debug* and higher; debug logs contain additional information. Default: False.
+:   Displays log entries for log levels `debug` and higher; debug logs contain additional information. Default: False.
 
 `--silent`
 :   Turns off intermediate output to console. Default: False.
@@ -51,14 +53,14 @@ None.
 
 ## Examples
 
-To remove a connection, execute a `snow connection remove` command similar to the following:
+- To remove a connection, execute a `snow connection remove` command similar to the following:
 
-Copy code
+  Copy code
 
-```
-snow connection remove bad_connection
-```
+  ```
+  snow connection remove bad_connection
+  ```
 
-```
-Removed connection bad_connection from /Users/jdoe/.snowflake/config.toml.
-```
+  ```
+  Removed connection bad_connection from /Users/jdoe/.snowflake/config.toml.
+  ```

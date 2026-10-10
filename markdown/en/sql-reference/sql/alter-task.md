@@ -251,7 +251,7 @@ Renaming a task isn’t supported. Instead, you can clone the task, and then dro
   user-specified virtual warehouse. To convert a task that relies on a warehouse to the serverless compute model, unset the
   `WAREHOUSE`.
 - If a task fails with an unexpected error, you can receive a notification about the error.
-  For more information about configuring task error notifications, see [Set up error notifications for tasks](/user-guide/tasks-errors).
+  For more information about configuring task error notifications, see [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
 - The `OVERLAP_POLICY` parameter replaces the deprecated `ALLOW_OVERLAPPING_EXECUTION` parameter. For backward compatibility,
   `ALLOW_OVERLAPPING_EXECUTION = TRUE` maps to `OVERLAP_POLICY = ALLOW_CHILD_OVERLAP`, and
   `ALLOW_OVERLAPPING_EXECUTION = FALSE` maps to `OVERLAP_POLICY = NO_OVERLAP`.
