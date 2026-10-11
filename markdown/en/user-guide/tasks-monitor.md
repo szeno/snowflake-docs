@@ -5,7 +5,7 @@
 You can configure Snowflake to push notifications when errors occur in task runs. You can also query the event table to
 determine if tasks failed to run. For more information, see the following sections:
 
-- [Set up error notifications for tasks](/user-guide/tasks-errors)
+- [Set up alerts and notifications for tasks](/user-guide/tasks-errors)
 - [Monitor events for task executions](/user-guide/tasks-events)
 
 ## See task owners
