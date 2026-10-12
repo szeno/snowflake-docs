@@ -412,6 +412,8 @@ you install other Visual Studio Code-compatible extensions.
 
 For platform-wide CoCo behavior, security, and governance concepts, see [CoCo](/user-guide/cortex-code/cortex-code).
 
+For a hands-on walkthrough, see [Getting Started with CoCo in the Snowflake Extension for Visual Studio Code](https://www.snowflake.com/en/developers/guides/get-started-coco-vscode-extension/).
+
 ### Prerequisites
 
 Before you use CoCo in the extension, make sure that:
