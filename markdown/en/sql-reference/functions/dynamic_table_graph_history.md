@@ -43,7 +43,8 @@ All arguments are optional. If no arguments are provided, only the most recent d
 
 The function returns the following columns.
 
-To view these columns, you must use a role with the MONITOR privilege. Otherwise, the function only returns a value for `NAME`,
+To view these columns, you must use a role with the MONITOR privilege or
+[a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference). Otherwise, the function only returns a value for `NAME`,
 `SCHEMA_NAME`, `DATABASE_NAME`, and `QUALIFIED_NAME`. For more information about dynamic table privileges, see
 [Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata).
 

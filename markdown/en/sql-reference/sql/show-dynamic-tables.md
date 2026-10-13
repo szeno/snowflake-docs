@@ -124,7 +124,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| SELECT | The dynamic tables that you want to list. | Some metadata is hidden if you don’t have the MONITOR privilege. For more information, see [Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata). |
+| SELECT | The dynamic tables that you want to list. | Without MONITOR or [a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference), some metadata is hidden. |
 
 Expand
 
@@ -139,7 +139,8 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- To SHOW a dynamic table, you must be using a role that has MONITOR privilege on the table.
+- To SHOW a dynamic table, you must be using a role that has the MONITOR privilege or
+  [a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference) on the table.
 
 - The command doesn’t require a running warehouse to execute.
 - The command only returns objects for which the current user’s current role has been granted at least one access privilege.

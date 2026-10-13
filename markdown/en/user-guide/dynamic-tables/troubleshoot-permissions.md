@@ -128,7 +128,8 @@ table you know exists, the issue is a missing privilege.
    ```
 
    If this returns no rows, your role may also need USAGE on the database and schema.
-2. Check whether your role has the MONITOR privilege on the dynamic table:
+2. Check whether your role has the MONITOR privilege or
+   [a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference) on the dynamic table:
 
    Copy code
 
@@ -143,7 +144,7 @@ table you know exists, the issue is a missing privilege.
    | 2025-01-15 08:00:00.000 -0800 | MONITOR   | DYNAMIC_TABLE | DT_ORDERS | ROLE       | ANALYST_ROLE |
    +-------------------------------+-----------+---------------+------------+------------+--------------+
    ```
-3. If your role doesn’t have MONITOR, ask the dynamic table owner to grant it:
+3. If your role doesn’t have MONITOR or a privilege that includes it, ask the dynamic table owner to grant MONITOR:
 
    Copy code
 

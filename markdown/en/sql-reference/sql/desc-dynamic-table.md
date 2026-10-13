@@ -28,7 +28,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| SELECT | The dynamic table that you want to describe. | Some metadata is hidden if you don’t have the MONITOR privilege. For more information, see [Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata). |
+| SELECT | The dynamic table that you want to describe. | Without MONITOR or [a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference), some metadata is hidden. |
 
 Expand
 
@@ -43,7 +43,8 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- To DESCRIBE a dynamic table, you must be using a role that has MONITOR privilege on the table.
+- To DESCRIBE a dynamic table, you must be using a role that has the MONITOR privilege or
+  [a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference) on the table.
 
 - To post-process the output of this command, you can use the [pipe operator](/sql-reference/operators-flow)
   (`->>`) or the [RESULT\_SCAN](/sql-reference/functions/result_scan) function. Both constructs treat the output as a

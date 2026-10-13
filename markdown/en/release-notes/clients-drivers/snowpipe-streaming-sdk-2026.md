@@ -8,6 +8,16 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.9.0 (October 08, 2026)
+
+### Behavior changes
+
+- The SDK now returns an `SfApiNotFoundError` error instead of `SfApiUserError` for route-not-found HTTP 404 responses during hostname discovery, letting applications identify and handle these errors separately.
+
+### Bug fixes
+
+- Updated Jackson in the Java SDK to address known security vulnerabilities.
+
 ## Version 1.8.1 (September 24, 2026)
 
 ### Behavior changes

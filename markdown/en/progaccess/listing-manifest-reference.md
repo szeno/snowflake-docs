@@ -601,11 +601,16 @@ Contains the following name value pairs:
 
   Specifies the geographic regions for which your data product has coverage.
 
-  - `granularity` (string, required)
-
-    Geographic coverage of your dataset.
+  - `geo_option` (string, required)
 
     One of:
+
+    - NOT\_APPLICABLE
+    - GLOBAL
+    - COUNTRIES
+  - `granularity` (list of strings, required for GLOBAL and COUNTRIES)
+
+    Geographic coverage of your dataset. One or more of:
 
     - LATITUDE\_LONGITUDE
     - ADDRESS
@@ -615,22 +620,13 @@ Contains the following name value pairs:
     - STATE
     - COUNTRY
     - REGION\_CONTINENT
-  - `geo_option` (string, required)
+  - `coverage` (required for COUNTRIES), containing `states`, `continents`, or both:
 
-    One of:
+    - `states`, a list of valid U.S. state names.
+    - `continents`, where each continent lists the countries your data product covers in it.
+      Include at least one country per continent, listed under the continent it belongs to.
 
-    - NOT\_APPLICABLE
-    - GLOBAL
-    - COUNTRIES
-  - `coverage` (required based on selection of `geo_option`), containing either :
-
-    - `states` (list of states) containing any list of valid U.S. state names.
-
-    Or
-
-    - `continents` (list of continents):
-
-      Any of:
+      Continents:
 
       - ASIA
       - EUROPE
@@ -639,11 +635,14 @@ Contains the following name value pairs:
       - SOUTH AMERICA
       - OCEANIA
       - ANTARCTICA
-  - `time` (required) containing:
 
-    Specifies the time period that your data product covers.
+  Specify only the fields that apply to your `geo_option` value.
+- `data_attributes.time` (optional), containing:
 
-    - `granularity` (required)
+  Specifies the time period that your data product covers. If you include `time`, specify both
+  `granularity` and `time_range`.
+
+  - `granularity` (required)
 
     One of:
 
@@ -653,24 +652,30 @@ Contains the following name value pairs:
     - WEEKLY
     - MONTHLY
     - YEARLY
-    - `time_range` (required) containing the following name/value pairs:
-      - `time_frame` (required)
+  - `time_range` (required), containing the following name/value pairs:
 
-        One of:
+    - `time_frame` (required)
 
-        - NEXT
-        - LAST
-        - BETWEEN
-      - `unit` (required)
-        One of:
+      One of:
 
-        - DAYS
-        - WEEKS
-        - MONTHS
-        - YEARS
-      - `value` (required when `time_frame` is NEXT/LAST, integer), range 1-100.
-      - `start_date` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
-      - `end_date` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
+      - NEXT
+      - LAST
+      - BETWEEN
+      - AFTER
+      - BEFORE
+    - `units` (required for NEXT and LAST)
+
+      One of:
+
+      - DAYS
+      - WEEKS
+      - MONTHS
+      - YEARS
+    - `value` (required for NEXT and LAST), an integer from 1 to 100.
+    - `start_date` (required for BETWEEN and AFTER), a date in MM-DD-YYYY format.
+    - `end_date` (required for BETWEEN and BEFORE), a date in MM-DD-YYYY format.
+
+    Specify only the fields that apply to your `time_frame` value.
 
 ### `data_attributes` example
 
@@ -694,12 +699,12 @@ data_attributes:
           - CANADA
         EUROPE:
           - UNITED KINGDOM
-    time:
-      granularity: MONTHLY
-      time_range:
-        time_frame: LAST
-        unit: MONTHS
-        value: 6
+  time:
+    granularity: MONTHLY
+    time_range:
+      time_frame: LAST
+      units: MONTHS
+      value: 6
 ```
 
 ## `data_dictionary`
@@ -1149,9 +1154,9 @@ data_attributes:
           - CANADA
         EUROPE:
           - UNITED KINGDOM
-    time:
-      granularity: MONTHLY
-      time_range:
+  time:
+    granularity: MONTHLY
+    time_range:
       time_frame: BETWEEN
       start_date: 12-24-2020
       end_date: 12-25-2021
@@ -1237,9 +1242,9 @@ data_attributes:
           - CANADA
         EUROPE:
           - UNITED KINGDOM
-    time:
-      granularity: MONTHLY
-      time_range:
+  time:
+    granularity: MONTHLY
+    time_range:
       time_frame: BETWEEN
       start_date: 12-24-2020
       end_date: 12-25-2021

@@ -31,7 +31,7 @@ The high-performance SDK mandates several properties to establish both the secur
 
 | Property | Description |
 | --- | --- |
-| `url` | URL for accessing your Snowflake account, including your account identifier. The protocol (<https://>) and port number are optional. |
+| `url` | URL for accessing your Snowflake account, including your account identifier. The protocol (<https://>) and port number are optional. Use the account endpoint, not the automatically discovered ingest hostname, a private endpoint DNS target, or a raw IP address. Before initializing the client, complete the [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity). |
 | `user` | User sign-in name for the Snowflake account. |
 | `account` | Snowflake account identifier; for example, xy12345. |
 
@@ -105,7 +105,7 @@ What this means for your application:
 Customer impact:
 
 - Existing applications that already connect to Snowflake over HTTPS continue to work without changes.
-- Applications that route SDK traffic through a proxy must use a TLS-terminating proxy. Plain-HTTP proxies and `http://` URLs are rejected.
+- HTTPS-only enforcement applies to destination URLs, not the proxy URL scheme. An HTTP proxy can tunnel HTTPS traffic; it doesn’t need to terminate TLS. For Kafka worker proxy settings and the distinction between JVM and native SDK traffic, see [Configure proxy access](/user-guide/kafka-connector/setup-kafka#label-kafkahp-proxy-configuration). Also complete the [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity).
 - For SnowGov regions and other deployments with formal FIPS 140-2 or 140-3 requirements, see [Supported cloud regions](/user-guide/intro-regions) for the regional compliance posture.
 
 ## Configuration examples

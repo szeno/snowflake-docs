@@ -6,6 +6,25 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 12, 2026
+
+### Runtime Server 2026.10.12.12
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.10.12.8
+
+- Iceberg: Added binary, fixed, UUID, and geospatial value conversion to `PutIcebergRecord`.
+- CDC PostgreSQL: Fixed an issue where replication stopped and logged “checking permissions is not supported” errors every second on Java 24 or later with PostgreSQL JDBC driver 42.7.5 or earlier, after the replication connection failed or went idle. Replication now reconnects automatically.
+- CDC PostgreSQL: Reconnected a dropped replication stream before snapshotting newly added tables, instead of failing and leaving those tables stuck.
+- CDC PostgreSQL: Fixed snapshot load failures on February 29 of a BC year. BC dates keep their day. BC timestamps become `0001-01-01 00:00:00`, the earliest timestamp Snowflake supports.
+- Google Ads: Honored the wait time Google’s API returns when a developer token’s or account’s request quota is exhausted, across scheduling, configuration verification, and ingestion, instead of retrying every few seconds or, on a CRON or long-interval schedule, every run. This prevents repeatedly hitting the rate limit and deepening quota exhaustion.
+- CDC Databases: Improved replication efficiency for single- and multi-database connectors by reducing redundant merge operations and clearing queued work already covered by an ongoing merge.
+
+### Connectors 2026.10.12.8
+
+- CDC SQL Server 0.57.0: Added ingested-record counts and commit-to-capture, commit-to-merge, and capture-to-journal latency metrics for the SQL Server change tracking gen 1 connector. Table-level metrics distinguish the source database, schema, and table.
+
 ## October 9, 2026
 
 ### Runtime Server 2026.10.9.8

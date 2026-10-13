@@ -716,18 +716,15 @@ Note the value. For example:
 
 #### Step 2: Grant equivalent model application roles
 
-Because `CORTEX_MODELS_ALLOWLIST` applies account-wide, the direct RBAC equivalent is granting model application roles to the PUBLIC role, which is automatically granted to all users. Start by replicating the allowlist behavior exactly, then tighten access to specific roles as needed.
+Because `CORTEX_MODELS_ALLOWLIST` applies account-wide, the direct RBAC equivalent is granting model application roles to the PUBLIC role. Snowflake grants PUBLIC to every user and every role in the account, so every role inherits those grants. Start by replicating the allowlist behavior exactly, then tighten access to specific roles as needed.
 
 Warning
 
-Granting to PUBLIC is not sufficient in all execution contexts. In the following scenarios, PUBLIC’s grants may not be active, and you must grant model application roles directly to the specific role in use:
+A grant to PUBLIC covers ordinary user sessions. It doesn’t cover code that runs inside a native app. Native app code uses the app’s own role hierarchy, not the consumer account’s PUBLIC role. If the app calls a Cortex AI function, grant the model application role to the application, or to the role in use inside the app.
 
-- **Secondary roles disabled**: When a session runs `USE SECONDARY ROLES NONE`, only the active primary role’s grants apply. If the active role doesn’t inherit PUBLIC’s model grants through its own role chain, the call will fail.
-- **Native Apps**: Native app execution contexts use the app’s own role hierarchy. Account-level PUBLIC grants don’t automatically carry through.
+For restricted caller’s rights (RCR) stored procedures, granting model application roles to PUBLIC is sufficient. Model RBAC doesn’t evaluate RCR caller grants in RCR contexts.
 
-Restricted caller’s rights (RCR) stored procedures are an exception. Model RBAC doesn’t evaluate RCR caller grants in RCR contexts, so granting model application roles to PUBLIC is sufficient for RCR workloads.
-
-Test all your workloads — including stored procedures, native apps, and any session that sets secondary roles — before disabling the allowlist.
+Test all your workloads, including stored procedures and native apps, before you disable the allowlist.
 
 The `SNOWFLAKE.MODELS` schema is refreshed daily and already contains objects for all available models. To see which model roles are available:
 

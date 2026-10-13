@@ -67,6 +67,10 @@ that the connector is actively ingesting into.
 
 ## Connection and authentication issues
 
+### Table creation succeeds but streaming initialization fails
+
+The connector can create tables while the streaming SDK can’t reach its separate ingest endpoint. If the logs show `get_pipe_info` with a DNS lookup failure, resolve the reported ingest hostname from the Kafka Connect worker. For private connectivity, configure a private DNS record that routes the hostname to the existing Snowflake private endpoint, then verify HTTPS access on port 443. Restart the worker if it caches a failed DNS lookup. See [Network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) for commands and troubleshooting checks.
+
 ### Authentication failures
 
 **Key pair authentication**

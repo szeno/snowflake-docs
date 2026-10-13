@@ -1,6 +1,7 @@
 # Monitor dynamic tables
 
-You need the MONITOR or OWNERSHIP privilege on a dynamic table to view its metadata.
+To view a dynamic table’s metadata, you need the MONITOR privilege or
+[a privilege that includes it](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-quick-reference) on the dynamic table.
 
 ## Choose a monitoring approach
 

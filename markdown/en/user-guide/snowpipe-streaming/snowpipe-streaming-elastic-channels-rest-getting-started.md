@@ -85,10 +85,11 @@ export INGEST_HOST=$(curl -sS -X GET \
   -H "X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT" \
   "https://${CONTROL_HOST}/v2/streaming/hostname")
 
+export INGEST_HOST=$(printf '%s' "$INGEST_HOST" | tr '_' '-')
 echo "Ingest Host: $INGEST_HOST"
 ```
 
-If you use private connectivity, create a private DNS record for `INGEST_HOST` that routes to your existing Snowflake private endpoint. You don’t need a second Snowflake private endpoint. For details, see the [private connectivity troubleshooting](#troubleshooting) section.
+Complete the shared [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) before continuing. For private connectivity, create a private DNS record for the normalized `INGEST_HOST` that routes to your existing Snowflake private endpoint. You don’t need a second Snowflake service private endpoint.
 
 Obtain a scoped token for the ingest host:
 
@@ -197,10 +198,7 @@ unset JWT_TOKEN SCOPED_TOKEN ACCOUNT USER DB SCHEMA TABLE CONTROL_HOST INGEST_HO
 
 ### Private connectivity troubleshooting
 
-- **`CONTROL_HOST` doesn’t resolve:** Verify that you used `privatelink-account-url` and that the private DNS zone is linked to the application runtime.
-- **`Get Hostname` succeeds but `INGEST_HOST` doesn’t resolve:** Add the returned ingest hostname to private DNS and route it through the existing Snowflake private endpoint.
-- **DNS works outside the connector but fails inside it:** Test from the connector container or runtime, and restart long-running workers after DNS changes if they cache negative DNS responses.
-- **TLS hostname mismatch:** Keep the returned ingest hostname as the URL hostname. Don’t connect to the raw private endpoint IP address or rewrite the TLS SNI or HTTP `Host` header.
+For unresolved account or ingest hostnames, HTTPS timeouts, or TLS hostname mismatches, use the commands and symptom table in [Network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity#troubleshoot-connectivity). Test from the application runtime, not only a developer laptop.
 
 ## Next steps
 

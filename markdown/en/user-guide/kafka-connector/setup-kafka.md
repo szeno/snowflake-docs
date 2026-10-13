@@ -15,6 +15,7 @@ The instructions in this topic specify which steps apply only to either version 
 
 ## Installation prerequisites
 
+- Complete the [Snowpipe Streaming network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) from every Kafka Connect worker. Verify access to the account endpoint, discovered ingest endpoint, and cloud-storage upload destinations. For private connectivity, configure private DNS for the ingest hostname as well as the account hostname.
 - The Kafka connector supports the following package versions:
 
   | Package | Snowflake Kafka Connector Version | Package Support (Tested by Snowflake) |
@@ -80,7 +81,7 @@ task doesn’t change the worker process environment.
 
 The worker must be able to reach both Snowflake service endpoints and the cloud-storage stage
 endpoints returned by Snowflake. To identify the required hostnames, see
-[Allowing hostnames](/user-guide/hostname-allowlist). Configure `NO_PROXY` according to which
+[Snowpipe Streaming network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity). Configure `NO_PROXY` according to which
 destinations should bypass the proxy. Separate `NO_PROXY` entries with commas. The Java
 `http.nonProxyHosts` property uses pipes (`|`) instead.
 
@@ -354,6 +355,8 @@ authentication methods, see [Authentication](#label-kafkahp-authentication).
 
 `snowflake.url.name`
 :   The URL for accessing your Snowflake account. This URL must include your [account identifier](/user-guide/admin-account-identifier). Note that the protocol (`https://`) and port number are optional.
+
+    Use the account endpoint, not the automatically discovered ingest hostname, a private endpoint DNS target, or a raw IP address. See [Network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) for private account discovery and ingest-host DNS configuration.
 
 `snowflake.user.name`
 :   User login name for the Snowflake account.

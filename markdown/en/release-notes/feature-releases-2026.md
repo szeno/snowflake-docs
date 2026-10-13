@@ -4,6 +4,8 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
+- [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
 - [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)

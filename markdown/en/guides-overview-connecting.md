@@ -16,7 +16,7 @@ For information about configuring clients, driver, libraries, and third-party ap
 ## Command-line clients
 
 [Snowflake CLI](/developer-guide/snowflake-cli/index)
-:   Use the command line to create, manage, update, and view apps running on Snowflake across workloads.
+:   Use the command line to connect to Snowflake and run SQL. You can also create, manage, update, and view apps running on Snowflake across workloads.
 
 ## Extensions for code editors
 

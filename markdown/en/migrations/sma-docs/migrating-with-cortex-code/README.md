@@ -22,6 +22,7 @@ workloads to Snowflake. It is a *thin router* that detects intent and language,
 then delegates all execution to one of several bundled sub-skills. The default
 and recommended path is to migrate to [**Snowpark Connect**](/developer-guide/snowpark-connect/snowpark-connect-getting-started),
 which preserves the PySpark API surface so existing code runs on Snowflake with minimal changes.
+For a step-by-step walkthrough of that path, see [Migrating to Snowpark Connect walkthrough](/migrations/sma-docs/use-cases/migrating-to-snowpark-connect-walkthrough).
 
 However, there are multiple migration paths possible, including migrating to the
 [Snowpark API](/developer-guide/snowpark/index) (which rewrites code to the `snowflake.snowpark` API).

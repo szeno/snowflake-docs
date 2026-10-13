@@ -736,7 +736,7 @@ For general information about roles and privilege grants for performing SQL acti
 ## Usage notes
 
 - To alter a dynamic table, you must be using a role that has OPERATE privilege on that
-  dynamic table. For general information, see [Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata).
+  dynamic table. For general information, see [Grant OPERATE to manage a dynamic table](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-operate).
 - Making changes to masking policies on a base table causes a [reinitialization](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization).
 - If you want to update an existing dynamic table and need to see its current definition,
   call the [GET\_DDL](/sql-reference/functions/get_ddl) function.

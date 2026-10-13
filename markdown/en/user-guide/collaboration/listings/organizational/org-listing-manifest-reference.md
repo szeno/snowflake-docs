@@ -208,11 +208,16 @@ The **optional** `data_attributes` field contains the following name value pairs
 
   Specifies geographic information for the data product.
 
-  - `granularity` (string, required)
-
-    Geographic coverage of the dataset.
+  - `geo_option` (string, required)
 
     One of the following:
+
+    - NOT\_APPLICABLE
+    - GLOBAL
+    - COUNTRIES
+  - `granularity` (list of strings, required for GLOBAL and COUNTRIES)
+
+    Geographic coverage of the dataset. One or more of the following:
 
     - LATITUDE\_LONGITUDE
     - ADDRESS
@@ -222,22 +227,13 @@ The **optional** `data_attributes` field contains the following name value pairs
     - STATE
     - COUNTRY
     - REGION\_CONTINENT
-  - `geo_option` (string, required)
+  - `coverage` (required for COUNTRIES), containing `states`, `continents`, or both:
 
-    One of the following:
+    - `states`, a list of valid U.S. state names.
+    - `continents`, where each continent lists the countries the data product covers in it.
+      Include at least one country per continent, listed under the continent it belongs to.
 
-    - NOT\_APPLICABLE
-    - GLOBAL
-    - COUNTRIES
-  - `coverage` (required based on selection of `geo_option`):
-
-    - `states` (list of states) containing any list of valid U.S. state names.
-
-    Or
-
-    - `continents` (list of continents):
-
-      Any of the following:
+      Continents:
 
       - ASIA
       - EUROPE
@@ -246,11 +242,14 @@ The **optional** `data_attributes` field contains the following name value pairs
       - SOUTH AMERICA
       - OCEANIA
       - ANTARCTICA
-  - `time` (required):
 
-    Specifies the time period for the data product.
+  Specify only the fields that apply to your `geo_option` value.
+- `data_attributes.time` (optional):
 
-    - `granularity` (required)
+  Specifies the time period for the data product. If you include `time`, specify both
+  `granularity` and `time_range`.
+
+  - `granularity` (required)
 
     One of the following:
 
@@ -260,24 +259,30 @@ The **optional** `data_attributes` field contains the following name value pairs
     - WEEKLY
     - MONTHLY
     - YEARLY
-    - `time_range` (required) containing the following name/value pairs:
-      - `time_frame` (required)
+  - `time_range` (required) containing the following name/value pairs:
 
-        One of the following:
+    - `time_frame` (required)
 
-        - NEXT
-        - LAST
-        - BETWEEN
-      - `unit` (required)
-        One of the following:
+      One of the following:
 
-        - DAYS
-        - WEEKS
-        - MONTHS
-        - YEARS
-      - `value` (required when `time_frame` is NEXT/LAST, integer). The range is 1 to 100.
-      - `start_time` (required when `time_frame` is BETWEEN, String date). The start time for the data product. The format is MM-DD-YYYY.
-      - `end_time` (required when `time_frame` is BETWEEN, String date), format MM-DD-YYYY.
+      - NEXT
+      - LAST
+      - BETWEEN
+      - AFTER
+      - BEFORE
+    - `units` (required for NEXT and LAST)
+
+      One of the following:
+
+      - DAYS
+      - WEEKS
+      - MONTHS
+      - YEARS
+    - `value` (required for NEXT and LAST), an integer from 1 to 100.
+    - `start_date` (required for BETWEEN and AFTER), a date in MM-DD-YYYY format.
+    - `end_date` (required for BETWEEN and BEFORE), a date in MM-DD-YYYY format.
+
+    Specify only the fields that apply to your `time_frame` value.
 
 For additional information on data product attributes, see [Required for public listings. Define additional attributes that](/collaboration/provider-listings-reference#label-listings-data-product-attributes).
 
@@ -303,12 +308,12 @@ data_attributes:
           - CANADA
         EUROPE:
           - UNITED KINGDOM
-    time:
-      granularity: MONTHLY
-      time_range:
-        time_frame: LAST
-        unit: MONTHS
-        value: 6
+  time:
+    granularity: MONTHLY
+    time_range:
+      time_frame: LAST
+      units: MONTHS
+      value: 6
 ```
 
 ### `organization_targets`

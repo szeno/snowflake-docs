@@ -34,7 +34,7 @@ The `Get Hostname` returns the hostname used to interact with the Snowpipe Strea
 
 Note
 
-For private connectivity (AWS PrivateLink, Azure Private Link, or Google Cloud Private Service Connect), call this endpoint through your private account URL, and configure private DNS for the returned ingest hostname before you use it for the scoped-token exchange and streaming operations. For complete steps, see [Discover and configure the ingest host](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-tutorial) in the REST API tutorial.
+For private connectivity (AWS PrivateLink, Azure Private Link, or Google Cloud Private Service Connect), call this endpoint through your private account URL, and configure private DNS for the returned ingest hostname before you use it for the scoped-token exchange and streaming operations. For discovery commands, DNS configuration, and verification checks shared by SDK, REST, and Kafka clients, see [Network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity).
 
 ```
 GET /v2/streaming/hostname
@@ -42,19 +42,17 @@ GET /v2/streaming/hostname
 
 Response:
 
-Copy code
-
 ```
-{
-  "hostname": "string"
-}
+<ingest-hostname>
 ```
 
-Description of response fields:
+The response body is the ingest hostname as plain text, not a JSON object.
+
+Description of the response:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| Hostname | String | The hostname of the account. |
+| Response body | String | The account-specific streaming ingest hostname. |
 
 Expand
 

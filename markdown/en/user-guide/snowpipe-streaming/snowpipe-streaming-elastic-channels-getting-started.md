@@ -7,7 +7,7 @@ Use a [Named Channel](/user-guide/snowpipe-streaming/snowpipe-streaming-channels
 ## Prerequisites
 
 - Snowflake account with access to a user with sufficient privileges to create roles, databases, and tables.
-- Outbound network access from your producer host to Snowflake and to the Snowflake-provided cloud storage endpoints used for SDK file uploads (AWS S3, Google Cloud Storage, or Azure Blob Storage, depending on your deployment).
+- Complete the [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) from your producer runtime. Verify the account endpoint, discovered ingest endpoint, and cloud-storage upload destinations. Private connectivity also requires DNS configuration for the ingest hostname.
 - Java 11+, Python 3.9+, or Node.js 20+ depending on your chosen SDK.
 - glibc version 2.26 or later on Linux.
 

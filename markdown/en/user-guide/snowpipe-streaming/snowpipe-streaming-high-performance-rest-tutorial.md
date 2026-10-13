@@ -112,22 +112,13 @@ export INGEST_HOST=$(curl -sS -X GET \
   -H "X-Snowflake-Authorization-Token-Type: KEYPAIR_JWT" \
   "https://${CONTROL_HOST}/v2/streaming/hostname")
 
+export INGEST_HOST=$(printf '%s' "$INGEST_HOST" | tr '_' '-')
 echo "Ingest Host: $INGEST_HOST"
 ```
 
 #### Configure private DNS for the ingest host
 
-If you use private connectivity, the returned ingest hostname must also resolve through your Snowflake private endpoint. The ingest hostname is separate from the Snowflake account hostname and might not appear in [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config) or [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
-
-Create a private DNS record for the exact normalized `INGEST_HOST` value and route it to the same existing Snowflake private endpoint used by your account hostname:
-
-- On AWS, create a [Route 53 private hosted-zone](/user-guide/admin-security-privatelink) `CNAME` (or an appropriate alias) that targets the existing Snowflake VPC endpoint regional DNS name.
-- On [Azure](/user-guide/privatelink-azure), resolve the ingest hostname to the existing Snowflake private endpoint IP address by using your private DNS configuration.
-- On [Google Cloud](/user-guide/private-service-connect-google), resolve the ingest hostname to the existing Private Service Connect endpoint.
-
-You don’t need to create a second Snowflake private endpoint for the ingest hostname.
-
-Verify DNS and TLS from the same VM, container, pod, connector worker, or on-premises runtime that sends streaming requests. Keep `INGEST_HOST` as the request hostname for TLS Server Name Indication (SNI) and HTTP routing; don’t replace it with the private endpoint IP address or disable TLS verification.
+Complete the shared [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) before continuing. They cover public and private connectivity, private DNS for the discovered ingest hostname, firewall inventory, and checks from the application runtime. For private connectivity, route the normalized `INGEST_HOST` through the existing Snowflake private endpoint; a second Snowflake service private endpoint isn’t required.
 
 Obtain a scoped token to authorize operations on the ingest host:
 
@@ -240,7 +231,4 @@ unset JWT_TOKEN SCOPED_TOKEN ACCOUNT USER DB SCHEMA TABLE PIPE CHANNEL CONTROL_H
 
 ### Private connectivity troubleshooting
 
-- **`CONTROL_HOST` doesn’t resolve:** Verify that you used `privatelink-account-url` and that the private DNS zone is linked or forwarded to the application runtime.
-- **`Get Hostname` succeeds but `INGEST_HOST` doesn’t resolve:** Add the returned ingest hostname to private DNS and route it through the existing Snowflake private endpoint.
-- **DNS works outside the connector but fails inside it:** Test from the connector container or managed runtime, and restart long-running workers after DNS changes if they cache negative DNS responses.
-- **TLS hostname mismatch:** Keep the returned ingest hostname as the URL hostname. Don’t connect to the raw private endpoint IP address or rewrite the TLS SNI or HTTP `Host` header.
+For unresolved account or ingest hostnames, HTTPS timeouts, or TLS hostname mismatches, use the commands and symptom table in [Network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity#troubleshoot-connectivity). Test from the application runtime, not only a developer laptop.

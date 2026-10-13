@@ -23,25 +23,31 @@ Note
 | Model | Legacy date | End-of-life date |
 | --- | --- | --- |
 | claude-4-sonnet | August 12, 2026 | October 14, 2026 |
-| openai-gpt-4.1 | August 12, 2026 | October 14, 2026 |
-| llama3-70b | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3-70b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3-8b | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3-8b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3.1-70b | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3.1-70b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| llama3.1-8b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| llama4-maverick | August 12, 2026 | No sooner than October 14, 2026 |
-| mistral-7b | August 12, 2026 | No sooner than October 14, 2026 |
-| mistral-7b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| mistral-large2 | August 12, 2026 | No sooner than October 14, 2026 |
-| mixtral-8x7b | August 12, 2026 | No sooner than October 14, 2026 |
-| mixtral-8x7b (fine-tuned) | August 12, 2026 | No sooner than October 14, 2026 |
-| pixtral-large | August 12, 2026 | No sooner than October 14, 2026 |
+| openai-gpt-4.1 | August 12, 2026 | April 14, 2027 [[1]](#footnote-1) |
+| llama3-70b | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3-70b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3-8b | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3-8b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3.1-70b | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3.1-70b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama3.1-8b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| llama4-maverick | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| mistral-7b | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| mistral-7b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| mistral-large2 | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| mixtral-8x7b | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| mixtral-8x7b (fine-tuned) | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
+| pixtral-large | August 12, 2026 | No sooner than the end of 2026 [[2]](#footnote-2) |
 
 Expand
 
 Show lessSee more
+
+[1]
+The end-of-life date for openai-gpt-4.1 was extended from October 14, 2026.
+
+[2]
+The exact end-of-life date is to be announced.
 
 If the named model parameter is not updated, queries or API calls that reference the model fail
 after its end-of-life date for every account, including accounts that were allowed to use the

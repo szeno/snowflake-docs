@@ -16,6 +16,7 @@ Ensure the following prerequisites are met:
    [region](/user-guide/intro-regions) as your Snowflake account.   
    While not strictly required, running in the same region improves throughput and reduces
    cross-region data transfer costs.
+6. You have completed the [Snowpipe Streaming network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) from every Kafka Connect worker, including private DNS for the discovered ingest hostname when using private connectivity.
 
 ## Tasks
 

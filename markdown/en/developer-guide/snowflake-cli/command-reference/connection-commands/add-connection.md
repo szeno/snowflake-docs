@@ -82,7 +82,7 @@ None
 :   Region name if not the default Snowflake deployment.
 
 `-A, --authenticator TEXT`
-:   Chosen authenticator, if other than password-based.
+:   Chosen authenticator, if other than password-based. For the supported values, see the authenticator parameter in [Python Connector API](/developer-guide/python-connector/python-connector-api#connect).
 
 `-W, --workload-identity-provider TEXT`
 :   Workload identity provider type.

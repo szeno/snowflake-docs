@@ -9,6 +9,20 @@ For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snow
 
 ### Snowpark Connect for Spark
 
+Important
+
+This is a behavior change release (BCR) package. A BCR is a change where
+the same code and the same input can produce a different result after the upgrade. Every change
+below is gated behind a config flag (default `true`) and can be fully reverted at runtime by
+setting the flag back to `"false"` — no code rewrite or rollback required. Review each
+migration guide before upgrading and audit any workloads that use the affected functions.
+
+#### Breaking changes
+
+- `to_date`, `to_timestamp`, `to_timestamp_ntz`, `to_timestamp_ltz`, `try_to_date`, and `try_to_timestamp` now use the 2000-2099 century window for a standalone two-digit year (`yy`), matching Apache Spark behavior. See [Migration guide](/release-notes/clients-drivers/snowpark-connect-bcr-use2000-as-two-digit-century-start).
+- `date_format`, `to_date`, `to_timestamp`, and `to_unix_timestamp` now validate format patterns as Spark does and route unsupported tokens through a Java UDF for Spark-exact output. If your workflow contains less common date-time format patterns, they are now routed through a Java UDF function; **this may cause longer/slower workflow runs**. Some previously accepted patterns now raise errors. See [Migration guide](/release-notes/clients-drivers/snowpark-connect-bcr-use-udf-for-unsupported-datetime-formats).
+- `CAST(string AS BIGINT)` near the Long boundary (±9,223,372,036,854,775,807) is now exact. In ANSI mode, real overflow raises `NumberFormatException` instead of silently returning a wrong value. See [Migration guide](/release-notes/clients-drivers/snowpark-connect-bcr-cast-string-to-integral-high-precision).
+
 #### Behavior changes
 
 - Enable high-precision string-to-integer casts by default with `snowpark.connect.cast.stringToIntegralHighPrecision`

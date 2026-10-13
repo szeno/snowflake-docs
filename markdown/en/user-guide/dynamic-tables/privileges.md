@@ -51,7 +51,9 @@ Expand
 
 Show lessSee more
 
-OWNERSHIP includes all capabilities of OPERATE and MONITOR.
+These privileges form a hierarchy: OPERATE includes all capabilities of MONITOR, and OWNERSHIP includes all
+capabilities of OPERATE and MONITOR. When an operation requires MONITOR, a role with OPERATE or OWNERSHIP also satisfies
+the requirement.
 
 ## Grant privileges to create a dynamic table
 
@@ -182,6 +184,7 @@ ALTER DYNAMIC TABLE mydb.myschema.dt_orders SET
 The MONITOR privilege provides read-only access to operational metadata without the ability to alter the dynamic table.
 Grant MONITOR to roles that need observability, for example
 `GRANT MONITOR ON DYNAMIC TABLE mydb.myschema.dt_orders TO ROLE ops_role`.
+Roles with OPERATE or OWNERSHIP on the dynamic table already have this access, because both privileges include MONITOR.
 
 With MONITOR, the role can view scheduling state in `SHOW DYNAMIC TABLES`, refresh history, and graph history:
 
@@ -206,8 +209,8 @@ FROM TABLE(INFORMATION_SCHEMA.DYNAMIC_TABLE_GRAPH_HISTORY())
 WHERE qualified_name = 'mydb.myschema.dt_orders';
 ```
 
-Without MONITOR, the following fields are hidden when you query a dynamic table with only SELECT: `text`, `warehouse`,
-`scheduling_state`, `last_suspended_on`, and `suspend_reason_code` (Snowsight only).
+Without MONITOR or a privilege that includes it, the following fields are hidden when you query a dynamic table with
+only SELECT: `text`, `warehouse`, `scheduling_state`, `last_suspended_on`, and `suspend_reason_code` (Snowsight only).
 
 MONITOR is read-only: it can’t suspend, resume, or refresh the table.
 

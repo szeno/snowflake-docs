@@ -9,25 +9,7 @@ For Elastic Channels (the recommended starting point for most new applications),
 Before you run the demo, ensure that you meet the following prerequisites:
 
 - Snowflake account: Verify that you have access to a Snowflake account. You will need a user with sufficient privileges (e.g., ACCOUNTADMIN or USERADMIN for the initial setup) to create the dedicated user and custom role detailed in [Step 1: Configure Snowflake objects](#label-snowpipe-streaming-high-performance-demo-project-step-1).
-- Network access: Ensure that your network allows outbound connectivity to Snowflake and Amazon S3 or Google Cloud Platform (GCS) or Azure Blob Storage. Adjust firewall rules if necessary because the SDK makes REST API calls to Snowflake and to your cloud storage provider.
-
-  - To verify network connectivity, use the following command:
-
-  Copy code
-
-  ```
-  # Test connectivity to Snowflake; replace with your account URL
-  curl -I https://<your_account_identifier>.snowflakecomputing.com
-
-  # Test connectivity to AWS S3
-  curl -I https://s3.amazonaws.com
-
-  # Test connectivity to GCS
-  curl -I https://storage.googleapis.com
-
-  # Test connectivity to Azure Blob Storage
-  curl -I https://azure.blob.core.windows.net  or curl -I https://<your_account_name>.blob.core.windows.net
-  ```
+- Network access: Complete the [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) from your producer runtime. Verify the account endpoint, discovered ingest endpoint, and cloud-storage upload destinations. Private connectivity also requires DNS configuration for the ingest hostname.
 - Java Development Environment: Install Java 11 or later, and Maven for dependency management.
 - Python: Install Python version 3.9 or later.
 - Node.js: Install Node.js version 20 or later.

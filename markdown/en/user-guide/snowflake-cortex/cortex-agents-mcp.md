@@ -12,6 +12,8 @@ The Snowflake-managed MCP server lets AI agents securely retrieve data from Snow
 
 For information about the MCP lifecycle, see [Lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle). For an example of an MCP implementation, see the [Getting Started with Managed Snowflake MCP Server](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-mcp-server/index.html) Quickstart.
 
+For information about sharing MCP servers with other accounts, see [Share Snowflake-managed MCP servers](/LIMITEDACCESS/sharing-mcp-servers).
+
 ## MCP server security recommendations
 
 Important

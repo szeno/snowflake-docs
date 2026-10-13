@@ -76,8 +76,8 @@ If no arguments are provided, 100 refreshes from all dynamic tables in the accou
 
 The function returns the following columns.
 
-To view these columns, you must use a role with the MONITOR privilege. For more information, see
-[Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata).
+To view these columns, you must use a role with the MONITOR privilege or a privilege that includes it, such as OPERATE.
+For more information about dynamic table privileges, see [Grant MONITOR to view metadata](/user-guide/dynamic-tables/privileges#label-dynamic-tables-privileges-view-metadata).
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
