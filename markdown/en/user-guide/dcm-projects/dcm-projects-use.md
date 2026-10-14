@@ -493,7 +493,7 @@ You have the following options to reference the location of the manifest and def
 - From your remote repository in a workflow
 
   The same CLI syntax can be used when the DCM commands are executed in a CI/CD workflow. You can call the CLI directly
-  or use the [reusable GitHub Actions](#label-dcm-github-actions) from the snowflake-labs DCM repository, which
+  or use the [reusable GitHub Actions](/user-guide/dcm-projects/dcm-projects-cicd#label-dcm-github-actions) from the snowflake-labs DCM repository, which
   handle CLI setup, authentication, and DCM commands internally.
 
   An example using the reusable `dcm-plan` action:
@@ -858,140 +858,8 @@ snow dcm drop my_project
 
 ## Automate a DCM project deployment
 
-### CI/CD best practices
-
-Follow these practices when automating deployments with CI/CD pipelines:
-
-- A DCM project targeting a non-production environment should be owned by a different role than its production counterpart to avoid
-  accidental deployments to production.
-- A DCM project targeting a production environment should be owned by a dedicated role for production deployments with specifically tailored access
-  privileges that are just enough to deploy all objects in the project.
-  - Avoid using general administrator roles for DCM project ownership. Grant such roles only to service users, not to individual developers.
-  - Grant the dedicated production deployment role only to service users, not to individual developers.
-  - Restrict the ownership to the production deployment role to ensure immutability of critical infrastructure or data products.
-
-    If the dedicated production deployment role grants ownership of production objects to other roles, users who are granted those roles can
-    still modify or drop the production objects.
-
-### GitHub Actions
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-A set of reusable composite GitHub Actions that automate DCM Projects pipelines is available in the
-[`snowflakedb/snowflake-actions`](https://github.com/snowflakedb/snowflake-actions) repository on the
-[GitHub Marketplace](https://github.com/marketplace/actions/snowflake-actions#github-actions-for-dcm-projects).
-Each action handles one step of the lifecycle, and you can compose them to build end-to-end CI/CD pipelines.
-
-Note
-
-These reusable actions are only available for GitHub. The same CI/CD concepts apply to Azure DevOps, GitLab CI/CD,
-Bitbucket Pipelines, and other providers. Only the workflow syntax differs. No published actions are available for
-those platforms yet. Consider building your own workflows using a coding agent such as Cortex Code.
-
-The following reusable actions are available: `dcm/parse-manifest`, `dcm/connection-test`, `dcm/plan`, and `dcm/deploy`.
-For setup instructions, input/output documentation, and sample workflows, see the
-[GitHub Marketplace listing](https://github.com/marketplace/actions/snowflake-actions#github-actions-for-dcm-projects).
-
-To use an action in your workflow, reference it with:
-
-Copy code
-
-```
-- uses: snowflakedb/snowflake-actions/dcm/<action-name>@v3
-```
-
-#### Authentication
-
-OIDC (OpenID Connect) is the recommended authentication method for CI/CD pipelines because it uses GitHub’s built-in identity
-tokens and requires no stored secrets. For setup instructions and alternative authentication options, see the
-[GitHub Marketplace listing](https://github.com/marketplace/actions/snowflake-actions#authentication).
-
-#### Sample workflows
-
-The [GitHub\_workflows](https://github.com/Snowflake-Labs/snowflake-dcm-projects/tree/main/GitHub_workflows) directory in the
-snowflake-labs DCM repository contains ready-to-use workflow files that compose the reusable actions into complete CI/CD pipelines.
-You can copy them into your repository’s `.github/workflows/` directory and customize them for your project. For full setup
-instructions, see the
-[sample workflows README](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/README.md).
-
-All sample workflows read the Snowflake `account_identifier` and `project_owner` role directly from the manifest targets,
-so that environment-specific configuration lives in the version-controlled `manifest.yml` rather than in duplicated
-GitHub secrets. Only the service user credentials are stored as secrets.
-
-The sample workflows demonstrate the following patterns applicable to any DCM Projects CI/CD setup:
-
-- **Manifest-driven configuration**: Each workflow reads `account_identifier`, `project_owner`, and `project_name` from the
-  manifest targets, keeping environment configuration in one place.
-- **Selected `DROP` detection**: The deploy workflow checks the saved `PLAN` result for top-level `DROP` entries for databases, schemas,
-  tables, and stages, and blocks the deployment if any are found. This check doesn’t cover every destructive `ALTER` or nested change, and
-  it doesn’t freeze the fresh changeset that `DEPLOY` computes.
-- **Sequential stage-to-production promotion**: Production deployment starts only after staging deployment succeeds and data quality tests pass.
-- **Pull request comments**: Plan and deploy summaries are posted as comments on the originating pull request.
-
-The following screenshot shows a sample PLAN summary that a workflow posted as a pull request comment.
-
-![GitHub Actions bot comment on a pull request summarizing a DCM PLAN, including created and altered objects](/static/images/dcm-projects/dcm_github_actions_pr_comment.png)
-
-The deployment workflows use the following sequence for each target:
-
-1. Plan: Runs `snow dcm plan` and summarizes the changeset.
-2. Selected `DROP` detection: Checks the saved `PLAN` for top-level `DROP` entries for databases, schemas, tables, or stages.
-3. Deploy: Runs `snow dcm deploy`.
-4. Post-deployment scripts (optional): Runs separate SQL scripts with Jinja variable injection.
-5. Test expectations (optional): Runs `snow dcm test` to validate data quality expectations.
-
-##### Sample workflow: Test connections
-
-- Workflow configuration file: [DCM\_1\_Test\_Connections.yml](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/DCM_1_Test_Connections.yml)
-- Trigger: Manual with the `workflow_dispatch` event
-
-This workflow validates that the GitHub Actions service user can connect to every target environment defined in the manifest. Use it
-when setting up a new repository, onboarding a new account, or debugging authentication issues. The workflow performs the following steps:
-
-- Parses all target names from `manifest.yml` dynamically.
-- Uses a GitHub Actions matrix strategy to test each target in parallel.
-- For each target, verifies the Snowflake connection, reports the connected account, user, and role, and checks whether the connected
-  role matches the DCM project owner.
-- Reports whether the DCM project object already exists and whether the service user has deployment privileges.
-
-##### Sample workflow: Test PR to main
-
-- Workflow configuration file: [DCM\_2\_Test\_PR\_to\_main.yml](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/DCM_2_Test_PR_to_main.yml)
-- Trigger: Pull request opened, synchronized, or reopened against the `main` branch
-
-This workflow runs a PLAN against the production target as an integration test for every pull request. It provides reviewers with a
-summary of the planned changes directly on the pull request. The workflow performs the following steps:
-
-- Runs `snow dcm plan` against the PROD target.
-- Parses `plan_result.json` to summarize CREATE, ALTER, and DROP operations grouped by object domain.
-- Uploads plan artifacts for later inspection.
-- Posts the plan summary as a comment on the pull request.
-- Fails the check if the PLAN fails, blocking the merge.
-
-##### Sample workflow: Deploy to Prod
-
-- Workflow configuration file: [DCM\_3\_Deploy\_to\_Prod.yml](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/DCM_3_Deploy_to_Prod.yml)
-- Trigger: Push to the `main` branch (typically a merged pull request)
-
-This workflow runs the deployment sequence once for the production target. Use it when you don’t need a staging environment or when staging
-is handled separately.
-
-After deployment, the workflow optionally posts a status summary to the originating pull request.
-
-##### Sample workflow: Deploy to Stage then Prod
-
-- Workflow configuration file: [DCM\_4\_Deploy\_to\_Stage\_then\_Prod.yml](https://github.com/Snowflake-Labs/snowflake-dcm-projects/blob/main/GitHub_workflows/DCM_4_Deploy_to_Stage_then_Prod.yml)
-- Trigger: Push to the `main` branch (typically a merged pull request)
-
-This workflow implements a sequential promotion pipeline. Changes are first deployed to staging, validated end-to-end, and only then
-promoted to production. A staging failure prevents production deployment from starting. A failure after production deployment starts can
-leave partial production changes, and a test failure occurs after production has changed.
-
-The workflow runs the deployment sequence first for STAGE and then for PROD. Production deployment starts only after all staging steps pass.
-After all jobs complete, the workflow optionally posts a final
-status summary to the originating pull request.
+To set up collaboration workflows and automate PLAN and DEPLOY with CI/CD pipelines, see
+[Collaboration and CI/CD for DCM Projects](/user-guide/dcm-projects/dcm-projects-cicd).
 
 ## Frequently asked questions (FAQ)
 

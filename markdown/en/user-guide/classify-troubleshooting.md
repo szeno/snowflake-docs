@@ -31,15 +31,26 @@ classification fails, you can find details in these places:
 - **SQL**: Query the event table with the examples in [Listing general errors](#label-classify-troubleshooting-listing-general) and
   [Listing object-level classification errors](#label-classify-troubleshooting-listing-object). For known tag-related failure codes, see
   [Tag-related error messages](#label-classify-troubleshooting-error-message-examples).
-
-In general, there is a delay before Snowflake tries to classify the object again. Every additional failed attempt is logged to the event
-table. This delay and retry process continues until the object is fixed or removed from automatic classification.
+- **Account Usage**: Query the `ERROR_MESSAGE` column of the
+  [DATA\_CLASSIFICATION\_LATEST view](/sql-reference/account-usage/data_classification_latest) for the most recent error per table.
 
 Note
 
-To help avoid unnecessary costs, Snowflake waits additional time to retry classification for some errors, such as timeouts. For these
-timeout errors, Snowflake doesn’t retry classification until all objects are reclassified; the schedule on which objects are reclassified
-is controlled by the `maximum_classification_validity_days` key of the classification profile.
+By default, retryable classification failures are logged to the event table after three consecutive failed attempts. The
+[DATA\_CLASSIFICATION\_LATEST view](/sql-reference/account-usage/data_classification_latest) also reports errors after three consecutive failures, except for timeouts,
+which appear after the first failure. Non-retryable failures, such as timeouts, are logged to the event table on their first occurrence.
+
+## How Snowflake retries a failed object
+
+Snowflake retries automatic classification on its standard schedule until an object fails three consecutive times. After three
+failures, Snowflake reduces the retry frequency to no more than once every 22 hours to prevent continuous retries on persistent errors.
+Subsequent failed attempts are logged to the event table when logging is enabled.
+
+Note
+
+Non-retryable failures, such as timeouts, don’t follow the 22-hour interval. To help avoid unnecessary costs, Snowflake retries these
+objects only after the interval set by `maximum_classification_validity_days` in the classification profile has elapsed since the last
+failure.
 
 If you want to prevent classification events from being logged, set the [ENABLE\_AUTOMATIC\_SENSITIVE\_DATA\_CLASSIFICATION\_LOG](/sql-reference/parameters#label-enable-automatic-sensitive-data-classification-log) account
 parameter to FALSE.
@@ -82,7 +93,73 @@ SELECT
   ORDER BY TIMESTAMP DESC;
 ```
 
+Important
+
+Always filter on the `event_type` attribute, as this example does, rather than on the presence of the `error_message` payload key.
+Classification emits two unrelated event types, and both of them use an `error_message` key:
+
+- `CLASSIFICATION_ERROR` for classification failures. The payload is one of the messages described in
+  [Classification error messages](#label-classify-troubleshooting-classification-error-messages).
+- `TAGGING_ERROR` for failures applying user-defined tags. The payload is structured JSON, not one of those messages. For details, see
+  [Tag-related error messages](#label-classify-troubleshooting-error-message-examples).
+
+For example, the following query returns only `TAGGING_ERROR` events:
+
+Copy code
+
+```
+SELECT
+  RECORD_ATTRIBUTES:"object_name"::string AS object_name,
+  PARSE_JSON(VALUE):"error_message" AS error_message,
+  timestamp
+  FROM <event_db>.<event_schema>.<event_table>
+  WHERE record_type = 'LOG'
+    AND scope:name = 'snow.automatic_sensitive_data_classification'
+    AND RECORD_ATTRIBUTES:"event_type" = 'TAGGING_ERROR'
+  ORDER BY timestamp DESC;
+```
+
+## Classification error messages
+
+Classification error details appear in `CLASSIFICATION_ERROR` events and in the `ERROR_MESSAGE` column of the
+[DATA\_CLASSIFICATION\_LATEST](/sql-reference/account-usage/data_classification_latest) view. The messages available in the event table can
+differ from those in the view.
+
+Each message includes its originating Snowflake error code in parentheses when the code is available. For example,
+`Failed to classify due to timeout while reading the data (000630).` Because this standard error code provides the most specific details about the issue, review it before taking
+corrective action.
+
+For descriptions and causes of specific error messages, see
+[Data Classification Latest Error Messages](/sql-reference/account-usage/data_classification_latest#label-data-classification-latest-error-messages) in the
+[DATA\_CLASSIFICATION\_LATEST](/sql-reference/account-usage/data_classification_latest) documentation.
+
+The following table lists solutions for messages reported by both the view and the event table:
+
+| Message | Solution |
+| --- | --- |
+| `Failed to classify the view due to a SQL compilation error` | Repair the view definition, then recreate the view. |
+| `Failed to classify due to data format issues` | Correct the offending values, or cast them to a valid type. |
+| `Failed to classify the secure object` | Check the appended error code for the cause. Commonly, the secure view references an object that was dropped. |
+| `Failed to classify the external table as it was marked invalid` | Refresh or recreate the external table. |
+| `Failed to classify 'Iceberg External Table' as it has been deprecated` | Migrate the table to [Apache Iceberg™ tables](/user-guide/tables-iceberg). |
+| `Failed to classify as the data in the table was inaccessible` | Repair the storage integration, the stage, or the cloud IAM role that Snowflake uses to read the data. |
+| `Failed to classify as one or more column(s) are mapped to multiple masking policies` | Resolve the conflict so that each column maps to a single masking policy. |
+| `Failed to classify due to timeout while reading the data` | You can’t fix this error yourself. Contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support). |
+| `Failed to classify` | Check the appended error code and the event table for details. If you can’t resolve the error, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support) with the error code. |
+
+Expand
+
+Show lessSee more
+
+The event table can also report `Failed to classify due to an invalid custom classifier configuration`. This message indicates an
+invalid regular expression, a missing category, or an invalid score in a custom classifier. Correct the custom classifier configuration.
+The `DATA_CLASSIFICATION_LATEST` view can instead report this failure as `Failed to classify`.
+
 ## Tag-related error messages
+
+Snowflake emits `TAGGING_ERROR` events when it can’t apply user-defined tags to a classified column. Unlike
+[Classification Error Messages](#label-classify-troubleshooting-classification-error-messages), `TAGGING_ERROR` payloads are structured
+JSON.
 
 |  |  |
 | --- | --- |

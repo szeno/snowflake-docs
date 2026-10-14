@@ -26,7 +26,7 @@ a strong balance between features, level of support, and cost.
 
 ### Enterprise Edition
 
-Enterprise Edition provides all the features and services of [Overview of editions](#label-snowflake-editions-standard), with additional features
+Enterprise Edition provides all the features and services of [Standard Edition](#label-snowflake-editions-standard), with additional features
 that are designed specifically for the needs of large-scale enterprises and organizations.
 
 ### Business Critical Edition

@@ -517,3 +517,790 @@ DATEADD(year, col1, '2024-02-29') /*** SSC-FDM-RS0009 - DATEADD OVER A FEB-29 DA
 - Test leap-day inputs with non-constant year quantities and define the required behavior for non-leap target years.
 - Add explicit date-adjustment logic when Snowflake’s result differs from the source requirement.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-FDM-RS0010
+
+The Redshift S3 credentials cannot be translated.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0010 while converting Redshift code because the Snowflake result is not the same as the source. The Redshift s3 credentials cannot be translated. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+COPY copy_csv_t1 FROM 's3://bucket/key' IAM_ROLE 'arn:aws:iam::123456789012:role/redshift-role' FORMAT AS CSV;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'bucket_integration' WITH ACCESS TO 's3://bucket/key' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+COPY INTO copy_csv_t1
+FROM 's3://bucket/key'
+STORAGE_INTEGRATION = bucket_integration
+FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0010 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0011
+
+PARALLEL OFF was translated to SINGLE = TRUE.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0011 while converting Redshift code because the Snowflake result is not the same as the source. Redshift parallel off was translated to single = true. Snowflake writes one file and fails when it exceeds the maximum file size instead of splitting it as Redshift does. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+UNLOAD ('SELECT id FROM sales.orders')
+TO 's3://company-exports/single/'
+IAM_ROLE DEFAULT
+CSV
+PARALLEL OFF;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'company_exports_integration' WITH ACCESS TO 's3://company-exports/single/' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0011 - REDSHIFT PARALLEL OFF WAS TRANSLATED TO SINGLE = TRUE. SNOWFLAKE WRITES ONE FILE AND FAILS WHEN IT EXCEEDS THE MAXIMUM FILE SIZE INSTEAD OF SPLITTING IT AS REDSHIFT DOES. **
+COPY INTO 's3://company-exports/single/'
+FROM
+(
+SELECT
+id
+FROM
+sales.orders
+)
+STORAGE_INTEGRATION = company_exports_integration
+FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"')
+SINGLE = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0011 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0012
+
+Partition columns stay in the unloaded data.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0012 while converting Redshift code because the Snowflake result is not the same as the source. Redshift omits the partition columns from the unloaded files unless ‘include’ is used. The generated Snowflake partition by expression always keeps them in the projected data. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+UNLOAD ('SELECT id, Year FROM sales.orders')
+TO 's3://company-exports/folded/'
+IAM_ROLE DEFAULT
+CSV
+PARTITION BY (Year);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'company_exports_integration' WITH ACCESS TO 's3://company-exports/folded/' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0012 - REDSHIFT OMITS THE PARTITION COLUMNS FROM THE UNLOADED FILES UNLESS 'INCLUDE' IS USED. THE GENERATED SNOWFLAKE PARTITION BY EXPRESSION ALWAYS KEEPS THEM IN THE PROJECTED DATA. **
+COPY INTO 's3://company-exports/folded/'
+FROM
+(
+SELECT
+id,
+Year
+FROM
+sales.orders
+)
+PARTITION BY CONCAT('year=', Year)
+STORAGE_INTEGRATION = company_exports_integration
+FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0012 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0013
+
+CASCADE was not carried over to the dynamic table refresh
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0013 while converting Redshift code because the Snowflake result is not the same as the source. Cascade was not carried over to the dynamic table refresh. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+REFRESH MATERIALIZED VIEW prod.vw_rpt_general_ledger CASCADE;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0013 - THE CASCADE OPTION WAS NOT CARRIED OVER: REDSHIFT ALSO REFRESHES MATERIALIZED VIEWS DEPENDING ON 'prod.vw_rpt_general_ledger', WHILE SNOWFLAKE REFRESHES ONLY 'prod.vw_rpt_general_ledger', SO DEPENDENT DYNAMIC TABLES RELY ON THEIR OWN TARGET_LAG. **
+ALTER DYNAMIC TABLE prod.vw_rpt_general_ledger REFRESH;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0013 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0014
+
+The RESTRICT keyword was removed; it is applied by default in Snowflake
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0014 while converting Redshift code because the Snowflake result is not the same as the source. The restrict keyword was removed, applied by default in Snowflake. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+REFRESH MATERIALIZED VIEW prod.vw_rpt_general_ledger RESTRICT;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0014 - THE RESTRICT KEYWORD WAS REMOVED, APPLIED BY DEFAULT IN SNOWFLAKE. **
+ALTER DYNAMIC TABLE prod.vw_rpt_general_ledger REFRESH;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0014 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0015
+
+The procedure name was renamed to a valid Snowflake identifier.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0015 while converting Redshift code because the Snowflake result is not the same as the source. The procedure name was renamed to a valid Snowflake identifier. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE dev_staging."my-proc-name"() AS $$ BEGIN NULL; END; $$ LANGUAGE plpgsql;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE
+--** SSC-FDM-RS0015 - PROCEDURE NAME 'dev_staging."my-proc-name"' IS NOT A VALID SNOWFLAKE IDENTIFIER UNQUOTED, SO IT WAS RENAMED TO 'dev_staging.my_proc_name'. UPDATE REFERENCES FROM CODE OUTSIDE THIS CONVERSION. **
+dev_staging.my_proc_name ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS $$ BEGIN NULL; END; $$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0015 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0016
+
+The procedure moved to a renamed schema while other objects did not.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0016 while converting Redshift code because the Snowflake result is not the same as the source. The procedure moved to a renamed schema while other objects did not. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE "5_dev"."my-proc-name"() AS $$ BEGIN NULL; END; $$ LANGUAGE plpgsql;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE
+--** SSC-FDM-RS0015 - PROCEDURE NAME '"5_dev"."my-proc-name"' IS NOT A VALID SNOWFLAKE IDENTIFIER UNQUOTED, SO IT WAS RENAMED TO '_5_dev.my_proc_name'. UPDATE REFERENCES FROM CODE OUTSIDE THIS CONVERSION. **
+--** SSC-FDM-RS0016 - THE SCHEMA QUALIFIER OF THIS PROCEDURE WAS RENAMED FROM '"5_dev"' TO '_5_dev'. TABLES AND VIEWS DECLARED IN '"5_dev"' ARE NOT RENAMED BY THIS CONVERSION, SO THE PROCEDURE NOW LIVES IN A DIFFERENT SCHEMA THAN THE OBJECTS ITS BODY REFERENCES WITHOUT A QUALIFIER. **
+_5_dev.my_proc_name ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS $$ BEGIN NULL; END; $$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0016 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0017
+
+MAXERROR has no COPY INTO counterpart, so the load now aborts on the first bad row.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0017 while converting Redshift code because the Snowflake result is not the same as the source. Maxerror has no copy into counterpart, so the load now aborts on the first bad row. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+COPY t1 FROM 's3://bucket/key' IAM_ROLE 'arn:aws:iam::123456789012:role/redshift-role' FORMAT AS CSV MAXERROR 100;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'bucket_integration' WITH ACCESS TO 's3://bucket/key' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0017 - REDSHIFT 'MAXERROR 100' LET THE LOAD CONTINUE UNTIL THAT MANY ROWS HAD FAILED. SNOWFLAKE HAS NO EQUIVALENT COUNT, SO THE GENERATED COPY INTO KEEPS THE DEFAULT ON_ERROR = ABORT_STATEMENT AND STOPS AT THE FIRST BAD ROW. **
+COPY INTO t1
+FROM 's3://bucket/key'
+STORAGE_INTEGRATION = bucket_integration
+FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0017 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0018
+
+Redshift CONVERT to TIMESTAMP may interpret digit-only strings differently in Snowflake.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0018 while converting Redshift code because the Snowflake result is not the same as the source. Redshift convert to timestamp reads digit-only strings as calendar dates. Snowflake cast may read them as unix epoch offsets. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+SELECT CONVERT(timestamp, '20240115') AS r;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  CAST('20240115' AS TIMESTAMP) /*** SSC-FDM-RS0018 - REDSHIFT CONVERT TO TIMESTAMP READS DIGIT-ONLY STRINGS AS CALENDAR DATES. SNOWFLAKE CAST MAY READ THEM AS UNIX EPOCH OFFSETS. ***/ AS r;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0018 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0019
+
+Redshift REAL uses single precision while Snowflake REAL uses double precision.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0019 while converting Redshift code because the Snowflake result is not the same as the source. Redshift real uses single precision. Snowflake real uses double precision, so values may differ. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+SELECT CONVERT(real, '3.14') AS r;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  CAST('3.14' AS REAL) /*** SSC-FDM-RS0019 - REDSHIFT REAL USES SINGLE PRECISION. SNOWFLAKE REAL USES DOUBLE PRECISION, SO VALUES MAY DIFFER. ***/ AS r;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0019 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0020
+
+Redshift TEXT\_TO\_NUMERIC\_ALT converts an empty string to zero while Snowflake TRY\_TO\_NUMBER returns NULL.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0020 while converting Redshift code because the Snowflake result is not the same as the source. Redshift TEXT\_TO\_NUMERIC\_ALT converts an empty string to zero. Snowflake TRY\_TO\_NUMBER returns null for the same input. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+SELECT text_to_numeric_alt('', 10, 2) AS parsed_value;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  TRY_TO_NUMBER('', 10, 2) /*** SSC-FDM-RS0020 - REDSHIFT TEXT_TO_NUMERIC_ALT CONVERTS AN EMPTY STRING TO ZERO. SNOWFLAKE TRY_TO_NUMBER RETURNS NULL FOR THE SAME INPUT. ***/ AS parsed_value;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0020 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0021
+
+OVERWRITE was removed because Snowflake rejects OVERWRITE beside PARTITION BY, and existing partition files are not overwritten.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0021 while converting Redshift code because the Snowflake result is not the same as the source. Overwrite was removed because Snowflake rejects overwrite beside partition by (002328), and existing partition files are not overwritten the way Redshift allowoverwrite would. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+UNLOAD ('SELECT id, year FROM sales.orders')
+TO 's3://company-exports/partover/'
+IAM_ROLE DEFAULT
+CSV
+ALLOWOVERWRITE
+PARTITION BY (year);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'company_exports_integration' WITH ACCESS TO 's3://company-exports/partover/' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0021 - OVERWRITE WAS REMOVED BECAUSE SNOWFLAKE REJECTS OVERWRITE BESIDE PARTITION BY (002328), AND EXISTING PARTITION FILES ARE NOT OVERWRITTEN THE WAY REDSHIFT ALLOWOVERWRITE WOULD. **
+--** SSC-FDM-RS0012 - REDSHIFT OMITS THE PARTITION COLUMNS FROM THE UNLOADED FILES UNLESS 'INCLUDE' IS USED. THE GENERATED SNOWFLAKE PARTITION BY EXPRESSION ALWAYS KEEPS THEM IN THE PROJECTED DATA. **
+COPY INTO 's3://company-exports/partover/'
+FROM
+(
+SELECT
+id,
+year
+FROM
+sales.orders
+)
+PARTITION BY CONCAT('year=', year)
+STORAGE_INTEGRATION = company_exports_integration
+FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0021 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0022
+
+REMOVEQUOTES was mapped to FIELD\_OPTIONALLY\_ENCLOSED\_BY, which parses the character as an optional enclosure instead of only stripping quotes.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0022 while converting Redshift code because the Snowflake result is not the same as the source. FIELD\_OPTIONALLY\_ENCLOSED\_BY replaces removequotes. Redshift only strips the surrounding quotes, while Snowflake parses the character as an optional enclosure, including its escape rules. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+COPY t1 FROM 's3://bucket/key' IAM_ROLE 'arn:aws:iam::123456789012:role/redshift-role' DELIMITER ',' REMOVEQUOTES;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'bucket_integration' WITH ACCESS TO 's3://bucket/key' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0022 - FIELD_OPTIONALLY_ENCLOSED_BY REPLACES REMOVEQUOTES. REDSHIFT ONLY STRIPS THE SURROUNDING QUOTES, WHILE SNOWFLAKE PARSES THE CHARACTER AS AN OPTIONAL ENCLOSURE, INCLUDING ITS ESCAPE RULES. **
+COPY INTO t1
+FROM 's3://bucket/key'
+STORAGE_INTEGRATION = bucket_integration
+FILE_FORMAT = (TYPE = CSV FIELD_DELIMITER = ',' FIELD_OPTIONALLY_ENCLOSED_BY = '"');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0022 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0023
+
+The COPY REGION option was removed because a Snowflake COPY INTO location does not take a region.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0023 while converting Redshift code because the Snowflake result is not the same as the source. The copy region option was removed because a Snowflake copy into location does not take a region. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+COPY t1 FROM 's3://bucket/key' IAM_ROLE 'arn:aws:iam::123456789012:role/redshift-role' REGION 'us-east-1' DELIMITER ',';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'bucket_integration' WITH ACCESS TO 's3://bucket/key' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0023 - REGION 'us-east-1' WAS REMOVED BECAUSE A SNOWFLAKE COPY INTO LOCATION DOES NOT TAKE A REGION. CONFIGURE THE REGION ON THE STORAGE INTEGRATION OR THE STAGE URL. **
+COPY INTO t1
+FROM 's3://bucket/key'
+STORAGE_INTEGRATION = bucket_integration
+FILE_FORMAT = (TYPE = CSV FIELD_DELIMITER = ',');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0023 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0024
+
+FILE\_EXTENSION is ignored when SINGLE = TRUE.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0024 while converting Redshift code because the Snowflake result is not the same as the source. Redshift extension was translated to FILE\_EXTENSION beside single = true. Snowflake ignores FILE\_EXTENSION when single = true, so the unloaded file does not receive that extension. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+UNLOAD ('SELECT id FROM sales.orders')
+TO 's3://company-exports/csv/'
+IAM_ROLE DEFAULT
+CSV
+HEADER
+ALLOWOVERWRITE
+PARALLEL OFF
+EXTENSION 'csv';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'company_exports_integration' WITH ACCESS TO 's3://company-exports/csv/' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+--** SSC-FDM-RS0011 - REDSHIFT PARALLEL OFF WAS TRANSLATED TO SINGLE = TRUE. SNOWFLAKE WRITES ONE FILE AND FAILS WHEN IT EXCEEDS THE MAXIMUM FILE SIZE INSTEAD OF SPLITTING IT AS REDSHIFT DOES. **
+--** SSC-FDM-RS0024 - REDSHIFT EXTENSION WAS TRANSLATED TO FILE_EXTENSION BESIDE SINGLE = TRUE. SNOWFLAKE IGNORES FILE_EXTENSION WHEN SINGLE = TRUE, SO THE UNLOADED FILE DOES NOT RECEIVE THAT EXTENSION. **
+COPY INTO 's3://company-exports/csv/'
+FROM
+(
+SELECT
+id
+FROM
+sales.orders
+)
+STORAGE_INTEGRATION = company_exports_integration
+FILE_FORMAT = (TYPE = CSV FILE_EXTENSION = 'csv' FIELD_OPTIONALLY_ENCLOSED_BY = '"')
+HEADER = TRUE
+OVERWRITE = TRUE
+SINGLE = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0024 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0025
+
+ON\_ERROR = CONTINUE skips a bad row instead of replacing the failed value.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0025 while converting Redshift code because the Snowflake result is not the same as the source. Snowflake ON\_ERROR = continue skips a row containing a conversion error. Redshift ignoreallerrors keeps the row and replaces the failed value. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ssc_scratch_copy_ignore_all_errors()
+AS $$
+BEGIN
+  COPY t1 FROM 's3://bucket/key' IAM_ROLE 'arn:aws:iam::123456789012:role/redshift-role' CSV IGNOREALLERRORS;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ssc_scratch_copy_ignore_all_errors ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS $$
+    BEGIN
+      --** SSC-FDM-RS0010 - REDSHIFT S3 CREDENTIALS HAVE NO SNOWFLAKE COUNTERPART. CREATE A STORAGE INTEGRATION NAMED 'bucket_integration' WITH ACCESS TO 's3://bucket/key' AND GRANT USAGE ON IT BEFORE RUNNING THE GENERATED COPY INTO. **
+      --** SSC-FDM-RS0025 - SNOWFLAKE ON_ERROR = CONTINUE SKIPS A ROW CONTAINING A CONVERSION ERROR. REDSHIFT IGNOREALLERRORS KEEPS THE ROW AND REPLACES THE FAILED VALUE. **
+      COPY INTO t1
+      FROM 's3://bucket/key'
+      STORAGE_INTEGRATION = bucket_integration
+      FILE_FORMAT = (TYPE = CSV FIELD_OPTIONALLY_ENCLOSED_BY = '"')
+      ON_ERROR = CONTINUE;
+    END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0025 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0026
+
+Redshift session configuration parameter has no Snowflake counterpart.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0026 while converting Redshift code because the Snowflake result is not the same as the source. Redshift session configuration parameter has no Snowflake counterpart. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE PROCEDURE reset_parameter()
+AS $$
+BEGIN
+  RESET enable_case_sensitive_identifier;
+  INSERT INTO reset_log VALUES ('after reset');
+END;
+$$ LANGUAGE plpgsql;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE PROCEDURE reset_parameter ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+  $$
+    BEGIN
+--      --** SSC-FDM-RS0026 - SESSION CONFIGURATION PARAMETER 'enable_case_sensitive_identifier' HAS NO SNOWFLAKE COUNTERPART. THE STATEMENT WAS REMOVED. **
+--      RESET enable_case_sensitive_identifier;
+      INSERT INTO reset_log
+      VALUES ('after reset');
+    END;
+  $$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0026 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-RS0029
+
+Redshift truncates or rounds half to even when it casts a fractional value to an integer, while Snowflake rounds half away from zero.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-RS0029 while converting Redshift code because the Snowflake result is not the same as the source. Redshift truncates a fractional value from table rows and rounds a floating-point constant half to even when it casts the value to an integer type. Snowflake rounds half away from zero, so values may differ. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE TABLE measures (f FLOAT8, r REAL, n NUMERIC(10, 2), i INTEGER, s VARCHAR(10));
+SELECT int4(f) AS a, int4(r) AS b, int4(n) AS c, int4(i) AS d, int4(s) AS e, int4(NULL) AS h FROM measures;
+WITH sales AS (SELECT 12.5 AS amount) SELECT int4(amount) AS g FROM sales;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE TABLE measures (
+  f FLOAT8,
+  r REAL,
+  n NUMERIC(10, 2),
+  i INTEGER,
+  s VARCHAR(10)
+)
+;
+SELECT
+  f :: INTEGER /*** SSC-FDM-RS0029 - REDSHIFT TRUNCATES A FRACTIONAL VALUE FROM TABLE ROWS AND ROUNDS A FLOATING-POINT CONSTANT HALF TO EVEN WHEN IT CASTS THE VALUE TO AN INTEGER TYPE. SNOWFLAKE ROUNDS HALF AWAY FROM ZERO, SO VALUES MAY DIFFER. ***/ AS a,
+  r :: INTEGER /*** SSC-FDM-RS0029 - REDSHIFT TRUNCATES A FRACTIONAL VALUE FROM TABLE ROWS AND ROUNDS A FLOATING-POINT CONSTANT HALF TO EVEN WHEN IT CASTS THE VALUE TO AN INTEGER TYPE. SNOWFLAKE ROUNDS HALF AWAY FROM ZERO, SO VALUES MAY DIFFER. ***/ AS b,
+  n :: INTEGER /*** SSC-FDM-RS0029 - REDSHIFT TRUNCATES A FRACTIONAL VALUE FROM TABLE ROWS AND ROUNDS A FLOATING-POINT CONSTANT HALF TO EVEN WHEN IT CASTS THE VALUE TO AN INTEGER TYPE. SNOWFLAKE ROUNDS HALF AWAY FROM ZERO, SO VALUES MAY DIFFER. ***/ AS c,
+  i :: INTEGER AS d,
+  s :: INTEGER AS e,
+  NULL :: INTEGER AS h
+FROM
+  measures;
+WITH sales AS
+(
+  SELECT
+    12.5 AS amount
+)
+SELECT
+  amount :: INTEGER /*** SSC-FDM-RS0029 - REDSHIFT TRUNCATES A FRACTIONAL VALUE FROM TABLE ROWS AND ROUNDS A FLOATING-POINT CONSTANT HALF TO EVEN WHEN IT CASTS THE VALUE TO AN INTEGER TYPE. SNOWFLAKE ROUNDS HALF AWAY FROM ZERO, SO VALUES MAY DIFFER. ***/ AS g
+FROM
+  sales;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-RS0029 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.

@@ -438,7 +438,7 @@ This section covers how to migrate from sending Amazon S3 event notifications di
 queue to using an Amazon Simple Notification Service (SNS) topic for the following scenarios:
 
 - [Refresh directory tables automatically for Amazon S3](/user-guide/data-load-dirtables-auto-s3)
-- [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3)
+- [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3)
 
 When you replicate a directory table or pipe,
 Snowflake binds it to a Snowflake-managed SQS queue in your target account, and creates the queue if needed, to handle automation. You can configure a single SNS topic to
@@ -460,7 +460,7 @@ To migrate, you must meet the following conditions:
 - You have already set up one or more event notifications for your S3 bucket. For instructions, see the topic for your use case:
 
   - [Refreshing Directory Tables Automatically for Amazon S3: Creating a New S3 Event Notification](/user-guide/data-load-dirtables-auto-s3#label-data-load-dirtables-auto-s3-option-1)
-  - [Creating a New S3 Event Notification to Automate Snowpipe](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-option-1)
+  - [Automate Snowpipe for Amazon S3: Send S3 event notifications to Amazon SQS](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-option-1)
 - You have already created a replication or failover group in a target account that includes a stage with a directory table or a pipe.
 
 ### Migrate to an SNS Topic
@@ -477,8 +477,7 @@ To migrate, you must meet the following conditions:
      [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) in that account.
    - Allow Amazon S3 to publish event notifications from your bucket to the SNS topic.
 
-   For instructions, see “Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic” in
-   [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+   For the Amazon S3 statement, see step 2 of [Create the SNS topic and the S3 event notification](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-sns-topic). For the Snowflake statement, see [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription). Both sections are in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 4. In your *source* account, where the directory tables and pipes are primary, call the
    [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns) function. The function subscribes that account’s SQS queue
    to your SNS topic without interrupting metadata synchronization or ingestion work. At the next refresh, Snowflake

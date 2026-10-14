@@ -174,7 +174,7 @@ The warning is also recorded in the agent trace in `SNOWFLAKE.LOCAL.AI_OBSERVABI
 
 In `accept` mode, the agent tries to match the question to the tools the caller can access. If it isn’t confident those tools are enough, it typically explains that it needs access to more tools rather than guessing. If it is confident, it answers with the accessible tools. Give each tool a clear name and a detailed description in the specification so the agent can tell which inaccessible tools would have been relevant. This matching is best-effort: if a tool has no description, the agent has no way to know that tool was needed.
 
-Granting the caller’s default role the privileges in [Additional privileges for tools](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-tool-privileges) is still required for any tool you expect the agent to use. Inaccessible-tool handling doesn’t bypass Snowflake privileges; it only controls whether a missing privilege aborts the whole run.
+Granting the role that authorizes the request the privileges in [Additional privileges for tools](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-tool-privileges) is still required for any tool you expect the agent to use. Inaccessible-tool handling doesn’t bypass Snowflake privileges; it only controls whether a missing privilege aborts the whole run.
 
 ## Change the mode on a versioned agent
 

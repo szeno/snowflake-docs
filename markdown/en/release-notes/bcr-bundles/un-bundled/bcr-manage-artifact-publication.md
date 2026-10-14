@@ -1,8 +1,13 @@
-# Snowflake CoWork: MANAGE ARTIFACT PUBLICATION ON ACCOUNT privilege granted to the PUBLIC role
+# Snowflake CoWork: MANAGE ARTIFACT PUBLICATION ON ACCOUNT privilege granted to the PUBLIC role (Canceled)
 
 Note
 
-This change will be rolled out gradually beginning in June 2026. Please note dates are subject to change.
+This behavior change has been canceled and will not be implemented.
+
+The change was canceled before dashboards became generally available, because Snowflake switched to a new privilege
+model for publishing dashboards to Snowflake CoWork. The behavior and privileges described on this page will be
+removed from the product, and replaced with the following behavior change:
+[MANAGE ACCESS privileges on Artifacts granted to the PUBLIC role](/release-notes/bcr-bundles/un-bundled/bcr-manage-access-dashboard-artifacts).
 
 Users must use a role that has the MANAGE ARTIFACT PUBLICATION ON ACCOUNT privilege to publish or unpublish dashboards to
 Snowflake CoWork. This change affects which roles have the MANAGE ARTIFACT PUBLICATION ON ACCOUNT privilege by default.

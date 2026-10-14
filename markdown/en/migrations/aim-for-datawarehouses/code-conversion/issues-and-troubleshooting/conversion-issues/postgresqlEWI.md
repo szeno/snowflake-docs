@@ -929,3 +929,61 @@ FROM
 
 - Replace `ROWID` references with a stable primary key or another logical row identifier.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-EWI-PG0021
+
+RECORD variable declaration and every loop that binds it were commented out. Snowflake Scripting has no RECORD variable outside a FOR loop row, so remaining references to this name must be reworked manually.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-PG0021 while converting PostgreSQL code because it cannot reproduce the source behavior in Snowflake. Record variable declaration and every loop that binds it were commented out. Snowflake scripting has no record variable outside a for loop row, so remaining references to this name must be reworked manually. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### PostgreSQL
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ssc_rec_outside_loop()
+AS $$
+DECLARE
+  rec RECORD;
+BEGIN
+  rec.rowid := 1;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ssc_rec_outside_loop ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+  $$
+--    DECLARE
+--
+----      !!!RESOLVE EWI!!! /*** SSC-EWI-PG0021 - RECORD VARIABLE DECLARATION AND EVERY LOOP THAT BINDS IT WERE COMMENTED OUT. SNOWFLAKE SCRIPTING HAS NO RECORD VARIABLE OUTSIDE A FOR LOOP ROW, SO REMAINING REFERENCES TO THIS NAME MUST BE REWORKED MANUALLY. ***/!!!
+--      rec RECORD;
+    BEGIN
+      rec.rowid := 1;
+    END;
+  $$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-PG0021 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.

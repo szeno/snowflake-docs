@@ -33,14 +33,17 @@ This optional revocation affects more than Cortex: it also removes `PUBLIC`’s 
 
 ## User requirements
 
-Cortex Agents determines session permissions from the querying user’s default role, not the role active in their session. Every user who calls an agent must have:
+Cortex Agents determines permissions from the Snowflake context of the request. For REST API calls, the authentication method, such as a programmatic access token (PAT), OAuth, key pair authentication, or a session token, identifies the caller. The role used to authorize the request comes from the `X-Snowflake-Role` header, or from the user’s default role if the header is omitted. If the request or session context activates secondary roles, those roles also govern privilege checks and data protection policy evaluation.
 
-- A default role with the privileges described on this page.
-- A default warehouse, with `USAGE` on that warehouse granted to the default role.
+For calls made from Snowsight or CoWork, the role selected in the UI is used to authorize the request. If no role is selected, Snowflake uses the user’s default role.
 
-If either is missing, agent calls fail even when the user’s current role has the required privileges.
+Every user who calls an agent must have:
 
-At a minimum, the default role must be granted `USAGE` on the agent, on the database and schema that contain it, and on the user’s default warehouse:
+- An active role with the privileges described on this page.
+- Access to any secondary roles that must be active for the run.
+- `USAGE` on the warehouses configured for the agent’s tools.
+
+At a minimum, the active role must be granted `USAGE` on the agent and on the database and schema that contain it. Grant `USAGE` on each tool warehouse to a role that is active in the caller’s session:
 
 Copy code
 
@@ -95,7 +98,7 @@ The following privileges control who can create, manage, and use an agent:
 | --- | --- | --- |
 | CREATE AGENT | Schema | Required to create an agent. |
 | USAGE | Agent | Required to query the agent to generate responses. The role also needs `USAGE` on the database and schema containing the agent, along with privileges on the objects used by the agent’s tools. See [Additional privileges for tools](#label-cortex-agents-tool-privileges). |
-| USAGE | Warehouse | Required on the user’s default warehouse to run agent queries and tools. |
+| USAGE | Warehouse | Required on the warehouse configured for a tool to run agent queries and tools. |
 | MODIFY | Agent | Permits updating the agent and removing it with [DROP AGENT](/sql-reference/sql/drop-agent). |
 | MONITOR | Agent | Required to view the agent’s threads, logs, and traces. |
 | OWNERSHIP | Agent | Automatically granted to the role that creates the agent. Can be transferred to another role with [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership). |
@@ -104,15 +107,15 @@ Expand
 
 Show lessSee more
 
-For default role and warehouse requirements, see [User requirements](#label-cortex-agents-user-requirements).
+For role and warehouse requirements, see [User requirements](#label-cortex-agents-user-requirements).
 
 ## Additional privileges for tools
 
-Because the agent runs with the querying user’s default role, that role also needs privileges on the objects used by the agent’s tools:
+Because the agent uses the caller’s session roles, those roles also need privileges on the objects used by the agent’s tools:
 
 Important
 
-`USAGE` on the agent isn’t sufficient on its own. The user’s default role also needs privileges on each tool you expect the agent to use. Grant the privileges in the following table for those tools.
+`USAGE` on the agent isn’t sufficient on its own. A role that is active in the caller’s session also needs privileges on each tool you expect the agent to use. Grant the privileges in the following table for those tools.
 
 By default (`accept`), a missing privilege on a configured tool doesn’t reject the entire run. The agent continues with the tools the role can access and reports the rest as warnings. Set `orchestration.tool_not_accessible` to `reject` or `legacy` if you want the run to fail instead. For modes, which tools Snowflake checks, and warning format, see [Inaccessible tool handling](/user-guide/snowflake-cortex/cortex-agents-inaccessible-tool-handling).
 

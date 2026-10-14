@@ -114,3 +114,23 @@ For each database you selected, you’ll be able to select the schemas.
 Your metadata should start loading automatically. Please allow 24-48 hours to completely generate popularity and lineage.
 
 When the sync is complete, you’ll be able to explore PostgreSQL in Horizon Catalog.
+
+## 4. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).

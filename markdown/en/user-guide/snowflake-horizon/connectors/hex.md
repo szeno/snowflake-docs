@@ -5,6 +5,7 @@ API key. Complete the following steps to connect Hex to Horizon Catalog:
 
 1. [Create an API key in Hex](#1-create-an-api-key-in-hex).
 2. [Create the Hex connection](#2-create-the-hex-connection).
+3. [Set up metadata access](#3-set-up-metadata-access).
 
 Note
 
@@ -64,6 +65,26 @@ the list of collections isn’t known until after that first sync.
 To limit which collections Horizon Catalog keeps syncing, reconfigure the data source and open
 **Select collections**. Deselecting a collection removes its projects from Horizon Catalog on the
 next sync.
+
+## 3. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

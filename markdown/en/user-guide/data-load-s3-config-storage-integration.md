@@ -419,4 +419,6 @@ Note
 - To load or unload data from or to a stage that uses an integration, a role must have the USAGE privilege on the stage. It is not necessary to also have the USAGE privilege on the storage integration.
 - The STORAGE\_INTEGRATION parameter is handled separately from other stage parameters, such as FILE\_FORMAT. Support for these other parameters is the same regardless of the integration used to access your S3 bucket.
 
+To load files from the stage automatically as they arrive, set up Amazon S3 event notifications and a pipe, as described in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+
 **Next:** [AWS data file encryption](/user-guide/data-load-s3-encrypt)

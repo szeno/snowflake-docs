@@ -103,8 +103,8 @@ Consider the following information when you work with storage lifecycle policies
   To evaluate and apply storage lifecycle policy expressions, Snowflake internally and temporarily bypasses any governance policies on a table.
 - **Row timestamps**: You can attach a policy on the METADATA$ROW\_LAST\_COMMIT\_TIME metadata column of a table that
   has ROW\_TIMESTAMP = TRUE, for both expiration and archival policies. This lets you expire or archive rows based on
-  when they were last committed instead of on a column that you maintain. This isn’t supported for
-  dynamic tables. For more information, see [Use row timestamps to measure latency in your pipelines](/user-guide/data-engineering/row-timestamps).
+  when they were last committed instead of on a column that you maintain.
+  For more information, see [Use row timestamps to measure latency in your pipelines](/user-guide/data-engineering/row-timestamps).
 - **Replication**:
 
   - Snowflake replicates storage lifecycle policies and their associations with tables to target accounts, but doesn’t run the policies.
@@ -126,9 +126,6 @@ Consider the following information when you work with storage lifecycle policies
   - Native Apps.
   - User-defined functions (UDFs) with external access and external functions.
   - Python, Java, or Scala UDFs.
-  - [Row timestamps](/user-guide/data-engineering/row-timestamps) on
-    [dynamic tables](/user-guide/dynamic-tables/storage-lifecycle-policies). Attaching a policy that references
-    METADATA$ROW\_LAST\_COMMIT\_TIME to a dynamic table returns an unsupported feature error.
 
 ### Policy behavior and execution
 

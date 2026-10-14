@@ -33,7 +33,7 @@ Create a new pipe that defines the `COPY INTO <table>` statement Snowpipe uses t
 
 Note
 
-Creating a pipe requires the `USAGE` privilege on the database and schema, the `CREATE PIPE` privilege on the schema, the `INSERT` and `SELECT` privileges on the target table, and either the `READ` privilege on an internal stage or the `USAGE` privilege on an external stage. If the pipe uses a named file format, you also need the `USAGE` privilege on the file format. If the pipe sends error notifications, you also need the `USAGE` privilege on its error integration. For more information, see the **Create a pipe** column in [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control).
+Creating a pipe requires the `USAGE` privilege on the database and schema, the `CREATE PIPE` privilege on the schema, the `INSERT` privilege on the target table, and either the `READ` privilege on an internal stage or the `USAGE` privilege on an external stage. If the pipe uses a named file format, you also need the `USAGE` privilege on the file format. If the pipe sends error notifications, you also need the `USAGE` privilege on its error integration. For more information, see the **Create a pipe** column in [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control).
 
 For example, create a pipe in the `mydb.myschema` schema that loads the JSON files staged in the `orders_stage` stage into the `orders` table:
 

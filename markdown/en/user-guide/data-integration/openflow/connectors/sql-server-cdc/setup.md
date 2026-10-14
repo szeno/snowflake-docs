@@ -571,7 +571,7 @@ To install the connector, do the following as a data engineer:
 
    Note
 
-   Before you install the connector, ensure that you have created a database and schema in Snowflake for the connector to store ingested data.
+   Before you install the connector, ensure that you have created a database in Snowflake for the connector to store ingested data.
 4. Authenticate to the deployment with your Snowflake account credentials and select **Allow** when prompted to allow the runtime application to access your Snowflake account. The connector installation process takes a few minutes to complete.
 5. Authenticate to the runtime with your Snowflake account credentials.
 

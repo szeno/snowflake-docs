@@ -119,10 +119,10 @@ Amazon S3Google CloudAzure
 1. Create an SNS topic in each AWS region in which your MLSI has storage locations. Record each topic’s ARN. You pass the ARNs to
    `CREATE NOTIFICATION INTEGRATION` in Scenario A or to
    `SYSTEM$CONVERT_PIPES_TO_MULTI_QUEUE` in Scenario B. For instructions, see
-   [Option 2: Configuring Amazon SNS to automate Snowpipe using SQS notifications](/user-guide/data-load-snowpipe-auto-s3#label-configuring-amazon-sns-for-snowpipe).
+   step 1 of [Create the SNS topic and the S3 event notification](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-sns-topic) in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 2. In each topic’s access policy, allow Amazon S3 to publish to the topic, as
-   described in “Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic” in
-   [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). Don’t add the policy that
+   described in step 2 of [Create the SNS topic and the S3 event notification](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-sns-topic) in
+   [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). Don’t add the policy that
    `SYSTEM$GET_AWS_SNS_IAM_POLICY` returns yet.
 3. On each bucket, configure an S3 event notification that sends object-created
    events for your stage’s path to the SNS topic in the bucket’s region. Use the
@@ -134,25 +134,24 @@ Amazon S3Google CloudAzure
 In Scenario B, do these items only for your secondary location, because your
 existing pipes already use the SNS topic for your primary location, or start using it when you move them from SQS to SNS at the start of Scenario B.
 
-Follow “Prerequisites” in [Configuring Automation Using GCS Pub/Sub](/user-guide/data-load-snowpipe-auto-gcs#label-gcp-pubsub-snowpipe) to create a Pub/Sub
-topic and a subscription. In Scenario A, do this for each storage location. In
-Scenario B, do it only for your secondary location, because your existing
-notification integration already uses the subscription for your primary
-location. For Scenario B, also create a notification integration for the new
-subscription in your source account, as described in “Step 1: Create a
-Notification Integration in Snowflake” in that topic.
+Follow [Step 2: Create a Pub/Sub topic and subscription](/user-guide/data-load-snowpipe-auto-gcs#label-gcp-pubsub-snowpipe) in
+[Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs).
+In Scenario A, do this for each storage location. In Scenario B, do it only for
+your secondary location, because your existing notification integration already
+uses the subscription for your primary location. For Scenario B, also create a
+notification integration for the new subscription in your source account, as
+described in [Create a notification integration](/user-guide/data-load-snowpipe-auto-gcs#label-data-load-snowpipe-auto-gcs-integration).
 
 Make the notifications for your secondary location cover the same paths as the
 notifications for your primary location.
 
-Follow “Step 1: Configuring the Event Grid Subscription” in
-[Configuring Automation With Azure Event Grid](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation), and then the “Retrieve the Storage
-Queue URL and Tenant ID” section of Step 2. Skip the “Create a Storage Account
-for Data Files” section, because your storage location already exists. In
-Scenario A, do this for each storage location. In Scenario B, do it only for
+Follow [Step 2: Create a storage queue and an Event Grid subscription](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation) in
+[Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure). Then get the queue URL and tenant ID, as
+described in step 1 of [Create a notification integration](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-integration).
+In Scenario A, do this for each storage location. In Scenario B, do it only for
 your secondary location, and also create a notification integration for that
-queue in your source account, as described in “Step 2: Creating the
-Notification Integration” in that topic.
+queue in your source account, as described in step 2 of
+[Create a notification integration](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-integration).
 
 Make the Event Grid subscription for your secondary location cover the same
 paths as the subscription for your primary location.
@@ -270,14 +269,14 @@ that hosts your primary location:
 
 Amazon S3Google CloudAzure
 
-Follow “Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic” in
-[Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+Complete the steps in [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription) in
+[Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
-Follow “Step 2: Grant Snowflake Access to the Pub/Sub Subscription” in
-[Configuring Automation Using GCS Pub/Sub](/user-guide/data-load-snowpipe-auto-gcs#label-gcp-pubsub-snowpipe).
+Follow [Step 4: Grant Snowflake access to the subscription](/user-guide/data-load-snowpipe-auto-gcs#label-snowpipe-gcs-grant-pubsub-access) in
+[Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs).
 
-Follow “Grant Snowflake Access to the Storage Queue” in
-[Configuring Automation With Azure Event Grid](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation).
+Follow [Step 4: Grant Snowflake access to the storage queue](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-grant-queue) in
+[Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure).
 
 After you create an MQNI, you can use it to create a new pipe in your source
 account with the [CREATE PIPE](/sql-reference/sql/create-pipe) command. The
@@ -339,8 +338,7 @@ step in your source account unless the step names another account:
    queue to the topic. Also allow Snowflake to subscribe your target account’s SQS queue:
    Snowflake subscribes that queue to the topic at the next refresh. To get each
    account’s policy statement, run `SYSTEM$GET_AWS_SNS_IAM_POLICY` with the
-   topic ARN once in your source account and once in your target account. For instructions, see “Step 1: Subscribe the Snowflake SQS Queue to
-   the SNS Topic” in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+   topic ARN once in your source account and once in your target account. For the Amazon S3 statement, see step 2 of [Create the SNS topic and the S3 event notification](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-sns-topic). For the Snowflake statement, see [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription). Both sections are in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
    Item 5 points the SQS-only pipes’ event notifications at this topic. Every
    subscriber to the topic, such as an AWS Lambda function, then also receives
@@ -498,7 +496,7 @@ the example in [Rebind SQS-only pipes](/user-guide/multi-location-resilience-dat
 For each new pipe, run `DESCRIBE PIPE` in your source account, and copy the ARN
 in the `notification_channel` column. Then, on your primary bucket, make sure that an S3 event notification for the pipe’s path targets that ARN, as described in
 [Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs)
-in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). Pipes that load from the same bucket share one queue, so an existing notification on the bucket might already cover the pipe’s path. If one does, confirm that it targets that ARN. If it targets an earlier Snowflake queue, update it to target that ARN. If it serves another application, such as an AWS Lambda function, use Amazon SNS with an MQNI instead, as described in [Choose a notification path for Amazon S3](#label-mlsi-choose-aws-notification-path). AWS doesn’t allow notifications whose paths overlap, such as a parent and a child path, so add a notification only for a path that doesn’t overlap an existing one. Don’t configure your secondary bucket yet:
+in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). Pipes that load from the same bucket share one queue, so an existing notification on the bucket might already cover the pipe’s path. If one does, confirm that it targets that ARN. If it targets an earlier Snowflake queue, update it to target that ARN. If it serves another application, such as an AWS Lambda function, use Amazon SNS with an MQNI instead, as described in [Choose a notification path for Amazon S3](#label-mlsi-choose-aws-notification-path). AWS doesn’t allow notifications whose paths overlap, such as a parent and a child path, so add a notification only for a path that doesn’t overlap an existing one. Don’t configure your secondary bucket yet:
 the pipe in your target account uses a different queue. For a pipe that exists
 when you configure your target account, you get that queue after you rebind
 the pipe, as described in [Rebind SQS-only pipes](/user-guide/multi-location-resilience-data-pipelines-setup-target-account#label-mlsi-sqs-rebind). For a

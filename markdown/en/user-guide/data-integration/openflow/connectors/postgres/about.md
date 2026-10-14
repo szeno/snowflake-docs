@@ -53,7 +53,7 @@ Show lessSee more
 - The connector supports PostgreSQL version 11 or later.
 - The connector supports only username and password authentication with PostgreSQL.
 - The connector doesn’t replicate tables with data that exceeds [Snowflake’s type limitations](/sql-reference/intro-summary-data-types).
-  An exception to this rule is date and time data type columns that contain out-of-range values. For more information, see [Out of range value support](#label-supported-pg-date-time-data-type-value).
+  `DATE`, `TIMESTAMP`, and `TIMESTAMPTZ` values outside the Snowflake range are an exception: the connector replaces them with a placeholder instead of stopping replication. For more information, see [Date and time values outside Snowflake limits](#label-supported-pg-date-time-data-type-value).
 - The connector requires every replicated table to have a supported identity key
   configuration: either a primary key with replica identity `DEFAULT`, a unique
   index with replica identity `USING INDEX` (see
@@ -350,26 +350,29 @@ The connector supports replicating tables with [TOAST values](https://www.postgr
 
 Whenever the connector encounters a TOASTed value in the CDC stream, it substitutes a default placeholder of `__previous_value_unchanged`, formatted for the given column type, and stores it in the journal table. The `MERGE` query then accounts for placeholder values, so that the destination table always contains the last non-TOASTed value.
 
-### Out of range value support
+### Date and time values outside Snowflake limits
 
-The connector supports replicating tables with columns of types `date`, `timestamp`, and `timestamptz` that contain out-of-range values.
-If the connector encounters an out-of-range value in the CDC stream, it substitutes a default placeholder based on the type of the column.
+Snowflake `DATE` accepts years from -9999 through 9999. Snowflake `TIMESTAMP_NTZ` and `TIMESTAMP_LTZ` accept years from 1 through 9999. When a source value is outside the range of its Snowflake type, the connector replaces it with a placeholder.
 
-**Placeholder values for out-of-range values**
+The following table lists each replaced value and the placeholder written to Snowflake:
 
-| Column type | Placeholder value |
-| --- | --- |
-| `date` | `-9999-01-01` through `9999-12-31`. |
-| `timestamp` | `0001-01-01 00:00:00` through `9999-12-31 23:59:59.999999999`. |
-| `timestamptz` | `0001-01-01 00:00:00+00` through `9999-12-31 23:59:59.999999999+00`. |
+| Source type | Snowflake type | Values replaced | Placeholder |
+| --- | --- | --- | --- |
+| `DATE` | `DATE` | Years 10000 through 5874897 | `9999-12-31` |
+| `infinity` | `9999-12-31` |
+| `-infinity` | `-9999-01-01` |
+| `TIMESTAMP` | `TIMESTAMP_NTZ` | Years 4713 BC through 1 BC | `0001-01-01 00:00:00` |
+| Years 10000 through 294276 | `9999-12-31 23:59:59.999999999` |
+| `infinity` | `9999-12-31 23:59:59.999999999` |
+| `-infinity` | `0001-01-01 00:00:00` |
+| `TIMESTAMPTZ` | `TIMESTAMP_LTZ` | Years 4713 BC through 1 BC in UTC | `0001-01-01 00:00:00+00` |
+| Years 10000 through 294276 in UTC | `9999-12-31 23:59:59.999999999+00` |
+| `infinity` | `9999-12-31 23:59:59.999999999+00` |
+| `-infinity` | `0001-01-01 00:00:00+00` |
 
 Expand
 
 Show lessSee more
-
-Note
-
-`-Infinity` and `Infinity` values are also replaced with the respective placeholders for all three types.
 
 # Understanding data retention
 

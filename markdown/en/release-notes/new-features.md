@@ -45,6 +45,8 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
+- [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
 - [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
 - [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)

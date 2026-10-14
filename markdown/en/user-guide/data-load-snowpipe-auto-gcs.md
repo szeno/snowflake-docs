@@ -1,409 +1,283 @@
-# Automating Snowpipe for Google Cloud Storage
+# Automate Snowpipe for Google Cloud Storage
 
-This topic provides instructions for triggering Snowpipe data loads from external stages on Google Cloud Storage automatically using [Google Cloud Pub/Sub](https://cloud.google.com/storage/docs/reporting-changes) messages for Google Cloud Storage (GCS) events.
+This topic describes how to set up a pipe that loads files from a Google Cloud Storage bucket as soon as they arrive. When a file lands in the bucket, Google Cloud Storage publishes a message to a [Google Cloud Pub/Sub](https://cloud.google.com/storage/docs/pubsub-notifications) topic. Snowflake reads the message from a subscription to that topic, and Snowpipe loads the file into your target table. For an overview of automated loading on every cloud provider, see [Automate Snowpipe with cloud event notifications](/user-guide/data-load-snowpipe-auto).
 
-Note that only `OBJECT_FINALIZE` events trigger Snowpipe to load files. Snowflake recommends that you only send supported events for Snowpipe to reduce costs, event noise, and latency.
+To set up automated loading from Google Cloud Storage, complete the following steps:
 
-## Cloud platform support
+1. [Create a storage integration and an external stage](#label-data-load-snowpipe-auto-gcs-stage) so that Snowflake can read the bucket.
+2. [Create a Pub/Sub topic and subscription](#label-gcp-pubsub-snowpipe) that receive messages about new files.
+3. [Create a notification integration](#label-data-load-snowpipe-auto-gcs-integration) that points to the subscription.
+4. [Grant Snowflake access to the subscription](#label-snowpipe-gcs-grant-pubsub-access).
+5. [Create the pipe](#label-data-load-snowpipe-auto-gcs-pipe).
+6. [Test the pipe](#label-data-load-snowpipe-auto-gcs-verify).
+7. [Load the files that are already in the bucket](#label-data-load-snowpipe-auto-gcs-existing-files).
 
-Triggering automated Snowpipe data loads using GCS Pub/Sub event messages is supported by Snowflake accounts hosted on [all supported cloud platforms](/user-guide/intro-cloud-platforms).
+The examples in this topic load JSON files from the `gcs://mybucket/orders/` path into the `mydb.myschema.orders` table. They use the `orders_pipe_owner` role from [Create a role to own the pipe (recommended)](#label-data-load-snowpipe-auto-gcs-owner-role). If you skip that section, use a role that has the required privileges. The Google Cloud project is named `my-project`.
 
-## Configuring secure access to Cloud Storage
+## Before you begin
 
-Note
+Make sure that you have the following:
 
-If you have already configured secure access to the GCS bucket that stores your data files, you can skip this section.
+- **A target table.** Snowpipe loads files into an existing standard table or [Apache Iceberg™ table](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-iceberg).
+- **Snowflake privileges.** The role that creates the pipe needs the privileges in the **Create a pipe** column of [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control), including the `USAGE` privilege on the notification integration. Creating the storage integration and the notification integration requires the `CREATE INTEGRATION` privilege on the account, which only the `ACCOUNTADMIN` role has by default.
+- **Google Cloud permissions.** You need permission to create Pub/Sub topics and subscriptions, to configure notifications on the bucket, and to grant IAM roles on the subscription and the project.
+- **The Google Cloud CLI.** The examples in this topic use the [gcloud CLI](https://cloud.google.com/sdk/docs/install). You can also complete the steps in the Google Cloud console.
 
-This section describes how to configure a Snowflake storage integration object to delegate authentication responsibility for cloud storage to a Snowflake identity and access management (IAM) entity.
+## Create a role to own the pipe (recommended)
 
-This section describes how to use storage integrations to allow Snowflake to read data from and write to a Google Cloud Storage bucket referenced in an external
-(that is, Cloud Storage) stage. Integrations are named, first-class Snowflake objects that avoid the need for passing explicit cloud provider credentials such as
-secret keys or access tokens; instead, integration objects reference a Cloud Storage service account. An administrator in your organization grants the service
-account permissions in the Cloud Storage account.
+Snowpipe loads files with the privileges of the role that owns the pipe. To follow the principle of least privilege, create a role that has only the privileges that the pipe needs, and create the pipe with that role. If you create the pipe with a different role, you can [transfer ownership](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-transfer-ownership) later, but you must pause the pipe to do so.
 
-Administrators can also restrict users to a specific set of Cloud Storage buckets (and optional paths) accessed by external stages that use the integration.
-
-Note
-
-- Completing the instructions in this section requires access to your Cloud Storage project as a project editor. If you are not a project
-  editor, ask your Cloud Storage administrator to perform these tasks.
-- Confirm that Snowflake supports the Google Cloud Storage region that your storage is hosted in. For more information, see
-  [Supported cloud regions](/user-guide/intro-regions).
-
-The following diagram shows the integration flow for a Cloud Storage stage:
-
-![Google Cloud Storage Stage Integration Flow](/static/images/storage-integration-gcs.png)
-
-1. An external (that is, Cloud Storage) stage references a storage integration object in its definition.
-2. Snowflake automatically associates the storage integration with a Cloud Storage service account created for your account. Snowflake creates a single service account that is referenced by all GCS storage integrations in your Snowflake account.
-3. A project editor for your Cloud Storage project grants permissions to the service account to access the bucket referenced in the stage definition. Note that many external stage objects can reference different buckets and paths and use the same integration for authentication.
-
-When a user loads or unloads data from or to a stage, Snowflake verifies the permissions granted to the service account on the bucket before allowing or denying access.
-
-**In this Section:**
-
-## Step 1: Create a Cloud Storage integration in Snowflake
-
-Create an integration using the [CREATE STORAGE INTEGRATION](/sql-reference/sql/create-storage-integration) command. An integration is a Snowflake object that delegates authentication responsibility for external cloud storage to a Snowflake-generated entity (that is, a Cloud Storage service account). For accessing Cloud Storage buckets, Snowflake creates a service account that can be granted permissions to access the bucket(s) that store your data files.
-
-A single storage integration can support multiple external (that is, GCS) stages. The URL in the stage definition must align with the GCS buckets (and optional paths) specified for the STORAGE\_ALLOWED\_LOCATIONS parameter.
-
-Note
-
-Only account administrators (users with the ACCOUNTADMIN role) or a role with the global CREATE INTEGRATION privilege can execute this SQL command.
+For example, the following statements create a role named `orders_pipe_owner` that can create a pipe that loads the `orders` table. In later steps, you also grant the role privileges on the stage and the notification integration.
 
 Copy code
 
 ```
-CREATE STORAGE INTEGRATION <integration_name>
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'GCS'
+USE ROLE SECURITYADMIN;
+
+CREATE ROLE IF NOT EXISTS orders_pipe_owner;
+
+GRANT USAGE ON DATABASE mydb TO ROLE orders_pipe_owner;
+GRANT USAGE, CREATE PIPE ON SCHEMA mydb.myschema TO ROLE orders_pipe_owner;
+GRANT INSERT ON TABLE mydb.myschema.orders TO ROLE orders_pipe_owner;
+
+-- Let users with the SYSADMIN role use and manage the new role.
+GRANT ROLE orders_pipe_owner TO ROLE SYSADMIN;
+```
+
+## Step 1: Create a storage integration and an external stage
+
+Snowpipe reads files through an external stage that points to your bucket. If you already have an external stage for the path that you want to load, make sure that its URL ends with a forward slash (`/`). If you created a role to own the pipe, grant it the `USAGE` privilege on the stage, as shown at the end of this step. Then continue with [Step 2](#label-gcp-pubsub-snowpipe).
+
+To create a storage integration, grant its service account access to the bucket, and create a stage, follow the steps in [Configure an integration for Google Cloud Storage](/user-guide/data-load-gcs-config). Creating a stage that uses a storage integration requires the `CREATE STAGE` privilege on the schema and the `USAGE` privilege on the integration. If you just created the pipe owner role, switch from the `SECURITYADMIN` role to a role that has these privileges. For example:
+
+Copy code
+
+```
+CREATE STAGE mydb.myschema.orders_stage
+  URL = 'gcs://mybucket/orders/'
+  STORAGE_INTEGRATION = my_gcs_int;
+```
+
+Important
+
+End the stage URL with a forward slash (`/`). Without it, the stage also includes every folder and file whose name starts with the same characters. For example, `gcs://mybucket/orders` also includes `gcs://mybucket/orders_archive/`, so the pipe loads files that you didn’t intend.
+
+To confirm that Snowflake can read the bucket, list the files in the stage:
+
+Copy code
+
+```
+LIST @mydb.myschema.orders_stage;
+```
+
+If the command returns an access error, check the storage integration with [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration).
+
+If you created a role to own the pipe, grant it the `USAGE` privilege on the stage:
+
+Copy code
+
+```
+GRANT USAGE ON STAGE mydb.myschema.orders_stage TO ROLE orders_pipe_owner;
+```
+
+## Step 2: Create a Pub/Sub topic and subscription
+
+Google Cloud Storage publishes a message to a Pub/Sub topic when a file is created in the bucket, and Snowflake pulls the messages from a subscription to the topic.
+
+If you already have a Pub/Sub subscription and a notification integration for Snowflake, you can reuse them. Create a notification on the bucket that publishes to that subscription’s topic, as shown in the first step of this section. Specify the topic by its full name, such as `--topic=projects/my-project/topics/snowpipe-orders`. If you specify only the topic ID, the command looks for the topic in your default Google Cloud project and creates it there if it doesn’t exist. Then continue with [Step 5](#label-data-load-snowpipe-auto-gcs-pipe). If you created a role to own the pipe, first grant it the `USAGE` privilege on the existing integration, as shown at the end of [Step 3](#label-data-load-snowpipe-auto-gcs-integration). Use a role that owns the integration or has the `MANAGE GRANTS` privilege, such as `SECURITYADMIN`.
+
+The commands in this step and in Step 4 use your default Google Cloud project. To use the `my-project` project from the examples, first run `gcloud config set project my-project`.
+
+1. Create a notification on the bucket that publishes `OBJECT_FINALIZE` events for the path that the pipe loads. If the topic doesn’t exist, the command creates it and lets Google Cloud Storage publish to it:
+
+   Copy code
+
+   ```
+   gcloud storage buckets notifications create gs://mybucket \
+     --topic=snowpipe-orders \
+     --event-types=OBJECT_FINALIZE \
+     --object-prefix=orders/ \
+     --payload-format=json
+   ```
+
+   Snowpipe loads files only for `OBJECT_FINALIZE` events, which Google Cloud Storage sends when an object is created or overwritten. Send only this event type, and set `--object-prefix` to the path that your pipes load, to reduce event noise and latency. To cover every pipe on the bucket, omit `--object-prefix`. Keep `--payload-format=json`: Snowpipe reads the file details from the JSON message body. If a message has no payload, Snowpipe discards it without reporting an error, and the file never loads. For more information, see [Configure Pub/Sub notifications for Cloud Storage](https://cloud.google.com/storage/docs/reporting-changes) in the Google Cloud documentation.
+2. Create a subscription to the topic. Snowflake supports only subscriptions that use the default pull delivery type. Push subscriptions aren’t supported. By default, Pub/Sub deletes a subscription that has no subscriber activity, such as pulls, for 31 days. The example sets `--expiration-period=never` so that the subscription isn’t deleted if no pipe reads from it for a while.
+
+   Copy code
+
+   ```
+   gcloud pubsub subscriptions create snowpipe-orders-sub \
+     --topic=snowpipe-orders \
+     --expiration-period=never
+   ```
+3. Get the full name of the subscription, which you use in [Step 3](#label-data-load-snowpipe-auto-gcs-integration):
+
+   Copy code
+
+   ```
+   gcloud pubsub subscriptions describe snowpipe-orders-sub --format="value(name)"
+   ```
+
+   The name has the form `projects/my-project/subscriptions/snowpipe-orders-sub`.
+
+Use this subscription only for Snowflake. If another application also pulls messages from it, each consumer receives only some of the messages, and the pipe misses files. If other applications need the same messages, create a separate subscription to the topic for each of them.
+
+## Step 3: Create a notification integration
+
+A notification integration is a Snowflake object that stores the name of your subscription and identifies the Google Cloud service account that Snowflake uses to read it. Create the integration with the [CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration-queue-inbound-gcp) command:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+CREATE NOTIFICATION INTEGRATION my_gcs_notification_int
+  TYPE = QUEUE
+  NOTIFICATION_PROVIDER = GCP_PUBSUB
   ENABLED = TRUE
-  STORAGE_ALLOWED_LOCATIONS = ('gcs://<bucket>/<path>/', 'gcs://<bucket>/<path>/')
-  [ STORAGE_BLOCKED_LOCATIONS = ('gcs://<bucket>/<path>/', 'gcs://<bucket>/<path>/') ]
+  GCP_PUBSUB_SUBSCRIPTION_NAME = 'projects/my-project/subscriptions/snowpipe-orders-sub';
 ```
 
-Where:
+Keep the following in mind:
 
-- `integration_name` is the name of the new integration.
-- `bucket` is the name of a Cloud Storage bucket that stores your data files (for example, `mybucket`). The required STORAGE\_ALLOWED\_LOCATIONS parameter and optional STORAGE\_BLOCKED\_LOCATIONS parameter restrict or block access to these buckets, respectively, when stages that reference this integration are created or modified.
-- `path` is an optional path that can be used to provide granular control over objects in the bucket.
+- Snowflake uses one service account for all of the Pub/Sub notification integrations in your account. It’s different from the service account that your storage integration uses, so you grant access to each one separately.
+- Each notification integration reads from one subscription. Several pipes can use the same notification integration, but you can’t create a pipe that uses a different integration for a subscription that another pipe already reads.
 
-The following example creates an integration that explicitly limits external stages that use the integration to reference either of two buckets and paths. In a later step, we will create an external stage that references one of these buckets and paths.
-
-Additional external stages that also use this integration can reference the allowed buckets and paths:
-
-> Copy code
->
-> ```
-> CREATE STORAGE INTEGRATION gcs_int
->   TYPE = EXTERNAL_STAGE
->   STORAGE_PROVIDER = 'GCS'
->   ENABLED = TRUE
->   STORAGE_ALLOWED_LOCATIONS = ('gcs://mybucket1/path1/', 'gcs://mybucket2/path2/')
->   STORAGE_BLOCKED_LOCATIONS = ('gcs://mybucket1/path1/sensitivedata/', 'gcs://mybucket2/path2/sensitivedata/');
-> ```
-
-## Step 2: Retrieve the Cloud Storage service account for your Snowflake account
-
-Execute the [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) command to retrieve the ID for the Cloud Storage service account that was created automatically for your Snowflake account:
+If you created a role to own the pipe, grant it the `USAGE` privilege on the integration. The role needs this privilege to create a pipe that uses the integration:
 
 Copy code
 
 ```
-DESC STORAGE INTEGRATION <integration_name>;
+GRANT USAGE ON INTEGRATION my_gcs_notification_int TO ROLE orders_pipe_owner;
 ```
 
-Where:
+## Step 4: Grant Snowflake access to the subscription
 
-> - `integration_name` is the name of the integration you created in [Step 1: Create a Cloud Storage integration in Snowflake](#step-1-create-a-cloud-storage-integration-in-snowflake) (in this topic).
-
-For example:
-
-> Copy code
->
-> ```
-> DESC STORAGE INTEGRATION gcs_int;
->
-> +-----------------------------+---------------+-----------------------------------------------------------------------------+------------------+
-> | property                    | property_type | property_value                                                              | property_default |
-> +-----------------------------+---------------+-----------------------------------------------------------------------------+------------------|
-> | ENABLED                     | Boolean       | true                                                                        | false            |
-> | STORAGE_ALLOWED_LOCATIONS   | List          | gcs://mybucket1/path1/,gcs://mybucket2/path2/                               | []               |
-> | STORAGE_BLOCKED_LOCATIONS   | List          | gcs://mybucket1/path1/sensitivedata/,gcs://mybucket2/path2/sensitivedata/   | []               |
-> | STORAGE_GCP_SERVICE_ACCOUNT | String        | service-account-id@project1-123456.iam.gserviceaccount.com                  |                  |
-> +-----------------------------+---------------+-----------------------------------------------------------------------------+------------------+
-> ```
-
-The STORAGE\_GCP\_SERVICE\_ACCOUNT property in the output shows the Cloud Storage service account created for your Snowflake account (that is, `service-account-id@project1-123456.iam.gserviceaccount.com`). We provision a single Cloud Storage service account for your entire Snowflake account. All Cloud Storage integrations use that service account.
-
-## Step 3: Grant the service account permissions to access bucket objects
-
-The following step-by-step instructions describe how to configure IAM access permissions for Snowflake in your Google Cloud console so that you can use a Cloud Storage bucket to load and unload data:
-
-### Create a custom IAM role
-
-Create a custom role that has the permissions required to access the bucket and get objects.
-
-1. Sign in to the Google Cloud console as a project editor.
-2. From the home dashboard, select **IAM & Admin** » **Roles**.
-3. Select **Create Role**.
-4. Enter a **Title** and optional **Description** for the custom role.
-5. Select **Add Permissions**.
-6. Filter the list of permissions, and add the following from the list:
-
-   > | Action(s) | Required permissions |
-   > | --- | --- |
-   > | Data loading only | - `storage.buckets.get` - `storage.objects.get` - `storage.objects.list` |
-   > | Data loading with purge option, executing the REMOVE command on the stage | - `storage.buckets.get` - `storage.objects.delete` - `storage.objects.get` - `storage.objects.list` |
-   > | Data loading and unloading | - `storage.buckets.get` (for calculating data transfer costs) - `storage.objects.create` - `storage.objects.delete` - `storage.objects.get` - `storage.objects.list` |
-   > | Data unloading only | - `storage.buckets.get` - `storage.objects.create` - `storage.objects.delete` - `storage.objects.list` |
-   > | Using [COPY FILES](/sql-reference/sql/copy-files) to copy files to an external stage | You must have the following additional permissions:  - `storage.multipartUploads.abort` - `storage.multipartUploads.create` - `storage.multipartUploads.list` - `storage.multipartUploads.listParts` |
-   >
-   > Expand
-   >
-   > Show lessSee more
-7. Select **Add**.
-8. Select **Create**.
-
-### Assign the custom role to the Cloud Storage Service Account
-
-1. Sign in to the Google Cloud console as a project editor.
-2. From the home dashboard, select **Cloud Storage** » **Buckets**.
-3. Filter the list of buckets, and select the bucket that you specified when you created your storage integration.
-4. Select **Permissions** » **View by principals**, then select **Grant access**.
-5. Under **Add principals**, paste the name of the service account name that you retrieved from the DESC STORAGE INTEGRATION command output.
-6. Under **Assign roles**, select the custom IAM role that you created previously, then select **Save**.
-
-Important
-
-If your Google Cloud organization was created on or after May 3, 2024, Google Cloud enforces a
-[domain restriction constraint](https://cloud.google.com/resource-manager/docs/organization-policy/restricting-domains)
-in project organization policies. The default constraint lists your domain as the only allowed value.
-
-To allow the Snowflake service account access to your storage, you must
-[update the domain restriction](/user-guide/data-load-gcs-allow).
-
-### Grant the Cloud Storage service account permissions on the Cloud Key Management Service cryptographic keys
-
-Note
-
-This step is required only if your GCS bucket is encrypted using a key stored in the Google Cloud Key Management Service (Cloud KMS).
-
-1. Sign in to the Google Cloud console as a project editor.
-2. From the home dashboard, search for and select **Security** » **Key Management**.
-3. Select the key ring that is assigned to your GCS bucket.
-4. Click **SHOW INFO PANEL** in the upper-right corner. The information panel for the key ring slides out.
-5. Click the **ADD PRINCIPAL** button.
-6. In the **New principals** field, search for the service account name from the DESCRIBE INTEGRATION output in [Step 2: Retrieve the Cloud Storage service account for your Snowflake account](#step-2-retrieve-the-cloud-storage-service-account-for-your-snowflake-account) (in this topic).
-7. From the **Select a role** dropdown, select the `Cloud KMS CrytoKey Encryptor/Decryptor` role.
-8. Click the **Save** button. The service account name is added to the **Cloud KMS CrytoKey Encryptor/Decryptor** role dropdown in the information panel.
-
-Note
-
-You can use the [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration)
-function to validate the configuration for your storage integration.
-
-# Configuring Automation Using GCS Pub/Sub
-
-## Prerequisites
-
-The instructions in this topic assume the following items have been created and configured:
-
-GCP account:
-:   - Pub/Sub topic that receives event messages from the GCS bucket. For more information, see [Creating the Pub/Sub Topic](#creating-the-pub-sub-topic) (in this topic).
-    - Subscription that receives event messages from the Pub/Sub topic. For more information, see [Creating the Pub/Sub Subscription](#creating-the-pub-sub-subscription) (in this topic).
-
-    For instructions, see the [Pub/Sub documentation](https://cloud.google.com/pubsub/docs).
-
-Snowflake:
-:   - Target table in the Snowflake database where you want to load data.
-
-### Creating the Pub/Sub Topic
-
-Create a Pub/Sub topic using [Cloud Shell](https://cloud.google.com/shell) or [Cloud SDK](https://cloud.google.com/sdk).
-
-Execute the following command to create the topic and enable it to listen for activity in the specified GCS bucket:
-
-Copy code
-
-```
-$ gsutil notification create -t <topic> -f json -e OBJECT_FINALIZE gs://<bucket-name>
-```
-
-Where:
-
-- `topic` is the name for the topic.
-- `bucket-name` is the name of your GCS bucket.
-
-If the topic already exists, the command uses it; otherwise, the command creates a new topic.
-
-For more information, see [Using Pub/Sub notifications for Cloud Storage](https://cloud.google.com/storage/docs/reporting-changes) in the Pub/Sub documentation.
-
-### Creating the Pub/Sub Subscription
-
-Create a subscription with pull delivery to the Pub/Sub topic using the Cloud Console, `gcloud` command-line tool, or the Cloud Pub/Sub API. For instructions, see [Managing topics and subscriptions](https://cloud.google.com/pubsub/docs/admin) in the Pub/Sub documentation.
-
-Note
-
-- Only Pub/Sub subscriptions that use the default pull delivery are supported with Snowflake. Push delivery is not supported.
-
-### Retrieving the Pub/Sub Subscription ID
-
-The Pub/Sub topic subscription ID is used in these instructions to allow Snowflake access to event messages.
-
-1. Log into the Google Cloud Platform Console as a project editor.
-2. From the home dashboard, choose **Big Data** » **Pub/Sub** » **Subscriptions**.
-3. Copy the ID in the **Subscription ID** column for the topic subscription.
-
-## Step 1: Create a Notification Integration in Snowflake
-
-Create a notification integration using the
-[CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration-queue-inbound-gcp) command.
-
-The notification integration references your Pub/Sub subscription. Snowflake associates the notification integration with a GCS
-service account created for your account. Snowflake creates a single service account that is referenced by all GCS notification
-integrations in your Snowflake account.
-
-Note
-
-- Only account administrators (users with the ACCOUNTADMIN role) or a role with the global CREATE INTEGRATION privilege can execute this SQL command.
-- The GCS service account for notification integrations is different from the service account created for storage integrations.
-- A single notification integration supports a single Google Cloud Pub/Sub subscription. Referencing the same Pub/Sub subscription in multiple notification integrations could result in missing data in target tables because event notifications are split between notification integrations. Therefore, pipe creation is blocked if a pipe references the same Pub/Sub subscription as an existing pipe.
-
-Copy code
-
-```
-CREATE NOTIFICATION INTEGRATION <integration_name>
-  TYPE = QUEUE
-  NOTIFICATION_PROVIDER = GCP_PUBSUB
-  ENABLED = true
-  GCP_PUBSUB_SUBSCRIPTION_NAME = '<subscription_id>';
-```
-
-Where:
-
-- `integration_name` is the name of the new integration.
-- `subscription_id` is the subscription name you recorded in [Retrieving the Pub/Sub Subscription ID](#retrieving-the-pub-sub-subscription-id).
-
-For example:
-
-Copy code
-
-```
-CREATE NOTIFICATION INTEGRATION my_notification_int
-  TYPE = QUEUE
-  NOTIFICATION_PROVIDER = GCP_PUBSUB
-  ENABLED = true
-  GCP_PUBSUB_SUBSCRIPTION_NAME = 'projects/project-1234/subscriptions/sub2';
-```
-
-## Step 2: Grant Snowflake Access to the Pub/Sub Subscription
-
-1. Execute the [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) command to retrieve the Snowflake service account ID:
+1. Get the name of the Snowflake service account for the integration from the `GCP_PUBSUB_SERVICE_ACCOUNT` property in the output of [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration):
 
    Copy code
 
    ```
-   DESC NOTIFICATION INTEGRATION <integration_name>;
+   DESC NOTIFICATION INTEGRATION my_gcs_notification_int;
    ```
 
-   Where:
+   The service account name has the form `service-account-id@project-id.iam.gserviceaccount.com`.
+2. Grant the service account the following roles. Replace `<service_account>` with the name from the previous step.
 
-   - `integration_name` is the name of the integration you created in [Step 1: Create a Notification Integration in Snowflake](#step-1-create-a-notification-integration-in-snowflake).
+   - **Pub/Sub Subscriber** on the subscription, so that Snowflake can pull and acknowledge messages:
 
-   For example:
+     Copy code
 
-   > Copy code
-   >
-   > ```
-   > DESC NOTIFICATION INTEGRATION my_notification_int;
-   > ```
-2. Record the service account name in the GCP\_PUBSUB\_SERVICE\_ACCOUNT column, which has the following format:
+     ```
+     gcloud pubsub subscriptions add-iam-policy-binding snowpipe-orders-sub \
+       --member="serviceAccount:<service_account>" \
+       --role="roles/pubsub.subscriber"
+     ```
+   - **Monitoring Viewer** on the project that contains the subscription, so that Snowflake can read the subscription’s metrics, such as the number of messages that are waiting:
 
-   Copy code
+     Copy code
 
-   ```
-   <service_account>@<project_id>.iam.gserviceaccount.com
-   ```
-3. Log into the Google Cloud Platform Console as a project editor.
-4. From the home dashboard, choose **Big Data** » **Pub/Sub** » **Subscriptions**.
-5. Select the subscription to configure for access.
-6. Click **SHOW INFO PANEL** in the upper-right corner. The information panel for the subscription slides out.
-7. Click the **ADD PRINCIPAL** button.
-8. In the **New principals** field, search for the service account name you recorded.
-9. From the **Select a role** dropdown, select **Pub/Sub Subscriber**.
-10. Click the **Save** button. The service account name is added to the **Pub/Sub Subscriber** role dropdown in the information panel.
-11. Navigate to the **Dashboard** page in the Cloud Console, and select your project from the dropdown list.
-12. Click the **ADD PEOPLE TO THIS PROJECT** button.
-13. Add the service account name you recorded.
-14. From the **Select a role** dropdown, select **Monitoring Viewer**.
-15. Click the **Save** button. The service account name is added to the **Monitoring Viewer** role.
+     ```
+     gcloud projects add-iam-policy-binding my-project \
+       --member="serviceAccount:<service_account>" \
+       --role="roles/monitoring.viewer"
+     ```
 
-### Step 3: Create a stage (if needed)
-
-Create an external stage that references your GCS bucket using the [CREATE STAGE](/sql-reference/sql/create-stage) command. Snowflake reads your
-staged data files into the external table metadata. Alternatively, you can use an existing external stage.
-
-Note
-
-- To configure secure access to the cloud storage location, see [Configuring Secure Access to Cloud Storage](#configuring-secure-access-to-cloud-storage) (in this topic).
-- To reference a storage integration in the CREATE STAGE statement, the role must have the USAGE privilege on the storage integration
-  object.
-
-The following example creates a stage named `mystage` in the active schema for the user session. The cloud storage URL includes the
-path `files`. The stage references a storage integration named `my_storage_int`.
-
-> Copy code
->
-> ```
-> USE SCHEMA mydb.public;
->
-> CREATE STAGE mystage
->   URL='gcs://load/files/'
->   STORAGE_INTEGRATION = my_storage_int;
-> ```
+   To grant the roles in the Google Cloud console instead, add the service account as a principal with the Pub/Sub Subscriber role on the subscription’s **Permissions** tab, and with the Monitoring Viewer role on the project’s **IAM** page. For more information, see [Access control with IAM](https://cloud.google.com/pubsub/docs/access-control) in the Google Cloud documentation.
 
 Important
 
-Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `gcs://mybucket/path` also includes files from `gcs://mybucket/path1` and `gcs://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
+Grant both roles before you create the pipe. When you create the pipe, Snowflake checks that it can pull from the subscription and read its metrics. If either role is missing, the `CREATE PIPE` statement fails, as described in [Step 5](#label-data-load-snowpipe-auto-gcs-pipe). If the Monitoring Viewer role is removed later, Snowpipe keeps loading files, but the `numOutstandingMessagesOnChannel` field in the output of [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) is no longer accurate, and the `channelErrorMessage` field reports `no monitoring permission`. Loading can also slow down when many messages are waiting in the subscription. For more information, see [Loads from Google Cloud Storage are delayed or files are missed](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-gcs-delayed).
 
-### Step 4: Create a pipe with auto-ingest enabled
+If your organization restricts which identities you can grant roles to, for example with domain-restricted sharing, you might need to allow the Snowflake service account. For more information, see [Allow access to Google Cloud Storage](/user-guide/data-load-gcs-allow).
 
-Create a pipe using the [CREATE PIPE](/sql-reference/sql/create-pipe) command. The pipe defines the [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement used by Snowpipe to load data from the ingestion queue into the target table.
+## Step 5: Create the pipe
 
-For example, create a pipe in the `snowpipe_db.public` schema that loads data from files staged in an external (GCS) stage named `mystage` into a destination table named `mytable`:
+Create the pipe with the [CREATE PIPE](/sql-reference/sql/create-pipe) command. Set `AUTO_INGEST = TRUE`, and set `INTEGRATION` to the name of your notification integration as a string. The string must match the name exactly as Snowflake stores it, which is in uppercase letters unless you enclosed the name in double quotes when you created the integration. Before you create the pipe, check that its location doesn’t overlap the location of another pipe, as described in [Give each pipe its own location](/user-guide/data-load-snowpipe-auto#label-snowpipe-auto-pipe-paths). For example, the following statement creates a pipe named `orders_pipe` that loads JSON files from the `orders_stage` stage into the `orders` table:
 
 Copy code
 
 ```
-CREATE PIPE snowpipe_db.public.mypipe
-  AUTO_INGEST = true
-  INTEGRATION = 'MY_NOTIFICATION_INT'
+USE ROLE orders_pipe_owner;
+
+CREATE PIPE mydb.myschema.orders_pipe
+  AUTO_INGEST = TRUE
+  INTEGRATION = 'MY_GCS_NOTIFICATION_INT'
   AS
-    COPY INTO snowpipe_db.public.mytable
-      FROM @snowpipe_db.public.mystage/path2/;
+  COPY INTO mydb.myschema.orders
+    FROM @mydb.myschema.orders_stage
+    FILE_FORMAT = (TYPE = 'JSON')
+    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
 ```
 
-The INTEGRATION parameter references the `my_notification_int` notification integration you created in [Step 1: Create a Notification Integration in Snowflake](#step-1-create-a-notification-integration-in-snowflake). The integration name must be provided in all uppercase.
+If the `CREATE PIPE` statement fails, check the error message:
 
-Important
+- `Could not pull` or `Could not monitor`: The Snowflake service account doesn’t have the Pub/Sub Subscriber role on the subscription or the Monitoring Viewer role on the project. Grant the roles, as described in [Step 4](#label-snowpipe-gcs-grant-pubsub-access). If you just granted them, wait a few minutes for the change to take effect, and then run the statement again.
+- `Subscription not found`: The subscription name in the notification integration is wrong, or the subscription was deleted. If the subscription was deleted, recreate it, as described in [Step 2](#label-gcp-pubsub-snowpipe), and grant the Pub/Sub Subscriber role on it again. You can’t change the subscription name with [ALTER NOTIFICATION INTEGRATION](/sql-reference/sql/alter-notification-integration-queue-inbound-gcp). Instead, create a notification integration with the correct subscription name, as described in [Step 3](#label-data-load-snowpipe-auto-gcs-integration), grant the `USAGE` privilege on it to the role that creates the pipe, and then create the pipe with the new integration.
+- `Subscription needs to have pull delivery type`: The subscription uses push delivery. Change its delivery type to pull, for example with `gcloud pubsub subscriptions modify-push-config snowpipe-orders-sub --push-endpoint=""`.
 
-Verify that the storage location reference in the COPY INTO *<table>* statement does not overlap with the reference in existing pipes
-in the account. Otherwise, multiple pipes could load the same set of data files into the target tables. For example, this situation can
-occur when multiple pipe definitions reference the same storage location with different levels of granularity, such as
-`<storage_location>/path1/` and `<storage_location>/path1/path2/`. In this example, if files are staged in
-`<storage_location>/path1/path2/`, both pipes would load a copy of the files.
+To load only part of the stage, add a path after the stage name in the `FROM` clause, such as `@mydb.myschema.orders_stage/2026/`. End the path with a forward slash (`/`).
 
-View the COPY INTO *<table>* statements in the definitions of all pipes in the account by executing [SHOW PIPES](/sql-reference/sql/show-pipes)
-or by querying either the [PIPES](/sql-reference/account-usage/pipes) view in Account Usage or the
-[PIPES](/sql-reference/info-schema/pipes) view in the Information Schema.
+## Step 6: Test the pipe
 
-If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path2/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path20` and `path2_archive`.
+1. Check that the pipe is running and that Snowflake can read the subscription:
 
-Snowpipe with auto-ingest is now configured!
+   Copy code
 
-When new data files are added to the GCS bucket, the event message informs Snowpipe to load them into the target table defined in the pipe.
+   ```
+   SELECT SYSTEM$PIPE_STATUS('mydb.myschema.orders_pipe');
+   ```
 
-### Step 5: Load historical files
+   The `executionState` field should be `RUNNING`. If it isn’t, see [Pipe execution states](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-execution-states). If the output includes a `channelErrorMessage` field, check its value. An error such as `PERMISSION_DENIED` means that Snowflake can’t pull messages from the subscription. Check that the subscription still exists and that the Snowflake service account still has the Pub/Sub Subscriber role on it, as described in [Step 4](#label-snowpipe-gcs-grant-pubsub-access). A value that starts with `no monitoring permission` means that Snowflake can’t read the subscription’s metrics, but Snowpipe still loads files. To restore the metrics, grant the Monitoring Viewer role, as described in Step 4.
+2. Upload a test file to the path that the pipe loads:
 
-To load any backlog of data files that existed in the external stage before Pub/Sub messages were configured, execute an [ALTER PIPE … REFRESH](/sql-reference/sql/alter-pipe) statement.
+   Copy code
 
-### Step 6: Delete staged files
+   ```
+   gcloud storage cp orders_test.json gs://mybucket/orders/
+   ```
+3. After about a minute, check whether the file loaded by running the following query. Snowpipe doesn’t need a warehouse, but this query does. Replace `mywh` with a warehouse that your current role has the `USAGE` privilege on. If the `orders_pipe_owner` role can’t use a warehouse, grant it the `USAGE` privilege on one, or switch to a role that can use a warehouse and see the table’s load history. For the privileges that the query needs, see the usage notes for [COPY\_HISTORY](/sql-reference/functions/copy_history).
 
-Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+   Copy code
 
-## SYSTEM$PIPE\_STATUS output
+   ```
+   USE WAREHOUSE mywh;
 
-The [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) function retrieves a JSON representation of the current status of a pipe.
+   SELECT file_name, status, row_count, first_error_message, last_load_time
+     FROM TABLE(mydb.INFORMATION_SCHEMA.COPY_HISTORY(
+       TABLE_NAME => 'mydb.myschema.orders',
+       START_TIME => DATEADD(HOUR, -1, CURRENT_TIMESTAMP())));
+   ```
 
-For pipes with AUTO\_INGEST set to TRUE, the function returns a JSON object containing the following name/value pairs (if applicable to the current pipe status):
+   If the file has the `Loaded` status, the pipe is working. If it has the `Load in progress` status, wait, and then run the query again. If it has the `Load failed` or `Partially loaded` status, the pipe received the notification, but the file has errors. The `first_error_message` column shows the first error. For more information, see [Step 3: Get details about load errors](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-check-files).
+
+   If the file isn’t listed, call `SYSTEM$PIPE_STATUS` again. If `lastReceivedMessageTimestamp` is missing or older than your upload, messages aren’t reaching Snowflake. If it’s newer than your upload but `lastForwardedMessageTimestamp` is missing or older than your upload, messages arrive, but none of them are for the pipe’s path. For the steps to fix these and other problems, see [Files don’t load with automated loading](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-auto-ingest).
+
+## Step 7: Load files that are already in the bucket
+
+The pipe loads only files that arrive after you configure notifications. To load the files that were already in the stage, run the following command:
 
 Copy code
 
 ```
-{"executionState":"<value>","oldestFileTimestamp":<value>,"pendingFileCount":<value>,"notificationChannelName":"<value>","numOutstandingMessagesOnChannel":<value>,"lastReceivedMessageTimestamp":"<value>","lastForwardedMessageTimestamp":"<value>","error":<value>,"fault":<value>}
+ALTER PIPE mydb.myschema.orders_pipe REFRESH;
 ```
 
-For descriptions of the output values, see the reference topic for the SQL function.
+`REFRESH` queues only files that were staged within the last 7 days and that the pipe hasn’t already processed. Files that failed to load count as processed, so `REFRESH` doesn’t queue them again. To reload them, see [Reload a file that Snowpipe already processed](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-reload-files). To load older files, see [Files staged more than 7 days ago](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-backfill).
+
+## After you set up the pipe
+
+- **Add more pipes.** Other pipes can use the same notification integration if the bucket notification covers their paths. To load from another bucket, create a stage for it, and make sure that the stage’s storage integration can access the bucket. Then create a notification on that bucket that publishes `OBJECT_FINALIZE` events in the JSON payload format to the same topic, as described in [Step 2](#label-gcp-pubsub-snowpipe), so that the same subscription and notification integration serve both buckets. Specify the topic by its full name, such as `--topic=projects/my-project/topics/snowpipe-orders`, so that the command doesn’t create a new topic in your default Google Cloud project. If a different role creates the new pipe, grant that role the `USAGE` privilege on the notification integration, as shown at the end of [Step 3](#label-data-load-snowpipe-auto-gcs-integration). Use a role that owns the integration or has the `MANAGE GRANTS` privilege, such as `SECURITYADMIN`. To isolate quotas and failures, you can instead create a separate topic, subscription, and notification integration for each bucket.
+- **Let other roles monitor or operate the pipe.** To check the pipe’s status, a role needs the `USAGE` privilege on the database and schema and the `MONITOR` privilege on the pipe. To pause or resume the pipe, it also needs the `OPERATE` privilege. To refresh the pipe, it also needs privileges on the stage and the target table, as listed in the **Refresh a pipe** column of [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control). For example, run the following statements with a role that has the `MANAGE GRANTS` privilege, such as `SECURITYADMIN`:
+
+  Copy code
+
+  ```
+  USE ROLE SECURITYADMIN;
+
+  GRANT USAGE ON DATABASE mydb TO ROLE data_engineer;
+  GRANT USAGE ON SCHEMA mydb.myschema TO ROLE data_engineer;
+  GRANT MONITOR, OPERATE ON PIPE mydb.myschema.orders_pipe TO ROLE data_engineer;
+  ```
+- **Get notified about failed loads.** Set up [error notifications](/user-guide/data-load-snowpipe-errors) to receive a message in the messaging service on your Snowflake account’s cloud platform when a file fails to load. Set up an [alert](/user-guide/data-load-snowpipe-monitor-events#label-snowpipe-events-alerts) to find out when the pipe stops loading or Snowflake can’t read the subscription.
+- **Clean up loaded files.** Snowpipe doesn’t delete files after it loads them. To manage storage costs, see [Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).

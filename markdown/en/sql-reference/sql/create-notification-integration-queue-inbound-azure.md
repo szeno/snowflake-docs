@@ -123,6 +123,6 @@ For general information about roles and privilege grants for performing SQL acti
 
 See the following topics:
 
-- [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
+- [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
 - [Refresh directory tables automatically for Azure Blob Storage](/user-guide/data-load-dirtables-auto-azure)
 - [Refresh external tables automatically for Azure Blob Storage](/user-guide/tables-external-azure)

@@ -13,6 +13,7 @@ Liveboards, Answers, and Worksheets in Horizon Catalog.
 1. [Identify your ThoughtSpot base URL](#1-identify-your-thoughtspot-base-url).
 2. [Enable trusted authentication and copy the secret key](#2-enable-trusted-authentication-and-copy-the-secret-key).
 3. [Create the ThoughtSpot connection](#3-create-the-thoughtspot-connection).
+4. [Set up metadata access](#4-set-up-metadata-access).
 
 ## 1. Identify your ThoughtSpot base URL
 
@@ -62,6 +63,26 @@ must update the ThoughtSpot connection in Horizon Catalog with the new value.
    where the first sync starts.
 4. When the wizard confirms that the connection is ready, select **Done**. The sync continues to run
    in the background.
+
+## 4. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

@@ -852,7 +852,7 @@ in that account, and creates the queue if none is available in the bucket’s re
 You must subscribe this SQS queue for your target account to the SNS topic to get notifications about the stage location.
 
 - If you use Amazon S3 Event Notifications with Amazon Simple Queue Service (SQS),
-  follow the instructions in [Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs) in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+  follow the instructions in [Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs) in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
   Important
 
@@ -860,8 +860,8 @@ You must subscribe this SQS queue for your target account to the SNS topic to ge
 
   You can also migrate from SQS to SNS. For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns).
 - If you use Amazon Simple Notification Service (SNS), see
-  [Subscribing the Snowflake SQS Queue to your SNS topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription).
-- If you use Amazon EventBridge, see [Option 3: Setting up Amazon EventBridge to automate Snowpipe](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-eventbridge).
+  [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription) in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+- If you use Amazon EventBridge, see [Option 3: Send S3 events through Amazon EventBridge](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-eventbridge).
 
 ### Microsoft Azure Blob Storage
 
@@ -875,7 +875,7 @@ See the diagram below for configuration details:
 ![Pipe replication for Azure](/static/images/data-pipeline-replication-azure.png)
 
 Create a new Event Grid subscription and storage queue. Then, create a new notification integration in the target account and
-grant Snowflake access to your storage queue. For instructions, see [Configuring Automation With Azure Event Grid](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation).
+grant Snowflake access to your storage queue. For instructions, see Steps 2 through 4 in [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure).
 
 Important
 
@@ -897,7 +897,8 @@ See the diagram below for configuration details:
 
 Create a new subscription to your Pub/Sub topic and a new notification integration in your target account.
 :   Then, grant Snowflake access to the Pub/Sub subscription. For instructions,
-    see [Configuring Automation Using GCS Pub/Sub](/user-guide/data-load-snowpipe-auto-gcs#label-gcp-pubsub-snowpipe).
+    see Steps 2 through 4 in [Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs). In Step 2, skip the first
+    item, which creates the bucket notification and topic, because they already exist.
 
 Important
 

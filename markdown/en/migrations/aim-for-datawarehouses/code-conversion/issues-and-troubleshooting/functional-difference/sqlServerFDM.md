@@ -3936,3 +3936,1485 @@ Copy code
 - Remove checkpoint scheduling and monitoring logic after migration.
 - Review surrounding maintenance workflows for other SQL Server-specific recovery operations.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-FDM-TS0086
+
+The XML DML delete mutation is rewritten as OBJECT\_INSERT over PARSE\_XML, which keeps only the element tree, so comment and processing-instruction nodes of the document are dropped.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0086 while converting SQL Server code because the Snowflake result is not the same as the source. The xml dml delete mutation is rewritten as OBJECT\_INSERT over PARSE\_XML, which keeps only the element tree, so comment and processing-instruction nodes of the document are dropped. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+DECLARE @x XML;
+SET @x = '<ROOT><BODY>1</BODY><OTHER>2</OTHER></ROOT>';
+SET @x.modify('delete (/ROOT/BODY)');
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+DECLARE
+  X VARCHAR;
+BEGIN
+  X := PARSE_XML('<ROOT><BODY>1</BODY><OTHER>2</OTHER></ROOT>');
+  --** SSC-FDM-TS0086 - THE XML DML DELETE MUTATION IS REWRITTEN AS OBJECT_INSERT OVER PARSE_XML, WHICH KEEPS ONLY THE ELEMENT TREE, SO COMMENT AND PROCESSING-INSTRUCTION NODES OF THE DOCUMENT ARE DROPPED. **
+  x := (
+    SELECT
+      TO_VARCHAR(OBJECT_INSERT(PARSE_XML(:x), '$', IFF(EQUAL_NULL(GET(PARSE_XML(:x), '@'), 'ROOT')
+      AND EQUAL_NULL(NVL(TO_VARCHAR(GET(PARSE_XML(:x), '@xmlns')), ''), ''), (
+        SELECT
+          ARRAY_AGG(child.VALUE)
+          WITHIN GROUP(
+          ORDER BY
+            child.INDEX)
+        FROM
+          TABLE(FLATTEN(INPUT => IFF(IS_ARRAY(GET(PARSE_XML(:x), '$')), GET(PARSE_XML(:x), '$'), ARRAY_CONSTRUCT(GET(PARSE_XML(:x), '$'))))) child
+        WHERE
+          NOT EQUAL_NULL(GET(child.VALUE, '@'), 'BODY')
+          OR NOT EQUAL_NULL(NVL(TO_VARCHAR(GET(child.VALUE, '@xmlns')), ''), '')
+      ), GET(PARSE_XML(:x), '$')), true))
+  );
+END;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0086 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0087
+
+FILESTREAM column option removed; the column data is stored inline in Snowflake, up to 64 MB instead of 2 GB.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0087 while converting SQL Server code because the Snowflake result is not the same as the source. Filestream column option removed. Snowflake has no filesystem-backed storage, so the column data is stored inline and is limited to 64 mb instead of 2 gb. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+ALTER TABLE sonos.SONOS_ItemMaster
+ADD AttachmentData VARBINARY(MAX) FILESTREAM NULL;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+ALTER TABLE IF EXISTS MYDB.sonos.SONOS_ItemMaster
+ADD
+--** SSC-FDM-TS0087 - FILESTREAM COLUMN OPTION REMOVED. SNOWFLAKE HAS NO FILESYSTEM-BACKED STORAGE, SO THE COLUMN DATA IS STORED INLINE AND IS LIMITED TO 64 MB INSTEAD OF 2 GB **
+AttachmentData VARBINARY NULL;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0087 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0088
+
+The datetime column DEFAULT keeps a literal whose Snowflake reading could not be shown to match SQL Server’s, so the column may default to a different instant or Snowflake may refuse the DEFAULT.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0088 while converting SQL Server code because the Snowflake result is not the same as the source. The datetime column default keeps a literal whose Snowflake reading could not be shown to match SQL Server’s, so the column may default to a different instant or Snowflake may refuse the default. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE Table4 (
+    CreatedAt DATE DEFAULT 0
+);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE Table4 (
+  CreatedAt DATE DEFAULT 0 :: DATE /*** SSC-FDM-TS0088 - THE DATETIME COLUMN DEFAULT KEEPS THE LITERAL '0': SQL SERVER READS A NUMBER AS DAYS FROM 1900-01-01 AND A STRING UNDER THE SESSION DATEFORMAT, SNOWFLAKE DOES NOT. RESPELL IT AS 'YYYY-MM-DD HH:MI:SS' OR THE DEFAULT MAY DIFFER OR BE REFUSED. ***/
+)
+;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0088 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0089
+
+HASHBYTES of a VARCHAR value hashes SQL Server collation bytes; Snowflake MD5\_BINARY and SHA binary functions hash UTF-8.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0089 while converting SQL Server code because the Snowflake result is not the same as the source. Hashbytes of a varchar value hashes SQL Server collation bytes. Snowflake MD5\_BINARY and sha binary functions hash utf-8. The digest matches for 7-bit ascii and may differ for other characters. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE FUNCTION udf_generate_hash (@input_val VARCHAR(MAX)) RETURNS VARCHAR(32)
+AS BEGIN RETURN CONVERT(VARCHAR(32), HASHBYTES('MD5', @input_val), 2); END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION udf_generate_hash (INPUT_VAL STRING)
+RETURNS VARCHAR(32)
+LANGUAGE SQL
+AS
+$$
+  HEX_ENCODE(MD5_BINARY(INPUT_VAL) /*** SSC-FDM-TS0089 - HASHBYTES OF A VARCHAR VALUE HASHES SQL SERVER COLLATION BYTES. SNOWFLAKE MD5_BINARY AND SHA BINARY FUNCTIONS HASH UTF-8. THE DIGEST MATCHES FOR 7-BIT ASCII AND MAY DIFFER FOR OTHER CHARACTERS. ***/, 1)
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0089 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0090
+
+The return type of a call in this addition could not be determined, so the source ‘+’ operator was kept and it performs arithmetic addition in Snowflake. Replace it with ‘||’ if the addition is a string concatenation.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0090 while converting SQL Server code because the Snowflake result is not the same as the source. The return type of a call in this addition could not be determined, so the source ‘+’ operator was kept and it performs arithmetic addition in Snowflake. Replace it with ‘||’ if the addition is a string concatenation. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+DECLARE @Chain VARCHAR(200);
+SET @Chain = 'start';
+SET @Chain += dbo.UnknownFn(@Chain);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+DECLARE
+CHAIN VARCHAR(200);
+BEGIN
+CHAIN := 'start';
+CHAIN := CHAIN + dbo.UnknownFn(@Chain) !!!RESOLVE EWI!!! /*** SSC-EWI-0073 - PENDING FUNCTIONAL EQUIVALENCE REVIEW FOR 'dbo.UnknownFn' NODE ***/!!! /*** SSC-FDM-TS0090 - THE RETURN TYPE OF A CALL IN THIS ADDITION COULD NOT BE DETERMINED, SO THE SOURCE '+' OPERATOR WAS KEPT AND IT PERFORMS ARITHMETIC ADDITION IN SNOWFLAKE. REPLACE IT WITH '||' IF THE ADDITION IS A STRING CONCATENATION. ***/;
+END;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0090 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0091
+
+TOP (n) row limit was carried over by rewriting the whole table, so Snowflake chose the affected rows
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0091 while converting SQL Server code because the Snowflake result is not the same as the source. Top (n) row limit was carried over by rewriting the whole table, so Snowflake chose the affected rows. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE logs (id INT, created_date DATE);
+DELETE TOP (3) FROM logs;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE MYDB.PUBLIC.logs (
+  id INT,
+  created_date DATE
+)
+;
+
+--** SSC-FDM-TS0091 - TOP ROW LIMIT WAS CARRIED OVER BY REWRITING ALL OF 'MYDB.PUBLIC.logs' WITH INSERT OVERWRITE BECAUSE NO KEY WAS RESOLVED, SO SNOWFLAKE CHOSE THE AFFECTED ROWS AND THE STATEMENT REPORTS THE TABLE ROW COUNT. **
+INSERT OVERWRITE INTO MYDB.PUBLIC.logs
+SELECT
+  *
+FROM
+  MYDB.PUBLIC.logs
+QUALIFY
+  ROW_NUMBER() OVER (
+  ORDER BY
+    SEQ8()) > 3;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0091 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0093
+
+Projected system catalog names may have different casing
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0093 while converting SQL Server code because the Snowflake result is not the same as the source. Projected system catalog name values may have different casing in Snowflake. Manual review required. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT cols.name AS column_name
+FROM syscolumns cols, sysobjects objs
+WHERE cols.id = objs.id AND objs.type = 'V' AND objs.name = 'my_view';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT cols.COLUMN_NAME /*** SSC-FDM-TS0093 - PROJECTED SYSTEM CATALOG NAME VALUES MAY HAVE DIFFERENT CASING IN SNOWFLAKE. MANUAL REVIEW REQUIRED ***/ AS column_name
+FROM
+INFORMATION_SCHEMA.COLUMNS cols,
+INFORMATION_SCHEMA.VIEWS objs
+WHERE
+cols.TABLE_SCHEMA = objs.TABLE_SCHEMA
+AND cols.TABLE_NAME = objs.TABLE_NAME
+AND UPPER(objs.TABLE_NAME) = UPPER('my_view') /*** SSC-FDM-TS0094 - CATALOG NAME COMPARISON WAS FOLDED WITH UPPER() FOR SNOWFLAKE CASE-SENSITIVE UNQUOTED IDENTIFIERS. A CASE-SENSITIVE SQL SERVER COLLATION WOULD NOT MATCH THE SAME ROWS. MANUAL REVIEW REQUIRED ***/;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0093 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0094
+
+A folded catalog-name comparison can match rows a case-sensitive SQL Server collation would reject
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0094 while converting SQL Server code because the Snowflake result is not the same as the source. Catalog name comparison was folded with upper() for Snowflake case-sensitive unquoted identifiers. A case-sensitive SQL Server collation would not match the same rows. Manual review required. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT cols.name AS column_name
+FROM syscolumns cols, sysobjects objs
+WHERE cols.id = objs.id AND objs.type = 'V' AND objs.name = 'my_view';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT cols.COLUMN_NAME /*** SSC-FDM-TS0093 - PROJECTED SYSTEM CATALOG NAME VALUES MAY HAVE DIFFERENT CASING IN SNOWFLAKE. MANUAL REVIEW REQUIRED ***/ AS column_name
+FROM
+INFORMATION_SCHEMA.COLUMNS cols,
+INFORMATION_SCHEMA.VIEWS objs
+WHERE
+cols.TABLE_SCHEMA = objs.TABLE_SCHEMA
+AND cols.TABLE_NAME = objs.TABLE_NAME
+AND UPPER(objs.TABLE_NAME) = UPPER('my_view') /*** SSC-FDM-TS0094 - CATALOG NAME COMPARISON WAS FOLDED WITH UPPER() FOR SNOWFLAKE CASE-SENSITIVE UNQUOTED IDENTIFIERS. A CASE-SENSITIVE SQL SERVER COLLATION WOULD NOT MATCH THE SAME ROWS. MANUAL REVIEW REQUIRED ***/;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0094 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0095
+
+The value the variable keeps when the IF conditions are false was not converted.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0095 while converting SQL Server code because the Snowflake result is not the same as the source. The value the variable keeps when the if conditions are false was not converted. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE FUNCTION dbo.TwoFoldsChain(@a INT, @b INT)
+RETURNS INT
+AS
+BEGIN
+    DECLARE @x INT;
+
+    SELECT @x = V FROM dbo.Src WHERE K = 1;
+
+    IF @a > 0
+        SET @x = 10;
+
+    IF @b > 0
+        SET @x = 20;
+
+    RETURN @x;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION dbo.TwoFoldsChain (A INT, B INT)
+RETURNS INT
+LANGUAGE SQL
+AS
+$$
+  WITH CTE1 AS
+  (
+    SELECT
+      V AS X
+    FROM
+      dbo.Src
+    WHERE
+      K = 1
+  ),
+  CTE2 AS
+  (
+    SELECT
+      CASE
+        WHEN A > 0
+          THEN 10
+      END AS X /*** SSC-FDM-TS0095 - THE CASE GENERATED FOR THIS IF DOES NOT CARRY THE VALUE 'X' KEEPS WHEN ITS CONDITIONS ARE FALSE, SO IT ANSWERS NULL OR A VALUE AN EARLIER IF LEFT IN THAT COLUMN INSTEAD OF THE VALUE ASSIGNED IN ANOTHER BRANCH OR BEFORE THIS IF. ***/
+  ),
+  CTE3 AS
+  (
+    SELECT
+      CASE
+        WHEN B > 0
+          THEN 20
+        ELSE (SELECT
+          X
+        FROM
+          CTE2)
+      END AS X
+  )
+  SELECT
+    CASE
+      WHEN B > 0
+        THEN 20
+      ELSE CASE
+        WHEN A > 0
+          THEN 10
+        ELSE (
+          SELECT
+            V AS X
+          FROM
+            dbo.Src
+          WHERE
+            K = 1
+        )
+      END
+    END
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0095 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0096
+
+INFORMATION\_SCHEMA.COLUMNS is not an exact equivalent: it describes columns of tables and views only, so a query over it returns a different row set and the procedure and function parameter rows syscolumns also returns are absent. A broad query may also exceed Snowflake’s information schema result limit.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0096 while converting SQL Server code because the Snowflake result is not the same as the source. INFORMATION\_SCHEMA.columns is not an exact equivalent: it describes columns of tables and views only, so a query over it returns a different row set and the procedure and function parameter rows syscolumns also returns are absent. A broad query may also exceed Snowflake’s information schema result limit. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT name FROM syscolumns;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  COLUMN_NAME
+FROM
+  --** SSC-FDM-TS0096 - 'syscolumns' WAS MAPPED TO 'INFORMATION_SCHEMA.COLUMNS', WHICH IS NOT AN EXACT EQUIVALENT: IT DESCRIBES COLUMNS OF TABLES AND VIEWS ONLY, SO A QUERY OVER IT RETURNS A DIFFERENT ROW SET AND THE SOURCE ROWS DESCRIBING STORED PROCEDURE AND FUNCTION PARAMETERS ARE ABSENT. A BROAD QUERY MAY ALSO FAIL OUTRIGHT BECAUSE SNOWFLAKE LIMITS HOW MUCH DATA AN INFORMATION SCHEMA QUERY MAY RETURN. MANUAL REVIEW REQUIRED **
+  INFORMATION_SCHEMA.COLUMNS;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0096 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0097
+
+TO\_BOOLEAN may not preserve SQL Server BIT assignment behavior for this return expression.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0097 while converting SQL Server code because the Snowflake result is not the same as the source. TO\_BOOLEAN may accept values that SQL Server rejects as bit, or reject values that SQL Server converts to bit. Review the return expression’s possible values. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE FUNCTION dbo.BitText(@Value VARCHAR(10))
+RETURNS BIT
+AS
+BEGIN
+    DECLARE @Result VARCHAR(10);
+    SELECT @Result = @Value FROM dbo.OneRow;
+    RETURN @Result;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION dbo.BitText (VALUE STRING)
+RETURNS BOOLEAN
+LANGUAGE SQL
+AS
+$$
+  WITH CTE1 AS
+  (
+    SELECT
+      VALUE AS RESULT
+    FROM
+      dbo.OneRow
+  )
+  SELECT
+    TO_BOOLEAN((
+      SELECT
+        VALUE AS RESULT
+      FROM
+        dbo.OneRow
+    )) /*** SSC-FDM-TS0097 - TO_BOOLEAN MAY ACCEPT VALUES THAT SQL SERVER REJECTS AS BIT, OR REJECT VALUES THAT SQL SERVER CONVERTS TO BIT. REVIEW THE RETURN EXPRESSION'S POSSIBLE VALUES. ***/
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0097 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0098
+
+The join to a system type catalog was removed and the type name is read from INFORMATION\_SCHEMA.COLUMNS.DATA\_TYPE, but the join key is not unique, so the source query may return more rows than the converted one.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0098 while converting SQL Server code because the Snowflake result is not the same as the source. The join to a system type catalog was removed and the type name is read from INFORMATION\_SCHEMA.columns.DATA\_TYPE, but the join key is not unique, so the source query may return more rows than the converted one. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT c.name, ty.name
+FROM sys.columns c
+INNER JOIN sys.types ty ON c.system_type_id = ty.system_type_id;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  c.COLUMN_NAME,
+  c.DATA_TYPE /*** SSC-FDM-TS0072 - SYSTEM COLUMN VALUE 'name' FOR BUILT-IN OBJECT 'sys.types' HAS NOT BEEN TRANSLATED TO ITS SNOWFLAKE EQUIVALENT. MANUAL REVIEW REQUIRED ***/
+FROM
+  --** SSC-FDM-TS0098 - JOIN TO SYSTEM TYPE CATALOG 'sys.types' WAS REMOVED AND THE TYPE NAME IS NOW READ FROM INFORMATION_SCHEMA.COLUMNS.DATA_TYPE, BUT 'system_type_id' IS NOT UNIQUE THERE, SO THE SOURCE QUERY MAY RETURN MORE THAN ONE ROW PER COLUMN WHILE THE CONVERTED QUERY RETURNS ONE **
+  INFORMATION_SCHEMA.COLUMNS c;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0098 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0099
+
+Index column metadata for standard tables is not supported in Snowflake. INFORMATION\_SCHEMA.INDEX\_COLUMNS is used as a workaround for hybrid tables.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0099 while converting SQL Server code because the Snowflake result is not the same as the source. Index column metadata for standard tables is not supported in Snowflake. INFORMATION\_SCHEMA.INDEX\_COLUMNS is used as a workaround for hybrid tables. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT object_id, key_ordinal FROM sys.index_columns;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  TABLE_NAME,
+  KEY_SEQUENCE
+FROM
+  --** SSC-FDM-TS0099 - INDEX COLUMN METADATA FOR STANDARD TABLES IS NOT SUPPORTED IN SNOWFLAKE. INFORMATION_SCHEMA.INDEX_COLUMNS IS USED AS A WORKAROUND FOR HYBRID TABLES. **
+  INFORMATION_SCHEMA.INDEX_COLUMNS;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0099 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0100
+
+BACKUP is not supported in Snowflake, which protects data with Time Travel and Fail-safe. The statement is commented out. Review DATA\_RETENTION\_TIME\_IN\_DAYS against the source retention policy, and use CLONE for point-in-time copies.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0100 while converting SQL Server code because the Snowflake result is not the same as the source. Backup is not supported in Snowflake, which protects data with time travel and fail-safe. The statement is commented out. Review DATA\_RETENTION\_TIME\_IN\_DAYS against the source retention policy, and use clone for point-in-time copies. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+BACKUP LOG AdventureWorks2012 TO DISK = 'Z:\SQLServerBackups\AdvWorksLog.trn';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+----** SSC-FDM-TS0100 - BACKUP IS NOT SUPPORTED IN SNOWFLAKE, WHICH PROTECTS DATA WITH TIME TRAVEL AND FAIL-SAFE. THE STATEMENT IS COMMENTED OUT. REVIEW DATA_RETENTION_TIME_IN_DAYS AGAINST THE SOURCE RETENTION POLICY, AND USE CLONE FOR POINT-IN-TIME COPIES. **
+--BACKUP LOG AdventureWorks2012 TO DISK = 'Z:\SQLServerBackups\AdvWorksLog.trn';
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0100 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0122
+
+Storage size from SYS.ALLOCATION\_UNITS was redirected to INFORMATION\_SCHEMA.TABLES.BYTES.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0122 while converting SQL Server code because the Snowflake result is not the same as the source. Storage size from sys.ALLOCATION\_UNITS was redirected to INFORMATION\_SCHEMA.tables.bytes, which reports one compressed size per table with no per-index or used/free page accounting, so the figure differs from the source. Manual review required. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT s.name AS SchemaName, t.name AS TableName, p.rows AS RowCounts,
+       CAST(ROUND((SUM(a.used_pages) / 128.00), 2) AS NUMERIC(36, 2)) AS UsedMB,
+       CAST(ROUND((SUM(a.total_pages) / 128.00), 2) AS NUMERIC(36, 2)) AS TotalMB
+FROM sys.tables t
+INNER JOIN sys.indexes i ON t.object_id = i.object_id
+INNER JOIN sys.partitions p ON i.object_id = p.object_id AND i.index_id = p.index_id
+INNER JOIN sys.allocation_units a ON p.partition_id = a.container_id
+LEFT JOIN sys.schemas s ON t.schema_id = s.schema_id
+WHERE t.is_ms_shipped = 0 AND i.OBJECT_ID > 255 AND t.name = 'tbl_3902196'
+GROUP BY s.name, t.name, p.rows;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  --** SSC-FDM-TS0122 - STORAGE SIZE FROM SYS.ALLOCATION_UNITS WAS REDIRECTED TO INFORMATION_SCHEMA.TABLES.BYTES, WHICH REPORTS ONE COMPRESSED SIZE PER TABLE WITH NO PER-INDEX OR USED/FREE PAGE ACCOUNTING, SO THE FIGURE DIFFERS FROM THE SOURCE. MANUAL REVIEW REQUIRED. **
+  TABLE_SCHEMA AS SchemaName,
+  TABLE_NAME AS TableName,
+  ROW_COUNT AS RowCounts,
+  NULL AS UsedMB,
+  ROUND(BYTES / 1024.0 / 1024.0, 2) AS TotalMB
+FROM
+  INFORMATION_SCHEMA.TABLES
+WHERE
+  TABLE_NAME = 'TBL_3902196'
+  AND TABLE_TYPE = 'BASE TABLE';
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0122 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0123
+
+Encryption catalog has no Snowflake counterpart and was converted to an empty result set
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0123 while converting SQL Server code because the Snowflake result is not the same as the source. Encryption catalog has no Snowflake counterpart and was converted to an empty result set. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT sk.name, sk.key_length, sk.algorithm_desc, sk.create_date, sk.key_guid
+FROM sys.symmetric_keys sk
+ORDER BY sk.name;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  sk.name,
+  sk.key_length,
+  sk.algorithm_desc,
+  sk.create_date,
+  sk.key_guid
+FROM
+  --** SSC-FDM-TS0123 - SYSTEM CATALOG 'sys.symmetric_keys' HAS NO SNOWFLAKE COUNTERPART BECAUSE ENCRYPTION IS PLATFORM-MANAGED AND NO CERTIFICATE OR ENCRYPTION KEY OBJECT CAN EXIST IN THE TARGET. THE REFERENCE WAS CONVERTED TO AN EMPTY RESULT SET WITH THE SAME COLUMNS, SO JOINS AND COLUMN REFERENCES STILL RESOLVE. A QUERY WHOSE PURPOSE WAS TO ENUMERATE THESE OBJECTS, OR PERMISSIONS ON THEM, NOW RETURNS ZERO ROWS AND SHOULD BE REVIEWED. **
+  (
+    SELECT
+      CAST(null AS NVARCHAR(128)) AS name,
+      CAST(null AS INT) AS principal_id,
+      CAST(null AS INT) AS symmetric_key_id,
+      CAST(null AS INT) AS key_length,
+      CAST(null AS CHAR(2)) AS key_algorithm,
+      CAST(null AS NVARCHAR(60)) AS algorithm_desc,
+      CAST(null AS TIMESTAMP_NTZ(3)) AS create_date,
+      CAST(null AS TIMESTAMP_NTZ(3)) AS modify_date,
+      CAST(null AS VARCHAR) AS key_guid,
+      CAST(null AS VARIANT) AS key_thumbprint,
+      CAST(null AS NVARCHAR(60)) AS provider_type,
+      CAST(null AS VARCHAR) AS cryptographic_provider_guid,
+      CAST(null AS VARIANT) AS cryptographic_provider_algid
+    WHERE
+      false
+  ) sk
+ORDER BY sk.name;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0123 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0124
+
+Routine parameter metadata is derived from argument signatures because Snowflake has no per-parameter catalog.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0124 while converting SQL Server code because the Snowflake result is not the same as the source. Routine parameter metadata is derived from argument signatures because Snowflake has no per-parameter catalog. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT name FROM sys.parameters WHERE name = NULL;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  NAME
+FROM
+  --** SSC-FDM-TS0124 - SYSTEM TABLE 'sys.parameters' WAS MAPPED TO 'PUBLIC.ALL_PARAMETERS_VIEW', WHICH DERIVES PARAMETERS FROM THE INFORMATION_SCHEMA ARGUMENT SIGNATURE; SNOWFLAKE HAS NO PER-PARAMETER CATALOG. IT SEES ONLY ROUTINES IN THE TARGET DATABASE, SO A PROBE FOR A SYSTEM ROUTINE FINDS NOTHING AND CAN INVERT AN EXISTS TEST. MAX_LENGTH, PRECISION, SCALE, IS_OUTPUT AND HAS_DEFAULT_VALUE ARE NOT AVAILABLE; PARAMETER_ID IS APPROXIMATE WITH DEFAULTS; A MAP/OBJECT/ARRAY PARAMETER YIELDS NO ROWS. NAME COMPARISONS FOLD TO UPPER CASE ONLY AGAINST A STRING LITERAL; OTHER FORMS STAY CASE-SENSITIVE UNLIKE SQL SERVER. MANUAL REVIEW REQUIRED **
+  PUBLIC.ALL_PARAMETERS_VIEW
+WHERE
+  NAME = NULL;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0124 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0125
+
+Default value removed from output parameter
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0125 while converting SQL Server code because the Snowflake result is not the same as the source. Default value removed from output parameter. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE usp_d4 @o INT = 5 OUTPUT, @b INT
+AS
+BEGIN
+    SET @o = @b;
+END
+GO
+CREATE PROCEDURE usp_d4b
+AS
+BEGIN
+    EXEC usp_d4 DEFAULT, 3;
+END
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE usp_d4 (O OUT INT /*** SSC-FDM-TS0125 - THE DEFAULT VALUE OF THE OUTPUT PARAMETER '@o' WAS REMOVED BECAUSE SNOWFLAKE OUTPUT ARGUMENTS CANNOT HAVE A DEFAULT VALUE. CALLERS MUST PASS AN ARGUMENT FOR IT, AND THE PARAMETER STARTS AS NULL INSTEAD OF ITS SOURCE DEFAULT ***/, B INT)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    O := :B;
+  END;
+$$;
+CREATE OR REPLACE PROCEDURE usp_d4b ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    CALL usp_d4(O => DEFAULT, B => 3) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0132 - THE ARGUMENT BINDING OF CALL 'usp_d4' WAS NOT ESTABLISHED, SO THE EMITTED POSITIONAL ARGUMENTS MAY NOT MATCH THE CALLEE'S DECLARED ORDER. ***/!!!;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0125 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0126
+
+Only database name and creation metadata have a Snowflake equivalent. Database name comparisons are case-sensitive in Snowflake.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0126 while converting SQL Server code because the Snowflake result is not the same as the source. Only database name and creation metadata have a Snowflake equivalent. Database name comparisons are case-sensitive in Snowflake. Manual review required. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT name FROM sysdatabases;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  DATABASE_NAME
+FROM
+  --** SSC-FDM-TS0126 - ONLY DATABASE NAME AND CREATION METADATA HAVE A SNOWFLAKE EQUIVALENT. DATABASE NAME COMPARISONS ARE CASE-SENSITIVE IN SNOWFLAKE. MANUAL REVIEW REQUIRED **
+  INFORMATION_SCHEMA.DATABASES;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0126 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0127
+
+Extended properties are not supported in Snowflake. The object COMMENT is used as a workaround, so only the object-level description is preserved.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0127 while converting SQL Server code because the Snowflake result is not the same as the source. Extended properties are not supported in Snowflake. The object comment is used as a workaround. Only the object-level description is preserved; the property name and column-level properties are not representable. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT t.[name], ep.[value] FROM sys.tables t
+LEFT JOIN sys.extended_properties ep
+  ON ep.[major_id] = t.[object_id] AND 'MS_Description' = ep.[name] AND 0 = ep.[minor_id];
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  t.TABLE_NAME,
+  t.COMMENT /*** SSC-FDM-TS0127 - EXTENDED PROPERTIES ARE NOT SUPPORTED IN SNOWFLAKE. THE OBJECT COMMENT IS USED AS A WORKAROUND. ONLY THE OBJECT-LEVEL DESCRIPTION IS PRESERVED; THE PROPERTY NAME AND COLUMN-LEVEL PROPERTIES ARE NOT REPRESENTABLE ***/
+FROM
+  INFORMATION_SCHEMA.TABLES t;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0127 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0128
+
+SET QUOTED\_IDENTIFIER OFF STATEMENT IS COMMENTED OUT BECAUSE ITS EFFECT WAS APPLIED TO THE CONVERTED CODE.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0128 while converting SQL Server code because the Snowflake result is not the same as the source. Set QUOTED\_IDENTIFIER off statement is commented out because its effect was applied to the converted code. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SET QUOTED_IDENTIFIER OFF;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+----** SSC-FDM-TS0128 - SET QUOTED_IDENTIFIER OFF STATEMENT IS COMMENTED OUT BECAUSE ITS EFFECT WAS APPLIED TO THE CONVERTED CODE. **
+--SET QUOTED_IDENTIFIER OFF;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0128 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0129
+
+The executing-requests view now reads an account-wide query history, which reports finished and running queries for the whole account with up to 3 hours of latency rather than the requests one server is executing right now.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0129 while converting SQL Server code because the Snowflake result is not the same as the source. The executing-requests view now reads an account-wide query history, which reports finished and running queries for the whole account with up to 3 hours of latency rather than the requests one server is executing right now. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT session_id FROM sys.dm_exec_requests;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  SESSION_ID
+FROM
+  --** SSC-FDM-TS0129 - SYSTEM TABLE 'sys.dm_exec_requests' NOW READS 'SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY', WHICH REPORTS FINISHED AND RUNNING QUERIES FOR THE WHOLE ACCOUNT WITH UP TO 3 HOURS OF LATENCY, NOT THE REQUESTS ONE SERVER IS EXECUTING RIGHT NOW, SO THE ROW SET DIFFERS. MANUAL REVIEW REQUIRED **
+  SNOWFLAKE.ACCOUNT_USAGE.QUERY_HISTORY;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0129 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0130
+
+Transaction lock query rerouted to SHOW LOCKS; lock granularity and reporting differ.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0130 while converting SQL Server code because the Snowflake result is not the same as the source. The transaction lock query was rerouted to Snowflake show locks. Snowflake reports data partition locks instead of SQL Server locks, so lock existence, counts, and attributes can differ. Show locks reports the current user’s sessions unless it uses in account, so another session can affect the result. Execute immediate ‘show locks’ must stay immediately before the read. Any statement between them breaks the RESULT\_SCAN(LAST\_QUERY\_ID()) read. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT CASE WHEN EXISTS (
+    SELECT TOP 2 1 FROM sys.dm_tran_locks
+    WHERE resource_associated_entity_id = OBJECT_ID('dbo.MyTable')) THEN 1 ELSE 0 END AS held;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+EXECUTE IMMEDIATE 'SHOW LOCKS';
+
+SELECT CASE WHEN EXISTS (
+SELECT TOP 2 1 FROM
+TABLE(RESULT_SCAN(LAST_QUERY_ID())) /*** SSC-FDM-TS0130 - THE TRANSACTION LOCK QUERY WAS REROUTED TO SNOWFLAKE SHOW LOCKS. SNOWFLAKE REPORTS DATA PARTITION LOCKS INSTEAD OF SQL SERVER LOCKS, SO LOCK EXISTENCE, COUNTS, AND ATTRIBUTES CAN DIFFER. SHOW LOCKS REPORTS THE CURRENT USER'S SESSIONS UNLESS IT USES IN ACCOUNT, SO ANOTHER SESSION CAN AFFECT THE RESULT. EXECUTE IMMEDIATE 'SHOW LOCKS' MUST STAY IMMEDIATELY BEFORE THE READ. ANY STATEMENT BETWEEN THEM BREAKS THE RESULT_SCAN(LAST_QUERY_ID()) READ. ***/
+WHERE
+REPLACE(SPLIT_PART("resource", '.', 1), '"', '') = CURRENT_DATABASE()
+AND UPPER(REPLACE(SPLIT_PART("resource", '.', 2), '"', '')) = 'DBO'
+AND UPPER(REPLACE(SPLIT_PART("resource", '.', 3), '"', '')) = 'MYTABLE'
+) THEN 1 ELSE 0 END AS held;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0130 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0142
+
+ERROR\_SEVERITY() has no Snowflake equivalent and was replaced with NULL
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0142 while converting SQL Server code because the Snowflake result is not the same as the source. ERROR\_SEVERITY() has no equivalent in Snowflake. Replaced with null. Severity classification is not available in Snowflake’s error model. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE dbo.p6
+AS
+BEGIN
+  DECLARE @sev INT;
+  BEGIN TRY
+    SET @sev = ERROR_SEVERITY();
+  END TRY
+  BEGIN CATCH
+    SELECT 1;
+  END CATCH
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE dbo.p6 ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    SEV INT;
+  BEGIN
+    SEV := NULL /*** SSC-FDM-TS0142 - ERROR_SEVERITY() HAS NO EQUIVALENT IN SNOWFLAKE. REPLACED WITH NULL. SEVERITY CLASSIFICATION IS NOT AVAILABLE IN SNOWFLAKE'S ERROR MODEL. ***/;
+  EXCEPTION
+    WHEN OTHER THEN
+      SELECT
+        1;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0142 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0144
+
+Procedure status was not returned with result sets
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0144 while converting SQL Server code because the Snowflake result is not the same as the source. The procedure returned result sets through Snowflake’s single return channel. The source integer status was not returned. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE ResultSetStatusProcedure
+AS
+BEGIN
+  DECLARE @err INT = 5;
+  SELECT 7 AS payload;
+  RETURN @err;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ResultSetStatusProcedure ()
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    ERR INT := 5;
+    ProcedureResultSet RESULTSET;
+  BEGIN
+    ProcedureResultSet := (SELECT
+      7 AS payload);
+    --** SSC-FDM-TS0144 - THE PROCEDURE RETURNED RESULT SETS THROUGH SNOWFLAKE'S SINGLE RETURN CHANNEL. THE SOURCE INTEGER STATUS WAS NOT RETURNED. **
+    RETURN TABLE(ProcedureResultSet);
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0144 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0145
+
+TO\_DATE in a VALUES list does not read a digit-only string as YYYYMMDD or YYMMDD.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0145 while converting SQL Server code because the Snowflake result is not the same as the source. TO\_DATE in a values list reads a digit-only string such as ’20251215’ as an epoch offset, not as the yyyymmdd or yymmdd date SQL Server cast reads; pass the format if the value can be such a string. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+INSERT INTO t (d, s) VALUES (CAST(SYSDATETIME() AS DATE), 'a'), (DEFAULT, DEFAULT);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+INSERT INTO t (d, s) VALUES (
+--** SSC-FDM-TS0145 - TO_DATE IN A VALUES LIST READS A DIGIT-ONLY STRING SUCH AS '20251215' AS AN EPOCH OFFSET, NOT AS THE YYYYMMDD OR YYMMDD DATE SQL SERVER CAST READS; PASS THE FORMAT IF THE VALUE CAN BE SUCH A STRING. **
+TO_DATE(CURRENT_TIMESTAMP()), 'a'), (DEFAULT, DEFAULT);
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0145 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0146
+
+A six-digit date uses SQL Server’s default two-digit year cutoff of 2049.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0146 while converting SQL Server code because the Snowflake result is not the same as the source. A six-digit date such as ’691215’ was read with SQL Server’s default two-digit year cutoff of 2049, so it is 1969-12-15 rather than the 2069-12-15 Snowflake’s yy format returns. A configured cutoff other than 2049 changes the century. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT CAST(CodeDate AS DATE) as datepart from CodedData;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+The `...` line is an editorial excerpt, not converter output.
+
+Copy code
+
+```
+SELECT
+  --** SSC-FDM-TS0146 - A SIX-DIGIT DATE SUCH AS '691215' WAS READ WITH SQL SERVER'S DEFAULT TWO-DIGIT YEAR CUTOFF OF 2049, SO IT IS 1969-12-15 RATHER THAN THE 2069-12-15 SNOWFLAKE'S YY FORMAT RETURNS. A CONFIGURED CUTOFF OTHER THAN 2049 CHANGES THE CENTURY. **
+...
+from
+  CodedData;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0146 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0147
+
+An unseparated digit string of this length is not a SQL Server date.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0147 while converting SQL Server code because the Snowflake result is not the same as the source. An unseparated digit string that is not 4, 6, or 8 characters is not a SQL Server date (error 241). TO\_DATE without a format may read it as an epoch offset, such as ’2025121’ becoming 1970-01-24. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT CAST('2025121' AS DATE);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+--** SSC-FDM-TS0147 - AN UNSEPARATED DIGIT STRING THAT IS NOT 4, 6, OR 8 CHARACTERS IS NOT A SQL SERVER DATE (ERROR 241). TO_DATE WITHOUT A FORMAT MAY READ IT AS AN EPOCH OFFSET, SUCH AS '2025121' BECOMING 1970-01-24. **
+TO_DATE('2025121');
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0147 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0148
+
+@@PROCID value was resolved from the converted declaration
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0148 while converting SQL Server code because the Snowflake result is not the same as the source. The @@PROCID value was resolved from the converted declaration. A substituted name or schema goes stale if the routine is renamed or moved. CURRENT\_SCHEMA() reads the session schema at runtime, which can differ from the SQL Server default schema in value and in letter case. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE FUNCTION FunctionTest() RETURNS NVARCHAR(255) AS BEGIN RETURN OBJECT_NAME(@@PROCID); END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION FunctionTest ()
+RETURNS NVARCHAR(255)
+LANGUAGE SQL
+AS
+$$
+  'FunctionTest' /*** SSC-FDM-TS0148 - THE @@PROCID VALUE WAS RESOLVED FROM THE CONVERTED DECLARATION. A SUBSTITUTED NAME OR SCHEMA GOES STALE IF THE ROUTINE IS RENAMED OR MOVED. CURRENT_SCHEMA() READS THE SESSION SCHEMA AT RUNTIME, WHICH CAN DIFFER FROM THE SQL SERVER DEFAULT SCHEMA IN VALUE AND IN LETTER CASE. ***/
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0148 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0149
+
+ERROR\_SEVERITY() inside a CATCH block was replaced with 16
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0149 while converting SQL Server code because the Snowflake result is not the same as the source. ERROR\_SEVERITY() inside a catch block was replaced with 16. The severity of the original error is not available in Snowflake’s error model. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE ProcTryCatchSeverity
+AS
+BEGIN
+  BEGIN TRY
+    SELECT 1/0;
+  END TRY
+  BEGIN CATCH
+    SELECT ERROR_SEVERITY() AS Sev;
+  END CATCH;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ProcTryCatchSeverity ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    SELECT
+      TRUNC(1 / 0);
+  EXCEPTION
+    WHEN OTHER THEN
+      SELECT
+        16 /*** SSC-FDM-TS0149 - ERROR_SEVERITY() INSIDE A CATCH BLOCK WAS REPLACED WITH 16. THE SEVERITY OF THE ORIGINAL ERROR IS NOT AVAILABLE IN SNOWFLAKE'S ERROR MODEL. ***/ AS Sev;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0149 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0150
+
+A negative WAITFOR DELAY value makes SQL Server wait indefinitely, but the converted wait returns immediately.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0150 while converting SQL Server code because the Snowflake result is not the same as the source. A negative waitfor delay value makes SQL Server wait indefinitely, but the converted wait returns immediately. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+DECLARE @x INT = 2;
+WAITFOR DELAY @x;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+DECLARE
+  X INT := 2;
+BEGIN
+  --** SSC-FDM-TS0150 - WAITFOR DELAY WITH INTEGER VARIABLE ':X' WAITS THAT MANY SECONDS. A NEGATIVE VALUE MAKES SQL SERVER WAIT INDEFINITELY, BUT THE CONVERTED CODE SKIPS THE WAIT AND RETURNS IMMEDIATELY. **
+  IF (:X IS NOT NULL
+  AND :X >= 0) THEN
+    CALL SYSTEM$WAIT(:X);
+  END IF;
+END;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0150 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TS0151
+
+TO\_GEOGRAPHY returns NULL for an empty point and accepts non-point WKT that STPointFromText rejects.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TS0151 while converting SQL Server code because the Snowflake result is not the same as the source. TO\_GEOGRAPHY returns null for point empty, which SQL Server stpointfromtext returns as an empty point, and returns non-point wkt that stpointfromtext rejects with error 6522. A z coordinate or a longitude outside -180 to 180 fails in Snowflake. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT CASE WHEN geography::STPointFromText('POINT EMPTY', 4326) IS NULL THEN 'null' ELSE 'built' END AS state;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT CASE WHEN
+--** SSC-FDM-TS0151 - TO_GEOGRAPHY RETURNS NULL FOR POINT EMPTY, WHICH SQL SERVER STPOINTFROMTEXT RETURNS AS AN EMPTY POINT, AND RETURNS NON-POINT WKT THAT STPOINTFROMTEXT REJECTS WITH ERROR 6522. A Z COORDINATE OR A LONGITUDE OUTSIDE -180 TO 180 FAILS IN SNOWFLAKE. **
+TO_GEOGRAPHY('POINT EMPTY') IS NULL THEN 'null' ELSE 'built' END AS state;
+```
+
+#### Best Practices
+
+Compare the converted statement with the SQL Server behavior that SSC-FDM-TS0151 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.

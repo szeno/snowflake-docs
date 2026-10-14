@@ -26,6 +26,7 @@ Complete all of the following steps to see Databricks metadata, lineage, and pop
 6. [Configure system tables lineage (recommended)](#6-configure-system-tables-lineage-recommended)
 7. [Create the Databricks connection](#7-create-the-databricks-connection)
 8. [Choose catalogs and schemas](#8-choose-catalogs-and-schemas)
+9. [Set up metadata access](#9-set-up-metadata-access)
 
 ## 1. Create a service principal in Databricks
 
@@ -210,6 +211,26 @@ Select the catalogs and click **Next**. For each catalog you selected, you’ll 
 Your metadata should start loading automatically. Allow 24 to 48 hours to completely generate popularity and lineage.
 
 When the sync is complete, you’ll be able to explore Databricks in Horizon Catalog.
+
+## 9. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

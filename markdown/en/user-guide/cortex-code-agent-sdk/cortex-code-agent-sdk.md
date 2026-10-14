@@ -4,6 +4,13 @@ Feature - Preview
 
 This feature is in preview.
 
+Note
+
+For new applications, use the [Cortex Agent SDK](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-agent-sdk)
+and its [Cortex Code interface](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-code). The older Cortex Code
+Agent SDK described on this page remains available for existing preview users, but the old SDK won’t be developed
+further.
+
 The Cortex Code Agent SDK lets you build agentic AI applications using Python and TypeScript. Your agents can read
 files, run commands, search codebases, execute SQL, and edit code, using the same tools and agent loop that power
 Cortex Code.

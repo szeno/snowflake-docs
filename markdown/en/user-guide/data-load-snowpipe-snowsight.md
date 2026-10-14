@@ -17,7 +17,7 @@ The privileges that you need depend on the task:
 | View pipe details | `MONITOR` or `OWNERSHIP` on the pipe, or `MONITOR EXECUTION` on the account |
 | View copy history | Any privilege on the target table, or `MONITOR` on the account |
 | Pause or resume a pipe | `OPERATE` or `OWNERSHIP` on the pipe |
-| Refresh a pipe | `OPERATE` or `OWNERSHIP` on the pipe, `USAGE` on an external stage or `READ` on an internal stage, `USAGE` on a named file format, and `SELECT` and `INSERT` on the target table |
+| Refresh a pipe | `OPERATE` or `OWNERSHIP` on the pipe, `USAGE` on an external stage or `READ` on an internal stage, `USAGE` on a named file format, and `INSERT` on the target table |
 | Edit the comment or drop the pipe | `OWNERSHIP` on the pipe |
 | Transfer ownership | `OWNERSHIP` on the pipe and `INSERT` on the target table |
 

@@ -500,8 +500,7 @@ the Amazon Resource Name (ARN) of your SQS queue.
 
    Note
 
-   Following AWS guidelines, Snowflake designates no more than one SQS queue per AWS S3 region. This SQS queue can be shared among multiple
-   buckets in the same AWS account. The SQS queue coordinates notifications for all directory tables reading data files from the same S3
+   In each Snowflake account, Snowflake usually uses one SQS queue for each AWS region where your S3 buckets are located. When the queue’s access policy reaches its size limit, Snowflake creates another queue in the region. Each SQS queue can be shared among multiple buckets in the same AWS region. The SQS queue coordinates notifications for all directory tables reading data files from the same S3
    bucket. When a new or modified data file is uploaded into the bucket, all directory table definitions that match the stage directory
    path read the file details into their metadata.
 2. Log into the AWS Management Console.

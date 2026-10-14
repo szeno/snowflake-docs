@@ -10,7 +10,7 @@ This topic provides configuration details to set up [outbound private connectivi
 following Snowflake features:
 
 - Bulk loading from Microsoft Azure using an external stage.
-- Automating Snowpipe for Microsoft Azure Blob Storage.
+- [Automating Snowpipe](/user-guide/data-load-snowpipe-auto-azure) for Microsoft Azure Blob Storage.
 
 The differences between configuring bulk loading and Snowpipe automation for private connectivity and configuring them for public network
 traffic consists of the following:
@@ -122,7 +122,7 @@ These steps are required for both bulk loading and Snowpipe automation.
 
 ## Syntax update for notification integrations
 
-Automating Snowpipe for Microsoft Azure Blob Storage requires you to create a notification integration. The following syntax update allows
+[Automating Snowpipe](/user-guide/data-load-snowpipe-auto-azure) for Microsoft Azure storage requires you to create a notification integration. The following syntax update allows
 you to configure the notification integration for private connectivity.
 
 Copy code
@@ -135,16 +135,15 @@ CREATE [ OR REPLACE ] NOTIFICATION INTEGRATION [ IF NOT EXISTS ] <name>
 
 ## Configure Snowpipe automation
 
-This section modifies the procedures described in [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure) to highlight how to implement Snowpipe
+This section modifies the procedures described in [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure) to highlight how to implement Snowpipe
 automation with private connectivity. The only differences are provisioning private connectivity endpoints and configuring the
 `USE_PRIVATELINK_ENDPOINT` property of the storage integration and notification integration.
 
 1. Create a storage integration and stage, along with its dedicated private connectivity endpoint, as described
    [earlier in this document](#label-private-connectivity-azure-configure-stage).
-2. [Grant Snowflake access to the storage locations](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure#step-2-grant-snowflake-access-to-the-storage-locations),
-   as described in the Automating Snowpipe for Microsoft Azure Blob Storage topic.
-3. [Configure the Event Grid Subscription](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure#step-1-configuring-the-event-grid-subscription),
-   as described in the Automating Snowpipe for Microsoft Azure Blob Storage topic.
+2. Grant Snowflake access to the storage account, as described in
+   [Step 2: Grant Snowflake Access to the Storage Locations](/user-guide/data-load-azure-config#step-2-grant-snowflake-access-to-the-storage-locations).
+3. [Create a storage queue and an Event Grid subscription](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation).
 4. In Snowflake, call the [SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint) system function to provision a
    private endpoint in your Snowflake VNet to enable Snowflake to connect to your Azure queue using private
    connectivity:
@@ -170,8 +169,7 @@ automation with private connectivity. The only differences are provisioning priv
    Important
 
    You must wait until the status is `APPROVED` before continuing with the next step.
-7. [Retrieve the storage queue URL and tenant ID](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure#retrieve-the-storage-queue-url-and-tenant-id),
-   as described in the Automating Snowpipe for Microsoft Azure Blob Storage topic.
+7. Get the storage queue URL and tenant ID, as described in step 1 of [Create a notification integration](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-integration).
 8. Create a notification integration and be sure to specify the `USE_PRIVATELINK_ENDPOINT` property:
 
    Copy code
@@ -181,14 +179,12 @@ automation with private connectivity. The only differences are provisioning priv
      ENABLED = TRUE
      TYPE = QUEUE
      NOTIFICATION_PROVIDER = AZURE_STORAGE_QUEUE
-     AZURE_STORAGE_QUEUE_PRIMARY_URI = "https://storageaccount.queue.core.windows.net/queuename"
+     AZURE_STORAGE_QUEUE_PRIMARY_URI = 'https://storageaccount.queue.core.windows.net/queuename'
      AZURE_TENANT_ID = '00000000-0000-0000-0000-000000000000'
      USE_PRIVATELINK_ENDPOINT = TRUE;
    ```
-9. [Grant Snowflake access to the storage queue](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure#grant-snowflake-access-to-the-storage-queue),
-   as described in the Automating Snowpipe for Microsoft Azure Blob Storage topic.
-10. [Create a pipe with auto-ingest enabled](/user-guide/data-load-snowpipe-auto-azure#label-snowpipe-automation-azure-create-pipe), as described in the Automating Snowpipe for
-    Microsoft Azure Blob Storage topic.
+9. [Grant Snowflake access to the storage queue](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-grant-queue).
+10. [Create the pipe](/user-guide/data-load-snowpipe-auto-azure#label-snowpipe-automation-azure-create-pipe).
 
 ## Disable private connectivity
 

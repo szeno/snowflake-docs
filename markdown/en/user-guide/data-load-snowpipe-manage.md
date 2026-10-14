@@ -26,7 +26,7 @@ The following table lists the privileges for the tasks on this page:
 | Pause, resume, or force-resume a pipe | `OPERATE` or `OWNERSHIP` on the pipe |
 | Pause or resume all pipes in a schema | `MODIFY` on the schema |
 | Pause or resume all pipes in the account | The `ACCOUNTADMIN` role |
-| Refresh a pipe | `OPERATE` or `OWNERSHIP` on the pipe, `USAGE` on an external stage or `READ` on an internal stage, `USAGE` on a named file format, and `SELECT` and `INSERT` on the target table |
+| Refresh a pipe | `OPERATE` or `OWNERSHIP` on the pipe, `USAGE` on an external stage or `READ` on an internal stage, `USAGE` on a named file format, and `INSERT` on the target table |
 | Change error notifications, the event level, a comment, or tags | `OWNERSHIP` on the pipe, except for setting `ERROR_INTEGRATION` or `LOG_EVENT_LEVEL`. To set tags, also `APPLY TAG` on the account or `APPLY` on each tag. To set `ERROR_INTEGRATION`, `USAGE` on the integration and either `OPERATE` or `OWNERSHIP` on the pipe. To set `LOG_EVENT_LEVEL`, `MODIFY LOG EVENT LEVEL` on the account and either `OPERATE` or `OWNERSHIP` on the pipe |
 | Recreate a pipe | `OWNERSHIP` on the pipe and the privileges in the **Create a pipe** column of [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control). To keep tags, also `APPLY TAG` on the account or `APPLY` on each tag. To keep `LOG_EVENT_LEVEL`, also `MODIFY LOG EVENT LEVEL` on the account |
 | Load or reload files with `COPY INTO` | `USAGE` on a warehouse, `USAGE` on an external stage or `READ` on an internal stage, `USAGE` on a named file format, and `INSERT` on the target table |
@@ -210,7 +210,7 @@ Complete the following steps:
    ```
    ALTER PIPE mydb.myschema.orders_pipe SET PIPE_EXECUTION_PAUSED = TRUE;
    ```
-6. Grant the privileges from step 3 to the same roles again, and set `LOG_EVENT_LEVEL` again if you need to. For automated loading, also confirm that the event notifications for your storage location are still configured correctly. For more information, see [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3), [Automating Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs), or [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure).
+6. Grant the privileges from step 3 to the same roles again, and set `LOG_EVENT_LEVEL` again if you need to. For automated loading, also confirm that the event notifications for your storage location are still configured correctly. For more information, see [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3), [Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs), or [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure).
 7. Resume the pipe, and then call `SYSTEM$PIPE_STATUS` to confirm that `executionState` is `RUNNING`:
 
    Copy code

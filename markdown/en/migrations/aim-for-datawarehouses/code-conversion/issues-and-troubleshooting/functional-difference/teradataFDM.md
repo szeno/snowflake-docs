@@ -82,6 +82,10 @@ COMMENT = '{"origin":"sf_sc","name":"snowconvert","version":{"major":1, "minor":
 
 Bash variable found, Snowflake CLI is required to run this script
 
+Note
+
+This FDM is deprecated. See [SSC-FDM-0140](/en/migrations/aim-for-datawarehouses/code-conversion/issues-and-troubleshooting/functional-difference/generalFDM#ssc-fdm-0140).
+
 ### Description
 
 When the source code of a BTEQ script file migrated to Snowflake Scripting contains Bash variable placeholders (`$variable` or `${variable}`), they are transformed into Snowflake CLI template variables (`<%variable%>`).
@@ -3862,6 +3866,262 @@ FROM
 - **Unify incompatible columns**: if the types differ, cast them to one common type in a derived table before applying `UNPIVOT`. See [SSC-EWI-TD0105](../conversion-issues/teradataEWI#ssc-ewi-td0105) for the case where incompatibility is confirmed.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
 
+## SSC-FDM-TD0062
+
+Teradata collation semantics are not supported in Snowflake. RTRIM() or UPPER(RTRIM()) is used as a workaround.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0062 while converting Teradata code because the Snowflake result is not the same as the source. Teradata collation semantics are not supported in Snowflake. Rtrim() or upper(rtrim()) is used as a workaround. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE VIEW affected_view AS
+SELECT *
+FROM employees
+WHERE first_name = 'George';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0062 - TERADATA COLLATION SEMANTICS ARE NOT SUPPORTED IN SNOWFLAKE. RTRIM() OR UPPER(RTRIM()) IS USED AS A WORKAROUND. **
+CREATE OR REPLACE VIEW affected_view
+AS
+SELECT
+  *
+FROM
+  employees
+WHERE
+  RTRIM(first_name) = RTRIM('George');
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0062 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0063
+
+HASHROW comparison now uses Snowflake HASH, whose values and sensitivity differ from Teradata
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0063 while converting Teradata code because the Snowflake result is not the same as the source. Hashrow was rewritten as Snowflake hash for this same-query comparison. The two functions normalize inputs differently, so the comparison may differ in either direction; Snowflake also treats numerically equal values of different types as equal. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM my_table WHERE HASHROW(c1) = HASHROW(c2);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  *
+FROM
+  my_table
+WHERE
+  --** SSC-FDM-TD0063 - HASHROW WAS REWRITTEN AS SNOWFLAKE HASH FOR THIS SAME-QUERY COMPARISON. THE TWO FUNCTIONS NORMALIZE INPUTS DIFFERENTLY, SO THE COMPARISON MAY DIFFER IN EITHER DIRECTION; SNOWFLAKE ALSO TREATS NUMERICALLY EQUAL VALUES OF DIFFERENT TYPES AS EQUAL. **
+  HASH(c1) = HASH(c2);
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0063 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0064
+
+A quoted derived table column-alias name was not canonicalized
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0064 while converting Teradata code because the Snowflake result is not the same as the source. The quoted name in this derived table column-alias list was kept as written because not every reference to it is visible here; Teradata ignores case in these names and Snowflake does not, so a reference spelled with other casing will not resolve. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+WITH cte AS (SEL "My Col" FROM (SEL 5 AS z) T0("My Col")) SEL "My Col" FROM cte;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+WITH cte AS (
+  SELECT
+    "My Col"
+  FROM
+    --** SSC-FDM-TD0064 - THE QUOTED NAME IN THIS DERIVED TABLE COLUMN-ALIAS LIST WAS KEPT AS WRITTEN BECAUSE NOT EVERY REFERENCE TO IT IS VISIBLE HERE; TERADATA IGNORES CASE IN THESE NAMES AND SNOWFLAKE DOES NOT, SO A REFERENCE SPELLED WITH OTHER CASING WILL NOT RESOLVE. **
+    (
+      SELECT
+        5 AS z
+    ) T0 (
+      "My Col"
+    )
+)
+SELECT
+  "My Col"
+FROM
+  cte;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0064 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0065
+
+DBC.DatabasesV lists every database, while INFORMATION\_SCHEMA.SCHEMATA lists schemas in the current database only
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0065 while converting Teradata code because the Snowflake result is not the same as the source. Dbc.databasesv uses INFORMATION\_SCHEMA.schemata, which lists schemas in the current database only. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT DBC.DatabasesV.DatabaseName FROM DBC.DatabasesV;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  INFORMATION_SCHEMA.SCHEMATA.SCHEMA_NAME
+FROM
+  --** SSC-FDM-TD0065 - DBC.DATABASESV USES INFORMATION_SCHEMA.SCHEMATA, WHICH LISTS SCHEMAS IN THE CURRENT DATABASE ONLY **
+  INFORMATION_SCHEMA.SCHEMATA;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0065 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0066
+
+GET DIAGNOSTICS ROW\_COUNT becomes SQLROWCOUNT, which is NULL or stale after a non-DML statement
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0066 while converting Teradata code because the Snowflake result is not the same as the source. Get diagnostics ROW\_COUNT was rewritten as sqlrowcount. Snowflake sets that value for the last insert, update, delete, or merge; after any other statement it is null or stale and can differ from Teradata. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE PROCEDURE RcNoDml(IN p INTEGER)
+BEGIN
+  DECLARE V_N INTEGER;
+  DECLARE V_COUNT INTEGER;
+  GET DIAGNOSTICS V_COUNT = ROW_COUNT;
+  CREATE TABLE rowcount_nodml_out AS (SELECT id FROM ssc_scratch_t_min) WITH DATA;
+  GET DIAGNOSTICS V_COUNT = ROW_COUNT;
+  SELECT id INTO :V_N FROM ssc_scratch_t_min WHERE id = 1;
+  GET DIAGNOSTICS V_COUNT = ROW_COUNT;
+  IF p = 1 THEN
+    INSERT INTO ssc_scratch_t_min (id) SELECT 1;
+  END IF;
+  GET DIAGNOSTICS V_COUNT = ROW_COUNT;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE RcNoDml (P INTEGER)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    V_N INTEGER;
+    V_COUNT INTEGER;
+  BEGIN
+    --** SSC-FDM-TD0066 - GET DIAGNOSTICS ROW_COUNT WAS REWRITTEN AS SQLROWCOUNT. SNOWFLAKE SETS THAT VALUE FOR THE LAST INSERT, UPDATE, DELETE, OR MERGE; AFTER ANY OTHER STATEMENT IT IS NULL OR STALE AND CAN DIFFER FROM TERADATA. **
+    V_COUNT := SQLROWCOUNT;
+    CREATE OR REPLACE TABLE rowcount_nodml_out AS (
+      SELECT
+        id
+      FROM
+        ssc_scratch_t_min
+    );
+    --** SSC-FDM-TD0066 - GET DIAGNOSTICS ROW_COUNT WAS REWRITTEN AS SQLROWCOUNT. SNOWFLAKE SETS THAT VALUE FOR THE LAST INSERT, UPDATE, DELETE, OR MERGE; AFTER ANY OTHER STATEMENT IT IS NULL OR STALE AND CAN DIFFER FROM TERADATA. **
+    V_COUNT := SQLROWCOUNT;
+    SELECT
+      id
+    INTO
+      :V_N
+    FROM
+      ssc_scratch_t_min
+    WHERE
+      id = 1;
+    --** SSC-FDM-TD0066 - GET DIAGNOSTICS ROW_COUNT WAS REWRITTEN AS SQLROWCOUNT. SNOWFLAKE SETS THAT VALUE FOR THE LAST INSERT, UPDATE, DELETE, OR MERGE; AFTER ANY OTHER STATEMENT IT IS NULL OR STALE AND CAN DIFFER FROM TERADATA. **
+    V_COUNT := SQLROWCOUNT;
+    IF (p = 1) THEN
+      INSERT INTO ssc_scratch_t_min (id) SELECT
+        1;
+    END IF;
+    --** SSC-FDM-TD0066 - GET DIAGNOSTICS ROW_COUNT WAS REWRITTEN AS SQLROWCOUNT. SNOWFLAKE SETS THAT VALUE FOR THE LAST INSERT, UPDATE, DELETE, OR MERGE; AFTER ANY OTHER STATEMENT IT IS NULL OR STALE AND CAN DIFFER FROM TERADATA. **
+    V_COUNT := SQLROWCOUNT;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0066 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
 ## SSC-FDM-TD0100
 
 BTEQ output-formatting setting has no Snowflake equivalent.
@@ -3969,3 +4229,675 @@ FROM
 - **Check ordering assumptions**: confirm that downstream processing does not depend on the physical row distribution or local ordering the removed clause produced.
 - **Order explicitly when needed**: add a Snowflake `ORDER BY` only where deterministic result ordering is actually required.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-FDM-TD0102
+
+Teradata CONTINUE handler materialized as a statement-scoped sub-block.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0102 while converting Teradata code because the Snowflake result is not the same as the source. Teradata continue handler materialized as a statement-scoped sub-block so execution resumes after the guarded statement. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE PROCEDURE TEST.COLLECT_STATS()
+BEGIN
+  DECLARE ERROR_EXISTS CONDITION FOR SQLSTATE VALUE '42000';
+
+	DECLARE EXIT HANDLER FOR SQLEXCEPTION
+		INSERT INTO Proc_Error_Table
+		('spSample3', 'Failed to Insert Row');
+	DECLARE CONTINUE HANDLER FOR ERROR_CONTINUE
+		INSERT INTO Proc_Error_Table
+		('spSample4', 'Failed to Insert Row');
+
+  COLLECT STATISTICS ON EDWCTM.RV_AWARD_TYPE;
+
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE TEST.COLLECT_STATS ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    --** SSC-FDM-TD0102 - TERADATA CONTINUE HANDLER MATERIALIZED AS A STATEMENT-SCOPED SUB-BLOCK SO EXECUTION RESUMES AFTER THE GUARDED STATEMENT. **
+    BEGIN
+--      --** SSC-FDM-0037 - COLLECT STATISTICS NOT NEEDED. SNOWFLAKE AUTOMATICALLY COLLECTS STATISTICS. **
+--      COLLECT STATISTICS ON EDWCTM.RV_AWARD_TYPE
+      NULL;
+    EXCEPTION
+      WHEN OTHER THEN
+        IF (ERROR_CONTINUE) THEN
+          INSERT INTO Proc_Error_Table
+          VALUES ('spSample4', 'Failed to Insert Row');
+        ELSE
+          RAISE;
+        END IF;
+    END;
+    !!!RESOLVE EWI!!! /*** SSC-EWI-0114 - MIXED CONTINUE AND EXIT EXCEPTION HANDLERS IN THE SAME BLOCK ARE NOT SUPPORTED BY SNOWFLAKE SCRIPTING ***/!!!
+    EXCEPTION
+      WHEN OTHER THEN
+        INSERT INTO Proc_Error_Table
+        VALUES ('spSample3', 'Failed to Insert Row');
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0102 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0103
+
+The load-isolation modifier was removed from the statement
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0103 while converting Teradata code because the Snowflake result is not the same as the source. The isolated loading modifier was removed. Snowflake does not provide the same load-isolation semantics; review concurrency behavior for this statement. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+DELETE WITH ISOLATED LOADING TARGET_T ALL;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0103 - THE ISOLATED LOADING MODIFIER WAS REMOVED. SNOWFLAKE DOES NOT PROVIDE THE SAME LOAD-ISOLATION SEMANTICS; REVIEW CONCURRENCY BEHAVIOR FOR THIS STATEMENT. **
+DELETE FROM
+  TARGET_T;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0103 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0104
+
+Teradata PRIMARY INDEX distribution semantics were removed.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0104 while converting Teradata code because the Snowflake result is not the same as the source. Teradata primary index distribution semantics were removed. Review physical design. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+CREATE VOLATILE TABLE ssc_scratch_dynamic_pi_source (id INTEGER, payload VARCHAR(20)) ON COMMIT PRESERVE ROWS;
+REPLACE PROCEDURE SSC_SCRATCH_DYNAMIC_PI()
+BEGIN
+  CALL DBC.SysExecSQL(
+    'CREATE TABLE ssc_scratch_dynamic_pi_out AS '
+    || '(SELECT id, payload FROM ssc_scratch_dynamic_pi_source) WITH DATA PRIMARY INDEX (id);'
+  );
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0039 - COLLATION HANDLED AT QUERY LEVEL FOR THIS TABLE, ANY NEW QUERY OVER THIS TABLE SHOULD APPLY COLLATION APPROPRIATELY **
+CREATE OR REPLACE TEMPORARY TABLE ssc_scratch_dynamic_pi_source (
+  id INTEGER,
+  payload VARCHAR(20)
+)
+;
+CREATE OR REPLACE PROCEDURE SSC_SCRATCH_DYNAMIC_PI ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    --** SSC-FDM-TD0104 - TERADATA PRIMARY INDEX DISTRIBUTION SEMANTICS WERE REMOVED. REVIEW PHYSICAL DESIGN. **
+    EXECUTE IMMEDIATE '
+CREATE OR REPLACE TABLE ssc_scratch_dynamic_pi_out AS (
+   SELECT
+      id,
+      payload
+   FROM
+      ssc_scratch_dynamic_pi_source
+); ';
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0104 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0105
+
+Snowflake Scripting does not raise SQLSTATE 02000 for no-data.
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0105 while converting Teradata code because the Snowflake result is not the same as the source. Snowflake scripting does not raise sqlstate ’02000’ for no-data, including an exhausted fetch, a zero-row select into, or a zero-row update, so this dispatch does not run. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE PROCEDURE p004_select_into (OUT heof SMALLINT)
+BEGIN
+  DECLARE valor VARCHAR(45);
+  DECLARE not_found CONDITION FOR SQLSTATE '02000';
+  DECLARE CONTINUE HANDLER FOR not_found
+    SET heof = 1;
+  SET heof = 0;
+  SELECT TABLENAME INTO valor FROM t001_ms_curr_procedures;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE p004_select_into (HEOF OUT SMALLINT)
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    valor VARCHAR(45);
+  BEGIN
+    heof := 0;
+    SELECT
+      TABLENAME
+    INTO
+      valor
+    FROM
+      t001_ms_curr_procedures;
+    EXCEPTION
+      WHEN OTHER CONTINUE THEN
+        IF (
+        --** SSC-FDM-TD0105 - SNOWFLAKE SCRIPTING DOES NOT RAISE SQLSTATE '02000' FOR NO-DATA, INCLUDING AN EXHAUSTED FETCH, A ZERO-ROW SELECT INTO, OR A ZERO-ROW UPDATE, SO THIS DISPATCH DOES NOT RUN. **
+        SQLSTATE = '02000') THEN
+          heof := 1;
+        ELSE
+          RAISE;
+        END IF;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0105 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0106
+
+The INSERT SELECT LIMIT copies the row and does not delete it from the queue
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0106 while converting Teradata code because the Snowflake result is not the same as the source. The insert select limit copies the row and does not delete it from the queue. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE PROCEDURE ssc_pr4840_ensure_ins()
+BEGIN
+   DECLARE v_sql VARCHAR(600);
+   DECLARE v_dummy INTEGER DEFAULT 0;
+   BEGIN
+      DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+      BEGIN
+         SET v_dummy = 1;
+      END;
+      SET v_sql = 'CREATE TABLE ssc_pr4840_q_ins, QUEUE (QITS TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6), ext_eventid INTEGER) PRIMARY INDEX (ext_eventid)';
+      EXECUTE IMMEDIATE v_sql;
+   END;
+   BEGIN
+      DECLARE CONTINUE HANDLER FOR SQLEXCEPTION
+      BEGIN
+         SET v_dummy = 1;
+      END;
+      SET v_sql = 'CREATE TABLE ssc_pr4840_log_ins (ext_eventid INTEGER) PRIMARY INDEX (ext_eventid)';
+      EXECUTE IMMEDIATE v_sql;
+   END;
+   SET v_sql = 'INSERT INTO ssc_pr4840_q_ins (ext_eventid) VALUES (11)';
+   EXECUTE IMMEDIATE v_sql;
+END;
+
+CALL ssc_pr4840_ensure_ins();
+
+INSERT INTO ssc_pr4840_log_ins (ext_eventid)
+SELECT AND CONSUME TOP 1 ext_eventid
+FROM ssc_pr4840_q_ins;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE ssc_pr4840_ensure_ins ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    v_sql VARCHAR(600);
+    v_dummy INTEGER DEFAULT 0;
+  BEGIN
+    BEGIN
+      v_sql := 'CREATE TABLE ssc_pr4840_q_ins (
+   QITS TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+   ext_eventid INTEGER
+)';
+      !!!RESOLVE EWI!!! /*** SSC-EWI-TD0029 - QUEUE TABLE FUNCTIONALITY NOT SUPPORTED ***/!!!
+      EXECUTE IMMEDIATE :v_sql;
+      EXCEPTION
+        WHEN OTHER CONTINUE THEN
+          BEGIN
+            v_dummy := 1;
+          END;
+    END;
+    BEGIN
+      v_sql := 'CREATE TABLE ssc_pr4840_log_ins (
+   ext_eventid INTEGER
+)';
+      EXECUTE IMMEDIATE :v_sql;
+      EXCEPTION
+        WHEN OTHER CONTINUE THEN
+          BEGIN
+            v_dummy := 1;
+          END;
+    END;
+    v_sql := 'INSERT INTO ssc_pr4840_q_ins (ext_eventid) VALUES (11)';
+    EXECUTE IMMEDIATE :v_sql;
+  END;
+$$;
+
+CALL ssc_pr4840_ensure_ins();
+
+INSERT INTO ssc_pr4840_log_ins (ext_eventid)
+--** SSC-FDM-TD0106 - THE INSERT SELECT LIMIT COPIES THE ROW AND DOES NOT DELETE IT FROM THE QUEUE **
+SELECT
+  ext_eventid
+FROM
+  ssc_pr4840_q_ins
+LIMIT 1 ;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0106 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0107
+
+ABORT or ROLLBACK with a message sets SQLCODE and continues in a Teradata procedure. RAISE stops the Snowflake procedure
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0107 while converting Teradata code because the Snowflake result is not the same as the source. Abort or rollback with a message sets sqlcode and continues in a Teradata procedure. Raise stops the Snowflake procedure. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+REPLACE PROCEDURE AbortMsg5()
+BEGIN
+  IF (1 = 0) THEN
+    ABORT 'it''s not valid';
+  END IF;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE AbortMsg5 ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    IF (1 = 0) THEN
+      ROLLBACK;
+      DECLARE
+        ABORT_EXCEPTION EXCEPTION (-20001, 'it''s not valid');
+      BEGIN
+        --** SSC-FDM-TD0107 - ABORT WITH A MESSAGE IN A TERADATA PROCEDURE SETS SQLCODE TO 3513 AND CONTINUES. RAISE STOPS THE SNOWFLAKE PROCEDURE, SO STATEMENTS AFTER THE ABORT DO NOT RUN. **
+        RAISE ABORT_EXCEPTION;
+      END;
+    END IF;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0107 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0108
+
+A fractional BYTEINT month is truncated in Teradata and may be rounded in Snowflake
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0108 while converting Teradata code because the Snowflake result is not the same as the source. A fractional byteint month is truncated in Teradata and may be rounded in Snowflake, so the january day may differ. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT CAST('01.01.' || SUBSTR(CAST(CAST(ADD_MONTHS(DATE '2024-01-31', CAST(1.9 AS BYTEINT)) AS DATE) AS CHAR(10)), 7, 4) AS DATE);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  TO_DATE('1901/01/' || TO_CHAR(DATEADD(MONTH, CAST(1.9 AS BYTEINT), DATE '2024-01-31'), 'DD'), 'YYYY/MM/DD') /*** SSC-FDM-TD0108 - A FRACTIONAL BYTEINT MONTH IS TRUNCATED IN TERADATA AND MAY BE ROUNDED IN SNOWFLAKE, SO THE JANUARY DAY MAY DIFFER. ***/;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0108 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0109
+
+The YYYY-MM-DD picture was removed from a compared DATE cast whose operand type is unknown
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0109 while converting Teradata code because the Snowflake result is not the same as the source. Format ‘yyyy-mm-dd’ removed from a compared date cast with an unknown operand. Yyyy-mm-dd or a date matches; another separator is a Teradata date and fails on Snowflake; a digit string fails on Teradata and is epoch seconds; a number does not cast. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT c FROM (SELECT '2017/06/01' AS c) src WHERE CAST(c AS DATE FORMAT 'YYYY-MM-DD') > '2017-01-01';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+c FROM
+(
+SELECT
+'2017/06/01' AS c
+) src
+WHERE
+--** SSC-FDM-TD0109 - FORMAT 'YYYY-MM-DD' REMOVED FROM A COMPARED DATE CAST WITH AN UNKNOWN OPERAND. YYYY-MM-DD OR A DATE MATCHES; ANOTHER SEPARATOR IS A TERADATA DATE AND FAILS ON SNOWFLAKE; A DIGIT STRING FAILS ON TERADATA AND IS EPOCH SECONDS; A NUMBER DOES NOT CAST. **
+CAST(c AS DATE) > '2017-01-01';
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0109 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0110
+
+The COPY INTO stage must be created before the unload runs
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0110 while converting Teradata code because the Snowflake result is not the same as the source. The copy into stage must be created before the unload runs. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('/AZ/ssc-scratch.example/dvault/T_DIM_PRODUCT/') STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0110 - THE GENERATED COPY INTO NAMES STAGE '@ssc_2dscratch_2eexample_dvault', WHICH THIS STATEMENT DOES NOT CREATE. CREATE THAT STAGE BEFORE RUNNING THE UNLOAD. **--
+--** SSC-FDM-TD0113 - TERADATA WRITE_NOS DID NOT COMPLETE AN UNLOAD DURING LIVE TESTING. VERIFY THE OUTPUT FILE NAMES, PARTITION PATHS, AND ROW CONTENT AGAINST THE SOURCE SYSTEM. **--
+--** SSC-FDM-TD0111 - SNOWFLAKE PARQUET REJECTS GZIP, SO THIS UNLOAD USES SNAPPY. **--
+COPY INTO @ssc_2dscratch_2eexample_dvault/T_DIM_PRODUCT/
+FROM
+(
+SELECT
+TRIM('A') AS department_cd,
+DATE '2020-01-02' AS load_dt
+ORDER BY load_dt
+)
+PARTITION BY (TO_VARCHAR(load_dt))
+FILE_FORMAT = (TYPE = PARQUET COMPRESSION = SNAPPY)
+HEADER = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0110 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0111
+
+Parquet GZIP is emitted as SNAPPY
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0111 while converting Teradata code because the Snowflake result is not the same as the source. Snowflake parquet rejects gzip, so this unload uses snappy. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('/AZ/ssc-scratch.example/dvault/T_DIM_PRODUCT/') STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0110 - THE GENERATED COPY INTO NAMES STAGE '@ssc_2dscratch_2eexample_dvault', WHICH THIS STATEMENT DOES NOT CREATE. CREATE THAT STAGE BEFORE RUNNING THE UNLOAD. **--
+--** SSC-FDM-TD0113 - TERADATA WRITE_NOS DID NOT COMPLETE AN UNLOAD DURING LIVE TESTING. VERIFY THE OUTPUT FILE NAMES, PARTITION PATHS, AND ROW CONTENT AGAINST THE SOURCE SYSTEM. **--
+--** SSC-FDM-TD0111 - SNOWFLAKE PARQUET REJECTS GZIP, SO THIS UNLOAD USES SNAPPY. **--
+COPY INTO @ssc_2dscratch_2eexample_dvault/T_DIM_PRODUCT/
+FROM
+(
+SELECT
+TRIM('A') AS department_cd,
+DATE '2020-01-02' AS load_dt
+ORDER BY load_dt
+)
+PARTITION BY (TO_VARCHAR(load_dt))
+FILE_FORMAT = (TYPE = PARQUET COMPRESSION = SNAPPY)
+HEADER = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0111 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0112
+
+CSV COPY INTO writes a header row
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0112 while converting Teradata code because the Snowflake result is not the same as the source. Teradata csv WRITE\_NOS omits the header row unless INCLUDE\_HEADER is true. This copy into writes header = true, so the file starts with a header row. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('/AZ/ssc-scratch.example/dvault/T_DIM_PRODUCT/') STOREDAS('CSV') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0110 - THE GENERATED COPY INTO NAMES STAGE '@ssc_2dscratch_2eexample_dvault', WHICH THIS STATEMENT DOES NOT CREATE. CREATE THAT STAGE BEFORE RUNNING THE UNLOAD. **--
+--** SSC-FDM-TD0113 - TERADATA WRITE_NOS DID NOT COMPLETE AN UNLOAD DURING LIVE TESTING. VERIFY THE OUTPUT FILE NAMES, PARTITION PATHS, AND ROW CONTENT AGAINST THE SOURCE SYSTEM. **--
+--** SSC-FDM-TD0112 - TERADATA CSV WRITE_NOS OMITS THE HEADER ROW UNLESS INCLUDE_HEADER IS TRUE. THIS COPY INTO WRITES HEADER = TRUE, SO THE FILE STARTS WITH A HEADER ROW. **--
+COPY INTO @ssc_2dscratch_2eexample_dvault/T_DIM_PRODUCT/
+FROM
+(
+SELECT
+TRIM('A') AS department_cd,
+DATE '2020-01-02' AS load_dt
+ORDER BY load_dt
+)
+PARTITION BY (TO_VARCHAR(load_dt))
+FILE_FORMAT = (TYPE = CSV COMPRESSION = GZIP)
+HEADER = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0112 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
+## SSC-FDM-TD0113
+
+Verify COPY INTO output against the Teradata unload
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-TD0113 while converting Teradata code because the Snowflake result is not the same as the source. Teradata WRITE\_NOS did not complete an unload during live testing. Verify the output file names, partition paths, and row content against the source system. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('/AZ/ssc-scratch.example/dvault/T_DIM_PRODUCT/') STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-TD0110 - THE GENERATED COPY INTO NAMES STAGE '@ssc_2dscratch_2eexample_dvault', WHICH THIS STATEMENT DOES NOT CREATE. CREATE THAT STAGE BEFORE RUNNING THE UNLOAD. **--
+--** SSC-FDM-TD0113 - TERADATA WRITE_NOS DID NOT COMPLETE AN UNLOAD DURING LIVE TESTING. VERIFY THE OUTPUT FILE NAMES, PARTITION PATHS, AND ROW CONTENT AGAINST THE SOURCE SYSTEM. **--
+--** SSC-FDM-TD0111 - SNOWFLAKE PARQUET REJECTS GZIP, SO THIS UNLOAD USES SNAPPY. **--
+COPY INTO @ssc_2dscratch_2eexample_dvault/T_DIM_PRODUCT/
+FROM
+(
+SELECT
+TRIM('A') AS department_cd,
+DATE '2020-01-02' AS load_dt
+ORDER BY load_dt
+)
+PARTITION BY (TO_VARCHAR(load_dt))
+FILE_FORMAT = (TYPE = PARQUET COMPRESSION = SNAPPY)
+HEADER = TRUE;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Teradata behavior that SSC-FDM-TD0113 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.

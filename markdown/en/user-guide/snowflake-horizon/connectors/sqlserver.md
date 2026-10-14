@@ -157,6 +157,26 @@ exercises (a).
 Initial metadata typically appears within a few minutes; for the `s3` path, lineage and popularity fill
 in as Firehose flushes batches into the bucket (up to 15 minutes per batch by default).
 
+## 5. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
+
 ## Connection security
 
 Horizon Catalog connects to SQL Server with encryption enabled by default (`Encrypt=yes`).

@@ -32,10 +32,6 @@ The following limitations apply when you attach a storage lifecycle policy to a 
   [frozen region](/user-guide/dynamic-tables/frozen-regions) predicate. For the full list of
   restrictions on supported expressions, see
   [Frozen region predicate limitations](/user-guide/dynamic-tables/frozen-regions#label-dts-frozen-where-limitations).
-- The policy predicate can’t reference metadata columns, including
-  [METADATA$ROW\_LAST\_COMMIT\_TIME](/user-guide/data-engineering/row-timestamps). Although standard tables support
-  storage lifecycle policies on row timestamps, dynamic tables don’t. Attaching such a policy returns an
-  unsupported feature error. Use a regular timestamp column in the dynamic table’s definition instead.
 
 ## Reinitialization triggers
 

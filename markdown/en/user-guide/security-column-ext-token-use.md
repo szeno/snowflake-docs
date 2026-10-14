@@ -14,7 +14,7 @@ assigning a masking policy to a tag, see [Tag-based masking policies](/user-guid
 
 Important
 
-External tokenization requires [Writing external functions](/sql-reference/external-functions), which are included in the Snowflake [Overview of editions](/user-guide/intro-editions#label-snowflake-editions-standard), and you can use external functions with a tokenization provider.
+External tokenization requires [Writing external functions](/sql-reference/external-functions), which are included in the Snowflake [Standard Edition](/user-guide/intro-editions#label-snowflake-editions-standard), and you can use external functions with a tokenization provider.
 
 However, if you choose to integrate your tokenization provider with Snowflake External Tokenization, you must upgrade to
 [Enterprise Edition](/user-guide/intro-editions#label-snowflake-editions-enterprise) or higher.

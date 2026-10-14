@@ -14,6 +14,7 @@ Complete the following steps to enable metadata, lineage, and popularity of your
 3. [Enable the Power BI service admin settings](#3-enable-the-power-bi-service-admin-settings)
 4. [Add Azure app to your workspace](#4-add-azure-app-to-your-workspace)
 5. [Create the Power BI connection](#5-create-the-power-bi-connection)
+6. [Set up metadata access](#6-set-up-metadata-access)
 
 ## 1. Create an Azure app
 
@@ -106,6 +107,26 @@ This is required to ingest the reports’ metadata and generate the column-level
    - **Client ID:** Application (client) ID of Azure App from step 1.6 above.
    - **Client Secret:** Client secret value of Azure App from step 1.8 above.
    - **Tenant ID:** Directory (tenant) ID of Azure App from step 1.6 above.
+
+## 6. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

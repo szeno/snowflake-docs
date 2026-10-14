@@ -456,11 +456,11 @@ Note that specific steps in this section require a local installation of the Azu
    - If you delete the service principal, the notification integration stops working.
 9. Grant the Snowflake app the following permissions:
 
-   - **Role:** Storage Queue Data Message Processor (the minimum required role), or Storage Queue Data Contributor.
+   - **Role:** Storage Queue Data Contributor. The Storage Queue Data Message Processor role isn’t enough, because Snowflake must also read the queue’s properties.
    - **Assign access to:** Azure AD user, group, or service principal.
    - **Select:** The `appDisplayName` value.
 
-   The Snowflake application identifier should now be listed under **Storage Queue Data Message Processor** or **Storage Queue Data Contributor** (on the same dialog).
+   The Snowflake application identifier should now be listed under **Storage Queue Data Contributor** (on the same dialog).
 
 ### (Optional) Step 3: Creating a stage
 

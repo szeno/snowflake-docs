@@ -35,6 +35,7 @@ Complete the following steps to connect Amazon QuickSight to Horizon Catalog:
 2. [Configure AWS CloudTrail event logs](#2-configure-aws-cloudtrail-event-logs), which is optional.
 3. [Create an IAM role](#3-create-an-iam-role).
 4. [Confirm authorization and start the sync](#4-confirm-authorization-and-start-the-sync).
+5. [Set up metadata access](#5-set-up-metadata-access).
 
 Steps 1 and 4 take place in the Horizon Catalog wizard, and Steps 2 and 3 take place in the AWS
 console. The wizard’s own steps are named rather than numbered, so a numbered step in this guide
@@ -349,6 +350,26 @@ separate **Dashboards** and **Analyses** groups. Native QuickSight folders are n
 
 Popularity and top users appear after Horizon Catalog processes the first CloudTrail logs it can
 read.
+
+## 5. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Troubleshooting
 

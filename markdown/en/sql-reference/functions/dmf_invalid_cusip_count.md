@@ -8,9 +8,12 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the count of non-NULL column values that are not a CUSIP: eight uppercase letters or digits followed by a digit.
+Returns the count of non-`NULL` column values that are not a CUSIP: eight characters, each an uppercase letter, digit, `*`,
+`@`, or `#`,
+followed by a digit.
 
-This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it
+This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view
+so it
 runs at regular intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).
 
 ## Syntax
@@ -28,15 +31,16 @@ SNOWFLAKE.CORE.INVALID_CUSIP_COUNT(<query>)
 
 ## Allowed data types
 
-The column projected by the `query` must have the VARCHAR data type.
+The column projected by the `query` must have the `VARCHAR` data type.
 
 ## Returns
 
-The function returns a NUMBER value. NULL values are not counted.
+The function returns a `NUMBER` value. `NULL` values are not counted.
 
 ## Usage notes
 
 - The function checks the format only; it does not validate the check digit.
+- The characters `*`, `@`, and `#` are accepted in the first eight positions because private-placement CUSIPs use them.
 - Lowercase letters do not match.
 
 ## Example

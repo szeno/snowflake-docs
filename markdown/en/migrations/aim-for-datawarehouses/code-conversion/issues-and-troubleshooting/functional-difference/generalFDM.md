@@ -144,7 +144,7 @@ External table translated to regular table
 
 Note
 
-This FDM is deprecated.
+This FDM is deprecated. See SSC-EWI-GP0001.
 
 ### Description
 
@@ -3584,6 +3584,50 @@ CREATE OR REPLACE HYBRID TABLE dbo.orders (
 - Verify sorting and comparison results for the indexed column under Snowflake’s resulting collation behavior.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
 
+## SSC-FDM-0136
+
+NOT NULL added to foreign key column for Hybrid Table
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-0136 while converting PostgreSQL code because the Snowflake result is not the same as the source. Nullable foreign key columns are not supported on hybrid tables in Snowflake. A not null constraint is added as a workaround. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### PostgreSQL
+
+Copy code
+
+```
+CREATE TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  customer_id INTEGER REFERENCES customers(customer_id)
+);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE HYBRID TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  --** SSC-FDM-0136 - NULLABLE FOREIGN KEY COLUMNS ARE NOT SUPPORTED ON HYBRID TABLES IN SNOWFLAKE. A NOT NULL CONSTRAINT IS ADDED AS A WORKAROUND. **
+  customer_id INTEGER REFERENCES customers (customer_id) NOT NULL,
+  --Auto-generated index for FOREIGN KEY columns
+  INDEX idx_fk_CUSTOMER_ID (customer_id)
+)
+;
+```
+
+#### Best Practices
+
+Compare the converted statement with the PostgreSQL behavior that SSC-FDM-0136 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.
+
 ## SSC-FDM-0137
 
 Multiple writers to the same target combined with UNION ALL.
@@ -3779,3 +3823,41 @@ $$;
 - Review the unsupported feature named in the marker and decide whether the procedure can be redesigned for inline execution.
 - Validate the generated standard procedure and its transaction behavior before deployment.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-FDM-0140
+
+Deployment placeholders require Snowflake CLI runtime substitution
+
+#### Description
+
+SnowConvert AI reports SSC-FDM-0140 while converting Redshift code because the Snowflake result is not the same as the source. Deployment placeholders require runtime substitution. Snowflake cli variables are used as a workaround. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Redshift
+
+Copy code
+
+```
+CREATE TABLE "${schema}".orders (id INT);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+--** SSC-FDM-0140 - DEPLOYMENT PLACEHOLDERS REQUIRE RUNTIME SUBSTITUTION. SNOWFLAKE CLI VARIABLES ARE USED AS A WORKAROUND. **
+CREATE TABLE "<%schema%>".orders (
+  id INT
+)
+;
+```
+
+#### Best Practices
+
+Compare the converted statement with the Redshift behavior that SSC-FDM-0140 describes. If that difference changes the result your workload needs, adjust the Snowflake statement before you run it.

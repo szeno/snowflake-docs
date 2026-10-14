@@ -37,11 +37,11 @@ when replicating data.
 | CHARACTER VARYING / VARCHAR | TEXT | Supported by default up to 16 MB. |
 | TEXT | TEXT | Supported by default up to 16 MB. |
 | BYTEA | BINARY | Supported by default up to 8 MB. |
-| DATE | DATE |  |
+| DATE | DATE | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/postgres/about#label-supported-pg-date-time-data-type-value). |
 | TIME / TIME WITHOUT TIME ZONE | TIME |  |
 | TIME WITH TIME ZONE / TIMETZ | TIMESTAMP\_TZ |  |
-| TIMESTAMP / TIMESTAMP WITHOUT TIME ZONE | TIMESTAMP\_NTZ |  |
-| TIMESTAMP WITH TIME ZONE / TIMESTAMPTZ | TIMESTAMP\_LTZ |  |
+| TIMESTAMP / TIMESTAMP WITHOUT TIME ZONE | TIMESTAMP\_NTZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/postgres/about#label-supported-pg-date-time-data-type-value). |
+| TIMESTAMP WITH TIME ZONE / TIMESTAMPTZ | TIMESTAMP\_LTZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/postgres/about#label-supported-pg-date-time-data-type-value). |
 | INTERVAL | TEXT |  |
 | JSON | VARIANT | Supported by default up to 16 MB. |
 | JSONB | VARIANT | Supported by default up to 16 MB. |

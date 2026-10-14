@@ -372,6 +372,7 @@ The following limitations apply to the Openflow Connector for Oracle:
   WARN-level message identifying the source table and primary key of the
   affected row so the change can be reconciled manually.
 - The connector doesn’t support the truncate table operation. `TRUNCATE` statements on the source are ignored, and the corresponding row deletions are not applied to the destination table.
+- `DATE`, `TIMESTAMP`, `TIMESTAMP WITH TIME ZONE`, and `TIMESTAMP WITH LOCAL TIME ZONE` values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](#label-oracle-out-of-range-date-time).
 
 ## How the connector works
 
@@ -610,6 +611,23 @@ When the connector encounters invalid rows, it emits a `WARN` log entry that inc
 #### Consume rejected rows
 
 To process rejected rows programmatically, create a stream on the error table and consume it like any other Snowflake stream. For more information, see [Streams on error tables](/user-guide/data-load-overview#streams-on-error-tables).
+
+### Date and time values outside Snowflake limits
+
+Snowflake `TIMESTAMP_NTZ`, `TIMESTAMP_LTZ`, and `TIMESTAMP_TZ` accept years from 1 through 9999. When a source value is outside that range, the connector replaces it with a placeholder.
+
+The following table lists each replaced value and the placeholder written to Snowflake:
+
+| Source type | Snowflake type | Values replaced | Placeholder |
+| --- | --- | --- | --- |
+| `DATE` | `TIMESTAMP_NTZ` | Years 4712 BC through 1 BC | `0001-01-01 00:00:00` |
+| `TIMESTAMP` | `TIMESTAMP_NTZ` | Years 4712 BC through 1 BC | `0001-01-01 00:00:00` |
+| `TIMESTAMP WITH TIME ZONE` | `TIMESTAMP_TZ` | Years 4712 BC through 1 BC | `0001-01-01 00:00:00` with the source offset, such as `0001-01-01 00:00:00+02:00` |
+| `TIMESTAMP WITH LOCAL TIME ZONE` | `TIMESTAMP_LTZ` | Years 4712 BC through 1 BC in UTC | `0001-01-01 00:00:00+00` |
+
+Expand
+
+Show lessSee more
 
 # Understanding data retention
 

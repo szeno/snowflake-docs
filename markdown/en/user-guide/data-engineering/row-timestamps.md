@@ -251,9 +251,7 @@ Row timestamps can also be used in the following cases:
   - CLUSTER BY expressions
 - [Storage lifecycle policies](/user-guide/storage-management/storage-lifecycle-policies) can reference
   METADATA$ROW\_LAST\_COMMIT\_TIME. Both expiration and archival policies are supported, so you can expire or
-  archive rows based on when they were last committed instead of maintaining your own timestamp column. This
-  isn’t supported for [dynamic tables](/user-guide/dynamic-tables/storage-lifecycle-policies): attaching a
-  policy that references METADATA$ROW\_LAST\_COMMIT\_TIME to a dynamic table returns an unsupported feature error.
+  archive rows based on when they were last committed instead of maintaining your own timestamp column.
 - Row timestamps can’t be restored by archive table restore. As a workaround, you can materialize METADATA$ROW\_LAST\_COMMIT\_TIME as a persisted
   column of another table to use in archive restore.
 

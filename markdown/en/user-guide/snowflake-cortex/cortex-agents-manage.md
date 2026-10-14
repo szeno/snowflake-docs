@@ -20,14 +20,15 @@ Important
 Before you create and call agents, set up the required roles, privileges, and authentication. For
 details, see [Access control and authentication](/user-guide/snowflake-cortex/cortex-agents-setup).
 
-Cortex Agents determines permissions from the querying user’s **default role**, not the role active in
-their session. The user must also have a **default warehouse**, with `USAGE` on that warehouse granted
-to the default role. If either is missing, agent calls fail even when the user’s current role has every
-required privilege. See
+Cortex Agents determines permissions from the Snowflake context of the request. For REST API calls,
+the `X-Snowflake-Role` header, or the user’s default role if the header is omitted, sets the primary
+role used to authorize the request. Tools use the warehouses configured in the agent specification.
+For calls made from Snowsight or CoWork, the role selected in the UI is used to authorize the
+request. If no role is selected, Snowflake uses the user’s default role. See
 [User requirements](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-user-requirements).
 
-When you call the Agents REST API, you can run a request under a role other than the user’s default
-role by setting the `X-Snowflake-Role` header. For more information, see [Specify Snowflake context with Snowflake REST APIs](/developer-guide/snowflake-rest-api/setting-context).
+When you call the Agents REST API, you can set the request’s primary role with the
+`X-Snowflake-Role` header. For more information, see [Specify Snowflake context with Snowflake REST APIs](/developer-guide/snowflake-rest-api/setting-context).
 
 ## Create an agent
 

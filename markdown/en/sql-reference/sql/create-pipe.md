@@ -120,7 +120,7 @@ For internal stages, using this parameter to automatically load data is only sup
 
     Specifies the Amazon Resource Name (ARN) for the SNS topic for your S3 bucket. The CREATE PIPE statement subscribes the
     Amazon Simple Queue Service (SQS) queue to the specified SNS topic. The pipe copies files to the ingest queue triggered by event
-    notifications via the SNS topic. For more information, see [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+    notifications via the SNS topic. For more information, see [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
     You can’t specify both `AWS_SNS_TOPIC` and `INTEGRATION` for an Amazon S3 stage.
 
@@ -130,8 +130,8 @@ For internal stages, using this parameter to automatically load data is only sup
     Specifies the existing notification integration used to access the storage queue. For an Amazon S3 stage, specify a
     Multi-Queue Notification Integration, and don’t specify `AWS_SNS_TOPIC`. For more information, see:
 
-    - [Automating Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
-    - [Automating Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
+    - [Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
+    - [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
     - [Create a Multi-Queue Notification Integration for multi-location resilience](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-mqni-scenario-a)
 
     The integration name must be typed in all uppercase.
@@ -163,9 +163,9 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
   | --- | --- | --- |
   | CREATE PIPE | Schema |  |
   | USAGE | Stage in the pipe definition | External stages only |
-  | USAGE | Integration | Required for receiving Snowpipe error notifications |
+  | USAGE | Integration | Required for the notification integrations that the pipe references in `INTEGRATION` or `ERROR_INTEGRATION` |
   | READ | Stage in the pipe definition | Internal stages only |
-  | SELECT, INSERT | Table in the pipe definition |  |
+  | INSERT | Table in the pipe definition |  |
   | USAGE | Named file format in the pipe definition | Only if the pipe uses a named file format |
   | OWNERSHIP | Pipe | Required to execute a [CREATE OR ALTER PIPE](#label-create-or-alter-pipe-syntax) statement for an *existing* pipe. |
   | SQL operations on schema objects also require USAGE or any other privilege on the database and schema that contain the object. |  |  |

@@ -13,6 +13,7 @@ Horizon Catalog.
 2. [Create a JSON key](#2-create-a-json-key)
 3. [Create the BigQuery connection](#3-create-the-bigquery-connection)
 4. [Choose databases and schemas](#4-choose-databases-and-schemas)
+5. [Set up metadata access](#5-set-up-metadata-access)
 
 ## 1. Create a service account
 
@@ -92,6 +93,26 @@ schemas later by reconfiguring the data source.
 
 Select the databases and schemas, then complete the wizard. Your metadata starts loading
 automatically. Popularity and lineage take 24 to 48 hours to fully generate.
+
+## 5. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

@@ -38,10 +38,10 @@ when replicating data.
 | CLOB | TEXT | Supported by default up to 16 MB. |
 | NCLOB | TEXT | Supported by default up to 16 MB. |
 | LONG | TEXT | Supported by default up to 16 MB. |
-| DATE | TIMESTAMP\_NTZ |  |
-| TIMESTAMP | TIMESTAMP\_NTZ |  |
-| TIMESTAMP WITH TIME ZONE | TIMESTAMP\_TZ |  |
-| TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP\_LTZ |  |
+| DATE | TIMESTAMP\_NTZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-out-of-range-date-time). |
+| TIMESTAMP | TIMESTAMP\_NTZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-out-of-range-date-time). |
+| TIMESTAMP WITH TIME ZONE | TIMESTAMP\_TZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-out-of-range-date-time). |
+| TIMESTAMP WITH LOCAL TIME ZONE | TIMESTAMP\_LTZ | Values outside the Snowflake range are replaced with a placeholder. For more information, see [Date and time values outside Snowflake limits](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-out-of-range-date-time). |
 | INTERVAL | TEXT |  |
 | INTERVAL YEAR TO MONTH | TEXT |  |
 | INTERVAL DAY TO SECOND | TEXT |  |

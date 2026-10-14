@@ -12,6 +12,7 @@ Horizon Catalog.
 1. [Identify your Sigma API request URL](#1-identify-your-sigma-api-request-url)
 2. [Generate an API client ID and secret](#2-generate-an-api-client-id-and-secret)
 3. [Create the Sigma connection](#3-create-the-sigma-connection)
+4. [Set up metadata access](#4-set-up-metadata-access)
 
 ## 1. Identify your Sigma API request URL
 
@@ -67,6 +68,26 @@ To generate API client credentials, you must be assigned the **Admin** account t
    - **Snowflake Database** and **Snowflake Schema:** The database and schema in your Snowflake
      account where Horizon Catalog stores the connector metadata. The defaults are `CONNECTORS` and
      `METADATA`.
+
+## 4. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

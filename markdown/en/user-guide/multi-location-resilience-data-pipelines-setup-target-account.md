@@ -215,13 +215,13 @@ tab for the cloud provider that hosts your secondary location:
 
 Amazon S3Google CloudAzure
 
-Follow “Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic” in
-[Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). In your target account, run
+Complete the steps in [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription) in
+[Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). In your target account, run
 `SYSTEM$GET_AWS_SNS_IAM_POLICY` with the ARN of the topic for your secondary
 location, and add the statement that it returns to that topic’s access policy.
 
-Follow “Step 2: Grant Snowflake Access to the Pub/Sub Subscription” in
-[Configuring Automation Using GCS Pub/Sub](/user-guide/data-load-snowpipe-auto-gcs#label-gcp-pubsub-snowpipe), for your secondary location’s subscription
+Follow [Step 4: Grant Snowflake access to the subscription](/user-guide/data-load-snowpipe-auto-gcs#label-snowpipe-gcs-grant-pubsub-access) in
+[Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs), for your secondary location’s subscription
 only, in your target account.
 
 Snowflake creates the integrations behind the replicated MQNI with your target
@@ -232,8 +232,8 @@ your target account. The `QUEUES` row shows each queue’s
 integration, and it differs from the `STORAGE_GCP_SERVICE_ACCOUNT` value that
 you used in [Grant access to your secondary storage location](#label-mlsi-target-grant-storage), so grant each one separately.
 
-Follow “Grant Snowflake Access to the Storage Queue” in
-[Configuring Automation With Azure Event Grid](/user-guide/data-load-snowpipe-auto-azure#label-azure-configuring-automation), for your secondary location’s queue
+Follow [Step 4: Grant Snowflake access to the storage queue](/user-guide/data-load-snowpipe-auto-azure#label-data-load-snowpipe-auto-azure-grant-queue) in
+[Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure), for your secondary location’s queue
 only, in your target account.
 
 Snowflake creates the integrations behind the replicated MQNI with your target
@@ -397,14 +397,15 @@ tell whether the rebind succeeded.
 
 After your pipes rebind successfully, point your secondary bucket at their new queue.
 In your target account, run [DESCRIBE PIPE](/sql-reference/sql/desc-pipe) to get
-the ARN in the `notification_channel` column. Pipes that load from the same bucket report the
+the ARN in the `notification_channel` column. Pipes that load from the same bucket usually report the
 same ARN. Pipes on different buckets in the same region usually do too, but
-Snowflake can use more than one queue in a region, so check each bucket’s
-pipes. On the secondary bucket, configure an S3 event notification that
-targets that ARN for each path that your primary bucket’s notifications cover,
+Snowflake can use more than one queue in a region, so check the ARN for each
+pipe. On the secondary bucket, for each path that your primary bucket’s
+notifications cover, configure an S3 event notification that targets the ARN
+of the pipes that load that path,
 as described in
 [Configure event notifications](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-configure-sqs)
-in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). AWS limits each bucket to 100 event
+in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3). AWS limits each bucket to 100 event
 notification configurations, and doesn’t allow overlapping prefix and suffix
 filters for the same event type. Mirror your primary bucket’s notifications
 rather than adding one for each pipe. The queue in your

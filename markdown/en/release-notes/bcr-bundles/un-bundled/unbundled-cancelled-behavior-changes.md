@@ -16,6 +16,7 @@ The following table lists canceled behavior changes. Canceled behavior changes a
 
 | Originally Planned BCR Bundle | Functional Area | Canceled Behavior Change | Additional Notes |
 | --- | --- | --- | --- |
+| Unbundled (Pending) | Snowflake CoWork | [Snowflake CoWork: MANAGE ARTIFACT PUBLICATION ON ACCOUNT privilege granted to the PUBLIC role (Canceled)](/release-notes/bcr-bundles/un-bundled/bcr-manage-artifact-publication) | Canceled before dashboards became generally available, because Snowflake switched to a new privilege model. Replaced by [MANAGE ACCESS privileges on Artifacts granted to the PUBLIC role](/release-notes/bcr-bundles/un-bundled/bcr-manage-access-dashboard-artifacts) |
 | [2025\_06 Bundle](/release-notes/bcr-bundles/2025_06_bundle) | Security | [OAuth authentication: Change in network policy behavior (Canceled)](/release-notes/bcr-bundles/un-bundled/bcr-2094) |  |
 | [2025\_04 Bundle](/release-notes/bcr-bundles/2025_04_bundle) | Security | [Mandatory multi-factor authentication on Snowsight login (Replaced)](/release-notes/bcr-bundles/un-bundled/bcr-1972) | Replaced by [Multi-factor authentication: MFA\_ENROLLMENT parameter values change](/release-notes/bcr-bundles/2025_06/bcr-2097) |
 | [2025\_04 Bundle](/release-notes/bcr-bundles/2025_04_bundle) | Snowpark Python | [Snowpark Python: Eliminate repeated subqueries in Snowpark-generated queries (Canceled)](/release-notes/bcr-bundles/un-bundled/bcr-1995) |  |

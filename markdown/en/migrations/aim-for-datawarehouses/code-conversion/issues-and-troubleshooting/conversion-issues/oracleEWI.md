@@ -5457,3 +5457,74 @@ CREATE OR REPLACE TYPE order_summary AS OBJECT (order_id NUMBER(38, 18), items m
 
 - Include the referenced type or replace the attribute with a supported scalar, `OBJECT`, or `ARRAY`.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-EWI-OR0171
+
+Collection element subscript rounding cannot be reproduced
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-OR0171 while converting Oracle code because it cannot reproduce the source behavior in Snowflake. The collection element subscript was not converted because the element it addresses is not proven to be the element Oracle addresses. The subscript’s declared type, range or expression shape could make the converted index select a different element. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Oracle
+
+Copy code
+
+```
+CREATE OR REPLACE TYPE ssc_dcity AS OBJECT (city VARCHAR2(40), zip VARCHAR2(10));
+CREATE OR REPLACE TYPE ssc_dcity_tab AS TABLE OF ssc_dcity;
+CREATE OR REPLACE PROCEDURE p_read_ieee_attr
+AS
+t ssc_dcity_tab := ssc_dcity_tab();
+d BINARY_DOUBLE := 2.5;
+v VARCHAR2(40);
+BEGIN
+  t.EXTEND;
+  t(1) := ssc_dcity('Lima', '15001');
+  v := t(d).city;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TYPE ssc_dcity AS OBJECT (city VARCHAR(40), zip VARCHAR(10));
+
+CREATE OR REPLACE TYPE ssc_dcity_tab AS ARRAY ( OBJECT (city VARCHAR(40), zip VARCHAR(10)) );
+
+CREATE OR REPLACE PROCEDURE p_read_ieee_attr ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    t ARRAY /*** SSC-FDM-OR0084 - COLLECTION TYPE 't' WAS MAPPED TO A SNOWFLAKE ARRAY; ELEMENT INDEXING WAS ADJUSTED FROM 1-BASED TO 0-BASED. ***/ := ARRAY_CONSTRUCT();
+    d FLOAT := 2.5;
+    v VARCHAR(40);
+  BEGIN
+    t := ARRAY_APPEND(:t, null);
+    --** SSC-FDM-OR0052 - COLLECTION INDEX '1' WAS ADJUSTED FROM 1-BASED TO 0-BASED INDEXING. **
+    t := ARRAY_CAT(ARRAY_CAT(ARRAY_SLICE(t, 0, 0), ARRAY_CONSTRUCT(OBJECT_CONSTRUCT('city', 'Lima', 'zip', '15001'))), ARRAY_SLICE(t, 1, ARRAY_SIZE(t)));
+    v :=
+    !!!RESOLVE EWI!!! /*** SSC-EWI-OR0171 - THE COLLECTION ELEMENT SUBSCRIPT WAS NOT CONVERTED BECAUSE THE ELEMENT IT ADDRESSES IS NOT PROVEN TO BE THE ELEMENT ORACLE ADDRESSES. THE SUBSCRIPT'S DECLARED TYPE, RANGE OR EXPRESSION SHAPE COULD MAKE THE CONVERTED INDEX SELECT A DIFFERENT ELEMENT. ***/!!!
+    null /*:t(:d)*/!!!RESOLVE EWI!!! /*** SSC-EWI-0073 - PENDING FUNCTIONAL EQUIVALENCE REVIEW FOR 'COLLECTION ELEMENT MEMBER ACCESS' NODE ***/!!!.city;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-OR0171 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.

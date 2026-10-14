@@ -7,7 +7,7 @@ Converts all the auto-ingest pipes in the current account that load data from an
 an Amazon Simple Notification Service (SNS) topic instead. One call converts every such pipe for the bucket; you can’t convert pipes individually. The function also subscribes the bucket’s Snowflake SQS queue to the topic.
 
 For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns) and
-[Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+[Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
 
 If you’re configuring multi-location resilience, converting pipes to SNS is one step in moving pipes that use only Amazon SQS notifications (SQS-only pipes) onto a Multi-Queue
 Notification Integration (MQNI). If you need to recreate pipes for multi-location resilience, finish recreating them before you convert them, because recreating a converted pipe from its original definition, which specifies neither `AWS_SNS_TOPIC` nor `INTEGRATION`, makes the pipe an SQS-only pipe again. Follow the procedure in [Move existing SQS-only pipes to Amazon SNS](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-sqs-to-sns). Then use `SYSTEM$CONVERT_PIPES_TO_MULTI_QUEUE` to create an MQNI from the SNS
@@ -71,9 +71,8 @@ Using a role that inherits `ACCOUNTADMIN`, or activating `ACCOUNTADMIN` only as 
     [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) in that account.
   - Allow Amazon S3 to publish event notifications from your bucket to the SNS topic.
 
-  For instructions, see [Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription) in [Automating Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
-- The function converts every SQS-only pipe in the current account that loads from the bucket, including directory table
-  auto-refresh pipes. It sets the SNS topic on each converted pipe and on the stage of each directory table auto-refresh pipe.
+  For the Amazon S3 statement, see step 2 of [Create the SNS topic and the S3 event notification](/user-guide/data-load-snowpipe-auto-s3#label-data-load-snowpipe-auto-s3-sns-topic). For the Snowflake statement, see [Let Snowflake subscribe to the topic](/user-guide/data-load-snowpipe-auto-s3#label-create-sns-topic-subscription). Both sections are in [Automate Snowpipe for Amazon S3](/user-guide/data-load-snowpipe-auto-s3).
+- The function converts every SQS-only pipe in the current account that loads from the bucket, including directory table auto-refresh pipes and the pipes that refresh external tables automatically. It sets the SNS topic on each converted pipe and on the stage of each directory table auto-refresh pipe.
   You can’t run `DESCRIBE PIPE` on a directory table auto-refresh pipe, so to confirm its conversion, run
   [DESCRIBE STAGE](/sql-reference/sql/desc-stage) and check that the `AWS_SNS_TOPIC` property in the `DIRECTORY` group shows the
   topic ARN.
@@ -87,6 +86,7 @@ Using a role that inherits `ACCOUNTADMIN`, or activating `ACCOUNTADMIN` only as 
   metadata that the conversion requires, but it also drops the pipe’s load history, so make sure that the recreated pipe doesn’t
   load files that the original pipe already loaded.
 - To prevent data loss, Snowpipe continues to consume messages from the SQS queue after the conversion.
+- External tables that refresh automatically from the bucket keep refreshing after you change the bucket’s event notification to send to the SNS topic. After the conversion, the `notification_channel` column in the output of [SHOW EXTERNAL TABLES](/sql-reference/sql/show-external-tables) is empty for those external tables.
 - The S3 bucket and SNS topic must be in the same AWS region.
 
 ## Examples

@@ -5835,3 +5835,49 @@ Issue code: SSC-EWI-0132
 
 - Change the indexed column to a data type supported by Snowflake hybrid tables or remove the index before deployment.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-EWI-0137
+
+Hybrid Table with unsupported foreign key properties is not supported in Snowflake
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-0137 while converting Greenplum code because it cannot reproduce the source behavior in Snowflake. Hybrid tables with unsupported foreign key properties are not supported in Snowflake. A standard table is used as a workaround. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Greenplum
+
+Copy code
+
+```
+CREATE TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  customer_id INTEGER REFERENCES customers(customer_id) ON DELETE CASCADE
+);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+!!!RESOLVE EWI!!! /*** SSC-EWI-0137 - HYBRID TABLES WITH UNSUPPORTED FOREIGN KEY PROPERTIES ARE NOT SUPPORTED IN SNOWFLAKE. A STANDARD TABLE IS USED AS A WORKAROUND. ***/!!!
+CREATE TABLE orders (
+  order_id INTEGER PRIMARY KEY,
+  customer_id INTEGER REFERENCES customers (customer_id) ON DELETE CASCADE
+)
+;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-0137 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.

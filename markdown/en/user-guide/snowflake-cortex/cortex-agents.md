@@ -144,7 +144,7 @@ For how to add and configure each tool, see [Create and manage agents](/user-gui
 
 ## Access control and authentication
 
-Calling an agent requires the SNOWFLAKE.CORTEX\_USER or SNOWFLAKE.CORTEX\_AGENT\_USER database role, privileges on the agent object, and privileges on the objects used by the agent’s tools. If the user’s role is missing privileges on a tool, the request is rejected with a 4XX error. Cortex Agents determines session permissions from the querying user’s default role. Requests to the Cortex Agents API must include an authorization token.
+Calling an agent requires the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role, privileges on the agent object, and privileges on the objects used by the agent’s tools. Cortex Agents determines permissions from the Snowflake context of the request, and tools use the warehouses configured in the agent specification.
 
 For the full requirements, including role setup, privilege tables, and authentication methods, see [Access control and authentication](/user-guide/snowflake-cortex/cortex-agents-setup).
 

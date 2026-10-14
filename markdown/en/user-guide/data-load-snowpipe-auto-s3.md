@@ -1,296 +1,232 @@
-# Automating Snowpipe for Amazon S3
+# Automate Snowpipe for Amazon S3
 
-This topic provides instructions for triggering Snowpipe data loads from external stages on S3 automatically using [Amazon SQS (Simple Queue Service)](https://aws.amazon.com/sqs/) notifications for an S3 bucket.
+This topic describes how to set up a pipe that loads files from an Amazon S3 bucket as soon as they arrive. When a file lands in the bucket, Amazon S3 sends an event notification to an Amazon Simple Queue Service (SQS) queue that Snowflake manages, and Snowpipe loads the file into your target table. For an overview of automated loading on every cloud provider, see [Automate Snowpipe with cloud event notifications](/user-guide/data-load-snowpipe-auto).
 
-Snowflake recommends that you only send supported events for Snowpipe to reduce costs, event noise, and latency.
+To set up automated loading from Amazon S3, complete the following steps:
 
-## Cloud platform support
+1. [Create a storage integration and an external stage](#label-data-load-snowpipe-secure-access-s3) so that Snowflake can read the bucket.
+2. [Choose how Amazon S3 notifies Snowpipe](#label-data-load-snowpipe-auto-s3-choose): directly through Amazon SQS, through Amazon Simple Notification Service (SNS), or through Amazon EventBridge. Then create the pipe and connect event notifications to it by following the option for that method.
+3. [Test the pipe](#label-data-load-snowpipe-auto-s3-verify).
+4. [Load the files that are already in the bucket](#label-data-load-snowpipe-auto-s3-existing-files).
 
-Triggering automated Snowpipe data loads using S3 event messages is supported by Snowflake accounts hosted on [all supported cloud platforms](/user-guide/intro-cloud-platforms).
+The examples in this topic load JSON files from the `s3://mybucket/orders/` path into the `mydb.myschema.orders` table. They use the `orders_pipe_owner` role from [Create a role to own the pipe (recommended)](#label-data-load-snowpipe-auto-s3-owner-role). If you skip that section, use a role that has the required privileges.
 
-## Network traffic
+## Before you begin
 
-Note to [Virtual Private Snowflake (VPS)](/user-guide/intro-editions) and [AWS PrivateLink](/user-guide/admin-security-privatelink) customers:
+Make sure that you have the following:
 
-Automating Snowpipe using Amazon SQS notifications works well. However, although AWS cloud storage within a VPC (including VPS) can communicate with its own messaging services (Amazon SQS, Amazon Simple Notification Service), this traffic flows between servers on Amazon’s secure network outside of the VPC; therefore, this traffic is not protected by the VPC.
+- **A target table.** Snowpipe loads files into an existing standard table or [Apache Iceberg™ table](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-iceberg).
+- **Snowflake privileges.** The role that creates the pipe needs the privileges in the **Create a pipe** column of [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control). Creating a storage integration also requires the `CREATE INTEGRATION` privilege on the account, which only the `ACCOUNTADMIN` role has by default.
+- **AWS permissions.** You need permission to create IAM policies and roles, and to configure event notifications on the bucket. To use Amazon SNS, you also need permission to create and edit SNS topics. To use Amazon EventBridge, you need permission to create and edit both EventBridge rules and SNS topics.
 
-## Configuring secure access to Cloud Storage
+## Create a role to own the pipe (recommended)
 
-Note
+Snowpipe loads files with the privileges of the role that owns the pipe. To follow the principle of least privilege, create a role that has only the privileges that the pipe needs, and create the pipe with that role. If you create the pipe with a different role, you can [transfer ownership](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-transfer-ownership) later, but you must pause the pipe to do so.
 
-If you have already configured secure access to the S3 bucket that stores your data files, you can skip this section.
-
-This section describes how to use storage integrations to allow Snowflake to read data from and write data to an Amazon S3 bucket referenced in an external (i.e. S3) stage. Integrations are named, first-class Snowflake objects that avoid the need for passing explicit cloud provider credentials such as secret keys or access tokens. Integration objects store an AWS identity and access management (IAM) user ID. An administrator in your organization grants the integration IAM user permissions in the AWS account.
-
-An integration can also list buckets (and optional paths) that limit the locations users can specify when creating external stages that use the integration.
-
-Note
-
-- Completing the instructions in this section requires permissions in AWS to create and manage IAM policies and roles. If you are not an AWS administrator, ask your AWS administrator to perform these tasks.
-- Note that currently, accessing S3 storage in [government regions](/user-guide/intro-regions#label-us-gov-regions)
-  using a storage integration is limited to Snowflake accounts hosted on AWS in the same government
-  region. Accessing your S3 storage from an account hosted outside of the government region using
-  direct credentials is supported.
-
-The following diagram shows the integration flow for a S3 stage:
-
-![Amazon S3 Stage Integration Flow](/static/images/storage-integration-s3.png)
-
-1. An external (i.e. S3) stage references a storage integration object in its definition.
-2. Snowflake automatically associates the storage integration with a S3 IAM user created for your account. Snowflake creates a single IAM user that is referenced by all S3 storage integrations in your Snowflake account.
-3. An AWS administrator in your organization grants permissions to the IAM user to access the bucket referenced in the stage definition. Note that many external stage objects can reference different buckets and paths and use the same storage integration for authentication.
-
-When a user loads or unloads data from or to a stage, Snowflake verifies the permissions granted to the IAM user on the bucket before allowing or denying access.
-
-Note
-
-We highly recommend this option, which avoids the need to supply IAM credentials when accessing cloud storage. See [Configuring secure access to Amazon S3](/user-guide/data-load-s3-config) for additional storage access options.
-
-### Step 1: Configure access permissions for the S3 bucket
-
-#### AWS access control requirements
-
-Snowflake requires the following permissions on an S3 bucket and folder to be able to access files in the folder (and sub-folders):
-
-- `s3:GetBucketLocation`
-- `s3:GetObject`
-- `s3:GetObjectVersion`
-- `s3:ListBucket`
-
-As a best practice, Snowflake recommends creating an IAM policy for Snowflake access to the S3 bucket. You can then attach the policy to
-the role and use the security credentials generated by AWS for the role to access files in the bucket.
-
-#### Creating an IAM policy
-
-The following step-by-step instructions describe how to configure access permissions for Snowflake in your AWS Management Console to access
-your S3 bucket.
-
-1. Log into the AWS Management Console.
-2. From the home dashboard, search for and select **IAM**.
-3. From the left-hand navigation pane, select **Account settings**.
-4. Under **Security Token Service (STS)** in the **Endpoints** list, find the Snowflake
-   [region](/user-guide/intro-regions) where your account is located. If the **STS status** is inactive,
-   move the toggle to **Active**.
-5. From the left-hand navigation pane, select **Policies**.
-6. Select **Create Policy**.
-7. For **Policy editor**, select **JSON**.
-8. Add a policy document that will allow Snowflake to access the S3 bucket and folder.
-
-   The following policy (in JSON format) provides Snowflake with the required permissions to load or unload data using a single bucket and
-   folder path.
-
-   Copy and paste the text into the policy editor:
-
-   Note
-
-   - Make sure to replace `bucket` and `prefix` with your actual bucket name and folder path prefix.
-   - The Amazon Resource Names (ARN) for buckets in
-     [government regions](/user-guide/intro-regions#label-us-gov-regions) have a `arn:aws-us-gov:s3:::` prefix.
-
-   Copy code
-
-   ```
-   {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-              "s3:GetObject",
-              "s3:GetObjectVersion"
-            ],
-            "Resource": "arn:aws:s3:::<bucket>/<prefix>/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket",
-                "s3:GetBucketLocation"
-            ],
-            "Resource": "arn:aws:s3:::<bucket>",
-            "Condition": {
-                "StringLike": {
-                    "s3:prefix": [
-                        "<prefix>/*"
-                    ]
-                }
-            }
-        }
-    ]
-   }
-   ```
-
-   Note
-
-   Setting the `"s3:prefix":` condition to either `["*"]` or `["<path>/*"]` grants access to all prefixes in the
-   specified bucket or path in the bucket, respectively.
-
-   Note that AWS policies support a variety of different security use cases.
-9. Select **Next**.
-10. Enter a **Policy name** (for example, `snowflake_access`) and an optional **Description**.
-11. Select **Create policy**.
-
-# Step 2: Create the IAM role in AWS
-
-To configure access permissions for Snowflake in the AWS Management Console, do the following:
-
-1. From the left-hand navigation pane in the Identity and Access Management (IAM) Dashboard, select **Roles**.
-2. Select **Create role**.
-3. Select **AWS account** as the trusted entity type.
-4. Select **Another AWS account**
-
-> ![Select trusted entity page in AWS Management Console](/static/images/screens/iam-role-select-trusted-entity.png)
-
-5. In the **Account ID** field, enter your own AWS account ID temporarily. Later, you modify the trust relationship and grant
-   access to Snowflake.
-6. Select the **Require external ID** option. An external ID is used to grant access to your AWS resources
-   (such as S3 buckets) to a third party like Snowflake.
-
-   Enter a placeholder ID such as `0000`.
-   In a later step, you will modify the trust relationship for your IAM role and specify the external ID for your storage integration.
-7. Select **Next**.
-8. Select the policy you created in `Step 1: Configure access permissions for the S3 bucket`\_ (in this topic).
-9. Select **Next**.
-
-> ![Review Page in AWS Management Console](/static/images/screens/iam-role-review.png)
-
-10. Enter a name and description for the role, then select **Create role**.
-
-You have now created an IAM policy for a bucket, created an IAM role, and attached the policy to the role.
-
-11. On the role summary page, locate and record the **Role ARN** value. In the next step, you will create a Snowflake integration that
-    references this role.
-
-Note
-
-Snowflake caches the temporary credentials for a period that cannot exceed the 60-minute expiration time. If you revoke access from
-Snowflake, users might be able to list files and access data from the cloud storage location until the cache expires.
-
-## Step 3: Create a cloud storage integration in Snowflake
-
-Create a storage integration using the [CREATE STORAGE INTEGRATION](/sql-reference/sql/create-storage-integration) command. A storage integration is a Snowflake
-object that stores a generated identity and access management (IAM) user for your S3 cloud storage, along with an optional set of allowed
-or blocked storage locations (that is, buckets). Cloud provider administrators in your organization grant permissions on the storage locations
-to the generated user. This option allows users to avoid supplying credentials when creating stages or loading data.
-
-A single storage integration can support multiple external (that is, S3) stages. The URL in the stage definition must align with the S3
-buckets (and optional paths) specified for the STORAGE\_ALLOWED\_LOCATIONS parameter.
-
-Note
-
-Only account administrators (users with the ACCOUNTADMIN role) or a role with the global CREATE INTEGRATION privilege can execute this
-SQL command.
+For example, the following statements create a role named `orders_pipe_owner` that can create a pipe that loads the `orders` table. After you create the stage in [Step 1](#label-data-load-snowpipe-secure-access-s3), you also grant the role the `USAGE` privilege on the stage.
 
 Copy code
 
 ```
-CREATE STORAGE INTEGRATION <integration_name>
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'S3'
-  ENABLED = TRUE
-  STORAGE_AWS_ROLE_ARN = '<iam_role>'
-  STORAGE_ALLOWED_LOCATIONS = ('<protocol>://<bucket>/<path>/', '<protocol>://<bucket>/<path>/')
-  [ STORAGE_BLOCKED_LOCATIONS = ('<protocol>://<bucket>/<path>/', '<protocol>://<bucket>/<path>/') ]
+USE ROLE SECURITYADMIN;
+
+CREATE ROLE IF NOT EXISTS orders_pipe_owner;
+
+GRANT USAGE ON DATABASE mydb TO ROLE orders_pipe_owner;
+GRANT USAGE, CREATE PIPE ON SCHEMA mydb.myschema TO ROLE orders_pipe_owner;
+GRANT INSERT ON TABLE mydb.myschema.orders TO ROLE orders_pipe_owner;
+
+-- Let users with the SYSADMIN role use and manage the new role.
+GRANT ROLE orders_pipe_owner TO ROLE SYSADMIN;
 ```
 
-Where:
+## Step 1: Create a storage integration and an external stage
 
-- `integration_name` is the name of the new integration.
-- `iam_role` is the Amazon Resource Name (ARN) of the role you created in [Step 2: Create the IAM role in AWS](#step-2-create-the-iam-role-in-aws) (in this topic).
-- `protocol` is one of the following:
+Snowpipe reads files through an external stage that points to your bucket. If you already have an external stage for the path that you want to load, make sure that its URL ends with a forward slash (`/`). If you created a role to own the pipe, grant it the `USAGE` privilege on the stage, as shown at the end of this step. Then continue with [Step 2](#label-data-load-snowpipe-auto-s3-choose).
 
-  - `s3` refers to S3 storage in public AWS regions outside of China.
-  - `s3china` refers to S3 storage in public AWS regions in China.
-  - `s3gov` refers to S3 storage in [government regions](/user-guide/intro-regions#label-us-gov-regions).
-- `bucket` is the name of a S3 bucket that stores your data files (for example, `mybucket`). The required STORAGE\_ALLOWED\_LOCATIONS
-  parameter and optional STORAGE\_BLOCKED\_LOCATIONS parameter restrict or block access to these buckets, respectively, when stages that
-  reference this integration are created or modified.
-- `path` is an optional path that can be used to provide granular control over objects in the bucket.
+Snowflake recommends that the stage use a storage integration, so that you don’t store AWS credentials in Snowflake. To create the IAM policy, the IAM role, and the storage integration, follow Steps 1 through 5 in [Option 1: Configure a Snowflake storage integration to access Amazon S3](/user-guide/data-load-s3-config-storage-integration). For other ways to give Snowflake access to your bucket, see [Configuring secure access to Amazon S3](/user-guide/data-load-s3-config).
 
-The following example creates an integration that allows access to all buckets in the account but blocks access to the defined `sensitivedata` folders.
-
-Additional external stages that also use this integration can reference the allowed buckets and paths:
+Then create the stage with the [CREATE STAGE](/sql-reference/sql/create-stage) command. Creating a stage that uses a storage integration requires the `CREATE STAGE` privilege on the schema and the `USAGE` privilege on the integration. If you just created the pipe owner role, switch from the `SECURITYADMIN` role to a role that has these privileges. For example:
 
 Copy code
 
 ```
-CREATE STORAGE INTEGRATION s3_int
-  TYPE = EXTERNAL_STAGE
-  STORAGE_PROVIDER = 'S3'
-  ENABLED = TRUE
-  STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::001234567890:role/myrole'
-  STORAGE_ALLOWED_LOCATIONS = ('*')
-  STORAGE_BLOCKED_LOCATIONS = ('s3://mybucket1/mypath1/sensitivedata/', 's3://mybucket2/mypath2/sensitivedata/');
+CREATE STAGE mydb.myschema.orders_stage
+  URL = 's3://mybucket/orders/'
+  STORAGE_INTEGRATION = my_s3_int;
 ```
 
-Note
+Important
 
-Optionally, use the [STORAGE\_AWS\_EXTERNAL\_ID](/sql-reference/sql/create-storage-integration#label-create-storage-integration-aws-ext-id) parameter to specify
-your own external ID. You might choose this option
-to use the same external ID across multiple external volumes and/or storage integrations.
+End the stage URL with a forward slash (`/`). Without it, the stage also includes every folder and file whose name starts with the same characters. For example, `s3://mybucket/orders` also includes `s3://mybucket/orders_archive/`, so the pipe loads files that you didn’t intend.
 
-## Step 4: Retrieve the AWS IAM user for your Snowflake account
+To confirm that Snowflake can read the bucket, list the files in the stage:
 
-1. To retrieve the ARN for the IAM user that was created automatically for your Snowflake account, use the [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration).
+Copy code
 
-   Copy code
+```
+LIST @mydb.myschema.orders_stage;
+```
 
-   ```
-   DESC INTEGRATION <integration_name>;
-   ```
+If the command returns an access error, check the storage integration with [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration).
 
-   Where:
+If you created a role to own the pipe, grant it the `USAGE` privilege on the stage:
 
-   - `integration_name` is the name of the integration you created in [Step 3: Create a Cloud Storage Integration in Snowflake](#step-3-create-a-cloud-storage-integration-in-snowflake)
-     (in this topic).
+Copy code
 
-   For example:
+```
+GRANT USAGE ON STAGE mydb.myschema.orders_stage TO ROLE orders_pipe_owner;
+```
 
-   Copy code
+## Step 2: Choose how Amazon S3 notifies Snowpipe
 
-   ```
-   DESC INTEGRATION s3_int;
-   ```
+Every method delivers events about new files to the Snowflake-managed SQS queue for your pipe. They differ in what sits between your bucket and that queue. Amazon S3 doesn’t let two event notifications on a bucket send the same event types for overlapping paths, so the right method depends mostly on whether other applications already receive notifications from the bucket. The following table compares the methods:
 
-   ```
-   +---------------------------+---------------+--------------------------------------------------------------------------------+------------------+
-   | property                  | property_type | property_value                                                                 | property_default |
-   +---------------------------+---------------+--------------------------------------------------------------------------------+------------------|
-   | ENABLED                   | Boolean       | true                                                                           | false            |
-   | STORAGE_ALLOWED_LOCATIONS | List          | s3://mybucket1/mypath1/,s3://mybucket2/mypath2/                                | []               |
-   | STORAGE_BLOCKED_LOCATIONS | List          | s3://mybucket1/mypath1/sensitivedata/,s3://mybucket2/mypath2/sensitivedata/    | []               |
-   | STORAGE_AWS_IAM_USER_ARN  | String        | arn:aws:iam::123456789001:user/abc1-b-self1234                                 |                  |
-   | STORAGE_AWS_ROLE_ARN      | String        | arn:aws:iam::001234567890:role/myrole                                          |                  |
-   | STORAGE_AWS_EXTERNAL_ID   | String        | MYACCOUNT_SFCRole=2_a123456/s0aBCDEfGHIJklmNoPq=                               |                  |
-   +---------------------------+---------------+--------------------------------------------------------------------------------+------------------+
-   ```
-2. Record the values for the following properties:
-
-| Property | Description |
-| --- | --- |
-| `STORAGE_AWS_IAM_USER_ARN` | The AWS IAM user created for your Snowflake account; for example, `arn:aws:iam::123456789001:user/abc1-b-self1234`. Snowflake provisions a single IAM user for your entire Snowflake account. All S3 storage integrations in your account use that IAM user. |
-| `STORAGE_AWS_EXTERNAL_ID` | The external ID that Snowflake uses to establish a trust relationship with AWS. If you didn’t specify an external ID (`STORAGE_AWS_EXTERNAL_ID`) when you created the storage integration, Snowflake generates an ID for you to use. |
+| Method | Use it when | What you configure |
+| --- | --- | --- |
+| [Amazon SQS](#label-data-load-snowpipe-auto-s3-option-1) | No other application receives event notifications for the path that your pipe loads, and you don’t plan to replicate the pipe to another account. This is the simplest method. | An S3 event notification that sends events to the pipe’s SQS queue. |
+| [Amazon SNS](#label-configuring-amazon-sns-for-snowpipe) | Other applications already receive, or will receive, event notifications for the path that your pipe loads. Also use Amazon SNS if you plan to replicate pipes to another account or set up [multi-location resilience](/user-guide/multi-location-resilience-data-pipelines). | An SNS topic that receives the S3 event notifications, and a pipe that references the topic. Snowflake subscribes its SQS queue to the topic. |
+| [Amazon EventBridge](#label-data-load-snowpipe-auto-s3-eventbridge) | You already route S3 events through EventBridge, or you need EventBridge rules to filter or route events. | An EventBridge rule that sends S3 events to an SNS topic, and then the same setup as for Amazon SNS. |
 
 Expand
 
 Show lessSee more
 
-You provide these values in the next section.
+Complete one of the following options, and then continue with [Step 3](#label-data-load-snowpipe-auto-s3-verify).
 
-## Step 5: Grant the IAM user permissions to access bucket objects
+If you start with Amazon SQS and later need to replicate pipes or share the bucket’s notifications, you can move every pipe for a bucket to Amazon SNS with one call to [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns). For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns).
 
-The following step-by-step instructions describe how to configure IAM access permissions for Snowflake in your AWS Management Console so that you can use a S3 bucket to load and unload data:
+### Option 1: Send S3 event notifications to Amazon SQS
 
-1. Sign in to the AWS Management Console.
-2. Select **IAM**.
-3. From the left-hand navigation pane, select **Roles**.
-4. Select the role you created in [Step 2: Create the IAM role in AWS](#step-2-create-the-iam-role-in-aws) (in this topic).
-5. Select the **Trust relationships** tab.
-6. Select **Edit trust policy**.
-7. Modify the policy document with the DESC STORAGE INTEGRATION output values you recorded in
-   [Step 4: Retrieve the AWS IAM user for your Snowflake account](#step-4-retrieve-the-aws-iam-user-for-your-snowflake-account) (in this topic):
+With this method, you create the pipe first, so that Snowflake can tell you which SQS queue to send event notifications to. Then you configure an event notification on the bucket that sends events to that queue.
 
-   **Policy document for IAM role**
+#### Create the pipe
+
+Create the pipe with the [CREATE PIPE](/sql-reference/sql/create-pipe) command, and set `AUTO_INGEST = TRUE`. Before you create the pipe, check that its location doesn’t overlap the location of another pipe, as described in [Give each pipe its own location](/user-guide/data-load-snowpipe-auto#label-snowpipe-auto-pipe-paths). For example, the following statement creates a pipe named `orders_pipe` that loads JSON files from the `orders_stage` stage into the `orders` table:
+
+Copy code
+
+```
+USE ROLE orders_pipe_owner;
+
+CREATE PIPE mydb.myschema.orders_pipe
+  AUTO_INGEST = TRUE
+  AS
+  COPY INTO mydb.myschema.orders
+    FROM @mydb.myschema.orders_stage
+    FILE_FORMAT = (TYPE = 'JSON')
+    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+```
+
+To load only part of the stage, add a path after the stage name in the `FROM` clause, such as `@mydb.myschema.orders_stage/2026/`. End the path with a forward slash (`/`).
+
+#### Configure event notifications
+
+1. Get the Amazon Resource Name (ARN) of the pipe’s SQS queue from the `notification_channel` column in the output of [DESCRIBE PIPE](/sql-reference/sql/desc-pipe):
+
+   Copy code
+
+   ```
+   DESC PIPE mydb.myschema.orders_pipe;
+   ```
+
+   The ARN looks like `arn:aws:sqs:us-west-2:123456789001:sf-snowpipe-AIDA1234567890EXAMPLE-AbCdEfGhIjKlMnOpQrStUv`. Snowflake reuses one SQS queue for the pipes in your account that load from buckets in the same AWS region, so pipes that load from the same bucket usually show the same ARN. When the queue’s access policy reaches its size limit, Snowflake creates another queue in the region, so always check the ARN for each new pipe.
+2. In the [Amazon S3 console](https://console.aws.amazon.com/s3/), open your bucket, and then select **Properties** » **Event notifications** » **Create event notification**.
+3. Complete the fields as follows, and then select **Save changes**:
+
+   - **Event name**: A name for the notification, such as `snowpipe-orders`.
+   - **Prefix**: The path that the pipe loads, such as `orders/`. To cover every pipe on the bucket with one notification, leave the prefix empty.
+   - **Suffix**: Optionally, a file extension to filter events by, such as `.json`.
+   - **Event types**: **All object create events** (`s3:ObjectCreated:*`). If you select individual event types instead, include `s3:ObjectCreated:CompleteMultipartUpload`, or Snowpipe doesn’t load files that are uploaded in parts. For more information, see [Large files in Amazon S3 don’t load](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-s3-multipart).
+   - **Destination**: **SQS queue**.
+   - **Specify SQS queue**: **Enter SQS queue ARN**, and then paste the ARN from step 1.
+
+   For more information, see [Enabling and configuring event notifications](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications.html) in the Amazon S3 documentation.
+
+If you save the notification and Amazon S3 reports that the configuration overlaps an existing one, another notification on the bucket already sends the same events for an overlapping path. If that notification already sends events to the queue ARN that `DESC PIPE` returned, you don’t need a second one. Make sure that its prefix, suffix, and event types cover the files that the pipe loads, and edit it if they don’t. Only widen the prefix, suffix, or event types, because other pipes might rely on the same notification. If that notification sends events to a different destination, Amazon S3 doesn’t allow both notifications. Drop the pipe with [DROP PIPE](/sql-reference/sql/drop-pipe), and then use [Amazon SNS](#label-configuring-amazon-sns-for-snowpipe) instead, or use [Amazon EventBridge](#label-data-load-snowpipe-auto-s3-eventbridge), which doesn’t require you to change the existing notification.
+
+A notification with a broad prefix, or no prefix, also sends events for files that no pipe loads. Snowpipe ignores these events, but a high volume of them can slow down how quickly Snowpipe finds the events for your pipes. To limit the events that Amazon S3 sends, create one notification for each path or file extension that your pipes load. For more information, see [Event notification filtering](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-filtering.html) in the Amazon S3 documentation.
+
+Next, [test the pipe](#label-data-load-snowpipe-auto-s3-verify).
+
+### Option 2: Send S3 event notifications through Amazon SNS
+
+With this method, Amazon S3 sends event notifications to an Amazon SNS topic. Amazon SNS delivers each notification to every subscriber of the topic, including the Snowflake-managed SQS queue for your pipe, so other applications can receive the same notifications. Snowpipe supports SNS topics that are encrypted with AWS Key Management Service (KMS). If the topic uses a customer managed key, the key policy must let the service that publishes to the topic, such as Amazon S3 (`s3.amazonaws.com`) or EventBridge (`events.amazonaws.com`), use the `kms:GenerateDataKey` and `kms:Decrypt` actions. Don’t use the AWS managed key for Amazon SNS (`alias/aws/sns`), because you can’t change its key policy. For more information, see [Encryption at rest](https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html) in the Amazon SNS documentation.
+
+#### Create the SNS topic and the S3 event notification
+
+If your bucket already sends event notifications to an SNS topic for the path that the pipe loads, note the topic’s ARN. Make sure that the notification’s prefix, suffix, and event types cover the files that the pipe loads, as described in step 3 of [Configure event notifications](#label-data-load-snowpipe-auto-s3-configure-sqs), and edit it if they don’t. Then continue with [Let Snowflake subscribe to the topic](#label-create-sns-topic-subscription).
+
+1. In the [Amazon SNS console](https://console.aws.amazon.com/sns/), create a standard topic in the same AWS region as your bucket. Note the topic’s ARN, such as `arn:aws:sns:us-west-2:001234567890:s3_mybucket`. For more information, see [Creating an Amazon SNS topic](https://docs.aws.amazon.com/sns/latest/dg/sns-create-topic.html) in the Amazon SNS documentation.
+2. In the Amazon SNS console, open the topic, select **Edit**, and then expand **Access policy**. Add a statement to the `Statement` array that lets Amazon S3 publish to the topic, using your topic ARN and bucket name, and then select **Save changes**. For example:
+
+   Copy code
+
+   ```
+   {
+     "Sid": "s3-event-notifier",
+     "Effect": "Allow",
+     "Principal": {
+       "Service": "s3.amazonaws.com"
+     },
+     "Action": "SNS:Publish",
+     "Resource": "arn:aws:sns:us-west-2:001234567890:s3_mybucket",
+     "Condition": {
+       "ArnLike": {
+         "aws:SourceArn": "arn:aws:s3:::mybucket"
+       }
+     }
+   }
+   ```
+3. On the bucket, create an event notification for the path that the pipe loads, with **All object create events** as the event types and the SNS topic as the destination. Complete the fields as described in steps 2 and 3 of [Configure event notifications](#label-data-load-snowpipe-auto-s3-configure-sqs), but for **Destination**, select **SNS topic**, and then select your topic.
+
+   If another notification on the bucket already sends the same events for an overlapping path, Amazon S3 doesn’t let you create a second one. What you do next depends on that notification’s destination:
+
+   - **Another SNS topic**: Don’t change the notification’s destination. Use that topic instead of the one that you created in step 1, as described at the beginning of this section.
+   - **A Snowflake-managed SQS queue**, which has `sf-snowpipe-` in its ARN: Follow the steps after this list.
+   - **Any other destination**, such as an application’s SQS queue or AWS Lambda function: Subscribe the destination to the topic, as described in step 4, so that the application keeps receiving the notifications. Then change the notification’s destination to the SNS topic, and make sure that its prefix, suffix, and event types cover the files that the pipe loads. If you widen the prefix or suffix, the topic also sends the application the events for the pipe’s files. To keep sending the application only the events that it received before, add a [subscription filter policy](https://docs.aws.amazon.com/sns/latest/dg/sns-message-filtering.html) with the `MessageBody` scope to its subscription. Amazon S3 event notifications don’t have message attributes, so a filter policy with the default `MessageAttributes` scope blocks every notification.
+
+   If the destination is a Snowflake-managed SQS queue, don’t change the notification’s destination yet, because the pipes that use the queue would stop loading files. Instead, complete the following steps:
+
+   1. Check whether the queue belongs to your Snowflake account. Use a role that can see every pipe, external table, and stage in the account. For pipes, a role that has the `MONITOR EXECUTION` privilege can see every pipe. The queue belongs to your account if its ARN appears in any of the following places:
+
+      - The `notification_channel` column in the output of [SHOW PIPES](/sql-reference/sql/show-pipes) with `IN ACCOUNT`. Check every pipe, not only the pipes that load from this bucket, because pipes that load from other buckets in the same AWS region can use the same queue. For a pipe that already uses an SNS topic, this column shows the topic ARN instead. For those pipes, call [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) with the same role, and check the `notificationChannelName` value, which shows the ARN of the SQS queue that the pipe uses.
+      - The `notification_channel` column in the output of [SHOW EXTERNAL TABLES](/sql-reference/sql/show-external-tables) with `IN ACCOUNT`, for external tables that refresh automatically. This column is empty for external tables that [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns) already moved to an SNS topic.
+      - The `DIRECTORY_NOTIFICATION_CHANNEL` property in the `DIRECTORY` group for each stage that has a directory table that refreshes automatically. To find these stages, run [SHOW STAGES](/sql-reference/sql/show-stages) with `IN ACCOUNT`, and look for `Y` in the `directory_enabled` column. Then run [DESCRIBE STAGE](/sql-reference/sql/desc-stage) for each of those stages, and check the property for each stage where `AUTO_REFRESH` is `true`.
+
+      If the ARN doesn’t appear in any of these places, the queue belongs to another Snowflake account, or no object in your account uses it anymore. If you know which account uses the queue, send its administrator the bucket name and the topic’s ARN, and ask them to complete the next three steps in their account. Because the topic is in your AWS account, they send you the statement that [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) returns in their account, and you add it to the topic’s access policy, as described in [Let Snowflake subscribe to the topic](#label-create-sns-topic-subscription). If their pipes already use a different topic, use that topic instead. Its access policy must include the statement from step 2 for your bucket and, before you create your pipe, the statement that `SYSTEM$GET_AWS_SNS_IAM_POLICY` returns in your account. When they finish, change the notification’s destination, as described in the final step of this list. If you can’t find out which Snowflake account uses the queue, contact [Snowflake Support](/user-guide/contacting-support) before you change the notification’s destination.
+   2. Find out whether any pipe or directory table that loads from the bucket already uses an SNS topic:
+
+      - For each pipe that loads from the bucket, run [DESCRIBE PIPE](/sql-reference/sql/desc-pipe), and check whether `notification_channel` shows a topic ARN.
+      - For each stage whose directory table refreshes from the bucket, run [DESCRIBE STAGE](/sql-reference/sql/desc-stage), and check the `AWS_SNS_TOPIC` property in the `DIRECTORY` group.
+      - For each external table that refreshes automatically from the bucket, check whether it was created with the `AWS_SNS_TOPIC` parameter.
+
+      If any of them use a topic, use that topic instead of the one that you created in step 1 for the rest of this procedure, including in the function call and in the `AWS_SNS_TOPIC` parameter when you create the pipe. If you use a different topic, the pipes that use the existing topic stop loading files after you change the notification’s destination. Make sure that the topic’s access policy includes the statement from step 2, with that topic’s ARN. Then, in the Amazon SNS console, check that the topic has a subscription for the SQS queue that those objects use. For a pipe, that queue is in the `notificationChannelName` value that `SYSTEM$PIPE_STATUS` returns. For a directory table, it’s in the `DIRECTORY_NOTIFICATION_CHANNEL` property in the `DESC STAGE` output. For an external table, look for a subscription whose endpoint is a Snowflake-managed SQS queue, which has `sf-snowpipe-` in its ARN. If they use more than one topic, or if the topic has no subscription for that queue, contact [Snowflake Support](/user-guide/contacting-support) before you change the notification’s destination.
+   3. Complete the steps in [Let Snowflake subscribe to the topic](#label-create-sns-topic-subscription) for the topic, and then return here and continue with the next step.
+   4. With `ACCOUNTADMIN` as your primary role, call [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns) with the bucket name and the topic’s ARN to move the pipes that load from the bucket to the topic. The function also subscribes the queue to the topic, and it moves to the topic any external tables that refresh automatically from the bucket. Then confirm that every pipe that loads from the bucket and every directory table that refreshes from it moved to the topic, as described in the function’s usage notes.
+
+      If the function returns an `Unrecognized bucket name` error, check the bucket name. If the name is correct, nothing in your account uses only the queue for this bucket. If you found the topic that the bucket’s pipes or directory tables use, or if no pipe, directory table, or external table in your account loads or refreshes from the bucket, continue with the next step. If only external tables refresh from the bucket, contact [Snowflake Support](/user-guide/contacting-support) before you change the notification’s destination. For other errors, see the **Returns** section of [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns).
+   5. Change the notification’s destination to the topic, and make sure that its prefix, suffix, and event types cover the files that the pipe loads. While Amazon S3 switches to the new destination, the queue can receive two notifications for the same file, but Snowpipe doesn’t load the file twice.
+4. If other applications need the event notifications, subscribe their endpoints, such as their SQS queues or AWS Lambda functions, to the topic. Make sure that each endpoint accepts messages from the topic:
+
+   - **SQS queue**: Enable raw message delivery on the subscription so that the queue receives S3 event notifications in their original format. The queue’s access policy must let Amazon SNS (`sns.amazonaws.com`) send messages to the queue from the topic. If you subscribe the queue in the Amazon SQS console with **Subscribe to Amazon SNS topic**, the console adds this statement for you. If the queue is encrypted with a customer managed KMS key, the key policy must also let Amazon SNS use the key.
+   - **AWS Lambda function**: Raw message delivery isn’t available for Lambda functions, so the function receives each S3 event notification inside an SNS message, in the `Sns.Message` field of each record. Update the function to read the event from that field. The function’s resource-based policy must also let Amazon SNS invoke the function. If you add the topic as a trigger in the Lambda console, the console adds this permission for you.
+
+   For more information, see [Fanout to Amazon SQS queues](https://docs.aws.amazon.com/sns/latest/dg/sns-sqs-as-subscriber.html) and [Fanout to Lambda functions](https://docs.aws.amazon.com/sns/latest/dg/sns-lambda-as-subscriber.html) in the Amazon SNS documentation.
+
+#### Let Snowflake subscribe to the topic
+
+Before you create the pipe, allow the Snowflake-managed SQS queue to subscribe to the topic:
+
+1. In Snowflake, call [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) with the topic’s ARN:
+
+   Copy code
+
+   ```
+   SELECT SYSTEM$GET_AWS_SNS_IAM_POLICY('arn:aws:sns:us-west-2:001234567890:s3_mybucket');
+   ```
+
+   The function returns a policy with a statement that lets the Snowflake IAM user for your account subscribe to the topic. For example:
 
    Copy code
 
@@ -298,618 +234,181 @@ The following step-by-step instructions describe how to configure IAM access per
    {
      "Version": "2012-10-17",
      "Statement": [
-    {
-      "Sid": "",
-      "Effect": "Allow",
-      "Principal": {
-        "AWS": "<snowflake_user_arn>"
-      },
-      "Action": "sts:AssumeRole",
-      "Condition": {
-        "StringEquals": {
-          "sts:ExternalId": "<snowflake_external_id>"
-        }
-      }
-    }
+       {
+         "Sid": "1",
+         "Effect": "Allow",
+         "Principal": {
+           "AWS": "arn:aws:iam::123456789001:user/vj4g-a-abcd1234"
+         },
+         "Action": ["sns:Subscribe"],
+         "Resource": ["arn:aws:sns:us-west-2:001234567890:s3_mybucket"]
+       }
      ]
    }
    ```
+2. In the Amazon SNS console, open the topic, select **Edit**, and then expand **Access policy**.
+3. Add the statement from the `Statement` array in the function’s output to the `Statement` array in the topic’s access policy. Keep the existing statements, including the one that lets Amazon S3 or EventBridge publish to the topic. If the policy already has the same statement, don’t add it again. If another statement in the policy has the same `Sid` value, such as `"1"`, change the `Sid` of the statement that you add to a unique value. Then select **Save changes**.
 
-   Where:
-
-> - `snowflake_user_arn` is the STORAGE\_AWS\_IAM\_USER\_ARN value you recorded.
-> - `snowflake_external_id` is the STORAGE\_AWS\_EXTERNAL\_ID value you recorded.
->
-> In this example, the `snowflake_external_id` value is `MYACCOUNT_SFCRole=2_a123456/s0aBCDEfGHIJklmNoPq=`.
->
-> Note
->
-> For security reasons, if you create a new storage integration (or recreate an existing storage integration using the CREATE OR
-> REPLACE STORAGE INTEGRATION syntax) without specifying an external ID, the new integration has a *different* external ID and
-> can’t resolve the trust relationship unless you update the trust policy.
-
-8. Select **Update policy** to save your changes.
-
-Note
-
-Snowflake caches the temporary credentials for a period that cannot exceed the 60-minute expiration time. If you revoke access from
-Snowflake, users might be able to list files and load data from the cloud storage location until the cache expires.
-
-Note
-
-You can use the [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration)
-function to validate the configuration for your storage integration.
-
-## Determining the correct option
-
-Before proceeding, determine whether an S3 event notification exists for the target path (or “prefix,” in AWS terminology) in your S3 bucket where your data files are located. AWS rules prohibit creating conflicting notifications for the same path.
-
-The following options for automating Snowpipe using Amazon SQS are supported:
-
-- **Option 1. New S3 event notification:** Create an event notification for the target path in your S3 bucket. The event notification informs Snowpipe via an SQS queue when files are ready to load.
-
-  Important
-
-  If a conflicting event notification exists for your S3 bucket, use Option 2 instead.
-- **Option 2. Existing event notification:** Configure [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/sns/) as a broadcaster to share notifications for a given path with multiple endpoints (or “subscribers,” e.g. SQS queues or AWS Lambda workloads), including the Snowflake SQS queue for Snowpipe automation. An S3 event notification published by SNS informs Snowpipe via an SQS queue when files are ready to load.
-
-  Note
-
-  We recommend this option if you plan to use [Stage, pipe, and load history replication](/user-guide/account-replication-stages-pipes-load-history). You can also migrate from option 1 to
-  option 2 after you create a replication or failover group. For more information, see [Migrate to Amazon Simple Notification Service (SNS)](/user-guide/account-replication-stages-pipes-load-history#label-account-replication-stages-pipes-load-history-migrate-to-sns).
-- **Option 3. Setting up Amazon EventBridge for automating Snowpipe:** Similar to option 2, you can also enable [Amazon EventBridge](https://aws.amazon.com/eventbridge/) for S3 buckets and create rules to send notifications to SNS topics.
-
-If you plan to set up multi-location resilience so that your pipes keep loading after a region-wide cloud provider outage, your choice of Option 1 (Amazon SQS only) or Option 2 or 3 (Amazon SNS) also determines how you point notifications at your target account. For more information, see [Choose a notification path for Amazon S3](/user-guide/multi-location-resilience-data-pipelines-setup-notifications#label-mlsi-choose-aws-notification-path).
-
-## Option 1: Creating a new S3 event notification to automate Snowpipe
-
-This section describes the most common option for triggering Snowpipe data loads automatically using [Amazon SQS (Simple Queue Service)](https://aws.amazon.com/sqs/) notifications for an S3 bucket. The steps explain how to create an event notification for the target path (or “prefix,” in AWS terminology) in your S3 bucket where your data files are stored.
-
-> Important
->
-> If a conflicting event notification exists for your S3 bucket, use [Option 2: Configuring Amazon SNS to Automate Snowpipe Using SQS Notifications](#option-2-configuring-amazon-sns-to-automate-snowpipe-using-sqs-notifications) (in this topic) instead. AWS rules prohibit creating conflicting notifications for the same target path.
-
-The following diagram shows the Snowpipe auto-ingest process flow:
-
-![Snowpipe Auto-ingest Process Flow](/static/images/data-load-snowpipe-s3-sqs.png)
-
-1. Data files are loaded in a stage.
-2. An S3 event notification informs Snowpipe via an SQS queue that files are ready to load. Snowpipe copies the files into a queue.
-3. A Snowflake-provided virtual warehouse loads data from the queued files into the target table based on parameters defined in the specified pipe.
-
-Note
-
-The instructions in this topic assume a target table already exists in the Snowflake database where your data will be loaded.
-
-### Step 1: Create a stage (if needed)
-
-Create an external stage that references your S3 bucket using the [CREATE STAGE](/sql-reference/sql/create-stage) command. Snowpipe fetches your data files from the stage and temporarily queues them before loading them into your target table. Alternatively, you can use an existing external stage.
-
-Note
-
-- To configure secure access to the cloud storage location, see [Configuring Secure Access to Cloud Storage](#configuring-secure-access-to-cloud-storage) (in this topic).
-- To reference a storage integration in the CREATE STAGE statement, the role must have the USAGE privilege on the storage integration object.
-
-The following example creates a stage named `mystage` in the active schema for the user session. The cloud storage URL includes the path `files`. The stage references a storage integration named `my_storage_int`:
-
-> Copy code
->
-> ```
-> USE SCHEMA snowpipe_db.public;
->
-> CREATE STAGE mystage
->   URL = 's3://mybucket/load/files/'
->   STORAGE_INTEGRATION = my_storage_int;
-> ```
-
-Important
-
-Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `s3://mybucket/path` also includes files from `s3://mybucket/path1` and `s3://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
-
-### Step 2: Create a pipe with auto-ingest enabled
-
-Create a pipe using the [CREATE PIPE](/sql-reference/sql/create-pipe) command. The pipe defines the [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement used by Snowpipe to load data from the ingestion queue into the target table.
-
-The following example creates a pipe named `mypipe` in the active schema for the user session. The pipe loads the data from files staged in the `mystage` stage into the `mytable` table:
-
-> Copy code
->
-> ```
-> CREATE PIPE snowpipe_db.public.mypipe
->   AUTO_INGEST = TRUE
->   AS
->     COPY INTO snowpipe_db.public.mytable
->       FROM @snowpipe_db.public.mystage
->       FILE_FORMAT = (type = 'JSON');
-> ```
-
-The `AUTO_INGEST = TRUE` parameter specifies to read event notifications sent from an S3 bucket to an SQS queue when new data is ready to load.
-
-Important
-
-Compare the stage reference in the pipe definition with existing pipes. Verify that the directory paths for the same S3 bucket do not overlap; otherwise, multiple pipes could load the same set of data files multiple times, into one or more target tables. This can happen, for example, when multiple stages reference the same S3 bucket with different levels of granularity, such as `s3://mybucket/path1` and `s3://mybucket/path1/path2`. In this use case, if files are staged in `s3://mybucket/path1/path2`, the pipes for both stages would load a copy of the files.
-
-This is different from the manual Snowpipe setup (with auto-ingest *disabled*), which requires users to submit a named set of files to a REST API to queue the files for loading. With auto-ingest enabled, each pipe receives a generated file list from the S3 event notifications. Additional care is required to avoid data duplication.
-
-If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path1` and `path2`.
-
-### Step 3: Configure security
-
-For each user who will execute continuous data loads using Snowpipe, grant sufficient access control privileges on the objects for the data load (i.e. the target database, schema, and table; the stage object, and the pipe).
-
-Note
-
-To follow the general principle of “least privilege”, we recommend creating a separate user and role to use for ingesting files using a pipe. The user should be created with this role as its default role.
-
-Using Snowpipe requires a role with the following privileges:
-
-| Object | Privilege | Notes |
-| --- | --- | --- |
-| Named pipe | OWNERSHIP |  |
-| Named stage | USAGE , READ |  |
-| Named file format | USAGE | Optional; only needed if the stage you created in [Step 1: Create a Stage (If Needed)](#step-1-create-a-stage-if-needed) references a named file format. |
-| Target database | USAGE |  |
-| Target schema | USAGE |  |
-| Target table | INSERT , SELECT |  |
-
-Expand
-
-Show lessSee more
-
-Use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) command to grant privileges to the role.
-
-Note
-
-Only security administrators (i.e. users with the SECURITYADMIN role) or higher, or another role with both the CREATE ROLE privilege on the account and the global MANAGE GRANTS privilege, can create roles and grant privileges.
-
-For example, create a role named `snowpipe_role` that can access a set of `snowpipe_db.public` database objects as well as a pipe named `mypipe`; then, grant the role to a user:
-
-> Copy code
->
-> ```
-> -- Create a role to contain the Snowpipe privileges
-> USE ROLE SECURITYADMIN;
->
-> CREATE OR REPLACE ROLE snowpipe_role;
->
-> -- Grant the required privileges on the database objects
-> GRANT USAGE ON DATABASE snowpipe_db TO ROLE snowpipe_role;
->
-> GRANT USAGE ON SCHEMA snowpipe_db.public TO ROLE snowpipe_role;
->
-> GRANT INSERT, SELECT ON snowpipe_db.public.mytable TO ROLE snowpipe_role;
->
-> GRANT USAGE ON STAGE snowpipe_db.public.mystage TO ROLE snowpipe_role;
->
-> -- Pause the pipe for OWNERSHIP transfer
-> ALTER PIPE mypipe SET PIPE_EXECUTION_PAUSED = TRUE;
->
-> -- Grant the OWNERSHIP privilege on the pipe object
-> GRANT OWNERSHIP ON PIPE snowpipe_db.public.mypipe TO ROLE snowpipe_role;
->
-> -- Grant the role to a user
-> GRANT ROLE snowpipe_role TO USER jsmith;
->
-> -- Set the role as the default role for the user
-> ALTER USER jsmith SET DEFAULT_ROLE = snowpipe_role;
->
-> -- Resume the pipe
-> ALTER PIPE mypipe SET PIPE_EXECUTION_PAUSED = FALSE;
-> ```
-
-### Step 4: Configure event notifications
-
-Configure event notifications for your S3 bucket to notify Snowpipe when new data is available to load. The auto-ingest feature relies on SQS queues to deliver event notifications from S3 to Snowpipe.
-
-For ease of use, Snowpipe SQS queues are created and managed by Snowflake. The SHOW PIPES command output displays the Amazon Resource Name (ARN) of your SQS queue.
-
-1. Execute the SHOW PIPES command:
+   For example, after you add the statement, the access policy contains statements similar to the following:
 
    Copy code
 
    ```
-   SHOW PIPES;
+   {
+     "Version": "2008-10-17",
+     "Id": "__default_policy_ID",
+     "Statement": [
+       {
+         "Sid": "__default_statement_ID",
+         ...
+       },
+       {
+         "Sid": "s3-event-notifier",
+         ...
+       },
+       {
+         "Sid": "1",
+         "Effect": "Allow",
+         "Principal": {
+           "AWS": "arn:aws:iam::123456789001:user/vj4g-a-abcd1234"
+         },
+         "Action": ["sns:Subscribe"],
+         "Resource": ["arn:aws:sns:us-west-2:001234567890:s3_mybucket"]
+       }
+     ]
+   }
    ```
 
-   Note the ARN of the SQS queue for the stage in the `notification_channel` column. Copy the ARN to a convenient location.
+#### Create the pipe that uses the topic
 
-   Note
+Create the pipe with `AUTO_INGEST = TRUE` and the `AWS_SNS_TOPIC` parameter set to the topic’s ARN. When you create the first pipe that references the topic, Snowflake subscribes its SQS queue to the topic. If Snowflake can’t subscribe, the `CREATE PIPE` statement fails with a `Pipe Notifications bind failure` error. For example, Snowflake can’t subscribe if the topic’s access policy is missing the statement from [Let Snowflake subscribe to the topic](#label-create-sns-topic-subscription), or if the topic is in a different AWS region from the bucket. If the topic is in a different region, the error message includes the error from Amazon SNS, such as `Invalid parameter: TopicArn`.
 
-   Snowflake reuses an existing SQS queue in the bucket’s region while that queue’s access policy is under the size limit, and creates another queue in the region when the policy reaches the limit. To find the queue for a pipe, check the `notification_channel` column in the output of `DESCRIBE PIPE`. Each SQS queue coordinates notifications for all the pipes that use it. These pipes connect the external stages for the S3 buckets to the target tables. When a data file is uploaded into the bucket, all pipes that match the stage directory path perform a one-time load of the file into their corresponding target tables.
-2. Log into the Amazon S3 console.
-3. Configure an event notification for your S3 bucket using the instructions provided in the [Amazon S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-event-notifications.html). Complete the fields as follows:
+Before you create the pipe, check that its location doesn’t overlap the location of another pipe, as described in [Give each pipe its own location](/user-guide/data-load-snowpipe-auto#label-snowpipe-auto-pipe-paths). The following statement creates a pipe that uses the topic:
 
-   - **Name**: Name of the event notification (e.g. `Auto-ingest Snowflake`).
-   - **Events**: Select the **ObjectCreate (All)** option.
-   - **Send to**: Select **SQS Queue** from the dropdown list.
-   - **SQS**: Select **Add SQS queue ARN** from the dropdown list.
-   - **SQS queue ARN**: Paste the SQS queue name from the SHOW PIPES output.
+Copy code
 
-Note
+```
+USE ROLE orders_pipe_owner;
 
-These instructions create a single event notification that monitors activity for the entire S3 bucket. This is the simplest approach. This notification handles all pipes configured at a more granular level in the S3 bucket directory. Snowpipe only loads data files as specified in pipe definitions. Note, however, that a high volume of notifications for activity outside a pipe definition could negatively impact the rate at which Snowpipe filters notifications and takes action.
-
-Alternatively, in the above steps, configure one or more paths and/or file extensions (or *prefixes* and *suffixes*, in AWS terminology) to filter event activity. For instructions, see the object key name filtering information in the relevant [AWS documentation topic](https://docs.aws.amazon.com/AmazonS3/latest/userguide/notification-how-to-filtering.html). Repeat these steps for each additional path or file extension you want the notification to monitor.
-
-Note that AWS limits the number of these notification *queue configurations* to a maximum of 100 per S3 bucket.
-
-Also note that AWS does not allow overlapping queue configurations (across event notifications) for the same S3 bucket. For example, if an existing notification is configured for `s3://mybucket/load/path1`, then you cannot create another notification at a higher level, such as `s3://mybucket/load`, or vice-versa.
-
-Snowpipe with auto-ingest is now configured!
-
-When new data files are added to the S3 bucket, the event notification informs Snowpipe to load them into the target table defined in the pipe.
-
-### Step 5: Load historical files
-
-To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Load historical or missed files](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
-
-### Step 6: Delete staged files
-
-Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
-
-## Option 2: Configuring Amazon SNS to automate Snowpipe using SQS notifications
-
-This section describes how to trigger Snowpipe data loads automatically using [Amazon SQS (Simple Queue Service)](https://aws.amazon.com/sqs/) notifications for an S3 bucket. The steps explain how to configure [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/sns/) as a broadcaster to publish event notifications for your S3 bucket to multiple subscribers (e.g. SQS queues or AWS Lambda workloads), including the Snowflake SQS queue for Snowpipe automation.
-
-> Note
->
-> These instructions assume an event notification exists for the target path in your S3 bucket where your data files are located. If no event notification exists, either:
->
-> - Follow [Option 1: Creating a New S3 Event Notification to Automate Snowpipe](#option-1-creating-a-new-s3-event-notification-to-automate-snowpipe) (in this topic) instead.
-> - Create an event notification for your S3 bucket, then proceed with the instructions in this topic. For information, see the [Amazon S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-event-notifications.html).
-
-The following diagram shows the process flow for Snowpipe auto-ingest with Amazon SNS:
-
-![Snowpipe Auto-ingest Process Flow with Amazon SNS](/static/images/data-load-snowpipe-s3-sns.png)
-
-1. Data files are loaded in a stage.
-2. An S3 event notification published by SNS informs Snowpipe via an SQS queue that files are ready to load. Snowpipe copies the files into a queue.
-3. A Snowflake-provided virtual warehouse loads data from the queued files into the target table based on parameters defined in the specified pipe.
-
-Note
-
-The instructions assume a target table already exists in the Snowflake database where your data will be loaded.
-
-Snowpipe auto ingest supports AWS KMS-encrypted SNS topics. For more information, refer to [Encryption at rest](https://docs.aws.amazon.com/sns/latest/dg/sns-server-side-encryption.html).
-
-# Prerequisite: Create an Amazon SNS Topic and Subscription
-
-1. Create an SNS topic in your AWS account to handle all messages for the Snowflake stage location on your S3 bucket.
-2. Subscribe your target destinations for the S3 event notifications (for example, other SQS queues or AWS Lambda workloads) to this topic. SNS publishes event notifications for your bucket to all subscribers to the topic.
-
-For instructions, see the [SNS documentation](https://aws.amazon.com/documentation/sns/).
-
-## Step 1: Subscribe the Snowflake SQS Queue to the SNS Topic
-
-1. Sign in to the AWS Management Console.
-2. From the home dashboard, choose **Simple Notification Service** (SNS).
-3. Choose **Topics** from the left-hand navigation pane.
-4. Locate the topic for your S3 bucket. Note the topic ARN.
-5. Using a Snowflake client, query the [SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY](/sql-reference/functions/system_get_aws_sns_iam_policy) system function with your SNS topic ARN:
-
-   > Copy code
-   >
-   > ```
-   > select system$get_aws_sns_iam_policy('<sns_topic_arn>');
-   > ```
-
-   The function returns an IAM policy that grants a Snowflake SQS queue permission to subscribe to the SNS topic.
-
-   For example:
-
-   > Copy code
-   >
-   > ```
-   > select system$get_aws_sns_iam_policy('arn:aws:sns:us-west-2:001234567890:s3_mybucket');
-   >
-   > +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   > | SYSTEM$GET_AWS_SNS_IAM_POLICY('ARN:AWS:SNS:US-WEST-2:001234567890:S3_MYBUCKET')                                                                                                                                                                   |
-   > +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   > | {"Version":"2012-10-17","Statement":[{"Sid":"1","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::123456789001:user/vj4g-a-abcd1234"},"Action":["sns:Subscribe"],"Resource":["arn:aws:sns:us-west-2:001234567890:s3_mybucket"]}]}                 |
-   > +---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-   > ```
-6. Return to the AWS Management Console. Choose **Topics** from the left-hand navigation pane.
-7. Select the topic for your S3 bucket, and click the **Edit** button. The **Edit** page opens.
-8. Click **Access policy - Optional** to expand this area of the page.
-9. Merge the IAM policy addition from the SYSTEM$GET\_AWS\_SNS\_IAM\_POLICY function results into the JSON document.
-
-   For example:
-
-   **Original IAM policy (abbreviated):**
-
-   > Copy code
-   >
-   > ```
-   > {
-   >   "Version":"2008-10-17",
-   >   "Id":"__default_policy_ID",
-   >   "Statement":[
-   >   {
-   >      "Sid":"__default_statement_ID",
-   >      "Effect":"Allow",
-   >      "Principal":{
-   >         "AWS":"*"
-   >      }
-   >      ..
-   >   }
-   > ]
-   >  }
-   > ```
-
-   **Merged IAM policy:**
-
-   > Copy code
-   >
-   > ```
-   > {
-   >   "Version":"2008-10-17",
-   >   "Id":"__default_policy_ID",
-   >   "Statement":[
-   >   {
-   >      "Sid":"__default_statement_ID",
-   >      "Effect":"Allow",
-   >      "Principal":{
-   >         "AWS":"*"
-   >      }
-   >      ..
-   >   },
-   >   {
-   >      "Sid":"1",
-   >      "Effect":"Allow",
-   >      "Principal":{
-   >        "AWS":"arn:aws:iam::123456789001:user/vj4g-a-abcd1234"
-   >       },
-   >       "Action":[
-   >         "sns:Subscribe"
-   >       ],
-   >       "Resource":[
-   >         "arn:aws:sns:us-west-2:001234567890:s3_mybucket"
-   >       ]
-   >   }
-   > ]
-   >  }
-   > ```
-10. Add an additional policy grant to allow S3 to publish event notifications for the bucket to the SNS topic.
-
-For example (using the SNS topic ARN and S3 bucket used throughout these instructions):
-
-> Copy code
->
-> ```
-> {
->  "Sid":"s3-event-notifier",
->  "Effect":"Allow",
->  "Principal":{
->     "Service":"s3.amazonaws.com"
->  },
->  "Action":"SNS:Publish",
->  "Resource":"arn:aws:sns:us-west-2:001234567890:s3_mybucket",
->  "Condition":{
->     "ArnLike":{
->        "aws:SourceArn":"arn:aws:s3:*:*:s3_mybucket"
->     }
->  }
->  }
-> ```
-
-**Merged IAM policy:**
-
-> Copy code
->
-> ```
-> {
->   "Version":"2008-10-17",
->   "Id":"__default_policy_ID",
->   "Statement":[
->   {
->      "Sid":"__default_statement_ID",
->      "Effect":"Allow",
->      "Principal":{
->         "AWS":"*"
->      }
->      ..
->   },
->   {
->      "Sid":"1",
->      "Effect":"Allow",
->      "Principal":{
->        "AWS":"arn:aws:iam::123456789001:user/vj4g-a-abcd1234"
->       },
->       "Action":[
->         "sns:Subscribe"
->       ],
->       "Resource":[
->         "arn:aws:sns:us-west-2:001234567890:s3_mybucket"
->       ]
->   },
->   {
->      "Sid":"s3-event-notifier",
->      "Effect":"Allow",
->      "Principal":{
->         "Service":"s3.amazonaws.com"
->      },
->      "Action":"SNS:Publish",
->      "Resource":"arn:aws:sns:us-west-2:001234567890:s3_mybucket",
->      "Condition":{
->         "ArnLike":{
->            "aws:SourceArn":"arn:aws:s3:*:*:s3_mybucket"
->         }
->      }
->    }
-> ]
->  }
-> ```
-
-11. Click **Save changes**.
-
-### Step 2: Create a stage (if needed)
-
-Create an external stage that references your S3 bucket using the [CREATE STAGE](/sql-reference/sql/create-stage) command. Snowpipe fetches your data files from the stage and temporarily queues them before loading them into your target table.
-
-Alternatively, you can use an existing external stage.
-
-Note
-
-To configure secure access to the cloud storage location, see [Configuring Secure Access to Cloud Storage](#configuring-secure-access-to-cloud-storage) (in this topic).
-
-The following example creates a stage named `mystage` in the active schema for the user session. The cloud storage URL includes the path `files`. The stage references a storage integration named `my_storage_int`:
-
-> Copy code
->
-> ```
-> CREATE STAGE mystage
->   URL = 's3://mybucket/load/files/'
->   STORAGE_INTEGRATION = my_storage_int;
-> ```
+CREATE PIPE mydb.myschema.orders_pipe
+  AUTO_INGEST = TRUE
+  AWS_SNS_TOPIC = 'arn:aws:sns:us-west-2:001234567890:s3_mybucket'
+  AS
+  COPY INTO mydb.myschema.orders
+    FROM @mydb.myschema.orders_stage
+    FILE_FORMAT = (TYPE = 'JSON')
+    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+```
 
 Important
 
-Append a forward slash (`/`) to the stage URL to limit auto-ingest to that folder. If you omit the forward slash, all files and folders starting with the prefix for the specified path are included. For example, `s3://mybucket/path` also includes files from `s3://mybucket/path1` and `s3://mybucket/path2`. For more information, see the `URL` parameter in [External stage parameters (`externalStageParams`)](/sql-reference/sql/create-stage#label-create-stage-externalstageparams).
+Don’t delete the subscription that Snowflake creates on the topic. If the subscription is deleted, every pipe that references the topic stops receiving event notifications. To recover, see [Snowpipe stops loading after an Amazon SNS subscription is deleted](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-sns-subscription-deleted).
 
-### Step 3: Create a pipe with auto-ingest enabled
+Next, [test the pipe](#label-data-load-snowpipe-auto-s3-verify).
 
-Create a pipe using the [CREATE PIPE](/sql-reference/sql/create-pipe) command. The pipe defines the [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement used by Snowpipe to load data from the ingestion queue into the target table. In the COPY statement, identify the SNS topic ARN from [Prerequisite: Create an Amazon SNS Topic and Subscription](#prerequisite-create-an-amazon-sns-topic-and-subscription).
+### Option 3: Send S3 events through Amazon EventBridge
 
-The following example creates a pipe named `mypipe` in the active schema for the user session. The pipe loads the data from files staged in the `mystage` stage into the `mytable` table:
+With this method, Amazon S3 sends events to Amazon EventBridge, and an EventBridge rule forwards them to an SNS topic. From the topic onward, the setup is the same as for [Amazon SNS](#label-configuring-amazon-sns-for-snowpipe).
 
-> Copy code
->
-> ```
-> CREATE PIPE snowpipe_db.public.mypipe
->   AUTO_INGEST = TRUE
->   AWS_SNS_TOPIC='<sns_topic_arn>'
->   AS
->     COPY INTO snowpipe_db.public.mytable
->       FROM @snowpipe_db.public.mystage
->       FILE_FORMAT = (type = 'JSON');
-> ```
+1. [Enable Amazon EventBridge](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications-eventbridge.html) on your bucket.
+2. Create an SNS topic in the same AWS region as the bucket, as described in step 1 of [Create the SNS topic and the S3 event notification](#label-data-load-snowpipe-auto-s3-sns-topic). You don’t need the statement that lets Amazon S3 publish to the topic, or an S3 event notification.
+3. Create an EventBridge rule on the default event bus in the bucket’s AWS region that matches object-created events for your bucket and path, and that has the SNS topic as its target. For example, the following event pattern matches new objects under the `orders/` path in `mybucket`:
 
-Where:
+   Copy code
 
-`AUTO_INGEST = TRUE`
-:   Specifies to read event notifications sent from an S3 bucket to an SQS queue when new data is ready to load.
+   ```
+   {
+     "source": ["aws.s3"],
+     "detail-type": ["Object Created"],
+     "detail": {
+       "bucket": { "name": ["mybucket"] },
+       "object": { "key": [{ "prefix": "orders/" }] }
+     }
+   }
+   ```
 
-`AWS_SNS_TOPIC = '<sns_topic_arn>'`
-:   Specifies the ARN for the SNS topic for your S3 bucket, e.g. `arn:aws:sns:us-west-2:001234567890:s3_mybucket` in the current example. The CREATE PIPE statement subscribes the Snowflake SQS queue to the specified SNS topic. Note that the pipe will only copy files to the ingest queue triggered by event notifications via the SNS topic.
+   Add a statement to the topic’s access policy that lets EventBridge publish to the topic. The statement is similar to the Amazon S3 statement in step 2 of [Create the SNS topic and the S3 event notification](#label-data-load-snowpipe-auto-s3-sns-topic). For example:
 
-To remove either parameter from a pipe, it is currently necessary to recreate the pipe using the CREATE OR REPLACE PIPE syntax.
+   Copy code
 
-Important
+   ```
+   {
+     "Sid": "eventbridge-publish",
+     "Effect": "Allow",
+     "Principal": {
+       "Service": "events.amazonaws.com"
+     },
+     "Action": "SNS:Publish",
+     "Resource": "arn:aws:sns:us-west-2:001234567890:s3_mybucket"
+   }
+   ```
 
-Verify that the storage location reference in the COPY INTO *<table>* statement does not overlap with the reference in existing pipes
-in the account. Otherwise, multiple pipes could load the same set of data files into the target tables. For example, this situation can
-occur when multiple pipe definitions reference the same storage location with different levels of granularity, such as
-`<storage_location>/path1/` and `<storage_location>/path1/path2/`. In this example, if files are staged in
-`<storage_location>/path1/path2/`, both pipes would load a copy of the files.
+   For more information, see [Creating rules that react to events](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-create-rule.html) and [Amazon SNS permissions](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-use-resource-based.html#eb-sns-permissions) in the Amazon EventBridge documentation.
+4. Complete the steps in [Let Snowflake subscribe to the topic](#label-create-sns-topic-subscription). Then [create the pipe with the `AWS_SNS_TOPIC` parameter](#label-data-load-snowpipe-auto-s3-sns-pipe).
 
-View the COPY INTO *<table>* statements in the definitions of all pipes in the account by executing [SHOW PIPES](/sql-reference/sql/show-pipes)
-or by querying either the [PIPES](/sql-reference/account-usage/pipes) view in Account Usage or the
-[PIPES](/sql-reference/info-schema/pipes) view in the Information Schema.
+Next, [test the pipe](#label-data-load-snowpipe-auto-s3-verify).
 
-If you append a path to the stage in the COPY INTO *<table>* statement, such as `@mystage/path/`, end the path with a forward slash (`/`). If you omit the forward slash, the pipe also loads files from all folders starting with that prefix, such as `path1` and `path2`.
+## Step 3: Test the pipe
 
-### Step 4: Configure security
+1. Check that the pipe is running:
 
-For each user who will execute continuous data loads using Snowpipe, grant sufficient access control privileges on the objects for the data load (i.e. the target database, schema, and table; the stage object, and the pipe).
+   Copy code
 
-Note
+   ```
+   SELECT SYSTEM$PIPE_STATUS('mydb.myschema.orders_pipe');
+   ```
 
-To follow the general principle of “least privilege”, we recommend creating a separate user and role to use for ingesting files using a pipe. The user should be created with this role as its default role.
+   The `executionState` field should be `RUNNING`. If it isn’t, see [Pipe execution states](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-execution-states).
+2. Upload a test file to the path that the pipe loads. For example, with the AWS CLI:
 
-Using Snowpipe requires a role with the following privileges:
+   Copy code
 
-| Object | Privilege | Notes |
-| --- | --- | --- |
-| Named pipe | OWNERSHIP |  |
-| Named storage integration | USAGE | Needed if the stage you created in [Step 2: Create a Stage (If Needed)](#step-2-create-a-stage-if-needed) references a storage integration. |
-| Named stage | USAGE , READ |  |
-| Named file format | USAGE | Optional; only needed if the stage you created in [Step 2: Create a Stage (If Needed)](#step-2-create-a-stage-if-needed) references a named file format. |
-| Target database | USAGE |  |
-| Target schema | USAGE |  |
-| Target table | INSERT , SELECT |  |
+   ```
+   aws s3 cp orders_test.json s3://mybucket/orders/
+   ```
+3. After about a minute, check whether the file loaded by running the following query. Snowpipe doesn’t need a warehouse, but this query does. Replace `mywh` with a warehouse that your current role has the `USAGE` privilege on. If the `orders_pipe_owner` role can’t use a warehouse, grant it the `USAGE` privilege on one, or switch to a role that can use a warehouse and see the table’s load history. For the privileges that the query needs, see the usage notes for [COPY\_HISTORY](/sql-reference/functions/copy_history).
 
-Expand
+   Copy code
 
-Show lessSee more
+   ```
+   USE WAREHOUSE mywh;
 
-Use the [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) command to grant privileges to the role.
+   SELECT file_name, status, row_count, first_error_message, last_load_time
+     FROM TABLE(mydb.INFORMATION_SCHEMA.COPY_HISTORY(
+       TABLE_NAME => 'mydb.myschema.orders',
+       START_TIME => DATEADD(HOUR, -1, CURRENT_TIMESTAMP())));
+   ```
 
-Note
+   If the file has the `Loaded` status, the pipe is working. If it has the `Load in progress` status, wait, and then run the query again. If it has the `Load failed` or `Partially loaded` status, the pipe received the notification, but the file has errors. The `first_error_message` column shows the first error. For more information, see [Step 3: Get details about load errors](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-check-files).
 
-Only security administrators (i.e. users with the SECURITYADMIN role) or higher can create roles.
+   If the file isn’t listed, call `SYSTEM$PIPE_STATUS` again. If `lastReceivedMessageTimestamp` is missing or older than your upload, event notifications aren’t reaching Snowflake. If it’s newer than your upload but `lastForwardedMessageTimestamp` is missing or older than your upload, event notifications arrive, but none of them are for the pipe’s path. For the steps to fix these and other problems, see [Files don’t load with automated loading](/user-guide/data-load-snowpipe-ts#label-snowpipe-ts-auto-ingest).
 
-For example, create a role named `snowpipe_role` that can access a set of `snowpipe_db.public` database objects as well as a pipe named `mypipe`; then, grant the role to a user:
+## Step 4: Load files that are already in the bucket
 
-> Copy code
->
-> ```
-> -- Create a role to contain the Snowpipe privileges
-> USE ROLE SECURITYADMIN;
->
-> CREATE OR REPLACE ROLE snowpipe_role;
->
-> -- Grant the required privileges on the database objects
-> GRANT USAGE ON DATABASE snowpipe_db TO ROLE snowpipe_role;
->
-> GRANT USAGE ON SCHEMA snowpipe_db.public TO ROLE snowpipe_role;
->
-> GRANT INSERT, SELECT ON snowpipe_db.public.mytable TO ROLE snowpipe_role;
->
-> GRANT USAGE, READ ON STAGE snowpipe_db.public.mystage TO ROLE snowpipe_role;
->
-> -- Pause the pipe for OWNERSHIP transfer
-> ALTER PIPE mypipe SET PIPE_EXECUTION_PAUSED = TRUE;
->
-> -- Grant the OWNERSHIP privilege on the pipe object
-> GRANT OWNERSHIP ON PIPE snowpipe_db.public.mypipe TO ROLE snowpipe_role;
->
-> -- Grant the role to a user
-> GRANT ROLE snowpipe_role TO USER jsmith;
->
-> -- Set the role as the default role for the user
-> ALTER USER jsmith SET DEFAULT_ROLE = snowpipe_role;
->
-> -- Resume the pipe
-> ALTER PIPE mypipe SET PIPE_EXECUTION_PAUSED = FALSE;
-> ```
+The pipe loads only files that arrive after you configure event notifications. To load the files that were already in the stage, run the following command:
 
-Snowpipe with auto-ingest is now configured!
+Copy code
 
-When new data files are added to the S3 bucket, the event notification informs Snowpipe to load them into the target table defined in the pipe.
+```
+ALTER PIPE mydb.myschema.orders_pipe REFRESH;
+```
 
-### Step 5: Load historical files
+`REFRESH` queues only files that were staged within the last 7 days and that the pipe hasn’t already processed. Files that failed to load count as processed, so `REFRESH` doesn’t queue them again. To reload them, see [Reload a file that Snowpipe already processed](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-reload-files). To load older files, see [Files staged more than 7 days ago](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-backfill).
 
-To load any backlog of data files that existed in the external stage before SQS notifications were configured, see [Load historical or missed files](/user-guide/data-load-snowpipe-manage#label-snowpipe-load-historic-data).
+## After you set up the pipe
 
-### Step 6: Delete staged files
+- **Add more pipes.** If you use Amazon SQS, other pipes that load from the same bucket usually use the same SQS queue. For each new pipe, compare its `notification_channel` value with the queue ARN in your event notification, as described in [Configure event notifications](#label-data-load-snowpipe-auto-s3-configure-sqs), and make sure that a notification covers the files that the new pipe loads. If the ARN is different and an existing notification for an overlapping path sends events to another queue, Amazon S3 doesn’t let you add a notification for the new ARN. In that case, drop the new pipe, and create it with [Amazon SNS](#label-configuring-amazon-sns-for-snowpipe) or [Amazon EventBridge](#label-data-load-snowpipe-auto-s3-eventbridge) instead. If you use Amazon SNS or Amazon EventBridge, create each new pipe with the same `AWS_SNS_TOPIC` value. Then make sure that the S3 event notification or EventBridge rule that publishes to the topic covers the files that the new pipe loads.
+- **Let other roles monitor or operate the pipe.** To check the pipe’s status, a role needs the `USAGE` privilege on the database and schema and the `MONITOR` privilege on the pipe. To pause or resume the pipe, it also needs the `OPERATE` privilege. To refresh the pipe, it also needs privileges on the stage and the target table, as listed in the **Refresh a pipe** column of [Snowpipe access control](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-access-control). For example, run the following statements with a role that has the `MANAGE GRANTS` privilege, such as `SECURITYADMIN`:
 
-Delete the staged files after you successfully load the data and no longer require the files. For instructions, see
-[Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+  Copy code
 
-## Option 3: Setting up Amazon EventBridge to automate Snowpipe
+  ```
+  USE ROLE SECURITYADMIN;
 
-Similar to Option 2, you can also set up Amazon EventBridge to automate Snowpipe.
-
-### Step 1: Create an Amazon SNS topic
-
-Follow [Prerequisite: Create an Amazon SNS Topic and Subscription](#prerequisite-create-an-amazon-sns-topic-and-subscription) (in this topic).
-
-### Step 2: Create an EventBridge rule to subscribe S3 buckets and send notifications to SNS topic
-
-- [Enable Amazon EventBridge](https://docs.aws.amazon.com/AmazonS3/latest/userguide/enable-event-notifications-eventbridge.html) for S3 buckets.
-- Create EventBridge rules to [send notifications](https://docs.aws.amazon.com/eventbridge/latest/userguide/eb-s3-object-created-tutorial.html) to the SNS topic created in step 1.
-
-### Step 3: Configuring Amazon SNS to automate Snowpipe using SQS notifications
-
-Follow [Option 2: Configuring Amazon SNS to automate Snowpipe using SQS notifications](#label-configuring-amazon-sns-for-snowpipe) (in this topic).
-
-## SYSTEM$PIPE\_STATUS output
-
-The [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) function retrieves a JSON representation of the current status of a pipe.
-
-For pipes with AUTO\_INGEST set to TRUE, the function returns a JSON object containing the following name/value pairs (if applicable to the current pipe status):
-
-> `{"executionState":"<value>","oldestFileTimestamp":<value>,"pendingFileCount":<value>,"notificationChannelName":"<value>","numOutstandingMessagesOnChannel":<value>,"lastReceivedMessageTimestamp":"<value>","lastForwardedMessageTimestamp":"<value>","error":<value>,"fault":<value>}`
-
-For descriptions of the output values, see the reference topic for the SQL function.
+  GRANT USAGE ON DATABASE mydb TO ROLE data_engineer;
+  GRANT USAGE ON SCHEMA mydb.myschema TO ROLE data_engineer;
+  GRANT MONITOR, OPERATE ON PIPE mydb.myschema.orders_pipe TO ROLE data_engineer;
+  ```
+- **Get notified about failed loads.** Set up [error notifications](/user-guide/data-load-snowpipe-errors) to receive a message in the messaging service on your Snowflake account’s cloud platform when a file fails to load. Set up an [alert](/user-guide/data-load-snowpipe-monitor-events#label-snowpipe-events-alerts) to find out when the pipe stops loading.
+- **Clean up loaded files.** Snowpipe doesn’t delete files after it loads them. To manage storage costs, see [Delete files after Snowpipe loads them](/user-guide/data-load-snowpipe-manage#label-snowpipe-delete-data-files).
+- **Change the notification method.** You can’t change or remove `AWS_SNS_TOPIC` with `ALTER PIPE`. To move pipes from Amazon SQS to Amazon SNS, use [SYSTEM$CONVERT\_PIPES\_SQS\_TO\_SNS](/sql-reference/functions/system_convert_pipes_sqs_to_sns), which moves every pipe for the bucket at once, as described in [Create the SNS topic and the S3 event notification](#label-data-load-snowpipe-auto-s3-sns-topic). If you instead recreate one pipe with `AWS_SNS_TOPIC`, don’t change the bucket’s event notification to send to the topic while other pipes on the bucket use only Amazon SQS, because those pipes would stop loading files. To move a pipe from Amazon SNS to Amazon SQS, recreate it without `AWS_SNS_TOPIC`, as described in [Recreate a pipe safely](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-recreate-steps). The recreated pipe loads files only after an event notification sends events directly to its queue. If you change a notification’s destination from the topic to the queue, the topic’s other subscribers, including pipes that use the topic, stop receiving those events.

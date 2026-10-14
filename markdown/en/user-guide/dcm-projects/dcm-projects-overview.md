@@ -66,6 +66,10 @@ quickstart walks through a sample food truck analytics pipeline and covers:
 
 ### Migrating existing objects to DCM Projects
 
+Note
+
+The migration skill and stored procedure are provided as experimental tools. Test them thoroughly and use them at your own risk.
+
 If you already have Snowflake objects that you want to bring under DCM Projects management, use the migration tools in the
 [`migration-tools`](https://github.com/Snowflake-Labs/snowflake-dcm-projects/tree/main/migration-tools/) folder of the Snowflake
 Labs DCM repository. Both tools generate DEFINE statements for your existing objects by running `GET_DDL` against a database or
@@ -77,10 +81,6 @@ schema you select:
   setups. Cortex Code pauses at key checkpoints for your review and approval.
 - **Stored procedure**: A fallback for when Cortex Code isn’t available. It only covers the file generation step; you set up the
   DCM project, and run PLAN and DEPLOY manually afterward.
-
-Note
-
-The migration skill and stored procedure are provided as experimental tools. Test them thoroughly and use them at your own risk.
 
 ## Key terms
 
@@ -131,6 +131,8 @@ querying DCM Projects deployment history in Information Schema.
 In Snowsight Workspaces, the `DCM ANALYZE` command only runs in the background while you’re actively editing a project’s
 definition files.
 
+Warehouse size doesn’t affect the latency of DCM Projects execution. An X-Small warehouse is sufficient.
+
 ## Considerations and limitations
 
 ### Project size and performance
@@ -141,7 +143,7 @@ Currently, DCM Projects supports up to 10,000 defined entities, grants, or attac
 
 DCM Projects also supports up to 10,000 files under `/sources` in a project.
 
-If a large project contains segments with no interdependencies, such as separate business units or applications, consider splitting it into multiple smaller projects along those boundaries. This can improve PLAN and DEPLOY execution times.
+If a large project contains segments with no interdependencies, such as separate business units or applications, consider splitting it into multiple smaller projects along those boundaries. This can improve PLAN and DEPLOY execution times. For options and recommendations, see [Architectural recommendations for DCM Projects](/user-guide/dcm-projects/dcm-projects-enterprise#label-dcm-multiple-projects).
 
 To validate definition changes faster during active development, use [PLAN DELTA](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-plan-delta) to evaluate only the definitions you changed instead of the entire project.
 
@@ -152,7 +154,8 @@ performed or planned (CREATE, ALTER, DROP) and the individual attributes affecte
 
 Note
 
-For object types still in preview, it’s not guaranteed that the changeset captures every granular change across all properties of that object.
+For object types, grants, and attachments still in preview, the completeness of the changeset in `plan_result.json` and
+`deploy_result.json` isn’t guaranteed yet, and the changeset format can still change.
 
 ### Templating
 

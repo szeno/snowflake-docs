@@ -1,4 +1,4 @@
-# Snowflake CoWork: MANAGE ACCESS privileges on Artifacts granted to the PUBLIC role
+# MANAGE ACCESS privileges on Artifacts granted to the PUBLIC role
 
 Note
 

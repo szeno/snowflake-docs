@@ -110,6 +110,6 @@ For general information about roles and privilege grants for performing SQL acti
 
 See the following topics:
 
-- [Automating Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
+- [Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
 - [Refresh directory tables automatically for Google Cloud Storage](/user-guide/data-load-dirtables-auto-gcs)
 - [Refresh external tables automatically for Google Cloud Storage](/user-guide/tables-external-gcs)

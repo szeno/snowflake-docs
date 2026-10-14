@@ -22,6 +22,7 @@ Horizon Catalog.
 4. [Grant access to the Shared folder](#4-grant-access-to-the-shared-folder).
 5. [Create the Looker connection](#5-create-the-looker-connection).
 6. [Connect Git repositories for LookML projects](#6-connect-git-repositories-for-lookml-projects) (optional, required for lineage).
+7. [Set up metadata access](#7-set-up-metadata-access).
 
 ## 1. Create a permission set and role for Horizon Catalog
 
@@ -147,6 +148,26 @@ Caution
 If you don’t install the deploy key for a selected project, or the key is later removed from the
 Git repository, Horizon Catalog can’t clone the repository and LookML lineage for that project
 fails to ingest.
+
+## 7. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 

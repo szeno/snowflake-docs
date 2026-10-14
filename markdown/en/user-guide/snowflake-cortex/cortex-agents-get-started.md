@@ -96,9 +96,10 @@ You need the following:
 
 Important
 
-Cortex Agents determines permissions from your **default role**, not the role active in your session.
-You must also have a **default warehouse**. If either is missing, agent calls fail even when your
-current role has every required privilege.
+This walkthrough uses Snowsight and CoCo, where the session starts with your **default role** and
+**default warehouse** unless you select a different role or warehouse. For REST API calls, Cortex
+Agents determines permissions from the [request context](/developer-guide/snowflake-rest-api/setting-context)
+and uses the warehouses configured for the agent’s tools.
 
 In this topic, you grant the required privileges to your existing default role so that you don’t have
 to change your account defaults. For details, see

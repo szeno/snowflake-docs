@@ -42,7 +42,7 @@ Show lessSee more
 
 DCM Projects are designed to provide full transparency and audit trails for all changes to your account infrastructure. This requires you to follow
 a few software development best practices for setting up infrastructure deployment processes. For more information, see
-[Automate a DCM project deployment](/user-guide/dcm-projects/dcm-projects-use#label-dcm-deployment-automation).
+[Collaboration and CI/CD for DCM Projects](/user-guide/dcm-projects/dcm-projects-cicd#label-dcm-deployment-automation).
 
 Use the following sources to review previous deployments:
 

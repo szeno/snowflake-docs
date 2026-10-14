@@ -3810,3 +3810,99 @@ FROM
 - **Add the source definition to the migration input** so the ordered columns of the referenced table or view can be resolved and the range expanded automatically.
 - **Or list the columns explicitly**: replace the range (`first_column:last_column`) with the individual column names before converting.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-EWI-TD0107
+
+The WRITE\_NOS location is not an external path
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TD0107 while converting Teradata code because it cannot reproduce the source behavior in Snowflake. This WRITE\_NOS location is not an external path, so the statement stays in source form. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('not-a-location/') STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+!!!RESOLVE EWI!!! /*** SSC-EWI-TD0107 - THIS WRITE_NOS LOCATION IS NOT AN EXTERNAL PATH, SO THE STATEMENT STAYS IN SOURCE FORM. ***/!!!
+SELECT
+  *
+FROM
+  TD_SYSFNLIB.WRITE_NOS(ON
+                           !!!RESOLVE EWI!!! /*** SSC-EWI-0108 - THE FOLLOWING SUBQUERY MATCHES AT LEAST ONE OF THE PATTERNS CONSIDERED INVALID AND MAY PRODUCE COMPILATION ERRORS ***/!!!
+                           (
+                             SELECT
+                               TRIM('A') AS department_cd,
+                               DATE '2020-01-02' AS load_dt
+                           ) PARTITION BY load_dt ORDER BY load_dt USING LOCATION('not-a-location/') STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TD0107 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TD0108
+
+WRITE\_NOS stays in source form
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TD0108 while converting Teradata code because it cannot reproduce the source behavior in Snowflake. WRITE\_NOS stays in source form. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### Teradata
+
+Copy code
+
+```
+SELECT * FROM TD_SYSFNLIB.WRITE_NOS (ON (SELECT TRIM('A') AS department_cd, DATE '2020-01-02' AS load_dt) PARTITION BY load_dt ORDER BY load_dt USING LOCATION(:loc) STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+!!!RESOLVE EWI!!! /*** SSC-EWI-TD0108 - WRITE_NOS STAYS IN SOURCE FORM BECAUSE LOCATION IS NOT A STRING LITERAL. ***/!!!
+SELECT
+  *
+FROM
+  TD_SYSFNLIB.WRITE_NOS(ON
+                           !!!RESOLVE EWI!!! /*** SSC-EWI-0108 - THE FOLLOWING SUBQUERY MATCHES AT LEAST ONE OF THE PATTERNS CONSIDERED INVALID AND MAY PRODUCE COMPILATION ERRORS ***/!!!
+                           (
+                             SELECT
+                               TRIM('A') AS department_cd,
+                               DATE '2020-01-02' AS load_dt
+                           ) PARTITION BY load_dt ORDER BY load_dt USING LOCATION(:loc) STOREDAS('PARQUET') COMPRESSION('GZIP')) AS Res;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TD0108 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.

@@ -424,7 +424,7 @@ For ease of use, these SQS queues are created and managed by Snowflake. The SHOW
 
    Note
 
-   Following AWS guidelines, Snowflake designates no more than one SQS queue per AWS S3 region. This SQS queue can be shared among multiple buckets in the same AWS account. The SQS queue coordinates notifications for all external tables reading data files from the same S3 bucket. When a new or modified data file is uploaded into the bucket, all external table definitions that match the stage directory path read the file details into their metadata.
+   In each Snowflake account, Snowflake usually uses one SQS queue for each AWS region where your S3 buckets are located. When the queue’s access policy reaches its size limit, Snowflake creates another queue in the region. Each SQS queue can be shared among multiple buckets in the same AWS region. The SQS queue coordinates notifications for all external tables reading data files from the same S3 bucket. When a new or modified data file is uploaded into the bucket, all external table definitions that match the stage directory path read the file details into their metadata.
 3. Sign in to the AWS Management Console.
 4. Configure an event notification for your S3 bucket by using the instructions provided in the [Amazon S3 documentation](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/enable-event-notifications.html). Complete the fields as shown in the following list:
 

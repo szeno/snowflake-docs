@@ -10,7 +10,8 @@ You can also reference additional files that your definitions need as [project a
 
 Note
 
-For objects, grants, and attachments in preview, the changeset format in `plan_results.json` and `deploy_results.json` can be subject to change.
+For object types, grants, and attachments still in preview, the completeness of the changeset in `plan_result.json` and
+`deploy_result.json` isn’t guaranteed yet, and the changeset format can still change.
 
 **Objects:**
 
@@ -199,6 +200,11 @@ EXECUTE CODE BUNDLE DEMO{{env_suffix}}.JOBS.MY_JOB
 
 DCM Projects supports defining databases. For syntax, see
 [DEFINE DATABASE](/sql-reference/sql/create-database#label-define-database-syntax).
+
+When you define a database, Snowflake automatically creates a `PUBLIC` schema inside it. This schema doesn’t appear in your definitions
+or in the changeset. To manage the `PUBLIC` schema with DCM Projects, add `DEFINE SCHEMA <database_name>.PUBLIC;` to your definitions. If you
+later remove that definition and deploy, the `PUBLIC` schema is removed. Otherwise, the `PUBLIC` schema exists as an unmanaged object
+outside of DCM Projects.
 
 ### Dynamic table
 
@@ -491,7 +497,7 @@ This approach is especially useful for dashboard and data app deployments that d
 dynamic tables that are also managed by DCM Projects. You can version and promote the data pipeline and the app that consumes it
 together across environments.
 
-[![](/static/images/dcm-projects/streamlit-in-dcm-project.png)](/static/images/dcm-projects/streamlit-in-dcm-project.png)
+![DCM project for a data app that contains a Streamlit app with its source files, plus a dynamic table, table, grants, role, warehouse, and external access integration](/static/images/dcm-projects/streamlit-in-dcm-project.png)
 
 #### Create a DCM project for Streamlit
 
@@ -644,6 +650,12 @@ DEFINE TABLE MY_DB.MY_SCHEMA.ORDERS (
   ORDER_STATUS VARCHAR DEFAULT 'PENDING' COMMENT 'Current order status'
 );
 ```
+
+Note
+
+You can set `ENABLE_SCHEMA_EVOLUTION` in a `DEFINE TABLE` statement. However, any
+[schema evolution](/user-guide/data-load-schema-evolution) that’s applied outside of DCM Projects shows up as drift during the next `PLAN`.
+To match the new table state again, manually update the table definition.
 
 **Limitations:**
 

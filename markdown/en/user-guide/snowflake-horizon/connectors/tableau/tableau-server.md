@@ -51,6 +51,7 @@ Complete the following steps to connect Tableau Server to Horizon Catalog:
 2. [Create and enable a Connected App](#2-create-and-enable-a-connected-app).
 3. [(Optional) Enable view and workbook usage](#3-optional-enable-view-and-workbook-usage).
 4. [Create the Tableau connection](#4-create-the-tableau-connection).
+5. [Set up metadata access](#5-set-up-metadata-access).
 
 ## 1. Enable the REST API and Metadata API
 
@@ -212,6 +213,26 @@ project and, if not, creates the project (if needed) and publishes both, typical
 seconds of the next connection validation or ingestion run, with no further action from you. To
 verify, open Tableau Server in your browser and confirm the project and data sources appear; usage
 then flows in automatically on the next ingestion run.
+
+## 5. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Troubleshooting
 

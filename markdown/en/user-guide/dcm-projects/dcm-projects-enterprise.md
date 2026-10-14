@@ -1,7 +1,8 @@
 # Architectural recommendations for DCM Projects
 
 This topic provides architectural recommendations for organizing DCM Projects definitions into project folders and deployment targets. It also
-explains how to work with multiple environments and collaborate on projects.
+explains how to work with multiple environments. For collaboration workflows, see
+[Collaboration and CI/CD for DCM Projects](/user-guide/dcm-projects/dcm-projects-cicd).
 
 ## Project folders and deployment targets
 
@@ -93,11 +94,11 @@ templating conditions increase, independently maintained definitions can be easi
 
 ## Considerations across architecture options
 
-The remaining guidance applies across the architecture options:
+The following guidance applies across the architecture options:
 
 - Separation of concerns and deployment dependencies are primarily considerations for Option C.
 - Environment isolation and object naming apply to all three options.
-- Independent development applies when developers create parallel instances of Option A or B. The object-naming requirements also apply
+- [Independent development](/user-guide/dcm-projects/dcm-projects-cicd#label-dcm-collaboration) applies when developers create parallel instances of Option A or B. The object-naming requirements also apply
   when developers independently maintain Option C projects in the same account.
 
 ### Separation of concerns and deployment dependencies
@@ -119,9 +120,8 @@ dependencies across projects.
 
 ### Environment isolation and object naming
 
-The following diagram shows a typical workflow for deploying a DCM project to multiple environments.
-
-![Reviewing and merging changes](/static/images/dcm-projects/dcm-project-deployment-multi-environments.png)
+For a diagram of a typical workflow for deploying a DCM project to multiple environments, see
+[Collaboration and CI/CD for DCM Projects](/user-guide/dcm-projects/dcm-projects-cicd).
 
 #### Separate accounts compared with separate databases
 
@@ -144,88 +144,3 @@ quickly create and destroy sandbox environments to test different solutions.
 
 This applies to all account-level objects, such as databases, roles, and warehouses. You then need to apply these templated names to all
 fully qualified names of nested objects.
-
-### Independent development in a shared environment
-
-Multiple developers commonly share the same development account to build and iterate on data products in parallel. However, if multiple
-users work on the same project in parallel, their PLAN and DEPLOY operations can cause conflicts if they don’t use templating to create
-unique names.
-
-The following is an example scenario:
-
-- Users A and B are both testing changes to different parts of project `TASTYBYTES`, which already runs on production.
-- Each user creates their own feature branch of `prod-main` and starts editing the entity definitions.
-- Each user creates their own DCM project (`TASTYBYTES_DEV_A` and `TASTYBYTES_DEV_B`).
-- If both users deploy with the same `DEV` templating configuration to the same Snowflake account, then:
-
-  - User A deploys the new `_DEV` instance of all entities first including the `TB_WAREHOUSE_DEV`, so they are managed by their project `TASTYBYTES_DEV_A`.
-  - Once user B tries to deploy one or more of the same object names (for example, `TB_WAREHOUSE_DEV`), the deployment for
-    `TASTYBYTES_DEV_B` fails because the warehouse is already managed by `TASTYBYTES_DEV_A`.
-- Alternatively, both users could own and deploy from the same project `TASTYBYTES_DEV`, each pointing at their different branch folders.
-  This would lead to user B overwriting all deployed entity versions of user A and vice versa.
-
-The following is a solution:
-
-- When working on the same development environment in parallel, Snowflake recommends always using distinct entity names to avoid conflicting
-  object names. You can achieve this by templating database, warehouse, and role names with unique suffixes. For example, `DEFINE DATABASE DCM_PROJECT_{{db}};`
-- When using configuration profiles like the following example, multiple developers can use the `DEV` configuration to set their warehouses
-  to `X-SMALL`.
-- Each developer must use both a distinct DCM project object and distinct managed-object names. To avoid conflicting database names,
-  developers should overwrite the `db` variable with a unique string. This could be based on user names, feature names, ticket numbers, or
-  branch names.
-
-  Copy code
-
-  ```
-  manifest_version: 2
-  type: DCM_PROJECT
-  default_target: DEV
-
-  targets:
-    DEV:
-      account_identifier: MYORG-MYACCOUNT_DEV
-      project_name: DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
-      project_owner: DCM_DEVELOPER
-      templating_config: DEV
-
-  templating:
-    defaults:
-      wh_size: "X-SMALL"
-
-    configurations:
-      DEV:
-        db: "DEV"
-
-      TEST:
-        db: "TEST"
-
-      PROD:
-        db: "PROD"
-        wh_size: "LARGE"
-  ```
-
-  For example, a developer working on `DOC_1234` can supply a developer-specific project identifier and object-name variable while retaining
-  the `DEV` target’s configuration:
-
-  Copy code
-
-  ```
-  snow dcm create DCM_DEMO.PROJECTS.DCM_PROJECT_DOC_1234 \
-    --target DEV \
-    --if-not-exists
-
-  snow dcm deploy DCM_DEMO.PROJECTS.DCM_PROJECT_DOC_1234 \
-    --target DEV \
-    --variable "db='DOC_1234'"
-  ```
-
-![DCM Project CI/CD workflow.](/static/images/dcm-projects/dcm-project-ci-cd-flow.png)
-
-- You can apply the same templating solution when one developer works on multiple projects.
-- The following is an example of a scalable project setup for teams.
-
-  When you start a new Jira ticket, complete the following steps:
-
-  1. Create and check out a Git branch by using your Git client.
-  2. Create a developer-specific DCM project object.
-  3. Run `PLAN` and `DEPLOY` with that project identifier and a matching unique object-name variable, as shown in the preceding example.

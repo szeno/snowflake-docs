@@ -148,7 +148,7 @@ Executing this SQL command requires [roles](/user-guide/security-access-control-
   | USAGE | Stage in the pipe definition | External stages only |
   | READ | Stage in the pipe definition | Internal stages only |
   | USAGE | Named file format in the pipe definition | Only if the pipe uses a named file format |
-  | SELECT, INSERT | Table in the pipe definition |  |
+  | INSERT | Table in the pipe definition |  |
 
   Expand
 

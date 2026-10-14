@@ -4816,3 +4816,1464 @@ SELECT @@SPID !!!RESOLVE EWI!!! /*** SSC-EWI-TS0115 - T-SQL SESSION GLOBAL '@@SP
 - Identify the state represented by the session global and pass it explicitly where possible.
 - Redesign logic that depends on SQL Server connection or cursor state.
 - If you need more support, you can email us at [aim-support@snowflake.com](mailto:aim-support@snowflake.com)
+
+## SSC-EWI-TS0116
+
+@@IDENTITY used without a preceding INSERT to an identity table
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0116 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. SnowConvert AI was unable to determine the target table for @@IDENTITY. No preceding insert to an identity table found. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE InsertOrderUnknownSqlIdentity @sql NVARCHAR(200)
+AS
+BEGIN
+    DECLARE @OrderID INT;
+    EXEC sp_executesql @sql;
+    SET @OrderID = @@IDENTITY;
+    SELECT @OrderID;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE InsertOrderUnknownSqlIdentity (SQL STRING)
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    ORDERID INT;
+    ProcedureResultSet RESULTSET;
+  BEGIN
+    --** SSC-FDM-0131 - THE DYNAMIC SQL CODE COULD NOT BE PARSED, SO IT WAS LEFT UNCHANGED AND WILL BE EXECUTED AS-IS AT RUNTIME. PLEASE REVIEW THE GENERATED CODE. **
+    EXECUTE IMMEDIATE :sql;
+    ORDERID := @@IDENTITY !!!RESOLVE EWI!!! /*** SSC-EWI-TS0116 - SNOWCONVERT AI WAS UNABLE TO DETERMINE THE TARGET TABLE FOR @@IDENTITY. NO PRECEDING INSERT TO AN IDENTITY TABLE FOUND. ***/!!!;
+    ProcedureResultSet := (SELECT
+      :ORDERID);
+    RETURN TABLE(ProcedureResultSet);
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0116 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0117
+
+@@IDENTITY references a table that cannot be resolved in the symbol table
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0117 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. SnowConvert AI was unable to resolve the target table for @@IDENTITY. Missing table definition. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE InsertOrder @CustomerID INT
+AS
+BEGIN
+    DECLARE @OrderID INT;
+    INSERT INTO UnknownTable (CustomerID) VALUES (@CustomerID);
+    SET @OrderID = @@IDENTITY;
+    SELECT @OrderID;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE InsertOrder (CUSTOMERID INT)
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    ORDERID INT;
+    ProcedureResultSet RESULTSET;
+  BEGIN
+
+    INSERT INTO UnknownTable (CustomerID) VALUES (:CUSTOMERID);
+    ORDERID := @@IDENTITY !!!RESOLVE EWI!!! /*** SSC-EWI-TS0117 - SNOWCONVERT AI WAS UNABLE TO RESOLVE THE TARGET TABLE FOR @@IDENTITY. MISSING TABLE DEFINITION. ***/!!!;
+    ProcedureResultSet := (SELECT
+      :ORDERID);
+    RETURN TABLE(ProcedureResultSet);
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0117 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0118
+
+@@IDENTITY references a table without an identifiable identity column
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0118 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. SnowConvert AI was unable to identify the identity column for @@IDENTITY. Missing column definition. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE Orders (OrderID INT, CustomerID INT);
+GO
+
+CREATE PROCEDURE InsertOrder @CustomerID INT
+AS
+BEGIN
+    DECLARE @OrderID INT;
+    INSERT INTO Orders (CustomerID) VALUES (@CustomerID);
+    SET @OrderID = @@IDENTITY;
+    SELECT @OrderID;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE Orders (
+  OrderID INT,
+  CustomerID INT
+)
+;
+
+CREATE OR REPLACE PROCEDURE InsertOrder (CUSTOMERID INT)
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    ORDERID INT;
+    ProcedureResultSet RESULTSET;
+  BEGIN
+
+    INSERT INTO Orders (CustomerID) VALUES (:CUSTOMERID);
+    ORDERID := @@IDENTITY !!!RESOLVE EWI!!! /*** SSC-EWI-TS0118 - SNOWCONVERT AI WAS UNABLE TO IDENTIFY THE IDENTITY COLUMN FOR @@IDENTITY. MISSING COLUMN DEFINITION. ***/!!!;
+    ProcedureResultSet := (SELECT
+      :ORDERID);
+    RETURN TABLE(ProcedureResultSet);
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0118 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0119
+
+OUTER APPLY is not supported in Snowflake. LEFT OUTER JOIN is used as a workaround and requires manual changes to run correctly.
+
+### Severity
+
+Critical
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0119 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Outer apply is not supported in Snowflake. Left outer join is used as a workaround and requires manual changes to run correctly. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT P.ID, J.value
+FROM SAMPLE_ATLAS P
+OUTER APPLY OPENJSON(P.VAL) J
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+P.ID,
+J.value
+FROM
+SAMPLE_ATLAS P
+!!!RESOLVE EWI!!! /*** SSC-EWI-TS0119 - OUTER APPLY IS NOT SUPPORTED IN SNOWFLAKE. LEFT OUTER JOIN IS USED AS A WORKAROUND AND REQUIRES MANUAL CHANGES TO RUN CORRECTLY. ***/!!!
+LEFT OUTER JOIN
+TABLE(AIM_DB.PUBLIC.OPENJSON_UDF(P.VAL)) J;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0119 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0121
+
+@@FETCH\_STATUS has no Snowflake Scripting equivalent.
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0121 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. @@FETCH\_STATUS has no Snowflake scripting equivalent. This reference was not consumed by the cursor for loop conversion and has to be redesigned manually. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE dbo.FetchStatusProc
+AS
+BEGIN
+    DECLARE @Found INT
+
+    SET @Found = @@FETCH_STATUS
+END
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE dbo.FetchStatusProc ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    FOUND INT;
+  BEGIN
+    FOUND := @@FETCH_STATUS !!!RESOLVE EWI!!! /*** SSC-EWI-TS0121 - @@FETCH_STATUS HAS NO SNOWFLAKE SCRIPTING EQUIVALENT. THIS REFERENCE WAS NOT CONSUMED BY THE CURSOR FOR LOOP CONVERSION AND HAS TO BE REDESIGNED MANUALLY. ***/!!!;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0121 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0122
+
+USER\_ID returns a SQL Server database principal id and Snowflake has no numeric principal id.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0122 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. USER\_ID returns a SQL Server database principal id and Snowflake has no numeric principal id. A lookup of a built-in principal is folded to its fixed id; any other lookup must be redesigned to key on the user name from CURRENT\_USER(). The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT 'ID: ' + USER_ID('dbo') AS v;
+SELECT USER_ID('dbo') + 1 AS v;
+SELECT USER_ID('dbo') - 1 AS v;
+SELECT USER_ID('dbo') * 2 AS v;
+SELECT USER_ID('dbo') % 2 AS v;
+SELECT -USER_ID('dbo') AS v;
+SELECT 1 AS v WHERE USER_ID('dbo') = 1;
+SELECT LEN(USER_ID('dbo')) AS v;
+SELECT ABS(USER_ID('dbo')) AS v;
+SELECT COALESCE(USER_ID('dbo'), 0) AS v;
+SELECT CASE USER_ID('dbo') WHEN 1 THEN 'y' ELSE 'n' END AS v;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT 'ID: ' + USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! AS v;
+
+SELECT USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! + 1 AS v;
+
+SELECT USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! - 1 AS v;
+
+SELECT USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! * 2 AS v;
+
+SELECT USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! % 2 AS v;
+
+SELECT -USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! AS v;
+
+SELECT 1 AS v WHERE USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! = 1;
+
+SELECT LEN(USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!!) AS v;
+
+SELECT ABS(USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!!) AS v;
+
+SELECT COALESCE(USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!!, 0) AS v;
+
+SELECT CASE USER_ID('dbo') !!!RESOLVE EWI!!! /*** SSC-EWI-TS0122 - USER_ID RETURNS A SQL SERVER DATABASE PRINCIPAL ID AND SNOWFLAKE HAS NO NUMERIC PRINCIPAL ID. A LOOKUP OF A BUILT-IN PRINCIPAL IS FOLDED TO ITS FIXED ID; ANY OTHER LOOKUP MUST BE REDESIGNED TO KEY ON THE USER NAME FROM CURRENT_USER() ***/!!! WHEN 1 THEN 'y' ELSE 'n' END AS v;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0122 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0123
+
+The type of a local variable has no Snowflake equivalent.
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0123 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. The type of a local variable has no Snowflake equivalent. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+DECLARE @Buf dbo.AllocTT;
+GO
+CREATE PROC dbo.p
+AS
+BEGIN
+  DECLARE @Buf INT;
+  SET @Buf = 1;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+DECLARE
+  BUF dbo.AllocTT !!!RESOLVE EWI!!! /*** SSC-EWI-TS0123 - THE DECLARED TYPE OF LOCAL VARIABLE '@Buf' HAS NO SNOWFLAKE EQUIVALENT. THE DECLARATION AND EVERY REFERENCE TO IT WERE LEFT AS WRITTEN AND HAVE TO BE REDESIGNED MANUALLY. ***/!!!;
+BEGIN
+  RETURN '';
+END;
+
+CREATE OR REPLACE PROCEDURE MYDB.dbo.p ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  DECLARE
+    BUF INT;
+  BEGIN
+    BUF := 1;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0123 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0125
+
+Addition between a character string and a datetime type other than DATETIME was not converted.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0125 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Addition between a character string and a datetime type other than datetime was not converted. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT CAST('2020-03-15' AS DATE) + CodeString;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+TO_DATE('2020-03-15') + CodeString !!!RESOLVE EWI!!! /*** SSC-EWI-TS0125 - '+' BETWEEN A CHARACTER STRING AND A DATE VALUE WAS LEFT AS WRITTEN: IT IS NOT A CONCATENATION, AND THE CONVERTER HAS NO EQUIVALENT DATE ARITHMETIC FOR IT. REWRITE THE EXPRESSION WITH AN EXPLICIT DATEADD. ***/!!!;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0125 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0127
+
+A character wrapper over HASHBYTES digest bytes renders differently in Snowflake.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0127 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. A character wrapper over hashbytes digest bytes renders differently in Snowflake. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT TRY_CONVERT(VARCHAR(64), HASHBYTES('SHA2_256', 'abc'), 0);
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+CAST(SHA2_BINARY('abc', 256) AS VARCHAR(64)) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0127 - THE 'TRY_CONVERT' CHARACTER WRAPPER OVER HASHBYTES DIGEST BYTES RENDERS DIFFERENTLY IN SNOWFLAKE. REVIEW THE RESULT BEFORE USING THE CONVERTED EXPRESSION. ***/!!!;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0127 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0128
+
+Variable value was read inside the statement that reassigns it.
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0128 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Variable value was read inside the statement that reassigns it. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE FUNCTION dbo.GetSalaryTrimmed(@Emp VARCHAR(64))
+RETURNS MONEY
+AS
+BEGIN
+    DECLARE @Salary MONEY;
+    SET @Emp = LTRIM(RTRIM(@Emp));
+    SELECT @Salary = BaseSalary FROM dbo.Salaries WHERE EmployeeName = @Emp;
+    RETURN ISNULL(@Salary, 0);
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE FUNCTION dbo.GetSalaryTrimmed (EMP STRING)
+RETURNS NUMBER(38, 4)
+LANGUAGE SQL
+AS
+$$
+  WITH CTE1 AS
+  (
+    SELECT
+      LTRIM(RTRIM((
+        SELECT
+          EMP
+        FROM
+          CTE1
+      ) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0128 - VARIABLE 'EMP' IS READ INSIDE THE STATEMENT THAT REASSIGNS IT, SO THE GENERATED COMMON TABLE EXPRESSION REFERENCES ITSELF AND SNOWFLAKE REJECTS THE FUNCTION. SPLIT THE REASSIGNMENT SO THE PREVIOUS VALUE IS READ FROM A SEPARATE STATEMENT. ***/!!!)) AS EMP
+  ),
+  CTE2 AS
+  (
+    SELECT
+      BaseSalary AS SALARY
+    FROM
+      dbo.Salaries
+    WHERE
+      EmployeeName = (
+        SELECT
+          EMP
+        FROM
+          CTE1
+      )
+  )
+  SELECT
+    NVL((
+      SELECT
+        SALARY
+      FROM
+        CTE2
+    ) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0146 - VARIABLE 'SALARY' IS READ THROUGH SCALAR SUBQUERIES OVER EARLIER COMMON TABLE EXPRESSIONS BECAUSE ITS STATEMENTS COULD NOT BE COMBINED INTO ONE EXPRESSION. CALLED FOR EACH ROW OF A QUERY, THE FUNCTION CAN FAIL OR RETURN A DIFFERENT VALUE. ***/!!!, 0)
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0128 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0130
+
+This system table reports page-level storage allocation; Snowflake has no 8 KB page equivalent. Read INFORMATION\_SCHEMA.TABLES.BYTES.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0130 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table reports page-level storage allocation; Snowflake has no 8 kb page equivalent. Read INFORMATION\_SCHEMA.tables.bytes. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT SUM(a.used_pages)
+FROM sys.objects o
+JOIN sys.allocation_units a ON a.container_id = o.object_id
+WHERE type = 'U';
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  SUM(a.used_pages !!!RESOLVE EWI!!! /*** SSC-EWI-0003 - SYSTEM COLUMN 'used_pages' FOR BUILT-IN OBJECT 'sys.allocation_units' HAS NOT BEEN TRANSLATED. ***/!!!)
+FROM
+  INFORMATION_SCHEMA.TABLES o
+  JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-TS0130 - SYSTEM TABLE sys.allocation_units REPORTS PAGE-LEVEL STORAGE ALLOCATION; SNOWFLAKE HAS NO 8 KB PAGE EQUIVALENT. READ INFORMATION_SCHEMA.TABLES.BYTES, MATCHING BOTH UPPER(TABLE_SCHEMA) AND UPPER(TABLE_NAME). BYTES IS COMPRESSED STORAGE, NOT A PAGE COUNT, AND NO CONSTANT FACTOR CONVERTS THE PAGE COLUMNS INTO IT. ***/!!!
+    sys.allocation_units a
+    ON a.container_id !!!RESOLVE EWI!!! /*** SSC-EWI-0003 - SYSTEM COLUMN 'container_id' FOR BUILT-IN OBJECT 'sys.allocation_units' HAS NOT BEEN TRANSLATED. ***/!!! = o.object_id !!!RESOLVE EWI!!! /*** SSC-EWI-0003 - SYSTEM COLUMN 'object_id' FOR BUILT-IN OBJECT 'SYS.OBJECTS' HAS NOT BEEN TRANSLATED. ***/!!!
+WHERE
+  TABLE_TYPE = 'BASE TABLE';
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0130 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0131
+
+This system table is per index partition. Replace the lookup with the per-table INFORMATION\_SCHEMA.TABLES.ROW\_COUNT.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0131 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table is per index partition. Replace the lookup with the per-table INFORMATION\_SCHEMA.tables.ROW\_COUNT. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT t.name AS table_name, SUM(p.rows) AS row_count
+FROM sys.tables t
+JOIN sys.partitions p ON p.object_id = t.object_id
+WHERE p.index_id IN (0,1)
+GROUP BY t.name;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  t.TABLE_NAME AS table_name,
+  SUM(p."rows") AS row_count
+FROM
+  INFORMATION_SCHEMA.TABLES t
+  JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-TS0131 - SYSTEM TABLE sys.partitions IS PER INDEX PARTITION. REPLACE THE LOOKUP WITH PER-TABLE INFORMATION_SCHEMA.TABLES.ROW_COUNT, MATCHING BOTH UPPER(TABLE_SCHEMA) AND UPPER(TABLE_NAME), AND DROP INDEX_ID < 2 OR IN (0,1). NO REWRITE FOR INDEX_ID = 1 OR IN (1) (HEAPS READ 0) OR > 1 (SELECTS SECONDARY INDEXES). ***/!!!
+    sys.partitions p
+    ON p.object_id = t.TABLE_NAME
+WHERE
+  p.index_id IN (0, 1)
+GROUP BY
+  t.TABLE_NAME;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0131 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0132
+
+Call argument binding was not established
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0132 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Call argument binding was not established. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE usp_d6b
+AS
+BEGIN
+    EXEC usp_outside_the_input DEFAULT, 3;
+END
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE usp_d6b ()
+RETURNS VARCHAR
+LANGUAGE SQL
+EXECUTE AS CALLER
+AS
+$$
+  BEGIN
+    CALL usp_outside_the_input(DEFAULT, 3) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0132 - THE ARGUMENT BINDING OF CALL 'usp_outside_the_input' WAS NOT ESTABLISHED, SO THE EMITTED POSITIONAL ARGUMENTS MAY NOT MATCH THE CALLEE'S DECLARED ORDER. ***/!!!;
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0132 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0133
+
+Routine result set delivery was not preserved
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0133 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Routine result set delivery was not preserved. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE dbo.if73h_c_p AS
+BEGIN
+  DECLARE @gc INT = 0;
+  IF @gc = 1
+    SELECT 'marked' AS c;
+  EXEC dbo.if73h_other_p;
+END
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE dbo.if73h_c_p ()
+RETURNS TABLE()
+LANGUAGE SQL
+EXECUTE AS CALLER
+!!!RESOLVE EWI!!! /*** SSC-EWI-TS0133 - RESULT SET DELIVERY FROM 'SqlExecute' WAS NOT PRESERVED. THE ROUTINE WAS CONVERTED, BUT THIS SOURCE CONSTRUCT CAN RETURN ROWS THAT THE GENERATED SNOWFLAKE ROUTINE DOES NOT FORWARD TO ITS CALLER. ***/!!!
+AS
+$$
+  DECLARE
+    GC INT := 0;
+    ProcedureResultSet RESULTSET;
+  BEGIN
+    IF (:GC = 1) THEN
+      ProcedureResultSet := (SELECT
+        'marked' AS c);
+    END IF;
+    CALL dbo.if73h_other_p();
+    RETURN TABLE(ProcedureResultSet);
+  END;
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0133 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0134
+
+SQL Server session symmetric-key function is not supported in Snowflake
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0134 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. SQL Server session symmetric-key function is not supported in Snowflake. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+DECLARE @Amount int = 42;
+SELECT ENCRYPTBYKEY(KEY_GUID('CB_CASE_KEY'), CONVERT(varbinary(max), @Amount));
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+DECLARE
+  AMOUNT INT := 42;
+  BlockResultSet RESULTSET;
+BEGIN
+  BlockResultSet := (SELECT
+    ENCRYPTBYKEY(KEY_GUID('CB_CASE_KEY'), CONVERT(varbinary(max), @Amount)) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0134 - THE ENCRYPTBYKEY FUNCTION IS NOT SUPPORTED IN SNOWFLAKE. PROVIDE EXPLICIT KEY MATERIAL AND REDESIGN THE CRYPTOGRAPHIC CALL. ***/!!!);
+  RETURN TABLE(BlockResultSet);
+END;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0134 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0135
+
+This system table describes the database’s physical data and log files, for which Snowflake has no per-file, per-filegroup or per-data-space object. For storage sizes read the per-table INFORMATION\_SCHEMA.TABLE\_STORAGE\_METRICS.ACTIVE\_BYTES.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0135 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table describes the database’s physical data and log files, for which Snowflake has no per-file, per-filegroup or per-data-space object. For storage sizes read the per-table INFORMATION\_SCHEMA.TABLE\_STORAGE\_METRICS.ACTIVE\_BYTES. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT df.name
+FROM sys.filegroups fg
+INNER JOIN sys.database_files df ON fg.data_space_id = df.data_space_id;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  df.name
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0141 - SYSTEM VIEW sys.filegroups REPORTS FILEGROUP STORAGE PLACEMENT, WHICH SNOWFLAKE MANAGES ITSELF AND EXPOSES IN NO INFORMATION_SCHEMA OR ACCOUNT_USAGE VIEW; THE REFERENCE WAS LEFT AS WRITTEN, SO REDESIGN THE LOOKUP FOR THE TARGET DATA-PLACEMENT REQUIREMENTS. ***/!!!
+  sys.filegroups fg
+  INNER JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-TS0135 - SYSTEM TABLE sys.database_files DESCRIBES THE DATABASE'S PHYSICAL DATA AND LOG FILES, FOR WHICH SNOWFLAKE HAS NO PER-FILE, PER-FILEGROUP OR PER-DATA-SPACE OBJECT. FOR STORAGE SIZES READ THE PER-TABLE INFORMATION_SCHEMA.TABLE_STORAGE_METRICS.ACTIVE_BYTES. ***/!!!
+    sys.database_files df
+    ON fg.data_space_id = df.data_space_id;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0135 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0136
+
+This system table describes physical files Snowflake does not have; its path and growth columns have no equivalent. For a size read TABLE\_STORAGE\_METRICS.ACTIVE\_BYTES or INFORMATION\_SCHEMA.TABLES.BYTES.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0136 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table describes physical files Snowflake does not have; its path and growth columns have no equivalent. For a size read TABLE\_STORAGE\_METRICS.ACTIVE\_BYTES or INFORMATION\_SCHEMA.tables.bytes. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT f.database_id, vs.volume_mount_point, vs.available_bytes
+FROM sys.master_files AS f
+CROSS APPLY sys.dm_os_volume_stats(f.database_id, f.file_id) AS vs;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  f.database_id,
+  vs.volume_mount_point,
+  vs.available_bytes
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0136 - SYSTEM TABLE sys.master_files DESCRIBES PHYSICAL FILES SNOWFLAKE DOES NOT HAVE; ITS PATH AND GROWTH COLUMNS HAVE NO EQUIVALENT. FOR SIZE READ ACTIVE_BYTES FROM SNOWFLAKE.ACCOUNT_USAGE.TABLE_STORAGE_METRICS ON DELETED = FALSE, OR INFORMATION_SCHEMA.TABLES.BYTES. ***/!!!
+  sys.master_files AS f
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0082 - CROSS APPLY HAS BEEN CONVERTED TO LEFT OUTER JOIN AND REQUIRES MANUAL VALIDATION. ***/!!!
+  LEFT OUTER JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-0031 - sys.dm_os_volume_stats FUNCTION NOT SUPPORTED ***/!!!
+    TABLE(sys.dm_os_volume_stats(f.database_id, f.file_id)) AS vs;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0136 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0137
+
+This system table lists filegroups and partition schemes, which Snowflake has no equivalent for. Remove the reference.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0137 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table lists filegroups and partition schemes, which Snowflake has no equivalent for. Remove the reference. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT dds.name, dds.data_space_id FROM sys.data_spaces dds;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  dds.name,
+  dds.data_space_id
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0137 - SYSTEM TABLE sys.data_spaces LISTS FILEGROUPS AND PARTITION SCHEMES, WHICH SNOWFLAKE HAS NO EQUIVALENT FOR IN INFORMATION_SCHEMA OR ACCOUNT_USAGE. REMOVE THE REFERENCE, BUT NOT AS AN EMPTY RESULT -- IT ALWAYS RETURNS THE DEFAULT PRIMARY FILEGROUP ROW. ***/!!!
+  sys.data_spaces dds;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0137 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0138
+
+This system table describes filegroup, data space and partition scheme placement, which has no Snowflake equivalent. Remove the reference.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0138 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table describes filegroup, data space and partition scheme placement, which has no Snowflake equivalent. Remove the reference. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT s.destination_id FROM sys.destination_data_spaces s;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  s.destination_id
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0138 - SYSTEM TABLE sys.destination_data_spaces DESCRIBES FILEGROUP, DATA SPACE AND PARTITION SCHEME PLACEMENT, WHICH HAS NO EQUIVALENT IN SNOWFLAKE: EVERY TABLE IS PARTITIONED AUTOMATICALLY INTO MICRO-PARTITIONS. NOTHING REPORTS PHYSICAL PLACEMENT, SO REMOVE THE REFERENCE. ***/!!!
+  sys.destination_data_spaces s;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0138 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0139
+
+This system table lists partition-function boundary values; Snowflake has no partition-function catalog. Delete the lookup or express the range as a clustering key.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0139 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system table lists partition-function boundary values; Snowflake has no partition-function catalog. Delete the lookup or express the range as a clustering key. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT p.name, r.boundary_id, r.value
+FROM [BI_EDW].[sys].[partition_functions] p
+JOIN [sys].[partition_range_values] r ON r.function_id = p.function_id;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  p.name,
+  r.boundary_id,
+  r.value
+FROM
+  (
+    SELECT
+      CAST(null AS VARCHAR) AS name,
+      CAST(null AS NUMBER(38, 0)) AS function_id,
+      CAST(null AS VARCHAR) AS type_desc,
+      CAST(null AS NUMBER(38, 0)) AS fanout,
+      CAST(null AS BOOLEAN) AS boundary_value_on_right
+    WHERE
+      false
+  ) p
+  JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-TS0139 - SYSTEM TABLE sys.partition_range_values LISTS PARTITION-FUNCTION BOUNDARY VALUES; SNOWFLAKE HAS NO PARTITION-FUNCTION CATALOG AND NO VIEW EXPOSES BOUNDARY VALUES. DELETE THE LOOKUP, OR EXPRESS THE PRUNING RANGE AS A CLUSTERING KEY, WHICH SNOWFLAKE MAINTAINS ITSELF. ***/!!!
+    sys.partition_range_values r
+    ON r.function_id = p.function_id;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0139 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0140
+
+An empty string default on a decimal or numeric column can never produce a value; the insert fails in SQL Server too.
+
+### Severity
+
+Low
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0140 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. An empty string default on a decimal or numeric column can never produce a value. SQL Server rejects it at insert time with error 8114 and the emitted default fails the same way. Remove the default or replace it with a numeric value. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+create table t_default
+(
+  c_date date null default (''),
+  c_int int null default (''),
+  c_dec decimal(28, 9) null default (''),
+  c_txt varchar(10) null default ('')
+)
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE t_default (
+  c_date DATE null default ('1900-01-01' :: DATE),
+  c_int INT null DEFAULT (0),
+  c_dec DECIMAL(28, 9) null
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0140 - AN EMPTY STRING DEFAULT ON A DECIMAL OR NUMERIC COLUMN CAN NEVER PRODUCE A VALUE. SQL SERVER REJECTS IT AT INSERT TIME WITH ERROR 8114 AND THE EMITTED DEFAULT FAILS THE SAME WAY. REMOVE THE DEFAULT OR REPLACE IT WITH A NUMERIC VALUE. ***/!!!
+  DEFAULT ('') :: DECIMAL(28, 9),
+  c_txt VARCHAR(10) null default ('')
+)
+;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0140 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0141
+
+This system view reports filegroup storage placement; Snowflake manages placement itself and exposes it in no catalog view.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0141 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. This system view reports filegroup storage placement; Snowflake manages placement itself and exposes it in no catalog view. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT df.name
+FROM sys.filegroups fg
+INNER JOIN sys.database_files df ON fg.data_space_id = df.data_space_id;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  df.name
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0141 - SYSTEM VIEW sys.filegroups REPORTS FILEGROUP STORAGE PLACEMENT, WHICH SNOWFLAKE MANAGES ITSELF AND EXPOSES IN NO INFORMATION_SCHEMA OR ACCOUNT_USAGE VIEW; THE REFERENCE WAS LEFT AS WRITTEN, SO REDESIGN THE LOOKUP FOR THE TARGET DATA-PLACEMENT REQUIREMENTS. ***/!!!
+  sys.filegroups fg
+  INNER JOIN
+    !!!RESOLVE EWI!!! /*** SSC-EWI-TS0135 - SYSTEM TABLE sys.database_files DESCRIBES THE DATABASE'S PHYSICAL DATA AND LOG FILES, FOR WHICH SNOWFLAKE HAS NO PER-FILE, PER-FILEGROUP OR PER-DATA-SPACE OBJECT. FOR STORAGE SIZES READ THE PER-TABLE INFORMATION_SCHEMA.TABLE_STORAGE_METRICS.ACTIVE_BYTES. ***/!!!
+    sys.database_files df
+    ON fg.data_space_id = df.data_space_id;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0141 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0142
+
+Tempdb space-usage view reports allocation state Snowflake does not expose
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0142 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Tempdb space-usage view reports allocation state Snowflake does not expose. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+SELECT session_id,
+    SUM(internal_objects_alloc_page_count) AS task_internal_objects_alloc_page_count,
+    SUM(user_objects_alloc_page_count) AS task_user_objects_alloc_page_count
+FROM sys.dm_db_task_space_usage
+GROUP BY session_id;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+SELECT
+  session_id,
+  SUM(internal_objects_alloc_page_count) AS task_internal_objects_alloc_page_count,
+  SUM(user_objects_alloc_page_count) AS task_user_objects_alloc_page_count
+FROM
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0142 - SYSTEM TABLE sys.dm_db_task_space_usage IS NOT SUPPORTED IN SNOWFLAKE. SNOWFLAKE MANAGES TEMPORARY STORAGE ITSELF AND EXPOSES NO PER-TASK ALLOCATION OR DEALLOCATION COUNTERS, ONLY SPILL IN BYTES FOR COMPLETED QUERIES, SO REMOVE OR REDESIGN THIS QUERY. ***/!!!
+  sys.dm_db_task_space_usage
+GROUP BY
+  session_id;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0142 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0143
+
+SQL CLR routines declared with EXTERNAL NAME are not supported in Snowflake.
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0143 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. SQL clr routines declared with external name are not supported in Snowflake, and the assembly holding the method is not part of the migrated code, so no equivalent body can be generated. The declaration is kept as written for a redesign. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE PROCEDURE dbo.ClrProc(@n [int])
+AS EXTERNAL NAME [MyAsm].[MyNs.MyCls].[MyMethod];
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+!!!RESOLVE EWI!!! /*** SSC-EWI-TS0143 - SQL CLR ROUTINES DECLARED WITH EXTERNAL NAME ARE NOT SUPPORTED IN SNOWFLAKE, AND THE ASSEMBLY HOLDING THE METHOD IS NOT PART OF THE MIGRATED CODE, SO NO EQUIVALENT BODY CAN BE GENERATED. THE DECLARATION IS KEPT AS WRITTEN FOR A REDESIGN. ***/!!!
+CREATE PROCEDURE dbo.ClrProc (@n [int])
+AS
+  EXTERNAL NAME [MyAsm].[MyNs.MyCls].[MyMethod];
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0143 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0144
+
+Pending SnowConvert AI translation for float and money default values on character columns.
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0144 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Pending SnowConvert AI translation for float and money default values on character columns. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE [T] (
+    [c1] [varchar](20) NOT NULL DEFAULT ((1e3))
+)
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE T (
+  c1 VARCHAR(20) NOT NULL
+  !!!RESOLVE EWI!!! /*** SSC-EWI-TS0144 - PENDING SNOWCONVERT AI TRANSLATION FOR FLOAT AND MONEY DEFAULT VALUES ON CHARACTER COLUMNS. ***/!!!
+  DEFAULT ((1e3))
+)
+;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0144 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0145
+
+DROP CONSTRAINT names a constraint the converted table does not define in Snowflake
+
+### Severity
+
+Medium
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0145 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. Drop constraint names a constraint the converted table does not define in Snowflake. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE stg_reo (id INT, update_date DATETIME DEFAULT GETDATE());
+ALTER TABLE stg_reo DROP CONSTRAINT IF EXISTS DF__STG_REO__UPDATE___025D5595;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE stg_reo (
+  id INT,
+  update_date TIMESTAMP_NTZ(3) DEFAULT CURRENT_TIMESTAMP() :: TIMESTAMP_NTZ(3)
+)
+;
+
+!!!RESOLVE EWI!!! /*** SSC-EWI-TS0145 - CONSTRAINT DF__STG_REO__UPDATE___025D5595 IS NOT DEFINED UNDER THAT NAME IN THE CONVERTED TABLE, SO THIS DROP FAILS IN SNOWFLAKE. DEFAULT AND NULL CONSTRAINTS ARE CONVERTED WITHOUT A NAME; USE ALTER TABLE ... ALTER COLUMN ... DROP DEFAULT OR DROP NOT NULL INSTEAD. ***/!!!
+ALTER TABLE IF EXISTS stg_reo DROP CONSTRAINT DF__STG_REO__UPDATE___025D5595;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0145 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.
+
+## SSC-EWI-TS0146
+
+A function variable read through earlier common table expressions can fail or differ when the function is called for each row.
+
+### Severity
+
+High
+
+#### Description
+
+SnowConvert AI reports SSC-EWI-TS0146 while converting SQL Server code because it cannot reproduce the source behavior in Snowflake. A function variable read through earlier common table expressions can fail or differ when the function is called for each row. The sample below is a verified conversion, and the Snowflake statement includes the marker the product emits.
+
+#### Code Example
+
+##### Input Code:
+
+##### SQL Server
+
+Copy code
+
+```
+CREATE TABLE dbo.Orders (OrderId INT, Qty INT);
+GO
+CREATE FUNCTION dbo.WindowQty(@id INT) RETURNS INT AS
+BEGIN
+  DECLARE @k INT = @id;
+  DECLARE @x INT = -1;
+  SELECT @x = SUM(Qty) OVER () FROM dbo.Orders WHERE OrderId = @k;
+  RETURN @x;
+END;
+```
+
+##### Output Code:
+
+##### Snowflake
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE dbo.Orders (
+  OrderId INT,
+  Qty INT
+)
+;
+
+CREATE OR REPLACE FUNCTION dbo.WindowQty (ID INT)
+RETURNS INT
+LANGUAGE SQL
+AS
+$$
+  WITH CTE1 AS
+  (
+    SELECT
+      ID AS K
+  ),
+  CTE2 AS
+  (
+    SELECT
+      -1 AS X
+  ),
+  CTE3 AS
+  (
+    SELECT
+      SUM(Qty) OVER () AS X FROM
+      dbo.Orders
+    WHERE
+      OrderId = (
+        SELECT
+          K
+        FROM
+          CTE1
+      )
+  )
+  SELECT
+    (
+      SELECT
+        X
+      FROM
+        CTE3
+    ) !!!RESOLVE EWI!!! /*** SSC-EWI-TS0146 - VARIABLE 'X' IS READ THROUGH SCALAR SUBQUERIES OVER EARLIER COMMON TABLE EXPRESSIONS BECAUSE ITS STATEMENTS COULD NOT BE COMBINED INTO ONE EXPRESSION. CALLED FOR EACH ROW OF A QUERY, THE FUNCTION CAN FAIL OR RETURN A DIFFERENT VALUE. ***/!!!
+$$;
+```
+
+#### Best Practices
+
+Review the construct marked SSC-EWI-TS0146 and rewrite it with a Snowflake pattern that keeps the behavior you need. SnowConvert AI leaves the statement marked because the conversion could not be completed automatically.

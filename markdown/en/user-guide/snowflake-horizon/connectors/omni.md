@@ -12,6 +12,7 @@ Horizon Catalog.
 1. [Identify your Omni domain](#1-identify-your-omni-domain).
 2. [Generate an API key](#2-generate-an-api-key).
 3. [Create the Omni connection](#3-create-the-omni-connection).
+4. [Set up metadata access](#4-set-up-metadata-access).
 
 ## 1. Identify your Omni domain
 
@@ -51,6 +52,26 @@ To generate an API key, you must be assigned an Admin account in Omni.
 
    Show lessSee more
 3. Select **Create connection**.
+
+## 4. Set up metadata access
+
+Other roles can’t see the metadata and lineage that this connector collects until you grant them
+access. Grant `USAGE` on the connector, and on the database and schema that contain it, to each role
+that needs to view the connector’s metadata and lineage:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CONNECTORS TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
+```
+
+If you stored the connector in a different database or schema, replace `CONNECTORS` and `METADATA`
+with the actual database and schema names.
+
+For more information about metadata access, see
+[Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Connection security
 
