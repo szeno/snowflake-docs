@@ -1,7 +1,8 @@
 # Oct 5, 2026: WITH GRANT OPTION for role grants
 
-You can now grant an account role or a database role to another role with `WITH GRANT OPTION`. The
-recipient role can grant that role to other roles, including with `WITH GRANT OPTION`.
+You can now grant an account role, a database role, or an application role to another role with
+`WITH GRANT OPTION`. The recipient role can grant that role to other roles, including with
+`WITH GRANT OPTION`.
 
 Use `REVOKE GRANT OPTION FOR` to remove only the grant option. The role grant stays in place, so the
 recipient still inherits the granted role’s privileges. Use `CASCADE` or `RESTRICT` to control grants
@@ -11,5 +12,5 @@ exist.
 `WITH GRANT OPTION` applies to grants from one role to another role. A grant to a user doesn’t support
 the clause.
 
-For more information, see [GRANT ROLE](/sql-reference/sql/grant-role) and
-[GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
+For more information, see [GRANT ROLE](/sql-reference/sql/grant-role), [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role),
+and [GRANT APPLICATION ROLE](/sql-reference/sql/grant-application-role).

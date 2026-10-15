@@ -221,6 +221,8 @@ Add a stddev_pop metric for the BIT columns, and treat the Teradata PERIOD(DATE)
 
 The agent sets `validationCustomMetrics` and `validationCustomTypes` respectively. See [Custom metrics](../manual-migration/data-validation-configuration-reference#custom-metrics-validationcustommetrics) and [L1 type mapping overrides](../manual-migration/data-validation-configuration-reference#l1-type-mapping-overrides-validationcustomtypes).
 
+To skip one L2 aggregate on a single column (for example length-based `avg` on a VARCHAR primary key) without excluding that column from L1 or L3, ask the agent to use a column-scoped `validationCustomMetrics` entry. See [Column-scoped custom metrics](../manual-migration/data-validation-configuration-reference#column-scoped-custom-metrics).
+
 When only one column needs a different expected type, for example because you deliberately migrated a `GEOGRAPHY` column to `VARIANT`, ask for a per-column rule instead and the agent sets `validationCustomTypeRules`. See [Per-column L1 type overrides](../manual-migration/data-validation-configuration-reference#per-column-l1-type-overrides).
 
 Note

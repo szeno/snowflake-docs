@@ -136,6 +136,7 @@ For examples and supported options, see [Cortex Code](/user-guide/snowflake-cort
 - [Authenticate Cortex Agent SDK requests](/user-guide/snowflake-cortex/cortex-agent-sdk/authentication): Configure PAT, OAuth, key-pair JWT, Snowflake session token, and custom authentication.
 - [Conversations](/user-guide/snowflake-cortex/cortex-agent-sdk/conversations): Maintain conversation state across turns.
 - [Direct Agent API](/user-guide/snowflake-cortex/cortex-agent-sdk/running-agents): Use low-level run, thread, and agent-object resources.
+- [Cortex Agent SDK features](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-features): Use MCP servers, coding-agent options, and detailed streaming events.
 - [Use the asynchronous Python client](/user-guide/snowflake-cortex/cortex-agent-sdk/async-python): Run concurrent agent operations from Python.
 - [SDK reference](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-reference): Configure responses, errors, retries, and request options.
 

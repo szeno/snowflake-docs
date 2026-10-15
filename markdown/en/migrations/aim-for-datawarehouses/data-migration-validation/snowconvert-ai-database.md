@@ -86,7 +86,7 @@ Show lessSee more
 | `TABLE_PROGRESS` | Per-table validation rollup with L1/L2/L3 pass flags. |
 | `TABLE_PROGRESS_DETAIL` | Per-table partition-level L2/L3 status counts. |
 | `PARTITION_PROGRESS` | Derived L1/L2/L3 and overall validation status per partition. |
-| `DATA_VALIDATION_ERROR` | Failed or abandoned validation **tasks** with error messages (distinct from row-level `MISMATCH` results). |
+| `DATA_VALIDATION_ERROR` | Failed or abandoned validation **tasks** with error messages (distinct from row-level `MISMATCH` results). The `ERROR_MESSAGE` begins with an [error code](../manual-migration/data-validation-configuration-reference#data-validation-error-codes). |
 | `DATA_VALIDATION_WARNING` | Non-fatal validation warnings (unsupported types, metric exclusions). |
 
 Expand
@@ -305,6 +305,8 @@ SELECT SOURCE_IDENTIFIER, WARNING_MESSAGE
 FROM SNOWCONVERT_AI.DATA_VALIDATION.DATA_VALIDATION_WARNING
 WHERE WORKFLOW_ID = <workflow_id>;
 ```
+
+Each `ERROR_MESSAGE` is prefixed with the task’s error code, for example `Data Validation failed (ConnectionError): ...`. See [Data validation error codes](../manual-migration/data-validation-configuration-reference#data-validation-error-codes) for what each code means and what to check.
 
 ### Correlate queries in QUERY\_HISTORY
 

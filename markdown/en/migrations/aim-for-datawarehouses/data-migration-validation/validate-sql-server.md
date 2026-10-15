@@ -75,6 +75,10 @@ Expand
 
 Show lessSee more
 
+Note
+
+Metrics validation (L2) summarizes each column with aggregates such as NULL count and distinct count; it doesn’t compare the values themselves. For `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, `UNIQUEIDENTIFIER`, `XML`, and `SQL_VARIANT`, a value change that preserves those aggregates (for example, editing a GUID or an XML document without changing the column’s distinct count) passes L2 without a mismatch. To compare the actual values of `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, and `UNIQUEIDENTIFIER` columns, enable [row validation (L3)](./data-validation#row-validation-l3). `XML` and `SQL_VARIANT` are compared at the schema level only and aren’t value-compared at any level.
+
 ## Platform-specific considerations
 
 - **Starting validation**: Ask the agent to generate a validation workflow with the depth you need (schema validation, metrics validation, and row-level validation, per table).

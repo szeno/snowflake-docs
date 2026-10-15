@@ -34,6 +34,30 @@ GRANT DATABASE ROLE <name>
 `share_name`
 :   Specifies the identifier for the share from which the specified database role is granted.
 
+## Access control requirements
+
+A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
+[privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
+
+| Privilege | Object | Notes |
+| --- | --- | --- |
+| OWNERSHIP | Database role | OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role (or any role with the MANAGE GRANTS privilege). |
+| OWNERSHIP | Share | Required to grant the database role to the share. |
+
+Expand
+
+Show lessSee more
+
+Alternatively, use a role with the global `MANAGE GRANTS` privilege. Only the SECURITYADMIN role, or a higher role, has this privilege by default. The privilege can be granted to additional roles as needed.
+
+For more information about access control requirements for sharing data, see
+[Enable non-ACCOUNTADMIN roles to perform data sharing tasks](/user-guide/security-access-privileges-shares).
+
+For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).
+
+For general information about roles and privilege grants for performing SQL actions on
+[securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
+
 ## Usage notes
 
 - Granting a database role to a share fails if any DDL or other restricted privilege was granted to the database role. A database role can

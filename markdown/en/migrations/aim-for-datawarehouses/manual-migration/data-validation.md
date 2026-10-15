@@ -110,7 +110,7 @@ Expand
 
 Show lessSee more
 
-Monitor progress in `SNOWCONVERT_AI.DATA_VALIDATION` (`TABLE_PROGRESS`, `TABLE_PROGRESS_DETAIL`, `DATA_VALIDATION_ERROR`, `DATA_VALIDATION_WARNING`) and the `DATA_VALIDATION_DASHBOARD` Streamlit app. See [Data validation](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation#monitoring-a-cloud-data-validation-workflow) for outcome categories and query tagging.
+Monitor progress in `SNOWCONVERT_AI.DATA_VALIDATION` (`TABLE_PROGRESS`, `TABLE_PROGRESS_DETAIL`, `DATA_VALIDATION_ERROR`, `DATA_VALIDATION_WARNING`) and the `DATA_VALIDATION_DASHBOARD` Streamlit app. See [Data validation](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation#monitoring-a-cloud-data-validation-workflow) for outcome categories and query tagging. When a run fails, the `DATA_VALIDATION_ERROR` message begins with an error code; see [Data validation error codes](./data-validation-configuration-reference#data-validation-error-codes).
 
 ## Related content
 

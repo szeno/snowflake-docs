@@ -297,8 +297,8 @@ SQL:
     includes `WITH GRANT OPTION` also lets the recipient role grant that role to other roles.
     `WITH GRANT OPTION` applies to grants from one role to another role. For syntax, who can grant the
     option, and how to revoke it, see [GRANT ROLE](/sql-reference/sql/grant-role) and
-    [REVOKE ROLE](/sql-reference/sql/revoke-role). Database roles use the same clause. See
-    [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
+    [REVOKE ROLE](/sql-reference/sql/revoke-role). Database roles and application roles use the same clause. See
+    [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role) and [GRANT APPLICATION ROLE](/sql-reference/sql/grant-application-role).
 
 Snowsight:
 :   1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).

@@ -13,7 +13,7 @@ Snowpipe Streaming delivers:
 - **As low as 5 seconds** ingest-to-queryable latency
 - **Direct ingestion without application-managed channels** through Elastic Channels
 - **Ordered, exactly-once ingestion** through Named Channels and offset tokens
-- Streaming into Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables
+- Streaming into Snowflake-managed [Apache Iceberg](/user-guide/tables-iceberg) tables, with ingest-to-queryable latency as low as 5 seconds when you query the tables in Snowflake, and 30 seconds when you use an [external query engine](/user-guide/tables-iceberg-use-external-query-engine)
 
 The results you observe depend on workload shape and configuration, including row size, table width (number of columns), SDK buffering or REST request batching, concurrency, table type, transformations, and clustering.
 

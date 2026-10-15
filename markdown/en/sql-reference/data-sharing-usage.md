@@ -8,8 +8,10 @@ Note
 
 This data is available only to the account that published the individual listing. By default, only account administrators (users with
 the ACCOUNTADMIN role) in the account can access the SNOWFLAKE database and schemas within the database, or perform queries on the
-views; however, privileges on the database can be granted to other roles in your account to allow other users to access the objects.
-For more details, see [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
+views. To let another role query DATA\_SHARING\_USAGE views without granting access to the rest of the SNOWFLAKE database, grant the
+SNOWFLAKE.SHARING\_USAGE\_VIEWER database role. For more information, see [DATA\_SHARING\_USAGE schema](/sql-reference/snowflake-db-roles#label-db-roles-data-sharing-usage).
+
+You can also grant privileges on the SNOWFLAKE database to other roles. For more details, see [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
 
 ## DATA\_SHARING\_USAGE views
 

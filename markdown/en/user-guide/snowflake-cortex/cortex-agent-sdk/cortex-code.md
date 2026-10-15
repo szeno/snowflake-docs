@@ -378,6 +378,7 @@ You can also fork at a specific message. Use `upToMessageId` in TypeScript or `u
 
 ## Next steps
 
+- [Cortex Agent SDK features](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-features): Use MCP servers, coding-agent options, and detailed streaming events
 - [SDK reference](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-reference): Review shared error, retry, and transport behavior
 
 ## Legal notices

@@ -12,6 +12,8 @@ See also:
 
     [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role) , [REVOKE DATABASE ROLE](/sql-reference/sql/revoke-database-role)
 
+    [GRANT APPLICATION ROLE](/sql-reference/sql/grant-application-role) , [REVOKE APPLICATION ROLE](/sql-reference/sql/revoke-application-role)
+
     [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege)
 
 ## Syntax
@@ -48,7 +50,8 @@ GRANT ROLE <name> TO USER <user_name>
     `WITH GRANT OPTION` is valid on a grant to a role.
     `GRANT ROLE ... TO USER ... WITH GRANT OPTION` isn’t supported.
 
-    The same clause is supported for database roles. See [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
+    The same clause is supported for database roles and application roles. See
+    [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role) and [GRANT APPLICATION ROLE](/sql-reference/sql/grant-application-role).
 
 ## Access control requirements
 

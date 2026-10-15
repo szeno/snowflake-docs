@@ -129,7 +129,7 @@ You must stop replication for the affected table before altering its journal or 
 
 To migrate a table:
 
-1. Stop replication for the affected table by stopping the topmost processors of the **Snapshot Load** and **Incremental Load** groups until all queues are empty. For the equivalent stop procedure, see the substeps in [Reclaim journal table storage](#label-postgres-reinstall-connector).
+1. Stop replication for the affected table by stopping the topmost processors of the **Snapshot Load** and **Incremental Load** groups until all queues are empty. For the equivalent stop procedure, see the substeps in [Reinstall the connector](#label-postgres-reinstall-connector).
 2. Widen the column on both the journal table and the destination table, according to the column type:
    1. For **VARCHAR** columns, run a single `ALTER TABLE ... ALTER COLUMN ... SET DATA TYPE VARCHAR(134217728)` on both the journal and destination tables.
    2. For **BINARY** columns, Snowflake doesn’t allow widening `BINARY` in place, so do the following on both the journal and destination tables:
@@ -287,7 +287,7 @@ CALL verify_error_logging('"my_schema"');
 
 ## Upgrading PostgreSQL
 
-Upgrading the connector requires a different approach depending on whether PostgreSQL is being upgraded to the next minor or major version.
+How you handle the connector during a PostgreSQL upgrade depends on whether you’re upgrading to the next minor or major version.
 
 Minor version upgrades
 
@@ -298,64 +298,106 @@ Minor version upgrades
 
 Major version upgrades
 
-- Require the PostgreSQL server to drop replication slots, including any used by the connector.
-- Cannot preserve or migrate replication slots to the new version. See also [PostgreSQL 17 and later versions upgrades](#label-postgres-upgrade-note).
-- Require restarting replication of all tables from the snapshot phase, unless you can stop all writes to the source database for the duration of the upgrade. In that case, you can keep the replicated data and resume with incremental replication only. For more information, see [Upgrade without re-snapshotting tables](#label-postgres-upgrade-incremental-only).
+- Drop replication slots, including the one that the connector uses, when you upgrade from PostgreSQL 16 or an earlier version. Upgrades from PostgreSQL 17 preserve replication slots. For more information, see [PostgreSQL 17 and later versions upgrades](#label-postgres-upgrade-note).
+- Always require dropping replication slots on Amazon Aurora, including on PostgreSQL 17 and later. Aurora doesn’t start a major version upgrade while a logical replication slot exists.
+- When the replication slot is dropped, require either re-snapshotting all tables or stopping all writes to the source database for the whole upgrade. For more information, see [Upgrade with re-snapshotting tables](#label-postgres-upgrade-resnapshot) and [Upgrade without re-snapshotting tables](#label-postgres-upgrade-incremental-only).
 
 To perform a minor version upgrade, do the following:
 
-1. Stop the connector, including all Processors and Controller Services.
+1. Stop the connector:
+   - Gen 2: On the **Installed Connectors** tab, open the connector’s menu and select **Stop**. For other ways to stop a connector, see [Start and stop data movement](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle#label-openflow-connector-lifecycle-start-stop).
+   - Gen 1: Stop all Processors and Controller Services in the connector.
 2. Upgrade PostgreSQL.
-3. Restart the connector.
+3. Start the connector:
+   - Gen 2: On the **Installed Connectors** tab, open the connector’s menu and select **Start**.
+   - Gen 1: Enable all Controller Services, and then start the connector’s process group. For more information, see [Run the flow](/user-guide/data-integration/openflow/connectors/postgres/setup#label-postgres-run-the-flow).
 
-To perform a major version upgrade, do the following:
+To perform a major version upgrade, follow one of the procedures in the following sections. Both approaches work with gen 1 and gen 2 connectors. A gen 2 connector always has to be reinstalled and configured again. A gen 1 connector doesn’t need to be reinstalled.
+
+### Upgrade with re-snapshotting tables
+
+This approach works even if writes to the source database continue during the upgrade because the connector re-snapshots every table after the upgrade.
+
+You don’t need to drop or rename the destination tables. The connector re-snapshots each table in place, which preserves the destination table object along with dependent objects such as streams. Before it loads the fresh snapshot, the connector saves a copy of the previous contents in an archive table named `<destination_table>_ARCHIVE_<timestamp>`, which you can drop once you’ve confirmed that the re-snapshot completed. For more information, see [Restart table replication](#label-of-postgres-restart-table-replication).
+
+#### Gen 2
+
+To upgrade with a gen 2 connector, do the following:
+
+1. Note the connector’s current configuration, including the source connection settings and the tables that it replicates. You need these values to configure the new connector.
+2. Remove the connector by stopping, deleting, and then dropping it. For instructions, see [Remove a connector](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle#label-openflow-connector-lifecycle-remove).
+3. Upgrade PostgreSQL.
+4. Install a new instance of the connector and configure it with the setup wizard or SQL, using the values that you noted earlier and the same destination database and schema. For more information, see [Set up the Openflow Connector for PostgreSQL](/user-guide/data-integration/openflow/connectors/postgres/setup).
+5. Start the connector. It creates a new replication slot and re-snapshots every table.
+
+#### Gen 1
+
+To upgrade with a gen 1 connector, do the following:
 
 1. Remove all tables from replication in the connector by clearing the **Included Table Names** and **Included Table Regex** parameters.
-2. Wait until all queues in the connector are empty, so that every captured change is merged into the destination tables.
+2. Wait until all queues in the connector are empty.
 3. Stop the connector, including all Processors and Controller Services.
-4. Open the **Incremental Load** group in the connector.
-5. Clear the state of the CDC processor:
+4. Clear the state of the CDC processor:
    1. Open the **Incremental Load** group in the connector.
    2. Right-click the top Processor in the group, **Read PostgreSQL CDC Stream**, and select **View state**.
    3. Click **Clear state**.
    4. Click **Close**.
-6. Upgrade PostgreSQL.
-7. Restart the connector. A new replication slot will be created.
-8. Re-add all tables to the **Included Table Names** or **Included Table Regex** parameters.
-
-You don’t need to drop or rename the destination tables before you re-add the tables. The connector re-snapshots each table in place, which preserves the destination table object along with dependent objects such as streams. Before it loads the fresh snapshot, the connector saves a copy of the previous contents in an archive table named `<destination_table>_ARCHIVE_<timestamp>`, which you can drop once you’ve confirmed that the re-snapshot completed. For more information, see [Restart table replication](#label-of-postgres-restart-table-replication).
+5. Upgrade PostgreSQL.
+6. Restart the connector. A new replication slot is created.
+7. Re-add all tables to the **Included Table Names** or **Included Table Regex** parameters.
 
 ### Upgrade without re-snapshotting tables
 
-When an upgrade drops the replication slot, you can avoid re-snapshotting every table if you can stop all writes to the source database while you upgrade. This applies to major version upgrades and to any upgrade to PostgreSQL 17.0 from version 16 or earlier. The connector keeps the data it already replicated and continues with incremental replication only.
+If no writes reach the source database for the whole duration of the upgrade, you can keep the data that the connector already replicated and continue with incremental replication only.
 
 Warning
 
-No writes of any kind, whether DML or DDL, can reach the replicated database from the moment you stop the connector until all tables are back in incremental replication. The new replication slot starts at the current write-ahead log position, so any change made during that window is lost and there’s no way to recover it without a new snapshot.
+No writes of any kind, whether DML or DDL, can reach the replicated database from the moment you stop writes until all tables are back in incremental replication. The new replication slot starts at the current write-ahead log position, so any change made during that window is lost and there’s no way to recover it without a new snapshot.
 
-To upgrade without re-snapshotting tables, do the following:
+The order of the first steps matters: stop writes to the source database, wait until the connector processes all remaining changes, and only then remove tables from replication or remove a gen 2 connector. The connector discards FlowFiles for tables that it no longer replicates, so removing tables earlier causes data gaps.
 
-1. Remove all tables from replication in the connector by clearing the **Included Table Names** and **Included Table Regex** parameters.
-2. Wait until all queues in the connector are empty, so that every captured change is merged into the destination tables.
-3. Stop the connector, including all Processors and Controller Services.
-4. Stop all writes to the source database, and keep them stopped for the rest of this procedure.
-5. Clear the state of the CDC processor:
+#### Gen 2
+
+To upgrade with a gen 2 connector without re-snapshotting tables, do the following:
+
+1. Note the connector’s current configuration, including the source connection settings and the tables that it replicates. You need these values to configure the new connector.
+2. Stop all writes to the source database, and keep them stopped for the rest of this procedure.
+3. Wait until all queues in the connector are empty, so that every change captured before writes stopped is merged into the destination tables. To see the queues, on the **Installed Connectors** tab, open the connector’s menu and select **View canvas**. When all FlowFiles have been processed, the **Queued** value on the connector’s process group becomes zero. If you changed the **Merge Task Schedule CRON** parameter, the queues aren’t emptied until the next scheduled run. To empty them sooner, set the parameter to `* * * * * ?`. For more information about the read-only canvas, see [Verify ingestion (dashboard, destination database, read-only canvas)](/user-guide/data-integration/openflow/gen2/setup-connector-wizard#label-openflow-connector-wizard-verify-flow).
+4. Remove the connector by stopping, deleting, and then dropping it. For instructions, see [Remove a connector](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle#label-openflow-connector-lifecycle-remove).
+5. Upgrade PostgreSQL.
+6. Install a new instance of the connector and configure it with the setup wizard or SQL, using the values that you noted earlier and the same destination database and schema. In the **Migration** step, set **Ingestion Type** so that tables go straight to incremental replication. For more information, see [Gen 2 parameters](/user-guide/data-integration/openflow/connectors/postgres/setup#label-postgres-gen2-parameters).
+7. Start the connector. It creates a new replication slot, and the tables bypass the snapshot phase and replicate incrementally into the existing destination tables.
+8. On the connector’s details page in the [Openflow Connectors Dashboard](/user-guide/data-integration/openflow/connectors-dashboard), confirm that every table reaches the **Incremental Replication** phase.
+9. Resume writes to the source database.
+10. Set **Ingestion Type** back to its default and apply the change, so that tables you add later still get a snapshot.
+
+#### Gen 1
+
+To upgrade with a gen 1 connector without re-snapshotting tables, do the following:
+
+1. Stop all writes to the source database, and keep them stopped for the rest of this procedure.
+2. Wait until all queues in the connector are empty, so that every change captured before writes stopped is merged into the destination tables. If you changed the **Merge Task Schedule CRON** parameter, the queues aren’t emptied until the next scheduled run. To empty them sooner, set the parameter to `* * * * * ?`.
+3. Remove all tables from replication in the connector by clearing the **Included Table Names** and **Included Table Regex** parameters.
+4. Confirm that the state of the **Table State Store** controller service no longer lists any tables. For instructions on viewing table state, see [Check the replication status of a table](#label-of-postgres-check-table-replication-status).
+5. Stop the connector, including all Processors and Controller Services.
+6. Clear the state of the CDC processor:
    1. Open the **Incremental Load** group in the connector.
    2. Right-click the top Processor in the group, **Read PostgreSQL CDC Stream**, and select **View state**.
    3. Click **Clear state**.
    4. Click **Close**.
-6. Upgrade PostgreSQL.
-7. In the `PostgreSQL Ingestion Parameters` context, set the `Ingestion Type` parameter to `incremental`. For more information, see [Openflow Connector for PostgreSQL: Set up incremental replication without snapshots](/user-guide/data-integration/openflow/connectors/postgres/incremental-replication).
-8. Restart the connector. A new replication slot is created.
-9. Re-add all tables to the **Included Table Names** or **Included Table Regex** parameters. The tables bypass the snapshot phase and replicate incrementally into the existing destination tables.
-10. Confirm that every table reaches the status INCREMENTAL\_REPLICATION in the **Table State Store** controller service. For instructions on viewing table state, see [Check the replication status of a table](#label-of-postgres-check-table-replication-status).
-11. Resume writes to the source database.
-12. Set the `Ingestion Type` parameter back to `full`, so that tables you add later still get a snapshot.
+7. Upgrade PostgreSQL.
+8. In the `PostgreSQL Ingestion Parameters` context, set the `Ingestion Type` parameter to `incremental`. For more information, see [Openflow Connector for PostgreSQL: Set up incremental replication without snapshots](/user-guide/data-integration/openflow/connectors/postgres/incremental-replication).
+9. Restart the connector. A new replication slot is created.
+10. Re-add all tables to the **Included Table Names** or **Included Table Regex** parameters. The tables bypass the snapshot phase and replicate incrementally into the existing destination tables.
+11. Confirm that every table reaches the status INCREMENTAL\_REPLICATION in the **Table State Store** controller service. For instructions on viewing table state, see [Check the replication status of a table](#label-of-postgres-check-table-replication-status).
+12. Resume writes to the source database.
+13. Set the `Ingestion Type` parameter back to `full`, so that tables you add later still get a snapshot.
 
 ### PostgreSQL 17 and later versions upgrades
 
 PostgreSQL 17 improved upgrading such that it no longer requires dropping replication slots when upgrading to later versions such as 17.1 » 18.0.
 Upgrading to PostgreSQL 17.0 or later from prior versions (16 and earlier) drops replication slots and should be treated as a major upgrade.
+This improvement doesn’t apply to Amazon Aurora, where every major version upgrade requires dropping replication slots.
 Future versions of PostgreSQL may also improve the upgrade process further.
 
 If the connector is using failover slot support, ensure the slot is caught up and not conflicting before starting the upgrade. See [Additional step when running pg\_upgrade](/user-guide/data-integration/openflow/connectors/postgres/failover#label-postgres-failover-pg-upgrade).

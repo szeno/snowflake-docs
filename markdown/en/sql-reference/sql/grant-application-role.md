@@ -16,12 +16,16 @@ See also:
 :   [ALTER APPLICATION ROLE](/sql-reference/sql/alter-application-role), [CREATE APPLICATION ROLE](/sql-reference/sql/create-application-role),
     [REVOKE APPLICATION ROLE](/sql-reference/sql/revoke-application-role), [SHOW APPLICATION ROLES](/sql-reference/sql/show-application-roles)
 
+    [GRANT ROLE](/sql-reference/sql/grant-role), [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role)
+
 ## Syntax
 
 Copy code
 
 ```
-GRANT APPLICATION ROLE <name> TO  { ROLE <parent_role_name> | APPLICATION ROLE <application_role> | APPLICATION <application_name> | USER <user_name> }
+GRANT APPLICATION ROLE <name> TO ROLE <parent_role_name> [ WITH GRANT OPTION ]
+
+GRANT APPLICATION ROLE <name> TO { APPLICATION ROLE <application_role> | APPLICATION <application_name> | USER <user_name> }
 ```
 
 ## Parameters
@@ -35,13 +39,12 @@ GRANT APPLICATION ROLE <name> TO  { ROLE <parent_role_name> | APPLICATION ROLE <
 :   Grants the application role to the specified account role.
 
 `APPLICATION ROLE application_role`
-:   Grants the application role to the specified application role. This grant creates a role
-    hierarchy of application roles.
+:   Grants the application role to the specified application role in the same application. This grant
+    creates a role hierarchy of application roles.
 
-    An application role can be granted to either an account role or another application role in the
-    same application. If the parent role is an application role and the identifier is not fully
-    qualified in the form of `application_name.application_role_name`, the command looks
-    for the application role in the current application for the session.
+    If the identifier isn’t fully qualified in the form of
+    `application_name.application_role_name`, the command looks for the
+    application role in the current application for the session.
 
 `APPLICATION application_name`
 :   Grants the application role to the specified application.
@@ -49,21 +52,47 @@ GRANT APPLICATION ROLE <name> TO  { ROLE <parent_role_name> | APPLICATION ROLE <
 `USER user_name`
 :   Grants the application role to the specified user.
 
+`WITH GRANT OPTION`
+:   If specified, allows the recipient account role to grant the application role further. The recipient
+    can include `WITH GRANT OPTION` on those grants.
+
+    Default: No value, which means the recipient account role can’t grant the application role further.
+    The recipient still inherits the privileges of the granted application role.
+
+    Application roles are granted to the application owner with `WITH GRANT OPTION`. The application owner
+    can grant an application role to another account role with `WITH GRANT OPTION`. That grantee can then
+    grant the application role further.
+
+    `WITH GRANT OPTION` applies when the grantor is an account role, including the application owner. It
+    doesn’t apply when the application grants an application role to another application role in the same
+    application.
+
+    For revoke behavior, see [REVOKE APPLICATION ROLE](/sql-reference/sql/revoke-application-role).
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
 [privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
 
+The following table lists two different grantors. The application owner grants an application role outside
+the application, and the application grants an application role to another application role in the same
+application:
+
 | Privilege or role | Object | Notes |
 | --- | --- | --- |
-| ACCOUNTADMIN | Application role | A user with this role can grant a [Budgets application role](/user-guide/budgets#label-budgets-application-roles) to a custom role. |
-| OWNERSHIP | Role | Role that is granted to an account role or another application role. However the application owner can grant an application role to another application role or account role. OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role (or any role with the MANAGE GRANTS privilege). |
+| OWNERSHIP | Application | The application owner can grant an application role to an account role, another application, or a user. A grant to an account role can include `WITH GRANT OPTION`. A role that was granted the application role with `WITH GRANT OPTION` can also grant it to an account role, another application, or a user. |
+| OWNERSHIP | Application role | The application can grant an application role to another application role in the same application. This grant forms the application role hierarchy. |
 
 Expand
 
 Show lessSee more
 
-Only the application owner can grant an application role to other roles or users. Only the SECURITYADMIN role, or a higher role, has this privilege by default. The privilege can be granted to additional roles as needed.
+Only the application owner, or a role that was granted the application role with `WITH GRANT OPTION`, can
+grant an application role to an account role, another application, or a user. The MANAGE GRANTS privilege
+doesn’t apply to these grants. `ACCOUNTADMIN` can grant an application role only when it owns the
+application or was granted the application role with `WITH GRANT OPTION`. For example, `ACCOUNTADMIN`
+doesn’t own the `SNOWFLAKE` application, but it has the `SNOWFLAKE` application roles with
+`WITH GRANT OPTION`, so it can grant them to other roles.
 
 For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).
 
@@ -73,22 +102,31 @@ For general information about roles and privilege grants for performing SQL acti
 ## Usage notes
 
 Granting an application role to another application role can only be performed within the
-context of an installed application, for example in application setup script.
+context of an installed application, for example, in the application’s setup script.
 
 ## Examples
 
-Grants an application role `app_role` to a different application role `other_app_role`:
+Grants the application role `app_role` to a different application role `other_app_role`:
 
 Copy code
 
 ```
-GRANT APPLICATION ROLE app_role to APPLICATION ROLE other_app_role;
+GRANT APPLICATION ROLE app_role TO APPLICATION ROLE other_app_role;
 ```
 
-Grants an application role `app_role` to a user `user1`:
+Grants the application role `app_role` in the application `my_app` to the account role `analyst`. The
+`analyst` role can grant `my_app.app_role` further:
 
 Copy code
 
 ```
-GRANT APPLICATION ROLE app_role to USER user1;
+GRANT APPLICATION ROLE my_app.app_role TO ROLE analyst WITH GRANT OPTION;
+```
+
+Grants the application role `app_role` in the application `my_app` to the user `user1`:
+
+Copy code
+
+```
+GRANT APPLICATION ROLE my_app.app_role TO USER user1;
 ```

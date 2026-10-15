@@ -86,7 +86,30 @@ Show lessSee more
 
 For the precise meaning of each L3 code (including which side a row is missing from or duplicated on), see [Validation levels and result codes](../manual-migration/data-validation-configuration-reference#validation-levels-and-result-codes) in the configuration reference.
 
-Task-level failures appear in `DATA_VALIDATION_ERROR` (distinct from row-level `MISMATCH` results).
+### Task-level error codes
+
+Task-level failures appear in `DATA_VALIDATION_ERROR` (distinct from row-level `MISMATCH` results). These mean the validation couldn’t run, not that data didn’t match. When a run fails, AIM DMV classifies the failure into one of six error codes and shows it in the job’s error message:
+
+Copy code
+
+```
+Data Validation failed (<ErrorCode>): <message>
+```
+
+| Error code | Summary |
+| --- | --- |
+| `ConnectionError` | Could not connect to, or authenticate with, the source or Snowflake. |
+| `SchemaError` | An object the validation needs doesn’t exist, or the user can’t see it. |
+| `TimeoutError` | A query was cancelled, or ran longer than a timeout allowed. |
+| `DataError` | The data itself prevented the validation (for example, a value that can’t be converted or computed). |
+| `ConfigError` | The validation configuration, or the local environment it runs in, is invalid. |
+| `InternalError` | The error didn’t match any of the other categories. |
+
+Expand
+
+Show lessSee more
+
+For the typical causes behind each code and what to check, see [Data validation error codes](../manual-migration/data-validation-configuration-reference#data-validation-error-codes).
 
 Monitor workflows in `SNOWCONVERT_AI.DATA_VALIDATION` or the `DATA_VALIDATION_DASHBOARD` Streamlit app. See [The SNOWCONVERT\_AI database](./snowconvert-ai-database) for views and sample queries filtered by `WORKFLOW_ID`.
 
@@ -188,7 +211,7 @@ The Orchestrator and Worker set Snowflake [`QUERY_TAG`](/sql-reference/parameter
 
 ### Normalization and metrics customization
 
-Built-in normalization and L2 metric templates apply per platform and data type. Override them at the workflow root with `validationCustomNormalizations` and `validationCustomMetrics`. See [Customizing normalization and metrics](../manual-migration/data-validation-configuration-reference#customizing-normalization-and-metrics) in the configuration reference.
+Built-in normalization and L2 metric templates apply per platform and data type. Override them at the workflow root with `validationCustomNormalizations` and `validationCustomMetrics`. Metric overrides can be datatype-scoped or column-scoped (for example, remove length-based `avg` on one VARCHAR key without dropping that column from L1 or L3). See [Customizing normalization and metrics](../manual-migration/data-validation-configuration-reference#customizing-normalization-and-metrics) and [Column-scoped custom metrics](../manual-migration/data-validation-configuration-reference#column-scoped-custom-metrics) in the configuration reference.
 
 ### Accepted transformations
 

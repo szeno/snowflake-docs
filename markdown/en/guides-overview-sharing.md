@@ -88,3 +88,12 @@ provider who is sharing their data in a clean room defines what analyses can be 
 gather insights from the data without having unrestricted access to it.
 
 For more information, see [Overview of Snowflake Data Clean Rooms](/user-guide/cleanrooms/overview).
+
+## Third party (publisher–subscriber) accounts
+
+Use third party (publisher–subscriber) accounts when a business partner or other organization
+outside your company needs a fully functional Snowflake account that your organization still
+governs. Partners can combine data you share with their own data. This option is separate from a
+Snowflake Data Clean Room, which controls which analyses another party can run on shared data.
+
+For more information, see [Third party (publisher–subscriber) accounts](/user-guide/third-party-publisher-subscriber-accounts).

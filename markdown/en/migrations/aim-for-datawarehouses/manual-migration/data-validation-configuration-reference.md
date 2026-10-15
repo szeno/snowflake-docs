@@ -54,7 +54,7 @@ Show lessSee more
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | How `INTERVAL` columns are compared. Defaults to `"interval"`, matching the target’s native interval type. See [INTERVAL data type handling](#interval-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Preferred, granular normalization overrides by data type, column, or column pattern. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `validationCustomNormalizations` | `Object` |  | Legacy, workflow-wide overrides for L2/L3 normalization SQL templates, keyed only by data type. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
-| `validationCustomMetrics` | `Object` |  | Workflow-wide overrides for L2 metric definitions. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
+| `validationCustomMetrics` | `Object` |  | Workflow-wide overrides for L2 metric definitions, by data type or by individual source column. See [Custom metrics](#custom-metrics-validationcustommetrics). |
 | `validationCustomTypes` | `Object` |  | Workflow-wide overrides for L1 source data type name mapping. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `validationCustomTypeRules` | `Array` |  | Per-column L1 type overrides, for columns deliberately migrated to a different type. See [Per-column L1 type overrides](#per-column-l1-type-overrides). |
 | `defaultTableConfiguration` | `Object` |  | Shared defaults inherited by every table, view, and object entry. Per-entry properties override them, and a nested `synchronization` block is merged field by field. See [Incremental validation](#incremental-validation). |
@@ -182,7 +182,133 @@ Expand
 
 Show lessSee more
 
-Task-level failures are recorded in `DATA_VALIDATION_ERROR`, distinct from row-level `MISMATCH` results.
+Task-level failures are recorded in `DATA_VALIDATION_ERROR`, distinct from row-level `MISMATCH` results. The error message for each failed task begins with one of the [error codes](#data-validation-error-codes) below.
+
+## Data validation error codes
+
+When a validation run fails, AIM DMV classifies the failure into one of six error codes and shows it in the job’s error message:
+
+Copy code
+
+```
+Data Validation failed (<ErrorCode>): <message>
+```
+
+The message keeps the text of the underlying error. For example, it shows the database’s “Invalid object name” text rather than a generic “Failed to execute query”.
+
+How the code is chosen:
+
+- **The root cause decides.** If a step fails because of a deeper error, the deeper error sets the code. For example, a schema query that fails because the connection dropped is reported as `ConnectionError`, not `SchemaError`.
+- **Several tables fail.** If a run stops because several tables hit fatal errors, it reports the code of the first table that failed. The message lists every failed table.
+- **Mismatches are not errors.** A table whose data does not match is reported as a failed validation in the results, not under any of these codes. These codes mean the validation could not run.
+
+| Error code | Summary |
+| --- | --- |
+| `ConnectionError` | Could not connect to, or authenticate with, the source or Snowflake. |
+| `SchemaError` | An object the validation needs doesn’t exist, or the user can’t see it. |
+| `TimeoutError` | A query was cancelled, or ran longer than a timeout allowed. |
+| `DataError` | The data itself prevented the validation (for example, a value that can’t be converted or computed). |
+| `ConfigError` | The validation configuration, or the local environment it runs in, is invalid. |
+| `InternalError` | The error didn’t match any of the other categories. |
+
+Expand
+
+Show lessSee more
+
+### ConnectionError
+
+AIM DMV could not connect to, or authenticate with, the source or Snowflake.
+
+Typical causes:
+
+- The host, port or DNS name is wrong or unreachable, the connection was refused, or the network dropped it.
+- The user name, password or account is wrong. This covers SQLSTATE class `08` (connection exception), class `28` (invalid authorization), Snowflake `390100` (incorrect username or password) and Teradata `8017`.
+- Snowflake `250001`: the client could not connect to the Snowflake backend.
+- Teradata `444` and `446`: the driver could not obtain a connection, or failed to connect.
+- The connection failed too many times in a row. The message says so: “Maximum consecutive connection failures (N) exceeded”.
+
+What to check:
+
+- Check the host, port, credentials and account identifier.
+- Check that firewalls, VPN and network policies allow the connection from this machine.
+- If the failures come and go, check whether the source is under heavy load or limits concurrent sessions.
+
+### SchemaError
+
+An object that the validation needs does not exist, or the user cannot see it.
+
+Typical causes:
+
+- A table or view is missing on either side. This covers SQLSTATE `42S02`, PostgreSQL and Redshift `42P01`, Snowflake `002003` and `002043`, and Teradata `3807`.
+- A column is missing or misnamed: SQLSTATE `42S22`, `42703`, Snowflake `000904` (invalid identifier), or Teradata `3810`.
+- A database or schema name is wrong: SQLSTATE `3D000`, `3F000`, or Teradata `3802`.
+- The user does not have privileges on the object. Snowflake reports a missing object and an unauthorized one with the same error, `002003`.
+- The source catalog returned no usable column data types. A common cause is an object configured as a table when it is a view.
+
+What to check:
+
+- Check that the object has been deployed to Snowflake and that its data has been migrated.
+- Check the database, schema and object names and how they are cased. Check any column mappings too.
+- Grant the validation user access to the object on both sides.
+- For views, check that the object type in the configuration is correct.
+
+### TimeoutError
+
+A query was cancelled, or ran longer than a timeout allowed.
+
+Typical causes:
+
+- ODBC timeouts: SQLSTATE `HYT00` (timeout expired) and `HYT01` (connection timeout expired).
+- SQLSTATE `57014`: the query was cancelled or hit a statement timeout.
+- Snowflake `000630`: the statement reached its timeout. Snowflake `000604`: SQL execution was cancelled.
+
+What to check:
+
+- Look at Snowflake’s [`STATEMENT_TIMEOUT_IN_SECONDS`](/sql-reference/parameters#label-statement-timeout-in-seconds) for the user and warehouse, and at the source’s query timeout.
+- Check whether the warehouse is queuing queries, or whether the source is overloaded.
+- For large tables, consider a larger warehouse, fewer tables in parallel, or splitting the validation.
+
+### DataError
+
+The validation could not run because of the data itself, such as a value the database could not convert or compute.
+
+Typical causes:
+
+- SQLSTATE class `22` (data exception). Examples are a numeric overflow, an invalid date, or a string that cannot be cast.
+- SQLSTATE class `23` (integrity constraint violation).
+- A metrics, row or cell validation step raised an error while computing or comparing its results.
+
+What to check:
+
+- Look in the message for the table and column, and find the values that fail. Overflow in aggregates over very large numeric columns is a common cause; see [`excludeMetrics` and `applyMetricColumnModifier`](#validation-configuration) to skip or guard overflow-prone aggregates.
+- Check that the column data types match between the source and Snowflake.
+
+### ConfigError
+
+The validation configuration, or the local environment it runs in, is invalid.
+
+Typical causes:
+
+- A required setting is missing or invalid. For example, row validation needs index columns.
+- The configuration file is not valid YAML, or a value has the wrong type.
+- A file or directory is missing, or cannot be read.
+- A required database driver is not installed. The message names the missing module, for example “No module named ‘pyodbc’”.
+- The source platform is not supported for Data Validation.
+
+What to check:
+
+- Look for the setting or file that the message names.
+- Check that the source platform’s ODBC driver or Python driver is installed.
+- If the message points at AIM DMV’s own Python environment, reinstall or update SnowConvert AI.
+
+### InternalError
+
+The error did not match any of the categories above. Some causes are an unexpected database error, such as a syntax error in a generated query, and a defect in Data Validation itself.
+
+What to check:
+
+- Retry the run once, in case the error was transient.
+- If it fails again, collect the job log and the full error message, and contact Snowflake support.
 
 ## Comparison configuration
 
@@ -335,6 +461,8 @@ Each entry in `columnSelectionList` is matched against every column name:
 Expand
 
 Show lessSee more
+
+Don’t put an index or primary-key column in `columnSelectionList` with exclude mode just to skip an L2 aggregate. That exclusion is rejected for index columns and would break L3 row pairing. To remove one L2 metric on a key column while keeping L1 and L3, use a [column-scoped custom metric](#column-scoped-custom-metrics) instead.
 
 ## Partitioning
 
@@ -534,24 +662,25 @@ validationCustomNormalizations:
 
 ### Custom metrics (`validationCustomMetrics`)
 
-L2 metrics are chosen by column data type. A `DEFAULT` set applies to types without a specific entry.
+L2 metrics are chosen by column data type. A `DEFAULT` set applies to types without a specific entry. You can also override or remove metrics for one source column without dropping that column from schema (L1) or row (L3) validation.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| `source` | `Array` | Metric overrides on the source platform side. |
-| `target` | `Array` | Metric overrides on the Snowflake target side. |
+| `source` | `Array` | Metric overrides on the source platform side. Accepts datatype-scoped and column-scoped entries. |
+| `target` | `Array` | Metric overrides on the Snowflake target side. Datatype-scoped entries only; column-scoped entries aren’t allowed here. |
 
 Expand
 
 Show lessSee more
 
-Each array entry:
+Each array entry must set **exactly one** of `datatype` or `column`:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `datatype` | `String` | Source or target data type (uppercased). |
-| `metrics` | `Array` | Metric definitions for that type. |
-| `replaceAll` | `Boolean` | When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). |
+| `datatype` | `String` | Source or target data type (uppercased). Datatype-scoped entry. |
+| `column` | `String` | Source-qualified column: `{table.fullyQualifiedName}.{columnName}`. Column-scoped entry; allowed only under `source`. |
+| `metrics` | `Array` | Metric definitions for that type or column. |
+| `replaceAll` | `Boolean` | Datatype-scoped only. When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). Not valid on column-scoped entries. |
 
 Expand
 
@@ -561,8 +690,8 @@ Each metric definition:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `name` | `String` | Metric name (for example `count`, `sum`, `min`, `max`, `stddev`). |
-| `metricQuery` | `String` | SQL aggregate using `"{{ col_name }}"`. A null or empty value **removes** that metric from the built-in set. |
+| `name` | `String` | Metric name (for example `count`, `sum`, `min`, `max`, `avg`, `stddev`). |
+| `metricQuery` | `String` | SQL aggregate using `"{{ col_name }}"`. Omit the field, or leave it null or empty, to **remove** that metric from the built-in set. |
 | `metricReturnDatatype` | `String` | Data type used to normalize the metric result. |
 | `metricColumnModifier` | `String` | Optional overflow guard override for this metric. |
 
@@ -583,7 +712,7 @@ Expand
 
 Show lessSee more
 
-Example:
+Datatype-scoped example:
 
 Copy code
 
@@ -600,6 +729,35 @@ validationCustomMetrics:
           metricQuery: "STDDEV_POP(\"{{ col_name }}\")"
           metricReturnDatatype: FLOAT
   target: []
+```
+
+#### Column-scoped custom metrics
+
+Use a `column` selector under `validationCustomMetrics.source` to override or remove L2 metrics for one source column. The override also applies to the mapped target column when you set `columnMappings`. Column-scoped entries may target index or primary-key columns; those columns stay in L1 and L3.
+
+The `column` value must match the table entry’s `fullyQualifiedName` plus the source column name. Omit `metricQuery` (or leave it empty) to remove a named metric.
+
+Don’t use `columnSelectionList` with exclude mode on an index or primary-key column for this purpose. That path is rejected for index columns and would break L3. See [Column filtering with regex patterns](#column-filtering-with-regex-patterns).
+
+Example: skip length-based `avg` on a VARCHAR primary key while keeping `min`/`max` and L1/L3 on that key:
+
+Copy code
+
+```
+validationConfiguration:
+  metricsValidation: true
+  schemaValidation: true
+  rowValidation: true
+validationCustomMetrics:
+  source:
+    - column: public.orders_pk_metrics.order_id
+      metrics:
+        - name: avg
+  target: []
+tables:
+  - fullyQualifiedName: public.orders_pk_metrics
+    indexColumnList: [order_id]
+    targetIndexColumnList: [ORDER_ID]
 ```
 
 ### L1 type mapping overrides (`validationCustomTypes`)

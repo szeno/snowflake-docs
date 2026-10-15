@@ -10,6 +10,21 @@ Snowflake uses semantic versioning for Snowflake Connector for Kafka updates.
 
 See [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) for documentation.
 
+## Version 4.2.2 (Oct 12, 2026)
+
+### New features
+
+- Upgraded Jackson to version 2.22.3, the Snowflake JDBC driver to version 4.4.0, and the
+  Snowpipe Streaming SDK to version 1.9.0.
+- Added `SnowflakeAvroConverter` for `value.converter` to keep the Avro schema.
+
+## Version 4.2.1 (Oct 2, 2026)
+
+### New features
+
+- Upgraded the Snowpipe Streaming SDK to version 1.8.1.
+- Reported a normalized authenticator type in `kafka_start` telemetry.
+
 ## Version 4.2.0 (Sep 24, 2026)
 
 ### New features

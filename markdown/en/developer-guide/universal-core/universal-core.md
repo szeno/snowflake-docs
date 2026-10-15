@@ -57,6 +57,10 @@ This split means that any change to `sf_core`, whether a security fix, a protoco
 
 `sf_core` owns the HTTP client and all TLS configuration. It negotiates TLS versions, manages certificate validation, applies connection timeouts and retry logic with exponential backoff, and handles proxy configuration. Certificate revocation checking uses certificate revocation lists (CRLs) rather than the Online Certificate Status Protocol (OCSP), and is off by default; see the driver pages for how to enable it and what it requires of your network. All drivers that use `sf_core` get the same TLS policy and the same network resilience behavior.
 
+### Cryptography
+
+`sf_core` uses the AWS-LC cryptographic library for TLS, key pair authentication, and client-side encryption of stage file transfers. A driver can also be built with the AWS-LC FIPS module instead of the standard AWS-LC library. For what that build changes, its known deviations, and how to build it from source, see [FIPS 140-3 considerations for drivers built on the Universal Core](/developer-guide/universal-core/universal-core-fips).
+
 ### Authentication
 
 All authentication flows are implemented in `sf_core`: username/password, username/password with multi-factor authentication (MFA), key pair, programmatic access tokens, external browser, native Okta, OAuth client credentials, OAuth authorization code, OAuth with a pre-acquired token, and workload identity federation on AWS, Azure, Google Cloud, and OpenID Connect (OIDC). MFA token caching is handled there too. The wrapper passes the configured credentials to `sf_core` at connection time and receives a session token in return; the wrapper itself has no knowledge of the authentication protocol.

@@ -41,9 +41,9 @@ GRANT USAGE ON SCHEMA <source_database>.<source_schema> TO ROLE <default_role>;
 GRANT SELECT ON TABLE <source_database>.<source_schema>.<table> TO ROLE <default_role>;
 ```
 
-In Snowsight, CoCo starts with your default role regardless of the role selected in the
-interface. For the CoCo CLI, use a connection whose role has the same privileges. If your default
-role is missing something, you can ask CoCo to switch roles for the session, as in “switch to the
+In Snowsight, CoCo starts with your active role. For the CoCo CLI, use a connection whose
+role has the same privileges. If your active role is missing something, you can ask CoCo to switch
+roles for the session, as in “switch to the
 SYSADMIN role”. If you don’t have `ACCOUNTADMIN`, send the preceding block to an administrator along
 with the one in step 1: the `SNOWFLAKE.COPILOT_USER` grant is account-level, and the read grants
 require a role that can grant privileges on the tables.

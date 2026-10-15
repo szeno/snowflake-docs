@@ -46,6 +46,24 @@ This example uses the library and signature for version 1.27.0 of the package. U
   Use the `imports` argument instead.
 - The `snowflake.ml.model.models.huggingface_pipeline.HuggingfacePipelineModel` class has been deprecated and will be removed in a future release.
 
+## Version 2.5.0 (2026-10-14)
+
+### New Features
+
+### Bug Fixes
+
+- Modeling: The `snowflake.ml.modeling` estimators and preprocessing transformers are not deprecated.
+  The `DeprecationWarning` emitted when importing a `snowflake.ml.modeling` subpackage, announced in
+  2.0.0, has been removed.
+- ML Jobs: `MLJob.get_logs(verbose=False)` no longer returns container startup and shutdown logs when other log
+  lines land between the lines of the job start or end banner.
+- Dependencies: Raised the `fsspec` requirement ceiling from `<2026` to `<2027` so `fsspec`
+  2026.6.0, which fixes CVE-2026-104851, can be installed.
+
+### Behavior Changes
+
+### Deprecations
+
 ## Version 2.3.0 (2026-09-28)
 
 ### New Features

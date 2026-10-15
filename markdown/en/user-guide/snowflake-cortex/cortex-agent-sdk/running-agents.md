@@ -719,6 +719,7 @@ The SDK handles the condition as follows:
 ## Next steps
 
 - [Asynchronous Python client](/user-guide/snowflake-cortex/cortex-agent-sdk/async-python): Use asynchronous patterns in the Python Agent client
+- [Cortex Agent SDK features](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-features): Use MCP servers, coding-agent options, and detailed streaming events
 - [Cortex Code](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-code): Use the bundled coding-agent session API
 - [SDK reference](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-reference): Use response views, transport wrappers, errors, retries, and request options
 

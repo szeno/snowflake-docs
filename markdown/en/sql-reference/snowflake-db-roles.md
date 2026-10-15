@@ -241,6 +241,32 @@ Expand
 
 Show lessSee more
 
+## DATA\_SHARING\_USAGE schema
+
+The SHARING\_USAGE\_VIEWER SNOWFLAKE database role is granted the SELECT privilege on the following DATA\_SHARING\_USAGE views.
+
+| View | Database Role |
+| --- | --- |
+| [APPLICATION\_STATE view](/sql-reference/data-sharing-usage/application-state-view) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_ACCESS\_HISTORY view](/sql-reference/data-sharing-usage/listing-access-history) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_AUTO\_FULFILLMENT\_DATABASE\_STORAGE\_DAILY view](/sql-reference/data-sharing-usage/listing-auto-fulfillment-database-storage-daily) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_AUTO\_FULFILLMENT\_REFRESH\_DAILY view](/sql-reference/data-sharing-usage/listing-auto-fulfillment-refresh-daily) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_CONSUMPTION\_DAILY view](/sql-reference/data-sharing-usage/listing-consumption-daily) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_EVENTS\_DAILY view](/sql-reference/data-sharing-usage/listing-events-daily) | SHARING\_USAGE\_VIEWER |
+| [LISTING\_TELEMETRY\_DAILY view](/sql-reference/data-sharing-usage/listing-telemetry-daily) | SHARING\_USAGE\_VIEWER |
+| [MARKETPLACE\_DISBURSEMENT\_REPORT view](/collaboration/views/marketplace-disbursement-report-ds) | SHARING\_USAGE\_VIEWER |
+| [MARKETPLACE\_LISTING\_INVOICE\_STATUS view](/collaboration/views/marketplace_listing_invoice_status) | SHARING\_USAGE\_VIEWER |
+| [MARKETPLACE\_PAID\_USAGE\_DAILY view](/collaboration/views/marketplace-paid-usage-daily-ds) | SHARING\_USAGE\_VIEWER |
+| [MARKETPLACE\_PROVIDER\_SPCS\_USAGE view](/collaboration/views/marketplace-provider-spcs-usage-ds) | SHARING\_USAGE\_VIEWER |
+| [MONETIZED\_USAGE\_DAILY view](/collaboration/views/monetized-usage-daily-ds) | SHARING\_USAGE\_VIEWER |
+| [PAID\_LISTING\_ACCESS\_AND\_CHANGE\_LOG view](/sql-reference/data-sharing-usage/paid-listing-access-change-log) | SHARING\_USAGE\_VIEWER |
+| [PROVIDER\_APPLICATION\_DAILY\_USAGE\_HISTORY view](/sql-reference/data-sharing-usage/provider-application-daily-usage-history) | SHARING\_USAGE\_VIEWER |
+| [RESHARED\_LISTING\_CONSUMPTION\_DAILY view](/sql-reference/data-sharing-usage/reshared-listing-consumption-daily) | SHARING\_USAGE\_VIEWER |
+
+Expand
+
+Show lessSee more
+
 ## CORE schema
 
 The CORE\_VIEWER SNOWFLAKE database role is granted to the PUBLIC role in all Snowflake accounts containing a shared SNOWFLAKE database.

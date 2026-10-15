@@ -45,6 +45,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
@@ -130,10 +131,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
 - [Sep 15, 2026: Embedding Streamlit in Snowflake apps in external pages (General availability)](/release-notes/2026/other/2026-09-15-sis-embedding-ga)
 - [Sep 15, 2026: Elastic Channels for Snowpipe Streaming (General availability)](/release-notes/2026/other/2026-09-15-snowpipe-streaming-elastic-channels-ga)
-- [September 14, 2026: Multimodal AI\_SUMMARIZE for automatic theme summarization (Public Preview)](/release-notes/2026/other/2026-09-14-ai-summarize-multimodal-preview)
-- [Sep 14, 2026: Catalog-linked databases: Write support for nested namespaces](/release-notes/2026/other/2026-09-14-cld-nested-namespace-write-support-open-catalog)
-- [Sep 14, 2026: Zero-copy support for all table formats in interactive warehouses (General availability)](/release-notes/2026/other/2026-09-14-interactive-zero-copy-ga)
-- [Sep 14, 2026: User-managed Restricted Session Scope in CoCo (General availability)](/release-notes/2026/other/2026-09-14-restricted-session-scope-coco)
-- [Snowflake ML Python (v2.1.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -350,14 +350,15 @@ Show lessSee more
 CoCo operates within your Snowflake account’s existing authentication and role-based access controls (RBAC). It does not store or
 modify your credentials and only performs actions permitted by the active role.
 
-CoCo always starts a session using your default role, regardless of the role you’ve selected
-in Snowsight worksheets, Workspaces, or the role selector in the lower-left corner of the UI. If you need to perform actions
-that require a different role, you can ask CoCo to change roles during the session (for example, “switch to the SYSADMIN role”).
+CoCo starts a session using your active role in Snowsight, the role you select in the user
+menu in the lower-left corner. If you need to perform actions that require a different
+role, you can ask CoCo to change roles during the session (for example, “switch to the SYSADMIN role”).
 
 Note
 
-If CoCo returns a permissions error, verify that your default role has the required privileges. You can either change your
-default role using [ALTER USER](/sql-reference/sql/alter-user), or ask CoCo to use a specific role for the current session.
+If CoCo returns a permissions error, verify that your active role has the required privileges. Switch
+to a role that has those privileges in the user menu, or ask CoCo to use a specific role for the
+current session.
 
 ## CoCo in Workspaces
 

@@ -28,7 +28,7 @@ Snowflake object that hosts Snowpark Container Services. You create a compute po
 
 ## Custom metrics
 
-Workflow-wide overrides for L2 aggregate metrics per data type. Set `validationCustomMetrics` at the workflow root with `source` and `target` arrays. See [Customizing normalization and metrics](../manual-migration/data-validation-configuration-reference#customizing-normalization-and-metrics).
+Workflow-wide overrides for L2 aggregate metrics, by data type or by individual source column. Set `validationCustomMetrics` at the workflow root with `source` and `target` arrays. Column-scoped entries under `source` use `column: {table.fullyQualifiedName}.{columnName}` and can remove a metric by omitting `metricQuery`. See [Custom metrics](../manual-migration/data-validation-configuration-reference#custom-metrics-validationcustommetrics).
 
 ## DUPLICATE\_SOURCE, DUPLICATE\_TARGET, DUPLICATE\_BOTH\_SIDES
 
@@ -54,7 +54,7 @@ Validation levels: **L1** schema, **L2** metrics (aggregates), **L3** row and ce
 
 ## MISMATCH
 
-L3 row validation result when source and target values differ after comparison. Distinct from task-level errors in `DATA_VALIDATION_ERROR`. See [Validation results](./data-validation#validation-results).
+L3 row validation result when source and target values differ after comparison. Distinct from task-level errors in `DATA_VALIDATION_ERROR`, which are classified into [error codes](../manual-migration/data-validation-configuration-reference#data-validation-error-codes). See [Validation results](./data-validation#validation-results).
 
 ## Network rule
 
