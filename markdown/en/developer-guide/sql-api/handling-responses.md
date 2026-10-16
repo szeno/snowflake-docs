@@ -136,8 +136,7 @@ Note
 
 Snowflake version 5.40 introduces changes to the way data returned by the Snowflake SQL API is handled, among other changes.
 
-This section describes how to get the results from a response using newer functionality of the Snowflake SQL API.
-For information on using the older, deprecated behavior see [Deprecated functionality](/developer-guide/sql-api/sql-api-old#label-sql-api-old).
+This section describes how to get the results from a response.
 
 If you [submit a SQL statement for execution](/developer-guide/sql-api/submitting-requests) or
 [check the status of statement execution](#label-sql-api-checking-statement-status), Snowflake returns a

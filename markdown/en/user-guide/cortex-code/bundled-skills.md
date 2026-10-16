@@ -77,6 +77,20 @@ Ways to use it:
 - Create and configure interactive warehouses, associate tables, and set up a fallback warehouse for mixed workloads
 - Diagnose interactive query timeouts, cache warming issues, and fallback warehouse behavior
 
+### `interactive-benchmark`
+
+Benchmark any SQL query on an interactive warehouse under realistic concurrent load.
+The skill deploys a FastAPI server and a [Locust](https://locust.io) load generator to
+[Snowpark Container Services](/developer-guide/snowpark-container-services/overview), then
+runs iterative load tests to determine whether the query meets a target latency.
+
+Ways to use it:
+
+- Benchmark a query against an interactive warehouse to measure latency under concurrent users
+- Validate that an interactive warehouse setup can handle production-level concurrency before going live
+- Automatically scale out or scale up the interactive warehouse until the latency target is met, or report that it can’t be reached
+- Generate an HTML benchmark report with percentile charts, bottleneck diagnosis, and optimization recommendations
+
 ### `workload-performance-analysis`
 
 Analyze SQL query performance via ACCOUNT\_USAGE: spilling, partition pruning, cache hit rates, clustering key recommendations, SOS and QAS eligibility.

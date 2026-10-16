@@ -8,10 +8,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 Important
 
 Requires runtime-extensions 2026.7.16.14 or later. Applies to PostgreSQL 17 and later only.

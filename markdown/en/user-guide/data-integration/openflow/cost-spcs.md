@@ -94,8 +94,14 @@ was created:
 
 To find out which naming pattern applies to a deployment, check the *NAME* values that
 [METERING\_HISTORY](/sql-reference/account-usage/metering_history) returns for *SERVICE\_TYPE* =
-*OPENFLOW\_COMPUTE\_SNOWFLAKE*, or run `SHOW COMPUTE POOLS LIKE 'INTERNAL_OPENFLOW%'` and
-`SHOW COMPUTE POOLS LIKE 'OPENFLOW%'`.
+*OPENFLOW\_COMPUTE\_SNOWFLAKE*.
+
+Note
+
+Snowflake manages the compute pools that Openflow Snowflake Deployments use, and those compute pools aren’t
+visible in your account. `SHOW COMPUTE POOLS` doesn’t return them, and you can’t operate on them directly. Their
+names appear only in cost and usage data such as
+[METERING\_HISTORY](/sql-reference/account-usage/metering_history).
 
 When every Openflow Snowflake Deployment in an account uses the default cluster name, you can split *management*
 (`CONTROL_POOL`) costs from *runtime* (`SMALL`/`MEDIUM`/`LARGE`) costs, but you can’t attribute credits to a

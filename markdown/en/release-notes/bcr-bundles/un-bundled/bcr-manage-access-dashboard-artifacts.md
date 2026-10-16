@@ -4,9 +4,8 @@ Note
 
 This change will be rolled out gradually beginning in late September 2026. Please note dates are subject to change.
 
-Users must use a role that has the MANAGE ACCESS privilege for an Artifact type to grant or revoke
-access to Artifacts of that type. This change affects which roles have the following privileges by
-default:
+To share Artifacts, a user needs a role with the MANAGE ACCESS privilege for that Artifact type.
+This change grants the following privileges to the PUBLIC role by default:
 
 - MANAGE ACCESS ON CHART ARTIFACTS
 - MANAGE ACCESS ON DASHBOARD ARTIFACTS
@@ -23,19 +22,20 @@ After the change:
 :   The PUBLIC role is granted the MANAGE ACCESS privileges on all five Artifact types, which means a
     user can use any role to grant and revoke access to Artifacts.
 
-    Granting these privileges to PUBLIC does not by itself give every role control over every Artifact.
-    Each privilege is granted at the account level and scoped by Artifact type: it governs whether a
-    role may manage sharing for Artifacts of that type at all, not which Artifacts it may manage.
-    Artifact-level authority is also evaluated when access grants are changed. The privileges on their
-    own confer no access to Artifact content or to the data behind it.
+    These are account-level privileges, scoped by Artifact type. They control whether a role can manage
+    sharing for Artifacts of that type at all. For users beyond the owner role to work with an Artifact,
+    the owner must still grant other roles access to each individual Artifact.
 
     If you do not publish Artifacts, these privileges will still be granted but will not have any
     observable effect.
 
-Granting someone access to an Artifact does not grant access to the data behind it. Dashboard
-Artifacts and Report Artifacts run with caller’s rights, so each viewer sees only the data that
-their own role is authorized to access. Chart Artifacts, File Artifacts, and Thread Artifacts are
-static snapshots that don’t execute SQL, so caller’s rights don’t apply to them.
+What viewers see depends on the Artifact type:
+
+- Dashboard Artifacts and Chart Artifacts run with caller’s rights, so each viewer sees only the data
+  that their own roles can access.
+- Report Artifacts (HTML reports), File Artifacts (such as PDF and PPT files), and Thread Artifacts
+  (Snowflake CoWork conversations) are static snapshots that don’t run SQL. Viewers see the text
+  and visualizations directly.
 
 After the change, if you want to restrict who can share Artifacts, revoke the MANAGE ACCESS
 privileges from the PUBLIC role, then grant the privileges to specific roles. You can do this for

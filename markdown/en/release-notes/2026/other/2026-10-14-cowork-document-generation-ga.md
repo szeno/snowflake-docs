@@ -1,0 +1,9 @@
+# Oct 14, 2026: Document generation in Snowflake CoWork (*General availability*)
+
+Document generation in Snowflake CoWork is now generally available and is no longer in
+[Preview](/release-notes/preview-features). You can ask Snowflake CoWork to generate a PDF, a Word
+document (`.docx`), a PowerPoint presentation, or an HTML file from your analysis. Generation requires
+the Cortex Agent [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool)
+on the associated agent. When the file is ready, you can view it inline in Snowflake CoWork.
+
+For more information, see [Document generation in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/document-generation).

@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Available to all Commercial (non-Gov), FedRAMP (Moderate and High), DoD, and KSA sovereign accounts with [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) enabled.
+Available to all Commercial (non-Gov), FedRAMP (Moderate and High), DoD, and KSA sovereign accounts.
 
 ## Overview
 
@@ -49,12 +49,14 @@ For RSS behavior, role inheritance details, and instructions for other CoCo clie
 
 ### Access control requirements
 
-A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to access CoCo must have the following
-database roles granted:
+A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to access CoCo must have either
+`SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER`. Until
+[BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, that role must
+also have `SNOWFLAKE.COPILOT_USER`:
 
 | Database Role | Notes |
 | --- | --- |
-| SNOWFLAKE.COPILOT\_USER | Required for all users to access CoCo. |
+| SNOWFLAKE.COPILOT\_USER | Required until [BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account. After the change, this role has no effect on access to CoCo. |
 | SNOWFLAKE.CORTEX\_USER **or** SNOWFLAKE.CORTEX\_AGENT\_USER | At least one of these database roles is required. SNOWFLAKE.CORTEX\_AGENT\_USER is a least-privilege alternative to SNOWFLAKE.CORTEX\_USER that enables CoCo’s agentic workflows by granting access to the Cortex Agents API, without granting access to other Cortex features. |
 
 Expand
@@ -64,11 +66,6 @@ Show lessSee more
 For instructions on granting database roles, see [GRANT DATABASE ROLE](/sql-reference/sql/grant-database-role).
 
 For general information about roles and access control, see [Overview of Access Control](/user-guide/security-access-control-overview).
-
-Note
-
-If your account previously opted out of (or disabled) Snowflake Copilot (legacy), CoCo will also be disabled. Contact your account
-team to enable this feature for your account.
 
 Note
 
@@ -82,18 +79,12 @@ Adding a credit card doesn’t upgrade the trial to a paid account or end the tr
 Access to CoCo in Snowsight requires both a qualifying database role and a non-zero daily credit
 limit. Administrators can restrict access through either mechanism.
 
-To remove access for specific roles, revoke the database roles that CoCo requires:
-
-Copy code
-
-```
-REVOKE DATABASE ROLE SNOWFLAKE.COPILOT_USER FROM ROLE analyst;
-```
-
-Because `SNOWFLAKE.COPILOT_USER` is required for all users, revoking it removes access to CoCo.
+To restrict access by role, use `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER`.
 `SNOWFLAKE.CORTEX_USER` is granted to the `PUBLIC` role by default, so every user in the account has
-it. To narrow that, revoke it from `PUBLIC` and grant either `SNOWFLAKE.CORTEX_USER` or
-`SNOWFLAKE.CORTEX_AGENT_USER` only to the roles that need it.
+it. Revoke both Cortex database roles from `PUBLIC`, then grant one of them only to the roles that
+need access. Until [BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account,
+those roles also need `SNOWFLAKE.COPILOT_USER`. After the change, granting or revoking
+`SNOWFLAKE.COPILOT_USER` has no effect on access to CoCo.
 
 To turn CoCo in Snowsight off for the entire account, set the account-level daily credit limit
 to `0`:

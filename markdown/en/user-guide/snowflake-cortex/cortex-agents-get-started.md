@@ -25,14 +25,16 @@ Use whichever surface you already work in:
   bundled skill handles this workflow. CoCo loads it automatically, or you can name it in your prompt.
 
 Before you use CoCo, complete [Step 1](#label-cortex-agents-get-started-grants), then grant your
-default role access to CoCo and read access to the data you want the agent to use:
+default role read access to the data you want the agent to use. Until
+[BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, CoCo in
+Snowsight also requires `SNOWFLAKE.COPILOT_USER` on that role:
 
 Copy code
 
 ```
 USE ROLE ACCOUNTADMIN;
 
--- Access to CoCo.
+-- Required for CoCo in Snowsight until BCR-2445 reaches your account.
 GRANT DATABASE ROLE SNOWFLAKE.COPILOT_USER TO ROLE <default_role>;
 
 -- Read access to the tables you point CoCo at.
@@ -45,8 +47,9 @@ In Snowsight, CoCo starts with your active role. For the CoCo CLI, use a connect
 role has the same privileges. If your active role is missing something, you can ask CoCo to switch
 roles for the session, as in “switch to the
 SYSADMIN role”. If you don’t have `ACCOUNTADMIN`, send the preceding block to an administrator along
-with the one in step 1: the `SNOWFLAKE.COPILOT_USER` grant is account-level, and the read grants
-require a role that can grant privileges on the tables.
+with the one in step 1. Until [BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your
+account, CoCo in Snowsight still needs the `SNOWFLAKE.COPILOT_USER` grant in that block. That
+grant is account-level. The read grants require a role that can grant privileges on the tables.
 
 When CoCo finishes, you have a working agent. To call it from your own application, see
 [Cortex Agents Run API](/user-guide/snowflake-cortex/cortex-agents-run).
@@ -152,8 +155,9 @@ following:
 - If cross-region inference is disabled in your account, they also need to run
   `ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'ANY_REGION';`. See
   [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
-- If you plan to build the agent with CoCo, they also need to grant
-  `SNOWFLAKE.COPILOT_USER` and read access to the tables CoCo uses. See
+- If you plan to build the agent with CoCo, they also need to grant read access to the tables CoCo
+  uses. Until [BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, CoCo
+  in Snowsight also requires `SNOWFLAKE.COPILOT_USER`. See
   [Let CoCo walk you through it](#label-cortex-agents-get-started-coco).
 - Every step after this one except [Clean up](#label-cortex-agents-get-started-cleanup) runs as your
   default role. If you don’t have `ACCOUNTADMIN`, the same administrator needs to drop the database

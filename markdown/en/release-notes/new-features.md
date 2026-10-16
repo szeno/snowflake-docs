@@ -45,9 +45,15 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 15, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-15-dcr)
+- [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
+- [ODBC Driver (v4.1.0)](/release-notes/clients-drivers/odbc-2026)
+- [Python Connector (v5.0.0)](/release-notes/clients-drivers/python-connector-2026)
+- [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
 - [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
+- [Snowpark Python (v1.55.2)](/release-notes/clients-drivers/snowpark-python-2026)
 - [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
 - [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
 - [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
@@ -126,10 +132,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
 - [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
 - [Python Connector (v4.7.4)](/release-notes/clients-drivers/python-connector-2026)
-- [Sep 15, 2026: Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-09-15-cortex-ai-gateway)
-- [Sep 15, 2026: Predict dynamic table refresh behavior with EXPLAIN CHANGES (General availability)](/release-notes/2026/other/2026-09-15-dynamic-tables-predict-refresh)
-- [Sep 15, 2026: Horizon Catalog Explorer UI (Preview)](/release-notes/2026/other/2026-09-15-horizon-catalog-explorer-ui)
-- [Sep 15, 2026: Embedding Streamlit in Snowflake apps in external pages (General availability)](/release-notes/2026/other/2026-09-15-sis-embedding-ga)
-- [Sep 15, 2026: Elastic Channels for Snowpipe Streaming (General availability)](/release-notes/2026/other/2026-09-15-snowpipe-streaming-elastic-channels-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

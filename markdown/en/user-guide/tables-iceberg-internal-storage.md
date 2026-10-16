@@ -15,8 +15,10 @@ query these same tables in Snowflake.
 
 Note
 
-This feature is currently available only for accounts hosted on Amazon Web Services (AWS) or Azure.
-This feature is not available in government regions or in the People’s Republic of China.
+This feature is available for accounts hosted on Amazon Web Services (AWS) or Microsoft Azure.
+It is also available on FedRAMP (Moderate) deployments on AWS Commercial Gov (US) in the us-east-1 and us-west-2 regions.
+Support for accounts hosted on Google Cloud is in private preview.
+This feature isn’t available in other government regions or in the People’s Republic of China.
 
 ## How Snowflake storage works
 
@@ -213,8 +215,10 @@ For more information, see [Considerations for accessing Iceberg tables with an e
 
 ### Cloud provider support
 
-This feature is currently available only for accounts hosted on Amazon Web Services (AWS) or Microsoft Azure.
-This feature is not available in government regions or in the People’s Republic of China.
+This feature is available for accounts hosted on Amazon Web Services (AWS) or Microsoft Azure.
+It is also available on FedRAMP (Moderate) deployments on AWS Commercial Gov (US) in the us-east-1 and us-west-2 regions.
+Support for accounts hosted on Google Cloud is in private preview.
+This feature isn’t available in other government regions or in the People’s Republic of China.
 
 ### Encryption
 

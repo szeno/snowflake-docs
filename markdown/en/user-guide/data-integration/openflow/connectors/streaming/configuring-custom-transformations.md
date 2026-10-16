@@ -6,10 +6,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 # Configuring custom transformations
 
 The streaming connectors (Kafka high-performance, Kinesis high-performance) consume messages with a `Consume*` processor and deliver them to Snowflake with `PublishSnowpipeStreaming`. By default the source connects directly to `PublishSnowpipeStreaming`. This topic describes how to insert **custom processing** between the source and the destination — filtering, field mapping (flatten / rename / remove), topic-to-table mapping, content-based routing to multiple tables, default values, and custom Groovy scripts — by adding a **Custom Transformations** process group in the Openflow UI. You apply this to an already-deployed streaming connector. If you don’t have one yet, first set up the [Kafka](/user-guide/data-integration/openflow/connectors/kafka/setup) or [Kinesis](/user-guide/data-integration/openflow/connectors/kinesis/setup) connector.

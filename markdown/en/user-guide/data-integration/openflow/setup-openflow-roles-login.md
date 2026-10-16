@@ -52,15 +52,6 @@ The **Openflow Admin role** is used by a deployment engineer to set up Openflow 
    ALTER USER <OPENFLOW_USER> SET DEFAULT_SECONDARY_ROLES = ('ALL');
    ```
 
-## Accept the Openflow terms of service
-
-This step is only required once for your organization.
-
-1. Sign in to Snowflake as a user with the ORGADMIN role.
-2. In the navigation menu, select **Admin** » **Terms**.
-3. Locate **Openflow terms of service** in the list.
-4. Review the agreement and select **Accept**.
-
 ## Start Openflow
 
 Log in to Openflow by performing the following steps:

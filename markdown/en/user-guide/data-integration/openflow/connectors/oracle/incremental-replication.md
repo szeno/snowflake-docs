@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes how to configure the Openflow Connector for Oracle connector to start replicating incremental changes for newly added tables immediately, bypassing snapshots. This configuration is useful when you reinstall the connector over previously replicated data and want to continue replication without snapshotting every table again.
@@ -77,6 +72,9 @@ To recover the table without a new snapshot, remove it from replication, switch 
 Important
 
 Before you recover the table, address the underlying cause of the failure. Otherwise, the connector encounters the same error again when it replays the changes. For example, raise the per-value limit (see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-increase-oversized-value-limit)) or fix the problematic record in the source database.
+
+This procedure can’t recover logical-key failures caused by insufficient supplemental
+logging. See [An UPDATE is missing the before-image of a logical key](/user-guide/data-integration/openflow/connectors/oracle/troubleshoot#label-oracle-logical-key-before-image-missing).
 
 To recover the table:
 

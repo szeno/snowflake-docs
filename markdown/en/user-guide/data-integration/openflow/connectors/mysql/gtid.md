@@ -8,10 +8,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 Important
 
 GTID tracking is available for the gen 1 Openflow Connector for MySQL only. It isn’t available for gen 2 connectors:

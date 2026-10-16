@@ -6,10 +6,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 # Snowflake Openflow Connector for Kafka: Configuring AWS MSK IAM Authentication
 
 AWS MSK IAM authentication allows you to use AWS Identity and Access Management (IAM) to authenticate to Amazon Managed Streaming for Apache Kafka (MSK).

@@ -10,12 +10,6 @@ Beginning with Snowflake version 8.24, network administrators have the option to
 - [Multi-factor authentication (MFA)](/user-guide/security-mfa)
 - [Troubleshooting service users authentication issues with Snowflake MFA](https://community.snowflake.com/s/article/Troubleshooting-service-users-authentication-issues-with-Snowflake-MFA) Knowledge Base article
 
-## Verifying the network connection to Snowflake with SnowCD
-
-After configuring your driver, you can evaluate and troubleshoot your network connectivity to Snowflake using [SnowCD](/user-guide/snowcd).
-
-You can use SnowCD during the initial configuration process and on-demand to evaluate and troubleshoot your network connection to Snowflake.
-
 ## Importing the `snowflake.connector` module
 
 To import the `snowflake.connector` module, execute the following command:
@@ -44,7 +38,7 @@ For details and examples, see [Usage notes for the `account` parameter (for the 
 
 Note
 
-For descriptions of available connector parameters, see the `snowflake.connector` [methods](/developer-guide/python-connector/python-connector-api#label-snowflake-connector-methods).
+The `snowflake.connector.ConnectionConfig` class defines all connector parameters. See that class for parameter descriptions.
 
 If you copy data from your own Amazon S3 bucket, then you need the AWS\_ACCESS\_KEY\_ID and AWS\_SECRET\_ACCESS\_KEY.
 
@@ -404,8 +398,7 @@ def connect_with_mfa_token_caching():
     The token is securely stored and reused for future connections.
 
     Note: This feature must also be enabled on the server side.
-    On Linux, token caching requires a secure credential storage
-    (such as keyring with a backend like Secret Service).
+    client_store_temporary_credential defaults to True.
     """
     print("Connecting with MFA token caching enabled...")
     print("First connection - MFA required. Please approve.")
@@ -414,7 +407,7 @@ def connect_with_mfa_token_caching():
     with snowflake.connector.connect(
         **CONNECTION_PARAMETERS,
         authenticator="username_password_mfa",
-        client_request_mfa_token=True,
+        client_store_temporary_credential=True,
     ) as conn:
         result = conn.cursor().execute("SELECT CURRENT_USER()").fetchone()
         print(f"First connection successful as: {result[0]}")
@@ -425,7 +418,7 @@ def connect_with_mfa_token_caching():
     with snowflake.connector.connect(
         **CONNECTION_PARAMETERS,
         authenticator="username_password_mfa",
-        client_request_mfa_token=True,
+        client_store_temporary_credential=True,
     ) as conn:
         result = conn.cursor().execute("SELECT CURRENT_USER()").fetchone()
         print(f"Second connection successful as: {result[0]}")
@@ -474,7 +467,11 @@ Examples:
         sys.exit(1)
 ```
 
-For more information, see [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching).
+`client_store_temporary_credential` defaults to `True`, so MFA, SSO, and OAuth token caching is on unless you set it to `False`. `client_request_mfa_token` is still accepted and mapped to `client_store_temporary_credential`, but it emits a `DeprecationWarning`. See [Renamed and deprecated parameters](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-renamed) and [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching).
+
+Note
+
+Before version 5.0, MFA caching used `client_request_mfa_token` and defaulted to `False`. On Linux, versions before 5.0 also needed the `secure-local-storage` extra (the keyring package).
 
 ## Using key-pair authentication and key-pair rotation
 
@@ -482,7 +479,11 @@ The Python connector supports key pair authentication and key rotation.
 
 For more information on how to configure key pair authentication and key rotation, see [Key-pair authentication and key-pair rotation](/user-guide/key-pair-auth).
 
-1. After completing the key pair authentication configuration, set the `private_key_file` parameter in the `connect` function to the path to the private key file. Also, set the `private_key_file_pwd` parameter to the passphrase of the private key file.
+1. After completing the key pair authentication configuration, set the `private_key_file` parameter in the `connect` function to the path to the private key file. Also, set the `private_key_password` parameter to the passphrase of the private key file. The connector still accepts `private_key_file_pwd` and maps it to `private_key_password`, but using it emits a `DeprecationWarning`.
+
+   Note
+
+   Before version 5.0, the passphrase parameter was named `private_key_file_pwd`.
 2. Modify and execute the sample code, below:
 
 > - Update the security parameters:
@@ -504,14 +505,14 @@ For more information on how to configure key pair authentication and key rotatio
 > > import snowflake.connector as sc
 > >
 > > private_key_file = '<path>'
-> > private_key_file_pwd = '<password>'
+> > private_key_password = '<password>'
 > >
 > > conn_params = {
 > >     'account': '<account_identifier>',
 > >     'user': '<user>',
 > >     'authenticator': 'SNOWFLAKE_JWT',
 > >     'private_key_file': private_key_file,
-> >     'private_key_file_pwd':private_key_file_pwd,
+> >     'private_key_password': private_key_password,
 > >     'warehouse': '<warehouse>',
 > >     'database': '<database>',
 > >     'schema': '<schema>'
@@ -523,13 +524,15 @@ For more information on how to configure key pair authentication and key rotatio
 
 ## Using a proxy server
 
-To use a proxy server, configure the following environment variables:
+Set the proxy on the connection with `proxy_host`, `proxy_port`, `proxy_user`, `proxy_password`, and `no_proxy`. You can also pass a single `proxy` URL of the form `[scheme://][user:pass@]host[:port]`. When both are set, individual fields override the matching part of the URL.
 
-- HTTP\_PROXY
-- HTTPS\_PROXY
-- NO\_PROXY
+The connector reads `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` unless you pass `use_proxy_env=False`. `use_proxy_env` defaults to `True`. When you also set `proxy_host` or `proxy_port`, the explicit parameters win and the environment variables are ignored.
 
-For example:
+Note
+
+Before version 5.0 (since connector 3.17.0), the connector always read those environment variables, and a variable set in the environment overrode `proxy_host` and `proxy_port` on the connection.
+
+Set the environment variables. The connector reads them by default:
 
 Linux or macOS:
 :   Copy code
@@ -546,6 +549,17 @@ Windows:
     set HTTP_PROXY=http://username:password@proxyserver.example.com:80
     set HTTPS_PROXY=http://username:password@proxyserver.example.com:80
     ```
+
+Pass `use_proxy_env=False` to ignore those variables:
+
+Copy code
+
+```
+conn = snowflake.connector.connect(
+    ...,
+    use_proxy_env=False,
+)
+```
 
 Tip
 
@@ -603,12 +617,24 @@ To enable the OAuth 2.0 Authorization Code flow:
 - Set the following OAuth connection parameters:
   - `oauth_client_id`: Value of `client id` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata).
   - `oauth_client_secret`: Value of the `client secret` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata).
-  - `oauth_authorization_url`: Identity Provider endpoint supplying the authorization code to the driver. When using Snowflake as an Identity Provider ,this value is derived from the `server` or `account` parameters.
-  - `oauth_token_request_url`: Identity Provider endpoint supplying the access tokens to the driver. When using Snowflake as an Identity Provider ,this value is derived from the `server` or `account` parameters.
+  - `oauth_authorization_url`: Identity Provider endpoint supplying the authorization code to the driver. When using Snowflake as an Identity Provider, this value is derived from the `server` or `account` parameters. The URL must use `https://`. `http://` is accepted only for a loopback host (`127.0.0.0/8`, `::1`, or `localhost`).
+
+    Note
+
+    Before version 5.0, the authorization-code flow already required `https://` for this URL and did not allow a loopback exception.
+  - `oauth_token_request_url`: Identity Provider endpoint supplying the access tokens to the driver. When using Snowflake as an Identity Provider, this value is derived from the `server` or `account` parameters. The URL must use `https://`, except for a loopback host.
+
+    Note
+
+    Before version 5.0, an `http://` token URL logged a warning and the request continued.
   - `oauth_scope`: Scope requested in the Identity Provider authorization request. By default, it is derived from the role. When multiple scopes are required, the value should be a space-separated list of multiple scopes.
   - `oauth_redirect_uri`: URI to use for authorization code redirection (Snowflake security integration metadata). Default: `http://127.0.0.1:{randomAvailablePort}`.
   - `oauth_disable_pkce:` Disables Proof Key for Code Exchange (PKCE), a security enhancement that ensures that even if malicious attackers intercept an Authorization Code, they won’t be able to change it to a valid access token.
-  - `oauth_enable_refresh_token:` Enables a silent re-authentication when the actual access token becomes outdated, providing it’s supported by the Authorization Server and `client_store_temporary_credential` is set to `True`.
+  - `oauth_enable_refresh_tokens`: Accepted for compatibility and ignored. The connector always uses a refresh token when the identity provider returns one, and emits a `DeprecationWarning` if you pass this parameter. Use `client_store_temporary_credential` to control whether that token is cached.
+
+    Note
+
+    Before version 5.0, the parameter defaulted to `True` and, when `False`, the connector did not use the refresh token to renew an expired access token.
   - `oauth_enable_single_use_refresh_tokens:` Whether to opt-in to single-use refresh token semantics.
 
 ### Enable the OAuth 2.0 Client Credentials flow
@@ -642,213 +668,108 @@ For more information about PATs, see [Using programmatic access tokens for authe
 
 ## Managing connection timeouts
 
-Calling `snowflake.connector.connect` submits a login request. If a login request fails, the connector can resend the connection
-request. The following parameters set time limits after which the connector stops retrying requests:
+Calling `snowflake.connector.connect` submits a login request. If a login request fails, the connector can resend the connection request. The following parameters set the time limits:
 
-- `login_timeout`: Specifies how long, in seconds, to keep resending the connection request. If the connection is
-  unsuccessful within that time, the connector fails with a timeout error after completing the current attempt instead of
-  continuing to retry the login request. After the timeout passes, further retries are prevented. However, the current ongoing attempt terminates naturally.
-- `network_timeout`: Specifies how long to wait for network issues to resolve for other requests, such as query
-  requests from `cursor.execute`. When `network_timeout` seconds have passed, if the current attempt fails, a timeout occurs, and the request in question is not retried.
-  After `network_timeout` seconds pass,
-  the current attempt is still allowed to finish (fail on its own), after which the timeout occurs.
-- `socket_timeout`: Specifies the connection and request timeouts at the socket level.
+- `login_timeout`: How long, in seconds, to keep retrying the login. The default is 120. When the budget is exhausted, the connector fails after the current attempt finishes. The property returns `120` when unset.
 
-The following example overrides the `socket_timeout` for the SNOWFLAKE\_JWT authenticator:
+  Note
 
-Copy code
+  Before version 5.0, the connector also used a 120-second budget, but `conn.login_timeout` returned `None` when you did not set the parameter.
+- `query_timeout`: Wall-clock timeout, in seconds, for query execution including retries. The default is `0`, which means no timeout.
+- `request_timeout`: Wall-clock timeout, in seconds, for other operations, such as closing the session and heartbeats, including retries. The default is 120. `0` means no timeout.
+- `connect_timeout`: Timeout, in seconds, for establishing a single HTTP connection. There is no default cap.
+- `retry_timeout`: Hard wall-clock cap, in seconds, on one HTTP attempt, including the response body. There is no default cap. A slow but active download counts against this cap.
 
-```
-# this request itself stops retrying after 60 seconds as it is a login request
-conn = snowflake.connector.connect(
-login_timeout=60,
-network_timeout=30,
-socket_timeout=10
-)
+`network_timeout` and `socket_timeout` are deprecated names. Passing either one emits a `DeprecationWarning`.
 
-# this request stops retrying after 30 seconds
-conn.cursor.execute("SELECT * FROM table")
-```
-
-The following example demonstrates the effect of setting `socket_timeout` to a large value:
-
-Copy code
-
-```
-# even though login_timeout is 1, connect will take up to n*300 seconds before failing
-# (n depends on possible socket addresses)
-# this issue arises because socket operations cannot be cancelled once started
-conn = snowflake.connector.connect(
-login_timeout=1,
-socket_timeout=300
-)
-```
-
-The following example shows how to override the socket timeout for the SNOWFLAKE\_JWT authenticator:
-
-Copy code
-
-```
-# socket timeout for login request overriden by env variable JWT_CNXN_WAIT_TIME
-conn = snowflake.connector.connect(
-authenticator="SNOWFLAKE_JWT",
-socket_timeout=300
-)
-
-# socket timeout for this request is still 300 seconds
-conn.cursor.execute("SELECT * FROM table")
-```
-
-Note that the `MAX_CON_RETRY_ATTEMPTS` environment variable limits the maximum number of retry attempts for login requests.
-If a request has not timed out but the maximum number of retry attempts is reached, the request immediately fails.
-The default value is 1, meaning the connector makes only one retry attempt.
-
-## Managing connection backoff policies for retries
-
-In some situations, you might want to vary the rate or frequency the connector uses to retry failed requests due to timeouts.
-For example, if you notice that very large numbers of attempts occur concurrently, you can spread those requests out by
-defining a retry backoff policy. A backoff policy specifies the time to wait between retry attempts.
-
-The Snowflake Connector for Python implements backoff policies with the `backoff_policy` connection parameter
-that specifies a Python generator function. The generator function lets you specify how long to wait (back off) before sending
-the next retry request.
-
-Snowflake provides the following helpers to create predefined generator functions with your desired parameters.
-You can use these if you do not want to create your own:
-
-- `linear_backoff`, which increases the backoff duration by a constant each iteration.
-- `exponential_backoff`, which multiplies the backoff duration by a constant each iteration.
-- `mixed_backoff`, which randomly chooses between incrementing the backoff duration with `exponential_backoff` and leaving it unchanged each iteration.
-
-These predefined generator functions use the following parameters to specify their behaviors:
-
-- `base`: Initial backoff time, in seconds (default = `1`).
-- `factor`: Coefficient for incrementing the backoff time. The effect depends on implementation (default = `2`); `linear_backup` adds the value, while `exponential_backup` multiplies the value.
-- `cap`: Maximum backoff time, in seconds (default = `16`).
-- `enable_jitter`: Whether to enable jitter on computed durations (default = `True`).
-
-  For more information about jitter in exponential backoff, see the [AWS Exponential Backoff And Jitter](https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/) article.
-
-For example, you can use the `exponential_backoff` policy with default values or with custom values, as shown:
-
-Copy code
-
-```
-from snowflake.connector.backoff_policies import exponential_backoff
-
-# correct, no required arguments
-snowflake.connector.connect(
-backoff_policy=exponential_backoff()
-)
-
-# correct, parameters are customizable
-snowflake.connector.connect(
-backoff_policy=exponential_backoff(
-    factor=5,
-    base=10,
-    cap=60,
-    enable_jitter=False
-  )
-)
-```
-
-You can also create your own backoff policy generator functions, similar to the following that defines
-the `my_backoff_policy` generator function:
-
-Copy code
-
-```
-def my_backoff_policy() -> int:
-  while True:
-    # yield the desired backoff duration
-```
-
-You then set the `backoff_policy` connection parameter to the name of your generator function as follows:
-
-Copy code
-
-```
-snowflake.connector.connect(
-  backoff_policy=constant_backoff
-)
-```
-
-## OCSP
-
-When the driver connects, Snowflake sends a certificate to confirm that the connection is to Snowflake rather than to
-a host that is impersonating Snowflake. The driver sends that certificate to an OCSP (Online Certificate Status
-Protocol) server to verify that the certificate has not been revoked.
-
-If the driver cannot reach the OCSP server to verify the certificate, the driver can
-[“fail open” or “fail closed”](/user-guide/ocsp#label-ocsp-fail-open-or-fail-close).
-
-### Choosing fail-open or fail-close mode
-
-Versions of the Snowflake Connector for Python prior to 1.8.0 default to fail-close mode. Versions 1.8.0 and later
-default to fail-open. You can override the default behavior by setting the optional connection parameter
-`ocsp_fail_open` when calling the connect() method. For example:
-
-Copy code
-
-```
-con = snowflake.connector.connect(
-    account=<account_identifier>,
-    user=<user>,
-    ...,
-    ocsp_fail_open=False,
-    ...);
-```
-
-### Verifying the OCSP connector or driver version
-
-The driver or connector version and its configuration both determine the OCSP behavior. For more information about the driver or connector version, their configuration, and OCSP behavior, see [OCSP Configuration](/user-guide/ocsp).
-
-### Caching OCSP responses
-
-To ensure all communications are secure, the Snowflake Connector for Python uses the HTTPS protocol to connect to Snowflake, as well as to connect to all other services (e.g. Amazon S3 for staging data files and Okta for federated authentication). In addition to the regular HTTPS protocol, the connector also checks the TLS/SSL certificate revocation status on each connection via OCSP (Online Certificate Status Protocol) and aborts the connection if it finds the certificate is revoked or the OCSP status is not reliable.
-
-Because each Snowflake connection triggers up to three round trips with the OCSP server, multiple levels of cache for OCSP responses have been introduced to reduce the network overhead added to the connection:
-
-- Memory cache, which persists for the life of the process.
-- File cache, which persists until the cache directory (e.g. `~/.cache/snowflake`) is purged.
-- OCSP response server cache.
-
-Caching also addresses availability issues for OCSP servers (i.e. in the event the actual OCSP server is down). As long as the cache is valid, the connector can still validate the certificate revocation status.
-
-If none of the cache layers contain the OCSP response, the client attempts to fetch the validation status directly from the CA’s OCSP server.
-
-#### Modifying the OCSP response file cache location
-
-By default, the file cache is enabled in the following locations, so no additional configuration tasks are required:
-
-Linux:
-:   `~/.cache/snowflake/ocsp_response_cache.json`
-
-macOS:
-:   `~/Library/Caches/Snowflake/ocsp_response_cache.json`
-
-Windows:
-:   `%USERPROFILE%\AppData\Local\Snowflake\Caches\ocsp_response_cache.json`
-
-However, if you want to specify a different location and/or file name for the OCSP response cache file, the `connect` method accepts the `ocsp_response_cache_filename` parameter, which specifies the path and name for the OCSP cache file in the form of a URI.
-
-#### OCSP response cache server
+The `network_timeout` value is copied to both `query_timeout` and `request_timeout` unless you set one of those yourself. `conn.network_timeout` returns `request_timeout`. The `socket_timeout` value is copied to both `connect_timeout` and `retry_timeout`. Because `retry_timeout` caps the whole attempt, a value you previously used to detect a stalled socket can now abort an active chunk download.
 
 Note
 
-The OCSP response cache server is currently supported by the Snowflake Connector for Python 1.6.0 and higher.
+Before version 5.0, `network_timeout` was a single wall-clock budget for non-login HTTP operations and defaulted to no cap.
 
-The memory and file types of OCSP cache work well for applications connected to Snowflake using one of the clients Snowflake provides, with a persistent host. However, they don’t work in dynamically-provisioned environments such as AWS Lambda or Docker.
+Note
 
-To address this situation, Snowflake provides a third level of caching: the OCSP response cache server. The OCSP response cache server fetches OCSP responses hourly from the CA’s OCSP servers and stores them for 24 hours. Clients can then request the validation status of a given Snowflake certificate from this server cache.
+Before version 5.0, `socket_timeout` was a per-attempt read-inactivity timeout that reset whenever bytes arrived, so an active download did not trip it.
 
-Important
+Copy code
 
-If your server policy denies access to most or all external IP addresses and web sites, you must allow the cache server address to allow normal service operation. The cache server URL is
-`ocsp*.snowflakecomputing.com:80`.
+```
+conn = snowflake.connector.connect(
+    login_timeout=60,
+    query_timeout=30,
+    request_timeout=30,
+    retry_timeout=10,
+)
+```
 
-If you need to disable the cache server for any reason, set the `SF_OCSP_RESPONSE_CACHE_SERVER_ENABLED` environment variable to `false`. Note that the value is case-sensitive and must be in
-lowercase.
+## Managing retry backoff
+
+The connector waits between retries using four connection parameters:
+
+- `retry_backoff_base_ms`: Initial delay in milliseconds. The default is 250.
+
+  Note
+
+  Before version 5.0, the default initial delay was 1 second.
+- `retry_backoff_factor`: Multiplier applied after each retry. The default is 2.
+
+  Note
+
+  Before version 5.0, the default multiplier was also 2.
+- `retry_backoff_cap_ms`: Maximum delay in milliseconds. The default is 16000.
+
+  Note
+
+  Before version 5.0, the default maximum delay was also 16000 milliseconds.
+- `retry_backoff_jitter`: `none`, `full`, or `decorrelated`. The default is `decorrelated`.
+
+  Note
+
+  Before version 5.0, the default jitter was full jitter.
+
+`backoff_policy` is not used. Passing it emits a `DeprecationWarning` and has no effect. The typed parameters cannot express an arbitrary generator.
+
+Note
+
+Before version 5.0, you passed a generator such as `exponential_backoff()` or your own generator, and that function computed the delay for every retry loop.
+
+Copy code
+
+```
+conn = snowflake.connector.connect(
+    retry_backoff_base_ms=250,
+    retry_backoff_factor=2,
+    retry_backoff_cap_ms=16000,
+    retry_backoff_jitter="decorrelated",
+)
+```
+
+## Certificate revocation checking
+
+The connector does not check certificate revocation with OCSP. Revocation checking uses certificate revocation lists (CRLs), and it is off by default.
+
+Set `crl_check_mode` to `DISABLED` (the default), `ADVISORY`, or `ENABLED`. `ENABLED` requires each certificate to have a valid CRL. `ADVISORY` rejects a certificate only when a CRL says it is revoked. Errors fetching or parsing a CRL do not fail the connection in `ADVISORY` mode.
+
+Cache the lists with `crl_enable_memory_caching` and `crl_enable_disk_caching`. Both default to `True`. `enable_crl_cache` is accepted, emits a `DeprecationWarning`, and has no effect. Set both cache parameters to `False` to disable caching.
+
+Note
+
+Before version 5.0, `enable_crl_cache` (default `True`) was the master switch: `False` turned off both caches, and `enable_crl_file_cache` applied only when the master switch was on.
+
+The names `cert_revocation_check_mode`, `enable_crl_memory_cache`, and `enable_crl_file_cache` are still accepted and mapped to the current names without a warning. Timeouts specified in milliseconds or hours are accepted under the old names and converted to the current second-based parameters. See [Renamed and deprecated parameters](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-renamed).
+
+Note
+
+Before version 5.0, those timeouts were specified in milliseconds or hours.
+
+If you enable CRL checking, confirm that the network can reach the CRL distribution points named in Snowflake’s certificate chain.
+
+`connect()` does not reject `ocsp_fail_open` or `ocsp_response_cache_filename`. Both are unknown parameters: the driver warns and forwards the values as login session parameters. Neither value selects an OCSP mode. The OCSP response cache server (`ocsp*.snowflakecomputing.com:80`) is not used.
+
+Note
+
+Before version 5.0, the connector sent each certificate to an OCSP responder. `ocsp_fail_open` selected fail-open or fail-close, and `ocsp_response_cache_filename` set the OCSP response cache file.
 
 ## Running connectivity tests and diagnostics
 
@@ -856,8 +777,12 @@ Note
 
 Running diagnostics for a connection requires the following:
 
-- Snowflake Connector for Python version 3.9.1 or newer.
-- Python version 3.9 (deprecated) or newer.
+- Snowflake Connector for Python version 3.9.1 or newer. The connector includes the same diagnostic parameters.
+- Python version 3.11 or newer.
+
+Note
+
+Before version 5.0, the connector required Python 3.9 or newer.
 
 If you encounter connectivity issues, you can run diagnostics directly within the connector. Snowflake Support might also request this information to help you with connectivity issues.
 

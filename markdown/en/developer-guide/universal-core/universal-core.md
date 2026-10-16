@@ -1,6 +1,6 @@
 # Universal Core
 
-Availability is specific to each driver. ODBC 4.x is generally available; Python 5.x remains in public preview.
+Availability is specific to each driver. ODBC 4.x and the Snowflake Connector for Python are generally available.
 See [Driver adoption](#label-universal-core-driver-adoption) for each driver’s status.
 
 The Snowflake **Universal Core** is a shared Rust library (`sf_core`) that contains the networking, authentication, data-transfer, and protocol logic that every Snowflake driver needs. Each driver is built as a thin, language-specific wrapper around this shared core; the Rust layer is not visible to application code.
@@ -91,7 +91,7 @@ The Universal Core is being rolled out across Snowflake drivers progressively. T
 
 | Driver | Universal Core status | How it ships |
 | --- | --- | --- |
-| Python (`snowflake-connector-python` 5.x) | Public preview | New major version, 5.x, of the same package |
+| Python (`snowflake-connector-python`) | Generally available | Same package |
 | ODBC (Snowflake ODBC Driver 4.x) | Generally available | New major version, 4.x; replaces 3.x on the machine |
 | JDBC | Private preview | New Maven artifacts, `snowflake-jdbc-native` and `snowflake-jdbc-native-all` |
 | Node.js | Planned |  |

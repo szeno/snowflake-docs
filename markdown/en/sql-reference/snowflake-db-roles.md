@@ -360,10 +360,12 @@ For details, see [Cortex LLM Functions required privileges](/user-guide/snowflak
 
 ## SNOWFLAKE.COPILOT\_USER database role
 
-The SNOWFLAKE.COPILOT\_USER database role allows customers to access Cortex Code features in Snowsight. Initially, this database role
-is granted to the PUBLIC role. The PUBLIC role is automatically granted to all users and roles, so this allows all users in your account
-to use Cortex Code. If you want to limit access to Cortex Code features in Snowsight, you can revoke access from the PUBLIC role and grant access to
-specific roles. For details, see [Access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
+`SNOWFLAKE.COPILOT_USER` is granted to the `PUBLIC` role by default. Until
+[BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, Cortex Code (CoCo)
+in Snowsight requires this role in addition to `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER`.
+After the change reaches your account, granting or revoking `SNOWFLAKE.COPILOT_USER` has no effect
+on access to CoCo. For details, see
+[Access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
 
 ## Using SNOWFLAKE database roles
 

@@ -8,10 +8,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 You can configure the Openflow Connector for PostgreSQL connector to immediately replicate incremental changes for newly added tables, bypassing snapshots. Use incremental load to continue replication without snapshotting every table again when you reinstall the connector over previously replicated data.
 
 To enable incremental replication in a new connector instance:

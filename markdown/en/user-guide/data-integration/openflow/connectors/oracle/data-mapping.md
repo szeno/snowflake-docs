@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes how Oracle data types are mapped to Snowflake data types when replicating data.

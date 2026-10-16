@@ -299,7 +299,7 @@ path = "/home/<username>/.snowflake/logs"
 level = "DEBUG"
 ```
 
-For more information about logging for the Snowflake Connector for Python, see [Logging configuration file](/developer-guide/python-connector/python-connector-example#label-python-easy-logging) in the Snowflake Connector for Python documentation.
+For more information about logging for the Snowflake Connector for Python, see [Driver troubleshooting logs](/developer-guide/python-connector/python-connector-example#label-python-easy-logging) in the Snowflake Connector for Python documentation.
 
 ## Configure encoding
 

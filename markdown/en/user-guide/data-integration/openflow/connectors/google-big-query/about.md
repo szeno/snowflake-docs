@@ -8,10 +8,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 The Openflow Connector for Google BigQuery connects a Google BigQuery project to Snowflake and replicates data from selected datasets, tables, and views on a schedule. The connector performs an initial full load for each table, followed by incremental updates using BigQuery’s native change-tracking functionality. Views are replicated using a truncate and load strategy.
 
 ## Use cases

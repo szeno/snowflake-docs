@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes the steps to install and configure the Openflow Connector for Oracle connector.
@@ -449,23 +444,17 @@ orders rows by the replication key.
   indicate a design issue and might degrade MERGE performance.
 - The logical key replaces an existing primary key on the table.
 
-### Limitation: Changes to a logical-key value
+### Changes to a logical-key value
 
-Important
-
-When a source `UPDATE` changes the value of a logical-key column, the connector
-does **not** soft-delete the row keyed by the old value before inserting the row
-keyed by the new value. The destination table ends up with two active rows for
-what’s a single row in the source: the original row, still active under its old
-key value, and a new row under the new key value.
-
-This differs from how the connector handles a primary-key value change on tables
-that don’t use a logical key. For more information on that behavior, see
+When supplemental logging includes every logical-key column, a source `UPDATE` that
+changes a logical-key value is handled the same way as a change to any other
+replication key. The destination row keyed by the old value is soft-deleted, and a
+new row is inserted under the new value. For more information, see
 [Changes to a replication key value](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-replication-key-value-change).
 
-To avoid this limitation, choose logical-key columns whose values don’t change in
-the source. If logical-key values do change, periodically run a full reload for
-the affected tables to reconcile the destination with the source.
+The connector requires supplemental logging for all columns, on the database or on
+the table. For setup and troubleshooting information, see
+[An UPDATE is missing the before-image of a logical key](/user-guide/data-integration/openflow/connectors/oracle/troubleshoot#label-oracle-logical-key-before-image-missing).
 
 ### Schema changes that affect a logical key
 

@@ -1,10 +1,6 @@
 # Client versions & support policy
 
-[Preview Feature](/release-notes/preview-features) — drivers built on the Universal Core
-
-Snowflake Connector for Python 5.x is in public preview. Preview versions are not listed on this page and are not covered by the support policy described here. The recommended and minimum supported versions below refer to the generally available drivers.
-
-See [Universal Core](/developer-guide/universal-core/universal-core).
+The Snowflake Connector for Python and Snowflake ODBC Driver 4.x are generally available drivers built on the Universal Core. See [Universal Core](/developer-guide/universal-core/universal-core).
 
 Snowflake provides a CLI (command-line interface) as well as other client software (drivers, connectors, etc.) for connecting to Snowflake and using certain
 Snowflake features (for example, Apache Kafka for loading data, Apache Hive metadata for external tables). The clients must be installed on each local workstation or system from which

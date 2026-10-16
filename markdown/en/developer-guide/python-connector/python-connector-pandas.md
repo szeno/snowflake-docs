@@ -1,4 +1,4 @@
-# Using pandas DataFrames with the Python Connector
+# Using Pandas with the Python Connector
 
 pandas is a library for data analysis. With pandas, you use a data structure called a DataFrame
 to analyze and manipulate two-dimensional data (such as data from a database table).
@@ -17,22 +17,17 @@ For more information, see the [PyArrow library](https://arrow.apache.org/docs/py
 
 ## Requirements
 
-Currently, the pandas-oriented API methods in the Python connector API work with:
+The pandas-oriented API methods work with:
 
-- Snowflake Connector 2.1.2 (or later) for Python.
-- PyArrow library version 3.0.x (or later), depending on your connector version.
+- Snowflake Connector for Python.
+- PyArrow 14.0.1 or later, which the `pandas` extra installs.
+- pandas earlier than 3.0.0. The minimum is 1.0.0 on Python before 3.13, and 2.1.2 on Python 3.13 and later.
 
-  If you do not have PyArrow installed, you do not need to install PyArrow yourself;
-  installing the Python Connector as documented below automatically installs the appropriate version of PyArrow.
+Note
 
-  Caution
+Before version 5.0, these methods worked with connector 2.1.2 or later, PyArrow 3.0.x or later, and pandas 0.25.2 or later, depending on the connector version.
 
-  If you already have any version of the PyArrow library other than the recommended version listed above,
-  please uninstall PyArrow before installing the Snowflake Connector for Python. Do not re-install a different
-  version of PyArrow after installing the Snowflake Connector for Python.
-
-  For more information, see the [PyArrow library](https://arrow.apache.org/docs/python/) documentation.
-- pandas 0.25.2 (or later), depending on your connector version. Earlier versions might work, but have not been tested.
+The `pandas` extra installs PyArrow. If a different PyArrow version is already installed, uninstall it before you install the connector extra, and don’t install another PyArrow version afterward.
 
 ## Installation
 
@@ -51,15 +46,19 @@ For more information, see the [extras](https://www.python.org/dev/peps/pep-0508/
 
 Use quotes around the name of the package (as shown) to prevent the square brackets from being interpreted as a wildcard.
 
-If you need to install other extras (for example, `secure-local-storage` for
-[caching connections with browser-based SSO](/user-guide/admin-security-fed-auth-use#label-browser-based-sso-connection-caching) or
-[caching MFA tokens](/user-guide/security-mfa#label-mfa-token-caching)), use a comma between the extras:
+The connector does not publish a `secure-local-storage` extra. Token caching is part of the connector.
+
+Note
+
+Before version 5.0, Linux token caching used that extra:
 
 Copy code
 
 ```
 pip install "snowflake-connector-python[secure-local-storage,pandas]"
 ```
+
+See [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching) and [Renamed and deprecated parameters](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-renamed).
 
 ## Reading data from a Snowflake database to a pandas DataFrame
 
@@ -69,6 +68,18 @@ into a pandas DataFrame:
 
 - `fetch_pandas_all()`.
 - `fetch_pandas_batches()`.
+
+These methods return a DataFrame for every result set, including JSON results from `SHOW`, `DESCRIBE`, DDL, PUT, and GET.
+
+Note
+
+Before version 5.0, they raised `NotSupportedError` unless the server returned Arrow.
+
+Keyword arguments are forwarded to `pyarrow.Table.to_pandas`. Arguments that only `pandas.concat` accepts, such as `sort`, `keys`, and `copy`, raise `TypeError`.
+
+Note
+
+Before version 5.0, those arguments were applied to `pandas.concat` while the connector combined per-batch frames.
 
 ## Writing data from a pandas DataFrame to a Snowflake database
 
@@ -120,7 +131,7 @@ Customarily, pandas is imported with the following statement:
 
 You might see references to pandas objects as either `pandas.object` or `pd.object`.
 
-## Migrating to pandas DataFrames
+## Migrating to Pandas
 
 This section is primarily for users who have used pandas (and possibly SQLAlchemy) previously.
 

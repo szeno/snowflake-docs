@@ -48,6 +48,3 @@ See [Limitations of the SQL API](/developer-guide/sql-api/intro#label-sql-api-li
 
 [Snowflake SQL API reference](/developer-guide/sql-api/reference)
 :   Read details about the operations, objects, HTTP headers, and response codes for this API.
-
-[Deprecated functionality](/developer-guide/sql-api/sql-api-old)
-:   Learn about deprecated functionality.

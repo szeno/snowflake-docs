@@ -4,10 +4,6 @@ Feature — Generally Available
 
 Openflow is available to all accounts in AWS [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
 
-Note
-
-The connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 Openflow connectors are curated, versioned Apache NiFi flow definitions built using open-source and proprietary NiFi components.
 These connectors follow a strict set of design patterns to ensure performance, fault-tolerance, and ease of configuration.
 

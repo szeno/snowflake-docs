@@ -64,7 +64,7 @@ To preserve the fail-close behavior, set the corresponding `ocsp_fail_open` para
 | Client / Driver | Setting |
 | --- | --- |
 | SnowSQL | `snowsql -o ocsp_fail_open=false` |
-| Python Connector | For details, see [Choosing fail-open or fail-close mode](/developer-guide/python-connector/python-connector-connect#label-python-ocsp-choosing-fail-open-or-fail-close-mode) in the Python Connector documentation. |
+| Python Connector | For details, see [Certificate revocation checking](/developer-guide/python-connector/python-connector-connect#label-python-ocsp-choosing-fail-open-or-fail-close-mode) in the Python Connector documentation. |
 | JDBC Driver | For details, see [Choosing fail-open or fail-close mode](/developer-guide/jdbc/jdbc-configure#label-jdbc-ocsp-choosing-fail-open-or-fail-close-mode) in the JDBC Driver documentation. |
 | ODBC Driver | For ODBC 3.x, set the connection parameter `OCSP_FAIL_OPEN=false`, or use `$SIMBAINI` to locate the configuration file and set `OCSPFailOpen=false` there. ODBC 4.x does not implement OCSP; set `CRL_MODE=ENABLED` for fail-close [CRL checking](/developer-guide/odbc/odbc-parameters#label-odbc-crl-4x). `CRL_MODE=ADVISORY` is not fail-close. |
 | SQL Alchemy | See JDBC Driver settings |

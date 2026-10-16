@@ -1,20 +1,14 @@
 # Snowflake Connector for Python
 
-[Preview Feature](/release-notes/preview-features) — Snowflake Connector for Python 5.x
-
-Snowflake Connector for Python 5.x, built on the Universal Core, is in public preview. It keeps the PEP 249 interface, the `snowflake.connector` module name, and the `snowflake-connector-python` package name. This page documents 4.x, which remains the default and the version Snowflake recommends for production.
-
-See [Snowflake Connector for Python built on the Universal Core](/developer-guide/python-connector/python-connector-universal-core).
-
-Note
-
-This driver currently does not support GCP regional endpoints. Please ensure that any workloads using through this driver do not require support for regional endpoints on GCP. If you have questions about this, please contact Snowflake Support.
-
 The Snowflake Connector for Python provides an interface for developing Python applications that can connect to Snowflake and perform all standard operations. It provides a programming alternative to
 developing applications in Java or C/C++ using the Snowflake JDBC or ODBC drivers.
 
-The connector is a native, pure Python package that has no dependencies on JDBC or ODBC. It can be installed using `pip` on
-Linux, MacOS, and Windows platforms where Python is installed.
+Starting with version 5.0, the connector is built on the [Universal Core](/developer-guide/universal-core/universal-core). The public interface remains the `snowflake.connector` module and PEP 249 `Connection` and `Cursor` objects. It can be installed using `pip` on
+Linux, macOS, and Windows where Python 3.11 or later is installed.
+
+Note
+
+If you are upgrading from a version before 5.0, see [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade).
 
 The connector supports developing applications using the Python Database API v2 specification (PEP-249), including using the following standard API objects:
 
@@ -22,8 +16,6 @@ The connector supports developing applications using the Python Database API v2 
 - `Cursor` objects for executing DDL/DML statements and queries.
 
 For more information, see [PEP-249](https://www.python.org/dev/peps/pep-0249/).
-
-[SnowSQL](/user-guide/snowsql), the command-line client provided by Snowflake, is an example of an application developed using the connector.
 
 Note
 
@@ -33,8 +25,10 @@ warehouses, without using SQL. For more information, see [Snowflake Python APIs:
 **Next Topics:**
 
 - [Installing the Python Connector](/developer-guide/python-connector/python-connector-install)
+- [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade)
 - [Using the Python Connector](/developer-guide/python-connector/python-connector-example)
-- [Using pandas DataFrames with the Python Connector](/developer-guide/python-connector/python-connector-pandas)
+- [Using asynchronous I/O with the Python Connector](/developer-guide/python-connector/python-connector-asyncio)
+- [Using Pandas with the Python Connector](/developer-guide/python-connector/python-connector-pandas)
 - [Distributing workloads that fetch results with the Snowflake Connector for Python](/developer-guide/python-connector/python-connector-distributed-fetch)
 - [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy)
 - [Python Connector API](/developer-guide/python-connector/python-connector-api)

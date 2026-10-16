@@ -16,8 +16,9 @@ how you create your gen 2 resources).
 ## Before you begin
 
 Complete the standard Openflow prerequisites described in
-[About Openflow](/user-guide/data-integration/openflow/about)—role configuration, terms of service, and
-deployment-type planning (BYOC or Openflow - Snowflake Deployment).
+[About Openflow](/user-guide/data-integration/openflow/about): role configuration and deployment-type planning
+(BYOC or Openflow - Snowflake Deployment). For BYOC, also
+[accept the Openflow BYOC Terms](/user-guide/data-integration/openflow/setup-openflow-byoc#label-openflow-byoc-accept-terms).
 
 Gen 2 uses different account- and schema-level privileges than gen 1. If you previously set up
 Openflow using the public guides, see [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations) for how

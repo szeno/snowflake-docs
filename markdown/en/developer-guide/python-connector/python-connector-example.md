@@ -100,9 +100,7 @@ For example:
 > COPY INTO testtable FROM s3://<s3_bucket>/data/
 >     STORAGE_INTEGRATION = myint
 >     FILE_FORMAT=(field_delimiter=',')
-> """.format(
->     aws_access_key_id=AWS_ACCESS_KEY_ID,
->     aws_secret_access_key=AWS_SECRET_ACCESS_KEY))
+> """)
 > ```
 >
 > Where:
@@ -110,11 +108,6 @@ For example:
 > - `s3://<s3_bucket>/data/` specifies the name of your S3 bucket
 > - The files in the bucket are prefixed with `data`.
 > - The bucket is accessed using a storage integration created using [CREATE STORAGE INTEGRATION](/sql-reference/sql/create-storage-integration) by an account administrator (i.e. a user with the ACCOUNTADMIN role) or a role with the global CREATE INTEGRATION privilege. A storage integration allows users to avoid supplying credentials to access a private storage location.
-
-Note
-
-This example uses the format() function to compose the statement. If your environment has a risk of SQL injection
-attacks, you might prefer to bind values rather than use format().
 
 ## Querying data
 
@@ -129,7 +122,7 @@ After the query has completed, you use the `Cursor` object to
 [fetch the values in the results](#label-python-connector-cursor-fetch-values). By default, the Snowflake Connector for
 Python converts the values from [Snowflake data types](/sql-reference-data-types) to native Python data types. (Note that
 you can choose to return the values as strings and perform the type conversions in your application.
-See [Improving query performance by bypassing data conversion](#label-python-connector-bypass-data-conversion).)
+See [Bypassing data conversion](#label-python-connector-bypass-data-conversion).)
 
 Note
 
@@ -156,7 +149,7 @@ Use the `Cursor` object to fetch the values in the results, as explained in
 
 The Snowflake Connector for Python supports asynchronous queries (i.e. queries that return control to the user before the query
 completes). You can submit an asynchronous query and use polling to determine when the query has completed. After the query
-completes, you can get the results.
+completes, you can get the results. To await connector calls on an asyncio event loop, see [Using asynchronous I/O with the Python Connector](/developer-guide/python-connector/python-connector-asyncio).
 
 Note
 
@@ -520,44 +513,41 @@ Cancel a query by [query ID](#label-python-connector-retrieve-query-id):
 > Copy code
 >
 > ```
-> cur = cn.cursor()
->
-> try:
+> with cn.cursor() as cur:
 >   cur.execute(r"SELECT SYSTEM$CANCEL_QUERY('queryID')")
 >   result = cur.fetchall()
 >   print(len(result))
 >   print(result[0])
-> finally:
->   cur.close()
 > ```
 
 Replace the string “queryID” with the actual query ID. To get the ID for a query, see
 [Retrieving the Snowflake query ID](#label-python-connector-retrieve-query-id).
 
-### Improving query performance by bypassing data conversion
+### Bypassing data conversion
 
-To improve query performance, use the `SnowflakeNoConverterToPython` class in the `snowflake.connector.converter_null` module to bypass
-data conversions from the Snowflake internal data type to the native Python data type, e.g.:
+The connector does not accept `converter_class`. Passing a class raises `ProgrammingError`, and `DefaultConverterClass` does not exist. Result conversion runs in the connector’s Arrow path and is not a Python plug-in. See [Parameters and calls that no longer work](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-removed).
+
+Note
+
+Before version 5.0, you could pass `converter_class=SnowflakeNoConverterToPython` (from `snowflake.connector.converter_null`) to skip conversion from Snowflake types to native Python types. Values then came back as strings: `TIMESTAMP_NTZ` and `TIMESTAMP_LTZ` as epoch seconds, and `TIMESTAMP_TZ` as epoch seconds, a space, and the UTC offset in minutes. Binding was unchanged.
+
+### Using core Arrow data handling
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Core Arrow data handling is in public preview and available to all accounts.
+
+Result fetches use the nanoarrow converter. Set the `use_core_arrow` connection parameter to `True` to use the Universal Core Arrow converter for those fetches:
 
 > Copy code
 >
 > ```
-> from snowflake.connector.converter_null import SnowflakeNoConverterToPython
->
-> con = snowflake.connector.connect(
->     ...
->     converter_class=SnowflakeNoConverterToPython
-> )
-> for rec in con.cursor().execute("SELECT * FROM large_table"):
->     # rec includes raw Snowflake data
+> conn = snowflake.connector.connect(use_core_arrow=True)
 > ```
 
-As a result, all data is represented in string form such that the application is responsible for
-converting it to the native Python data types. For example, `TIMESTAMP_NTZ` and `TIMESTAMP_LTZ`
-data are the epoch time represented in string form, and `TIMESTAMP_TZ` data is the epoch time followed by a space
-followed by the offset to UTC in minutes represented in string form.
+Note
 
-No impact is made to binding data; Python native data can still be bound for updates.
+A later connector version will use core Arrow data handling by default.
 
 ## Downloading data
 
@@ -1060,9 +1050,6 @@ The Snowflake Connector for Python supports a context manager that allocates and
 > ```
 > # Connecting to Snowflake using the context manager
 > with snowflake.connector.connect(
->   user=USER,
->   password=PASSWORD,
->   account=ACCOUNT,
 >   autocommit=False,
 > ) as con:
 >     con.cursor().execute("INSERT INTO a VALUES(1, 'test1')")
@@ -1079,9 +1066,6 @@ An equivalent code with `try` and `except` blocks is as follows:
 > ```
 > # Connecting to Snowflake using try and except blocks
 > con = snowflake.connector.connect(
->   user=USER,
->   password=PASSWORD,
->   account=ACCOUNT,
 >   autocommit=False)
 > try:
 >     con.cursor().execute("INSERT INTO a VALUES(1, 'test1')")
@@ -1207,17 +1191,21 @@ More comprehensive logging can be enabled by setting the logging level to `DEBUG
 >
 > `botocore` and `boto3` are available through the AWS (Amazon Web Services) SDK for Python.
 
-### Logging configuration file
+### Driver troubleshooting logs
 
-Alternatively, you can easily specify the log level and the directory in which to save log files in the `config.toml` configuration file. For more information about the this file, see [Connecting using the `connections.toml` file](/developer-guide/python-connector/python-connector-connect#label-python-connection-toml).
+The connector does not read a `[log]` section from `config.toml` or a YAML logging file. There is no setting for a log path, rotation size, or per-module level. See [Parameters and calls that no longer work](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-removed).
+
+To capture driver-internal troubleshooting logs, set `SNOWFLAKE_TROUBLESHOOTING_ENABLED` before the process starts:
+
+Copy code
+
+```
+export SNOWFLAKE_TROUBLESHOOTING_ENABLED=true
+```
 
 Note
 
-This logging configuration feature supports log levels as defined in the Python logging document.
-
-For more information about logging levels, see the Python [Basic Logging Tutorial](https://docs.python.org/3/howto/logging.html#basic-logging-tutorial).
-
-This logging configuration file uses toml to define the `save_logs`, `level`, and `path` logging parameters, as follows:
+Before version 5.0, a logging configuration file set `save_logs`, `level`, and `path` and attached a rotating file handler. A `[log]` section in `config.toml` looked like this:
 
 Copy code
 
@@ -1228,17 +1216,7 @@ level = "INFO"
 path = "<directory to store logs>"
 ```
 
-where:
-
-- `save_logs` determines whether to save logs.
-- `level` specifies the logging level. If not defined, the driver defaults to `INFO`.
-- `path` identifies the directory in which to save the log files. If not defined, the driver saves the logs in the default `$SNOWFLAKE_HOME/logs/` directory.
-
-Note
-
-If your `config.toml` file does not contain a `[log]` section, log messages are not saved.
-
-Log message from a single day are appended to the `python-connector.log` file, which is later renamed to `python-connector.log.YYYY-MM-DD`.
+Log lines from one day were appended to `python-connector.log`, which was later renamed to `python-connector.log.YYYY-MM-DD`.
 
 ## Sample program
 
@@ -1676,13 +1654,6 @@ Closing connection...
 
 Here is a longer example:
 
-> Note
->
-> In the section where you set your account and login information, make sure to replace the variables as needed to match your Snowflake login information (name, password, etc.).
-
-This example uses the format() function to compose the statement. If your environment has a risk of SQL injection
-attacks, you might prefer to bind values rather than use format().
-
 Copy code
 
 ```
@@ -1699,25 +1670,8 @@ logging.basicConfig(
 
 import snowflake.connector
 
-# Set ACCOUNT to your account identifier.
-# See https://docs.snowflake.com/en/user-guide/gen-conn-config.
-ACCOUNT = '<my_organization>-<my_account>'
-# Set your login information.
-USER = '<login_name>'
-PASSWORD = '<password>'
-
-import os
-
-# Only required if you copy data from your S3 bucket
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-
 # Connecting to Snowflake
-con = snowflake.connector.connect(
-  user=USER,
-  password=PASSWORD,
-  account=ACCOUNT,
-)
+con = snowflake.connector.connect()
 
 # Creating a database, schema, and warehouse if none exists
 con.cursor().execute("CREATE WAREHOUSE IF NOT EXISTS tiny_warehouse")
@@ -1747,9 +1701,7 @@ con.cursor().execute("""
 COPY INTO testtable FROM s3://<s3_bucket>/data/
      STORAGE_INTEGRATION = myint
      FILE_FORMAT=(field_delimiter=',')
-""".format(
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY))
+""")
 
 # Querying data
 cur = con.cursor()

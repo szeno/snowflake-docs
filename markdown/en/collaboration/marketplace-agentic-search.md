@@ -19,7 +19,11 @@ Agentic Marketplace Discovery applies to the public Snowflake Marketplace only. 
 
 To use CoCo for Marketplace search and listing actions, you need the following:
 
-- Access to CoCo in Snowsight. Your role must have the `SNOWFLAKE.COPILOT_USER` database role and either the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role. See [Access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
+- Access to CoCo in Snowsight. Your role must have either the `SNOWFLAKE.CORTEX_USER` or
+  `SNOWFLAKE.CORTEX_AGENT_USER` database role. Until
+  [BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, your role must
+  also have `SNOWFLAKE.COPILOT_USER`. See
+  [Access control requirements](/user-guide/cortex-code/cortex-code-snowsight#label-cortex-code-snowsight-access-control).
 - A Snowflake account that can access the Snowflake Marketplace. See [Use listings as a consumer](/collaboration/consumer-becoming).
 
 To install a listing or start a trial, your role must also have the privileges required for those consumer actions (for example, CREATE DATABASE and IMPORT SHARE). See [Access and install listings as a consumer](/collaboration/consumer-listings-access) and [Explore listings](/collaboration/consumer-listings-exploring).

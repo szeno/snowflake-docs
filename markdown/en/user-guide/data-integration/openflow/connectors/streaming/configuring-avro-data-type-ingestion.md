@@ -6,10 +6,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 # Configuring Avro data type ingestion
 
 The streaming connectors (Kafka high-performance, Kinesis high-performance) use a `Consume*` processor (`ConsumeKafka` / `ConsumeKinesis`) with a `JsonTreeReader` controller service to parse incoming messages. This topic describes how to switch to Avro-encoded messages by replacing `JsonTreeReader` with an `AvroReader`. The steps are identical for both connectors — on a Kinesis connector, use the `ConsumeKinesis` processor where `ConsumeKafka` is referenced.

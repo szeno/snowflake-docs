@@ -14,6 +14,16 @@ Warning
 
 Because Python 3.8 has reached its [End of Life](https://devguide.python.org/versions/), deprecation warnings will be triggered when you use `snowpark-python` with Python 3.8. For more information, see [Snowflake Python Runtime Support](/developer-guide/python-runtime-support-policy). Snowpark Python 1.24.0 will be the last client and server version to support Python 3.8, in accordance with [Anaconda’s policy](https://forum.anaconda.com/t/python-3-8-reaches-end-of-life/87265). Upgrade your existing Python 3.8 objects to Python 3.9 or later.
 
+## Version 1.55.2: Oct 13, 2026
+
+### Improvements
+
+- Added support for `cloudpickle` 3.1.2, in addition to previously supported versions.
+
+### Bug fixes
+
+- Fixed a bug where a nested UDxF registered inside a stored procedure inherited inaccessible app-package stage paths from the procedure’s `IMPORTS` clause.
+
 ## Version 1.55.1: Oct 05, 2026
 
 ### Bug fixes

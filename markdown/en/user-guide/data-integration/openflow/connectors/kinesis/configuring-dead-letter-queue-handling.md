@@ -6,10 +6,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 # Openflow Connector for Kinesis Data Streams: Configuring DLQ handling
 
 This topic explains how to configure a **Kinesis stream** as a destination for Dead Letter Queue (DLQ) messages on the **Kinesis high-performance connector**, plus the other Kinesis-specific parts of DLQ handling (the source processor, parse-failure relationship, and credential reuse).

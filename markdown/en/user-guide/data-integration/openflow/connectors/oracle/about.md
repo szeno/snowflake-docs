@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes the basic concepts of Openflow Connector for Oracle, its workflow, and limitations.
@@ -354,9 +349,8 @@ The following limitations apply to the Openflow Connector for Oracle:
   applies to renaming a replication-key column. After any such change,
   restart replication for the affected table: see
   [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
-- When a logical-key value changes on the source, the connector doesn’t soft-delete
-  the old row, which results in duplicate active rows in the destination. For more information,
-  see [Limitation: Changes to a logical-key value](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-logical-key-value-change).
+- Tables with a user-declared logical key require supplemental logging for all columns.
+  See [An UPDATE is missing the before-image of a logical key](/user-guide/data-integration/openflow/connectors/oracle/troubleshoot#label-oracle-logical-key-before-image-missing).
 - Updates that modify only a part of a large object (`LOB`) value by using the
   `DBMS_LOB` package, for example `DBMS_LOB.WRITEAPPEND`, `DBMS_LOB.WRITE`,
   `DBMS_LOB.ERASE`, or `DBMS_LOB.TRIM`, aren’t supported. Oracle XStream reports
@@ -563,10 +557,10 @@ The destination table therefore contains two rows after the change: the
 original row, soft-deleted, and a new row under the new key value. To query only
 current rows, filter on `_SNOWFLAKE_DELETED = FALSE`.
 
-This behavior applies when the replication key is a primary key or an
-auto-detected unique constraint or unique index. User-declared logical keys
-behave differently: see the limitation described in
-[Limitation: Changes to a logical-key value](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-logical-key-value-change).
+This behavior applies when the replication key is a primary key, an
+auto-detected unique constraint or unique index, or a user-declared logical key.
+For supplemental logging requirements for logical keys, see
+[An UPDATE is missing the before-image of a logical key](/user-guide/data-integration/openflow/connectors/oracle/troubleshoot#label-oracle-logical-key-before-image-missing).
 
 ### Oversized values
 

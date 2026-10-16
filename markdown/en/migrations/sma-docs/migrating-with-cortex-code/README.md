@@ -27,6 +27,7 @@ For a step-by-step walkthrough of that path, see [Migrating to Snowpark Connect 
 However, there are multiple migration paths possible, including migrating to the
 [Snowpark API](/developer-guide/snowpark/index) (which rewrites code to the `snowflake.snowpark` API).
 To access a different path, you will have to ask for this path when you initiate your migration or are setting up your configuration.
+For a walkthrough of the Snowpark API path (SMA CLI conversion plus the post-conversion pipeline), see [Spark to Snowpark API](/migrations/sma-docs/migrating-with-cortex-code/spark-to-snowpark-api).
 This documentation will focus initially on the recommended path.
 
 ### Migration approach

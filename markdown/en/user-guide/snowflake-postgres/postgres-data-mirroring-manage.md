@@ -1,8 +1,3 @@
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-Currently, this feature is only available on Amazon Web Services (AWS) and Microsoft Azure.
-
 # Manage and monitor mirrors
 
 Use the procedures in the `snowflake.postgres` schema to alter, drop, inspect, and monitor mirrors after they’re created. These procedures take a mirror name but not an instance name;

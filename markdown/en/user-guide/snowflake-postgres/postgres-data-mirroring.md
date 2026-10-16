@@ -1,8 +1,3 @@
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-Currently, this feature is only available on Amazon Web Services (AWS) and Microsoft Azure.
-
 # Data mirroring
 
 Data mirroring continuously replicates data from Postgres into a Snowflake database with minimal lag.

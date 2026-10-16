@@ -8,10 +8,6 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 [Snowflake Openflow on BYOC deployments](/user-guide/data-integration/openflow/about-byoc) are available to all accounts in AWS Commercial Regions only ([Commercial regions](/user-guide/intro-regions#label-na-general-regions)).
 
-Note
-
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
 The connector writes information about completed Salesforce Bulk API jobs to logs in the event table. You can query these logs to track the objects and number of records replicated to Snowflake.
 
 The examples on this page query `OPENFLOW.TELEMETRY.EVENTS`. If your Openflow deployment sends telemetry to a different event table, replace the table name in the examples. Adjust the 30-minute time range as needed.

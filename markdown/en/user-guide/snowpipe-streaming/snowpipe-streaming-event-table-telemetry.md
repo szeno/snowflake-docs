@@ -104,19 +104,21 @@ The fields in `RESOURCE_ATTRIBUTES` identify the affected objects:
 
 ### Event types
 
-Choose an event type based on what you want to monitor. Severity identifies informational events (`INFO`) and errors (`ERROR`):
+Choose an event type based on what you want to monitor. Severity identifies informational events (`INFO`) and errors (`ERROR`). Each subsection includes the event schema as it appears in the event table:
 
 | Event name | Severity | Purpose |
 | --- | --- | --- |
-| `commit` | `INFO` | Reports row counts and available offset tokens when Snowflake commits processed data to the target table. |
-| `latency` | `INFO` | Reports the time Snowflake takes to process data for a channel. |
-| `row_error` | `ERROR` | Provides details about rows that failed processing. |
-| `channel_lifecycle` | `INFO` | Records successful channel `OPEN` and `DROP` operations. |
-| `channel_error` | `ERROR` | Reports a failure when operating on a channel or committing its data. |
+| [`commit`](#label-snowpipe-streaming-events-commit) | `INFO` | Reports row counts and available offset tokens when Snowflake commits processed data to the target table. |
+| [`latency`](#label-snowpipe-streaming-events-latency) | `INFO` | Reports the time Snowflake takes to process data for a channel. |
+| [`row_error`](#label-snowpipe-streaming-events-row-error) | `ERROR` | Provides details about rows that failed processing. |
+| [`channel_lifecycle`](#label-snowpipe-streaming-events-channel-lifecycle) | `INFO` | Records successful channel `OPEN` and `DROP` operations. |
+| [`channel_error`](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-events-channel-error) | `ERROR` | Reports a failure when operating on a channel or committing its data. |
 
 Expand
 
 Show lessSee more
+
+For the event-table columns that these events populate, see [Event table columns for Snowpipe Streaming events](#label-snowpipe-streaming-events-columns).
 
 #### Track ingestion progress with commit events
 
@@ -128,6 +130,40 @@ The `VALUE` column for a `commit` event contains these fields:
 - `error_count`: Number of rows rejected during validation or parsing.
 - `uncompressed_bytes`: Uncompressed bytes associated with the commit request. If a request includes multiple channels, the same byte count can appear in each channel’s event. Summing this field can double-count data, so don’t use it for exact ingestion or billing totals.
 - `offset_start` and `offset_end`: Offset tokens reported with the commit, when available. These are strings defined by the application that sends the data, not counters that Snowflake orders numerically or alphabetically.
+
+The following example shows a `commit` event. The `offset_start` and `offset_end` fields are omitted when the commit doesn’t report offset tokens:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "commit",
+    "severity_text": "INFO"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "row_count": "<row_count>",
+    "rows_parsed": "<rows_parsed>",
+    "error_count": "<error_count>",
+    "uncompressed_bytes": "<uncompressed_bytes>",
+    "offset_start": "<offset_start>",
+    "offset_end": "<offset_end>"
+  }
+}
+```
 
 Row counts describe each event, not running totals. For Named Channels, use [channel status](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling) to determine where to resume ingestion after an interruption, rather than relying on the order of telemetry events.
 
@@ -191,6 +227,35 @@ Snowflake uses the recorded request-start timestamp when request timing is enabl
 
 This measurement doesn’t include time before the request reaches Snowflake. It isn’t the total time from creating a record in the source to querying it in Snowflake.
 
+The following example shows a `latency` event. The `total_latency_ms` field is omitted when Snowflake doesn’t have a measurement for the request:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "latency",
+    "severity_text": "INFO"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "total_latency_ms": "<total_latency_ms>"
+  }
+}
+```
+
 The following query groups measurements into one-minute intervals by table and channel. It returns the average, approximate 95th percentile (p95), maximum, and number of measurements. The p95 value is the time at or below which approximately 95% of measurements fall:
 
 Copy code
@@ -226,7 +291,104 @@ A `row_error` event can include the following fields:
 - `error_line_number` and `error_char_pos`: Line number and character position reported for the error.
 - `error_offset`: Offset token associated with the error, when available.
 
-A `channel_error` event includes the channel name, error code, error message, and `error_type` classification. Failures during a commit have `error_type` set to `SYSTEM` and can include `uncompressed_bytes`. Other channel-operation failures are classified as `USER` or `SYSTEM`. Use the error code and message to decide what action to take; the classification alone doesn’t establish the cause.
+The following example shows a `row_error` event. The `error_offset` field is omitted when no offset token is associated with the error:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "row_error",
+    "severity_text": "ERROR"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "error_code": "<error_code>",
+    "error_message": "<error_message>",
+    "error_col_name": "<error_col_name>",
+    "error_line_number": "<error_line_number>",
+    "error_char_pos": "<error_char_pos>",
+    "error_offset": "<error_offset>"
+  }
+}
+```
+
+A `channel_error` event includes the channel name, error code, error message, and `error_type` classification. Failures during a commit have `error_type` set to `SYSTEM` and include `uncompressed_bytes`. Other channel-operation failures are classified as `USER` or `SYSTEM` and don’t include `uncompressed_bytes`. Use the error code and message to decide what action to take; the classification alone doesn’t establish the cause.
+
+The following example shows a `channel_error` event for a commit failure:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "channel_error",
+    "severity_text": "ERROR"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "error_type": "SYSTEM",
+    "error_code": "<error_code>",
+    "error_message": "<error_message>",
+    "uncompressed_bytes": "<uncompressed_bytes>"
+  }
+}
+```
+
+The following example shows a `channel_error` event for a channel-operation failure, such as an unsuccessful `OPEN` or `DROP`:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "channel_error",
+    "severity_text": "ERROR"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "error_type": "<USER_or_SYSTEM>",
+    "error_code": "<error_code>",
+    "error_message": "<error_message>"
+  }
+}
+```
 
 There isn’t necessarily a `row_error` event for every rejected row. Use `error_count` from commit events for totals, and use row-error events to investigate individual failures.
 
@@ -260,7 +422,39 @@ An event might lack object names if Snowflake couldn’t identify the affected o
 
 #### Inspect channel activity with lifecycle events
 
-A `channel_lifecycle` event records a successful `OPEN` or `DROP` operation. Its `VALUE` fields identify the channel (`channel_name`), its mode (`channel_mode`), and the operation (`event_type`). When supplied by the client, `tracking_label` and `client_version` provide additional information about the client that performed the operation.
+A `channel_lifecycle` event records a successful `OPEN` or `DROP` operation. Its `VALUE` fields identify the channel (`channel_name`), its mode (`channel_mode`), and the operation (`event_type`). Channel mode is `STATEFUL` for Named Channels, `ELASTIC` for Elastic Channels, or `STATELESS` for other stateless channels. When supplied by the client, `tracking_label` and `client_version` provide additional information about the client that performed the operation.
+
+The following example shows a `channel_lifecycle` event. The `tracking_label` and `client_version` fields are omitted when the client doesn’t supply them:
+
+Copy code
+
+```
+{
+  "TIMESTAMP": "<some_timestamp>",
+  "SCOPE": {
+    "name": "snow.snowpipe.streaming"
+  },
+  "RESOURCE_ATTRIBUTES": {
+    "snow.executable.type": "SNOWPIPE_STREAMING",
+    "snow.database.name": "<MY_DB_NAME>",
+    "snow.schema.name": "<MY_SCHEMA_NAME>",
+    "snow.table.name": "<MY_TABLE_NAME>",
+    "snow.pipe.name": "<MY_PIPE_NAME>"
+  },
+  "RECORD_TYPE": "EVENT",
+  "RECORD": {
+    "name": "channel_lifecycle",
+    "severity_text": "INFO"
+  },
+  "VALUE": {
+    "channel_name": "<channel_name>",
+    "channel_mode": "<STATEFUL_ELASTIC_or_STATELESS>",
+    "event_type": "<OPEN_or_DROP>",
+    "tracking_label": "<tracking_label>",
+    "client_version": "<client_version>"
+  }
+}
+```
 
 The following query returns recent channel operations:
 
@@ -285,6 +479,72 @@ WHERE scope:"name"::STRING = 'snow.snowpipe.streaming'
   AND timestamp > DATEADD('minute', -15, CURRENT_TIMESTAMP())
 ORDER BY timestamp DESC;
 ```
+
+### Event table columns for Snowpipe Streaming events
+
+Snowpipe Streaming events populate the following columns in the event table, and leave all other columns `NULL`:
+
+| Column | Data type | Description |
+| --- | --- | --- |
+| `TIMESTAMP` | `TIMESTAMP_NTZ` | The UTC time when the event was created. |
+| `SCOPE` | `OBJECT` | The service that produced the event. For Snowpipe Streaming events, `name` is always `snow.snowpipe.streaming`. |
+| `RESOURCE_ATTRIBUTES` | `OBJECT` | The objects that the event is about: the target database, schema, table, and pipe when Snowflake can identify them. See the next table. |
+| `RECORD_TYPE` | `STRING` | The type of record. For Snowpipe Streaming events, this value is always `EVENT`. |
+| `RECORD` | `OBJECT` | The name of the event, in the `name` key, and its severity, in the `severity_text` key. |
+| `VALUE` | `VARIANT` | Details that depend on the event type, such as row counts, latency, or an error message. For examples, see [Event types](#label-snowpipe-streaming-events-types). |
+
+Expand
+
+Show lessSee more
+
+The `RESOURCE_ATTRIBUTES` column contains the following keys when Snowflake can identify the affected objects. An event might omit one or more of these keys if Snowflake couldn’t resolve the corresponding object:
+
+| Key | Data type | Description | Example |
+| --- | --- | --- | --- |
+| `snow.executable.type` | `VARCHAR` | Service identifier. For Snowpipe Streaming events, this value is always `SNOWPIPE_STREAMING`. | `"SNOWPIPE_STREAMING"` |
+| `snow.database.name` | `VARCHAR` | The name of the database that contains the target table. | `"MYDB"` |
+| `snow.schema.name` | `VARCHAR` | The name of the schema that contains the target table. | `"MYSCHEMA"` |
+| `snow.table.name` | `VARCHAR` | The name of the target table. | `"ORDERS"` |
+| `snow.pipe.name` | `VARCHAR` | The name of the streaming pipe, when available. | `"ORDERS-STREAMING"` |
+
+Expand
+
+Show lessSee more
+
+The `VALUE` column contains the following keys. Fields marked as optional are omitted when Snowflake doesn’t have a value for them:
+
+| Event | Key | Data type | Description |
+| --- | --- | --- | --- |
+| `commit` | `channel_name` | `VARCHAR` | Channel associated with the commit. |
+| `commit` | `row_count` | `NUMBER` | Number of rows successfully ingested in this event. |
+| `commit` | `rows_parsed` | `NUMBER` | Number of rows read during parsing, including rows that were rejected. |
+| `commit` | `error_count` | `NUMBER` | Number of rows rejected during validation or parsing. |
+| `commit` | `uncompressed_bytes` | `NUMBER` | Uncompressed bytes associated with the commit request. If a request includes multiple channels, the same byte count can appear in each channel’s event. |
+| `commit` | `offset_start` | `VARCHAR` | Optional. Starting offset token reported with the commit. |
+| `commit` | `offset_end` | `VARCHAR` | Optional. Ending offset token reported with the commit. |
+| `latency` | `channel_name` | `VARCHAR` | Channel associated with the measurement. |
+| `latency` | `total_latency_ms` | `NUMBER` | Optional. Server-side processing time in milliseconds. |
+| `row_error` | `channel_name` | `VARCHAR` | Channel where the error occurred. |
+| `row_error` | `error_code` | `VARCHAR` | Error identifier. |
+| `row_error` | `error_message` | `VARCHAR` | Error description. |
+| `row_error` | `error_col_name` | `VARCHAR` | Column associated with the error. |
+| `row_error` | `error_line_number` | `NUMBER` | Line number reported for the error. |
+| `row_error` | `error_char_pos` | `NUMBER` | Character position reported for the error. |
+| `row_error` | `error_offset` | `VARCHAR` | Optional. Offset token associated with the error. |
+| `channel_error` | `channel_name` | `VARCHAR` | Channel associated with the failure. |
+| `channel_error` | `error_type` | `VARCHAR` | `SYSTEM` for commit failures. `USER` or `SYSTEM` for other channel-operation failures. |
+| `channel_error` | `error_code` | `VARCHAR` | Error identifier. For a commit failure with no specific code, this value is `FAILURE`. |
+| `channel_error` | `error_message` | `VARCHAR` | Error description. |
+| `channel_error` | `uncompressed_bytes` | `NUMBER` | Present for commit failures. Uncompressed bytes associated with the failed commit request. |
+| `channel_lifecycle` | `channel_name` | `VARCHAR` | Channel that was opened or dropped. |
+| `channel_lifecycle` | `channel_mode` | `VARCHAR` | Channel mode: `STATEFUL`, `ELASTIC`, or `STATELESS`. |
+| `channel_lifecycle` | `event_type` | `VARCHAR` | Operation recorded: `OPEN` or `DROP`. |
+| `channel_lifecycle` | `tracking_label` | `VARCHAR` | Optional. Client-supplied tracking label. |
+| `channel_lifecycle` | `client_version` | `VARCHAR` | Optional. Client version reported with the operation. |
+
+Expand
+
+Show lessSee more
 
 ### Example Streamlit dashboard
 

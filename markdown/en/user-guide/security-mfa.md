@@ -275,7 +275,11 @@ To enable MFA token caching, complete the following steps:
 2. In the client connection string, update the authenticator value to `authenticator = username_password_mfa`.
 3. Add the package or libraries needed by the driver or connector:
 
-   - If you are using the Snowflake Connector for Python, install the optional keyring package by running:
+   - The Snowflake Connector for Python caches tokens without the `secure-local-storage` extra. Install the connector as described in [Installing the Python Connector](/developer-guide/python-connector/python-connector-install).
+
+     Note
+
+     Before version 5.0, Linux token caching required the optional keyring package:
 
      > Copy code
      >
@@ -287,7 +291,7 @@ To enable MFA token caching, complete the following steps:
      >
      > Use quotes around the name of the package as shown to prevent the square brackets from being interpreted as a wildcard.
      >
-     > If you need to install other extras (for example, `pandas` for [using the Python Connector APIs for Pandas](/developer-guide/python-connector/python-connector-pandas#label-python-connector-pandas-install)), use a comma between the extras:
+     > If you need to install other extras (for example, `pandas` for [using the Python Connector APIs for pandas](/developer-guide/python-connector/python-connector-pandas)), use a comma between the extras:
      >
      > Copy code
      >

@@ -1,8 +1,3 @@
-[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-Currently, this feature is only available on Amazon Web Services (AWS) and Microsoft Azure.
-
 # Create a mirror
 
 Follow these steps to create a mirror from Snowflake Postgres to a Snowflake analytics database.

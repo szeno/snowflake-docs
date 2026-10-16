@@ -18,6 +18,7 @@ In Windows:
 
 - In ODBC 4.x, configure logging and driver-manager encoding in `sf.odbc.ini`, not in the driver registry key.
   Use `%APPDATA%\snowflake\sf.odbc.ini`, or set `SF_ODBC_INI` to the full path of your file before starting the application.
+  A path that points at a directory is skipped, so it does not hide the standard per-user `sf.odbc.ini`.
   See [4.x configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config) for the search order and supported keys.
 - In ODBC 3.x, [configuration parameters](#label-odbc-configuration-parameters) are set in the Windows registry using **regedit**
   and the following registry path:
@@ -171,6 +172,9 @@ In macOS or Linux:
 
     In ODBC 4.x, set this key in `sf.odbc.ini` to `OFF`, `ERROR`, `WARN` (or `WARNING`), `INFO`, `DEBUG`, or `TRACE`.
     Numeric log levels and `FATAL` are not accepted in this file.
+    Starting with version 4.1.0, each `SQLConnect`, `SQLDriverConnect`, and `SQLBrowseConnect` re-reads
+    `LogLevel` and `LogPath` and applies any change before the connection proceeds. You do not need to restart the process.
+    `DriverManagerEncoding` is still read once per process. `LogLevel`, `LogPath`, and `TRACING` in a DSN stay ignored.
 
     In ODBC 3.x, use the following numeric values:
 
@@ -393,9 +397,8 @@ Set `CRL_MODE=ENABLED` in the DSN or connection string to enable fail-close revo
 complete, for example because a CRL download fails. `CRL_MODE=DISABLED` is the default.
 
 The canonical parameter name is `crl_check_mode`. The ODBC alias `CRL_ENABLED` also accepts `true` or `false`
-to select `ENABLED` or `DISABLED`. The 3.x parameters `CRL_CHECK` and `CRL_ADVISORY` do not configure CRL checking
-in 4.x. Validate the selected mode and network access to the certificate’s CRL distribution points before
-cutting over production workloads.
+to select `ENABLED` or `DISABLED`. Validate the selected mode and network access to the certificate’s CRL
+distribution points before cutting over production workloads.
 
 | Parameter | Default | Description |
 | --- | --- | --- |
@@ -415,7 +418,24 @@ Expand
 
 Show lessSee more
 
-Use these connection parameters for 4.x rather than the 3.x CRL parameters and environment variables below.
+Prefer these 4.x parameter names. Starting with version 4.1.0, these 3.x connection-string keys are aliases:
+
+| 3.x key | 4.x parameter |
+| --- | --- |
+| `CRL_ALLOW_NO_CRL` | `crl_allow_certificates_without_crl_url` |
+| `CRL_DISK_CACHING` | `crl_enable_disk_caching` |
+| `CRL_MEMORY_CACHING` | `crl_enable_memory_caching` |
+| `CRL_DOWNLOAD_TIMEOUT` | `crl_http_timeout` |
+
+Expand
+
+Show lessSee more
+
+`CRL_DOWNLOAD_TIMEOUT=0` applies the 4.x `crl_http_timeout` default of 10 seconds. The 3.x default for that key is 120 seconds.
+
+`CRL_CHECK` and `CRL_ADVISORY` are accepted and ignored. The driver posts SQLSTATE `01000` on connect. Set `CRL_MODE` to `ENABLED` for fail-close checking or `ADVISORY` for fail-open.
+
+The 3.x parameters and environment variables below still apply to the 3.x driver.
 
 #### ODBC 3.x
 
@@ -515,6 +535,7 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     > - `oauth_authorization_code` Manually authenticate using an OAuth authorization code with your web browser and a chosen identity provider (including Snowflake as an IdP). For more information, see [Using the OAuth 2.0 Authorization Code flow](#label-odbc-oauth-code-flow).
     > - `oauth_client_credentials` Automatically authenticate using OAuth client credentials with your chosen identity provider (Snowflake as an IdP doesn’t support the client credentials flow). For more information, see [Using the OAuth 2.0 Client Credentials flow](#label-odbc-oauth-client-flow).
     > - `programmatic_access_token` to authenticate with a programmatic access token (PAT).
+    > - `PAT_WITH_EXTERNAL_SESSION` to authenticate with a programmatic access token and reuse a server-side session. Set `token` and `external_session_id`.
     > - `workload_identity` to authenticate with the [workload identity federation (WIF)](/user-guide/workload-identity-federation) authenticator.
 
     Default is `snowflake`.
@@ -595,7 +616,7 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     These parameters were introduced in version 2.23.2 of the ODBC Driver.
 
-    ODBC 4.x accepts these connection-string parameters but ignores them and posts a deprecation warning.
+    ODBC 4.x supports these connection-string parameters. They change the reported sizes of max-length VARCHAR and BINARY columns in `SQLDescribeCol`, `SQLColAttribute`, and `SQLColumns`; explicitly bounded columns and fetched values remain unchanged. Unset or negative values preserve the session maximum.
 
 `get_size_threshold`
 :   Specifies the minimum file size, in megabytes (MB), to break files into smaller parts when downloading files with the [GET](/sql-reference/sql/get) command.
@@ -752,9 +773,12 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
     process temporary directory.
 
 `token=<string>`
-:   Specifies the token for OAuth or PAT authentication, where `<string>` is the token. This parameter is required only when the `authenticator=oauth` or `authenticator=programmatic_access_token` parameter is set.
+:   Specifies the token for OAuth or PAT authentication, where `<string>` is the token. This parameter is required only when the `authenticator=oauth`, `authenticator=programmatic_access_token`, or `authenticator=PAT_WITH_EXTERNAL_SESSION` parameter is set.
 
     Default is none.
+
+`external_session_id`
+:   Server-side session identifier to reuse when `authenticator=PAT_WITH_EXTERNAL_SESSION`. Available starting with ODBC Driver 4.1.0.
 
 `query_timeout`
 :   Specifies how long, in seconds, to wait for a query to complete before returning an error. Zero (0) indicates to wait indefinitely.
@@ -817,10 +841,10 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 
     This argument is supported for AWS and Google Cloud workloads and only applies when `authenticator=WORKLOAD_IDENTITY`.
 
-`wif_host` (ODBC 3.x only)
+`wif_host`
 :   Overrides the STS/IAM endpoint used for AWS or Google Cloud Workload Identity Federation in ODBC 3.x. The DSN key is `WORKLOAD_IDENTITY_HOST_KEY`.
 
-    ODBC 4.x does not support this endpoint override and has no equivalent replacement. `WORKLOAD_IDENTITY_AUDIENCE` is not a supported ODBC 4.x connection parameter.
+    Starting with version 4.1.0, `wif_host` sets the AWS STS endpoint for Workload Identity Federation. When unset, the driver uses the regional default. `WORKLOAD_IDENTITY_AUDIENCE` is not a supported ODBC 4.x connection parameter.
 
 `PRIV_KEY_BASE64`
 :   Base64-encoded private key.
@@ -1138,6 +1162,9 @@ To enable the workload identity federation authenticator, do the following:
 Configure logging in `sf.odbc.ini`. Set `LogPath` to a writable directory and `LogLevel` to a string value such as `INFO` or `DEBUG`.
 Use `LogRotation` for time-based rotation and `LogMaxCount` to limit retained files. Size-based rotation is not implemented.
 The 3.x `sf_client_config.json` logging mechanism does not apply to 4.x.
+Starting with version 4.1.0, each `SQLConnect`, `SQLDriverConnect`, and `SQLBrowseConnect` re-reads `LogLevel` and `LogPath`
+and applies any change before the connection proceeds, so an edit takes effect on the next connect without restarting the process.
+`DriverManagerEncoding` is still read once per process.
 For supported keys and platform-specific file locations, see [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
 
 ### ODBC 3.x

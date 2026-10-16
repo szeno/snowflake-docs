@@ -12,13 +12,17 @@ Cortex Code is an AI coding assistant built into Snowflake Workspaces. Because y
 
 ## Prerequisites
 
-To use Cortex Code, grant the following database roles to your Workday LDQ role:
+To use Cortex Code, grant `SNOWFLAKE.CORTEX_USER` to your Workday LDQ role. Until
+[BCR-2445](/release-notes/bcr-bundles/un-bundled/bcr-2445) reaches your account, also grant
+`SNOWFLAKE.COPILOT_USER`:
 
 Copy code
 
 ```
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER TO ROLE WORKDAY_LDQ_TEST_ROLE;
+
+-- Required until BCR-2445 reaches your account.
 GRANT DATABASE ROLE SNOWFLAKE.COPILOT_USER TO ROLE WORKDAY_LDQ_TEST_ROLE;
-GRANT DATABASE ROLE SNOWFLAKE.CORTEX_USER  TO ROLE WORKDAY_LDQ_TEST_ROLE;
 ```
 
 ## Access Cortex Code

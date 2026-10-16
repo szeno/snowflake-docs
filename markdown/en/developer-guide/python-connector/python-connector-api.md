@@ -69,7 +69,7 @@ connect(parameters…)
         | `user` | Yes | Login name for the user. |
         | `password` | Yes | Password for the user. |
         | `application` |  | Name that identifies the application making the connection. |
-        | `region` |  | \*Deprecated\* This description of the parameter is for backwards compatibility only.. |
+        | `region` |  | Unknown connection parameter. `connect()` warns and forwards the value as a login session parameter named `REGION`. It is not used to build the hostname, and `Connection` has no `region` property. Pass a fully qualified `account` identifier, such as `myaccount.us-east-1`, or set `host`.  Note  Before version 5.0, `region` was used to build the Snowflake hostname, and reading `Connection.region` returned the value and emitted a `PendingDeprecationWarning`. |
         | `host` |  | Host name. |
         | `port` |  | Port number (`443` by default). |
         | `database` |  | Name of the default database to use. After login, you can use [USE DATABASE](/sql-reference/sql/use-database) to change the database. |
@@ -80,25 +80,33 @@ connect(parameters…)
         | `passcode` |  | The passcode provided by Duo when using MFA (Multi-Factor Authentication) for login. |
         | `private_key` |  | The private key used for authentication. For more information, see [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
         | `private_key_file` |  | Specifies the path to the private key file for the specified user. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
-        | `private_key_file_pwd` |  | Specifies the passphrase to decrypt the private key file for the specified user. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
+        | `private_key_password` |  | Specifies the passphrase to decrypt the private key file for the specified user. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). The connector still accepts `private_key_file_pwd` and `private_key_passphrase` and maps them to `private_key_password`, but using them emits a `DeprecationWarning`.  Note  Before version 5.0, this parameter was named `private_key_file_pwd` (and `private_key_passphrase` was also accepted). |
         | `autocommit` |  | `None` by default, which honors the Snowflake parameter [AUTOCOMMIT](/sql-reference/parameters). Set to `True` or `False` to enable or disable autocommit mode in the session, respectively. |
-        | `client_fetch_use_mp` |  | When set to `True`, it enables multi-processed fetching, which for many cases should reduce the fetching time. Default: `False`. |
-        | `client_prefetch_threads` |  | Number of threads used to download the results sets (`4` by default). Increasing the value improves fetch performance but requires more memory. |
+        | `client_fetch_use_mp` |  | Accepted and ignored. Passing it emits a `DeprecationWarning`. Chunk download always uses a thread pool.  Note  Before version 5.0, `True` switched chunk fetching from a thread pool to a process pool. The default was `False`. |
+        | `client_prefetch_threads` |  | Number of threads used to download the result sets (`4` by default). Increasing the value improves fetch performance but requires more memory. `client_fetch_threads` is still accepted as an alias and emits a `DeprecationWarning`.  Note  Before version 5.0, `client_fetch_threads` set this pool size and defaulted to `client_prefetch_threads`. |
         | `client_session_keep_alive` |  | To keep the session active indefinitely (even if there is no activity from the user), set this to `True`. When setting this to `True`, call the `close` method to terminate the thread properly; otherwise, the process might hang. The default value depends on the version of the connector that you are using:   - **Version 2.4.6 and later:** `None` by default.   When the value is `None`, the [CLIENT\_SESSION\_KEEP\_ALIVE](/sql-reference/parameters#label-client-session-keep-alive) session parameter takes precedence.     To override the session parameter, pass in `True` or `False` for this argument. - **Version 2.4.5 and earlier:** `False` by default.   When the value is `False` (either by specifying the value explicitly or by omitting the argument), the [CLIENT\_SESSION\_KEEP\_ALIVE](/sql-reference/parameters#label-client-session-keep-alive) session parameter takes precedence.   Passing `client_session_keep_alive=False` to the `connect` method does not override the value `TRUE` in the `CLIENT_SESSION_KEEP_ALIVE` session parameter. |
-        | `login_timeout` |  | Timeout in seconds for login. By default, 60 seconds. The login request gives up after the timeout length if the HTTP response is “success”. |
-        | `network_timeout` |  | Timeout in seconds for all other operations. By default, none/infinite. A general request gives up after the timeout length if the HTTP response is not “success”. |
-        | `ocsp_response_cache_filename` |  | URI for the OCSP response cache file. By default, the OCSP response cache file is created in the cache directory:   - Linux: `~/.cache/snowflake/ocsp_response_cache` - macOS: `~/Library/Caches/Snowflake/ocsp_response_cache` - Windows: `%USERPROFILE%AppDataLocalSnowflakeCachesocsp_response_cache`   To locate the file in a different directory, specify the path and file name in the URI (e.g. `file:///tmp/my_ocsp_response_cache.txt`).. |
+        | `login_timeout` |  | Timeout in seconds for login, including retries. The default is 120. The property returns `120` when unset. See [Managing connection timeouts](/developer-guide/python-connector/python-connector-connect#label-python-manage-timeouts).  Note  Before version 5.0, the connector applied a 120-second budget internally, but `conn.login_timeout` returned `None` when you did not set the parameter. |
+        | `query_timeout` |  | Wall-clock timeout in seconds for query execution, including retries. The default is `0` (no timeout). |
+        | `request_timeout` |  | Wall-clock timeout in seconds for other operations, such as logout and heartbeats, including retries. The default is 120. `0` means no timeout. |
+        | `network_timeout` |  | Deprecated. Passing it emits a `DeprecationWarning` and copies the value to `query_timeout` and `request_timeout` unless you set one of those yourself. `conn.network_timeout` returns `request_timeout`.  Note  Before version 5.0, this was a single wall-clock budget for non-login HTTP operations, defaulting to no cap, and the property returned `None` when unset. |
+        | `ocsp_response_cache_filename` |  | Unknown connection parameter. `connect()` warns and forwards the value as a login session parameter. It does not configure revocation. Revocation checking uses CRLs. See [Certificate revocation checking](/developer-guide/python-connector/python-connector-connect#label-python-crl).  Note  Before version 5.0, this was the URI of the OCSP response cache file. The default locations were `~/.cache/snowflake/ocsp_response_cache` on Linux, `~/Library/Caches/Snowflake/ocsp_response_cache` on macOS, and `%USERPROFILE%\AppData\Local\Snowflake\Caches\ocsp_response_cache` on Windows. |
         | `authenticator` |  | Authenticator for Snowflake:   - `snowflake` (default) to use the internal Snowflake authenticator. - `externalbrowser` to authenticate using your web browser and Okta, AD FS, or any other SAML 2.0-compliant identity provider (IdP) that has been defined for your account.   You can enable the `SNOWFLAKE_AUTH_FORCE_SERVER` environment variable to force re-authentication through the browser even if a valid SSO session exists. For more information, see [Using connection caching to minimize the number of prompts for authentication — \*Optional\*](/user-guide/admin-security-fed-auth-use#label-browser-based-sso-connection-caching).   - `https://<okta_account_name>.okta.com` (i.e. the URL endpoint for your Okta account) to authenticate through native Okta. - `oauth` to authenticate using OAuth. You must also specify the `token` parameter and set its value to the OAuth access token. - `username_password_mfa` to authenticate with MFA token caching. For more details, see [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching). - `OAUTH_AUTHORIZATION_CODE` to use the OAuth 2.0 Authorization Code flow. - `OAUTH_CLIENT_CREDENTIALS` to use the OAuth 2.0 Client Credentials flow. - `WORKLOAD_IDENTITY` to authenticate with the [workload identity federation (WIF)](/user-guide/workload-identity-federation) authenticator.   If the value is not `snowflake`, the user and password parameters must be your login credentials for the IdP. |
         | `validate_default_parameters` |  | `False` by default. If `True`, then:   - Raise an exception if the specified database, schema, or warehouse doesn’t exist. - Print a warning to stderr if an invalid argument name or an argument value of the wrong data type is passed. |
         | `paramstyle` |  | `pyformat` by default for client side binding. Specify `qmark` or `numeric` to change bind variable formats for server side binding. |
         | `timezone` |  | `None` by default, which honors the Snowflake parameter [TIMEZONE](/sql-reference/parameters). Set to a valid time zone (e.g. `America/Los_Angeles`) to set the session time zone. |
         | `arrow_number_to_decimal` |  | `False` by default, which means that [NUMBER](/sql-reference/data-types-numeric#label-data-type-number) column values are returned as double-precision floating point numbers (`float64`).     Set this to `True` to return DECIMAL column values as decimal numbers (`decimal.Decimal`) when calling the `fetch_pandas_all()` and `fetch_pandas_batches()` methods.     This parameter was introduced in version 2.4.3 of the Snowflake Connector for Python. |
-        | `socket_timeout` |  | Timeout in seconds for socket-level read and connect requests. For more information, see [Managing connection timeouts](/developer-guide/python-connector/python-connector-connect#label-python-manage-timeouts). |
-        | `backoff_policy` |  | Name of the generator function that defines how long to wait between retries. For more information, see [Managing connection backoff policies for retries](/developer-guide/python-connector/python-connector-connect#label-python-manage-retries). |
+        | `connect_timeout` |  | Timeout in seconds for establishing a single HTTP connection. There is no default cap. |
+        | `retry_timeout` |  | Hard wall-clock cap in seconds on one HTTP attempt, including the response body. There is no default cap. See [Managing connection timeouts](/developer-guide/python-connector/python-connector-connect#label-python-manage-timeouts). |
+        | `socket_timeout` |  | Deprecated. Passing it emits a `DeprecationWarning` and copies the value to `connect_timeout` and `retry_timeout` unless you set one of those yourself. `conn.socket_timeout` returns `retry_timeout`. The same number can abort an active chunk download because `retry_timeout` caps the whole attempt.  Note  Before version 5.0, this was a per-attempt read-inactivity timeout that reset when bytes arrived, so an active download did not trip it. |
+        | `retry_backoff_base_ms` |  | Initial retry delay in milliseconds. The default is 250.  Note  Before version 5.0, the default initial delay was 1 second, set through `backoff_policy`. |
+        | `retry_backoff_factor` |  | Multiplier applied to the retry delay after each attempt. The default is 2. |
+        | `retry_backoff_cap_ms` |  | Maximum retry delay in milliseconds. The default is 16000. |
+        | `retry_backoff_jitter` |  | Jitter strategy: `none`, `full`, or `decorrelated`. The default is `decorrelated`.  Note  Before version 5.0, the default was full jitter. |
+        | `backoff_policy` |  | Not used. Passing it emits a `DeprecationWarning` and has no effect. Set `retry_backoff_base_ms`, `retry_backoff_factor`, `retry_backoff_cap_ms`, and `retry_backoff_jitter` instead. See [Managing retry backoff](/developer-guide/python-connector/python-connector-connect#label-python-manage-retries).  Note  Before version 5.0, this was a generator, such as `exponential_backoff()` or a custom function, that computed the delay before each retry. |
         | `enable_connection_diag` |  | Whether to generate a connectivity diagnostic report. Default is `False`. |
         | `connection_diag_log_path` |  | Absolute path for the location of the diagnostic report. Used only if `enable_connection_diag` is `True`. Default is the default temp directory for your operating system, such as `/tmp` for Linux or Mac. |
         | `connection_diag_allowlist_path` |  | Absolute path to a JSON file containing the output of `SYSTEM$ALLOWLIST()` or `SYSTEM$ALLOWLIST_PRIVATELINK()`. Required only if the user defined in the connection does not have permission to run the system allowlist functions or if connecting to the account URL fails. |
-        | `iobound_tpe_limit` |  | Size of the preprocess\_tpe and postprocess threadpool executors (TPEs). By default, the value is the lesser of the number of files and the number of CPU cores. |
+        | `iobound_tpe_limit` |  | Accepted and ignored. Passing it emits a `DeprecationWarning`. `Connection.iobound_tpe_limit` does not exist.  Note  Before version 5.0, this capped the number of I/O worker threads for PUT and GET. When unset, the cap was the lesser of the number of files and the number of CPU cores. |
         | `unsafe_file_write` |  | Specifies which file permissions to assign to files downloaded from a stage using a GET command. `False` (default) sets the file permissions to `600`, which means only the owner can access the files. `True` sets the permissions to `644`, which gives the owner read and write permissions and read-only permissions to everyone else. For more information, see [Downloading data](/developer-guide/python-connector/python-connector-example#label-python-connector-downloading-data). |
         | `oauth_client_id` |  | Value of `client id` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata). |
         | `oauth_client_secret` |  | Value of the `client secret` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata). |
@@ -107,28 +115,29 @@ connect(parameters…)
         | `oauth_scope` |  | Scope requested in the Identity Provider authorization request. By default, it is derived from the role. When multiple scopes are required, the value should be a space-separated list of multiple scopes. |
         | `oauth_redirect_uri` |  | URI to use for authorization code redirection (Snowflake security integration metadata). Default: `http://127.0.0.1:{randomAvailablePort}`. |
         | `oauth_disable_pkce` |  | Disables Proof Key for Code Exchange (PKCE), a security enhancement that ensures that even if malicious attackers intercept an Authorization Code, they won’t be able to change it to a valid access token. |
-        | `oauth_enable_refresh_token` |  | Enables a silent re-authentication when the actual access token becomes outdated, providing it’s supported by the Authorization Server and `client_store_temporary_credential` is set to `True`. |
+        | `oauth_enable_refresh_tokens` |  | Accepted and ignored. Passing it emits a `DeprecationWarning`. The connector always uses a refresh token when the identity provider returns one. Use `client_store_temporary_credential` to control caching.  Note  Before version 5.0, this parameter defaulted to `True` and, when `False`, the connector did not use the refresh token to renew an expired access token. |
         | `oauth_enable_single_use_refresh_tokens` |  | Whether to opt-in to single-use refresh token semantics. |
-        | `oauth_credentials_in_body` |  | Whether or not credentials should be sent in the body for OAuth authentication. Default is `False`. |
+        | `oauth_credentials_in_body` |  | When `True`, send `client_id` and `client_secret` in the token-request body only (the default is `False`, which uses HTTP Basic).  Note  Before version 5.0, `True` added the credentials to the body and still sent the HTTP Basic header, so the secret was in both places. |
         | `oauth_socket_uri` |  | URI to use for the OAuth socket connection. Default: `http://127.0.0.1:{randomAvailablePort}`. |
-        | `client_store_temporary_credential` |  | Whether or not to allow clients to cache SSO credentials on the client side. For this setting to take effect, caching must be enabled on the server. For more information, see [Using connection caching to minimize the number of prompts for authentication — \*Optional\*](/user-guide/admin-security-fed-auth-use#label-browser-based-sso-connection-caching). Default is `False`. |
-        | `client_request_mfa_token` |  | Whether or not to allow clients to cache MFA credentials on the client side For this setting to take effect, caching must be enabled on the server. For more information, see [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching). Default is `False`. |
+        | `client_store_temporary_credential` |  | Whether to cache ID, OAuth, and MFA tokens on the client. Caching must also be enabled on the server. See [Using connection caching to minimize the number of prompts for authentication — \*Optional\*](/user-guide/admin-security-fed-auth-use#label-browser-based-sso-connection-caching) and [Using MFA token caching to minimize the number of prompts during authentication — \*optional\*](/user-guide/security-mfa#label-mfa-token-caching). The default is `True` on every platform. Set it to `False` to disable caching, including external-browser login on macOS and Windows. `client_request_mfa_token` is a deprecated alias and still maps to this parameter with a `DeprecationWarning`.  Note  Before version 5.0, the parameter defaulted to `False`. External-browser login on macOS and Windows still cached an ID token when you omitted the flag. Linux and OAuth authorization-code caching followed the parameter. `client_request_mfa_token` enabled MFA token caching only. |
         | `workload_identity_provider` |  | Platform of the workload identity provider. Possible values include: `AWS`, `AZURE`, `GCP`, and `OIDC`. |
         | `workload_identity_impersonation_path` |  | An array of strings that provide an identity chain to use when connecting to Snowflake. Array elements are either a full service account address or a service account’s unique ID.  Impersonation works by following each array entry in order to obtain a token that allows authorization of the next service account. Each account in the identity chain needs permissions to impersonate the next account only. The final account in the list obtains your Snowflake connection token and is used to connect to Snowflake.  Account impersonation is supported only for Google Cloud and AWS workloads. |
         | `unsafe_skip_file_permissions_check` |  | Whether to skip permissions checks on file access. Default is `False`. |
-        | `cert_revocation_check_mode` |  | Certificate revocation check mode. For accepted values, see [CertRevocationCheckMode](#label-python-crl-validation-options). |
-        | `allow_certificates_without_crl_url` |  | Whether to allow certificates without certificate revocation list distribution points. Default is `False`. |
-        | `crl_connection_timeout_ms` |  | The connection timeout for certificate revocation list downloads, in milliseconds. Default is `3000`. |
-        | `crl_read_timeout_ms` |  | The read timeout for certificate revocation list downloads, in milliseconds. Default is `3000`. |
-        | `crl_cache_validity_hours` |  | How long the certificate revocation list cache is valid, in hours. Default is `24`. |
-        | `enable_crl_cache` |  | Whether or not to enable certificate revocation list caching. Default is `True`. |
-        | `enable_crl_file_cache` |  | Whether to cache certificate revocation list to disk. Applies only when `enable_crl_cache` is `True`. Default is `True`. |
-        | `crl_cache_dir` |  | The directory to store the certificate revocation list cache in. Applies only when `enable_crl_file_cache` is `True`. |
-        | `crl_cache_removal_delay_days` |  | The amount of time to keep expired certificate revocation list files on disk, in days. Default is `7`. |
-        | `crl_cache_cleanup_interval_hours` |  | How often to clean the certificate revocation list cache, in hours. Default is `1`. |
+        | `crl_check_mode` |  | CRL check mode: `DISABLED` (default), `ADVISORY`, or `ENABLED`. See [Module:](#label-python-crl-validation-options). `cert_revocation_check_mode` is still accepted as a silent alias.  Note  Before version 5.0, the parameter was `cert_revocation_check_mode` and took the `CertRevocationCheckMode` enum. |
+        | `crl_allow_certificates_without_crl_url` |  | Whether to allow certificates without certificate revocation list distribution points. Default is `False`. `allow_certificates_without_crl_url` is still accepted as a silent alias.  Note  Before version 5.0, the parameter was named `allow_certificates_without_crl_url`. |
+        | `crl_connection_timeout` |  | The connection timeout for certificate revocation list downloads, in seconds. Default is `10`. `crl_connection_timeout_ms` is still accepted and converted to seconds.  Note  Before version 5.0, `crl_connection_timeout_ms` set the same timeout in milliseconds (default `3000`). |
+        | `crl_http_timeout` |  | The HTTP timeout for certificate revocation list downloads, in seconds. Default is `10`. `crl_read_timeout_ms` is still accepted and converted to seconds.  Note  Before version 5.0, `crl_read_timeout_ms` set this in milliseconds (default `3000`). |
+        | `crl_validity_time` |  | How long a cached certificate revocation list stays valid, in seconds. Default is `86400` (24 hours). `crl_cache_validity_hours` is still accepted and converted to seconds.  Note  Before version 5.0, `crl_cache_validity_hours` set this in hours (default `24`). |
+        | `crl_enable_memory_caching` |  | Whether to cache certificate revocation lists in memory. Default is `True`. `enable_crl_memory_cache` is still accepted as a silent alias. `enable_crl_cache` is accepted, emits a `DeprecationWarning`, and has no effect.  Note  Before version 5.0, `enable_crl_memory_cache` was this switch, and `enable_crl_cache=False` disabled it along with the disk cache. |
+        | `crl_enable_disk_caching` |  | Whether to cache certificate revocation lists on disk. Default is `True`. It is independent of `crl_enable_memory_caching`. `enable_crl_file_cache` is still accepted as a silent alias.  Note  Before version 5.0, `enable_crl_file_cache` applied only when `enable_crl_cache` was `True`. |
+        | `crl_cache_dir` |  | The directory to store the certificate revocation list cache in. Used when `crl_enable_disk_caching` is `True`. |
+        | `crl_on_disk_cache_removal_delay` |  | How long to keep expired certificate revocation list files on disk, in seconds. Default is `604800` (7 days). `crl_cache_removal_delay_days` is still accepted and converted to seconds.  Note  Before version 5.0, `crl_cache_removal_delay_days` set this in days (default `7`). |
+        | `crl_cache_cleanup_interval` |  | How often to clean the certificate revocation list cache, in seconds. Default is `3600`. `crl_cache_cleanup_interval_hours` is still accepted and converted to seconds.  Note  Before version 5.0, `crl_cache_cleanup_interval_hours` set this in hours (default `1`). |
         | `crl_cache_start_cleanup` |  | Whether to run certificate revocation list cleanup activities in the background. Default is `False`. |
-        | `ocsp_root_certs_dict_lock_timeout` |  | Timeout for acquiring the lock on the OCSP root certs dictionary, in seconds. A value of `-1` disables timeouts. Default is `-1`. |
-        | `no_proxy` |  | Comma-separated list of hostnames that should bypass the proxy. You can use an asterisk (`*`) in the hostnames. For more information, see [Using a proxy server](/developer-guide/python-connector/python-connector-connect#label-python-using-a-proxy-server). |
+        | `ocsp_root_certs_dict_lock_timeout` |  | Unknown connection parameter. `connect()` warns and forwards the value as a login session parameter. It does not configure revocation.  Note  Before version 5.0, this was the timeout, in seconds, for acquiring the lock on the OCSP root certificates dictionary. A value of `-1` disabled the timeout. The default was `-1`. |
+        | `use_proxy_env` |  | When `True` (the default), read `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY`. Pass `False` to ignore them. Explicit `proxy_host` and `proxy_port` win over those variables. See [Using a proxy server](/developer-guide/python-connector/python-connector-connect#label-python-using-a-proxy-server).  Note  Before version 5.0 (since 3.17.0), the connector always read the variables, and they overrode explicit proxy parameters. |
+        | `use_s3_regional_url` |  | When `True`, PUT and GET use the S3 regional endpoint. The default is `False`. Required for PrivateLink-to-S3 and for Snowpipe Streaming. `enable_stage_s3_privatelink_for_us_east_1` is still accepted and emits a `DeprecationWarning`.  Note  Before version 5.0, the parameter was `enable_stage_s3_privatelink_for_us_east_1`. The `_for_us_east_1` suffix was historical: the setting applied to every S3 region. |
+        | `no_proxy` |  | Comma-separated list of hostnames that should bypass the proxy. See [Using a proxy server](/developer-guide/python-connector/python-connector-connect#label-python-using-a-proxy-server). When `use_proxy_env` is `True` (the default), `NO_PROXY` is also read. An explicit `no_proxy` value wins. |
 
         Expand
 
@@ -664,16 +673,7 @@ fetch\_pandas\_all()
     :   Copy code
 
         ```
-        ctx = snowflake.connector.connect(
-                  host=host,
-                  user=user,
-                  password=password,
-                  account=account,
-                  warehouse=warehouse,
-                  database=database,
-                  schema=schema,
-                  protocol='https',
-                  port=port)
+        ctx = snowflake.connector.connect()
 
         # Create a cursor object.
         cur = ctx.cursor()
@@ -716,16 +716,7 @@ fetch\_pandas\_batches()
     :   Copy code
 
         ```
-        ctx = snowflake.connector.connect(
-                  host=host,
-                  user=user,
-                  password=password,
-                  account=account,
-                  warehouse=warehouse,
-                  database=database,
-                  schema=schema,
-                  protocol='https',
-                  port=port)
+        ctx = snowflake.connector.connect()
 
         # Create a cursor object.
         cur = ctx.cursor()
@@ -1027,9 +1018,13 @@ QueryStatus
     Show lessSee more
 
 CertRevocationCheckMode
-:   How to treat certificate revocation lists (CRLs) attached to a certificate. This enum has the following constants:
+:   `crl_check_mode` is a string. Pass one of the following values. The `CertRevocationCheckMode` enum does not exist. The old parameter name is still accepted as a silent alias.
 
-    | Enum Constant | Description |
+    Note
+
+    Before version 5.0, the same values were constants on the `CertRevocationCheckMode` enum, passed as `cert_revocation_check_mode`.
+
+    | Value | Description |
     | --- | --- |
     | DISABLED | No revocation check is done. |
     | ADVISORY | Only a revoked certificate can invalidate the chain. Errors related to the CRL don’t revoke a certificate. |
@@ -1070,6 +1065,7 @@ write\_pandas(parameters…)
         | `on_error` |  | Specifies how errors should be handled. Set this to one of the string values documented in the `ON_ERROR` [copy option](/sql-reference/sql/copy-into-table#label-copy-into-table-copyoptions). By default, the function uses `"ABORT_STATEMENT"`. |
         | `parallel` |  | Number of threads to use when uploading the Parquet files to the temporary stage. For the default number of threads used and guidelines on choosing the number of threads, see [the parallel parameter of the PUT command](/sql-reference/sql/put#label-put-parameter-parallel). |
         | `quote_identifiers` |  | If `False`, prevents the connector from [putting double quotes around identifiers](/sql-reference/identifiers-syntax) before sending the identifiers to the server. By default, the connector puts double quotes around identifiers. |
+        | `table_type` |  | Table kind to create when the function creates the table: `temp`, `temporary`, `transient`, or an empty string (the default) for a permanent table. The connector does not accept `create_temp_table`. Passing it raises `TypeError`.  Note  Before version 5.0, `create_temp_table=True` was a deprecated alias for `table_type='temp'` and emitted a `DeprecationWarning`. |
 
         Expand
 

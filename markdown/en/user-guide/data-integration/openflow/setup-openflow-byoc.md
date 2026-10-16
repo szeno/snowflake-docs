@@ -15,6 +15,20 @@ Setting up Openflow involves the following steps:
 
 The prerequisites to be completed on your Snowflake and AWS accounts are as follows:
 
+### Accept the Openflow BYOC Terms
+
+Accept the Openflow BYOC Terms before you set up a BYOC deployment. You only need to accept them
+once for your organization.
+
+1. Sign in to Snowflake as an [organization administrator](/user-guide/organization-administrators).
+2. In the navigation menu, select **Admin** » **Terms**.
+3. In the **Openflow** section, locate **Openflow BYOC Terms**.
+4. Review the agreement and select **Accept**.
+
+   If the terms are already marked **Accepted**, someone in your organization accepted them
+   earlier and you can skip this step. If you can’t reach the **Terms** page at all, your role
+   doesn’t have permissions to accept terms.
+
 ### Snowflake account
 
 First, grant the required privileges to the Openflow admin at the account level.
@@ -255,17 +269,6 @@ If you want to use an existing VPC and your own subnets, ensure that you have th
     Important
 
     If your VPC has no public internet egress, use [custom ingress](/user-guide/data-integration/openflow/setup-openflow-byoc-custom-ingress) instead of Snowflake managed ingress. Custom ingress eliminates the Let’s Encrypt dependency. See [Configuring private deployments](#configuring-private-deployments).
-
-## Accept the Openflow terms of service
-
-This step is only required once for your organization.
-
-1. Sign in to Snowflake as a user with the ORGADMIN role.
-2. In the navigation menu, select **Admin** » **Terms**.
-3. Locate **Openflow terms of service** in the list.
-4. Review the agreement and select **Accept**.
-
-   If you don’t see this option, the terms have already been accepted for your organization.
 
 ## Create an Openflow deployment
 

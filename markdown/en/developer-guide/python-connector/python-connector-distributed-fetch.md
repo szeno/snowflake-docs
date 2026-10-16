@@ -120,7 +120,7 @@ The next sections explain how to work with [ResultBatch](/developer-guide/python
 - [Iterating over rows in a result batch](#label-python-connector-result-batch-iterate)
 - [Materializing the rows in a result batch](#label-python-connector-result-batch-materialize)
 - [Getting the number of rows and size of a result batch](#label-python-connector-result-batch-size-count)
-- [Converting an arrow result batch to a PyArrow table or pandas DataFrame](#label-python-connector-result-batch-convert)
+- [Converting a result batch to a PyArrow table or pandas DataFrame](#label-python-connector-result-batch-convert)
 
 ### Iterating over rows in a result batch
 
@@ -174,9 +174,21 @@ uncompressed_size = first_result_batch.uncompressed_size
 Note that these attributes are available before you iterate over the result batch. You don’t need to fetch the subset of rows for
 the batch in order to get the values of these attributes.
 
-### Converting an arrow result batch to a PyArrow table or pandas DataFrame
+### Converting a result batch to a PyArrow table or pandas DataFrame
 
-To convert an `ArrowResultBatch` to a PyArrow table or a pandas DataFrame, use the following methods:
+`JSONResultBatch` and `ArrowResultBatch` are aliases of `ResultBatch`. `to_arrow()` and `to_pandas()` work on every batch, including results that the server returned as JSON.
+
+Note
+
+Before version 5.0, those methods raised `NotSupportedError` on a JSON batch, because that batch had no Arrow representation.
+
+`ResultBatch` does not expose `session_manager` or `http_config`. The core downloads chunks. After you unpickle a batch, you can pass a live `Connection`, but a connection is not required.
+
+Note
+
+Before version 5.0, those properties controlled HTTP downloads for a batch after the connection closed.
+
+To convert a batch to a PyArrow table or a pandas DataFrame, use the following methods:
 
 - `to_pandas()`: Call this method to return a pandas DataFrame containing the rows in a `ArrowResultBatch`, if you have
   [installed the pandas-compatible version of the Snowflake Connector for Python](/developer-guide/python-connector/python-connector-pandas#label-python-connector-pandas-install).

@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes how to set up the Oracle database for Openflow Connector for Oracle.
@@ -121,6 +116,9 @@ replication, run the following commands:
    ```
    ALTER TABLE schema_name.table_name ADD SUPPLEMENTAL LOG DATA (ALL) COLUMNS;
    ```
+
+   Log all columns. For logical-key requirements and troubleshooting information,
+   see [An UPDATE is missing the before-image of a logical key](/user-guide/data-integration/openflow/connectors/oracle/troubleshoot#label-oracle-logical-key-before-image-missing).
 
 ## Create the XStream administrator user
 
@@ -362,6 +360,67 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Error creating XStream Outbound Server: ' || SQLERRM);
       RAISE;
+END;
+/
+```
+
+Warning
+
+`CREATE_OUTBOUND` normally builds the LogMiner data dictionary and prepares the
+selected tables or schemas. In some cases, these steps do not run automatically.
+
+Check the following views in the container that holds the objects:
+
+Copy code
+
+```
+-- Individual tables
+SELECT table_owner, table_name
+FROM dba_capture_prepared_tables
+WHERE table_owner = 'SCHEMA_NAME';
+
+-- A complete schema
+SELECT schema_name
+FROM dba_capture_prepared_schemas
+WHERE schema_name = 'SCHEMA_NAME';
+```
+
+If a configured table or schema is missing from these views, or if Oracle logs
+contain `Missing MVDD` (multi-version data dictionary), run the following
+procedures from `CDB$ROOT`.
+
+Build the data dictionary:
+
+Copy code
+
+```
+EXEC DBMS_CAPTURE_ADM.BUILD();
+```
+
+Then prepare each table:
+
+Copy code
+
+```
+BEGIN
+  DBMS_CAPTURE_ADM.PREPARE_TABLE_INSTANTIATION(
+    table_name           => 'SCHEMA_NAME.TABLE_NAME',
+    supplemental_logging => 'ALL',
+    container            => 'YOUR_PDB_NAME');
+END;
+/
+```
+
+If the outbound server captures an entire schema, prepare the schema instead:
+
+Copy code
+
+```
+BEGIN
+  DBMS_CAPTURE_ADM.PREPARE_SCHEMA_INSTANTIATION(
+    schema_name          => 'SCHEMA_NAME',
+    supplemental_logging => 'ALL',
+    container            => 'YOUR_PDB_NAME');
 END;
 /
 ```

@@ -10,12 +10,7 @@ Snowflake connectors are supported in every region where Snowflake Openflow is a
 
 Note
 
-This connector is subject to the [Snowflake Connector Terms](https://www.snowflake.com/legal/snowflake-connector-terms/).
-
-Note
-
-The Openflow Connector for Oracle is also subject to additional terms of service beyond the standard
-connector terms of service. For more information, see the
+The Openflow Connector for Oracle is subject to the terms of service in the
 [Openflow Connector for Oracle Addendum](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/openflow-oracle-terms/).
 
 This topic describes how to troubleshoot common issues with the
@@ -161,6 +156,48 @@ schema.
    take effect.
 2. Restart replication for the affected table: see
    [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
+
+## An UPDATE is missing the before-image of a logical key
+
+If supplemental logging isn’t enabled for all columns, an incremental `UPDATE` might
+omit the before-image of one or more logical-key columns. When this happens, the
+connector marks the table `FAILED` and doesn’t apply the change. The connector log
+shows a message such as
+“`UPDATE for table <table> is missing the before-image of logical key columns [<columns>]`”.
+Without the previous key value, the merge can’t soft-delete the existing destination
+row, and applying the change would leave two active rows.
+
+Oracle includes a column in the before-image when the column changed or when
+supplemental logging covers it. Logging only primary-key columns includes the primary
+key and the columns that changed. An unchanged logical-key column is left out. The
+same applies to a composite logical key when only one of its columns changed.
+
+**Solution**
+
+1. Check which supplemental logging is enabled. Either `SUPPLEMENTAL_LOG_DATA_ALL`
+   must be `YES`, or the table must have a log group of type `ALL COLUMN LOGGING`:
+
+   Copy code
+
+   ```
+   SELECT supplemental_log_data_all, supplemental_log_data_pk
+   FROM v$database;
+
+   SELECT log_group_name, log_group_type
+   FROM dba_log_groups
+   WHERE owner = 'YOUR_SCHEMA'
+     AND table_name = 'YOUR_TABLE';
+   ```
+2. Enable supplemental logging for all columns on the database or on the affected
+   table. For the commands, see
+   [Enable XStream and supplemental logging](/user-guide/data-integration/openflow/connectors/oracle/setup-oracledb#label-enable-xstream-and-supplemental-logging).
+3. Restart replication for the affected table so the connector takes a fresh snapshot.
+   See
+   [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
+
+   Don’t recover this table by replaying redo in incremental-only mode. The change
+   record already stored in the redo logs still lacks the before-image, and the table
+   fails again. See [Recover a table using incremental-only mode](/user-guide/data-integration/openflow/connectors/oracle/incremental-replication#label-of-oracle-recover-table-incremental-only).
 
 ## A logical-key configuration references a column that doesn’t exist
 
