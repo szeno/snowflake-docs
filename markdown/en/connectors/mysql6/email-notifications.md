@@ -105,8 +105,8 @@ Where:
 > `app_db_name`
 > :   Specifies the name of the connector database.
 
-The connector requires the `SELECT` privilege on the view. It also requires `USAGE` privilege both on the database
-and the schema that contains the view. To grant these privileges, run the following commands:
+The connector requires the `SELECT` privilege on the view. It also requires `USAGE` privilege or any other privilege
+both on the database and the schema that contains the view. To grant these privileges, run the following commands:
 
 > Copy code
 >

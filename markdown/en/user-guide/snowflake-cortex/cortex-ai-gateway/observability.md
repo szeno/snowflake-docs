@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 Cortex AI Gateway records traces and spans for all requests traversing the gateway. Traces give you
 full execution transparency into agent behavior: which models were invoked, step timing, token

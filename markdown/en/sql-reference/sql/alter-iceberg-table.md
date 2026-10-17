@@ -42,6 +42,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
   [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
+  [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
 
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ REPLACE_INVALID_CHARACTERS ]
@@ -51,6 +52,9 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR ]
   [ ENABLE_ICEBERG_MERGE_ON_READ ]
   [ ENABLE_SCHEMA_EVOLUTION ]
+  [ ALLOW_V3_EXPRESSION_DEFAULTS ]
+
+ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UPGRADE TO ICEBERG VERSION 3
 
 ALTER ICEBERG TABLE [ IF EXISTS ] dataGovnPolicyTagAction
 
@@ -386,6 +390,15 @@ Where:
 
     Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
 
+`ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE }`
+:   For Snowflake-managed Iceberg v3 tables only, specifies whether the table allows column defaults that Snowflake can’t evaluate to a
+    constant, such as `CURRENT_DATE()`, sequences, and identity columns. These defaults aren’t written to Iceberg metadata, so only
+    Snowflake writes use them.
+
+    You can’t set this parameter to `FALSE` or unset it while the table has an expression, sequence, or identity default.
+    For more information, see [ALLOW\_V3\_EXPRESSION\_DEFAULTS](/sql-reference/parameters#label-allow-v3-expression-defaults) and
+    [Use expression defaults with Snowflake-managed tables](/user-guide/tables-iceberg-default-values#label-tables-iceberg-expression-defaults).
+
 `UNSET`
 :   Currently, you can only unset the following parameters with this command:
 
@@ -396,6 +409,16 @@ Where:
     > - `ICEBERG_MERGE_ON_READ_BEHAVIOR`
     > - `ENABLE_ICEBERG_MERGE_ON_READ`
     > - `ENABLE_SCHEMA_EVOLUTION`
+    > - `ALLOW_V3_EXPRESSION_DEFAULTS`
+
+`UPGRADE TO ICEBERG VERSION 3`
+:   Upgrades the table in place from Iceberg version 2 (v2) to version 3 (v3). The table keeps its name, privileges, and downstream
+    references. The upgrade is permanent; you can’t downgrade a v3 table to v2. For a Snowflake-managed table, you can restore the
+    pre-upgrade v2 table by using a Time Travel clone. For more information, see
+    [Restore the pre-upgrade v2 table](/user-guide/tables-iceberg-upgrade-version#label-tables-iceberg-upgrade-version-restore-v2).
+
+    Supported for Snowflake-managed tables and for externally managed tables with `CATALOG_SOURCE = ICEBERG_REST`.
+    For more information, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
 ## Clustering actions (`clusteringAction`)
 
@@ -449,11 +472,14 @@ For more information about clustering keys and reclustering, see [Understanding 
 
         Important
 
-        When you specify a default value for a column, you must specify a static value; you can’t specify an expression or
-        function for the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default
-        and write default.
+        For externally managed Iceberg tables, the default value must be a static value; you can’t specify an expression or function for
+        the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default and write default.
 
-        For more information about using default values with Iceberg tables, see [Use default values with Iceberg tables](/user-guide/tables-iceberg-manage#label-tables-iceberg-default-values).
+        For Snowflake-managed v3 Iceberg tables, you can also specify SQL expressions, sequences, and identity columns as defaults.
+        Defaults that Snowflake can’t evaluate to a constant require the ALLOW\_V3\_EXPRESSION\_DEFAULTS parameter. For more information, see
+        [Use expression defaults with Snowflake-managed tables](/user-guide/tables-iceberg-default-values#label-tables-iceberg-expression-defaults).
+
+        For more information about using default values with Iceberg tables, see [Use default values with Apache Iceberg™ tables](/user-guide/tables-iceberg-default-values).
 
 `RENAME COLUMN col_name to new_col_name`
 :   Renames the specified column to a new name that’s not currently used for any other columns in the table.
@@ -473,16 +499,21 @@ For more information about clustering keys and reclustering, see [Understanding 
 
         Important
 
-        When you specify a default value for a column, you must specify a static value; you can’t specify an expression or
-        function for the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default
-        and write default.
+        For externally managed Iceberg tables, the default value must be a static value; you can’t specify an expression or function for
+        the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default and write default.
 
-        For more information about using default values with Iceberg tables, see [Use default values with Iceberg tables](/user-guide/tables-iceberg-manage#label-tables-iceberg-default-values).
+        For Snowflake-managed v3 Iceberg tables, you can also specify SQL expressions, sequences, and identity columns as defaults.
+        Defaults that Snowflake can’t evaluate to a constant require the ALLOW\_V3\_EXPRESSION\_DEFAULTS parameter. For more information, see
+        [Use expression defaults with Snowflake-managed tables](/user-guide/tables-iceberg-default-values#label-tables-iceberg-expression-defaults).
+
+        You can’t change the write default on a table that has `ALLOW_V3_EXPRESSION_DEFAULTS = TRUE`.
+
+        For more information about using default values with Iceberg tables, see [Use default values with Apache Iceberg™ tables](/user-guide/tables-iceberg-default-values).
 
     `DROP WRITE DEFAULT`
     :   For Iceberg version 3 (v3) tables only, drops the write default value for the column.
 
-        For more information about using default values with Iceberg tables, see [Use default values with Iceberg tables](/user-guide/tables-iceberg-manage#label-tables-iceberg-default-values).
+        For more information about using default values with Iceberg tables, see [Use default values with Apache Iceberg™ tables](/user-guide/tables-iceberg-default-values).
 
 `DROP COLUMN [ IF EXISTS ] col_name [ CASCADE | RESTRICT ]`
 :   Removes the specified column from the table.
@@ -757,8 +788,53 @@ For general information about roles and privilege grants for performing SQL acti
 
   Attention
 - To troubleshooting issues with altering the CATALOG\_SYNC parameter, see [You can’t alter an Iceberg table when specifying the CATALOG\_SYNC parameter](/user-guide/tables-iceberg-open-catalog-troubleshooting#label-alter-iceberg-table-catalog-sync-parameter-troubleshooting)
+- Regarding UPGRADE TO ICEBERG VERSION 3:
+
+  - The upgrade runs as an atomic transaction. While it runs, UPDATE, DELETE, and MERGE operations are blocked, Snowflake retries INSERT
+    and COPY operations (including Snowpipe) that commit during the upgrade, and SELECT operations succeed.
+  - The following tables can’t be upgraded: tables created from Delta files, Parquet Direct tables, v2 tables with positional delete
+    files, and externally managed tables that use a catalog source
+    other than `ICEBERG_REST`.
+  - Streams that reference `METADATA$ROW_ID` stop working and must be recreated. Dynamic tables that use the table as a source are
+    reinitialized with a one-time full refresh.
+  - If a Snowflake-managed table has expression, sequence, or identity column defaults, Snowflake sets `ALLOW_V3_EXPRESSION_DEFAULTS = TRUE`
+    on the table. For externally managed tables, defaults must be literal constants; the upgrade fails if a column has an
+    expression, sequence, or identity default.
 
 ## Examples
+
+The following example upgrades a table from Iceberg v2 to v3:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE my_v2_iceberg_table UPGRADE TO ICEBERG VERSION 3;
+```
+
+The following example creates a v2 clone of an upgraded Snowflake-managed table as it existed before the upgrade, and then replaces
+the upgraded table with the clone. For the full workflow, including how to apply changes made after the upgrade, see
+[Restore the pre-upgrade v2 table](/user-guide/tables-iceberg-upgrade-version#label-tables-iceberg-upgrade-version-restore-v2).
+
+Copy code
+
+```
+CREATE ICEBERG TABLE my_table_v2
+  CLONE my_table AT (TIMESTAMP => '2026-10-16 09:00:00'::TIMESTAMP_LTZ)
+  COPY GRANTS;
+
+ALTER ICEBERG TABLE my_table RENAME TO my_table_v3_backup;
+ALTER ICEBERG TABLE my_table_v2 RENAME TO my_table;
+```
+
+The following example allows expression defaults on a Snowflake-managed v3 table, and then adds a column with an expression default:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE user_events SET ALLOW_V3_EXPRESSION_DEFAULTS = TRUE;
+
+ALTER ICEBERG TABLE user_events ADD COLUMN last_updated DATE DEFAULT CURRENT_DATE();
+```
 
 The following example sets a tag (`my_tag`) with a value of `customer` on an Iceberg table.
 

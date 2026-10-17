@@ -315,6 +315,9 @@ templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/cr
 **Limitations:**
 
 - Only the pipe `COMMENT` can be changed after creation. The `COPY INTO` body and all other pipe properties are immutable.
+- To manage an existing pipe with a DCM project, its `COPY INTO` statement must already reference objects, such as the target table
+  and the stage, by their fully qualified names. Because the `COPY INTO` statement can’t be changed, DCM Projects can’t update an existing
+  pipe to use fully qualified names.
 - `AUTO_INGEST = TRUE` requires an S3/Azure/GCS event notification to be configured outside of DCM Projects. DCM Projects creates the pipe
   but doesn’t configure the cloud-side notification.
 

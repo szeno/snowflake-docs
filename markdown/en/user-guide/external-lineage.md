@@ -204,7 +204,7 @@ GRANT ROLE dbt_lineage_role TO USER dbt_integration_user;
 The `INGEST LINEAGE` privilege authorizes a role to use external lineage, but it doesn’t grant access to the objects named in a lineage
 event. The role sending the request must also be able to resolve every Snowflake object referenced in the `inputs` and `outputs` properties
 of the payload. Snowflake resolves these objects when it receives the request, so the role needs the privileges required to see each object:
-typically `USAGE` on the database and schema that contain it, along with a privilege such as `SELECT` on the object itself.
+typically `USAGE` or any other privilege on the database and schema that contain it, along with a privilege such as `SELECT` on the object itself.
 
 Snowflake resolves the objects using the role that is in effect for the request, which is the default role of the user associated with the
 request. Granting the required privileges to a role that the user is granted, but that isn’t in effect for the request, isn’t sufficient. If

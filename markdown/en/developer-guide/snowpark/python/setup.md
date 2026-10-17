@@ -56,7 +56,8 @@ in order to have the best experience when using UDFs. For more information, see
 
 Note
 
-There is a known issue with running Snowpark Python on Apple M1 chips due to memory handling in pyOpenSSL.
+There is a known issue with running Snowpark Python on Mac computers with Apple silicon (M1 and later chips) due to memory
+handling in pyOpenSSL.
 The error message displayed is, “Cannot allocate write+execute memory for ffi.callback()”.
 
 As a workaround, set up a virtual environment that uses x86 Python using these commands:

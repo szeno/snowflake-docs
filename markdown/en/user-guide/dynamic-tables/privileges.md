@@ -33,8 +33,8 @@ background refreshes, so the owner role must keep USAGE and SELECT on all refere
 owner role loses these privileges, refreshes fail. For details, see
 [Understand the owner-role refresh model](#label-dynamic-tables-privileges-owner-role-refresh).
 
-Every operation on a dynamic table requires USAGE on the containing database, schema, and (for operations that run
-queries) a warehouse. The examples below include these grants each time so you can copy any section independently.
+Every operation on a dynamic table requires USAGE or any other privilege on the containing database and schema, and
+(for operations that run queries) USAGE on a warehouse. The examples below include these grants each time so you can copy any section independently.
 
 The following table maps each operation to the required privilege:
 
@@ -58,8 +58,8 @@ the requirement.
 ## Grant privileges to create a dynamic table
 
 To create a dynamic table, a role needs CREATE DYNAMIC TABLE on the schema, SELECT on every base table or view
-referenced in the definition (the SELECT query), and USAGE on the database, schema, and refresh
-warehouse.
+referenced in the definition (the SELECT query), USAGE or any other privilege on the database and schema, and
+USAGE on the refresh warehouse.
 
 Copy code
 
@@ -101,8 +101,8 @@ These grants also apply to dynamic Iceberg tables. For more information, see
 
 ## Grant privileges to query a dynamic table
 
-To read from a dynamic table without the ability to create one, a role needs SELECT on the dynamic table and USAGE on
-the database, schema, and a query warehouse:
+To read from a dynamic table without the ability to create one, a role needs SELECT on the dynamic table, USAGE or any
+other privilege on the database and schema, and USAGE on a query warehouse:
 
 Copy code
 

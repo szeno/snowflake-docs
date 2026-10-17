@@ -66,7 +66,7 @@ Copy code
               "runId":"2021-11-11T19:46:23.826Z",
               "scheduledTime":"2021-11-11T19:46:23.826Z",
               "queryStartTime":"2021-11-11T19:46:24.879Z",
-              "graphCompletedTime":"2021-11-11T19:54:24.5591",
+              "graphCompletionTime":"2021-11-11T19:54:24.559Z",
               "queryId":"01a03962-0300-0002-0000-0000000034d8",
               "attemptNumber":5
 }]}

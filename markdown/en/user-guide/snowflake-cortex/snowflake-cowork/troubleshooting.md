@@ -25,7 +25,7 @@ This page provides information about common issues that you may run into when wo
 
     - For each semantic model:
 
-      - The user’s role is granted USAGE on the database and schema of the semantic model stage or view, and table.
+      - The user’s role is granted USAGE or any other privilege on the database and schema of the semantic model stage or view, and table.
       - If using a semantic model, the user’s role is granted READ on the stage that stores the semantic model file.
       - If using a semantic view, the user’s role is granted REFERENCES on the semantic view.
       - The user’s role is granted SELECT for each table defined in the semantic model or view.

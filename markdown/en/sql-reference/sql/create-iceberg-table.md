@@ -68,6 +68,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ ERROR_LOGGING = { TRUE | FALSE } ]
   [ COMMENT = '<string_literal>' ]
   [ ICEBERG_VERSION = <integer> ]
+  [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]

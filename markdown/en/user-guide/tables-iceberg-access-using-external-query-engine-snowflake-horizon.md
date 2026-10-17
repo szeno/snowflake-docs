@@ -167,7 +167,7 @@ For more information, see the following sections:
 ### Configure read access to your Iceberg tables
 
 To query Iceberg tables, the role used to perform the operation must have the SELECT privilege on the Iceberg table and the USAGE
-privilege on the parent database and schema. For an example of granting these privileges to a role, see
+privilege or any other privilege on the parent database and schema. For an example of granting these privileges to a role, see
 [Example: Set up a service account user](#label-tables-iceberg-query-using-external-query-engine-snowflake-horizon-set-up-service-account-user).
 
 Important
@@ -224,7 +224,7 @@ The following table describes the privileges required for write operations on Ic
 
 | Operation | Necessary privileges |
 | --- | --- |
-| Data Manipulation Language (DML) operations | Important  A role used to execute the operation must have *all* of the following privileges:   - SELECT, UPDATE, TRUNCATE, INSERT, and DELETE privileges on the table - USAGE privilege for the parent schema where the table is nested under - USAGE privilege on the parent database or schema under which the table is nested |
+| Data Manipulation Language (DML) operations | Important  A role used to execute the operation must have *all* of the following privileges:   - SELECT, UPDATE, TRUNCATE, INSERT, and DELETE privileges on the table - USAGE privilege or any other privilege on the parent database and schema under which the table is nested |
 | CREATE ICEBERG TABLE | A role used to execute the operation must have the following privileges:   - CREATE ICEBERG TABLE privilege on schema - USAGE privilege on the external volume |
 | CREATE SCHEMA | A role used to execute the operation must have the CREATE SCHEMA privilege on the parent database. |
 | Rename a table | A role used to execute the operation must have the OWNERSHIP privilege on the table.  Important  To move the table to a new schema, ensure that your role also has the CREATE ICEBERG TABLE privilege on the destination schema. |

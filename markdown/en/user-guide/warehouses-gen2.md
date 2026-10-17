@@ -101,7 +101,8 @@ Important
 
 If you use account replication for your warehouses, and you create any Gen2 warehouses, any secondary regions must
 also have Gen2 warehouse support. Otherwise, the Gen2 warehouses might not be able to resume in the
-secondary regions after a failover. Make sure to test that any Gen2 warehouses can be resumed in secondary regions.
+secondary regions after a failover. Snowflake doesn’t automatically convert replicated Gen2 warehouses to Gen1
+warehouses in those regions. Make sure to test that any Gen2 warehouses can be resumed in secondary regions.
 
 The default value of the GENERATION property for standard warehouses is ’2’ (Gen2), unless Gen2 isn’t available in
 your region. For more information, see [Default value for the GENERATION for standard warehouses](#label-gen-2-standard-warehouses-default-generation).

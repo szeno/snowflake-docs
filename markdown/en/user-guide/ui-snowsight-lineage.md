@@ -302,7 +302,7 @@ dependencies:
 - VIEW LINEAGE on the account.
 - Any privilege on the objects for which you want to evaluate the lineage, such as SELECT on a table. If you want to let users view the
   lineage of an object without being able to access its data, you can grant the REFERENCES privilege on the object.
-- USAGE on the database and schema that contains the object.
+- USAGE or any other privilege on the database and schema that contains the object.
 
 The VIEW LINEAGE privilege controls whether a user can view data lineage for their objects. By default, the PUBLIC role has this privilege,
 which means everyone has the ability to view lineage. To narrow who can view lineage, you can revoke the VIEW LINEAGE privilege from the

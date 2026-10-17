@@ -12,6 +12,9 @@ Snowflake provides a JDBC type 4 driver that supports core JDBC functionality. T
 The driver can be used with most client tools/applications that support JDBC for connecting to a database server. [sfsql](/user-guide/sfsql), the now-deprecated command-line client provided by
 Snowflake, is an example of a JDBC-based application.
 
+For a complete list of the connection parameters the driver accepts, including what each one does, see
+[JDBC Driver connection parameter reference](/developer-guide/jdbc/jdbc-parameters).
+
 **Next Topics:**
 
 - [Java requirements for the JDBC Driver](/developer-guide/jdbc/java-install)

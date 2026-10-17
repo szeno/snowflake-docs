@@ -359,8 +359,11 @@ When you create an object that requires one or more privileges to use, only the 
 indirectly inherits are considered when searching for the grants of those privileges.
 
 For any other statement that requires one or more privileges (such as querying a table requires the SELECT privilege on a table with the
-USAGE privilege on the database and schema), the primary role, the secondary roles, and any other inherited roles are considered when
+USAGE privilege or any other privilege on the database and schema), the primary role, the secondary roles, and any other inherited roles are considered when
 searching for the grants of those privileges.
+
+SHOW commands that list objects in a database or schema, such as [SHOW SCHEMAS](/sql-reference/sql/show-schemas) or SHOW TABLES IN SCHEMA, still
+require the USAGE privilege on the containing database and schema.
 
 Note
 

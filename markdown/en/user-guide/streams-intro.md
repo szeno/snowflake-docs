@@ -8,6 +8,10 @@ An individual table stream tracks the changes made to rows in a *source table*. 
 a “change table” available of what changed, at the row level, between two transactional points of time in a table. This allows querying and
 consuming a sequence of change records in a transactional fashion.
 
+A common use for streams is in continuous data pipelines. When you combine a stream with a [task](/user-guide/tasks-intro), the task
+can transform the new or changed rows that the stream surfaces each time it runs, or skip the run if no change data exists. For more
+information, see [Introduction to streams and tasks](/user-guide/data-pipelines-intro).
+
 Streams can be created to query change data on the following objects:
 
 - Standard tables, including shared tables.

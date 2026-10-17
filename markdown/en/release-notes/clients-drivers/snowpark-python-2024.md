@@ -173,7 +173,8 @@ As Python 3.8 has reached its [End of Life](https://devguide.python.org/versions
 
 - Updated `Session` class to be thread-safe. This allows concurrent DataFrame transformations, DataFrame actions, UDF and stored procedure registration, and concurrent file uploads when using the same `Session` object.
 
-  - The feature is disabled by default and can be enabled by setting `FEATURE_THREAD_SAFE_PYTHON_SESSION` to `True` for account.
+  - The feature was initially disabled by default and could be enabled by setting `FEATURE_THREAD_SAFE_PYTHON_SESSION` to `True` for the account.
+    `FEATURE_THREAD_SAFE_PYTHON_SESSION` is now enabled by default. For more information, see [Submit Snowpark queries concurrently](/developer-guide/snowpark/python/working-with-dataframes#label-snowpark-python-dataframe-threadsafe-objects).
   - Updating session configurations, like changing database or schema, when multiple threads are using the session may lead to unexpected behavior.
   - When enabled, some internally created temporary table names returned from `DataFrame.queries` API are not deterministic, and may be different when DataFrame actions are executed. This does not affect explicit user-created temporary tables.
 - Added support for ‘Service’ domain to `session.lineage.trace` API.

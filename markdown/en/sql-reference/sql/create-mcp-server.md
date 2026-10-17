@@ -35,6 +35,17 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
     - `title`: Human-readable title for the tool
     - `description`: Description of what the tool does
 
+    For `GENERIC` and `CORTEX_AGENT_RUN` tools, you can also specify an optional `annotations` object with MCP tool behavior hints:
+
+    - `readOnlyHint`: If `true`, the tool doesn’t modify its environment.
+    - `destructiveHint`: If `true`, the tool might perform destructive updates. This hint is meaningful only when `readOnlyHint` is `false`.
+    - `idempotentHint`: If `true`, repeated calls with the same arguments have the same effect as one call.
+    - `openWorldHint`: If `true`, the tool might interact with external entities.
+
+    Each annotation is optional. For omitted annotations, Snowflake uses the default for the tool type. The defaults for `GENERIC` and `CORTEX_AGENT_RUN` are `readOnlyHint: false`, `destructiveHint: true`, `idempotentHint: false`, and `openWorldHint: true`.
+
+    Tool annotations are hints for MCP clients. They don’t enforce tool behavior or replace access control. Configure privileges for the underlying object according to the actual operations that the tool can perform.
+
     **Supported tool types:**
 
     - `CORTEX_SEARCH_SERVICE_QUERY`: Cortex Search Service tool
@@ -186,6 +197,11 @@ CREATE MCP SERVER procedure_tools_server
         name: "calculate_values_sp"
         type: "GENERIC"
         description: "Calculates the product and sum of two numbers and returns them in a JSON object."
+        annotations:
+          readOnlyHint: true
+          destructiveHint: false
+          idempotentHint: true
+          openWorldHint: false
         config:
           type: "procedure"
           warehouse: "compute_service_warehouse"
@@ -214,5 +230,7 @@ CREATE MCP SERVER agent_server
         type: "CORTEX_AGENT_RUN"
         identifier: "support_db.agents_schema.customer_service_agent"
         description: "Agent that handles customer service inquiries"
+        annotations:
+          openWorldHint: false
   $$;
 ```

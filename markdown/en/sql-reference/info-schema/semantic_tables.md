@@ -25,3 +25,15 @@ See also:
 Expand
 
 Show lessSee more
+
+## Examples
+
+List the logical tables in the semantic view `my_semantic_view` in the `mydatabase` database, along with the base table for each logical table:
+
+Copy code
+
+```
+SELECT semantic_view_schema, semantic_view_name, name, base_table_catalog, base_table_schema, base_table_name
+  FROM mydatabase.INFORMATION_SCHEMA.SEMANTIC_TABLES
+  WHERE semantic_view_name = 'MY_SEMANTIC_VIEW';
+```

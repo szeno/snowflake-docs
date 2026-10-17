@@ -43,6 +43,10 @@ SYSTEM$CLUSTERING_DEPTH( '<table_name>' , '( <col1> [ , <col2> ... ] )' [ , '<pr
 - If `predicate` contains a string, the string must be enclosed in single quotes, which then must be escaped using single quotes. For example:
   `SYSTEM$CLUSTERING_DEPTH( ... , 'col1 = 100 and col2 = ''A''' )`
 
+## Limitations
+
+If a table has more than 2 million partitions, the results of the function are based on a subset of the table’s partitions.
+
 ## Examples
 
 Calculate the clustering depth for a table using the clustering key defined for the table:

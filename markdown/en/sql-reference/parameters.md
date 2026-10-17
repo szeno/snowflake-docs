@@ -124,6 +124,7 @@ Snowflake provides the following object parameters:
 
 | Parameter | Object Type | Notes |
 | --- | --- | --- |
+| [ALLOW\_V3\_EXPRESSION\_DEFAULTS](#label-allow-v3-expression-defaults) | Account, Database, Schema, Apache Iceberg™ table | Allows column defaults on Snowflake-managed Iceberg v3 tables that Snowflake can’t evaluate to a constant. |
 | [AUTO\_EVENT\_LOGGING](#label-auto-event-logging) | Snowflake Scripting stored procedure |  |
 | [BASE\_LOCATION\_PREFIX](#label-base-location-prefix) | Database, Schema | Specifies a prefix to use in the write path for Apache Iceberg™ table files. |
 | [CATALOG](#label-catalog) | Database, Schema, Apache Iceberg™ table |  |
@@ -423,6 +424,36 @@ Values:
 :   `TRUE`: Stores a connection token in the client-side operating system keystore to enable the client application to perform browser-based SSO without prompting users to authenticate whenever a new connection is established.
 
     `FALSE`: Does not store a connection token. Users are prompted to authenticate whenever the client application establishes a new connection with Snowflake. SSO to Snowflake is still possible if this parameter is set to false.
+
+Default:
+:   `FALSE`
+
+## ALLOW\_V3\_EXPRESSION\_DEFAULTS
+
+Type:
+:   Object (for databases, schemas, and Apache Iceberg™ tables) — Can be set for Account » Database » Schema » Apache Iceberg™ table
+
+Data Type:
+:   Boolean
+
+Description:
+:   Specifies whether Snowflake-managed Iceberg v3 tables can use column defaults that Snowflake can’t evaluate to a non-`NULL`
+    constant, such as `CURRENT_DATE()`, `CURRENT_USER()`, sequences, and identity columns. Snowflake evaluates these defaults only for
+    Snowflake writes; they aren’t written to Iceberg metadata, so external engines don’t use them.
+
+    Literal constants and expressions that Snowflake evaluates to constants, such as `PI()`, don’t require this parameter.
+
+    When you upgrade a Snowflake-managed v2 table that has expression, sequence, or identity defaults to v3, Snowflake sets this
+    parameter to `TRUE` on the table.
+
+    You can’t set the parameter to `FALSE` or unset it on a table while the table has such a default.
+
+    For more information, see [Use expression defaults with Snowflake-managed tables](/user-guide/tables-iceberg-default-values#label-tables-iceberg-expression-defaults).
+
+Values:
+:   `TRUE`: Allows expression, sequence, and identity defaults on v3 tables.
+
+    `FALSE`: Statements that define such defaults on v3 tables fail.
 
 Default:
 :   `FALSE`
@@ -2581,13 +2612,13 @@ Description:
     Before you use other engines to upgrade an Iceberg tables format-version in table properties to v3, ensure that the table isn’t used by
     engines or applications that don’t yet support v3. Downgrading format versions isn’t supported in the Apache Iceberg specification. Therefore, all
     readers and writers must support v3. The default version for Iceberg tables in Snowflake is v2, which can be configured to v3 if
-    needed. Using Snowflake to perform in-place version upgrades isn’t supported at this time.
+    needed. To upgrade a table in place by using Snowflake, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
     Note
 
     You can set this parameter when creating an Iceberg table using the [CREATE ICEBERG TABLE (Snowflake as the Iceberg catalog)](/sql-reference/sql/create-iceberg-table-snowflake)
     or [CREATE ICEBERG TABLE (Iceberg REST catalog)](/sql-reference/sql/create-iceberg-table-rest) command.
-    You can’t use the ALTER ICEBERG TABLE command to change this configuration for an existing table.
+    To change an existing table from v2 to v3, use [ALTER ICEBERG TABLE … UPGRADE TO ICEBERG VERSION 3](/user-guide/tables-iceberg-upgrade-version).
 
 Values:
 :   `2`: The table conforms with Iceberg version 2.
@@ -2617,7 +2648,7 @@ Description:
     Before you use other engines to upgrade an Iceberg tables format-version in table properties to v3, ensure that the table isn’t used by
     engines or applications that don’t yet support v3. Downgrading format versions isn’t supported in the Apache Iceberg specification. Therefore, all
     readers and writers must support v3. The default version for Iceberg tables in Snowflake is v2, which can be configured to v3 if
-    needed. Using Snowflake to perform in-place version upgrades isn’t supported at this time.
+    needed. To upgrade a table in place by using Snowflake, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
     Note
 

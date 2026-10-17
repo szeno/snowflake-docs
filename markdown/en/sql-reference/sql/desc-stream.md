@@ -37,6 +37,11 @@ DESC[RIBE] STREAM <name>
   The double quotes ensure that the column names in the SELECT list or WHERE clause match the column names
   in the SHOW command output that was scanned.
 
+## Output
+
+`DESCRIBE STREAM` returns a single row with the same columns as [SHOW STREAMS](/sql-reference/sql/show-streams#output). For a
+description of each column, see that topic.
+
 ## Examples
 
 Create an example stream:

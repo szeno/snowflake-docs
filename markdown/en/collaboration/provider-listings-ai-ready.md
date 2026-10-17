@@ -13,11 +13,11 @@ After you grant an agent, semantic view, or CKE to your listing’s secure share
 3. [Path 1: Structured data](#label-provider-listings-ai-ready-structured-data)
 4. [Path 2: Unstructured content](#label-provider-listings-ai-ready-unstructured-content)
 5. [Path 3: Native Applications](#label-provider-listings-ai-ready-native-apps)
-6. [Path 4: MCP Servers (Private Preview)](#label-provider-listings-ai-ready-mcp-servers)
-   - [Sharing Snowflake-managed MCP](#label-provider-listings-ai-ready-managed-mcp-sharing)
-   - [Remote MCP Server listing](#label-provider-listings-ai-ready-remote-mcp)
-7. [Consumer experience](#label-provider-listings-ai-ready-consumer-experience)
-   - [Extending to external AI tools with Snowflake-managed MCP](#label-provider-listings-ai-ready-consumer-mcp)
+6. [Path 4: MCP Servers (Private Preview)](#label-provider-listings-ai-ready-mcp-servers)  
+   · [Sharing Snowflake-managed MCP](#label-provider-listings-ai-ready-managed-mcp-sharing)  
+   · [Remote MCP Server listing](#label-provider-listings-ai-ready-remote-mcp)
+7. [Consumer experience](#label-provider-listings-ai-ready-consumer-experience)  
+   · [Extending to external AI tools with Snowflake-managed MCP](#label-provider-listings-ai-ready-consumer-mcp)
 
 ## Prerequisites
 

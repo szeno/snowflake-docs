@@ -45,12 +45,15 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 16, 2026: Cortex AI Gateway on Azure, Google Cloud, and AWS New Zealand](/release-notes/2026/other/2026-10-16-cortex-ai-gateway-regions)
+- [October 16, 2026: Apache Iceberg™ v3 table upgrades and expression defaults (General availability)](/release-notes/2026/other/2026-10-16-iceberg-v3-upgrade-expression-defaults-ga)
 - [Oct 15, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-15-dcr)
 - [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
 - [ODBC Driver (v4.1.0)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
 - [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
+- [Oct 13, 2026: CoCo Desktop v1.21.7](/release-notes/2026/other/2026-10-13-coco-desktop-v1-21-7)
 - [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Snowpark Python (v1.55.2)](/release-notes/clients-drivers/snowpark-python-2026)
@@ -127,10 +130,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)
 - [.NET Driver (v6.2.0)](/release-notes/clients-drivers/dotnet-2026)
 - [ODBC Driver (v4.0.0-rc4)](/release-notes/clients-drivers/odbc-2026)
-- [Sep 16, 2026: CoCo Desktop v1.21.5](/release-notes/2026/other/2026-09-16-coco-desktop-v1-21-5)
-- [Sep 16, 2026: Cortex Agents object enhancements (General availability)](/release-notes/2026/other/2026-09-16-cortex-agents-object-enhancements-ga)
-- [Sep 16, 2026: Include and exclude per-user quota users by name (General availability)](/release-notes/2026/other/2026-09-16-per-user-quota-user-membership)
-- [Sep 16, 2026: Weekly per-user quota limits (General availability)](/release-notes/2026/other/2026-09-16-weekly-per-user-quota-limits)
-- [Python Connector (v4.7.4)](/release-notes/clients-drivers/python-connector-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

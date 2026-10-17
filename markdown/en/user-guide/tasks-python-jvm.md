@@ -104,7 +104,7 @@ CREATE OR REPLACE TASK IF NOT EXISTS task2
   SCHEDULE = '1 minute'
   AS
     $$
-    print(Task completed successfully.)
+    print("Task completed successfully.")
     $$
   ;
 ```

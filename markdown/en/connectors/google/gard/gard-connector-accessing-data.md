@@ -21,7 +21,7 @@ The following sections explain how to grant the privileges to access this data a
 
 After the Snowflake Connector for Google Analytics Raw Data synchronizes the data with Snowflake, you can use `data_owner_role` to access the data or any other role if it meets both of the following conditions:
 
-- Has USAGE privilege on the database and schema that contain the data ingested by Snowflake Connector for Google Analytics Raw Data.
+- Has USAGE privilege or any other privilege on the database and schema that contain the data ingested by Snowflake Connector for Google Analytics Raw Data.
 - Is granted with the DATA\_READER application role, which has SELECT privilege on tables or views within this schema.
 
 For example, if you configured the Snowflake Connector for Google Analytics Raw Data to store the data in the `dest_db` database and

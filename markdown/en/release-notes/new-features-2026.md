@@ -263,9 +263,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Oct 16, 2026: Cortex AI Gateway on Azure, Google Cloud, and AWS New Zealand](/release-notes/2026/other/2026-10-16-cortex-ai-gateway-regions)
+- [October 16, 2026: Apache Iceberg™ v3 table upgrades and expression defaults (General availability)](/release-notes/2026/other/2026-10-16-iceberg-v3-upgrade-expression-defaults-ga)
 - [Oct 15, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-15-dcr)
 - [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
 - [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
+- [Oct 13, 2026: CoCo Desktop v1.21.7](/release-notes/2026/other/2026-10-13-coco-desktop-v1-21-7)
 - [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)

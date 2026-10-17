@@ -137,6 +137,9 @@ The output of the command includes the following columns, which describe the pro
 | `refresh_mode_reason` | Explanation for why the refresh mode was chosen. If Snowflake chose `FULL` when `INCREMENTAL` is supported, the output provides a reason for why it thinks full refresh performs better. `NULL` if no pertinent information is available. |
 | `scheduling_state` | Displays `RUNNING` for online feature tables that are actively scheduling refreshes and `SUSPENDED` for suspended online feature tables. |
 | `comment` | Comment for the online feature table. |
+| `setup_status` | Setup status of the online feature table: `SETUP_NOTREADY`, `SETUP_READY`, or `SETUP_FAILED`. `NULL` for online feature tables that use hybrid table online serving. |
+| `setup_error_msg` | Error returned when setup failed. `NULL` unless `setup_status` is `SETUP_FAILED`. |
+| `setup_time` | Time when the setup status was last written. |
 
 Expand
 

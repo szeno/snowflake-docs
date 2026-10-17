@@ -153,7 +153,7 @@ the threshold.
 
 A single monitor can be set at the account level to control credit usage for all warehouses in your account.
 
-In addition, a one or more warehouses can be assigned to a resource monitor, thereby controlling the credit usage for each assigned
+In addition, one or more warehouses can be assigned to a resource monitor, thereby controlling the credit usage for each assigned
 warehouse. Note, however, that a warehouse can be assigned to only a single resource monitor below the account level.
 
 The following diagram illustrates a scenario in which one resource monitor is set at the account level and individual warehouses are

@@ -203,7 +203,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 | CREATE INTERACTIVE TABLE | Schema | Required to create an interactive table in the schema. |
 | SELECT | Table, external table, view | Required on queried tables and/or views in the AS SELECT clause. |
 | APPLY | Masking policy, row access policy, tag, storage lifecycle policy | Required only when applying a masking policy, row access policy, object tags, storage lifecycle policy, or any combination of these [governance](/guides-overview-govern) features when creating tables. |
-| USAGE | Database, Schema | Required on the database and schema containing the interactive table. |
+| USAGE | Database, Schema | Required on the database and schema containing the interactive table. Any other privilege on the database and schema also satisfies this requirement. |
 | USAGE | Warehouse | Required on the warehouses specified in the WAREHOUSE and INITIALIZATION\_WAREHOUSE parameters (when TARGET\_LAG is used). |
 
 Expand

@@ -345,6 +345,16 @@ To create an external volume, see [Configure an external volume](/user-guide/tab
    The refresh operation fails if Snowflake can’t access the storage location configured for the target account.
    If this happens, double-check your access control settings, or try [Verifying storage access](/user-guide/tables-iceberg-managing-external-volumes#label-tables-iceberg-storage-verify-storage-access).
 
+## Upgrade replicated tables from Iceberg v2 to v3
+
+To upgrade a Snowflake-managed Iceberg table that’s part of a replication or failover group, upgrade the table in the source
+account. The next replication refresh propagates the upgraded v3 table to target accounts; you don’t upgrade the table in
+target accounts. If you fail over before a refresh delivers the upgraded table, the replication refresh that runs after failover
+fails.
+
+After the upgrade, the stream and dynamic table replication limitations for v2 tables no longer apply. For more information, see
+[Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
+
 ## Considerations and limitations
 
 Consider the following points when you use replication for Iceberg tables:

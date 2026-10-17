@@ -772,6 +772,7 @@ Suggested usage:
      'WAREHOUSE_TYPE',
      'ADAPTIVE',
      '{"WAREHOUSE_TYPE": "STANDARD"}',
+     '{}',
      'DRY_RUN'
    );
    ```
@@ -785,6 +786,7 @@ Suggested usage:
      'WAREHOUSE_TYPE',
      'ADAPTIVE',
      '{"WAREHOUSE_TYPE": "STANDARD"}',
+     '{}',
      'ACTIVE'
    );
    ```

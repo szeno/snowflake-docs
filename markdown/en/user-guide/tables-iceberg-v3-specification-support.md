@@ -21,7 +21,7 @@ For more information, see [Iceberg v3 data types](/user-guide/tables-iceberg-dat
 
 ### Default values
 
-See [Default values](/user-guide/tables-iceberg-manage#label-tables-iceberg-default-values).
+See [Use default values with Apache Iceberg™ tables](/user-guide/tables-iceberg-default-values).
 
 ### Deletion vectors
 
@@ -30,6 +30,12 @@ See [Deletion vectors](/user-guide/tables-iceberg-manage#tables-iceberg-deletion
 ### Row lineage
 
 See [Row lineage](/user-guide/tables-iceberg-manage#label-tables-iceberg-row-lineage).
+
+### Upgrade from Iceberg v2
+
+You can upgrade an existing v2 table to v3 in place. The upgrade is permanent, but for Snowflake-managed tables you can
+[restore the pre-upgrade v2 table](/user-guide/tables-iceberg-upgrade-version#label-tables-iceberg-upgrade-version-restore-v2)
+by using Time Travel. See [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
 ## Configure the default Iceberg version
 
@@ -57,7 +63,7 @@ Caution
 Before you use other engines to upgrade an Iceberg tables format-version in table properties to v3, ensure that the table isn’t used by
 engines or applications that don’t yet support v3. Downgrading format versions isn’t supported in the Apache Iceberg specification. Therefore, all
 readers and writers must support v3. The default version for Iceberg tables in Snowflake is v2, which can be configured to v3 if
-needed. Using Snowflake to perform in-place version upgrades isn’t supported at this time.
+needed. To upgrade a table in place by using Snowflake, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
 ### Usage notes
 
@@ -109,7 +115,7 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_v3_table
 
 Note
 
-You can’t use the ALTER ICEBERG TABLE command to change the format version for an existing table.
+To change an existing table from Iceberg v2 to v3, upgrade the table in place. For more information, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
 ## Get the format version for Iceberg tables
 
@@ -189,27 +195,6 @@ The following Snowflake features aren’t supported for Iceberg v3:
 - [Schema inference](/sql-reference/functions/infer_schema#label-iceberg-infer-schema-column-definitions)
 - [Snowpipe Streaming classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview)
 - SnowGov Regions
-- An in-place upgrade of a Snowflake-managed Iceberg table from v2 to v3, which includes cloning a v2 table, and then upgrading the clone to v3
-
-  Important
-
-  If another engine upgrades an externally managed Iceberg table in a standard Snowflake database from v2 to v3, Snowflake’s
-  manual and automated refresh for the table will fail. To recover, follow these steps:
-
-  1. Using the external engine, perform a DML operation that creates a new snapshot (such as an INSERT or UPDATE). Simply updating
-     table properties to change the format version doesn’t create a new snapshot and isn’t sufficient. Only after a new snapshot
-     is created does the updated format version appear in the Iceberg metadata.
-  2. After the new snapshot exists, replace the table in Snowflake by running [CREATE OR REPLACE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table).
-     When you replace the table, Snowflake reads the updated Iceberg metadata and recognizes the table as v3.
-
-  The following example uses Apache Spark to upgrade an externally managed Iceberg table from v2 to v3 and then create a new snapshot:
-
-  Copy code
-
-  ```
-  ALTER TABLE table_name SET TBLPROPERTIES('format-version'='3');
-  INSERT INTO table_name SELECT * FROM table_name LIMIT 0;
-  ```
 
 Note
 

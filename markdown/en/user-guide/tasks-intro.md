@@ -377,7 +377,7 @@ After a task is suspended and modified, a new version is set when the standalone
 When the task is suspended, all future scheduled runs of the task are cancelled; however, currently running tasks continue to run using the current version.
 
 For example, suppose the task is suspended, but a scheduled run of this task has already started.
-The owner of the task modifies the SQL code called by the task while the task is still running.
+The owner of the task modifies the SQL code in the definition of the task while the task is still running.
 The task runs the SQL code in its definition using the version of the task that was current when the task started its run.
 When the task is resumed or is manually run, a new version of the task is set. This new version includes the modifications to the task.
 

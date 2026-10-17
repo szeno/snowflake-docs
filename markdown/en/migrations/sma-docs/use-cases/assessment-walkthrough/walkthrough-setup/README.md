@@ -27,7 +27,7 @@ During the initial assessment phase, Snowpark Migration Accelerator (SMA) examin
 
 #### Download and Installation
 
-To begin an assessment with the Snowpark Migration Accelerator (SMA), you only need to complete the installation process. While Snowflake provides optional [helpful training on using the SMA](https://learn.snowflake.com/en/courses/spark-to-snowpark-sma/), you can proceed without it. No special access codes are needed. Simply:
+To begin an assessment with the Snowpark Migration Accelerator (SMA), you only need to complete the installation process. While Snowflake provides optional [helpful training on using the SMA](https://learn.snowflake.com/en/courses/OD-SC-SMA/), you can proceed without it. No special access codes are needed. Simply:
 
 1. Visit our [Download and Access](/migrations/sma-docs/general/getting-started/download-and-access) section
 2. [Download the installer](https://www.snowflake.com/en/data-cloud/snowpark/migration-accelerator/)

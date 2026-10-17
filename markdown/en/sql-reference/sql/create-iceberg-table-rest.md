@@ -193,12 +193,16 @@ You can apply a masking policy to a column in a CTAS statement. Specify the mask
 
     Important
 
-    When you specify a default value for a column, you must specify a static value; you can’t specify an expression or
-    function for the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default
-    and write default.
+    For externally managed Iceberg tables, the default value must be a static value; you can’t specify an expression or function for
+    the value. This requirement is in accordance with the Iceberg v3 specification and applies to both the initial default and write default.
 
-    Default values is an Iceberg v3 feature, so you can’t specify a default value for a table that conforms to Iceberg v2. For more
-    information about using default values with Iceberg tables, see [Use default values with Iceberg tables](/user-guide/tables-iceberg-manage#label-tables-iceberg-default-values).
+    For Snowflake-managed v3 Iceberg tables, you can also specify SQL expressions, sequences, and identity columns as defaults.
+    Defaults that Snowflake can’t evaluate to a constant require the ALLOW\_V3\_EXPRESSION\_DEFAULTS parameter. For more information, see
+    [Use expression defaults with Snowflake-managed tables](/user-guide/tables-iceberg-default-values#label-tables-iceberg-expression-defaults).
+
+    Initial and write defaults are an Iceberg v3 feature. On a Snowflake-managed table that conforms to Iceberg v2, Snowflake can use
+    column defaults for Snowflake writes, but it doesn’t write them to Iceberg metadata. For more information about using default values
+    with Iceberg tables, see [Use default values with Apache Iceberg™ tables](/user-guide/tables-iceberg-default-values).
 
     Note
 
@@ -386,7 +390,7 @@ You can apply a masking policy to a column in a CTAS statement. Specify the mask
     Before you use other engines to upgrade an Iceberg tables format-version in table properties to v3, ensure that the table isn’t used by
     engines or applications that don’t yet support v3. Downgrading format versions isn’t supported in the Apache Iceberg specification. Therefore, all
     readers and writers must support v3. The default version for Iceberg tables in Snowflake is v2, which can be configured to v3 if
-    needed. Using Snowflake to perform in-place version upgrades isn’t supported at this time.
+    needed. To upgrade a table in place by using Snowflake, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
     If you don’t set this parameter, the Iceberg table defaults to the Iceberg version for the schema, database, or account. The schema
     takes precedence over the database, and the database takes precedence over the account.

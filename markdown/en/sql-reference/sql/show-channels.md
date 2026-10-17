@@ -152,3 +152,11 @@ Show all the channels for a specific pipe:
 > ```
 > show channels in pipe MY_PIPE;
 > ```
+
+Show all the channels for a specific table, using the fully qualified name of the table to specify its database and schema:
+
+> Copy code
+>
+> ```
+> show channels in table mydb.myschema.mytable;
+> ```

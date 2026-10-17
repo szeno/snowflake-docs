@@ -183,7 +183,7 @@ ALTER DATABASE <name> PRIMARY
         Before you use other engines to upgrade an Iceberg tables format-version in table properties to v3, ensure that the table isn’t used by
         engines or applications that don’t yet support v3. Downgrading format versions isn’t supported in the Apache Iceberg specification. Therefore, all
         readers and writers must support v3. The default version for Iceberg tables in Snowflake is v2, which can be configured to v3 if
-        needed. Using Snowflake to perform in-place version upgrades isn’t supported at this time.
+        needed. To upgrade a table in place by using Snowflake, see [Upgrade an Apache Iceberg™ table from version 2 to version 3](/user-guide/tables-iceberg-upgrade-version).
 
         Default:
         :   `2`

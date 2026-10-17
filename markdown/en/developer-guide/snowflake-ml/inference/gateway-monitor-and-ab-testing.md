@@ -109,7 +109,7 @@ You must have the following privileges to work with gateway model monitor object
 
 | Command | Required privileges |
 | --- | --- |
-| CREATE MODEL MONITOR | - CREATE MODEL MONITOR privilege on the schema where you want to create the monitor - OWNERSHIP on the model - USAGE on the gateway - SELECT on the ground truth table (if `GROUND_TRUTH` is specified) - USAGE on the database, schema, and warehouse |
+| CREATE MODEL MONITOR | - CREATE MODEL MONITOR privilege on the schema where you want to create the monitor - OWNERSHIP on the model - USAGE on the gateway - SELECT on the ground truth table (if `GROUND_TRUTH` is specified) - USAGE or any other privilege on the database and schema - USAGE on the warehouse |
 | SHOW MODEL MONITORS | Any privilege on the model monitor |
 | SHOW MODEL MONITORS IN GATEWAY | USAGE on the gateway |
 | DESCRIBE MODEL MONITOR | Any privilege on the model monitor |

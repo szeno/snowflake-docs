@@ -156,7 +156,7 @@ supplemental contract terms).
 | europe-west4 | Europe West4 (Netherlands) |  |
 | me-central2 | Middle East Central2 (Dammam) |  |
 | **Microsoft Azure** | | | |
-| Microsoft Azure | northeurope | North Europe (Ireland) |  |
+| Microsoft Azure | northeurope | North Europe (Ireland) [2] |  |
 | swedencentral | Sweden Central (Gävle) |  |
 | switzerlandnorth | Switzerland North (Zurich) |  |
 | westeurope | West Europe (Netherlands) |  |
@@ -168,6 +168,8 @@ Expand
 Show lessSee more
 
 [1] See the map preceding this table for the location of each supported region, labeled by cloud region ID.
+
+[2] Available only for customers with existing accounts in the region. Due to Microsoft’s requirements, Snowflake will determine eligibility for any new customers in this region on a case-by-case basis.
 
 ## Asia Pacific and China
 

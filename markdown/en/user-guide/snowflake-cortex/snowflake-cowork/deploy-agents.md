@@ -39,7 +39,7 @@ To access the tools attached to an agent, users must have the following privileg
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| USAGE | Database, schema | Required to access the objects associated with any tools to attach to the agent. |
+| USAGE | Database, schema | Required to access the objects associated with any tools to attach to the agent. Any other privilege on the database and schema also satisfies this requirement. |
 | USAGE | Cortex Search service | Required to run the Cortex Search services in the Cortex Agents request. |
 | READ | Stage | Required to open source documents from citations when the Cortex Search tool specifies a source stage and relative path column. |
 | SELECT | Table | Required to access the objects referenced in the agent’s semantic view/model. |

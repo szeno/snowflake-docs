@@ -71,6 +71,8 @@ Snowflake converters are not supported with Snowpipe Streaming. Some customized 
   - Dropping NOT NULL constraint if the source data column is missing.
 - If Kafka connector creates the target table, schema evolution is enabled by default. However, if schema evolution is disabled for an existing table then Kafka connector will try to send the rows with mismatched schemas to the configured dead-letter queues (DLQ).
 - JSON ARRAY is not supported for further schematization.
+- Semi-structured fields in a record aren’t split into separate columns. A field that contains a nested object (a Kafka STRUCT
+  or MAP, or a JSON object) is loaded into a VARIANT column, and a field that contains an array is loaded into an ARRAY column.
 - For the Kafka connector with Snowpipe Streaming, schema evolution is not tracked by the `SchemaEvolutionRecord` output in the following views and commands: [INFORMATION\_SCHEMA COLUMNS View](/sql-reference/info-schema/columns), [ACCOUNT\_USAGE COLUMNS View](/sql-reference/account-usage/columns), [DESCRIBE TABLE command](/sql-reference/sql/desc-table), and [SHOW COLUMNS command](/sql-reference/sql/show-columns). The `SchemaEvolutionRecord` output always shows NULL.
 
 ## Examples

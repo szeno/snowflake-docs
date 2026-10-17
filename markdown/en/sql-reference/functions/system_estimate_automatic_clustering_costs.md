@@ -90,7 +90,7 @@ The privileges needed to estimate costs are the same as those required to read t
 following privileges:
 
 - SELECT and INSERT privileges on the table, or OWNERSHIP privilege on the table.
-- USAGE or OWNERSHIP privilege on the parent schema and database.
+- USAGE privilege or any other privilege on the parent schema and database.
 
 ## Usage notes
 

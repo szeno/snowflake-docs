@@ -40,12 +40,15 @@ The minimum privileges required to create a dynamic table are:
 | CREATE DYNAMIC TABLE | Schema | Allows creating dynamic tables in the schema |
 | USAGE | Warehouse | Allows running refreshes |
 | SELECT | Base tables | Allows reading from base tables or views |
-| USAGE | Database | Allows accessing the database |
-| USAGE | Schema | Allows accessing the schema |
+| USAGE or any other privilege | Database | Allows resolving objects in the database |
+| USAGE or any other privilege | Schema | Allows resolving objects in the schema |
 
 Expand
 
 Show lessSee more
+
+USE DATABASE, USE SCHEMA, and SHOW commands that list objects in a database or schema (for example,
+SHOW DYNAMIC TABLES IN SCHEMA) still require the USAGE privilege on the database and schema.
 
 1. Check what privileges your role currently has:
 

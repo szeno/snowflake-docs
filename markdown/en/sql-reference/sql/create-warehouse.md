@@ -203,16 +203,16 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 >
 > > Valid values:
 > >
-> > | Value | Memory (up to) | CPU architecture | Min warehouse size required | Max warehouse size |
-> > | --- | --- | --- | --- | --- |
-> > | `STANDARD_GEN_1` | 16 GB | Standard | XSMALL | X6LARGE |
-> > | `STANDARD_GEN_2` | 16 GB | Standard (generation 2) | XSMALL | X4LARGE |
-> > | `MEMORY_1X` | 16 GB | Standard | XSMALL | X4LARGE |
-> > | `MEMORY_1X_x86` | 16 GB | x86 | XSMALL | X4LARGE |
-> > | `MEMORY_16X` | 256 GB | Standard | MEDIUM | X6LARGE |
-> > | `MEMORY_16X_x86` | 256 GB | x86 | MEDIUM | X4LARGE |
-> > | `MEMORY_64X` | 1 TB | Standard | LARGE | X4LARGE |
-> > | `MEMORY_64X_x86` | 1 TB | x86 | LARGE | X4LARGE |
+> > | Value | Warehouse type | Memory (up to) | CPU architecture | Min warehouse size required | Max warehouse size |
+> > | --- | --- | --- | --- | --- | --- |
+> > | `STANDARD_GEN_1` | Standard | 16 GB | Standard | XSMALL | X6LARGE |
+> > | `STANDARD_GEN_2` | Standard | 16 GB | Standard (generation 2) | XSMALL | X4LARGE |
+> > | `MEMORY_1X` | Snowpark-optimized | 16 GB | Standard | XSMALL | X4LARGE |
+> > | `MEMORY_1X_x86` | Snowpark-optimized | 16 GB | x86 | XSMALL | X4LARGE |
+> > | `MEMORY_16X` | Snowpark-optimized | 256 GB | Standard | MEDIUM | X6LARGE |
+> > | `MEMORY_16X_x86` | Snowpark-optimized | 256 GB | x86 | MEDIUM | X4LARGE |
+> > | `MEMORY_64X` | Snowpark-optimized | 1 TB | Standard | LARGE | X4LARGE |
+> > | `MEMORY_64X_x86` | Snowpark-optimized | 1 TB | x86 | LARGE | X4LARGE |
 > >
 > > Expand
 > >

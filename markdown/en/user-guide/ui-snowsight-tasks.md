@@ -177,6 +177,13 @@ You can filter the page to display relevant information. It is recommended to fi
 - Filter on the name of the database or schema that contains the tasks.
 - Use the search field to filter on the root task name.
 
+Note
+
+The **Date Range** filter uses rolling 24-hour windows rather than calendar days. For example, **Last day** shows the 24 hours before the
+current time, and **Last 7 days** groups runs into seven 24-hour windows that end at the current time. As a result, a run can appear under a
+different date than the calendar day on which it ran. To check the exact time of each run, query the
+[TASK\_HISTORY](/sql-reference/functions/task_history) table function or the [TASK\_HISTORY view](/sql-reference/account-usage/task_history) view.
+
 You can also select a specific task graph to drill down for more details, which the following image demonstrates:
 
 > ![View the details of a task graph on the task graph detail page.](/static/images/snowsight/ui-task-graph-details.png)

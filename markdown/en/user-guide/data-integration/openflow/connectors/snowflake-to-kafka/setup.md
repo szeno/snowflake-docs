@@ -34,7 +34,7 @@ Snowflake, so you grant it the privileges below.
    create stream stream_on_table on table stream_source;
    ```
 2. Grant the runtime’s execute-as role the SELECT privilege on the stream and the source object for
-   the stream, and the USAGE privilege on the database and schema containing them. For example:
+   the stream, and the USAGE privilege or any other privilege on the database and schema containing them. For example:
 
    Copy code
 
@@ -65,7 +65,7 @@ If you’re deploying the connector in Openflow - BYOC Deployments and using the
 strategy instead of the recommended `SNOWFLAKE_MANAGED`, you’ll also grant this same execute-as
 role to a service user rather than relying on the runtime’s managed token. The privileges to grant
 your service user’s role are the ones from step 2 (`SELECT` on the stream and source object,
-and `USAGE` on their database and schema), not a destination database and warehouse. See
+and `USAGE` or any other privilege on their database and schema), not a destination database and warehouse. See
 [Set up key-pair authentication for Openflow - BYOC Deployments](/user-guide/data-integration/openflow/setup-openflow-byoc-key-pair-auth)
 to create the service user.
 

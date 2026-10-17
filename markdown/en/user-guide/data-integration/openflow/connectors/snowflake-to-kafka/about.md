@@ -29,7 +29,7 @@ Depending on the configuration of the Kafka broker, which is going to be receivi
    2. Designates a warehouse to be used by the connector.
    3. Configures or identifies the Snowflake user used by the connector and a role for this user.
       The user must have appropriate permissions to the source Snowflake stream. At a minimum,
-      the user needs USAGE privilege on the database and schema containing the Snowflake stream,
+      the user needs USAGE privilege or any other privilege on the database and schema containing the Snowflake stream,
       and SELECT privilege on the stream and the stream’s underlying table or view object.
 2. A Kafka administrator performs the following tasks.
 

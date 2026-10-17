@@ -64,7 +64,7 @@ Show lessSee more
 You need the following privileges to run this function:
 
 - SELECT privilege on the specified table.
-- USAGE privilege on the database and schema of the specified table.
+- USAGE privilege or any other privilege on the database and schema of the specified table.
 
 ## Usage notes
 

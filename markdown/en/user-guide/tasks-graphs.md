@@ -254,11 +254,12 @@ to run using the current version.
 
 Note
 
+The version of a task graph includes the properties of its tasks, but not the stored procedures that the tasks call.
 If the definition of a stored procedure called by a task changes while the task graph is executing, the new programming could be
 executed when the stored procedure is called by the task in the current run.
 
 For example, suppose the root task in a task graph is suspended, but a scheduled run of this task has already started. The owner of all
-tasks in the task graph modifies the SQL code called by a child task while the root task is still running. The child task runs and executes
+tasks in the task graph modifies the SQL code in the definition of a child task while the root task is still running. The child task runs and executes
 the SQL code in its definition using the version of the task graph that was current when the root task started its run. When the root task
 is resumed or is manually executed, a new version of the task graph is set. This new version includes the modifications to the child task.
 

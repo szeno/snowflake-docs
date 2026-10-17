@@ -28,7 +28,7 @@ For example, create a secure view in the current schema that selects a subset of
 > Copy code
 >
 > ```
-> CREATE SECURE VIEW v CHANGE_TRACKING = TRUE AS SELECT col1, col2 FROM t;
+> CREATE SECURE VIEW my_view CHANGE_TRACKING = TRUE AS SELECT col1, col2 FROM t;
 > ```
 
 For example, modify an existing view to enable change tracking:
@@ -117,6 +117,19 @@ stream might not actually be stale yet.
 Consuming the change data for a stream moves the STALE\_AFTER timestamp forward.
 
 For more information, see [Data retention period and staleness](/user-guide/streams-intro#label-streams-staleness).
+
+## Transfer ownership of a stream
+
+To transfer ownership of a stream to a different role, run the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command with the `STREAM`
+object type. For example:
+
+Copy code
+
+```
+GRANT OWNERSHIP ON STREAM mystream TO ROLE myrole;
+```
+
+For the `REVOKE CURRENT GRANTS` and `COPY CURRENT GRANTS` options and other requirements, see [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership).
 
 ## View and manage streams in Snowsight
 

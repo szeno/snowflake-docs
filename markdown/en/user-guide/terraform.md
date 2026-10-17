@@ -24,7 +24,7 @@ The Snowflake Terraform provider follows semantic versioning. Major version rele
 
 - Generally, we introduce new features and fixes in the latest minor version. This is due to the resource-intensive development process and the need for extensive regression testing.
 - If we discover a security vulnerability, we consider backporting critical fixes to earlier versions on a case-by-case basis.
-- We assess BCRs introduced by underlying Snowflake features for impacts to the provider. The [migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/MIGRATION_GUIDE.md) provides information about how to manage potential breaking changes. We prioritize BCR fixes in each latest version release of the provider and recommend updating your version of the provider regularly.
+- We assess BCRs introduced by underlying Snowflake features for impacts to the provider. The [Snowflake BCR migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/SNOWFLAKE_BCR_MIGRATION_GUIDE.md) describes the Snowflake BCRs that affect the provider and how to adapt your Terraform configuration to them. The [migration guide](https://github.com/snowflakedb/terraform-provider-snowflake/blob/main/MIGRATION_GUIDE.md) provides information about how to manage potential breaking changes when you upgrade to a newer version of the provider. We prioritize BCR fixes in each latest version release of the provider and recommend updating your version of the provider regularly.
 
 ### Preview features
 

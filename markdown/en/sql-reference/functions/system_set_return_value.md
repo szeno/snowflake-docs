@@ -55,7 +55,7 @@ The child task retrieves the return value set by the predecessor task (by callin
 >   WAREHOUSE = return_task_wh
 >   AFTER set_return_value_task
 >   AS
->     INSERT INTO return_values_table VALUES(SYSTEM$GET_PREDECESSOR_RETURN_VALUE('get_return_value_task'));
+>     INSERT INTO return_values_table VALUES(SYSTEM$GET_PREDECESSOR_RETURN_VALUE('SET_RETURN_VALUE_TASK'));
 >
 > -- Resume task (using ALTER TASK ... RESUME).
 > -- Wait for task to run on schedule.

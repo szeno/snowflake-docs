@@ -379,6 +379,63 @@ while not (status.status == "RUNNING" and status.size == "L"):
     print(f"Status: {status.status}, size: {status.size}")
 ```
 
+## Check online feature table setup status
+
+After you enable online serving on a feature view that uses
+`OnlineStoreType.POSTGRES`, Snowflake creates an
+[online feature table](/sql-reference/sql/create-online-feature-table)
+and reports whether that table’s online store finished setup. The online
+service reaching `RUNNING` means the serving layer is up; each new online
+feature table has its own setup status.
+
+Use [`SHOW ONLINE FEATURE TABLES`](/sql-reference/sql/show-online-feature-tables)
+to inspect that status:
+
+Copy code
+
+```
+SHOW ONLINE FEATURE TABLES LIKE '<feature_view_name>%';
+```
+
+| Column | Description |
+| --- | --- |
+| `setup_status` | Setup outcome for the online feature table. |
+| `setup_error_msg` | Error returned when setup failed. `NULL` unless `setup_status` is `SETUP_FAILED`. |
+| `setup_time` | Time when the setup status was last written. |
+
+Expand
+
+Show lessSee more
+
+A new table starts at `SETUP_NOTREADY` and then moves to one of these outcomes:
+
+| Status | Meaning |
+| --- | --- |
+| `SETUP_NOTREADY` | The table was created. Online-store setup has not finished. |
+| `SETUP_READY` | Online-store setup succeeded. The table can ingest and serve. |
+| `SETUP_FAILED` | Online-store setup failed. See `setup_error_msg`. |
+
+Expand
+
+Show lessSee more
+
+Wait until `setup_status` is `SETUP_READY` before you depend on online reads
+for that feature view. After you register the feature view, `SETUP_NOTREADY`
+typically lasts a few seconds. The online service can already be `RUNNING`
+while the table is still being provisioned. If the table stays at
+`SETUP_NOTREADY` for more than 5 minutes, treat setup as stuck and see
+[Online feature table setup failed](#label-online-fs-troubleshooting-setup-failed).
+
+Online feature tables created before this status was recorded appear as
+`SETUP_READY`.
+
+If setup cannot complete, the table moves to `SETUP_FAILED` and
+`setup_error_msg` has the reason. This status is independent of
+`scheduling_state`, which is the refresh schedule (`RUNNING` or `SUSPENDED`).
+
+If `setup_status` is `SETUP_FAILED`, see
+[Online feature table setup failed](#label-online-fs-troubleshooting-setup-failed).
+
 ## Read from the online store
 
 Use the online store to retrieve feature values for specific entity keys at inference time.
@@ -1155,6 +1212,55 @@ Copy code
 
 ```
 fs.register_feature_view(my_feature_view, version="V1", overwrite=True)
+```
+
+### Online feature table setup failed
+
+If [`SHOW ONLINE FEATURE TABLES`](/sql-reference/sql/show-online-feature-tables)
+reports `setup_status = SETUP_FAILED`, the online feature table did not finish
+setup. `setup_error_msg` has the reason. Online reads for that feature view
+are not ready.
+
+Copy code
+
+```
+SHOW ONLINE FEATURE TABLES LIKE '<feature_view_name>%';
+```
+
+Confirm the online service is `RUNNING`:
+
+Copy code
+
+```
+status = fs.get_online_service_status()
+print(status.status, status.size)
+```
+
+Fix the cause if `setup_error_msg` identifies one, then re-register the
+feature view so setup can run again:
+
+Copy code
+
+```
+fs.register_feature_view(my_feature_view, version="V1", overwrite=True)
+```
+
+If multiple online feature tables report `SETUP_FAILED` at the same time and
+re-registering the feature views doesn’t resolve it, the problem is likely with
+the online service rather than individual tables. As a last resort, drop and
+recreate the online service, then re-register the feature views.
+
+Dropping the online service stops all online serving
+
+Dropping the online service stops online serving for every feature view in the
+feature store until you recreate the service and setup completes. Avoid this in
+production unless other fixes have failed.
+
+Copy code
+
+```
+fs.drop_online_service()
+fs.create_online_service("FS_PRODUCER_ROLE", "FS_CONSUMER_ROLE")
 ```
 
 ### Online service unreachable (DNS resolution with PrivateLink)

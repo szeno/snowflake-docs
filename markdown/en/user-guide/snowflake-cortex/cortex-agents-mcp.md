@@ -78,6 +78,23 @@ Snowflake currently supports the following tool types:
 - **SYSTEM\_EXECUTE\_SQL:** SQL execution
 - **GENERIC:** tool for UDFs and stored procedures
 
+#### Configure tool annotations
+
+For `GENERIC` and `CORTEX_AGENT_RUN` tools, you can override the default [MCP tool annotations](https://modelcontextprotocol.io/specification/2025-11-25/schema#toolannotations) that Snowflake returns to clients. These hints let clients distinguish tools that are read-only, destructive, idempotent, or able to interact with external entities.
+
+Add an `annotations` object to the tool definition and specify any of the following Boolean fields:
+
+- `readOnlyHint`: The tool doesn’t modify its environment.
+- `destructiveHint`: The tool might perform destructive updates. This hint applies only when `readOnlyHint` is `false`.
+- `idempotentHint`: Repeated calls with the same arguments have the same effect as one call.
+- `openWorldHint`: The tool might interact with external entities.
+
+You can omit fields that you don’t want to override. By default, `GENERIC` and `CORTEX_AGENT_RUN` tools use `readOnlyHint: false`, `destructiveHint: true`, `idempotentHint: false`, and `openWorldHint: true`.
+
+Important
+
+Tool annotations are client-facing hints, not security controls. Snowflake doesn’t validate that a tool behaves as its annotations claim. Use RBAC and least-privilege access to control the operations that the underlying UDF, stored procedure, or Cortex Agent can perform.
+
 The following examples show how to configure different tool types:
 
 Agent toolAnalyst toolSearch toolSQL execution toolUDF / Stored Procedure
@@ -93,6 +110,8 @@ tools:
     type: "CORTEX_AGENT_RUN"
     identifier: "<database_name>.<schema_name>.<agent_name>"
     description: "Answers governed business data questions by using configured Cortex Analyst and Cortex Search resources."
+    annotations:
+      openWorldHint: false
 ```
 
 The agent tool response includes all intermediate steps by design: reasoning traces, tool calls, search results, and citations.
@@ -172,6 +191,11 @@ tools:
     identifier: "db.schema.my_function"
     type: "GENERIC"
     description: "Custom tool description"
+    annotations:
+      readOnlyHint: true
+      destructiveHint: false
+      idempotentHint: true
+      openWorldHint: false
     config:
       type: "function"
       query_timeout: 120

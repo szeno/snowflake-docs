@@ -25,6 +25,11 @@ For optimal performance in high-throughput deployments, we recommend the followi
   - `net.snowflake.ingest.internal.apache.parquet`
   - `org.apache.parquet`
 - Channels should be long lived when a client is actively inserting data and should be reused because offset token information is retained. Don’t close channels after inserting data because data inside the channels is automatically flushed based on the time configured in `MAX_CLIENT_LAG`.
+- When you’re completely done ingesting data through a channel, close and drop it by calling `close(true)`
+  (`CompletableFuture<Void> close(boolean drop)`). The channel is dropped after all of its data is committed. Dropping a
+  channel deletes its offset token and other state from Snowflake, unless the channel was already reopened in another client.
+  If you later open a channel with the same name, it behaves like a new channel. To close a channel without dropping it, call
+  `close()`.
 
 ## Latency recommendations
 

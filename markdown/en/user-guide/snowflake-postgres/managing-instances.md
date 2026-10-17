@@ -264,6 +264,35 @@ operation restarts the server in-place, without creating a replica or performing
 Regenerating credentials will return a new connection string for your database instance, replacing the existing credentials. Read more about
 this topic in [Snowflake Postgres Roles](/user-guide/snowflake-postgres/postgres-roles).
 
+## Your responsibilities and what Snowflake manages
+
+Snowflake Postgres manages the infrastructure and database software for your instances, including
+server provisioning, operating system updates, and automated backups. This reduces routine database
+administration so you can focus on building and running your applications.
+
+You manage how your applications use the database, including your data and schemas, access controls,
+and query and index tuning. You also choose the instance configuration that meets your workload’s
+needs, such as compute capacity, storage, and high availability.
+
+The following table explains your responsibilities and what Snowflake manages for each area:
+
+| Area | Your responsibility | Snowflake’s responsibility |
+| --- | --- | --- |
+| Data and application performance | Manage data and schemas. Tune queries, indexes, and application behavior. | Operate the underlying database service. |
+| Infrastructure and routine maintenance | Choose a [maintenance window](/user-guide/snowflake-postgres/postgres-maintenance) and prepare applications to reconnect after maintenance. | Provision infrastructure, patch the operating system, and apply Postgres minor version updates. |
+| Major version upgrades | Test application compatibility, plan, and initiate [upgrades](/user-guide/snowflake-postgres/postgres-upgrades). | Run the upgrade process. |
+| Backups and recovery | Define recovery requirements and initiate [point-in-time recovery](/user-guide/snowflake-postgres/postgres-point-in-time-recovery) when needed. | Run automated backups and create a recovered instance from the selected point in time. |
+| High availability | Choose whether to enable [high availability](/user-guide/snowflake-postgres/high-availability) and ensure applications can reconnect after a failover. | Maintain a standby and fail over automatically if the primary becomes unavailable, when high availability is enabled. |
+| Compute and storage | Monitor capacity and request [compute or storage changes](#label-sfpg-modify). | Provision resources and automatically increase storage when disk space becomes critically low. |
+| Network and database access | Configure [network rules](/user-guide/snowflake-postgres/postgres-network), [database users, roles, and grants](/user-guide/snowflake-postgres/postgres-roles). Protect credentials. | Provide network controls and database authentication mechanisms. |
+| Encryption | Configure [client certificate verification](/user-guide/snowflake-postgres/postgres-ssl-certs). Safeguard your customer-managed key if you use [Tri-Secret Secure](/user-guide/snowflake-postgres/postgres-tss). | Encrypt instance storage, provide encrypted connections, and manage Snowflake-managed keys. |
+
+Expand
+
+Show lessSee more
+
+For specific security configuration responsibilities, see [Customer Configurable Security Controls](/user-guide/snowflake-postgres/about#label-customer-configurable-controls).
+
 ## Custom configuration parameters
 
 You can make changes to many of Postgres’s own server settings for your Snowflake Postgres instances. You can see the list of available

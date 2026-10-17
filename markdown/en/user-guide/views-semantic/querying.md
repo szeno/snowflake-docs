@@ -600,7 +600,8 @@ SELECT customer_market_segment, AGG(order_average_value)
   GROUP BY customer_market_segment;
 ```
 
-The dimensions must be reachable by every metric used in the query.
+The dimensions must be reachable by every metric used in the query. A dimension is reachable by a metric if you can return
+that dimension with that metric, as explained in [Choosing the dimensions that you can return for a given metric](#label-semantic-views-query-dimensions-metrics).
 
 ### Specifying the HAVING clause
 
@@ -651,7 +652,9 @@ SELECT * FROM SEMANTIC_VIEW (
 ```
 
 This query fails because the `orders` table for the `order_date` dimension has a higher level of granularity than the
-`customer` table for the `customer_order_count` metric:
+`customer` table for the `customer_order_count` metric. In the `tpch_analysis` semantic view, `orders` refers to `customer`
+(`orders (o_custkey) REFERENCES customer`), so each customer can have many orders. The `order_date` dimension has one value
+per order, but the `customer_order_count` metric is computed per customer, so it can’t be broken down by order date:
 
 ```
 010234 (42601): SQL compilation error:

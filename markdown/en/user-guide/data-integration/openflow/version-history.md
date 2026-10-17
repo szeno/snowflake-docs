@@ -6,6 +6,33 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 15, 2026
+
+### Runtime Server 2026.10.15.2
+
+- Applied security patches and dependency upgrades.
+- Runtime UI: Upgraded the Runtime UI to version 0.93.0.
+
+### Runtime Extensions 2026.10.15.8
+
+- CDC MySQL: Fixed an issue where the MySQL connector could stop capturing changes for some tables, without reporting an error, after the source MySQL server was restarted.
+- CDC SQL Server: Fixed an issue where SQL Server CDC tables that include a `TIMESTAMP` / `ROWVERSION` column failed when incremental replication started after the snapshot. The column is now replicated as `TEXT` during both the snapshot and incremental replication, as documented.
+- CDC Databases: Fixed an issue where stopping a database connector could fail a merge retry that was already in progress.
+- CDC Oracle: Fixed capture status and position lookups when multiple XStream outbound servers share the same capture.
+- CDC Oracle: When an `UPDATE` changes a logical-key value but the change record lacks the before-image of every logical-key column, the table is now marked `FAILED` instead of replicating the change, which prevents duplicate active rows in the destination. With a complete before-image, the old row is soft-deleted and the new row is inserted.
+- SharePoint: Limited stage cleanup to the affected document or extracted-image directory, reducing cleanup work on large stages.
+- MongoDB: Added two timestamps to each captured DML FlowFile, as epoch milliseconds in UTC: the earliest source commit time of the changes, and the time the connector first read an event in that FlowFile.
+- CDC SQL Server: Added the earliest source commit timestamp of the rows each SQL Server CDC DML FlowFile carries.
+- Veeva Vault: Fixed an issue where schema evolution tried to drop the `NOT NULL` constraint on primary key columns.
+
+### Connectors 2026.10.15.1
+
+- CDC SQL Server (change tracking) 0.58.0: Changed tables to fail when the SQL Server change tracking retention limit is exceeded, instead of continuing after the required change records are no longer available.
+- CDC SQL Server (change tracking) 0.58.0 and CDC SQL Server (change data capture) 0.51.0: The journal table now inherits the destination database collation, so a destination database with a case-insensitive (`en-ci`) default collation replicates case-insensitive source primary keys correctly.
+- CDC SQL Server (change data capture) 0.51.0 and MongoDB 0.28.0: Added ingested-record counts and commit-to-capture, capture-to-journal, and commit-to-merge latency metrics for the gen 1 connectors.
+- Jira Core 0.10.0: Applied the Merge Interval to audit deletes, snapshot objects, and users, reducing unnecessary Snowflake warehouse wake-ups. Snapshot and user runs no longer remain `IN_PROGRESS` while waiting for the interval.
+- SharePoint 0.29.0, SharePoint (no ACL) 0.13.0, SharePoint to Stage (no Cortex) 0.26.0, and SharePoint to Stage (no Cortex, no ACL) 0.9.0: Changed stage cleanup to remove a deleted item’s files by its item-ID prefix instead of scanning the whole stage, reducing cleanup work on large stages. Removed the unused `Use Legacy Removal Pattern` parameter. Drain existing cleanup queues before upgrading.
+
 ## October 12, 2026
 
 ### Runtime Server 2026.10.12.12

@@ -9,7 +9,7 @@ This Account Usage view displays a row for each [task](/user-guide/tasks-intro) 
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| CREATED | TIMESTAMP\_LTZ | Date and time when the task was created. |
+| CREATED | TIMESTAMP\_NTZ | Date and time when the task was created. |
 | LAST\_ALTERED | TIMESTAMP\_LTZ | Date and time when the task was last altered. |
 | DELETED | TIMESTAMP\_LTZ | Date and time when the task was dropped. NULL if the task hasn’t been dropped. |
 | ID | VARCHAR | Unique identifier for each task. Note that recreating a task (using CREATE OR REPLACE TASK) essentially creates a new task with a new ID. |
@@ -28,8 +28,8 @@ This Account Usage view displays a row for each [task](/user-guide/tasks-intro) 
 | CONDITION | VARCHAR | Condition specified in the WHEN clause for the task. |
 | ALLOW\_OVERLAPPING\_EXECUTION | BOOLEAN | For root tasks in a task graph, displays TRUE if overlapping execution of the task graph is explicitly allowed. For child tasks in a task graph, displays NULL. |
 | ERROR\_INTEGRATION | VARCHAR | Name of the notification integration used to access Amazon Simple Notification Service (SNS), Google Pub/Sub, or Microsoft Azure Event Grid to relay error notifications for the task. |
-| LAST\_COMMITTED | TIMESTAMP\_LTZ | Timestamp when a version of the task was last set. If no version was set—that is, if the task wasn’t resumed or manually run after it was created—the value is NULL. |
-| LAST\_SUSPENDED | TIMESTAMP\_LTZ | Timestamp when the task was last suspended. Displays the timestamps for both the root tasks and the child tasks. NULL if the task hasn’t been suspended yet. |
+| LAST\_COMMITTED | TIMESTAMP\_NTZ | Timestamp when a version of the task was last set. If no version was set—that is, if the task wasn’t resumed or manually run after it was created—the value is NULL. |
+| LAST\_SUSPENDED | TIMESTAMP\_NTZ | Timestamp when the task was last suspended. Displays the timestamps for both the root tasks and the child tasks. NULL if the task hasn’t been suspended yet. |
 | OWNER\_ROLE\_TYPE | VARCHAR | The type of role that owns the object. Common values include ROLE, DATABASE\_ROLE, APPLICATION, APPLICATION PACKAGE SHARE, USER, SHARE, and others. |
 | INSTANCE\_ID | NUMBER | Internal/system-generated identifier for the instance which the object belongs to. |
 | CONFIG | VARCHAR | For the root task in a task graph, displays the default configuration set in the task definition with CREATE TASK or ALTER TASK. For child tasks in a task graph, displays NULL. Returns an empty string for tasks in shared databases or application instances where the consumer account differs from the provider account. |

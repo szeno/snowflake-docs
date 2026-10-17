@@ -11,6 +11,7 @@ Note
 This function is generally deprecated in favor of the
 [ACCOUNT\_USAGE.SERVERLESS\_TASK\_HISTORY view](/sql-reference/account-usage/serverless_task_history),
 which provides a more complete data set and supports longer date ranges.
+Unlike this function, which returns only the task name, the view also returns a TASK\_ID column that identifies each task.
 
 ## Syntax
 

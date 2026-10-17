@@ -35,6 +35,7 @@ Show lessSee more
   - SQLServer INT: -2^31 (-2,147,483,648) to 2^31-1 (2,147,483,647)
   - SQLServer BIGINT: -2^63 (-9,223,372,036,854,775,808) to 2^63-1 (9,223,372,036,854,775,807)
   - SQLServer SMALLINT: -2^15 (-32,768) to 2^15-1 (32,767)
+- NUMBER(38,0) can hold values outside the range of a 64-bit signed integer (the SQL Server BIGINT range shown above). If an application, driver, or downstream system reads these columns into a 64-bit integer type, values outside that range can overflow.
 - For Money and Smallmoney: ​
   - Currency or monetary data does not need to be enclosed in single quotation marks ( ‘ ). It is important to remember that while you can specify monetary values preceded by a currency symbol, SQL Server does not store any currency information associated with the symbol, it only stores the numeric value.
   - Please take care on the translations for the DMLs

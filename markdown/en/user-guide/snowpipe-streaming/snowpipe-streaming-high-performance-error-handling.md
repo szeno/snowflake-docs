@@ -121,7 +121,7 @@ For these errors, stop the ingestion, and then fix the client application’s se
 
 ### Handling SDK exceptions and HTTP status codes
 
-When you use the Java SDK, methods such as `insertRows`, `getLatestCommittedOffsetToken`, and `getChannelStatus` might throw an `SFException`. To ensure resilient ingestion, applications must catch these exceptions, and then inspect `getHttpStatusCode()` to determine the required recovery action.
+When you use the Java SDK, methods such as `appendRow`, `appendRows`, `getLatestCommittedOffsetToken`, and `getChannelStatus` might throw an `SFException`. To ensure resilient ingestion, applications must catch these exceptions, and then inspect `getHttpStatusCode()` to determine the required recovery action.
 
 The following table describes common HTTP status codes, their error conditions, and the required actions:
 
