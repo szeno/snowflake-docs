@@ -45,7 +45,17 @@ None
 
 ## Usage notes
 
-This command helps you migrate from SnowSQL to Snowflake CLI by identifying your SnowSQL environment variables and mapping them to the corresponding Snowflake CLI environment variables. It displays information with suggested changes and links to documentation.
+This command only prints suggested Snowflake CLI mappings. It doesn’t set or migrate environment variables.
+It treats a `snowsql` prefix without regard to case. Only the exact uppercase names in the map get a suggestion. On Windows, the operating system stores environment-variable names in uppercase, so `snowsql_account` is read as `SNOWSQL_ACCOUNT`. The command handles these names as follows:
+
+- `EXIT_ON_ERROR` isn’t printed, because that name doesn’t start with `snowsql`.
+- `snowsql_account` is reported unused on Unix-like systems, where the lowercase name is preserved. Only the exact uppercase name `SNOWSQL_ACCOUNT` gets a suggestion. On Windows, that lowercase name is already uppercase, so the command suggests `SNOWFLAKE_ACCOUNT`.
+- `SNOWSQL_PASSWORD` is reported unused. The known password name is `SNOWSQL_PWD`.
+- `SNOWSQL_ACCOUNTNAME` is reported unused. The documented name is `SNOWSQL_ACCOUNT`.
+- `SNOWSQL_REGION` is suggested as `SNOWFLAKE_ACCOUNT` (account identifier, not the region name). Put the [account identifier](/user-guide/admin-account-identifier) in `SNOWFLAKE_ACCOUNT` or on the imported connection’s `account`. Don’t copy the region name into the account. A region value already in the SnowSQL file is imported as `region`. The default Snowflake CLI doesn’t read `SNOWSQL_REGION` or `SNOWFLAKE_REGION` while connecting.
+- `SNOWSQL_PROXY_HOST` is suggested as `HTTPS_PROXY or HTTP_PROXY host`. `SNOWSQL_PROXY_PORT`, `SNOWSQL_PROXY_USER`, and `SNOWSQL_PROXY_PWD` are suggested as `HTTPS_PROXY or HTTP_PROXY` followed by `port`, `username`, or `password`. Those SnowSQL proxy variables aren’t read while connecting.
+
+For the connection mappings the default Snowflake CLI connection behavior reads, see [Manually migrate your environment variables](/user-guide/snowsql-migrate#label-snowsql-migration-env-var-mappings).
 
 ## Examples
 

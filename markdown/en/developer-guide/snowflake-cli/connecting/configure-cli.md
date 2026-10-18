@@ -53,16 +53,21 @@ Other Snowflake tools (VS Code Extension, Cortex Code, SnowConvert) also read `c
 
 ## Location of the `.toml` configuration file
 
-By default Snowflake CLI looks for the `config.toml` file in the `~/.snowflake` directory or, in case this directory does not exist, in a system-specific location, as listed below.
-You can also specify which configuration file should be used with the `--config-file` flag or `SNOWFLAKE_HOME` environment variable.
+By default Snowflake CLI chooses a configuration directory and reads `config.toml` from that directory.
+You can select a specific file with the `--config-file` flag.
 
-- If you specify the `--config-file` option (such as `snow --config-file ./my-config-file-path`), Snowflake CLI uses the specified configuration file.
-- If the `SNOWFLAKE_HOME` environment variable is set, Snowflake CLI uses the location specified by this variable.
-- If a `~/.snowflake` directory exists on your machine, Snowflake CLI uses the `~/.snowflake/config.toml` file.
-- Otherwise, Snowflake CLI uses the `config.toml` file in one of the following locations, based on your operating system:
-  - Linux: `~/.config/snowflake/config.toml`, but you can update it with XDG vars
-  - Windows: `%USERPROFILE%\AppData\Local\snowflake\config.toml`
-  - Mac: `~/Library/Application Support/snowflake/config.toml`
+- If you specify the `--config-file` option (such as `snow --config-file ./my-config-file-path`), Snowflake CLI uses that file as `config.toml`.
+- Otherwise Snowflake CLI chooses the directory as follows:
+  - If `SNOWFLAKE_HOME` is set, that path is the candidate directory. If `SNOWFLAKE_HOME` isn’t set, the candidate is `~/.snowflake`.
+  - If the candidate directory exists, Snowflake CLI uses `config.toml` in that directory.
+  - If the candidate directory doesn’t exist, Snowflake CLI uses `config.toml` in one of the following locations, based on your operating system:
+    - Linux: `~/.config/snowflake/config.toml`, but you can update it with XDG vars
+    - Windows: `%USERPROFILE%\AppData\Local\snowflake\config.toml`
+    - macOS: `~/Library/Application Support/snowflake/config.toml`
+
+`SNOWFLAKE_HOME` is used only when that directory already exists. A missing `SNOWFLAKE_HOME` directory doesn’t fall back to `~/.snowflake`. Snowflake CLI uses the operating-system path in the previous list. Create the directory before you rely on it.
+`--config-file` doesn’t change where `connections.toml` is read. If `connections.toml` exists in the configuration directory chosen by those rules, connections come from that file, and connection entries in `config.toml` are ignored. `default_connection_name` is still read from `config.toml`.
+Run `snow --info` and read `default_config_file_path` to see the `config.toml` path for this installation.
 
 Note
 

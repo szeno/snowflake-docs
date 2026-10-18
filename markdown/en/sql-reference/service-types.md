@@ -34,6 +34,7 @@ This topic contains the types of usage that can incur costs in Snowflake.
 | FAILSAFE\_RECOVERY | FAILSAFE RECOVERY | Charges for recovering data from Fail-safe storage. | Databases | Credits |
 | HYBRID\_TABLE\_DEDICATED\_STORAGE\_MODE | HYBRID TABLE DEDICATED STORAGE MODE | Dedicated storage mode for Hybrid Tables. | Storage | Days |
 | HYBRID\_TABLE\_STORAGE | HYBRID TABLE STORAGE | Storage used by Hybrid Tables for transactional data. | Storage | TiB-Months |
+| ICEBERG\_REFRESH\_DATA\_VOLUME | ICEBERG REFRESH DATA VOLUME | Data registration credits for externally managed iceberg tables. | Databases | Credits |
 | INTERNAL\_DATA\_TRANSFER | INTERNAL DATA TRANSFER | Data transfer between Snowflake regions or cloud providers. | Networking | TiB |
 | LOGGING | LOGGING | Storage and compute for event logging and audit trails. | Management and Governance | Credits |
 | MATERIALIZED\_VIEW | MATERIALIZED VIEWS | Serverless compute for maintaining materialized views. | Compute | Credits |

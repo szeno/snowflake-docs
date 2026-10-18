@@ -596,6 +596,15 @@ Warning
 
 Don’t use `--force` unless you intentionally want to recreate the dbt project object. In `snow dbt deploy`, `--force` runs `CREATE OR REPLACE DBT PROJECT`, which may remove run history.
 
+The workflows in this tutorial deploy the dbt project from the `tasty_bytes_dbt_demo` folder of the repository that you forked in the
+getting-started tutorial.
+
+If you uncommented the packages in `packages.yml` during the getting-started tutorial, add
+`--external-access-integration dbt_ext_access` to each `snow dbt deploy` command, as the workflow comments note. When a dbt project object
+has an external access integration, Snowflake runs `dbt deps` before it compiles the project during deployment, so the `snow dbt execute`
+commands don’t need the integration. If a dbt command needs network access during execution, such as `deps`, specify
+`EXTERNAL_ACCESS_INTEGRATIONS` on [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project) instead.
+
 GitHub ActionsGitLab CI/CDAzure DevOps
 
 1. In your GitHub repository, go to **Actions**.
@@ -648,8 +657,9 @@ GitHub ActionsGitLab CI/CDAzure DevOps
          - run: snow connection test -x
 
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
+         # If packages.yml lists packages, add --external-access-integration dbt_ext_access
          - name: Create a new tester dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
-           run: snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action --source ./tasty_bytes --dbt-version 1.12.3 -x
+           run: snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action --source ./tasty_bytes_dbt_demo --dbt-version 1.12.3 -x
 
          - name: List all of the snowflake dbt project objects in your account
            run: snow dbt list --format JSON -x
@@ -694,9 +704,10 @@ ci-test-dbt:
     # The -x is shorthand for --temporary-connection
     - snow connection test -x
     # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
+    # If packages.yml lists packages, add --external-access-integration dbt_ext_access
     - >-
       snow dbt deploy tester_tasty_bytes_dbt_project_object_gitlab
-      --source ./tasty_bytes
+      --source ./tasty_bytes_dbt_demo
       --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
       --git-commit "${CI_COMMIT_SHA}"
@@ -748,9 +759,10 @@ steps:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
   # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
+  # If packages.yml lists packages, add --external-access-integration dbt_ext_access
   - script: |
       snow dbt deploy tester_tasty_bytes_dbt_project_object_ado \
-        --source ./tasty_bytes \
+        --source ./tasty_bytes_dbt_demo \
         --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
         --git-commit "$(Build.SourceVersion)" \
@@ -872,15 +884,16 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
          # The --default-target flag ensures the dbt project object compiles and executes with your prod target
+         # If packages.yml lists packages, add --external-access-integration dbt_ext_access
          - name: Create a new dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
-           run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes --default-target prod --dbt-version 1.12.3 -x
+           run: snow dbt deploy tasty_bytes_dbt_object_gh_action --source ./tasty_bytes_dbt_demo --default-target prod --dbt-version 1.12.3 -x
 
          - name: List all of the snowflake dbt project objects in your account
            run: snow dbt list --format JSON -x
 
          # (optional) Uncomment the lines below and follow Step 7 if you want to manage Task orchestration via source control
          # - name: Run schedules.sql to create or alter tasks for tasty_bytes_dbt_object_gh_action
-         #   run: snow sql -f ${{ github.workspace }}/tasty_bytes/schedules.sql -x
+         #   run: snow sql -f ${{ github.workspace }}/tasty_bytes_dbt_demo/schedules.sql -x
    ```
 6. Select **Commit changes** to save the file to `.github/workflows/pr_merged.yml`.
 7. After you merge a pull request into `main`, navigate to the **Actions** tab of your repository to see your `pr_merged.yml` action start
@@ -907,9 +920,10 @@ cd-deploy-dbt:
     - snow connection test -x
     # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
     # The --default-target flag ensures the dbt project object compiles and executes with your prod target
+    # If packages.yml lists packages, add --external-access-integration dbt_ext_access
     - >-
       snow dbt deploy tasty_bytes_dbt_object_gitlab
-      --source ./tasty_bytes
+      --source ./tasty_bytes_dbt_demo
       --default-target prod
       --dbt-version 1.12.3
       --git-url "${CI_PROJECT_URL}"
@@ -918,7 +932,7 @@ cd-deploy-dbt:
       -x
     - snow dbt list --format JSON -x
     # (optional) Uncomment to manage Task orchestration via source control
-    # - snow sql -f ./tasty_bytes/schedules.sql -x
+    # - snow sql -f ./tasty_bytes_dbt_demo/schedules.sql -x
 ```
 
 Commit and push to `main` to trigger the deployment.
@@ -963,9 +977,10 @@ steps:
 
   # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
   # The --default-target flag ensures the dbt project object compiles and executes with your prod target
+  # If packages.yml lists packages, add --external-access-integration dbt_ext_access
   - script: |
       snow dbt deploy tasty_bytes_dbt_object_ado \
-        --source ./tasty_bytes \
+        --source ./tasty_bytes_dbt_demo \
         --default-target prod \
         --dbt-version 1.12.3 \
         --git-url "$(Build.Repository.Uri)" \
@@ -982,7 +997,7 @@ steps:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
   # (optional) Uncomment to manage Task orchestration via source control
-  # - script: snow sql -f ./tasty_bytes/schedules.sql -x
+  # - script: snow sql -f ./tasty_bytes_dbt_demo/schedules.sql -x
   #   displayName: 'Run schedules.sql'
   #   env:
   #     SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
@@ -1007,7 +1022,7 @@ Create a second pipeline in Azure DevOps pointing to this YAML file.
 
 Orchestrate executions of your dbt project object using a `schedules.sql` file and Snowflake tasks (triggered from the CD workflow):
 
-1. In your repository, navigate to your dbt project (for example, `tasty_bytes/`).
+1. In your repository, navigate to your dbt project (for example, `tasty_bytes_dbt_demo/`).
 2. Create a file named `schedules.sql` and copy and paste the following into the file.
 
    This file:

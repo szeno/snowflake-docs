@@ -220,7 +220,11 @@ You can specify the SQL query to execute using one of the following options:
 
   - `snow sql -f myfile.sql`
   - `snow sql -f file1.sql -f file2.sql -f file3.sql`
-- Specify the query as `stdin` and pipe it to the `snow sql` command, such as `cat my.sql | snow sql`.
+- Specify the query as `stdin` and pipe it to the `snow sql` command with `--stdin` (`-i`), such as `cat my.sql | snow sql --stdin`.
+
+  Note
+
+  Without `-q`, `-f`, or `--stdin`, the command reads standard input and then still enters the REPL. That decision is made before the read, so the piped text is discarded. The REPL sees an empty standard input, and the session ends when it reaches the end of that input. The SQL isn’t executed.
 - If your query contains special characters, such as the dollar sign in [SYSTEM functions](/sql-reference/functions-system), that you do not want the shell to interpret, you can do either of the following:
 
   - Enclose the query in single quotes instead of double quotes, as in:
@@ -348,7 +352,7 @@ The following examples show the effect of the `--enhanced-exit-codes` option whe
   Copy code
 
   ```
-  snow sql --enhanced-exit-codes -q 'slect 1'
+  snow sql -q 'slect 1'
 
   echo $?
   ```
@@ -357,7 +361,7 @@ The following examples show the effect of the `--enhanced-exit-codes` option whe
   1
   ```
 
-Alternatively, you can set the `SNOWFLAKE_ENHANCED_EXIT_CODES` environment variable to `1` to send the enhanced return codes for all `snow sql` commands.
+Alternatively, you can set the `SNOWFLAKE_ENHANCED_EXIT_CODES` environment variable to `1` to enable enhanced return codes globally for Snowflake CLI commands.
 
 ### Interactive mode
 

@@ -251,8 +251,9 @@ If both files exist, Snowflake CLI uses only connections from `connections.toml`
 
 ### Use environment variables for Snowflake credentials
 
-You can specify Snowflake credentials in system environment variables instead of
-in configuration files. You can use the following generic environment variables only to specify connection parameters:
+You can supply Snowflake credentials with system environment variables.
+The following generic variables fill a connection parameter only when a command-line flag and the selected connection haven’t already set that parameter.
+With `--temporary-connection` (`-x`), no saved connection is loaded, so these variables supply the parameters:
 
 - `SNOWFLAKE_ACCOUNT`
 - `SNOWFLAKE_USER`
@@ -261,7 +262,11 @@ in configuration files. You can use the following generic environment variables 
 - `SNOWFLAKE_SCHEMA`
 - `SNOWFLAKE_ROLE`
 - `SNOWFLAKE_WAREHOUSE`
+- `SNOWFLAKE_HOST`
+- `SNOWFLAKE_PORT`
+- `SNOWFLAKE_PROTOCOL`
 - `SNOWFLAKE_AUTHENTICATOR`
+- `SNOWFLAKE_PRIVATE_KEY_FILE`
 - `SNOWFLAKE_PRIVATE_KEY_PATH`
 - `SNOWFLAKE_PRIVATE_KEY_RAW`
 - `SNOWFLAKE_SESSION_TOKEN`
@@ -279,6 +284,10 @@ in configuration files. You can use the following generic environment variables 
 - `SNOWFLAKE_OAUTH_ENABLE_SINGLE_USE_REFRESH_TOKENS`
 - `SNOWFLAKE_CLIENT_STORE_TEMPORARY_CREDENTIAL`
 - `SNOWFLAKE_WORKLOAD_IDENTITY_PROVIDER`
+
+`SNOWFLAKE_PRIVATE_KEY_FILE` and `SNOWFLAKE_PRIVATE_KEY_PATH` both set the private key file. If the connection doesn’t already have a key file, `SNOWFLAKE_PRIVATE_KEY_FILE` is applied first.
+To replace one key of a connection that already exists, set `SNOWFLAKE_CONNECTIONS_<NAME>_<KEY>`. `<NAME>` is the connection name in uppercase, and `<KEY>` is the Snowflake CLI parameter name, such as `PASSWORD` or `PRIVATE_KEY_FILE`. This variable replaces that key from the file. It doesn’t create a connection that isn’t already defined.
+For an encrypted private key, set `PRIVATE_KEY_PASSPHRASE`. That variable takes precedence over `private_key_passphrase` or `private_key_file_pwd` on the connection. It isn’t one of the `SNOWFLAKE_*` fill-in variables in the previous list.
 
 ### Pass connection parameters to the `snow` command
 
@@ -332,7 +341,9 @@ For improved security, Snowflake strongly recommends using either `SNOWFLAKE_CON
 
 Snowflake CLI is an open-source command-line tool explicitly designed for developer-centric workloads in addition to SQL operations. Snowflake CLI is a more modern, robust, and efficient CLI client than legacy SnowSQL. In addition to executing SQL commands with Snowflake CLI, you can also execute commands for other Snowflake products like Streamlit in Snowflake, Snowpark Container Services, and Snowflake Native App Framework. Because new features and enhancements will be added only to Snowflake CLI, Snowflake recommends that you begin transitioning from SnowSQL to Snowflake CLI.
 
-To import any existing connections defined in [SnowSQL](/user-guide/snowsql) into your Snowflake CLI `config.toml` configuration file, use the `snow helpers import-snowsql-connections` command.
+To import existing connections defined in [SnowSQL](/user-guide/snowsql) into your Snowflake CLI configuration, run `snow helpers import-snowsql-connections` once. It copies connection sections into the Snowflake CLI configuration and stops. It doesn’t copy `[variables]`, `[connection_options]`, or environment variables. From `[options]`, it copies `login_timeout`, `client_session_keep_alive`, `ocsp_fail_open`, `insecure_mode`, and `client_store_temporary_credential` when a connection omits that key. A named connection doesn’t receive keys from the unnamed `[connections]` section.
+
+When `connections.toml` exists, the import writes each connection as a top-level `[connection_name]` section in that file. Otherwise it writes `[connections.connection_name]` in `config.toml`. `default_connection_name` is set only from the unnamed `[connections]` section, under the name that section was actually saved with, including a prompted rename. A section that is only `[connections.default]` doesn’t become the CLI default. If you decline the overwrite of that unnamed connection, the existing connection and `default_connection_name` are left unchanged. Declining a named connection still lets the unnamed section set the default when that section is saved. If the default name is already used by another connection in the same import, the command asks for another name and stops after three unsuccessful tries, without writing. For the files the command reads, key remapping, and typed values, see the [snow helpers import-snowsql-connections](/developer-guide/snowflake-cli/command-reference/helpers-commands/import-snowsql-connections) command reference.
 
 To import SnowSQL connections, enter the `snow helpers import-snowsql-connections` command similar to the following code block that imports SnowSQL connections from the standard configuration file locations:
 
@@ -342,7 +353,7 @@ Copy code
 snow helpers import-snowsql-connections
 ```
 
-As the command processes the SnowSQL configuration files, it shows the progress and prompts for confirmation when a connection with the same name is already defined in the Snowflake CLI `config.toml` file:
+As the command processes the SnowSQL configuration files, it shows the progress and prompts for confirmation when a connection with the same name is already defined in the Snowflake CLI configuration:
 
 ```
 SnowSQL config file [/etc/snowsql.cnf] does not exist. Skipping.
@@ -354,6 +365,7 @@ Trying to read connections from [/Users/<user>/.snowsql/config].
 Reading SnowSQL's default connection configuration from [/Users/<user>/.snowsql/config]
 Reading SnowSQL's connection configuration [connections.connection1] from [/Users/<user>/.snowsql/config]
 Reading SnowSQL's connection configuration [connections.connection2] from [/Users/<user>/.snowsql/config]
+SnowSQL config file [/usr/lib64/snowflake/snowsql/config] does not exist. Skipping.
 Connection 'connection1' already exists in Snowflake CLI, do you want to use SnowSQL definition and override existing connection in Snowflake CLI? [y/N]: Y
 Connection 'connection2' already exists in Snowflake CLI, do you want to use SnowSQL definition and override existing connection in Snowflake CLI? [y/N]: n
 Connection 'default' already exists in Snowflake CLI, do you want to use SnowSQL definition and override existing connection in Snowflake CLI? [y/N]: n
@@ -367,23 +379,7 @@ For help with migrating from SnowSQL to Snowflake CLI, see [Migrating from SnowS
 
 ## Use a temporary connection
 
-You can also specify connection parameters from the command line using the `--temporary-connection [-x]` option. It ignores all definitions from the `config.toml`, using ones specified by command-line options instead. This approach can be helpful for CI/CD use cases when you don’t want to use a configuration file. When you use a temporary connection, Snowflake CLI ignores any connection variables defined in the `config.toml` file, but does still use any of the following [environment variables](#label-snowcli-environment-creds) you set:
-
-- `SNOWFLAKE_ACCOUNT`
-- `SNOWFLAKE_USER`
-- `SNOWFLAKE_PASSWORD`
-- `SNOWFLAKE_DATABASE`
-- `SNOWFLAKE_SCHEMA`
-- `SNOWFLAKE_ROLE`
-- `SNOWFLAKE_WAREHOUSE`
-- `SNOWFLAKE_AUTHENTICATOR`
-- `SNOWFLAKE_PRIVATE_KEY_FILE`
-- `SNOWFLAKE_PRIVATE_KEY_RAW`
-- `SNOWFLAKE_PRIVATE_KEY_PATH`
-- `SNOWFLAKE_SESSION_TOKEN`
-- `SNOWFLAKE_MASTER_TOKEN`
-- `SNOWFLAKE_TOKEN_FILE_PATH`
-- `WORKLOAD_IDENTITY_PROVIDER`
+You can also specify connection parameters from the command line using the `--temporary-connection [-x]` option. It ignores all definitions from the `config.toml`, using ones specified by command-line options instead. This approach can be helpful for CI/CD use cases when you don’t want to use a configuration file. When you use a temporary connection, Snowflake CLI ignores connection variables in `config.toml` and uses command-line options plus the [environment variables](#label-snowcli-environment-creds) listed in the previous section.
 
 The following example shows how to create a temporary connection using a username and password. This example assumes you stored the password in the `SNOWFLAKE_PASSWORD` environment variable.
 
