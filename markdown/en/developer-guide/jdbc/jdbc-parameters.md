@@ -16,6 +16,9 @@ You must also set the [parameters for authentication](#label-jdbc-connection-par
 
 > Description:
 > :   Specifies the login name of the user for the connection.
+>
+>     Specify the user’s `LOGIN_NAME` property, not the user object’s `NAME` when the values differ. If no login name was
+>     explicitly set, the user object’s name is the default login name. See [CREATE USER](/sql-reference/sql/create-user).
 
 ## Authentication parameters
 

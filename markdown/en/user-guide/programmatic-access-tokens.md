@@ -582,6 +582,10 @@ conn = snowflake.connector.connect(
 )
 ```
 
+For `user`, specify the user’s `LOGIN_NAME` property, not the user object’s `NAME` when the values differ. If no login name
+was explicitly set, the user object’s name is the default login name. These values can differ for users provisioned through
+SCIM. See [CREATE USER](/sql-reference/sql/create-user).
+
 In the same way, you can use programmatic access tokens in place of a password in third-party applications (such as Tableau or Power BI). Paste the programmatic access token in the field for the password.
 
 Note

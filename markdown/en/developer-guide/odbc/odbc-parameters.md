@@ -298,6 +298,9 @@ Beginning with Snowflake version 8.24, network administrators have the option to
 `uid` (User)
 :   Specifies the login name of the Snowflake user to authenticate.
 
+    Specify the user’s `LOGIN_NAME` property, not the user object’s `NAME` when the values differ. If no login name was
+    explicitly set, the user object’s name is the default login name. See [CREATE USER](/sql-reference/sql/create-user).
+
 ### Optional connection parameters
 
 `AUTHENTICATION_TIMEOUT`

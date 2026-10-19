@@ -31,6 +31,9 @@ WAREHOUSE = os.getenv('WAREHOUSE')
 ...
 ```
 
+For the `user` connection parameter, specify the user’s `LOGIN_NAME` property, not the user object’s `NAME` when the values
+differ. If no login name was explicitly set, the user object’s name is the default login name. See [CREATE USER](/sql-reference/sql/create-user).
+
 For the ACCOUNT parameter, use your [account identifier](/user-guide/gen-conn-config). Note that the account identifier
 does not include the `snowflakecomputing.com` suffix.
 

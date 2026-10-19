@@ -279,6 +279,7 @@ egress IP addresses for each partner application:
 | Microsoft Power Query Online | [Azure IP ranges and service tags](https://www.microsoft.com/en-us/download/details.aspx?id=56519) |
 | Microsoft Azure DevOps | [Azure IP ranges and service tags](https://www.microsoft.com/en-us/download/details.aspx?id=56519) |
 | Microsoft Azure Data Factory | [Azure IP ranges and service tags](https://www.microsoft.com/en-us/download/details.aspx?id=56519) |
+| Okta | [Okta IP ranges](https://s3.amazonaws.com/okta-ip-ranges/ip_ranges.json) |
 | Qlik | [Qlik IP addresses](https://help.qlik.com/en-US/cloud-services/Subsystems/Hub/Content/Sense_Hub/Introduction/qlik-cloud-dns-ip.htm) |
 | Tableau | [Tableau Cloud IP ranges](https://help.tableau.com/current/pro/desktop/en-us/publish_tableau_online_ip_authorization.htm) |
 | GitHub Actions | [REST API endpoints for meta data](https://docs.github.com/en/rest/meta) |

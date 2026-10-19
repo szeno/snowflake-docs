@@ -124,7 +124,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 21, 2026: Lineage preservation through temporary tables and views (General availability)](/release-notes/2026/other/2026-09-21-lineage-temporary-objects)
 - [Python Connector (v4.7.5)](/release-notes/clients-drivers/python-connector-2026)
 - [Snowflake ML Python (v2.2.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
-- [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

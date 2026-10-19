@@ -75,6 +75,10 @@ In addition, you must specify the [options for authenticating to the server](#la
     [Okta URL endpoint for your Okta account](/developer-guide/node-js/nodejs-driver-authenticate#label-nodejs-native-sso) (e.g. `https://<okta_account_name>.okta.com`).
     If you don’t set the `authenticator` option, you must set this value.
 
+    For Snowflake authentication, including using a programmatic access token as a password, specify the user’s `LOGIN_NAME`
+    property, not the user object’s `NAME` when the values differ. If no login name was explicitly set, the user object’s
+    name is the default login name. See [CREATE USER](/sql-reference/sql/create-user).
+
 `password`
 :   Password for the user. Set this option if you set the `authenticator` option to `SNOWFLAKE` or the
     [Okta URL endpoint for your Okta account](/developer-guide/node-js/nodejs-driver-authenticate#label-nodejs-native-sso) (e.g. `https://<okta_account_name>.okta.com`)
