@@ -708,11 +708,11 @@ A service might expose zero to many endpoints. Use the following fields to descr
   - When this endpoint is public or the target of a service function (see [Using a service](/developer-guide/snowpark-container-services/working-with-services#label-snowpark-containers-service-communicating)), the protocol must be HTTP or HTTPS.
 - `corsSettings`: The fields under `endpoints` allow you to configure Snowflake support for CORS on HTTP requests to public endpoints.
 
-  - `corsSettings.Access-Control-Allow-Origin`: Specifies the origins for which Snowflake responds with the provided CORS allow and expose response headers. The value must be a valid URL with no path specified, for example, `https://example.com/, https://example.com:12345`, for security reasons the “\*” wildcard is not allowed for `Access-Control-Allow-Origin`.
+  - `corsSettings.Access-Control-Allow-Origin`: Specifies the origins for which Snowflake responds with the provided CORS allow and expose response headers. The value must be a valid URL with no path specified, for example, `https://example.com, https://example.com:12345`. For security reasons, the “\*” wildcard is not allowed for `Access-Control-Allow-Origin`.
   - Snowflake supports the following CORS response headers:
-    - `corsSettings.Access-Control-Allow-Methods`: Specifies the value of the HTTP `Access-Control-Allow-Methods` CORS response header. This tells the browsers what HTTP methods (GET, POST, etc.) they should allow when sending requests to this endpoint.
-    - `corsSettings.Access-Control-Allow-Headers`: Specifies the value of the HTTP `Access-Control-Allow-Headers` CORS response header. This tells the browsers what HTTP headers they should allow when sending requests to this endpoint.
-    - `corsSettings.Access-Control-Expose-Headers`: Specifies the value of the HTTP `Access-Control-Expose-Headers` CORS response header. This tells the browsers what HTTP headers they should allow when exposing responses from this endpoint.
+    - `corsSettings.Access-Control-Allow-Methods`: Specifies the value of the HTTP `Access-Control-Allow-Methods` CORS response header. This tells browsers what HTTP methods (GET, POST, and so on) they should allow when sending requests to this endpoint.
+    - `corsSettings.Access-Control-Allow-Headers`: Specifies the value of the HTTP `Access-Control-Allow-Headers` CORS response header. This tells browsers what HTTP headers they should allow when sending requests to this endpoint.
+    - `corsSettings.Access-Control-Expose-Headers`: Specifies the value of the HTTP `Access-Control-Expose-Headers` CORS response header. This tells browsers what HTTP headers they should allow when exposing responses from this endpoint.
 
 Note
 
@@ -727,7 +727,7 @@ Copy code
 
 ```
 spec:
-  container:
+  containers:
   - name: echo
     image: <image-name>
     env:
@@ -736,7 +736,7 @@ spec:
     readinessProbe:
       port: 8000
       path: /healthcheck
-  endpoint:
+  endpoints:
   - name: echoendpoint
     port: 8000
     public: true
@@ -751,7 +751,7 @@ to the endpoint from outside of Snowflake (internet access). By default, `public
 This section explains both `spec.volumes` and `spec.containers.volumeMounts` specification fields because they’re closely related.
 
 - `spec.volumes` defines a shared file system. These volumes can be made available in your containers.
-- `spec.containers.volumeMount` defines where a volume appears in specific containers.
+- `spec.containers.volumeMounts` defines where a volume appears in specific containers.
 
 Note that, the `volumes` field is specified at the `spec` level, but since multiple containers can share the same volume, `volumeMounts` becomes a `spec.containers`-level field.
 
@@ -914,7 +914,7 @@ To obtain the UID and GID of the container, do the following:
    —----------------------------------------------------------
    a6a1f1fe204d  tutorial-image         "/usr/local/bin/entr…"
    ```
-3. Run the `docker id` command inside the container to get the UID and GID:
+3. Run the `id` command inside the container to get the UID and GID:
 
    Copy code
 

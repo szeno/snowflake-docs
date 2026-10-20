@@ -52,6 +52,10 @@ AI_COMPLETE(
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
+    Bring-your-own model: Open preview
+
+    Alternatively, specify the name of a Snowpark Container Services model inference service that hosts your own text generation or vision-language model. Image inputs require a vision-language model. For supported file types, availability, prerequisites, and access requirements, see [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
+
 `predicate`
 :   A string prompt.
 
@@ -134,6 +138,8 @@ Response:
 ```
 
 ## Usage notes for processing images
+
+The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing images](/developer-guide/snowflake-ml/inference/spcs-ai-complete#supported-file-types).
 
 - Only text and images are supported. Video and audio files are not supported.
 - Supported image formats:

@@ -156,7 +156,7 @@ CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
     Copy code
 
     ```
-    '{"component:name" = "value", ...}'
+    '{"component:name": "value", ...}'
     ```
 
     The format uses `component:name` where `component` is either `postgres` (for PostgreSQL server settings) or
@@ -165,7 +165,7 @@ CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
     Copy code
 
     ```
-    '{"postgres:work_mem" = "128MB", "pgbouncer:default_pool_size" = "200"}'
+    '{"postgres:work_mem": "128MB", "pgbouncer:default_pool_size": "200"}'
     ```
 
     See [Snowflake Postgres Server Settings](/user-guide/snowflake-postgres/postgres-server-settings) for available settings.

@@ -323,9 +323,9 @@ The `workspace_mounts` array fields:
 
 | Field | Description |
 | --- | --- |
-| `name` | Fully qualified Snowflake workspace name (for example, `USER$.PUBLIC.DEFAULT$`). Required. |
+| `name` | Fully qualified Snowflake workspace name. Double-quoted identifiers are supported, including names with a space, hyphen, or non-ASCII character (for example, `USER$.PUBLIC.DEFAULT$` or `DB.SCHEMA."CASE-1 · title"`). Required. |
 | `type` | Mount type. Use `workspace` for Snowflake workspaces. Defaults to `workspace` if omitted. |
-| `mount_path` | Container filesystem path where the workspace is mounted. Defaults to `/workspace` if omitted. |
+| `mount_path` | Absolute container path where the workspace is mounted. Defaults to `/workspace` if omitted. |
 
 Expand
 
@@ -346,6 +346,11 @@ Copy code
     "name": "DB.SCHEMA.SHARED_DATA",
     "type": "workspace",
     "mount_path": "/data"
+  },
+  {
+    "name": "DB.SCHEMA.\"CASE-1 · title\"",
+    "type": "workspace",
+    "mount_path": "/case"
   }
 ]
 ```
@@ -356,7 +361,9 @@ Note
 
 The `mount_path` must be a **top-level** absolute path (for example, `/workspace`, `/project`, `/data`). Nested paths like `/workspace/mydata` are not supported: the sandbox runtime creates a symlink at the specified path but does not create intermediate parent directories. Each workspace requires a unique top-level mount path.
 
-The `name` must be a Snowflake **workspace** object (created with `CREATE WORKSPACE`), not a regular internal stage. Regular stages cannot be mounted as workspaces.
+The `name` must be a Snowflake **workspace** object (created with `CREATE WORKSPACE`), not a regular internal stage. Regular stages cannot be mounted as workspaces. A name that is not a valid unquoted identifier must be double-quoted, the same way you would quote it in SQL. `"DB"."SCHEMA"."CASE-1 · title"` is also accepted. A malformed quote, a name that contains `..`, an unsupported `type`, or a `mount_path` that is not an absolute sandbox path is rejected. The error names the `workspace_mounts` entry.
+
+Two different objects whose names collapse to the same sandbox directory are also rejected. For example, `DB.SCHEMA."A B"` and `DB.SCHEMA."A_B"` cannot be mounted in the same request.
 
 ## Attaching skills
 

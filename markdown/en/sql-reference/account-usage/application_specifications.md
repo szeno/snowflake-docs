@@ -29,7 +29,7 @@ The following table provides definitions for the *APPLICATION\_SPECIFICATIONS* v
 | STATUS\_UPDATED\_ON | TIMESTAMP\_LTZ | The timestamp when the app specification was last updated, including when it was created, approved, or declined. |
 | LABEL | TEXT | A label containing the name of the app specification that is displayed to consumer in Snowsight. |
 | DESCRIPTION | TEXT | A description of the app specification. This description is displayed to the consumer. |
-| DEFINITION | TEXT | The fields that comprise the app specification definition. For more information, |
+| DEFINITION | TEXT | The fields that comprise the app specification definition. For more information, see [App specification definition](/developer-guide/native-apps/requesting-app-specs#label-native-apps-app-spec-definition). |
 
 Expand
 

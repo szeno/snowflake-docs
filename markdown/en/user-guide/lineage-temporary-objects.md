@@ -162,6 +162,7 @@ a destination table, the lineage is preserved. Currently, Snowflake supports thi
 ## Limitations
 
 - This feature isn’t supported for transient tables.
+- Lineage might not be preserved through a temporary object that connects a very large number of upstream sources to downstream tables.
 - For chained temporary nodes, especially with views or object dependency relationships, race conditions can occur where deletions cause the
   lineage to appear broken. The time period between the deletions of the temporary nodes can affect the resulting lineage graph. For
   example, consider this scenario:

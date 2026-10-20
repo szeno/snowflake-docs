@@ -61,6 +61,7 @@ Snowflake provides the following account parameters:
 | [LISTING\_AUTO\_FULFILLMENT\_REPLICATION\_REFRESH\_SCHEDULE](#label-listing-auto-fulfillment-replication-refresh-schedule) | Used to set the refresh schedule for all listings in an account. |
 | [MAP\_SCIM\_USERNAME\_TO\_ENTERPRISE\_ATTR](#label-map-scim-username-to-enterprise-attr) | Controls how SCIM user attributes map to the Snowflake `NAME` and `LOGIN_NAME` properties. |
 | [MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS](#label-min-data-retention-time-in-days) | Used to set the minimum data retention period for retaining historical data for Time Travel operations. |
+| [MIN\_STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](#label-min-stage-undrop-retention-time-in-days) | Used to set the minimum retention period for restoring a dropped named internal stage with [UNDROP STAGE](/sql-reference/sql/undrop-stage). |
 | [NETWORK\_POLICY](#label-network-policy) | This is the only account parameter that can be set by either account administrators (that is, users with the ACCOUNTADMIN system role) or security administrators (that is, users with the SECURITYADMIN system role).   For more information, see [Object parameters](#label-object-parameters). |
 | [OAUTH\_ADD\_PRIVILEGED\_ROLES\_TO\_BLOCKED\_LIST](#label-oauth-add-privileged-roles-to-blocked-list) |  |
 | [PERIODIC\_DATA\_REKEYING](#label-periodic-data-rekeying) |  |
@@ -171,6 +172,7 @@ Snowflake provides the following object parameters:
 | [SERVERLESS\_TASK\_MAX\_STATEMENT\_SIZE](#label-serverless-task-max-statement-size) | Database, Schema, Task, Account |  |
 | [SERVERLESS\_TASK\_MIN\_STATEMENT\_SIZE](#label-serverless-task-min-statement-size) | Database, Schema, Task, Account |  |
 | [SERVICE\_CALLER\_TOKEN\_VALIDITY\_SECS](#label-service-caller-token-validity-secs) | Account, Database, Schema, Service | Controls how long a caller’s rights login token is valid for Snowpark Container Services. |
+| [STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](#label-stage-undrop-retention-time-in-days) | Account, Database, Schema, Stage | Applies only to named internal stages. For more information, see [UNDROP STAGE](/sql-reference/sql/undrop-stage). |
 | [STATEMENT\_QUEUED\_TIMEOUT\_IN\_SECONDS](#label-statement-queued-timeout-in-seconds) | Warehouse | Also a session parameter (can be set at both the object and session levels). For inheritance and override details, see the parameter description. |
 | [STATEMENT\_TIMEOUT\_IN\_SECONDS](#label-statement-timeout-in-seconds) | Warehouse | Also a session parameter (can be set at both the object and session levels). For inheritance and override details, see the parameter description. |
 | [STORAGE\_SERIALIZATION\_POLICY](#label-storage-serialization-policy) | Database, Schema, Apache Iceberg™ table | This parameter is only supported for Iceberg tables that use Snowflake as the catalog. |
@@ -3244,6 +3246,37 @@ Note
   schemas, or tables. The effective retention time of a database, schema, or table is MAX(DATA\_RETENTION\_TIME\_IN\_DAYS,
   MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS).
 
+## MIN\_STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS
+
+Type:
+:   Account — Can be set only for Account
+
+Data Type:
+:   Integer
+
+Description:
+:   Minimum number of days for which a dropped named internal stage remains available to restore with
+    [UNDROP STAGE](/sql-reference/sql/undrop-stage). If a minimum is set on an account, the retention period for a stage is determined by
+    MAX([STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](#label-stage-undrop-retention-time-in-days), MIN\_STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS).
+
+Values:
+:   `0` or `1` (for [Standard Edition](/user-guide/intro-editions))
+
+    `0` to `90` (for [Enterprise Edition or higher](/user-guide/intro-editions))
+
+Default:
+:   `0`
+
+Note
+
+- This parameter applies only to named internal stages. It doesn’t affect external stages or the stages associated with a table or a
+  user.
+- This parameter can only be set and unset by account administrators (that is, users with the ACCOUNTADMIN role or other role that is
+  granted the ACCOUNTADMIN role).
+- Setting the minimum doesn’t alter any existing STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS value set on an account, database, schema, or
+  stage, but it does change the effective retention period for a stage.
+- Setting STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS to a value below this minimum returns an error.
+
 ## NETWORK\_POLICY
 
 Type:
@@ -4138,6 +4171,37 @@ Values:
 
 Default:
 :   `FALSE`
+
+## STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS
+
+Type:
+:   Object (for stages) — Can be set for Account » Database » Schema » Stage
+
+Data Type:
+:   Integer
+
+Description:
+:   Number of days for which a dropped named internal stage remains available to restore with [UNDROP STAGE](/sql-reference/sql/undrop-stage). A
+    value of `0` means that a dropped stage isn’t reliably restorable, because it’s eligible for purge immediately after it’s dropped.
+
+    A stage inherits the value from the nearest level where the parameter is set. For more information, see
+    [Retention period for dropped stages](/sql-reference/sql/undrop-stage#label-undrop-stage-retention).
+
+Values:
+:   `0` or `1` (for [Standard Edition](/user-guide/intro-editions))
+
+    `0` to `90` (for [Enterprise Edition or higher](/user-guide/intro-editions))
+
+    If [MIN\_STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](#label-min-stage-undrop-retention-time-in-days) is set for the account, a lower value returns an error.
+
+Default:
+:   `0`
+
+Note
+
+This parameter applies only to named internal stages. Setting it directly on any other kind of stage, such as an external stage,
+returns an error. You can set it on an account, database, or schema, where it applies to the named internal stages that the object
+contains.
 
 ## STATEMENT\_QUEUED\_TIMEOUT\_IN\_SECONDS
 

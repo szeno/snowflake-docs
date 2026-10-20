@@ -3774,7 +3774,7 @@ Generate test cases for migrated stored procedures
 
 #### scai test seed
 
-Generate YAML test case files for converted stored procedures.
+Generate YAML test definitions for converted code units: test case files for stored procedures and UDFs, and ETL test definitions for converted SSIS packages and Informatica workflows.
 
 Copy code
 
@@ -3788,13 +3788,21 @@ scai test seed [--execution-log <EXECUTION_LOG>] [--source-connection <SOURCE_CO
 - Code converted with ‘scai code convert’
 - Optional: an execution log file produced by running the original stored procedures
 
-**Behavior:**
+**Behavior — procedures and UDFs:**
 
 - When –execution-log is provided: reads it, matches procedure calls to their converted counterparts, and generates one YAML per procedure with up to –max-cases test cases (default: 10)
 - When –execution-log is omitted: generates a stub YAML with a commented test\_cases placeholder for every converted code unit
 - Validates source connection (–source-connection or default source connection)
 - Validates Snowflake connection (–connection, project connection, or default connection)
 - By default, existing test files are overwritten (use –append to add instead)
+
+**Behavior — ETL units:**
+
+- Writes one ETL test definition per converted ETL unit, declaring how to launch the source package or workflow, what to run on Snowflake, and which table pairs to compare
+- SSIS units are written in the `execution:` / `comparison:` schema; Informatica units in the `kind: etl` / `pipeline:` / `validation:` schema
+- For SSIS, queries the source SQL Server (both SSISDB.catalog and msdb) for the package’s deployment location when a source connection is available, and omits those fields rather than guessing when it is not
+- For Informatica, derives the folder and workflow from the conversion report and writes `TODO_INFA_*` placeholders where it cannot — these must be filled in before validation
+- Under –append, only the table pairs and their registry-derived key columns are regenerated; every other key you edited survives
 
 **Options:**
 
@@ -3803,8 +3811,14 @@ scai test seed [--execution-log <EXECUTION_LOG>] [--source-connection <SOURCE_CO
 | `-s, --source-connection <SOURCE_CONNECTION>` | Name of the source connection to use (from configured source connections). Uses default if not specified. | No |  |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use. Uses project/default connection if not specified. | No |  |
 | `-m, --max-cases <MAX_CASES>` | Maximum number of test cases to generate per procedure. | No | 10 |
-| `-a, --append` | Append test cases to existing test files instead of replacing them. | No |  |
+| `-a, --append` | Append test cases to existing test files instead of replacing them. Comments inside the YAML body are not preserved on append. | No |  |
 | `-e, --execution-log <EXECUTION_LOG>` | Path to the execution log file produced by running the original stored procedures. Optional : when omitted, every code unit gets a stub YAML with a commented test\_cases placeholder. | No |  |
+| `--log-column <LOG_COLUMN>` | Name of the CSV column containing the SQL statement in the execution log. | No |  |
+| `--where <WHERE>` | SQL-like WHERE clause to filter code units (same syntax as ‘scai test capture –where’). Only matching units are scaffolded; non-matching files on disk are left untouched, including under –append. | No |  |
+| `--bindings-from <BINDINGS_SOURCE>` | Path to a bash/ksh wrapper that invokes bteq, or a directory of them. Static `KEY=VALUE` and `export KEY=VALUE` assignments pre-fill shared binding values in test\_config.yaml. Repeatable; a directory is scanned recursively for `*.sh`, `*.ksh`, and `*.bash`. | No |  |
+| `--bindings-args <BINDINGS_ARG>` | Invocation argument for the –bindings-from wrapper, applied as the positional parameters `$1`, `$2`, and so on, in order. Inlined statically — no shell runs at seed time. Repeatable. | No |  |
+| `--source-binding-wrapper <WRAPPER>` | Source-side binding wrapper template with a `{name}` slot, such as `@{name}@` or `<{name}>`. Lets the seed discover placeholders in each `.btq` file and read their values from the wrapper’s `sed` substitutions. Repeatable for scripts that mix grammars. | No |  |
+| `--database-bindings <PATH>` | Path to a `database-bindings.yml` mapping canonical database names to physical databases. Validated here but not applied: seed emits one canonical test suite, and capture/validate resolve the physical database per run. | No |  |
 
 Expand
 
@@ -3814,6 +3828,12 @@ Show lessSee more
 
 ```
 artifacts/<target_db>/<target_schema>/<object_type>/.../<procedure_name>.yml
+```
+
+ETL units are written alongside, one file per unit:
+
+```
+artifacts/<unit>/etl-test/<unit>.yml
 ```
 
 **Examples:**
@@ -3994,7 +4014,7 @@ scai test doctor --json
 
 #### scai test etl-validate
 
-Run a converted ETL package on Snowflake, optionally launch the original SSIS package on SQL Server, and compare outputs.
+Run a converted ETL pipeline on Snowflake, launch the original package or workflow on the source platform, and compare the tables both sides write.
 
 Copy code
 
@@ -4002,31 +4022,40 @@ Copy code
 scai test etl-validate [--connection <CONNECTION>] [--source-connection <SOURCE_CONNECTION>] [OPTIONS]
 ```
 
-**Supported languages:**
+**Supported ETL platforms:**
 
-- SqlServer
+- SSIS
+- Informatica PowerCenter
+- Any other platform, once test\_config.yaml declares an `external_command:` section naming the side that command drives
 
 **Prerequisites:**
 
 - A migration project initialized with ‘scai init’ and converted with ‘scai code convert’
-- ETL test YAML files generated via ‘scai test seed’ (or hand-authored under artifacts/\*\*/etl-tests/)
-- A configured Snowflake connection that hosts the converted task DAG
-- A configured SQL Server connection that hosts the SSIS catalog and source tables (unless –skip-ssis-execution is used)
+- ETL test definitions generated via ‘scai test seed’ (or hand-authored as `.yml` files under an `etl-test/` directory in the unit’s artifacts path)
+- A configured Snowflake connection that hosts the converted task DAG or dbt project
+- A configured source connection that hosts the source tables — and, for SSIS, the SSIS catalog (unless –skip-ssis-execution is used)
+- For Informatica, a pmcmd connection registered with ‘scai connection add-informatica-pmcmd’ — it carries the pmcmd path, repository credentials, integration service, and domain
 
 **Behavior:**
 
-- Discovers ETL packages from the CodeUnitRegistry (filtered by –platform / –where / –part-type)
-- Launches the SSIS package via SSISDB.catalog or SQL Agent jobs (skippable)
-- Executes the Snowflake task DAG and verifies every task reaches SUCCEEDED
+- Discovers ETL units from the CodeUnitRegistry (filtered by –platform / –where / –pipeline)
+- Launches the source side: an SSIS package via a SQL Agent job or SSISDB.catalog (skippable), or an Informatica workflow via pmcmd
+- Runs the converted side: EXECUTE TASK on a task DAG and verifies every task reaches SUCCEEDED, or a local dbt run
+- Both sides run in the same pass — there is no separate capture step, and the table comparison is the verdict
 - Runs cross-platform DVF comparisons on every declared source/target table pair
 - Persists per-step status to `{validation_database}.VALIDATION.ETL_EXECUTION_LOG`
+- Fails when nothing was validated — either no units matched the selection, or every matched unit lacks an ETL test definition
 
 | Option | Description | Required |
 | --- | --- | --- |
-| `--platform <PLATFORM>` | ETL source platform to validate against (e.g. informatica, ssis). | No |
+| `--platform <PLATFORM>` | ETL source platform to validate against (for example, informatica or ssis). Optional inside a project: when omitted it is inferred from the converted ETL code units. Platforms other than informatica and ssis have no built-in executor and are accepted only when test\_config.yaml declares an `external_command:` section. | No |
 | `--where <WHERE>` | SQL-like WHERE clause to filter ETL code units (same syntax as ‘scai code deploy –where’). | No |
+| `--pipeline <PIPELINE>` | SQL LIKE pattern matched against ETL pipeline names (code\_unit\_id); use `%` as the wildcard, as in `'%Load%'`. Only matching pipelines run; all others are skipped. Omit to run every discovered pipeline. | No |
 | `--check-env` | Run environment qualification checks (connectivity + platform access) instead of the full validate pipeline. Recommended before long runs to surface misconfigured connections early. | No |
 | `--skip-ssis-execution` | Skip the source-platform execution step and only run Snowflake-side validation tracks. | No |
+| `--with-lineage` | Order validations by ETL lineage, generating the lineage report first when it does not exist. Only workflows in the lineage run, level by level; an existing report is reused as-is. | No |
+| `--informatica-connection <NAME>` | Named Informatica pmcmd connection to use for launching workflows. Overrides the connection selected by project configuration. | No |
+| `--database-bindings <PATH>` | A file path, or a name listed under `database_bindings` in `.scai/config/project.local.yml`. The file maps canonical database names to physical databases, so parallel workers can run the same seeded ETL tests against their own database, or a whole run can be pointed at one ephemeral database. Routes execution only: results and skip reasons are unaffected. | No |
 | `-c, --connection <CONNECTION>` | Named Snowflake connection to use (from connections.toml). Overrides the value in test\_config.yaml when supplied. | No |
 | `-s, --source-connection <SOURCE_CONNECTION>` | Named source-database connection to use. Overrides the value in test\_config.yaml when supplied. | No |
 
@@ -4039,8 +4068,11 @@ Show lessSee more
 Copy code
 
 ```
-# Validate all ETL units (SSIS by default)
+# Validate every discovered ETL unit
 scai test etl-validate
+
+# Check connectivity and platform access before a long run
+scai test etl-validate --check-env
 
 # With explicit connections
 scai test etl-validate --source-connection my-sqlserver --connection my-snowflake
@@ -4050,7 +4082,15 @@ scai test etl-validate --skip-ssis-execution
 
 # Filter to a single unit
 scai test etl-validate --where "id = 'pkg:LoadCustomers'"
+
+# Run only the pipelines whose name contains "Load"
+scai test etl-validate --pipeline '%Load%'
+
+# Validate Informatica workflows in lineage order
+scai test etl-validate --platform informatica --with-lineage
 ```
+
+For the full ETL testing model, see [Testing SSIS pipelines](/migrations/aim-for-datawarehouses/testing/etl-pipelines/ssis) and [Testing Informatica PowerCenter pipelines](/migrations/aim-for-datawarehouses/testing/etl-pipelines/informatica).
 
 ---
 

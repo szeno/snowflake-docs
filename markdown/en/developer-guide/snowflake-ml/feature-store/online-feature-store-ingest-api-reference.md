@@ -1,9 +1,5 @@
 # Ingest API reference
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Available to all accounts.
-
 This page is the API reference for the Feature Store Ingest REST endpoint. For an
 overview of the online feature store and getting started instructions, see
 [Serving online features](/developer-guide/snowflake-ml/feature-store/online-feature-store).
@@ -24,7 +20,7 @@ Writes are UPSERT-based, so it’s safe to retry failed requests.
 ### Limits
 
 - Maximum 2 stream sources per request
-- Maximum 10 records per stream source
+- Maximum 50 records per stream source
 
 ### Authentication
 
@@ -51,7 +47,7 @@ Show lessSee more
 
 | Field | Required | Description |
 | --- | --- | --- |
-| `records` | Yes | A map of stream source name to an array of event records. Each record must match the schema registered for that stream source. Maximum 2 sources, 10 records per source. |
+| `records` | Yes | A map of stream source name to an array of event records. Each record must match the schema registered for that stream source. Maximum 2 sources, 50 records per source. |
 | `dry_run` | No | When `true`, validates records but doesn’t write them. Default: `false`. |
 | `include_diagnostics` | No | When `true`, includes a `diagnostics` object in the response with server-side timing. Default: `false`. |
 

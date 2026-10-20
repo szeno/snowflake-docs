@@ -111,6 +111,10 @@ AI_COMPLETE(
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
+    Bring-your-own model: Open preview
+
+    Alternatively, specify the name of a Snowpark Container Services model inference service that hosts your own text generation or vision-language model. Image inputs require a vision-language model. For supported file types, availability, prerequisites, and access requirements, see [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
+
 `prompt`
 :   A [prompt](/sql-reference/functions/prompt) object containing text and, optionally, images or documents.
 
@@ -136,7 +140,7 @@ AI_COMPLETE(
 
 Important
 
-If you’re using AI\_COMPLETE with a prompt object, you can’t provide a JSON schema to get a structured output as a response.
+If you’re using `AI_COMPLETE` with a prompt object and a Snowflake-hosted Cortex model, you can’t provide a JSON schema to get a structured output as a response. For the arguments supported by models deployed on Snowpark Container Services, see [Syntax](/developer-guide/snowflake-ml/inference/spcs-ai-complete#syntax).
 
 To get a structured output as the response, use the *response\_format* parameter with [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string). For more information using structured outputs, see [AI\_COMPLETE (Structured outputs)](/sql-reference/functions/ai_complete-structured-outputs).
 
@@ -241,6 +245,8 @@ FROM image_table;
 
 ## Usage notes for processing images
 
+The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing images](/developer-guide/snowflake-ml/inference/spcs-ai-complete#supported-file-types).
+
 - To process multiple images, specify a prompt object in the function call that defines a prompt template and the associated image files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the images in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
 - Only text and images are supported. Video and audio files are not supported.
 - Supported image formats:
@@ -258,6 +264,8 @@ FROM image_table;
 - Stage names are case-insensitive; paths are case-sensitive.
 
 ## Usage notes for processing documents
+
+The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing documents](/developer-guide/snowflake-ml/inference/spcs-ai-complete#pdf-files).
 
 - To process multiple documents, specify a prompt object in the function call that defines a prompt template and the associated document files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the documents in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
 - Only text and documents are supported. Video and audio files are not supported.

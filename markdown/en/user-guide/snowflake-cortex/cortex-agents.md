@@ -85,6 +85,9 @@ Cortex Agents supports the following models. These models run through [cross-reg
 | OpenAI | `openai-gpt-4.1` (legacy) | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |  |
 | Google | `gemini-3.1-pro` | Public preview | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | Google | `gemini-3.5-flash` | GA | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
+| Google | `gemini-4-argon` | Public preview | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
+| xAI | `grok-4.7` | Public preview | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
+| Z.ai | `glm-5.3` | Public preview | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
 
 Expand
 

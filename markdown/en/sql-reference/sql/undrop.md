@@ -25,6 +25,7 @@ For specific syntax, usage notes, and examples, see:
 > - [UNDROP NOTEBOOK](/sql-reference/sql/undrop-notebook)
 > - [UNDROP SCHEMA](/sql-reference/sql/undrop-schema)
 > - [UNDROP SNAPSHOT](/sql-reference/sql/undrop-snapshot)
+> - [UNDROP STAGE](/sql-reference/sql/undrop-stage)
 > - [UNDROP STREAMLIT](/sql-reference/sql/undrop-streamlit)
 > - [UNDROP TABLE](/sql-reference/sql/undrop-table)
 > - [UNDROP TAG](/sql-reference/sql/undrop-tag)

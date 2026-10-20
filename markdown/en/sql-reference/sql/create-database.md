@@ -37,6 +37,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] DATABASE [ IF NOT EXISTS ] <name>
         [ IGNORE HYBRID TABLES ] ]
     [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]
     [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]
+    [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]
     [ EXTERNAL_VOLUME = <external_volume_name> ]
     [ CATALOG = <catalog_integration_name> ]
     [ ICEBERG_DEFAULT_DDL_COLLATION = '<collation_specification>' ]
@@ -324,6 +325,12 @@ You must have the IMPORT SHARE privilege to create a database from a share.
     database to prevent streams on the tables from becoming stale.
 
     For a detailed description of this parameter, see [MAX\_DATA\_EXTENSION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-max-data-extension-time-in-days).
+
+`STAGE_UNDROP_RETENTION_TIME_IN_DAYS = integer`
+:   Object parameter that specifies the number of days for which a dropped named internal stage in the database remains available to
+    restore with [UNDROP STAGE](/sql-reference/sql/undrop-stage). Schemas and stages in the database inherit this value unless they override it.
+
+    For a detailed description of this parameter, see [STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-stage-undrop-retention-time-in-days).
 
 `EXTERNAL_VOLUME = external_volume_name`
 :   Object parameter that specifies the default external volume to use for [Apache Iceberg™ tables](/user-guide/tables-iceberg).

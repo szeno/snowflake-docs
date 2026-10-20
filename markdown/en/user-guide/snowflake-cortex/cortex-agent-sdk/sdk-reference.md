@@ -167,7 +167,7 @@ for raw in detail.get("messages", []):
 Thread-specific members include `message_id`, `parent_id`, `role`, `created_on`, `request_id`, `message_type`,
 `status`, `schema_version`, `tags`, and `raw`.
 
-Snowflake thread and message identifiers are preserved as strings so `int64` IDs remain exact.
+In TypeScript, Snowflake thread and message identifiers are preserved as strings so `int64` IDs remain exact. Python returns those identifiers as `int`.
 
 ## Thread pagination
 
@@ -385,10 +385,34 @@ try {
 }
 ```
 
+```
+Exception
+└── CortexAgentError
+    ├── CortexAgentAPIError  (alias: APIStatusError)
+    │   ├── BadRequestError
+    │   ├── AuthenticationError
+    │   ├── PermissionDeniedError
+    │   ├── NotFoundError
+    │   ├── ConflictError
+    │   ├── UnprocessableEntityError
+    │   ├── RateLimitError
+    │   └── InternalServerError
+    ├── APIConnectionError
+    │   └── APITimeoutError
+    └── APIConnectionAbortedError
+```
+
+`APIConnectionError`, `APITimeoutError`, and `APIConnectionAbortedError` inherit from `CortexAgentError`, not from
+`CortexAgentAPIError`. An `except CortexAgentAPIError` block does not catch DNS, TLS, timeout, or cancellation
+failures.
+
 Copy code
 
 ```
 from cortex_agent_sdk import (
+    APIConnectionAbortedError,
+    APIConnectionError,
+    APITimeoutError,
     AuthenticationError,
     CortexAgentAPIError,
     CortexAgentError,
@@ -406,11 +430,18 @@ except NotFoundError:
     raise
 except CortexAgentAPIError as err:
     print(err.status, err.request_id, err.body)
+except APITimeoutError:
+    raise
+except APIConnectionError:
+    raise
+except APIConnectionAbortedError:
+    raise
 except CortexAgentError:
     raise
 ```
 
-Every `CortexAgentError` can expose `name`, `status`, `request_id`, and `body`.
+Every `CortexAgentError` exposes `message`, `status`, `request_id`, and `body`. Python exceptions do not have a
+`name` attribute; use `type(err).__name__`.
 
 If an auth-refresh callback fails, the SDK raises the original API error and attaches safe refresh metadata. In
 TypeScript, read `err.authRefresh.provider`, `err.authRefresh.attempt`, `err.authRefresh.requestId`, and `err.cause`.
@@ -499,6 +530,13 @@ Python retries use exponential backoff with `Retry-After` support and these defa
 - Multiplicative jitter: shortens the computed delay by up to 25%
 - Default `max_retries`: `2`
 - Default `retry_streaming`: `False`
+
+Three additional rules change whether a response is retried and how long the SDK waits:
+
+- An `x-should-retry` header overrides the status-code decision. `true` retries the response, and `false` does not.
+- `retry-after-ms` is preferred over `Retry-After`. The SDK reads `retry-after-ms` first and treats the value as
+  milliseconds.
+- A `Retry-After` delay longer than 60 seconds is ignored. The SDK uses normal backoff instead, capped at 8 seconds.
 
 Configure retries on the client for retry-safe methods:
 

@@ -177,7 +177,7 @@ language:
 | Assistant response | `assistant` | `AssistantMessage` | Text, thinking, and tool-use blocks |
 | User or tool result | `user` | `UserMessage` | User input or tool-result content |
 | Partial output | `stream_event` | `StreamEvent` | Text or thinking updates when partial messages are enabled |
-| Turn completion | `result` | `ResultMessage` | Result, usage, cost, session ID, and permission denials |
+| Turn completion | `result` | `ResultMessage` | Result, usage, session ID, and permission denials. Python `ResultMessage` also includes `total_cost_usd`. |
 
 Expand
 
@@ -204,8 +204,10 @@ for await (const event of query({
   prompt: "Summarize this repository",
   options: { includePartialMessages: true },
 })) {
-  if (event.type === "stream_event" && event.event.delta?.type === "text_delta") {
-    process.stdout.write(event.event.delta.text);
+  if (event.type !== "stream_event") continue;
+  const raw = event.event as { delta?: { type?: string; text?: string } };
+  if (raw.delta?.type === "text_delta" && raw.delta.text) {
+    process.stdout.write(raw.delta.text);
   }
 }
 ```

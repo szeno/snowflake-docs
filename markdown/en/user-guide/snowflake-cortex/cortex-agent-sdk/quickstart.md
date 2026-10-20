@@ -102,7 +102,10 @@ answer: AgentResponse = turn.result()
 print(answer.text)
 ```
 
-`send()` starts durable asynchronous work and returns after Snowflake accepts the turn. The SDK manages the thread ID, parent message ID, run ID, and `background` and `stream` flags. `turn.id` is the server-assigned run ID; `result()` waits for the final assistant response.
+`send()` starts durable asynchronous work and returns after Snowflake accepts the turn. If a previous turn on
+this conversation is still running, `send()` waits for that turn to finish first. The SDK manages the thread ID,
+parent message ID, run ID, and `background` and `stream` flags. `turn.id` is the server-assigned run ID;
+`result()` waits for the final assistant response.
 
 ## Step 2: Read events as they arrive
 
@@ -160,7 +163,8 @@ print(answer.usage)
 ## Step 4: Send a follow-up
 
 The same conversation retains history across turns. You can attach to `conversation.id` later to continue the same
-thread from another process.
+thread from another process. The agent from `create()` is not stored on the thread. Pass it again on each `send()`
+after `attach()`.
 
 TypeScriptPython
 

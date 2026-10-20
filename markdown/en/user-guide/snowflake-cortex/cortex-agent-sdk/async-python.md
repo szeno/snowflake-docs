@@ -67,7 +67,9 @@ resumed: AsyncConversation = await client.conversations.attach(conversation.id)
 ```
 
 Call `cancel()`, `result()`, and `events()` on the `AsyncTurn` that `send()` returned. `turn.id` is the
-server-assigned run ID. The root client does not recover a turn from that ID.
+server-assigned run ID. The root client does not recover a turn from that ID. `attach()` does not keep the agent
+from the conversation that created the thread. Pass `agent` on each later `send()`, or the turn uses an empty inline
+agent.
 
 ## Concurrency and ordering
 

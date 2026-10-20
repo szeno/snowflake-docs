@@ -16,18 +16,18 @@ The [JDBC](https://docs.snowflake.com/en/developer-guide/snowpark/reference/pyth
 | --- | --- |
 | `url` | A connection string used to connect to the external data source via the JDBC driver |
 | `udtf_configs` | A dictionary containing the necessary configurations for the UDTF creation |
-| `properties` | A dictionary containing the key-value pair that is needed during establishing JDBC connection |
-| `table` | Table in the source database |
-| `query` | SQL query wrapped as a subquery for reading data |
+| `properties` | A dictionary of JDBC connection properties. Supply credentials through the Snowflake secret in `udtf_configs`, not through `properties` or `url`. |
+| `table` | Table in the source database. Specify either `table` or `query`, not both. |
+| `query` | SQL query wrapped as a subquery for reading data. Specify either `table` or `query`, not both. |
 | `column` | Partitioning column for parallel reads |
-| `lower_bound` | Lower bound for partitioning |
-| `upper_bound` | Upper bound for partitioning |
+| `lower_bound` | Lower bound used to calculate partition strides, not to filter rows |
+| `upper_bound` | Upper bound used to calculate partition strides, not to filter rows |
 | `num_partitions` | Number of partitions for parallelism |
 | `query_timeout` | The timeout duration for SQL execution, measured in seconds. |
 | `fetch_size` | Number of rows fetched per round trip |
 | `custom_schema` | Custom schema for pulling data from external databases |
-| `predicates` | List of conditions for WHERE clause partitions |
-| `session_init_statement` | Executes a SQL or PL/SQL statement upon session initialization |
+| `predicates` | List of conditions for `WHERE` clause partitions. If `column` is also specified, column-based partitioning takes precedence. |
+| `session_init_statement` | One or more SQL statements executed before fetching data for each partition |
 
 Expand
 
@@ -50,15 +50,18 @@ Partition column
     - `upper_bound`
     - `num_partitions`
 
-    These four parameters have to be set at the same time and the `column` must be numeric or date type.
+    Specify all four parameters together. The partition column must have a numeric or date type.
+    The bounds determine partition strides; they don’t restrict the rows returned. To restrict the data,
+    use a `WHERE` clause in `query` or use predicate-based partitioning.
 
 Predicates
 :   This method divides source data into partitions based on parameter predicates, which are a list of expressions suitable for inclusion in `WHERE` clauses, where each expression defines a partition. Predicates provide a more flexible way of dividing partitions; for example, you can divide partitions on boolean or non-numeric columns.
 
-The Snowpark Python JDBC also allows adjusting parallelism level within a partition:
+You can also adjust the number of rows fetched per batch:
 
-Fetch\_size
-:   Within a partition, the API fetches rows in chunks defined by `fetch_size`. These rows are written to Snowflake in parallel as they are fetched, which allows reading and writing to overlap and maximizes throughput.
+`fetch_size`
+:   `fetch_size` sets the number of rows fetched per batch from the external data source. It can reduce
+    round trips for drivers with a low default fetch size. It doesn’t set the number of partitions.
 
 ## Using JDBC to ingest data from external data source
 
@@ -72,7 +75,11 @@ Fetch\_size
      Copy code
 
      ```
-     session.file.put("<your directory>/<your file name>", "@<your stage name>/<stage path>")
+     session.file.put(
+         "<your directory>/<your file name>",
+         "@<your stage name>/<stage path>",
+         auto_compress=False,
+     )
      ```
    - Upload using Snowsight as described in the following steps.
 
@@ -372,12 +379,13 @@ Fetch\_size
 
 ### Source tracing when using Snowpark JDBC to connect to SQL Server
 
-1. Include a tag of Snowpark in your create connection function:
+1. Set `applicationName` in the JDBC URL. For the URL format, see
+   [Building the connection URL](https://learn.microsoft.com/en-us/sql/connect/jdbc/building-the-connection-url).
 
    Copy code
 
    ```
-   connection_str="jdbc:mssql://<your host>:<your port>/<your db>?applicationName=snowflake-snowpark-python"
+   connection_str="jdbc:sqlserver://<your host>:<your port>;databaseName=<your db>;applicationName=snowflake-snowpark-python"
    udtf_configs = {
    "external_access_integration": "<your integration>",
    "secret": "<your secret>",
@@ -408,12 +416,13 @@ Fetch\_size
 
 ### Source tracing when using Snowpark JDBC to connect to PostgreSQL
 
-1. Include a tag of Snowpark in your create connection function:
+1. Set the case-sensitive `ApplicationName` property in the JDBC URL. See
+   [pgJDBC connection parameters](https://jdbc.postgresql.org/documentation/use/#connection-parameters).
 
    Copy code
 
    ```
-   connection_str="jdbc:postgresql://<your host>:<your port>/<your db>?applicationName=snowflake-snowpark-python"
+   connection_str="jdbc:postgresql://<your host>:<your port>/<your db>?ApplicationName=snowflake-snowpark-python"
    udtf_configs = {
    "external_access_integration": "<your integration>",
    "secret": "<your secret>",

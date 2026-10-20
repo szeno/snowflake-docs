@@ -245,7 +245,7 @@ In your VPC as an AWS administrator:
    2. Find the **DNS Names** field, and copy the region-scoped DNS name. The Snowflake S3\_STAGE\_VPCE\_DNS\_NAME parameter will be set to
       this value.
 
-      The format of the region-scoped DNS name looks like `*.vpce-sd98fs0d9f8g.s3.us-west-2.vpce.amazonaws.com`. Though AWS also provides
+      The format of the region-scoped DNS name looks like `*.vpce-sd98fs0d9f8g-abc00ef0.s3.us-west-2.vpce.amazonaws.com`. Though AWS also provides
       an availability zone DNS name, Snowflake recommends the region-scoped DNS name because it provides high availability with failover
       capabilities.
 
@@ -256,14 +256,14 @@ use the S3\_STAGE\_VPCE\_DNS\_NAME parameter to associate the DNS name of that e
 
 The S3\_STAGE\_VPCE\_DNS\_NAME parameter should be set to the region-scoped DNS Name of the interface endpoint associated with a specific
 internal stage. The standard format begins with an asterisk (`*`) and ends with `vpce.amazonaws.com`
-(for example, `*.vpce-sd98fs0d9f8g.s3.us-west-2.vpce.amazonaws.com`).
+(for example, `*.vpce-sd98fs0d9f8g-abc00ef0.s3.us-west-2.vpce.amazonaws.com`).
 
 As an example, the account administrator can execute the following to associate an endpoint with the current account:
 
 Copy code
 
 ```
-ALTER ACCOUNT SET S3_STAGE_VPCE_DNS_NAME = '*.vpce-sd98fs0d9f8g.s3.us-west2.vpce.amazonaws.com';
+ALTER ACCOUNT SET S3_STAGE_VPCE_DNS_NAME = '*.vpce-sd98fs0d9f8g-abc00ef0.s3.us-west-2.vpce.amazonaws.com';
 ```
 
 #### User overrides of interface endpoints

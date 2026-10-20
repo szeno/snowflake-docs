@@ -626,6 +626,11 @@ The Spark Connector supports converting between many common data types.
 >
 > Show lessSee more
 
+The Spark Connector doesn’t map any Spark data type to GEOGRAPHY or GEOMETRY. If the connector creates the target table (for
+example, with `SaveMode.Overwrite` when `truncate_table` is `off`), a `StringType` column that holds geospatial data is
+created as VARCHAR. To keep a GEOGRAPHY or GEOMETRY column, write into an existing table, and use `truncate_table = on`
+with `SaveMode.Overwrite`.
+
 ### From Snowflake to Spark SQL
 
 > | Snowflake Data Type | Spark Data Type |
@@ -641,6 +646,8 @@ The Spark Connector supports converting between many common data types.
 > | DECIMAL | `DecimalType` |
 > | DOUBLE | `DoubleType` |
 > | FLOAT | `DoubleType` |
+> | GEOGRAPHY | `StringType` when [GEOGRAPHY\_OUTPUT\_FORMAT](/sql-reference/parameters#label-geography-output-format) is `GeoJSON` (the default), `WKT`, or `EWKT`. When the output format is `WKB` or `EWKB`, the value is returned as binary, which isn’t supported. |
+> | GEOMETRY | `StringType` when [GEOMETRY\_OUTPUT\_FORMAT](/sql-reference/parameters#label-geometry-output-format) is `GeoJSON` (the default), `WKT`, or `EWKT`. When the output format is `WKB` or `EWKB`, the value is returned as binary, which isn’t supported. |
 > | INTEGER | `DecimalType(38, 0)` |
 > | OBJECT | `StringType` |
 > | TIMESTAMP | `TimestampType` |

@@ -440,6 +440,10 @@ errors returned, see [OAuth Error Codes](/user-guide/oauth-snowflake-overview#la
 
 This endpoint returns an OAuth access token in exchange for a JSON Web Token (JWT). For an example, see [Tutorial 1 (step 5)](/developer-guide/snowpark-container-services/tutorials/tutorial-1). In the tutorial you send a request to this endpoint to exchange a JWT token for an OAuth token and use the OAuth token to access a public endpoint exposed by a Snowpark Container Services service.
 
+Note
+
+This section describes the JWT bearer grant. To exchange a user’s credential for a delegated access token that an AI agent uses on the user’s behalf, see [OAuth token exchange for agent delegation](/user-guide/oauth-token-exchange).
+
 The token endpoint is as follows:
 
 Copy code

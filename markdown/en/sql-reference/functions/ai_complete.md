@@ -10,6 +10,10 @@ Generates a response (completion) from text or an image using a supported langua
 - A single image and a text prompt, to generate a response based on the image and prompt. For more information, see [AI\_COMPLETE (Single image)](/sql-reference/functions/ai_complete-single-file).
 - A prompt object that can support multiple images and text. For more information, see [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object).
 
+Bring-your-own model: Open preview
+
+You can also use your own text generation or vision-language model deployed as a Snowpark Container Services model inference service. Specify the service name as the `model` argument. For supported inputs, availability, prerequisites, access requirements, and limitations, see [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
+
 ## Syntax
 
 The syntax for the function depends on the type of input that you provide. For information about the syntax, see the following sections:
@@ -43,8 +47,10 @@ For more information about error handling for AI functions, see [Snowflake Corte
 
 ## Access control requirements
 
-Users must use a role that has been granted the [SNOWFLAKE.CORTEX\_USER database role](/sql-reference/snowflake-db-roles#label-snowflake-db-roles-cortex-user).
+For Snowflake-hosted Cortex models, users must use a role that has been granted the [SNOWFLAKE.CORTEX\_USER database role](/sql-reference/snowflake-db-roles#label-snowflake-db-roles-cortex-user).
 See [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges) for more information on this privilege.
+
+For models deployed as Snowpark Container Services model inference services, see [Access control requirements](/developer-guide/snowflake-ml/inference/spcs-ai-complete#access-control-requirements).
 
 Note
 

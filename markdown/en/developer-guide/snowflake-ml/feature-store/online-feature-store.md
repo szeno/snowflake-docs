@@ -1,37 +1,33 @@
 # Serving online features
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Available to all accounts. Requires `snowflake-ml-python` version 1.41 or later.
-
 Online feature serving stores the latest feature values keyed by entity so applications
 can fetch features in milliseconds rather than running warehouse queries. The Online
-Feature Store uses a managed Postgres serving layer for ultra-low-latency reads, stream
-ingestion, time-windowed aggregations, and REST APIs. Enable online serving on a feature
+Feature Store uses a managed Postgres serving layer for ultra-low-latency reads (typically under 10 ms at P50), stream
+ingestion with end-to-end freshness typically under 200 ms at P50, time-windowed aggregations, and REST APIs. Enable online serving on a feature
 view when you create it, or update an existing feature view later.
 
 The Online Feature Store is well suited for real-time ML applications such as fraud
 detection, recommendations, and personalization. It stays integrated with your batch
 feature pipeline for training while serving the same feature values at inference time.
 
-![Architecture of the Snowflake Online Feature Store showing offline feature views, the Postgres online serving layer, stream ingest, and online feature retrieval.](/static/images/screens/feature-store-architecture.png)
-
-The following table summarizes ways you can use the Online Feature Store:
+The following table highlights key features of the Online Feature Store:
 
 | Use | Description |
 | --- | --- |
-| Batch online feature views | Serve the latest row per entity key from batch feature views. |
-| Stream feature views | Ingest events in real time and serve updated features with end-to-end freshness of less than two seconds. Includes stream sources, transformations, and backfill. |
-| Real-time feature views | Compute features at query time from request inputs and upstream feature views. |
-| REST ingest and query API | HTTP endpoints for streaming data ingestion and online feature retrieval. |
-| Feature groups | Bundle multiple feature views into one versioned set for online reads and training. See [Feature groups](/developer-guide/snowflake-ml/feature-store/feature-groups). |
+| [Batch online feature views](#label-online-python-manage-and-serve-online-feature-python-api) | Serve the latest row per entity key from batch feature views. |
+| [Stream feature views](#label-online-fs-stream-feature-views) | Ingest events in real time and serve updated features with end-to-end freshness typically under 200 ms at P50. Includes stream sources, transformations, and backfill. |
+| [Real-time feature views](#label-online-fs-realtime-feature-views) | Compute features at query time from request inputs and upstream feature views. |
+| [REST ingest and query API](#label-online-fs-rest-query) | HTTP endpoints for streaming data ingestion and online feature retrieval. |
+| [Feature groups](/developer-guide/snowflake-ml/feature-store/feature-groups) | Bundle multiple feature views into one versioned set for online reads and training. |
+| [Real-time model inference](#label-online-fs-real-time-inference-integration) | Retrieve online features automatically when you call a model deployed for real-time inference. |
 
 Expand
 
 Show lessSee more
 
-If you are interested in online serving using hybrid tables, see
-[Online serving with hybrid tables](#label-online-serving-hybrid-tables).
+For batch-only workloads that don’t need the online service, stream ingest, real-time
+feature views, or REST APIs, you can also serve features from hybrid tables. See
+[Online serving with hybrid tables](/developer-guide/snowflake-ml/feature-store/online-feature-store-hybrid-tables).
 
 Resources
 
@@ -47,31 +43,38 @@ The Online Feature Store receives feature data in two ways:
 
 - From the offline store: Feature values computed in the offline pipeline are
   synchronized to the online store on a schedule you configure with `target_lag`.
-- From a stream or request source: For sub-minute freshness, features are computed
-  as events arrive or at query time. See
+- From a stream or request source: For features that must reflect the latest events or
+  request context, features are computed as events arrive or at request time. See
   [Stream feature views](#label-online-fs-stream-feature-views) and
   [Real-time feature views](#label-online-fs-realtime-feature-views).
+
+![Architecture of the Snowflake Online Feature Store showing offline feature views, the Postgres online serving layer, stream ingest, and online feature retrieval.](/static/images/screens/feature-store-architecture.png)
 
 For real-time ML workloads, serving latency and data freshness matter most.
 
 Serving latency is how long the store takes to return feature values at inference
-time. The Online Feature Store achieves 10 ms p50 serving latency through the REST
-query API.
+time. The Online Feature Store typically serves features in under 10 ms at P50 through the REST query API.
 
 Data freshness is the end-to-end lag from a source event to an updated served feature
 value. For example, when a user generates clickstream events, freshness includes the time
 to ingest events, compute features, update the online store, and make values available for
-retrieval. With stream ingestion, end-to-end freshness is under 2 seconds.
+retrieval. With stream feature views, end-to-end feature freshness is typically under 200 ms at P50.
 
-Freshness depends on how you populate the online store:
+### Regional availability
 
-- Offline to online sync: Set `target_lag` from 10 seconds to 8 days. Use
-  this path when minute-scale freshness is acceptable.
-- Stream ingest: Features update as events land in the ingest endpoint. Use stream
-  feature views when you need sub-minute freshness.
+The Online Feature Store is available for the Amazon Web Services (AWS) and Microsoft Azure
+cloud service providers (CSPs). Google Cloud Platform (GCP) isn’t currently supported.
 
-Snowflake refreshes the online store in the background. If refresh fails five times in a
-row, the online table is suspended. To troubleshoot, check your refresh history.
+The online service creates a Snowflake Postgres instance in the same region as your Snowflake
+account, so the Online Feature Store is available in the regions where Snowflake Postgres is
+available. For the list of regions, see
+[Snowflake Postgres regional availability](/user-guide/snowflake-postgres/about#label-snowflake-postgres-regional-availability).
+
+U.S. public sector regions (AWS GovCloud and Azure Government) and regions in China
+aren’t supported.
+
+Setup is the same on AWS and Azure, including network policies for the REST endpoint and
+[PrivateLink URL configuration](#label-online-fs-privatelink-url).
 
 ## Enabling online serving for feature views
 
@@ -82,7 +85,7 @@ Before you create an online feature store, complete the following:
   Copy code
 
   ```
-  pip install --upgrade --force-reinstall "snowflake-ml-python>=1.41"
+  pip install --upgrade --force-reinstall "snowflake-ml-python>=2.5"
   ```
 - Configure [Feature Store access control](/developer-guide/snowflake-ml/feature-store/rbac)
   for producer and consumer roles.
@@ -137,7 +140,7 @@ The following are the `OnlineConfig` parameters:
 | Parameter | Type | Description | Default |
 | --- | --- | --- | --- |
 | `enable` | Boolean, optional | Specifies whether online feature serving should be enabled for the feature view. | `False` |
-| `target_lag` | Str, optional | Target data freshness lag in a `"&lt;num&gt; (seconds|minutes|hours|days|s|m|h|d)"` format. Used for offline-to-online sync only; not used for stream feature views. | `10 seconds` |
+| `target_lag` | Str, optional | Target data freshness lag in a `"<num> (seconds|minutes|hours|days|s|m|h|d)"` format. Used for offline-to-online sync only; not used for stream feature views. | `1 minute` |
 | `store_type` | Enum, optional | Online store implementation. Set to `OnlineStoreType.POSTGRES` for the Online Feature Store. | `OnlineStoreType.HYBRID_TABLE` |
 
 Expand
@@ -154,9 +157,9 @@ source data to the online store is approximately `refresh_freq + online_config.t
 Warning
 
 When `store_type=OnlineStoreType.POSTGRES`, keep the **combined length of the feature view
-name and version at 46 characters or fewer**. The Postgres-backed online store maps feature
+name and version at 45 characters or fewer**. The Postgres-backed online store maps feature
 views to internal Postgres object names subject to Postgres identifier limits. Names that
-are too long can be truncated and cause collisions or ingest errors. See
+are too long are rejected with an error. See
 [Feature view name length with Postgres online serving](#label-online-fs-troubleshooting-postgres-name-length).
 
 For existing feature views, update the online serving configuration with `update_feature_view`:
@@ -191,10 +194,12 @@ The online service is a managed serving layer for low-latency online reads.
 Create it once per feature store before registering feature views with online serving
 enabled. The online service enables you to ingest data into the online store and read features from the online store using a REST API.
 
-The `create_online_service` method takes the Snowflake database role names for the
+The `create_online_service` method takes the Snowflake account role names for the
 producer (creates and operates on feature views) and consumer (reads feature views and
 entities). These are the same roles you configure in
-[Feature Store access control](/developer-guide/snowflake-ml/feature-store/rbac). Note that the role calling `create_online_service` must have the `CREATE SCHEMA` privilege on the
+[Feature Store access control](/developer-guide/snowflake-ml/feature-store/rbac).
+Database roles are not supported and are rejected at creation time.
+The role calling `create_online_service` must have the `CREATE SCHEMA` privilege on the
 feature store database.
 
 Copy code
@@ -204,11 +209,15 @@ create_result = fs.create_online_service("FS_PRODUCER_ROLE", "FS_CONSUMER_ROLE")
 print(create_result)
 ```
 
-Note
+Important
 
-The online service runs continuously after you create it. Keep it running to serve online
-traffic in production. For testing or development, call `drop_online_service()` when you’re
-done to minimize cost of unused resources.
+The online service begins billing as soon as you create it. Compute charges accrue
+continuously while the service is running, whether or not it is serving traffic. The
+default service size is `S`. For how the online service is billed, see
+[Cost and billing considerations](#label-online-fs-cost-billing).
+
+For testing or development, call `drop_online_service()` when you’re done to stop
+billing. In production, keep the service running to serve online traffic.
 
 The online service can take several minutes to provision on first creation. Poll the status
 until it reaches `RUNNING`:
@@ -227,6 +236,40 @@ while status.status != "RUNNING":
 print(f"Size: {status.size}")
 print(f"Query URL: {status.endpoints}")
 ```
+
+### Check the online service status
+
+To see the status of the online service and the components behind it, call
+`SYSTEM$GET_FEATURE_STORE_ONLINE_SERVICE_STATUS` with the database and schema of your
+feature store:
+
+Copy code
+
+```
+SELECT SYSTEM$GET_FEATURE_STORE_ONLINE_SERVICE_STATUS('MY_DB.MY_FEATURE_STORE_SCHEMA');
+```
+
+The result includes the status of the Snowflake Postgres instance that stores online
+features and the status of the online service runtime instances that serve the ingest
+and query endpoints. It also lists the service endpoints. For more information, see
+[PrivateLink URL configuration](#label-online-fs-privatelink-url).
+
+From Python, use `get_online_service_status()` to check the overall service status and
+its accompanying message:
+
+Copy code
+
+```
+status = fs.get_online_service_status()
+print(status.status)
+print(status.message)
+```
+
+The online service can serve requests only when its status is `RUNNING`.
+
+After the service reaches `RUNNING`, each feature view that you enable for online serving also
+needs its online feature table to finish setup before it can serve reads. For more information,
+see [Check online feature tables](#label-online-fs-check-setup-status).
 
 ### Choose an online service size
 
@@ -252,7 +295,7 @@ The `size` argument accepts one of the following values (case-insensitive):
 
 | Size | Notes |
 | --- | --- |
-| `XS` | Prototyping and experiments. Available only at creation; an `XS` service can’t be resized later. |
+| `XS` | Prototyping and experiments. Runs on a single compute node without high availability, so don’t use it for production traffic. Available only at creation; an `XS` service can’t be resized later. |
 | `S` | Light or early-stage production: a small working set and low QPS (roughly tens of QPS). |
 | `M` | Steady production traffic with a moderate working set. Roughly double `S` (roughly 100 to 300 QPS). |
 | `L` | Larger working sets or higher query and ingest QPS (roughly 300 to 500+ QPS). Roughly double `M`. |
@@ -264,12 +307,15 @@ Expand
 
 Show lessSee more
 
+Sizes `S` through `3XL` are designed for production and include high availability with
+redundant compute nodes.
+
 The QPS ranges are rough, order-of-magnitude starting points for directional guidance, not
 guarantees. Your actual size depends on your workload, so use these to pick a starting size and
 then right-size against real traffic. See [Estimate the size you need](#label-online-fs-estimate-size)
 for the factors that drive sizing.
 
-When you omit `size`, the server applies its default size. Accounts that cap the available
+When you omit `size`, the service is created at the default size, `S`. Accounts that cap the available
 size are provisioned at their cap instead. To read the size a service is provisioned at, check
 the `size` attribute on the status returned by `get_online_service_status()`. This attribute is
 `None` for services created before sizes were recorded.
@@ -296,7 +342,7 @@ driven mainly by these factors:
 - **Read throughput and concurrency.** Your sustained and peak query QPS, and how many features
   (or feature groups) each request fetches.
 - **Ingest throughput.** Your sustained and peak write and stream-ingest QPS.
-- **Latency target.** The store targets about 10 ms p50 (see
+- **Latency target.** Retrieval latency is typically under 10 ms at P50 (see
   [Retrieval latency performance and benchmarking](#label-online-python-retrieve-features-from-online-storage)).
   Holding a tight latency target under high concurrency needs more headroom.
 
@@ -314,7 +360,7 @@ real traffic, and resize from there. Use the
 to measure your workload before committing to a size.
 
 **Signs a service is underprovisioned.** When a service is too small for its load, read latency
-rises (especially p90 and p99), latency gets more variable, and a severely overloaded service
+rises (especially P90 and P99), latency gets more variable, and a severely overloaded service
 starts returning query or ingest errors. Watch request volume, latency percentiles, and error
 rate on the
 [Online Serving tab](/developer-guide/snowflake-ml/feature-store/monitoring#label-fs-monitoring-online-serving)
@@ -379,62 +425,31 @@ while not (status.status == "RUNNING" and status.size == "L"):
     print(f"Status: {status.status}, size: {status.size}")
 ```
 
-## Check online feature table setup status
+### Autoscaling
 
-After you enable online serving on a feature view that uses
-`OnlineStoreType.POSTGRES`, Snowflake creates an
-[online feature table](/sql-reference/sql/create-online-feature-table)
-and reports whether that table’s online store finished setup. The online
-service reaching `RUNNING` means the serving layer is up; each new online
-feature table has its own setup status.
+In addition to its fixed size, the online service autoscales the number of compute nodes
+based on load. This helps the service handle bursts of concurrent query and ingest
+requests without resizing to a larger size.
 
-Use [`SHOW ONLINE FEATURE TABLES`](/sql-reference/sql/show-online-feature-tables)
-to inspect that status:
+Autoscaling is based on aggregated CPU usage. When CPU usage rises above 80%, Snowflake
+adds compute nodes, and when the load subsides, Snowflake removes them. The service never
+drops below the baseline node count for its size. For more information about how
+CPU-based autoscaling works, see
+[How CPU-based autoscaling works](/developer-guide/snowpark-container-services/scaling-services#label-spcs-working-with-services-enabling-autoscaling).
 
-Copy code
+Autoscaling adds serving and ingest capacity, but it doesn’t add capacity to the
+underlying online store, and it adjusts the node count only within the bounds of the
+provisioned size. If your workload needs more memory, storage, or maximum capacity,
+[resize the online service](#label-online-fs-resize-online-service) to a larger size
+instead.
 
-```
-SHOW ONLINE FEATURE TABLES LIKE '<feature_view_name>%';
-```
+Each compute node added beyond the baseline is billed as online service autoscale compute.
+For more information, see
+[What the online service bills for](#label-online-fs-billing-components).
 
-| Column | Description |
-| --- | --- |
-| `setup_status` | Setup outcome for the online feature table. |
-| `setup_error_msg` | Error returned when setup failed. `NULL` unless `setup_status` is `SETUP_FAILED`. |
-| `setup_time` | Time when the setup status was last written. |
-
-Expand
-
-Show lessSee more
-
-A new table starts at `SETUP_NOTREADY` and then moves to one of these outcomes:
-
-| Status | Meaning |
-| --- | --- |
-| `SETUP_NOTREADY` | The table was created. Online-store setup has not finished. |
-| `SETUP_READY` | Online-store setup succeeded. The table can ingest and serve. |
-| `SETUP_FAILED` | Online-store setup failed. See `setup_error_msg`. |
-
-Expand
-
-Show lessSee more
-
-Wait until `setup_status` is `SETUP_READY` before you depend on online reads
-for that feature view. After you register the feature view, `SETUP_NOTREADY`
-typically lasts a few seconds. The online service can already be `RUNNING`
-while the table is still being provisioned. If the table stays at
-`SETUP_NOTREADY` for more than 5 minutes, treat setup as stuck and see
-[Online feature table setup failed](#label-online-fs-troubleshooting-setup-failed).
-
-Online feature tables created before this status was recorded appear as
-`SETUP_READY`.
-
-If setup cannot complete, the table moves to `SETUP_FAILED` and
-`setup_error_msg` has the reason. This status is independent of
-`scheduling_state`, which is the refresh schedule (`RUNNING` or `SUSPENDED`).
-
-If `setup_status` is `SETUP_FAILED`, see
-[Online feature table setup failed](#label-online-fs-troubleshooting-setup-failed).
+To monitor autoscaling activity, use the **Concurrency** chart on the **Stream Ingest** tab
+of the Feature Store monitoring dashboard. For more information, see
+[Monitoring](/developer-guide/snowflake-ml/feature-store/monitoring#label-fs-monitoring-stream-ingest).
 
 ## Read from the online store
 
@@ -486,52 +501,48 @@ online_df.show()
 
 ## Retrieval latency performance and benchmarking
 
-The Postgres-backed online store is optimized for low-latency feature retrieval. In general, you can
-expect 10ms p50, sub-15ms p95, and sub-20ms p99 latency through the REST query API.
+The Postgres-backed online store is optimized for low-latency feature retrieval. Retrieval
+latency is typically under 10 ms at P50 at 2,000 queries per second (QPS).
 
 Actual latency depends on factors such as the number of features per entity, the number
 of entity keys per request, network distance between the caller and the online service,
 and the payload size.
+
+The first requests after a period of inactivity, or after the online service is resumed or
+resized, can see higher latency while the service warms up. To avoid cold-start latency,
+send continuous retrieval traffic for at least 10 seconds before you send latency-sensitive
+requests or measure latency.
 
 To measure latency in your own environment, we have released a
 [Online Feature Store Benchmark Kit](https://github.com/Snowflake-Labs/snowflake-feature-store-online-benchmark-kit),
 which provides scripts and instructions for running reproducible latency benchmarks against
 your online service.
 
-## Integrate with real-time model inference
-
-In addition to fetching features with the Python SDK or the Query REST API, you can deploy a model from the
-[Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview) as a managed real-time inference
-service that automatically looks up feature values from the online store at inference time.
-
-When your online feature store uses `OnlineStoreType.POSTGRES`, pass `feature_sources_per_function` to
-`create_service()` to map a registered feature view to a model method (such as `predict`). At inference time, the
-model service fetches any missing feature columns from the feature view before invoking the model. You can send only
-entity IDs in the request payload and let the service retrieve the rest.
-
-`mv` is a `ModelVersion` object from the [Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview). Obtain it with `reg.get_model("my_model").version("v1")`, where `reg` is a `snowflake.ml.registry.Registry` object.
-
-Copy code
-
-```
-mv = reg.get_model("my_model").version("v1")
-
-mv.create_service(
-    service_name="myservice",
-    service_compute_pool="my_compute_pool",
-    ingress_enabled=True,
-    feature_sources_per_function={"predict": [registered_fv]},
-)
-```
-
-For more details, see [Online Feature Store integration](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api#label-real-time-inference-online-feature-store-integration)
-in the real-time inference documentation.
-
 ## Stream feature views
 
 Stream feature views allow you to ingest events in real time and serve updated
-features with near-zero latency. They use a `StreamSource` to define the event schema
+features with end-to-end freshness typically under 200 ms at P50. They use a `StreamSource` to define the event schema
 and a `StreamConfig` to specify the transformation logic and historical backfill data.
+
+### Stream ingest freshness
+
+Stream feature views receive online data directly from the REST API. End-to-end streaming ingest freshness,
+from when an event is ingested to when it can be read from the online store, is typically under
+200 ms at P50 and under 500 ms at P99. Actual end-to-end freshness varies by region and workload.
+The offline refresh frequency for a feature view does not affect online data freshness.
+
+To measure online data freshness in your own environment, send continuous traffic and allow
+at least 10 seconds of warmup time. Ingestion API response latency
+is a useful proxy for freshness, but end-to-end freshness also includes the time until the
+updated values can be read from the online store.
+
+To monitor stream ingest latency over time, use the **Stream Ingest** tab of the Feature Store monitoring
+dashboard. For more information, see
+[Monitoring](/developer-guide/snowflake-ml/feature-store/monitoring#label-fs-monitoring-stream-ingest).
+
+Data ingested via streaming API is simultaneously written into the offline store in Snowflake
+via a dual-write path. As with batch feature views, you can use the offline data for training or
+batch inference.
 
 ![Stream feature view architecture](/static/images/streamFV_diagram.png)
 
@@ -651,7 +662,7 @@ You can combine stream ingestion with time-windowed aggregation to compute rolli
 (such as total spend over 48 hours) that update continuously as new events arrive. For
 details on defining time-windowed aggregation features and which aggregations are
 supported for Postgres online serving, see
-[Time-windowed aggregation features](/developer-guide/snowflake-ml/feature-store/advanced-feature-engineering#label-fs-aggregation-support-by-store).
+[Time-windowed aggregation features](/developer-guide/snowflake-ml/feature-store/advanced-feature-engineering#label-online-fs-time-windowed-aggregation).
 
 To get fresher online features, you can further enable continuous aggregation by setting the feature aggregation method as
 `FeatureAggregationMethod.CONTINUOUS`. This instructs the online service to maintain running aggregates as events arrive
@@ -834,7 +845,9 @@ Online reads through the Python SDK (`read_feature_view`, `read_feature_group`) 
 REST query calls both require authentication and network connectivity to the online
 service. Set a `SNOWFLAKE_PAT` environment variable or configure key-pair JWT
 authentication as described in the setup prerequisites. The sections below cover
-endpoint URLs, PrivateLink routing, and network rules.
+endpoint URLs and PrivateLink routing. Client IPs must also be allowed by the network policy
+that applies to the authenticating user; see
+[HTTP 401: client IP not allowed](#label-online-fs-troubleshooting-http-401).
 
 Each online service has ingest and query endpoint URLs. Retrieve them from the
 online service status:
@@ -901,151 +914,189 @@ Authorization: Snowflake Token="<your_pat_token>"
 Content-Type: application/json
 ```
 
-## Online serving with hybrid tables
+## Serve model predictions with online features
 
-Snowflake also supports online serving through [online feature tables](/sql-reference/commands-feature-store)
-backed by hybrid tables. This product is generally available and synchronizes the latest
-feature values from the offline store on a schedule you configure with `target_lag`.
+When an application such as a fraud check or a recommendation widget needs a prediction,
+it usually has only an entity ID, such as a user or transaction ID. The model needs the latest
+feature values for that entity to make the prediction.
 
-Use hybrid table online serving when you need low-latency point lookups for batch feature
-views and don’t require Postgres-backed capabilities. Hybrid tables don’t support the
-Online Feature Store online service, stream ingest, real-time feature views, REST APIs,
-or the time-windowed aggregation API. That aggregation API isn’t currently supported
-for hybrid table online serving. For those workloads, use `OnlineStoreType.POSTGRES` in
-the sections above.
+Snowflake real-time inference hosts a model from the
+[Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview) as a managed
+service with a dedicated HTTP endpoint that scales with request volume. When you connect that
+service to the Online Feature Store, it looks up the feature values for each request from the
+online store before it invokes the model. Your application sends entity IDs and receives
+predictions in a single call, without fetching features separately through the Python SDK or the
+Query REST API. For more information about real-time inference, see
+[Deploy models for real-time inference (REST API)](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api).
 
-### Prerequisites
+When your online feature store uses `OnlineStoreType.POSTGRES`, pass `feature_sources_per_function` to
+`create_service()` to map a registered feature view to a model method (such as `predict`). At inference time, the
+model service fetches any missing feature columns from the feature view before invoking the model. You can send only
+entity IDs in the request payload and let the service retrieve the rest.
 
-Important
-
-You must have Snowflake version 9.26 or later and `snowflake-ml-python` version 1.18.0
-or later to use hybrid table online serving.
-
-Hybrid table online serving doesn’t use the Postgres online service. You don’t need to
-call `create_online_service`, set `SNOWFLAKE_PAT`, or configure network access for the
-REST endpoints described earlier on this page.
-
-Create or connect to a feature store the same way you do for offline feature views. For
-details, see [Creating or connecting to a feature store](/developer-guide/snowflake-ml/feature-store/create).
-
-### Enable hybrid table online serving
-
-Enable online serving in `OnlineConfig` on a batch feature view. When you omit
-`store_type`, the feature view uses hybrid table online serving by default
-(`OnlineStoreType.HYBRID_TABLE`). For parameter descriptions, see the
-[`OnlineConfig` table](#batch-online-feature-views) above.
+`mv` is a `ModelVersion` object from the [Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview). Obtain it with `reg.get_model("my_model").version("v1")`, where `reg` is a `snowflake.ml.registry.Registry` object.
 
 Copy code
 
 ```
-from snowflake.ml.feature_store import FeatureView, OnlineConfig
+mv = reg.get_model("my_model").version("v1")
 
-source_df = session.table("MY_DB.MY_SCHEMA.SOURCE_TABLE")
-
-fv = FeatureView(
-    name="MY_ONLINE_FV",
-    entities=[my_entity],
-    feature_df=source_df,
-    timestamp_col="EVENT_TS",
-    refresh_freq="5 minutes",
-    online_config=OnlineConfig(enable=True, target_lag="30 seconds"),
-    desc="Batch features served from a hybrid table online feature table",
-)
-
-fs.register_feature_view(fv, version="v1")
-```
-
-The `refresh_freq` and `target_lag` settings work the same way as described in [Enabling online serving for feature views](#batch-online-feature-views).
-
-### Permissions
-
-Before you enable hybrid table online serving, grant the producer and consumer roles
-access to online feature tables. Use the access control script in
-[Feature Store access control](/developer-guide/snowflake-ml/feature-store/rbac#label-snowflake-feature-store-setup-sql),
-then grant the following privileges:
-
-Copy code
-
-```
-GRANT CREATE ONLINE FEATURE TABLE ON SCHEMA IDENTIFIER($SCHEMA_FQN) TO ROLE IDENTIFIER($FS_ROLE_PRODUCER);
-
-GRANT SELECT, MONITOR ON FUTURE ONLINE FEATURE TABLES IN SCHEMA IDENTIFIER($SCHEMA_FQN) TO ROLE IDENTIFIER($FS_ROLE_CONSUMER);
-
-GRANT SELECT, MONITOR ON ALL ONLINE FEATURE TABLES IN SCHEMA IDENTIFIER($SCHEMA_FQN) TO ROLE IDENTIFIER($FS_ROLE_CONSUMER);
-```
-
-### Read features from hybrid table online store
-
-To retrieve feature values from hybrid table online storage, use `read_feature_view`
-with `store_type=StoreType.ONLINE`. Reads use the hybrid table online feature table,
-not the Postgres online service.
-
-Copy code
-
-```
-from snowflake.ml.feature_store import StoreType
-
-fv = fs.get_feature_view("MY_ONLINE_FV", "v1")
-
-fs.read_feature_view(
-    feature_view=fv,
-    keys=[["entity_key_1"], ["entity_key_2"]],
-    feature_names=["FEATURE_A", "FEATURE_B"],
-    store_type=StoreType.ONLINE,
+mv.create_service(
+    service_name="myservice",
+    service_compute_pool="my_compute_pool",
+    ingress_enabled=True,
+    feature_sources_per_function={"predict": [registered_fv]},
 )
 ```
 
-Alternatively, you can read features from the hybrid table directly through SQL. This approach isn’t recommended for production use because it can increase latency.
+For more details, see [Online Feature Store integration](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api#label-real-time-inference-online-feature-store-integration)
+in the real-time inference documentation.
 
-### Time series data handling
+## Cost and billing considerations
 
-To ensure data consistency, you can specify a `timestamp_col`. When multiple rows with the same primary key are found in the source, Snowflake only ingests the version with the most recent timestamp. If you don’t specify a timestamp column, the most recently processed row takes precedence.
+This section describes billing for online serving using the Feature Store online service. The rates for the Feature Store online service are listed in the Snowflake Service Consumption Table.
 
-### Understanding costs
+### What the online service bills for
 
-Online feature tables incur costs across the following consumption modes:
+The online service bills for three components:
 
-- **Virtual warehouse compute**: Both key lookups and data ingestion operations consume virtual warehouse credits at standard rates. For more information, see [Virtual warehouse credit usage](/user-guide/cost-understanding-compute#label-virtual-warehouse-credit-usage).
-- **Cloud Services compute**: Required to identify changes in underlying base objects and determine when refresh operations are needed. For more information, see [Cloud service credit usage](/user-guide/cost-understanding-compute#label-cloud-services-credit-usage).
-- **Hybrid table storage**: Storage costs based on flat monthly rate per GB. It’s more expensive than the cost for traditional Snowflake storage, but identical to the cost to store hybrid tables. For more information, see Table 3(b) in the [Credit Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
-- **Hybrid table requests**: As of March 1, 2026, hybrid table requests are no longer billed, and metering was disabled soon after this pricing change took effect.
+- **Online service compute.** An hourly credit rate set by the size of the online
+  service. Each size has its own rate, and larger sizes cost more. To choose a size, see
+  [Choose an online service size](#label-online-fs-create-online-service-size). The online
+  service is always on so that it can serve real-time inference requests at any time, so
+  compute is billed for every hour the service exists, whether or not it is serving
+  traffic. The rate covers all of the serving and ingest infrastructure included in that
+  size.
+- **Online service autoscale compute.** An hourly credit rate for each additional
+  compute node that the service adds beyond the baseline for its size. You’re billed only
+  for those extra nodes, and only while they’re running. For when autoscaling happens, see
+  [Autoscaling](#label-online-fs-autoscaling).
+- **Online service storage.** A monthly rate per terabyte for the feature data stored in
+  the online store.
 
-Tip
+On your bill, online service compute and autoscale compute roll up into a single Feature
+Store Online Service compute total for your account. Online service storage appears as a
+separate line item.
 
-Incremental refresh can help reduce costs. Incremental updates are generally more cost-efficient than full refresh, resulting in lower compute and data ingestion costs.
+### Example: Estimate monthly cost
 
-### Cost monitoring
+Suppose you run an online service at size `M` for a full month (730 hours) with 2 TB of
+feature data in the online store. During a 48-hour peak, the service autoscales by two
+compute nodes beyond the baseline for its size. The monthly cost is the sum of the three
+billing components.
 
-To monitor costs, use these views:
+This example uses the following rates. For the current rates, always refer to Table 1(j), Table 1(k), and Table 3(h) of the Snowflake Service Consumption Table. The credit price of $2 per credit is for illustration only, your price per credit depends on your contract.
+
+| Component | Unit rate | Usage | Monthly cost |
+| --- | --- | --- | --- |
+| Online service compute (`M`) | 4.14 credits per hour | 730 hours = 3,022.20 credits | $6,044.40 |
+| Online service autoscale compute | 0.396 credits per node per hour | 2 nodes x 48 hours = 38.02 credits | $76.04 |
+| Online service storage | $465.00 per TB per month | 2 TB | $930.00 |
+| **Total** |  |  | **$7,050.44** |
+
+Expand
+
+Show lessSee more
+
+#### Other costs considerations
+
+Online service charges cover only the online serving and ingest infrastructure. Other
+parts of a Feature Store pipeline are billed through their own services and appear as
+separate items on your bill:
+
+| Activity | Description | Billed as |
+| --- | --- | --- |
+| Offline refresh | Batch feature pipelines that compute feature values in the offline store. | [Virtual warehouse compute](/user-guide/cost-understanding-compute#label-virtual-warehouse-credit-usage) ([dynamic tables](/user-guide/dynamic-tables/cost)) |
+| Offline to online sync | Materializing and synchronizing feature values from the offline store into the online store. | [Virtual warehouse](/user-guide/cost-understanding-compute#label-virtual-warehouse-credit-usage) compute |
+| Stream offline writeback | Writing processed stream events back to the offline store. | [Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-cost) |
+
+Expand
+
+Show lessSee more
+
+### Monitor online service cost
+
+Online service usage is reported under its own [service types](/sql-reference/service-types):
+
+| Service type | Billing component | Where to find it |
+| --- | --- | --- |
+| `ONLINE_FEATURE_STORE_COMPUTE` | Online service compute | METERING\_HISTORY, USAGE\_IN\_CURRENCY\_DAILY |
+| `ONLINE_FEATURE_STORE_AUTOSCALE_COMPUTE` | Online service autoscale compute | METERING\_HISTORY, USAGE\_IN\_CURRENCY\_DAILY |
+| `ONLINE_FEATURE_STORE_STORAGE` | Online service storage | USAGE\_IN\_CURRENCY\_DAILY |
+
+Expand
+
+Show lessSee more
+
+To see hourly credit consumption for online service compute and autoscale compute in an
+account, query the [METERING\_HISTORY view](/sql-reference/account-usage/metering_history).
+Latency for this view can be up to 3 hours.
 
 Copy code
 
 ```
--- Hybrid table request credits (historical data only; no new events are recorded)
-SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.HYBRID_TABLE_USAGE_HISTORY;
-
--- Storage consumption
-SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.STORAGE_USAGE;
-SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.DATABASE_STORAGE_USAGE_HISTORY;
-
--- Overall costs
-SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.METERING_HISTORY;
+SELECT DATE_TRUNC('day', start_time) AS usage_day,
+       service_type,
+       SUM(credits_used) AS credits
+  FROM SNOWFLAKE.ACCOUNT_USAGE.METERING_HISTORY
+  WHERE service_type IN ('ONLINE_FEATURE_STORE_COMPUTE', 'ONLINE_FEATURE_STORE_AUTOSCALE_COMPUTE')
+    AND start_time >= DATEADD(day, -30, CURRENT_TIMESTAMP())
+  GROUP BY 1, 2
+  ORDER BY 1, 2;
 ```
+
+To see daily usage and cost in your currency for all three billing components, including
+storage, query the
+[USAGE\_IN\_CURRENCY\_DAILY view](/sql-reference/organization-usage/usage_in_currency_daily)
+in the ORGANIZATION\_USAGE schema:
+
+Copy code
+
+```
+SELECT usage_date,
+       account_name,
+       service_type,
+       SUM(usage) AS usage,
+       SUM(usage_in_currency) AS usage_in_currency
+  FROM SNOWFLAKE.ORGANIZATION_USAGE.USAGE_IN_CURRENCY_DAILY
+  WHERE service_type LIKE 'ONLINE_FEATURE_STORE%'
+    AND usage_date >= DATEADD(day, -30, CURRENT_DATE())
+  GROUP BY 1, 2, 3
+  ORDER BY 1, 2, 3;
+```
+
+You can also see online service consumption on the
+[Cost Management](/user-guide/cost-exploring-overall) pages in Snowsight. Costs for
+offline refresh, sync, and stream writeback appear under their own service types. See
+[Other costs considerations](#label-online-fs-billing-other-costs).
+
+### Tips on reducing feature store costs
+
+- **Use `XS` for development.** For development purposes, use the `XS` size for testing.
+- **Drop services you aren’t using.** The online service bills every hour it exists. Call
+  `drop_online_service()` when you’re done.
+- **Right-size the service.** Start with the size that fits your working set and peak
+  load, watch latency and utilization, and
+  [resize](#label-online-fs-resize-online-service) down if the service is consistently
+  underused.
+- **Set `refresh_freq` for your training needs.** A shorter `refresh_freq` refreshes the
+  offline dynamic table more often and increases its cost. Choose the longest interval
+  your workflow can tolerate.
+- **Prefer incremental refresh.** Incremental refresh of the offline dynamic table is
+  generally cheaper than full refresh. See [Refresh modes](#label-online-python-refresh-methods).
 
 ## Managing offline to online sync
 
 For batch feature views with online serving enabled, Snowflake refreshes the offline
 dynamic table on `refresh_freq` and syncs values to the online store on
-`OnlineConfig.target_lag`. These settings apply to both Postgres and hybrid table online
-serving.
+`OnlineConfig.target_lag`.
 
 You can also suspend refresh, trigger refreshes manually, and inspect refresh history
 through the Python SDK.
 
 ### Refresh modes
 
-Snowflake uses the following refresh modes when updating the offline dynamic table and,
-for hybrid table online serving, the online feature table:
+Snowflake uses the following refresh modes when updating the offline dynamic table:
 
 - Incremental refresh: Snowflake tracks changes in the sources and merges only the new or
   updated rows into the store. This is the preferred and most efficient mode.
@@ -1075,19 +1126,15 @@ fs.resume_feature_view(feature_view=fv)
 ### Trigger a refresh manually
 
 Use `refresh_feature_view` to trigger a refresh outside the scheduled interval. Pass
-`store_type=StoreType.OFFLINE` to refresh the offline dynamic table, or
-`store_type=StoreType.ONLINE` to refresh a hybrid table online feature table.
+`store_type=StoreType.OFFLINE` to refresh the offline dynamic table.
 
 Copy code
 
 ```
 from snowflake.ml.feature_store import StoreType
 
-# Refresh the offline dynamic table (default)
+# Refresh the offline dynamic table
 fs.refresh_feature_view(feature_view=fv, store_type=StoreType.OFFLINE)
-
-# Refresh the hybrid table online feature table
-fs.refresh_feature_view(feature_view=fv, store_type=StoreType.ONLINE)
 ```
 
 Note
@@ -1116,9 +1163,139 @@ fs.get_refresh_history(feature_view=fv, store_type=StoreType.ONLINE)
 ## Troubleshooting
 
 This section lists common Online Feature Store issues and actionable workarounds
-you can apply from your account or client environment. Platform-level limitations
-that require admin action are listed under
-[Known limitations](#label-online-fs-troubleshooting-known-limitations).
+you can apply from your account or client environment. Limitations of the Online Feature
+Store are listed under [Known limitations](#label-online-fs-troubleshooting-known-limitations).
+
+### Check online service status
+
+When online reads or ingests fail, first
+[check the online service status](#label-online-fs-check-online-service-status) and confirm that
+the service is `RUNNING`. Then check the online feature tables for the affected feature views.
+
+#### Check online feature tables
+
+A `RUNNING` online service doesn’t mean every feature view is ready to serve. When you
+enable online serving on a feature view that uses `OnlineStoreType.POSTGRES`, Snowflake creates
+an [online feature table](/sql-reference/sql/create-online-feature-table) for it and reports
+whether that table’s online store finished setup. To check the online feature tables for a
+feature view, run [SHOW ONLINE FEATURE TABLES](/sql-reference/sql/show-online-feature-tables):
+
+Copy code
+
+```
+SHOW ONLINE FEATURE TABLES LIKE '<feature_view_name>%';
+```
+
+Check these columns in the output:
+
+| Column | Description |
+| --- | --- |
+| `setup_status` | Setup outcome for the online feature table. |
+| `setup_error_msg` | Error returned when setup failed. `NULL` unless `setup_status` is `SETUP_FAILED`. |
+| `setup_time` | Time when the setup status was last written. |
+| `scheduling_state` | Whether the table’s refresh schedule is `RUNNING` or `SUSPENDED`. Independent of `setup_status`. If a refresh fails, the table is suspended. [Check the refresh history](#label-online-fs-troubleshooting-error-logs) for the cause. |
+
+Expand
+
+Show lessSee more
+
+A new table starts at `SETUP_NOTREADY` and then moves to one of these outcomes:
+
+| Status | Meaning |
+| --- | --- |
+| `SETUP_NOTREADY` | The table was created. Online-store setup has not finished. |
+| `SETUP_READY` | Online-store setup succeeded. The table can ingest and serve. |
+| `SETUP_FAILED` | Online-store setup failed. See `setup_error_msg`. |
+
+Expand
+
+Show lessSee more
+
+Wait until `setup_status` is `SETUP_READY` before you depend on online reads for that feature
+view. After you register the feature view, `SETUP_NOTREADY` typically lasts a few seconds. The
+online service can already be `RUNNING` while the table is still being provisioned. Online
+feature tables created before this status was recorded appear as `SETUP_READY`.
+
+If `setup_status` is `SETUP_FAILED`, fix the cause in `setup_error_msg` if it identifies one, and
+then re-register the feature view so setup runs again:
+
+Copy code
+
+```
+fs.register_feature_view(my_feature_view, version="V1", overwrite=True)
+```
+
+If several online feature tables fail setup together, drop and recreate the online service, and
+then re-register the feature views:
+
+Copy code
+
+```
+fs.drop_online_service()
+fs.create_online_service("FS_PRODUCER_ROLE", "FS_CONSUMER_ROLE")
+```
+
+If setup still fails, or the table stays at `SETUP_NOTREADY` for more than 5 minutes, see
+[Online feature table setup failed](#label-online-fs-troubleshooting-setup-failed).
+
+### View refresh diagnostics
+
+Use `get_refresh_history(..., verbose=True)` to diagnose offline and online refresh
+issues for a feature view. Setting `verbose=True` returns all backend history columns.
+By default, the method returns only the name, state, refresh start and end times, and
+refresh action.
+
+To inspect offline refresh history for a feature view and version, run:
+
+Copy code
+
+```
+fs.get_refresh_history("MY_FV", "v1", verbose=True).show()
+```
+
+To inspect online feature table refresh history, pass `store_type=StoreType.ONLINE`.
+The feature view must have online storage enabled:
+
+Copy code
+
+```
+from snowflake.ml.feature_store.feature_view import StoreType
+
+fs.get_refresh_history(
+    "MY_FV", "v1",
+    store_type=StoreType.ONLINE,
+    verbose=True,
+).show()
+```
+
+Refresh history describes feature view refresh operations, not online service health.
+To check service health, use
+[`get_online_service_status()`](#label-online-fs-troubleshooting-runtime-status) and
+inspect `status.status` and `status.message`.
+
+### Monitor online serving health
+
+Monitor warehouse usage and refresh execution times alongside
+[online service status](#label-online-fs-troubleshooting-runtime-status) and
+[refresh diagnostics](#label-online-fs-troubleshooting-error-logs).
+
+#### Monitor warehouse usage
+
+Review the load on the warehouse used to refresh your online feature tables. In
+Snowsight, open **Compute** » **Warehouses**, select the warehouse, and review its
+activity for the period you’re investigating. Look for queued queries or increased
+load that coincides with slower refreshes. For details and required privileges, see
+[Monitoring warehouse load](/user-guide/warehouses-load-monitoring).
+
+#### Inspect refresh execution times
+
+In Snowsight Query History, find `ALTER ONLINE FEATURE TABLE ... REFRESH` statements:
+
+1. Set the time range and **Warehouse** filter for the refreshes you’re investigating.
+2. Use the **SQL Text** filter to search for `ALTER ONLINE FEATURE TABLE`. Look for
+   statements with the `REFRESH` action; the table name appears before `REFRESH`.
+3. Review **Status** and **Duration**, and open a query’s details to inspect execution
+   time and any reported error.
 
 ### Object already exists error on online service creation
 
@@ -1314,24 +1491,46 @@ RuntimeError: (2201) Online Service error (HTTP 401): Authentication/authorizati
 {"responseType":"ERROR_UNAUTHORIZED","detail":"Incoming request with IP/Token <your_ip> is not allowed to access Snowflake. ..."}
 ```
 
-The SPCS endpoint that hosts the online service can enforce a network ingress rule that
-doesn’t include your client IP. This is separate from account-level network policy: you
-might reach Snowflake SQL endpoints but still be blocked at the SPCS endpoint.
+The online service endpoint authenticates each request as the Snowflake user that owns the
+PAT or key pair JWT, and then enforces the [network policy](/user-guide/network-policies) that
+applies to that user. This error means the client IP isn’t allowed by that network policy. A
+network policy set on the user takes precedence over the account-level network policy, so a
+request can succeed for one user or client machine and fail for another. For more
+information, see [Network policy precedence](/user-guide/network-policies#label-network-policy-precedence).
 
-Workaround: ask your Snowflake account admin to add the client IP to the network rule
-attached to the SPCS endpoint:
+PATs have an additional requirement: the user must be subject to a network policy to
+authenticate with the token. For details, see
+[Network policy requirements](/user-guide/programmatic-access-tokens#label-pat-prerequisites-network).
+
+Workaround: ask your Snowflake account admin to find the network policy that applies to the
+user and add the client IP to a network rule in its allowed list:
 
 Copy code
 
 ```
-SHOW NETWORK RULES;
+-- Find the network policy in effect. A user-level policy overrides the account-level policy.
+SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN USER my_service_user;
+SHOW PARAMETERS LIKE 'NETWORK_POLICY' IN ACCOUNT;
 
-ALTER NETWORK RULE MY_NETWORK_RULE
+-- List the network rules in the policy's ALLOWED_NETWORK_RULE_LIST.
+DESCRIBE NETWORK POLICY my_network_policy;
+
+-- Add the client IPs to one of the allowed network rules.
+ALTER NETWORK RULE my_db.my_schema.my_allowed_ips
   SET VALUE_LIST = ('203.0.113.10', '203.0.113.11', '198.51.100.5');
 ```
 
-If online reads worked before and suddenly fail with HTTP 401, check whether network rules
-were recently modified.
+`SET VALUE_LIST` replaces the rule’s existing values, so include the IPs that are already allowed.
+
+Note
+
+The online service’s own network rules are managed by Snowflake, aren’t listed by
+`SHOW NETWORK RULES`, and don’t control which client IPs can reach the online service
+endpoint. Don’t try to modify them to resolve this error.
+
+If online reads worked before and suddenly fail with HTTP 401, check whether the network
+policy that applies to the user or account, or the network rules it references, were
+recently modified.
 
 ### Python UDF fails with dataclasses import blocked
 
@@ -1444,14 +1643,10 @@ account configuration.
 When you enable online serving with `OnlineStoreType.POSTGRES`, the online service creates
 internal Postgres objects for each feature view. Snowflake adds fixed metadata padding to
 the feature view name and version when building those internal names. As a result, the
-**combined length of the feature view `name` and `version` must not exceed 46 characters**.
+**combined length of the feature view `name` and `version` must not exceed 45 characters**.
 
-If the combined length exceeds this limit, registration might succeed, but the online
-service can truncate internal Postgres identifiers. That can lead to:
-
-- Collisions between feature views that differ only after truncation
-- Undefined behavior when reading or ingesting features
-- Stream ingest or online service errors (for example, HTTP 500)
+If the combined length exceeds this limit, `register_feature_view` and `update_feature_view` raise
+an error before creating any objects.
 
 Snowflake allows longer feature view names for offline-only feature views and for Snowflake
 SQL identifiers generally (for example, version strings up to 128 characters). Those longer
@@ -1463,13 +1658,32 @@ feature view catalogs to the online store.
 
 **Example:** A feature view named `sender_document_sender_device_ip_address_count_endtoend_uuid_new_city`
 (69 characters) with version `V1` exceeds the limit. Shorten the name (and version if needed)
-so `len(name) + len(version) <= 46`.
+so `len(name) + len(version) <= 45`.
 
-Future SDK releases might reject registration when the combined length exceeds this limit.
-Until then, validate name length in your own pipelines when enabling Postgres online serving.
+## Known limitations
 
-### Known limitations
-
-Accounts with Tri-Secret Secure enabled on PrivateLink must complete Postgres CMK setup
-before creating the online service. Without CMK configuration, online service creation fails.
-For more information, see [Snowflake Postgres Tri-Secret Secure](/user-guide/snowflake-postgres/postgres-tss).
+- **CLONE is not supported for feature stores.** Using
+  [CREATE SCHEMA … CLONE](/sql-reference/sql/create-clone) on a schema that hosts a
+  feature store does not clone the feature store. The operation might copy some offline
+  schema objects (such as metadata tables, transformation UDFs, and dynamic tables) but does
+  not copy feature store registration, entities, feature views, online serving configuration,
+  or stream pipelines. The result is incomplete and is not supported.
+- **Tri-Secret Secure requires Postgres CMK setup.** Accounts with Tri-Secret Secure enabled on
+  PrivateLink must complete Postgres CMK setup before creating the online service. Without CMK
+  configuration, online service creation fails. For more information, see [Snowflake Postgres Tri-Secret Secure](/user-guide/snowflake-postgres/postgres-tss).
+- **Entity name length limit.** Entity names are limited to 32 characters. Longer
+  names raise an error.
+- **Feature name length with Postgres online serving.** For non-tiled (passthrough) feature
+  views, feature names can be up to 62 characters (the 63-byte Postgres identifier limit minus
+  a 1-byte margin). For tiled or aggregation feature views, source column names, including
+  entity join keys, can be up to 30 characters because tile column prefixes consume the budget.
+  Names you give aggregated features with `.alias()` aren’t limited.
+- **Hybrid table online serving doesn’t support Iceberg-backed feature views.**
+  For more information, see [Online feature retrieval with Iceberg-backed feature views](/developer-guide/snowflake-ml/feature-store/advanced-feature-engineering#label-fs-iceberg-online-store-support).
+- **update\_feature\_view warehouse propagation.** The `update_feature_view()` function
+  does not propagate warehouse changes to the online feature table. To update the
+  warehouse for an online feature table, use direct SQL:
+  `ALTER ONLINE FEATURE TABLE <db>.<schema>.<online_feature_table_name> SET WAREHOUSE = <warehouse_name>;`.
+- **Ordered-N aggregation limit.** For `last_n`, `first_n`, `last_distinct_n`, and
+  `first_distinct_n` aggregations, `n` must be at most 100. This limit is enforced at
+  feature view definition on all backends.

@@ -130,7 +130,7 @@ ALTER POSTGRES INSTANCE [ IF EXISTS ] <name> UNSET TAG <tag_name>
         Copy code
 
         ```
-        '{"component:name" = "value", ...}'
+        '{"component:name": "value", ...}'
         ```
 
         Some settings require an instance restart to take effect. These changes won’t be applied unless you specify

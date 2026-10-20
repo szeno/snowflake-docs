@@ -108,7 +108,7 @@ For the command parameters:
 >     Copy code
 >
 >     ```
->     '{"component:name" = "value", ...}'
+>     '{"component:name": "value", ...}'
 >     ```
 >
 >     Default: No custom Postgres configuration parameters are set.

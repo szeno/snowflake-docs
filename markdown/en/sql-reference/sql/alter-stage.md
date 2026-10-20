@@ -3,7 +3,7 @@
 Modifies the properties for an existing named internal or external stage.
 
 See also:
-:   [CREATE STAGE](/sql-reference/sql/create-stage) , [DROP STAGE](/sql-reference/sql/drop-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
+:   [CREATE STAGE](/sql-reference/sql/create-stage) , [DROP STAGE](/sql-reference/sql/drop-stage) , [UNDROP STAGE](/sql-reference/sql/undrop-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
 
 ## Syntax
 
@@ -21,7 +21,10 @@ ALTER STAGE [ IF EXISTS ] <name> UNSET DCM PROJECT
 -- Internal stage
 ALTER STAGE [ IF EXISTS ] <name> SET
   [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM } [ formatTypeOptions ] } ) ]
+  [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]
   { [ COMMENT = '<string_literal>' ] }
+
+ALTER STAGE [ IF EXISTS ] <name> UNSET STAGE_UNDROP_RETENTION_TIME_IN_DAYS
 
 -- External stage
 ALTER STAGE [ IF EXISTS ] <name> SET {
@@ -186,8 +189,19 @@ ALTER STAGE [ IF EXISTS ] <name> REFRESH [ SUBPATH = '<relative-path>' ]
 
         For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
 
+    `STAGE_UNDROP_RETENTION_TIME_IN_DAYS = integer`
+    :   Specifies the number of days for which the stage remains available to restore with [UNDROP STAGE](/sql-reference/sql/undrop-stage) after it’s
+        dropped.
+
+        For a detailed description of this parameter, including the kinds of stage it applies to, see
+        [STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-stage-undrop-retention-time-in-days).
+
     `COMMENT = 'string_literal'`
     :   Adds a comment or overwrites an existing comment for the stage.
+
+`UNSET STAGE_UNDROP_RETENTION_TIME_IN_DAYS`
+
+> Removes the value set on the stage so that the stage inherits the value from its schema, database, or account.
 
 `UNSET DCM PROJECT`
 

@@ -6,7 +6,7 @@ Testing is part of the migrate-objects stage: after a procedure or function depl
 
 Note
 
-Testing covers **stored procedures and UDFs**. Whole-table and whole-schema data comparison is a separate feature — see [Data Validation](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation). Testing of ETL pipelines (SSIS, Informatica) is on the roadmap.
+The flow described on this page covers **stored procedures and UDFs**. Whole-table and whole-schema data comparison is a separate feature — see [Data Validation](/migrations/aim-for-datawarehouses/data-migration-validation/data-validation). ETL pipelines are tested by a separate flow that runs both sides and compares the tables they write — see [Testing SSIS pipelines](/migrations/aim-for-datawarehouses/testing/etl-pipelines/ssis) and [Testing Informatica PowerCenter pipelines](/migrations/aim-for-datawarehouses/testing/etl-pipelines/informatica).
 
 ## How testing works
 

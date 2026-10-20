@@ -30,6 +30,6 @@ warehouses, without using SQL. For more information, see [Snowflake Python APIs:
 - [Using asynchronous I/O with the Python Connector](/developer-guide/python-connector/python-connector-asyncio)
 - [Using Pandas with the Python Connector](/developer-guide/python-connector/python-connector-pandas)
 - [Distributing workloads that fetch results with the Snowflake Connector for Python](/developer-guide/python-connector/python-connector-distributed-fetch)
-- [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy)
+- [Snowflake SQLAlchemy](/developer-guide/sqlalchemy/sqlalchemy)
 - [Python Connector API](/developer-guide/python-connector/python-connector-api)
 - [Dependency management policy for the Python Connector](/developer-guide/python-connector/python-connector-dependencies)

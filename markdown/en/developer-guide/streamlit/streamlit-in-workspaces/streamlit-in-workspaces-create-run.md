@@ -40,11 +40,22 @@ access.
    - **Execution**: The compute pool to run the app and the query warehouse to run
      queries in the app.
    - **Network**: Any External Access Integrations you want to add to the app.
-   - **Sharing**: Add roles that will have USAGE privilege on the app.
+   - **Sharing**: Add roles and users that will have USAGE privilege on the app. For more information, see
+     [Share with roles and users](#label-streamlit-in-workspaces-deploy-sharing).
 3. Select **Deploy**.
 
 Snowflake copies your app files into the Streamlit object and makes the app available
 to users with the appropriate privileges.
+
+### Share with roles and users
+
+In the **Sharing** tab, add roles or users and select **View only** or **View and share** for each. Deploying grants
+USAGE on the app to each one. The list is saved in `snowflake.yml`, so later deploys grant the same access.
+
+If a user doesn’t have USAGE on the app’s database and schema, a warning icon appears next to their name. Hover over it
+and select **Grant USAGE** to grant it when you deploy. If that grant fails, the app isn’t shared with that user.
+
+To stop sharing a deployed app with a user, see [Stop sharing an app with a user](/developer-guide/streamlit/features/sharing-streamlit-apps#label-streamlit-sharing-users-remove).
 
 ### Redeploy your app
 

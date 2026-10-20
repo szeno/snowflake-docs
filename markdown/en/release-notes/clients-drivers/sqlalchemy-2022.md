@@ -8,7 +8,7 @@ This article contains the release notes for the SQLAlchemy, including the follow
 
 Snowflake uses semantic versioning for SQLAlchemy updates.
 
-See [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy) for documentation.
+See [Snowflake SQLAlchemy](/developer-guide/sqlalchemy/sqlalchemy) for documentation.
 
 ## Version 1.4.5 (December 9, 2022)
 

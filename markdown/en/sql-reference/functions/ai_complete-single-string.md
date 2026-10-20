@@ -26,6 +26,10 @@ AI_COMPLETE(
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
+    Bring-your-own model: Open preview
+
+    Alternatively, specify the name of a Snowpark Container Services model inference service that hosts your own text generation or vision-language model. For prerequisites, availability, access requirements, and differences from Snowflake-hosted models, see [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
+
 `prompt`
 :   A string prompt
 

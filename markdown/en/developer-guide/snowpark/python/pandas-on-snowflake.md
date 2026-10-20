@@ -414,11 +414,9 @@ functions and procedures.
 
 **Prerequisites**
 
-The following package versions are required:
-
-- Python 3.9 (deprecated), 3.10, 3.11, 3.12 or 3.13
-- Modin version 0.32.0
-- pandas version 2.2.\*
+Use a Python version supported by the Snowpark Python release you install. Modin and pandas versions
+must match that release’s dependencies; installing `snowflake-snowpark-python[modin]` with pip selects
+compatible versions together. Installing the latest Modin independently might produce an incompatible combination.
 
 Tip
 
@@ -452,7 +450,8 @@ To install pandas on Snowflake in your development environment, follow these ste
 
    If you previously installed an older version of pandas on Snowflake using Python 3.9 and pandas 1.5.3, you will need to upgrade your Python and pandas
    versions as described above. Follow the steps to create a new environment with Python 3.10 to 3.13.
-2. Install the Snowpark Python library with Modin:
+2. Install the Snowpark Python library with Modin. You can also use this command inside the conda
+   environment created above:
 
    Copy code
 
@@ -460,13 +459,9 @@ To install pandas on Snowflake in your development environment, follow these ste
    pip install "snowflake-snowpark-python[modin]"
    ```
 
-   or
-
-   Copy code
-
-   ```
-   conda install snowflake-snowpark-python modin==0.28.1
-   ```
+   If you install the packages with conda instead, choose Modin and pandas versions compatible with
+   your selected Snowpark Python release. Check that release’s dependencies on
+   [PyPI](https://pypi.org/project/snowflake-snowpark-python/); the required versions aren’t the same for every release.
 
 > Note
 >
@@ -812,7 +807,7 @@ pandas is commonly used with third-party library APIs for visualization and mach
 
 ### Supported third-party libraries
 
-The libraries listed below accept pandas on Snowflake DataFrames as input, but not all their methods have been tested. For an in-depth interoperability status on an API level, see [Interoperability with third party libraries](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/modin/interoperability).
+The libraries listed below accept pandas on Snowflake DataFrames as input, but not all their methods have been tested. For tested Plotly and scikit-learn operations, see [Interoperability with third party libraries](https://docs.snowflake.com/en/developer-guide/snowpark/reference/python/latest/modin/interoperability).
 
 - Plotly
 - Altair

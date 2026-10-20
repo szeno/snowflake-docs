@@ -17,6 +17,7 @@ Both external and internal stages can include file format and copy options.
 - [CREATE STAGE … CLONE](/sql-reference/sql/create-clone)
 - [ALTER STAGE](/sql-reference/sql/alter-stage)
 - [DROP STAGE](/sql-reference/sql/drop-stage)
+- [UNDROP STAGE](/sql-reference/sql/undrop-stage)
 - [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
 - [SHOW STAGES](/sql-reference/sql/show-stages)
 

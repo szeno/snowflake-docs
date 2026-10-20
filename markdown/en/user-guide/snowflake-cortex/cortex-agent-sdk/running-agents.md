@@ -560,7 +560,7 @@ const threadId = String(thread.responseBody.thread_id);
 
 const approvalRun: AsyncRun = await api.codingAgent.run({
   thread_id: threadId,
-  parent_message_id: 0,
+  parent_message_id: "0",
   messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
   permissionPolicy: "always_ask",
   models: { orchestration: "claude-sonnet-4-5" },

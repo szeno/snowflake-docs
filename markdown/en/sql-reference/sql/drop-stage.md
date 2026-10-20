@@ -3,14 +3,16 @@
 Removes the specified named internal or external stage from the current/specified schema. The status of the files in the stage depends on
 the stage type:
 
-- For an internal stage, all of the files in the stage are purged from Snowflake, regardless of their load status. This
-  prevents the files from continuing to using storage and, consequently, accruing storage charges. However, this also means that the
-  staged files cannot be recovered after a stage is dropped.
+- For an internal stage, all of the files in the stage become unavailable along with the dropped stage, regardless of their load
+  status. The files remain recoverable while the stage is within its
+  [retention period](/sql-reference/sql/undrop-stage#label-undrop-stage-retention): if you restore the stage with
+  [UNDROP STAGE](/sql-reference/sql/undrop-stage), the staged files are restored with it. After the retention period passes, the files are
+  removed permanently.
 - For an external stage, only the stage itself is dropped; any data files in the referenced external location (Amazon S3, Google Cloud
   Storage, or Microsoft Azure) are not removed.
 
 See also:
-:   [CREATE STAGE](/sql-reference/sql/create-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
+:   [CREATE STAGE](/sql-reference/sql/create-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [UNDROP STAGE](/sql-reference/sql/undrop-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
 
 ## Syntax
 
@@ -28,7 +30,9 @@ DROP STAGE [ IF EXISTS ] <name>
 
 ## Usage notes
 
-- Dropped stages cannot be recovered; they must be recreated.
+- To restore a dropped stage, use [UNDROP STAGE](/sql-reference/sql/undrop-stage) within the stage’s
+  [retention period](/sql-reference/sql/undrop-stage#label-undrop-stage-retention). After that period passes, the stage must be
+  recreated.
 - This command cannot be used to drop the stage associated with a table or user; only named stages (internal or external) can be dropped.
 
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully

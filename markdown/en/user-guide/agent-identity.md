@@ -47,6 +47,7 @@ The following table lists the supported entry points:
 | Snowflake-managed MCP server | Sessions through a [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) are marked agentic automatically |
 | Snowflake OAuth | A custom OAuth [security integration](/user-guide/oauth-custom#configuring-agent-sessions) is configured with `IS_AGENTIC = TRUE` |
 | External OAuth | An External OAuth [security integration](/user-guide/oauth-ext-custom#configuring-agent-sessions) is configured with `IS_AGENTIC = TRUE` |
+| OAuth token exchange | An application exchanges a user’s credential for a delegated token with [`act` type `agent`](/user-guide/oauth-token-exchange#label-oauth-token-exchange-acting-agent) |
 | `SERVICE_AGENT` user type | Sessions opened by a user created with type [SERVICE\_AGENT](/user-guide/admin-user-management#label-user-management-types) |
 
 Expand
@@ -63,6 +64,7 @@ Use the following table to choose how to identify the agent:
 | Needs its own Snowflake identity and privileges (autonomous) | A [`SERVICE_AGENT`](/user-guide/admin-user-management#label-user-management-types) user, typically with [workload identity federation](/user-guide/workload-identity-federation) (including SPIFFE and SPIRE), [key-pair authentication](/user-guide/key-pair-auth), or [programmatic access tokens](/user-guide/programmatic-access-tokens) |
 | Acts on behalf of end users through a custom Snowflake OAuth client (delegated) | `IS_AGENTIC = TRUE` on the [custom OAuth integration](/user-guide/oauth-custom#configuring-agent-sessions). Snowflake doesn’t treat sessions that use other delegated methods, such as programmatic access tokens alone, as agentic unless you also use a supported agent identity path. |
 | Acts on behalf of end users through an External OAuth client (delegated) | `IS_AGENTIC = TRUE` on the [External OAuth integration](/user-guide/oauth-ext-custom#configuring-agent-sessions). Snowflake doesn’t treat sessions that use other delegated methods, such as programmatic access tokens alone, as agentic unless you also use a supported agent identity path. |
+| Acts on behalf of end users with a per-task delegated token | [OAuth token exchange](/user-guide/oauth-token-exchange) with `act` type `agent`. Your application should [attach a Restricted Session Scope to the token](/user-guide/oauth-token-exchange#label-oauth-token-exchange-privilege-ceiling) to bound the agent. To enforce a ceiling that the application can’t loosen, an administrator can also set an [admin-managed RSS](/user-guide/restricted-session-scope#label-agent-rss-admin) on a session policy. |
 
 Expand
 
@@ -81,7 +83,7 @@ The `agent_type` column in QUERY\_HISTORY identifies the agent that directly inv
 | --- | --- |
 | `CORTEX_AGENT` | A persistent, named Cortex Agent |
 | `CORTEX_LITE_AGENT` | A Cortex lite agent (REST API or CoCo client) |
-| `EXTERNAL_AGENT` | An external agent using `SERVICE_AGENT` or an OAuth integration with `IS_AGENTIC = TRUE` |
+| `EXTERNAL_AGENT` | An external agent using `SERVICE_AGENT`, an OAuth integration with `IS_AGENTIC = TRUE`, or an OAuth token exchange with `act` type `agent` |
 
 Expand
 
@@ -147,6 +149,10 @@ Set `AGENT_RESTRICTED_SESSION_SCOPE` on a session policy, then attach that polic
 to users. The ceiling applies only when an agent is active
 ([IS\_AGENT\_ACTIVATED](/sql-reference/functions/is_agent_activated) returns `TRUE`).
 
+An application can also attach an RSS directly to a delegated access token for one agent task. A
+token-bound RSS applies to every session created from the token, whether or not an agent is active.
+For details, see [Set the privilege ceiling](/user-guide/oauth-token-exchange#label-oauth-token-exchange-privilege-ceiling).
+
 Users can also apply an RSS to an individual chat in CoCo CLI, CoCo Desktop, or CoCo in Snowsight.
 For instructions, see
 [Restrict a CoCo chat](/user-guide/restricted-session-scope#label-agent-rss-user-managed).
@@ -186,6 +192,8 @@ For YAML structure, predefined scopes, and the full examples, see
   as agentic
 - [External OAuth](/user-guide/oauth-ext-custom#configuring-agent-sessions): Mark External OAuth
   clients as agentic
+- [OAuth token exchange for agent delegation](/user-guide/oauth-token-exchange): Issue per-task delegated tokens that are bounded by an RSS
+  and attributed to an agent
 - [Workload identity federation](/user-guide/workload-identity-federation): Authenticate `SERVICE_AGENT` workloads with workload
   identity
 - [Data protection policies for agentic interactions](/user-guide/data-protection-policies-snowsight#label-data-protection-policies-agentic): Use

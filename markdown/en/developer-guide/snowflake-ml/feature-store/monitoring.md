@@ -1,9 +1,5 @@
 # Monitoring and Observability
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Available to all accounts.
-
 You can monitor the health of your feature store pipelines, online serving endpoint, and stream ingestion directly in
 Snowsight. The monitoring view is available under **AI & ML** » **Features** and is organized into three tabs:
 

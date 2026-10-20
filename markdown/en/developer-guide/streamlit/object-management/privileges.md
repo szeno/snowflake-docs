@@ -6,7 +6,7 @@ Streamlit apps use a permission model that is based on owner’s rights. For mor
 You can also configure a container-runtime app to use restricted caller’s rights (Preview). For more information, see
 [Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
 
-The app owner and the owner of the schema containing the Streamlit app can determine which roles have
+The app owner and the owner of the schema containing the Streamlit app can determine which roles and users have
 permission to use the app. Users can interact with the app and can see anything displayed by
 the Streamlit app. Users have the same view of the app as the owner does except that they can’t access
 the edit mode.
@@ -55,7 +55,7 @@ in the future grant.
 ## Privileges required to view a Streamlit app
 
 To view a Streamlit app, you must have a Snowflake account and be signed in. Additionally,
-you must use a role that is granted the USAGE privilege on the following objects:
+you must have USAGE on the following objects, through a role or granted directly to your user:
 
 - The database that contains the Streamlit app
 - The schema that contains the Streamlit app
@@ -75,6 +75,19 @@ GRANT USAGE ON DATABASE streamlit_db TO ROLE streamlit_viewer;
 GRANT USAGE ON SCHEMA streamlit_db.streamlit_schema TO ROLE streamlit_viewer;
 GRANT USAGE ON STREAMLIT streamlit_db.streamlit_schema.streamlit_app TO ROLE streamlit_viewer;
 ```
+
+To grant these privileges to a user instead:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE streamlit_db TO USER jane_doe;
+GRANT USAGE ON SCHEMA streamlit_db.streamlit_schema TO USER jane_doe;
+GRANT USAGE ON STREAMLIT streamlit_db.streamlit_schema.streamlit_app TO USER jane_doe;
+```
+
+Privileges granted directly to a user take effect only when the user has all secondary roles enabled. For more
+information, see [Share an app with a user](/developer-guide/streamlit/features/sharing-streamlit-apps#label-streamlit-sharing-users).
 
 The schema owner or a user with the role with the MANAGE GRANTS privilege can grant the USAGE
 privilege to view all future Streamlit apps created in the schema as shown in this example:

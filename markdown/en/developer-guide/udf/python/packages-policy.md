@@ -154,17 +154,17 @@ This function works with packages from PyPI (via Artifact Repository) and packag
 > Copy code
 >
 > ```
-> SYSTEM$RESOLVE_PYTHON_PACKAGES(<python_version>, <package_spec_string>, [<artifact_repository_name>])
+> SYSTEM$RESOLVE_PYTHON_PACKAGES( '<python_version>', '<package_spec_string>' [ , '<artifact_repository_name>' ] )
 > ```
 >
 > Where:
 >
-> - `python_version`: String specifying the Python version (e.g., ’3.12’)
-> - `package_spec_string`: Package specifications in PACKAGES clause format (e.g., `$$('numpy>=1.20.0', 'pandas==1.3.0')$$`). Use `$$()$$` to return only base packages.
+> - `python_version`: String specifying the Python version, for example, `'3.12'`.
+> - `package_spec_string`: String containing package specifications in `PACKAGES` clause format, for example, `$$('numpy', 'pandas')$$`. Use `$$()$$` to return only base packages.
 > - `artifact_repository_name`: Optional artifact repository name. If not provided, uses the default Anaconda repository.
 >
 > **Returns:** A JSON array of resolved package specifications in the format `["package1==version1", "package2==version2", ...]`.
-> Always includes base packages (e.g., Python runtime) in addition to the requested packages.
+> Includes base packages, such as the Python runtime, in addition to the requested packages.
 >
 > **Examples:**
 >
@@ -173,16 +173,14 @@ This function works with packages from PyPI (via Artifact Repository) and packag
 > Copy code
 >
 > ```
-> SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES('3.12', $$('numpy>=1.20.0', 'pandas==1.3.0')$$);
+> SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES('3.12', $$('numpy', 'pandas')$$);
 > ```
 >
-> The result is a list of the resolved packages and their dependencies:
+> The result lists the resolved versions of `numpy`, `pandas`, and their dependencies in
+> `<package_name>==<version_name>` format. The versions depend on the selected runtime and the packages
+> available in the repository when you run the function.
 >
-> ```
-> ["_libgcc_mutex==0.1", "_openmp_mutex==5.1", "numpy==1.24.3", "pandas==1.5.3", "python==3.12.20", ...]
-> ```
->
-> Using a custom PyPI artifact repository:
+> Using the Snowflake PyPI artifact repository:
 >
 > Copy code
 >
@@ -217,11 +215,11 @@ This function works with packages from PyPI (via Artifact Repository) and packag
 >   RETURNS STRING
 >   LANGUAGE PYTHON
 >   PACKAGES = ('snowflake-snowpark-python')
->   RUNTIME_VERSION = 3.10
+>   RUNTIME_VERSION = '3.10'
 >   HANDLER = 'echo'
 > AS $$
 > def echo():
-> return 'hi'
+>     return 'hi'
 > $$;
 >
 > DESCRIBE FUNCTION my_udf();

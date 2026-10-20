@@ -22,7 +22,7 @@ To view a list of release note announcements, filtered by date and release type,
 
 | Client | Version | Date | BCR? |
 | --- | --- | --- | --- |
-| [.NET Driver](/release-notes/clients-drivers/dotnet) | TBD | TBD |  |
+| [.NET Driver](/release-notes/clients-drivers/dotnet) | 6.4.0 | 16-Oct-2026 |  |
 | [Go Snowflake Driver](/release-notes/clients-drivers/golang) | TBD | TBD |  |
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | TBD | TBD |  |

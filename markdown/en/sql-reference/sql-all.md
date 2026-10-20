@@ -756,6 +756,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [UNDROP NOTEBOOK](/sql-reference/sql/undrop-notebook) | Restores the most recent version of a dropped notebook. |
 | [UNDROP SCHEMA](/sql-reference/sql/undrop-schema) | Restore the most recent version of a dropped schema. |
 | [UNDROP SNAPSHOT](/sql-reference/sql/undrop-snapshot) | Restores a previously removed [snapshot of a block storage volume](/developer-guide/snowpark-container-services/block-storage-volume). |
+| [UNDROP STAGE](/sql-reference/sql/undrop-stage) | Restores a dropped named internal or external stage. |
 | [UNDROP STREAMLIT](/sql-reference/sql/undrop-streamlit) | Restores the most recent version of a dropped Streamlit object. |
 | [UNDROP TABLE](/sql-reference/sql/undrop-table) | Restores the most recent version of a dropped table. |
 | [UNDROP TAG](/sql-reference/sql/undrop-tag) | Restores the most recent version of a tag to the system. |

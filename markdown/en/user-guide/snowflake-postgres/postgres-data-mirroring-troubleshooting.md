@@ -103,16 +103,15 @@ snowflake_cdc: cannot create publication "<mirror_name>" because the cluster is 
 
 **Solution:** Increase `max_replication_slots` and `max_wal_senders` together (the latter should
 be set to at least the same value) using
-[server settings](/user-guide/snowflake-postgres/postgres-server-settings), then restart the instance:
+[server settings](/user-guide/snowflake-postgres/postgres-server-settings). Both settings require a
+restart, so include `APPLY IMMEDIATELY`:
 
 Copy code
 
 ```
 ALTER POSTGRES INSTANCE "my_instance"
-    SET POSTGRES_SETTINGS = (
-        'max_replication_slots' = '20',
-        'max_wal_senders' = '20'
-    );
+    SET POSTGRES_SETTINGS = '{"postgres:max_replication_slots": "20", "postgres:max_wal_senders": "20"}'
+    APPLY IMMEDIATELY;
 ```
 
 ## Mirroring setup fails on newly created Snowflake accounts

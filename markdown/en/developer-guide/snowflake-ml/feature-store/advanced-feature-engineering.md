@@ -18,9 +18,9 @@ can layer onto your feature views as your requirements evolve:
 | Online | Low-latency “latest values” lookup for inference. | Yes | Online feature store or table synced from Feature Views. | Real-time churn scoring, fraud scoring |
 | Time-windowed | Trailing-window aggregates over recent history. | Yes | Feature View using the Aggregations API with tiling (`feature_granularity`, `refresh_freq`). | Spend 7d, orders 30d, last N items |
 | Rollup | Aggregates features from a lower-level entity to a higher-level entity through a mapping. | No | Rollup Feature View from a source Feature View and a mapping DataFrame. | Visitor to subscriber, card to account |
-| Iceberg | Open-format features stored as Dynamic Iceberg Tables for cross-engine interoperability. | No | Feature View with `StorageConfig` pointing to an external volume with `StorageFormat.ICEBERG`. | Features consumed by Spark/Trino, data lake integration |
-| Stream (Public Preview) | Real-time event ingestion with near-zero latency feature updates. | Yes | Feature View with `StreamSource` and `StreamConfig` for continuous ingestion. | Live clickstream signals, real-time transaction features |
-| Real-time (Public Preview) | On-demand features computed at read time from upstream feature views and per-request inputs. | Yes | Feature View with `RealtimeConfig`, `compute_fn`, and `RequestSource`. | Weighted balance, currency conversion, derived scores |
+| Iceberg | Open-format features stored as Dynamic Iceberg Tables for cross-engine interoperability. | No | Feature View with `StorageConfig` pointing to an external volume with `StorageFormat.ICEBERG`. Can be served online with the Postgres online store with `online_config=OnlineConfig(enable=True, store_type=OnlineStoreType.POSTGRES)`. | Features consumed by Spark/Trino, data lake integration |
+| Stream | Real-time event ingestion, with end-to-end freshness typically under 200 ms at P50. | Yes | Feature View with `StreamSource` and `StreamConfig` for continuous ingestion. | Live clickstream signals, real-time transaction features |
+| Real-time | On-demand features computed at read time from upstream feature views and per-request inputs. | Yes | Feature View with `RealtimeConfig`, `compute_fn`, and `RequestSource`. | Weighted balance, currency conversion, derived scores |
 
 Expand
 
@@ -43,13 +43,9 @@ For end-to-end instructions, see
 
 ### Stream feature views
 
-Public Preview
-
-This feature is in public preview.
-
 Stream feature views provide continuous, near-real-time feature updates from live event
 streams. Use this pattern when your model needs features that reflect the very latest
-events, with end-to-end freshness of less than 2 seconds, such as live clickstream signals
+events, with end-to-end freshness typically under 200 ms at P50, such as live clickstream signals
 or real-time transaction features. Stream feature views use a `StreamSource` and
 `StreamConfig` to define transformation logic and historical backfill data, and can be
 combined with time-windowed aggregation to compute rolling metrics that update
@@ -60,10 +56,6 @@ and combine streaming with time-windowed aggregation, see
 [Stream feature views](/developer-guide/snowflake-ml/feature-store/online-feature-store#label-online-fs-stream-feature-views).
 
 ### Real-time feature views
-
-Public Preview
-
-This feature is in public preview.
 
 Real-time feature views evaluate a Python function during each query to produce
 features that can’t be precomputed, whether that means incorporating per-request
@@ -116,32 +108,16 @@ Supported aggregation functions:
 - `Feature.max(column, window)`: Maximum over a time window
 - `Feature.count(column, window)`: Count over a time window
 - `Feature.avg(column, window)`: Average over a time window
-- `Feature.last_distinct_n(column, window, n)`: Last N distinct values in a time window (offline only; see [`last_distinct_n` aggregation](#label-fs-last-distinct-n-aggregation))
+- `Feature.var(column, window)`: Variance over a time window
+- `Feature.stddev(column, window)`: Standard deviation over a time window
+- `Feature.last_distinct_n(column, window, n)`, `Feature.first_distinct_n(column, window, n)`: Last/first N distinct values in a time window (see [`last_distinct_n`/`first_distinct_n` aggregation](#label-fs-last-first-distinct-n-aggregation))
+- `Feature.last_n(column, window, n)`, `Feature.first_n(column, window, n)`: Last/first N values in a time window (see [`last_n`/`first_n` aggregation](#label-fs-last-first-n-aggregation))
 - `Feature.approx_count_distinct(column, window)`: Approximate distinct count over a time window (see [`approx_count_distinct` aggregation](#label-online-fs-approx-count-distinct))
 
-### Aggregation function support by store type
-
-The following table lists which functions are supported for the offline Feature Store and
-the Postgres-backed Online Feature Store. Note that
-[Online feature tables (hybrid table)](/developer-guide/snowflake-ml/feature-store/online-feature-store#label-online-serving-hybrid-tables)
-do not support time-windowed aggregation functions.
-
-| Aggregation function | Offline Feature Store | Online Feature Store |
-| --- | --- | --- |
-| `sum`, `min`, `max`, `count`, `avg` | Supported | Supported |
-| `approx_count_distinct` | Supported | Supported |
-| `last_distinct_n` | Supported | Not supported |
-
-Expand
-
-Show lessSee more
-
-Note
-
-The Postgres-backed online store can maintain running aggregates as events arrive
-(for example with `FeatureAggregationMethod.CONTINUOUS`). If you register a feature
-view with an unsupported aggregation for Postgres online serving, the Snowflake ML
-Python SDK returns an error at registration time.
+Time-windowed aggregations are supported for the offline Feature Store and
+the Postgres-backed Online Feature Store (`OnlineStoreType.POSTGRES`). Note that
+[Online feature tables (hybrid table)](/developer-guide/snowflake-ml/feature-store/online-feature-store-hybrid-tables)
+do not support time-windowed aggregations.
 
 The following example defines entities, aggregation features, and creates a tiled
 feature view:
@@ -297,6 +273,8 @@ features = [
 ]
 ```
 
+The source column for `approx_count_distinct` must be a string data type (`STRING` or `VARCHAR`).
+
 Use the `precision` parameter to control the trade-off between accuracy and
 performance. Higher precision uses more memory but produces more accurate
 estimates; lower precision uses less memory and runs faster. Valid values
@@ -317,10 +295,10 @@ Expand
 
 Show lessSee more
 
-### `last_distinct_n` aggregation
+### `last_distinct_n`/`first_distinct_n` aggregation
 
-The `last_distinct_n` aggregation returns the last *N* distinct values of a column
-observed within a time window, ordered by recency. Use this pattern when your model
+The `last_distinct_n`/`first_distinct_n` aggregation returns the last/first *N* distinct values
+of a column observed within a time window, ordered by recency as “oldest first”. Use this pattern when your model
 needs a short list of recent categorical signals, such as the last 10 products a user
 viewed or the last 5 merchants they purchased from.
 
@@ -335,17 +313,21 @@ features = [
 ]
 ```
 
-The `n` parameter sets how many distinct values to retain per entity within the window.
-Use `last_distinct_n` in batch or offline feature views when you need recency-ordered
-distinct lists for training or batch inference.
+The `n` parameter sets how many distinct values to retain per entity within the window
+and is capped at 100. Use `last_distinct_n`/`first_distinct_n` when you need recency-ordered
+distinct lists for training or inference.
 
 Note
 
-`last_distinct_n` is supported for the offline Feature Store only. It is not supported
-for Postgres-backed online serving. If you register a feature view with `last_distinct_n`
-and enable Postgres online serving, the Snowflake ML Python SDK returns an error at
-registration time. For online cardinality estimates, use [`approx_count_distinct`](#label-online-fs-approx-count-distinct)
-instead.
+Feature views with `last_distinct_n` aggregation created with `snowflake-ml-python` version `1.41.0` or earlier
+return elements ordered as “newest first”. Online serving is not supported for those feature views.
+
+### `last_n`/`first_n` aggregation
+
+The `last_n`/`first_n` aggregation returns the last/first *N* values
+of a column observed within a time window, ordered by recency. These aggregations are similar to
+the [`last_distinct_n`/`first_distinct_n` aggregation](#label-fs-last-first-distinct-n-aggregation) but
+they don’t deduplicate values.
 
 ### Secondary key aggregation
 
@@ -697,9 +679,6 @@ Requires `snowflake-ml-python` version 1.26.0 or later. An
 [external volume](/sql-reference/sql/create-external-volume) configured for
 Iceberg storage is also required.
 
-Iceberg-backed feature views don’t support online feature retrieval today. Use them for
-batch training, offline feature serving, and cross-engine interoperability scenarios.
-
 ### Configure storage for Iceberg
 
 Use `StorageConfig` to point the feature view at your external volume. The `base_location`
@@ -744,3 +723,43 @@ Note
 Iceberg supports microsecond precision for timestamp types. If your source data uses
 nanosecond precision, cast it to microsecond precision (for example, `TIMESTAMP(6)`) in
 your feature DataFrame.
+
+### Online feature retrieval with Iceberg-backed feature views
+
+The Postgres-backed Online Feature Store supports feature views with
+Iceberg-backed offline storage (`StorageConfig(format=StorageFormat.ICEBERG)`). Requires
+`snowflake-ml-python` version 1.53.0 or later.
+
+Copy code
+
+```
+from snowflake.ml.feature_store import FeatureView, OnlineConfig, OnlineStoreType
+
+fv = FeatureView(
+    name="MY_ICEBERG_FEATURES",
+    entities=[my_entity],
+    feature_df=source_df,
+    timestamp_col="TS",
+    refresh_freq="1d",
+    storage_config=storage_config,
+    online_config=OnlineConfig(
+        enable=True,
+        target_lag="30s",
+        store_type=OnlineStoreType.POSTGRES,
+    ),
+    desc="Iceberg-backed features served online",
+)
+
+registered_fv = fs.register_feature_view(fv, version="1")
+```
+
+You need an online service in the account before you register the feature view. For more
+information, see
+[Create the online service](/developer-guide/snowflake-ml/feature-store/online-feature-store#label-online-fs-create-online-service).
+
+After registration, read Iceberg-backed features online the same way as any other
+online feature view. For more information, see
+[Read from the online store](/developer-guide/snowflake-ml/feature-store/online-feature-store#label-online-fs-read-online-store).
+
+Freshness of online data depends on the offline refresh schedule (`refresh_freq`) plus
+the online sync lag (`OnlineConfig.target_lag`).

@@ -63,8 +63,8 @@ answer: AgentResponse = turn.result()
 print(answer.text)
 ```
 
-`send()` returns a durable `Turn`; it does not wait for the final answer. `result()` waits and returns a memoized
-`AgentResponse`.
+`send()` returns a durable `Turn` after Snowflake accepts that turn. If a previous turn on this conversation is still
+running, `send()` waits for it to finish first. `result()` waits and returns a memoized `AgentResponse`.
 
 ## Work with a turn
 
@@ -333,8 +333,11 @@ conversation.rename("Quarterly analysis")
 conversation.delete()
 ```
 
-`attach()` continues from the latest assistant message unless you pass `message_id`. `branch()` creates a local branch
-from a specific message without changing the original object.
+`attach()` continues from the latest assistant message. In Python, pass `message_id` to start from a specific message
+instead. `branch()` creates a local branch from a specific message without changing the original object.
+
+The agent passed to `create()` lives only on that conversation object. `attach()` does not copy it, so pass `agent` on
+each later `send()`. If you omit it, the next turn uses an empty inline agent.
 
 ## Calls are serialized
 
@@ -346,6 +349,28 @@ Note
 
 If another client adds turns to the same thread, call `client.conversations.attach(threadId)` again when you need to
 resync with the newest assistant message.
+
+## List and search threads
+
+TypeScript `client.conversations` can list and search threads without dropping to the direct API. Python
+`ConversationsResource` does not include these methods; use the direct thread API described in
+[Use the direct Cortex Agent API](/user-guide/snowflake-cortex/cortex-agent-sdk/running-agents).
+
+Copy code
+
+```
+import type { SearchThreadsResponse, ThreadMetadata } from "@snowflake/cortex-agent-sdk/api";
+
+const threads: ThreadMetadata[] = await client.conversations.list({
+  origin_application: "cortex_agent_sdk",
+  page_size: 20,
+});
+
+const matches: SearchThreadsResponse = await client.conversations.search({
+  query: "quarterly revenue",
+  limit: 5,
+});
+```
 
 ## Use the direct API when needed
 

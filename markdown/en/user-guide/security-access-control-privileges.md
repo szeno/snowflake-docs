@@ -22,7 +22,6 @@ to which it is applied, and not all objects support all privileges:
 | APPLY AUTHENTICATION POLICY | Global | Grants the ability to add or drop an authentication policy on the Snowflake account or a user in the Snowflake account. |
 | APPLY BACKUP POLICY | Global | Grants the ability to add [backup](/user-guide/backups) policies to backup sets that don’t already have a policy. This privilege is granted to the ACCOUNTADMIN role and can be delegated. |
 | APPLY BACKUP RETENTION LOCK | Global | Grants the ability to create and apply [backup](/user-guide/backups) policies with retention lock. This privilege is granted to the ACCOUNTADMIN role and can be delegated. |
-| APPLY COMMENT | Database, Schema, Table, View, and other supported objects | Grants the ability to set or unset the comment on an object, including column comments on table-like objects. For supported object types, see [Metadata access control](/user-guide/snowflake-horizon/connectors/access-control#apply-comment). |
 | APPLY CONTACT | Global | Grants the ability to associate or detach a [contact](/user-guide/contacts-using) with an object. |
 | APPLY DATA MOVEMENT POLICY | Global | Grants the ability to set a [data movement policy](/user-guide/data-movement-policies) on a tag or on the account. |
 | APPLY FEATURE POLICY | Global | Grants the ability to apply a feature policy for an account or on a specific object. |

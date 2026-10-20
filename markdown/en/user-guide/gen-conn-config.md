@@ -215,7 +215,7 @@ SQLAlchemy:
 :   - Account name: `snowflake://user_login_name:password@orgname-account_name`
     - Account locator: `snowflake://user_login_name:password@account_locator_with_additional_segments`
 
-    For additional information, see [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy).
+    For additional information, see [Snowflake SQLAlchemy](/developer-guide/sqlalchemy/sqlalchemy).
 
 ## Additional configuration steps
 

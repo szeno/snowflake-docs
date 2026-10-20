@@ -6,7 +6,7 @@ each property.
 DESCRIBE can be abbreviated to DESC.
 
 See also:
-:   [DROP STAGE](/sql-reference/sql/drop-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [CREATE STAGE](/sql-reference/sql/create-stage) , [SHOW STAGES](/sql-reference/sql/show-stages)
+:   [DROP STAGE](/sql-reference/sql/drop-stage) , [UNDROP STAGE](/sql-reference/sql/undrop-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [CREATE STAGE](/sql-reference/sql/create-stage) , [SHOW STAGES](/sql-reference/sql/show-stages)
 
 ## Syntax
 

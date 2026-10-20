@@ -29,7 +29,7 @@ Additionally, this command supports the following variants:
 - [CREATE STAGE … CLONE](#label-create-stage-clone-syntax): Creates a clone of an existing stage. For more information, see [Cloning considerations](/user-guide/object-clone).
 
 See also:
-:   [DROP STAGE](/sql-reference/sql/drop-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
+:   [DROP STAGE](/sql-reference/sql/drop-stage) , [UNDROP STAGE](/sql-reference/sql/undrop-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [SHOW STAGES](/sql-reference/sql/show-stages) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
 
     [PUT](/sql-reference/sql/put) , [COPY INTO <table>](/sql-reference/sql/copy-into-table)
 
@@ -45,6 +45,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] STAGE [ IF NOT EXISTS ] <internal
     internalStageParams
     directoryTableParams
   [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM } [ formatTypeOptions ] } ) ]
+  [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 
@@ -340,6 +341,13 @@ If a URL is not specified, Snowflake creates an internal stage by default.
 Note
 
 `FORMAT_NAME` and `TYPE` are mutually exclusive; you can only specify one or the other for a stage.
+
+`STAGE_UNDROP_RETENTION_TIME_IN_DAYS = integer`
+:   Specifies the number of days for which the stage remains available to restore with [UNDROP STAGE](/sql-reference/sql/undrop-stage) after it’s
+    dropped. If you don’t specify this parameter, the stage inherits the value set on the schema, database, or account.
+
+    For a detailed description of this parameter, including the kinds of stage it applies to, see
+    [STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-stage-undrop-retention-time-in-days).
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the stage.

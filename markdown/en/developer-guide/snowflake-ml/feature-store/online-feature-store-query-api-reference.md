@@ -1,9 +1,5 @@
 # Query API reference
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Available to all accounts.
-
 This page is the API reference for the Feature Store Query REST endpoint. For an
 overview of the online feature store and getting started instructions, see
 [Serving online features](/developer-guide/snowflake-ml/feature-store/online-feature-store).

@@ -98,9 +98,9 @@ For general information about roles and privilege grants for performing SQL acti
 ## Usage notes
 
 - An RSS is a ceiling on the user’s existing RBAC privileges. It never grants additional privileges.
-- If you later update the RSS object, session policies that reference it pick up the change for new
-  agent activity. An RSS that is already active in a session is immutable for the lifetime of that
-  session.
+- If you later update the RSS object, session policies that reference it pick up the change on the
+  next request, including in sessions that are already open. A session that an RSS governs can’t
+  change, unset, or escalate that RSS.
 - Regarding metadata:
 
   Attention

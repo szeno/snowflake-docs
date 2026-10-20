@@ -26,6 +26,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] SCHEMA [ IF NOT EXISTS ] <name>
   [ WITH MANAGED ACCESS ]
   [ DATA_RETENTION_TIME_IN_DAYS = <integer> ]
   [ MAX_DATA_EXTENSION_TIME_IN_DAYS = <integer> ]
+  [ STAGE_UNDROP_RETENTION_TIME_IN_DAYS = <integer> ]
   [ EXTERNAL_VOLUME = <external_volume_name> ]
   [ CATALOG = <catalog_integration_name> ]
   [ ICEBERG_DEFAULT_DDL_COLLATION = '<collation_specification>' ]
@@ -187,6 +188,12 @@ For more details, see [CREATE <object> … CLONE](/sql-reference/sql/create-clon
     the schema to prevent streams on the tables from becoming stale.
 
     For a detailed description of this parameter, see [MAX\_DATA\_EXTENSION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-max-data-extension-time-in-days).
+
+`STAGE_UNDROP_RETENTION_TIME_IN_DAYS = integer`
+:   Object parameter that specifies the number of days for which a dropped named internal stage in the schema remains available to
+    restore with [UNDROP STAGE](/sql-reference/sql/undrop-stage). Stages in the schema inherit this value unless they override it.
+
+    For a detailed description of this parameter, see [STAGE\_UNDROP\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-stage-undrop-retention-time-in-days).
 
 `EXTERNAL_VOLUME = external_volume_name`
 :   Object parameter that specifies the default external volume to use for [Apache Iceberg™ tables](/user-guide/tables-iceberg).

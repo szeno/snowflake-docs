@@ -7,7 +7,8 @@ Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and 
 Openflow BYOC deployments are available to all accounts in AWS [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
 
 This section describes how Openflow authenticates to Snowflake and to external
-systems, and how you manage secrets used by connectors and runtimes.
+systems, how you control access to requests sent to Openflow endpoints, and how
+you manage secrets used by connectors and runtimes.
 
 For a high-level summary of authentication, authorization, encryption, secrets,
 private connectivity, and Tri-Secret Secure support, see
@@ -27,3 +28,6 @@ authentication method), see
 - [Data Connectivity Proxy](/user-guide/data-connectivity-proxy):
   Route connector traffic through a Data Connectivity Proxy for private or
   controlled network paths.
+- [Endpoint management and data ingress permissions](/user-guide/data-integration/openflow/openflow-endpoints#label-openflow-endpoints-grant-management-privileges):
+  Grant the privileges that authorize users to manage Openflow endpoints and to
+  send data to them.

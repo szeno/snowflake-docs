@@ -74,10 +74,6 @@ your Snowflake account on Google Cloud:
 
 [Network rules](/user-guide/network-rules) that use private service connect endpoints aren’t supported currently on Google Cloud.
 
-### Private connectivity to key management services through Tri-Secret Secure
-
-Private connectivity to key management services through Tri-Secret Secure isn’t supported currently on Google Cloud.
-
 ### Snowflake Open Catalog
 
 [Snowflake Open Catalog](https://other-docs.snowflake.com/en/opencatalog/overview) is currently not available in government regions.

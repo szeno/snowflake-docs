@@ -5,8 +5,9 @@ Modifies the properties of an existing [restricted session scope](/user-guide/re
 `RSS` is a shorthand alias for `RESTRICTED SESSION SCOPE`. You can use either form in this
 statement.
 
-Any changes to the YAML definition take effect for new agent activity. An RSS that is already
-active in a session is immutable for the lifetime of that session.
+Changes to the YAML definition take effect on the next request, including in sessions that are
+already open. A session that an RSS governs can’t change, unset, or escalate that RSS, so run this
+command from a session that the RSS doesn’t govern.
 
 See also:
 :   [CREATE RESTRICTED SESSION SCOPE](/sql-reference/sql/create-restricted-session-scope) ,

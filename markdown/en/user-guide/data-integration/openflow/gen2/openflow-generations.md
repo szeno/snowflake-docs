@@ -123,6 +123,8 @@ Show lessSee more
 
 ## Authorization differences
 
+For endpoint-specific management and data ingress permissions, see [Grant endpoint management privileges](/user-guide/data-integration/openflow/openflow-endpoints#label-openflow-endpoints-grant-management-privileges).
+
 ### USAGE on a deployment does not grant visibility on runtimes
 
 In gen 1, users with `USAGE` on a deployment can see its runtimes.

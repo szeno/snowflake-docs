@@ -152,6 +152,13 @@ registered_fv: FeatureView = fs.register_feature_view(
 A feature view pipeline definition is immutable after it has been registered, providing consistent feature computation as
 long as the feature view exists.
 
+Note
+
+To use a larger warehouse for the initial build and reinitializations than for steady-state refreshes, set
+`initialization_warehouse` along with `warehouse` when you create the feature view. It is also used for the one-time
+backfill of streaming feature views, and requires `snowflake-ml-python` 1.45.0 or later. For sizing guidance, see
+[Use separate warehouses for initialization and steady-state refreshes](/user-guide/dynamic-tables/warehouse-selection#label-dynamic-tables-warehouse-dual-design).
+
 ## Retrieving feature views
 
 Once a feature view has been registered with the feature store, you can retrieve it from there when you need it by using
@@ -191,6 +198,7 @@ You can update some properties of a feature view you have registered in the feat
 
 - The feature view’s refresh frequency
 - The warehouse where the feature transforms execute
+- The warehouse used for initialization and reinitialization
 - The description of the feature view
 
 Feature definitions and columns cannot be modified. To change the features in a feature store, create a new version of
@@ -209,6 +217,7 @@ fs.update_feature_view(
     version="<version>",
     refresh_freq="<new_fresh_freq>",    # optional
     warehouse="<new_warehouse>",        # optional
+    initialization_warehouse="<new_initialization_warehouse>",  # optional
     desc="<new_description>",           # optional
 )
 ```
@@ -271,8 +280,7 @@ External feature views use views, which do not incur additional storage costs.
   feature view to internal Postgres identifiers. Postgres enforces a compile-time
   identifier length limit (`NAMEDATALEN`, 63 usable characters). Snowflake reserves
   metadata padding when constructing those internal names, so the **combined length of the
-  feature view name and version must not exceed 46 characters**. Longer names can be
-  truncated without a clear error at registration time, which can cause identifier
-  collisions, undefined behavior, or online ingest failures (HTTP 500). Use abbreviated
-  feature view names and short version strings. For details, see
+  feature view name and version must not exceed 45 characters**. `register_feature_view`
+  and `update_feature_view` reject longer names with an error.
+  Use abbreviated feature view names and short version strings. For details, see
   [Feature view name length with Postgres online serving](/developer-guide/snowflake-ml/feature-store/online-feature-store#label-online-fs-troubleshooting-postgres-name-length).

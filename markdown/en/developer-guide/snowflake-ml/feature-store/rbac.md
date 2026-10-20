@@ -5,8 +5,9 @@ The privileges required by the Snowflake Feature Store depend on the type of use
 - *Producers* can create and operate on feature views.
 - *Consumers* can read information about feature views and entities in the feature store.
 
-Typically, each type of user will have their own [Snowflake database role](/sql-reference/snowflake-db-roles) with
-the necessary privileges. Feature store roles are most naturally configured using a
+Typically, each type of user will have their own account role with
+the necessary privileges. Database roles are not supported for Feature Store access control.
+Feature store roles are most naturally configured using a
 [role hierarchy](/user-guide/security-access-control-overview#label-role-hierarchy-and-privilege-inheritance).
 
 ![Examples of setting up consumer and producer roles in two feature stores](/static/images/screens/snowflake-feature-store-dual-fs-roles.png)

@@ -76,7 +76,7 @@ If the failure was caused by an issue in the source table such as a missing prim
 
 ## Increase the oversized value limit
 
-By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. If your Snowflake account has the `ENABLE_OPENFLOW_CDC_BASED_SQLSERVER_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
+By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. You can raise the per-value limit from 16 MB to **128 MB**.
 
 Note
 
@@ -91,10 +91,6 @@ The increased limit doesn’t apply equally to all column types.
 Note
 
 In Snowflake, the maximum size for `BINARY` is **64 MB** (`BINARY(67108864)`), even when the increased size limits are enabled. Only `VARCHAR`, `VARIANT`, `ARRAY` and `OBJECT` columns can hold up to 128 MB.
-
-### Check whether the 128 MB limit is available
-
-You may not be able to verify the `ENABLE_OPENFLOW_CDC_BASED_SQLSERVER_SSV2` parameter value by querying it. To check if it is enabled, see if the FlowFiles flow through **Upload Rows via Snowpipe Streaming 2** processor (not through **Upload Rows via Snowpipe Streaming**).
 
 ### Configure the processors
 

@@ -50,6 +50,8 @@ The function returns `'TRUE'` in the following scenarios:
   - A session using a Snowflake OAuth [custom client integration](/user-guide/oauth-custom#configuring-agent-sessions)
     or an [External OAuth integration](/user-guide/oauth-ext-custom#configuring-agent-sessions) configured with
     `IS_AGENTIC = TRUE`
+  - A session created from an [OAuth token exchange](/user-guide/oauth-token-exchange) token with
+    `act` type `agent`
 
 For an overview of how Snowflake identifies, audits, and governs agent sessions, see
 [Agent identity](/user-guide/agent-identity).

@@ -165,7 +165,7 @@ snow streamlit describe my_app
 ## Share a Streamlit app
 
 You can share your Streamlit app with other Snowflake users by granting USAGE privilege
-to a role. For more information about sharing options, see
+to a role or directly to a user. For more information about sharing options, see
 [Sharing Streamlit in Snowflake apps](/developer-guide/streamlit/features/sharing-streamlit-apps).
 
 SnowsightSQLSnowflake CLI
@@ -174,7 +174,7 @@ SnowsightSQLSnowflake CLI
 2. In the navigation menu, select **Projects** » **Streamlit**.
 3. Select the Streamlit app you want to share.
 4. Select **Share**.
-5. Begin typing the name of the role you want to share your app with, and then select it.
+5. Begin typing a role name or a username, and then select it.
 6. Optional: Select **Copy to clipboard** to copy the app URL.
 7. Select **Done**.
 
@@ -186,10 +186,29 @@ Copy code
 GRANT USAGE ON STREAMLIT my_app TO ROLE viewer_role;
 ```
 
+Share the app with a user:
+
+Copy code
+
+```
+GRANT USAGE ON STREAMLIT my_app TO USER jane_doe;
+```
+
+The user also needs USAGE on the app’s database and schema. For more information, see
+[Share an app with a user](/developer-guide/streamlit/features/sharing-streamlit-apps#label-streamlit-sharing-users).
+
 Share the app with a role:
 
 Copy code
 
 ```
 snow streamlit share my_app viewer_role
+```
+
+Share the app with a user, including USAGE on the app’s database and schema:
+
+Copy code
+
+```
+snow streamlit share my_app --to-user jane_doe --grant-location-usage
 ```

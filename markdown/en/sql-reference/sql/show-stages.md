@@ -4,7 +4,7 @@ Lists all the stages for which you have access privileges. This command can be u
 database (or the current schema/database for the session), or your entire account.
 
 See also:
-:   [CREATE STAGE](/sql-reference/sql/create-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [DROP STAGE](/sql-reference/sql/drop-stage) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
+:   [CREATE STAGE](/sql-reference/sql/create-stage) , [ALTER STAGE](/sql-reference/sql/alter-stage) , [DROP STAGE](/sql-reference/sql/drop-stage) , [UNDROP STAGE](/sql-reference/sql/undrop-stage) , [DESCRIBE STAGE](/sql-reference/sql/desc-stage)
 
 ## Syntax
 

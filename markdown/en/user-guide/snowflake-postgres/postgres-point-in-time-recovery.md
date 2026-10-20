@@ -118,7 +118,7 @@ For the command parameters:
         Copy code
 
         ```
-        '{"component:name" = "value", ...}'
+        '{"component:name": "value", ...}'
         ```
 
         Default: Copied from the origin.

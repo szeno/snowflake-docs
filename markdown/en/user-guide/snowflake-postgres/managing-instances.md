@@ -321,7 +321,7 @@ With the POSTGRES\_SETTINGS option, you specify a JSON-formatted string with the
 Copy code
 
 ```
-'{"component:name" = "value", ...}'
+'{"component:name": "value", ...}'
 ```
 
 Changes to some of the Postgres settings may require an instance restart to take effect. These changes will not take effect
@@ -333,7 +333,8 @@ consult the table in [Postgres settings](/user-guide/snowflake-postgres/postgres
 Copy code
 
 ```
-ALTER POSTGRES INSTANCE my_instance SET POSTGRES_SETTINGS = ( 'work_mem' = '128MB' );
+ALTER POSTGRES INSTANCE my_instance
+  SET POSTGRES_SETTINGS = '{"postgres:work_mem": "128MB"}';
 ```
 
 ## Instance states

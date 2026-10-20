@@ -229,6 +229,11 @@ Show lessSee more
 
 The `Append Rows` operation inserts a batch of rows to the given channel.
 
+Send this request to the ingest hostname returned by `Get Hostname`, not to your Snowflake account hostname.
+Set the `continuationToken` query parameter to the `next_continuation_token` value returned by the `Open Channel` request
+for the first request, and to the `next_continuation_token` value returned by the previous `Append Rows` response for each
+later request.
+
 ```
 POST /v2/streaming/data/databases/{databaseName}/schemas/{schemaName}/pipes/{pipeName}/channels/{channelName}/rows
 ```

@@ -8,6 +8,8 @@ changes are required.
 This topic covers how to add and manage MCP servers using the graphical interface,
 the full configuration schema, credential handling, and administrator controls.
 
+For servers enabled by your administrator in Cortex Tools, CoCo Desktop discovers the servers automatically when your account role has access to the server and has been granted the `SNOWFLAKE$OPS.MCP$USER` database role. Find these servers under **Agent Settings** > **MCP** > **Snowflake Managed** and complete any required user authorization. See [Connect to an enabled Cortex Tools server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client#label-gateway-tools-first-party-clients) for that workflow and its availability requirements; you don’t need to manually enter those servers’ URLs.
+
 ## Transport types
 
 CoCo Desktop supports two MCP transport types. Choose the transport that matches your server:

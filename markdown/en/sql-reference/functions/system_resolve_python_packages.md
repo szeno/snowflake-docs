@@ -11,7 +11,7 @@ This function works with packages from both Anaconda and Artifact Repository (Py
 Copy code
 
 ```
-SYSTEM$RESOLVE_PYTHON_PACKAGES( '<python_version>', '<package_spec_string>', ['<artifact_repository_name>'] )
+SYSTEM$RESOLVE_PYTHON_PACKAGES( '<python_version>', '<package_spec_string>' [ , '<artifact_repository_name>' ] )
 ```
 
 ## Arguments
@@ -20,7 +20,7 @@ SYSTEM$RESOLVE_PYTHON_PACKAGES( '<python_version>', '<package_spec_string>', ['<
 :   String specifying the version of the Python runtime (e.g., ’3.12’).
 
 `package_spec_string`
-:   Package specifications in PACKAGES clause format (e.g., `$$('numpy>=1.20.0', 'pandas==1.3.0')$$`).
+:   String containing package specifications in `PACKAGES` clause format, for example, `$$('numpy', 'pandas')$$`.
     Use `$$()$$` to return only base packages (Python runtime and its dependencies).
 
 `artifact_repository_name`
@@ -54,16 +54,12 @@ with the Python 3.12 runtime from the default Anaconda repository:
 Copy code
 
 ```
-SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES('3.12', $$('numpy>=1.20.0', 'pandas==1.3.0')$$);
+SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES('3.12', $$('numpy', 'pandas')$$);
 ```
 
-The result is a list of the dependencies and their versions:
-
-```
-["_libgcc_mutex==0.1", "_openmp_mutex==5.1", "blas==1.0", "ca-certificates==2024.9.24",
-"intel-openmp==2023.1.0", "libffi==3.4.4", "libgcc-ng==11.2.0", "numpy==1.24.3",
-"pandas==1.5.3", "python==3.12.20", "readline==8.2", "sqlite==3.45.3", ...]
-```
+The result lists the resolved versions of `numpy`, `pandas`, and their dependencies in
+`<package_name>==<version_name>` format. The versions depend on the selected runtime and the packages
+available in the repository when you run the function.
 
 **Example 2: Resolve packages from Artifact Repository (PyPI)**
 
@@ -85,12 +81,8 @@ Copy code
 SELECT SYSTEM$RESOLVE_PYTHON_PACKAGES('3.12', $$()$$);
 ```
 
-The result contains the Python runtime and system dependencies:
-
-```
-["_libgcc_mutex==0.1", "ca-certificates==2024.9.24", "libffi==3.4.4",
-"openssl==3.0.15", "python==3.12.20", "readline==8.2", ...]
-```
+The result contains the resolved Python runtime and its system dependencies. No additional Python
+packages are requested.
 
 ## See also
 

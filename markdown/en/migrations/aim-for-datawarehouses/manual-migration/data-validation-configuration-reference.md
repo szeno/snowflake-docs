@@ -10,7 +10,7 @@ For SnowConvert AI CLI commands that generate and submit validation workflows, s
 
 Note
 
-Property names in this file are **camelCase** (for example `sourcePlatform`, `fullyQualifiedName`, `validationConfiguration`). This is the format `scai data validate generate-config` produces and `scai data validate start` reads. Keys that don’t match — including snake\_case spellings such as `source_platform` — are **silently ignored**, which can leave a required value like `sourcePlatform` unset and stop the workflow from starting. When in doubt, generate the file with `scai data validate generate-config` and edit from there.
+Property names in this file are **camelCase** (for example `sourcePlatform`, `fullyQualifiedName`, `validationConfiguration`). This is the format `scai data validate generate-config` produces and `scai data validate start` reads. Keys that don’t match — including snake\_case spellings such as `source_platform` — are **rejected**: the workflow fails validation with an invalid-schema error that names the unrecognized key. When in doubt, generate the file with `scai data validate generate-config` and edit from there.
 
 ## Validation workflow file overview
 
@@ -386,7 +386,7 @@ Expand
 
 Show lessSee more
 
-Only the spellings listed above are recognized. Any other key — including snake\_case forms not shown here, such as `where_clause` or `column_names_to_partition_by` — is silently ignored rather than rejected, so a typo leaves the corresponding value unset.
+Only the spellings listed above are recognized. Any other key — including snake\_case forms not shown here, such as `where_clause` or `column_names_to_partition_by` — is rejected when the workflow is created, and the error names the unrecognized key.
 
 Three rules apply:
 
@@ -407,7 +407,6 @@ Three rules apply:
 | `indexColumnList` | `String[]` |  | Columns used to align rows on the source (required for L3). Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
 | `targetIndexColumnList` | `String[]` |  | Columns used to align rows on the target. |
 | `columnMappings` | `Object` |  | Map of source column name to target column name. |
-| `isCaseSensitive` | `Boolean` |  | Case sensitivity for identifiers and column filtering (default `false`). |
 | `objectType` | `String` |  | `TABLE` (default) or `VIEW`. Set to `VIEW` to validate a view from a flat `tables` list instead of the `views` array. |
 | `columnNamesToPartitionBy` | `String[]` |  | Columns for range-based partitioning during L2/L3. Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
 | `targetPartitionSizeRows` | `Integer` |  | Per-table rows per partition override. |
@@ -425,6 +424,8 @@ Three rules apply:
 Expand
 
 Show lessSee more
+
+Physical Snowflake target names for tables, schemas, and columns are resolved from Snowflake catalog metadata, so there’s no setting to switch identifier case handling. If a target object was created with a quoted, mixed-case name, spell its stored case in `targetName`, `targetDatabase`, or `targetSchema`. The `isCaseSensitive` property is no longer supported; remove it from existing workflow files, because it’s rejected like any other unrecognized key.
 
 ### Filtering compared rows
 
@@ -450,8 +451,8 @@ When a table uses [incremental validation](#incremental-validation), neither fil
 
 Each entry in `columnSelectionList` is matched against every column name:
 
-- **Literal** — plain string (for example `LOAD_DATE`), case-insensitive unless `isCaseSensitive: true`
-- **Regex** — entry wrapped in single quotes with `r"..."` inside (for example `'r".*_TS"'`)
+- **Literal** — plain string (for example `LOAD_DATE`), matched case-insensitively
+- **Regex** — entry wrapped in single quotes with `r"..."` inside (for example `'r".*_TS"'`), matched case-insensitively
 
 | `useColumnSelectionAsExcludeList` | Behavior |
 | --- | --- |

@@ -524,6 +524,8 @@ Consider the following items when you access Iceberg tables with an external que
     all commercial cloud regions. S3-compatible non-AWS storage isn’t yet supported.
   - FedRAMP (Moderate): This feature is supported for Snowflake-managed Iceberg tables that are stored on FedRAMP (Moderate) deployments
     on AWS Commercial Gov (US) in the us-east-1 and us-west-2 regions.
+  - FedRAMP (High): This feature is currently supported for Iceberg tables that use customer-managed storage only. Iceberg tables that
+    use Snowflake-managed storage aren’t supported on FedRAMP (High) yet.
   - For Iceberg tables stored on Amazon S3:
 
     - If you want to use SSE-KMS encryption, Snowflake must know the full Amazon Resource Name (ARN) of your AWS KMS key to vend credentials

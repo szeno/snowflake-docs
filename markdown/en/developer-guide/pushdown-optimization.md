@@ -109,7 +109,9 @@ This query is equivalent to:
 >     1/IFF(category = 'MentalHealth', 0, 1) = 1;
 > ```
 
-There are (at least) two methods that Snowflake can use to process this query.
+The view’s filter keeps only `PhysicalHealth` rows. The query’s additional predicate is designed to cause a divide-by-zero error
+if evaluated on a `MentalHealth` row, rather than simply exclude that row. The order of predicates in the SQL text does not determine
+their evaluation order. There are (at least) two methods that Snowflake can use to process this query.
 
 - Method 1:
 
@@ -122,8 +124,9 @@ There are (at least) two methods that Snowflake can use to process this query.
   2. Apply the WHERE clause in the query (i.e. filter based on `WHERE 1/IFF(category = 'MentalHealth', 0, 1) = 1`).
   3. Apply the view’s security filter (i.e. filter out the rows for which the category is not `PhysicalHealth`).
 
-Logically, these two sequences seem equivalent; they return the same set of rows. However, depending on how selective these two filters are,
-one order of processing might be faster, and Snowflake’s query planner might choose the plan that executes faster.
+Reordering filters that evaluate without errors can preserve the returned rows while improving performance. In this example,
+however, the query’s predicate can raise an error on rows that the view’s filter would otherwise exclude. The chosen evaluation
+order can therefore affect whether the query succeeds or raises an error.
 
 Suppose that the optimizer chooses the second plan, in which the clause `WHERE 1/IFF(category = 'MentalHealth', 0, 1) = 1` is executed
 before the security filter. If the patients table has any rows in which `category = 'MentalHealth'`, then the `IFF` function returns

@@ -263,17 +263,23 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [October 20, 2026: Online Feature Store (General availability)](/release-notes/2026/other/2026-10-20-online-feature-store-ga)
+- [Oct 19, 2026: Cortex Tools for Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-10-19-cortex-ai-gateway-tools)
 - [Oct 16, 2026: Cortex AI Gateway on Azure, Google Cloud, and AWS New Zealand](/release-notes/2026/other/2026-10-16-cortex-ai-gateway-regions)
+- [Oct 16, 2026: Grok 4.7 and GLM 5.3 models (Preview)](/release-notes/2026/other/2026-10-16-grok-4-7-glm-5-3-preview)
 - [October 16, 2026: Apache Iceberg™ v3 table upgrades and expression defaults (General availability)](/release-notes/2026/other/2026-10-16-iceberg-v3-upgrade-expression-defaults-ga)
+- [Oct 16, 2026: Openflow Endpoints (General availability)](/release-notes/2026/other/2026-10-16-openflow-endpoints-ga)
 - [Oct 15, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-15-dcr)
 - [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
 - [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
 - [Oct 13, 2026: CoCo Desktop v1.21.7](/release-notes/2026/other/2026-10-13-coco-desktop-v1-21-7)
 - [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
+- [Oct 13, 2026: Gemini 4 Argon model in AI Functions (Preview)](/release-notes/2026/other/2026-10-13-gemini-4-argon-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
 - [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
 - [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
+- [Oct 12, 2026: Share Streamlit in Snowflake apps with individual users (General availability)](/release-notes/2026/other/2026-10-12-sis-share-with-users)
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)

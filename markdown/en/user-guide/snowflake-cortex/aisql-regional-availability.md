@@ -25,8 +25,8 @@ and will give you a good idea of what a state-of-the-art model can do.
 
 ### Medium models
 
-- `claude-sonnet-5` is Anthropic’s latest Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. With a 1,000,000-token context window and up to 64,000 output tokens, it’s well-suited for agentic workflows and for analyzing large inputs in a single call.
-- `claude-sonnet-4-6` is a leader in general reasoning and multimodal capabilities. It outperforms its predecessors in tasks that require reasoning across different domains and modalities. You can use its large output capacity to get more information from either structured or unstructured queries. Its reasoning capabilities and large context windows make it well-suited for agentic workflows.
+- `claude-sonnet-5-5` (Public Preview) is Anthropic’s latest Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. It requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
+- `claude-sonnet-5` is Anthropic’s Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. With a 1,000,000-token context window and up to 64,000 output tokens, it’s well-suited for agentic workflows and for analyzing large inputs in a single call.
 - `llama3.3-70b` is an open source model that demonstrates state-of-the-art performance ideal for chat applications,
   content creation, and enterprise applications. It is a highly performant, cost effective model that enables diverse use
   cases with a context window of 128K. `llama3-70b` is still supported and has a context window of 8K.
@@ -86,39 +86,42 @@ In the AWS Europe West 1 (Ireland) region:
 
 | Function | Model | Context window (tokens) | Max output (tokens) |
 | --- | --- | --- | --- |
-| AI\_COMPLETE | `llama4-maverick` | 128,000 | 8,192 |
-|  | `claude-sonnet-5` | 1,000,000 | 64,000 |
-|  | `claude-sonnet-4-6` | 1,000,000 | 64,000 |
-|  | `claude-opus-5-5` | 1,000,000 | 128,000 |
+| AI\_COMPLETE | `claude-opus-5-5` | 1,000,000 | 128,000 |
 |  | `claude-opus-5` | 1,000,000 | 128,000 |
+|  | `claude-sonnet-5` | 1,000,000 | 64,000 |
 |  | `claude-opus-4-8` | 1,000,000 | 128,000 |
 |  | `claude-opus-4-7` | 1,000,000 | 128,000 |
 |  | `claude-opus-4-6` | 1,000,000 | 128,000 |
+|  | `claude-sonnet-4-6` | 1,000,000 | 64,000 |
+|  | `claude-opus-4-5` | 200,000 | 64,000 |
 |  | `claude-sonnet-4-5` | 200,000 | 64,000 |
 |  | `claude-haiku-4-5` | 200,000 | 64,000 |
-|  | `claude-opus-4-5` | 200,000 | 64,000 |
-|  | `gemini-3.1-pro` | 1,000,000 | 64,000 |
-|  | `gemini-3.5-flash` | 1,000,000 | 64,000 |
-|  | `gemini-3.8-flash` | 1,000,000 | 64,000 |
-|  | `gemini-3.7-flash` | 1,000,000 | 64,000 |
-|  | `gemini-3.1-flash-lite` | 1,000,000 | 64,000 |
-|  | `mistral-large2` | 128,000 | 8,192 |
-|  | `mistral-large3` | 256,000 | 32,768 |
-|  | `qwen3-32b` | 128,000 | 8,192 |
-|  | `qwen3-next-80b-a3b` | 128,000 | 8,192 |
-|  | `qwen3-vl-235b-a22b` | 128,000 | 8,192 |
-|  | `openai-gpt-5.1` | 272,000 | 8,192 |
 |  | `openai-gpt-5.4-mini` | 400,000 | 128,000 |
 |  | `openai-gpt-5.4-nano` | 400,000 | 128,000 |
+|  | `openai-gpt-5.1` | 272,000 | 8,192 |
 |  | `openai-gpt-5` | 272,000 | 8,192 |
 |  | `openai-gpt-5-mini` | 272,000 | 8,192 |
 |  | `openai-gpt-5-nano` | 272,000 | 8,192 |
 |  | `openai-gpt-4.1` | 128,000 | 32,000 |
+|  | `gemini-4-argon` | 1,000,000 | 32,768 |
+|  | `gemini-3.8-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.7-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.5-flash` | 1,000,000 | 64,000 |
+|  | `gemini-3.1-pro` | 1,000,000 | 64,000 |
+|  | `gemini-3.1-flash-lite` | 1,000,000 | 64,000 |
+|  | `grok-4.7` | 500,000 | 65,536 |
+|  | `glm-5.3` | 1,000,000 | 128,000 |
+|  | `qwen3-32b` | 128,000 | 8,192 |
+|  | `qwen3-next-80b-a3b` | 128,000 | 8,192 |
+|  | `qwen3-vl-235b-a22b` | 128,000 | 8,192 |
+|  | `mistral-large3` | 256,000 | 32,768 |
+|  | `mistral-large2` | 128,000 | 8,192 |
 |  | `mixtral-8x7b` | 32,000 | 8,192 |
-|  | `llama3.1-8b` | 128,000 | 8,192 |
-|  | `llama3.1-70b` | 128,000 | 8,192 |
-|  | `llama3.3-70b` | 128,000 | 8,192 |
 |  | `mistral-7b` | 32,000 | 8,192 |
+|  | `llama4-maverick` | 128,000 | 8,192 |
+|  | `llama3.3-70b` | 128,000 | 8,192 |
+|  | `llama3.1-70b` | 128,000 | 8,192 |
+|  | `llama3.1-8b` | 128,000 | 8,192 |
 | EMBED\_TEXT\_768 | `e5-base-v2` | 512 | n/a |
 |  | `snowflake-arctic-embed-m` | 512 | n/a |
 | EMBED\_TEXT\_1024 | `nv-embed-qa-4` | 512 | n/a |
@@ -189,55 +192,59 @@ The following functions and models are available in any region via [cross-region
 | Function | Model | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | AI\_COMPLETE |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-opus-5-5` | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
+| `claude-sonnet-5-5` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-5-5` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5-5` | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
 | `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-7` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-sonnet-4-6` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-opus-4-6` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |  |
+| `claude-sonnet-4-6` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-opus-4-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `claude-4-sonnet [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `llama4-maverick [legacy]` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `llama3.3-70b` | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6.1-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.4` | ✔ |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | † | ✔ |  |
-| `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
+| `openai-gpt-5.4` | ✔ |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ | ✔ |  |
 | `openai-gpt-5.4-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-5.4-nano` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
+| `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
+| `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
 | `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
 | `openai-gpt-5-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-5-nano` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-4.1 [legacy]` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `mistral-large2 [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `mistral-large3` | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |
+| `gemini-4-argon` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
+| `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
+| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `grok-4.7` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
+| `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `kimi-k3` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `glm-5.3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `qwen3-32b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-next-80b-a3b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-vl-235b-a22b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
+| `snowflake-decision-fast` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `mistral-large3` | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |
+| `mistral-large2 [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `mixtral-8x7b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `mistral-7b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| `llama4-maverick [legacy]` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
+| `llama3.3-70b` | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | AI\_EMBED |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `e5-base-v2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |

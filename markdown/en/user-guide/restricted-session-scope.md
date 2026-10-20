@@ -10,13 +10,16 @@ A Restricted Session Scope (RSS) is a privilege ceiling that limits what an agen
 of a user. An RSS doesn’t replace RBAC and can’t grant privileges the user doesn’t already have
 through their roles.
 
-You can apply an RSS in two ways:
+You can apply an RSS in three ways:
 
 - **Admin-managed RSS:** An administrator sets `AGENT_RESTRICTED_SESSION_SCOPE` on a
   [session policy](/user-guide/session-policies), then attaches that policy to the account or to
   specific users. The ceiling applies whenever an agent is active for users covered by the policy.
 - **User-managed RSS:** A user restricts an individual chat in CoCo CLI, CoCo Desktop, or CoCo in
   Snowsight. This restriction can only narrow the access allowed by RBAC and any admin-managed RSS.
+- **Token-bound RSS:** An application attaches an RSS to a delegated access token that it obtains
+  through [OAuth token exchange](/user-guide/oauth-token-exchange). The ceiling applies to every
+  session created from that token.
 
 `AGENT_RESTRICTED_SESSION_SCOPE` on a session policy applies only when an agent is active. When no
 agent is active, that property is ignored. For when
@@ -32,7 +35,8 @@ Restricted Session Scope helps you:
   databases.
 - Reduce unintended production writes, privilege escalation through secondary roles, and access to
   sensitive data from agent workflows.
-- Keep full RBAC available when no agent is active in the session, or when no RSS is applied.
+- Keep full RBAC available when no agent is active in the session, or when no RSS is applied. A
+  token-bound RSS is the exception: it applies to every session created from the token.
 - Apply different agent ceilings account-wide or to specific users through session policy
   attachment.
 - Let users further restrict individual CoCo chats to read-only access or selected roles.
@@ -104,15 +108,19 @@ role_scopes:
   Blocking a role doesn’t strip privileges that a non-blocked primary role inherits from it. For
   the matching rules and an example, see [Role scopes](#label-agent-rss-role-scopes).
 
-After an RSS is activated for agent activity in a session, it’s immutable for the lifetime of that
-session. It can’t be changed, unset, or escalated. To apply a different scope, close the session and
-open a new one.
+After an RSS is activated for agent activity in a session, it can’t be changed, unset, or escalated
+from within that session. To apply a different scope, close the session and open a new one.
+
+This doesn’t freeze the definition of a named RSS object. Snowflake evaluates an RSS that applies
+through a session policy on every request. If an administrator alters the RSS object from a session
+that the RSS doesn’t govern, the change takes effect on the next request, including in sessions that
+are already open.
 
 ### Create an RSS object and reference it
 
 Creating an RSS requires the `CREATE RESTRICTED SESSION SCOPE` privilege on the parent schema. If
-you later update the RSS object, policies that reference it pick up the change for new agent
-activity.
+you later update the RSS object, policies that reference it pick up the change on the next request,
+including in sessions that are already open.
 
 Copy code
 
@@ -565,8 +573,9 @@ the current chat. To clear the restriction, start a new chat without applying an
   While an agent is active, the agent has the same access as the user.
 - If a session policy references an RSS object by fully qualified name, Snowflake blocks
   [DROP RESTRICTED SESSION SCOPE](/sql-reference/sql/drop-restricted-session-scope) until you remove or update that reference.
-- Once a RSS is active for agent activity in a session, it can’t be escalated. Close the session
-  and open a new one to apply a different scope.
+- Once an RSS is active for agent activity in a session, it can’t be escalated from within that
+  session. Close the session and open a new one to apply a different scope. Changes to the RSS
+  object made from a session that the RSS doesn’t govern take effect on the next request.
 - `allowed_roles` and `blocked_roles` apply to both the primary role and any secondary roles. Use
   `allowed_secondary_roles` or `blocked_secondary_roles` when you want to restrict secondary roles
   only. A blocklist matches role names exactly. If a blocked role is in the hierarchy of the
@@ -575,11 +584,13 @@ the current chat. To clear the restriction, start a new chat without applying an
 - RSS and agent-aware masking policies are complementary. RSS controls access scope; masking
   controls data visibility within that scope.
 - If an admin-managed RSS and a user-managed RSS both apply, Snowflake enforces their intersection.
-  A user-managed RSS can’t exceed the admin-managed ceiling.
+  A user-managed RSS can’t exceed the admin-managed ceiling. The same applies to a token-bound RSS
+  in an agent-active session.
 - For third-party agents, `IS_AGENT_ACTIVATED` returns `TRUE` when the connection goes through the
-  Snowflake MCP Server or an OAuth security integration with `IS_AGENTIC = TRUE`. Agents that
+  Snowflake MCP Server, an OAuth security integration with `IS_AGENTIC = TRUE`, or a token from
+  [OAuth token exchange](/user-guide/oauth-token-exchange) with `act` type `agent`. Agents that
   connect through REST APIs or SDKs with standard authentication (key pair or personal access token)
-  and neither of those mechanisms currently activate the agent context, unless the session uses a
+  and none of those mechanisms currently activate the agent context, unless the session uses a
   `SERVICE_AGENT` user.
 - The session policy RSS applies to agent-active sessions covered by the policy, regardless of
   client.

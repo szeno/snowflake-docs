@@ -10,6 +10,21 @@ Snowflake uses semantic versioning for .NET Driver updates.
 
 See [.NET Driver](/developer-guide/dotnet/dotnet-driver) for documentation.
 
+## Version 6.4.0 (October 16, 2026)
+
+### New features and improvements
+
+- Added opt-in logging of SQL query text and bind parameter values at the INFO level. Configure `LOG_QUERY_TEXT`, `LOG_QUERY_PARAMETERS`, and `LOG_MAX_QUERY_LENGTH` through a connection string, a TOML configuration file, or the corresponding `SnowflakeDbLoggerConfig` methods. Parameter logging requires query text logging to be enabled. For configuration details, see [Query logging](https://github.com/snowflakedb/snowflake-connector-net/blob/v6.4.0/doc/Client/Logging.md#query-logging).
+
+  Secret masking is best-effort and might not remove every sensitive value. Treat query logs as confidential data.
+- Upgraded the `BouncyCastle.Cryptography` dependency from 2.6.2 to 2.7.0.
+
+### Bug fixes
+
+- Added error logging when Windows Credential Manager can’t cache a token because it exceeds the 2560-byte limit or the write fails. These failures were previously silent and could cause repeated browser authentication after restarting an application. Tokens that exceed the limit still can’t be cached.
+- Fixed query context cache updates when processing Arrow results, avoiding unnecessary server-side work on subsequent requests.
+- Fixed publication of symbol packages (`.snupkg`) to NuGet alongside the main package.
+
 ## Version 6.3.0 (September 30, 2026)
 
 ### New features and improvements

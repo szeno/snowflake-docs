@@ -8,7 +8,51 @@ This article contains the release notes for the SQLAlchemy, including the follow
 
 Snowflake uses semantic versioning for SQLAlchemy updates.
 
-See [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy) for documentation.
+See [Snowflake SQLAlchemy](/developer-guide/sqlalchemy/sqlalchemy) for documentation.
+
+## Version 2.0.0 (October 19, 2026)
+
+This is a major release. To upgrade from 1.x, see [Migrating Snowflake SQLAlchemy from 1.x to 2.x](/developer-guide/sqlalchemy/sqlalchemy-migrate).
+
+### Behavior changes
+
+- Dropped support for SQLAlchemy 1.4. The dialect now requires `SQLAlchemy>=2.0.44,<2.1`; SQLAlchemy 2.1.0 removed APIs that the dialect imports at module load time. Removed the internal `snowflake.sqlalchemy.compat` module. If you’re still on SQLAlchemy 1.4, pin `snowflake-sqlalchemy<2.0.0`.
+- Now requires `snowflake-connector-python>=5.0.0`, which provides the async driver. Connector 4.x is no longer supported.
+- Supported Python versions are now 3.11 through 3.14 (dropped 3.8, 3.9, and 3.10), because connector 5.x requires Python 3.11 or later.
+- `enable_structured_type_json` is on by default. Setting it to `False` restores raw JSON strings and emits a `DeprecationWarning`.
+- Removed the `force_div_is_floordiv` dialect option. The `/` operator always performs true division and `//` always performs floor division (`FLOOR(left / right)`). Passing the option to `create_engine()` raises `TypeError`. If you’re coming from a release older than 1.11.1, integer `//` previously compiled to plain `/` (true division in Snowflake) under the default option value; it now floors.
+- Removed the `legacy_url_params` opt-out and the `SNOWFLAKE_SQLALCHEMY_LEGACY_URL_PARAMS` environment variable. Passing `legacy_url_params` to `create_engine()` raises `TypeError`, and the environment variable has no effect. Pass sensitive connection parameters through `connect_args=`. `unsafe_skip_config_file_permissions_check` and `crl_unsafe_skip_file_permissions_check` are now also blocked from the URL query string.
+
+### New features and updates
+
+- Added [async support](/developer-guide/sqlalchemy/sqlalchemy-async): use `create_async_engine()` or `create_snowflake_async_engine()` with the same `snowflake://` URL as the sync dialect to get an `AsyncEngine` and `AsyncSession`. The async dialect checks for `greenlet` when the engine is created and raises an `ImportError` with install instructions if it’s missing.
+- Added the `enable_structured_type_json` dialect option (on by default). For semi-structured `VARIANT`, `OBJECT`, and `ARRAY` columns and for structured `MAP`, `ARRAY(<type>)`, and `OBJECT(...)` columns, reads return `dict` or `list` values, and writes accept `dict` or `list` values, which the dialect wraps in `PARSE_JSON()` (cast to the declared type for structured columns). The engine’s `json_serializer` and `json_deserializer` are used when provided.
+- Added support for UUID and DECFLOAT values inside `VARIANT` and structured types. `decimal.Decimal` values in semi-structured payloads are serialized as JSON strings to preserve all 38 `DECFLOAT` digits.
+- Added the opt-in `enable_native_uuid` dialect option, which renders SQLAlchemy’s generic `Uuid` type and `Mapped[uuid.UUID]` as native Snowflake `UUID` instead of `CHAR(32)`, binds `uuid.UUID` values, and honors `as_uuid` on reads.
+- Added opt-in [strict host-name mode](/developer-guide/sqlalchemy/sqlalchemy-connect#label-sqlalchemy-strict-host-names) (`strict_host_names` or `SNOWFLAKE_SQLALCHEMY_STRICT_HOST_NAMES`), which stops the dialect from inferring or appending domains to host names and forwards connection parameters, including `connection_name` profiles, to the connector unvalidated.
+- Added `COLLATE` support: `Column.collate()` and `String(collation=...)` render the collation as a single-quoted string literal.
+- Added subscript access (`col["key"]`, `col[0]`) for `VARIANT`, `OBJECT`, `ARRAY`, and `MAP` columns.
+- Added the `InsertMulti` construct for multi-table `INSERT ALL` and `INSERT FIRST` statements.
+- Added row access policy support on `SnowflakeTable` through the `row_access_policy` parameter.
+- Added opt-in `snowflake_rely=True` to render `RELY` on `PRIMARY KEY`, `FOREIGN KEY`, and `UNIQUE` constraints.
+- Added support for the `json_serializer` and `json_deserializer` parameters in `create_engine()`.
+- Added the `asdecimal` parameter on `_CUSTOM_DECIMAL` to opt into float results instead of `Decimal`.
+- Added a `python_type` property to Snowflake custom types.
+- Added the full Snowflake `TYPE=JSON` option set to `JSONFormatter`, and `if_not_exists` and `comment` options to `CreateFileFormat`.
+- The dialect now sets `enable_server_session_keep_alive_auto_detection=True` explicitly on new connections, which pins the connector’s current default and silences its `FutureWarning`. A value supplied in the URL or `connect_args` takes precedence.
+
+### Bug fixes
+
+- Improved stage reference handling in compiled `COPY INTO` and staged-file SQL so that `ExternalStage` paths, including sub-paths created with `from_parent_stage`, are escaped when quoting is required.
+- Fixed a `NULL_IF` backslash breakout in `COPY` `FILE_FORMAT` options.
+- Fixed `repr()` of `CopyIntoStorage` unloading into an `ExternalStage` or a cloud location, which raised `UnsupportedCompilationError`.
+- Fixed hybrid table index reflection: reflected index names are normalized to SQLAlchemy’s lowercase convention for unquoted identifiers, `get_multi_indexes()` keys preserve the caller’s schema, and empty `INCLUDE` columns reflect as `[]`.
+- Fixed `get_multi_indexes()` raising `TypeError` when `filter_names` is `None` and the schema contains hybrid tables.
+- Fixed reflection failing on schemas or databases with more than 10,000 objects by paginating the underlying `SHOW` commands.
+- Fixed PrivateLink and regional account parsing for org-style account names that contain dashes.
+- Fixed `URL` failing to encode `[`, `]`, `?`, and `#` in passwords.
+- Fixed invalid `LIMIT -1` SQL for a `SELECT` with `OFFSET` but no `LIMIT`; the dialect now emits `LIMIT NULL OFFSET ...`.
+- Expired-session, expired-token (including error code `390195`), and closed-connection errors are now detected as disconnects, so pooled connections are invalidated and recycled.
 
 ## Version 1.11.0 (July 8, 2026)
 

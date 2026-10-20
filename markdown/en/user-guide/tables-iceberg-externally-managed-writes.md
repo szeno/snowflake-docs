@@ -51,7 +51,7 @@ Use the workflow in this section to get started with this feature:
    Then,
    [configure an Apache Iceberg™ REST catalog integration for your remote Iceberg catalog](/user-guide/tables-iceberg-configure-catalog-integration-rest).
    Your remote catalog must comply with the
-   open source [Apache Iceberg REST OpenAPI specification](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml),
+   open source [Apache Iceberg REST OpenAPI specification](https://github.com/apache/iceberg/blob/main/open-api/rest-catalog-open-api.yaml).
    If you currently use a [catalog integration for AWS Glue](/user-guide/tables-iceberg-configure-catalog-integration-glue),
    you must create a new REST catalog integration for the AWS Glue Iceberg REST endpoint.
 2. Choose from the following options:

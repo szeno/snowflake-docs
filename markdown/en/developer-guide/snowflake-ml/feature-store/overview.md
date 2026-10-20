@@ -31,6 +31,7 @@ Key benefits of the Snowflake Feature Store include support for:
 - Feature transformations authored in Python or SQL
 - Automatic update and refresh of feature values from source data with Snowflake managed Feature Views
 - Ability to use user-managed feature pipelines with external tools such as [dbt](https://www.getdbt.com/)
+- Low-latency online feature serving backed by Snowflake Postgres for real-time ML inference
 
 The Snowflake Feature Store is fully integrated with the
 [Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview)
@@ -105,6 +106,28 @@ Tip
 All objects of a Snowflake Feature Store are stored in the feature store’s schema. To completely delete
 a feature store, make sure the schema doesn’t contain any other resources, and then
 [drop the schema](/sql-reference/sql/drop-schema).
+
+## Online feature serving
+
+Batch feature views power training and offline analytics, but real-time ML applications need the
+latest feature values in milliseconds at inference time. The Online Feature Store is now generally
+available and uses a managed Snowflake Postgres serving layer for ultra-low-latency online reads.
+
+With Postgres-backed online serving, you can:
+
+- Serve the latest feature values from batch feature views without running warehouse queries at
+  inference time.
+- Keep online and offline pipelines in sync automatically as offline features refresh.
+- Ingest streaming events and serve updated features with end-to-end freshness typically under 200 ms at P50 through stream
+  feature views.
+- Retrieve features through REST APIs and integrate them with real-time model inference.
+
+The Postgres online store supports batch, stream, and real-time feature views, REST ingest and
+query APIs, and feature groups for bundled training and serving. Use it for fraud detection,
+recommendations, personalization, and other low-latency ML workloads.
+
+For setup, APIs, stream and real-time feature views, and troubleshooting, see
+[Serving online features](/developer-guide/snowflake-ml/feature-store/online-feature-store).
 
 ## Getting started
 

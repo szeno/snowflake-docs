@@ -177,9 +177,7 @@ The same soft-delete mechanism applies when you change a table’s Column Filter
 
 By default, the connector replicates individual values up to **16 MB**. When the connector encounters a larger value, it marks the associated table as permanently failed and stops replicating it. To change how the connector handles oversized values (for example, to replace them with `NULL` instead), modify the **Oversized Value Strategy** destination parameter.
 
-If your Snowflake account has the `ENABLE_OPENFLOW_CDC_SQLSERVER_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
-
-For details and instructions on enabling the 128 MB per-value limit, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-increase-oversized-value-limit).
+You can raise the per-value limit from 16 MB to **128 MB**. For instructions, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-increase-oversized-value-limit).
 
 ### Always On Availability Groups and source failover
 

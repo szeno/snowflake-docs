@@ -1,8 +1,8 @@
 # Feature groups
 
-[Preview Feature — Open](/release-notes/preview-features)
+Note
 
-Available to all accounts. Requires online serving with `store_type=OnlineStoreType.POSTGRES` on all source feature views.
+Requires online serving with `store_type=OnlineStoreType.POSTGRES` on all source feature views.
 
 A **feature group** bundles one or more feature views into a single, versioned set of features that a model can
 consume for training and inference. This pattern is also known as a *feature service* in other feature store

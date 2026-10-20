@@ -14,4 +14,4 @@ You can browse the release notes for the following years:
 - [2023 releases](/release-notes/clients-drivers/sqlalchemy-2023)
 - [2022 releases](/release-notes/clients-drivers/sqlalchemy-2022)
 
-See [Using the Snowflake SQLAlchemy toolkit with the Python Connector](/developer-guide/python-connector/sqlalchemy) for documentation.
+See [Snowflake SQLAlchemy](/developer-guide/sqlalchemy/sqlalchemy) for documentation.
