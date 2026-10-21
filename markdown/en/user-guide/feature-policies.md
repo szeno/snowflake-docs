@@ -43,21 +43,32 @@ They apply only in a native app context.
 
 ### Other blockable types
 
-The following object types can be blocked in any context to which the policy is attached,
-whether that is native apps or personal databases:
+The following object types can be blocked in any context the policy is bound to (native
+apps, regular databases, or personal databases) that supports creating that object type:
 
 - AGENTS
 - APPLICATION\_SERVICE
 - ARTIFACT\_REPOSITORY
+- CORTEX\_SEARCH\_SERVICES
+- DYNAMIC\_TABLES
+- FILE\_FORMATS
+- FUNCTIONS
 - GIT\_REPOSITORY
+- ICEBERG\_TABLES
+- MATERIALIZED\_VIEWS
 - MCP\_SERVERS
+- PROCEDURES
 - SCHEMA
 - SECRET
+- STAGES
+- TABLES
 - TASKS
+- VIEWS
 - WORKSPACE
 
-For the broader set of object types that [conditional creation rules](#label-feature-policy-rules)
-can reference, see [Supported object types](#label-feature-policy-rules-object-types).
+Each type is accepted in either singular or plural form (for example, both `TABLE` and
+`TABLES`). [Conditional creation rules](#label-feature-policy-rules) can reference the
+same object types; see [Supported object types](#label-feature-policy-rules-object-types).
 
 ## Privileges required to use feature policies
 
@@ -362,6 +373,7 @@ blocked_creation_rules:
     # or, referencing one or more named conditions:
     block_when_any:
       - <condition-name>
+    error_message: "<text>"   # optional
 ```
 
 `blocked_creation_rules`:
@@ -371,7 +383,9 @@ blocked_creation_rules:
     in `block_when_any` evaluates to `TRUE`. If both `block_when` and
     `block_when_any` are omitted, every creation of that `object_type` is blocked
     (this isn’t allowed for `ALL`; see [Supported object types](#label-feature-policy-rules-object-types)).
-    A rule can specify `block_when` or `block_when_any`, but not both.
+    A rule can specify `block_when` or `block_when_any`, but not both. A rule can
+    also carry an optional `error_message` that explains the error to the user (see
+    [Custom error messages](#label-feature-policy-rules-error-message)).
 
 `conditions`:
 :   An optional list of named, reusable expressions that rules can reference by
@@ -387,7 +401,7 @@ or plural form (for example, both `TABLE` and `TABLES` are accepted):
 | Category | Object types |
 | --- | --- |
 | Account-level | `COMPUTE_POOL`, `DATABASE`, `WAREHOUSE` |
-| Schema-level | `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `MATERIALIZED_VIEW`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `SCHEMA`, `TASK`, `AGENT`, `MCP_SERVER` |
+| Schema-level | `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `MATERIALIZED_VIEW`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `SCHEMA`, `TASK`, `AGENT`, `MCP_SERVER`, `CORTEX_SEARCH_SERVICE` |
 | Personal database | `WORKSPACE`, `GIT_REPOSITORY`, `APPLICATION_SERVICE`, `ARTIFACT_REPOSITORY` |
 
 Expand
@@ -436,13 +450,16 @@ created or altered.
 
 Access attributes of the object being created using either the `$` variable shorthand or the `SYS_CONTEXT` function:
 
-- **`$<PROPERTY>`**: a shorthand that resolves the property directly. Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`) evaluate to an actual boolean, so write `"$IS_TRANSIENT"` rather than `"... = 'TRUE'"`. Using a name that isn’t a recognized property, or a property inapplicable to the rule’s `object_type`, causes a compilation error when the policy is created or altered.
+- **`$<PROPERTY>`**: a shorthand that resolves the property directly. Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`, `$REQUEST_LOGGING`) evaluate to an actual boolean, so write `"$IS_TRANSIENT"` rather than `"... = 'TRUE'"`. Using a name that isn’t a recognized property, or a property inapplicable to the rule’s `object_type`, causes a compilation error when the policy is created or altered.
 - **`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', '<property>')`**: the full form. Always returns a string, so Boolean comparisons require `= 'TRUE'`. A property inapplicable to the domain returns `NULL` at runtime rather than an error at create time.
 
 | Property | $ shorthand | Type | Returns |
 | --- | --- | --- | --- |
+| `TYPE` | `$TYPE` | String | The type of the object being created, using the same name as a rule’s `object_type`, for example `TABLE`, `AGENT`, or `MCP_SERVER`. Useful in `ALL` rules and in conditions shared across object types. |
+| `REQUEST_OPERATION` | `$REQUEST_OPERATION` | String | The kind of statement being evaluated. Always `'CREATE'` for creation rules, including `CREATE OR ALTER`. |
 | `IS_TEMPORARY` | `$IS_TEMPORARY` | Boolean | `'TRUE'` for `CREATE TEMPORARY ...` of `TABLE`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `AGENT`; `'FALSE'` otherwise. |
 | `IS_TRANSIENT` | `$IS_TRANSIENT` | Boolean | `'TRUE'` for `CREATE TRANSIENT ...` of `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `MATERIALIZED_VIEW`, `SCHEMA`, `DATABASE`, `APPLICATION_PACKAGE`; `'FALSE'` otherwise. |
+| `REQUEST_LOGGING` | `$REQUEST_LOGGING` | Boolean | For `CORTEX_SEARCH_SERVICE`: `'TRUE'` when the statement sets `REQUEST_LOGGING = TRUE`; `'FALSE'` when it sets `FALSE` or omits the property. `'FALSE'` for other object types. |
 | `WAREHOUSE` | `$WAREHOUSE` | String | For `TASK`: the warehouse named in the request, or `NULL` if none (serverless task). `NULL` for other object types. |
 | `EXTERNAL_VOLUME` | `$EXTERNAL_VOLUME` | String | For `ICEBERG_TABLE`: the external volume resolved for the request (table, schema, database, or account level), or `NULL` if none. `NULL` for other object types. |
 | `DATABASE` | `$DATABASE` | String | The name of the database containing the object being created. `NULL` for account-level object types. |
@@ -452,7 +469,7 @@ Expand
 
 Show lessSee more
 
-Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`) always evaluate to `TRUE` or
+Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`, `$REQUEST_LOGGING`) always evaluate to `TRUE` or
 `FALSE` for every object type, so a single rule applied across mixed object types
 behaves predictably: the property is `FALSE` for types that don’t support that
 creation option (for example, `$IS_TRANSIENT` is `FALSE` for `STAGE`). When accessed
@@ -465,6 +482,30 @@ that property. A comparison against `NULL` is itself `NULL`, and a rule whose
 comparisons so they evaluate to `TRUE` or `FALSE` for every `object_type` the
 rule covers. With the `$` shorthand, a string property that doesn’t apply to the
 rule’s `object_type` is instead rejected as a compilation error at create time.
+
+#### Check whether a statement supplied a property
+
+Two more `SYS_CONTEXT` functions test whether the `CREATE` statement supplied a
+property, rather than reading its value. Both return a Boolean and have no `$`
+shorthand.
+
+`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_PRESENT', '<property>')`:
+:   `TRUE` when `<property>` is a recognized property and the statement supplied it.
+    `FALSE` when the name is recognized but the statement didn’t supply it. Boolean
+    properties, and other properties that have a default or a resolved value for the
+    object type, count as supplied even when the statement omits them. `TYPE`,
+    `REQUEST_OPERATION`, `DATABASE`, and `SCHEMA` are always supplied when they apply.
+
+`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_SET_TO', '<property>', '<value>')`:
+:   `TRUE` when the statement set `<property>` to `<value>` (compared
+    case-insensitively), or when the statement didn’t supply `<property>` at all.
+    `FALSE` when the statement set a different value. An explicit `NULL` doesn’t match
+    any `<value>`. An omitted Boolean property is supplied at its default, so the
+    function compares that default.
+
+Both functions return `NULL` for a name that isn’t a recognized property, so a
+misspelled property name makes the rule fail closed (see
+[NULL handling](#label-feature-policy-rules-null-handling)).
 
 #### Validation rules
 
@@ -490,6 +531,46 @@ supply), the rule fails closed: the operation is blocked. Write expressions
 that always evaluate to `TRUE` or `FALSE` for every `object_type` a rule
 covers, for example by guarding a property comparison with a test that is
 never `NULL`.
+
+### Custom error messages
+
+By default, a user whose statement is blocked by a rule sees a generic error that
+names the object type and where the policy is applied. Add an `error_message` to a
+rule to tell the user why the statement was blocked and what to do instead:
+
+Copy code
+
+```
+CREATE FEATURE POLICY require_permanent_tables
+  AS $$
+    blocked_creation_rules:
+      - object_type: TABLE
+        block_when: "$IS_TEMPORARY OR $IS_TRANSIENT"
+        error_message: "Temporary and transient tables aren't allowed. Create a permanent table."
+  $$;
+```
+
+When this policy is applied to the account, a `CREATE TRANSIENT TABLE` statement fails
+with an error that includes the rule’s text after `Your policy:`, for example:
+
+```
+Create TABLE denied due to feature policy restriction for the account. Your policy: Temporary and transient tables aren't allowed. Create a permanent table. Consult your internal policy administrator to review the effective feature policy by running 'SHOW FEATURE POLICIES ON ACCOUNT'.
+```
+
+The following rules apply to `error_message`:
+
+- The value is trimmed of leading and trailing whitespace. The trimmed text must be
+  1 to 512 characters long.
+- The value must be a single line. Newlines, tabs, and other control characters
+  aren’t allowed.
+- The sequence `${`, followed later by `}`, is reserved and isn’t allowed.
+- Snowflake validates the value when the policy is created or altered. An invalid
+  value causes the statement to fail.
+
+Snowflake shows the message from the first rule in the list that blocks the
+statement. If a statement is blocked because its object type is listed in
+`BLOCKED_OBJECT_TYPES_FOR_CREATION`, Snowflake shows the generic error without any
+rule’s `error_message`, even if a rule for the same object type also matches.
 
 ### Examples
 
@@ -619,6 +700,29 @@ CREATE FEATURE POLICY block_serverless_tasks
   $$;
 ```
 
+#### Require request logging for Cortex Search Services
+
+The following policy blocks creating a Cortex Search Service unless the statement
+sets `REQUEST_LOGGING = TRUE`. Because `REQUEST_LOGGING` defaults to `FALSE`, a
+statement that omits the property is also blocked. For more information about
+request logging, see
+[Enable request logging](/user-guide/snowflake-cortex/cortex-search/cortex-search-monitor#label-cortex-search-request-logging).
+
+Copy code
+
+```
+CREATE FEATURE POLICY require_search_request_logging
+  AS $$
+    blocked_creation_rules:
+      - object_type: CORTEX_SEARCH_SERVICE
+        block_when: "NOT $REQUEST_LOGGING"
+        error_message: "Create Cortex Search Services with REQUEST_LOGGING = TRUE."
+  $$;
+```
+
+This rule applies only when a service is created. It doesn’t block an
+`ALTER CORTEX SEARCH SERVICE` statement that later disables request logging.
+
 #### Block a property across every object type with ALL
 
 Use the `ALL` wildcard to apply one rule to every supported object type without
@@ -634,6 +738,20 @@ CREATE FEATURE POLICY block_temp_everywhere
     blocked_creation_rules:
       - object_type: ALL
         block_when: "$IS_TEMPORARY"
+  $$;
+```
+
+To exempt specific types from an `ALL` rule, test `$TYPE`. The following policy
+blocks every temporary creation except temporary tables:
+
+Copy code
+
+```
+CREATE FEATURE POLICY block_temp_except_tables
+  AS $$
+    blocked_creation_rules:
+      - object_type: ALL
+        block_when: "$IS_TEMPORARY AND $TYPE <> 'TABLE'"
   $$;
 ```
 

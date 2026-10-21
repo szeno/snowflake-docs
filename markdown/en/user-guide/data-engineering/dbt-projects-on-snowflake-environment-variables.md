@@ -727,6 +727,7 @@ You can see environment information through several Snowflake surfaces:
 
 - `SHOW DBT PROJECTS` and `GET_DDL` reflect the dbt project object’s `DEFAULT_ENVIRONMENT` attribute. This is an attribute the user must set on the object via CREATE or via ALTER commands. This isn’t derived from the `default_environment:` section in the `env.yml` file.
 - The `ENVIRONMENT` column in the ACCOUNT\_USAGE [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/account-usage/dbt_project_execution_history) view shows which environment was used for each execution.
+- `TABLE(INFORMATION_SCHEMA.DBT_PROJECT_EXECUTION_HISTORY(...))` includes the environment used for a run in its `ENVIRONMENT` column. For more information, see [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/functions/dbt_project_execution_history).
 - Query History shows the `ENVIRONMENT` override for a specific `EXECUTE DBT PROJECT` statement.
 - Query History also shows the `ENV_VARS` overrides (the overridden environment variables) for a specific `EXECUTE DBT PROJECT` statement.
 

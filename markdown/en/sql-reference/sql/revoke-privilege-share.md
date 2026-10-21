@@ -1,6 +1,6 @@
 # REVOKE *<privilege>* … FROM SHARE
 
-Revokes access privileges for databases and other supported database objects (schemas, tables, and views) from a share. Revoking
+Revokes access privileges for databases and other supported database objects (schemas, tables, views, and models) from a share. Revoking
 privileges on these objects effectively removes the objects from the share, disabling access to the objects granted via the database
 role in all consumer accounts that have created a database from the share.
 
@@ -19,6 +19,7 @@ Copy code
 REVOKE objectPrivilege ON
      {  DATABASE <name>
       | SCHEMA <name>
+      | MODEL <name>
       | SEMANTIC VIEW <name>
       | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }
       | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> }
@@ -36,22 +37,22 @@ Copy code
 objectPrivilege ::=
 -- For DATABASE
    REFERENCE_USAGE [ , ... ]
--- For DATABASE, FUNCTION, or SCHEMA
+-- For DATABASE, FUNCTION, MODEL, or SCHEMA
    USAGE [ , ... ]
+-- For MODEL or TAG
+   READ
 -- For SEMANTIC VIEW
    { REFERENCES | SELECT } [ , ... ]
 -- For TABLE
    EVOLVE SCHEMA [ , ... ]
 -- For EXTERNAL TABLE, ICEBERG TABLE, TABLE, or VIEW
    SELECT [ , ... ]
--- For TAG
-   READ
 ```
 
 ## Parameters
 
 `name`
-:   Specifies the identifier for the object (database, schema, table, or view) for which the specified privilege is revoked.
+:   Specifies the identifier for the object (database, schema, table, view, or model) for which the specified privilege is revoked.
 
 `schema_name`
 :   Specifies the identifier for the schema for which the specified privilege is revoked for all tables or views.
@@ -75,6 +76,8 @@ objectPrivilege ::=
 > REVOKE SELECT ON VIEW mydb.shared_schema.view1 FROM SHARE share1;
 >
 > REVOKE SELECT ON VIEW mydb.shared_schema.view3 FROM SHARE share1;
+>
+> REVOKE USAGE ON MODEL mydb.shared_schema.model1 FROM SHARE share1;
 >
 > REVOKE USAGE ON SCHEMA mydb.shared_schema FROM SHARE share1;
 >

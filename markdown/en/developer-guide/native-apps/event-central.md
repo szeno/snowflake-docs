@@ -236,6 +236,10 @@ Events are routed using the existing event sharing configuration if either of th
 
 For information about the existing event sharing feature, see [About event sharing](/developer-guide/native-apps/event-about#label-nativeapps-provider-logging-about-events).
 
+To migrate an existing legacy event routing configuration to an event routing table, use
+[SYSTEM$MIGRATE\_LEGACY\_EVENT\_ROUTING\_CONFIGURATION](/sql-reference/functions/system_migrate_legacy_event_routing_configuration). The function creates the table but
+doesn’t activate it for the organization.
+
 ## Find routed events
 
 An event routing table stores only routing rules. It doesn’t store events. Events routed by a rule are ingested

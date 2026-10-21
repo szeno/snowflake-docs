@@ -30,6 +30,23 @@ The Snowflake Native App Framework allows providers to request certain safe priv
 
 For more information on configuring an app to have privileges granted automatically, see [Configure the privileges required by an app](/developer-guide/native-apps/requesting-auto-privs).
 
+After a privilege is granted, the app creates the object by running the corresponding SQL command in its setup
+script. Objects that the setup script creates are created inside the APPLICATION object by default.
+Account-level objects, such as warehouses, are created in the consumer account outside the APPLICATION
+object, so the app needs the matching privilege. For more information, see
+[About privileges and references in a Snowflake Native App](/developer-guide/native-apps/requesting-objects-privs#label-native-apps-privs-about).
+
+For example, an app that has the `CREATE WAREHOUSE` privilege can include the following command in its
+setup script to create a warehouse in the consumer account:
+
+Copy code
+
+```
+CREATE WAREHOUSE IF NOT EXISTS application_wh;
+```
+
+For more information, see [Create the required objects in the setup script](/developer-guide/native-apps/requesting-auto-privs#label-native-apps-auto-privs-create-objects).
+
 From the provider perspective, automated granting of privileges streamlines app development because the
 app does not have to determine if a consumer has granted the requested privileges or created the required
 objects in their account.

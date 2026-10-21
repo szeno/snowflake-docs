@@ -371,19 +371,22 @@ The system compute pools have the following default configuration:
     - MIN\_NODES=1
     - MAX\_NODES=150
     - INITIALLY\_SUSPENDED=true
-    - AUTO\_SUSPEND\_SECS=259200
+    - AUTO\_SUSPEND\_SECS=600
 
 Note that
 
 - Compute pools are initially in a suspended state and only begin incurring costs when a supported Snowflake workload starts using them.
-- For the CPU system compute pool, Snowflake keeps one idle node in the pool at no cost to you whenever the pool is active, so that new workloads can start quickly. The following details apply:
+- For the CPU system compute pool, Snowflake may provide one or more idle nodes at no cost to you so that new workloads can start quickly. The following details apply:
 
-  - The idle node is visible in the `idle_nodes` column of SHOW COMPUTE POOLS and DESCRIBE COMPUTE POOL output.
-  - The idle node counts against the compute pool’s MAX\_NODES limit and the per-account node limit.
-  - Snowflake covers the cost of one idle node. It doesn’t appear in your billing.
-  - When a workload starts on the idle node, that node is billed to you normally and Snowflake provisions a new idle node to replace it.
+  - While Snowflake provides idle nodes, Snowflake sets the pool’s AUTO\_SUSPEND\_SECS to a longer value, currently 259200 (3 days), so that the pool and its idle nodes remain available for longer before the pool is suspended.
+  - Idle nodes are included in the `idle_nodes` column of SHOW COMPUTE POOLS and DESCRIBE COMPUTE POOL output.
+  - Idle nodes count toward the compute pool’s MIN\_NODES setting. For example, if MIN\_NODES is 1 and Snowflake provides one idle node, that idle node satisfies the minimum and no additional billed node is kept.
+  - Idle nodes count against the compute pool’s MAX\_NODES limit and the per-account node limit.
+  - Idle nodes don’t count as running workloads, so they don’t prevent the pool from being automatically suspended.
+  - Snowflake covers the cost of these idle nodes. They don’t appear in your billing.
+  - When a workload starts on one of these idle nodes, that node is billed to you normally and Snowflake may provision a new idle node to replace it.
   - This behavior isn’t configurable. Contact [Snowflake Support](https://community.snowflake.com/s/article/How-To-Submit-a-Support-Case-in-Snowflake-Lodge) if you have questions about this behavior.
-- If no workloads are running, the GPU compute pool is automatically suspended after 10 minutes and the CPU compute pool is automatically suspended after 3 days. To modify the auto-suspension policy for system compute pools, use the [ALTER COMPUTE POOL SET AUTO\_SUSPEND\_SECS](/sql-reference/sql/alter-compute-pool) command.
+- To see the current auto-suspension setting for a system compute pool, check the `auto_suspend_secs` column in the output of SHOW COMPUTE POOLS. To change it, use the [ALTER COMPUTE POOL SET AUTO\_SUSPEND\_SECS](/sql-reference/sql/alter-compute-pool) command.
 
 ### Managing the system compute pools
 

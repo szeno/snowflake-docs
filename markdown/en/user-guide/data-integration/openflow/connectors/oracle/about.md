@@ -407,6 +407,7 @@ The connector supports the following schema changes:
 - **Drop column.** The connector renames the destination column with a `__SNOWFLAKE_DELETED` suffix to preserve historical values. For details, see [Dropped columns](#dropped-columns).
 - **Rename column.** The connector treats a rename as dropping the original column and adding a new one. The connector retains the original column under a suffixed name; for example, a column named `A` becomes `A__SNOWFLAKE_DELETED`. For query patterns, see [Renamed columns](#renamed-columns).
 - **Compatible type change.** The connector keeps replication running with the destination column type unchanged when you change a column to a source type that maps to the same Snowflake data type (for example, `INT` to `BIGINT`, both mapped to `NUMBER`).
+- **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`. The connector creates destination character columns at the maximum Snowflake length, so the destination column type stays the same and replication continues.
 - **Re-add a previously dropped column.** The connector adds the column as a new destination column alongside the existing soft-deleted column (for example, `A` and `A__SNOWFLAKE_DELETED`).
 
 If you drop a column that was previously dropped and soft-deleted, replication for the affected table fails because the soft-deleted column name is already taken.
@@ -416,9 +417,8 @@ If you drop a column that was previously dropped and soft-deleted, replication f
 The connector doesn’t support the following schema changes. Unless noted otherwise, replication stops for the affected table until you restart it:
 
 - **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key. The connector doesn’t detect this change and keeps replicating with the previous key; replication doesn’t stop on its own. Restart replication for the affected table so the connector picks up the new key.
-- **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively).
+- **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively). Changes between timestamps with and without a time zone are also incompatible.
 - **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
-- **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`.
 
 To recover, restart replication for the affected table: see [Restart table replication](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-restart-table-replication).
 

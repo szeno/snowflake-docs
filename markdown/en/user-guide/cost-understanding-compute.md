@@ -24,7 +24,8 @@ Warehouses come in many sizes. In this table, the size specifies the compute res
 Each increase in size to the next larger warehouse approximately doubles the computing power and the number of credits billed per
 full hour that the warehouse runs.
 
-For information on credit consumption, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+For information on credit consumption, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf). For the current price of a credit, see the
+[Snowflake Pricing Guide](https://www.snowflake.com/pricing/pricing-guide/).
 
 Important
 
@@ -108,6 +109,18 @@ Keep the following in mind:
   monthly adjustment may be significantly less than 10%.
 
 For example:
+
+| Date | Compute Credits Used (Warehouses only) | Cloud Services Credits Used | Credit Adjustment for Cloud Services (Lesser of 10% of Compute or Cloud Services) | Credits Billed (Sum of Compute, Cloud Services, and Adjustment) |
+| --- | --- | --- | --- | --- |
+| Nov 1 | 100 | 20 | -10 | 110 |
+| Nov 2 | 120 | 10 | -10 | 120 |
+| Nov 3 | 80 | 5 | -5 | 80 |
+| Nov 4 | 100 | 13 | -10 | 103 |
+| **Total** | **400** | **48** | **-35** | **413** |
+
+Expand
+
+Show lessSee more
 
 ### More about cloud services
 

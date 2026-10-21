@@ -35,6 +35,12 @@ The following requirements, considerations, and limitations apply to dbt project
 When you use a stored procedure to call EXECUTE DBT PROJECT, use a caller’s rights stored procedure. For more information, see
 [CREATE PROCEDURE](/sql-reference/sql/create-procedure) and [Creating a stored procedure](/developer-guide/stored-procedure/stored-procedures-creating).
 
+This requirement also applies to [CREATE DBT PROJECT](/sql-reference/sql/create-dbt-project) and
+[ALTER DBT PROJECT … DEPLOY](/sql-reference/sql/alter-dbt-project) when `AUTO_COMPILE = TRUE` (the default), because these
+commands run a dbt compilation as part of deployment. If you need to create or deploy a dbt project object from an owner’s rights
+stored procedure, set `AUTO_COMPILE = FALSE`, and then run any subsequent EXECUTE DBT PROJECT commands from a caller’s rights
+stored procedure.
+
 ## Limitations, requirements, and considerations for telemetry, logging, and tracing
 
 The following requirements, considerations, and limitations apply to telemetry, logging, and tracing for dbt on Snowflake:

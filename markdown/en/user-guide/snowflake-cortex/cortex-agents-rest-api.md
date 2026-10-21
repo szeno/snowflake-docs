@@ -55,9 +55,10 @@ Show lessSee more
 | `profile` | [AgentProfile](#label-snowflake-agent-object-agentprofile) | Agent profile information (display name, avatar, color, etc.). |
 | `models` | [ModelConfig](#label-snowflake-agent-object-modelconfig) | Model configuration for the agent. Includes the orchestration model (e.g., claude-4-sonnet). If not provided, a model is automatically selected. Currently only available for the `orchestration` step. |
 | `instructions` | [AgentInstructions](#label-snowflake-agent-object-agentinstructions) | Instructions for the agent’s behavior, including response, orchestration, and sample questions. |
-| `orchestration` | [OrchestrationConfig](#label-snowflake-agent-object-orchestrationconfig) | Orchestration configuration, including budget constraints (for example, seconds, tokens) and capabilities such as `analytical_search`. |
+| `orchestration` | [OrchestrationConfig](#label-snowflake-agent-object-orchestrationconfig) | Orchestration configuration, including budget constraints (e.g., seconds, tokens). |
 | `tools` | array of [Tool](#label-snowflake-agent-object-tool) | List of tools available for the agent to use. Each tool includes a tool\_spec with type, name, description, and input schema. Tools may have a corresponding configuration in tool\_resources. |
-| `tool_resources` | map of [ToolResource](#label-snowflake-agent-object-toolresource) | Configuration for each tool referenced in the tools array. Keys must match the name of the respective tool. |
+| `tool_resources` | map of [ToolResource](#label-snowflake-agent-object-toolresource) | Configuration for each tool referenced in the tools array. Each key must equal the name of the corresponding tool. |
+| `thinking_effort` | string | Controls the reasoning effort used by the orchestration model. Higher effort can improve complex-task quality at the cost of latency and tokens. When omitted, the service selects the appropriate default. |
 
 Expand
 
@@ -79,12 +80,16 @@ Copy code
   },
   "instructions": {
     "response": "You will respond in a friendly but concise manner",
-    "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search"
+    "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search",
+    "system": "You are a friendly agent ..."
   },
   "orchestration": {
     "budget": {
       "seconds": 30,
       "tokens": 16000
+    },
+    "capabilities": {
+      "analytical_search": true
     }
   },
   "tools": [
@@ -117,7 +122,8 @@ Copy code
       },
       "identifier": "DB.SCHEMA.UDF"
     }
-  }
+  },
+  "thinking_effort": "high"
 }
 ```
 
@@ -235,9 +241,10 @@ Show lessSee more
 | `profile` | [AgentProfile](#label-snowflake-agent-object-agentprofile) | Agent profile information (display name, avatar, color, etc.). |
 | `models` | [ModelConfig](#label-snowflake-agent-object-modelconfig) | Model configuration for the agent. Includes the orchestration model (e.g., claude-4-sonnet). If not provided, a model is automatically selected. Currently only available for the `orchestration` step. |
 | `instructions` | [AgentInstructions](#label-snowflake-agent-object-agentinstructions) | Instructions for the agent’s behavior, including response, orchestration, and sample questions. |
-| `orchestration` | [OrchestrationConfig](#label-snowflake-agent-object-orchestrationconfig) | Orchestration configuration, including budget constraints (for example, seconds, tokens) and capabilities such as `analytical_search`. |
+| `orchestration` | [OrchestrationConfig](#label-snowflake-agent-object-orchestrationconfig) | Orchestration configuration, including budget constraints (e.g., seconds, tokens). |
 | `tools` | array of [Tool](#label-snowflake-agent-object-tool) | List of tools available for the agent to use. Each tool includes a tool\_spec with type, name, description, and input schema. Tools may have a corresponding configuration in tool\_resources. |
-| `tool_resources` | map of [ToolResource](#label-snowflake-agent-object-toolresource) | Configuration for each tool referenced in the tools array. Keys must match the name of the respective tool. |
+| `tool_resources` | map of [ToolResource](#label-snowflake-agent-object-toolresource) | Configuration for each tool referenced in the tools array. Each key must equal the name of the corresponding tool. |
+| `thinking_effort` | string | Controls the reasoning effort used by the orchestration model. Higher effort can improve complex-task quality at the cost of latency and tokens. When omitted, the service selects the appropriate default. |
 
 Expand
 
@@ -258,12 +265,16 @@ Copy code
   },
   "instructions": {
     "response": "You will respond in a friendly but concise manner",
-    "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search"
+    "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search",
+    "system": "You are a friendly agent ..."
   },
   "orchestration": {
     "budget": {
       "seconds": 30,
       "tokens": 16000
+    },
+    "capabilities": {
+      "analytical_search": true
     }
   },
   "tools": [
@@ -296,7 +307,8 @@ Copy code
       },
       "identifier": "DB.SCHEMA.UDF"
     }
-  }
+  },
+  "thinking_effort": "high"
 }
 ```
 
@@ -461,6 +473,7 @@ The `OrchestrationConfig` schema documents `budget`. The same object also accept
 | --- | --- | --- |
 | `response` | string | Instructions for response generation. |
 | `orchestration` | string | These custom instructions are used when the agent is planning which tools to use. |
+| `system` | string | System instructions for the agent. |
 
 Expand
 
@@ -473,7 +486,8 @@ Copy code
 ```
 {
   "response": "You will respond in a friendly but concise manner",
-  "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search"
+  "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search",
+  "system": "You are a friendly agent ..."
 }
 ```
 
@@ -518,6 +532,26 @@ Copy code
 {
   "seconds": 30,
   "tokens": 16000
+}
+```
+
+## `CapabilitiesConfig`
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `analytical_search` | boolean | If true, enables analytical search. |
+
+Expand
+
+Show lessSee more
+
+**Example**
+
+Copy code
+
+```
+{
+  "analytical_search": true
 }
 ```
 
@@ -572,7 +606,7 @@ Copy code
 | Field | Type | Description |
 | --- | --- | --- |
 | `budget` | [BudgetConfig](#label-snowflake-agent-object-budgetconfig) | Budget constraints for the agent. If more than one constraint is specified, whichever is first hit will end the request. |
-| `capabilities` | object | Optional orchestration capabilities. Set `analytical_search` to `true` to allow the agent to run analytical search when a Cortex Search tool is configured. Default: `false`. See [Analytical search](/user-guide/snowflake-cortex/cortex-agents-analytical-search#label-enable-analytical-search). |
+| `capabilities` | [CapabilitiesConfig](#label-snowflake-agent-object-capabilitiesconfig) | Capabilities to enable for the agent. |
 
 Expand
 

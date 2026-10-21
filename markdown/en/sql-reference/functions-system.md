@@ -72,6 +72,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$LINK\_ORGANIZATION\_USER](/sql-reference/functions/system_link_organization_user) |  |
 | [SYSTEM$LINK\_ORGANIZATION\_USER\_GROUP](/sql-reference/functions/system_link_organization_user_group) |  |
 | [SYSTEM$MIGRATE\_DBT\_PROJECT](/sql-reference/functions/system_migrate_dbt_project) |  |
+| [SYSTEM$MIGRATE\_LEGACY\_EVENT\_ROUTING\_CONFIGURATION](/sql-reference/functions/system_migrate_legacy_event_routing_configuration) |  |
 | [SYSTEM$MIGRATE\_SAML\_IDP\_REGISTRATION](/sql-reference/functions/system_migrate_saml_idp_registration) |  |
 | [SYSTEM$OPT\_IN\_INTERNAL\_STAGE\_NETWORK\_LOGS](/sql-reference/functions/system_opt_in_internal_stage_network_logs) |  |
 | [SYSTEM$OPT\_OUT\_INTERNAL\_STAGE\_NETWORK\_LOGS](/sql-reference/functions/system_opt_out_internal_stage_network_logs) |  |
@@ -224,6 +225,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$LOCATE\_DBT\_ARCHIVE](/sql-reference/functions/system_locate_dbt_archive) |  |
 | [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts) |  |
 | [SYSTEM$LOG, SYSTEM$LOG\_<level> (for Snowflake Scripting)](/sql-reference/functions/system_log) |  |
+| [SYSTEM$PARQUET\_DIRECT\_AUTO\_REFRESH\_STATUS](/sql-reference/functions/system_parquet_direct_auto_refresh_status) |  |
 | [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) |  |
 | [SYSTEM$QUERY\_REFERENCE](/sql-reference/functions/system_query_reference) |  |
 | [SYSTEM$READ\_YAML\_FROM\_SEMANTIC\_VIEW](/sql-reference/functions/system_read_yaml_from_semantic_view) |  |

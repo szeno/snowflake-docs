@@ -93,6 +93,7 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW EXTERNAL FUNCTIONS](/sql-reference/sql/show-external-functions)
 > - [SHOW EXTERNAL TABLES](/sql-reference/sql/show-external-tables)
 > - [SHOW FILE FORMATS](/sql-reference/sql/show-file-formats)
+> - [SHOW FILES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-files-in-artifact-repository)
 > - [SHOW FUNCTIONS](/sql-reference/sql/show-functions)
 > - [SHOW GATEWAYS](/sql-reference/sql/show-gateways)
 > - [SHOW GIT BRANCHES](/sql-reference/sql/show-git-branches)

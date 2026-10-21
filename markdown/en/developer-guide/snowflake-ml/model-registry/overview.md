@@ -807,10 +807,42 @@ You can also call model methods in SQL. See [Inference from SQL](/developer-guid
 
 ## Sharing models
 
-Models can both be shared and replicated. The following privileges are grantable to a shared model:
+Models can both be shared and replicated. To share a model with another account in the same region, add the model to a share
+with [GRANT <privilege> … TO SHARE](/sql-reference/sql/grant-privilege-share). The following privileges are grantable to a shared model:
 
 - USAGE: Allows the grantee to use the model for warehouse inference without being able to see any of its internals.
 - READ: Allows the grantee to use the model for SPCS inference and also see its metadata. Metadata includes, but isn’t limited to, comments, tags, and metrics.
+
+The following example shares the model `mymodel` with a consumer account. The share also needs USAGE on the database and schema
+that contain the model.
+
+Copy code
+
+```
+CREATE SHARE myshare;
+
+GRANT USAGE ON DATABASE mydb TO SHARE myshare;
+GRANT USAGE ON SCHEMA mydb.myschema TO SHARE myshare;
+GRANT USAGE ON MODEL mydb.myschema.mymodel TO SHARE myshare;
+-- To let consumers deploy the model to SPCS and see its metadata, also grant READ:
+-- GRANT READ ON MODEL mydb.myschema.mymodel TO SHARE myshare;
+
+ALTER SHARE myshare ADD ACCOUNTS = myorg.myconsumeraccount;
+```
+
+In the consumer account, create a database from the share. The shared model is available in that database:
+
+Copy code
+
+```
+CREATE DATABASE shared_models FROM SHARE myorg.myprovideraccount.myshare;
+
+SHOW MODELS IN DATABASE shared_models;
+
+SELECT MODEL(shared_models.myschema.mymodel)!predict(...) FROM my_table;
+```
+
+For more information about creating shares, see [Create and configure shares](/user-guide/data-sharing-provider).
 
 ## Cost considerations
 

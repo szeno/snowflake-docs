@@ -185,7 +185,8 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 | External Tables | [AUTO\_REFRESH\_REGISTRATION\_HISTORY](/sql-reference/functions/auto_refresh_registration_history) | TO BE DEPRECATED - Refer to [CATALOG\_LINKED\_DATABASE\_USAGE\_HISTORY view](/sql-reference/account-usage/catalog_linked_database_usage_history). For more information, see [Introduction to external tables](/user-guide/tables-external-intro). |
 |  | [EXTERNAL\_TABLE\_FILES](/sql-reference/functions/external_table_files) |  |
 |  | [EXTERNAL\_TABLE\_FILE\_REGISTRATION\_HISTORY](/sql-reference/functions/external_table_registration_history) |  |
-| Iceberg Tables | [ICEBERG\_TABLE\_FILES](/sql-reference/functions/iceberg_table_files) | Information Schema table function. |
+| Iceberg Tables | [ICEBERG\_TABLE\_FILE\_REGISTRATION\_HISTORY](/sql-reference/functions/iceberg_table_file_registration_history) | Information Schema table function. |
+|  | [ICEBERG\_TABLE\_FILES](/sql-reference/functions/iceberg_table_files) | Information Schema table function. |
 |  | [ICEBERG\_TABLE\_SNAPSHOT\_REFRESH\_HISTORY](/sql-reference/functions/iceberg_table_snapshot_refresh_history) | Information Schema table function. |
 | Listings | [AVAILABLE\_LISTINGS](/sql-reference/functions/available_listings) |  |
 |  | [AVAILABLE\_LISTING\_REFRESH\_HISTORY](/sql-reference/functions/available_listing_refresh_history) |  |

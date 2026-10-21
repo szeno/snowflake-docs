@@ -97,6 +97,7 @@ some of the available options. To view the full syntax, see the following pages:
 > - [CREATE ICEBERG TABLE (AWS Glue as the Iceberg catalog)](/sql-reference/sql/create-iceberg-table-aws-glue)
 > - [CREATE ICEBERG TABLE (Iceberg files in object storage)](/sql-reference/sql/create-iceberg-table-iceberg-files)
 > - [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta) (Delta Direct)
+> - [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet) (Parquet Direct, preview)
 > - [CREATE ICEBERG TABLE (Iceberg REST catalog)](/sql-reference/sql/create-iceberg-table-rest)
 
 You can also configure data governance (for example, masking or row access policies)
@@ -140,6 +141,24 @@ CREATE ICEBERG TABLE my_delta_iceberg_table
 ```
 
 If the Delta table uses a partitioning scheme, Snowflake automatically interprets the scheme from the Delta log.
+
+### Parquet files in object storage (Parquet Direct)
+
+**Parquet Direct** (preview) allows you to query Apache Parquet™ files from external cloud object storage with better performance than external tables. For more information, see [Parquet Direct](/user-guide/tables-iceberg-parquet-direct)
+and [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet).
+
+The following example creates a table from Parquet files that use Hive-style partitioning. Snowflake automatically infers the columns
+and partition columns and evolves the schema:
+
+Copy code
+
+```
+CREATE ICEBERG TABLE sales_data
+  EXTERNAL_VOLUME = 'my_ext_vol'
+  CATALOG = 'hive_catalog_int'
+  BASE_LOCATION = 'sales/'
+  ENABLE_SCHEMA_EVOLUTION = TRUE;
+```
 
 ### Apache Iceberg™ REST catalog
 

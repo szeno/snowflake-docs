@@ -13,6 +13,7 @@ See also:
     [DESCRIBE ARTIFACT REPOSITORY](/sql-reference/sql/desc-artifact-repository) ,
     [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository) ,
     [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories) ,
+    [SHOW FILES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-files-in-artifact-repository),
     [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository)
 
 ## Syntax

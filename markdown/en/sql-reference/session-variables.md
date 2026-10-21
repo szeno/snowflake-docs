@@ -2,6 +2,12 @@
 
 You can define and use SQL variables in sessions in Snowflake.
 
+Note
+
+This page covers **session variables**: temporary values that exist only for the duration of a
+session. For persistent, schema-scoped variables that survive session boundaries and are shared
+across sessions, see [Schema variables](/sql-reference/schema-variables).
+
 ## Overview
 
 Snowflake supports SQL variables declared by the user. They have many uses, such as storing application-specific environment settings.
@@ -275,3 +281,7 @@ Copy code
 ```
 UNSET my_variable;
 ```
+
+If a session variable shadows a [schema variable](/sql-reference/schema-variables) of the same
+name, `UNSET` removes the session variable and restores visibility of the schema variable
+underneath. The schema variable itself isn’t affected.

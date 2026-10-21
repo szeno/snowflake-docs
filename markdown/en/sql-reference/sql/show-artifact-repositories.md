@@ -5,11 +5,12 @@ Lists the
 for which you have access privileges.
 
 See also:
-:   [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) ,
-    [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository) ,
-    [DESCRIBE ARTIFACT REPOSITORY](/sql-reference/sql/desc-artifact-repository) ,
-    [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository) ,
-    [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository) ,
+:   [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository),
+    [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository),
+    [DESCRIBE ARTIFACT REPOSITORY](/sql-reference/sql/desc-artifact-repository),
+    [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository),
+    [SHOW FILES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-files-in-artifact-repository),
+    [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository),
     [SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository)
 
 ## Syntax

@@ -176,16 +176,28 @@ Used when `target.tableType` is `"iceberg"`. Account setup follows Snowflake’s
 | Property | Type | Required | Description |
 | --- | --- | --- | --- |
 | `catalog` | `String` |  | Default `SNOWFLAKE` for Snowflake-managed Iceberg. Use a catalog integration name for externally cataloged tables. |
-| `externalVolume` | `String` | For `catalog` `SNOWFLAKE` | Snowflake external volume for Iceberg data and metadata. |
-| `baseLocationPrefix` | `String` |  | Optional path prefix for `BASE_LOCATION`. |
+| `externalVolume` | `String` | For `catalog` `SNOWFLAKE` | External volume name, or `SNOWFLAKE_MANAGED` to store the table in Snowflake. `SNOWFLAKE_MANAGED` is supported on AWS and Azure commercial accounts. |
+| `baseLocationPrefix` | `String` | For a customer volume on `copy_files` | Path prefix for `BASE_LOCATION` (`{prefix}/{database}/{schema}/{table}`). Required when `externalVolume` is a customer volume. Omit it when `externalVolume` is `SNOWFLAKE_MANAGED`. |
 | `catalogTableName` | `String` | For external `catalog` | Fully qualified name in the external catalog. |
 | `catalogSync` | `String` |  | Optional catalog integration to sync Snowflake-managed metadata back to an external catalog. |
-| `sourceDataStage` | `String` |  | Stage path starting with `@` pointing at existing Parquet files. |
-| `migrationStrategy` | `String` |  | One of `catalog_link`, `convert_to_managed`, or `copy_files`. |
+| `sourceDataStage` | `String` |  | Stage path starting with `@` pointing at existing Parquet files. Do not set this and `extraction.externalStage` on the same table. |
+| `migrationStrategy` | `String` |  | One of `catalog_link`, `convert_to_managed`, or `copy_files`. When omitted, `catalog: SNOWFLAKE` resolves to `copy_files`. |
+| `icebergSpec` | `String` |  | Logical type profile. `v2` is the default. `v3` is also supported. See [Apache Iceberg™ tables (spec v2 and v3)](../data-migration-validation/iceberg). |
+| `storageMode` | `String` |  | `compatible` (default) writes `STORAGE_SERIALIZATION_POLICY = COMPATIBLE`. `native` is spec v3 only and writes `STORAGE_SERIALIZATION_POLICY = OPTIMIZED`. |
+| `loadMode` | `String` |  | `ADD_FILES_COPY` (default) registers staged Parquet without rewriting it. `FULL_INGEST` rewrites the staged files and, on spec v3, can coerce temporal and geospatial values into native types. |
+| `externalEngineAccess` | `Boolean` |  | `false` (default). Set to `true` when another engine must read the Parquet files. Allowed with `storageMode: compatible`. Rejected with `storageMode: native`. |
+| `postLoadOptimize` | `Boolean` |  | When omitted, defaults to `true` for `ADD_FILES_COPY` and `false` for `FULL_INGEST`. When enabled, turns on compaction after the first load. |
+| `targetFileSize` | `String` |  | Optional target file size: `AUTO`, `16MB`, `32MB`, `64MB`, or `128MB`. When omitted, `FULL_INGEST` uses `128MB`; `ADD_FILES_COPY` does not set a target size. |
 
 Expand
 
 Show lessSee more
+
+Type mappings, storage choices, and how to validate the same tables are in [Apache Iceberg™ tables (spec v2 and v3)](../data-migration-validation/iceberg). On spec v3 with `FULL_INGEST`, a timestamp with an offset becomes `TIMESTAMP_LTZ(6)`. `TIME WITH TIME ZONE` and `TIMETZ` also become `TIMESTAMP_LTZ(6)`. The staged value has no date, so the load attaches it to `1970-01-01`.
+
+Warning
+
+`TIMESTAMP_LTZ` stores the instant in UTC and shows it in the session time zone.
 
 Note
 

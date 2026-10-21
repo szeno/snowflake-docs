@@ -156,6 +156,7 @@ The connector supports the following schema changes:
 - **Drop column.** The connector renames the destination column with a `__SNOWFLAKE_DELETED` suffix to preserve historical values. For details, see [Dropped columns](#dropped-columns).
 - **Rename column.** The connector treats a rename as dropping the original column and adding a new one. The connector retains the original column under a suffixed name; for example, a column named `A` becomes `A__SNOWFLAKE_DELETED`. For query patterns, see [Renamed columns](#renamed-columns).
 - **Compatible type change.** The connector keeps replication running with the destination column type unchanged when you change a column to a source type that maps to the same Snowflake data type (for example, `INT` to `BIGINT`, both mapped to `NUMBER`).
+- **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`. The connector creates destination character columns at the maximum Snowflake length, so the destination column type stays the same and replication continues.
 - **Re-add a previously dropped column.** The connector adds the column as a new destination column alongside the existing soft-deleted column (for example, `A` and `A__SNOWFLAKE_DELETED`).
 
 If you drop a column that was previously dropped and soft-deleted, replication for the affected table fails because the soft-deleted column name is already taken.
@@ -165,9 +166,8 @@ If you drop a column that was previously dropped and soft-deleted, replication f
 The connector doesn’t support the following schema changes. Unless noted otherwise, replication stops for the affected table until you restart it:
 
 - **Primary key definition change.** Adding or removing primary key columns, or changing which columns form the primary key. The connector doesn’t detect this change and keeps replicating with the previous key; replication doesn’t stop on its own. Restart replication for the affected table so the connector picks up the new key.
-- **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively).
+- **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively). Changes between timestamps with and without a time zone are also incompatible.
 - **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
-- **Character column length change.** For example, changing `VARCHAR(50)` to `VARCHAR(100)`.
 
 To recover, restart replication for the affected table: see [Restart table replication](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-restart-table-replication).
 
@@ -193,7 +193,7 @@ For connection settings, see [Always On Availability Groups](/user-guide/data-in
 
 ### Error handling for invalid rows
 
-An *invalid row* is a row that Snowflake rejects during ingestion because it can’t be written to the destination table, for example a value that can’t be converted to the destination column’s type, or a missing required column. The **Error Handling Strategy** parameter controls what the connector does when it encounters an invalid row:
+An *invalid row* is a row that Snowflake rejects during ingestion because it can’t be written to the destination table, for example, a value that can’t be converted to the destination column’s type, or a missing required column. The **Error Handling Strategy** parameter controls what the connector does when it encounters an invalid row:
 
 - **Fail Table** (default): On the first invalid row, the connector marks the table as permanently failed and stops replicating it, preserving strict, all-or-nothing replication. After you fix the source data, resume replication as described in [Restart table replication](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-restart-table-replication).
 - **Log Errors and Continue**: The connector keeps replicating the valid rows and records each rejected row, together with its original payload and error details, in the table’s *error table*. The table isn’t marked as failed.
@@ -202,7 +202,7 @@ To change the strategy, set the **Error Handling Strategy** parameter. For more 
 
 #### How rejected rows are captured
 
-The connector loads data with Snowpipe Streaming, so error logging behaves exactly as described in [Error logging in Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables). When you select **Log Errors and Continue**, the connector creates new destination and journal tables with the [`ERROR_LOGGING`](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables#turn-on-error-logging) property set to `TRUE`, so rejected rows are captured in a dedicated error table instead of aborting the load. The error table stores the original payload sent to Snowflake before any transformation, along with error details.
+The connector loads data with Snowpipe Streaming, so error logging behaves exactly as described in [Error logging in Snowpipe Streaming](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables). The connector creates destination and journal tables with the [`ERROR_LOGGING`](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables#turn-on-error-logging) property set to `TRUE`, so when you select **Log Errors and Continue**, rejected rows are captured in a dedicated error table instead of aborting the load. The error table stores the original payload sent to Snowflake before any transformation, along with error details.
 
 Query a table’s error table with the `ERROR_TABLE` table function:
 
@@ -217,7 +217,7 @@ Where a rejected row lands depends on the replication stage:
 - **Snapshot load**: The rejected row is written to the destination table’s error table.
 - **Incremental (change tracking) load**: The rejected row is written to the journal table’s error table, because changes are first written to the journal table. For more information about journal tables, see .
 
-The connector enables error logging only on tables that it creates after you select **Log Errors and Continue**. To capture rejected rows for tables that were already being replicated, enable error logging on their existing destination and journal tables with the stored procedure in [Enable error logging on an existing schema](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-enable-error-logging-existing-schema).
+Tables that earlier versions of the connector created don’t have error logging enabled. To capture rejected rows for those tables, enable error logging on their existing destination and journal tables with the stored procedure in [Enable error logging on an existing schema](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-enable-error-logging-existing-schema).
 
 Note
 

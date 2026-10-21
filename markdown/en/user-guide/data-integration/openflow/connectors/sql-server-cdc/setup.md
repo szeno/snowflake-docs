@@ -557,6 +557,16 @@ to create the service user.
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
 
+If the source uses a case-insensitive collation, for example `SQL_Latin1_General_CP1_CI_AS`, set the destination database collation to `en-ci` before the connector creates any tables:
+
+Copy code
+
+```
+ALTER DATABASE <destination_database> SET DEFAULT_DDL_COLLATION = 'en-ci';
+```
+
+Primary key values that differ only by case are the same key on the source, so a case-sensitive destination can store the same row twice.
+
 ## Install the connector
 
 To install the connector, do the following as a data engineer:
@@ -728,6 +738,16 @@ For failover behavior, see [Always On Availability Groups and source failover](/
 | Table Storage Format | Standard Snowflake tables or Iceberg tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
 | Iceberg Version | The Iceberg table version, 2 or 3 (default 3). Ignored unless Table Storage Format is **ICEBERG**. Don’t change this value after ingestion begins. | No |
 | Snowflake Warehouse | Snowflake warehouse used to run queries. | Yes |
+
+Expand
+
+Show lessSee more
+
+The following destination parameter controls how the connector handles invalid rows:
+
+| Parameter | Description | Required |
+| --- | --- | --- |
+| Error Handling Strategy | Determines how the connector handles invalid rows that Snowflake rejects during ingestion. Possible values are:  - **Fail Table** (default): The table is marked as failed on the first invalid row, and replication stops for that table. - **Log Errors and Continue**: The connector keeps replicating the valid rows and records each rejected row in the table’s error table.  For more information, see [Error handling for invalid rows](/user-guide/data-integration/openflow/connectors/sql-server-cdc/about#label-sql-server-cdc-error-handling). | No |
 
 Expand
 

@@ -1896,7 +1896,7 @@ df = session.read \
 
   - Leveraging [native parquet ingestion capabilities](https://docs.snowflake.com/en/user-guide/tutorials/script-data-load-transform-parquet). Consider also [autoingest with snowpipe](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-s3).
   - Parquet [external tables](https://docs.snowflake.com/en/user-guide/tables-external-intro) which can be pointed directly to cloud file locations.
-  - Using [Iceberg tables](https://docs.snowflake.com/LIMITEDACCESS/iceberg/tables-iceberg-parquet-source).
+  - Using [Iceberg tables](https://docs.snowflake.com/user-guide/tables-iceberg-parquet-direct).
 - When doing a migration is a good practice to leverage the SMA reports to try to build an inventory of files and determine after modernization to which stages/tables will the data be mapped.
 - For more support, you can email us at [sma-support@snowflake.com](mailto:sma-support@snowflake.com) or post an issue [in the SMA](/migrations/sma-docs/user-guide/project-overview/configuration-and-settings).
 

@@ -1,6 +1,6 @@
 # GRANT *<privilege>* … TO SHARE
 
-Grants access privileges for databases and other supported database objects (schemas, UDFs, tables, and views) to a share. Granting
+Grants access privileges for databases and other supported database objects (schemas, UDFs, tables, views, and models) to a share. Granting
 privileges on these objects effectively adds the objects to the share, which can then be shared with one or more consumer accounts.
 
 For more details, see [About Secure Data Sharing](/user-guide/data-sharing-intro) and [Create and configure shares](/user-guide/data-sharing-provider).
@@ -19,6 +19,7 @@ GRANT objectPrivilege ON
      {  DATABASE <name>
       | SCHEMA <name>
       | FUNCTION <name>
+      | MODEL <name>
       | SEMANTIC VIEW <name>
       | { TABLE <name> | ALL TABLES IN SCHEMA <schema_name> }
       | { EXTERNAL TABLE <name> | ALL EXTERNAL TABLES IN SCHEMA <schema_name> }
@@ -37,16 +38,16 @@ Copy code
 objectPrivilege ::=
 -- For DATABASE
    REFERENCE_USAGE [ , ... ]
--- For DATABASE, FUNCTION, or SCHEMA
+-- For DATABASE, FUNCTION, MODEL, or SCHEMA
    USAGE [ , ... ]
+-- For MODEL or TAG
+   READ
 -- For SEMANTIC VIEW
    { REFERENCES | SELECT } [ , ... ]
 -- For TABLE
    EVOLVE SCHEMA [ , ... ]
 -- For EXTERNAL TABLE, ICEBERG TABLE, TABLE, or VIEW
    SELECT [ , ... ]
--- For TAG
-   READ
 ```
 
 ## Parameters
@@ -63,7 +64,7 @@ objectPrivilege ::=
 ## Usage notes
 
 - The USAGE privilege on only a single database can be granted to a share; however, within that database, privileges on multiple schemas,
-  UDFs, tables, and views can be granted to the share.
+  UDFs, tables, views, and models can be granted to the share.
 - Privileges on individual objects must be granted to a share in separate GRANT statements. The only exceptions are the SELECT privilege on
   tables (including Apache Iceberg™ tables) and views. Using an `ALL` clause, you can grant SELECT on all tables in a specified schema
   to a share. You can also grant SELECT on all views in a specified schema to a share if the share has
@@ -74,6 +75,14 @@ objectPrivilege ::=
   an error.
 - Currently, sharing a UDF that references an object from another database is not supported. For example, if you attempt to grant USAGE
   on a UDF that references a secure view from another database, an error is returned.
+- For models, the privilege you grant determines what consumers can do with the shared model:
+
+  - USAGE lets consumers run inference with the model on a warehouse. Consumers cannot access the model’s code, weights, or other
+    artifacts.
+  - READ lets consumers deploy the model to Snowpark Container Services for inference and view the model’s metadata, such as
+    comments, tags, and metrics.
+
+  For more details, see [Sharing models](/developer-guide/snowflake-ml/model-registry/overview#label-snowpark-model-registry-model-sharing).
 - Use the REFERENCE\_USAGE privilege when sharing a secure view that references objects belonging to multiple databases, as follows:
 
   - The REFERENCE\_USAGE privilege must be granted individually on each database.
@@ -119,6 +128,26 @@ This is an example of sharing objects from a single database:
 > GRANT SELECT ON ICEBERG TABLE mydb.shared_schema.iceberg_table_1 TO SHARE share1;
 >
 > GRANT SELECT ON DYNAMIC TABLE mydb.public TO SHARE share1;
+> ```
+
+This is an example of sharing a model so that consumers can run inference with it on a warehouse:
+
+> Copy code
+>
+> ```
+> GRANT USAGE ON DATABASE mydb TO SHARE share1;
+>
+> GRANT USAGE ON SCHEMA mydb.shared_schema TO SHARE share1;
+>
+> GRANT USAGE ON MODEL mydb.shared_schema.model1 TO SHARE share1;
+> ```
+
+To also let consumers deploy the model to Snowpark Container Services and view its metadata, grant the READ privilege on the model:
+
+> Copy code
+>
+> ```
+> GRANT READ ON MODEL mydb.shared_schema.model1 TO SHARE share1;
 > ```
 
 This is an example of sharing a secure view that references objects from a different database:

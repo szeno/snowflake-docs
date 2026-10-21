@@ -160,6 +160,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER USER … REMOVE WORKLOAD IDENTITY](/sql-reference/sql/alter-user-remove-workload-identity) | Removes a named [workload identity](/user-guide/workload-identity-federation) from a user. |
 | [ALTER USER … ROTATE KEY PAIR](/sql-reference/sql/alter-user-rotate-key-pair) | Rotates a [key pair](/user-guide/key-pair-auth) by replacing the stored public key with a new public key. |
 | [ALTER USER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-rotate-programmatic-access-token) | Rotates [programmatic access token](/user-guide/programmatic-access-tokens), generating a new token secret with an extended expiration time, and expiring the existing token secret. |
+| [ALTER VARIABLE](/sql-reference/sql/alter-variable) | Modifies the properties of an existing [schema variable](/sql-reference/schema-variables). |
 | [ALTER VIEW](/sql-reference/sql/alter-view) | Modifies the properties for an existing view. |
 | [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) | Suspends or resumes a [virtual warehouse](/user-guide/warehouses-overview), or aborts all queries (and other SQL statements) for a warehouse. |
 | **B** |  |
@@ -230,6 +231,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE ICEBERG TABLE (AWS Glue as the Iceberg catalog)](/sql-reference/sql/create-iceberg-table-aws-glue) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) in the current/specified schema using an Iceberg table that is registered in the AWS Glue Data Catalog. |
 | [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) in the current/specified schema using Delta table files in object storage (external cloud storage). |
 | [CREATE ICEBERG TABLE (Iceberg files in object storage)](/sql-reference/sql/create-iceberg-table-iceberg-files) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) in the current/specified schema using Iceberg files in object storage (external cloud storage). |
+| [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet) | Creates or replaces a read-only [Apache Iceberg™ table](/user-guide/tables-iceberg) in the current or specified schema from Apache Parquet™ files in external cloud object storage. |
 | [CREATE ICEBERG TABLE (Iceberg REST catalog)](/sql-reference/sql/create-iceberg-table-rest) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) in the current/specified schema for an Iceberg REST catalog. |
 | [CREATE ICEBERG TABLE (Snowflake as the Iceberg catalog)](/sql-reference/sql/create-iceberg-table-snowflake) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses [Snowflake as the Iceberg catalog](/user-guide/tables-iceberg#label-tables-iceberg-snowflake-as-catalog) in the current/specified schema. |
 | [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository) | Creates a new [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository) in the current schema. |
@@ -316,6 +318,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE TASK](/sql-reference/sql/create-task) | Creates a new [task](/user-guide/tasks-intro) in the current/specified schema or replaces an existing task. |
 | [CREATE TYPE](/sql-reference/sql/create-type) | Creates a [user-defined type](/sql-reference/data-types-user-defined). |
 | [CREATE USER](/sql-reference/sql/create-user) | Creates a new user or replaces an existing user in the system. |
+| [CREATE VARIABLE](/sql-reference/sql/create-variable) | Creates a new [schema variable](/sql-reference/schema-variables), a named, typed, persistent scalar value scoped to a schema. |
 | [CREATE OR ALTER VERSIONED SCHEMA](/sql-reference/sql/create-versioned-schema) | Creates a new versioned schema or modifies an existing versioned schema. |
 | [CREATE VIEW](/sql-reference/sql/create-view) | Creates a new view in the current/specified schema, based on a query of one or more existing tables (or any other valid query expression). |
 | [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse) | Creates a new [virtual warehouse](/user-guide/warehouses-overview) in the system. |
@@ -407,6 +410,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE TRANSACTION](/sql-reference/sql/desc-transaction) | Describes the [transaction](/sql-reference/transactions), including the start time and the state (running, committed, rolled back). |
 | [DESCRIBE TYPE](/sql-reference/sql/desc-type) | Describes a [user-defined type](/sql-reference/data-types-user-defined). |
 | [DESCRIBE USER](/sql-reference/sql/desc-user) | Describes a [user](/user-guide/admin-user-management), including the current and default values of the properties of the user. |
+| [DESCRIBE VARIABLE](/sql-reference/sql/desc-variable) | Describes a [schema variable](/sql-reference/schema-variables), including its type, current value, default, and metadata. |
 | [DESCRIBE VIEW](/sql-reference/sql/desc-view) | Describes the columns in a view (or table). |
 | [DESCRIBE WAREHOUSE](/sql-reference/sql/desc-warehouse) | Describes a [virtual warehouse](/user-guide/warehouses-overview). |
 | [DROP <object>](/sql-reference/sql/drop) | Removes the specified object from the system. |
@@ -503,6 +507,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP TASK](/sql-reference/sql/drop-task) | Removes a task from the current/specified schema. |
 | [DROP TYPE](/sql-reference/sql/drop-type) | Removes a [user-defined type](/sql-reference/data-types-user-defined). |
 | [DROP USER](/sql-reference/sql/drop-user) | Removes the specified user from the system. |
+| [DROP VARIABLE](/sql-reference/sql/drop-variable) | Removes a [schema variable](/sql-reference/schema-variables) from the schema. |
 | [DROP VIEW](/sql-reference/sql/drop-view) | Removes the specified view from the current/specified schema. |
 | [DROP WAREHOUSE](/sql-reference/sql/drop-warehouse) | Removes the specified [virtual warehouse](/user-guide/warehouses-overview) from the system. |
 | **E** |  |
@@ -616,6 +621,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW FAILOVER GROUPS](/sql-reference/sql/show-failover-groups) | Lists the primary and secondary [failover groups](/user-guide/account-replication-intro#label-replication-and-failover-groups) in your account, as well as the failover groups in other accounts that are associated with your account. |
 | [SHOW FEATURE POLICIES](/sql-reference/sql/show-feature-policies) | Lists the [feature policies](/developer-guide/native-apps/ui-consumer-feature-policies) for which you have access privileges. |
 | [SHOW FILE FORMATS](/sql-reference/sql/show-file-formats) | Lists the file formats for which you have access privileges. |
+| [SHOW FILES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-files-in-artifact-repository) | Lists retained files in a `PYPI` artifact repository. |
 | [SHOW FUNCTIONS](/sql-reference/sql/show-functions) | Lists all functions that you have privileges to access, including built-in, user-defined, and external functions. |
 | [SHOW FUNCTIONS IN MODEL](/sql-reference/sql/show-functions-in-model) | Lists functions defined in machine learning models. |
 | [SHOW GATEWAYS](/sql-reference/sql/show-gateways) | Lists the [gateway](/developer-guide/snowpark-container-services/gateway) for which you have access privileges. |
@@ -693,6 +699,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW RULES IN EVENT ROUTING TABLE](/sql-reference/sql/show-rules-in-event-routing-table) | Returns the list of rules for the specified event routing table. |
 | [SHOW RUN … IN EXPERIMENT](/sql-reference/sql/show-run-in-experiment) | Displays logged parameters or metrics for [experiment runs](/developer-guide/snowflake-ml/experiments). |
 | [SHOW RUNS IN EXPERIMENT](/sql-reference/sql/show-runs-in-experiment) | Lists the runs in an [experiment](/developer-guide/snowflake-ml/experiments). |
+| [SHOW SCHEMA VARIABLES IN SCHEMA](/sql-reference/sql/show-schema-variables) | Lists all [schema variables](/sql-reference/schema-variables) in the specified schema for which you have access privileges. |
 | [SHOW SCHEMAS](/sql-reference/sql/show-schemas) | Lists the schemas for which you have access privileges, including dropped schemas that are still within the Time Travel retention period and, therefore, can be undropped. |
 | [SHOW SECRETS](/sql-reference/sql/show-secrets) | Lists the secrets for which you have rights to see. |
 | [SHOW SEMANTIC DIMENSIONS](/sql-reference/sql/show-semantic-dimensions) | Lists the dimensions in the [semantic views](/user-guide/views-semantic/overview) for which you have access privileges. |
@@ -761,6 +768,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [UNDROP TABLE](/sql-reference/sql/undrop-table) | Restores the most recent version of a dropped table. |
 | [UNDROP TAG](/sql-reference/sql/undrop-tag) | Restores the most recent version of a tag to the system. |
 | [UNDROP TYPE](/sql-reference/sql/undrop-type) | Restores the most recent version of a [user-defined type](/sql-reference/data-types-user-defined). |
+| [UNDROP VARIABLE](/sql-reference/sql/undrop-variable) | Restores the most recent version of a dropped [schema variable](/sql-reference/schema-variables). |
 | [UNSET](/sql-reference/sql/unset) | Drops a [session variable](/sql-reference/session-variables). |
 | [UPDATE](/sql-reference/sql/update) | Updates specified rows in the target table with new values. |
 | [USE <object>](/sql-reference/sql/use) | Specifies the role, warehouse, database, or schema to use for the current session. |

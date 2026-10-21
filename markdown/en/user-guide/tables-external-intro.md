@@ -16,6 +16,12 @@ Querying data in an external table might be slower than querying data that you s
 performance, you can use a [materialized view](/user-guide/views-materialized) based on an external table.
 For optimal query performance when you work with Parquet files, consider using [Apache Iceberg™ tables](/user-guide/tables-iceberg) instead.
 
+Tip
+
+If your data is in Apache Parquet™ files, [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) (preview) is recommended instead
+of an external table. Parquet Direct creates a read-only Iceberg table that queries your Parquet files in place, with better
+query performance than external tables, automatic schema inference, evolution, parition inference, and event-driven auto-refresh.
+
 Note
 
 If Snowflake encounters an error while scanning a file in cloud storage during a query operation,

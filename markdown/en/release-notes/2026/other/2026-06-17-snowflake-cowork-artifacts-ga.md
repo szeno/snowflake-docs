@@ -6,4 +6,4 @@ This release also makes **shared conversations** generally available. A shared c
 
 Account admins can disable sharing of artifacts and chats for the entire account from the Snowflake CoWork settings in Snowsight.
 
-For more information, see [Artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).
+For more information, see [Chart and Thread artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).

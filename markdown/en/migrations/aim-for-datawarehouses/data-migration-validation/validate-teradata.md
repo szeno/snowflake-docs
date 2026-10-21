@@ -235,4 +235,5 @@ Use `comparison_configuration.type_mapping_file_path` to supply a custom mapping
 - [Data validation](./data-validation)
 - [Data validation configuration reference](../manual-migration/data-validation-configuration-reference)
 - [Migrating Data from Teradata](./migrate-teradata)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Manual Migration: Data validation](../manual-migration/data-validation)

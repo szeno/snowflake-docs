@@ -16,6 +16,14 @@ Copy code
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> REFRESH [ '<metadata_file_relative_path>' ]
 ```
 
+For [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> REFRESH [ '<relative_path>' ]
+```
+
 ## Parameters
 
 `table_name`
@@ -54,6 +62,26 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> REFRESH [ '<metadata_file_relativ
       if the full path to your metadata file is `s3://mybucket_us_east_1/my_base_location/metadata/v1.metadata.json`,
       specify `metadata/v1.metadata.json` as the `{metadata-file-relative-path}`.
 
+`'relative_path'`
+:   For [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables (preview), specifies a path to a Parquet file or to
+    a directory of Parquet files, relative to the table’s `BASE_LOCATION`. Snowflake registers new, changed, and deleted files
+    under that path. If you omit the path, Snowflake refreshes all files under the `BASE_LOCATION`.
+
+    Snowflake matches the path as a prefix, not as an exact name. Snowflake refreshes every file whose path, relative to the
+    `BASE_LOCATION`, begins with the string that you specify. For example, if your `BASE_LOCATION` contains the directories
+    `sales` and `sales_archive`:
+
+    - `'/sales'` refreshes the files in both `sales` and `sales_archive`.
+    - `'/sales/'` refreshes only the files in `sales`.
+
+    To refresh only one directory, end the path with a slash (`/`). To refresh a single file, specify the full file name, such
+    as `'/sales/part-00001.parquet'`. For examples, see [Refresh a Parquet Direct table](#label-alter-iceberg-table-refresh-parquet-direct-examples).
+
+    Note
+
+    - If you specify a path that doesn’t exist, the refresh proceeds as if you didn’t specify a path.
+    - You can’t manually refresh a Parquet Direct table that has `AUTO_REFRESH = TRUE`. Disable auto-refresh first.
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -81,6 +109,9 @@ For general information about roles and privilege grants for performing SQL acti
 - Only the table owner (that is, the role with the OWNERSHIP privilege on the table) or higher can execute this command.
 - Using the ALTER ICEBERG TABLE … REFRESH command in transactions (implicit or explicit) is not supported.
 - Considerations for [Delta Direct](/sql-reference/sql/create-iceberg-table-delta) tables: When you refresh a Delta Direct table using this command, Snowflake processes up to 1,000 Delta commit files per refresh and can perform a checkpoint refresh (full refresh) under certain conditions. For the 1,000 commit file limit, checkpoint refresh triggers, and examples, see [Refresh](/sql-reference/sql/create-iceberg-table-delta#label-tables-iceberg-delta-refresh-limitations).
+- Considerations for [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables: Each refresh registers Parquet
+  files and incurs data registration charges for the bytes added. For more information, see
+  [Billing](/user-guide/tables-iceberg-parquet-direct#label-tables-iceberg-parquet-direct-billing).
 - Regarding metadata:
 
   Attention
@@ -125,3 +156,67 @@ location.
 To refresh a table that you created using the old syntax, specify a path relative to the `BASE_LOCATION`. For example,
 if the full path to your metadata file is `s3://mybucket_us_east_1/my_base_location/metadata/v1.metadata.json`,
 specify `metadata/v1.metadata.json` as the `{metadata-file-relative-path}`.
+
+### Refresh a Parquet Direct table
+
+The following examples refresh a [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) table named `orders`. The
+table’s `BASE_LOCATION` contains the following Hive-partitioned directories:
+
+Copy code
+
+```
+region=us/order_date=2026-10-01/part-00001.parquet
+region=us/order_date=2026-10-02/part-00001.parquet
+region=us_east/order_date=2026-10-01/part-00001.parquet
+region=eu/order_date=2026-10-01/part-00001.parquet
+```
+
+Refresh all files under the table’s `BASE_LOCATION`:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH;
+```
+
+Refresh only the `region=us` directory. The trailing slash limits the refresh to that directory:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH '/region=us/';
+```
+
+Without the trailing slash, the path is a prefix of both `region=us` and `region=us_east`, so the following statement
+refreshes the files in both directories:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH '/region=us';
+```
+
+Refresh a single partition:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH '/region=us/order_date=2026-10-01/';
+```
+
+Refresh every October 2026 partition in the `region=us` directory. This example omits the trailing slash on purpose, so
+that the path matches both `order_date=2026-10-01` and `order_date=2026-10-02`:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH '/region=us/order_date=2026-10';
+```
+
+Refresh a single Parquet file:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE orders REFRESH '/region=us/order_date=2026-10-01/part-00001.parquet';
+```

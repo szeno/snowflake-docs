@@ -117,17 +117,17 @@ The agent sets `preflight: true` at the workflow root, and `preflightKeepSchema:
 
 ## Migrating to Apache Iceberg™ tables
 
-On supported source platforms, you can land migrated data in Apache Iceberg™ tables instead of native Snowflake tables.
+On supported source platforms, you can land migrated data in Apache Iceberg™ tables instead of native Snowflake tables. The default profile is Iceberg **spec v2** with `storageMode: compatible`.
 
 **Prompt:**
 
 Copy code
 
 ```
-Migrate the SALES schema to Iceberg tables using my external volume MY_EXTERNAL_VOLUME
+Migrate the SALES schema to Iceberg spec v2 tables using my external volume MY_EXTERNAL_VOLUME
 ```
 
-The agent sets `target.tableType: "iceberg"` and fills in `target.icebergConfig` for you. See [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
+The agent sets `target.tableType: "iceberg"` and fills in `target.icebergConfig` (`icebergSpec: v2`, `storageMode: compatible`, your external volume, and a `baseLocationPrefix` when the volume is a customer bucket). See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 ## Reducing lock contention on the source
 

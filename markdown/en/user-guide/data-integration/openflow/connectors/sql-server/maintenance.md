@@ -159,7 +159,7 @@ When the source produces frequent changes to rows that contain large values, you
 
 ## Enable error logging on an existing schema
 
-When you set the **Error Handling Strategy** parameter to **Log Errors and Continue**, the connector enables error logging automatically only on tables that it creates afterward. Tables that the connector created earlier don’t capture rejected rows until you turn on error logging for them. For more information about the error-handling strategies, see [Error handling for invalid rows](/user-guide/data-integration/openflow/connectors/sql-server/about#label-sql-server-error-handling).
+The connector creates new destination and journal tables with error logging enabled. Tables that earlier versions of the connector created don’t capture rejected rows when you set the **Error Handling Strategy** parameter to **Log Errors and Continue** until you turn on error logging for them. For more information about the error-handling strategies, see [Error handling for invalid rows](/user-guide/data-integration/openflow/connectors/sql-server/about#label-sql-server-error-handling).
 
 Because the connector stores journal tables in the same schema as the destination tables, you can turn on error logging for a whole destination schema at once. Run the following stored procedure once per destination schema. Replace `my_database` with your destination database and `my_schema` with the destination schema.
 

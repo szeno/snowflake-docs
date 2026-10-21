@@ -1,6 +1,6 @@
 # Conversations with the Cortex Agent SDK
 
-— Open
+[Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
 

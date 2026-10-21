@@ -213,6 +213,7 @@ You can use this option to create an Iceberg table for the following sources:
   - If your external data is in Unity Catalog, see [Tutorial: Set up bidirectional access to Apache Iceberg™ tables in Databricks Unity Catalog](/user-guide/tutorials/tables-iceberg-set-up-bidirectional-access-to-unity-catalog)
   - If your external data is in AWS Glue, see [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/)
 - [Delta table files in object storage](/user-guide/tables-iceberg-configure-catalog-integration-object-storage#label-tables-iceberg-create-cat-int-delta) (**Delta Direct**; see [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta))
+- [Parquet files in object storage](/user-guide/tables-iceberg-configure-catalog-integration-object-storage#label-tables-iceberg-create-cat-int-parquet) (**Parquet Direct**, preview; see [Parquet Direct](/user-guide/tables-iceberg-parquet-direct))
 - [Iceberg metadata files in object storage](/user-guide/tables-iceberg-configure-catalog-integration-object-storage#label-tables-iceberg-create-cat-int-iceberg-files)
 
 Snowflake does not assume any life-cycle management on the table.
@@ -346,6 +347,11 @@ The following considerations and limitations apply to Iceberg tables, and are su
 > - For refresh behavior and examples, see [Refresh](/sql-reference/sql/create-iceberg-table-delta#label-tables-iceberg-delta-refresh-limitations).
 > - The following Delta Lake features aren’t currently supported: Row Tracking, change data files, change metadata,
 >   DataChange, CDC, protocol evolution.
+
+**Parquet Direct**
+
+> For considerations and limitations for Iceberg tables created from Parquet files (preview), see
+> [Considerations and limitations](/user-guide/tables-iceberg-parquet-direct#label-tables-iceberg-parquet-direct-limitations).
 
 **Automated refresh**
 

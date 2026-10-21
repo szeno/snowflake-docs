@@ -96,13 +96,9 @@ The CoCo Agent SDK lets you build agentic AI applications using Python and TypeS
 files, run commands, search codebases, execute SQL, and edit code, using the same tools and agent loop that power
 CoCo.
 
-For details about the Agent SDK, see [CoCo Agent SDK](/user-guide/cortex-code-agent-sdk/cortex-code-agent-sdk).
+For details about the Agent SDK, see [Cortex Agent SDK](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-agent-sdk).
 
 ### Model Context Protocol (MCP)
-
-Feature — Preview
-
-This feature is in preview.
 
 CoCo CLI implements the Model Context Protocol (MCP), an open standard for connecting AI agents to external
 tools and data sources such as GitHub, Jira, internal APIs, and databases. Add an MCP server once, and its tools
@@ -112,10 +108,6 @@ For details about MCP support, see [CoCo CLI Model Context Protocol (MCP) suppor
 
 ### Agent Client Protocol (ACP)
 
-Feature — Preview
-
-This feature is in preview.
-
 CoCo CLI implements the Agent Client Protocol (ACP), an open standard that lets editors and IDEs such as Zed,
 JetBrains, VS Code, and Neovim embed CoCo as a local agent backend. Editors drive the session while CoCo
 streams responses, tool calls, and file diffs back to the editor.
@@ -123,10 +115,6 @@ streams responses, tool calls, and file diffs back to the editor.
 For details about ACP support, see [CoCo CLI Agent Client Protocol (ACP) support](/user-guide/cortex-code/cortex-code-acp).
 
 ### Plugins
-
-Feature — Preview
-
-This feature is in preview.
 
 A CoCo CLI plugin is a self-contained package that bundles skills, subagents, slash commands, hooks, and MCP
 servers under a single manifest. Share plugins across a team from a Git repository, install them from the official
@@ -145,7 +133,7 @@ For detailed setup instructions, release history, troubleshooting, and advanced 
 - [CoCo automations in CLI and Snowsight](/user-guide/cortex-code/cortex-code-automations)
 - [CoCo changelog](/user-guide/cortex-code/changelog)
 - [Observability](/user-guide/cortex-code/observability)
-- [CoCo Agent SDK](/user-guide/cortex-code-agent-sdk/cortex-code-agent-sdk)
+- [Cortex Agent SDK](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-agent-sdk)
 - [CoCo CLI Model Context Protocol (MCP) support](/user-guide/cortex-code/cortex-code-mcp)
 - [CoCo CLI Agent Client Protocol (ACP) support](/user-guide/cortex-code/cortex-code-acp)
 - [CoCo CLI plugins](/user-guide/cortex-code/cortex-code-plugins)

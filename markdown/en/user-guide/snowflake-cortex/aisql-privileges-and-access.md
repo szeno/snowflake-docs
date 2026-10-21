@@ -848,6 +848,8 @@ Setting the allowlist to `'None'` disables the allowlist fallback entirely, so o
 
 ### Supported features
 
+Model access controls follow the model. The same restriction applies in every feature that uses that model, including [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents) and [Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork).
+
 Model access controls are supported by the following features:
 
 | Feature | Account-level allowlist | Role-based access control | Notes |
@@ -866,6 +868,8 @@ Model access controls are supported by the following features:
 | [Cortex REST API](/user-guide/snowflake-cortex/cortex-rest-api) | ✔ | ✔ |  |
 | [Cortex Playground](/user-guide/snowflake-cortex/cortex-playground) | ✔ | ✔ |  |
 | [Snowflake CoCo](/user-guide/cortex-code/cortex-code) | ✔ | ✔ | Applies to CoCo in Snowsight, CoCo Desktop, and CoCo CLI. The model picker shows only the models the current role can access. |
+| [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents) | ✔ | ✔ | Applies to the orchestration model selected for the agent in Snowsight, SQL, or the REST API. |
+| [Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork) | ✔ | ✔ | Applies to the orchestration model of the agents that Snowflake CoWork runs. |
 
 Expand
 

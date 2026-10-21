@@ -9,4 +9,4 @@ With artifacts, you can:
 - Ask follow-up questions on saved artifacts while retaining context.
 - Refresh artifacts to see fresh data at any time.
 
-For more information, see [Artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).
+For more information, see [Chart and Thread artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).

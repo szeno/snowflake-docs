@@ -5,7 +5,7 @@ Schema:
 
 This Account Usage view can be used to query the history of data loaded into tables
 using [Snowpipe](/user-guide/data-load-snowpipe-intro) or the history of credits used for
-[Iceberg automated refresh](/user-guide/tables-iceberg-auto-refresh) within the last 365 days (1 year).
+[Iceberg automated refresh](/user-guide/tables-iceberg-auto-refresh) and within the last 365 days (1 year).
 
 The view displays the history of data loaded and credits billed for your entire Snowflake account.
 You can use the `pipe_name` column to filter the view for a specific pipe or Iceberg table with automated refresh.
@@ -15,7 +15,7 @@ You can use the `pipe_name` column to filter the view for a specific pipe or Ice
 | Column Name | Data Type | Description |
 | --- | --- | --- |
 | PIPE\_ID | NUMBER | Internal/system-generated identifier for the pipe used for the data load. Displays NULL if no pipe name was specified in the query. Each row includes the totals for all pipes in use within the time range. |
-| PIPE\_NAME | VARCHAR | Name of the pipe or Iceberg table with automated refresh. Displays NULL for the internal (hidden) pipe object used to refresh the metadata for an external table or Delta-based Iceberg table. |
+| PIPE\_NAME | VARCHAR | Name of the pipe or Iceberg table or Parquet Direct table with automated refresh. Displays NULL for the internal (hidden) pipe object used to refresh the metadata for an external table or Delta-based Iceberg table. |
 | START\_TIME | TIMESTAMP\_LTZ | Start time of the period when data-ingestion information is aggregated. |
 | END\_TIME | TIMESTAMP\_LTZ | End time of the period when data-ingestion information is aggregated. |
 | CREDITS\_USED | NUMBER | Number of credits billed for Snowpipe data loads during the START\_TIME and END\_TIME window. |
@@ -48,6 +48,12 @@ Show lessSee more
   ALTER EXTERNAL TABLE <name> REFRESH … statement can be used to manually synchronize your external table to external storage. For directory
   tables, the ALTER STAGE <name> REFRESH … statement can be used to manually synchronize the directory to external storage.
 - Snowflake does not bill Snowpipe file charges for [Iceberg automated refresh](/user-guide/tables-iceberg-auto-refresh).
+
+- For [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables (preview), this view includes the serverless compute
+  credits for auto-refresh, and the `PIPE_NAME` column contains the Iceberg table name. To query Parquet Direct tables in
+  this view, contact [Snowflake Support](/user-guide/contacting-support) to request access. Data registration credits for
+  Parquet Direct tables aren’t included in this view.
+  For more information, see [Billing](/user-guide/tables-iceberg-parquet-direct#label-tables-iceberg-parquet-direct-billing).
 
 ## Examples
 
@@ -82,4 +88,22 @@ SELECT
   FROM SNOWFLAKE.ACCOUNT_USAGE.PIPE_USAGE_HISTORY
   WHERE pipe_name = 'iceberg_glue_table'
   AND START_TIME >= '2025-04-01';
+```
+
+This query displays the daily auto-refresh credits and data volume for a [Parquet Direct](/user-guide/tables-iceberg-parquet-direct)
+table named `my_parquet_table` over the last 30 days:
+
+Copy code
+
+```
+SELECT
+    DATE_TRUNC('day', start_time) AS usage_date,
+    SUM(credits_used) AS credits_used,
+    SUM(bytes_inserted) AS bytes_inserted,
+    SUM(files_inserted) AS files_inserted
+  FROM SNOWFLAKE.ACCOUNT_USAGE.PIPE_USAGE_HISTORY
+  WHERE pipe_name = 'MY_PARQUET_TABLE'
+  AND start_time >= DATEADD(day, -30, CURRENT_TIMESTAMP())
+  GROUP BY usage_date
+  ORDER BY usage_date DESC;
 ```

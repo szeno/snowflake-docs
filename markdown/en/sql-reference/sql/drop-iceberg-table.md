@@ -105,6 +105,10 @@ For general information about roles and privilege grants for performing SQL acti
   the table. For more information, see [Metadata and snapshots for Iceberg tables](/user-guide/tables-iceberg#label-tables-iceberg-snapshots).
 - Within the Time Travel retention period, you can restore a dropped table by using the [UNDROP ICEBERG TABLE](/sql-reference/sql/undrop-iceberg-table) command.
 - After a dropped table has been purged, it cannot be recovered; it must be recreated.
+- When you drop a [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) table that has auto-refresh enabled,
+  Snowflake also drops the internal pipe that processes the table’s auto-refresh notifications. Dropping the table doesn’t
+  delete the Parquet files in your cloud storage.
+- You can’t use UNDROP ICEBERG TABLE to restore a dropped Parquet Direct table. To recover the table, re-create it.
 - After dropping a table, creating a table with the same name creates a new version of the table. You can restore
   the dropped version of the previous table with the following steps:
 

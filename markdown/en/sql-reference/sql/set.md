@@ -2,6 +2,10 @@
 
 Initializes the value of a [session variable](/sql-reference/session-variables) to the result of a SQL expression.
 
+To write to a [schema variable](/sql-reference/schema-variables), use a qualified name
+(`SET schema.name = value` or `SET database.schema.name = value`). An unqualified `SET name = value`
+always targets a session variable, even if a schema variable of the same name exists.
+
 See also:
 :   [SHOW VARIABLES](/sql-reference/sql/show-variables), [UNSET](/sql-reference/sql/unset)
 

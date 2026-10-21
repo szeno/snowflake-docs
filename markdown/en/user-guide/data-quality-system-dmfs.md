@@ -20,6 +20,9 @@ The Statistics DMFs return a measurement rather than a pass or fail signal. You 
 value indicates a problem. The Outliers DMFs apply a built-in threshold, such as Tukey fences or a Z-score cutoff, and return the number
 or percentage of values that fall outside it.
 
+The Machine Learning DMFs compare a column of predicted values with a column of actual values, for example, to monitor the output
+of a machine learning model. Specify the predicted column first when you associate one of these DMFs with a table or view.
+
 Many count and percentage DMFs measure undesirable values, so lower values are better. Other DMFs, such as `NOT_NULL_COUNT`, measure
 values that meet an expectation. The `ROWS_IN_PAST` DMFs in the Volume category count values in a trailing window that ends at the
 scheduled evaluation time; a value of 0 means that no data arrived.
@@ -51,6 +54,13 @@ Currently, Snowflake supports these system DMFs to measure common metrics withou
 |  | [UNTRIMMED\_STRING\_COUNT](/sql-reference/functions/dmf_untrimmed_string_count) | Determine how many non-NULL values in a string column have leading or trailing whitespace. |
 |  | [UNTRIMMED\_STRING\_PERCENT](/sql-reference/functions/dmf_untrimmed_string_percent) | Determine what percentage of non-NULL values in a string column have leading or trailing whitespace. |
 | Freshness | [FRESHNESS](/sql-reference/functions/dmf_freshness) | Determine the freshness of a table’s data based on a timestamp column or the most recent [DML operation](/sql-reference/sql-dml). |
+|  | [SOURCE\_TARGET\_LAG](/sql-reference/functions/dmf_source_target_lag) | Determine how far, in seconds, the latest timestamp in a target table trails the latest timestamp in a source table. |
+| Machine Learning | [ACCURACY](/sql-reference/functions/dmf_accuracy) | Determine what percentage of predicted values in a column are equal to the actual values in another column. |
+|  | [MAE](/sql-reference/functions/dmf_mae) | Determine the mean absolute error between a column of predicted values and a column of actual values. |
+|  | [MAPE](/sql-reference/functions/dmf_mape) | Determine the mean absolute percentage error between a column of predicted values and a column of actual values. |
+|  | [MEAN\_ERROR](/sql-reference/functions/dmf_mean_error) | Determine whether a column of predicted values is, on average, higher or lower than a column of actual values. |
+|  | [R\_SQUARED](/sql-reference/functions/dmf_r_squared) | Determine the coefficient of determination (R²) of a column of predicted values against a column of actual values. |
+|  | [RMSE](/sql-reference/functions/dmf_rmse) | Determine the root mean squared error between a column of predicted values and a column of actual values. |
 | Outliers | [EXTREME\_OUTLIER\_COUNT](/sql-reference/functions/dmf_extreme_outlier_count) | Determine how many non-NULL values in a numeric column fall outside the extreme asymmetric Tukey fences for the column. |
 |  | [EXTREME\_OUTLIER\_IQR\_COUNT](/sql-reference/functions/dmf_extreme_outlier_iqr_count) | Determine how many non-NULL values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
 |  | [EXTREME\_OUTLIER\_IQR\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_iqr_percent) | Determine what percentage of values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
@@ -63,7 +73,10 @@ Currently, Snowflake supports these system DMFs to measure common metrics withou
 |  | [OUTLIER\_PERCENT](/sql-reference/functions/dmf_outlier_percent) | Determine what percentage of values in a numeric column fall outside the asymmetric Tukey fences for the column. |
 |  | [OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_outlier_zscore_count) | Determine how many non-NULL values in a numeric column have a Z-score greater than 3. |
 |  | [OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_outlier_zscore_percent) | Determine what percentage of values in a numeric column have a Z-score greater than 3. |
-| Schema | [SCHEMA\_CHANGE\_COUNT](/sql-reference/functions/dmf_schema_change_count) | Count schema changes (column add, drop, rename, or type change) detected between consecutive evaluations. |
+| Schema | [SCHEMA\_CHANGE\_ADD\_COUNT](/sql-reference/functions/dmf_schema_change_add_count) | Count columns added between consecutive evaluations. |
+|  | [SCHEMA\_CHANGE\_COUNT](/sql-reference/functions/dmf_schema_change_count) | Count schema changes (column add, drop, rename, or type change) detected between consecutive evaluations. |
+|  | [SCHEMA\_CHANGE\_DROP\_COUNT](/sql-reference/functions/dmf_schema_change_drop_count) | Count columns dropped between consecutive evaluations. |
+|  | [SCHEMA\_CHANGE\_TYPE\_COUNT](/sql-reference/functions/dmf_schema_change_type_count) | Count columns whose data type changed between consecutive evaluations. |
 | Statistics | [APPROX\_QUANTILE\_20](/sql-reference/functions/dmf_approx_quantile_20) | Determine the approximate 20th percentile value for a numeric column. |
 |  | [APPROX\_QUANTILE\_25](/sql-reference/functions/dmf_approx_quantile_25) | Determine the approximate 25th percentile value for a numeric column. |
 |  | [APPROX\_QUANTILE\_40](/sql-reference/functions/dmf_approx_quantile_40) | Determine the approximate 40th percentile value for a numeric column. |
@@ -208,6 +221,7 @@ Currently, Snowflake supports these system DMFs to measure common metrics withou
 |  | [ROWS\_IN\_PAST\_WEEK\_PERCENT](/sql-reference/functions/dmf_rows_in_past_week_percent) | Determine what percentage of values in a date/timestamp column fall in the 7 days before the scheduled evaluation time. |
 |  | [ROWS\_IN\_PAST\_YEAR\_COUNT](/sql-reference/functions/dmf_rows_in_past_year_count) | Determine how many non-NULL values in a date/timestamp column fall in the 365 days before the scheduled evaluation time. |
 |  | [ROWS\_IN\_PAST\_YEAR\_PERCENT](/sql-reference/functions/dmf_rows_in_past_year_percent) | Determine what percentage of values in a date/timestamp column fall in the 365 days before the scheduled evaluation time. |
+|  | [TABLE\_SIZE\_BYTES](/sql-reference/functions/dmf_table_size_bytes) | Determine the logical size of a table, in bytes. |
 
 Expand
 
@@ -231,6 +245,10 @@ Some system DMFs measure closely related conditions:
 - `INVALID_INTEGER_COUNT` counts values that aren’t written as a integer, and `INVALID_NUMERIC_TYPE_CAST_COUNT` counts values that
   can’t be cast to a number. For example, `3.7` is counted by `INVALID_INTEGER_COUNT` but not by `INVALID_NUMERIC_TYPE_CAST_COUNT`.
 - `TRUE_PERCENT`, `FALSE_PERCENT`, and `NULL_PERCENT` add up to 100 for a Boolean column that has at least one row.
+- `SCHEMA_CHANGE_ADD_COUNT`, `SCHEMA_CHANGE_DROP_COUNT`, and `SCHEMA_CHANGE_TYPE_COUNT` each count one kind of change that
+  `SCHEMA_CHANGE_COUNT` also counts. Renamed columns are counted only by `SCHEMA_CHANGE_COUNT`.
+- `FRESHNESS` measures how long ago a single table was last updated, and `SOURCE_TARGET_LAG` measures how far the latest timestamp in a
+  target table trails the latest timestamp in a source table.
 
 ## Related functions
 

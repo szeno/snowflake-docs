@@ -4,7 +4,8 @@ Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceb
 in the account or replaces an existing catalog integration for the following sources:
 
 - Apache Iceberg™ metadata files
-- Delta Lake metadata files
+- Delta Lake metadata files (Delta Direct)
+- Apache Parquet™ files (Parquet Direct)
 
 See also:
 :   [ALTER CATALOG INTEGRATION](/sql-reference/sql/alter-catalog-integration) , [DROP CATALOG INTEGRATION](/sql-reference/sql/drop-catalog-integration) , [SHOW CATALOG INTEGRATIONS](/sql-reference/sql/show-catalog-integrations), [DESCRIBE CATALOG INTEGRATION](/sql-reference/sql/desc-catalog-integration)
@@ -17,7 +18,7 @@ Copy code
 CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
   <name>
   CATALOG_SOURCE = OBJECT_STORE
-  TABLE_FORMAT = { ICEBERG | DELTA }
+  TABLE_FORMAT = { ICEBERG | DELTA | NONE | HIVE }
   ENABLED = { TRUE | FALSE }
   [ REFRESH_INTERVAL_SECONDS = <value> ]
   [ COMMENT = '<string_literal>' ]
@@ -35,13 +36,23 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
 `CATALOG_SOURCE = OBJECT_STORE`
-:   Specifies external Iceberg metadata files or Delta files in object storage as the source.
+:   Specifies external Iceberg metadata files, Delta files, or Parquet files in object storage as the source.
 
-`TABLE_FORMAT = { ICEBERG | DELTA }`
+`TABLE_FORMAT = { ICEBERG | DELTA | NONE | HIVE }`
 :   Specifies the table format.
 
     - `ICEBERG`: Specifies Glue Iceberg tables or Iceberg tables from metadata in an external cloud storage location.
     - `DELTA`: Specifies Delta Lake data in object storage [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta) (**Delta Direct**).
+    - `NONE`: Specifies Apache Parquet™ files in object storage without a table format (**Parquet Direct**). Use this value when
+      your file paths aren’t Hive-style, or when you want to define partition columns explicitly with expressions on the
+      `METADATA$FILENAME` pseudocolumn. See [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet).
+    - `HIVE`: Specifies Parquet files in object storage that use Hive-style `key=value` directory partitioning
+      (**Parquet Direct**). Snowflake infers partition columns from the file paths, so you can’t define explicit partition
+      columns on tables that use this catalog integration. See [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet).
+
+    [Preview Feature](/release-notes/preview-features) — Open
+
+    Support for `TABLE_FORMAT = NONE` and `TABLE_FORMAT = HIVE` (Parquet Direct) is in preview and available to all accounts.
 
 `ENABLED = { TRUE | FALSE }`
 :   Specifies whether the catalog integration is available to use for Iceberg tables.
@@ -121,7 +132,7 @@ For general information about roles and privilege grants for performing SQL acti
           FROM $1
           WHERE "catalog_name" = 'my_catalog_integration_1';
   ```
-- [Automatically refresh Apache Iceberg™ tables](/user-guide/tables-iceberg-auto-refresh) is only supported for this type of catalog integration when `TABLE_FORMAT = DELTA`.
+- [Automatically refresh Apache Iceberg™ tables](/user-guide/tables-iceberg-auto-refresh) is only supported for this type of catalog integration when `TABLE_FORMAT` equals `DELTA`, `HIVE`, or `NONE`.
 - Regarding metadata:
 
   Attention
@@ -144,3 +155,26 @@ the object storage that you associate with an [external volume](/sql-reference/s
 >   TABLE_FORMAT = ICEBERG
 >   ENABLED = TRUE;
 > ```
+
+The following example creates an integration for Parquet files that use Hive-style partitioning (Parquet Direct).
+Snowflake infers partition columns from paths such as `year=2024/month=01/`:
+
+Copy code
+
+```
+CREATE CATALOG INTEGRATION hive_catalog_int
+  CATALOG_SOURCE = OBJECT_STORE
+  TABLE_FORMAT = HIVE
+  ENABLED = TRUE;
+```
+
+The following example creates an integration for Parquet files with a custom directory layout (Parquet Direct):
+
+Copy code
+
+```
+CREATE CATALOG INTEGRATION parquet_catalog_int
+  CATALOG_SOURCE = OBJECT_STORE
+  TABLE_FORMAT = NONE
+  ENABLED = TRUE;
+```

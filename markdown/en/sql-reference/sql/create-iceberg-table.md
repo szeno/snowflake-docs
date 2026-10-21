@@ -28,6 +28,7 @@ To view the syntax, parameter descriptions, usage notes, and examples for specif
     or [CREATE ICEBERG TABLE (catalog-linked database) … AS SELECT](/sql-reference/sql/create-iceberg-table-rest#label-tables-iceberg-external-write-create-table-ctas-syntax) variant syntax with your catalog-linked database to create
     new remote Iceberg tables from Snowflake.
   - [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta)
+  - [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet) (preview)
   - [CREATE ICEBERG TABLE (Iceberg files in object storage)](/sql-reference/sql/create-iceberg-table-iceberg-files)
 
 ### Snowflake as the Iceberg catalog
@@ -280,6 +281,83 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
 ```
 
 For more information, see [CREATE ICEBERG TABLE (Delta files in object storage)](/sql-reference/sql/create-iceberg-table-delta).
+
+#### Parquet files
+
+Copy code
+
+```
+CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
+  [
+    -- Data column definition
+    <col_name> <col_type>
+    [ NOT NULL ]
+    [ [ WITH ] MASKING POLICY <policy_name> [ USING ( <col_name> , <cond_col1> , ... ) ] ]
+    [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
+    [ COMMENT '<string_literal>' ]
+    -- In-line constraint
+    [ inlineConstraint ]
+    -- Additional column definitions (data, virtual, or partition columns)
+    [ , <col_name> <col_type> ...
+      -- Virtual column definition
+      | <col_name> <col_type> AS <expr>
+      -- Partition column definition (TABLE_FORMAT = NONE only)
+      | <part_col_name> <col_type> AS <part_expr>
+      -- In-line constraint
+      [ inlineConstraint ]
+      [ , ... ]
+    ]
+    -- Out-of-line constraints
+    [ , outoflineConstraint [ ... ] ]
+  ]
+  [ PARTITION BY ( <part_col_name> [, <part_col_name> ... ] ) ]
+  [ EXTERNAL_VOLUME = '<external_volume_name>' ]
+  [ CATALOG = '<catalog_integration_name>' ]
+  BASE_LOCATION = '<relative_path_from_external_volume>'
+  [ ENABLE_SCHEMA_INFERENCE = { TRUE | FALSE } ]
+  [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
+  [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ]
+  [ AUTO_REFRESH = { TRUE | FALSE } ]
+  [ REFRESH_ON_CREATE = { TRUE | FALSE } ]
+  [ PATTERN = '<regex_pattern>' ]
+  [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ]
+  [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
+  [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
+  [ COMMENT = '<string_literal>' ]
+```
+
+Where:
+
+> Copy code
+>
+> ```
+> inlineConstraint ::=
+>   [ CONSTRAINT <constraint_name> ]
+>   { UNIQUE
+>     | PRIMARY KEY
+>     | [ FOREIGN KEY ] REFERENCES <ref_table_name> [ ( <ref_col_name> ) ]
+>   }
+>   [ <constraint_properties> ]
+> ```
+>
+> For additional inline constraint details, see [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint).
+>
+> Copy code
+>
+> ```
+> outoflineConstraint ::=
+>   [ CONSTRAINT <constraint_name> ]
+>   { UNIQUE [ ( <col_name> [ , <col_name> , ... ] ) ]
+>     | PRIMARY KEY [ ( <col_name> [ , <col_name> , ... ] ) ]
+>     | [ FOREIGN KEY ] [ ( <col_name> [ , <col_name> , ... ] ) ]
+>       REFERENCES <ref_table_name> [ ( <ref_col_name> [ , <ref_col_name> , ... ] ) ]
+>   }
+>   [ <constraint_properties> ]
+> ```
+>
+> For additional out-of-line constraint details, see [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint).
+
+For more information, see [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet).
 
 #### Iceberg files in object storage
 

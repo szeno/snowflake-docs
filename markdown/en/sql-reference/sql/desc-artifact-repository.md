@@ -7,11 +7,12 @@ including its type, owning role, and creation time.
 `DESC` is an alias for `DESCRIBE`.
 
 See also:
-:   [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) ,
-    [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository) ,
-    [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository) ,
-    [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories) ,
-    [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository) ,
+:   [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository),
+    [ALTER ARTIFACT REPOSITORY](/sql-reference/sql/alter-artifact-repository),
+    [DROP ARTIFACT REPOSITORY](/sql-reference/sql/drop-artifact-repository),
+    [SHOW ARTIFACT REPOSITORIES](/sql-reference/sql/show-artifact-repositories),
+    [SHOW FILES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-files-in-artifact-repository),
+    [SHOW PACKAGES IN ARTIFACT REPOSITORY](/sql-reference/sql/show-packages-in-artifact-repository),
     [SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository)
 
 ## Syntax

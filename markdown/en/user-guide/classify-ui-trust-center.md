@@ -130,10 +130,6 @@ For SQL examples that query the event table and other troubleshooting guidance, 
 
 ## Sensitive Data Entitlement report
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to Enterprise Edition or higher.
-
 The Sensitive Data Entitlement report lets you view who can access sensitive data in your account. The report generates a
 view that includes a list of users who have an access control role that gives them privileges to tables that contain
 sensitive data. It lists the table, the user, the role, and the privilege on the table.
@@ -236,10 +232,6 @@ CALL SNOWFLAKE.DATA_SECURITY.DELETE_REPORT_DATA(
 ```
 
 ## Sensitive Data Access report
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to Enterprise Edition or higher.
 
 The Sensitive Data Access report shows which users accessed sensitive data in your account during a specified lookback period. The report
 generates a view that lists each user-table-role combination identified in query and access history for tables that contain sensitive data. It

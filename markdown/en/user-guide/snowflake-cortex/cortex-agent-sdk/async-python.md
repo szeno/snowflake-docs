@@ -1,6 +1,6 @@
 # Use the asynchronous Python client
 
-— Open
+[Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
 

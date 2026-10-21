@@ -25,6 +25,9 @@ UNDROP ICEBERG TABLE <name>
 ## Usage notes
 
 - This command isn’t supported for tables in a catalog-linked database.
+- This command isn’t supported for [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables. To recover a dropped
+  Parquet Direct table, re-create it. You also can’t set the `DATA_RETENTION_TIME_IN_DAYS` parameter on a Parquet Direct
+  table.
 - Restoring Iceberg tables is only supported in the current schema or current database, even if the table name is fully qualified.
 - If an Iceberg table with the same name already exists, an error is returned.
 - To undrop an Iceberg table whose external volume has been dropped, undrop the external volume first. You can’t undrop the Iceberg table

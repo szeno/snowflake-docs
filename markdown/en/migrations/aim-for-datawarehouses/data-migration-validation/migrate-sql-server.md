@@ -84,7 +84,7 @@ Tune `columnNamesToPartitionBy` and `partitionSize` for large tables.
 
 ### Iceberg targets
 
-SQL Server extracts for Apache Iceberg™ targets must explicitly use `cet_as` or `cloud_direct`. Set `target.tableType` to `"iceberg"`, supply `target.icebergConfig`, and configure a Snowflake external stage for the selected extraction path. See [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
+SQL Server extracts for Apache Iceberg™ targets must explicitly use `cet_as` or `cloud_direct`. Set `target.tableType` to `"iceberg"`, supply `target.icebergConfig`, and configure a Snowflake external stage for the selected extraction path. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 ## Using CETAS extraction
 
@@ -220,4 +220,5 @@ Show lessSee more
 
 - [Data migration](./data-migration)
 - [Validating Data from SQL Server](./validate-sql-server)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Manual Migration: Data migration](../manual-migration/data-migration)

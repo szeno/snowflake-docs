@@ -460,6 +460,62 @@ Expand
 
 Show lessSee more
 
+## Parquet data types
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Parquet Direct is in preview and available to all accounts.
+
+When you define a column for an
+[Iceberg table created from Parquet files (Parquet Direct)](/user-guide/tables-iceberg-parquet-direct), specify a Snowflake data type that maps to the Parquet data type in your
+source files. If you use schema inference, Snowflake chooses these types for you.
+
+The following table shows how Parquet logical types map to physical types, and how the physical types map to Snowflake data
+types.
+
+| Parquet logical type | Parquet physical type | Snowflake data type |
+| --- | --- | --- |
+| None | BOOLEAN | BOOLEAN |
+| None   INT(bitWidth=8, isSigned=true)   INT(bitWidth=16, isSigned=true)   INT(bitWidth=32, isSigned=true) | INT32 | INT |
+| None, INT(bitWidth=64, isSigned=true) | INT64 | BIGINT |
+| None | FLOAT | FLOAT |
+| None | DOUBLE | FLOAT |
+| DECIMAL(P,S) | INT32   INT64   FIXED\_LEN\_BYTE\_ARRAY(N) | DECIMAL(P,S) |
+| DATE | INT32 | DATE |
+| TIME(isAdjustedToUTC=true, unit=MILLIS) | INT32 | TIME(3) |
+| TIME(isAdjustedToUTC=true, unit=MICROS) | INT64 | TIME(6) |
+| TIME(isAdjustedToUTC=true, unit=NANOS) | INT64 | TIME(9) |
+| None | INT96 | TIMESTAMP\_LTZ(6) |
+| TIMESTAMP(isAdjustedToUTC=true, unit=MILLIS) | INT64 | TIMESTAMP\_LTZ(3) |
+| TIMESTAMP(isAdjustedToUTC=false, unit=MILLIS) | INT64 | TIMESTAMP\_NTZ(3) |
+| TIMESTAMP(isAdjustedToUTC=true, unit=MICROS) | INT64 | TIMESTAMP\_LTZ(6) |
+| TIMESTAMP(isAdjustedToUTC=false, unit=MICROS) | INT64 | TIMESTAMP\_NTZ(6) |
+| TIMESTAMP(isAdjustedToUTC=true, unit=NANOS) | INT64 | TIMESTAMP\_LTZ(9) |
+| TIMESTAMP(isAdjustedToUTC=false, unit=NANOS) | INT64 | TIMESTAMP\_NTZ(9) |
+| STRING | BYTE\_ARRAY | VARCHAR |
+| ENUM | BYTE\_ARRAY | VARCHAR |
+| JSON | BYTE\_ARRAY | VARCHAR |
+| UUID | FIXED\_LEN\_BYTE\_ARRAY(16) | BINARY(16) |
+| None | FIXED\_LEN\_BYTE\_ARRAY(N) | BINARY(L) |
+| None   BSON | BYTE\_ARRAY | BINARY |
+| INTERVAL | FIXED\_LEN\_BYTE\_ARRAY(12) | BINARY(12)    Snowflake doesn’t support a corresponding data type for the Parquet INTERVAL type, and reads the data from source files as binary data. |
+
+Expand
+
+Show lessSee more
+
+The following table shows how Parquet nested data types map to Snowflake data types.
+
+| Parquet logical nested type | Snowflake data type |
+| --- | --- |
+| None (group) | [Structured OBJECT](/sql-reference/data-types-structured#label-structured-types-specifying-object) |
+| LIST | [Structured ARRAY](/sql-reference/data-types-structured#label-structured-types-specifying-array) |
+| MAP | [MAP](/sql-reference/data-types-structured#label-structured-types-specifying-map) |
+
+Expand
+
+Show lessSee more
+
 ## Considerations
 
 Consider the following items when you work with data types for Iceberg tables:

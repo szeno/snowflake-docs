@@ -104,4 +104,5 @@ Metrics validation (L2) summarizes each column with aggregates such as NULL coun
 
 - [Data validation](./data-validation)
 - [Migrating Data from SQL Server](./migrate-sql-server)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Manual Migration: Data validation](../manual-migration/data-validation)

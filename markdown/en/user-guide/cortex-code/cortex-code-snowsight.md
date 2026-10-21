@@ -4,11 +4,13 @@ Feature — Generally Available
 
 Available to all Commercial (non-Gov), FedRAMP (Moderate and High), DoD, and KSA sovereign accounts.
 
+CoCo in Snowsight isn’t currently available for accounts in the Azure East US (Virginia) `eastus` region, even with cross-region inference enabled.
+
 ## Overview
 
 Snowflake CoCo provides an agentic experience across several functional areas within Snowsight. It is designed to assist data analysts,
-engineers, and administrators with tasks such as SQL development, data exploration, and account management by deeply integrating into the Snowsight
-interface and offering capabilities such as diff views.
+engineers, and administrators with tasks such as SQL development, data exploration, and account management. It’s integrated directly into
+Snowsight and includes features such as diff views for reviewing suggested changes.
 
 CoCo uses intelligent orchestration to plan and execute multi-step tasks based on your request. In addition, it selects internal tools and relevant
 context from your Snowflake environment to complete the task, ensuring that each response is accurate.

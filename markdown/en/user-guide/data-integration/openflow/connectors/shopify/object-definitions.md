@@ -29,7 +29,7 @@ The following fields are supported in each object definition:
 | `tableName` | **(Required)** The Snowflake destination table name. |
 | `gidTypeName` | The Shopify GID resource type (for example, `Order`, `Product`). Used for delete cascade and child record routing. |
 | `additionalGidTypeNames` | Array of additional GID type names that also map to this object. Use when Shopify returns the same resource under more than one GID type name, so that records are routed to the correct table regardless of which GID type appears in the response. |
-| `graphqlFields` | List of GraphQL selection fields. Each entry is a field name, a nested selection (for example, `"totalPriceSet { shopMoney { amount currencyCode } }"`), or an aliased field with arguments (for example, `"tier: metafield(key: \"custom.tier\") { value }"`). Aliases are useful for querying metafields by key. |
+| `graphqlFields` | List of GraphQL selection fields. Each entry is a field name, a nested selection (for example, `"totalPriceSet { shopMoney { amount currencyCode } }"`), or an aliased field with arguments (for example, `"tier: metafield(key: \"custom.tier\") { value }"`). Aliases are useful for querying metafields by key. To select fields from an inline fragment, see [Example: Select fields from an inline fragment](#label-shopify-inline-fragments). |
 | `requiredQueryArgs` | Map of fixed GraphQL argument key-value pairs appended to every query for this object. Use for endpoints that require non-standard arguments that aren’t covered by the built-in query parameters (for example, `{"type": "SALES_CHANNEL"}`). |
 | `supportsIncremental` | Whether the object supports incremental sync. Default: `true`. |
 | `incrementalField` | The field used for watermark-based incremental queries (for example, `updatedAt`, `createdAt`). The field must both exist on the returned type **and** be accepted as a filter by the query root’s `query:` argument. A field that exists on the type but isn’t supported as a filter causes `GetShopifyIncremental` to fail with `Invalid search field: <name>`. If this happens, set `supportsIncremental` to `false` and `refreshStrategy` to `FULL_PERIODIC` instead. |
@@ -165,6 +165,50 @@ Copy code
       { "name": "DRAFT_PO_NUMBER", "path": "$.draft_po_number.value", "type": "string" }
     ],
     "childFields": []
+  }
+]
+```
+
+## Example: Select fields from an inline fragment
+
+Some query roots return an interface type, and the fields you need exist only on a concrete
+type. For example, the `events` query returns the `Event` interface, and the `subjectType`
+and `subjectId` fields exist only on `BasicEvent`. You can use `subjectId` to join events to
+other objects, such as joining `ORDER` events to the `ORDERS` table.
+
+A top-level `graphqlFields` entry can’t start with an inline fragment (`... on Type { }`).
+To select fields from an inline fragment, start the entry with an aliased field, followed
+by the fragment in the same entry. To extract these values into dedicated columns, add
+promoted columns for the alias and for each fragment field. The fragment fields appear at
+the root of the record, so their paths don’t include the alias.
+
+Copy code
+
+```
+[
+  {
+    "apiType": "events",
+    "tableName": "EVENTS",
+    "gidTypeName": "BasicEvent",
+    "supportsBulk": true,
+    "supportsIncremental": true,
+    "incrementalField": "createdAt",
+    "sortKeys": ["CREATED_AT", "ID"],
+    "supportsDeletes": false,
+    "graphqlFields": [
+      "id",
+      "createdAt",
+      "message",
+      "eventAction: action ... on BasicEvent { subjectType subjectId }"
+    ],
+    "promotedColumns": [
+      { "name": "ID", "path": "$.id", "type": "gid" },
+      { "name": "CREATED_AT", "path": "$.createdAt", "type": "timestamp" },
+      { "name": "MESSAGE", "path": "$.message", "type": "string" },
+      { "name": "ACTION", "path": "$.eventAction", "type": "string" },
+      { "name": "SUBJECT_TYPE", "path": "$.subjectType", "type": "string" },
+      { "name": "SUBJECT_ID", "path": "$.subjectId", "type": "gid" }
+    ]
   }
 ]
 ```

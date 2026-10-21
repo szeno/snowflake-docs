@@ -216,6 +216,16 @@ to create the service user.
    BYOC deployments handle outbound connectivity in the cloud environment and don’t use EAIs or
    network rules.
 
+If the source uses a case-insensitive collation, for example `SQL_Latin1_General_CP1_CI_AS`, set the destination database collation to `en-ci` before the connector creates any tables:
+
+Copy code
+
+```
+ALTER DATABASE <destination_database> SET DEFAULT_DDL_COLLATION = 'en-ci';
+```
+
+Primary key values that differ only by case are the same key on the source, so a case-sensitive destination can store the same row twice.
+
 ## Install the connector
 
 To install the connector, do the following as a data engineer:

@@ -15,8 +15,10 @@ Session temporary tables are not associated after the behavior change described 
   schema.
 - [FRESHNESS](/sql-reference/functions/dmf_freshness) — Use to return information about the frequency with which objects in the
   schema are being updated.
+- [TABLE\_SIZE\_BYTES](/sql-reference/functions/dmf_table_size_bytes) — Use to return the logical size, in bytes, of tables within
+  the schema. This DMF applies only to tables and doesn’t support anomaly detection.
 
-When you associate one of these DMFs at the schema level, you can specify that you want Snowflake to determine whether
+When you associate ROW\_COUNT or FRESHNESS at the schema level, you can specify that you want Snowflake to determine whether
 [anomalies](/user-guide/data-quality-anomaly) exist in the volume or freshness of a table or view over time.
 
 The following example shows how to enable anomaly detection for the association between the ROW\_COUNT DMF and every object in the
@@ -53,13 +55,26 @@ ALTER SCHEMA <name>
     [ EXCLUDE_TABLE_TYPES = ( '<object_type>' [ , '<object_type>' ... ] ) ]
 ```
 
+For `TABLE_SIZE_BYTES`, use this syntax:
+
+Copy code
+
+```
+ALTER SCHEMA <name>
+  ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.TABLE_SIZE_BYTES ON ()
+    [ EXCLUDE_TABLE_TYPES = ( '<object_type>' [ , '<object_type>' ... ] ) ]
+```
+
 #### Arguments
 
 `{ SNOWFLAKE.CORE.ROW_COUNT | SNOWFLAKE.CORE.FRESHNESS } ON ()`
-:   Associates the system DMF with objects within the schema.
-
-    Possible values are [SNOWFLAKE.CORE.ROW\_COUNT](/sql-reference/functions/dmf_row_count) and
+:   Associates the selected system DMF with supported objects within the schema. Possible values are
+    [SNOWFLAKE.CORE.ROW\_COUNT](/sql-reference/functions/dmf_row_count) and
     [SNOWFLAKE.CORE.FRESHNESS](/sql-reference/functions/dmf_freshness).
+
+`SNOWFLAKE.CORE.TABLE_SIZE_BYTES ON ()`
+:   Associates [TABLE\_SIZE\_BYTES](/sql-reference/functions/dmf_table_size_bytes) with tables in the schema. This DMF doesn’t support
+    anomaly detection.
 
 `ANOMALY_DETECTION = { TRUE | FALSE }`
 :   If TRUE, Snowflake uses an algorithm to detect anomalies in the values returned by the DMF. Snowflake detects anomalies in each object,
@@ -108,6 +123,15 @@ Copy code
 ```
 ALTER SCHEMA my_schema
   ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.FRESHNESS ON ();
+```
+
+Associate TABLE\_SIZE\_BYTES with all tables in a schema:
+
+Copy code
+
+```
+ALTER SCHEMA my_schema
+  ADD DATA METRIC FUNCTION SNOWFLAKE.CORE.TABLE_SIZE_BYTES ON ();
 ```
 
 Associate the ROW\_COUNT DMF with all objects in a schema and enable anomaly detection for those associations:

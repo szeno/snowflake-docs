@@ -36,14 +36,26 @@ CREATE [ OR REPLACE ] FEATURE POLICY [ IF NOT EXISTS ] <name>
     - APPLICATION\_SERVICE
     - ARTIFACT\_REPOSITORY
     - COMPUTE\_POOLS
+    - CORTEX\_SEARCH\_SERVICES
     - DATABASES
+    - DYNAMIC\_TABLES
+    - FILE\_FORMATS
+    - FUNCTIONS
     - GIT\_REPOSITORY
+    - ICEBERG\_TABLES
+    - MATERIALIZED\_VIEWS
     - MCP\_SERVERS
+    - PROCEDURES
     - SCHEMA
     - SECRET
+    - STAGES
+    - TABLES
     - TASKS
+    - VIEWS
     - WAREHOUSES
     - WORKSPACE
+
+    Each type is accepted in either singular or plural form (for example, both `TABLE` and `TABLES`).
 
     Note
 
@@ -65,6 +77,9 @@ CREATE [ OR REPLACE ] FEATURE POLICY [ IF NOT EXISTS ] <name>
 `AS $$ ... $$`
 :   Optional YAML body that defines [conditional creation rules](/user-guide/feature-policies#label-feature-policy-rules).
     The body can include `blocked_creation_rules` and an optional `conditions` list.
+    Each rule can include an optional `error_message` that Snowflake shows to the user
+    when the rule blocks a statement. For more information, see
+    [Custom error messages](/user-guide/feature-policies#label-feature-policy-rules-error-message).
     For syntax, supported object types, and examples, see
     [Feature policy rules](/user-guide/feature-policies#label-feature-policy-rules).
 

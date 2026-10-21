@@ -165,6 +165,115 @@ As a result, NiFi queues may fill in waves rather than steadily: FlowFiles arriv
 
 When the source produces frequent changes to rows that contain large values, you might need a Large warehouse. High-frequency merges of many moderately large rows (for example, many 8 MB values) can require a large single merge operation, and smaller warehouses can run out of memory. By contrast, fewer very large rows (for example, 128 MB values) are streamed file by file through the **Upload Rows via Snowpipe Streaming 2** processor, and each file is merged incrementally, which typically completes without warehouse errors even on smaller warehouses.
 
+## Enable error logging on an existing schema
+
+The connector creates new destination and journal tables with error logging enabled. Tables that earlier versions of the connector created don’t capture rejected rows when you set the **Error Handling Strategy** parameter to **Log Errors and Continue** until you turn on error logging for them. For more information about the error-handling strategies, see [Error handling for invalid rows](/user-guide/data-integration/openflow/connectors/sql-server-cdc/about#label-sql-server-cdc-error-handling).
+
+Because the connector stores journal tables in the same schema as the destination tables, you can turn on error logging for a whole destination schema at once. Run the following stored procedure once per destination schema. Replace `my_database` with your destination database and `my_schema` with the destination schema.
+
+Note
+
+The schema name is passed as a quoted identifier (for example, `'"my_schema"'`) so it matches the exact, case-sensitive name that the connector created. For more information about how the connector names destination schemas, see [SQLServer Destination Parameters](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-of-sqlserver-cdc-destination-parameters).
+
+Copy code
+
+```
+USE DATABASE my_database;
+
+WITH enable_error_logging AS PROCEDURE (schema_name STRING)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+DECLARE
+  tables RESULTSET;
+  table_count NUMBER DEFAULT 0;
+BEGIN
+  SHOW TABLES IN SCHEMA IDENTIFIER(:schema_name);
+
+  -- Assign AFTER SHOW TABLES so LAST_QUERY_ID() refers to that result
+  tables := (
+    SELECT "database_name", "schema_name", "name"
+    FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    WHERE "kind" = 'TABLE'
+  );
+
+  FOR t IN tables DO
+    -- Double-quote each identifier so names with special characters are handled safely
+    EXECUTE IMMEDIATE
+      'ALTER TABLE "' || REPLACE(t."database_name", '"', '""') || '".' ||
+      '"'             || REPLACE(t."schema_name",   '"', '""') || '".' ||
+      '"'             || REPLACE(t."name",          '"', '""') || '" ' ||
+      'SET ERROR_LOGGING = TRUE';
+
+    table_count := table_count + 1;
+  END FOR;
+
+  RETURN 'Enabled ERROR_LOGGING on ' || table_count || ' table(s) in schema ' || :schema_name;
+END;
+$$
+CALL enable_error_logging('"my_schema"');
+```
+
+### Verify that error logging is enabled
+
+To confirm that error logging is enabled on every table in a schema, run the following procedure. It reports how many tables have error logging enabled and how many don’t.
+
+Copy code
+
+```
+USE DATABASE my_database;
+
+WITH verify_error_logging AS PROCEDURE (schema_name STRING)
+RETURNS STRING
+LANGUAGE SQL
+AS
+$$
+DECLARE
+  tables RESULTSET;
+  probe RESULTSET;
+  total_tables          NUMBER DEFAULT 0;
+  logging_enabled       NUMBER DEFAULT 0;
+  disabled_or_invisible NUMBER DEFAULT 0;
+BEGIN
+  SHOW TABLES IN SCHEMA IDENTIFIER(:schema_name);
+
+  -- Assign AFTER SHOW TABLES so LAST_QUERY_ID() refers to that result
+  tables := (
+    SELECT "database_name", "schema_name", "name"
+    FROM TABLE(RESULT_SCAN(LAST_QUERY_ID()))
+    WHERE "kind" = 'TABLE'
+  );
+
+  FOR t IN tables DO
+    total_tables := total_tables + 1;
+
+    -- Probe ERROR_TABLE(): it succeeds only when error logging is enabled and visible
+    BEGIN
+      probe := (
+        EXECUTE IMMEDIATE
+          'SELECT 1 FROM ERROR_TABLE(' ||
+          '"' || REPLACE(t."database_name", '"', '""') || '".' ||
+          '"' || REPLACE(t."schema_name",   '"', '""') || '".' ||
+          '"' || REPLACE(t."name",          '"', '""') || '"' ||
+          ') LIMIT 1'
+      );
+      logging_enabled := logging_enabled + 1;
+    EXCEPTION
+      WHEN STATEMENT_ERROR THEN
+        disabled_or_invisible := disabled_or_invisible + 1;
+    END;
+  END FOR;
+
+  RETURN 'schema='                                  || :schema_name ||
+         ', total_tables='                          || total_tables ||
+         ', error_logging_enabled='                 || logging_enabled ||
+         ', error_logging_disabled_or_not_visible=' || disabled_or_invisible;
+END;
+$$
+CALL verify_error_logging('"my_schema"');
+```
+
 ## Reinstall the connector
 
 This section provides instructions on how to reinstall the connector, and continue replicating data for

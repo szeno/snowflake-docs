@@ -8,6 +8,8 @@ Openflow BYOC deployments are available to all accounts in AWS [Commercial regio
 
 Openflow endpoints let external systems push data into an Openflow runtime using a stable HTTPS URL. After you create a custom flow with a compatible Listen processor, you attach an endpoint to that processor and send requests to the endpoint URL from an external HTTP client.
 
+![Openflow endpoints are created in a deployment and attached to a ListenHTTP or ListenOTLP processor in a runtime. External clients authenticate with a PAT and send requests to the endpoint URL, which Openflow routes to the attached processor.](/static/images/openflow-endpoints-architecture.svg)
+
 ## Before you begin
 
 Before you start, confirm the following:

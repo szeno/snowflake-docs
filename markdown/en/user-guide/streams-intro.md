@@ -314,7 +314,8 @@ cannot track changes in materialized views.
 Streams are limited to views that satisfy the following requirements:
 
 Underlying Tables:
-:   - All of the underlying tables must be native tables.
+:   - Each underlying table must support the stream type you create. See [Types of streams](#label-stream-and-tasks-types-of-streams) and [Limitations](#label-stream-limitations).
+    - Views over external tables or directory tables are not supported.
     - The view can apply only the following operations:
       - Projections
       - Filters

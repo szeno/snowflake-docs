@@ -36,12 +36,13 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ TARGET_FILE_SIZE = { AUTO | 16MB | 32MB | 64MB | 128MB } ]
   [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ]
   [ CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
-  [ LOG_EVENT_LEVEL = { ERROR | WARN | DEBUG } ]
+  [ LOG_EVENT_LEVEL = { ERROR | WARN | INFO | DEBUG } ]
   [ ERROR_LOGGING = { TRUE | FALSE } ]
   [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
   [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
+  [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ]
   [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
 
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
@@ -282,12 +283,13 @@ Where:
 
         You cannot set the CONTACT property with other properties in the same statement.
 
-    `LOG_EVENT_LEVEL = { ERROR | WARN | DEBUG }`
+    `LOG_EVENT_LEVEL = { ERROR | WARN | INFO | DEBUG }`
     :   Specifies the severity level of automated refresh log events that should be ingested and made available in the active event table.
         The [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level) parameter determines which events to capture based on the following values:
 
         - `ERROR`: Events that signal a change requiring human intervention to resolve.
         - `WARN`: Events that signal an issue that can be resolved without human intervention.
+        - `INFO`: Informational events, such as successfully processed refresh batches.
         - `DEBUG`: High-volume events.
 
         Note
@@ -389,6 +391,13 @@ Where:
     - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
 
     Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
+`MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE }`
+:   For [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables (preview), controls how column names in Parquet
+    files are matched against the table schema during refresh. If you switch from `CASE_INSENSITIVE` to `CASE_SENSITIVE`,
+    Snowflake keeps honoring the column name casings that it already recorded for the table.
+
+    For more information, see [CREATE ICEBERG TABLE (Parquet files in object storage)](/sql-reference/sql/create-iceberg-table-parquet).
 
 `ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE }`
 :   For Snowflake-managed Iceberg v3 tables only, specifies whether the table allows column defaults that Snowflake can’t evaluate to a

@@ -103,7 +103,7 @@ The following example shows how to create a warehouse in the consumer account:
 Copy code
 
 ```
-CREATE OR REPLACE WAREHOUSE application_wh;
+CREATE WAREHOUSE IF NOT EXISTS application_wh;
 ```
 
 This command creates a warehouse named `application_wh` in the consumer account. The

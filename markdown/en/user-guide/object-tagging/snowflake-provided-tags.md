@@ -1,9 +1,5 @@
 # Snowflake-provided tags
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Snowflake-provided tags are out-of-the-box tags for common governance use cases, such as tracking cost centers, identifying sensitive data,
 certifying trusted data assets, and pausing tag propagation. These tags give you a consistent tagging vocabulary across accounts,
 databases, teams, and use cases.

@@ -39,7 +39,8 @@ SNOWFLAKE.CORTEX.AGENT_RUN( <request_body> [, <create_thread_if_not_present> ] )
     | `instructions` | [AgentInstructions](#label-snowflake-agent-run-agentinstructions) | Instructions for the agent’s behavior, including response, orchestration, and sample questions. |
     | `orchestration` | [OrchestrationConfig](#label-snowflake-agent-run-orchestrationconfig) | Orchestration configuration, including budget constraints (e.g., seconds, tokens). |
     | `tools` | array of [Tool](#label-snowflake-agent-run-tool) | List of tools available for the agent to use. Each tool includes a tool\_spec with type, name, description, and input schema. Tools may have a corresponding configuration in tool\_resources. |
-    | `tool_resources` | map of [ToolResource](#label-snowflake-agent-run-toolresource) | Configuration for each tool referenced in the tools array. Keys must match the name of the respective tool. |
+    | `tool_resources` | map of [ToolResource](#label-snowflake-agent-run-toolresource) | Configuration for each tool referenced in the tools array. Each key must equal the name of the corresponding tool. |
+    | `thinking_effort` | string | Controls the reasoning effort used by the orchestration model. Higher effort can improve complex-task quality at the cost of latency and tokens. When omitted, the service selects the appropriate default. |
 
     Expand
 
@@ -83,12 +84,16 @@ SNOWFLAKE.CORTEX.AGENT_RUN( <request_body> [, <create_thread_if_not_present> ] )
       },
       "instructions": {
         "response": "You will respond in a friendly but concise manner",
-        "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search"
+        "orchestration": "For any query related to revenue we should use Analyst; For all policy questions we should use Search",
+        "system": "You are a friendly agent ..."
       },
       "orchestration": {
         "budget": {
           "seconds": 30,
           "tokens": 16000
+        },
+        "capabilities": {
+          "analytical_search": true
         }
       },
       "tools": [
@@ -121,7 +126,8 @@ SNOWFLAKE.CORTEX.AGENT_RUN( <request_body> [, <create_thread_if_not_present> ] )
           },
           "identifier": "DB.SCHEMA.UDF"
         }
-      }
+      },
+      "thinking_effort": "high"
     }
     ```
 

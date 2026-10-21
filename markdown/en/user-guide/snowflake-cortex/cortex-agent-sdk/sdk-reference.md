@@ -1,6 +1,6 @@
 # Cortex Agent SDK reference
 
-— Open
+[Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
 

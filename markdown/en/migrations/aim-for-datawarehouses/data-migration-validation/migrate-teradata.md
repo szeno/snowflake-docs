@@ -193,4 +193,5 @@ Show lessSee more
 
 - [Data migration](./data-migration)
 - [Data migration configuration reference](../manual-migration/data-migration-configuration-reference)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Validating Data from Teradata](./validate-teradata)

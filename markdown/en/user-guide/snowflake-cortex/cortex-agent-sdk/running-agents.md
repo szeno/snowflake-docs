@@ -1,6 +1,6 @@
 # Use the direct Cortex Agent API
 
-— Open
+[Preview Feature](/release-notes/preview-features) — Open
 
 Available to all accounts.
 

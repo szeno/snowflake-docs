@@ -27,6 +27,12 @@ You can either install the VS Code extension from the Visual Studio marketplace 
 
    After the installation completes, the Snowflake Extension for Visual Studio Code appears in the **INSTALLED** section of the **Extensions** menu in VS Code.
 
+Tip
+
+If the Marketplace page doesn’t offer a download for the version you want, you can install a specific version directly from VS Code:
+in the **Extensions** view, select the **Snowflake** extension, select the gear icon (**Manage**), select **Install Specific Version**,
+and then select the version.
+
 ## Sign in to Snowflake with the VS Code extension
 
 Before you can execute SQL statements, use Snowpark Python, use Snowflake Native App Framework features, or use CoCo, you must sign in to a Snowflake account.

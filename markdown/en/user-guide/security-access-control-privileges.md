@@ -589,6 +589,7 @@ Note
 | CREATE PACKAGES POLICY | Enables creating a new packages policy in a schema. |
 | CREATE PASSWORD POLICY | Enables creating a new password policy in a schema. |
 | CREATE PIPE | Enables creating a new pipe in a schema. |
+| CREATE VARIABLE | Enables creating a new schema variable in a schema. |
 | CREATE STREAM | Enables creating a new stream in a schema, including cloning a stream. |
 | CREATE TAG | Enables creating a new [tag key](/user-guide/object-tagging/introduction) in a schema. |
 | CREATE TASK | Enables creating a new task in a schema, including cloning a task. |
@@ -1167,6 +1168,23 @@ Operating on an object in a schema requires at least one privilege on the parent
 | USAGE | Enables using a sequence in a SQL statement. |
 | ALL [ PRIVILEGES ] | Grants all privileges, except OWNERSHIP, on the sequence. |
 | OWNERSHIP | Grants full control over the sequence; required to alter the sequence. Only a single role can hold this privilege on a specific object at a time. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
+
+Expand
+
+Show lessSee more
+
+Note
+
+Operating on an object in a schema requires at least one privilege on the parent database and at least one privilege on the parent schema.
+
+## Schema variable privileges
+
+| Privilege | Usage |
+| --- | --- |
+| READ | Enables reading the variable’s value using the `$name` or `$schema.name` syntax. |
+| WRITE | Enables setting the variable’s value using `SET schema.name = value`. Doesn’t imply READ. |
+| ALL [ PRIVILEGES ] | Grants all privileges, except OWNERSHIP, on the schema variable. |
+| OWNERSHIP | Grants full control over the schema variable; required to alter or drop it. Only a single role can hold this privilege on a specific object at a time. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
 
 Expand
 

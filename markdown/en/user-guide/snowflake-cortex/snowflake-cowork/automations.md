@@ -102,7 +102,7 @@ You can also see your reports from the **Automations** tab, which lists each aut
 
 Automations follow a caller’s-rights model: each run executes with your own role and warehouse, without elevated permissions. As a result, every report respects role-based access control (RBAC), row-access policies, and column-masking policies. If you lose access to the underlying data, the report reflects your current permissions the next time it runs.
 
-The link in an automation email opens the conversation for that run. Snowflake stores that conversation for up to 60 days after it is created. If you forward the email link, the recipient can’t open the report. To share the report, select **Share**. The recipient sees a snapshot of the report at the time you share it. See [Artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).
+The link in an automation email opens the conversation for that run. Snowflake stores that conversation for up to 60 days after it is created. If you forward the email link, the recipient can’t open the report. To share the report, select **Share**. The recipient sees a snapshot of the report at the time you share it. See [Chart and Thread artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts).
 
 Snowflake encrypts automation results at rest. If your account uses Tri-Secret Secure, at-rest encryption for these results includes your customer-managed key. Snowflake logs each run in [Account Usage](/sql-reference/account-usage).
 

@@ -37,6 +37,12 @@ ICEBERG_TABLE_FILES(
     If not specified, the function returns information about the table files for the current
     [snapshot](/user-guide/tables-iceberg#label-tables-iceberg-snapshots).
 
+    Note
+
+    The `AT` argument isn’t supported for [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables. For Parquet Direct
+    tables, the function returns the Parquet files that are currently registered to the table. To see the history of file
+    registration, use [ICEBERG\_TABLE\_FILE\_REGISTRATION\_HISTORY](/sql-reference/functions/iceberg_table_file_registration_history).
+
 ## Output
 
 The function returns the following columns:

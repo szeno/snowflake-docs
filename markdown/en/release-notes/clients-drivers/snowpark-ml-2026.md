@@ -46,9 +46,50 @@ This example uses the library and signature for version 1.27.0 of the package. U
   Use the `imports` argument instead.
 - The `snowflake.ml.model.models.huggingface_pipeline.HuggingfacePipelineModel` class has been deprecated and will be removed in a future release.
 
+## Version 2.6.0 (2026-10-20)
+
+### New Features
+
+- ML Jobs: Added `register_code_bundle` and `register_job_from_code_bundle` (Public Preview) to
+  create a Snowflake code bundle and run ML Jobs from it. `delete_code_bundle` drops a registered bundle.
+- Feature Store: The Postgres-backed Online Feature Store is now generally available, including tiled aggregations,
+  streaming and realtime feature views and feature groups.
+- Registry: `huggingface.TransformersPipeline` can omit `task`; when omitted, the task is inferred
+  automatically from the model’s Hugging Face Hub `pipeline_tag` (requires `huggingface_hub`).
+
+### Bug Fixes
+
+- ML Jobs: `submit_from_stage` accepts stage paths with double-quoted segments, such as a Git repository branch whose
+  name contains `/` (`@repo/branches/"feature/x"/src`). These paths used to fail with “does not exist”.
+- ML Jobs: `MLJob.result()` no longer returns another job’s result when results are fetched concurrently on one
+  machine.
+
+### Behavior Changes
+
+- Registry: `huggingface.TransformersPipeline` now takes required `model` as the first argument;
+  `task` is optional and inferred when not provided. Prefer
+  `TransformersPipeline(model="org/model")` over passing `task` explicitly.
+- Registry: Removed deprecated `huggingface_pipeline.HuggingFacePipelineModel` and its
+  `log_model_and_create_service` API. Use `huggingface.TransformersPipeline` with
+  `registry.log_model` / `ModelVersion.create_service` instead. A pickle-compat alias remains
+  for loading models logged with the old class.
+- Feature Store: Batch feature views with a Postgres online store now default `OnlineConfig.target_lag` to
+  `"1 minute"` instead of `"10 seconds"`. Setting a Postgres `target_lag` below 1 minute emits a `UserWarning`.
+  Hybrid table online stores are unchanged.
+
+### Deprecations
+
 ## Version 2.5.0 (2026-10-14)
 
 ### New Features
+
+- Registry: `create_service` now accepts `FeatureGroup` objects in `feature_sources_per_function`
+  alongside `FeatureView`s. Snowflake resolves the `FeatureGroup`’s online feature tables at
+  deploy time, so callers no longer need to enumerate the underlying feature views manually.
+- Experiment Tracking: Experiment runs now appear as first-class objects in lineage. Calling
+  `model_version.lineage(direction="upstream", domain_filter={"experiment"})` returns `Run` instances
+  with `database_name`, `schema_name`, `experiment_name`, and `name` properties that can be passed straight back
+  into experiment tracking.
 
 ### Bug Fixes
 
@@ -61,6 +102,39 @@ This example uses the library and signature for version 1.27.0 of the package. U
   2026.6.0, which fixes CVE-2026-104851, can be installed.
 
 ### Behavior Changes
+
+### Deprecations
+
+## Version 2.4.0 (2026-10-06)
+
+### New Features
+
+- Generic: Support Python 3.14.
+- Registry: `FeatureSpec(dtype=DataType.OBJECT)` now accepts schema-free Python dictionaries as a
+  model input or output (SQL `OBJECT`). Callers can pass a dict to `ModelVersion.run`, an object
+  literal in SQL, or a JSON object over REST, without stringifying to JSON. Use `shape=(-1,)` for
+  a list of dictionaries (`ARRAY(OBJECT)`). Closed structs with a fixed field list remain
+  `FeatureGroupSpec`.
+- Experiment Tracking: Added `snowflake.ml.experiment.callback.catboost.SnowflakeCatboostCallback`, a
+  CatBoost training callback that logs metrics and, optionally, parameters to a Snowflake experiment.
+  Pass `params=model.get_params()` to log parameters. Model logging is handled separately after
+  training via `ExperimentTracking.log_model`.
+- Experiment Tracking: `ExperimentTracking` accepts an optional `warnings_as_errors` parameter. When True,
+  conditions that are normally reported as warnings are raised instead.
+
+### Bug Fixes
+
+### Behavior Changes
+
+- Experiment Tracking: Re-constructing the `ExperimentTracking` singleton now logs an informational
+  message instead of emitting a `UserWarning`.
+- Registry: `log_model` no longer raises when `options={'relax_version': True}` is used with pip
+  requirements or Snowpark Container Services-only targets. The option is ignored, a warning is
+  emitted, and exact pip version specifications are kept.
+- Feature Store: `update_feature_view()` now rejects a `target_lag` change on a feature view whose online store
+  is `POSTGRES`, instead of reporting success for a change that is not applied. Set `target_lag` when online
+  storage is first enabled, or delete and re-register the feature view to change it. Enabling or disabling
+  online storage, and `target_lag` changes on hybrid-table online stores, are unaffected.
 
 ### Deprecations
 

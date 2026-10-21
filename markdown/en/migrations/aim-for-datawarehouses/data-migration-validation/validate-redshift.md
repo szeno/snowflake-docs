@@ -29,7 +29,7 @@ auth_method = "standard"
 ## Validation behavior
 
 - **After UNLOAD migrations**: Schema and metrics validation still run **SQL against live Redshift**. For L3, reuse **UNLOAD** with the same Worker `unload_*` TOML and Snowflake `externalStage` as migration. Grant the Redshift cluster IAM role the [Amazon S3](./required-privileges#amazon-s3) writer actions. Ensure the Worker can reach the cluster and that large partition result sets stay within timeout and spool limits.
-- **Iceberg targets**: Validation compares whatever is in Snowflake (native or Iceberg). Iceberg targets don’t change L2/L3 SQL on the Redshift side.
+- **Iceberg targets**: For spec v2 tables, set `tableType: iceberg` and `icebergConfig.icebergSpec: v2` on the validation workflow so L1 expects `VARCHAR` for both `TIMESTAMP` and `TIMESTAMPTZ`, and L3 compares those columns as the stored UTC ISO text. Metrics validation does not run for Iceberg tables. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg#validating-spec-v2-and-spec-v3-tables).
 
 For partitioning and `indexColumnList`, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
@@ -104,4 +104,5 @@ Show lessSee more
 
 - [Data validation](./data-validation)
 - [Migrating Data from Amazon Redshift](./migrate-redshift)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Manual Migration: Data validation](../manual-migration/data-validation)

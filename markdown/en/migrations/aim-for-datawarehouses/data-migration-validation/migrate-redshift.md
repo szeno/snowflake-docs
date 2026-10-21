@@ -51,7 +51,7 @@ secret_access_key = "your-secret-access-key"
 
 ### Iceberg targets
 
-Redshift as a source doesn’t prevent **Apache Iceberg™** tables on Snowflake as targets. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. See [Data migration configuration reference](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
+Redshift as a source doesn’t prevent **Apache Iceberg™** tables on Snowflake as targets. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Data migration configuration reference](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 ## Using UNLOAD extraction
 
@@ -182,4 +182,5 @@ Show lessSee more
 
 - [Data migration](./data-migration)
 - [Validating Data from Amazon Redshift](./validate-redshift)
+- [Apache Iceberg™ tables (spec v2 and v3)](./iceberg)
 - [Manual Migration: Data migration](../manual-migration/data-migration)

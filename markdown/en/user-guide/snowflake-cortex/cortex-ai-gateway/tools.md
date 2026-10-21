@@ -1,102 +1,63 @@
-1. [Overview](/en/guides "Overview")
-2. [Snowflake Horizon Catalog](/en/user-guide/snowflake-horizon "Snowflake Horizon Catalog")
-4. [Applications and tools for connecting to Snowflake](/en/guides-overview-connecting "Applications and tools for connecting to Snowflake")
-6. [Virtual warehouses](/en/user-guide/warehouses "Virtual warehouses")
-7. [Databases, Tables, & Views](/en/guides-overview-db "Databases, Tables, & Views")
-8. [Data types](/en/data-types "Data types")
-10. Data Integration
+# Cortex Tools
 
-    - [Snowflake Openflow](/en/user-guide/data-integration/openflow/about "Snowflake Openflow")
-    - Apache Iceberg™
+[Preview Feature](/release-notes/preview-features) — Open
 
-      - [Apache Iceberg™ Tables](/en/user-guide/tables-iceberg "Apache Iceberg™ Tables")
-      - [Snowflake Open Catalog](/en/user-guide/opencatalog/overview "Snowflake Open Catalog")
-    - Zero-Copy Connectors
+Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-      - [About SAP® and Snowflake](/en/user-guide/data-integration/zero-copy/about-sap-snowflake "About SAP® and Snowflake")
-      - [About Salesforce Data Cloud and Snowflake](/en/user-guide/data-integration/zero-copy/about-salesforce-datacloud "About Salesforce Data Cloud and Snowflake")
-      - [About Workday Live Data Query for Snowflake](/en/user-guide/data-integration/zero-copy/about-workday-ldq "About Workday Live Data Query for Snowflake")
-      - [About Workday Data Cloud and Snowflake](/en/user-guide/data-integration/zero-copy/about-workday-datacloud "About Workday Data Cloud and Snowflake")
-11. Data engineering
+Cortex Tools, a part of Cortex AI Gateway, connects the AI clients your organization uses to the business tools your work already lives in, using the Model Context Protocol (MCP). Cortex Tools works with any agent that supports MCP, including CoCo (CLI and Desktop), ChatGPT, Claude, Cursor, and more.
 
-    - [Data loading](/en/guides-overview-loading-data "Data loading")
-    - [Dynamic tables](/en/user-guide/dynamic-tables/overview "Dynamic tables")
-    - [Streams and tasks](/en/user-guide/data-pipelines-intro "Streams and tasks")
-    - [Row timestamps](/en/user-guide/data-engineering/row-timestamps "Row timestamps")
-    - [DCM Projects](/en/user-guide/dcm-projects/dcm-projects-overview "DCM Projects")
-    - [dbt Projects on Snowflake](/en/user-guide/data-engineering/dbt-projects-on-snowflake "dbt Projects on Snowflake")
-    - [Data Unloading](/en/guides-overview-unloading-data "Data Unloading")
-12. [Storage lifecycle policies](/en/user-guide/storage-management/storage-lifecycle-policies "Storage lifecycle policies")
-13. [Migrations](/en/migrations/snowflake-aim "Migrations")
-15. [Queries](/en/guides-overview-queries "Queries")
-16. [Collaboration](/en/guides-overview-sharing "Collaboration")
-18. [Snowflake AI & ML](/en/guides-overview-ai-features "Snowflake AI & ML")
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools. Administrators enable servers and configure access. End users connect to enabled servers and complete any required authorization with the third-party service.
 
-    - [Governance and availability](/en/user-guide/snowflake-cortex/governance-and-availability "Governance and availability")
-    - [Snowflake CoWork](/en/user-guide/snowflake-cortex/snowflake-cowork "Snowflake CoWork")
-    - [Snowflake CoCo](/en/user-guide/cortex-code/cortex-code "Snowflake CoCo")
-    - [Cortex AI Functions](/en/user-guide/snowflake-cortex/aisql "Cortex AI Functions")
-    - [Cortex Agents](/en/user-guide/snowflake-cortex/cortex-agents "Cortex Agents")
-    - [Cortex Agent SDK](/en/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-agent-sdk "Cortex Agent SDK")
-    - [Snowflake-managed MCP server](/en/user-guide/snowflake-cortex/cortex-agents-mcp "Snowflake-managed MCP server")
-    - [Cortex AI Gateway](/en/user-guide/snowflake-cortex/cortex-ai-gateway "Cortex AI Gateway")
+## Get started
 
-      - [Inference](/en/user-guide/snowflake-cortex/cortex-ai-gateway/inference "Inference")
-      - [Observability](/en/user-guide/snowflake-cortex/cortex-ai-gateway/observability "Observability")
-      - [Cost management](/en/user-guide/snowflake-cortex/cortex-ai-gateway/cost-management "Cost management")
-      - [Cortex Tools](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools "Cortex Tools")
+1. **Administrators:** [Choose a server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers), complete its setup, and [enable it and grant access](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections).
+2. **End users:** [Connect from your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client) and complete any required third-party authorization. CoCo Desktop and CLI discover servers automatically after your administrator configures access.
 
-        - [Available MCP servers](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers "Available MCP servers")
-        - [Distributing access to MCP servers](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections "Distributing access to MCP servers")
-        - [Setting up MCP servers needing additional configuration](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup "Setting up MCP servers needing additional configuration")
-        - [Adding a custom MCP server](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-custom-apps "Adding a custom MCP server")
-        - [Configuring tool availability for an MCP server](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-tool-policies "Configuring tool availability for an MCP server")
-        - [Viewing agent activity](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-activity "Viewing agent activity")
-        - [Adding an MCP server to your AI client](/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client "Adding an MCP server to your AI client")
-    - [Cortex Analyst](/en/user-guide/snowflake-cortex/cortex-analyst "Cortex Analyst")
-    - [Cortex Search](/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview "Cortex Search")
-    - [Cortex Knowledge Extensions](/en/user-guide/snowflake-cortex/cortex-knowledge-extensions/cke-overview "Cortex Knowledge Extensions")
-    - [Cortex Inference](/en/user-guide/snowflake-cortex/cortex-rest-api "Cortex Inference")
-    - [Cortex AI Guardrails](/en/user-guide/snowflake-cortex/cortex-ai-guardrails "Cortex AI Guardrails")
-    - [AI Observability](/en/user-guide/snowflake-cortex/ai-observability "AI Observability")
-    - [ML Functions](/en/guides-overview-ml-functions "ML Functions")
-    - [Provisioned Throughput](/en/user-guide/snowflake-cortex/provisioned-throughput "Provisioned Throughput")
-    - [ML Development and ML Ops](/en/developer-guide/snowpark-ml/overview "ML Development and ML Ops")
-    - [Pricing](/en/user-guide/snowflake-cortex/pricing "Pricing")
-20. [Snowflake Postgres](/en/user-guide/snowflake-postgres/about "Snowflake Postgres")
-22. [Alerts & Notifications](/en/guides-overview-alerts "Alerts & Notifications")
-24. [Security](/en/guides-overview-secure "Security")
-26. [Organizations & Accounts](/en/guides-overview-manage "Organizations & Accounts")
-27. [Business continuity & data recovery](/en/user-guide/replication-intro "Business continuity & data recovery")
-29. [Performance optimization](/en/guides-overview-performance "Performance optimization")
-30. [Cost & Billing](/en/guides-overview-cost "Cost & Billing")
+## What you can do
 
-[Guides](/en/guides)[Snowflake AI & ML](/en/guides-overview-ai-features)[Cortex AI Gateway](/en/user-guide/snowflake-cortex/cortex-ai-gateway)Cortex Tools
+| Task | Who it’s for |
+| --- | --- |
+| [Browse available MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers) | Administrator and end user |
+| [Distributing access to MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) | Administrator |
+| [Setting up MCP servers needing additional configuration](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup) | Administrator |
+| [Adding a custom MCP server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-custom-apps) | Administrator |
+| [Configuring tool availability for an MCP server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-tool-policies) | Administrator |
+| [Viewing agent activity](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-activity) | Administrator |
+| [Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client) | End user |
 
-MDX Compile ErrorCopy Error
+Expand
 
-File:`content/en/user-guide/snowflake-cortex/cortex-ai-gateway/tools.mdx`Copy
+Show lessSee more
 
-`Could not resolve "/opt/snowflakedb/snowflake-prod-docs/content/en/INCLUDE/text/text-cortex-ai-gateway-aws-only-pupr.mdx" (originally "INCLUDE/text/text-cortex-ai-gateway-aws-only-pupr.mdx")`
+## Regional availability
 
-line 10, col 35
+Cortex Tools has the same regional availability as Cortex AI Gateway: at Public Preview it’s available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Fix the error in the source file and refresh the page. The CI lint gate (`make lint.mdx`) also catches these errors before merge.
+## Related MCP features
 
-Was this page helpful?
+Cortex Tools connects your AI clients outward to third-party business tools. If instead you want to expose data in your Snowflake account to an AI client, see [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp).
 
-YesNo
+## Next step
 
-[Visit Snowflake](https://www.snowflake.com)
+[Browse available MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers)
 
-[Join the conversation](https://community.snowflake.com/s/)
+## Legal notices
 
-[Develop with Snowflake](https://developers.snowflake.com)
+Where your configuration of Cortex AI Gateway uses a model provided on the
+[Model and Service Pass-Through Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/ai-features/model-pass-through-terms/),
+your use of that model is further subject to the terms for that model on that page.
 
-[Share your feedback](/feedback)
+The data classification of inputs and outputs is as set forth in the following table.
 
-[Read the latest on our blog](https://www.snowflake.com/blog/)
+| Input data classification | Output data classification | Designation |
+| --- | --- | --- |
+| Customer Data | Customer Data | Preview AI Features [[1]](#footnote-1) |
 
-[Get your own certification](https://learn.snowflake.com)
+Expand
 
-[Privacy Notice](https://www.snowflake.com/privacy-policy/)[Site Terms](https://www.snowflake.com/legal/snowflake-site-terms/)Cookies Settings© 2026 Snowflake, Inc. All Rights Reserved.
+Show lessSee more
+
+[1]
+Represents the defined term used in the Preview AI Terms and Acceptable Use Policy.
+
+For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).

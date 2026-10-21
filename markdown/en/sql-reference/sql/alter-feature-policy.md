@@ -56,14 +56,26 @@ ALTER FEATURE POLICY [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , ... ]
         - APPLICATION\_SERVICE
         - ARTIFACT\_REPOSITORY
         - COMPUTE\_POOLS
+        - CORTEX\_SEARCH\_SERVICES
         - DATABASES
+        - DYNAMIC\_TABLES
+        - FILE\_FORMATS
+        - FUNCTIONS
         - GIT\_REPOSITORY
+        - ICEBERG\_TABLES
+        - MATERIALIZED\_VIEWS
         - MCP\_SERVERS
+        - PROCEDURES
         - SCHEMA
         - SECRET
+        - STAGES
+        - TABLES
         - TASKS
+        - VIEWS
         - WAREHOUSES
         - WORKSPACE
+
+        Each type is accepted in either singular or plural form (for example, both `TABLE` and `TABLES`).
 
         Note
 

@@ -56,6 +56,7 @@ For more information, see [Access control for dbt projects on Snowflake](/user-g
    - **PREVIOUS RUNS** - The number of runs in the selected time period by status.
    - **DATABASE** and **SCHEMA** - The database and schema where the dbt project object is saved.
    - **LAST RUN PARAMETERS** - The dbt command-line arguments (ARGS) specified in the EXECUTE DBT PROJECT command for the last dbt project object execution.
+   - **LAST ENVIRONMENT** - The environment (defined in the `env.yml` file) selected for the last run.
 2. To inspect individual project runs, select a dbt project object from the list.
 
    The dbt project object details page in the Horizon Catalog Explorer opens for that dbt project object.
@@ -66,6 +67,7 @@ For more information, see [Access control for dbt projects on Snowflake](/user-g
    - **STATUS** - The result of the run: **Succeeded**, **Executing**, or **Failed**.
    - **RUN TIME** - The elapsed time since the last run. To reverse the sort order, select the column header. The most recent run is shown first by default.
    - **PARAMETERS** The dbt command-line arguments (ARGS) specified in the EXECUTE DBT PROJECT command for the last dbt project object execution.
+   - **ENVIRONMENT** - The environment (defined in the `env.yml` file) selected for the run.
 3. To see details for a run, select it from the list.
 
    The **Query Details** page opens for the EXECUTE DBT PROJECT query that ran. This page includes the following tabs:
