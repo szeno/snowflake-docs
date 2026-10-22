@@ -8,7 +8,7 @@ Snowflake CLI supports the following ways to list the contents of a Git reposito
 
 ## List branches in a repository
 
-The `snow git list-branches` command lists all of the branches in a repository.
+The `snow git list-branches` command lists all branches in a repository.
 
 Copy code
 
@@ -43,7 +43,7 @@ show git branches in my_snow_git
 
 ## List tags in a repository
 
-The `snow git list-tabs` command lists all of the tags in a repository.
+The `snow git list-tags` command lists all tags in a repository.
 
 Copy code
 
@@ -53,7 +53,7 @@ snow git list-tags <REPO_NAME>
 
 where:
 
-- `<REPO_NAME>` is the ID of the repository stage you want to create. Note that if the repository stage already exists, the command fails.
+- `<REPO_NAME>` is the ID of the repository stage.
 
 For example, to list all of the tags in a repository named `my_snow_git`, enter the following command:
 
@@ -79,7 +79,7 @@ show git tags in my_snow_git
 
 ## List files in a repository
 
-The `snow git list-files` command lists all of the files on a specified repository state (a specific branch, tag or commit).
+The `snow git list-files` command lists all files at a specified repository state (a specific branch, tag, or commit).
 
 Copy code
 
@@ -89,13 +89,13 @@ snow git list-files <REPO_PATH>
 
 where:
 
-- `<REPO_PATH>` is a stage path with a specific scope where the value is the repository name is followed by a suffix specifying which branch, tag or commit. The following lists some different types of values:
+- `<REPO_PATH>` is a stage path consisting of the repository name followed by a suffix that specifies the branch, tag, or commit. For example:
 
-  - `@snowcli_git/branches/main/` refers to last commit of the `main` branch.
+  - `@snowcli_git/branches/main/` refers to the last commit of the `main` branch.
   - `@snowcli_git/tags/v2.1.0/` refers to a commit tagged `v2.1.0`.
   - `@snowcli_git/commits/1e939d69ca6fd0f89074e7e97c9fd1/` refers to a specific commit. Commit hashes should be between 6 and 40 characters long.
 
-  A repository path can also be a subdirectory or file in the repository, but still must be preceded with a scope prefix.
+  A repository path can also be a subdirectory or file in the repository, but it must include a scope prefix.
 
 The following example lists all of the files in the `my_snow_git` repository marked with the `v2.0.0` tag:
 

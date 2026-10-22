@@ -75,6 +75,10 @@ SP1 or later; builds before 2016 SP1 require the Enterprise or Developer edition
   capture instance already tracks. The connector still reflects the latest value of the new column in
   the destination table after the connector switches to the new capture instance.
 - The connector doesn’t support the truncate table operation. `TRUNCATE` statements on the source are ignored, and the corresponding row deletions are not applied to the destination table.
+- Each replicated table must have only one capture instance when replication starts, because
+  the connector creates a second capture instance during a schema transition and SQL Server
+  allows at most two capture instances per table. Drop any extra capture instances before you
+  add the table to replication, otherwise a later schema change fails the table.
 
 Note
 

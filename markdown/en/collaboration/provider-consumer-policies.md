@@ -227,9 +227,11 @@ Monetized listings on Snowflake Marketplace are available to qualified partners 
 
 - Before submitting a paid listing, partners must engage with their Snowflake Partner Manager to review and validate their monetization
   strategy.
-- On-Demand customers who do not have a Snowflake Partner Manager may request approval by submitting [this case form](https://snowforce.my.site.com/s/provider-onboarding-case) to Snowflake for review. The review may include a vetting call to evaluate
-  the provider’s go-to-market readiness for offering paid listings on Snowflake Marketplace. Approval for monetization is determined by
-  Snowflake based on the outcome of this review.
+- On-Demand customers who do not have a Snowflake Partner Manager may request approval by using the **Contact Marketplace Operations**
+  button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the
+  CREATE LISTING privilege.
+  Snowflake’s review may include a vetting call to evaluate the provider’s go-to-market readiness for offering paid listings on Snowflake Marketplace.
+  Approval for monetization is determined by Snowflake based on the outcome of this review.
 
 Refer to the documentation pages below for additional details and requirements to pay for listings as a consumer and offer paid listings as
 a provider:

@@ -45,12 +45,18 @@ Copy code
 ```
 {
   "version": "1.0",
+  "enabled":     true,
   "permissions": { },
   "settings":    { },
   "required":    { },
+  "tenant":      { },
+  "auth":        { },
+  "cli":         { },
+  "desktop":     { },
   "defaults":    { },
   "files":       { },
-  "ui":          { }
+  "ui":          { },
+  "sql":         { }
 }
 ```
 
@@ -211,6 +217,68 @@ Copy code
 Expand
 
 Show lessSee more
+
+### `enabled`, `tenant`, and `auth`
+
+Restricts which Snowflake accounts and authentication methods CoCo may use. These controls apply to both CoCo CLI and CoCo Desktop. You can also deliver them through an MDM profile. For more information, see [Enforce CoCo policy with MDM](/user-guide/cortex-code/mdm-policy).
+
+Copy code
+
+```
+{
+  "enabled": true,
+  "tenant": {
+    "allowedAccounts": ["myorg-prod", "myorg-*"]
+  },
+  "auth": {
+    "allowedMethods": ["OAUTH_AUTHORIZATION_CODE", "EXTERNALBROWSER"],
+    "accounts": {
+      "myorg-prod": { "allowedMethods": ["EXTERNALBROWSER"] }
+    }
+  }
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `enabled` | `boolean` | Master switch. When `false`, the account, authentication, and version controls aren’t enforced. If omitted or `true`, they’re enforced. |
+| `tenant.allowedAccounts` | `string[]` | Snowflake account patterns (glob) that CoCo may connect to. A connection to any other account is refused before it reaches the network. |
+| `auth.allowedMethods` | `string[]` | Allowed authentication methods: `OAUTH_AUTHORIZATION_CODE`, `EXTERNALBROWSER`, `SNOWFLAKE`, `PROGRAMMATIC_ACCESS_TOKEN`, and `INHERITED_SESSION`. Values are case-insensitive. A connection that uses any other method is refused. |
+| `auth.accounts` | `object` | Optional per-account overrides. Each key is an account pattern and each value is `{ "allowedMethods": [...] }`. This selects the methods for an account that `tenant.allowedAccounts` already permits; it doesn’t permit additional accounts. |
+| `cli`, `desktop` | `object` | Optional per-application overrides. Each can contain `tenant`, `auth`, `required`, and `enabled`, and replaces the shared top-level value for that application only. |
+
+Expand
+
+Show lessSee more
+
+### `sql`
+
+Sets whether the built-in SQL tool starts in read-only mode.
+
+Copy code
+
+```
+{
+  "sql": {
+    "defaultMode": "read-only",
+    "lockMode": true
+  }
+}
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `defaultMode` | `"read-only"` or `"write"` | Mode for new sessions. In read-only mode, CoCo sets the `CORTEX_CLIENT_READ_ONLY` session parameter, which rejects any statement other than `SELECT`, `EXPLAIN`, `SHOW`, and `DESCRIBE`. If omitted, sessions start in write mode. |
+| `lockMode` | `boolean` | When `true`, users can’t change the mode with `/sql-readonly`. Requires `defaultMode` to be set. |
+
+Expand
+
+Show lessSee more
+
+#### Related Snowflake parameters
+
+- `CORTEX_CLIENT_READ_ONLY` is a Snowflake session parameter, not an environment variable. After it’s set to `TRUE` for a session, it can’t be set back to `FALSE`.
+- `CORTEX_MCP_SERVER_FORCE_SQL_EXEC_READ_ONLY` is a Snowflake account parameter (default `FALSE`). When `TRUE`, the SQL execution tool of Snowflake-managed MCP servers is always read-only, overriding the account default and any per-tool `read_only` setting. It doesn’t change CoCo’s own SQL tool; use `sql.defaultMode` and `sql.lockMode` for that.
 
 ## Permission patterns
 

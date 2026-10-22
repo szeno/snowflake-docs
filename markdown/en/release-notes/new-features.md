@@ -53,12 +53,16 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 ## Recent feature updates
 
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
+- [Oct 23, 2026: Retrieve Cortex Search (Public Preview)](/release-notes/2026/other/2026-10-23-cortex-search-retrieve-preview)
+- [October 21, 2026: Declarative Feature Store (General availability)](/release-notes/2026/other/2026-10-21-declarative-feature-store-ga)
 - [Oct 20, 2026: dbt Projects on Snowflake updates](/release-notes/2026/other/2026-10-20-dbt-projects-on-snowflake-updates)
+- [October 20, 2026: Recompact Iceberg table data after target file size increases](/release-notes/2026/other/2026-10-20-iceberg-target-file-size-recompact)
 - [October 20, 2026: Online Feature Store (General availability)](/release-notes/2026/other/2026-10-20-online-feature-store-ga)
 - [Oct 20, 2026: Sensitive Data Entitlement and Access reports (General availability)](/release-notes/2026/other/2026-10-20-sensitive-data-entitlement-access-reports-ga)
 - [Oct 20, 2026: Snowflake-provided tags (General availability)](/release-notes/2026/other/2026-10-20-snowflake-provided-tags-ga)
 - [Snowflake ML Python (v2.6.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Oct 19, 2026: Cortex Tools for Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-10-19-cortex-ai-gateway-tools)
+- [SnowSQL (v1.5.3)](/release-notes/clients-drivers/snowsql-2026)
+- [Oct 19, 2026: Tools for Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-10-19-cortex-ai-gateway-tools)
 - [Oct 19, 2026: Schema variables (General availability)](/release-notes/2026/other/2026-10-19-schema-variables-ga)
 - [SQLAlchemy (v2.0.0)](/release-notes/clients-drivers/sqlalchemy-2026)
 - [Oct 16, 2026: Cortex AI Gateway on Azure, Google Cloud, and AWS New Zealand](/release-notes/2026/other/2026-10-16-cortex-ai-gateway-regions)
@@ -71,7 +75,6 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
 - [ODBC Driver (v4.1.0)](/release-notes/clients-drivers/odbc-2026)
 - [Python Connector (v5.0.0)](/release-notes/clients-drivers/python-connector-2026)
-- [October 14, 2026: Centralized event sharing for Snowflake Native Apps — General Availability](/release-notes/2026/other/2026-10-14-centralized-event-sharing-ga)
 - [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
 - [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Oct 13, 2026: CoCo Desktop v1.21.7](/release-notes/2026/other/2026-10-13-coco-desktop-v1-21-7)
@@ -142,11 +145,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)
 - [Sep 23, 2026: Account posture reporting in the Trust Center (Preview)](/release-notes/2026/other/2026-09-23-trust-center-account-posture-preview)
 - [Sep 22, 2026: Improved data freshness for selected ORGANIZATION\_USAGE history views](/release-notes/2026/other/2026-09-22-organization-usage-history-views-latency)
-- [September 21, 2026: Cortex AI Function Evaluation for measuring quality (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-evaluation-preview)
-- [September 21, 2026: Cortex AI Function Optimization for more efficient AI implementations (Public Preview)](/release-notes/2026/other/2026-09-21-ai-function-optimization-preview)
-- [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
-- [Sep 21, 2026: Lineage preservation through temporary tables and views (General availability)](/release-notes/2026/other/2026-09-21-lineage-temporary-objects)
-- [Python Connector (v4.7.5)](/release-notes/clients-drivers/python-connector-2026)
-- [Snowflake ML Python (v2.2.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

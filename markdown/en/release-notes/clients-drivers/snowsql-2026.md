@@ -12,6 +12,17 @@ For release note information for versions released prior to January 2022, see th
 
 See [SnowSQL (CLI client)](/user-guide/snowsql) for documentation.
 
+## Version 1.5.3 (Oct 20, 2026)
+
+### New features and updates
+
+- Upgraded `snowflake-connector-python` to 4.8.0.
+- Upgraded the bundled Python version to 3.12 for Linux and macOS.
+
+### Bug fixes
+
+- None.
+
 ## Version 1.5.2 (Sep 10, 2026)
 
 ### New features and updates

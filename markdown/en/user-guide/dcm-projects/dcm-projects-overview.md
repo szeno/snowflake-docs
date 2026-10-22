@@ -36,7 +36,7 @@ You can work with DCM Projects using Snowsight Workspaces, Snowflake CLI in your
 commands, or an automated CI/CD pipeline. For a comparison of these interfaces, setup instructions, and a diagram of how they fit
 into a typical development-to-production workflow, see
 [Interface tools](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-interface-tools) in
-[Deploy and manage DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
+[Create and deploy DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
 
 ## How to get started
 
@@ -51,7 +51,7 @@ You can get started with a DCM project in one of the following ways. Cortex Code
   the migration stored procedure or Cortex Code skill. See [Migrating existing objects to DCM Projects](#label-dcm-projects-migrate)
   below.
 
-For setup instructions and interface-specific steps, see [Deploy and manage DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
+For setup instructions and interface-specific steps, see [Create and deploy DCM Projects](/user-guide/dcm-projects/dcm-projects-use).
 
 ### Try the quickstart
 
@@ -137,7 +137,16 @@ Warehouse size doesn’t affect the latency of DCM Projects execution. An X-Smal
 
 ### Project size and performance
 
-The execution time for DCM Projects operations like PLAN and DEPLOY depends heavily on the size and shape of the project definitions. Complex dependency graphs, such as grants on dynamic tables calling functions to read from views that join external source tables, affect performance more than simply having a large number of independent tables. For large projects with 1,000+ entities, PLAN or DEPLOY can take 10 minutes or more. Consolidating definitions into fewer files generally shows faster execution times for PLAN and DEPLOY commands.
+Note
+
+The execution time of PLAN and DEPLOY depends on both the size and the shape of the project definitions. The dependency depth across
+objects, grants, and attachments can affect execution time more than the number of defined or modified entities alone. For example,
+grants on dynamic tables that call functions to read from views that join external source tables take longer to evaluate than a large
+number of independent tables.
+
+As a reference point, PLAN or DEPLOY for projects with 1,000+ entities can take 10 minutes or more. A smaller project with deep
+dependencies can take longer than a larger project with mostly independent entities. Consolidating definitions into fewer files generally
+shows faster execution times for PLAN and DEPLOY commands.
 
 Currently, DCM Projects supports up to 10,000 defined entities, grants, or attachments per project, with a maximum total size of 30 MB. This 30 MB limit applies to both the sum of all source files and the rendered definition files. In some cases, exceeding these limits can cause executions to fail due to timeouts.
 

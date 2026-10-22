@@ -228,7 +228,7 @@ ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) UNSET
 `UNSET DCM PROJECT`
 
 > Detaches the function from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the function and the DCM project without dropping the function. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-detach-object) for more information.
+> The command removes the association between the function and the DCM project without dropping the function. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ### User-defined functions
 

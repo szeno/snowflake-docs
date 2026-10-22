@@ -2,6 +2,8 @@
 
 At Snowflake, maintaining **trust and safety across the Marketplace** is a top priority. All public profiles, listings, and underlying data products are subject to review processes designed to uphold security, integrity, and compliance standards.
 
+## Review processes
+
 1. **Content metadata**
 
    1. **Profiles**
@@ -34,7 +36,7 @@ At Snowflake, maintaining **trust and safety across the Marketplace** is a top p
 
 If Providers and Consumers are unable to come to a resolution on a dispute regarding a product, they may file a case with Snowflake Marketplace Operations.
 
-Use these forms to file your dispute:
+Use these options to file your dispute:
 
-- Provider dispute against a Consumer: <https://snowforce.my.site.com/s/provider-onboarding-case>
-- Consumer dispute against a Provider: <https://snowforce.my.site.com/s/consumer-reporting>
+- **Provider dispute against a Consumer**: Use the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
+- **Consumer dispute against a Provider**: Use the [consumer reporting form](https://snowforce.my.site.com/s/consumer-reporting).

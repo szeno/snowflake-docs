@@ -489,7 +489,7 @@ Do not specify copy options using the CREATE STAGE, ALTER STAGE, CREATE TABLE, o
 `UNSET DCM PROJECT`
 
 > Detaches the table from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the table and the DCM project without dropping the table. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-detach-object) for more information.
+> The command removes the association between the table and the DCM project without dropping the table. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Clustering actions (`clusteringAction`)
 

@@ -150,6 +150,10 @@ examples of common transformation shapes, and
 [Advanced feature engineering](/developer-guide/snowflake-ml/feature-store/advanced-feature-engineering)
 for time-windowed aggregation and other production patterns.
 
+To define and deploy your feature store as version-controlled spec files instead of
+imperative Python, see
+[Declarative feature store overview](/developer-guide/snowflake-ml/feature-store/feature-development-lifecycle).
+
 Note
 
 These quickstarts are only shown as examples. Following along with the example may require additional rights to third-party data,

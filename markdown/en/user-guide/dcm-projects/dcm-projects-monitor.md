@@ -2,42 +2,6 @@
 
 This topic describes how to monitor DCM deployments and troubleshoot failing DCM plans.
 
-## Troubleshoot a DCM project
-
-If you are unfamiliar with the DCM project, you might run into errors from misconfigurations or other common pitfalls. This section
-describes those errors and how to resolve them.
-
-### Common causes for errors
-
-The following table lists common causes for errors in a DCM project execution:
-
-| Error category | Common causes |
-| --- | --- |
-| Secondary roles | - DCM PLAN and DEPLOY always execute using only the primary role’s privileges, regardless of whether the session has secondary roles active. - A DDL statement that succeeds when run manually may fail in DCM PLAN if the manual run relied on privileges from a secondary role that DCM doesn’t use. |
-| Insufficient role privileges | - Insufficient role privileges to create defined object types - Insufficient role privileges to alter or drop existing objects that are now owned by another role - Insufficient role privileges to use system DMFs - Insufficient role privileges to run a warehouse to refresh a dynamic table at creation |
-| Jinja rendering issues | - Jinja rendering issues from incorrect Jinja syntax - Jinja rendering issues from value-type mismatches |
-| Project issues | - Incorrect manifest path - Empty definition folders - Outdated definition files on the wrong repo branch - Objects that are already deployed by another DCM project - Mismatched project and object references |
-
-Expand
-
-Show lessSee more
-
-### Recommended troubleshooting steps
-
-Follow these steps to troubleshoot and debug a DCM project.
-
-| Step | Details |
-| --- | --- |
-| Set secondary roles to none | - DCM always executes with the primary role only. If a DDL statement works when you run it manually but fails in DCM PLAN or DEPLOY, you may be relying on privileges from a secondary role without realizing it. - To reproduce the exact privilege context that DCM uses, run `USE SECONDARY ROLES NONE;` before testing the statement manually. If the statement fails, the primary role is missing a required privilege. - For service users running DCM in CI/CD pipelines, secondary roles are typically not active, so this is also important for ensuring consistent behavior across environments. |
-| Use error messages from PLAN | - See if the error message refers to a specific file and line number. - Review the code in the specified line of the source file. - Optionally, open the corresponding rendered output file from the `out/plan/sources/definitions` folder. |
-| Narrow down | - Run PLAN on the project with only an empty SQL file in the definitions folder to confirm that project privileges and settings are correct. - Gradually add definition files back to the project. |
-| Change the client | - If the CI/CD workflow fails, try running the same CLI commands locally. - If the local CLI commands fail, try running them in Workspaces. - Run `snow connection test` to check the account, role, and user. |
-| Use Cortex Code for AI-assisted debugging | - Start Cortex Code with the DCM skill and describe the error. - Cortex Code can read plan output, diagnose Jinja rendering issues, identify privilege gaps, and suggest fixes. - Especially useful for complex Jinja templating errors and dependency resolution issues. |
-
-Expand
-
-Show lessSee more
-
 ## Observe and audit DCM project deployments
 
 DCM Projects are designed to provide full transparency and audit trails for all changes to your account infrastructure. This requires you to follow
@@ -220,3 +184,39 @@ snow logs dcm_project DCM_DEMO.PROJECTS.DCM_PROJECT_DEV \
 2. Select the **Logs** tab.
 3. Select the appropriate event table.
 4. Filter by the project’s parent database or schema.
+
+## Troubleshoot a DCM project
+
+If you are unfamiliar with the DCM project, you might run into errors from misconfigurations or other common pitfalls. This section
+describes those errors and how to resolve them.
+
+### Common causes for errors
+
+The following table lists common causes for errors in a DCM project execution:
+
+| Error category | Common causes |
+| --- | --- |
+| Secondary roles | - DCM PLAN and DEPLOY always execute using only the primary role’s privileges, regardless of whether the session has secondary roles active. - A DDL statement that succeeds when run manually may fail in DCM PLAN if the manual run relied on privileges from a secondary role that DCM doesn’t use. |
+| Insufficient role privileges | - Insufficient role privileges to create defined object types - Insufficient role privileges to alter or drop existing objects that are now owned by another role - Insufficient role privileges to use system DMFs - Insufficient role privileges to run a warehouse to refresh a dynamic table at creation |
+| Jinja rendering issues | - Jinja rendering issues from incorrect Jinja syntax - Jinja rendering issues from value-type mismatches |
+| Project issues | - Incorrect manifest path - Empty definition folders - Outdated definition files on the wrong repo branch - Objects that are already deployed by another DCM project - Mismatched project and object references |
+
+Expand
+
+Show lessSee more
+
+### Recommended troubleshooting steps
+
+Follow these steps to troubleshoot and debug a DCM project.
+
+| Step | Details |
+| --- | --- |
+| Set secondary roles to none | - DCM always executes with the primary role only. If a DDL statement works when you run it manually but fails in DCM PLAN or DEPLOY, you may be relying on privileges from a secondary role without realizing it. - To reproduce the exact privilege context that DCM uses, run `USE SECONDARY ROLES NONE;` before testing the statement manually. If the statement fails, the primary role is missing a required privilege. - For service users running DCM in CI/CD pipelines, secondary roles are typically not active, so this is also important for ensuring consistent behavior across environments. |
+| Use error messages from PLAN | - See if the error message refers to a specific file and line number. - Review the code in the specified line of the source file. - Optionally, open the corresponding rendered output file from the `out/plan/sources/definitions` folder. |
+| Narrow down | - Run PLAN on the project with only an empty SQL file in the definitions folder to confirm that project privileges and settings are correct. - Gradually add definition files back to the project. |
+| Change the client | - If the CI/CD workflow fails, try running the same CLI commands locally. - If the local CLI commands fail, try running them in Workspaces. - Run `snow connection test` to check the account, role, and user. |
+| Use Cortex Code for AI-assisted debugging | - Start Cortex Code with the DCM skill and describe the error. - Cortex Code can read plan output, diagnose Jinja rendering issues, identify privilege gaps, and suggest fixes. - Especially useful for complex Jinja templating errors and dependency resolution issues. |
+
+Expand
+
+Show lessSee more

@@ -2,9 +2,9 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools. Provider-side setup can also require administrator permissions in the third-party service.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. Provider-side setup can also require administrator permissions in the third-party service.
 
 Server setup can include instance-specific configuration values, provider-side permissions, and OAuth application or service-account credentials. Check both sections below: a server with no required configuration fields can still need setup in the third-party service.
 
@@ -58,7 +58,7 @@ Show lessSee more
 
 1. Sign in to Snowsight.
 2. Select **AI & ML** > **AI Gateway**.
-3. Select **MCP & Tools**. Cortex Tools opens in a new tab.
+3. Select **MCP & Tools**. Tools opens in a new tab.
 4. Find the server you want to configure.
 5. Enter the required value or values, then save.
 
@@ -69,7 +69,7 @@ The Snowflake MCP server exposes Cortex Search, Cortex Analyst, and SQL executio
 1. Follow [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) to create an MCP server object and grant access to the tools it exposes.
 2. Follow [Snowflake OAuth for custom clients](/user-guide/oauth-custom) to configure an OAuth client. Set its redirect URI to `https://identity.snowflake.com/oauth2/callback`.
 3. Collect the account URL, database, schema, and MCP server name. Securely retrieve the OAuth client ID and client secret.
-4. Enter these values for the Snowflake server in Cortex Tools.
+4. Enter these values for the Snowflake server in Tools.
 5. Have users authorize with a Snowflake account and role that can use the configured MCP server and its tools.
 
 ## Provider setup and OAuth applications
@@ -97,7 +97,7 @@ Users need access to the Asana workspaces they want to connect. If you supply yo
 1. Open the [Asana developer console](https://app.asana.com/0/my-apps) and create an **MCP app**.
 2. Add `https://identity.snowflake.com/oauth2/callback` under **OAuth** > **Redirect URLs**.
 3. Under **Manage distribution**, choose the workspaces where the application can be used. If you restrict distribution to specific workspaces, add at least one.
-4. Securely copy the client ID and client secret into the Asana server configuration in Cortex Tools.
+4. Securely copy the client ID and client secret into the Asana server configuration in Tools.
 
 See [Integrating with Asana’s MCP Server](https://developers.asana.com/docs/integrating-with-asanas-mcp-server) for application requirements. If a user can’t authorize, check that the app’s distribution includes their workspace.
 
@@ -105,7 +105,7 @@ See [Integrating with Asana’s MCP Server](https://developers.asana.com/docs/in
 
 An Okta administrator must configure the app integration; granting Okta API scopes to the app requires the **Super Admin** role. Supply your Okta organization domain as `oktaDomain`.
 
-For a custom OAuth client, follow [Implement OAuth for Okta](https://developer.okta.com/docs/guides/implement-oauth-for-okta/main/) to create an OIDC web application for user authorization. Register `https://identity.snowflake.com/oauth2/callback`, assign the intended users, and grant the required Okta API scopes. Enter the client ID and client secret in Cortex Tools.
+For a custom OAuth client, follow [Implement OAuth for Okta](https://developer.okta.com/docs/guides/implement-oauth-for-okta/main/) to create an OIDC web application for user authorization. Register `https://identity.snowflake.com/oauth2/callback`, assign the intended users, and grant the required Okta API scopes. Enter the client ID and client secret in Tools.
 
 For read-only operations, grant the relevant read scopes, such as `okta.users.read`, `okta.groups.read`, `okta.apps.read`, `okta.policies.read`, or `okta.logs.read`. Grant the corresponding management scopes only for tools that need to change resources. The authorizing user’s Okta permissions also constrain access.
 
@@ -305,7 +305,7 @@ Use a Wiz account with the **Project Admin** or **Global Admin** role. This conn
 Wrike uses an authorization-code flow. When you supply your own OAuth client, register an app using the steps below. Users authorize their own connections whether you use a preconfigured client or your own. See [Wrike OAuth 2.0](https://developers.wrike.com/oauth-20-authorization/) for the provider’s registration and authorization requirements.
 
 1. In Wrike, select your profile image > **Apps & Integrations** > **API** > **+ App**. You can also open the [Wrike App Console](https://www.wrike.com/appconsole.htm#/api).
-2. Enter an app name, such as `Cortex Tools`.
+2. Enter an app name, such as `Tools`.
 3. Set **Redirect URI** to `https://identity.snowflake.com/oauth2/callback` and save the app.
 4. Securely copy the **Client ID** and **Client Secret** from the app configuration and enter them for the Wrike connection in Cortex AI Gateway.
 5. Request only the scopes required by the tools you plan to use. Wrike scopes are case-sensitive.

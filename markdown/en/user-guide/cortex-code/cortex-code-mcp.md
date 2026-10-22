@@ -4,7 +4,7 @@ CoCo CLI implements the [Model Context Protocol (MCP)](https://modelcontextproto
 
 This topic covers how to add and manage MCP servers, the full configuration schema, credential handling, and administrator controls.
 
-For servers enabled by your administrator in Cortex Tools, CoCo CLI discovers the servers automatically when your account role has access to the server and has been granted the `SNOWFLAKE$OPS.MCP$USER` database role. Enter `/mcp` and find these servers in the **Managed** list. Complete any required user authorization. See [Connect to an enabled Cortex Tools server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client#label-gateway-tools-first-party-clients) for the connection workflow; you don’t need to manually add these servers with `cortex mcp add`.
+For servers enabled by your administrator in Tools, CoCo CLI discovers the servers automatically when your account role has access to the server and has been granted the `SNOWFLAKE$OPS.MCP$USER` database role. Enter `/mcp` and find these servers in the **Managed** list. Complete any required user authorization. See [Connect to an enabled Tools server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client#label-gateway-tools-first-party-clients) for the connection workflow; you don’t need to manually add these servers with `cortex mcp add`.
 
 ## Transport types
 

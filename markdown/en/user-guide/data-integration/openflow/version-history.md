@@ -6,6 +6,73 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 20, 2026
+
+### Runtime Server 2026.10.20.2
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.10.20.12
+
+- CDC SQL Server: Added a Source setting to the gen 2 connector for reading source tables under snapshot isolation. The setting applies to snapshot and change tracking reads as appropriate for the selected capture mode and is disabled by default.
+- Salesforce: Fixed an issue where a formula that Snowflake cannot run prevented the whole formula view of an object from being created. Only that formula now appears as an empty (`NULL`) column, with a column comment starting with `SNOWFLAKE_COMPILE_ERROR` and a warning naming the field and reason.
+- Salesforce: Fixed an issue where formula views were not created when formulas did arithmetic on date or date/time fields. Number formulas are now rounded to the decimal places configured in Salesforce, date/time subtraction now counts partial days, and formulas that Snowflake cannot calculate appear as empty columns instead of preventing the view from being created.
+- Salesforce: Fixed an issue where formula fields that contain comments appeared as empty columns in formula views, and added support for the `TIMEVALUE`, `MFLOOR`, and `MCEILING` functions. Unsupported functions are now reported clearly instead of as a syntax error, and `FLOOR` and `CEILING` now round negative numbers as Salesforce does.
+- Salesforce: Fixed an issue where formula views were not created when the Destination Database or Destination Schema was configured in lowercase.
+- LinkedIn Ads: Updated the connector to LinkedIn Marketing API version 202610. Since October 16, 2026, every report run failed with `Requested version 20250301 is not active` (HTTP 426) because LinkedIn retired the previous version. After upgrading, reports load again and data missed during the outage is fetched automatically on the next run, so do not change the report’s start date, metrics, pivots, or facets to recover.
+- CDC Oracle: Fixed an issue where source tables with no primary or unique key produced a malformed `MERGE` that was retried indefinitely without the table ever being marked failed. These tables now fail cleanly.
+- CDC PostgreSQL: Fixed an issue where `CaptureChangePostgreSQL` did not yield on errors that cause a reconnect. The processor now yields for 90 seconds, letting PostgreSQL drop the dormant `walsender` process left by the broken connection.
+- CDC PostgreSQL: Increased the threshold for treating a replication stream as silent from 10 minutes to 6 hours, avoiding disconnects on instances running large transactions.
+- CDC PostgreSQL: The gen 2 connector wizard now reports when all replication slots are in use before the connector is deployed, and accepts an existing compatible slot for that connector.
+- CDC MySQL: Tagged GTIDs (MySQL 8.3 and later) are now replicated instead of stopping replication.
+- CDC MySQL: With GTID position tracking, the connector now retries when it cannot read or save its starting position on first start. Previously it could re-read all retained binary log history instead of starting from the latest position.
+- CDC Databases: CDC processors now consistently log permanent replication failures, such as failed tables, invalid configuration, and unrecoverable source errors, at `ERROR` instead of `WARN`.
+
+### Connectors 2026.10.20.12
+
+- Salesforce Bulk API 1.17.0: Fixed an issue where, with Object Identifier Resolution set to case-sensitive and a lowercase Destination Schema, Snowpipe Streaming wrote to the upper-cased schema while tables were created in the lowercase schema. The flow now references the resolved schema consistently.
+- CDC SQL Server (change data capture) 0.52.0: Added the Error Handling Strategy to the change data capture connector. **Fail Table** (default) marks the table failed when Snowflake rejects a row; **Log Errors and Continue** skips invalid rows and keeps replicating.
+- CDC SQL Server (change data capture) 0.52.0: Captured changes now carry the minimum commit time per FlowFile, enabling commit-latency metrics for the connector.
+- CDC SQL Server (change tracking) 0.59.0: Removed the Snowpipe Streaming version switch and the Snowpipe Streaming v1 upload path, so only Snowpipe Streaming v2 is used. The upgrade is rejected if any removed queue still contains FlowFiles. Before upgrading, stop `Switch Snowpipe Streaming Version` in **Perform Snapshot Load** and **Incremental Load** and wait for the queues after it to empty.
+
+### Control Plane Core 0.137.0
+
+- Openflow Endpoints is now generally available. External systems can push data into Openflow over a stable HTTPS URL, covering webhooks, OpenTelemetry, app events, and logs.
+- Fixed an issue where scheduled connectors could remain stopped indefinitely when the last status report expired before the scheduled resume time, or when a manual stop permanently blocked future scheduled resumes.
+- Deployment upgrade errors now surface the actual error instead of a generic unknown error message.
+
+### Data Plane Service 0.137.0
+
+- Fixed an issue where a runtime upgrade could time out if horizontal pod autoscaling reduced the replica count mid-upgrade, because the upgrade workflow waited for a stale target node count that could never be reached.
+- Fixed an issue where scheduled connectors could remain stopped indefinitely when the last status report expired before the scheduled resume time, or when a manual stop permanently blocked future scheduled resumes.
+
+### Control Plane UI 0.96.0
+
+- Added multi-database CDC connector UI.
+- Dependent properties are now hidden on connector details pages for a cleaner view.
+- The Installed Connectors page now supports name and runtime filters.
+- Stateless Process Groups can now buffer FlowFile content in memory.
+- Troubleshooting mode is now required for empty queue and clear state operations.
+- Clearing component state now requires confirmation.
+
+### Data Plane UI 0.26.0
+
+- Security patches and dependency upgrades.
+
+### Runtime Operator 0.83.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.70.0
+
+- Fixed a provisioning failure that misconfigured the network load balancer when a create operation retried after an initial timeout or failure.
+- Fixed token refresh cronjob permissions to allow it to run regularly in the background and provide redundant image pull secret refresh.
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.53.0
+
+- Security patches and dependency upgrades.
+
 ## October 15, 2026
 
 ### Runtime Server 2026.10.15.2
@@ -223,6 +290,7 @@ Show entries for:DeploymentRuntime / ConnectorControl Plane
 - CDC Oracle: Added a client-side ROWID chunking strategy for read-only databases and very large bigfile tablespaces where Oracle’s parallel-execute chunking procedure cannot be used.
 - Schema evolution: When a removed non-nullable column is renamed, dropped the `NOT NULL` constraint so later inserts and merges don’t fail with `NULL result in a non-nullable column`.
 - CDC MySQL and PostgreSQL: Blocked gen 1 to gen 2 migration until Re-snapshot Table Exclusions is blank. Permanently excluded tables must be removed from Included Table Names or Included Table Regex.
+- Google Ads: Updated Google Ads API version in GetGoogleAdsReport from v22 to v25.
 
 ## September 22, 2026
 

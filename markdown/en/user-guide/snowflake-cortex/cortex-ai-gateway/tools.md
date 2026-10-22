@@ -1,12 +1,12 @@
-# Cortex Tools
+# Tools
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Cortex Tools, a part of Cortex AI Gateway, connects the AI clients your organization uses to the business tools your work already lives in, using the Model Context Protocol (MCP). Cortex Tools works with any agent that supports MCP, including CoCo (CLI and Desktop), ChatGPT, Claude, Cursor, and more.
+Tools is a capability of Cortex AI Gateway that connects AI clients to the business tools your organization already uses through the Model Context Protocol (MCP). Tools works with any agent that supports MCP, including CoCo (CLI and Desktop), ChatGPT, Claude, Cursor, and more.
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools. Administrators enable servers and configure access. End users connect to enabled servers and complete any required authorization with the third-party service.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. Administrators enable servers and configure access. End users connect to enabled servers and complete any required authorization with the third-party service.
 
 ## Get started
 
@@ -15,7 +15,7 @@ Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in
 
 ## What you can do
 
-| Task | Who it’s for |
+| Task | Who this is for |
 | --- | --- |
 | [Browse available MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers) | Administrator and end user |
 | [Distributing access to MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) | Administrator |
@@ -31,11 +31,11 @@ Show lessSee more
 
 ## Regional availability
 
-Cortex Tools has the same regional availability as Cortex AI Gateway: at Public Preview it’s available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Tools is available in Public Preview to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 ## Related MCP features
 
-Cortex Tools connects your AI clients outward to third-party business tools. If instead you want to expose data in your Snowflake account to an AI client, see [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp).
+Tools connects your AI clients outward to third-party business tools. If instead you want to expose data in your Snowflake account to an AI client, see [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp).
 
 ## Next step
 

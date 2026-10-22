@@ -2,9 +2,9 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-As an administrator, you enable MCP servers in Cortex Tools and configure which account roles can access them. Users complete any required authorization with the third-party service.
+As an administrator, you enable MCP servers in Tools and configure which account roles can access them. Users complete any required authorization with the third-party service.
 
 With the required role grants in place, enabling a server makes it discoverable to CoCo Desktop and CLI users.
 
@@ -12,7 +12,7 @@ For a list of all available servers and their authentication requirements, see [
 
 ## Administrator requirement
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools. This requirement applies to server configuration, enablement, and access management. It is separate from the role grants that end users need to connect to a server.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. This requirement applies to server configuration, enablement, and access management. It is separate from the role grants that end users need to connect to a server.
 
 ## Grant access for automatic client configuration
 
@@ -23,7 +23,7 @@ This database-role grant is required in addition to access to the individual MCP
 ## Enable an MCP server
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**. Cortex Tools opens in a new tab.
+2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**. Tools opens in a new tab.
 3. Find the MCP server you want to make available to your users.
 4. Complete any [provider-specific setup](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
 5. Enable the server.

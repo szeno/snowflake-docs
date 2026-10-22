@@ -38,4 +38,4 @@ You can request cancellation of a consumer invoice directly from the invoices ta
 The cancellation process depends on the invoice amount:
 
 - **Under $33,000 USD**: Snowflake processes the cancellation directly. It usually completes within 30 minutes.
-- **$33,000 USD or more**: The dialog directs you to open a [provider onboarding case](https://snowforce.my.site.com/s/provider-onboarding-case). The Snowflake internal team reviews and processes your cancellation request.
+- **$33,000 USD or more**: The dialog directs you to use the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege. The Snowflake internal team reviews and processes your cancellation request.

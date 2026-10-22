@@ -104,8 +104,6 @@ why it matters, see [Limitations](#label-mysql-gtid-limitations).
   tracking.
 - GTID tracking is available for the gen 1 connector only. See the
   [connector generation requirement](/user-guide/data-integration/openflow/connectors/mysql/gtid#label-mysql-gtid-generation) at the top of this page.
-- The connector doesn’t support tagged GTIDs, which MySQL 8.3 and later can produce in the form
-  `<uuid>:<tag>:1-5`. Don’t assign tags to transactions on a source that the connector replicates.
 - The connector doesn’t support out-of-order transactions. When a multithreaded replica runs with
   `replica_preserve_commit_order` set to `OFF`, it can commit transactions in a different order than
   they appear in its relay log, which MySQL calls gaps in the sequence of executed transactions. The

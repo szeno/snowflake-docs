@@ -144,7 +144,7 @@ ALTER TASK [ IF EXISTS ] <name> REMOVE WHEN
 `UNSET DCM PROJECT`
 
 > Detaches the task from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the task and the DCM project without dropping the task. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-detach-object) for more information.
+> The command removes the association between the task and the DCM project without dropping the task. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 `sql`
 :   Specifies the SQL code to execute when the task runs:

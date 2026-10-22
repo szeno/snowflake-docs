@@ -1,6 +1,6 @@
 # Data metric functions
 
-Snowflake provides built-in system data metric functions to measure data quality for tables and views:
+Snowflake provides more than 185 built-in system data metric functions to measure data quality for tables and views:
 
 - [ACCEPTED\_VALUES (system data metric function)](/sql-reference/functions/dmf_accepted_values)
 - [ACCURACY (system data metric function)](/sql-reference/functions/dmf_accuracy)

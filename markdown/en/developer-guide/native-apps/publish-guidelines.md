@@ -184,7 +184,7 @@ First-time Connected Application providers must meet the [requirements above](#l
 
 ### Connected Application listing enablement on Snowflake Marketplace
 
-Complete the following steps to verify eligibility against the [requirements to publish a Connected Application on Snowflake Marketplace](#label-guidelines-reqs-connected-apps-publish) and enable your account for listing. Steps 1–3 are submitted through the SPN portal. After submission, Snowflake reviews your inputs and follows up within 10 business days. Reach out to your Partner Development Manager (PDM) for questions, or [submit a case with Marketplace Operations](https://snowforce.my.site.com/s/provider-onboarding-case) for support.
+Complete the following steps to verify eligibility against the [requirements to publish a Connected Application on Snowflake Marketplace](#label-guidelines-reqs-connected-apps-publish) and enable your account for listing. Steps 1–3 are submitted through the SPN portal. After submission, Snowflake reviews your inputs and follows up within 10 business days. Reach out to your Partner Development Manager (PDM) for questions. If you do not have a PDM, use the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
 
 1. **Be an active SPN partner.** Enroll at the **Connected Application Select** tier designation or higher within the AI Data Cloud Products Partner Program.
 

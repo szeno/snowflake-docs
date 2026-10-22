@@ -333,6 +333,15 @@ ALTER NETWORK POLICY example_network_policy ADD ALLOWED_NETWORK_RULE_LIST = (
 );
 ```
 
+To allow a custom role to use the Snowflake-managed network rules in the `SNOWFLAKE.NETWORK_SECURITY`
+schema, grant the role the `SNOWFLAKE.NETWORK_SECURITY_ADMIN` application role:
+
+Copy code
+
+```
+GRANT APPLICATION ROLE SNOWFLAKE.NETWORK_SECURITY_ADMIN TO ROLE custom_role;
+```
+
 ### Snowflake-managed egress network rules
 
 Snowflake provides the following pre-defined, Snowflake-managed egress network rule:

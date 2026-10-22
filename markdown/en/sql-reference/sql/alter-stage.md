@@ -206,7 +206,7 @@ ALTER STAGE [ IF EXISTS ] <name> REFRESH [ SUBPATH = '<relative-path>' ]
 `UNSET DCM PROJECT`
 
 > Detaches the stage from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the stage and the DCM project without dropping the stage. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-detach-object) for more information.
+> The command removes the association between the stage and the DCM project without dropping the stage. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 > `FILE_FORMAT = ( FORMAT_NAME = 'file_format_name' )` or `FILE_FORMAT = ( TYPE = CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM [ ... ] )`
 > :   Modifies the file format for the stage, which can be either:

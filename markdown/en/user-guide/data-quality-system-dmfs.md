@@ -10,7 +10,7 @@ of [data quality checks](/user-guide/data-quality-intro).
 
 ## About system DMFs
 
-Snowflake provides system DMFs in the CORE schema of the shared [SNOWFLAKE database](/sql-reference/snowflake-db). System DMFs are
+Snowflake provides more than 185 system DMFs in the CORE schema of the shared [SNOWFLAKE database](/sql-reference/snowflake-db). System DMFs are
 maintained by Snowflake; you cannot change the name or functionality of any system DMF.
 
 Each system DMF enables you to measure a different data quality attribute. You can assign more than one system DMF to a table or view to
@@ -29,7 +29,7 @@ scheduled evaluation time; a value of 0 means that no data arrived.
 
 ## System DMFs
 
-Currently, Snowflake supports these system DMFs to measure common metrics without having to define them:
+Snowflake supports more than 185 system DMFs to measure common metrics without having to define them:
 
 | Category | System DMF | Description |
 | --- | --- | --- |

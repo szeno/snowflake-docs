@@ -20,7 +20,7 @@ Failure to do so may result in enforcement actions, up to and including suspensi
 - Refunds must be authorized and initiated by the Provider.
 - Snowflake will not get involved in cases where a chargeback was initiated with the card issuer.
 
-Providers can initiate a refund using [this form](https://snowforce.my.site.com/s/provider-onboarding-case).
+Providers can request a refund by using the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
 
 ## Filing a dispute with Snowflake
 
@@ -32,10 +32,10 @@ The Case must include:
 - All relevant information and evidence including: account information, listing information, billing periods, and documentation of the policy or terms violation.
 - A record of your communications with the other party.
 
-Use the below forms to file your dispute:
+Use the following options to file your dispute:
 
-- [Provider dispute against a Consumer](https://snowforce.my.site.com/s/provider-onboarding-case)
-- [Consumer dispute against a Provider](https://snowforce.my.site.com/s/consumer-reporting)
+- **Provider dispute against a Consumer**: Use the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
+- **Consumer dispute against a Provider**: Use the [consumer reporting form](https://snowforce.my.site.com/s/consumer-reporting).
 
 ## Enforcement actions
 
@@ -52,7 +52,7 @@ All enforcement actions are applied in accordance with the Provider and Consumer
 ## Appeals process
 
 Providers who believe that an enforcement action (for example, suspension, or removal) was made in error or warrants reconsideration may submit an
-appeal by filing a Case via the [Snowflake Marketplace Case Form](https://snowforce.my.site.com/s/provider-onboarding-case).
+appeal by using the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
 
 The appeal must include:
 

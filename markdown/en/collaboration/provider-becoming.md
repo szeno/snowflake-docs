@@ -122,14 +122,16 @@ To publish paid listings to consumers privately or on the Snowflake Marketplace,
 
 1. Make sure that your account is eligible to provide paid listings. See [Who can provide paid listings](#label-monetization-provider-region-support).
 2. Before creating a paid listing that you want to publish on the Snowflake Marketplace, contact your business development partner at Snowflake.
-   If you do not have a business development partner, [submit a case with Marketplace Operations](https://snowforce.my.site.com/s/provider-onboarding-case). This step is required for listing
-   approval.
+   If you do not have a business development partner, use the **Contact Marketplace Operations** button in
+   [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING
+   privilege. This step is required for listing approval.
 3. Set up a payout method to get paid for listings. See [Set up Stripe to get paid for listings](#label-set-up-stripe-listings).
 
 Note
 
-If you are a commercial reseller (VAR) that wants to offer paid listings, use this form to [submit a case with Marketplace Operations](https://snowforce.my.site.com/s/provider-onboarding-case).
-You only need to file one case to cover both purchasing and offering listings.
+If you are a commercial reseller (VAR) that wants to offer paid listings, use the **Contact Marketplace Operations** button in
+[Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
+You only need to submit one request to cover both purchasing and offering listings.
 
 ### Who can provide paid listings
 

@@ -2,13 +2,13 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-As an administrator, you can connect any MCP server not already in the catalog by providing its URL. This is useful for internal tools, custom integrations, or servers that aren’t yet listed in the Cortex Tools catalog.
+As an administrator, you can connect any MCP server not already in the catalog by providing its URL. This is useful for internal tools, custom integrations, or servers that aren’t yet listed in the Tools catalog.
 
 ## Requirements
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools, including adding custom servers.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools, including adding custom servers.
 
 The server must:
 
@@ -19,7 +19,7 @@ The server must:
 
 1. Sign in to Snowsight.
 2. Select **AI & ML** > **AI Gateway**.
-3. Select **MCP & Tools**. Cortex Tools opens in a new tab.
+3. Select **MCP & Tools**. Tools opens in a new tab.
 4. Select **Add app** > **Remote URL**.
 5. Enter the server URL. The URL must end with `/mcp`.
 6. Enter an app name.

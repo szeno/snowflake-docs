@@ -2,13 +2,13 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Cortex Tools records tool-call activity in your Snowflake account. Use the `AGENT_TRACE_TABLE` table function to review these traces. For how to query traces and the access requirements, see [Cortex AI Gateway observability](/user-guide/snowflake-cortex/cortex-ai-gateway/observability).
+Tools records tool-call activity in your Snowflake account. Use the `AGENT_TRACE_TABLE` table function to review these traces. For how to query traces and the access requirements, see [Cortex AI Gateway observability](/user-guide/snowflake-cortex/cortex-ai-gateway/observability).
 
-You can also use the Activity catalog to review tool-call activity for AI clients connected through Cortex Tools.
+You can also use the Activity catalog to review tool-call activity for AI clients connected through Tools.
 
-## View activity in Cortex Tools
+## View activity in Tools
 
 1. Sign in to Snowsight.
 2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**.
@@ -22,7 +22,7 @@ The Dashboard tab provides a high-level summary of AI activity in your organizat
 
 - Which apps are installed
 - The total number of tool calls made
-- Any AI access discovered outside of Cortex Tools
+- Any AI access discovered outside of Tools
 
 Use this tab for a quick overview of adoption and usage patterns.
 

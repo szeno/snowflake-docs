@@ -57,7 +57,7 @@ ALTER ROLE [ IF EXISTS ] <name> UNSET DCM PROJECT
 `UNSET DCM PROJECT`
 
 > Detaches the role from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the role and the DCM project without dropping the role. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-detach-object) for more information.
+> The command removes the association between the role and the DCM project without dropping the role. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Usage notes
 

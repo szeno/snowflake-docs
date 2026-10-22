@@ -1,11 +1,10 @@
-# Oct 19, 2026: Cortex Tools for Cortex AI Gateway (*Preview*)
+# Oct 19, 2026: Tools for Cortex AI Gateway (*Preview*)
 
-We are pleased to announce the preview of Cortex Tools, a part of Cortex AI Gateway that connects the AI
-clients your organization uses to the business tools your work already lives in, using the Model
-Context Protocol (MCP). Supported clients include CoCo Desktop, CoCo CLI,
-Claude, and Cursor.
+We are pleased to announce the preview of Tools for Cortex AI Gateway, which connects AI clients
+to the business tools your organization already uses through the Model Context Protocol (MCP).
+Supported clients include CoCo Desktop, CoCo CLI, Claude, and Cursor.
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools.
 As an administrator, you control which MCP servers your users can reach, which tools each server
 exposes, and review tool-call activity.
 
@@ -32,4 +31,4 @@ With this preview, you can:
 To get started, sign in to Snowsight and select **AI & ML** > **AI Gateway** >
 **MCP & Tools**.
 
-For more information, see [Cortex Tools](/user-guide/snowflake-cortex/cortex-ai-gateway/tools).
+For more information, see [Tools](/user-guide/snowflake-cortex/cortex-ai-gateway/tools).

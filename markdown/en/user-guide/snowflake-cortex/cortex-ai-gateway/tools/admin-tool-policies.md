@@ -2,11 +2,11 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 As an administrator, you control which tools each MCP server exposes to your users’ AI clients. Configuring tool availability lets you limit what AI can do with a given server. For example, you can allow read-only tools while keeping write or delete tools unavailable.
 
-When a user’s AI client connects to an MCP server through Cortex Tools, it only receives the tools you’ve enabled. Tools that aren’t enabled are not visible to the client and can’t be invoked.
+When a user’s AI client connects to an MCP server through Tools, it only receives the tools you’ve enabled. Tools that aren’t enabled are not visible to the client and can’t be invoked.
 
 Note
 
@@ -14,7 +14,7 @@ If you don’t configure tool availability for an app, all tools are available b
 
 ## Configure available tools
 
-Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools, including configuring tool availability.
+Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools, including configuring tool availability.
 
 1. Sign in to Snowsight.
 2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**.

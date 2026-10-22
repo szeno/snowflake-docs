@@ -263,7 +263,8 @@ To ensure a seamless transition for your high-priority clients, consider impleme
 Note
 
 Before you create and publish a paid listing on Snowflake Marketplace, contact your business development partner at Snowflake.
-If you do not have a business development partner, [submit a case with Marketplace Operations](https://snowforce.my.site.com/s/provider-onboarding-case).
+If you do not have a business development partner, use the **Contact Marketplace Operations** button in
+[Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
 This step is required for listing approval.
 
 To publish data, Snowflake Native Apps, or Connected Apps on Snowflake Marketplace, your role must have the required privileges to create a listing. See [Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares). For how public free, public paid, public connected, Snowflake Native App, and dataset listings differ, see [Listing types](#label-listing-types-overview).

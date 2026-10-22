@@ -2,15 +2,15 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Cortex Tools provides the following MCP servers. Select a server in the table for its connection details and any setup it requires.
+Tools provides the following MCP servers. Select a server in the table for its connection details and any setup it requires.
 
 To add a server that isn’t listed here, see [Adding a custom MCP server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-custom-apps).
 
 ## Connecting to a server
 
-Before you can connect to any of these servers, an administrator must enable it for your organization. Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Cortex Tools. See [Distributing access to MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections).
+Before you can connect to any of these servers, an administrator must enable it for your organization. Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. See [Distributing access to MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections).
 
 When a user access to a role that has been granted the `SNOWFLAKE$OPS.MCP$USER` database role, MCP servers they can access are automatically discoverable in CoCo Desktop and CLI. Users must still authorize the servers before they can be used by any agent.
 
@@ -191,7 +191,7 @@ Show lessSee more
 
 Review the [Apollo GraphQL setup guidance](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup#label-gateway-tools-oauth-apollo) with the administrator of your graph before connecting. Don’t use Apollo.io sales-platform registration instructions for this server.
 
-For more information, see [Apollo GraphQL deployment and authorization](https://www.apollographql.com/docs/apollo-mcp-server). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Apollo GraphQL deployment and authorization](https://www.apollographql.com/docs/apollo-mcp-server). For connection steps specific to Tools, use the workflow above.
 
 ## Asana
 
@@ -214,7 +214,7 @@ Use an account with access to the Asana resources you want the AI client to use.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Asana MCP setup](https://developers.asana.com/docs/integrating-with-asanas-mcp-server). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Asana MCP setup](https://developers.asana.com/docs/integrating-with-asanas-mcp-server). For connection steps specific to Tools, use the workflow above.
 
 ## Ashby
 
@@ -262,7 +262,7 @@ Use an account with access to the Atlassian resources you want the AI client to 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Atlassian connector capabilities](https://docs.natoma.ai/apps/atlassian-remote). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Atlassian connector capabilities](https://docs.natoma.ai/apps/atlassian-remote). For connection steps specific to Tools, use the workflow above.
 
 ## Avalara Dev Documentation
 
@@ -402,7 +402,7 @@ Use an account with access to the Box resources you want the AI client to use. R
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Box connector capabilities](https://docs.natoma.ai/apps/box). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Box connector capabilities](https://docs.natoma.ai/apps/box). For connection steps specific to Tools, use the workflow above.
 
 ## Buildkite
 
@@ -671,7 +671,7 @@ Use an account with access to the Fireflies.ai resources you want the AI client 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Fireflies.ai connector capabilities](https://docs.natoma.ai/apps/fireflies). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Fireflies.ai connector capabilities](https://docs.natoma.ai/apps/fireflies). For connection steps specific to Tools, use the workflow above.
 
 ## GitHub
 
@@ -1042,7 +1042,7 @@ Use an account with access to the Linear resources you want the AI client to use
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Linear connector capabilities](https://docs.natoma.ai/apps/linear). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Linear connector capabilities](https://docs.natoma.ai/apps/linear). For connection steps specific to Tools, use the workflow above.
 
 ## Linx
 
@@ -1064,7 +1064,7 @@ Use an account with access to the Linx resources you want the AI client to use. 
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Linx Security connector capabilities](https://docs.natoma.ai/apps/linx). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Linx Security connector capabilities](https://docs.natoma.ai/apps/linx). For connection steps specific to Tools, use the workflow above.
 
 ## Lucid
 
@@ -1304,7 +1304,7 @@ Use an account with access to the Monday.com resources you want the AI client to
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Monday.com MCP servers](https://developer.monday.com/apps/docs/mcp-servers). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Monday.com MCP servers](https://developer.monday.com/apps/docs/mcp-servers). For connection steps specific to Tools, use the workflow above.
 
 ## Neon
 
@@ -1366,7 +1366,7 @@ Use an account with access to the Notion resources you want the AI client to use
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Notion connector capabilities](https://docs.natoma.ai/apps/notion). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Notion connector capabilities](https://docs.natoma.ai/apps/notion). For connection steps specific to Tools, use the workflow above.
 
 ## Okta (Cortex)
 
@@ -1700,7 +1700,7 @@ Use an account with access to the Stripe resources you want the AI client to use
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Stripe connector capabilities](https://docs.natoma.ai/apps/stripe). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Stripe connector capabilities](https://docs.natoma.ai/apps/stripe). For connection steps specific to Tools, use the workflow above.
 
 ## Torii
 
@@ -1722,7 +1722,7 @@ Use an account with access to the Torii resources you want the AI client to use.
 
 When connecting, complete the provider’s authorization flow and review the requested permissions. If consent is blocked, ask the provider administrator to check application approval and the authorizing account’s access.
 
-For more information, see [Torii MCP capabilities and permissions](https://developers.toriihq.com/docs/connect-claude-to-torii). For connection steps specific to Cortex Tools, use the workflow above.
+For more information, see [Torii MCP capabilities and permissions](https://developers.toriihq.com/docs/connect-claude-to-torii). For connection steps specific to Tools, use the workflow above.
 
 ## Upwind
 

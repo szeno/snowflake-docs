@@ -114,8 +114,8 @@ To reshare data to consumers in other regions, listing auto-fulfillment must be 
 includes a `warehouse` field that you must specify when resharing across regions. This field can be omitted when resharing within the
 same region.
 
-Resharing data cross-region requires a local copy of the data for further replication downstream. Snowflake automatically creates dynamic
-tables to manage this. The warehouse you specify is used to create and refresh these dynamic tables.
+Resharing data cross-region requires a local copy of the data for further replication downstream. Snowflake creates hidden dynamic tables
+to manage this copy only for resharing in `RESHARER` mode. The warehouse you specify is used to create and refresh the dynamic tables.
 
 Copy code
 
@@ -125,7 +125,56 @@ auto_fulfillment:
 ```
 
 You can use the [SYSTEM$SHOW\_DYNAMIC\_TABLES\_CREATED\_FOR\_RESHARING](/sql-reference/functions/system_show_dynamic_tables_created_for_resharing) system function to view the dynamic tables created for
-resharing.
+resharing. To see whether auto-fulfillment has replicated the listing to a target region, and to view refresh errors, see
+[Check whether auto-fulfillment reached a region](#label-resharing-refresh-history).
+
+In `RESHARER` mode, Snowflake creates the hidden dynamic tables automatically for each reshared view granted to the share, including views
+that you add to the share later. You don’t need to create them yourself.
+
+### Privileges required for cross-region resharing
+
+In `RESHARER` mode, Snowflake creates the hidden dynamic tables by running tasks using the role that owns the secure view in your share.
+The view owner role must have both of the following privileges on the account:
+
+- EXECUTE TASK
+- EXECUTE MANAGED TASK
+
+Both privileges are required. If the role is missing either one, Snowflake can’t create the hidden dynamic tables, and the listing isn’t
+fulfilled to remote regions. For more information about these privileges, see [Task security](/user-guide/tasks-intro#label-task-security-reqs).
+
+The following example grants both privileges to the role that owns the secure view. Run these statements with the ACCOUNTADMIN role:
+
+Copy code
+
+```
+GRANT EXECUTE TASK ON ACCOUNT TO ROLE my_view_owner_role;
+GRANT EXECUTE MANAGED TASK ON ACCOUNT TO ROLE my_view_owner_role;
+```
+
+Alternatively, transfer ownership of the secure view to a role that already has both privileges.
+
+If Snowflake couldn’t create the hidden dynamic tables initially because of missing privileges, it retries automatically after you grant
+the privileges. You don’t need to recreate the secure view, the share, or the listing.
+
+### How data is materialized in RESHARER mode
+
+When the provider’s listing uses the default `RESHARER` enforcement mode, the hidden dynamic tables materialize the provider’s data as your
+account sees it. Context functions such as [CURRENT\_ACCOUNT](/sql-reference/functions/current_account) in the provider’s secure views or
+governance policies resolve in your account’s context, not in the context of your consumers. As a result, consumers in remote regions see
+the rows that your account can see.
+
+If the provider needs each downstream consumer to see only the rows that the consumer is entitled to, the provider must use
+`reshare_policy_enforcement: CALLER`. For more information, see
+[Configuring policy enforcement mode](/collaboration/resharing-as-provider#label-resharing-policy-enforcement-mode).
+
+### Cross-region resharing in CALLER mode
+
+When the provider’s listing uses `reshare_policy_enforcement: CALLER`, Snowflake doesn’t create hidden dynamic tables in your account.
+Instead, the provider’s data must be available in the remote region so that the provider’s policies can be evaluated in the context of
+whoever queries the reshared data.
+
+To make the provider’s data available in the remote region, Snowflake replicates the provider’s listing to that region by using
+Cross-Cloud Auto-Fulfillment. This replication is in addition to the auto-fulfillment of your reshared listing.
 
 ## Enabling further resharing by your consumers
 
@@ -144,3 +193,57 @@ provider to resolve the issue. This error can occur when:
 To confirm whether resharing is currently enabled for the imported database, check the `resharing_settings` column in the output of
 SHOW DATABASES, or in Snowsight verify that **Reshare** is **Allowed**. For detailed steps, see
 [Verify that an imported database allows resharing](#verify-that-an-imported-database-allows-resharing).
+
+### Consumers in a remote region can’t query a reshared view
+
+If you reshare across regions and consumers in the remote region can’t query a reshared view, check whether Snowflake has created the
+hidden dynamic tables for that view:
+
+Copy code
+
+```
+SELECT SYSTEM$SHOW_DYNAMIC_TABLES_CREATED_FOR_RESHARING('my_db.my_schema.my_view');
+```
+
+- If no dynamic tables are returned, confirm that the role that owns the secure view has both the EXECUTE TASK and EXECUTE MANAGED TASK
+  privileges. For details, see [Privileges required for cross-region resharing](#label-resharing-cross-region-privileges).
+- If the dynamic tables exist, confirm that auto-fulfillment replicated the listing to the consumer’s region. For details, see
+  [Check whether auto-fulfillment reached a region](#label-resharing-refresh-history). To start a refresh immediately, run
+  [SYSTEM$TRIGGER\_LISTING\_REFRESH](/sql-reference/functions/system_trigger_listing_refresh):
+
+  Copy code
+
+  ```
+  SELECT SYSTEM$TRIGGER_LISTING_REFRESH('LISTING', 'my_reshared_listing');
+  ```
+
+### Check whether auto-fulfillment reached a region
+
+Call [LISTING\_REFRESH\_HISTORY](/sql-reference/functions/listing_refresh_history) on your reshared listing to see whether auto-fulfillment
+replicated the data to a target region, and to see refresh errors. The function returns the past 14 days of refresh history for a listing
+in your account. You need any privilege on the listing.
+
+The following example returns the refresh history for one target region. Omit `SNOWFLAKE_REGION` to return every target region.
+
+Copy code
+
+```
+SELECT *
+  FROM TABLE(INFORMATION_SCHEMA.LISTING_REFRESH_HISTORY(
+    LISTING_NAME => 'my_reshared_listing',
+    SNOWFLAKE_REGION => 'AWS_US_EAST_1'));
+```
+
+Use these columns to tell whether replication finished:
+
+- `PHASE_NAME` is `COMPLETED` and `ERROR` is null: the refresh finished for that region, and the data is replicated there.
+- `ERROR` contains `errorCode` and `errorMessage`: the refresh failed. Those fields describe the failure.
+- `PHASE_NAME` is still an in-progress phase, such as `PRIMARY_UPLOADING_DATA` or `SECONDARY_DOWNLOADING_DATA`: auto-fulfillment hasn’t
+  finished for that region yet. `END_TIME` is also null while a phase is in progress.
+
+For the full list of phases, see the [usage notes](/sql-reference/functions/listing_refresh_history#label-listing-refresh-history-function-usage-notes).
+
+If the latest refresh failed or is still in progress, you can start a new refresh with
+[SYSTEM$TRIGGER\_LISTING\_REFRESH](/sql-reference/functions/system_trigger_listing_refresh). Snowflake also sends a daily email that
+summarizes failed listing refreshes to the email address specified on the listing. For more information, see
+[How do I find out if an auto-fulfillment refresh fails?](/collaboration/provider-listings-auto-fulfillment#label-auto-fulfillment-faqs).
