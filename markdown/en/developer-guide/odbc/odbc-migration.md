@@ -251,7 +251,7 @@ See [Connecting using the connections.toml file](/developer-guide/odbc/odbc-para
 | `SQL_SF_CONN_ATTR_PRIV_KEY` | Set `SQL_SF_CONN_ATTR_PRIV_KEY_CONTENT` or `SQL_SF_CONN_ATTR_PRIV_KEY_BASE64` with `SQLSetConnectAttr`, or use the `PRIV_KEY_FILE` DSN/connection-string keyword. |
 | `BROWSER_RESPONSE_TIMEOUT` | `AUTHENTICATION_TIMEOUT` |
 | `PUT_MAXRETRIES` / `GET_MAXRETRIES` | `PUT_GET_MAX_ATTEMPTS` (aliases still accepted, with an `01000` warning) |
-| `TRACING` | Ignored. Configure `LogLevel` and `LogPath` in `sf.odbc.ini`. |
+| `TRACING` | Ignored. Configure `LogLevel` and `LogPath` in `sf.odbc.ini`. Starting with version 4.2.0, a stored value posts SQLSTATE `01000` on connect. |
 | `DisableOCSPCheck` / `OCSP_FAIL_OPEN` | Accepted but ignored, with a deprecation warning. Configure [4.x CRL options](/developer-guide/odbc/odbc-parameters#label-odbc-crl-4x) instead. |
 
 Expand

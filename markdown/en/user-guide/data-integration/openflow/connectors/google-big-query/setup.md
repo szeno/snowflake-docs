@@ -23,26 +23,13 @@ This topic describes the steps to set up the Openflow Connector for Google BigQu
 
 ## Set up BigQuery
 
-1. Create a Google Cloud Service account and grant it the necessary permissions to read BigQuery data. The connector uses this account for authentication.
+1. Create a Google Cloud service account. The connector uses this account for authentication.
+2. Create a dataset for the connector’s temporary tables in the same location as your source datasets. The connector doesn’t create this dataset. You specify it in the **Temporary Table Dataset** parameter.
+3. Grant the service account the IAM roles listed in [IAM roles](#label-bq-iam-roles).
+4. Generate and download the corresponding JSON key file for the service account. You will need the full contents of this file for the connector’s configuration.
+5. Enable change history on each source table to allow the connector to perform incremental replication. This feature allows BigQuery to track row-level changes (inserts, updates, and deletes), which the connector uses to sync data efficiently.
 
-   This account must have the following permissions:
-
-   - [BigQuery User](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.user)
-   - [BigQuery Data Editor](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.dataEditor)
-
-> Important
->
-> `BigQuery Data Editor` must be granted at the **project level**, not at individual datasets.
-> The connector queries `{project}.{region}.INFORMATION_SCHEMA.TABLES` to discover tables
-> across all configured regions - a region-scoped view that requires project-level access. The
-> connector also queries `{project}.{dataset}.INFORMATION_SCHEMA.KEY_COLUMN_USAGE` to
-> determine primary keys for each replicated table. Without project-level access, the query
-> fails with a `Access Denied` error and the connector does not run correctly.
-
-1. Generate and download the corresponding JSON key file for the service account. You will need the full contents of this file for the connector’s configuration.
-2. Enable change history on each source table to allow the connector to perform incremental replication. This feature allows BigQuery to track row-level changes (inserts, updates, and deletes), which the connector uses to sync data efficiently.
-
-   Run the following query in the BigQuery console for each table:
+   Run the following query in the BigQuery console for each table. You need permission to update the table, such as `bigquery.tables.update`. The connector’s service account doesn’t need this permission.
 
    Copy code
 
@@ -50,6 +37,27 @@ This topic describes the steps to set up the Openflow Connector for Google BigQu
    ALTER TABLE `project.dataset.table`
    SET OPTIONS (enable_change_history = TRUE);
    ```
+
+## IAM roles
+
+Grant the service account the following [IAM roles](https://docs.cloud.google.com/bigquery/docs/access-control):
+
+| Scope | Role | Purpose |
+| --- | --- | --- |
+| Project | [BigQuery Job User](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.jobUser) (`roles/bigquery.jobUser`) | Run the queries that the connector issues. |
+| Project | [BigQuery Read Session User](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.readSessionUser) (`roles/bigquery.readSessionUser`) | Open BigQuery Storage Read API sessions to read table data. |
+| Project | [BigQuery Metadata Viewer](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.metadataViewer) (`roles/bigquery.metadataViewer`) | Discover tables with the region-level `INFORMATION_SCHEMA.TABLES` view. This role grants no access to table data. |
+| Each source dataset | [BigQuery Data Viewer](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.dataViewer) (`roles/bigquery.dataViewer`) | Read table data and change history, and query column and primary key metadata. |
+| Temporary table dataset | [BigQuery Data Editor](https://docs.cloud.google.com/bigquery/docs/access-control#bigquery.dataEditor) (`roles/bigquery.dataEditor`) | Create, read, and drop the journal tables and the temporary tables used for view ingestion. |
+
+Expand
+
+Show lessSee more
+
+Important
+
+- Grant BigQuery Data Viewer on every dataset that the connector replicates from. The connector doesn’t discover tables in datasets where the service account lacks this role.
+- To replicate a view, the service account must also be able to read the view’s underlying tables, or the view must be an [authorized view](https://docs.cloud.google.com/bigquery/docs/authorized-views).
 
 ## Set up your Snowflake account
 
@@ -151,7 +159,7 @@ This section describes the flow parameters that you can configure based on the f
 | Parameter | Description |
 | --- | --- |
 | BigQuery Project Name | The unique identifier of the Google Cloud Project that contains BigQuery datasets and tables.  Where to find: open BigQuery Studio (Google Cloud Console > BigQuery) and in the left Explorer pane hover over your project to see the Project ID.  **Example:** `example-team-gcp` |
-| GCP Service Account JSON | The entire content of the JSON key file for the Google Cloud Platform Service Account used for authentication. Ensure the service account has the necessary IAM permissions to perform BigQuery operations, such as the BigQuery Job User and BigQuery Data Viewer roles.  Where to get it: Google Cloud Console > IAM & Admin > Service Accounts > select the service account > Keys tab > Add key > Create new key > JSON. This downloads a .json file—open it and paste the entire file content (including braces) into this field. |
+| GCP Service Account JSON | The entire content of the JSON key file for the Google Cloud service account used for authentication. Ensure the service account has the IAM roles described in [IAM roles](#label-bq-iam-roles).  Where to get it: Google Cloud Console > IAM & Admin > Service Accounts > select the service account > Keys tab > Add key > Create new key > JSON. This downloads a .json file—open it and paste the entire file content (including braces) into this field. |
 
 Expand
 
@@ -187,7 +195,7 @@ Show lessSee more
 | Included View Names Regex | Regular expression for specifying view names to replicate across datasets. Combined with the Included View Names to include any matching view. Note: REGEXP expression should match Google’s RE2 syntax.  **Example:** `^report_.*` |
 | Incremental Sync Frequency | How often the connector runs incremental synchronization for each table. Runs do not overlap if a cycle takes longer than the configured interval, the next run waits for the prior one to finish. Because BigQuery limits max size of window to 24h, schedule must be more frequent than this value.  **Example:** `10m` |
 | View Sync Frequency | How often the connector runs synchronization for each view. Runs do not overlap, if a cycle takes longer than the configured interval, the next run waits for the prior one to finish. View ingestion does not support CDC, only truncate and load.  **Example:** `1h` |
-| Temporary Table Dataset | Dataset in which necessary temporary tables are created, such as CDC journal tables or temporary tables for view ingestion. Snowflake recommends having a separate dataset for temporary tables and not using the ingested dataset for this purpose.  **Example:** `openflow_temp` |
+| Temporary Table Dataset | Dataset in which necessary temporary tables are created, such as journal tables or temporary tables for view ingestion. The dataset must already exist in the same location as the source datasets, and the service account needs the BigQuery Data Editor role on it. See [IAM roles](#label-bq-iam-roles).  **Example:** `openflow_temp` |
 
 Expand
 

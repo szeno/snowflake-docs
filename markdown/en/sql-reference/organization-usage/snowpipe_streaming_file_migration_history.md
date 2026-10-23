@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -45,7 +41,7 @@ Show lessSee more
 | --- | --- | --- |
 | START\_TIME | TIMESTAMP\_LTZ | Start of the time (in the local time zone) range in which data migration took place. |
 | END\_TIME | TIMESTAMP\_LTZ | End of the time (in the local time zone) range in which data migration took place. |
-| CREDITS\_USED | FLOAT | Number of credits billed for Snowpipe Streaming data migration during the START\_TIME and END\_TIME window. |
+| CREDITS\_USED | NUMBER(38,9) | Number of credits billed for Snowpipe Streaming data migration during the START\_TIME and END\_TIME window. |
 | NUM\_BYTES\_MIGRATED | NUMBER | Number of bytes migrated during the START\_TIME and END\_TIME window. |
 | NUM\_ROWS\_MIGRATED | NUMBER | Number of rows migrated during the START\_TIME and END\_TIME window. |
 | TABLE\_ID | NUMBER | Internal/system-generated identifier for the target table that the Snowpipe Streaming client loads data into. |

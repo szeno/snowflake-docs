@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -49,14 +45,17 @@ Show lessSee more
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ID | NUMBER | Internal/system-generated identifier for the privacy policy. |
-| NAME | VARCHAR | Name of the privacy policy. |
-| SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema that contains the privacy policy. |
-| SCHEMA | VARCHAR | Schema that contains the privacy policy. |
-| DATABASE\_ID | NUMBER | Internal/system-generated identifier for the database that contains the privacy policy. |
-| DATABASE | VARCHAR | Database that contains the privacy policy. |
-| OWNER | VARCHAR | Name of the role that owns the privacy policy. |
-| COMMENT | VARCHAR | Comment for the privacy policy, if any. |
+| POLICY\_ID | NUMBER | Internal/system-generated identifier for the privacy policy. |
+| POLICY\_NAME | VARCHAR | Name of the privacy policy. |
+| POLICY\_SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema in which the policy resides. |
+| POLICY\_SCHEMA | VARCHAR | Schema that contains the privacy policy. |
+| POLICY\_CATALOG\_ID | NUMBER | Internal/system-generated identifier for the database in which the policy resides. |
+| POLICY\_CATALOG | VARCHAR | Database to which the privacy policy belongs. |
+| POLICY\_OWNER | VARCHAR | Name of the role that owns the privacy policy. |
+| POLICY\_SIGNATURE | VARCHAR | Type signature of the privacy policy’s arguments. |
+| POLICY\_RETURN\_TYPE | VARCHAR | Return value data type. |
+| POLICY\_BODY | VARCHAR | Privacy policy definition. |
+| POLICY\_COMMENT | VARIANT | Comments entered for the privacy policy (if any). |
 | CREATED | TIMESTAMP\_LTZ | Date and time when the privacy policy was created. |
 | LAST\_ALTERED | TIMESTAMP\_LTZ | Date and time when the privacy policy was last altered. |
 | DELETED | TIMESTAMP\_LTZ | Date and time when the privacy policy was dropped. |

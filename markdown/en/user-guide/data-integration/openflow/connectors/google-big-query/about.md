@@ -76,7 +76,7 @@ The view synchronization frequency is configured separately from table increment
 
 You can filter which views to replicate using the **Included View Names** and **Included View Names Regex** parameters. These filters apply across all datasets selected for replication.
 
-The connector creates temporary tables in BigQuery during view ingestion. Use the **Temporary Table Dataset** parameter to specify a dedicated dataset for these temporary tables. Snowflake recommends using a separate dataset for temporary tables and not using the ingested dataset for this purpose.
+The connector creates temporary tables and journal tables in BigQuery. Use the **Temporary Table Dataset** parameter to specify a dedicated dataset for them. See [Specify flow parameters](/user-guide/data-integration/openflow/connectors/google-big-query/setup#label-specify-bq-connector-flow-parameters) for the dataset requirements.
 
 ## Data type mapping
 
@@ -110,7 +110,7 @@ Show lessSee more
 
 The connector’s incremental sync functionality is built on [BigQuery’s native CHANGES function](https://cloud.google.com/bigquery/docs/reference/standard-sql/time-series-functions#changes). When you enable change history on a source table, BigQuery maintains an internal journal of all row-level modifications (inserts, updates, and deletes).
 
-The connector queries this journal on a configured incremental sync frequency schedule to retrieve a feed of changes. The connector materializes these changes into a journal table within the same BigQuery dataset. This journal table follows a consistent naming convention: `<sourceTableName>_<incremental_number>_<hash>_journal`
+The connector queries this journal on a configured incremental sync frequency schedule to retrieve a feed of changes. The connector materializes these changes into a journal table in the dataset specified by the **Temporary Table Dataset** parameter in [Specify flow parameters](/user-guide/data-integration/openflow/connectors/google-big-query/setup#label-specify-bq-connector-flow-parameters). This journal table follows a consistent naming convention: `<sourceTableName>_<incremental_number>_<hash>_journal`
 
 These journal tables are managed entirely by the connector during the replication process and are used to merge data into the final destination table in Snowflake.
 

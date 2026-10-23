@@ -72,10 +72,13 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
   ERROR_INTEGRATION = <integration_name>
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
+  READ_ONLY = TRUE
+
+ALTER FAILOVER GROUP [ IF EXISTS ] <name> SET
   TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> UNSET
-  { COMMENT | REPLICATION_SCHEDULE | OPTIMIZED_REFRESH | RPO_ASSURANCE | ERROR_INTEGRATION } [ , ... ]
+  { COMMENT | REPLICATION_SCHEDULE | OPTIMIZED_REFRESH | RPO_ASSURANCE | ERROR_INTEGRATION | READ_ONLY } [ , ... ]
 
 ALTER FAILOVER GROUP [ IF EXISTS ] <name> UNSET
   TAG <tag_name> [ , <tag_name> ... ]
@@ -408,6 +411,26 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> RESUME
     :   Specifies the name of the notification integration to use to email/push notifications when refresh errors occur for the failover
         group. For more details, see [Error notifications for replication and failover groups](/user-guide/account-replication-error-notifications).
 
+    `READ_ONLY = TRUE`
+    :   Puts the primary failover group into read-only mode. Use read-only mode to stop new writes to objects in the
+        failover group on the source account during a planned disaster recovery drill or account migration. For the
+        workflow, see [Quiesce a primary failover group](/user-guide/account-replication-quiesce-primary).
+
+        You can set this property on the primary failover group only. The active role needs the OWNERSHIP privilege or
+        the FAILOVER privilege on the failover group.
+
+        When read-only mode is set:
+
+        - New DDL and DML statements that target objects in the failover group fail.
+        - Tasks, pipes, and alerts whose database is in the failover group aren’t scheduled.
+        - Read operations (`SELECT`, `SHOW`, and `DESCRIBE`) continue to work.
+
+        To restore read-write mode without failing over, unset `READ_ONLY`. After you promote the failover group on
+        the target account, the source becomes a secondary and `read_only` is cleared.
+
+        Default:
+        :   `FALSE`
+
     `TAG tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ]`
     :   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
 
@@ -564,6 +587,7 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> RESUME
     - `OPTIMIZED_REFRESH`
     - `RPO_ASSURANCE`
     - `ERROR_INTEGRATION`
+    - `READ_ONLY`
     - `TAG tag_name [ , tag_name ... ]`
 
     You can reset multiple properties with a single ALTER statement; however, each property must be separated by
@@ -743,6 +767,22 @@ Copy code
 
 ```
 ALTER FAILOVER GROUP myfg UNSET RPO_ASSURANCE;
+```
+
+Put the primary failover group into read-only mode:
+
+Copy code
+
+```
+ALTER FAILOVER GROUP myfg SET READ_ONLY = TRUE;
+```
+
+Restore read-write mode without failing over:
+
+Copy code
+
+```
+ALTER FAILOVER GROUP myfg UNSET READ_ONLY;
 ```
 
 ### Executed from the target account

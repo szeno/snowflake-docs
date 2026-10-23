@@ -8,7 +8,7 @@ Get started with Cortex Search
 
 Cortex Search enables low-latency, high-quality “fuzzy” search over your Snowflake data.
 It powers a broad array of search experiences for Snowflake users
-including [Retrieval Augmented Generation (RAG)](https://en.wikipedia.org/wiki/Prompt_engineering#Retrieval-augmented_generation)
+including [Retrieval Augmented Generation (RAG)](https://www.snowflake.com/en/fundamentals/rag/)
 applications leveraging Large Language Models (LLMs).
 
 Cortex Search gets you up and running with a hybrid (vector and keyword) search engine on your text data in minutes, without having to

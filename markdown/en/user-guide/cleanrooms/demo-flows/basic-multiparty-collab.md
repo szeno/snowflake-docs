@@ -24,7 +24,7 @@ Here is a basic multi-party clean room collaboration scenario:
    collaboration YAML spec that lists the collaborators, their collaboration roles, and all resources that should be present in the initial
    version of the collaboration.
 
-   - The owner can request to add or remove collaborators and change collaborator roles after the collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a [preview feature](/release-notes/preview-features)). These changes take effect after the affected collaborators approve them.
+   - The owner can request to add or remove collaborators and change collaborator roles after the collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference). These changes take effect after the affected collaborators approve them.
    - Additional resources can be added by collaborators after the collaboration is created, if their collaboration role permits it.
    - If your collaboration shares data with users in other cloud hosting regions, the sharer must [enable Cross-Cloud Auto-Fulfillment on their account](/user-guide/cleanrooms/laf#label-dcr-collab-enabling-laf).
 4. Collaborators [review and join the collaboration](#label-dcr-collaboration-join-collaboration).

@@ -61,14 +61,18 @@ All the arguments are optional.
 
 ## Output
 
+The function returns one row per materialized view for each 1-hour window, within the queried date range, in which
+that view consumed refresh credits. A materialized view that had no refresh activity during a given hour doesn’t
+produce a row for that hour, so the absence of a row implies zero credits used, not zero reported as a value.
+
 The function returns the following columns:
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| START\_TIME | TIMESTAMP\_LTZ | Start of the specified time range. |
-| END\_TIME | TIMESTAMP\_LTZ | End of the specified time range. |
-| CREDITS\_USED | TEXT | Number of credits billed for materialized view maintenance during the START\_TIME and END\_TIME window. |
-| MATERIALIZED\_VIEW\_NAME | TEXT | Name of the materialized view. |
+| START\_TIME | TIMESTAMP\_LTZ | Start of the 1-hour window (see the Usage notes above) that this row’s credit usage is attributed to. This is a bucket boundary within the queried date range, not the DATE\_RANGE\_START argument. |
+| END\_TIME | TIMESTAMP\_LTZ | End of the 1-hour window that this row’s credit usage is attributed to. This is a bucket boundary within the queried date range, not the DATE\_RANGE\_END argument. |
+| CREDITS\_USED | TEXT | Number of credits billed for this materialized view’s maintenance during the START\_TIME and END\_TIME window. This value is per materialized view, per 1-hour window, and can be fractional. |
+| MATERIALIZED\_VIEW\_NAME | TEXT | Fully-qualified name (database.schema.view) of the materialized view. |
 
 Expand
 

@@ -8,7 +8,7 @@ Note
 Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
 
 Returns the location of dbt artifacts from the most recent successful
-execution of a dbt project object within the previous 7 days. You can import these artifacts into
+execution of a dbt project object within the previous 14 days. You can import these artifacts into
 another dbt project execution and use them with `--state`.
 
 ## Syntax
@@ -66,7 +66,7 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- The dbt project object must have completed a successful execution within the previous 7 days.
+- The dbt project object must have completed a successful execution within the previous 14 days.
 - Deployment-time auto compile doesn’t create dbt artifacts for this function. Complete a qualifying execution after deployment.
 - This function locates reusable dbt artifacts by dbt project object and is the typical system function for Slim CI.
   [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts) and

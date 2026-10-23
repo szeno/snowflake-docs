@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -51,8 +47,8 @@ Show lessSee more
 | DATABASE\_ID | NUMBER | Internal/system-generated identifier for the database that contains the table. |
 | DATABASE\_NAME | VARCHAR | Name of the database that contains the table. |
 | RESULT | VARIANT | Latest classification result. For a description of the JSON object, see the output of the [SYSTEM$GET\_CLASSIFICATION\_RESULT](/sql-reference/functions/system_get_classification_result) function. |
-| STATUS | VARCHAR | One of the following: `CLASSIFIED` or `REVIEWED`. |
-| TRIGGER\_TYPE | VARCHAR | Mode of the classification trigger: `MANUAL` or `AUTO CLASSIFICATION`, where `MANUAL` indicates that someone called a system function to initiate the classification process. |
+| STATUS | VARCHAR | One of the following: `CLASSIFIED`, `REVIEWED`, or `NOT_CLASSIFIED`. |
+| TRIGGER\_TYPE | VARCHAR | Mode of the classification trigger: `MANUAL` or `AUTO CLASSIFICATION`, where `MANUAL` indicates that someone called a system function to initiate the classification process. NULL if no classification result exists. |
 | LAST\_CLASSIFIED\_ON | TIMESTAMP\_LTZ | Time when the table was last successfully classified. |
 | LAST\_CLASSIFICATION\_ATTEMPT | TIMESTAMP\_LTZ | Timestamp of the last sensitive data classification attempt. If the value is greater than `LAST_CLASSIFIED_ON`, it indicates that the last sensitive data classification attempt resulted in a failure. |
 | ERROR\_MESSAGE | VARCHAR | Error message from the last sensitive data classification attempt, if it resulted in a failure. |

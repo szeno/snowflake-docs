@@ -32,6 +32,7 @@ Snowflake supports most SQL data types. The following table provides a summary o
 | [Unstructured data types](/sql-reference/data-types-unstructured) | FILE | See [Introduction to unstructured data](/user-guide/unstructured-intro). |
 | [Geospatial data types](/sql-reference/data-types-geospatial) | GEOGRAPHY |  |
 | GEOMETRY |  |
+| [IPADDRESS data type](/sql-reference/data-types-ipaddress) | IPADDRESS |  |
 | [UUID data type](/sql-reference/data-types-uuid) | UUID |  |
 | [Vector data types](/sql-reference/data-types-vector) | VECTOR |  |
 | [UNKNOWN data type](/sql-reference/data-types-unknown) | UNKNOWN | Iceberg v3 type used when a more specific column type isn’t known yet. Supported only in Iceberg tables. Has no storage and always reads as NULL. |

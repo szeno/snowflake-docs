@@ -34,8 +34,12 @@ You can’t upgrade the following tables:
 - Externally managed tables that use a native AWS Glue or object storage catalog source.
 - [Apache Iceberg™ tables created from Delta files](/sql-reference/sql/create-iceberg-table-delta) (Delta Direct).
 - [Parquet Direct tables](/user-guide/tables-iceberg-parquet-direct).
-- v2 tables with positional delete files, including tables that use merge-on-read with positional delete files for row-level deletes.
 - Snowflake-managed tables whose external volume doesn’t allow writes.
+
+If upgrading a supported v2 table is blocked by active position-delete files, the error message recommends running
+`ALTER ICEBERG TABLE <table_name> OPTIMIZE (REMOVE_POSITION_DELETES)` before retrying. For supported table types and limitations, see the
+[command reference](/sql-reference/sql/alter-iceberg-table-optimize). The command rewrites affected partitions using copy-on-write and
+clears active position-delete files for live data files after it succeeds.
 
 ## Upgrade a table to Iceberg v3
 
@@ -49,14 +53,33 @@ You can’t upgrade the following tables:
 
    The `value` column in the output is `2` for a v2 table. For other ways to check the version, see
    [Get the format version for Iceberg tables](/user-guide/tables-iceberg-v3-specification-support#label-tables-iceberg-get-format-version).
-2. Upgrade the table by using the [ALTER ICEBERG TABLE … UPGRADE TO ICEBERG VERSION 3](/sql-reference/sql/alter-iceberg-table) command:
+2. If the v2 table has active position-delete files, remove them before you upgrade by running the remediation recommended by the
+   upgrade error message. This step applies to both Snowflake-managed and externally managed tables:
+
+   Copy code
+
+   ```
+   ALTER ICEBERG TABLE my_v2_iceberg_table OPTIMIZE (REMOVE_POSITION_DELETES);
+   ```
+
+   Run this command and the upgrade command in the next step as separate statements:
+
+   Copy code
+
+   ```
+   ALTER ICEBERG TABLE my_v2_iceberg_table OPTIMIZE (REMOVE_POSITION_DELETES);
+   ALTER ICEBERG TABLE my_v2_iceberg_table UPGRADE TO ICEBERG VERSION 3;
+   ```
+
+   For supported table types and limitations, see the [command reference](/sql-reference/sql/alter-iceberg-table-optimize).
+3. Upgrade the table by using the [ALTER ICEBERG TABLE … UPGRADE TO ICEBERG VERSION 3](/sql-reference/sql/alter-iceberg-table) command:
 
    Copy code
 
    ```
    ALTER ICEBERG TABLE my_v2_iceberg_table UPGRADE TO ICEBERG VERSION 3;
    ```
-3. Verify the upgrade by running the SHOW PARAMETERS command again. The `value` column in the output is `3`.
+4. Verify the upgrade by running the SHOW PARAMETERS command again. The `value` column in the output is `3`.
 
 ## Test the upgrade on a clone
 

@@ -86,6 +86,7 @@ The command returns the following columns:
 | `is_listing_auto_fulfillment_group` | TRUE if the replication group is used for [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment). FALSE otherwise. |
 | `is_optimized_refresh_enabled` | TRUE if [Optimized Refresh](/user-guide/account-replication-optimized-refresh#label-optimized-refresh) is enabled for the failover group. FALSE otherwise. When TRUE, subsequent refreshes for the group run as Optimized Refresh; when FALSE, they run as Replication Classic unless [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance) is enabled. |
 | `rpo_assurance` | TRUE if [RPO Assurance](/user-guide/account-replication-optimized-refresh#label-rpo-assurance) is enabled for the failover group. FALSE otherwise. |
+| `read_only` | `TRUE` when the primary failover group is in read-only mode. `FALSE` when the primary failover group is in read-write mode. For how to set read-only mode, see [Quiesce a primary failover group](/user-guide/account-replication-quiesce-primary). |
 
 Expand
 

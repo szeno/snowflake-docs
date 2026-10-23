@@ -175,6 +175,7 @@ In macOS or Linux:
     Starting with version 4.1.0, each `SQLConnect`, `SQLDriverConnect`, and `SQLBrowseConnect` re-reads
     `LogLevel` and `LogPath` and applies any change before the connection proceeds. You do not need to restart the process.
     `DriverManagerEncoding` is still read once per process. `LogLevel`, `LogPath`, and `TRACING` in a DSN stay ignored.
+    Starting with version 4.2.0, `TRACING` in a DSN or connection string posts SQLSTATE `01000` on connect.
 
     In ODBC 3.x, use the following numeric values:
 
@@ -384,7 +385,7 @@ Beginning with Snowflake version 8.24, network administrators have the option to
 
     Note
 
-    ODBC 3.x only. ODBC 4.x ignores `TRACING` in a DSN or connection string. Configure `LogLevel` and `LogPath` in `sf.odbc.ini`. See [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
+    ODBC 3.x only. ODBC 4.x ignores `TRACING` in a DSN or connection string. Starting with version 4.2.0, a stored value posts SQLSTATE `01000` on connect, and the warning names `LogLevel` in `sf.odbc.ini`. Configure `LogLevel` and `LogPath` in `sf.odbc.ini`. See [Configuration differences](/developer-guide/odbc/odbc-migration#label-odbc-migration-config).
 
 `warehouse` (Warehouse)
 :   Specifies the default warehouse to use for sessions initiated by the driver.

@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -45,14 +41,17 @@ Show lessSee more
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ID | NUMBER | Internal/system-generated identifier for the aggregation policy. |
-| NAME | VARCHAR | Name of the aggregation policy. |
-| SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema that contains the aggregation policy. |
-| SCHEMA | VARCHAR | Schema that contains the aggregation policy. |
-| DATABASE\_ID | NUMBER | Internal/system-generated identifier for the database that contains the aggregation policy. |
-| DATABASE | VARCHAR | Database that contains the aggregation policy. |
-| OWNER | VARCHAR | Name of the role that owns the aggregation policy. |
-| COMMENT | VARCHAR | Comment for the aggregation policy, if any. |
+| POLICY\_ID | NUMBER | Internal/system-generated identifier for the aggregation policy. |
+| POLICY\_NAME | VARCHAR | Name of the aggregation policy. |
+| POLICY\_SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema in which the policy resides. |
+| POLICY\_SCHEMA | VARCHAR | Schema that contains the aggregation policy. |
+| POLICY\_CATALOG\_ID | NUMBER | Internal/system-generated identifier for the database in which the policy resides. |
+| POLICY\_CATALOG | VARCHAR | Database to which the aggregation policy belongs. |
+| POLICY\_OWNER | VARCHAR | Name of the role that owns the aggregation policy. |
+| POLICY\_SIGNATURE | VARCHAR | Type signature of the aggregation policy’s arguments. |
+| POLICY\_RETURN\_TYPE | VARCHAR | Return value data type. |
+| POLICY\_BODY | VARCHAR | Aggregation policy definition. |
+| POLICY\_COMMENT | VARIANT | Comments entered for the aggregation policy (if any). |
 | CREATED | TIMESTAMP\_LTZ | Date and time when the aggregation policy was created. |
 | LAST\_ALTERED | TIMESTAMP\_LTZ | Date and time when the aggregation policy was last altered. |
 | DELETED | TIMESTAMP\_LTZ | Date and time when the aggregation policy was dropped. |

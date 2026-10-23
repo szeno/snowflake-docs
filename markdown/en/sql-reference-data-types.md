@@ -36,6 +36,7 @@ For more information about Snowflake data types, see the following topics:
 - [Structured data types](/sql-reference/data-types-structured)
 - [Unstructured data types](/sql-reference/data-types-unstructured)
 - [Geospatial data types](/sql-reference/data-types-geospatial)
+- [IPADDRESS data type](/sql-reference/data-types-ipaddress)
 - [UUID data type](/sql-reference/data-types-uuid)
 - [Vector data types](/sql-reference/data-types-vector)
 - [User-defined types](/sql-reference/data-types-user-defined)

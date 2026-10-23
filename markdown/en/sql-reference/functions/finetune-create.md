@@ -8,7 +8,6 @@ Feature — Generally Available
 Support for this feature is available to accounts in the following regions:
 
 > - AWS US West 2 (Oregon)
-> - AWS US East 1 (N. Virginia)
 > - AWS Europe Central 1 (Frankfurt)
 > - Azure East US 2 (Virginia)
 

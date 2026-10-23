@@ -47,6 +47,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [DATABASE\_STORAGE\_USAGE\_HISTORY](/sql-reference/organization-usage/database_storage_usage_history) | Historical | 24 hours | Data retained for 1 year. |
 | [DATABASES](/sql-reference/organization-usage/databases) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [DYNAMIC\_TABLE\_REFRESH\_HISTORY](/sql-reference/organization-usage/dynamic_table_refresh_history) | Historical | 5 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
+| [EXTERNAL\_ACCESS\_HISTORY](/sql-reference/organization-usage/external_access_history) | Historical | under 3 hours | Data retained for 1 year. [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [FEATURE\_POLICIES](/sql-reference/organization-usage/feature_policies) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [FILE\_FORMATS](/sql-reference/organization-usage/file_formats) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [FUNCTIONS](/sql-reference/organization-usage/functions) | Object | under 3 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |

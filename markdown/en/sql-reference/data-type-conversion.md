@@ -195,6 +195,9 @@ For more information about conversions between [semi-structured types](/sql-refe
 | Interval data types |  |  |  |  |  |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-type-number) | ✔ | ❌ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | None. |
 |  | [VARCHAR](/sql-reference/data-types-text#label-character-datatypes) | ✔ | ✔ | [TO\_VARCHAR](/sql-reference/functions/to_char) | None. |
+| IPADDRESS |  |  |  |  |  |
+|  | [VARCHAR](/sql-reference/data-types-text#label-character-datatypes) | ✔ | ✔ | [TO\_VARCHAR](/sql-reference/functions/to_char) | None. |
+|  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ✔ | ✔ | [TO\_VARIANT](/sql-reference/functions/to_variant) | None. |
 | NUMBER[(p,s)]   *(Fixed-point numbers, including INTEGER)* |  |  |  |  |  |
 |  | [BOOLEAN](/sql-reference/data-types-logical) | ✔ | ✔ | [TO\_BOOLEAN](/sql-reference/functions/to_boolean) | For example, from `0` to `FALSE`. |
 |  | [DECFLOAT](/sql-reference/data-types-numeric#label-data-type-decfloat) | ✔ | ✔ | [TO\_DECFLOAT](/sql-reference/functions/to_decfloat) | None. |
@@ -223,6 +226,7 @@ For more information about conversions between [semi-structured types](/sql-refe
 |  | [DECFLOAT](/sql-reference/data-types-numeric#label-data-type-decfloat) | ✔ | ✔ | [TO\_DECFLOAT](/sql-reference/functions/to_decfloat) | None. |
 |  | [FLOAT](/sql-reference/data-types-numeric#label-data-types-for-floating-point-numbers) | ✔ | ✔ | [TO\_DOUBLE](/sql-reference/functions/to_double) | For example, from `'12.34'` to `12.34`. |
 |  | [Interval data types](/sql-reference/data-types-datetime#label-datatypes-interval-variations) | ✔ | ✔ | — | The VARCHAR value is parsed in the same way as an [interval literal](/sql-reference/data-types-datetime#label-interval-data-types-interval-literals). |
+|  | [IPADDRESS](/sql-reference/data-types-ipaddress) | ✔ | ✔ | [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) | None. |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-types-for-fixed-point-numbers) | ✔ | ✔ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | For example, from `'12.34'` to `12.34`. |
 |  | [PERIOD](/sql-reference/data-types-period) | ✔ | ❌ | — | Explicit cast only, and the target type must include an element type, for example `'[2023-03-25, 2026-07-09)'::PERIOD(DATE)`. A cast to bare `::PERIOD` is invalid. The VARCHAR value must use the canonical `[begin, end)` form. On INSERT, a matching string literal is coerced to the PERIOD column type. |
 |  | [TIME](/sql-reference/data-types-datetime#label-datatypes-time) | ✔ | ✔ | [TO\_TIME , TIME](/sql-reference/functions/to_time) | None. |
@@ -239,6 +243,7 @@ For more information about conversions between [semi-structured types](/sql-refe
 |  | [DECFLOAT](/sql-reference/data-types-numeric#label-data-type-decfloat) | ✔ | ❌ | [TO\_DECFLOAT](/sql-reference/functions/to_decfloat) | None. |
 |  | [FLOAT](/sql-reference/data-types-numeric#label-data-types-for-floating-point-numbers) | ✔ | ✔ | [TO\_DOUBLE](/sql-reference/functions/to_double) | None. |
 |  | [GEOGRAPHY](/sql-reference/data-types-geospatial) | ✔ | ❌ | [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) | None. |
+|  | [IPADDRESS](/sql-reference/data-types-ipaddress) | ✔ | ✔ | [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) | None. |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-types-for-fixed-point-numbers) | ✔ | ✔ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | None. |
 |  | [OBJECT](/sql-reference/data-types-semistructured#label-data-type-object) | ✔ | ✔ | [TO\_OBJECT](/sql-reference/functions/to_object) | None. |
 |  | [TIME](/sql-reference/data-types-datetime#label-datatypes-time) | ✔ | ✔ | [TO\_TIME , TIME](/sql-reference/functions/to_time) | None. |

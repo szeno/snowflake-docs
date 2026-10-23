@@ -25,7 +25,7 @@ The gateway endpoint takes this form:
 https://<account-host>/api/v2/aigateways/SNOWFLAKE
 ```
 
-Append the path for the API you’re calling, either `/v1/chat/completions` or `/v1/messages`. See
+Append the path for the API you’re calling: `/v1/chat/completions`, `/v1/messages`, or `/v1/responses`. See
 [Choose your API](#label-cortex-ai-gateway-choose-your-api).
 
 To get the endpoint for your account, use:
@@ -55,15 +55,15 @@ For attributing that spend to teams and users, and for capping it, see
 
 ## Choose your API
 
-The gateway supports two industry-standard API specifications. Pick the one your client requires:
+The gateway supports three industry-standard API specifications. Pick the one your client requires:
 
-|  | Chat Completions API | Messages API |
-| --- | --- | --- |
-| Compatibility | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) |
-| Path | `/v1/chat/completions` | `/v1/messages` |
-| Supported models | All models except Claude (OpenAI, Grok, Llama, Mistral, DeepSeek, Snowflake) | Claude models only |
-| SDK support | OpenAI Python and JavaScript SDKs | Anthropic Python SDK |
-| Best for | Most clients and use cases | Existing Anthropic integrations |
+|  | Chat Completions API | Messages API | Responses API (preview) |
+| --- | --- | --- | --- |
+| Compatibility | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) | [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses/create) |
+| Path | `/v1/chat/completions` | `/v1/messages` | `/v1/responses` |
+| Supported models | All models except Claude (OpenAI, Grok, Llama, Mistral, DeepSeek, Snowflake) | Claude models only | OpenAI models only |
+| SDK support | OpenAI Python and JavaScript SDKs | Anthropic Python SDK | OpenAI Python and JavaScript SDKs |
+| Best for | Most clients and use cases | Existing Anthropic integrations | Clients that only speak the Responses API |
 
 Expand
 
@@ -71,8 +71,9 @@ Show lessSee more
 
 Note
 
-The OpenAI Responses API (`/v1/responses`) is coming soon to the gateway and not supported yet. If a client offers a choice of API
-format, choose Chat Completions or Messages.
+The Responses API is in [public preview](/release-notes/preview-features). It doesn’t keep conversation state, so
+clients must send the full conversation with each request. For other limitations, see
+[Limitations](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-rest-api-responses-limitations).
 
 ## Prerequisites
 
@@ -107,7 +108,7 @@ Authorization: Bearer <token>
 
 ## Quickstart
 
-OpenAI PythonOpenAI JavaScriptAnthropic Pythoncurl
+OpenAI PythonOpenAI JavaScriptAnthropic PythonOpenAI Python (Responses)curl
 
 Copy code
 
@@ -189,6 +190,25 @@ The base URL omits the trailing `/v1`, because the Anthropic SDK appends `/v1/me
 Copy code
 
 ```
+from openai import OpenAI
+
+client = OpenAI(
+  api_key="<SNOWFLAKE_PAT>",
+  base_url="<gateway-endpoint>/v1"
+)
+
+response = client.responses.create(
+  model="openai-gpt-5.6-sol",
+  input="How does a snowflake get its unique pattern?",
+  store=False,
+)
+
+print(response.output_text)
+```
+
+Copy code
+
+```
 curl "<gateway-endpoint>/v1/chat/completions" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $SNOWFLAKE_TOKEN" \
@@ -202,7 +222,7 @@ curl "<gateway-endpoint>/v1/chat/completions" \
 
 ## Supported features
 
-The gateway exposes the same Chat Completions and Messages surfaces as Cortex Inference, so request
+The gateway exposes the same Chat Completions, Messages, and Responses surfaces as Cortex Inference, so request
 and response fields, and the features built on them, behave the same way. See the Cortex Inference
 documentation for instructions on:
 
@@ -220,7 +240,9 @@ documentation for instructions on:
   [Thinking and reasoning](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-rest-api-thinking-reasoning).
 
 For the complete field-level request and response reference, see
-[Cortex Inference](/user-guide/snowflake-cortex/cortex-rest-api).
+[Cortex Inference](/user-guide/snowflake-cortex/cortex-rest-api). For the fields and features the Responses
+API supports, see
+[Responses API reference](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-rest-api-responses-reference).
 
 ## Instrument a coding agent
 
@@ -312,7 +334,7 @@ Where:
 
 #### Other clients
 
-Any client that lets you set a custom base URL and bearer token, and connects using either the **Chat Completions API** or **Messages API** can use the gateway. Set the base URL
+Any client that lets you set a custom base URL and bearer token, and connects using the **Chat Completions API**, **Messages API**, or **Responses API** can use the gateway. Set the base URL
 according to the API format the client uses, as described in [Gateway endpoint](#label-cortex-ai-gateway-url-format),
 and supply your token as the bearer token. See [Setting up authentication](#label-cortex-ai-gateway-authentication).
 

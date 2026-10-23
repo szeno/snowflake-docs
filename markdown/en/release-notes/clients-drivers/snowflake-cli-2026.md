@@ -8,6 +8,43 @@ This article contains the release notes for the Snowflake CLI, including the fol
 
 See [Snowflake CLI](/developer-guide/snowflake-cli/index) for documentation.
 
+## Version 3.30.0 (Oct 20, 2026)
+
+### Backward incompatibility
+
+- Re-running `snow helpers import-snowsql-connections` can save a different connection than an earlier import. Custom `--snowsql-config-file` paths are merged after the default SnowSQL files instead of replacing that list, and `/usr/lib64/snowflake/snowsql/config` is read last when it exists. Named connections are saved from `connections.<name>` alone and do not receive keys from the unnamed `[connections]` section. `login_timeout`, `client_session_keep_alive`, `ocsp_fail_open`, `insecure_mode`, and `client_store_temporary_credential` are copied from `[options]` when a connection omits them; a key set on the connection wins. Passwords and other text stay strings, including values that look like numbers. `login_timeout` and `client_prefetch_threads` are saved as integers, and `client_session_keep_alive`, `client_store_temporary_credential`, `ocsp_fail_open`, `insecure_mode`, `oauth_disable_pkce`, `oauth_enable_refresh_tokens`, `oauth_enable_single_use_refresh_tokens`, and `disable_request_pooling` are saved as booleans. `default_connection_name` is set only from the unnamed `[connections]` section, under the name it was actually saved with. When `WORKSPACE` is set, `.snowsql.cnf` and `.snowsql/config` are read from that directory instead of the home directory.
+- `snow streamlit deploy` no longer defaults `query_warehouse` to the identifier `streamlit` when the field is omitted from `snowflake.yml`. A new app uses the connection warehouse instead, and deploy fails if that is also unset. An existing app keeps its warehouse unless `snowflake.yml` sets `query_warehouse`.
+- `snow streamlit deploy --replace` now UNSETs Streamlit properties (title, comment, external access integrations, secrets, imports, compute\_pool) that were cleared from `snowflake.yml`, and REVOKEs object grants that disappeared from `grants:` (OWNERSHIP is left alone). Omitting `grants:` still leaves live grants untouched. If the app’s current grants cannot be listed, deploy fails rather than skip the revoke.
+
+### New additions
+
+- `snow feature` is now generally available. This command group manages declarative feature-store objects in Snowflake (`init`, `sync`, `plan`, `apply`, `list`, `describe`, `online-service` (`status`/`create`/`drop`), `ingest`, `query`). It is now visible by default and no longer requires the `ENABLE_FEATURE_STORE` feature flag. It requires the `snowflake-ml-python[feature_store]` library.
+- Air-gapped mode configures the CLI for isolated environments that cannot reach the public internet. Enable it with `cli.air_gapped` in `config.toml` or `SNOWFLAKE_CLI_AIR_GAPPED`. The environment variable is read at runtime and is not copied into a newly created `config.toml`. Commands that talk to external services may change or refuse to run, including PyPI and Homebrew version checks, `snow upgrade`, auto-upgrade, `snow init` against the public GitHub template default, and pip-backed flows such as `snow snowpark build`. Pip in those flows uses `--isolated` and only `--index-url` or `PIP_INDEX_URL`. When air-gapped mode is set, Snowsight no longer falls back to `app.snowflake.com`. Override remaining defaults with `cli.per_account_app_domain` in `config.toml` or `SNOWFLAKE_CLI_PER_ACCOUNT_APP_DOMAIN`, and with `SNOWFLAKE_AUDIENCE` for GitHub OIDC.
+- Override the default `snow init` template repository with `cli.init_template_source` in `config.toml` or `SNOWFLAKE_CLI_INIT_TEMPLATE_SOURCE`. Air-gapped mode requires this override, a local `--template-source`, or an in-region git URL.
+- `snow dcm plan` and `snow dcm deploy` now accept `--deployment` to plan or deploy from an existing deployment, by name or alias, instead of uploading local files. The deployment is used as stored: the manifest target’s configuration and environment variables are not applied again. `--variable` and `--env-file` cannot be combined with `--deployment`.
+
+### Fixes and improvements
+
+- Connection diagnostics and the per-account cert probe now require TLS 1.3. `snow init --template-source`, SQL `!source`/`!load`, and pip index URLs reject plaintext `http://`.
+- `snow app version drop` now reports that the drop is in progress and may take a few minutes, instead of saying it is already complete.
+- Upgraded setuptools from 80.8.0 to 84.0.0.
+- Comparing an `FQN` against a value that is not an `FQN` instance now returns `False` instead of raising `AttributeError`.
+- Upgraded keyring from 25.6.0 to 25.7.0.
+- Upgraded jaraco.context from 6.0.1 to 6.1.2.
+- `snow streamlit deploy` includes `environment.yml` and the pages directory (`pages_dir`, or `pages/` by default) when they exist on disk, even if a native v2 project lists only `main_file` in `artifacts`. Overlapping `pages/` and `pages/*.py` artifacts no longer fail the bundle.
+- `snow streamlit deploy` treats only Snowflake error 2003 from `DESCRIBE STREAMLIT` as “object does not exist”. Other programming errors are no longer swallowed into a misleading `CREATE STREAMLIT IF NOT EXISTS`. Because 2003 also means “not authorized”, `--replace` no longer turns it into `CREATE OR REPLACE`.
+- Improved sanitization of external access integration and secret values in generated Streamlit and Snowpark SQL, and of import and stage location values in generated Streamlit SQL. `imports`, `external_access_integrations`, `secrets`, `runtime_name`, and `compute_pool` in `snowflake.yml` no longer accept a backslash.
+- `snow streamlit get-url` and the URL printed after deploy now fail when the connection has no account or region, instead of opening `https://app.snowflake.com` with no app path.
+- `snow streamlit logs` accepts any `SYSTEM$ST_CONTAINER_RUNTIME*` runtime, matching deploy/restart. A newer container runtime such as `..._PY3_12` is also accepted in `snowflake.yml`.
+- Replacing a legacy `ROOT_LOCATION` Streamlit app with a versioned deploy copies files from the old stage onto the new versioned stage when possible.
+- `ALTER STREAMLIT ... ADD LIVE VERSION` quotes each database, schema, and name part so hyphenated or reserved identifiers parse.
+- `snow helpers import-snowsql-connections` reads SnowSQL files the way SnowSQL 1.5 does: quotes are removed, `#` starts a comment, and the file is decoded as UTF-8. A repeated collision while naming the unnamed `[connections]` section stops after three tries instead of prompting forever.
+- `snow helpers import-snowsql-connections` keeps a private-key passphrase from the SnowSQL file, adds `authenticator = "SNOWFLAKE_JWT"` when a private key is imported and authenticator is still absent after the files are merged, and preserves `region` and proxy settings for the connector. The short SnowSQL key wins over a long alias across files. A blank or whitespace short key is skipped, so the next alias is used. `private_key_path` wins over `private_key_file` when both are present. A blank value is omitted, so a later blank clears an earlier value. When the authenticator that survives the merge is present and is not `SNOWFLAKE_JWT`, the private key and passphrase are omitted. A SnowSQL file that exists but cannot be opened, cannot be decoded, or is not valid INI fails the import before anything is written. The message names the path and does not repeat the file contents. A section with no remaining values is not saved.
+- `snow helpers check-snowsql-env-vars` reports the SnowSQL variable that is actually set. `SNOWSQL_REGION` suggests putting the account identifier in `SNOWFLAKE_ACCOUNT`, not the region name. The deprecated proxy variables are suggested as the host, port, username, or password inside `HTTPS_PROXY` or `HTTP_PROXY`.
+- The direct install script updates the bash startup file the shell reads. It edits the first existing login profile (`~/.bash_profile`, `~/.bash_login`, or `~/.profile`) and an existing `~/.bashrc`, and does not create a bash login profile.
+- A configuration file with permissions that are too open now prints the `chmod` or `icacls` command on its own line. Copying that command no longer includes a line break or the error box border.
+- Upgraded GitPython from 3.1.62 to 3.2.0.
+
 ## Version 3.29.0 (Oct 08, 2026)
 
 ### New additions

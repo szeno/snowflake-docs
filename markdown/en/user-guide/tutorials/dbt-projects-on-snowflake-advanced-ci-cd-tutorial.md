@@ -46,7 +46,7 @@ portion of the dbt DAG, and keeps production state available for future Slim CI 
 
 - An existing production dbt project object.
 - A CI role with the `MONITOR` privilege on the production dbt project object.
-- At least one successful execution of the production dbt project object within the previous 7 days.
+- At least one successful execution of the production dbt project object within the previous 14 days.
 
 ## Set up your environment
 
@@ -1121,7 +1121,7 @@ Create a second pipeline named `PR Accepted Deployment - Slim CI` in Azure DevOp
   6. Optionally run a `schedules.sql` file to manage tasks.
 - **Cleanup**: GitHub cleans up resources when the pull request closes. GitLab and Azure clean up at the end of their CI pipelines.
 
-The production dbt project object must complete at least one successful scheduled or otherwise initiated execution every 7 days so that
+The production dbt project object must complete at least one successful scheduled or otherwise initiated execution every 14 days so that
 future Slim CI jobs can import its state.
 
 ## (Optional) Add orchestration with Snowflake tasks

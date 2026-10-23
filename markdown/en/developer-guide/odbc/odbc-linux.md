@@ -254,7 +254,7 @@ To download and install the Snowflake ODBC driver for Linux using `yum`:
    gpgkey=https://sfc-repo.snowflakecomputing.com/odbc/Snowkey-<GPG_KEY_ID>-gpg
    ```
 
-   Set `VERSION_NUMBER` to the 4.x version to install, for example 4.0.0.
+   Set `VERSION_NUMBER` to the 4.x version to install, for example 4.2.0.
    Set `GPG_KEY_ID` to 3C98F63C9292CE02.
    For aarch64, use `odbc/linuxaarch64/<VERSION_NUMBER>/` in `baseurl`.
 

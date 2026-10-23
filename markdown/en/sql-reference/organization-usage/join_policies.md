@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -45,17 +41,20 @@ Show lessSee more
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ID | NUMBER | Internal/system-generated identifier for the join policy. |
-| NAME | VARCHAR | Name of the join policy. |
-| SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema that contains the join policy. |
-| SCHEMA | VARCHAR | Schema that contains the join policy. |
-| DATABASE\_ID | NUMBER | Internal/system-generated identifier for the database that contains the join policy. |
-| DATABASE | VARCHAR | Database that contains the join policy. |
-| OWNER | VARCHAR | Name of the role that owns the join policy. |
-| COMMENT | VARCHAR | Comment for the join policy, if any. |
-| CREATED | TIMESTAMP\_LTZ | Date and time when the join policy was created. |
-| LAST\_ALTERED | TIMESTAMP\_LTZ | Date and time when the join policy was last altered. |
-| DELETED | TIMESTAMP\_LTZ | Date and time when the join policy was dropped. |
+| POLICY\_ID | NUMBER | Internal/system-generated identifier for the policy. |
+| POLICY\_NAME | VARCHAR | Name of the policy. |
+| POLICY\_SCHEMA\_ID | NUMBER | Internal/system-generated identifier for the schema in which the policy resides. |
+| POLICY\_SCHEMA | VARCHAR | Schema that contains the policy. |
+| POLICY\_CATALOG\_ID | NUMBER | Internal/system-generated identifier for the database in which the policy resides. |
+| POLICY\_CATALOG | VARCHAR | Database to which the policy belongs. |
+| POLICY\_OWNER | VARCHAR | Name of the role that owns the policy. |
+| POLICY\_SIGNATURE | VARCHAR | Type signature of the policy’s arguments. |
+| POLICY\_RETURN\_TYPE | VARCHAR | Return value data type. |
+| POLICY\_BODY | VARCHAR | Policy definition. |
+| POLICY\_COMMENT | VARIANT | Comments entered for the policy (if any). |
+| CREATED | TIMESTAMP\_LTZ | Date and time when the policy was created. |
+| LAST\_ALTERED | TIMESTAMP\_LTZ | Date and time when the policy was last altered. |
+| DELETED | TIMESTAMP\_LTZ | Date and time when the policy was dropped. |
 | OWNER\_ROLE\_TYPE | VARCHAR | The type of role that owns the object, for example `ROLE`.   If a Snowflake Native App owns the object, the value is `APPLICATION`.   Snowflake returns NULL if you delete the object because a deleted object does not have an owner role. |
 
 Expand

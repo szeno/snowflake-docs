@@ -280,7 +280,7 @@ EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
 
 The role that executes this statement must have the `MONITOR` privilege on
 `prod_database.dbt_projects.production_project`. That object must have a successful execution from
-the previous 7 days. For details, see
+the previous 14 days. For details, see
 [SYSTEM$DBT\_GET\_LAST\_SUCCESSFUL\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_successful_run_target).
 
 ### Run changed models by importing state from a specific query

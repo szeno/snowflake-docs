@@ -4,7 +4,6 @@ We are pleased to announce the general availability of [Cortex Fine-tuning](/use
 a fully managed service that lets you fine-tune popular large language models using your data all within Snowflake, in the following regions:
 
 > - AWS US West 2 (Oregon)
-> - AWS US East 1 (N. Virginia)
 > - AWS Europe Central 1 (Frankfurt)
 > - Azure East US 2 (Virginia)
 

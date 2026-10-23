@@ -2,8 +2,8 @@
 
 Snowflake Cortex AI Functions support a range of language and embedding models with varying capabilities, context-window
 sizes, and regional availability. Use this reference to choose a model for your workload, check its input and output
-limits, confirm that it’s available in your region, understand [legacy and end-of-life access](#label-cortex-model-lifecycle),
-and identify previous model versions that are still supported.
+limits, confirm that it’s available in your region, and understand
+[legacy and end-of-life access](#label-cortex-model-lifecycle).
 
 ## Choosing a model
 
@@ -41,22 +41,6 @@ and will give you a good idea of what a state-of-the-art model can do.
   done quickly. It offers low latency and high throughput processing for multiple pages of text with its 32K context
   window.
 
-The following table provides information on how popular models perform on various benchmarks,
-including the models offered by Snowflake Cortex AI\_COMPLETE as well as a few other popular models.
-
-| Model | Context Window (Tokens) | MMLU (Reasoning) | HumanEval (Coding) | GSM8K (Arithmetic Reasoning) | Spider 1.0 (SQL) |
-| --- | --- | --- | --- | --- | --- |
-| [GPT-4o](https://openai.com/index/hello-gpt-4o/) | 128,000 | 88.7 | 90.2 | 96.4 | - |
-| [llama3.1-70b](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md) | 128,000 | 86 | 80.5 | 95.1 | - |
-| [mistral-large2](https://mistral.ai/news/mistral-large-2407/) | 128,000 | 84 | 92 | 93 | - |
-| [llama3.1-8b](https://github.com/meta-llama/llama-models/blob/main/models/llama3_1/MODEL_CARD.md) | 128,000 | 73 | 72.6 | 84.9 | - |
-| [mixtral-8x7b](https://mistral.ai/news/mixtral-of-experts/) | 32,000 | 70.6 | 40.2 | 60.4 | - |
-| [mistral-7b](https://mistral.ai/news/announcing-mistral-7b/) | 32,000 | 62.5 | 26.2 | 52.1 | - |
-
-Expand
-
-Show lessSee more
-
 ## Model restrictions
 
 Models used by Snowflake Cortex have limitations on size as described in the table below. Sizes are given in tokens.
@@ -86,7 +70,7 @@ In the AWS Europe West 1 (Ireland) region:
 
 | Function | Model | Context window (tokens) | Max output (tokens) |
 | --- | --- | --- | --- |
-| AI\_COMPLETE | `claude-opus-5-5` | 1,000,000 | 128,000 |
+| **AI\_COMPLETE** | `claude-opus-5-5` | 1,000,000 | 128,000 |
 |  | `claude-opus-5` | 1,000,000 | 128,000 |
 |  | `claude-sonnet-5` | 1,000,000 | 64,000 |
 |  | `claude-opus-4-8` | 1,000,000 | 128,000 |
@@ -122,59 +106,26 @@ In the AWS Europe West 1 (Ireland) region:
 |  | `llama3.3-70b` | 128,000 | 8,192 |
 |  | `llama3.1-70b` | 128,000 | 8,192 |
 |  | `llama3.1-8b` | 128,000 | 8,192 |
-| EMBED\_TEXT\_768 | `e5-base-v2` | 512 | n/a |
+| **EMBED\_TEXT\_768** | `e5-base-v2` | 512 | n/a |
 |  | `snowflake-arctic-embed-m` | 512 | n/a |
-| EMBED\_TEXT\_1024 | `nv-embed-qa-4` | 512 | n/a |
+| **EMBED\_TEXT\_1024** | `nv-embed-qa-4` | 512 | n/a |
 |  | `multilingual-e5-large` | 512 | n/a |
 |  | `voyage-multilingual-2` | 32,000 | n/a |
-| AI\_EXTRACT | `arctic-extract` | 128,000 | 51,200 |
-| AI\_FILTER | Snowflake managed model | 128,000 | n/a |
-| AI\_CLASSIFY | Snowflake managed model | 128,000 | n/a |
-| AI\_AGG | Snowflake managed model | 128,000 per row can be used across multiple rows | 8,192 |
-| AI\_SENTIMENT | Snowflake managed model | 2,048 | n/a |
-| AI\_SUMMARIZE\_AGG | Snowflake managed model | 128,000 per row can be used across multiple rows | 8,192 |
-| ENTITY\_SENTIMENT | Snowflake managed model | 2,048 | n/a |
-| EXTRACT\_ANSWER | Snowflake managed model | 2,048 for text 64 for question | n/a |
-| SENTIMENT | Snowflake managed model | 512 | n/a |
-| SUMMARIZE | Snowflake managed model | 32,000 | 4,096 |
-| TRANSLATE | Snowflake managed model | 100,000 (input only) | 100,000 |
+| **AI\_EXTRACT** | `arctic-extract` | 128,000 | 51,200 |
+| **AI\_FILTER** | Snowflake managed model | 128,000 | n/a |
+| **AI\_CLASSIFY** | Snowflake managed model | 128,000 | n/a |
+| **AI\_AGG** | Snowflake managed model | 128,000 per row can be used across multiple rows | 8,192 |
+| **AI\_SENTIMENT** | Snowflake managed model | 2,048 | n/a |
+| **AI\_SUMMARIZE\_AGG** | Snowflake managed model | 128,000 per row can be used across multiple rows | 8,192 |
+| **ENTITY\_SENTIMENT** | Snowflake managed model | 2,048 | n/a |
+| **EXTRACT\_ANSWER** | Snowflake managed model | 2,048 for text 64 for question | n/a |
+| **SENTIMENT** | Snowflake managed model | 512 | n/a |
+| **SUMMARIZE** | Snowflake managed model | 32,000 | 4,096 |
+| **TRANSLATE** | Snowflake managed model | 100,000 (input only) | 100,000 |
 
 Expand
 
 Show lessSee more
-
-## Model lifecycle: legacy and end-of-life
-
-Snowflake retires Cortex models in two stages: **legacy**, then **end-of-life**. A model marked
-legacy is not yet unavailable to every account. Access depends on whether your **account** already
-used that model.
-
-### Legacy
-
-After a model’s legacy date:
-
-- If your account used the model anywhere before the legacy date, the account can continue to use
-  it in every supported application until the model’s end-of-life date. Supported applications
-  include AI\_COMPLETE, CORTEX.COMPLETE, the Agents API, Cortex Inference, and Snowflake CoWork.
-- If your account had not used the model anywhere before the legacy date, the account can’t start
-  using it. Queries and API calls that name the model fail.
-
-Any usage of the model in the account before the legacy date means that the account can continue
-to use the model until end-of-life, including in applications that had not called that model
-before.
-
-Snowflake recommends that you migrate to a supported model before the end-of-life date, even if
-your account can still call the legacy model.
-
-### End-of-life
-
-After a model’s end-of-life date, the model is no longer available to any account, regardless of
-prior usage. Queries and API calls that name the model fail.
-
-Use [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models) to see each model’s
-`lifecycle_status`, `legacy_date`, and `eol_date`. Deprecation dates for specific models are
-announced in unbundled behavior change releases, such as
-[Cortex model deprecations for August 2026](/release-notes/bcr-bundles/un-bundled/bcr-august-model-deprecations).
 
 ## Regional availability
 
@@ -191,7 +142,7 @@ The following functions and models are available in any region via [cross-region
 
 | Function | Model | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AI\_COMPLETE |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| **AI\_COMPLETE** |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-opus-5-5` | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
 | `claude-sonnet-5-5` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
@@ -205,7 +156,6 @@ The following functions and models are available in any region via [cross-region
 | `claude-opus-4-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `claude-4-sonnet [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `openai-gpt-6.1-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -246,7 +196,7 @@ The following functions and models are available in any region via [cross-region
 | `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| AI\_EMBED |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `e5-base-v2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
@@ -256,24 +206,24 @@ The following functions and models are available in any region via [cross-region
 | `multilingual-e5-large` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `voyage-multilingual-2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| AI\_CLASSIFY TEXT | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_CLASSIFY IMAGE | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| AI\_EXTRACT | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |
-| AI\_FILTER TEXT | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_FILTER IMAGE | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| AI\_AGG |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_REDACT | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| AI\_SENTIMENT | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_SIMILARITY TEXT | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| AI\_SIMILARITY IMAGE | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  | ✔ |  |
-| AI\_SUMMARIZE\_AGG | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_TRANSCRIBE | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
-| SENTIMENT | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| ENTITY\_SENTIMENT | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| EXTRACT\_ANSWER | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| SUMMARIZE | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| TRANSLATE | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| AI\_TRANSLATE | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| **AI\_AGG** |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_REDACT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| **AI\_SENTIMENT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
+| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  | ✔ |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_TRANSCRIBE** | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
+| **SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
+| **SUMMARIZE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **TRANSLATE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_TRANSLATE** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
 
 Expand
 
@@ -283,17 +233,19 @@ The following functions and models are available natively in North American regi
 
 | Function | Model | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | AWS US East (Commercial Gov - N. Virginia) | Azure East US 2 (Virginia) | Azure East US (Virginia) | Azure West US (Washington) | Azure West US 3 (Arizona) | Azure North Central US (Illinois) | Azure South Central US (Texas) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AI\_COMPLETE |  |  |  |  |  |  |  |  |  |
+| **AI\_COMPLETE** |  |  |  |  |  |  |  |  |  |
 | `llama4-maverick [legacy]` | ✔ |  |  |  |  |  |  |  |  |
 | `llama3.1-8b` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `llama3.3-70b` | ✔ |  |  |  |  |  |  |  |  |
+| `llama3-70b [legacy]` | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| `llama3-8b [legacy]` | ✔ | ✔ |  | ✔ |  |  |  |  |  |
 | `openai-gpt-4.1 [legacy]` |  |  |  | ✔ |  |  |  |  |  |
 | `mistral-large2 [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `mixtral-8x7b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `mistral-7b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 |  |  |  |  |  |  |  |  |  |  |
-| AI\_EMBED |  |  |  |  |  |  |  |  |  |
+| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |
 | `e5-base-v2` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
@@ -303,22 +255,22 @@ The following functions and models are available natively in North American regi
 | `multilingual-e5-large` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `voyage-multilingual-2` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 |  |  |  |  |  |  |  |  |  |  |
-| AI\_CLASSIFY TEXT | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| AI\_CLASSIFY IMAGE | ✔ | ✔ |  |  |  |  |  |  |  |
-| AI\_EXTRACT | ✔ | ✔ |  |  | ✔ | ✔ |  |  | ✔ |
-| AI\_FILTER TEXT | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| AI\_FILTER IMAGE | ✔ | ✔ |  |  |  |  |  |  |  |
-| AI\_AGG | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| AI\_REDACT | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| AI\_SIMILARITY TEXT | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| AI\_SIMILARITY IMAGE | ✔ | ✔ |  |  |  |  |  |  |  |
-| AI\_SUMMARIZE\_AGG | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| AI\_TRANSCRIBE | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| SENTIMENT | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| ENTITY\_SENTIMENT | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| EXTRACT\_ANSWER | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| SUMMARIZE | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| TRANSLATE | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  |  | ✔ | ✔ |  |  | ✔ |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_REDACT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_TRANSCRIBE** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **SUMMARIZE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **TRANSLATE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 
 Expand
 
@@ -328,45 +280,46 @@ The following functions and models are available natively in European regions.
 
 | Function | Model | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS Europe West 2 (London) | Azure West Europe (Netherlands) |
 | --- | --- | --- | --- | --- |
-| AI\_COMPLETE |  |  |  |  |
-| | `claude-sonnet-4-6` |  |  | ✔ |  |
-| | `claude-opus-4-6` |  |  | ✔ |  |
-| | `claude-4-sonnet [legacy]` |  |  |  |  |
-| | `llama4-maverick [legacy]` |  |  |  |  |
-| | `llama3.1-8b` | ✔ | ✔ |  | ✔ |
-| | `llama3.1-70b [legacy]` | ✔ | ✔ |  | ✔ |
-| | `llama3.3-70b` |  |  |  |  |
-| | `openai-gpt-4.1 [legacy]` |  |  |  |  |
-| | `mistral-large2 [legacy]` | ✔ | ✔ |  | ✔ |
-| | `mixtral-8x7b [legacy]` | ✔ | ✔ |  | ✔ |
-| | `mistral-7b [legacy]` | ✔ | ✔ |  | ✔ |
+| **AI\_COMPLETE** |  |  |  |  |
+| `claude-sonnet-4-6` |  |  | ✔ |  |
+| `claude-opus-4-6` |  |  | ✔ |  |
+| `llama4-maverick [legacy]` |  |  |  |  |
+| `llama3.1-8b` | ✔ | ✔ |  | ✔ |
+| `llama3.1-70b [legacy]` | ✔ | ✔ |  | ✔ |
+| `llama3.3-70b` |  |  |  |  |
+| `llama3-70b [legacy]` | ✔ |  |  | ✔ |
+| `llama3-8b [legacy]` | ✔ |  |  | ✔ |
+| `openai-gpt-4.1 [legacy]` |  |  |  |  |
+| `mistral-large2 [legacy]` | ✔ | ✔ |  | ✔ |
+| `mixtral-8x7b [legacy]` | ✔ | ✔ |  | ✔ |
+| `mistral-7b [legacy]` | ✔ | ✔ |  | ✔ |
 |  |  |  |  |  |
-| AI\_EMBED |  |  |  |  |
-| | `e5-base-v2` | ✔ |  |  | ✔ |
-| | `snowflake-arctic-embed-m` | ✔ | ✔ |  | ✔ |
-| | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ |  | ✔ |
-| | `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ |  | ✔ |
-| | `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ |  | ✔ |
-| | `nv-embed-qa-4` |  |  |  |  |
-| | `multilingual-e5-large` | ✔ | ✔ |  | ✔ |
-| | `voyage-multilingual-2` | ✔ | ✔ |  | ✔ |
+| **AI\_EMBED** |  |  |  |  |
+| `e5-base-v2` | ✔ |  |  | ✔ |
+| `snowflake-arctic-embed-m` | ✔ | ✔ |  | ✔ |
+| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ |  | ✔ |
+| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ |  | ✔ |
+| `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ |  | ✔ |
+| `nv-embed-qa-4` |  |  |  |  |
+| `multilingual-e5-large` | ✔ | ✔ |  | ✔ |
+| `voyage-multilingual-2` | ✔ | ✔ |  | ✔ |
 |  |  |  |  |  |
-| AI\_CLASSIFY TEXT | ✔ | ✔ |  | ✔ |
-| AI\_CLASSIFY IMAGE | ✔ |  |  |  |
-| AI\_EXTRACT | ✔ | ✔ |  | ✔ |
-| AI\_FILTER TEXT | ✔ | ✔ |  | ✔ |
-| AI\_FILTER IMAGE | ✔ |  |  |  |
-| AI\_AGG | ✔ | ✔ |  | ✔ |
-| AI\_REDACT | ✔ | ✔ |  | ✔ |
-| AI\_SIMILARITY TEXT | ✔ | ✔ |  | ✔ |
-| AI\_SIMILARITY IMAGE | ✔ |  |  |  |
-| AI\_SUMMARIZE\_AGG | ✔ | ✔ |  | ✔ |
-| AI\_TRANSCRIBE | ✔ |  |  |  |
-| SENTIMENT | ✔ | ✔ |  | ✔ |
-| ENTITY\_SENTIMENT | ✔ |  |  | ✔ |
-| EXTRACT\_ANSWER | ✔ | ✔ |  | ✔ |
-| SUMMARIZE | ✔ | ✔ |  | ✔ |
-| TRANSLATE | ✔ | ✔ |  | ✔ |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_CLASSIFY IMAGE** | ✔ |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  | ✔ |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_FILTER IMAGE** | ✔ |  |  |  |
+| **AI\_AGG** | ✔ | ✔ |  | ✔ |
+| **AI\_REDACT** | ✔ | ✔ |  | ✔ |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_SIMILARITY IMAGE** | ✔ |  |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |
+| **AI\_TRANSCRIBE** | ✔ |  |  |  |
+| **SENTIMENT** | ✔ | ✔ |  | ✔ |
+| **ENTITY\_SENTIMENT** | ✔ |  |  | ✔ |
+| **EXTRACT\_ANSWER** | ✔ | ✔ |  | ✔ |
+| **SUMMARIZE** | ✔ | ✔ |  | ✔ |
+| **TRANSLATE** | ✔ | ✔ |  | ✔ |
 
 Expand
 
@@ -376,18 +329,19 @@ The following functions and models are available natively in Asia-Pacific region
 
 | Function | Model | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) |
 | --- | --- | --- |
-| AI\_COMPLETE |  |  |
-| `claude-4-sonnet [legacy]` |  |  |
+| **AI\_COMPLETE** |  |  |
 | `llama4-maverick [legacy]` |  |  |
 | `llama3.1-8b` | ✔ | ✔ |
 | `llama3.1-70b [legacy]` | ✔ | ✔ |
 | `llama3.3-70b` |  |  |
+| `llama3-70b [legacy]` |  | ✔ |
+| `llama3-8b [legacy]` | ✔ | ✔ |
 | `openai-gpt-4.1 [legacy]` |  |  |
 | `mistral-large2 [legacy]` | ✔ | ✔ |
 | `mixtral-8x7b [legacy]` | ✔ | ✔ |
 | `mistral-7b [legacy]` | ✔ | ✔ |
 |  |  |  |
-| AI\_EMBED |  |  |
+| **AI\_EMBED** |  |  |
 | `e5-base-v2` | ✔ | ✔ |
 | `snowflake-arctic-embed-m` | ✔ | ✔ |
 | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ |
@@ -397,21 +351,21 @@ The following functions and models are available natively in Asia-Pacific region
 | `multilingual-e5-large` | ✔ | ✔ |
 | `voyage-multilingual-2` | ✔ | ✔ |
 |  |  |  |
-| AI\_EXTRACT | ✔ | ✔ |
-| AI\_CLASSIFY TEXT | ✔ | ✔ |
-| AI\_CLASSIFY IMAGE |  |  |
-| AI\_FILTER TEXT | ✔ | ✔ |
-| AI\_FILTER IMAGE |  |  |
-| AI\_AGG | ✔ | ✔ |
-| AI\_SIMILARITY TEXT | ✔ | ✔ |
-| AI\_SIMILARITY IMAGE |  |  |
-| AI\_SUMMARIZE\_AGG | ✔ | ✔ |
-| AI\_TRANSCRIBE |  |  |
-| EXTRACT\_ANSWER | ✔ | ✔ |
-| SENTIMENT | ✔ | ✔ |
-| ENTITY\_SENTIMENT |  | ✔ |
-| SUMMARIZE | ✔ | ✔ |
-| TRANSLATE | ✔ | ✔ |
+| **AI\_EXTRACT** | ✔ | ✔ |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |
+| **AI\_CLASSIFY IMAGE** |  |  |
+| **AI\_FILTER TEXT** | ✔ | ✔ |
+| **AI\_FILTER IMAGE** |  |  |
+| **AI\_AGG** | ✔ | ✔ |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |
+| **AI\_SIMILARITY IMAGE** |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |
+| **AI\_TRANSCRIBE** |  |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ |
+| **SENTIMENT** | ✔ | ✔ |
+| **ENTITY\_SENTIMENT** |  | ✔ |
+| **SUMMARIZE** | ✔ | ✔ |
+| **TRANSLATE** | ✔ | ✔ |
 
 Expand
 
@@ -427,42 +381,45 @@ The following Snowflake Cortex AI functions and models are available in the foll
 
 | Function | Model | AWS US East 2 (Ohio) | AWS CA Central 1 (Central) | AWS SA East 1 (São Paulo) | AWS Europe West 2 (London) | AWS Europe Central 1 (Frankfurt) | AWS Europe North 1 (Stockholm) | AWS AP Northeast 1 (Tokyo) | AWS AP South 1 (Mumbai) | AWS AP Southeast 2 (Sydney) | AWS AP Southeast 3 (Jakarta) | Azure South Central US (Texas) | Azure West US 2 (Washington) | Azure UK South (London) | Azure North Europe (Ireland) | Azure Switzerland North (Zürich) | Azure Central India (Pune) | Azure Japan East (Tokyo, Saitama) | Azure Southeast Asia (Singapore) | Azure Australia East (New South Wales) | Google Cloud Europe West 2 (London) | Google Cloud Europe West 4 (Netherlands) | Google Cloud US Central 1 (Iowa) | Google Cloud US East 4 (N. Virginia) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AI\_EMBED |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| | `snowflake-arctic-embed-m` | | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| | `multilingual-e5-large` | | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| AI\_EXTRACT | ✔ | ✔ | ✔ | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | ✔ | ✔ | Cross-region only | Cross-region only | Cross-region only | Cross-region only |
+| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| `multilingual-e5-large` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| **AI\_EXTRACT** | ✔ | ✔ | ✔ | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | ✔ | ✔ | Cross-region only | Cross-region only | Cross-region only | Cross-region only |
 
 Expand
 
 Show lessSee more
 
-The following table lists in-region availability of legacy models. These models have not reached
-end-of-life. After the legacy date, only accounts that already used the model can continue to call
-it. Accounts that had not used the model can’t start. Snowflake recommends newer models for new
-development. For the full definition, see [Model lifecycle: legacy and end-of-life](#label-cortex-model-lifecycle).
+## Model lifecycle: legacy and end-of-life
 
-**Legacy**
+Snowflake retires Cortex models in two stages: **legacy**, then **end-of-life**. A model marked
+legacy is not yet unavailable to every account. Access depends on whether your **account** already
+used that model.
 
-| Function (Model) | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) | Azure East US 2 (Virginia) | Azure West Europe (Netherlands) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AI\_COMPLETE |  |  |  |  |  |  |  |  |
-| | `llama3-8b` | ✔ | ✔ | ✔ |  | ✔ | ✔ | ✔ |  |
-| | `llama3-70b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ |  |
+### Legacy
 
-Expand
+After a model’s legacy date:
 
-Show lessSee more
+- If your account used the model anywhere before the legacy date, the account can continue to use
+  it in every supported application until the model’s end-of-life date. Supported applications
+  include AI\_COMPLETE, CORTEX.COMPLETE, the Agents API, Cortex Inference, and Snowflake CoWork.
+- If your account had not used the model anywhere before the legacy date, the account can’t start
+  using it. Queries and API calls that name the model fail.
 
-## Previous model versions
+Any usage of the model in the account before the legacy date means that the account can continue
+to use the model until end-of-life, including in applications that had not called that model
+before.
 
-The Snowflake Cortex AI\_COMPLETE and COMPLETE functions also support the following older model versions. We recommend
-using the latest model versions instead of the versions listed in this table.
+Snowflake recommends that you migrate to a supported model before the end-of-life date, even if
+your account can still call the legacy model.
 
-| Model | Context Window (Tokens) | MMLU (Reasoning) | HumanEval (Coding) | GSM8K (Arithmetic Reasoning) | Spider 1.0 (SQL) |
-| --- | --- | --- | --- | --- | --- |
-| [llama-2-70b-chat](https://huggingface.co/meta-llama/Llama-2-70b-chat) | 4,096 | 68.9 | 30.5 | 57.5 | - |
+### End-of-life
 
-Expand
+After a model’s end-of-life date, the model is no longer available to any account, regardless of
+prior usage. Queries and API calls that name the model fail.
 
-Show lessSee more
+Use [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models) to see each model’s
+`lifecycle_status`, `legacy_date`, and `eol_date`. Deprecation dates for specific models are
+announced in unbundled behavior change releases, such as
+[Cortex model deprecations for August 2026](/release-notes/bcr-bundles/un-bundled/bcr-august-model-deprecations).

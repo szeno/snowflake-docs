@@ -38,6 +38,8 @@ This family of functions can be used to convert an expression of any Snowflake d
 | [TRY\_TO\_GEOMETRY](/sql-reference/functions/try_to_geometry) | Error-handling version of TO\_GEOMETRY. |
 | [ST\_GEOMETRYFROMWKB](/sql-reference/functions/st_geometryfromwkb) |  |
 | [ST\_GEOMETRYFROMWKT](/sql-reference/functions/st_geometryfromwkt) |  |
+| **IPADDRESS data type** | [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) |  |
+| [TRY\_TO\_IPADDRESS](/sql-reference/functions/try_to_ipaddress) | Error-handling version of TO\_IPADDRESS. |
 
 Expand
 
@@ -55,6 +57,7 @@ Conversion functions with a TRY\_ prefix are special versions of their respectiv
 - [TRY\_TO\_DOUBLE](/sql-reference/functions/try_to_double)
 - [TRY\_TO\_GEOGRAPHY](/sql-reference/functions/try_to_geography)
 - [TRY\_TO\_GEOMETRY](/sql-reference/functions/try_to_geometry)
+- [TRY\_TO\_IPADDRESS](/sql-reference/functions/try_to_ipaddress)
 - [TRY\_TO\_TIME](/sql-reference/functions/try_to_time)
 - [TRY\_TO\_TIMESTAMP / TRY\_TO\_TIMESTAMP\_\*](/sql-reference/functions/try_to_timestamp)
 

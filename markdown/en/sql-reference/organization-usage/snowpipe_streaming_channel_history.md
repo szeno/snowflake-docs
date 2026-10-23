@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -49,6 +45,7 @@ Show lessSee more
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
+| ACCOUNT\_ID | NUMBER | The ID of the Snowflake account. |
 | CREATED\_ON | TIMESTAMP\_LTZ | Date and time when the rowset channel history was created. |
 | CHANNEL\_ID | NUMBER | The internal, system-generated ID of the Snowpipe Streaming channel. |
 | CHANNEL\_NAME | VARCHAR | The user-defined name of the Snowpipe Streaming channel. |
@@ -60,31 +57,11 @@ Show lessSee more
 | TABLE\_SCHEMA\_NAME | VARCHAR | The name of the schema containing the target table. |
 | TABLE\_DATABASE\_ID | NUMBER | The internal ID of the database containing the target table. |
 | TABLE\_DATABASE\_NAME | VARCHAR | The name of the database containing the target table. |
-| PIPE\_NAME | VARCHAR | “The name of the Snowpipe object associated with the current Snowpipe Streaming channel history entry. |
-|  |  |  |
-| Named pipes: The value is the user-defined name of the Snowpipe object associated with the channel. |  |  |
-|  |  |  |
-| Default pipe: The value is automatically derived from the target table name; for example, MY\_TABLE-STREAMING.” |  |  |
-| PIPE\_SCHEMA\_ID | NUMBER | “The internal identifier for the schema associated with the Snowpipe Streaming channel. |
-|  |  |  |
-| Named pipes: The value is the internal ID of the schema that contains the user-defined Snowpipe object. |  |  |
-|  |  |  |
-| Default pipe: The value is the internal ID of the schema that contains the target table.” |  |  |
-| PIPE\_SCHEMA\_NAME | VARCHAR | “The name of the schema associated with the Snowpipe Streaming channel. |
-|  |  |  |
-| Named pipes: The value is the user-defined name of the schema that contains the Snowpipe object. |  |  |
-|  |  |  |
-| Default pipe: The value is the name of the schema that contains the target table.” |  |  |
-| PIPE\_DATABASE\_ID | NUMBER | “The internal identifier for the database associated with the Snowpipe Streaming channel. |
-|  |  |  |
-| Named pipes: The value is the internal ID of the database that contains the user-defined Snowpipe object. |  |  |
-|  |  |  |
-| Default pipe: The value is the internal ID of the database that contains the target table.” |  |  |
-| PIPE\_DATABASE\_NAME | VARCHAR | “The name of the database associated with the Snowpipe Streaming channel. |
-|  |  |  |
-| Named pipes: The value is the user-defined name of the database that contains the Snowpipe object. |  |  |
-|  |  |  |
-| Default pipe: The value is the name of the database that contains the target table.” |  |  |
+| PIPE\_NAME | VARCHAR | The name of the Snowpipe object associated with the current Snowpipe Streaming channel history entry. Named pipes: The value is the user-defined name of the Snowpipe object associated with the channel. Default pipe: The value is automatically derived from the target table name; for example, MY\_TABLE-STREAMING. |
+| PIPE\_SCHEMA\_ID | NUMBER | The internal identifier for the schema associated with the Snowpipe Streaming channel. Named pipes: The value is the internal ID of the schema that contains the user-defined Snowpipe object. Default pipe: The value is the internal ID of the schema that contains the target table. |
+| PIPE\_SCHEMA\_NAME | VARCHAR | The name of the schema associated with the Snowpipe Streaming channel. Named pipes: The value is the user-defined name of the schema that contains the Snowpipe object. Default pipe: The value is the name of the schema that contains the target table. |
+| PIPE\_DATABASE\_ID | NUMBER | The internal identifier for the database associated with the Snowpipe Streaming channel. Named pipes: The value is the internal ID of the database that contains the user-defined Snowpipe object. Default pipe: The value is the internal ID of the database that contains the target table. |
+| PIPE\_DATABASE\_NAME | VARCHAR | The name of the database associated with the Snowpipe Streaming channel. Named pipes: The value is the user-defined name of the database that contains the Snowpipe object. Default pipe: The value is the name of the database that contains the target table. |
 | LAST\_ERROR\_OFFSET\_UPPER\_BOUND | VARCHAR | The upper bound of the offset token range of the last rowset that encountered errors during this historical period. |
 | LAST\_ERROR\_MESSAGE | VARCHAR | The last error message encountered while writing data to the channel. This column displays a redacted error message when an error is encountered. |
 | SNOWFLAKE\_PROCESSING\_LATENCY\_MS | NUMBER | The average latency, in milliseconds, observed by the Snowflake service in processing rowsets for this channel during this historical period. |

@@ -1591,23 +1591,19 @@ See [GRANT\_PRIVILEGE\_ON\_ACCOUNT\_TO\_ROLE](#label-dcr-grant-privilege-on-acco
 
 ### EDIT
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   COLLABORATION
 
 Called by the owner to edit an existing collaboration in place. The owner submits the full, target [collaboration specification](/user-guide/cleanrooms/spec-collaboration#label-dcr-collaboration-spec-yaml); the procedure compares it to the current specification and applies the differences as a single bulk update request. Only the collaboration owner can call this procedure.
 
-The changes are not applied immediately. EDIT creates one update request that must be approved by all affected collaborators before any change takes effect. Track the request by calling [VIEW\_UPDATE\_REQUESTS](#label-dcr-collaboration-view-update-requests-reference), where it appears with the type `Edit Collaboration`.
+The changes are not applied immediately. EDIT creates one update request that must be approved by all [affected collaborators](#edit-required-approvals) before any change takes effect. Track the request by calling [VIEW\_UPDATE\_REQUESTS](#label-dcr-collaboration-view-update-requests-reference), where it appears with the type `Edit Collaboration`.
 
 #### Supported changes
 
 EDIT supports the following changes:
 
 - Add a new collaborator as an analysis runner or a data provider.
-- Remove an existing collaborator. Removal can be partial (from specific components) or complete (from the entire collaboration).
+- Remove an existing collaborator. Removal can be partial (from specific components) or complete (from the entire collaboration). Removing a collaborator from the entire collaboration also removes the templates and data offerings that they provided.
 - Change a collaborator’s role (for example, update a data provider to an analysis runner, or the reverse).
 - Share an already-registered template with an analysis runner, or remove a shared template.
 - Share an already-linked data offering from a data provider with an analysis runner, or unlink a shared data offering.
@@ -1634,6 +1630,26 @@ EDIT works alongside the existing post-creation flows. You can still
 [remove a template](#label-dcr-collaboration-remove-template-reference) with REMOVE\_TEMPLATE, and
 [unlink a data offering](#label-dcr-collaboration-unlink-data-offering-reference) with UNLINK\_DATA\_OFFERING.
 
+#### Required approvals
+
+Only the collaboration owner can submit an EDIT request, and the owner’s approval is automatic. The following table shows which other collaborators must approve each type of change.
+
+| Change | Approvers |
+| --- | --- |
+| Add a new collaborator | All existing collaborators |
+| Remove a collaborator | None |
+| Make an existing collaborator an analysis runner | That collaborator |
+| Make an existing collaborator a data provider to an analysis runner | That collaborator, the analysis runner, and the analysis runner’s data providers |
+| Share a data offering with an analysis runner | The data offering’s provider |
+| Unlink a data offering | None |
+| Share a template with an analysis runner | The analysis runner, the analysis runner’s data providers, and the template’s provider |
+| Remove a template | None |
+| Add `distribution: external` | None |
+
+Expand
+
+Show lessSee more
+
 #### Syntax
 
 Copy code
@@ -1657,9 +1673,11 @@ A string message confirming that the update request has been submitted. Use [VIE
 #### Usage notes
 
 - Approvers can only approve or reject the entire request; partial approval of individual changes is not supported.
-- You can only add a collaborator in a different cloud region from the owner if the collaboration was originally created as a cross-cloud collaboration. If the collaboration wasn’t initially set up for [Cross-Cloud Auto-Fulfillment](/user-guide/cleanrooms/laf#label-dcr-collab-enabling-laf), every collaborator added with EDIT must be in the same region as the owner. Conversely, removing the last cross-region collaborator does not cause the collaboration to start supporting [external tables](/user-guide/cleanrooms/laf#label-dcr-collab-laf-limitations).
 - Adding a collaborator from another organization to a same-organization collaboration turns on the [automated security scan](/user-guide/cleanrooms/spec-collaboration#label-dcr-collaboration-distribution). The request doesn’t complete until the scan resolves, so it might take longer to complete than other edit requests. The collaboration is scanned for every later patch, even if you remove that collaborator again.
 - When the edit adds a new collaborator, the collaboration tracks that collaborator through the `INVITED`, `REVIEWING`, `JOINING`, and `JOINED` states. The update request moves directly to `APPROVED` once the existing collaborators approve it; the new collaborator’s review and join operations do not change the request status. Affected collaborators can review any newly shared resources by calling [VIEW\_DATA\_OFFERINGS](#label-dcr-collaboration-view-data-offerings-reference), [VIEW\_TEMPLATES](#label-dcr-collaboration-view-templates-reference), and [VIEW\_CODE\_SPECS](#label-dcr-collaboration-view-code-specs-reference).
+- Adding a collaborator from a different cloud region from the owner’s region turns on Cross-Cloud Auto-Fulfillment for the collaboration. The new collaborator must have [Cross-Cloud Auto-Fulfillment enabled on their account](/user-guide/cleanrooms/laf#label-dcr-collab-enabling-laf) before they can review and join.
+- Removing the last cross-region collaborator doesn’t turn Cross-Cloud Auto-Fulfillment off for the collaboration, so any [Cross-Cloud Auto-Fulfillment limitations](/user-guide/cleanrooms/laf#label-dcr-collab-laf-limitations) still apply to the collaboration.
+- If no collaborator in a new analysis runner’s region has access to a data offering yet, a single edit can’t both add that analysis runner and share the data offering with them. Add the analysis runner in one edit, then share the data offering in a second edit.
 
 #### Example
 
@@ -2092,6 +2110,11 @@ Schema:
 Leaves a collaboration that you have joined. You cannot rejoin a collaboration after you have left it.
 
 **You must call this procedure twice.** Call it once, then call GET\_STATUS until it returns `LOCAL_DROP_PENDING`, then call this procedure again.
+
+Leaving removes your resources (data offerings and templates) from the collaboration.
+
+LEAVE succeeds only after all of your resources are removed from the collaboration. The owner can’t leave a collaboration, and instead
+calls [TEARDOWN](#label-dcr-collaboration-teardown-reference) to delete it for everyone.
 
 #### Syntax
 

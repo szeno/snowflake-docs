@@ -31,7 +31,7 @@ To defer to production:
 3. Select the database and schema that contain the production dbt project object, and then select the object.
 
    A dbt project object appears only if you have the `MONITOR` privilege on it.
-   The object must also have at least one qualifying execution within the previous 7 days.
+   The object must also have at least one qualifying execution within the previous 14 days.
 4. Select the target artifacts to use as state:
 
    - **Last Successful Run** (default)

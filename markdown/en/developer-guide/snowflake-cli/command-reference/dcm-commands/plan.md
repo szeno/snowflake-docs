@@ -14,6 +14,7 @@ snow dcm plan
   --target <target>
   --save-output
   --delta
+  --deployment <deployment>
   --connection <connection>
   --host <host>
   --port <port>
@@ -68,7 +69,7 @@ snow dcm plan
 :   Local directory path containing DCM project files. Omit to use current directory.
 
 `--variable, -D TEXT`
-:   Variables for the execution context; for example: `-D "&lt;key&gt;=&lt;value&gt;"`.
+:   Variables for the execution context; for example: `-D "&lt;key&gt;=&lt;value&gt;"`. Default: [].
 
 `--target TEXT`
 :   Target profile from `manifest.yml` to use. Uses `default_target` if not specified.
@@ -78,6 +79,9 @@ snow dcm plan
 
 `--delta`
 :   Process only statements changed since the last `deploy`, plus statements potentially impacted by those changes. Default: False.
+
+`--deployment TEXT`
+:   Name or alias of the deployment. For names containing ‘$’, use single quotes to prevent shell expansion (e.g., ‘DEPLOYMENT$1’). If both the deployment name and the alias match two different deployments, the deployment name match has higher precedence.
 
 `--connection, -c, --environment TEXT`
 :   Name of the connection, as defined in your `config.toml` file. Default: `default`.

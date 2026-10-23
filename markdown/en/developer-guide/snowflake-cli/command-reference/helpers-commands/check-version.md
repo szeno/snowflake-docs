@@ -49,7 +49,7 @@ None
 
 ## Usage notes
 
-`snow helpers check-version` doesn’t require a Snowflake connection. It checks locally cached version information by default. Use `--refresh` to query PyPI and Homebrew directly, bypassing the cache.
+`snow helpers check-version` doesn’t require a Snowflake connection. It checks locally cached version information by default. Use `--refresh` to query PyPI and Homebrew directly, bypassing the cache. When `cli.air_gapped` / `SNOWFLAKE_CLI_AIR_GAPPED` is set, the command exits with an error and does not query any repository.
 
 ## Examples
 

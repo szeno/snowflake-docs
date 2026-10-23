@@ -110,7 +110,7 @@ Other things to note about this collaboration:
 
 - Both `alice` and `bob` can add new templates, and share them with any other collaborators.
 - Any data provider can add or remove data offerings in their data offerings list, even after the collaboration is created.
-- The owner can request to add or remove collaborators and change collaborator roles after the collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a [preview feature](/release-notes/preview-features)); these changes require approval from the affected collaborators. For example, the owner could later request to make `bob` a data provider to himself.
+- The owner can request to add or remove collaborators and change collaborator roles after the collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference); these changes require approval from the affected collaborators. For example, the owner could later request to make `bob` a data provider to himself.
 
 ## Basic clean room collaboration workflow
 
@@ -134,7 +134,7 @@ Here is a simple clean room collaboration scenario:
 6. Analysis runners can then run any templates shared with them in the collaboration, using any data offerings shared with them in the
    collaboration. The analysis runner bears the cost of the analysis. Templates can either return query results in the response or
    [activate results to the caller or another collaborator](/user-guide/cleanrooms/activation#label-dcr-collaboration-activating-results).
-7. The owner can later request to add or remove collaborators and change collaborator roles by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a [preview feature](/release-notes/preview-features)), subject to approval from the affected collaborators.
+7. The owner can later request to add or remove collaborators and change collaborator roles by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference), subject to approval from the affected collaborators.
 
 Learn more
 
@@ -147,8 +147,8 @@ Any Snowflake Data Clean Rooms user with appropriate privileges can create a cle
 that determines all the collaborators and their relative roles in the collaboration, as well as any resources present in the initial
 configuration of the collaboration. (The resource owners must join before the resources can be used.) Resources can be added or removed
 after the collaboration is created. The owner can also request to add or remove collaborators and change collaborator roles after the
-collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a
-[preview feature](/release-notes/preview-features)); these changes require approval from the affected collaborators.
+collaboration is created by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference);
+these changes require approval from the affected collaborators.
 
 Collaborations aren’t versioned: a collaboration can change with the addition or removal of resources, but those changes aren’t tracked.
 
@@ -213,10 +213,6 @@ Learn more
 
 ### Editing a collaboration
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The collaboration owner can request to edit an existing collaboration in place, instead of tearing it down and recreating it. To edit a
 collaboration, the owner submits an updated version of the collaboration specification in the
 [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) procedure. EDIT can add or remove
@@ -232,8 +228,7 @@ Learn more
 You can leave a collaboration at any time, although the collaboration owner can’t leave a collaboration, and instead deletes the
 collaboration for everyone.
 
-- Non-owners leave a collaboration by calling LEAVE. Any data offerings they have provided will be removed from the
-  collaboration. You can’t rejoin a collaboration after leaving it.
+- Non-owners leave a collaboration by calling LEAVE. The data offerings and templates they provided are removed from the collaboration, and their alias is removed from the collaboration specification. You can’t rejoin a collaboration after leaving it.
 - Collaboration owners can’t leave a collaboration: ownership can’t be transferred. A collaboration owner can drop a collaboration for all
   collaborators by calling TEARDOWN.
 

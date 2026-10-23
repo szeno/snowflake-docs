@@ -64,7 +64,7 @@ snow dcm drop-deployment
 ## Options
 
 `--deployment TEXT`
-:   Name or alias of the deployment to drop. For names containing ‘$’, use single quotes to prevent shell expansion (for example, ‘DEPLOYMENT$1’). If both the deployment name and the alias match two different deployments, the deployment name match has higher precedence.
+:   Name or alias of the deployment. For names containing ‘$’, use single quotes to prevent shell expansion (e.g., ‘DEPLOYMENT$1’). If both the deployment name and the alias match two different deployments, the deployment name match has higher precedence.
 
 `--if-exists`
 :   Do nothing if the deployment does not exist. Default: False.

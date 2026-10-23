@@ -245,10 +245,11 @@ The collaboration defines the following roles and relationships:
 - Only the templates listed for an analysis runner can be used. Notice that this collaboration currently shares the `alice_only_template`
   with Alice.
 
-After the collaboration is created, the owner can request to add or remove collaborators, change collaborator roles, and change the data
-providers, data offerings, and templates shared with each analysis runner by calling
-[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a
-[preview feature](/release-notes/preview-features)); such changes require approval from the affected collaborators.
+After the collaboration is created, the owner can call
+[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) to add or remove collaborators, change
+their roles, and share or remove data offerings and templates for each analysis runner. Depending on the type of change, approval from
+certain collaborators is required. For details, see
+[Required approvals](/user-guide/cleanrooms/collaboration-api-reference#edit-required-approvals).
 
 ### Wait for the collaboration to be created and joined
 

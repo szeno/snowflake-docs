@@ -78,9 +78,15 @@ For general information about roles and privilege grants for performing SQL acti
 
 - Only the table owner (that is, the role with the OWNERSHIP privilege on the table) or higher can execute this command.
 - Converting a table in a catalog-linked database isn’t supported.
+- If conversion is blocked because the table has active position-delete files, the error message recommends running
+  `ALTER ICEBERG TABLE <table_name> OPTIMIZE (REMOVE_POSITION_DELETES)` before retrying. The optimize operation rewrites affected
+  partitions and clears active position-delete files for live data files. For supported table types and limitations, see the
+  [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize) command reference.
 - Regarding metadata:
 
   Attention
+
+  Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
 
 ## Examples
 

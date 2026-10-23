@@ -5,7 +5,6 @@ Feature — Generally Available
 Support for this feature is available to accounts in the following regions:
 
 > - AWS US West 2 (Oregon)
-> - AWS US East 1 (N. Virginia)
 > - AWS Europe Central 1 (Frankfurt)
 > - Azure East US 2 (Virginia)
 
@@ -194,7 +193,7 @@ When you create the Dataset, set the response to `None` if the document does not
 - The maximum number of pages per document is:
 
   - 64 pages for AWS US West 2 (Oregon) and AWS Europe Central 1 (Frankfurt)
-  - 125 pages for AWS US East 1 (N. Virginia) and Azure East US 2 (Virginia)
+  - 125 pages for Azure East US 2 (Virginia)
 - The maximum number of unique document files in the Dataset is 1,000. You can reference the same document file multiple times.
 - A limit exists on how many questions and documents can be in a fine-tuning job. Number of questions multiplied by total number
   of pages in all document files in the Dataset must be equal or less than 50,000.

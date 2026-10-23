@@ -26,10 +26,10 @@ also be a data provider and an analysis runner.
 
 The owner specifies the initial collaborators and their collaboration roles when they create the collaboration. After the collaboration is
 created, the owner can request to add or remove collaborators and change collaborator roles by calling
-[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a
-[preview feature](/release-notes/preview-features)); these changes take effect only after the affected collaborators approve them. For
-example, the owner can request to add a new analysis runner, add a data provider for an existing analysis runner, or update a data provider
-to an analysis runner. The owner collaboration role itself can’t be changed or transferred to another collaborator.
+[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference); these changes take effect only after
+the affected collaborators approve them. For example, the owner can request to add a new analysis runner, add a data provider for an
+existing analysis runner, or update a data provider to an analysis runner. The owner collaboration role itself can’t be changed or
+transferred to another collaborator.
 
 In addition, collaborators can link or remove [resources](/user-guide/cleanrooms/resources) after a collaboration is created.
 
@@ -90,7 +90,7 @@ The previous collaboration defines the following collaborators and collaboration
 - `bob` is an analysis runner, and a data provider for `alice` but *not* for himself. `bob` is the alias defined in the
   collaboration for account `corp2.acctxyz`.
 
-After the collaboration is created, the owner can request to add or remove collaborators and change collaboration roles by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a [preview feature](/release-notes/preview-features)), subject to approval from the affected collaborators.
+After the collaboration is created, the owner can request to add or remove collaborators and change collaboration roles by calling [EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference), subject to approval from the affected collaborators.
 
 Data providers can link data offerings after a collaboration is created. Any collaborator can request to add templates after a collaboration
 is created. The following example shows how you can use the Collaboration API to link resources into the previous collaboration after

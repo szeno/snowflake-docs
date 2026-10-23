@@ -4,6 +4,12 @@ This topic lists the release notes for server releases that occurred earlier in 
 
 For more recent releases, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [10.38 Release Notes: Oct 17, 2026 - Oct 22, 2026](/release-notes/2026/10_38)
+
+  - [SQL updates](/release-notes/2026/10_38#sql-updates)
+
+    - [IPADDRESS data type (Preview)](/release-notes/2026/10_38#ipaddress-data-type-preview)
+  - [Release notes change log](/release-notes/2026/10_38#release-notes-change-log)
 - [10.36 Release Notes: Oct 3, 2026 - Oct 7, 2026](/release-notes/2026/10_36)
 
   - [Native App Framework updates](/release-notes/2026/10_36#native-app-framework-updates)

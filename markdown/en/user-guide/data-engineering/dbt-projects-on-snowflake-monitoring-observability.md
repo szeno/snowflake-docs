@@ -137,7 +137,7 @@ Use [`SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET`](/sql-reference/functions/syste
 [`SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_failed_run_target), or
 [`SYSTEM$DBT_GET_LAST_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_run_target) to retrieve
 reusable dbt artifacts from a dbt project object’s recent executions. For example, Slim CI uses `SYSTEM$DBT_GET_LAST_SUCCESSFUL_RUN_TARGET` to
-retrieve dbt artifacts from a production object. These functions require `MONITOR` on the referenced dbt project object, and that object must have at least one qualifying execution within the previous 7 days.
+retrieve dbt artifacts from a production object. These functions require `MONITOR` on the referenced dbt project object, and that object must have at least one qualifying execution within the previous 14 days.
 
 For artifacts from a known query, use `SYSTEM$LOCATE_DBT_ARTIFACTS` or `SYSTEM$LOCATE_DBT_ARCHIVE` with its query ID. Use these system functions when
 you’re investigating or importing a specific execution’s results.

@@ -6,7 +6,8 @@ this integration when creating the UDF or procedure with CREATE FUNCTION or CREA
 to authenticate with the external location.
 
 An administrator can monitor requests made to external network locations by using the
-[EXTERNAL\_ACCESS\_HISTORY](/sql-reference/account-usage/external_access_history) view.
+[EXTERNAL\_ACCESS\_HISTORY](/sql-reference/account-usage/external_access_history) view. In an organization account, use the
+[EXTERNAL\_ACCESS\_HISTORY](/sql-reference/organization-usage/external_access_history) view to query that history across accounts.
 
 For an end-to-end sequence of code examples you might use to set up and use external access, refer to
 [External network access examples](/developer-guide/external-network-access/external-network-access-examples).

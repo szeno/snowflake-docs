@@ -12,21 +12,21 @@ For how REST API usage fits alongside other AI features, see [AI Observability i
 
 ## Choose your API
 
-Cortex REST API supports two industry-standard API specifications. Pick the one that best fits your stack:
+Cortex REST API supports three industry-standard API specifications. Pick the one that best fits your stack:
 
-|  | **Chat Completions API** | **Messages API** |
-| --- | --- | --- |
-| Compatibility | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) |
-| Endpoint | `/api/v2/cortex/v1/chat/completions` | `/api/v2/cortex/v1/messages` |
-| Supported models | All models (OpenAI, Claude, Llama, Mistral, DeepSeek, Snowflake) | Claude models only |
-| SDK support | OpenAI Python and JavaScript SDKs | Anthropic Python SDK |
-| Best for | Most use cases; multi-model flexibility | Existing Anthropic integrations; Anthropic API parity |
+|  | **Chat Completions API** | **Messages API** | **Responses API** (preview) |
+| --- | --- | --- | --- |
+| Compatibility | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) | [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses/create) |
+| Endpoint | `/api/v2/cortex/v1/chat/completions` | `/api/v2/cortex/v1/messages` | `/api/v2/cortex/v1/responses` |
+| Supported models | All models (OpenAI, Claude, Llama, Mistral, DeepSeek, Snowflake) | Claude models only | OpenAI models only |
+| SDK support | OpenAI Python and JavaScript SDKs | Anthropic Python SDK | OpenAI Python and JavaScript SDKs |
+| Best for | Most use cases; multi-model flexibility | Existing Anthropic integrations; Anthropic API parity | Existing integrations and clients built on the OpenAI Responses API |
 
 Expand
 
 Show lessSee more
 
-Both APIs share the same authentication, model catalog, and rate limits. The only difference is the
+All three APIs share the same authentication, model catalog, and rate limits. The only difference is the
 request/response format and which models each endpoint supports. For pricing, see the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
@@ -196,6 +196,77 @@ In the preceding examples, replace the following:
 - `<account-identifier>`: Your Snowflake account identifier.
 - `<SNOWFLAKE_PAT>`: Your Snowflake Programmatic Access Token (PAT).
 - `model`: The Claude model name. See [Model availability](#label-cortex-complete-llm-model-availability) for supported models.
+
+### Responses API quickstart
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+The Responses API follows the OpenAI specification and supports OpenAI models only. You can use the OpenAI SDK
+directly. The API doesn’t keep conversation state, so send the full conversation in `input` with every request. See
+[Limitations](#label-cortex-rest-api-responses-limitations).
+
+PythonJavaScript/TypeScriptcurl
+
+Copy code
+
+```
+from openai import OpenAI
+
+client = OpenAI(
+  api_key="<SNOWFLAKE_PAT>",
+  base_url="https://<account-identifier>.snowflakecomputing.com/api/v2/cortex/v1"
+)
+
+response = client.responses.create(
+  model="openai-gpt-5.6-sol",
+  instructions="You are a helpful assistant.",
+  input="How does a snowflake get its unique pattern?",
+  store=False,
+)
+
+print(response.output_text)
+```
+
+Copy code
+
+```
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "<SNOWFLAKE_PAT>",
+  baseURL: "https://<account-identifier>.snowflakecomputing.com/api/v2/cortex/v1"
+});
+
+const response = await client.responses.create({
+  model: "openai-gpt-5.6-sol",
+  instructions: "You are a helpful assistant.",
+  input: "How does a snowflake get its unique pattern?",
+  store: false,
+});
+
+console.log(response.output_text);
+```
+
+Copy code
+
+```
+curl "https://<account-identifier>.snowflakecomputing.com/api/v2/cortex/v1/responses" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <SNOWFLAKE_PAT>" \
+  -d '{
+    "model": "openai-gpt-5.6-sol",
+    "input": "How does a snowflake get its unique pattern?",
+    "store": false
+  }'
+```
+
+In the preceding examples, replace the following:
+
+- `<account-identifier>`: Your Snowflake account identifier.
+- `<SNOWFLAKE_PAT>`: Your Snowflake Programmatic Access Token (PAT).
+- `model`: The OpenAI model name. See [Model availability](#label-cortex-complete-llm-model-availability) for supported models.
 
 ## Setting up authentication
 
@@ -2620,6 +2691,129 @@ For full request and response schema details, see the
 
 400 `unknown model model_name`
 :   The specified model does not exist or is not a Claude model.
+
+402 `budget exceeded`
+:   The model consumption budget was exceeded.
+
+403 `Not Authorized`
+:   Account not enabled for REST API, or the default role does not have the `snowflake.cortex_user` database role.
+
+429 `too many requests`
+:   The usage quota has been exceeded. Try again later.
+
+503 `inference timed out`
+:   The request took too long.
+
+## Responses API reference
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+### POST /api/v2/cortex/v1/responses
+
+Generates a model response using an OpenAI model. The request and response format follows the
+[OpenAI Responses API specification](https://platform.openai.com/docs/api-reference/responses/create).
+
+```
+POST https://<account_identifier>.snowflakecomputing.com/api/v2/cortex/v1/responses
+```
+
+Note
+
+The Responses API supports **OpenAI models only**. For other models, use the Chat Completions API or the
+Messages API.
+
+The Responses API’s public preview status applies only to OpenAI models that are in public preview or
+generally available.
+
+#### Required headers
+
+`Authorization: Bearer token`
+:   Authorization for the request. `token` is a JSON web token (JWT), OAuth token, or
+    [programmatic access token](/user-guide/programmatic-access-tokens). For details, see
+    [Authenticating Snowflake REST APIs with Snowflake](/developer-guide/snowflake-rest-api/authentication).
+
+`Content-Type: application/json`
+:   Specifies that the body of the request is in JSON format.
+
+#### Optional headers
+
+`X-Snowflake-Authorization-Token-Type: type`
+:   Defines the type of authorization token.
+
+    If you omit the `X-Snowflake-Authorization-Token-Type` header, Snowflake determines the token type by examining the token.
+
+    Even though this header is optional, you can choose to specify this header. You can set the header to one of the following values:
+
+    - `KEYPAIR_JWT` (for key-pair authentication)
+    - `OAUTH` (for OAuth)
+    - `PROGRAMMATIC_ACCESS_TOKEN` (for [programmatic access tokens](/user-guide/programmatic-access-tokens))
+
+`Accept: application/json, text/event-stream`
+:   Specifies that the response will either contain JSON (error case) or server-sent events.
+
+#### Required JSON fields
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `model` | string | The OpenAI model to use (see [Model availability](#label-cortex-complete-llm-model-availability)). Required on every request. |
+| `input` | string or array | The input to the model: a text string, or an array of input items. Each message item has a `role` (`system`, `developer`, `user`, or `assistant`) and `content`. |
+
+Expand
+
+Show lessSee more
+
+#### Commonly used optional JSON fields
+
+| Field | Type | Default | Description |
+| --- | --- | --- | --- |
+| `instructions` | string | null | A system or developer message inserted into the model’s context. |
+| `max_output_tokens` | integer | Varies by model | Maximum tokens in the response, including reasoning tokens. |
+| `stream` | boolean | false | Whether to stream back partial progress as server-sent events. |
+| `tools` | array | null | A list of tools the model may call. Each tool must have `type: "function"`, with `name`, `description`, and `parameters` at the top level. |
+| `tool_choice` | string or object | `"auto"` | Controls how the model selects tools. Options: `"auto"`, `"required"`, `"none"`, or an object specifying a particular function. |
+| `text` | object | null | Constrains the output format. Use `{"format": {"type": "json_schema", ...}}` for structured output. |
+| `reasoning` | object | null | Set `reasoning.effort` to control reasoning. Values: `"none"`, `"minimal"`, `"low"`, `"medium"`, `"high"`. |
+| `store` | boolean | false | Always treated as `false`, whatever value you send, so responses aren’t stored. See [Limitations](#label-cortex-rest-api-responses-limitations). |
+
+Expand
+
+Show lessSee more
+
+For full request and response schema details, see the
+[OpenAI Responses API documentation](https://platform.openai.com/docs/api-reference/responses).
+
+#### Supported features
+
+The Responses API supports the following features for OpenAI models:
+
+- Text generation, with multi-turn conversations passed in `input`
+- Streaming (`"stream": true`)
+- System and developer instructions (via the top-level `instructions` field or `system`/`developer` input items)
+- Tool calling with client-side function tools
+- Structured output (`text.format` with `json_schema`)
+- Reasoning (`reasoning.effort`)
+
+#### Limitations
+
+- **OpenAI models only.** Requests for Claude, Llama, Mistral, and other models are rejected.
+- **No conversation state.** `store` is always treated as `false`, so responses
+  aren’t stored. You can’t retrieve a response with `GET /responses/{id}` or continue one with `previous_response_id`.
+  Send the full conversation history in `input` on every request.
+- **No background mode.** Requests are synchronous. `"background": true` is rejected.
+- `model` is required on every request.
+
+#### Status codes
+
+200 `OK`
+:   Request completed successfully.
+
+400 `invalid_request_error`
+:   The request body is malformed, contains invalid values, or uses an unsupported field or tool.
+
+400 `unknown model model_name`
+:   The specified model does not exist or is not an OpenAI model.
 
 402 `budget exceeded`
 :   The model consumption budget was exceeded.

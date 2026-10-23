@@ -6,7 +6,7 @@ partner solution, visit the [Snowflake Partner Network](https://www.snowflake.co
 on the Snowflake website.
 
 For native Snowflake connectors, drivers, and developer tools, see the
-[Developer Guide](/developer-guide/).
+[Developer Guide](/developer-guide/drivers).
 
 For free trials of partner applications directly from Snowflake, see
 [Trial SaaS applications from listings](/collaboration/consumer-saas-trials).

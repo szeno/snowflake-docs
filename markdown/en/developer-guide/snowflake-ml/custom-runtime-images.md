@@ -1,9 +1,5 @@
 # Custom Runtime Images
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Custom runtime images let you use your own container images for machine learning workloads on Container Runtime,
 including [Snowflake Notebooks](/developer-guide/snowflake-ml/notebooks-on-spcs) and
 [ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview). You can extend the Snowflake-provided base images as long as they meet platform compatibility requirements.
@@ -215,6 +211,10 @@ job = test_function()
 ```
 
 ## Use custom runtime images in Notebooks
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
 
 Once your custom image is registered, you can use it to run Notebook services. This ensures your code executes in
 your specialized environment with all your required dependencies.

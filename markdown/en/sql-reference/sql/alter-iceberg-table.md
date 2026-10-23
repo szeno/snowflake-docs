@@ -7,12 +7,13 @@ Note
 To replace the catalog integration for an externally managed Iceberg table in a standard Snowflake database with a different
 catalog integration, see [SYSTEM$SET\_CATALOG\_INTEGRATION](/sql-reference/functions/system_set_catalog_integration).
 
-You can also use an ALTER ICEBERG TABLE statement to refresh a table, convert a table, alter a structured type column, or evolve partition specs. The syntax for those operations varies
-considerably. To view the syntax, parameter descriptions, usage notes, and examples for these operations,
-see the following pages:
+You can also use an ALTER ICEBERG TABLE statement to refresh or convert a table, optimize a table to clear active position-delete references
+for live data files, alter a structured type column, or evolve partition specs. The syntax for those operations varies considerably. To view
+the syntax, parameter descriptions, usage notes, and examples for these operations, see the following pages:
 
 - [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh)
 - [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed)
+- [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize)
 - [ALTER ICEBERG TABLE … ALTER COLUMN … SET DATA TYPE (structured types)](/sql-reference/sql/alter-iceberg-table-alter-column-set-data-type)
 - [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution)
 
@@ -801,9 +802,11 @@ For general information about roles and privilege grants for performing SQL acti
 
   - The upgrade runs as an atomic transaction. While it runs, UPDATE, DELETE, and MERGE operations are blocked, Snowflake retries INSERT
     and COPY operations (including Snowpipe) that commit during the upgrade, and SELECT operations succeed.
-  - The following tables can’t be upgraded: tables created from Delta files, Parquet Direct tables, v2 tables with positional delete
-    files, and externally managed tables that use a catalog source
+  - The following tables can’t be upgraded: tables created from Delta files, Parquet Direct tables, and externally managed tables that use a catalog source
     other than `ICEBERG_REST`.
+  - If upgrading a supported v2 table is blocked by active position-delete files, the error message recommends running
+    `ALTER ICEBERG TABLE <table_name> OPTIMIZE (REMOVE_POSITION_DELETES)` before retrying. For supported table types and limitations,
+    see [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize).
   - Streams that reference `METADATA$ROW_ID` stop working and must be recreated. Dynamic tables that use the table as a source are
     reinitialized with a one-time full refresh.
   - If a Snowflake-managed table has expression, sequence, or identity column defaults, Snowflake sets `ALLOW_V3_EXPRESSION_DEFAULTS = TRUE`

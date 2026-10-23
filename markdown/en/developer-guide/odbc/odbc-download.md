@@ -19,7 +19,7 @@ To download the installer:
    an application using the driver. You can also [verify the driver version](/user-guide/snowflake-client-version-check) by
    examining queries executed by the driver in the QUERY\_HISTORY view.
 3. Download the installer from the [ODBC Download](https://www.snowflake.com/en/developers/downloads/odbc/) page or from the
-   [Downloading Snowflake Clients, Connectors, Drivers, and Libraries](/user-guide/snowflake-client-repository). The current version is 4.0.0.
+   [Downloading Snowflake Clients, Connectors, Drivers, and Libraries](/user-guide/snowflake-client-repository). The current version is 4.2.0.
 
    Because the driver is open source, each release is also published on the
    [Snowflake drivers releases](https://github.com/snowflakedb/drivers/releases) page on GitHub, tagged

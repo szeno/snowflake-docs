@@ -13,8 +13,7 @@ in the collaboration specification.
 The owner submits this specification by calling INITIALIZE.
 
 After a collaboration is created, the owner can request to edit it in place by submitting an updated version of this specification by calling
-[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference) (a
-[preview feature](/release-notes/preview-features)).
+[EDIT](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-edit-reference).
 
 **Schema:**
 

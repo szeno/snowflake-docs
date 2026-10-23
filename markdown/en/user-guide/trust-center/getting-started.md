@@ -65,6 +65,24 @@ After you enable the scanner package, you can
 After the package runs, you can monitor AI agents, runtime guardrail status, and AI-related violations and
 detections from the [View the AI Security tab](/user-guide/trust-center/using-the-trust-center#label-trust-center-ai-security-tab).
 
+## Enable the Data Security scanner package
+
+Complete the following steps to enable the [Data Security scanner package](/user-guide/trust-center/overview#label-data-security-scanner-package):
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. Switch to a role with the `SNOWFLAKE.TRUST_CENTER_ADMIN` application role granted to it.
+
+   For more information about granting this role, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
+3. In the navigation menu, select **Governance & security** » **Trust Center**.
+4. Select a warehouse.
+5. Select **Scanner Packages**.
+6. Select **Data Security**.
+7. Select **Enable** and then **Continue**.
+
+After you enable the scanner package, you can
+[enable or disable individual scanners in the scanner package](/user-guide/trust-center/using-the-trust-center#label-trust-center-enable-disable-scanner). You can also
+[change the schedule of individual scanners in the scanner package](/user-guide/trust-center/using-the-trust-center#label-trust-center-change-scanner-schedule).
+
 ## Ensure multi-factor authentication (MFA) is enforced for all human users using password-based authentication
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).

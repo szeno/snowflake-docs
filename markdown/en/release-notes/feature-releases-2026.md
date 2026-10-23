@@ -5,8 +5,13 @@ This topic lists the feature updates that occurred earlier in 2026.
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
+- [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)
 - [Oct 23, 2026: Retrieve Cortex Search (Public Preview)](/release-notes/2026/other/2026-10-23-cortex-search-retrieve-preview)
+- [October 22, 2026: Custom runtime images for ML Jobs (General availability)](/release-notes/2026/other/2026-10-22-custom-runtime-images-ml-jobs-ga)
+- [Oct 22, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-22-dcr)
+- [Oct 22, 2026: Quiesce a primary failover group (General availability)](/release-notes/2026/other/2026-10-22-quiesce-primary-failover-group-ga)
 - [October 21, 2026: Declarative Feature Store (General availability)](/release-notes/2026/other/2026-10-21-declarative-feature-store-ga)
+- [Oct 20, 2026: Cortex Fine-tuning: New model training no longer available in AWS US East 1](/release-notes/2026/other/2026-10-20-cortex-finetuning-aws-us-east-1)
 - [Oct 20, 2026: dbt Projects on Snowflake updates](/release-notes/2026/other/2026-10-20-dbt-projects-on-snowflake-updates)
 - [October 20, 2026: Recompact Iceberg table data after target file size increases](/release-notes/2026/other/2026-10-20-iceberg-target-file-size-recompact)
 - [October 20, 2026: Online Feature Store (General availability)](/release-notes/2026/other/2026-10-20-online-feature-store-ga)
@@ -44,6 +49,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
 - [Oct 05, 2026: OpenAI GPT-6.1 Sol model (Preview)](/release-notes/2026/other/2026-10-05-openai-gpt-61-sol-preview)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
+- [Oct 05, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-23-trust-center-data-security-scanner-package-ga)
 - [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
 - [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)

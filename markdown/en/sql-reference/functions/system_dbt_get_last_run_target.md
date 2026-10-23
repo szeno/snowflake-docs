@@ -7,7 +7,7 @@ Note
 
 Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
 
-Returns the location of dbt artifacts from the most recent completed execution of a dbt project object within the previous 7 days, whether the execution succeeded or failed. You can import these artifacts into another dbt project execution and use them with `--state`.
+Returns the location of dbt artifacts from the most recent completed execution of a dbt project object within the previous 14 days, whether the execution succeeded or failed. You can import these artifacts into another dbt project execution and use them with `--state`.
 
 ## Syntax
 
@@ -58,7 +58,7 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- The dbt project object must have a completed execution with a populated target directory within the previous 7 days.
+- The dbt project object must have a completed execution with a populated target directory within the previous 14 days.
 - Deployment-time auto compile doesn’t create dbt artifacts for this function. Complete a qualifying execution after deployment.
 - This function can return dbt artifacts from either a successful or failed execution. Use [SYSTEM$DBT\_GET\_LAST\_SUCCESSFUL\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_successful_run_target) or [SYSTEM$DBT\_GET\_LAST\_FAILED\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_failed_run_target) when the execution status matters.
 - `--import` or `IMPORTS` makes the returned dbt artifacts available to an execution. You must also point dbt to the mounted directory with `--state`.

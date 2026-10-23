@@ -14,6 +14,25 @@ Warning
 
 Because Python 3.8 has reached its [End of Life](https://devguide.python.org/versions/), deprecation warnings will be triggered when you use `snowpark-python` with Python 3.8. For more information, see [Snowflake Python Runtime Support](/developer-guide/python-runtime-support-policy). Snowpark Python 1.24.0 will be the last client and server version to support Python 3.8, in accordance with [Anaconda’s policy](https://forum.anaconda.com/t/python-3-8-reaches-end-of-life/87265). Upgrade your existing Python 3.8 objects to Python 3.9 or later.
 
+## Version 1.55.3: Oct 21, 2026
+
+### Snowpark Python API updates
+
+#### Improvements
+
+- Removed the `experimental` tag from `DataFrame.to_polars()`.
+- `DataFrame.to_polars()` now uses `transport="parquet"` by default instead of `transport="arrow"`.
+
+#### Bug fixes
+
+- Fixed a bug where `DataFrameReader.jdbc` (PrPr) timed out on slow external data sources. The source query is now executed lazily.
+
+### Snowpark pandas API updates
+
+#### Bug fixes
+
+- Fixed a bug where `Index.to_pandas()` returned an integer `Index` whose width (for example, `int8` or `int32`) depended on the integer width that the server returned, instead of the `int64` type that Snowpark pandas uses for all integer types. This fix also affects `Index.astype` to any integer type.
+
 ## Version 1.55.2: Oct 13, 2026
 
 ### Improvements

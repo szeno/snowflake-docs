@@ -86,12 +86,12 @@ most one ZIP file. Importing the full archive can take longer than importing sta
 
 Before a CI job imports production dbt artifacts, you must have:
 
-- A production dbt project object with at least one qualifying execution within the previous 7 days.
+- A production dbt project object with at least one qualifying execution within the previous 14 days.
 - A CI role with the `MONITOR` privilege on the production object.
 - A separate database or schema where the CI job can create or update relations.
 - The privileges required to deploy and execute the tester dbt project object.
 
-Deployment-time auto compile doesn’t generate dbt artifacts that the `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` system functions can use. Execute the production dbt project object after deployment and at least once every 7 days so that qualifying dbt artifacts remain available.
+Deployment-time auto compile doesn’t generate dbt artifacts that the `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` system functions can use. Execute the production dbt project object after deployment and at least once every 14 days so that qualifying dbt artifacts remain available.
 
 Grant the CI role monitoring access to the production object:
 
@@ -112,7 +112,7 @@ To use production artifacts as state during development:
 2. Enable **Defer to Production**.
 3. Select the database and schema that contain the production dbt project object, and then select the object.
 
-   A dbt project object appears only if you have the `MONITOR` privilege on it. The object must also have at least one qualifying execution within the previous 7 days.
+   A dbt project object appears only if you have the `MONITOR` privilege on it. The object must also have at least one qualifying execution within the previous 14 days.
 4. Select the target artifacts to use as state:
 
    - **Last Successful Run** (default)

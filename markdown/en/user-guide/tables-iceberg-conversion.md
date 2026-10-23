@@ -45,6 +45,10 @@ Before you convert an Iceberg table, ensure that Snowflake can write to your ext
 For Snowflake to write to your external volume, the following conditions must be met:
 
 > - Use the ALTER ICEBERG TABLE … REFRESH command to manually refresh the table before you convert it.
+> - If conversion is blocked because the table has active position-delete files, the error message recommends running
+>   `ALTER ICEBERG TABLE <table_name> OPTIMIZE (REMOVE_POSITION_DELETES)` before retrying. The command rewrites affected partitions and
+>   clears active position-delete files for live data files. For supported table types and limitations, see the
+>   [command reference](/sql-reference/sql/alter-iceberg-table-optimize).
 > - The `ALLOW_WRITES` property for your external volume is set to `TRUE`. To update the value of this property for an existing
 >   external volume, use the [ALTER EXTERNAL VOLUME](/sql-reference/sql/alter-external-volume) command.
 >   For example: `ALTER EXTERNAL VOLUME my_ext_vol SET ALLOW_WRITES=TRUE`.

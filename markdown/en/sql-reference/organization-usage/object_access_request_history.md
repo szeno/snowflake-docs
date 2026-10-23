@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -48,14 +44,14 @@ Show lessSee more
 | USER\_ACCOUNT\_NAME | VARCHAR | The account name of the requester or approver. |
 | USER\_NAME | VARCHAR | The username of the requester or approver. |
 | USER\_EMAIL | VARCHAR | The email of the requester or approver. |
-| USER\_COMMENT | VARCHAR | For CREATE\_REQUEST and CANCEL REQUEST, this shows the reason for access provided by the requester.  For APPROVE\_REQUEST, DENY\_REQUEST, and AUTO\_APPROVE\_REQUEST, this is the comment for approval/denial provided by the approver. |
+| USER\_COMMENT | VARCHAR | For CREATE\_REQUEST and CANCEL\_REQUEST, this shows the reason for access provided by the requester.  For APPROVE\_REQUEST, DENY\_REQUEST, and AUTO\_APPROVE\_REQUEST, this is the comment for approval/denial provided by the approver. |
 | ACTION | VARCHAR | The requester or approver action. This can be one of the following:   - CREATE\_REQUEST - CANCEL\_REQUEST - APPROVE\_REQUEST - DENY\_REQUEST - AUTO\_APPROVE\_REQUEST |
 | REQUEST\_ID | VARCHAR | The UUID of the request. This can be used to track the history of the request. |
 | OBJECT\_DOMAIN | VARCHAR | The requested object domain. Currently, this can only be DATA\_EXCHANGE\_LISTING. |
 | OBJECT\_REGION | VARCHAR | The snowflake region name where the requested object is located. |
 | OBJECT\_ACCOUNT\_NAME | VARCHAR | The account where the requested object is located. |
 | OBJECT\_NAME | VARCHAR | The name of the requested object. |
-| GRANTEE\_TO\_AUTHORIZE | VARCHAR | For CREATE\_REQUEST and CANCEL REQUEST, this shows the role provided by the requester.  For APPROVE\_REQUEST, DENY\_REQUEST, and AUTO\_APPROVE\_REQUEST, this is the role granted or denied by the approver. |
+| GRANTEE\_TO\_AUTHORIZE | VARCHAR | For CREATE\_REQUEST and CANCEL\_REQUEST, this shows the role provided by the requester.  For APPROVE\_REQUEST, DENY\_REQUEST, and AUTO\_APPROVE\_REQUEST, this is the role granted or denied by the approver. |
 | GRANTEE\_TYPE | VARCHAR | The type of the grantee. Currently, this can only be ROLE. |
 
 Expand

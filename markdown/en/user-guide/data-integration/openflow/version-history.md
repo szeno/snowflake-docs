@@ -6,6 +6,37 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 22, 2026
+
+### Runtime Server 2026.10.22.2
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.10.22.2
+
+- Schema Inference: Fixed an issue where nested arrays were not preserved when choosing a `CHOICE` sub-type.
+- Schema Inference: Fixed exponential schema inference time for deeply nested records.
+- Record processing: Fixed an issue where nested JSON arrays could arrive in Snowflake as Java object-reference strings such as `[[Ljava.lang.Object;@65335376` when processing records with ambiguous inferred types. Nested arrays are now preserved, and schema inference is faster for deeply nested records.
+- CDC PostgreSQL (GA): When the runtime cannot write or commit a batch of change events, the connector no longer saves the advanced WAL position. It reconnects and reads those events again from the last saved position, so change events are no longer skipped after a storage failure. Events in an interrupted batch may be delivered more than once, and a storage failure while writing a schema change no longer marks the affected table as failed.
+- Microsoft Dataverse (GA): Fixed an issue where configuration problems with the table filter were not reported. The connector now logs an error on every table listing run when a table named in the Tables Filter is not found or does not have change tracking enabled, when a regular expression filter matches no tables, when no table filter is set, or when a table’s schema cannot be read. These errors appear in the Connectors Dashboard Issues view and mark the connector unhealthy until the configuration is fixed.
+- Google Ads (Public Preview): `GetGoogleAdsReport` no longer records a changed report definition when the report returned no data, so the destination table is still created on a later run instead of failing with a “table does not exist” error.
+- Google Ads (Public Preview): Fixed duplicate rows when Batch Ingestion Mode is set to `BATCHED` and an incremental run spans more than one batch.
+
+#### Gen 2 Connectors
+
+N/A
+
+#### Gen 1 Connectors
+
+- CDC SQL Server (change data capture) 0.53.0 (GA): Removed the Snowpipe Streaming version switch and the Snowpipe Streaming v1 upload path in **Perform Snapshot Load** and **Incremental Load**. The upgrade is rejected if any removed queue still contains FlowFiles. Before upgrading, stop `Switch Snowpipe Streaming Version` in both process groups, leave the rest running, and wait until the connections leaving `Switch Snowpipe Streaming Version`, `Upload Rows via Snowpipe Streaming`, `Update Failure Reason With SNOWPIPE_UPLOAD_FAILED`, and `Exit Switch Snowpipe Streaming Version` are empty. FlowFiles waiting in front of `Switch Snowpipe Streaming Version` continue after the upgrade.
+- Google Ads 0.13.0 (Public Preview): Fixed an issue where ingestion stalled for several hours when the data fetched for a single report in one run exceeded 1 GB, and the report was never written to the destination table. Such reports now load normally.
+- Google Ads 0.13.0 (Public Preview): The destination table is now created if missing before an incremental run deletes outdated data. Previously, every following run could fail with SQL error `002003` until the processor state was cleared.
+- Box Metadata 0.14.0, Unstructured Box CDC 0.25.0, Unstructured Box to Stage (no Cortex) 0.22.0 (Public Preview): Fixed an issue where comma-separated File Extensions To Ingest and folder ID filters did not ignore spaces around each entry. Previously, a value such as `pdf, docx, xlsx` matched only `pdf` and other file types were silently skipped.
+- Google Drive (no Cortex) 0.25.0, Google Drive (no Cortex, no DWD) 0.7.0, Unstructured Google Drive CDC 0.31.0, Unstructured Google Drive CDC (no DWD) 0.8.0 (GA): Fixed an issue where comma-separated File Extensions To Ingest values did not ignore spaces around each entry. Previously, a value such as `pdf, docx, xlsx` matched only `pdf` and other file types were silently skipped.
+- Unstructured SharePoint CDC 0.31.0, Unstructured SharePoint CDC (no ACL) 0.15.0, Unstructured SharePoint to Stage (no Cortex) 0.28.0, Unstructured SharePoint to Stage (no Cortex, no ACL) 0.11.0 (GA): Fixed an issue where comma-separated File Extensions To Ingest values did not ignore spaces around each entry. Previously, a value such as `pdf, docx, xlsx` matched only `pdf` and other file types were silently skipped.
+- Kafka High Performance 0.6.0 (GA): Set the metric resolution to source and destination, with the Kafka topic as the source name, so source and destination metrics can be shown together.
+- Kinesis High Performance 0.5.0 (GA): Set the metric resolution to source and destination, with the Kinesis stream name as the source name, so source and destination metrics can be shown together.
+
 ## October 20, 2026
 
 ### Runtime Server 2026.10.20.2

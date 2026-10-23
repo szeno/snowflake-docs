@@ -34,7 +34,7 @@ snow init
 :   which template (subdirectory of –template-source) should be used. If not provided, whole source will be used as the template.
 
 `--template-source TEXT`
-:   local path to template directory or URL to git repository with templates. Default: <https://github.com/snowflakedb/snowflake-cli-templates>.
+:   local path to template directory or URL to git repository with templates. Default: <https://github.com/snowflakedb/snowflake-cli-templates>. Override with SNOWFLAKE\_CLI\_INIT\_TEMPLATE\_SOURCE.
 
 `--variable, -D TEXT`
 :   String in `key=value` format. Provided variables will not be prompted for.

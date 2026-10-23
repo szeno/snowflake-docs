@@ -13,15 +13,14 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
-- [10.38 Release Notes (Preview)](/release-notes/2026/10_38)
+## Recent server releases
+
+- [10.38 Release Notes: Oct 17, 2026 - Oct 22, 2026](/release-notes/2026/10_38)
 
   - [SQL updates](/release-notes/2026/10_38#sql-updates)
 
     - [IPADDRESS data type (Preview)](/release-notes/2026/10_38#ipaddress-data-type-preview)
   - [Release notes change log](/release-notes/2026/10_38#release-notes-change-log)
-
-## Recent server releases
-
 - [10.36 Release Notes: Oct 3, 2026 - Oct 7, 2026](/release-notes/2026/10_36)
 
   - [Native App Framework updates](/release-notes/2026/10_36#native-app-framework-updates)
@@ -37,29 +36,27 @@ If you have questions about any of these features, contact
 
     - [New ACCOUNT\_USAGE.STREAMS view](/release-notes/2026/10_35#new-accountusagestreams-view)
   - [Release notes change log](/release-notes/2026/10_35#release-notes-change-log)
-- [10.32 Release Notes (with behavior changes): Sep 05, 2026 - Sep 09, 2026](/release-notes/2026/10_32)
-
-  - [Behavior change bundles](/release-notes/2026/10_32#behavior-change-bundles)
-  - [SQL updates](/release-notes/2026/10_32#sql-updates)
-
-    - [PERIOD data type (General availability)](/release-notes/2026/10_32#period-data-type-general-availability)
-  - [Data governance updates](/release-notes/2026/10_32#data-governance-updates)
-
-    - [Data metric function FILTER: Modify or clear a filter on an existing association](/release-notes/2026/10_32#data-metric-function-filter-modify-or-clear-a-filter-on-an-existing-association)
-  - [Release notes change log](/release-notes/2026/10_32#release-notes-change-log)
 
 For earlier server releases, see [Server releases earlier in 2026](/release-notes/weekly-releases-2026).
 
 ## Recent feature updates
 
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
+- [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)
 - [Oct 23, 2026: Retrieve Cortex Search (Public Preview)](/release-notes/2026/other/2026-10-23-cortex-search-retrieve-preview)
+- [October 22, 2026: Custom runtime images for ML Jobs (General availability)](/release-notes/2026/other/2026-10-22-custom-runtime-images-ml-jobs-ga)
+- [Oct 22, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-22-dcr)
+- [Oct 22, 2026: Quiesce a primary failover group (General availability)](/release-notes/2026/other/2026-10-22-quiesce-primary-failover-group-ga)
 - [October 21, 2026: Declarative Feature Store (General availability)](/release-notes/2026/other/2026-10-21-declarative-feature-store-ga)
+- [ODBC Driver (v4.2.0)](/release-notes/clients-drivers/odbc-2026)
+- [Snowpark Python (v1.55.3)](/release-notes/clients-drivers/snowpark-python-2026)
+- [Oct 20, 2026: Cortex Fine-tuning: New model training no longer available in AWS US East 1](/release-notes/2026/other/2026-10-20-cortex-finetuning-aws-us-east-1)
 - [Oct 20, 2026: dbt Projects on Snowflake updates](/release-notes/2026/other/2026-10-20-dbt-projects-on-snowflake-updates)
 - [October 20, 2026: Recompact Iceberg table data after target file size increases](/release-notes/2026/other/2026-10-20-iceberg-target-file-size-recompact)
 - [October 20, 2026: Online Feature Store (General availability)](/release-notes/2026/other/2026-10-20-online-feature-store-ga)
 - [Oct 20, 2026: Sensitive Data Entitlement and Access reports (General availability)](/release-notes/2026/other/2026-10-20-sensitive-data-entitlement-access-reports-ga)
 - [Oct 20, 2026: Snowflake-provided tags (General availability)](/release-notes/2026/other/2026-10-20-snowflake-provided-tags-ga)
+- [Snowflake CLI (v3.30.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowflake ML Python (v2.6.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [SnowSQL (v1.5.3)](/release-notes/clients-drivers/snowsql-2026)
 - [Oct 19, 2026: Tools for Cortex AI Gateway (Preview)](/release-notes/2026/other/2026-10-19-cortex-ai-gateway-tools)
@@ -104,11 +101,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
 - [Oct 05, 2026: OpenAI GPT-6.1 Sol model (Preview)](/release-notes/2026/other/2026-10-05-openai-gpt-61-sol-preview)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
+- [Oct 05, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-23-trust-center-data-security-scanner-package-ga)
 - [Snowpark Python (v1.55.1)](/release-notes/clients-drivers/snowpark-python-2026)
 - [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 - [Oct 1, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-01-dcr)
 - [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)
 - [Oct 1, 2026: Remote app operations for Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-10-01-remote-app-operations-ga)
+- [PHP PDO Driver (v4.3.0)](/release-notes/clients-drivers/php-pdo-2026)
 - [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
 - [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
 - [Sep 30, 2026: Dynamic tables continue incrementally refreshing after failover (General availability)](/release-notes/2026/other/2026-09-30-dynamic-tables-incremental-refresh-after-failover)
@@ -144,6 +143,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Sep 23, 2026: Non-deterministic aggregate functions are supported with dynamic table incremental refresh (General availability)](/release-notes/2026/other/2026-09-23-nondeterministic-agg-incremental-dynamic-tables)
 - [September 23, 2026: Container runtime for Streamlit apps in Snowflake Native Apps (Preview)](/release-notes/2026/other/2026-09-23-streamlit-container-runtime-native-apps-preview)
 - [Sep 23, 2026: Account posture reporting in the Trust Center (Preview)](/release-notes/2026/other/2026-09-23-trust-center-account-posture-preview)
-- [Sep 22, 2026: Improved data freshness for selected ORGANIZATION\_USAGE history views](/release-notes/2026/other/2026-09-22-organization-usage-history-views-latency)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

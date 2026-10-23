@@ -1,7 +1,3 @@
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Schema:
 :   [ORGANIZATION\_USAGE](/sql-reference/organization-usage)
 
@@ -60,7 +56,7 @@ Show lessSee more
 | KEY\_SEQUENCE | NUMBER | Position of the column in the index. |
 | INDEX\_OWNER | TEXT | Owner of the index. |
 | IS\_UNIQUE | TEXT | With `YES` or `NO`, indicates whether this index is a unique index. |
-| IS\_INCLUDED\_COLUMN | TEXT | With `YES` or `NO`, indicates whether this column is covered by an index. |
+| IS\_INCLUDED\_COLUMN | TEXT | With `YES` or `NO`, indicates whether this row represents a non-key column included in a covering index. Index key columns are `NO`; included columns are `YES`. |
 | CONSTRAINT\_NAME | TEXT | Name of the constraint that is associated with this index. |
 | STATUS | TEXT | Status of this index. |
 | CREATED | TIMESTAMP\_LTZ | Time of creation for this index. |

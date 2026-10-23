@@ -18,6 +18,7 @@ These topics provide reference information for the system-defined functions and 
   - [Encryption functions](/sql-reference/functions-encryption)
   - [Geospatial functions](/sql-reference/functions-geospatial)
   - [Hash functions](/sql-reference/functions-hash-scalar)
+  - [IPADDRESS functions](/sql-reference/functions-ipaddress)
   - [Metadata functions](/sql-reference/functions-metadata)
   - [Notification functions](/sql-reference/functions-notification)
   - [Numeric functions](/sql-reference/functions-numeric)

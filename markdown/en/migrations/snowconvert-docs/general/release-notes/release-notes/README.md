@@ -1,5 +1,266 @@
 # SnowConvert AI - Recent Release Notes
 
+## Version 2.51.3 (October 22, 2026)
+
+### CLI
+
+#### New Features
+
+- Added PDF generation for the assessment report.
+- Added Iceberg v2 target support to `scai data migrate`.
+- Added support for Iceberg spec v3 with native or compatible storage, and the `FULL_INGEST` load mode, in `create-workflow`.
+- Added Iceberg spec, storage, and load mode placeholders to `scai data migration generate-config`, copied into the validation config.
+- Added opt-in extraction strategies to `generate-config`.
+- Added `--skip-reports` and a faster post-run status read to Direct Mode `scai data` start.
+- Added `--only-cases` to `scai test validate` to validate only the named case numbers.
+- Added `--allow-empty` to `scai testbed init`.
+- Added prompts for missing connection secrets when running in an interactive terminal.
+- Added trace-id correlation across SnowConvert AI and data migration and validation logs.
+- Added support for column-scoped custom data validation metrics.
+
+#### Improvements
+
+- Assessment ticket titles now include the issue description, and generated acceptance criteria were removed from conversion-issue tickets.
+- The conversion-issues CSV now includes every conversion-issue pair and records the engine version.
+- Effort estimates now use the registry with the updated rate card, price SSIS packages, and discount repeated EWIs.
+- `scai data doctor` now checks Teradata, Oracle, Redshift, and BigQuery prerequisites before a workflow starts, and compares extraction destinations to the external stage URL.
+- `scai data validate` and `scai data migrate` now fail when a finished workflow has failed tables.
+- BigQuery and IBM DB2 local validation now run through the Data Exchange Agent.
+- Cloud data migration in SPCS now uses the SPCS workload identity instead of requiring a PAT or key pair.
+- The local migration worker now stops gracefully on Ctrl+C and `worker stop`.
+- `scai code deploy` now passes connection overrides to nested `snow` commands, and fails clearly on an unbound `${db}` registry database.
+- `scai testbed load` now continues past bad rows instead of aborting the whole table load, and loads related tables in the same foreign-key cluster.
+- Improved `scai testbed init` and `generate` performance on large ETL workloads.
+- `QRY0006` errors now include the driver’s error message.
+
+#### Bug Fixes
+
+- Fixed an issue where `scai update` failed with `INT0002` when the release download took more than 10 seconds to start.
+- Fixed an issue where `scai init` failed with `PRJ0001` in an empty folder when `~/.config` did not exist.
+- Fixed an issue where `scai code add` rolled back the whole SQL Server import on duplicate objects, including table-scoped index names and same-named databases on different servers.
+- Fixed an issue where `scai code add` on BigQuery failed late with an opaque `ADD0011` when files lacked tags.
+- Fixed an issue where `scai testbed load` overwrote rows in the real SQL Server source database without asking.
+- Fixed an issue where data migration failed with `DMG0011` because an orchestrator older than the pinned version was kept when auto-update was off.
+- Fixed an issue where parallel `scai data` runs rebuilt the orchestrator environment in the same directory without a lock.
+- Fixed an issue where data infrastructure setup reported ready even when its Python environments failed to build.
+- Fixed an issue where the local orchestrator and worker virtual environment on Linux was built without `bin/python`.
+- Fixed an issue where `scai data worker setup` reused a stale SPCS service from a previous project on Redshift.
+- Fixed an issue where `scai project defaults set/unset` dropped unknown keys from `project.local.yml`.
+- Fixed an issue where `scai test etl-validate` created its execution log in the `PUBLIC` schema instead of `VALIDATION`.
+- Fixed an issue where running the assessment opened several Snowflake browser sign-ins at once.
+- Fixed an issue where scai called the Snowflake CLI with connections defined only in `config.toml` that it could not resolve when `connections.toml` existed.
+
+### Desktop App
+
+#### New Features
+
+- Added a Dashboard tab with Migration status and Assessment views.
+- Added an option to add a new source connection from the source connection picker.
+
+#### Improvements
+
+- Refreshed the Migration status dashboard pages (home, conversion, deployment, data migration, data validation, and testing) to the latest design.
+- Added a light theme review so every surface follows one theme, and improved readability of diagrams in the dark theme.
+- Added a dock or taskbar signal when a permission or edit review is waiting.
+- Permission cards for shell commands now describe what the command does.
+- The Snowflake connection is now kept across projects and sessions.
+- Reduced the number of approvals needed before the first assessment.
+- Removed “Private Preview” from the window title.
+
+#### Bug Fixes
+
+- Fixed an issue where the agent session was lost with `unknown or inactive session` after a connection drop, a failed resume, or while working in another app.
+- Fixed an issue where conversations were cut off with “Connection interrupted” while the agent was working.
+- Fixed an issue where setup questions were repeated, not shown, or stalled setup after being answered.
+- Fixed an issue where Open Assessment did nothing or opened the report in the browser instead of the Dashboard tab.
+- Fixed an issue where the app hung on “Preparing workspace…” after deleting the project whose migration was running.
+- Fixed an issue where a project set up to migrate two SQL Server databases only extracted one.
+- Fixed an issue where changing the model in Settings failed with an `unknown session` error.
+- Fixed an issue where deploying a table from the Tasks panel failed while the chat deployed it.
+- Fixed an issue where the Objects list showed objects as “In Progress” when no agent was working on them.
+- Fixed an issue where clicking “Resume migration” did nothing.
+
+### Conversion Engine
+
+#### New Features
+
+##### General
+
+- Added real exit codes and an opt-in `--strict` mode for conversion runs that lose work.
+
+##### Oracle
+
+- Added conversion of `DBMS_MVIEW.REFRESH` calls.
+- Added conversion of scalar and correlated `KEEP (DENSE_RANK FIRST|LAST)` aggregates.
+- Marked `UID` as a not-supported function instead of pending review.
+
+##### RedShift
+
+- Mapped `COPY ACCEPTINVCHARS` to `REPLACE_INVALID_CHARACTERS`.
+- Mapped `COPY BLANKSASNULL` and `EMPTYASNULL` to `EMPTY_FIELD_AS_NULL`.
+
+##### SQL Server
+
+- Added conversion of scalar `BINARY_CHECKSUM` and `CHECKSUM` to `HASH`.
+- Added qualification of single-part names with `dbo`.
+- Added conversion of whole assignments of UDF-turned-procedure calls to `CALL INTO`.
+- Added conversion of `DATETIME` plus or minus integer columns, variables, and parameters to `DATEADD`.
+- `SET IMPLICIT_TRANSACTIONS OFF` is now commented out as equivalent default behavior.
+
+##### Teradata
+
+- Added emulation of SQLSTATE-bound `CONDITION` on `SIGNAL` with Snowflake handler dispatch.
+- Added native mixed `CONTINUE` and `EXIT` handlers, including named condition arms.
+- Added conversion of `EXTRACT` date arithmetic through `DATEADD`.
+- Added mapping of one-argument `TD_MONTH_END` for `DATE` operands.
+- Added mapping of captured-SQLCODE handler lookups of `dbc.ErrorMsgs` to `SQLERRM`.
+- Added a cross-database fallback for agreeing unqualified references.
+
+##### DataStage
+
+- Consolidated DataStage jobs that share a tool instance into one dbt project, with smaller models.
+
+##### Druid
+
+- Added conversion of native search filters to substring and partial-match predicates.
+
+#### Bug Fixes
+
+##### Oracle
+
+- Fixed `TO_CHAR_UDF` invalid branches, `NULL` input handling, ISO-year elements (`I`, `IY`, `IYY`, `IYYY`), and week-of-month (`W`, `w`).
+- Fixed `REGEXP_LIKE_UDF` null handling, boolean match semantics, and POSIX classes in bracket expressions.
+- Added translation of literal `TO_YMINTERVAL` and `TO_DSINTERVAL`.
+- Added translation of `CONNECT BY` set operands without `PRIOR`.
+- Fixed `RAISE_APPLICATION_ERROR` run-time messages.
+- Fixed binding of numeric `FOR` loop counters in `CALL` arguments.
+- Converted procedure `INSERT VALUES` with UDF calls to single-row `INSERT SELECT`.
+- Fixed duplicate `DATEADD_UDF` and `DATEDIFF_UDF` helper definitions.
+- Fixed `DBMS_OUTPUT` helpers to use a deploy-time log table.
+- Removed physical-only `MOVE PARTITION` clauses.
+
+##### SQL Server
+
+- Fixed date cast and offset type resolution across `CONVERT`, `TRY_CONVERT`, `CAST`, `DATEADD`, and `DATEDIFF` chains.
+- Fixed an issue where `'yyyymmdd'` date literals in `DATEADD`/`DATEDIFF` in views were treated as epoch seconds.
+- Fixed an issue where a non-breaking space in a procedure commented out a large part of its body.
+- Fixed `LEN` to always emit `LENGTH`.
+- Fixed same-named indexes on different tables colliding or being dropped, and `ALTER INDEX`/`DROP INDEX` resolution.
+- Fixed `QUOTENAME_UDF`, `ISNUMERIC_UDF`, `OPENJSON_WITH_SCHEMA_UDF`, and `FOR_XML_UDF` to match SQL Server behavior.
+- Inlined `ISNUMERIC` in scalar UDFs.
+- Truncated hexadecimal `CONVERT` over `HASHBYTES` to the declared length.
+- Added parsing of `OPEN/CLOSE MASTER KEY`.
+- Marked `INT` arguments passed to a too-narrow `VARCHAR` parameter with SSC-FDM-TS0158.
+- Improved pre-processing performance for dynamic SQL analysis.
+
+##### Teradata
+
+- Fixed `REGEXP_INSTR` word-boundary escapes and `REGEXP_SUBSTR` parenthesis lookarounds.
+- Fixed `VALIDTIME` period columns so `NEXT` emits `DATEADD`.
+- Converted a procedure-body `LEAVE` to `RETURN`.
+- Converted bare `ACTIVITY_COUNT` `SELECT INTO` to an assignment without SSC-EWI-TD0023.
+- Wrapped non-literal string numeric arguments with `TRY_TO_NUMBER`.
+- Treated `CREATE MULTISET/SET VOLATILE` tables as volatile and fixed binding of joined qualifiers.
+- Fixed dynamic `INSERT` conversion when its `SELECT` has no `FROM` table list.
+- Kept `DELETE` statements when a host variable matches the target table.
+- Kept quoted table names that contain a newline, and comments before `END` and on CTE closers.
+- Commented out `DROP INDEX`, dynamic `CREATE USER`, and catalog-dependent logic on `DBC.TriggersV` and `DBC.INDICESV`.
+- Read `DBC.RoleInfoV` cursors from `SHOW ROLES`.
+- Reported SSC-FDM-TD0062 when `COLLATE` is used for case specification.
+- Removed unnecessary SSC-EWI-TD0025, SSC-EWI-0013, and `TRUNC` cast warnings.
+
+##### SSIS
+
+- Added a `generate_schema_name` override to every SSIS dbt project.
+- Linked Execute Package tasks to the child package.
+- Recorded the lineage of variable-sourced Execute SQL Tasks.
+
+##### DataStage
+
+- Kept parameter sets in dbt vars.
+- Translated BASIC `SPACE` to Snowflake `SPACE`.
+
+##### General
+
+- Re-converted re-imported units instead of preserving stale output.
+
+### Data Validation
+
+#### New Features
+
+- Added Iceberg `FULL_INGEST` load mode, including native temporal and geospatial migration.
+- Added Iceberg v2 and v3 native storage support.
+- Added customizable encoding and decoding expressions (`customColumnTransforms`) for data migration.
+- Added native Teradata `PERIOD` migration with a `periodHandling` flag.
+- Added per-column L2 metric overrides and custom metrics.
+- Added a `resetPartitions` option.
+- Added continuation of source sequences and identity columns on the Snowflake target after load.
+- Allowed pseudo-columns to be used as partition keys.
+
+#### Improvements
+
+- L2 `COUNT(DISTINCT)` is now off by default and can be enabled with `includeCountDistinct`.
+- Source LOB columns are skipped in cloud L3 by default.
+- Improved partition key selection for PostgreSQL, Teradata, Oracle, and Redshift.
+- Reduced Direct Mode start-up, polling, and validation wait times.
+- Secondary roles are now activated on data validation sessions.
+- Retried transient Redshift DNS failures and Teradata dropped sessions.
+- Recorded an L1 `EXCLUDED` result when a column is excluded from validation.
+
+#### Bug Fixes
+
+- Fixed an issue where a `;` in an ODBC password truncated the connection string.
+- Fixed false mismatches for time zone offsets, `TIME` precision, JSON/JSONB, floats, `DECFLOAT`, string lengths, and geospatial values across several platforms.
+- Fixed L2 metric failures for SQL Server `XML`, `IMAGE`, `TEXT`, and `NTEXT`; IBM DB2 `XML`, `BOOLEAN`, `GRAPHIC`, and LOB types; and PostgreSQL `BIT` types.
+- Fixed Oracle `XMLTYPE` hashing and delimited or mixed-case column names in Oracle and IBM DB2.
+- Fixed PostgreSQL bare `NUMERIC`/`DECIMAL` truncation.
+- Fixed `excludeSourceColumns` not being applied at runtime.
+- Fixed the Data Migration dashboard under-reporting row counts for very large tables.
+- Fixed data workflows locking source tables indefinitely when owned by another project or a stopped orchestrator.
+- Fixed `scai data migrate` uploads on Windows failing on paths with backslashes.
+- Fixed full-replace with `partitionByDate` leaving target rows for periods without source rows.
+
+### Others
+
+#### Testing Framework
+
+##### Improvements
+
+- Added Redshift, Teradata, and Oracle source coverage in `scai test`.
+- Added a generic ETL deployer and support for running SSIS packages with testbed-generated files.
+- ETL runs now verify that dependent tables exist and that upstream producers succeeded.
+- Added a warning when `modifies_data: false` skips isolation for writes.
+- Added an actionable error for missing Teradata `HASH_MD5`.
+
+##### Bug Fixes
+
+- Fixed an issue where `scai test etl-validate` reported Passed when zero result tables were compared, or Failed when `USE SECONDARY ROLES` was rejected.
+- Fixed an issue where row validation reported a match when the target held extra duplicate rows.
+- Fixed delta rows being paired by arrival order.
+- Fixed `validate --workers N` failing on read-only cases.
+- Fixed restoring Teradata tables listed twice in one capture and tables that fall back on duplicate keys.
+
+#### Migration Plugin
+
+##### New Features
+
+- Added Iceberg target setup to the migration plugin.
+- Added agent-guided Snowflake Budgets to cap warehouse and compute pool spend.
+- Added the option to switch from default to custom conversion flags on an existing project.
+
+##### Improvements
+
+- AIM now recommends the connection’s own Snowflake role and warehouse for data migration, and creates a sandbox target database only after confirmation.
+- Improved assessment report visuals, including exclusion categories, Requires Attention details, and lineage views.
+- Faster deployment of DDL-only tables.
+
+##### Bug Fixes
+
+- Fixed an issue where `split_code` did not recognize Oracle `EDITIONABLE`/`FORCE`, `PACKAGE`, `SYNONYM`, `DATABASE LINK`, or `MATERIALIZED VIEW` DDL.
+- Fixed an issue where successful deploys could not be recorded as complete.
+- Fixed an issue where the “Download conversion reports” link in the saved assessment report failed.
+- Fixed an issue where the assessment dashboard showed old data after switching projects.
+
 ## Version 2.49.0 (October 7, 2026)
 
 ### CLI

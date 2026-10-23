@@ -608,7 +608,7 @@ Schema evolution is limited to the following operations:
 
 ## Using the connector with Apache Iceberg™ tables
 
-The connector can ingest data into a Snowflake-managed Apache Iceberg™ table. You must create the Iceberg table manually before running the connector; the connector doesn’t create Iceberg tables automatically. Server-side schema evolution is supported for Iceberg tables; client-side schema evolution isn’t. For more information, see [Validation and error handling](/user-guide/kafka-connector/validation-error-handling).
+Kafka connector v4 supports ingestion and schema evolution for Snowflake-managed Iceberg v2 and v3 tables. Use server-side validation (`snowflake.validation=server_side`) for Iceberg ingestion and schema evolution. Starting with version 4.1.0, set `snowflake.autocreate.table.type=iceberg` to auto-create a missing table, or create the table beforehand. For configuration examples and schema evolution limitations, see [Load data into Iceberg tables](/user-guide/kafka-connector/iceberg).
 
 The Iceberg table can use either of the following storage options:
 
@@ -664,6 +664,7 @@ Copy code
 
 ```
 CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+    RECORD_METADATA VARIANT,
     id number(38,0),
     name varchar,
     body_temperature number(4,2),
@@ -674,7 +675,9 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
   )
   EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
   CATALOG = 'SNOWFLAKE'
-  ICEBERG_VERSION = 3;
+  ICEBERG_VERSION = 3
+  ENABLE_SCHEMA_EVOLUTION = TRUE
+  ERROR_LOGGING = TRUE;
 ```
 
 To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and provide a `BASE_LOCATION`:
@@ -683,6 +686,7 @@ To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and pr
 >
 > ```
 > CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+>     RECORD_METADATA VARIANT,
 >     id number(38,0),
 >     name varchar,
 >     body_temperature number(4,2),
@@ -694,25 +698,30 @@ To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and pr
 >   EXTERNAL_VOLUME = 'my_volume'
 >   CATALOG = 'SNOWFLAKE'
 >   BASE_LOCATION = 'my_location/my_iceberg_table'
->   ICEBERG_VERSION = 3;
+>   ICEBERG_VERSION = 3
+>   ENABLE_SCHEMA_EVOLUTION = TRUE
+>   ERROR_LOGGING = TRUE;
 > ```
 >
 > Copy code
 >
 > ```
 > CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+>     RECORD_METADATA VARIANT,
 >     id INT,
 >     name string,
 >     body_temperature float,
 >     approved_coffee_types array(string),
 >     animals_possessed variant,
 >     date_added date,
->     options object(can_walk boolean, can_talk boolean),
+>     options object(can_walk boolean, can_talk boolean)
 >     )
 >   EXTERNAL_VOLUME = 'my_volume'
 >   CATALOG = 'SNOWFLAKE'
 >   BASE_LOCATION = 'my_location/my_iceberg_table'
->   ICEBERG_VERSION = 3;
+>   ICEBERG_VERSION = 3
+>   ENABLE_SCHEMA_EVOLUTION = TRUE
+>   ERROR_LOGGING = TRUE;
 > ```
 
 Note
