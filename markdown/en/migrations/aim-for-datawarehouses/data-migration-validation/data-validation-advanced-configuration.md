@@ -24,7 +24,7 @@ The agent sets `row_validation: true` for the tables you named (globally it stay
 
 ## Choosing an L3 extraction strategy
 
-L3 needs a source-side signature extract before Snowflake can compare row hashes. The optional `validation_configuration.extraction` block uses the **same strategy names as data migration**. The recommended L3 extract is always the source’s native export:
+L3 needs a source-side signature extract before Snowflake can compare row hashes. The optional `validation_configuration.extraction` block uses the **same strategy names as data migration**. When the source has a native export, that export is the recommended L3 extract:
 
 | Source | Recommended strategy |
 | --- | --- |
@@ -32,12 +32,15 @@ L3 needs a source-side signature extract before Snowflake can compare row hashes
 | Teradata | **WRITE\_NOS** (`write_nos`) |
 | Oracle | **DBMS\_CLOUD** (`dbms_cloud`) |
 | SQL Server / Azure Synapse | **CETAS** (`cet_as`) |
-| BigQuery | **EXPORT DATA** (`export_data`) |
+| BigQuery | **EXPORT DATA** (`export_data`). See [Validating Data from Google BigQuery](./validate-bigquery). |
 | PostgreSQL | **regular** (COPY, `use_copy = true`) |
+| IBM DB2 | **`cloud_direct`** when an object store and external stage are available. Otherwise **`regular`**. |
 
 Expand
 
 Show lessSee more
+
+When the native bucket isn’t available, SQL Server, Azure Synapse, Redshift, Oracle, Teradata, and PostgreSQL can use **`cloud_direct`** instead: the Worker writes the signature Parquet to S3, GCS, or Azure Blob behind an external stage. BigQuery doesn’t support `cloud_direct`. Use `regular` when no bucket is available. Azure SQL Database can’t use `cet_as`. Use `cloud_direct` or `regular` there.
 
 **Prompt:**
 
@@ -183,7 +186,7 @@ The agent sets `intervalHandling` on that table’s validation entry to match mi
 
 If validation reads are blocked by production writers, you can opt in to anti-locking query hints. This trades consistency guarantees (dirty reads) for reduced blocking, so use it only when locking is actually a problem.
 
-On MVCC engines (Oracle, PostgreSQL, Redshift), readers don’t block writers and hints usually aren’t needed. On lock-based engines (SQL Server), `WITH (NOLOCK)` avoids blocking but allows dirty reads that can produce false `MISMATCH` results. The impact is usually **stronger at L3** (byte-exact row hashing) than at **L2** (aggregate metrics within tolerance). Teradata gets `LOCKING ROW FOR ACCESS` automatically (safe, not a dirty read).
+On MVCC engines (Oracle, PostgreSQL, Redshift), readers don’t block writers and hints usually aren’t needed. On lock-based engines (SQL Server), `WITH (NOLOCK)` avoids blocking but allows dirty reads that can produce false `MISMATCH` results. The impact is usually **stronger at L3** (byte-exact row hashing) than at **L2** (aggregate metrics within tolerance). Teradata gets `LOCKING ROW FOR ACCESS` automatically (safe, not a dirty read). IBM DB2 gets no automatic hint.
 
 **Prompt:**
 

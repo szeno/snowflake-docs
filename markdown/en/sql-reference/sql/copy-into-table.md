@@ -1642,7 +1642,7 @@ You can specify one or more of the following copy options (separated by blank sp
 
 `SIZE_LIMIT = num`
 :   Definition:
-    :   Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. When the threshold is exceeded, the COPY operation discontinues loading files. This option is commonly used to load a common group of files by using multiple COPY statements. For each statement, the data load continues until the specified `SIZE_LIMIT` is exceeded, before moving on to the next statement.
+    :   Number (> 0) that specifies the maximum size (in bytes) of data to be loaded for a given COPY statement. When the threshold is exceeded, the COPY operation discontinues loading files. This option is commonly used to load a common group of files by using multiple COPY statements. For each statement, the data load continues until the specified `SIZE_LIMIT` is exceeded, before moving on to the next statement. Because the COPY command skips files that it has already loaded into the table (see [Load metadata](/user-guide/data-load-considerations-load#label-copy-load-metadata)), each subsequent statement loads files that the previous statements didn’t load.
 
         For example, suppose a set of files in a stage path were each 10 MB in size. If multiple COPY statements set SIZE\_LIMIT to `25000000` (25 MB), each would load 3 files. That is, each COPY operation would discontinue after the `SIZE_LIMIT` threshold was exceeded.
 
@@ -1780,6 +1780,9 @@ The command returns the following columns:
 Expand
 
 Show lessSee more
+
+If the command doesn’t process any files, it returns a single `status` column instead of the preceding columns, with the
+value `Copy executed with 0 files processed.`
 
 ## Examples
 

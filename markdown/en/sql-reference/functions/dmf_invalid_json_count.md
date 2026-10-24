@@ -48,3 +48,25 @@ SELECT SNOWFLAKE.CORE.INVALID_JSON_COUNT(
   FROM events.tables.logs
 );
 ```
+
+The following example creates a table with sample JSON payloads, and then counts the values that aren’t valid JSON:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE json_payloads (payload VARCHAR);
+
+INSERT INTO json_payloads (payload) VALUES
+  ('{"id": 1, "status": "active"}'),  -- valid JSON object
+  ('[1, 2, 3]'),                      -- valid JSON array
+  ('{"id": 2, "status": }'),          -- not valid JSON: missing value
+  (NULL);                             -- NULL values aren't counted
+
+SELECT SNOWFLAKE.CORE.INVALID_JSON_COUNT(
+  SELECT
+    payload
+  FROM json_payloads
+);
+```
+
+In this example, the function returns `1`, for the one value that isn’t valid JSON.

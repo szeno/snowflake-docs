@@ -54,7 +54,7 @@ and [Offset migration properties](/user-guide/kafka-connector/setup-kafka#label-
 
 Important
 
-Choose the validation mode for your target table. For standard Snowflake tables, use `snowflake.validation=client_side` when columns should be created from declared schema types, such as Avro or Protobuf. For Snowflake-managed Iceberg tables, use `snowflake.validation=server_side`. After reviewing the migration settings above, set `snowflake.streaming.validate.compatibility.with.classic=false` before starting the connector. Pre-create columns when you need specific types or precision. For more information, see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode) and [Iceberg limitations](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-limitations).
+Choose your validation mode deliberately. Set `snowflake.validation=client_side` if your source uses a schema registry or a strongly typed schema (for example, Avro or Protobuf), so that columns are created from the declared types. The v4 default, `server_side`, infers column types from the first observed record values and doesn’t use a schema registry, which can silently downgrade a type (for example, a declared `FLOAT64` inferred as `NUMBER(38,0)`, truncating decimals). For more information, see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode).
 
 ## Migration paths
 

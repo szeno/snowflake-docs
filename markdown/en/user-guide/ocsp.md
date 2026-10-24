@@ -35,7 +35,7 @@ Currently, the fail-open default approach applies to the following client and dr
 | SnowSQL | v1.1.79 or later |
 | Python Connector | v1.8.0 or later |
 | JDBC Driver | v3.8.0 or later |
-| ODBC Driver | v2.19.0 through 3.x |
+| ODBC Driver | v2.19.0 through 3.21.x |
 | SQL Alchemy | Upgrade Python Connector to v1.8.0 or later |
 | Spark | v2.4.14 or later if using Maven or SBT to build the Spark application.   JDBC v3.8.0 or later if attaching JAR files to Spark cluster.   Request Databricks to upgrade their Spark connector if using the Databricks built-in Spark connector. |
 | Go Driver | v1.2.0 or later |
@@ -46,6 +46,9 @@ Expand
 Show lessSee more
 
 Note
+
+Starting with ODBC 3.22.0, OCSP checking is off by default. Set `OCSP_FAIL_OPEN=true` for fail-open checking or `OCSP_FAIL_OPEN=false` for fail-close checking.
+See [Configuration parameters](/developer-guide/odbc/odbc-parameters#label-odbc-configuration-parameters).
 
 ODBC 4.x does not implement OCSP. Certificate revocation list (CRL) checking is available but disabled by default
 (`CRL_MODE=DISABLED`). Set `CRL_MODE=ENABLED` for fail-close checking or `CRL_MODE=ADVISORY` for advisory checking.

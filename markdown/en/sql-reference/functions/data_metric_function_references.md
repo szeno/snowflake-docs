@@ -138,6 +138,10 @@ When the DMF association is suspended, the status can be one of the following:
 `SUSPENDED_ACTIVE_EVENT_TABLE_DOES_NOT_EXIST_OR_NOT_AUTHORIZED`
 :   The event table is not set at the account level.
 
+`SUSPENDED_DATA_METRIC_FUNCTION_OR_TARGET_OBJECT_IS_INVALID`
+:   The DMF evaluation failed with an error that doesn’t map to a more specific suspended status, so either the DMF or the
+    object it’s associated with is invalid.
+
 ## Examples
 
 To return a row for each DMF assigned to the table named `hr.tables.empl_info`, execute the following:

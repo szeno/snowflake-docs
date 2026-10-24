@@ -523,6 +523,20 @@ and whose value in a different column is `Public`. All other conditions result i
 >    end;
 > ```
 
+A conditional masking policy takes more than one input column, so when you apply it to a column you must list the columns
+to pass to the policy in a USING clause, in the same order as the policy’s arguments. The first column corresponds to the
+policy’s first argument, which is the column to mask. For example, apply the policy to the `email` column of a table, passing the `visibility` column as
+the condition:
+
+> Copy code
+>
+> ```
+> ALTER TABLE IF EXISTS user_info MODIFY COLUMN email
+>   SET MASKING POLICY de_email_visibility USING (email, visibility);
+> ```
+
+For more information, see [Apply a conditional masking policy on a column](/user-guide/security-column-intro#label-security-column-intro-apply-cond-cols).
+
 ## Example: Allow a masked column in a row access policy or conditional masking policy
 
 Replace a masking policy that either allows viewing the email address, viewing only the email address domain, or a fixed masked value:

@@ -189,9 +189,9 @@ For more information about conversions between [semi-structured types](/sql-refe
 |  | [VARCHAR](/sql-reference/data-types-text#label-character-datatypes) | ✔ | ✔ | [TO\_VARCHAR](/sql-reference/functions/to_char) | None. |
 |  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ✔ | ✔ | [TO\_VARIANT](/sql-reference/functions/to_variant) | None. |
 | GEOGRAPHY |  |  |  |  |  |
-|  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ✔ | ❌ | [TO\_VARIANT](/sql-reference/functions/to_variant) | None. |
+|  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ❌ | ❌ | — | `CAST`, `::`, and `TO_VARIANT` don’t accept this conversion. Use [ST\_ASGEOJSON](/sql-reference/functions/st_asgeojson) to obtain an `OBJECT` that can be converted to `VARIANT`. |
 | GEOMETRY |  |  |  |  |  |
-|  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ✔ | ❌ | [TO\_VARIANT](/sql-reference/functions/to_variant) | None. |
+|  | [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant) | ❌ | ❌ | — | `CAST`, `::`, and `TO_VARIANT` don’t accept this conversion. Use [ST\_ASGEOJSON](/sql-reference/functions/st_asgeojson) to obtain an `OBJECT` that can be converted to `VARIANT`. |
 | Interval data types |  |  |  |  |  |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-type-number) | ✔ | ❌ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | None. |
 |  | [VARCHAR](/sql-reference/data-types-text#label-character-datatypes) | ✔ | ✔ | [TO\_VARCHAR](/sql-reference/functions/to_char) | None. |
@@ -225,6 +225,8 @@ For more information about conversions between [semi-structured types](/sql-refe
 |  | [DATE](/sql-reference/data-types-datetime#label-datatypes-date) | ✔ | ✔ | [TO\_DATE , DATE](/sql-reference/functions/to_date) | None. |
 |  | [DECFLOAT](/sql-reference/data-types-numeric#label-data-type-decfloat) | ✔ | ✔ | [TO\_DECFLOAT](/sql-reference/functions/to_decfloat) | None. |
 |  | [FLOAT](/sql-reference/data-types-numeric#label-data-types-for-floating-point-numbers) | ✔ | ✔ | [TO\_DOUBLE](/sql-reference/functions/to_double) | For example, from `'12.34'` to `12.34`. |
+|  | [GEOGRAPHY](/sql-reference/data-types-geospatial) | ❌ | ❌ | [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) | `CAST` and the `::` operator don’t support this conversion. Use [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) directly. |
+|  | [GEOMETRY](/sql-reference/data-types-geospatial) | ❌ | ❌ | [TO\_GEOMETRY](/sql-reference/functions/to_geometry) | `CAST` and the `::` operator don’t support this conversion. Use [TO\_GEOMETRY](/sql-reference/functions/to_geometry) directly. |
 |  | [Interval data types](/sql-reference/data-types-datetime#label-datatypes-interval-variations) | ✔ | ✔ | — | The VARCHAR value is parsed in the same way as an [interval literal](/sql-reference/data-types-datetime#label-interval-data-types-interval-literals). |
 |  | [IPADDRESS](/sql-reference/data-types-ipaddress) | ✔ | ✔ | [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) | None. |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-types-for-fixed-point-numbers) | ✔ | ✔ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | For example, from `'12.34'` to `12.34`. |
@@ -242,7 +244,7 @@ For more information about conversions between [semi-structured types](/sql-refe
 |  | [DATE](/sql-reference/data-types-datetime#label-datatypes-date) | ✔ | ✔ | [TO\_DATE , DATE](/sql-reference/functions/to_date) | None. |
 |  | [DECFLOAT](/sql-reference/data-types-numeric#label-data-type-decfloat) | ✔ | ❌ | [TO\_DECFLOAT](/sql-reference/functions/to_decfloat) | None. |
 |  | [FLOAT](/sql-reference/data-types-numeric#label-data-types-for-floating-point-numbers) | ✔ | ✔ | [TO\_DOUBLE](/sql-reference/functions/to_double) | None. |
-|  | [GEOGRAPHY](/sql-reference/data-types-geospatial) | ✔ | ❌ | [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) | None. |
+|  | [GEOGRAPHY](/sql-reference/data-types-geospatial) | ❌ | ❌ | [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) | `CAST` and the `::` operator don’t support this conversion. Use [TO\_GEOGRAPHY](/sql-reference/functions/to_geography) directly. |
 |  | [IPADDRESS](/sql-reference/data-types-ipaddress) | ✔ | ✔ | [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) | None. |
 |  | [NUMBER[(p,s)]](/sql-reference/data-types-numeric#label-data-types-for-fixed-point-numbers) | ✔ | ✔ | [TO\_NUMBER](/sql-reference/functions/to_decimal) | None. |
 |  | [OBJECT](/sql-reference/data-types-semistructured#label-data-type-object) | ✔ | ✔ | [TO\_OBJECT](/sql-reference/functions/to_object) | None. |

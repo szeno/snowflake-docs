@@ -58,6 +58,6 @@ Call the data metric function manually:
 > SELECT data_freshness_hour(SELECT last_updated FROM hr.tables.empl_info) < 60;
 > ```
 >
-> The statement returns `True` if there are no updates to the table in the last hour (60 minutes).
+> The statement returns `True` if there are updates to the table in the last hour (60 minutes).
 >
-> The statement returns `False` if there were updates to the table that took place more than one hour ago.
+> The statement returns `False` if there were no updates to the table in the last hour.

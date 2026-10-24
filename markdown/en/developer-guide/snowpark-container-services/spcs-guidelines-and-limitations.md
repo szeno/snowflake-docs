@@ -12,7 +12,7 @@
     - Each service can support up to 10 EAIs (see [CREATE SERVICE](/sql-reference/sql/create-service) and [ALTER SERVICE](/sql-reference/sql/alter-service)).
     - Each EAI can have up to 100 host names.
   - When accessing the public endpoint from the internet, you might find that username/password authentication works, but SSO results in a blank page or the error: “OAuth client integration with the given client ID is not found.”. For information about addressing this issue, see [Ingress and SSO considerations](/developer-guide/snowpark-container-services/service-network-communications#label-additional-considerations-ingress-sso).
-- **Image platform requirements:** Currently, Snowpark Container Services requires linux/amd64 platform images.
+- **Image platform requirements:** Container images must match the CPU architecture of the compute pool’s instance family: `linux/amd64` for x86 instance families and `linux/arm64` for ARM instance families. For more information, see [Snowpark Container Services: Understanding instance families](/developer-guide/snowpark-container-services/instance-families).
 - **Service containers are not privileged:** Service containers do not run as privileged, and therefore cannot change
   the configuration of the hardware on the host and can change only limited OS configurations. Service containers can only
   perform operating system configurations that a normal user (that is, a user who doesn’t require root) can do.

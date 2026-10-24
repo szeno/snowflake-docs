@@ -329,7 +329,7 @@ or
 
     For more information about this parameter, see [USER\_TASK\_TIMEOUT\_MS](/sql-reference/parameters#label-user-task-timeout-ms).
 
-    Values: `0` - `604800000` (7 days). A value of `0` specifies that the maximum timeout value is enforced.
+    Values: `0` - `604800000` (7 days). A value of `0` isn’t treated as “no limit”: the task run times out immediately. Specify a value greater than `0`.
 
     Default: `3600000` (1 hour)
 

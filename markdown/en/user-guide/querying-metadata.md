@@ -22,7 +22,8 @@ METADATA$FILE\_LAST\_MODIFIED
 :   Last modified timestamp of the staged data file the current row belongs to. Returned as TIMESTAMP\_NTZ.
 
 METADATA$START\_SCAN\_TIME
-:   Start timestamp of operation for each record in the staged data file. Returned as TIMESTAMP\_LTZ.
+:   Timestamp when Snowflake started scanning the staged data file that the current row belongs to, as part of the query or load
+    operation (for example, a COPY INTO statement or a Snowpipe load) that reads the file. Returned as TIMESTAMP\_LTZ.
 
 ## Query limitations
 

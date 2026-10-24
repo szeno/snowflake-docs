@@ -7,6 +7,9 @@ Using budgets incurs the following costs:
   billed to your account.
 - **Storage costs** — Snowflake stores metadata for Budgets in your account. Storage for this metadata is billed to your account.
 
+In your task history, you might also see a task named \_FINALIZER\_TASK. Snowflake creates this task for each budget as the
+[finalizer task](/user-guide/tasks-graphs#label-finalizer-task) of \_MEASUREMENT\_TASK, so it runs after each run of \_MEASUREMENT\_TASK.
+
 ## Exploring compute costs
 
 You can view costs for serverless tasks using Snowsight or the Account Usage

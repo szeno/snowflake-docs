@@ -4,8 +4,7 @@ Feature — Generally Available
 
 Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, and Google Cloud Platform commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions).
 
-Instance families are grouped by type: general compute, high memory, and GPU accelerated.
-GCP instance families are available in three types:
+Instance families are grouped as current generation or previous generation. Google Cloud instance families are available in three types:
 
 - **General Compute (GEN)**: Recommended for general-purpose containerized workloads.
 - **High Memory (MEM)**: High memory-to-vCPU ratio for applications that require large amounts of RAM, such as CPU-based model serving, large-scale in-memory data processing, and vector index serving.
@@ -41,6 +40,28 @@ Expand
 
 Show lessSee more
 
+#### ARM general compute
+
+Current generation ARM instances for general-purpose workloads.
+
+| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region availability |
+| --- | --- | --- | --- | --- | --- | --- |
+| GEN\_ARM\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 | Available everywhere |
+| GEN\_ARM\_G1\_4 | 3 | 13 | 100 | 23.0 | 150 | Available everywhere |
+| GEN\_ARM\_G1\_8 | 6 | 28 | 100 | 23.0 | 150 | Available everywhere |
+| GEN\_ARM\_G1\_16 | 14 | 58 | 100 | 23.0 | 150 | Available everywhere |
+| GEN\_ARM\_G1\_32 | 28 | 116 | 100 | 23.0 | 150 | Available everywhere |
+
+Expand
+
+Show lessSee more
+
+Note
+
+ARM instances require container images built for the `linux/arm64` platform.
+x86 instances require `linux/amd64`. For multi-architecture deployments, use
+multi-platform container images.
+
 ### High Memory Instance Families
 
 Current generation x86 instances optimized for memory-intensive workloads.
@@ -57,7 +78,7 @@ Show lessSee more
 
 ### GPU Accelerated Instance Families
 
-GCP GPU instance families feature two NVIDIA GPU architectures, each suited to different AI and ML workloads.
+Google Cloud GPU instance families feature two NVIDIA GPU architectures, each suited to different AI and ML workloads.
 
 #### NVIDIA L4
 
@@ -88,4 +109,18 @@ Show lessSee more
 
 ## Previous Generation Instance Families
 
-There are no previous generation instance families on Google Cloud. All listed instance families are current generation.
+### General compute instance families
+
+Previous generation x86 instances. For new workloads, use CPU\_X64 instances instead.
+
+| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region availability |
+| --- | --- | --- | --- | --- | --- | --- |
+| GEN\_X64\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 | Available everywhere |
+| GEN\_X64\_G1\_4 | 3 | 13 | 100 | 10.0 | 150 | Available everywhere |
+| GEN\_X64\_G1\_8 | 6 | 28 | 100 | 16.0 | 150 | Available everywhere |
+| GEN\_X64\_G1\_16 | 14 | 58 | 100 | 32.0 | 150 | Available everywhere |
+| GEN\_X64\_G1\_32 | 28 | 116 | 100 | 32.0 | 150 | Available everywhere |
+
+Expand
+
+Show lessSee more

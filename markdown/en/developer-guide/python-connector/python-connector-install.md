@@ -24,7 +24,7 @@ Before version 5.0, the connector was published from [snowflake-connector-python
 
 ## Prerequisites
 
-Requires Python 3.11 or later. Wheels are published for CPython 3.11, 3.12, 3.13, and 3.14.
+Requires Python 3.11 or later. Wheels are published for CPython 3.11, 3.12, 3.13, 3.14, and 3.14t (free-threaded CPython). Windows on ARM does not include a 3.14t wheel.
 
 For a list of the operating systems supported by Snowflake clients, see [Operating system support](/release-notes/requirements#label-client-operating-system-support).
 

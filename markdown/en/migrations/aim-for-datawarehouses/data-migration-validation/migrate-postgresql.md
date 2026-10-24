@@ -4,12 +4,13 @@ This page covers PostgreSQL-specific setup for [Data migration](./data-migration
 
 ## Prerequisites
 
-- **Npgsql driver** (pure Python) on Workers. You don’t install a PostgreSQL ODBC driver for cloud migration.
+- **PostgreSQL ODBC driver** (`psqlODBC`) on Workers. The Worker connects through it for metadata, key inference, and reads. A Worker on Snowpark Container Services installs it (`odbc-postgresql`) at startup. See [PostgreSQL](../manual-migration/manual-spcs-worker-setup#postgresql) for the egress hosts. On your own host, install the PostgreSQL ODBC driver.
+- **`psql`** on the Worker’s `PATH` for COPY extraction (`use_copy = true`). When `psql` isn’t available, the Worker reads through the ODBC driver instead. The Snowpark Container Services image doesn’t include `psql`.
 - **TLS configuration**: Set **`ssl_mode`** in Worker TOML (`Disable`, `Prefer`, `Require`, `VerifyCA`, `VerifyFull`). Default **`Require`** for managed hosts; use **`Disable`** for local Docker or lab instances without TLS.
 
 ## Connectivity and extraction
 
-The recommended extract is **`regular`**, which uses the PostgreSQL COPY protocol (`use_copy = true`, the default for cloud migration). It requires `psql` on the Worker host.
+The recommended extract is **`regular`**, which uses the PostgreSQL COPY protocol (`use_copy = true`, the default for cloud migration). It requires `psql` on the Worker host. Without `psql`, the same `regular` extract runs through the ODBC driver.
 
 ### Managed host (TLS required)
 

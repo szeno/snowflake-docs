@@ -2,7 +2,7 @@
 
 Snowflake AIM **Data Migration and Validation** (AIM DMV) provides a fault-tolerant, scalable way to move data from external sources into Snowflake and verify that migrated data matches the source. Both features share the same Orchestrator and Workers, the same `SNOWCONVERT_AI` metadata database, and the same deployment options.
 
-Use [Data migration](./data-migration) when you are moving data from a system you plan to decommission. Use [Data validation](./data-validation) when you need confidence that migrated data is correct before cutover.
+Use [Data migration](./data-migration) when you are moving data from a system you plan to decommission. Use [Data validation](./data-validation) when you need confidence that migrated data is correct before cutover. Supported sources are listed on those pages and include IBM DB2 for Linux, UNIX, and Windows.
 
 ## Architecture overview
 

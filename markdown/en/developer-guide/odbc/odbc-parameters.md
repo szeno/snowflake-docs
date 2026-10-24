@@ -93,6 +93,11 @@ In macOS or Linux:
 :   Set to `true` to disable the TLS certificate revocation status check by the Online Certificate Status Protocol (OCSP). In normal circumstances, this flag should not be set. But if the OCSP
     availability problem persists, the application might temporarily set this parameter in order to unblock connectivity issues and remove it when the OCSP availability problem is addressed.
 
+    Starting with version 3.22.0, OCSP checking is off by default. To turn it on, set `OCSP_FAIL_OPEN` in the connection string or DSN, or
+    `OCSPFailOpen` in the `simba.snowflake.ini` file or the Windows registry: `true` selects fail-open and `false` selects fail-close.
+    `DisableOCSPCheck=false` doesn’t turn OCSP on. `DisableOCSPCheck=true` turns off fail-open checking, but fail-close checking
+    (`OCSP_FAIL_OPEN=false`) stays on. For more information, see [OCSP Configuration](/user-guide/ocsp).
+
     Note
 
     ODBC 4.x accepts but ignores `DisableOCSPCheck` and `OCSP_FAIL_OPEN`, with a deprecation warning.
@@ -877,8 +882,21 @@ In macOS or Linux, they are set in the `odbc.ini` file, similar to the rest of t
 `WORKLOAD_IDENTITY_AWS_USE_OUTBOUND_TOKEN`
 :   When `true`, AWS Workload Identity Federation attestation uses outbound STS `GetWebIdentityToken` instead of the default pre-signed `GetCallerIdentity` token. This connection parameter takes precedence over `SNOWFLAKE_ENABLE_AWS_WIF_OUTBOUND_TOKEN`.
 
+    In ODBC 3.x, this parameter is available starting with version 3.22.0.
+
 `USE_PROXY_ENV`
 :   When `true`, ODBC 4.x reads the `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY` environment variables. The alias `PROXYWITHENV` is also accepted. Explicit `PROXY` / `NO_PROXY` connection parameters still apply. Version 3.x read those environment variables automatically when no DSN or configuration-file proxy was set.
+
+`PrivateLinkHostnameSuffix`
+:   Overrides the hostname suffix that the driver uses to detect a private connectivity host. The default is `privatelink.snowflakecomputing`, matched with or without the top-level domain. A leading `.` is optional.
+    When the host matches, the driver sets `SF_OCSP_RESPONSE_CACHE_SERVER_URL` to `http://ocsp.<host>/ocsp_response_cache.json` unless `DisableResponseCacheOverride` is `true`.
+
+    ODBC 3.x only, starting with version 3.22.0.
+
+`DisableResponseCacheOverride`
+:   When `true`, the driver doesn’t set `SF_OCSP_RESPONSE_CACHE_SERVER_URL` when it detects a private connectivity host. Default is `false`.
+
+    ODBC 3.x only, starting with version 3.22.0.
 
 ### Private-key connection attributes
 

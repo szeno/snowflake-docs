@@ -3,6 +3,10 @@
 If you already have an Amazon Web Services (AWS) account and use S3 buckets for storing and managing your data files, you can make use of your existing buckets and folder paths when unloading data from
 Snowflake tables. This topic describes how to use the COPY command to unload data from a table into an Amazon S3 bucket. You can then download the unloaded data files to your local file system.
 
+Each [COPY INTO <location>](/sql-reference/sql/copy-into-location) statement unloads data from one table or one query, so you can’t unload an entire schema or
+database with a single statement. To unload several tables, run a separate COPY INTO statement for each table. For more information about
+unloading the results of a query, see [Overview of data unloading](/user-guide/data-unload-overview).
+
 As illustrated in the diagram below, unloading data to an S3 bucket is performed in two steps:
 
 Step 1:

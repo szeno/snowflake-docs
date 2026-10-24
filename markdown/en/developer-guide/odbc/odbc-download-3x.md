@@ -5,7 +5,7 @@
 Snowflake provides an installer for the ODBC driver.
 
 The [ODBC release notes](/release-notes/clients-drivers/odbc) track 3.x releases alongside 4.x releases.
-The current 3.x version is 3.21.0. Choose a 3.x version from the download page or client repository
+The current 3.x version is 3.22.0. Choose a 3.x version from the download page or client repository
 to stay on 3.x; the latest overall ODBC version refers to 4.x.
 
 Note

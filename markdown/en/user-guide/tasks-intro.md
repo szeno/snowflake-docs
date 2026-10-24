@@ -636,7 +636,7 @@ SQLPython
 Copy code
 
 ```
-USE SYSADMIN;
+USE ROLE securityadmin;
 
 CREATE ROLE warehouse_task_creation
   COMMENT = 'This role can create user-managed tasks.';
@@ -647,7 +647,7 @@ Copy code
 ```
 from snowflake.core.role import Role
 
-root.session.use_role("SYSADMIN")
+root.session.use_role("securityadmin")
 
 my_role = Role(
     name="warehouse_task_creation",
@@ -661,7 +661,7 @@ SQLPython
 Copy code
 
 ```
-USE ACCOUNTADMIN;
+USE ROLE accountadmin;
 
 GRANT CREATE TASK
   ON SCHEMA schema1
@@ -673,7 +673,7 @@ Copy code
 ```
 from snowflake.core.role import Securable
 
-root.session.use_role("ACCOUNTADMIN")
+root.session.use_role("accountadmin")
 
 root.roles['warehouse_task_creation'].grant_privileges(
     privileges=["CREATE TASK"], securable_type="schema", securable=Securable(name='schema1')
@@ -700,14 +700,14 @@ root.roles['warehouse_task_creation'].grant_privileges(
 )
 ```
 
-As an example of a role that can create serverless tasks; create a custom role named `serverless_task_creation` and grant the role the CREATE TASK privilege and the account level EXECUTE MANAGED TASK privilege.
+As an example of a role that can create serverless tasks, create a custom role named `serverless_task_creation` and grant the role the CREATE TASK privilege and the account level EXECUTE MANAGED TASK privilege.
 
 SQLPython
 
 Copy code
 
 ```
-USE SYSADMIN;
+USE ROLE securityadmin;
 
 CREATE ROLE serverless_task_creation
   COMMENT = 'This role can create serverless tasks.';
@@ -718,7 +718,7 @@ Copy code
 ```
 from snowflake.core.role import Role
 
-root.session.use_role("SYSADMIN")
+root.session.use_role("securityadmin")
 
 my_role = Role(
     name="serverless_task_creation",
@@ -732,7 +732,7 @@ SQLPython
 Copy code
 
 ```
-USE ACCOUNTADMIN;
+USE ROLE accountadmin;
 
 GRANT CREATE TASK
   ON SCHEMA schema1
@@ -744,7 +744,7 @@ Copy code
 ```
 from snowflake.core.role import Securable
 
-root.session.use_role("ACCOUNTADMIN")
+root.session.use_role("accountadmin")
 
 root.roles['serverless_task_creation'].grant_privileges(
     privileges=["CREATE TASK"], securable_type="schema", securable=Securable(name='schema1')

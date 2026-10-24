@@ -8,6 +8,26 @@ This article contains the release notes for the Snowflake Python APIs, including
 
 See [Snowflake Python APIs: Managing Snowflake objects with Python](/developer-guide/snowflake-python-api/snowflake-python-overview) for documentation.
 
+## Version 1.14.0 (Oct 22, 2026)
+
+### New features and updates
+
+- **Identifier improvements:**
+  - Added `IdentifierString` for string-compatible identifier values and `Identifier` for spelling-preserving, Snowflake-aware equality and hashing.
+  - Added `CanonicalName` to distinguish an object identifier from the object’s name.
+  - Added `QualifiedIdentifier` for immutable, `Identifier`-based qualified names with optional schema and database qualifiers.
+  - Deprecated `FQN` in favor of `QualifiedIdentifier`. `FQN` will be removed in the next major release of `snowflake.core`.
+- Dropped support for Python 3.10.
+- Added the `SNOWFLAKE_MIN_TLS_VERSION` environment variable to raise the minimum TLS version of the connections `snowflake.core` opens to Snowflake. It accepts the same values as the Snowflake Connector for Python: `1.2`, `1.3`, `TLSv1.2`, or `TLSv1.3`, case-insensitively. Set this variable before creating `Root` objects. An unrecognized value raises `SnowflakePythonError` when a `Root` is created. Leaving the variable unset keeps the current behavior.
+- Added the `SNOWFLAKE_TLS_CIPHERS` environment variable to restrict the ciphers of the connections `snowflake.core` opens to Snowflake. It takes a colon-separated list of OpenSSL cipher names. Names starting with `TLS_` are TLS 1.3 cipher suites and require Python 3.15 or later. On earlier Python versions, those names raise `SnowflakePythonError`. Other names restrict TLS 1.2 only, and `TLS_` names restrict TLS 1.3 only. A TLS version with no names in the list keeps OpenSSL’s default ciphers. The setting doesn’t apply to the connection to an HTTPS proxy. Set this variable before creating `Root` objects. A value without any cipher names raises `SnowflakePythonError` when a `Root` is created.
+- Raised the minimum `urllib3` version to 2.
+- Raised the minimum `certifi` version to 2026.10.19.
+- Deprecated `snowflake.core.notebook`. The package will be removed in the next major release of `snowflake.core`, and importing it emits a `DeprecationWarning`. Snowflake is disabling creation of new Legacy Notebooks, starting September 1, 2026. A later change, planned for November 2026, forbids editing and executing existing Legacy Notebooks as well. For the timeline, see [Disable Legacy Notebook creations](/release-notes/bcr-bundles/un-bundled/bcr-disable-legacy-notebooks).
+
+### Bug fixes
+
+- A `DAGTask` whose `StoredProcedureCall` passes `imports=[]` or `packages=[]` now gets no imports or packages, instead of the `DAG`’s defaults.
+
 ## Version 1.13.2 (Sep 24, 2026)
 
 ### New features and updates

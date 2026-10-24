@@ -93,6 +93,16 @@ You can set session parameters, such as QUERY\_TAG, in multiple ways when using 
   ```
   con.cursor().execute("ALTER SESSION SET QUERY_TAG = 'EndOfMonthFinancials'")
   ```
+- `execute()` can override `TIMEZONE` or `QUERY_TAG` for one statement. Pass them in `_statement_params`. The values are sent with that query and do not change the session.
+
+  Copy code
+
+  ```
+  cur.execute(
+      "SELECT CURRENT_TIMESTAMP()",
+      _statement_params={"TIMEZONE": "America/Los_Angeles"},
+  )
+  ```
 
 For more information about session parameters, see the descriptions of individual parameters on the general
 [Parameters](/sql-reference/parameters) page.

@@ -215,7 +215,7 @@ Copy code
 
 ```
 GRANT USAGE ON DATABASE dp_db TO ROLE dp_tutorial_analyst;
-GRANT USAGE ON SCHEMA dp_schema TO ROLE dp_tutorial_analyst;
+GRANT USAGE ON SCHEMA dp_db.dp_schema TO ROLE dp_tutorial_analyst;
 GRANT SELECT
   ON TABLE dp_db.dp_schema.dp_tutorial_diabetes_survey
   TO ROLE dp_tutorial_analyst;
@@ -328,8 +328,8 @@ Copy code
 USE ROLE ACCOUNTADMIN;
 DROP ROLE dp_tutorial_analyst;
 DROP WAREHOUSE dp_tutorial_wh;
-ALTER TABLE dp_tutorial_diabetes_survey
+ALTER TABLE dp_db.dp_schema.dp_tutorial_diabetes_survey
   DROP PRIVACY POLICY policy_db.diff_priv_policies.patients_policy;
 DROP DATABASE dp_db;
-DROP DATABASE policies_db;
+DROP DATABASE policy_db;
 ```

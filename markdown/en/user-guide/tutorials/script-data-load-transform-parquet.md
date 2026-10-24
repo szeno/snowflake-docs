@@ -25,7 +25,7 @@ link/file to your local file system.
 The tutorial assumes you unpacked files in to the following directories:
 
 > - Linux/macOS: `/tmp/load`
-> - Windows: `C:\tempload`
+> - Windows: `C:\temp\load`
 
 The Parquet data file includes sample continent data. The following is a representative example:
 

@@ -20,7 +20,8 @@ Feature — Generally Available
 Available to all Commercial (non-Gov), FedRAMP (Moderate and High), DoD, and KSA sovereign accounts with [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) enabled.
 
 CoCo is the persistent, web-based entry point for AI in Snowflake. It is deeply integrated into Workspaces and
-Snowsight Admin pages.
+Snowsight Admin pages. Account administrators enable and manage CoCo from the
+[CoCo Admin](/user-guide/cortex-code/cortex-code-admin) page.
 
 Key capabilities:
 

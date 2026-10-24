@@ -6,13 +6,16 @@ This page covers **SnowConvert AI CLI (`scai`) commands** for cloud data validat
 
 Use this page when you run data validation from the CLI instead of Snowflake CoCo. Cloud validation commands mirror the data migration commands under `scai data validate …`, sharing `scai data worker …` and `scai data orchestrator …`.
 
-Supported source platforms: **SQL Server**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, and **Snowflake** (Snowflake-to-Snowflake). Platform-specific prerequisites (for example Teradata **HASH\_MD5** for L3), Worker TOML, and data type mappings live on the AIM pages:
+Supported source platforms: **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, **IBM DB2**, **Google BigQuery**, and **Snowflake** (Snowflake-to-Snowflake). Platform-specific prerequisites (for example Teradata **HASH\_MD5** for L3), Worker TOML, and data type mappings live on the AIM pages:
 
 - [Validating Data from Amazon Redshift](/migrations/aim-for-datawarehouses/data-migration-validation/validate-redshift)
 - [Validating Data from SQL Server](/migrations/aim-for-datawarehouses/data-migration-validation/validate-sql-server)
+- [Validating Data from Azure Synapse Analytics](/migrations/aim-for-datawarehouses/data-migration-validation/validate-synapse)
 - [Validating Data from Teradata](/migrations/aim-for-datawarehouses/data-migration-validation/validate-teradata)
 - [Validating Data from Oracle](/migrations/aim-for-datawarehouses/data-migration-validation/validate-oracle)
 - [Validating Data from PostgreSQL](/migrations/aim-for-datawarehouses/data-migration-validation/validate-postgresql)
+- [Validating Data from IBM DB2](/migrations/aim-for-datawarehouses/data-migration-validation/validate-db2)
+- [Validating Data from Google BigQuery](/migrations/aim-for-datawarehouses/data-migration-validation/validate-bigquery)
 - [Validating Data from Snowflake](/migrations/aim-for-datawarehouses/data-migration-validation/validate-snowflake)
 
 ## Prerequisites

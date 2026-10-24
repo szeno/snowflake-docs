@@ -2,7 +2,7 @@
 
 The Data Validation feature provides a fault-tolerant, scalable way to verify that data in Snowflake matches the data in the original source system. For most sources it runs on the same infrastructure used by Data Migration, so you can migrate and validate with the same Orchestrator and Workers. Snowflake-to-Snowflake validation is an exception: it runs in-warehouse on the Orchestrator and doesn’t need Workers.
 
-AIM DMV data validation is designed for migration and copy scenarios where you need confidence that data is correct before cutting over. Supported source platforms are **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, and **Snowflake** (Snowflake-to-Snowflake).
+AIM DMV data validation is designed for migration and copy scenarios where you need confidence that data is correct before cutting over. Supported source platforms are **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, **IBM DB2**, **Google BigQuery**, and **Snowflake** (Snowflake-to-Snowflake).
 
 For shared architecture, deployment options, prerequisites, and Worker tuning, see [Data Migration & Validation overview](./overview).
 
@@ -20,7 +20,7 @@ Compares aggregate statistics: row count, min, max, sum, average, null count, di
 
 ### Row validation (L3)
 
-Performs row-level comparison. When `row_validation` is enabled, most source platforms extract a source-side signature (primary-key columns plus an MD5 row hash) per partition, compare those signatures in Snowflake, then drill into individual cells on mismatches. The recommended L3 extract is always the source’s native export: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** (BigQuery), or **regular** (PostgreSQL). Signature Parquet for object-store strategies lands on a Snowflake external stage (Amazon S3, Azure Blob, or GCS, depending on the source). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) (including [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage)) and [External stage and storage integration](./required-privileges#external-stage-and-storage-integration) for object-store grants. Snowflake-to-Snowflake validation compares rows with SQL set-difference inside Snowflake instead of signature extract on Workers. See [Validating Data from Snowflake](./validate-snowflake).
+Performs row-level comparison. When `row_validation` is enabled, most source platforms extract a source-side signature (primary-key columns plus an MD5 row hash) per partition, compare those signatures in Snowflake, then drill into individual cells on mismatches. When the source has a native export, that export is the recommended L3 extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./validate-bigquery)), or **regular** (PostgreSQL). For **IBM DB2**, prefer **`cloud_direct`** when an object store and a matching external stage are available, and use **`regular`** otherwise. Signature Parquet for object-store strategies lands on a Snowflake external stage (Amazon S3, Azure Blob, or GCS, depending on the source). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) (including [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage)) and [External stage and storage integration](./required-privileges#external-stage-and-storage-integration) for object-store grants. Snowflake-to-Snowflake validation compares rows with SQL set-difference inside Snowflake instead of signature extract on Workers. See [Validating Data from Snowflake](./validate-snowflake).
 
 Row validation is disabled by default and is typically applied only where needed because it’s the most resource-intensive level.
 
@@ -43,6 +43,8 @@ Each platform page covers prerequisites (including platform-specific UDF or driv
 - [Validating Data from Teradata](./validate-teradata)
 - [Validating Data from Oracle](./validate-oracle)
 - [Validating Data from PostgreSQL](./validate-postgresql)
+- [Validating Data from IBM DB2](./validate-db2)
+- [Validating Data from Google BigQuery](./validate-bigquery)
 - [Validating Data from Snowflake](./validate-snowflake)
 
 For workflow and Worker field definitions, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).

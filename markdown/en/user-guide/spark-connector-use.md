@@ -658,6 +658,11 @@ with `SaveMode.Overwrite`.
 >
 > Show lessSee more
 
+WKT and EWKT output can round coordinates. GeoJSON avoids this text-format rounding but doesn’t preserve a `GEOMETRY` value’s
+spatial reference system identifier (SRID). Specify the SRID when converting back with [TO\_GEOMETRY](/sql-reference/functions/to_geometry)
+(the default is `0`), or set [GEOMETRY\_OUTPUT\_FORMAT](/sql-reference/parameters#label-geometry-output-format) to `EWKT` to retain it. For coordinate storage limits, see
+[Geospatial data types](/sql-reference/data-types-geospatial).
+
 ## Calling the DataFrame.show Method
 
 If you are calling the `DataFrame.show` method and passing in a number that is less than the number of rows in the

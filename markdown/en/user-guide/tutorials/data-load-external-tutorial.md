@@ -525,6 +525,10 @@ The query returns the following results:
 > +-----------------------------------------------------------------+
 > ```
 
+The nested objects in each record (for example, the `name` object inside `customer`) are loaded as-is into the VARIANT column,
+so the `myjsonformat` file format doesn’t need any extra options for nested JSON. To query nested values or flatten them into rows,
+see [Querying Semi-structured Data](/user-guide/querying-semistructured) and [FLATTEN](/sql-reference/functions/flatten).
+
 ## Clean up
 
 Congratulations, you have successfully completed the tutorial.

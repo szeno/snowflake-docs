@@ -1,5 +1,19 @@
 # JDBC Driver
 
+JDBC 0.0.6 Private Preview - Universal Core
+
+A version of the Snowflake JDBC Driver built on the Universal Core is available in private preview.
+Preview participants can download the `snowflake-jdbc-native-all` JAR from
+[Maven Central](https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc-native-all/).
+
+Use this driver only if you are participating in the private preview, subject to
+[Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
+It may be unstable and is not ready for use with production data. Use it only for internal evaluation;
+do not use it to process personal data or other data subject to compliance or legal requirements.
+
+The documentation below applies to the existing JDBC driver. For the Universal Core version, follow the
+[preview installation instructions](https://github.com/snowflakedb/drivers/blob/main/jdbc/README.md#consuming-the-driver).
+
 Note
 
 Version 3.21.0 introduced support for Google Cloud Storage regional endpoints.

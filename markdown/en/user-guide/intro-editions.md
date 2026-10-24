@@ -88,6 +88,8 @@ Note
 
 This is only a partial list of the features. For a more complete and detailed list, see [Overview of key features](/user-guide/intro-supported-features).
 
+### Release management
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | 24-hour [early access to weekly new releases](/user-guide/intro-releases), which can be used for additional testing or validation before each release is deployed to your production accounts. |  | ✔ | ✔ | ✔ |
@@ -95,6 +97,8 @@ This is only a partial list of the features. For a more complete and detailed li
 Expand
 
 Show lessSee more
+
+### Security, governance, and data protection
 
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
@@ -146,6 +150,8 @@ Expand
 
 Show lessSee more
 
+### Compute Resource Management
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | [Virtual warehouses](/user-guide/warehouses), separate compute clusters for isolating query and data loading workloads. | ✔ | ✔ | ✔ | ✔ |
@@ -155,6 +161,8 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+### SQL support
 
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
@@ -188,6 +196,8 @@ Expand
 
 Show lessSee more
 
+### Interfaces and tools
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | [Snowsight](/user-guide/ui-snowsight), the next-generation SQL worksheet for advanced query development, data analysis, and visualization. | ✔ | ✔ | ✔ | ✔ |
@@ -205,6 +215,8 @@ Expand
 
 Show lessSee more
 
+### Data import and export
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | [Bulk loading](/guides-overview-loading-data) from delimited flat files (CSV, TSV, etc.) and semi-structured data files (JSON, Avro, ORC, Parquet, and XML). | ✔ | ✔ | ✔ | ✔ |
@@ -217,6 +229,8 @@ Expand
 
 Show lessSee more
 
+### Data pipelines
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | [Streams](/user-guide/streams-intro) for tracking table changes. | ✔ | ✔ | ✔ | ✔ |
@@ -225,6 +239,8 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+### Data replication and failover
 
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
@@ -235,6 +251,8 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+### Data sharing
 
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
@@ -254,6 +272,8 @@ Expand
 
 Show lessSee more
 
+### Artificial intelligence and machine learning
+
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |
 | Use [Snowflake Cortex AI Functions](/user-guide/snowflake-cortex/aisql) to respond to plain-language prompts, answer questions, summarize or translate text, find similar documents, and more. | ✔ | ✔ | ✔ | ✔ |
@@ -268,6 +288,8 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+### Customer support
 
 | Feature/Service | Standard | Enterprise | Business Critical | VPS |
 | --- | --- | --- | --- | --- |

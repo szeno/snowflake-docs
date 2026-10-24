@@ -133,3 +133,8 @@ This example builds on an example in the [INFER\_SCHEMA](/sql-reference/function
 > +------+-------------------+--------+-------+---------+-------------+------------+-------+------------+---------+-------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 > -- Note that since MATCH_BY_COLUMN_NAME is set as CASE_INSENSITIVE, all column names are retrieved as uppercase letters.
 > ```
+
+If the query in the USING TEMPLATE clause returns an empty or NULL array, the CREATE TABLE statement fails with the error
+`template must be a non-null JSON array`. This can happen when [INFER\_SCHEMA](/sql-reference/functions/infer_schema) returns no rows, for example
+because no staged files match the LOCATION argument or the files can’t be read with the specified file format. To troubleshoot, run the
+INFER\_SCHEMA query by itself and verify that it returns the expected columns.

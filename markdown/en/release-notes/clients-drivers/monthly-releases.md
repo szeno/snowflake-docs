@@ -29,11 +29,14 @@ To view a list of release note announcements, filtered by date and release type,
 | [Node.js Driver](/release-notes/clients-drivers/nodejs) | TBD | TBD |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 4.1.0 | 15-Oct-2026 |  |
 | 4.2.0 | 21-Oct-2026 |  |
+| 3.22.0 | 23-Oct-2026 |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | 4.3.0 | 01-Oct-2026 |  |
+| 4.3.1 | 21-Oct-2026 |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | 3.29.0 | 08-Oct-2026 |  |
 | 3.30.0 | 20-Oct-2026 |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
-| [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | TBD | TBD |  |
+| [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 5.0.0 | 15-Oct-2026 |  |
+| 5.1.0 | 21-Oct-2026 |  |
 | [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | TBD | TBD |  |
 | [Snowpipe Streaming SDK](/release-notes/clients-drivers/snowpipe-streaming-sdk) | TBD | TBD |  |
 | [Snowflake Python APIs](/release-notes/clients-drivers/snowapi-python) | TBD | TBD |  |

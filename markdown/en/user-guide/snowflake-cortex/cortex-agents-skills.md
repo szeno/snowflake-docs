@@ -258,7 +258,7 @@ ALTER AGENT db1.schema1.my_agent
   $$;
 ```
 
-To reference a Cortex Extension (private preview), so that all skills bundled in the extension are added to the
+To reference a Cortex Extension, so that all skills bundled in the extension are added to the
 agent:
 
 Copy code
@@ -342,7 +342,7 @@ PUT /api/v2/databases/{database}/schemas/{schema}/agents/{name}
 }
 ```
 
-To reference a Cortex Extension (private preview) from a persisted agent spec, so that all skills bundled in the
+To reference a Cortex Extension from a persisted agent spec, so that all skills bundled in the
 extension are added to the agent:
 
 Copy code
@@ -464,7 +464,9 @@ If your skills need to execute code, you must enable the [code execution tool](/
 ### Use skills in Snowflake CoWork
 
 The skills configured on an agent are automatically available in Snowflake CoWork. You can also explicitly
-select a skill for use by selecting the **+** button and then choosing the skill from the list.
+select a skill for use by selecting the **+** button and then choosing the skill from the list. That list shows the
+agent’s configured skills, not the shared skills and plugins in your account. For details, see
+[Use a shared skill in Snowflake CoWork](/user-guide/cortex-code/cortex-code-skill-plugin-sharing#label-cortex-code-skill-sharing-cowork).
 
 ## Access control
 

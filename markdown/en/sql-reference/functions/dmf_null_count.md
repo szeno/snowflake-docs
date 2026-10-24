@@ -24,7 +24,7 @@ SNOWFLAKE.CORE.NULL_COUNT(<query>)
 ## Arguments
 
 `query`
-:   Specifies a SQL query that projects a single column.
+:   Specifies a SQL query that projects exactly one column.
 
 ## Allowed data types
 
@@ -43,6 +43,29 @@ The column projected by the `query` must have one of the following data types:
 The function returns a scalar value with a NUMBER data type.
 
 ## Usage notes
+
+The `query` must project exactly one column. If the query projects more than one column, the call fails
+with an error similar to the following:
+
+```
+Invalid argument types for function 'NULL_COUNT$V1': (ROW(NUMBER(38,0), VARCHAR(25)))
+```
+
+To fix the error, project one column, or call the function once for each column:
+
+Copy code
+
+```
+-- Fails: two columns are projected.
+SELECT SNOWFLAKE.CORE.NULL_COUNT(
+  SELECT c_custkey, c_name FROM snowflake_sample_data.tpch_sf1.customer
+);
+
+-- Works: one column is projected.
+SELECT SNOWFLAKE.CORE.NULL_COUNT(
+  SELECT c_name FROM snowflake_sample_data.tpch_sf1.customer
+);
+```
 
 When you call a system DMF manually, you don’t need to specify whichever allowed data type you are using. You only need to specify the
 query for the column that you want to measure. Snowflake matches the allowed data type for the function with the data type for the column.

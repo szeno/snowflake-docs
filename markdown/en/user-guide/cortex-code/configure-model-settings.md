@@ -117,6 +117,11 @@ Settings are applied at session startup. Exact behavior may vary across surfaces
 
 Set `orchestration` to a supported Cortex model identifier. Use `auto` (recommended) to let Snowflake select an appropriate model automatically.
 
+Auto options depend on your account configuration. If one of the following options appears in your account’s model picker, you can set `orchestration` to its corresponding value:
+
+- `auto-intelligent` (**Auto Intelligent**): Favors the most capable models.
+- `auto-efficient` (**Auto Efficient**): Optimizes for cost.
+
 For available model identifiers, context windows, and per-region availability, see [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
 
 ## Enable cross-region inference

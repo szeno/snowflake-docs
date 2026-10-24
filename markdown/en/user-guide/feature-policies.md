@@ -337,11 +337,30 @@ ALTER DATABASE my_db
 
 ## Feature policy rules
 
-A feature policy can carry a YAML body that conditionally blocks the creation of
-specific object types based on attributes of the request. This extends the
-existing `BLOCKED_OBJECT_TYPES_FOR_CREATION` clause, which blocks every attempt
-to create an object of a given type, with rules that fire only when a SQL
-expression you supply evaluates to `TRUE`.
+With `blocked_creation_rules`, a feature policy can stop users from creating
+objects in ways you don’t allow. Each rule applies to an object type and blocks
+a `CREATE` statement only when a condition you define is true. This lets you allow
+users to create objects of a type in general but block specific uses, such as a
+particular creation option or a property value you don’t permit.
+
+For example, a feature policy can:
+
+- Block temporary or transient tables.
+- Require request logging on Cortex Search Services.
+- Restrict object creation to a specific schema.
+
+To block every creation of an object type, regardless of the statement, list the
+type in `BLOCKED_OBJECT_TYPES_FOR_CREATION` instead.
+
+Attention
+
+`blocked_creation_rules` apply only to statements that create an object,
+including `CREATE OR ALTER`. They don’t prevent a later standalone `ALTER`
+statement from modifying the properties of an existing object, including
+properties that a rule required at creation. For example, a rule that requires
+`REQUEST_LOGGING = TRUE` when a Cortex Search Service is created doesn’t stop a
+user from later running
+`ALTER CORTEX SEARCH SERVICE ... SET REQUEST_LOGGING = FALSE`.
 
 ### Policy body syntax
 
@@ -358,7 +377,7 @@ CREATE FEATURE POLICY <name>
     $$ ]
 ```
 
-The YAML supports two top-level keys:
+The YAML body has the following structure:
 
 Copy code
 
@@ -376,22 +395,63 @@ blocked_creation_rules:
     error_message: "<text>"   # optional
 ```
 
-`blocked_creation_rules`:
-:   A list of rules, each scoped to a single `object_type` (for example, `TABLE`,
-    `TASK`, `WAREHOUSE`) or to the `ALL` wildcard. A rule blocks creation when its
-    `block_when` expression evaluates to `TRUE`, or when any of the conditions named
-    in `block_when_any` evaluates to `TRUE`. If both `block_when` and
-    `block_when_any` are omitted, every creation of that `object_type` is blocked
-    (this isn’t allowed for `ALL`; see [Supported object types](#label-feature-policy-rules-object-types)).
-    A rule can specify `block_when` or `block_when_any`, but not both. A rule can
-    also carry an optional `error_message` that explains the error to the user (see
-    [Custom error messages](#label-feature-policy-rules-error-message)).
+The policy body supports the following top-level keys:
 
-`conditions`:
-:   An optional list of named, reusable expressions that rules can reference by
-    name through `block_when_any`. Use this when the same predicate appears in
-    multiple rules. A rule that uses `block_when_any` requires at least one matching
-    entry in `conditions`.
+- `conditions`: Optional. A list of named, reusable expressions that rules
+  reference through `block_when_any`. See
+  [Condition properties](#label-feature-policy-rules-condition-properties).
+- `blocked_creation_rules`: Optional. A list of rules that block matching `CREATE`
+  statements. See [Rule properties](#label-feature-policy-rules-rule-properties).
+
+#### Condition properties
+
+The `conditions` list is optional. Each condition gives a name to a SQL Boolean
+expression, so you can define the expression once and reuse it across multiple
+rules instead of repeating it in each rule’s `block_when`. A rule references
+conditions by name in its `block_when_any` list.
+
+Each entry in `conditions` supports these properties:
+
+- `name`: Required. The name that rules use to reference the condition in
+  `block_when_any`. Must be unique within `conditions`.
+- `expression`: Required. A SQL Boolean expression. See
+  [Blocking expressions](#label-feature-policy-rules-blocking-expressions).
+
+#### Rule properties
+
+Each entry in `blocked_creation_rules` supports these properties:
+
+- `object_type`: Required. The object type that the rule applies to, such as
+  `TABLE`, `TASK`, or `CORTEX_SEARCH_SERVICE`, or the `ALL` wildcard. Snowflake
+  rejects an unsupported type when the policy is created or altered. See
+  [Supported object types](#label-feature-policy-rules-object-types).
+- `block_when`: Optional. A SQL Boolean expression. The rule blocks the
+  statement when the expression evaluates to `TRUE`. Can’t be an empty string.
+- `block_when_any`: Optional. A list of condition names. The rule blocks the
+  statement when any of the named conditions evaluates to `TRUE`. Must contain
+  at least one name, and each name must match an entry in `conditions`.
+- `error_message`: Optional. Text that Snowflake appends to the error for a
+  blocked `CREATE`. See
+  [Custom error messages](#label-feature-policy-rules-error-message).
+
+A rule can specify `block_when` or `block_when_any`, but not both. If a rule
+specifies neither, it blocks every `CREATE` of its `object_type`. An `ALL` rule
+must specify one of them.
+
+An `ALL` rule applies to every supported object type, not to every object type
+in Snowflake. For the list of supported types, see
+[Supported object types](#label-feature-policy-rules-object-types).
+The expression in an `ALL` rule can use only the following properties:
+
+- `TYPE`
+- `REQUEST_OPERATION`
+- `IS_TEMPORARY`
+- `IS_TRANSIENT`
+- `DATABASE`
+- `SCHEMA`
+
+To use a property that applies only to specific object types, such as
+`WAREHOUSE` on `TASK`, write a rule for that object type instead.
 
 ### Supported object types
 
@@ -400,66 +460,81 @@ or plural form (for example, both `TABLE` and `TABLES` are accepted):
 
 | Category | Object types |
 | --- | --- |
-| Account-level | `COMPUTE_POOL`, `DATABASE`, `WAREHOUSE` |
-| Schema-level | `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `MATERIALIZED_VIEW`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `SCHEMA`, `TASK`, `AGENT`, `MCP_SERVER`, `CORTEX_SEARCH_SERVICE` |
-| Personal database | `WORKSPACE`, `GIT_REPOSITORY`, `APPLICATION_SERVICE`, `ARTIFACT_REPOSITORY` |
+| Account-level | `DATABASE` |
+| Database-level | `SCHEMA` |
+| Schema-level | `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `TASK`, `AGENT`, `CORTEX_SEARCH_SERVICE` |
 
 Expand
 
 Show lessSee more
 
-Account-level types apply only in a native app context. Personal database types apply only
-when the policy is bound to personal databases, either with `FOR ALL PERSONAL DATABASES` or
-directly to a personal database. The `ALL` wildcard covers only the types applicable in the
-current policy binding context.
+Each of these types has at least one object property that a blocking expression
+can test. For the properties that apply to each type, see
+[Object properties](#label-feature-policy-rules-available-context). The `ALL`
+wildcard covers every supported type.
 
-A rule can also use the `ALL` wildcard in place of a specific `object_type` to
-apply a single `block_when` or `block_when_any` to every supported type. An
-`ALL` rule must carry a `block_when` or `block_when_any`: an unconditional `ALL`
-rule (one that blocks every object type outright) isn’t allowed. To block every
-creation of a specific type unconditionally, list that type in
-`BLOCKED_OBJECT_TYPES_FOR_CREATION` instead.
+To block every creation of other object types, list them in
+`BLOCKED_OBJECT_TYPES_FOR_CREATION`. See [Blockable object types](#label-feature-policy-blockable-object-types).
 
-### Supported object types for personal databases
+### Blocking expressions
 
-Within a personal-database policy, `blocked_creation_rules` can reference the following
-entity types:
+This section applies to both a rule’s `block_when` expression and a
+condition’s `expression`. Each is a SQL Boolean expression written as a quoted
+string. Snowflake validates the expression when the policy is created or
+altered.
 
-| Category | Object types |
-| --- | --- |
-| Account-level | *(none; account-level types have no effect in personal database context)* |
-| Entity types | `WORKSPACE`, `SCHEMA`, `SECRET`, `GIT_REPOSITORY`, `APPLICATION_SERVICE`, `ARTIFACT_REPOSITORY` |
+#### Object properties
+
+A blocking expression can refer to properties of the object that the `CREATE`
+statement creates, such as the values that the statement sets. It can also
+refer to properties of the request itself, such as the type of object. Refer to
+a property in either of the following ways:
+
+- **`$<PROPERTY>`**: Resolves the property directly. The variable has the same
+  type as the property. For example, `$IS_TRANSIENT` is a Boolean, so use it
+  directly or compare it with an unquoted `TRUE` or `FALSE` (for example,
+  `$IS_TRANSIENT` or `NOT $IS_TRANSIENT`). `$SCHEMA` is a string, so compare it
+  with a string literal (for example, `$SCHEMA = 'STAGING'`). Using an
+  unrecognized name, or a property that doesn’t apply to the rule’s
+  `object_type`, is a compilation error when the policy is created or altered.
+- **`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', '<property>')`**:
+  The full form. Always returns a string, so Boolean comparisons require
+  `= 'TRUE'`. A property that doesn’t apply to the rule’s `object_type` returns
+  `NULL` at runtime instead of causing an error when the policy is created.
+
+For example, the following two rules are equivalent:
+
+Copy code
+
+```
+blocked_creation_rules:
+  - object_type: TABLE
+    block_when: "$IS_TEMPORARY"
+    error_message: "Temporary tables aren't allowed. Create a permanent table."
+  - object_type: TABLE
+    block_when: "SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', 'IS_TEMPORARY') = 'TRUE'"
+    error_message: "Temporary tables aren't allowed. Create a permanent table."
+```
+
+The following properties describe the request itself. They apply to every
+object type:
+
+| Property | $ shorthand | Returns |
+| --- | --- | --- |
+| `TYPE` | `$TYPE` | The type of the object being created, using the same name as a rule’s `object_type`, for example `TABLE`, `AGENT`, or `TASK`. Useful in `ALL` rules and in shared conditions. |
+| `REQUEST_OPERATION` | `$REQUEST_OPERATION` | The kind of statement being evaluated. Always `CREATE` in `blocked_creation_rules`, including for `CREATE OR ALTER`. |
 
 Expand
 
 Show lessSee more
 
-Account-level types (`COMPUTE_POOL`, `DATABASE`, `WAREHOUSE`) are ignored when a policy
-is bound to personal databases. List them in `BLOCKED_OBJECT_TYPES_FOR_CREATION` or
-`blocked_creation_rules` only when the policy is bound to native apps. For how Snowflake
-chooses between a per-database policy and an account-level policy, see
-[Feature policy precedence](#label-feature-policy-precedence).
-
-### block\_when expressions
-
-A `block_when` (or `conditions[].expression`) value is a SQL Boolean expression
-written as a quoted string. The expression is validated when the policy is
-created or altered.
-
-#### Available context
-
-Access attributes of the object being created using either the `$` variable shorthand or the `SYS_CONTEXT` function:
-
-- **`$<PROPERTY>`**: a shorthand that resolves the property directly. Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`, `$REQUEST_LOGGING`) evaluate to an actual boolean, so write `"$IS_TRANSIENT"` rather than `"... = 'TRUE'"`. Using a name that isn’t a recognized property, or a property inapplicable to the rule’s `object_type`, causes a compilation error when the policy is created or altered.
-- **`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', '<property>')`**: the full form. Always returns a string, so Boolean comparisons require `= 'TRUE'`. A property inapplicable to the domain returns `NULL` at runtime rather than an error at create time.
+The following properties describe the object being created:
 
 | Property | $ shorthand | Type | Returns |
 | --- | --- | --- | --- |
-| `TYPE` | `$TYPE` | String | The type of the object being created, using the same name as a rule’s `object_type`, for example `TABLE`, `AGENT`, or `MCP_SERVER`. Useful in `ALL` rules and in conditions shared across object types. |
-| `REQUEST_OPERATION` | `$REQUEST_OPERATION` | String | The kind of statement being evaluated. Always `'CREATE'` for creation rules, including `CREATE OR ALTER`. |
-| `IS_TEMPORARY` | `$IS_TEMPORARY` | Boolean | `'TRUE'` for `CREATE TEMPORARY ...` of `TABLE`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `AGENT`; `'FALSE'` otherwise. |
-| `IS_TRANSIENT` | `$IS_TRANSIENT` | Boolean | `'TRUE'` for `CREATE TRANSIENT ...` of `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `MATERIALIZED_VIEW`, `SCHEMA`, `DATABASE`, `APPLICATION_PACKAGE`; `'FALSE'` otherwise. |
-| `REQUEST_LOGGING` | `$REQUEST_LOGGING` | Boolean | For `CORTEX_SEARCH_SERVICE`: `'TRUE'` when the statement sets `REQUEST_LOGGING = TRUE`; `'FALSE'` when it sets `FALSE` or omits the property. `'FALSE'` for other object types. |
+| `IS_TEMPORARY` | `$IS_TEMPORARY` | Boolean | `TRUE` for `CREATE TEMPORARY ...` of `TABLE`, `VIEW`, `STAGE`, `FILE_FORMAT`, `FUNCTION`, `PROCEDURE`, `SECRET`, `AGENT`. `FALSE` otherwise. |
+| `IS_TRANSIENT` | `$IS_TRANSIENT` | Boolean | `TRUE` for `CREATE TRANSIENT ...` of `TABLE`, `ICEBERG_TABLE`, `DYNAMIC_TABLE`, `SCHEMA`, `DATABASE`. `FALSE` otherwise. |
+| `REQUEST_LOGGING` | `$REQUEST_LOGGING` | Boolean | For `CORTEX_SEARCH_SERVICE`: `TRUE` when the statement sets `REQUEST_LOGGING = TRUE`. `FALSE` when it sets `FALSE` or omits the property. `FALSE` for other object types. |
 | `WAREHOUSE` | `$WAREHOUSE` | String | For `TASK`: the warehouse named in the request, or `NULL` if none (serverless task). `NULL` for other object types. |
 | `EXTERNAL_VOLUME` | `$EXTERNAL_VOLUME` | String | For `ICEBERG_TABLE`: the external volume resolved for the request (table, schema, database, or account level), or `NULL` if none. `NULL` for other object types. |
 | `DATABASE` | `$DATABASE` | String | The name of the database containing the object being created. `NULL` for account-level object types. |
@@ -469,47 +544,123 @@ Expand
 
 Show lessSee more
 
-Boolean properties (`$IS_TEMPORARY`, `$IS_TRANSIENT`, `$REQUEST_LOGGING`) always evaluate to `TRUE` or
-`FALSE` for every object type, so a single rule applied across mixed object types
-behaves predictably: the property is `FALSE` for types that don’t support that
-creation option (for example, `$IS_TRANSIENT` is `FALSE` for `STAGE`). When accessed
-with `SYS_CONTEXT`, the same properties return the strings `'TRUE'` or `'FALSE'`.
+Boolean properties are `FALSE` for object types that don’t support that
+creation option, so a single rule applied across mixed object types behaves
+predictably. For example, `$IS_TRANSIENT` is `FALSE` for `STAGE`.
 
-String properties return `NULL` when the rule’s `object_type` doesn’t carry
-that property. A comparison against `NULL` is itself `NULL`, and a rule whose
-`block_when` evaluates to `NULL` fails closed and blocks the operation (see
-[NULL handling](#label-feature-policy-rules-null-handling)). Guard string-property
-comparisons so they evaluate to `TRUE` or `FALSE` for every `object_type` the
-rule covers. With the `$` shorthand, a string property that doesn’t apply to the
-rule’s `object_type` is instead rejected as a compilation error at create time.
+#### Properties on CREATE and CREATE OR ALTER
 
-#### Check whether a statement supplied a property
+A blocking expression can read the properties that the statement explicitly
+sets. It can also read properties that the statement doesn’t set but that have
+a default or a resolved value for the object type. Those properties report that
+value.
 
-Two more `SYS_CONTEXT` functions test whether the `CREATE` statement supplied a
-property, rather than reading its value. Both return a Boolean and have no `$`
-shorthand.
+- Boolean properties are always present. If the statement omits one, the value
+  is that property’s default. `IS_OBJECT_PROPERTY_PRESENT` returns `TRUE`.
+- Other properties that have a default or a resolved value for the object type,
+  such as `EXTERNAL_VOLUME` on `ICEBERG_TABLE`, are present at that value when
+  the statement omits them. `IS_OBJECT_PROPERTY_PRESENT` returns `TRUE`.
+- Properties without a default are `NULL` when the statement omits them or sets
+  them to `NULL`. `IS_OBJECT_PROPERTY_PRESENT` returns `TRUE` only when the
+  statement supplies a value.
+- `TYPE`, `REQUEST_OPERATION`, `DATABASE`, and `SCHEMA` are always present when
+  they apply to the object type.
 
-`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_PRESENT', '<property>')`:
-:   `TRUE` when `<property>` is a recognized property and the statement supplied it.
-    `FALSE` when the name is recognized but the statement didn’t supply it. Boolean
-    properties, and other properties that have a default or a resolved value for the
-    object type, count as supplied even when the statement omits them. `TYPE`,
-    `REQUEST_OPERATION`, `DATABASE`, and `SCHEMA` are always supplied when they apply.
+#### Safely handling missing properties
 
-`SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_SET_TO', '<property>', '<value>')`:
-:   `TRUE` when the statement set `<property>` to `<value>` (compared
-    case-insensitively), or when the statement didn’t supply `<property>` at all.
-    `FALSE` when the statement set a different value. An explicit `NULL` doesn’t match
-    any `<value>`. An omitted Boolean property is supplied at its default, so the
-    function compares that default.
+A string property can be `NULL`, for example `WAREHOUSE` on a serverless task.
+A comparison against `NULL` is itself `NULL`, and a rule whose expression
+evaluates to `NULL` blocks the statement. For example,
+`$WAREHOUSE NOT IN ('CORP_M', 'CORP_XL')` is `NULL` for a serverless task, so
+the rule blocks every serverless task, even if you intended to allow them.
 
-Both functions return `NULL` for a name that isn’t a recognized property, so a
-misspelled property name makes the rule fail closed (see
-[NULL handling](#label-feature-policy-rules-null-handling)).
+To write a rule that behaves predictably for every statement, use one of the
+following approaches instead of comparing the property directly.
+
+##### Using NULL checks
+
+Test whether a property is `NULL` before comparing its value. An `IS NOT NULL`
+check makes the expression `FALSE` instead of `NULL` when the property has no
+value.
+
+The following rule requires that a task’s warehouse, when set, is `CORP_M` or
+`CORP_XL`. A task without a warehouse is allowed:
+
+Copy code
+
+```
+blocked_creation_rules:
+  - object_type: TASK
+    block_when: "$WAREHOUSE IS NOT NULL AND $WAREHOUSE NOT IN ('CORP_M', 'CORP_XL')"
+    error_message: "Tasks must use the CORP_M or CORP_XL warehouse, or run as serverless tasks."
+```
+
+The rule handles each statement as follows:
+
+- `CREATE TASK` with `WAREHOUSE = CORP_M` or `WAREHOUSE = CORP_XL`: allowed.
+- `CREATE TASK` with a different warehouse: blocked.
+- `CREATE TASK` with no warehouse (a serverless task): allowed.
+
+##### Using IS\_OBJECT\_PROPERTY\_SET\_TO
+
+Use `IS_OBJECT_PROPERTY_SET_TO` to require that a property has a specific value
+whenever a statement supplies it. The function returns `TRUE` when the
+statement sets the property to the value, or when the statement doesn’t supply
+the property at all. The value is compared case-insensitively, and an explicit
+`NULL` doesn’t match any value. An omitted Boolean is present at its default,
+so the function compares that default. The function returns `NULL` for an
+unrecognized property name.
+
+The following rule requires that a task that names a warehouse uses
+`CORP_M`:
+
+Copy code
+
+```
+blocked_creation_rules:
+  - object_type: TASK
+    block_when: "NOT SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_SET_TO', 'WAREHOUSE', 'CORP_M')"
+    error_message: "Tasks must use the CORP_M warehouse, or run as serverless tasks."
+```
+
+The rule handles each statement as follows:
+
+- `CREATE TASK` with `WAREHOUSE = CORP_M`: allowed.
+- `CREATE TASK` with a different warehouse: blocked.
+- `CREATE TASK` with no warehouse (a serverless task): allowed.
+
+##### Using IS\_OBJECT\_PROPERTY\_PRESENT
+
+Use `IS_OBJECT_PROPERTY_PRESENT` to block a statement based on whether a
+property is present, regardless of its value. The function returns `TRUE` when
+the property is present and `FALSE` when it isn’t. For the properties that
+count as present, see
+[Properties on CREATE and CREATE OR ALTER](#label-feature-policy-rules-properties-on-create).
+The function returns `NULL` for an unrecognized property name.
+
+The following rule allows only serverless tasks:
+
+Copy code
+
+```
+blocked_creation_rules:
+  - object_type: TASK
+    block_when: "SYS_CONTEXT('SNOWFLAKE$REQUEST', 'IS_OBJECT_PROPERTY_PRESENT', 'WAREHOUSE')"
+    error_message: "Only serverless tasks are allowed. Create the task without a WAREHOUSE."
+```
+
+The rule handles each statement as follows:
+
+- `CREATE TASK` with any `WAREHOUSE`: blocked.
+- `CREATE TASK` with no warehouse (a serverless task): allowed.
+
+Each of these expressions evaluates to `TRUE` or `FALSE` for every statement,
+so a missing property never causes it to block the statement.
 
 #### Validation rules
 
-The following expressions are rejected at CREATE or ALTER time:
+Snowflake rejects the following expressions when the policy is created or
+altered:
 
 - Expressions that don’t evaluate to a Boolean type (for example, a numeric
   literal or a string literal).
@@ -517,26 +668,39 @@ The following expressions are rejected at CREATE or ALTER time:
   `(SELECT COUNT(*) FROM t) > 0`).
 - Expressions that call functions with side effects (for example,
   `SYSTEM$RUN_QUERY_SYNC`).
-- Expressions that name an unsupported `object_type` or call a function that
-  doesn’t exist.
-- Expressions that use `$<NAME>` where `<NAME>` is not a recognized property, or
-  where the property doesn’t apply to the rule’s `object_type` (for example,
-  `$WAREHOUSE` in a `TABLE` rule).
+- Expressions that call functions that must run in a warehouse.
+- Expressions that call a function that doesn’t exist.
+- Expressions that use `$<NAME>` where `<NAME>` isn’t a recognized object
+  property, or where the property doesn’t apply to the rule’s `object_type`
+  (for example, `$WAREHOUSE` in a `TABLE` rule).
 
-#### NULL handling
+Attention
 
-If `block_when` evaluates to `NULL` at runtime (for example, because
-`SYS_CONTEXT(...) = 'TRUE'` is compared against a property the request didn’t
-supply), the rule fails closed: the operation is blocked. Write expressions
-that always evaluate to `TRUE` or `FALSE` for every `object_type` a rule
-covers, for example by guarding a property comparison with a test that is
-never `NULL`.
+An expression that compares a property can evaluate to `NULL` at runtime, and
+a rule whose expression evaluates to `NULL` blocks the statement. Validation
+doesn’t catch the following cases:
+
+- The property has no value for the statement, for example `WAREHOUSE` on a
+  serverless task.
+- The expression uses `SYS_CONTEXT` to read a property that doesn’t apply to
+  the rule’s `object_type`, or a misspelled property name.
+- The statement explicitly sets the property to `NULL`.
+
+To avoid these failures, check for `NULL` before comparing a property’s value.
+See [Using NULL checks](#label-feature-policy-rules-null-checks).
 
 ### Custom error messages
 
-By default, a user whose statement is blocked by a rule sees a generic error that
-names the object type and where the policy is applied. Add an `error_message` to a
-rule to tell the user why the statement was blocked and what to do instead:
+When a rule blocks the statement, the statement is denied. By default, the
+error names the object type and points to the effective feature policy, for
+example:
+
+```
+Create TABLE denied due to feature policy restriction for the account. Consult your internal policy administrator to review the effective feature policy by running 'SHOW FEATURE POLICIES ON ACCOUNT'.
+```
+
+Add an `error_message` to a rule to tell the user why the statement was blocked
+and what to do instead:
 
 Copy code
 
@@ -550,8 +714,8 @@ CREATE FEATURE POLICY require_permanent_tables
   $$;
 ```
 
-When this policy is applied to the account, a `CREATE TRANSIENT TABLE` statement fails
-with an error that includes the rule’s text after `Your policy:`, for example:
+When this policy is applied to the account, a `CREATE TRANSIENT TABLE` statement
+fails with an error that includes the rule’s text after `Your policy:`:
 
 ```
 Create TABLE denied due to feature policy restriction for the account. Your policy: Temporary and transient tables aren't allowed. Create a permanent table. Consult your internal policy administrator to review the effective feature policy by running 'SHOW FEATURE POLICIES ON ACCOUNT'.
@@ -578,25 +742,22 @@ The following examples assume the feature policy is attached to an account, an
 application, or a database after creation. For attachment syntax, see
 [Apply a feature policy](#label-feature-policy-apply).
 
+Each example includes an `error_message`. Adding one to every rule is
+recommended, so that users who are blocked understand why and know what to do
+instead. For more information, see
+[Custom error messages](#label-feature-policy-rules-error-message).
+
 #### Block all temporary tables
 
 Copy code
 
 ```
--- Using the $ variable shorthand:
 CREATE FEATURE POLICY block_temp_tables
   AS $$
     blocked_creation_rules:
       - object_type: TABLE
         block_when: "$IS_TEMPORARY"
-  $$;
-
--- Equivalent using SYS_CONTEXT:
-CREATE FEATURE POLICY block_temp_tables_sys_context
-  AS $$
-    blocked_creation_rules:
-      - object_type: TABLE
-        block_when: "SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', 'IS_TEMPORARY') = 'TRUE'"
+        error_message: "Temporary tables aren't allowed. Create a permanent or transient table."
   $$;
 ```
 
@@ -604,50 +765,22 @@ CREATE FEATURE POLICY block_temp_tables_sys_context
 
 Transient tables don’t carry the same Time Travel and Fail-safe protections as
 permanent tables. A policy that requires only permanent tables can block
-creations of `CREATE TRANSIENT TABLE`:
+`CREATE TRANSIENT TABLE` statements:
 
 Copy code
 
 ```
--- Using the $ variable shorthand:
 CREATE FEATURE POLICY block_transient_tables
   AS $$
     blocked_creation_rules:
       - object_type: TABLE
         block_when: "$IS_TRANSIENT"
-  $$;
-
--- Equivalent using SYS_CONTEXT:
-CREATE FEATURE POLICY block_transient_tables_sys_context
-  AS $$
-    blocked_creation_rules:
-      - object_type: TABLE
-        block_when: "SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', 'IS_TRANSIENT') = 'TRUE'"
+        error_message: "Transient tables aren't allowed. Create a permanent table."
   $$;
 ```
 
-To require permanent tables outright, block both temporary and transient
-creations in the same rule:
-
-Copy code
-
-```
--- Using the $ variable shorthand:
-CREATE FEATURE POLICY require_permanent_tables
-  AS $$
-    blocked_creation_rules:
-      - object_type: TABLE
-        block_when: "$IS_TEMPORARY OR $IS_TRANSIENT"
-  $$;
-
--- Equivalent using SYS_CONTEXT:
-CREATE FEATURE POLICY require_permanent_tables_sys_context
-  AS $$
-    blocked_creation_rules:
-      - object_type: TABLE
-        block_when: "SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', 'IS_TEMPORARY') = 'TRUE' OR SYS_CONTEXT('SNOWFLAKE$REQUEST', 'GET_OBJECT_PROPERTY', 'IS_TRANSIENT') = 'TRUE'"
-  $$;
-```
+To block both temporary and transient tables in one rule, see the example in
+[Custom error messages](#label-feature-policy-rules-error-message).
 
 #### Block transient and temporary objects across multiple object types
 
@@ -669,18 +802,25 @@ CREATE FEATURE POLICY block_transient_and_temp_objects
     blocked_creation_rules:
       - object_type: TABLE
         block_when_any: [is_transient, is_temporary]
+        error_message: "Temporary and transient tables aren't allowed. Create a permanent table."
       - object_type: DYNAMIC_TABLE
         block_when_any: [is_transient, is_temporary]
+        error_message: "Transient dynamic tables aren't allowed. Create a permanent dynamic table."
       - object_type: ICEBERG_TABLE
         block_when_any: [is_transient, is_temporary]
+        error_message: "Transient Iceberg tables aren't allowed. Create a permanent Iceberg table."
       - object_type: STAGE
         block_when_any: [is_transient, is_temporary]
+        error_message: "Temporary stages aren't allowed. Create a permanent stage."
       - object_type: VIEW
         block_when_any: [is_transient, is_temporary]
+        error_message: "Temporary views aren't allowed. Create a permanent view."
       - object_type: FUNCTION
         block_when_any: [is_transient, is_temporary]
+        error_message: "Temporary functions aren't allowed. Create a permanent function."
       - object_type: PROCEDURE
         block_when_any: [is_transient, is_temporary]
+        error_message: "Temporary procedures aren't allowed. Create a permanent procedure."
   $$;
 ```
 
@@ -697,6 +837,7 @@ CREATE FEATURE POLICY block_serverless_tasks
     blocked_creation_rules:
       - object_type: TASK
         block_when: "$WAREHOUSE IS NULL"
+        error_message: "Serverless tasks aren't allowed. Specify a WAREHOUSE when you create the task."
   $$;
 ```
 
@@ -738,6 +879,7 @@ CREATE FEATURE POLICY block_temp_everywhere
     blocked_creation_rules:
       - object_type: ALL
         block_when: "$IS_TEMPORARY"
+        error_message: "Temporary objects aren't allowed. Create a permanent object."
   $$;
 ```
 
@@ -752,12 +894,9 @@ CREATE FEATURE POLICY block_temp_except_tables
     blocked_creation_rules:
       - object_type: ALL
         block_when: "$IS_TEMPORARY AND $TYPE <> 'TABLE'"
+        error_message: "Only temporary tables are allowed. Create other objects as permanent objects."
   $$;
 ```
-
-An `ALL` rule must include a `block_when` or `block_when_any`. To block every
-creation of a type unconditionally, list it in
-`BLOCKED_OBJECT_TYPES_FOR_CREATION` instead.
 
 #### Restrict object creation to a specific schema
 
@@ -773,6 +912,7 @@ CREATE FEATURE POLICY tables_only_in_staging
     blocked_creation_rules:
       - object_type: TABLE
         block_when: "$SCHEMA <> 'STAGING'"
+        error_message: "Tables can be created only in the STAGING schema."
   $$;
 ```
 
@@ -792,8 +932,12 @@ CREATE FEATURE POLICY block_all_tables
   AS $$
     blocked_creation_rules:
       - object_type: TABLE
+        error_message: "Creating tables isn't allowed here. Contact your administrator to request a table."
   $$;
 ```
+
+Unlike listing `TABLE` in `BLOCKED_OBJECT_TYPES_FOR_CREATION`, this rule shows
+its `error_message` when it blocks a statement.
 
 #### Reuse a condition across rules
 
@@ -809,9 +953,11 @@ CREATE FEATURE POLICY block_temp_objects
       - object_type: TABLE
         block_when_any:
           - is_temp
+        error_message: "Temporary tables aren't allowed. Create a permanent table."
       - object_type: VIEW
         block_when_any:
           - is_temp
+        error_message: "Temporary views aren't allowed. Create a permanent view."
   $$;
 ```
 
@@ -833,6 +979,7 @@ CREATE FEATURE POLICY combined_policy
     blocked_creation_rules:
       - object_type: TABLE
         block_when: "$IS_TEMPORARY"
+        error_message: "Temporary tables aren't allowed. Create a permanent table."
   $$;
 ```
 

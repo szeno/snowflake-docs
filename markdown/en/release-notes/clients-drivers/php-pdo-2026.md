@@ -10,6 +10,17 @@ Snowflake uses semantic versioning for PHP PDO Driver for Snowflake updates.
 
 See [PHP PDO Driver for Snowflake](/developer-guide/php-pdo/php-pdo-driver) for documentation.
 
+## Version 4.3.1 (Oct 21, 2026)
+
+### New features and updates
+
+- Upgraded libsnowflakeclient to version 2.12.0.
+- Updated the bundled Mozilla CA certificate list.
+
+### Bug fixes
+
+- None.
+
 ## Version 4.3.0 (Oct 1, 2026)
 
 ### New features and updates

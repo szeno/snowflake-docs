@@ -54,7 +54,7 @@ Before starting a migration, ensure you have:
 - [Git](https://git-scm.com/install) installed.
 - [Snowflake CoCo CLI](/user-guide/cortex-code/cortex-code-cli) installed (the Snowflake AIM Agent for Data Warehouses is bundled).
 - A Snowflake account with a connection configured in `~/.snowflake/config.toml` or `~/.snowflake/connections.toml`.
-- A source database accessible from your machine. Supported source connections include SQL Server, Amazon Redshift, Oracle, Teradata, and PostgreSQL.
+- A source database accessible from your machine. Supported source connections include SQL Server, Amazon Redshift, Oracle, Teradata, PostgreSQL, and IBM DB2.
 
 All other dependencies (`uv`, SnowConvert, Python packages) are installed automatically when the Snowflake AIM Agent for Data Warehouses runs for the first time.
 
@@ -150,6 +150,8 @@ Expand
 Show lessSee more
 
 **Other dialects with deterministic conversion support:** Azure Synapse, Sybase IQ, Google BigQuery, Greenplum, Netezza, Spark SQL, Databricks SQL, Vertica, Hive, IBM DB2
+
+Cloud data migration and cloud data validation are supported for IBM DB2 for Linux, UNIX, and Windows. See [Migrating Data from IBM DB2](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-db2) and [Validating Data from IBM DB2](/migrations/aim-for-datawarehouses/data-migration-validation/validate-db2).
 
 **Available extraction scripts:** Teradata, SQL Server, Synapse, Oracle, Redshift, Netezza, Vertica, DB2, Hive, BigQuery, Databricks, Sybase IQ
 

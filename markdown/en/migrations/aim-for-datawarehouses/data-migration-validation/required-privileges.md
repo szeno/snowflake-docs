@@ -143,7 +143,7 @@ Grant these only when your deployment or target uses the corresponding feature.
 
 ### External stage and storage integration
 
-Required when you load from external cloud storage (S3, Azure Blob, or GCS) instead of Snowflake’s internal stage, including native L3 signature extracts (`unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`). PostgreSQL L3 uses `regular` with Worker COPY into the internal `TASK_RESULTS` stage, so it doesn’t need these grants.
+Required when you load from external cloud storage (S3, Azure Blob, or GCS) instead of Snowflake’s internal stage, including native L3 signature extracts (`unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`) and `cloud_direct`. PostgreSQL L3 uses `regular` with Worker COPY into the internal `TASK_RESULTS` stage, and IBM DB2 `regular` lands on that same internal stage, so those paths don’t need these grants.
 
 Copy code
 
@@ -157,7 +157,7 @@ GRANT READ, WRITE ON STAGE <db>.<schema>.<external_stage> TO ROLE <migration_rol
 
 #### Amazon S3
 
-When files land on **Amazon S3**, two identities need access to the same bucket and prefix: the **writer** (Redshift, Oracle, or Teradata) and the **Snowflake storage integration** that reads the files through `externalStage`. These actions don’t apply to Azure Blob or GCS prefixes.
+When files land on **Amazon S3**, two identities need access to the same bucket and prefix: the **writer** (Redshift, Oracle, Teradata, or the Worker for `cloud_direct`) and the **Snowflake storage integration** that reads the files through `externalStage`. These actions don’t apply to Azure Blob or GCS prefixes.
 
 The Snowflake integration role needs `s3:GetBucketLocation`, `s3:GetObject`, `s3:GetObjectVersion`, `s3:ListBucket`, and `s3:DeleteObject`. See [Configure a Snowflake storage integration for Amazon S3](/user-guide/data-load-s3-config-storage-integration#label-s3-storage-integration-required-actions).
 
@@ -168,6 +168,7 @@ Writer IAM (the identity that creates the Parquet objects) depends on the strate
 | `unload` | Redshift cluster IAM role (`unload_iam_role_arn`). The role must trust `redshift.amazonaws.com`. | `s3:PutObject`, `s3:DeleteObject`, `s3:AbortMultipartUpload`, `s3:ListBucket`, `s3:GetBucketLocation` |
 | `dbms_cloud` | IAM user or role stored in the Oracle `DBMS_CLOUD` credential | `s3:PutObject`, `s3:GetObject`, `s3:ListBucket` |
 | `write_nos` (S3 location) | Identity Teradata NOS uses (`write_nos_function_mapping`, authorization object, or access keys) | `s3:PutObject`, `s3:AbortMultipartUpload`, `s3:ListBucket`, `s3:GetBucketLocation` |
+| `cloud_direct` | Worker credentials for `[connections.target.s3]` (`profile_name` or the host’s default AWS credentials) | `s3:PutObject`, `s3:AbortMultipartUpload`, `s3:ListBucket`, `s3:GetBucketLocation` |
 
 Expand
 
@@ -177,7 +178,7 @@ Show lessSee more
 
 #### Azure Blob Storage
 
-When files land on **Azure Blob Storage**, two identities need access to the same container and prefix: the **writer** (SQL Server or Synapse CETAS, Teradata NOS, or Oracle `DBMS_CLOUD`) and the **Snowflake storage integration** that reads the files through `externalStage`.
+When files land on **Azure Blob Storage**, two identities need access to the same container and prefix: the **writer** (SQL Server or Synapse CETAS, Teradata NOS, Oracle `DBMS_CLOUD`, or the Worker for `cloud_direct`) and the **Snowflake storage integration** that reads the files through `externalStage`.
 
 Grant the Snowflake Azure service principal **Storage Blob Data Contributor** on the storage account or container. After you create the integration, consent the `AZURE_CONSENT_URL` and assign the role to the app name from `DESC STORAGE INTEGRATION`. See [Configure an Azure container for loading data](/user-guide/data-load-azure-config#label-configuring-azure-storage-integration).
 
@@ -188,6 +189,7 @@ Writer access depends on the strategy:
 | `cet_as` | Identity behind the SQL Server or Synapse `DATABASE SCOPED CREDENTIAL` used by the external data source | **Storage Blob Data Contributor** (CETAS writes Parquet) |
 | `write_nos` with `/az/` | Identity Teradata NOS uses | Write, create, and list blobs on the container |
 | `dbms_cloud` to an Azure URI | Credential stored in Oracle `DBMS_CLOUD` | Write (and read, if the credential also lists objects) on that URI |
+| `cloud_direct` | Worker credentials for `[connections.target.blob]` (connection string, account key, SAS token, or default credential) | **Storage Blob Data Contributor**, or a SAS token with Write, Create, and List |
 
 Expand
 
@@ -197,7 +199,7 @@ If you use a SAS token instead of a storage integration, include Read, List, Wri
 
 #### Google Cloud Storage
 
-When files land on **Google Cloud Storage**, two identities need access to the same bucket and prefix: the **writer** (Teradata NOS, BigQuery `EXPORT DATA`, or Oracle `DBMS_CLOUD`) and the **Snowflake GCS service account** from `DESC STORAGE INTEGRATION` (`STORAGE_GCS_SERVICE_ACCOUNT`).
+When files land on **Google Cloud Storage**, two identities need access to the same bucket and prefix: the **writer** (Teradata NOS, BigQuery `EXPORT DATA`, Oracle `DBMS_CLOUD`, or the Worker for `cloud_direct`) and the **Snowflake GCS service account** from `DESC STORAGE INTEGRATION` (`STORAGE_GCS_SERVICE_ACCOUNT`).
 
 Grant `storage.buckets.get`, `storage.objects.get`, `storage.objects.list`, and `storage.objects.delete` (for example `roles/storage.objectAdmin`). See [Configure an integration for Google Cloud Storage](/user-guide/data-load-gcs-config).
 
@@ -206,8 +208,9 @@ Writer IAM depends on the strategy:
 | `extraction.strategy` | Writer identity | Required GCS access on the prefix |
 | --- | --- | --- |
 | `write_nos` with `/gs/` | Identity Teradata NOS uses | Create (and typically get/list) objects |
-| `export_data` | BigQuery job identity (`EXPORT DATA`) | `storage.objects.create` and `storage.objects.delete` |
+| `export_data` | BigQuery job identity (`EXPORT DATA`). See [Google BigQuery](#google-bigquery). | `storage.objects.create` and `storage.objects.delete` |
 | `dbms_cloud` to a GCS URI | Credential stored in Oracle `DBMS_CLOUD` | Create objects on that URI |
+| `cloud_direct` | Worker credentials for `[connections.target.gcs]` (`credential_file_path` or Application Default Credentials) | `storage.objects.create` (and `storage.objects.delete` to replace earlier files) |
 
 Expand
 
@@ -360,7 +363,9 @@ The following table summarizes the requirements. Each platform’s grants and de
 | Azure Synapse | Same as SQL Server | Same as SQL Server | CETAS needs `CREATE EXTERNAL TABLE` and Azure Blob writer access |
 | Amazon Redshift | `SELECT` on source tables and `USAGE` on schema | Automatic (`information_schema`) | `UNLOAD` needs S3 IAM on the cluster role (`unload_iam_role_arn`) |
 | Teradata | `SELECT` on source database and `SELECT` on `DBC` | Explicit `SELECT` on `DBC.*V` views | `HASH_MD5` UDF and `EXECUTE FUNCTION`; `WRITE_NOS` plus object-store IAM |
+| Google BigQuery | `roles/bigquery.dataViewer` on the dataset and `bigquery.jobs.create` on the project | Automatic (`INFORMATION_SCHEMA`) | `export_data` needs GCS writer access (`storage.objects.create` and `storage.objects.delete`) |
 | PostgreSQL | `SELECT` on source tables and `USAGE` on schema | Automatic (`pg_catalog`, `information_schema`) | Recommended extract is COPY (`regular`); no extra SQL grant |
+| IBM DB2 | `SELECT` on source tables and views | Automatic (`SYSCAT` views and `SYSIBM.SYSDUMMY1` are readable by `PUBLIC` by default) | `regular` needs no extra SQL grant. `cloud_direct` needs the [external stage grants](#external-stage-and-storage-integration) |
 
 Expand
 
@@ -686,6 +691,51 @@ Expand
 
 Show lessSee more
 
+### Google BigQuery
+
+BigQuery uses IAM roles rather than SQL `GRANT` statements. Grant the following to the service account the Workers connect as: read access on the dataset, and permission to run query jobs in the project set by `project_id`.
+
+#### System views queried
+
+| View | Purpose |
+| --- | --- |
+| `INFORMATION_SCHEMA.COLUMNS` | Column metadata (name, data type, ordinal, nullability). |
+| `INFORMATION_SCHEMA.TABLES` | Object type detection and table existence. |
+| `INFORMATION_SCHEMA.TABLE_CONSTRAINTS` | Primary key discovery. |
+| `INFORMATION_SCHEMA.KEY_COLUMN_USAGE` | Constraint column membership. |
+| `__TABLES__` | Row count and size estimation. |
+
+Expand
+
+Show lessSee more
+
+#### Required IAM permissions
+
+```
+# Option A: predefined roles (recommended)
+roles/bigquery.dataViewer    # On the dataset: read tables and metadata
+roles/bigquery.jobUser       # On the project: run query jobs
+
+# Option B: granular permissions
+bigquery.tables.get          # Table metadata
+bigquery.tables.getData      # Read table data (extraction)
+bigquery.tables.list         # List tables in the dataset
+bigquery.jobs.create         # Run queries (COUNT(*), extraction, EXPORT DATA)
+
+# For export_data (BigQuery EXPORT DATA to GCS)
+storage.objects.create       # Write Parquet files under the export prefix
+storage.objects.delete       # Overwrite earlier export files under that prefix
+```
+
+#### Key points
+
+- BigQuery uses IAM rather than SQL `GRANT` statements.
+- `roles/bigquery.dataViewer` alone doesn’t let the service account run queries. Also grant `bigquery.jobs.create`, for example through `roles/bigquery.jobUser` on the project.
+- `export_data` needs `storage.objects.create` and `storage.objects.delete` on the GCS bucket and prefix that `EXPORT DATA` writes to. The Snowflake storage integration also needs read access to that prefix. See [Google Cloud Storage](#l3-extraction-gcs-iam).
+- `regular` extraction needs no GCS access. The Worker reads rows through the BigQuery API and uploads them to the internal stage.
+- `INFORMATION_SCHEMA` is scoped to the dataset (`project.dataset.INFORMATION_SCHEMA.COLUMNS`).
+- BigQuery’s `INFORMATION_SCHEMA.COLUMNS` doesn’t expose `numeric_precision` or `numeric_scale` natively; AIM DMV derives them by parsing `data_type`.
+
 ### PostgreSQL
 
 #### System views queried
@@ -730,6 +780,44 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA <source_schema>
 - Row count uses `COUNT(*)`, because PostgreSQL doesn’t keep a reliable pre-computed row count.
 - PostgreSQL folds unquoted identifiers to lowercase, the opposite of Oracle; AIM DMV normalizes accordingly.
 - Recommended L3 extract is **regular** with Worker COPY (`use_copy = true`). That uses the same `SELECT` grants and the internal `TASK_RESULTS` stage. It doesn’t need an external stage or object-store IAM.
+
+### IBM DB2
+
+AIM DMV connects to IBM DB2 for Linux, UNIX, and Windows to read table metadata, infer keys, and extract data. The connected user needs `SELECT` on every table or view being migrated or validated.
+
+#### Catalog views queried
+
+| View | Purpose |
+| --- | --- |
+| `SYSCAT.TABLES` | Table metadata and size estimate. Row count uses `COUNT(*)`. |
+| `SYSCAT.COLUMNS` | Column metadata (name, data type, nullability, and ordinal position). |
+| `SYSCAT.INDEXES` | Primary, unique, and non-unique index discovery. |
+| `SYSCAT.INDEXCOLUSE` | Index column membership. Index `INCLUDE` columns aren’t part of the key. |
+| `SYSIBM.SYSDUMMY1` | Connectivity check. |
+
+Expand
+
+Show lessSee more
+
+#### Required grants
+
+Copy code
+
+```
+-- Replace <source_user> with the DB2 user the Workers connect as.
+-- Replace MYSCHEMA with the schema being migrated.
+
+GRANT SELECT ON TABLE MYSCHEMA.CUSTOMERS TO USER <source_user>;
+```
+
+Repeat the `GRANT` for each table or view in the workflow. To cover a schema, grant `SELECT` on the tables in that schema to the Worker user.
+
+#### Key points
+
+- On LUW, `SYSCAT.TABLES`, `SYSCAT.COLUMNS`, `SYSCAT.INDEXES`, `SYSCAT.INDEXCOLUSE`, and `SYSIBM.SYSDUMMY1` are readable by `PUBLIC` by default, so they usually need no extra grant.
+- `regular` extraction and `regular` L3 use those `SELECT` grants and the internal stage. They don’t need an external stage.
+- `cloud_direct` uses the same source `SELECT` grants and also needs the [external stage and storage integration](#external-stage-and-storage-integration) grants, because the Worker writes Parquet to object storage.
+- Unquoted identifiers are folded to uppercase.
 
 ## Related content
 

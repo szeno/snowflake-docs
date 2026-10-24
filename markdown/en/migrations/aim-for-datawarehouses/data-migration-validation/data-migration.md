@@ -6,7 +6,7 @@ For shared architecture, deployment options, prerequisites, and Worker tuning, s
 
 ## Supported source platforms
 
-AIM DMV cloud data migration supports **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, and **PostgreSQL**. Each platform page covers prerequisites, auth methods, extraction strategies, data type mappings, and platform-specific suggestions:
+AIM DMV cloud data migration supports **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, **IBM DB2**, and **Google BigQuery**. Each platform page covers prerequisites, auth methods, extraction strategies, data type mappings, and platform-specific suggestions:
 
 - [Migrating Data from Amazon Redshift](./migrate-redshift)
 - [Migrating Data from SQL Server](./migrate-sql-server)
@@ -14,6 +14,8 @@ AIM DMV cloud data migration supports **SQL Server**, **Azure Synapse Analytics*
 - [Migrating Data from Teradata](./migrate-teradata)
 - [Migrating Data from Oracle](./migrate-oracle)
 - [Migrating Data from PostgreSQL](./migrate-postgresql)
+- [Migrating Data from IBM DB2](./migrate-db2)
+- [Migrating Data from Google BigQuery](./migrate-bigquery)
 
 For workflow and Worker field definitions, see [Data migration configuration reference](../manual-migration/data-migration-configuration-reference).
 

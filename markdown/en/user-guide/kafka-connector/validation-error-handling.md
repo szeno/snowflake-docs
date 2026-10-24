@@ -32,7 +32,7 @@ With server-side validation, the connector infers column types after serializing
 - Schema registry information about numerical precision might be lost.
 - Binary data results in [VARCHAR](/sql-reference/data-types-text#varchar) columns being created, with the data ingested as base64-encoded strings.
 
-For standard Snowflake tables, use client-side validation (`snowflake.validation=client_side`) to create columns from declared schema types, or pre-create columns with the intended types. For Snowflake-managed Iceberg tables, use server-side validation and pre-create columns when you need specific types. See [Iceberg limitations](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-limitations).
+To preserve declared types from a schema registry, use client-side validation (`snowflake.validation=client_side`), or pre-create the table columns with the intended types before ingestion.
 
 **When to use server-side validation:**
 
@@ -59,7 +59,7 @@ sending rows to Snowflake.
 
 Note
 
-Kafka connector v4 supports ingestion and schema evolution for Snowflake-managed [Apache Iceberg tables](/user-guide/tables-iceberg) using server-side validation (`snowflake.validation=server_side`, the default). For setup, see [Load data into Iceberg tables](/user-guide/kafka-connector/iceberg). For mode and type restrictions, see [Iceberg limitations](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-limitations).
+Client-side schema evolution isn’t supported for [Apache Iceberg tables](/user-guide/tables-iceberg). To ingest into Iceberg tables, use server-side validation (`snowflake.validation=server_side`, the default). Because server-side validation infers column types from values rather than from a schema registry, pre-create the Iceberg table columns with the intended types to avoid type downgrades.
 
 **When to use client-side validation:**
 

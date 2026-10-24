@@ -55,7 +55,8 @@ Where:
 >     - `STOPPED_NOTIFICATION_INTEGRATION_DROPPED`
 >     - `STOPPED_MISSING_PIPE`
 >     - `STOPPED_MISSING_TABLE` (the target table defined in the pipe definition is dropped)
->     - `STALLED_COMPILATION_ERROR`
+>     - `STALLED_COMPILATION_ERROR` (the COPY INTO statement in the pipe definition can’t be compiled. To troubleshoot, check the
+>       `invalid_reason` column in the output of [DESCRIBE PIPE](/sql-reference/sql/desc-pipe) or [SHOW PIPES](/sql-reference/sql/show-pipes).)
 >     - `STALLED_INITIALIZATION_ERROR`
 >     - `STALLED_EXECUTION_ERROR`
 >     - `STALLED_INTERNAL_ERROR`
@@ -134,7 +135,8 @@ Where:
 > :   Timestamp of the oldest pending refresh job creation time, displayed only when a pending job exists.
 >
 > `pendingHistoryRefreshJobsCount`
-> :   Total number of pending history refresh jobs for non-table-owned pipes. Displays `0` if no jobs are pending.
+> :   Total number of pending history refresh jobs for the pipe’s target table. Displays `0` if no jobs are pending.
+>     This field isn’t returned for the internal pipes that Snowflake creates and manages for external tables.
 
 ## Examples
 

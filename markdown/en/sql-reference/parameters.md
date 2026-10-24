@@ -4871,7 +4871,7 @@ Description:
     For more information about USER\_TASK\_TIMEOUT\_MS, see [CREATE TASK…USER\_TASK\_TIMEOUT](/sql-reference/sql/create-task#label-create-task-user-task-timeout-ms).
 
 Values:
-:   `0` - `604800000` (7 days). A value of `0` specifies that the maximum timeout value is enforced.
+:   `0` - `604800000` (7 days). A value of `0` isn’t treated as “no limit”: the task run times out immediately. Specify a value greater than `0`.
 
 Default:
 :   `3600000` (1 hour)

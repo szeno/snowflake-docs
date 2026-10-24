@@ -32,7 +32,8 @@ The column projected by the `query` must have the VARCHAR data type.
 
 ## Returns
 
-The function returns a NUMBER value.
+The function returns a NUMBER value that is the percentage of blank values, from 0 to 100. For example, `1` means that
+1% of the values in the column are blank, and `100` means that all of the values are blank.
 
 ## Example
 

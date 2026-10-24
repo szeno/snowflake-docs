@@ -8,7 +8,8 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the count of column values that are blank for the specified column in a table.
+Returns the count of column values that are blank for the specified column in a table. A value is blank when it’s an empty string
+or contains only spaces (that is, `TRIM(<column>) = ''`). NULL values aren’t counted as blank.
 
 This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it
 runs at regular intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).
@@ -36,7 +37,7 @@ The function returns a NUMBER value.
 
 ## Example
 
-Measure the percentage of blank fields for the SSN column (US social security number):
+Measure the number of blank fields for the SSN column (US social security number):
 
 > Copy code
 >

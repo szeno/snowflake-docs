@@ -10,7 +10,7 @@ After the agent generates a workflow, it always shows you the YAML and asks whet
 
 ## Choosing an extraction strategy
 
-Most platforms support a **server-side export** strategy that writes data directly to object storage (for example `unload` for Redshift, `dbms_cloud` for Oracle, `write_nos` for Teradata). When your source supports one and the prerequisites are in place (external stage, credentials, platform permissions), use it for **all** tables from that source. Data never flows through the Worker, and you avoid mixing `regular` with a server-side strategy on the same source without a good reason. For **PostgreSQL**, **`regular`** (COPY, `use_copy = true`) is the recommended extract.
+Most platforms support a **server-side export** strategy that writes data directly to object storage (for example `unload` for Redshift, `dbms_cloud` for Oracle, `write_nos` for Teradata). When your source supports one and the prerequisites are in place (external stage, credentials, platform permissions), use it for **all** tables from that source. Data never flows through the Worker, and you avoid mixing `regular` with a server-side strategy on the same source without a good reason. For **PostgreSQL**, **`regular`** (COPY, `use_copy = true`) is the recommended extract. **IBM DB2** has no server-side export. **`regular`** is the default, and **`cloud_direct`** is preferred when an object store and a matching external stage are available. Both strategies read through the Worker and write Parquet. See [Migrating Data from IBM DB2](./migrate-db2).
 
 Use **`regular`** extraction only when data volume is genuinely small, or when object storage and the external stage aren’t set up yet. Once prerequisites are ready, switch the whole workflow to the server-side strategy rather than reserving it for “large tables only.”
 
@@ -64,7 +64,7 @@ Apache Iceberg™ targets always store `INTERVAL` columns as `VARCHAR`, because 
 
 ## Preparing a custom extraction plugin
 
-The built-in extraction strategies (`regular`, `unload`, `write_nos`, `dbms_cloud`, `tpt`) cover most sources. If your environment needs a different extraction path, for example a proprietary driver, a bulk-export tool not covered by a built-in strategy, or a custom authentication flow, you can supply your own **extraction plugin** and register it on a Worker’s source connection.
+The built-in extraction strategies (`regular`, `unload`, `write_nos`, `dbms_cloud`, `cet_as`, `export_data`, and `cloud_direct`) cover most sources. If your environment needs a different extraction path, for example a proprietary driver, a bulk-export tool not covered by a built-in strategy, or a custom authentication flow, you can supply your own **extraction plugin** and register it on a Worker’s source connection.
 
 At a high level, preparing a plugin means:
 

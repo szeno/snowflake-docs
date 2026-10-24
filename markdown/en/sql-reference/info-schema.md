@@ -60,7 +60,7 @@ the “Snowflake-specific” column in the following table.
 | [INDEX\_COLUMNS](/sql-reference/info-schema/index_columns) | Database | ✔ |  |
 | [INFORMATION\_SCHEMA\_CATALOG\_NAME](/sql-reference/info-schema/information_schema_catalog_name) | Account |  |  |
 | [LISTINGS](/sql-reference/info-schema/listings) | Account | ✔ |  |
-| [LOAD\_HISTORY](/sql-reference/info-schema/load_history) | Account | ✔ | Data retained for 14 days. |
+| [LOAD\_HISTORY](/sql-reference/info-schema/load_history) | Database | ✔ | Data retained for 14 days. |
 | [MODEL\_VERSIONS](/sql-reference/info-schema/model_versions) | Database | ✔ |  |
 | [OBJECT\_PRIVILEGES](/sql-reference/info-schema/object_privileges) | Account |  |  |
 | [PACKAGES](/sql-reference/info-schema/packages) | Database | ✔ |  |

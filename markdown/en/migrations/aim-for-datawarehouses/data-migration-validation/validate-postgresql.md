@@ -4,8 +4,8 @@ This page covers PostgreSQL-specific setup for [Data validation](./data-validati
 
 ## Prerequisites
 
-- **Npgsql driver** on Workers (no ODBC install). Same `ssl_mode` guidance as [Migrating Data from PostgreSQL](./migrate-postgresql).
-- **regular (Recommended)**: L3 uses `extraction.strategy: regular` with the PostgreSQL COPY protocol (`use_copy = true`). Install `psql` on the Worker host. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
+- **PostgreSQL ODBC driver** (`psqlODBC`) on Workers, the same driver as [Migrating Data from PostgreSQL](./migrate-postgresql). Same `ssl_mode` guidance.
+- **regular (Recommended)**: L3 uses `extraction.strategy: regular` with the PostgreSQL COPY protocol (`use_copy = true`). Install `psql` on the Worker host. Without `psql`, the Worker reads the signatures through the ODBC driver. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 ## Connectivity
 

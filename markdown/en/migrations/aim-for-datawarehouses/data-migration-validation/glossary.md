@@ -40,7 +40,7 @@ Snowflake object that grants an SPCS service permission to reach external hosts 
 
 ## Extraction strategy
 
-How AIM DMV reads data from the source during **migration**, and how it extracts L3 signature Parquet during **validation**. The recommended extract is always the source’s native export: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** (BigQuery), or **regular** (PostgreSQL). Validation uses the same strategy names under `validation_configuration.extraction`. See [Extraction strategies](../manual-migration/data-migration-configuration-reference#extraction-strategies) and [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
+How AIM DMV reads data from the source during **migration**, and how it extracts L3 signature Parquet during **validation**. When the source has a native export, that export is the recommended extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./migrate-bigquery)), or **regular** (PostgreSQL). For IBM DB2, prefer **`cloud_direct`** when an object store and external stage are available, and use **`regular`** otherwise. Validation uses the same strategy names under `validation_configuration.extraction`. See [Extraction strategies](../manual-migration/data-migration-configuration-reference#extraction-strategies) and [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 ## Hybrid table
 

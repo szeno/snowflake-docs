@@ -1,5 +1,20 @@
 # Node.js Driver
 
+Node.js 4.0 Alpha 1 Private Preview - Universal Core
+
+A version of the Snowflake Node.js Driver built on the Universal Core is available in private preview.
+Preview participants can obtain the `snowflake-sdk` alpha release from
+[npm](https://www.npmjs.com/package/snowflake-sdk/v/4.0.0-alpha.1).
+This release requires Node.js 22 or later.
+
+Use this driver only if you are participating in the private preview, subject to
+[Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
+It may be unstable and is not ready for use with production data. Use it only for internal evaluation;
+do not use it to process personal data or other data subject to compliance or legal requirements.
+
+The documentation below describes the existing Node.js driver. Its requirements and supported
+functionality might differ from the preview.
+
 Note
 
 This driver currently does not support GCP regional endpoints. Please ensure that any workloads using through this driver do not require support for regional endpoints on GCP. If you have questions about this, please contact Snowflake Support.

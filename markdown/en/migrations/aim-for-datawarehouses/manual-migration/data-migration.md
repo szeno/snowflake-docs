@@ -6,13 +6,16 @@ This page covers **SnowConvert AI CLI (`scai`) commands** for data migration. Fo
 
 Use this page when you run data migration from the CLI instead of Snowflake CoCo. Cloud data commands are grouped under `scai data migrate …`, `scai data worker …`, and `scai data orchestrator …`.
 
-Supported source platforms: **SQL Server**, **Amazon Redshift**, **Teradata**, **Oracle**, and **PostgreSQL**. Platform-specific auth, extraction strategies, Worker TOML, and data type mappings live on the AIM pages:
+Supported source platforms: **SQL Server**, **Azure Synapse Analytics**, **Amazon Redshift**, **Teradata**, **Oracle**, **PostgreSQL**, **IBM DB2**, and **Google BigQuery**. Platform-specific auth, extraction strategies, Worker TOML, and data type mappings live on the AIM pages:
 
 - [Migrating Data from Amazon Redshift](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-redshift)
 - [Migrating Data from SQL Server](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-sql-server)
+- [Migrating Data from Azure Synapse Analytics](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-synapse)
 - [Migrating Data from Teradata](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-teradata)
 - [Migrating Data from Oracle](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-oracle)
 - [Migrating Data from PostgreSQL](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-postgresql)
+- [Migrating Data from IBM DB2](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-db2)
+- [Migrating Data from Google BigQuery](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-bigquery)
 
 ## Prerequisites
 

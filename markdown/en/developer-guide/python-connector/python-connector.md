@@ -8,7 +8,7 @@ Linux, macOS, and Windows where Python 3.11 or later is installed.
 
 Note
 
-If you are upgrading from a version before 5.0, see [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade).
+If you are upgrading from a version before 5.0, see [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade).
 
 The connector supports developing applications using the Python Database API v2 specification (PEP-249), including using the following standard API objects:
 
@@ -25,7 +25,7 @@ warehouses, without using SQL. For more information, see [Snowflake Python APIs:
 **Next Topics:**
 
 - [Installing the Python Connector](/developer-guide/python-connector/python-connector-install)
-- [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade)
+- [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade)
 - [Using the Python Connector](/developer-guide/python-connector/python-connector-example)
 - [Using asynchronous I/O with the Python Connector](/developer-guide/python-connector/python-connector-asyncio)
 - [Using Pandas with the Python Connector](/developer-guide/python-connector/python-connector-pandas)

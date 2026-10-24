@@ -39,6 +39,29 @@ VALIDATE( [<namespace>.]<table_name> , JOB_ID => { '<query_id>' | '_last' } )
 - If new files have been added to the stage used by `query_id` since the load was executed, the new files added are ignored during the validation.
 - If files have been removed from the stage used by `query_id` since the load was executed, the files removed are reported as missing.
 
+## Output
+
+The function returns one row for each error, with the following columns:
+
+| Column Name | Data Type | Description |
+| --- | --- | --- |
+| ERROR | TEXT | Error encountered in the source file. |
+| FILE | TEXT | Name of the source file where the error was encountered. |
+| LINE | NUMBER | Number of the line in the source file where the error was encountered. |
+| CHARACTER | NUMBER | Position of the character where the error was encountered. |
+| BYTE\_OFFSET | NUMBER | Byte offset to the character where the error was encountered. |
+| CATEGORY | TEXT | Category of the operation when the error was produced. |
+| CODE | NUMBER | ID for the error message displayed in the ERROR column. |
+| SQL\_STATE | TEXT | SQL state code. |
+| COLUMN\_NAME | TEXT | Name and order of the column that contained the error. |
+| ROW\_NUMBER | NUMBER | Number of the row in the source file where the error was encountered. |
+| ROW\_START\_LINE | NUMBER | Number of the first line of the row where the error was encountered. |
+| REJECTED\_RECORD | TEXT | Record that contained the error. |
+
+Expand
+
+Show lessSee more
+
 ## Examples
 
 Return errors for the last executed COPY command:

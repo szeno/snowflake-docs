@@ -230,7 +230,7 @@ Recommended allowlist (plus your PostgreSQL endpoint):
 - `deb.debian.org:80`
 - `deb.debian.org:443`
 
-The Worker installs `odbc-postgresql` from Debian package mirrors at startup.
+The Worker installs `odbc-postgresql` (the PostgreSQL ODBC driver) from Debian package mirrors at startup and connects through it. The image doesn’t include `psql`, so COPY extraction (`use_copy = true`) falls back to reading through the ODBC driver on SPCS. See [Migrating Data from PostgreSQL](../data-migration-validation/migrate-postgresql).
 
 ### Oracle
 
@@ -238,7 +238,49 @@ No driver download hosts. The Worker uses the pre-installed thin `oracledb` driv
 
 ### Teradata
 
-No driver download hosts. The Worker uses the pre-installed `teradatasql` driver. Allow only your Teradata host and port.
+Recommended allowlist (plus your Teradata host and port):
+
+- `pypi.org:443`
+- `files.pythonhosted.org:443`
+
+The Worker installs the `teradatasql` Python driver from PyPI when the container starts. Without these hosts, the Worker can’t connect to Teradata.
+
+### Google BigQuery
+
+Recommended allowlist:
+
+- `bigquery.googleapis.com:443` (BigQuery API: metadata, queries, and `EXPORT DATA` jobs)
+- `oauth2.googleapis.com:443` (service-account token exchange)
+
+No driver download hosts. The Worker uses the pre-installed `google-cloud-bigquery` client, with no ODBC driver. With `export_data`, BigQuery writes the Parquet files to GCS on its own side, and Snowflake reads them through the storage integration, so the Worker doesn’t need a GCS host.
+
+Pass the service-account key to the Worker as a Snowflake secret. Base64-encode the key file and store it in a generic string secret:
+
+Copy code
+
+```
+CREATE SECRET SNOWCONVERT_AI.DATA_MIGRATION.BIGQUERY_SA_SECRET
+  TYPE = GENERIC_STRING
+  SECRET_STRING = '<base64_encoded_service_account_key>';
+```
+
+Map that secret to `BIGQUERY_CREDENTIALS_JSON_BASE64` in the service spec, and set the project and dataset:
+
+Copy code
+
+```
+          env:
+            DATA_SOURCE_TYPE: bigquery
+            DATA_SOURCE_PROJECT_ID: <gcp_project_id>
+            DATA_SOURCE_DATABASE: <default_dataset>
+            DATA_SOURCE_LOCATION: US
+          secrets:
+          - snowflakeSecret: BIGQUERY_SA_SECRET
+            secretKeyRef: secret_string
+            envVarName: BIGQUERY_CREDENTIALS_JSON_BASE64
+```
+
+Use the base64 secret rather than `BIGQUERY_CREDENTIALS_JSON`. A single-quoted `SECRET_STRING` turns the `\n` escapes inside the key’s `private_key` into real newlines, which makes the JSON invalid. Base64 has no characters that quoting can corrupt. `DATA_SOURCE_LOCATION` defaults to `US`. For `export_data`, also set `EXPORT_DATA_GCS_BUCKET` and, optionally, `EXPORT_DATA_GCS_PREFIX`.
 
 ## Related content
 

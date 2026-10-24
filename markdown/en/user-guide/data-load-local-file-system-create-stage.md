@@ -61,7 +61,9 @@ Named stages are database objects that provide the greatest degree of flexibilit
 
 - Users with the appropriate privileges on the stage can load data into any table.
 - Because the stage is a database object, the security/access rules that apply to all objects apply. The privileges to use a stage can be
-  granted or revoked from roles. In addition, ownership of the stage can be transferred to another role.
+  granted or revoked from roles. In addition, ownership of the stage can be transferred to another role. For the privileges that apply to
+  stages, see [Stage privileges](/user-guide/security-access-control-privileges#label-access-control-privileges-stage). To grant or revoke them, see [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) and
+  [REVOKE <privileges> … FROM ROLE](/sql-reference/sql/revoke-privilege).
 
 If you plan to stage data files that will be loaded only by you, or will be loaded only into a single table, then you may prefer to simply
 use either your user stage or the stage for the table into which you will be loading data.

@@ -30,6 +30,7 @@ Show lessSee more
 
 ## Usage notes
 
+- The view returns load history only for tables in the database that contains the INFORMATION\_SCHEMA you query, so the view doesn’t include a database name column. To retrieve load history for tables in all databases in your account, use the [LOAD\_HISTORY view](/sql-reference/account-usage/load_history) (Account Usage).
 - The historical data for COPY INTO commands is removed from the view when a table is dropped.
 - The view only includes COPY INTO commands that executed to completion, with or without errors. No record is added if the transaction is rolled back, for example, or if the ON\_ERROR = ABORT\_STATEMENT copy option is included in the COPY INTO *<table>* statement and a detected error in a data file aborts the load operation.
 - This view returns an upper limit of 10,000 rows. To avoid this limitation, use the [LOAD\_HISTORY view](/sql-reference/account-usage/load_history) (Account Usage), [COPY\_HISTORY function](/sql-reference/functions/copy_history) (Information Schema), or the [COPY\_HISTORY view](/sql-reference/account-usage/copy_history) (Account Usage).

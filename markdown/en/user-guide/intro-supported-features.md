@@ -22,7 +22,7 @@ by Snowflake.
   - [Amazon S3 policy controls](/user-guide/data-load-s3-config).
   - [Azure storage access controls](/user-guide/data-load-azure-config).
   - [Google Cloud Storage access permissions](/user-guide/data-load-gcs-config).
-- Support for PHI data (in compliance with HIPAA and [HITRUST CSF](/user-guide/intro-cloud-platforms#label-hitrust-csf-cert) regulations) — requires Business Critical
+- Support for protected health information (PHI) data (in compliance with HIPAA and [HITRUST CSF](/user-guide/intro-cloud-platforms#label-hitrust-csf-cert) regulations) — requires Business Critical
   Edition (or higher).
 - Automatic [data encryption](/user-guide/security-encryption-end-to-end) by Snowflake using Snowflake-managed keys.
 - [Object-level access control](/user-guide/security-access-control-overview).

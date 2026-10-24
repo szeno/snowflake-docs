@@ -251,7 +251,6 @@ The connector supports the following schema changes:
 - **Drop column.** The connector renames the destination column with a `__SNOWFLAKE_DELETED` suffix to preserve historical values. For details, see [Dropped columns](#dropped-columns).
 - **Compatible type change.** The connector transitions to a new capture instance that reflects the updated column definition when you change a column to a source type that maps to the same Snowflake data type (for example, `INT` to `BIGINT`, both mapped to `NUMBER`).
 - **Re-add a previously dropped column.** The connector adds the column as a new destination column alongside the existing soft-deleted column (for example, `A` and `A__SNOWFLAKE_DELETED`).
-- **Numeric precision or scale change.** For example, widening `DECIMAL(7,2)` to `DECIMAL(12,4)`. The connector transitions to a new capture instance that reflects the updated column definition.
 - **Character column length change.** The connector transitions to a new capture instance that reflects the updated column definition; for example, widening `VARCHAR(50)` to `VARCHAR(200)`.
 
 If you drop a column that was previously dropped and soft-deleted, replication for the affected table fails because the soft-deleted column name is already taken.
@@ -262,6 +261,7 @@ The connector doesn’t support the following schema changes. Unless noted other
 
 - **Primary key definition change.** SQL Server blocks dropping, switching, or otherwise modifying the primary key of a table while Change Data Capture is enabled on it. This is a source-side restriction that SQL Server enforces itself, not a limitation of the connector: the statement fails on the source database before any change reaches the connector. Adding a primary key to a table that didn’t have one doesn’t refresh the key the connector already uses; to change the replication key, restart replication for the affected table. For more information, see the primary-key restart guidance in [Limitations](#limitations).
 - **Incompatible type change.** When the new source type maps to a different Snowflake data type (for example, `INT` to `VARCHAR`, mapped to `NUMBER` and `TEXT` respectively). Changes between timestamps with and without a time zone are also incompatible.
+- **Numeric precision or scale change.** For example, changing `NUMERIC(7,2)` to `NUMERIC(6,3)`.
 - **Rename column.** SQL Server doesn’t allow renaming a column that belongs to an active CDC capture instance. This is a source-side restriction that SQL Server enforces itself, not a limitation of the connector: the rename statement fails on the source database before any change reaches the connector.
 
 #### When the wrapper procedures aren’t deployed

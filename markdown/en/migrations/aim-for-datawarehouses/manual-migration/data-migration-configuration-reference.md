@@ -275,7 +275,7 @@ Copy code
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
 | `strategy` | `String` |  | Extraction method. See the table below. Defaults to `"regular"`. |
-| `externalStage` | `String` | See description | Required when `strategy` is `"unload"`, `"write_nos"`, `"dbms_cloud"`, `"cet_as"`, or `"cloud_direct"`. Snowflake external stage whose URL matches the bucket or container that receives the extracted files. |
+| `externalStage` | `String` | See description | Required when `strategy` is `"unload"`, `"write_nos"`, `"dbms_cloud"`, `"cet_as"`, `"export_data"`, or `"cloud_direct"`. Snowflake external stage whose URL matches the bucket or container that receives the extracted files. |
 | `pluginClass` | `String` |  | Optional. Fully qualified class name of a [custom extraction plugin](../data-migration-validation/data-migration-advanced-configuration#preparing-a-custom-extraction-plugin) to use instead of a built-in strategy. |
 
 Expand
@@ -291,8 +291,9 @@ Show lessSee more
 | `"write_nos"` | Teradata only | Teradata WRITE\_NOS exports to S3, Azure Blob, or GCS; Snowflake loads from the external stage. Recommended when NOS and the external stage are available. |
 | `"dbms_cloud"` | Oracle only | Oracle `DBMS_CLOUD.EXPORT_DATA` writes Parquet to object storage; Snowflake loads from the external stage. Recommended when the object storage and external stage are available. |
 | `"cet_as"` | SQL Server and Azure Synapse | Source-side `CREATE EXTERNAL TABLE AS SELECT` writes Parquet to Azure Blob; Snowflake loads from the external stage. SQL Server support requires Azure SQL Managed Instance, SQL Server 2022 or later, or Azure Synapse. Azure SQL Database isn’t supported. |
-| `"cloud_direct"` | Supported ODBC sources | Worker streams cursor results directly to S3 or Azure Blob and Snowflake loads from the external stage. |
-| `"tpt"` | Teradata only | Worker runs TPT EXPORT via `tbuild`. `externalStage` is not required. |
+| `"export_data"` | BigQuery only | BigQuery `EXPORT DATA` writes Parquet to GCS; Snowflake loads from the external stage. See [Migrating Data from Google BigQuery](../data-migration-validation/migrate-bigquery). |
+| `"cloud_direct"` | SQL Server, Azure Synapse, Redshift, Oracle, Teradata, PostgreSQL, and IBM DB2 | Worker streams results directly to S3, GCS, or Azure Blob and Snowflake loads from the external stage. |
+| `"tpt"` | Teradata only | Accepted for compatibility. The Orchestrator treats `tpt` as `"regular"`. `externalStage` is not required. |
 
 Expand
 
@@ -340,6 +341,7 @@ This applies to `synchronization.strategy: checksum` during migration and to [in
 | Spatial values as text | SQL Server, Redshift, and Oracle `SDO_GEOMETRY` | Compared as Well-Known Text with spacing normalized, so binary geometry detail is lost |
 | A custom `checksumExpression` | Any platform | Only that expression drives detection — whether a change is detected depends entirely on what the expression evaluates |
 | Fully frozen partitions | PostgreSQL (`checksum` strategy) | The default PostgreSQL checksum fingerprints a partition from each row’s MVCC `xmin`. `VACUUM FREEZE` rewrites every row’s `xmin` to the same frozen value, so a fully frozen partition’s fingerprint depends only on its row count. An update that is frozen again between two consecutive sync runs may go undetected. Use a value-derived `checksumExpression` (for example `MAX(updated_at)`) or the `watermark` strategy. See [Migrating Data from PostgreSQL](../data-migration-validation/migrate-postgresql#incremental-sync-and-vacuum-freeze). |
+| Skipped large objects | IBM DB2 `BLOB`, `CLOB`, `DBCLOB`, and `XML` | Checksum skips these types. If every column is one of them, the checksum is the partition row count, so a change that doesn’t change the row count isn’t detected. Use a watermark column. See [Migrating Data from IBM DB2](../data-migration-validation/migrate-db2#incremental-sync). |
 
 Expand
 
@@ -415,7 +417,7 @@ Iceberg targets always coerce `INTERVAL` columns to `VARCHAR`, regardless of `in
 
 ## Extraction strategies
 
-Each table can set **`extraction.strategy`** (or inherit from **`defaultTableConfiguration.extraction`**). Worker TOML holds connection and platform-specific options (UNLOAD credentials, WRITE\_NOS location, TPT tuning).
+Each table can set **`extraction.strategy`** (or inherit from **`defaultTableConfiguration.extraction`**). Worker TOML holds connection and platform-specific options (UNLOAD credentials, WRITE\_NOS location, BigQuery `EXPORT DATA` bucket).
 
 | Strategy | Platforms | When to use |
 | --- | --- | --- |
@@ -423,9 +425,10 @@ Each table can set **`extraction.strategy`** (or inherit from **`defaultTableCon
 | **`write_nos`** | Teradata only | **Recommended default** when Teradata NOS and a Snowflake external stage are available. Server-side export to S3, Azure Blob, or GCS. Use for all tables from the source. See [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). |
 | **`dbms_cloud`** | Oracle only | **Recommended default** when object storage and a Snowflake external stage are available. Server-side export via `DBMS_CLOUD.EXPORT_DATA`. Use for all tables from the source. See [Migrating Data from Oracle](../data-migration-validation/migrate-oracle). |
 | **`cet_as`** | SQL Server and Azure Synapse | Source-side CETAS export to Azure Blob. See [Migrating Data from SQL Server](../data-migration-validation/migrate-sql-server#using-cetas-extraction) and [Migrating Data from Azure Synapse Analytics](../data-migration-validation/migrate-synapse#using-cetas-extraction). |
-| **`cloud_direct`** | Supported ODBC sources | Worker streams query results directly to S3 or Azure Blob, skipping local disk and re-upload. |
-| **`regular`** (default) | All | Worker pulls data over the source connection, then uploads to the Snowflake internal stage. On **PostgreSQL**, **`regular`** with COPY (`use_copy = true`) is the recommended extract. |
-| **`tpt`** | Teradata only | Worker-side bulk export via Teradata Parallel Transporter when WRITE\_NOS isn’t available. See [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). |
+| **`export_data`** | BigQuery only | Server-side `EXPORT DATA` writes Parquet to GCS. Snowflake loads from an external stage on the same prefix. See [Migrating Data from Google BigQuery](../data-migration-validation/migrate-bigquery). |
+| **`cloud_direct`** | SQL Server, Azure Synapse, Redshift, Oracle, Teradata, PostgreSQL, and IBM DB2 | Worker streams query results directly to S3, GCS, or Azure Blob, skipping local disk and re-upload. On **IBM DB2** this is the preferred extract when an object store and external stage are available. See [Migrating Data from IBM DB2](../data-migration-validation/migrate-db2). |
+| **`regular`** (default) | All | Worker pulls data over the source connection, then uploads to the Snowflake internal stage. On **PostgreSQL**, **`regular`** with COPY (`use_copy = true`) is the recommended extract. On **IBM DB2**, **`regular`** is the default when the workflow omits a strategy. |
+| **`tpt`** | Teradata only | Accepted for compatibility. The Orchestrator treats `tpt` as `regular`, so the Worker reads through the Teradata driver. Use `write_nos` for a server-side export. See [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). |
 
 Expand
 
@@ -490,6 +493,17 @@ defaultTableConfiguration:
     externalStage: TARGET_DB.DATA_MIGRATION.AZURE_LANDING
 ```
 
+**BigQuery export\_data:**
+
+Copy code
+
+```
+defaultTableConfiguration:
+  extraction:
+    strategy: export_data
+    externalStage: TARGET_DB.DATA_MIGRATION.GCS_EXPORT_STAGE
+```
+
 **Cloud direct:**
 
 Copy code
@@ -502,6 +516,8 @@ defaultTableConfiguration:
 ```
 
 **Teradata tpt:**
+
+`tpt` is accepted for compatibility and runs as `regular`.
 
 Copy code
 
@@ -561,6 +577,7 @@ The Worker configuration file uses [TOML](https://toml.io/) format. For cloud da
 | `[connections.source.sqlserver]` | `prefer_native_driver` | `Boolean` | Optional. Defaults to `true`. Set to `false` to force the ODBC fallback. |
 | `[connections.source.sqlserver]` | `set_context_info` | `Boolean` | Optional. Defaults to `true`. Set to `false` to prevent the native driver from tagging the SQL Server session with `SET CONTEXT_INFO`. |
 | `[connections.target.s3]` | (S3 storage settings) | `Object` | S3 target for `cloud_direct`. Requires `bucket_name`; optional fields include `profile_name`, `region_name`, and `prefix`. |
+| `[connections.target.gcs]` | (GCS storage settings) | `Object` | GCS target for `cloud_direct`. Requires `bucket_name`; optional fields include `project_id`, `credential_file_path`, and `prefix`. |
 | `[connections.target.blob]` | (Azure storage credentials) | `Object` | Azure Blob target for `cloud_direct`. Requires `container_name` and either `connection_string`, or `account_name` with `account_key`, `sas_token`, or `use_default_credential = true`. |
 | `[connections.target.snowflake_connection_name]` | `connection_name` | `String` | Snowflake profile for data sessions (loads). |
 
@@ -835,6 +852,7 @@ Source platforms fall into two groups:
 | **Oracle** | Automatic `PARALLEL` optimizer hint on large tables | Override with `selectModifier`, or set `selectModifier: "NONE"` to disable |
 | **Amazon Redshift** | No automatic hint | Opt-in pass-through via `queryModifiers` |
 | **PostgreSQL** | No automatic hint | Opt-in pass-through via `queryModifiers` |
+| **IBM DB2** | No automatic hint | Opt-in pass-through via `queryModifiers` |
 
 Expand
 

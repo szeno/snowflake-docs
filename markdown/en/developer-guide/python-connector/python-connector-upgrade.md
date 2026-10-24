@@ -1,4 +1,4 @@
-# Upgrading to the Snowflake Connector for Python 5.0.0
+# Upgrading to the Snowflake Connector for Python 5.x
 
 Installing the connector replaces the earlier `snowflake-connector-python` package in that environment. The `snowflake.connector` module and the PEP 249 `Connection` and `Cursor` objects stay the same.
 
@@ -12,14 +12,14 @@ Install the connector in a separate virtual environment and keep the previous en
 
 The connector requires Python 3.11 or later. See [Installing the Python Connector](/developer-guide/python-connector/python-connector-install).
 
-Before you upgrade a shared environment, check libraries that still require a connector version before 5.0. Installing 5.0.0 there can make `pip` refuse the install, or it can replace a connector those libraries can’t import:
+Before you upgrade a shared environment, check libraries that still require a connector version before 5.0.0. Installing version 5.0.0 or later there can make `pip` refuse the install, or it can replace a connector those libraries can’t import:
 
 - Snowpark for Python (`snowflake-snowpark-python` 1.55.1) requires `snowflake-connector-python>=3.17.0,<5.0.0`.
 - Snowflake ML (`snowflake-ml-python` 2.4.0) requires `snowflake-connector-python[pandas]>=3.17.3,<5`.
 - Snowflake SQLAlchemy (`snowflake-sqlalchemy` 1.11.1) requires `snowflake-connector-python<5.0.0`.
 - Snowflake CLI (`snowflake-cli` 3.29.0) requires `snowflake-connector-python[secure-local-storage]==4.7.5`.
 
-Install 5.0.0 in a separate virtual environment when any of those libraries are installed.
+Install version 5.0.0 or later in a separate virtual environment when any of those libraries are installed.
 
 Copy code
 
@@ -29,7 +29,7 @@ python -c "import snowflake.connector; print(snowflake.connector.__version__)"
 python -W error::DeprecationWarning -m pytest
 ```
 
-The printed version should be `5.0.0`. That means this environment is using the connector described here.
+The printed version should be `5.0.0` or later. That means this environment is using the connector described here.
 
 `-W error::DeprecationWarning` is a Python command-line option. It turns a `DeprecationWarning` into an error that stops the program. Renamed parameters still connect, and each one emits that warning. With this option, pytest fails at the first old parameter name, so you can see what to change. Use the same option on the command that starts your application, for example `python -W error::DeprecationWarning your_app.py`.
 
@@ -80,11 +80,11 @@ Before version 5.0, the connector checked revocation with OCSP, and those parame
   Note
 
   Before version 5.0, the connection parameter defaulted to `False`. External-browser login on macOS and Windows still cached an ID token when you omitted the flag.
-- If you depend on the previous console-login default, set `oauth_disable_console_login` explicitly. The current default is `False`, so omitting it enables console login for external-browser authentication. That default is still being confirmed. The old name still maps to the new one and emits a `DeprecationWarning`.
+- Don’t pass `disable_console_login` or `oauth_disable_console_login`. Passing either warns and has no effect. External browser login always requests the SSO URL from Snowflake.
 
   Note
 
-  Before version 5.0, `disable_console_login` defaulted to `True`, which asked for the SSO URL instead of the console-login URL.
+  Before version 5.0, `disable_console_login` defaulted to `True`, which asked for the SSO URL instead of the console-login URL. Setting it to `False` opened `/console/login` directly.
 - Expect one extra authentication after upgrading if you depend on a cached token. Token cache files are not reused unchanged from the previous connector.
 
 ### Step 5: Re-check cursor and fetch error handling
@@ -121,7 +121,6 @@ These current names are what the connector docs describe. The previous name stil
 | `enable_stage_s3_privatelink_for_us_east_1` | `use_s3_regional_url` | Forced PUT and GET to use the S3 regional endpoint. The `_for_us_east_1` suffix was historical: it applied to every S3 region. The old connection argument is a deprecated alias. The server session parameter `ENABLE_STAGE_S3_PRIVATELINK_FOR_US_EAST_1` is still honored. *(BD#30)* |
 | `network_timeout` | `query_timeout` and `request_timeout` | One wall-clock budget for non-login HTTP operations. It defaulted to no cap, and `conn.network_timeout` returned `None` when unset. The value is copied to both new parameters unless you set one of them yourself. `conn.network_timeout` returns `request_timeout` (default 120). Using the old name emits a `DeprecationWarning`. *(BD#52)* |
 | `socket_timeout` | `connect_timeout` and `retry_timeout` | Per-attempt read-inactivity timeout. It reset on every received byte, so a slow but active download did not trip it. The value is copied to both new parameters. `retry_timeout` is a hard cap on the whole HTTP attempt, including the body download, so `socket_timeout=30` can abort an active chunk download at 30 seconds. `conn.socket_timeout` returns `retry_timeout` (default `None`). *(BD#52)* |
-| `disable_console_login` | `oauth_disable_console_login` | Defaulted to `True`, so external-browser login asked for the SSO URL. The current parameter defaults to `False`, and that default is still being confirmed. Set it explicitly if you depend on the previous behavior. The old name is a deprecated alias. *(BD#99)* |
 | `external_browser_timeout` | `authentication_timeout` | Seconds to wait for an external-browser authentication response. The old name is a deprecated alias of `authentication_timeout` (default 120). That budget also covers Okta and OAuth authentication, so setting the old name changes those flows too. |
 | `oauth_socket_uri` | `oauth_redirect_uri` | Loopback URI for the OAuth redirect. Before version 5.0, the listener could bind a different host or port from the URI sent to the IdP. The listener binds `oauth_redirect_uri`. The old name is a deprecated alias. |
 | `skip_file_permissions_check` | `unsafe_skip_config_file_permissions_check` and `crl_unsafe_skip_file_permissions_check` | One flag skipped permission checks on both configuration files and the CRL cache. The value is copied to both parameters unless you set one of them. |
@@ -151,6 +150,7 @@ Before version 5.0, the connector applied a 120-second budget internally, but `c
 | --- | --- | --- |
 | `client_fetch_use_mp` | Remove it. Chunk fetch always uses a thread pool. Passing it warns and has no effect. | `True` switched the chunk-fetch pool from threads to processes. *(BD#25)* |
 | `oauth_enable_refresh_tokens` | Remove it. The connector always uses a refresh token when the IdP returns one. Use `client_store_temporary_credential` to control caching. Passing it warns and has no effect. | Default `True`. When `False`, the connector did not use the refresh token to renew an expired access token. *(BD#28)* |
+| `disable_console_login`, `oauth_disable_console_login` | Remove them. Passing either warns and has no effect. External browser login always requests the SSO URL from Snowflake. | `disable_console_login` defaulted to `True`, so external-browser login asked for the SSO URL instead of opening `/console/login`. Setting it to `False` opened `/console/login`. *(BD#99)* |
 | `enable_crl_cache` | Set `crl_enable_memory_caching` and `crl_enable_disk_caching`. Passing it warns and has no effect. | Master switch for both CRL caches (default `True`). `False` disabled memory and disk caches regardless of `enable_crl_file_cache`. *(BD#42)* |
 | `backoff_policy` | Set `retry_backoff_base_ms` (default 250), `retry_backoff_cap_ms` (default 16000), `retry_backoff_factor` (default 2), and `retry_backoff_jitter` (`none`, `full`, or `decorrelated`; default `decorrelated`). Passing `backoff_policy` warns and has no effect. | A generator, such as `exponential_backoff()` or a custom function, computed the delay before each retry. Defaults were a 1-second initial delay and full jitter. The 16-second cap and 2x factor are unchanged. *(BD#58)* |
 | `create_temp_table` on `write_pandas` | Pass `table_type='temp'`. Passing `create_temp_table` raises `TypeError`. | `create_temp_table=True` was a deprecated alias for `table_type='temp'` and emitted a `DeprecationWarning`. *(BD#19)* |
@@ -199,6 +199,11 @@ The following list summarizes breaking differences between versions before 5.0 a
   Note
 
   Before version 5.0, the session token was used as a bearer with no upfront check, and a bad token failed later as `HttpError` (errno 290401).
+- **External-browser login always requests the SSO URL from Snowflake.** `disable_console_login` and `oauth_disable_console_login` are not connection parameters. Passing either warns and has no effect. *(BD#99)*
+
+  Note
+
+  Before version 5.0, `disable_console_login` defaulted to `True`, which asked for the SSO URL. Setting it to `False` opened `/console/login` directly.
 - **External-browser login does not silently re-authenticate** when the master token expires mid-session. The connector raises `ReauthenticationRequest` instead of opening the browser again and retrying the query. Open a new connection to run the browser flow again. *(BD#82)*
 
   Note

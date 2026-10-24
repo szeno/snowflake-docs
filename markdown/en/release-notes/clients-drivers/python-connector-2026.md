@@ -10,9 +10,32 @@ Snowflake uses semantic versioning for Snowflake Connector for Python updates.
 
 See [Snowflake Connector for Python](/developer-guide/python-connector/python-connector) for documentation.
 
+## Version 5.1.0 (Oct 21, 2026)
+
+### New features and updates
+
+- Added support for Python 3.14t (free-threaded CPython). Wheels are published for Linux, macOS, and Windows x64. Windows on ARM does not include a 3.14t wheel. See [Installing the Python Connector](/developer-guide/python-connector/python-connector-install).
+
+### Bug fixes
+
+- Fixed statement-level `TIMEZONE` overrides. Pass `TIMEZONE` in `_statement_params` on `execute()` to send that time zone on the query request without changing the session. See .
+- Fixed stage uploads and downloads so a failed system certificate load is retried, instead of failing the storage client or skipping the operating-system trust store.
+
+### Security fixes
+
+- Updated bundled root certificates and distrusted compromised intermediate certificate authority (CA) certificates (RUSTSEC-2026-0382).
+
+### Changes
+
+- Login omits `CLIENT_SESSION_KEEP_ALIVE` and `CLIENT_PREFETCH_THREADS` unless you set `client_session_keep_alive` or `client_prefetch_threads`. A heartbeat frequency you set is sent as `CLIENT_SESSION_KEEP_ALIVE_HEARTBEAT_FREQUENCY` and clamped to 900–3600 seconds. An explicit `validate_default_parameters` value, `True` or `False`, is sent as `CLIENT_VALIDATE_DEFAULT_PARAMETERS`. Omitting `validate_default_parameters` leaves that parameter off the login request.
+- Login sends `TIMEZONE`, `AUTOCOMMIT`, `CLIENT_TIMESTAMP_TYPE_MAPPING`, `CLIENT_METADATA_REQUEST_USE_CONNECTION_CTX`, `SERVICE_NAME`, `GCS_USE_DOWNSCOPED_CREDENTIAL`, and `CLIENT_OUT_OF_BAND_TELEMETRY_ENABLED` as session parameters when you set them.
+- Removed `disable_console_login` and `oauth_disable_console_login`. Passing either connection parameter warns and has no effect. External browser login always requests the SSO URL from Snowflake. See [Parameters and calls that no longer work](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-removed).
+- Removed `OCSP_MODE` from the login client environment and from connection diagnostics. The connector does not perform OCSP. Certificate revocation is reported as `CERT_REVOCATION_CHECK_MODE`.
+- Changed GCS PUT to omit the `Content-Encoding` header.
+
 ## Version 5.0.0 (Oct 15, 2026)
 
-Snowflake Connector for Python 5.0.0 is generally available. It is built on the [Universal Core](/developer-guide/universal-core/universal-core) and is published under the existing `snowflake-connector-python` package name. It requires Python 3.11 or later. Installing it replaces the connector from versions before 5.0 in that environment. See [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade) before you upgrade.
+Snowflake Connector for Python 5.0.0 is generally available. It is built on the [Universal Core](/developer-guide/universal-core/universal-core) and is published under the existing `snowflake-connector-python` package name. It requires Python 3.11 or later. Installing it replaces the connector from versions before 5.0 in that environment. See [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade) before you upgrade.
 
 The lists below are the differences from versions before 5.0.
 
@@ -187,7 +210,7 @@ The lists below are the differences from versions before 5.0.
 
 ## Version 5.0.0rc3 (Sep 10, 2026)
 
-Third release candidate of the connector built on the Universal Core. See [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
+Third release candidate of the connector built on the Universal Core. See [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
 
 ### New features and updates
 
@@ -210,7 +233,7 @@ Third release candidate of the connector built on the Universal Core. See [Upgra
 
 ## Version 5.0.0rc2 (Sep 4, 2026)
 
-Second release candidate of the connector built on the Universal Core. See [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
+Second release candidate of the connector built on the Universal Core. See [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
 
 ### New features and updates
 
@@ -278,7 +301,7 @@ Without this, the OCSP for the internal stage will be performed **over public li
 
 ## Version 5.0.0rc1 (Aug 19, 2026)
 
-Initial public preview release of the connector built on the Universal Core. This is a new version line, published under the existing `snowflake-connector-python` package name as a release candidate. Because pre-release versions are not installed by default, `pip install --pre snowflake-connector-python` is required. See [Upgrading to the Snowflake Connector for Python 5.0.0](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
+Initial public preview release of the connector built on the Universal Core. This is a new version line, published under the existing `snowflake-connector-python` package name as a release candidate. Because pre-release versions are not installed by default, `pip install --pre snowflake-connector-python` is required. See [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade) for installation instructions, the curated list of behavior differences, and migration guidance.
 
 ### New features and updates
 

@@ -25,7 +25,9 @@ SNOWFLAKE.CORE.DUPLICATE_COUNT(<query>)
 ## Arguments
 
 `query`
-:   Specifies a SQL query that projects one or more columns.
+:   Specifies a SQL query that projects exactly one column when you call the function directly. To measure duplicates across multiple
+    columns, associate the function with a table by using `ALTER TABLE ... ADD DATA METRIC FUNCTION ... ON (col1, col2)`. For an example,
+    see [Examples](/sql-reference/functions/dmf_duplicate_count#label-dmf-duplicate-count-columns-example).
 
 ## Allowed data types
 
@@ -42,6 +44,32 @@ The columns projected by the `query` must have one of the following data types:
 ## Returns
 
 The function returns a scalar value with a NUMBER data type.
+
+## Usage notes
+
+When you call the function directly, the `query` must project exactly one column. If the query projects
+more than one column, the call fails with an error similar to the following:
+
+```
+Invalid argument types for function 'DUPLICATE_COUNT$V1': (ROW(NUMBER(38,0), VARCHAR(25)))
+```
+
+Copy code
+
+```
+-- Fails: two columns are projected.
+SELECT SNOWFLAKE.CORE.DUPLICATE_COUNT(
+  SELECT c_custkey, c_name FROM snowflake_sample_data.tpch_sf1.customer
+);
+
+-- Works: one column is projected.
+SELECT SNOWFLAKE.CORE.DUPLICATE_COUNT(
+  SELECT c_name FROM snowflake_sample_data.tpch_sf1.customer
+);
+```
+
+To count duplicates for a combination of columns, associate the function with a table as shown in the
+[Examples](/sql-reference/functions/dmf_duplicate_count#label-dmf-duplicate-count-columns-example).
 
 ## Example
 

@@ -8,6 +8,15 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.9.1 (October 23, 2026)
+
+### Bug fixes
+
+- Fixed an issue where file-mode uploads to Google Cloud Storage could be silently truncated.
+- Fixed an issue where a retried file-mode upload to Microsoft Azure could leave the registered file with an ETag that didn’t match the stored blob.
+- Fixed an issue where an invalidated client continued to refresh OAuth and Snowpark Container Services tokens until the application closed it.
+- Updated rustls and rustls-webpki to address known security vulnerabilities.
+
 ## Version 1.9.0 (October 08, 2026)
 
 ### Behavior changes

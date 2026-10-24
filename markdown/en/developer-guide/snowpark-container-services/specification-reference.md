@@ -196,7 +196,7 @@ Note the following:
 
 - When you create a service, Snowflake runs these containers on a single node in the specified compute pool, sharing the same network interface.
 - You might choose to run multiple service instances to load-balance incoming requests. Snowflake might choose to run these service instances on the same node or different nodes in the specified compute pool. All containers for a given instance always run on one node.
-- Currently, Snowpark Container Services requires linux/amd64 platform images.
+- Container images must match the CPU architecture of the compute pool’s instance family: `linux/amd64` for x86 instance families and `linux/arm64` for ARM instance families. For more information, see [Snowpark Container Services: Understanding instance families](/developer-guide/snowpark-container-services/instance-families).
 
 The following sections explain the types of containers fields.
 

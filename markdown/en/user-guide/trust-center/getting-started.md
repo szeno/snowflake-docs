@@ -13,7 +13,7 @@ Complete the following steps to enable the [CIS Benchmarks scanner package](/use
    For more information about granting this role, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
 3. In the navigation menu, select **Governance & security** » **Trust Center**.
 4. Select a warehouse.
-5. Select **Scanner Packages**.
+5. Select the **Manage scanners** tab.
 6. Select **CIS Benchmarks**.
 7. Select **Enable** and then **Continue**.
 
@@ -31,7 +31,7 @@ Complete the following steps to enable the [Threat Intelligence scanner package]
    For more information about granting this role, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
 3. In the navigation menu, select **Governance & security** » **Trust Center**.
 4. Select a warehouse.
-5. Select **Scanner Packages**.
+5. Select the **Manage scanners** tab.
 6. Select **Threat Intelligence**.
 7. Select **Enable** and then **Continue**.
 
@@ -54,7 +54,7 @@ Complete the following steps to enable the [AI Security scanner package](/user-g
    For more information about granting this role, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
 3. In the navigation menu, select **Governance & security** » **Trust Center**.
 4. Select a warehouse.
-5. Select **Scanner Packages**.
+5. Select the **Manage scanners** tab.
 6. Select **AI Security**.
 7. Select **Enable** and then **Continue**.
 

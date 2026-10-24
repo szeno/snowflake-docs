@@ -422,8 +422,7 @@ For more information, see [Limitations](#label-security-row-limitations).
 
 ### Materialized views
 
-Snowflake supports adding a row access policy to a materialized view provided that a row access policy is not set on the underlying
-table or view.
+Snowflake supports adding a row access policy directly to a materialized view.
 
 Row access policies and materialized views do have the following limitations:
 
