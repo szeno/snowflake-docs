@@ -362,111 +362,58 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_REST_API_USER TO ROLE api_consumer;
 
 ## Model availability
 
-The following tables show the models available in the Cortex REST API for each region.
-After a model’s legacy date, only accounts that already used the model can continue to
-call it until end-of-life; accounts that had not used it can’t start.
+The following table shows the models the Cortex REST API serves and the release stage of each one.
 
-Cross-region and Cross-cloudNorth AmericaEuropeAsia-Pacific
+For the regions and cross-region routing scopes each model runs in, see [Regional availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region).
 
-| Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `claude-opus-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
-| `claude-sonnet-5-5` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-haiku-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
-| `claude-fable-5-1` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-fable-5` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-sonnet-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-opus-4-8` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-opus-4-7` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-opus-4-6` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-4-6` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `claude-opus-4-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |
-| `claude-haiku-4-5` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `claude-4-sonnet` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `openai-gpt-6.1-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-luna` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-sol` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-terra` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-luna` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.4` | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ | ✔ | ✔ |
-| `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
-| `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
-| `openai-gpt-5-mini` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `openai-gpt-5-nano` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `openai-gpt-4.1` | ✔ |  |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `grok-4.7` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `grok-4.6` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `kimi-k3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `glm-5.3` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `deepseek-v4-flash` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `deepseek-r1` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `snowflake-decision-fast` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `snowflake-llama-3.3-70b` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `mistral-large2` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
-| `mistral-large` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `mistral-7b` | ✔ | ✔ |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |
-| `llama4-maverick` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `llama3.1-405b` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `llama3.1-70b` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
-| `llama3.1-8b` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |
+| Model | Status |
+| --- | --- |
+| `claude-opus-5-5` | Public preview |
+| `claude-opus-5` | GA |
+| `claude-opus-4-8` | GA |
+| `claude-opus-4-7` | GA |
+| `claude-opus-4-6` | GA |
+| `claude-opus-4-5` | GA |
+| `claude-fable-5-1` | Private preview |
+| `claude-fable-5` | Private preview |
+| `claude-sonnet-5` | GA |
+| `claude-sonnet-5-5` | Public preview |
+| `claude-sonnet-4-6` | GA |
+| `claude-sonnet-4-5` | GA |
+| `claude-haiku-5-5` | Public preview |
+| `claude-haiku-4-5` | GA |
+| `openai-gpt-6-astra` | GA |
+| `openai-gpt-6-luna` | Public preview |
+| `openai-gpt-6-sol` | Public preview |
+| `openai-gpt-6.1-sol` | Public preview |
+| `openai-gpt-5.6-luna` | GA |
+| `openai-gpt-5.6-sol` | GA |
+| `openai-gpt-5.6-terra` | GA |
+| `openai-gpt-5.5` | Private preview |
+| `openai-gpt-5.4` | GA |
+| `openai-gpt-5.2` | GA |
+| `openai-gpt-5.1` | GA |
+| `openai-gpt-5` | GA |
+| `openai-gpt-5-mini` | GA |
+| `openai-gpt-5-nano` | GA |
+| `openai-gpt-4.1` | Legacy |
+| `llama4-maverick` | Legacy |
+| `llama3.1-8b` | GA |
+| `llama3.1-70b` | Legacy |
+| `deepseek-v4-flash` | Private preview |
+| `glm-5.3` | Public preview |
+| `kimi-k3` | Public preview |
+| `mistral-7b` | Legacy |
+| `mistral-large2` | Legacy |
+| `grok-4.7` | Public preview |
+| `grok-4.6` | Public preview |
+| `snowflake-decision-fast` | Private preview |
 
 Expand
 
 Show lessSee more
 
-| Model | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | Azure East US 2 (Virginia) |
-| --- | --- | --- | --- |
-| `llama4-maverick` | ✔ |  |  |
-| `llama3.1-8b` | ✔ | ✔ | ✔ |
-| `llama3.1-70b` | ✔ | ✔ | ✔ |
-| `llama3.1-405b` | ✔ | ✔ | ✔ |
-| `deepseek-r1` | ✔ |  |  |
-| `mistral-7b` | ✔ | ✔ | ✔ |
-| `mistral-large` | ✔ | ✔ | ✔ |
-| `mistral-large2` | ✔ | ✔ | ✔ |
-| `snowflake-llama-3.3-70b` | ✔ |  |  |
-
-Expand
-
-Show lessSee more
-
-| Model | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS Europe West 2 (London) | Azure West Europe (Netherlands) |
-| --- | --- | --- | --- | --- |
-| `claude-opus-4-6` |  |  | ✔ |  |
-| `claude-sonnet-4-6` |  |  | ✔ |  |
-| `llama3.1-8b` | ✔ |  |  | ✔ |
-| `llama3.1-70b` | ✔ | ✔ |  | ✔ |
-| `mistral-7b` | ✔ |  |  | ✔ |
-| `mistral-large` | ✔ |  |  | ✔ |
-| `mistral-large2` | ✔ | ✔ |  | ✔ |
-
-Expand
-
-Show lessSee more
-
-| Model | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) |
-| --- | --- | --- |
-| `llama3.1-8b` |  | ✔ |
-| `llama3.1-70b` | ✔ | ✔ |
-| `mistral-7b` |  | ✔ |
-| `mistral-large` |  | ✔ |
-| `mistral-large2` | ✔ | ✔ |
-
-Expand
-
-Show lessSee more
-
-\* Indicates a public preview function or model. Public preview features aren’t suitable for production workloads.
-
-\*\* Indicates a private preview model. Private preview models are available only to accounts that Snowflake has explicitly enabled, and they aren’t suitable for production workloads.
-
-† Models are available to Azure US FedRAMP High Plus accounts through cross-region inference with processing on AWS in the United States. See [US FedRAMP High and DoD gov regions](/user-guide/snowflake-cortex/cross-region-inference#label-cortex-cross-region-fedramp-dod).
+Public preview models aren’t suitable for production workloads. Private preview models are available only to accounts that Snowflake has explicitly enabled. After a model’s legacy date, only accounts that already used the model can continue to call it until end-of-life; accounts that hadn’t used it can’t start.
 
 You can also use any [fine-tuned](/user-guide/snowflake-cortex/cortex-finetuning) model in any supported region.
 

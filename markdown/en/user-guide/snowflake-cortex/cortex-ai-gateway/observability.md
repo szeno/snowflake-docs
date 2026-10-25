@@ -122,6 +122,14 @@ A client that reads the standard OpenTelemetry environment variables takes these
 `OTEL_EXPORTER_OTLP_TRACES_HEADERS`, with `OTEL_TRACES_EXPORTER` set to `otlp`. Clients that keep
 telemetry behind a switch of their own need that turned on as well.
 
+### Trace context propagation
+
+For client spans and gateway spans to join into one turn, the client has to send a `traceparent` header
+on its requests. Without it both sides are still recorded, they just don’t share a `trace_id`.
+
+For how to turn propagation on when setting up a coding agent, see
+[Instrument a coding agent](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-coding-agents).
+
 ### Example: OpenCode
 
 OpenCode exports through an OpenTelemetry plugin, configured in
@@ -150,13 +158,147 @@ Copy code
 `<gateway-endpoint>/telemetry/v1/traces`. `{env:SNOWFLAKE_TOKEN}` reads the token from an environment
 variable, so it isn’t stored in the file.
 
-### Trace context propagation
+### Trace Claude requests
 
-For client spans and gateway spans to join into one turn, the client has to send a `traceparent` header
-on its requests. Without it both sides are still recorded, they just don’t share a `trace_id`.
+You can send Claude traces to the gateway from your application, through the Claude SDKs or Claude
+Code, and from the Claude API. Set up either one, or both.
 
-For how to turn propagation on when setting up a coding agent, see
-[Instrument a coding agent](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-coding-agents).
+#### Claude Code and SDK
+
+The Claude SDKs and Claude Code emit an OpenTelemetry span for each request they send. Configure the
+exporter to send spans to the gateway, and route the requests through the gateway. Each client span then
+shares a `trace_id` with the gateway span for the same request.
+
+Claude SDK PythonClaude SDK TypeScriptClaude Code
+
+Register a tracer provider before the first call. The SDK uses whichever provider your application
+registers:
+
+Copy code
+
+```
+from anthropic import Anthropic
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
+PAT = "<SNOWFLAKE_PAT>"
+
+provider = TracerProvider()
+provider.add_span_processor(
+  BatchSpanProcessor(
+    OTLPSpanExporter(
+      endpoint="<gateway-endpoint>/telemetry/v1/traces",
+      headers={"Authorization": f"Bearer {PAT}"},
+    )
+  )
+)
+trace.set_tracer_provider(provider)
+
+client = Anthropic(base_url="<gateway-endpoint>", auth_token=PAT)
+
+message = client.messages.create(
+  model="claude-sonnet-4-5",
+  max_tokens=1024,
+  messages=[{"role": "user", "content": "How does a snowflake get its unique pattern?"}],
+)
+```
+
+Register a tracer provider before the first call. The SDK uses whichever provider your application
+registers:
+
+Copy code
+
+```
+import Anthropic from "@anthropic-ai/sdk";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+import { BatchSpanProcessor, NodeTracerProvider } from "@opentelemetry/sdk-trace-node";
+
+const PAT = "<SNOWFLAKE_PAT>";
+
+const provider = new NodeTracerProvider({
+  spanProcessors: [
+    new BatchSpanProcessor(
+      new OTLPTraceExporter({
+        url: "<gateway-endpoint>/telemetry/v1/traces",
+        headers: { Authorization: `Bearer ${PAT}` },
+      }),
+    ),
+  ],
+});
+provider.register();
+
+const client = new Anthropic({ baseURL: "<gateway-endpoint>", authToken: PAT });
+
+const message = await client.messages.create({
+  model: "claude-sonnet-4-5",
+  max_tokens: 1024,
+  messages: [{ role: "user", content: "How does a snowflake get its unique pattern?" }],
+});
+```
+
+Claude Code reads its telemetry settings from the `env` block of `~/.claude/settings.json`:
+
+Copy code
+
+```
+{
+  "env": {
+    "ANTHROPIC_BASE_URL": "<gateway-endpoint>",
+    "ANTHROPIC_AUTH_TOKEN": "<SNOWFLAKE_PAT>",
+    "CLAUDE_CODE_ENABLE_TELEMETRY": "1",
+    "CLAUDE_CODE_ENHANCED_TELEMETRY_BETA": "1",
+    "CLAUDE_CODE_PROPAGATE_TRACEPARENT": "1",
+    "OTEL_TRACES_EXPORTER": "otlp",
+    "OTEL_EXPORTER_OTLP_TRACES_PROTOCOL": "http/protobuf",
+    "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT": "<gateway-endpoint>/telemetry/v1/traces",
+    "OTEL_EXPORTER_OTLP_TRACES_HEADERS": "Authorization=Bearer <SNOWFLAKE_PAT>"
+  }
+}
+```
+
+Tracing requires both `CLAUDE_CODE_ENABLE_TELEMETRY` and `CLAUDE_CODE_ENHANCED_TELEMETRY_BETA`. By
+default, Claude Code sends the `traceparent` header only to the Anthropic API.
+`CLAUDE_CODE_PROPAGATE_TRACEPARENT` sends it to the gateway as well, which is required for trace
+correlation between client and server spans. For more information, see
+[Claude Code monitoring](https://code.claude.com/docs/en/monitoring-usage).
+
+By default, the SDKs record metadata, not prompts or responses. To record prompts and responses, or to
+change the content size limit, set a conversation ID, or turn off tracing for a client, see the SDK options in
+[Set up OpenTelemetry with the Claude SDK](https://platform.claude.com/docs/en/manage-claude/opentelemetry/sdk#4-configure-the-sdk).
+
+#### Claude API
+
+The Claude API exports spans for the requests it serves, including each model run and each server tool
+it runs. To enable this, add the gateway as a telemetry destination in the Claude Console. Your
+application code doesn’t change.
+
+1. In the Claude Console, open the
+   [OpenTelemetry settings page](https://platform.claude.com/settings/telemetry-destinations) and click
+   **Add destination**.
+2. For **Provider**, select **Snowflake**.
+3. Enter the gateway’s base URL, derived by running `DESCRIBE AI GATEWAY SNOWFLAKE`.
+4. Enter an authorization token: a programmatic access token, or another form of identification accepted by
+   the gateway for inference. See [Setting up authentication](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-authentication).
+5. Click **Add destination**, then use **Test** in the destination’s **More actions** menu to send a test
+   span.
+
+Note
+
+By default, a programmatic access token works only for a user who is subject to a network policy. If you
+use one here, the user’s network policy must allow traffic from the Claude API, which sends spans from
+[Anthropic’s IP addresses](https://platform.claude.com/docs/en/api/ip-addresses) (such as
+`160.79.104.0/21`). Claude Platform on AWS sends traffic from different addresses. For more information,
+see [Network policy requirements](/user-guide/programmatic-access-tokens#label-pat-prerequisites-network).
+
+The other fields are optional. **Content mode** defaults to metadata only, and **Workspaces** sets which
+Claude Console workspaces send spans.
+
+Claude API spans have `service.name` set to `claude-platform`. If the request came from a Claude SDK
+client with tracing set up, the API span appears under the SDK span in the same trace. For more
+information about destination settings, delivery, and limits, see
+[Set up OpenTelemetry with the Claude API](https://platform.claude.com/docs/en/manage-claude/opentelemetry/api).
 
 ## What the gateway records
 

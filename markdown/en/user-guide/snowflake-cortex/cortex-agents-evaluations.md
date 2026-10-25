@@ -994,15 +994,15 @@ The `GROUND_TRUTH` column contains the full JSON from your dataset’s ground tr
 
 Agent Evaluations compute metrics with LLM judges, using [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference). The following models are supported as judges. For system metrics, Snowflake chooses among the models belonging to the metric version you selected, based on the models your account allows. For custom metrics, you can name any of these models in the `model` key.
 
-Availability is shown by cross-region routing scope (the value of the `CORTEX_ENABLED_CROSS_REGION` account parameter), not by individual region. A judge is available to your account when your routing scope is marked for that model. These are the same scopes listed in [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+A judge is available to your account based on your `CORTEX_ENABLED_CROSS_REGION` routing scope rather than your account’s own region. For the regions each judge model runs in, see [Regional availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region).
 
-| Model | Metric versions | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region) | Azure EU (Cross-Region) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `claude-4-sonnet` | `v1` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ |  |  |  |  |  |
-| `claude-sonnet-4-5` | `v2` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |
-| `claude-sonnet-4-6` | `v3` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |
-| `openai-gpt-5.2` | `v2` | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |
-| `openai-gpt-5.4` | `v3` | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |
+| Model | Metric versions |
+| --- | --- |
+| `claude-4-sonnet` | `v1` |
+| `claude-sonnet-4-5` | `v2` |
+| `claude-sonnet-4-6` | `v3` |
+| `openai-gpt-5.2` | `v2` |
+| `openai-gpt-5.4` | `v3` |
 
 Expand
 

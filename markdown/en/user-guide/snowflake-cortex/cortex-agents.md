@@ -63,40 +63,7 @@ Show lessSee more
 
 When creating an agent, we recommend selecting **auto** for the model. With this option, Cortex automatically selects the highest-quality model for your account, and quality improves as new models become available.
 
-Cortex Agents supports the following models. These models run through [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference), so availability is shown by cross-region routing scope (the value of the `CORTEX_ENABLED_CROSS_REGION` account parameter), not by individual region. A model is available to your account when your routing scope is marked for that model. Columns match the scopes listed in [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability) and [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability).
-
-| Provider | Model | Status | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region) | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Anthropic | `claude-opus-5` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-opus-4-8` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-opus-4-7` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-opus-4-6` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-opus-4-5` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| Anthropic | `claude-sonnet-5` | GA | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-sonnet-4-6` | GA | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| Anthropic | `claude-sonnet-4-5` | GA | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |  |
-| Anthropic | `claude-4-sonnet` (legacy) | GA | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ |  |  |  |  |  |  |
-| Anthropic | `claude-haiku-4-5` | GA | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  |  |  |  |  |
-| OpenAI | `openai-gpt-5.4` | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |  |
-| OpenAI | `openai-gpt-5.2` | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |  |
-| OpenAI | `openai-gpt-5.1` | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |  |
-| OpenAI | `openai-gpt-5` | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  | ✔ |  |
-| OpenAI | `openai-gpt-5-mini` | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |  |
-| OpenAI | `openai-gpt-4.1` (legacy) | GA | ✔ |  |  |  |  |  |  |  |  | ✔ | ✔ |  |  |  |
-| Google | `gemini-3.1-pro` | Public preview | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| Google | `gemini-3.5-flash` | GA | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| Google | `gemini-4-argon` | Public preview | ✔ |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| xAI | `grok-4.7` | Public preview | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| Z.ai | `glm-5.3` | Public preview | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-
-Expand
-
-Show lessSee more
-
-Public preview models aren’t intended for production workloads. After a model’s legacy date, only
-accounts that already used the model can continue to call it until end-of-life; accounts that had
-not used it can’t start. Run [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models)
-to see legacy and end-of-life dates, and switch to a newer model before then.
+For the models Cortex Agents supports, their release stages, and the regions they run in, see [Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-product).
 
 ## How it works
 
