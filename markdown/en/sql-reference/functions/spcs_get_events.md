@@ -57,7 +57,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| MONITOR | Service | OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role (or any role with the MANAGE GRANTS privilege). |
+| MONITOR | Service |  |
 
 Expand
 

@@ -11,6 +11,11 @@ The sleep timer is configured using the Streamlit app’s `config.toml` configur
 If your app was created with the ROOT\_LOCATION parameter, you must use SQL to PUT the configuration
 file in the app’s stage location. Otherwise, you can use SQL or the Snowsight Streamlit in Snowflake editor.
 
+To check whether your app was created with the ROOT\_LOCATION parameter, run
+[DESCRIBE STREAMLIT](/sql-reference/sql/desc-streamlit) and look at the `root_location` column of the output.
+For information about moving an app from ROOT\_LOCATION to the FROM parameter, see
+[Migrate your app from ROOT\_LOCATION to FROM](/developer-guide/streamlit/migrations-and-upgrades/root-location).
+
 ## WebSocket timeout
 
 When a viewer opens a Streamlit app, a WebSocket connection is established between the

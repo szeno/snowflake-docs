@@ -86,7 +86,7 @@ The following example shows how to create an EAI for an outbound request to the 
 
    ```
    CREATE STREAMLIT streamlit_db.streamlit_schema.streamlit_app
-     ROOT_LOCATION = '<stage_path_and_root_directory>'
+     FROM '<source_location>'
      MAIN_FILE = '<path_to_main_file_in_root_directory>'
      EXTERNAL_ACCESS_INTEGRATIONS = (openai_access_int)
      SECRETS = ('my_openai_key' = streamlit_db.streamlit_schema.openai_key);

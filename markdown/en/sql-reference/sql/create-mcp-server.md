@@ -52,6 +52,7 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
     - `CORTEX_ANALYST_MESSAGE`: Cortex Analyst tool
     - `SYSTEM_EXECUTE_SQL`: SQL execution tool
     - `CORTEX_AGENT_RUN`: Cortex Agent tool
+    - `CODING_AGENT`: Coding Agent tool, with no stored agent object. Snowflake adds the `code_toolset_all` tool on every run
     - `GENERIC`: Custom tool for UDFs and stored procedures
 
     **Tool-specific requirements:**
@@ -67,6 +68,12 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
       - `type`: Either `function` (for UDF) or `procedure` (for stored procedure)
       - `warehouse`: Warehouse to use for execution
       - `input_schema`: JSON schema defining the function/procedure parameters
+
+    For `CODING_AGENT` tools:
+
+    - Add the tool to the server specification. Omit `identifier`. This tool does not reference a stored agent object.
+    - `config`: Optional agent configuration, such as `model`, `instructions`, `tools`, `tool_resources`, and `skills`. Leave `messages`, `thread_id`, `parent_message_id`, `stream`, `background`, and `origin_application` out of `config`. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
+    - Snowflake appends `code_toolset_all` after any tools in `config`. A run can include `code_toolset_all` or `code_execution`, but not both.
 
 ## Access control requirements
 
@@ -232,5 +239,26 @@ CREATE MCP SERVER agent_server
         description: "Agent that handles customer service inquiries"
         annotations:
           openWorldHint: false
+  $$;
+```
+
+**Example 6: Create MCP server with a coding agent tool**
+
+Add a `CODING_AGENT` tool to the server specification. Clients call the tool with a `text` argument and can pass `thread_id` to continue the conversation.
+
+Copy code
+
+```
+CREATE MCP SERVER coding_agent_server
+  FROM SPECIFICATION $$
+    tools:
+      - title: "Coding agent"
+        name: "ask_coding_agent"
+        type: "CODING_AGENT"
+        description: "Ask the coding agent. code_toolset_all gives the agent a managed sandbox where it can write and run code. That sandbox stays attached to the conversation thread."
+        config:
+          model: "claude-sonnet-4-6"
+          instructions:
+            response: "Write and run code when that answers the question."
   $$;
 ```

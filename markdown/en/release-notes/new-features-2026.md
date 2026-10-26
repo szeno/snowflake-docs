@@ -272,6 +272,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
 - [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)
 - [Oct 23, 2026: Retrieve Cortex Search (Public Preview)](/release-notes/2026/other/2026-10-23-cortex-search-retrieve-preview)
+- [October 23, 2026: Coding agent MCP tool](/release-notes/2026/other/2026-10-23-mcp-coding-agent)
 - [October 23, 2026: Snowpark Container Services GEN\_ARM\_G1 and GEN\_X64\_G1 instances on Google Cloud (General availability)](/release-notes/2026/other/2026-10-23-spcs-gcp-gen-instances-ga)
 - [October 22, 2026: Custom runtime images for ML Jobs (General availability)](/release-notes/2026/other/2026-10-22-custom-runtime-images-ml-jobs-ga)
 - [Oct 22, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-22-dcr)

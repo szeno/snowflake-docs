@@ -909,9 +909,9 @@ Copy code
 USE ROLE service_owner;
 GRANT USAGE ON DATABASE service_db TO ROLE func_owner;
 GRANT USAGE ON SCHEMA my_schema TO ROLE func_owner;
-GRANT SERVICE ROLE ON service service_db.my_schema.my_service!all_endpoints_usage TO ROLE func_owner;
+GRANT SERVICE ROLE service_db.my_schema.my_service!all_endpoints_usage TO ROLE func_owner;
 USE ROLE func_owner;
-CREATE OR REPLACE test_udf(v VARCHAR)
+CREATE OR REPLACE FUNCTION test_udf(v VARCHAR)
   RETURNS VARCHAR
   SERVICE=service_db.my_schema.my_service
   ENDPOINT=endpointname1

@@ -1,6 +1,6 @@
 # Coding Agent
 
-A Coding Agent is a managed agent that brings Snowflake CoCo’s coding capabilities into your own applications through the Cortex Agents REST API or SQL. You add the `code_toolset_all` tool type to a Cortex Agent, and Snowflake provisions and manages a sandbox backed by the same runtime that powers CoCo (bash, file read/write/edit, grep, glob, web search, SQL execution, and skills), executes the tools, and streams results back to your application, so you don’t build or host an agent loop yourself. Any query that requires code generation, SQL execution, data transformation, or pipeline automation is handled inside the sandboxed runtime.
+A Coding Agent is a managed agent that brings Snowflake CoCo’s coding capabilities into your own applications through the Cortex Agents REST API, SQL, or a Snowflake-managed MCP server. You add the `code_toolset_all` tool type to a Cortex Agent, and Snowflake provisions and manages a sandbox backed by the same runtime that powers CoCo (bash, file read/write/edit, grep, glob, web search, SQL execution, and skills), executes the tools, and streams results back to your application, so you don’t build or host an agent loop yourself. Any query that requires code generation, SQL execution, data transformation, or pipeline automation is handled inside the sandboxed runtime.
 
 Use `code_toolset_all` when you want an autonomous coding agent with the full suite of development tools. It differs from two related surfaces:
 
@@ -11,20 +11,21 @@ Use `code_toolset_all` when you want an autonomous coding agent with the full su
 
 ## Quickstart
 
-You can call a Coding Agent from two surfaces. Both accept the same core agent configuration — `messages`, `models`, `instructions`, `tools`, and `tool_resources` — so that part of the body is portable between them. Transport-specific fields are not: the REST API streams by default and accepts `stream`, while `AGENT_RUN` rejects `"stream": true` and always returns a single JSON value.
+You can call a Coding Agent from the REST API, SQL, or a Snowflake-managed MCP server. The REST API and SQL accept the same core agent configuration — `messages`, `models`, `instructions`, `tools`, and `tool_resources` — so that part of the body is portable between them. Transport-specific fields are not: the REST API streams by default and accepts `stream`, while `AGENT_RUN` rejects `"stream": true` and always returns a single JSON value. An MCP `CODING_AGENT` tool keeps that configuration on the server specification. The client sends `text` instead of `messages`.
 
 | Surface | Call | Response |
 | --- | --- | --- |
 | REST API | `POST /api/v2/cortex/agent:run` | Streams server-sent events (SSE) by default. Set `stream` to `false` for a single JSON response. |
 | SQL | [AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/agent_run-snowflake-cortex) | A single JSON string. Streaming isn’t supported. |
+| MCP | `CODING_AGENT` tool on a [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) | One `tools/call` result. The server collects the agent response. The call sends `text`, and optionally `thread_id`. |
 
 Expand
 
 Show lessSee more
 
-Use the REST API when your application displays the agent’s tool calls and output as they happen. Use SQL when you want a coding agent inside a query, a stored procedure, or a scheduled task and don’t need incremental output.
+Use the REST API when your application displays the agent’s tool calls and output as they happen. Use SQL when you want a coding agent inside a query, a stored procedure, or a scheduled task and don’t need incremental output. Use MCP when an MCP client should call the coding agent as a tool. Add a `CODING_AGENT` tool to the MCP server specification. That specification holds the agent configuration, and Snowflake adds `code_toolset_all` on every run. See [Configure tool types](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-configure-tool-types).
 
-To call either surface, use a role that has been granted the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role. See [API access roles](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-access-control). The REST API also requires an authorization token, such as a programmatic access token (PAT). In the example, `$SNOWFLAKE_ACCOUNT_BASE_URL` is your account URL (`https://<orgname>-<account_name>.snowflakecomputing.com`) and `$PAT` is that token.
+To call the REST API or SQL, use a role that has been granted the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role. See [API access roles](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-access-control). The REST API also requires an authorization token, such as a programmatic access token (PAT). In the example, `$SNOWFLAKE_ACCOUNT_BASE_URL` is your account URL (`https://<orgname>-<account_name>.snowflakecomputing.com`) and `$PAT` is that token.
 
 The following examples need no agent object and no workspace: the entire configuration is in the request body, and the sandbox starts with an empty file system. They set the orchestration model to `auto`, which lets Snowflake select the highest-quality model available to your account. To pin a specific model instead, see [Orchestration model and instructions](#label-coding-agent-instructions).
 

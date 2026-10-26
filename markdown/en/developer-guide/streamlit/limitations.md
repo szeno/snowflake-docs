@@ -14,7 +14,10 @@ The following limitations apply to all Streamlit in Snowflake apps, regardless o
 - [Custom components](#label-streamlit-custom-components) with external scripts
 - [Query parameters](#label-streamlit-query-params)
 - Using external stages isn’t supported.
-- Replication isn’t supported.
+- When you replicate a database with a replication or failover group, Streamlit in Snowflake apps in the database are replicated, but their
+  supporting resources (compute pools, warehouses, external access integrations, secrets, and roles) aren’t. Configure those resources
+  separately in the target account. For more information, see
+  [Streamlit in Snowflake: Replication enabled by default (Generally enabled)](/release-notes/bcr-bundles/2026_04/bcr-2316).
 - Using `.so` files isn’t supported.
 
 ## Limitations and changes that vary by runtime

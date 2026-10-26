@@ -20,3 +20,6 @@ These tutorials provide step-by-step instructions for you to explore Snowpark Co
 
 [Tutorial 8: Access the public endpoint programmatically](/developer-guide/snowpark-container-services/tutorials/advanced/tutorial-8-access-public-endpoint-programmatically)
 :   In Tutorial 1, you learned how to access a public endpoint by using a browser. In this tutorial, you access the same endpoint programmatically.
+
+[Tutorial: Run a Snowpark Container Services job as a Snowflake task](/developer-guide/snowpark-container-services/tutorials/advanced/run-job-as-task)
+:   In this tutorial, you create a task graph with a SQL task and a dependent job service task, so that you run a Snowpark Container Services job as a Snowflake task.
