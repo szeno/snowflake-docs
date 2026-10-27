@@ -89,25 +89,25 @@ Microsoft Azure endpoint:
 
 Where:
 
-- `<version>` is the combined SnowSQL major, minor, and patch versions. For example, for version 1.5.3, the major version is 1, the
-  minor version is 5, and the patch version is 3. So, the version is 1.5.3.
-- `<bootstrap_version>` is the combined SnowSQL major and minor versions. For example, for version 1.5.3, the major version is
+- `<version>` is the combined SnowSQL major, minor, and patch versions. For example, for version 1.5.4, the major version is 1, the
+  minor version is 5, and the patch version is 4. So, the version is 1.5.4.
+- `<bootstrap_version>` is the combined SnowSQL major and minor versions. For example, for version 1.5.4, the major version is
   1 and the minor version is 5, so the bootstrap version is 1.5.
 
-For example, to download the SnowSQL installer where `<bootstrap_version>` is 1.5 and `<version>` is 1.5.3:
+For example, to download the SnowSQL installer where `<bootstrap_version>` is 1.5 and `<version>` is 1.5.4:
 
 AWS endpoint:
 :   Copy code
 
     ```
-    $ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.3-linux_x86_64.bash
+    $ curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.4-linux_x86_64.bash
     ```
 
 Microsoft Azure endpoint:
 :   Copy code
 
     ```
-    $ curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.3-linux_x86_64.bash
+    $ curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.4-linux_x86_64.bash
     ```
 
 For more information about SnowSQL versions, see [Understanding SnowSQL Versioning](#understanding-snowsql-versioning) (in this topic).
@@ -157,10 +157,10 @@ To verify the signature for the downloaded package:
 
    ```
    # If you prefer to use curl to download the signature file, run this command:
-   curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.3-linux_x86_64.bash.sig
+   curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.4-linux_x86_64.bash.sig
 
    # Verify the package signature.
-   gpg --verify snowsql-1.5.3-linux_x86_64.bash.sig snowsql-1.5.3-linux_x86_64.bash
+   gpg --verify snowsql-1.5.4-linux_x86_64.bash.sig snowsql-1.5.4-linux_x86_64.bash
    ```
 
    or, if you are downloading the signature file from the [Azure endpoint](#label-snowsql-linux-installer-curl):
@@ -169,10 +169,10 @@ To verify the signature for the downloaded package:
 
    ```
    # If you prefer to use curl to download the signature file, run this command:
-   curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.3-linux_x86_64.bash.sig
+   curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/linux_x86_64/snowsql-1.5.4-linux_x86_64.bash.sig
 
    # Verify the package signature.
-   gpg --verify snowsql-1.5.3-linux_x86_64.bash.sig snowsql-1.5.3-linux_x86_64.bash
+   gpg --verify snowsql-1.5.4-linux_x86_64.bash.sig snowsql-1.5.4-linux_x86_64.bash
    ```
 
    Note
@@ -329,25 +329,25 @@ Microsoft Azure endpoint:
 
 where:
 
-- `<version>` is the combined SnowSQL major, minor, and patch versions. For example, for version 1.5.3, the major version is 1, the
-  minor version is 5, and the patch version is 3. So, the version is 1.5.3.
-- `<bootstrap_version>` is the combined SnowSQL major and minor versions. For example, for version 1.5.3, the major version is
+- `<version>` is the combined SnowSQL major, minor, and patch versions. For example, for version 1.5.4, the major version is 1, the
+  minor version is 5, and the patch version is 4. So, the version is 1.5.4.
+- `<bootstrap_version>` is the combined SnowSQL major and minor versions. For example, for version 1.5.4, the major version is
   1 and the minor version is 5, so the bootstrap version is 1.5.
 
-For example, to download the SnowSQL installer where `<bootstrap_version>` is 1.5 and `<version>` is 1.5.3:
+For example, to download the SnowSQL installer where `<bootstrap_version>` is 1.5 and `<version>` is 1.5.4:
 
 AWS endpoint:
 :   Copy code
 
     ```
-    curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/darwin_x86_64/snowsql-1.5.3-darwin_x86_64.pkg
+    curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/darwin_x86_64/snowsql-1.5.4-darwin_x86_64.pkg
     ```
 
 Microsoft Azure endpoint:
 :   Copy code
 
     ```
-    curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/darwin_x86_64/snowsql-1.5.3-darwin_x86_64.pkg
+    curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/darwin_x86_64/snowsql-1.5.4-darwin_x86_64.pkg
     ```
 
 For more information about SnowSQL versions, see [Understanding SnowSQL Versioning](#understanding-snowsql-versioning) (in this topic).
@@ -511,14 +511,14 @@ AWS endpoint:
 :   Copy code
 
     ```
-    curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/windows_x86_64/snowsql-1.5.3-windows_x86_64.msi
+    curl -O https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.5/windows_x86_64/snowsql-1.5.4-windows_x86_64.msi
     ```
 
 Microsoft Azure endpoint:
 :   Copy code
 
     ```
-    curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/windows_x86_64/snowsql-1.5.3-windows_x86_64.msi
+    curl -O https://sfc-repo.azure.snowflakecomputing.com/snowsql/bootstrap/1.5/windows_x86_64/snowsql-1.5.4-windows_x86_64.msi
     ```
 
 For more information about SnowSQL versions, see [Understanding SnowSQL Versioning](#understanding-snowsql-versioning) (in this topic).

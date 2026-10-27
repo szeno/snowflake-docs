@@ -112,6 +112,8 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$UNBLOCK\_SNOWFLAKE\_MANAGED\_STORAGE\_VOLUME\_PUBLIC\_ACCESS](/sql-reference/functions/system_unblock_snowflake_managed_storage_volume_public_access) |  |
 | [SYSTEM$UNLINK\_ORGANIZATION\_USER](/sql-reference/functions/system_unlink_organization_user) |  |
 | [SYSTEM$UNLINK\_ORGANIZATION\_USER\_GROUP](/sql-reference/functions/system_unlink_organization_user_group) |  |
+| [SYSTEM$UNMANAGE\_ENTITY\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_entity_from_dcm_project) |  |
+| [SYSTEM$UNMANAGE\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_from_dcm_project) |  |
 | [SYSTEM$UNREGISTER\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_unregister_privatelink_endpoint) |  |
 | [SYSTEM$UNSET\_DEFAULT\_COLUMNS\_OVERRIDE\_FOR\_SHOW\_COMMAND](/sql-reference/functions/system_unset_default_columns_override_for_show_command) |  |
 | [SYSTEM$UNSET\_DEFAULT\_COLUMNS\_OVERRIDE\_FOR\_SYSTEM\_OBJECT](/sql-reference/functions/system_unset_default_columns_override_for_system_object) |  |
@@ -227,6 +229,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$LOG, SYSTEM$LOG\_<level> (for Snowflake Scripting)](/sql-reference/functions/system_log) |  |
 | [SYSTEM$PARQUET\_DIRECT\_AUTO\_REFRESH\_STATUS](/sql-reference/functions/system_parquet_direct_auto_refresh_status) |  |
 | [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) |  |
+| [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) |  |
 | [SYSTEM$QUERY\_REFERENCE](/sql-reference/functions/system_query_reference) |  |
 | [SYSTEM$READ\_YAML\_FROM\_SEMANTIC\_VIEW](/sql-reference/functions/system_read_yaml_from_semantic_view) |  |
 | [SYSTEM$READ\_OSI\_YAML\_FROM\_SEMANTIC\_VIEW](/sql-reference/functions/system_read_osi_yaml_from_semantic_view) |  |
@@ -247,6 +250,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$STREAM\_HAS\_DATA](/sql-reference/functions/system_stream_has_data) |  |
 | [SYSTEM$SUPPORTED\_DBT\_VERSIONS](/sql-reference/functions/system_supported_dbt_versions) |  |
 | [SYSTEM$TAG\_VALUE\_CONTAINS](/sql-reference/functions/system_tag_value_contains) |  |
+| [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) |  |
 | [SYSTEM$TASK\_RUNTIME\_INFO](/sql-reference/functions/system_task_runtime_info) |  |
 | [SYSTEM$TYPEOF](/sql-reference/functions/system_typeof) |  |
 | [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration) |  |

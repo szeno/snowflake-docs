@@ -23,6 +23,8 @@ SYSTEM$TASK_RUNTIME_INFO('<arg_name>')
     | `'CURRENT_TASK_NAME'` | Returns the name of the current task. |
     | `'CURRENT_ROOT_TASK_NAME'` | Returns the name of the root task in the current task graph. |
     | `'CURRENT_ROOT_TASK_UUID'` | Returns a universally unique identifier (UUID) that represents the root task in the current task graph. |
+    | `'CURRENT_TASK_GRAPH_ID'` | Returns the unique identifier for the current [task graph object](/user-guide/task-graph-object). Returns NULL if the current task is part of a root-task-based graph instead of a task graph object. |
+    | `'CURRENT_TASK_GRAPH_NAME'` | Returns the name of the current [task graph object](/user-guide/task-graph-object). Returns NULL if the current task is part of a root-task-based graph instead of a task graph object. |
     | `'CURRENT_TASK_GRAPH_RUN_GROUP_ID'` | Returns a universally unique identifier (UUID) that represents the current graph run group. |
     | `'CURRENT_TASK_GRAPH_ORIGINAL_SCHEDULED_TIMESTAMP'` | Returns the original scheduled timestamp of the root task in the current graph run group.  For graphs that are retried, the returned value is the original scheduled timestamp of the initial graph run in the current group. |
     | `'LAST_SUCCESSFUL_TASK_GRAPH_RUN_GROUP_ID'` | Returns a universally unique identifier (UUID) that represents the latest successful graph run group.  The value is consistent throughout the graph run group and is determined when the root task of the initial graph run starts. |

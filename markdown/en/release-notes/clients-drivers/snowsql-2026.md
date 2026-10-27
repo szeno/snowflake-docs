@@ -12,6 +12,16 @@ For release note information for versions released prior to January 2022, see th
 
 See [SnowSQL (CLI client)](/user-guide/snowsql) for documentation.
 
+## Version 1.5.4 (Oct 22, 2026)
+
+### New features and updates
+
+- Upgraded the bundled `certifi` package to 2026.10.19.
+
+### Bug fixes
+
+- Improved signature validation of auto-upgrade downloads.
+
 ## Version 1.5.3 (Oct 20, 2026)
 
 ### New features and updates

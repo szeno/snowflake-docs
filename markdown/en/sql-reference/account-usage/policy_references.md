@@ -5,7 +5,7 @@ Schema:
 
 This Account Usage view lists references to policies that are applied to objects in your account.
 
-The view supports aggregation, feature, masking, network, projection, row access, and storage lifecycle policies.
+The view supports aggregation, feature, ingress, masking, network, projection, row access, and storage lifecycle policies.
 
 The view is complementary to the Information Schema table function [POLICY\_REFERENCES](/sql-reference/functions/policy_references).
 

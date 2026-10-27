@@ -27,7 +27,7 @@ The view displays one row for each run of a task in the history.
 | ERROR\_MESSAGE | VARCHAR | Error message, if the statement returned an error. |
 | GRAPH\_VERSION | NUMBER | Integer identifying the version of the task graph that was run, or is scheduled to be run. Each incremental increase in the value represents one or more modifications to tasks in the task graph. If the root task is recreated (using CREATE OR REPLACE TASK), then the version number restarts from 1. |
 | RUN\_ID | NUMBER | Time when the standalone or root task in a task graph is/was originally scheduled to start running. Format is epoch time (in milliseconds).     *Original* scheduled time refers to rare instances when the system may reschedule the same task to run at a different time to retry it or rebalance the load. If that happens, RUN\_ID shows the original scheduled run time and SCHEDULED\_TIME shows the rescheduled run time.     Note that RUN\_ID may not be a unique identifier for the current task/graph run prior to retry. You may use GRAPH\_RUN\_GROUP\_ID column as a replacement for RUN\_ID. |
-| ROOT\_TASK\_ID | VARCHAR | Unique identifier for the root task in a task graph. This ID matches the ID column value in the SHOW TASKS output for the same task. |
+| ROOT\_TASK\_ID | VARCHAR | Unique identifier for the root task in a root-task-based graph. This ID matches the ID column value in the SHOW TASKS output for the same task. NULL for task graph objects. |
 | SCHEDULED\_FROM | VARCHAR | One of:  - `SCHEDULE`: The task was scheduled to run normally, as described in SCHEDULE or AFTER clauses of [CREATE TASK](/sql-reference/sql/create-task). - `EXECUTE_TASK`: The task was scheduled to run with [EXECUTE TASK](/sql-reference/sql/execute-task). - `MANUAL RETRY`: The task was scheduled to run with [EXECUTE TASK … RETRY LAST](/sql-reference/sql/execute-task). - `AUTOMATIC RETRY`: The task was configured to retry on failure and the previous execution failed. For more information, see [Automatically retry failed task runs](/user-guide/tasks-intro#label-tasks-automatically-retry). - `TRIGGER` : The task was run because the stream, in the `WHEN` clause of the task, contained new data.  For runs of child tasks in a task graph, the column returns the same value as the root task run. |
 | ATTEMPT\_NUMBER | NUMBER | Integer representing the number of attempts to run this task. Initially one. |
 | INSTANCE\_ID | NUMBER | Internal/system-generated identifier for the instance which the object belongs to. |
@@ -39,6 +39,7 @@ The view displays one row for each run of a task in the history.
 | GRAPH\_RUN\_GROUP\_ID | VARCHAR | Identifier for the graph run. When a graph run has multiple task runs, each task run will show the same GRAPH\_RUN\_GROUP\_ID. The combination of GRAPH\_RUN\_GROUP\_ID, and ATTEMPT\_NUMBER can be used to uniquely identify a graph run. |
 | BACKFILL\_INFO | OBJECT | Reserved for future use. The returned value for all rows is NULL. |
 | SPCS\_JOB\_ID | NUMBER | ID of the Snowpark Container Services (SPCS) job associated with this task run. NULL if the task did not run as a container job. |
+| GRAPH\_ID | VARCHAR | Unique identifier for the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
 
 Expand
 

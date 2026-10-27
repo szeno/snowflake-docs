@@ -33,8 +33,6 @@ ALTER TAG [ IF EXISTS ] <name> SET MASKING POLICY
   <masking_policy_name> [ , MASKING POLICY <masking_policy_2_name> , ... ] [ FORCE ]
 
 ALTER TAG [ IF EXISTS ] <name> UNSET MASKING POLICY <masking_policy_name> [ , MASKING POLICY <masking_policy_2_name> , ... ]
-
-ALTER TAG [ IF EXISTS ] <name> UNSET DCM PROJECT
 ```
 
 ## Parameters
@@ -183,11 +181,6 @@ ALTER TAG [ IF EXISTS ] <name> UNSET DCM PROJECT
     - `PROPAGATE`
     - `ON_CONFLICT`
     - `COMMENT`
-
-`UNSET DCM PROJECT`
-
-> Detaches the tag from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the tag and the DCM project without dropping the tag. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Access control requirements
 

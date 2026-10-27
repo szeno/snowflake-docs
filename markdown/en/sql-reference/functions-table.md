@@ -201,6 +201,7 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 |  | [CURRENT\_TASK\_GRAPHS](/sql-reference/functions/current_task_graphs) |  |
 |  | [SERVERLESS\_TASK\_HISTORY](/sql-reference/functions/serverless_task_history) | TO BE DEPRECATED - Refer to [SERVERLESS\_TASK\_HISTORY view](/sql-reference/account-usage/serverless_task_history). |
 |  | [TASK\_DEPENDENTS](/sql-reference/functions/task_dependents) |  |
+|  | [TASK\_GRAPH\_CHANGES](/sql-reference/functions/task_graph_changes) |  |
 |  | [TASK\_HISTORY](/sql-reference/functions/task_history) |  |
 | Network rules | [NETWORK\_RULE\_REFERENCES](/sql-reference/functions/network_rule_references) | Information Schema table function. For details, see [Network rules](/user-guide/network-rules). |
 | Data Quality | [DATA\_METRIC\_FUNCTION\_EXPECTATIONS](/sql-reference/functions/data_metric_function_expectations) |  |

@@ -37,7 +37,8 @@ To view a list of release note announcements, filtered by date and release type,
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
 | [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 5.0.0 | 15-Oct-2026 |  |
 | 5.1.0 | 21-Oct-2026 |  |
-| [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | TBD | TBD |  |
+| 4.8.1 | 26-Oct-2026 |  |
+| [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | 3.2.3 | 23-Oct-2026 |  |
 | [Snowpipe Streaming SDK](/release-notes/clients-drivers/snowpipe-streaming-sdk) | TBD | TBD |  |
 | [Snowflake Python APIs](/release-notes/clients-drivers/snowapi-python) | TBD | TBD |  |
 | [Snowpark Library for Python](/release-notes/clients-drivers/snowpark-python) | TBD | TBD |  |

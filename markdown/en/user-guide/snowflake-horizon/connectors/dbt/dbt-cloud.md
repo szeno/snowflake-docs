@@ -24,14 +24,20 @@ date automatically. By the time you finish this guide you’ll have:
 
 ## 1. Configure a dbt Cloud job
 
-Horizon Catalog reads the build artifacts that a dbt Cloud job produces, so the job has to generate
-documentation, compile the project, run tests, and run on a schedule:
+Horizon Catalog reads the build artifacts that a dbt Cloud job produces, so the job has to produce
+a manifest, generate documentation, run tests, and run on a schedule:
 
 1. In dbt Cloud, create a job and select the environment to run it in.
 2. Enable **Generate docs on run**. Horizon Catalog uses this step for `catalog.json`.
-3. Add the command `dbt compile --full-refresh`. Horizon Catalog uses this compiled manifest for
-   model metadata and lineage. `--full-refresh` compiles incremental models as a full rebuild, which
-   keeps upstream lineage in the compiled SQL.
+3. Add the command `dbt compile`, unless the job already runs `dbt build` or `dbt run`. Horizon
+   Catalog accepts `manifest.json` from a successful `dbt compile`, and from `dbt run` or `dbt build`.
+
+   Note
+
+   `dbt compile --full-refresh` is optional. It compiles incremental models as a full SELECT instead
+   of a MERGE, which keeps upstream lineage in the compiled SQL. It doesn’t run the models. Leave
+   the flag off for a project that rejects `flags.FULL_REFRESH`. Adding it fails the job, and
+   Horizon Catalog then has no manifest.
 4. Add the command `dbt test`. Horizon Catalog reads test outcomes from this step, including
    failures. `dbt compile` and **Generate docs on run** do not execute tests, so
    `run_results.json` either omits those tests or records synthetic success. Failed tests never
@@ -41,8 +47,7 @@ documentation, compile the project, run tests, and run on a schedule:
 
    If the job already runs `dbt build`, omit a separate `dbt test` command. `dbt build` runs models
    and tests, and Horizon Catalog still ingests the manifest and failed tests when the job ends in
-   Error. Keep `dbt compile --full-refresh` in the job: that command is the preferred source for
-   incremental-model lineage.
+   Error.
 5. Schedule the job to run daily at 4:00 a.m., so it finishes before the Horizon Catalog ingestion
    runs and your metadata stays current.
 6. Save the job.

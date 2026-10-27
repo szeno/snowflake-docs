@@ -10,6 +10,17 @@ Snowflake uses semantic versioning for Snowflake Connector for Spark updates.
 
 See [Snowflake Connector for Spark](/user-guide/spark-connector) for documentation.
 
+## Version 3.2.3 (October 23, 2026)
+
+### Improvements
+
+- Added the per-catalog `snowflake-database` option (`spark.sql.catalog.<catalog>.snowflake-database`) for the fallback catalog, so one Spark session can use fallback catalogs that map to different Snowflake databases.
+- Changed the fallback catalog’s database to default to the catalog’s warehouse when `spark.snowflake.sfDatabase` is not set, so the Iceberg and fallback paths read from the same database without extra configuration.
+
+### Bug fixes
+
+- Fixed handling of Snowflake column names that contain double quotes. When `keep_column_case` is off, you can now read, filter, and write these columns correctly, and their Spark column names escape the embedded quote (for example, `"a""b"`).
+
 ## Version 3.2.2 (September 1, 2026)
 
 ### Bug fixes

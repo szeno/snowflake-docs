@@ -86,7 +86,7 @@ Provisional L3 row result recorded when a table defines accepted transformations
 
 ## Preflight
 
-A bounded migration dry run (`preflight: true`). Each table is capped at one partition and the data lands in a transient `PREFLIGHT_<workflowId>` schema instead of the configured target, so the whole pipeline is exercised without writing to production tables. Distinct from `scai data doctor`, which checks infrastructure and configuration health before a run starts. See [Preflight: a bounded dry run](../manual-migration/data-migration-configuration-reference#preflight-bounded-dry-run).
+A bounded migration dry run (`preflight: true`). Each table is capped at one partition and the data lands in a transient `PREFLIGHT_<workflowId>` schema instead of the configured target, so one partition per table goes through the pipeline without writing to production tables. The real target tables must already exist. Distinct from `scai data doctor`, which checks infrastructure and configuration health before a run starts. See [Preflight: a bounded dry run](../manual-migration/data-migration-configuration-reference#preflight-bounded-dry-run).
 
 ## Rate limit
 
@@ -114,7 +114,7 @@ Snowflake feature for running containerized services in your account. See [Deplo
 
 ## Sync strategy
 
-Incremental mode: **none** (validate or load in full), **watermark** (track changes by a monotonically increasing column), or **checksum** (compare a per-partition hash or custom aggregate). Used by data migration for incremental sync and by data validation for [incremental validation](../manual-migration/data-validation-configuration-reference#incremental-validation).
+How a workflow decides which source rows to extract on each run and how they land in the target. The strategies are **none** (extract every row and append it), **full-replace** (extract every row and delete each partition’s target rows before loading), **watermark** (extract rows above the last stored value of a monotonically increasing column), and **checksum** (re-extract only partitions whose checksum changed). Data migration uses all four. Data validation uses **none**, **watermark**, and **checksum** for [incremental validation](../manual-migration/data-validation-configuration-reference#incremental-validation). See [Choosing a synchronization strategy](../manual-migration/data-migration-configuration-reference#choosing-a-synchronization-strategy).
 
 ## Task / task queue
 

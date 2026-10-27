@@ -29,8 +29,6 @@ ALTER WAREHOUSE [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 
 ALTER WAREHOUSE [ IF EXISTS ] <name> UNSET { <property_name> | <param_name> } [ , ... ]
 
-ALTER WAREHOUSE [ IF EXISTS ] <name> UNSET DCM PROJECT
-
 ALTER WAREHOUSE [ IF EXISTS ] <name> ADD TABLES ( <table_name> [ , <table_name> ... ] )
 
 ALTER WAREHOUSE [ IF EXISTS ] <name> DROP TABLES ( <table_name> [ , <table_name> ... ] )
@@ -446,11 +444,6 @@ Where:
 
     `UNSET` can be used to unset all the properties and parameters for a warehouse, except `WAREHOUSE_SIZE`, which can only
     be changed using `SET`.
-
-`UNSET DCM PROJECT`
-
-> Detaches the warehouse from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the warehouse and the DCM project without dropping the warehouse. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
 

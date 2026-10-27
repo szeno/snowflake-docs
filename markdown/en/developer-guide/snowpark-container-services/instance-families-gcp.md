@@ -62,6 +62,8 @@ ARM instances require container images built for the `linux/arm64` platform.
 x86 instances require `linux/amd64`. For multi-architecture deployments, use
 multi-platform container images.
 
+GEN\_ARM\_G1 can’t be a backup instance family for x86 compute pools.
+
 ### High Memory Instance Families
 
 Current generation x86 instances optimized for memory-intensive workloads.
@@ -112,6 +114,11 @@ Show lessSee more
 ### General compute instance families
 
 Previous generation x86 instances. For new workloads, use CPU\_X64 instances instead.
+
+GEN\_X64\_G1 and CPU\_X64 instance families can’t be backup instance families for each
+other because they use incompatible block storage volume types. To use GEN\_X64\_G1,
+create a new compute pool with a GEN\_X64\_G1 instance family and deploy your services
+to that pool. For more information, see [Backup instance types](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-backup-instance-types).
 
 | Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region availability |
 | --- | --- | --- | --- | --- | --- | --- |

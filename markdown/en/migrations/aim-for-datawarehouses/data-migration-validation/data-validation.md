@@ -165,7 +165,7 @@ Expand
 
 Show lessSee more
 
-Re-validation is also distinct from [incremental validation](./data-validation-advanced-configuration#re-validating-only-what-changed): re-validation retries **failed** work from one run, while incremental validation skips **unchanged** partitions on later scheduled runs.
+Re-validation is also distinct from [incremental validation](./data-validation-advanced-configuration#re-validating-only-what-changed): re-validation retries **failed** work from one run, while incremental validation skips **unchanged** partitions on later runs that you start.
 
 ## Considerations and recommendations
 

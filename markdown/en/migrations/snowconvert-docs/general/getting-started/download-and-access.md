@@ -18,7 +18,7 @@ Before you start, make sure that your system meets the minimum requirements list
   - Java JDK 8 or higher
   - 4 GB of RAM or higher
 
-Before you download, if you’re into the legalities of SnowConvert AI, you can view our [End User License Agreement (EULA)](../terms-and-conditions/README)
+Before you download, review the [terms that govern SnowConvert AI](../terms-and-conditions/README).
 
 Note
 

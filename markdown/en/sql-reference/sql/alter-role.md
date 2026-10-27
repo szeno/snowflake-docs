@@ -20,8 +20,6 @@ ALTER ROLE [ IF EXISTS ] <name> UNSET COMMENT
 ALTER ROLE [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER ROLE [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
-
-ALTER ROLE [ IF EXISTS ] <name> UNSET DCM PROJECT
 ```
 
 ## Parameters
@@ -53,11 +51,6 @@ ALTER ROLE [ IF EXISTS ] <name> UNSET DCM PROJECT
 
     - `TAG tag_name [ , tag_name ... ]`
     - `COMMENT`
-
-`UNSET DCM PROJECT`
-
-> Detaches the role from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the role and the DCM project without dropping the role. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Usage notes
 

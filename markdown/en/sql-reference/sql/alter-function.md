@@ -124,8 +124,6 @@ ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) SET
 ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) UNSET TAG <tag_name> [ , <tag_name> ... ]
-
-ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) UNSET DCM PROJECT
 ```
 
 ### External functions
@@ -224,11 +222,6 @@ ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] ) UNSET
 
 `UNSET ...`
 :   Specifies the properties to unset for the function, which resets them to the defaults.
-
-`UNSET DCM PROJECT`
-
-> Detaches the function from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the function and the DCM project without dropping the function. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ### User-defined functions
 

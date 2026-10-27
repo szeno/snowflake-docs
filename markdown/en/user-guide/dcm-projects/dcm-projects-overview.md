@@ -82,6 +82,10 @@ schema you select:
 - **Stored procedure**: A fallback for when Cortex Code isn’t available. It only covers the file generation step; you set up the
   DCM project, and run PLAN and DEPLOY manually afterward.
 
+If another role already owns an object, the DCM project owner role must hold that role. Snowflake recommends including a
+`GRANT OWNERSHIP` statement that grants ownership of the object to the same role. See
+[Ownership on DCM-managed objects](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-ownership).
+
 ## Key terms
 
 The following are the key terms you should know when working with DCM Projects.

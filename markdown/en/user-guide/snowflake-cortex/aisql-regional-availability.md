@@ -134,7 +134,7 @@ use [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference
 
 Note
 
-- The AI\_COUNT\_TOKENS function is available in all regions for any model, but the models themselves are available only in the regions specified in the tables below.
+- You can call AI\_COUNT\_TOKENS in all regions. Supported functions and models are listed in [supported functions and models](/sql-reference/functions/ai_count_tokens#label-ai-count-tokens-supported). The models themselves are available only in the regions specified in the tables below.
 
 Cross-RegionNorth AmericaEuropeAsia-Pacific
 

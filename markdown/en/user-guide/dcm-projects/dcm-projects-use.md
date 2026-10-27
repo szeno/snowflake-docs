@@ -235,17 +235,17 @@ owner role manually outside of DCM. In that case, the next PLAN or DEPLOY will f
 expects. To recover, restore the required ownership or role hierarchy outside of DCM.
 
 For an intentional management handoff, first use the documented
-[detach workflow](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) with a role that has the required privileges, and then remove the definition before
+[unmanage workflow](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-unmanage) with a role that has the required privileges, and then remove the definition before
 redeploying. Removing a definition without first detaching the object expresses intent to drop the managed object; it isn’t a recovery
 method for owner lockout.
 
-If you want to migrate existing objects to be managed by a DCM project, the role that owns the DCM project object also has to have ownership
-privileges (direct or inherited through other roles) on the object to be managed by DCM project.
+You can start managing an object that another role already owns. The DCM project owner role must hold that role, and the project definitions
+must include the object definition. Deployments can then change the object while ownership stays with that role. Snowflake recommends adding
+a `GRANT OWNERSHIP` statement that grants ownership of the object to the same role, so the definitions stay in sync with the current
+ownership.
 
-Note
-
-If an object is migrated, we recommend adding the corresponding GRANT OWNERSHIP statement to the project definitions as well to ensure that
-the current state and DCM project definitions are in sync.
+If the DCM project owner role already owns the object, add the object definition to the project. Ownership stays with the DCM project
+owner role.
 
 ## Define a DCM project
 

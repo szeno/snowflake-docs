@@ -64,6 +64,7 @@ For object types, grants, and attachments still in preview, the completeness of 
 
 - [ATTACH Data Metric Function](#label-dcm-projects-object-type-dmf)
 - [ATTACH Masking Policy](#label-dcm-attach-masking-policy)
+- [ATTACH Row Access Policy](#label-dcm-attach-row-access-policy)
 - [ATTACH Tag](#label-dcm-projects-attach-tag)
 
 ## Objects
@@ -326,27 +327,17 @@ templating. All pipe properties supported by [CREATE PIPE](/sql-reference/sql/cr
 DCM Projects supports defining the following types of policies:
 
 - [Authentication policy](/sql-reference/sql/create-authentication-policy#label-define-authentication-policy-syntax)
-- [Masking policy](/sql-reference/sql/create-masking-policy) (Public Preview)
+- [Masking policy](/sql-reference/sql/create-masking-policy)
 - [Network policy](/sql-reference/sql/create-network-policy#label-define-network-policy-syntax)
-- [Row access policy](/user-guide/security-row-intro) (Public Preview)
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
+- [Row access policy](/user-guide/security-row-intro)
 
 **Limitations:**
 
-- `DEFINE MASKING POLICY` and `DEFINE ROW ACCESS POLICY` are still in Public Preview.
-- **Masking policy:** `DEFINE MASKING POLICY` doesn’t support attaching a masking policy inline as part of an object
-  definition. Use [ATTACH Masking Policy](#label-dcm-attach-masking-policy) to manage the attachment separately.
 - **Network policy:** For more information, see [Controlling network traffic with network policies](/user-guide/network-policies).
   - You can’t replace an existing network policy while it’s assigned to an account, security integration, or user. Unassign
     the policy before redeploying a replacement.
   - Assigning the policy to an account, user, or integration must be done outside of DCM Projects, using `ALTER ACCOUNT`,
     `ALTER USER`, or `ALTER SECURITY INTEGRATION`.
-- **Row access policy:** Attaching a row access policy to a table or view as part of a DCM project definition isn’t yet
-  supported; see
-  [Attachments](#label-dcm-projects-attachments).
 
 ### Procedures
 
@@ -424,6 +415,7 @@ DEFINE SEMANTIC VIEW DEMO{{env_suffix}}.ANALYTICS.SALES_METRICS
 
 - All defined constraints and relationships must be named.
 - All [CREATE OR ALTER SEMANTIC VIEW usage notes](/sql-reference/sql/create-semantic-view#label-create-or-alter-semantic-view-usage-notes) apply, including that tags on the semantic view or its members can’t be added or changed through the statement. Any existing tags are preserved.
+- A semantic view defined on a view that is on a dynamic table can’t be created in the same deployment as that dynamic table. The dynamic table must be refreshed before the semantic view can be created, and `PLAN` doesn’t refresh the dynamic table.
 
 ### Sequence
 
@@ -910,6 +902,20 @@ GRANT OWNERSHIP ON TABLE MY_DB.MY_SCHEMA.MY_TABLE TO ROLE DATA_OWNER_ROLE;
 GRANT ROLE DATA_OWNER_ROLE TO ROLE DCM_PROJECT_OWNER_ROLE;
 ```
 
+You can also start managing an object that another role already owns. The DCM project owner role must hold that role, and the project
+definitions must include the object definition. Deployments can then change the object while ownership stays with that role. Snowflake
+recommends adding a `GRANT OWNERSHIP` statement that grants ownership of the object to the same role, so the definitions stay in sync with
+the current ownership. If you add that statement and the object already has other grants, include those grants in the same project or
+revoke them outside DCM Projects before you deploy. See the limitations below and
+[Ownership on DCM-managed objects](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-ownership).
+
+Copy code
+
+```
+-- Recommended. DATA_OWNER_ROLE already owns MY_TABLE, and the project owner role holds DATA_OWNER_ROLE.
+GRANT OWNERSHIP ON TABLE MY_DB.MY_SCHEMA.MY_TABLE TO ROLE DATA_OWNER_ROLE;
+```
+
 When removing a `GRANT OWNERSHIP` statement that was previously deployed, DCM Projects attempts to grant
 ownership back to the DCM project owner, using the object’s current owner role to perform the transfer.
 If the project owner role doesn’t hold the object’s current owner role, you must transfer ownership back manually outside of DCM Projects.
@@ -1041,11 +1047,8 @@ revokes the privilege on the next deployment.
 
 DCM Projects uses `ATTACH` statements to associate objects — such as data quality functions, policies, and tags — with other Snowflake objects.
 
-**Limitations:**
-
-- Attaching row access policies to tables or views isn’t yet supported. You can attach a row access policy manually outside of
-  DCM Projects. DCM Projects definitions for table objects ignore attached row access policies and don’t revoke them on redeploy, even when
-  the definitions don’t contain the policies.
+DCM Projects doesn’t attach policies inline as part of an object definition. Use [ATTACH Masking Policy](#label-dcm-attach-masking-policy) and
+[ATTACH Row Access Policy](#label-dcm-attach-row-access-policy) instead.
 
 ### ATTACH Data Metric Function
 
@@ -1156,6 +1159,70 @@ Warning
 
 When you remove an `ATTACH MASKING POLICY` statement from the definitions, DCM Projects removes the masking policy from the column during the next deployment. DCM Projects doesn’t restore a policy that was attached before the project managed the attachment.
 
+### ATTACH Row Access Policy
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Use `ATTACH ROW ACCESS POLICY` to declaratively assign a row access policy to one or more tables, Apache Iceberg™ tables, views, or dynamic tables. The row access policy and target objects don’t need to be defined in the same DCM project. You can reference row access policies and objects anywhere in the account if the deploying role has the required privileges. For more information, see [Row access policy privileges](/user-guide/security-row-intro#label-security-row-privileges).
+
+**Syntax:**
+
+Copy code
+
+```
+ATTACH ROW ACCESS POLICY <policy_fqn>
+  TO { TABLE | ICEBERG TABLE | VIEW | DYNAMIC TABLE } <object_fqn>
+    ON ( <column_name> [ , ... ] )
+  [ , { TABLE | ICEBERG TABLE | VIEW | DYNAMIC TABLE } <object_fqn>
+    ON ( <column_name> [ , ... ] ) ... ];
+```
+
+The columns in the `ON` clause map by position to the arguments in the row access policy signature.
+
+**Examples:**
+
+To attach a row access policy to a single table:
+
+Copy code
+
+```
+ATTACH ROW ACCESS POLICY MY_DB.SEC.SALES_REGION
+  TO TABLE MY_DB.CORE.SALES ON (REGION);
+```
+
+To attach a row access policy to multiple objects of different types:
+
+Copy code
+
+```
+ATTACH ROW ACCESS POLICY MY_DB.SEC.SALES_REGION
+  TO TABLE MY_DB.CORE.SALES ON (REGION),
+     TABLE MY_DB.CORE.SALES_ARCHIVE ON (REGION),
+     VIEW MY_DB.CORE.SALES_V ON (REGION),
+     DYNAMIC TABLE MY_DB.CORE.SALES_SUMMARY ON (SALES_REGION);
+```
+
+To attach a row access policy with a multi-column signature:
+
+Copy code
+
+```
+ATTACH ROW ACCESS POLICY MY_DB.SEC.REGION_AND_TIER
+  TO TABLE MY_DB.CORE.SALES ON (REGION, CUSTOMER_TIER);
+```
+
+An object can have only one row access policy. The result depends on the existing attachment:
+
+- If a process outside DCM Projects attached the existing row access policy, DCM Projects replaces it during deployment.
+- If another DCM project manages the existing row access policy attachment, the deployment fails before DCM Projects replaces it. This applies whether the projects declare the same policy or different policies in the attachment statement.
+- If the current DCM project had managed the existing attachment, DCM Projects updates it in place.
+
+Warning
+
+When you remove an `ATTACH ROW ACCESS POLICY` statement from the definitions, DCM Projects removes the row access policy from the object during the next deployment. DCM Projects doesn’t restore a policy that was attached before the project managed the attachment.
+
 ### ATTACH Tag
 
 [Preview Feature](/release-notes/preview-features) — Open
@@ -1231,9 +1298,13 @@ This single statement creates six tag-target pairs: both tags are attached to ea
 | `PROCEDURE <db>.<schema>.<name>(<arg_types>)` | No |
 | `STAGE <db>.<schema>.<name>` | No |
 | `TASK <db>.<schema>.<name>` | No |
+| `PIPE <db>.<schema>.<name>` | No |
+| `STREAM <db>.<schema>.<name>` | No |
 | `ROLE <name>` | No |
 | `DATABASE ROLE <db>.<name>` | No |
 | `WAREHOUSE <name>` | No |
+| `INTEGRATION <name>` | No |
+| `USER <name>` | No |
 
 Expand
 

@@ -21,7 +21,8 @@ TASK_HISTORY(
       [, DATABASE_NAME => '<string>' ]
       [, SCHEMA_NAME => '<string>' ]
       [, ERROR_ONLY => { TRUE | FALSE } ]
-      [, ROOT_TASK_ID => '<string>'] )
+      [, ROOT_TASK_ID => '<string>']
+      [, GRAPH_ID => '<string>'] )
 ```
 
 ## Arguments
@@ -68,8 +69,11 @@ All the arguments are optional.
     Default: `FALSE`.
 
 `ROOT_TASK_ID =>string`
-:   Unique identifier for the root task in a task graph. This ID matches the ID column value in the SHOW TASKS output for the same task.
-    Specify the ROOT\_TASK\_ID to show the history of the root task and any child tasks that are part of the task graph.
+:   Unique identifier for the root task in a root-task-based graph. This ID matches the ID column value in the SHOW TASKS output for the same task.
+    Specify the ROOT\_TASK\_ID to show the history of the root task and any child tasks that are part of the graph. Mutually exclusive with GRAPH\_ID.
+
+`GRAPH_ID =>string`
+:   Unique identifier for a [task graph object](/user-guide/task-graph-object). Specify the GRAPH\_ID to show the history of all member tasks in the task graph. Mutually exclusive with ROOT\_TASK\_ID.
 
 ## Usage notes
 
@@ -118,7 +122,7 @@ The function returns the following columns:
 | QUERY\_START\_TIME | TIMESTAMP\_LTZ | Time when the query in the task definition started to run, or NULL if SCHEDULED\_TIME is in the future or the current scheduled run has not started yet. This timestamp aligns with the start time for the query returned by QUERY\_HISTORY. |
 | NEXT\_SCHEDULED\_TIME | TIMESTAMP\_LTZ | Time when the standalone or root task (in a [task graph](/user-guide/tasks-graphs#label-task-dag)) is next scheduled to start running, assuming the current run of the standalone task or task graph started at the SCHEDULED\_TIME time completes in time. |
 | COMPLETED\_TIME | TIMESTAMP\_LTZ | Time when the task completed, or NULL if SCHEDULED\_TIME is in the future or if the task is still running. |
-| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a task graph. This ID matches the ID column value in the SHOW TASKS output for the same task. |
+| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a root-task-based graph. This ID matches the ID column value in the SHOW TASKS output for the same task. NULL for task graph objects. |
 | GRAPH\_VERSION | NUMBER | Integer identifying the version of the task graph that was run, or is scheduled to be run. Each incremental increase in the value represents one or more modifications to tasks in the task graph. If the root task is recreated (using CREATE OR REPLACE TASK), then the version number restarts from 1. |
 | RUN\_ID | NUMBER | Time when the standalone or root task in a [task graph](/user-guide/tasks-graphs#label-task-dag) is/was originally scheduled to start running. Format is epoch time (in milliseconds).     *Original* scheduled time refers to rare instances when the system might reschedule the same task to run at a different time to retry it or rebalance the load. If that happens, RUN\_ID shows the original scheduled run time and SCHEDULED\_TIME shows the rescheduled run time.     Note that RUN\_ID may not be a unique identifier for the current task/graph run before retry. You can use GRAPH\_RUN\_GROUP\_ID column as a replacement for RUN\_ID. |
 | RETURN\_VALUE | TEXT | Value set for the predecessor task in a task graph. The return value is explicitly set by calling the [System\_Set\_Return\_Value](system_set_return_value) function by the predecessor task. |
@@ -132,6 +136,7 @@ The function returns the following columns:
 | GRAPH\_RUN\_GROUP\_ID | TEXT | Identifier for the graph run. When a graph run has multiple task runs, each task run will show the same GRAPH\_RUN\_GROUP\_ID. The combination of GRAPH\_RUN\_GROUP\_ID, and ATTEMPT\_NUMBER can be used to uniquely identify a graph run. |
 | BACKFILL\_INFO | OBJECT | Reserved for future use. The returned value for all rows is NULL. |
 | SPCS\_JOB\_ID | NUMBER | ID of the Snowpark Container Services (SPCS) job associated with this task run. NULL if the task did not run as a container job. |
+| GRAPH\_ID | TEXT | Unique identifier for the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
 
 Expand
 

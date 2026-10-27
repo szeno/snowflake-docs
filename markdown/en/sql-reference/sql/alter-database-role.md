@@ -21,8 +21,6 @@ ALTER DATABASE ROLE [ IF EXISTS ] <name> UNSET COMMENT
 ALTER DATABASE ROLE [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
 
 ALTER DATABASE ROLE [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
-
-ALTER DATABASE ROLE [ IF EXISTS ] <name> UNSET DCM PROJECT
 ```
 
 ## Parameters
@@ -62,11 +60,6 @@ ALTER DATABASE ROLE [ IF EXISTS ] <name> UNSET DCM PROJECT
 
     - `COMMENT`
     - `TAG tag_name [ , tag_name ... ]`
-
-`UNSET DCM PROJECT`
-
-> Detaches the database role from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the database role and the DCM project without dropping the database role. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Access control privileges
 

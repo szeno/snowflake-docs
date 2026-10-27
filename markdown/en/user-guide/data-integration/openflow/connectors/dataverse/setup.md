@@ -347,12 +347,33 @@ To restart ingestion for a specific table:
 1. Make sure the connector is running and open the connector process group.
 2. Right-click on the canvas, select **Parameters** and remove the target table’s entity
    set name from the **Source Tables Filter Value** parameter.
-3. Stop the **List Dataverse Tables** processor and start it again to trigger removal of the table state.
+3. Let the **List Dataverse Tables** processor complete two run cycles to remove the table state.
+   Each cycle runs once per **Ingestion Schedule Interval** parameter value. The first cycle marks
+   the table as stale, and the second cycle removes its state. Step 4 shows how to confirm that the
+   state has been removed.
+
+   To run both cycles immediately instead of waiting:
+
+   1. When the processor shows no active threads, right-click the **List Dataverse Tables** processor,
+      select **Stop**, then **Start**.
+   2. Wait until a yellow warning icon appears on the processor. Hover over the icon to verify that it
+      shows the following message:
+
+      ```
+      Table <entity_set_name> has been marked as stale. Table state will be removed on the next cycle if not restored
+      ```
+   3. Right-click the processor, select **Stop**, then **Start** again. Then continue with step 4 to
+      confirm that the table’s state has been removed.
 4. Wait until the table’s state has been removed:
 
    1. Right-click on the canvas and select **Controller services**.
    2. Locate the controller service named **Dataverse Table State Service** and select **View state** from its ellipsis menu.
    3. Wait until the table’s entity set name no longer appears in the list.
+
+   Note
+
+   If you re-add the table before its state is removed, the connector restores the table’s previous
+   state and doesn’t restart ingestion.
 5. Stop the **List Dataverse Tables** processor and wait until all queues are empty.
 6. (Optional) DROP the destination objects in Snowflake and let the connector recreate them.
 
@@ -381,7 +402,8 @@ To restart ingestion for a specific table:
 Note
 
 To restart ingestion for all replicated tables, repeat this procedure for each table, or remove all
-entity set names from the **Source Tables Filter Value** parameter and then re-add them.
+entity set names from the **Source Tables Filter Value** parameter, wait until none of them appear
+in the **Dataverse Table State Service** state (see step 4), and then re-add them.
 
 Do not delete FlowFiles manually while the connector is running. Doing so can leave a table in the
 `FETCHING` status indefinitely. If this occurs, restart ingestion for that table as described above.

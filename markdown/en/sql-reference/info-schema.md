@@ -153,6 +153,7 @@ user logins, and queries:
 | [TAG\_REFERENCES](/sql-reference/functions/tag_references) | N/A | Results are only returned for the role that has access to the specified object. |
 | [TAG\_REFERENCES\_ALL\_COLUMNS](/sql-reference/functions/tag_references_all_columns) | N/A | Results are only returned for the role that has access to the specified object. |
 | [TASK\_DEPENDENTS](/sql-reference/functions/task_dependents) | N/A | Results returned only for the ACCOUNTADMIN role or task owner (role with OWNERSHIP privilege on task). |
+| [TASK\_GRAPH\_CHANGES](/sql-reference/functions/task_graph_changes) | N/A | Results include only the member tasks your current role has privileges on. |
 | [TASK\_HISTORY](/sql-reference/functions/task_history) | 7 days | Results returned only for the ACCOUNTADMIN role, the task owner (i.e. the role with the OWNERSHIP privilege on the task), or a role with the global MONITOR EXECUTION privilege. |
 | [VALIDATE\_PIPE\_LOAD](/sql-reference/functions/validate_pipe_load) | 14 days | Results depend on the privileges assigned to the user’s current role. |
 | [WAREHOUSE\_LOAD\_HISTORY](/sql-reference/functions/warehouse_load_history) | 14 days | Results depend on MONITOR USAGE privilege. [1] |

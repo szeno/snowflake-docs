@@ -7,6 +7,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | **A** |  |
 | [ALTER <object>](/sql-reference/sql/alter) | Modifies the metadata of an account-level or database object, or the parameters for a session. |
 | [ALTER ACCOUNT](/sql-reference/sql/alter-account) | Modifies an account. |
+| [ALTER ACCOUNT SET INGRESS POLICY](/sql-reference/sql/alter-account-set-ingress-policy) | Attaches an [ingress policy](/user-guide/ingress-policies) to the current account, or removes that attachment. |
 | [ALTER AGENT](/sql-reference/sql/alter-agent) | Modifies the properties or specification for an existing [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents). |
 | [ALTER AGGREGATION POLICY](/sql-reference/sql/alter-aggregation-policy) | Replaces the existing rules or comment of an [aggregation policy](/user-guide/aggregation-policies). |
 | [ALTER ALERT](/sql-reference/sql/alter-alert) | Modifies the properties of an existing alert and suspends or resumes an existing [alert](/user-guide/alerts). |
@@ -70,6 +71,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize) | Rewrites supported Apache Iceberg table partitions to clear active position-delete references for live data files. |
 | [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution) | Adds, drops, or replaces partition fields for a Snowflake-managed [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh) | Refreshes the metadata for an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses an external Iceberg catalog. |
+| [ALTER INGRESS POLICY](/sql-reference/sql/alter-ingress-policy) | Modifies the body or comment of an existing [ingress policy](/user-guide/ingress-policies). |
 | [ALTER INTEGRATION](/sql-reference/sql/alter-integration) | Modifies the properties for an existing integration. |
 | [ALTER JOIN POLICY](/sql-reference/sql/alter-join-policy) | Replaces the existing rules or comment for a [join policy](/user-guide/join-policies). |
 | [ALTER LISTING](/sql-reference/sql/alter-listing) | Modifies the properties of a [listings](/collaboration/collaboration-listings-about) with an inline YAML manifest, or from a file located in a stage location. |
@@ -148,6 +150,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER TABLE (event tables)](/sql-reference/sql/alter-table-event-table) | Modifies the properties, columns, or constraints for an existing [event table](/developer-guide/logging-tracing/event-table-setting-up). |
 | [ALTER TAG](/sql-reference/sql/alter-tag) | Modifies the properties for an existing tag, including renaming the tag and setting a masking policy on a tag. |
 | [ALTER TASK](/sql-reference/sql/alter-task) | Modifies the properties for an existing task. |
+| [ALTER TASK GRAPH](/sql-reference/sql/alter-task-graph) | Modifies the properties, member defaults, or lifecycle state of an existing task graph. |
 | [ALTER TYPE](/sql-reference/sql/alter-type) | Modifies the properties for an existing [user-defined type](/sql-reference/data-types-user-defined). |
 | [ALTER USER](/sql-reference/sql/alter-user) | Modifies the properties and object/session parameters for an existing user in the system. |
 | [ALTER USER … ADD KEY PAIR](/sql-reference/sql/alter-user-add-key-pair) | Registers a named [key pair](/user-guide/key-pair-auth) for a user. |
@@ -161,6 +164,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER USER … REMOVE WORKLOAD IDENTITY](/sql-reference/sql/alter-user-remove-workload-identity) | Removes a named [workload identity](/user-guide/workload-identity-federation) from a user. |
 | [ALTER USER … ROTATE KEY PAIR](/sql-reference/sql/alter-user-rotate-key-pair) | Rotates a [key pair](/user-guide/key-pair-auth) by replacing the stored public key with a new public key. |
 | [ALTER USER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-user-rotate-programmatic-access-token) | Rotates [programmatic access token](/user-guide/programmatic-access-tokens), generating a new token secret with an extended expiration time, and expiring the existing token secret. |
+| [ALTER USER SET INGRESS POLICY](/sql-reference/sql/alter-user-set-ingress-policy) | Attaches an [ingress policy](/user-guide/ingress-policies) to a user, or removes that attachment. |
 | [ALTER VARIABLE](/sql-reference/sql/alter-variable) | Modifies the properties of an existing [schema variable](/sql-reference/schema-variables). |
 | [ALTER VIEW](/sql-reference/sql/alter-view) | Modifies the properties for an existing view. |
 | [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) | Suspends or resumes a [virtual warehouse](/user-guide/warehouses-overview), or aborts all queries (and other SQL statements) for a warehouse. |
@@ -237,6 +241,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE ICEBERG TABLE (Snowflake as the Iceberg catalog)](/sql-reference/sql/create-iceberg-table-snowflake) | Creates or replaces an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses [Snowflake as the Iceberg catalog](/user-guide/tables-iceberg#label-tables-iceberg-snowflake-as-catalog) in the current/specified schema. |
 | [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository) | Creates a new [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository) in the current schema. |
 | [CREATE INDEX](/sql-reference/sql/create-index) | Creates a new secondary index in an existing [hybrid table](/user-guide/tables-hybrid) and populates the index with data. |
+| [CREATE INGRESS POLICY](/sql-reference/sql/create-ingress-policy) | Creates a new [ingress policy](/user-guide/ingress-policies) in the current or specified schema. |
 | [CREATE INTEGRATION](/sql-reference/sql/create-integration) | Creates a new integration in the system or replaces an existing integration. |
 | [CREATE INTERACTIVE TABLE](/sql-reference/sql/create-interactive-table) | Creates a new [interactive table](/user-guide/interactive) in the current/specified schema or replaces an existing table. |
 | [CREATE INTERACTIVE WAREHOUSE](/sql-reference/sql/create-interactive-warehouse) | Creates a new interactive [virtual warehouse](/user-guide/warehouses-overview) optimized for low-latency, high-concurrency workloads with interactive tables. |
@@ -317,6 +322,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint) | This topic describes how to create constraints by specifying a CONSTRAINT clause in a [CREATE TABLE](/sql-reference/sql/create-table), [CREATE HYBRID TABLE](/sql-reference/sql/create-hybrid-table), or [ALTER TABLE](/sql-reference/sql/alter-table) statement. |
 | [CREATE TAG](/sql-reference/sql/create-tag) | Creates a new tag or replaces an existing tag in the system. |
 | [CREATE TASK](/sql-reference/sql/create-task) | Creates a new [task](/user-guide/tasks-intro) in the current/specified schema or replaces an existing task. |
+| [CREATE TASK GRAPH](/sql-reference/sql/create-task-graph) | Creates a new [task graph](/user-guide/task-graph-object) in the current/specified schema or replaces an existing task graph. |
 | [CREATE TYPE](/sql-reference/sql/create-type) | Creates a [user-defined type](/sql-reference/data-types-user-defined). |
 | [CREATE USER](/sql-reference/sql/create-user) | Creates a new user or replaces an existing user in the system. |
 | [CREATE VARIABLE](/sql-reference/sql/create-variable) | Creates a new [schema variable](/sql-reference/schema-variables), a named, typed, persistent scalar value scoped to a schema. |
@@ -339,6 +345,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE BACKUP POLICY](/sql-reference/sql/desc-backup-policy) | Describes a specific [backup policy](/user-guide/backups). |
 | [DESCRIBE BACKUP SET](/sql-reference/sql/desc-backup-set) | Describes a specific [backup set](/user-guide/backups). |
 | [DESCRIBE CATALOG INTEGRATION](/sql-reference/sql/desc-catalog-integration) | Describes the properties of a [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def). |
+| [DESCRIBE COMMITTED TASK](/sql-reference/sql/desc-committed-task) | Describes the committed definition of a task in a task graph. |
 | [DESCRIBE COMPUTE POOL](/sql-reference/sql/desc-compute-pool) | Describes the properties of a [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool). |
 | [DESCRIBE CONFIGURATION](/sql-reference/sql/desc-configuration) | Describes the properties of a [configuration](/developer-guide/native-apps/inter-app-communication). |
 | [DESCRIBE CORTEX SEARCH SERVICE](/sql-reference/sql/desc-cortex-search) | Describes the properties of a [Cortex Search service](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview). |
@@ -361,6 +368,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE GATEWAY](/sql-reference/sql/desc-gateway) | Describes the properties of a [gateway](/developer-guide/snowpark-container-services/gateway). |
 | [DESCRIBE GIT REPOSITORY](/sql-reference/sql/desc-git-repository) | Describes an existing Snowflake [Git repository clone](/developer-guide/git/git-overview). |
 | [DESCRIBE ICEBERG TABLE](/sql-reference/sql/desc-iceberg-table) | Describes either the columns in an [Apache Iceberg™ table](/user-guide/tables-iceberg) or the current values, as well as the default values, for the properties of an Iceberg table. |
+| [DESCRIBE INGRESS POLICY](/sql-reference/sql/desc-ingress-policy) | Describes the properties of an [ingress policy](/user-guide/ingress-policies). |
 | [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) | Describes the properties of an integration. |
 | [DESCRIBE JOIN POLICY](/sql-reference/sql/desc-join-policy) | Describes the details about a [join policy](/user-guide/join-policies), including the creation date, name, and the SQL expression. |
 | [DESCRIBE LISTING](/sql-reference/sql/desc-listing) | Describes the columns in a [listing](/collaboration/collaboration-listings-about). |
@@ -408,6 +416,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE STREAMLIT](/sql-reference/sql/desc-streamlit) | Describes the columns in a Streamlit object. |
 | [DESCRIBE TABLE](/sql-reference/sql/desc-table) | Describes either the columns in a table or the set of stage properties for the table (current values and default values). |
 | [DESCRIBE TASK](/sql-reference/sql/desc-task) | Shows information about a task. |
+| [DESCRIBE TASK GRAPH](/sql-reference/sql/desc-task-graph) | Describes a task graph. |
 | [DESCRIBE TRANSACTION](/sql-reference/sql/desc-transaction) | Describes the [transaction](/sql-reference/transactions), including the start time and the state (running, committed, rolled back). |
 | [DESCRIBE TYPE](/sql-reference/sql/desc-type) | Describes a [user-defined type](/sql-reference/data-types-user-defined). |
 | [DESCRIBE USER](/sql-reference/sql/desc-user) | Describes a [user](/user-guide/admin-user-management), including the current and default values of the properties of the user. |
@@ -456,6 +465,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP ICEBERG TABLE](/sql-reference/sql/drop-iceberg-table) | Removes an [Apache Iceberg™ table](/user-guide/tables-iceberg) from the current/specified schema, but retains a version of the Iceberg table so that it can be recovered using [UNDROP ICEBERG TABLE](/sql-reference/sql/undrop-iceberg-table). |
 | [DROP IMAGE REPOSITORY](/sql-reference/sql/drop-image-repository) | Removes the specified [image repository](/developer-guide/snowpark-container-services/tutorials/tutorial-1) from the current or specified schema. |
 | [DROP INDEX](/sql-reference/sql/drop-index) | Drops a secondary index. |
+| [DROP INGRESS POLICY](/sql-reference/sql/drop-ingress-policy) | Removes an [ingress policy](/user-guide/ingress-policies) from the current or specified schema. |
 | [DROP INTEGRATION](/sql-reference/sql/drop-integration) | Removes an integration from the account. |
 | [DROP JOIN POLICY](/sql-reference/sql/drop-join-policy) | Removes a [join policy](/user-guide/join-policies) from the current/specified schema. |
 | [DROP LISTING](/sql-reference/sql/drop-listing) | Removes the specified [listing](/collaboration/collaboration-listings-about) from the system and immediately revokes access for all consumers. |
@@ -506,6 +516,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP TABLE](/sql-reference/sql/drop-table) | Removes a table from the current or specified schema, but retains a version of the table so that it can be recovered by using [UNDROP TABLE](/sql-reference/sql/undrop-table). |
 | [DROP TAG](/sql-reference/sql/drop-tag) | Removes a tag from the system. |
 | [DROP TASK](/sql-reference/sql/drop-task) | Removes a task from the current/specified schema. |
+| [DROP TASK GRAPH](/sql-reference/sql/drop-task-graph) | Removes a task graph from the current/specified schema. |
 | [DROP TYPE](/sql-reference/sql/drop-type) | Removes a [user-defined type](/sql-reference/data-types-user-defined). |
 | [DROP USER](/sql-reference/sql/drop-user) | Removes the specified user from the system. |
 | [DROP VARIABLE](/sql-reference/sql/drop-variable) | Removes a [schema variable](/sql-reference/schema-variables) from the schema. |
@@ -523,6 +534,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [EXECUTE NOTEBOOK PROJECT](/sql-reference/sql/execute-notebook-project) | Executes a Notebook Project. |
 | [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) | Executes a Code Bundle at the specified entrypoint. |
 | [EXECUTE TASK](/sql-reference/sql/execute-task) | Manually triggers an asynchronous single run of a task (either a standalone task or the root task in a [task graph](/user-guide/tasks-graphs#label-task-dag)) independent of the schedule defined for the task. |
+| [EXECUTE TASK GRAPH](/sql-reference/sql/execute-task-graph) | Triggers one immediate run of a task graph’s committed version, independent of its schedule. |
 | [EXPERIMENT (CREATE / EXECUTE / SHOW / DROP)](/sql-reference/sql/experiment) | An experiment is a schema-level Snowflake object that packages an AI workload — either an evaluation or an optimization — and records its results as a set of runs. |
 | [EXPLAIN](/sql-reference/sql/explain) | Returns the logical execution plan for the specified SQL statement. |
 | **G** |  |
@@ -587,6 +599,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW CHANNELS](/sql-reference/sql/show-channels) | Lists the [Snowpipe Streaming channels](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) for which you have access privileges. |
 | [SHOW CLASSES](/sql-reference/sql/show-classes) | Lists all available classes. |
 | [SHOW COLUMNS](/sql-reference/sql/show-columns) | Lists the columns in the tables or views and the dimensions, facts, and metrics in the [semantic views](/user-guide/views-semantic/overview) for which you have access privileges. |
+| [SHOW COMMITTED TASKS](/sql-reference/sql/show-committed-tasks) | Lists the tasks in the committed version of a task graph. |
 | [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families) | Lists the available [compute pool instance families](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pools-instance-family-table) that you can use to create a compute pool. |
 | [SHOW COMPUTE POOLS](/sql-reference/sql/show-compute-pools) | Lists the [compute pools](/developer-guide/snowpark-container-services/working-with-compute-pool) in your account for which you have access privileges. |
 | [SHOW CONFIGURATIONS](/sql-reference/sql/show-configurations) | Lists the [configurations](/developer-guide/native-apps/inter-app-communication) in the specified app for which you have access privileges. |
@@ -637,6 +650,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories) | Lists the [image repositories](/developer-guide/snowpark-container-services/tutorials/tutorial-1) for which you have access privileges. |
 | [SHOW IMAGES IN IMAGE REPOSITORY](/sql-reference/sql/show-images-in-image-repository) | Lists the images in an [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository). |
 | [SHOW INDEXES](/sql-reference/sql/show-indexes) | Lists all the indexes in your account for which you have access privileges. |
+| [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies) | Lists the [ingress policies](/user-guide/ingress-policies) that you can see. |
 | [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations) | Lists the integrations in your account. |
 | [SHOW INTERACTIVE TABLES](/sql-reference/sql/show-interactive-tables) | Lists the [interactive tables](/user-guide/interactive) for which you have access privileges. |
 | [SHOW JOIN POLICIES](/sql-reference/sql/show-join-policies) | Lists information about existing [join policies](/user-guide/join-policies), including the creation date, database and schema names, owner, and any available comments. |
@@ -729,6 +743,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW STREAMS](/sql-reference/sql/show-streams) | Lists the streams for which you have access privileges. |
 | [SHOW TABLES](/sql-reference/sql/show-tables) | Lists the tables for which you have access privileges, including dropped tables that are still within the Time Travel retention period and, therefore, can be undropped. |
 | [SHOW TAGS](/sql-reference/sql/show-tags) | Lists the tag information. |
+| [SHOW TASK GRAPHS](/sql-reference/sql/show-task-graphs) | Lists the task graphs for which you have access privileges. |
 | [SHOW TASKS](/sql-reference/sql/show-tasks) | Lists the tasks for which you have access privileges. |
 | [SHOW TELEMETRY EVENT DEFINITIONS](/sql-reference/sql/show-telemetry-event-definitions) | Lists the [event definitions](/developer-guide/native-apps/event-definition) for the specified app. |
 | [SHOW TRANSACTIONS](/sql-reference/sql/show-transactions) | List all running transactions. |

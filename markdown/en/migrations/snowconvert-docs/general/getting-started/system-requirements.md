@@ -13,7 +13,7 @@ Before you start, make sure that your system meets the minimum requirements list
 
 \*The amount of RAM available affects the speed of assessment and conversion executions and the amount of code that can be processed at once (more is better).
 
-Before you download, if you’re into the legalities of SnowConvert AI, you can view our [End User License Agreement (EULA)](../terms-and-conditions/README).
+Before you download, review the [terms that govern SnowConvert AI](../terms-and-conditions/README).
 
 Note
 

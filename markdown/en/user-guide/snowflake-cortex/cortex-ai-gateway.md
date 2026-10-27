@@ -160,6 +160,7 @@ logging:
 | `logging.enabled` | Whether the gateway records traces for the requests that pass through it. This is the switch everything else depends on: while it’s `false`, nothing is recorded no matter what `capture_payload` is set to. See [Observability for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability). |
 | `logging.enable_client_telemetry` | Whether the gateway accepts traces that client applications export to it. See [Send client traces to the gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability#label-cortex-ai-gateway-client-traces). |
 | `logging.capture_payload.request_response` | Whether prompts and model responses are recorded alongside the metadata. `false` means they aren’t captured. Takes effect only when `logging.enabled` is `true`. Turning this on records the content of requests and responses, so treat the trace table as sensitive once it’s enabled. |
+| `logging.capture_payload.exclude_tags` | A list of fully qualified tag names, in the form `database.schema.tag`. Requests from a user who has any of these tags set get metadata-only logging, even when `logging.capture_payload.request_response` is `true`. See [Exclude users from payload capture](#label-cortex-ai-gateway-exclude-from-capture). |
 
 Expand
 
@@ -201,3 +202,56 @@ on.
 
 For what the metadata surfaces, see [Observability for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability) and
 [AI\_GATEWAY\_USAGE\_HISTORY view](/sql-reference/account-usage/ai_gateway_usage_history).
+
+### Exclude users from payload capture
+
+With payload capture on, you can still keep specific users’ prompts and responses out of the trace
+table. List one or more tags in `logging.capture_payload.exclude_tags`, then set any of those tags on
+the users to exclude. Their requests are still logged at the metadata level, but their prompts, model
+responses, and tool content aren’t captured.
+
+Create a tag and set it on the users to exclude:
+
+Copy code
+
+```
+CREATE TAG governance.tags.payload_capture_exempt;
+
+ALTER USER exec_user SET TAG governance.tags.payload_capture_exempt = 'true';
+```
+
+Then list the tag in the specification:
+
+Copy code
+
+```
+ALTER AI GATEWAY SNOWFLAKE FROM SPECIFICATION $$
+schema_version: 1
+models:
+  - name: '*'
+logging:
+  enabled: true
+  capture_payload:
+    request_response: true
+    exclude_tags:
+      - governance.tags.payload_capture_exempt
+$$;
+```
+
+Keep the following in mind:
+
+- Write each tag as `database.schema.tag`. `ALTER AI GATEWAY` fails if a listed tag doesn’t exist.
+- Only tags set directly on users are considered, not tags on the account or a role. The tag’s value
+  doesn’t matter.
+- Setting or unsetting the tag on a user takes effect on that user’s next request through the gateway.
+- `DESCRIBE AI GATEWAY` shows each tag as `database.schema.tag`, with its current name. If a listed
+  tag is dropped, it no longer appears or excludes users.
+- If the gateway can’t determine whether a user is excluded, it doesn’t capture the payload for that
+  request.
+
+Important
+
+Anyone who can set a listed tag on a user can exclude that user from payload capture. Use a tag
+dedicated to this purpose, and limit which roles have the APPLY privilege on it or the global APPLY
+TAG privilege. See
+[Introduction to object tagging](/user-guide/object-tagging/introduction).

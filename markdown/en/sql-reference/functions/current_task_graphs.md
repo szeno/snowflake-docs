@@ -20,7 +20,8 @@ Copy code
 ```
 CURRENT_TASK_GRAPHS(
       [ RESULT_LIMIT => <integer> ]
-      [, ROOT_TASK_NAME => '<string>' ] )
+      [, ROOT_TASK_NAME => '<string>' ]
+      [, GRAPH_NAME => '<string>' ] )
 ```
 
 ## Arguments
@@ -37,8 +38,12 @@ All the arguments are optional.
     Default: `1000`
 
 `ROOT_TASK_NAME => string`
-:   A case-insensitive string specifying the name of the root task. Only non-qualified task names are supported. Only graph runs for the
-    specified task are returned. Note that if multiple tasks have the same name, the function returns the graph runs for each of these tasks.
+:   A case-insensitive string specifying the name of the root task in a root-task-based graph. Only non-qualified task names are supported. Only graph runs for the
+    specified task are returned. Note that if multiple tasks have the same name, the function returns the graph runs for each of these tasks. Mutually exclusive with GRAPH\_NAME.
+
+`GRAPH_NAME => string`
+:   A case-insensitive string specifying the name of a [task graph object](/user-guide/task-graph-object). Only non-qualified names are supported. Only graph runs for the
+    specified task graph are returned. If multiple task graphs have the same name, the function returns the graph runs for each of them. Mutually exclusive with ROOT\_TASK\_NAME.
 
 ## Usage notes
 
@@ -65,7 +70,7 @@ The function returns the following columns:
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ROOT\_TASK\_NAME | TEXT | Name of the root task. |
+| ROOT\_TASK\_NAME | TEXT | Name of the root task. NULL for task graph objects. |
 | DATABASE\_NAME | TEXT | Name of the database that contains the graph. |
 | SCHEMA\_NAME | TEXT | Name of the schema that contains the graph. |
 | STATE | TEXT | State of the graph run:   - `SCHEDULED`: The root task is scheduled at a future time. - `EXECUTING`: At least one task run in the graph is still executing, or the root task ran successfully to completion and one or more child tasks are scheduled.   Note that if the state of the root task run is SKIPPED, the function does not return a row for the run. |
@@ -76,13 +81,15 @@ The function returns the following columns:
 | SCHEDULED\_TIME | TIMESTAMP\_LTZ | Time when the root task is/was scheduled to start running. Note that we make a best effort to ensure absolute precision, but only guarantee that tasks do not execute *before* the scheduled time. |
 | QUERY\_START\_TIME | TIMESTAMP\_LTZ | Time when the query in the root task definition started to run. This timestamp aligns with the start time for the query returned by QUERY\_HISTORY. |
 | NEXT\_SCHEDULED\_TIME | TIMESTAMP\_LTZ | Time when the standalone or root task (in a [task graph](/user-guide/tasks-graphs#label-task-dag)) is next scheduled to start running, assuming the current run of the standalone task or [task graph](/user-guide/tasks-graphs#label-task-dag) started at the SCHEDULED\_TIME time completes in time. |
-| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a [task graph](/user-guide/tasks-graphs#label-task-dag). This ID matches the ID column value in the SHOW TASKS output for the same task. |
+| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a root-task-based graph. This ID matches the ID column value in the SHOW TASKS output for the same task. NULL for task graph objects. |
 | GRAPH\_VERSION | NUMBER | Integer identifying the version of the [task graph](/user-guide/tasks-graphs#label-task-dag) that was run, or is scheduled to be run. |
 | RUN\_ID | NUMBER | Time when the standalone or root task in a [task graph](/user-guide/tasks-graphs#label-task-dag) is/was originally scheduled to start running. Format is epoch time (in milliseconds).     *Original* scheduled time refers to rare instances when the system might reschedule the same task to run at a different time to retry it or rebalance the load. If that happens, RUN\_ID shows the original scheduled run time and SCHEDULED\_TIME shows the rescheduled run time.     Note that RUN\_ID may not be a unique identifier for the current task/graph run before retry. You can use GRAPH\_RUN\_GROUP\_ID column as a replacement for RUN\_ID. |
 | ATTEMPT\_NUMBER | NUMBER | Integer representing the number of attempts to run this task. Initially one. |
 | CONFIG | TEXT | Displays the graph level configuration used during the graph run if explicitly set. Otherwise displays NULL. |
 | GRAPH\_RUN\_GROUP\_ID | TEXT | Identifier for the graph run. When a graph run has multiple task runs, each task run will show the same GRAPH\_RUN\_GROUP\_ID. The combination of GRAPH\_RUN\_GROUP\_ID, and ATTEMPT\_NUMBER can be used to uniquely identify a graph run. |
 | BACKFILL\_INFO | OBJECT | Reserved for future use. The returned value for all rows is NULL. |
+| GRAPH\_ID | TEXT | Unique identifier for the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
+| GRAPH\_NAME | TEXT | Name of the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
 
 Expand
 

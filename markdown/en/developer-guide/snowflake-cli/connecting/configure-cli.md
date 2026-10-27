@@ -431,7 +431,7 @@ to convert to BOM-free UTF-8 instead.
 
 ## Set a default output format
 
-By default, Snowflake CLI prints command results as a table. You can change the default to `TABLE`, `JSON`, `JSON_EXT`, or `CSV`. `--format` on a command still overrides the default.
+By default, Snowflake CLI prints command results as a table. You can change the default to `TABLE`, `JSON`, `JSON_EXT`, `CSV`, or `PLAIN`. `--format` on a command still overrides the default.
 
 - Add the `output_format` setting to the `config.toml` file:
 

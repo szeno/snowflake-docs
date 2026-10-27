@@ -126,6 +126,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [CORTEX\_AI\_GUARDRAILS\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_ai_guardrails_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [CORTEX\_AISQL\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_aisql_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
+| [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_desktop_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_snowsight_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [CORTEX\_ANALYST\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_analyst_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [CORTEX\_DOCUMENT\_PROCESSING\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_document_processing_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |

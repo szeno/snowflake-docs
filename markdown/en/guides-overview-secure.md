@@ -48,6 +48,7 @@ Use the following table to find the topic that matches your task:
 | Require MFA for password sign-ins | [Multi-factor authentication (MFA)](/user-guide/security-mfa) |
 | Provision or deprovision users and groups from your IdP | [SCIM](/user-guide/scim-intro) |
 | Restrict where clients may connect from | [Network policies](/user-guide/network-policies) and [Network rules](/user-guide/network-rules) |
+| Allow or block requests by evaluating one or more context keys, such as authentication method, network origin, client, geolocation, and endpoint path | [Ingress policies](/user-guide/ingress-policies) |
 | Connect without public internet paths | [Private connectivity for inbound network traffic](/user-guide/private-connectivity-inbound) and [Private connectivity for outbound network traffic](/user-guide/private-connectivity-outbound) |
 | Review account security findings | [Trust Center](/user-guide/trust-center/overview) |
 | Monitor AI workload posture in Trust Center | [AI Security in Trust Center](/user-guide/trust-center/using-the-trust-center#label-trust-center-ai-security-tab) |
@@ -74,12 +75,14 @@ Show lessSee more
 - **[OAuth](/user-guide/oauth-intro):** Topics related to using Snowflake OAuth and External OAuth to connect to Snowflake.
 - **[Workload identity federation](/user-guide/workload-identity-federation):** Preferred authentication method for service-to-service workloads accessing Snowflake data.
 - **[External API authentication and secrets](/user-guide/api-authentication):** Configuring Snowflake to authenticate to external services.
+- **[Ingress policies](/user-guide/ingress-policies):** Admitting or blocking requests by evaluating one or more context keys, such as authentication method, network origin, client, geolocation, and endpoint path.
 
 ## Network security
 
 - **[Malicious IP protection](/user-guide/malicious-ip-protection):** Protecting your account from IP addresses that are known to be malicious.
 - **[Controlling network traffic with network policies](/user-guide/network-policies):** Using network policies to restrict access to Snowflake.
 - **[Network rules](/user-guide/network-rules):** Using network rules with other Snowflake features to restrict access to and from Snowflake.
+- **[Ingress policies](/user-guide/ingress-policies):** Admitting or blocking requests by evaluating one or more context keys, such as authentication method, network origin, client, geolocation, and endpoint path.
 - **[Private connectivity for inbound network traffic](/user-guide/private-connectivity-inbound):** Using private connectivity to access the Snowflake service, Snowsight, Streamlit in Snowflake, internal stages, Snowflake managed storage volumes, and Snowpark Container Services.
 - **[Private connectivity for outbound network traffic](/user-guide/private-connectivity-outbound):** Using private connectivity for external network locations, external functions, external stages, external tables, external volumes, and Snowpipe automation.
 

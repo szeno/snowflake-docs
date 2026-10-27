@@ -133,8 +133,6 @@ Grant the `DBMS_CLOUD` credential and the Snowflake storage integration the obje
 
 ### Incremental sync
 
-Oracle supports all three strategies: **`none`**, **`watermark`**, and **`checksum`**.
-
 For **`watermark`**, if your tables don’t have a reliable updated-at column, consider using **`ORA_ROWSCN`** — Oracle’s built-in system change number pseudo-column that advances whenever a row is modified. It’s a good default for watermark-based incremental sync on Oracle.
 
 For **`checksum`**, AIM DMV computes a partition checksum over the normalized columns. Some Oracle types are excluded from the default hash, so review [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect) before relying on checksum sync.

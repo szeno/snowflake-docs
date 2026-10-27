@@ -82,8 +82,7 @@ ALTER DATABASE [ IF EXISTS ] <name> UNSET { DATA_RETENTION_TIME_IN_DAYS         
                                             CONTACT <purpose>                   |
                                             ENABLE_DATA_COMPACTION              |
                                             OAUTH_AUTHORIZATION_SERVER          |
-                                            OAUTH_SCOPES_SUPPORTED              |
-                                            DCM PROJECT
+                                            OAUTH_SCOPES_SUPPORTED
                                           }
                                           [ , ... ]
 ```
@@ -523,11 +522,6 @@ ALTER DATABASE <name> PRIMARY
 > if one is set. See
 > [Feature policy precedence](/user-guide/feature-policies#label-feature-policy-precedence) for
 > details.
-
-`UNSET DCM PROJECT`
-
-> Detaches the database from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the database and the DCM project without dropping the database. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Database replication and failover parameters
 

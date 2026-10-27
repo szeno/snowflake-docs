@@ -1,7 +1,7 @@
 # Manage deployed DCM Projects
 
-This topic describes how to manage a deployed DCM project: list the entities and grants it manages, detach objects and
-grants, purge a project, and drop a project.
+This topic describes how to manage a deployed DCM project: list the entities and grants it manages, unmanage entities, grants, and
+attachments, purge a project, and drop a project.
 
 ## Show objects and grants managed by a DCM project
 
@@ -40,75 +40,81 @@ SHOW FUTURE GRANTS IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 4. Select the **Objects** tab to see a list of all Snowflake objects currently managed by this project object, or select the **Grants** tab to see a list of all grants currently managed by this project object.
 5. Select the name of an object to open that object’s details page in a new tab.
 
-## Detach objects from a DCM project
+## Unmanage entities, grants, and attachments from a DCM project
 
-Using the [ALTER <object>](/sql-reference/sql/alter) command with the UNSET DCM PROJECT clause, you can detach an object that was deployed and
-is now managed by a DCM project. The command removes the association between the object and the DCM project without dropping the object.
-You can use this command when you want to start managing an object by a different DCM project.
+Unmanaging removes an entity, grant, or attachment from the management scope of a DCM project without dropping the entity, revoking the
+grant, or detaching the attachment. Only the DCM project’s tracking of the entity, grant, or attachment is removed. You can unmanage an
+entity, grant, or attachment when you want to manage it with a different DCM project or manage it manually.
 
-Make sure to remove the corresponding DEFINE statement from your [project definition files](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-definition-files) before
-you deploy it again. Otherwise, the object will be reintegrated into the DCM project.
+Unmanaging is different from removing a definition and redeploying. DCM Projects interprets a missing definition as intent to drop the entity, revoke the
+grant, or remove the attachment on the next deployment.
 
-An example of a SQL command to detach an object from a DCM project:
+After you unmanage an entity, grant, or attachment, remove the corresponding statement from your
+[project definition files](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-definition-files) before the next deployment. Otherwise, the DCM project manages it again.
 
-Copy code
+### Unmanage with system functions
 
-```
-ALTER TABLE MY_DB.MY_SCH.MY_TABLE
-  UNSET DCM PROJECT;
-```
+[Preview Feature](/release-notes/preview-features) — Open
 
-## Detach grants from a DCM project
+Available to all accounts.
 
-`ALTER DCM PROJECT ... UNMANAGE GRANT` removes a grant from a project’s management scope without revoking the underlying privilege. The grant remains exactly as it is: only the project’s tracking of it is removed.
+DCM Projects provides two system functions for unmanaging. Choose the one that fits what you want to unmanage:
 
-Use `UNMANAGE GRANT` when you want to:
+- [SYSTEM$UNMANAGE\_ENTITY\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_entity_from_dcm_project) unmanages a single entity that you identify by its type and name.
+  Managed grants or attachments to the entity remain unchanged.
 
-- Transfer a grant to a different project or to manual management.
-- Clean up stale grant references after an external change: for example, someone outside DCM revoked a privilege.
+  Copy code
 
-This is different from removing a grant definition and redeploying. DCM interprets a missing grant definition as intent to revoke, and revokes the grant on the next deployment.
+  ```
+  SELECT SYSTEM$UNMANAGE_ENTITY_FROM_DCM_PROJECT(
+    'DCM_DEMO.PROJECTS.DCM_PROJECT_DEV',
+    'DYNAMIC TABLE',
+    'DCM_DEMO_1_EA_DEV.ANALYTICS.MENU_ITEM_POPULARITY');
+  ```
 
-### Required privileges
+  Note
 
-The role executing `ALTER DCM PROJECT ... UNMANAGE GRANT` must have `OWNERSHIP` on the DCM Project object.
-No `REVOKE` privilege or ownership of the target resource is required: the role only needs to be able to see the grant and the securable object.
-This means you can clean up grant references even after another role has removed your access to the managed resources.
+  If you want to remove `GRANT` statements for that entity from the definition files without revoking the privileges, also unmanage those
+  grants. Pass the `GRANT` statements to [SYSTEM$UNMANAGE\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_from_dcm_project).
+- [SYSTEM$UNMANAGE\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_from_dcm_project) unmanages the entities, grants, and data metric function attachments
+  that you specify with definition statements. The function accepts `DEFINE`, `GRANT`, and `ATTACH DATA METRIC FUNCTION` statements as
+  they appear in DCM Projects definition files. Each statement must match
+  the statement as written in the definition files. You can copy the statements from your definition files into the function argument. Jinja templating isn’t supported, so pass the rendered statements.
 
-### Syntax
+  The function processes the statements as a single batch. If any statement contains a syntax error or references an object that doesn’t
+  exist, the whole call fails and nothing is unmanaged. Statements for items that the DCM project doesn’t manage are skipped without an
+  error.
 
-Copy code
+  Copy code
 
-```
-ALTER DCM PROJECT <project_name>
-  UNMANAGE GRANT <grant_specification>;
-```
+  ```
+  SELECT SYSTEM$UNMANAGE_FROM_DCM_PROJECT(
+    'DCM_DEMO.PROJECTS.DCM_PROJECT_DEV',
+    $$
+      DEFINE TABLE sales.public.orders (id NUMBER);
 
-`<grant_specification>` uses the same grammar as a [GRANT <privilege>](/sql-reference/sql/grant-privilege) statement. Write it exactly as you would write the `GRANT` line in your DCM definition files, omitting the leading `GRANT` keyword.
+      GRANT SELECT, INSERT ON TABLE sales.public.orders TO ROLE analyst;
 
-### Return value
+      ATTACH DATA METRIC FUNCTION sales.public.not_null
+        TO TABLE sales.public.orders
+        ON (id);
+    $$);
+  ```
 
-On success, the command returns a message that includes the count of unmanaged grants, for example:
+  Note
 
-Copy code
+  Pass a `GRANT OWNERSHIP` statement to `SYSTEM$UNMANAGE_FROM_DCM_PROJECT` before you remove it from the definition files if ownership
+  should stay with the current owner role. Removing the statement and deploying grants ownership back to the DCM project owner role. See
+  [OWNERSHIP grants](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-grant-ownership).
 
-```
-Unmanaged 3 grants from the project my_project
-```
+Both functions return the number of items that were unmanaged. `SYSTEM$UNMANAGE_FROM_DCM_PROJECT` counts every `DEFINE`, `GRANT`, and
+`ATTACH DATA METRIC FUNCTION` item, so the preceding example returns `3` when the DCM project manages all three items.
 
-### Next steps after unmanaging
+To call either function, the role needs OWNERSHIP on the DCM project. On the entities, the role only needs a privilege that makes them
+visible, such as SELECT on a table. OWNERSHIP of the entities isn’t required.
 
-After running `UNMANAGE GRANT`, remove the corresponding `GRANT` statement from your project definition files before the next deployment. If you leave it in place, DCM reintegrates the grant on the next `EXECUTE DCM PROJECT` run.
-
-### Error handling
-
-The command returns an error if:
-
-- The referenced grant or securable object doesn’t exist or isn’t resolvable.
-- The role doesn’t have `OWNERSHIP` on the DCM Project.
-- The role can’t see the referenced securable object.
-
-The command doesn’t fail silently: every error is reported so you can confirm exactly which grants were unmanaged.
+**Limitation:** Of the `ATTACH` statements, the unmanage functions support only `ATTACH DATA METRIC FUNCTION`. Unmanaging tag
+attachments (`ATTACH TAG`) and policy attachments, such as `ATTACH MASKING POLICY`, isn’t supported.
 
 ## Purge a DCM project
 

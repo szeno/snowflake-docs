@@ -415,7 +415,9 @@ or
 :   Specifies a Boolean SQL expression; multiple conditions joined with AND/OR are supported. When a task is triggered (based on its
     `SCHEDULE` or `AFTER` setting), it validates the conditions of the expression to determine whether to execute. If the
     conditions of the expression are not met, then the task skips the current run. Any tasks that identify this task as a
-    predecessor also don’t run.
+    predecessor also don’t run, unless the task graph uses
+    [advanced branching](/user-guide/tasks-graphs#label-task-graph-advanced-branching). In a task graph that uses advanced branching, every
+    task is scheduled and evaluates its own `WHEN` clause, whatever state its predecessors completed in.
 
     The following are supported in a task WHEN clause:
 
@@ -457,6 +459,56 @@ or
       Note
 
       Use of [PARSE\_JSON](/sql-reference/functions/parse_json) in TASK … WHEN expressions isn’t supported as it requires warehouse based compute resources.
+    - [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) is supported for evaluation in the SQL expression.
+
+      This function indicates whether the predecessors of the task completed in the states described by a specified condition, such as
+      `ALL_FAILED` or `ALL_DONE`. Use it to run a task on outcomes other than “all predecessors succeeded.” A task graph that calls this
+      function uses [advanced branching](/user-guide/tasks-graphs#label-task-graph-advanced-branching), which changes how Snowflake schedules
+      every task in the graph.
+
+      [Preview Feature](/release-notes/preview-features) — Open
+
+      [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) is a public preview feature, available to all accounts.
+
+      Simple example that runs a task only when all of its predecessors failed:
+
+      Copy code
+
+      ```
+      CREATE TASK my_task
+        WAREHOUSE = my_warehouse
+        AFTER task_a, task_b
+        WHEN SYSTEM$PREDECESSORS_STATE('ALL_FAILED')
+        AS
+          SELECT CURRENT_TIMESTAMP;
+      ```
+    - [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) is supported for evaluation in the SQL expression.
+
+      This function returns the state that a specified task in the current task graph run completed in, such as `SUCCEEDED`, `FAILED`, or
+      `SKIPPED`. Use it to branch on the outcome of one specific task rather than on the outcome of all of the task’s predecessors. A task
+      graph that calls this function uses [advanced branching](/user-guide/tasks-graphs#label-task-graph-advanced-branching).
+
+      [Preview Feature](/release-notes/preview-features) — Open
+
+      [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) is a public preview feature, available to all accounts.
+
+      Simple example that runs a task only when a specific predecessor failed:
+
+      Copy code
+
+      ```
+      CREATE TASK my_task
+        WAREHOUSE = my_warehouse
+        AFTER task_a, task_b
+        WHEN SYSTEM$TASK_COMPLETION_STATE('TASK_A') = 'FAILED'
+        AS
+          SELECT CURRENT_TIMESTAMP;
+      ```
+
+      Note
+
+      Task names are case-sensitive. Because tasks created without quotes are
+      [stored and resolved in uppercase](/sql-reference/identifiers-syntax), pass the uppercase form of the task name.
     - [Boolean operators](/sql-reference/operators-logical) such as AND, OR, NOT, and others.
 
       Simple example that runs whenever data changes in either of two streams:

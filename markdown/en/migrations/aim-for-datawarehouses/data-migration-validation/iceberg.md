@@ -66,7 +66,7 @@ Show lessSee more
 
 Note
 
-The target name must not already exist. That includes a native table, a view, an Iceberg table, or any other object with that name. AIM DMV stops before creating or loading the Iceberg table, so it does not register files onto an existing catalog entry. Drop the object or choose another name. Native Snowflake tables can be reused. Iceberg targets cannot.
+The target name must not already exist on the first load. That includes a native table, a view, an Iceberg table, or any other object with that name. AIM DMV stops before creating the Iceberg table, so it does not register files onto an existing catalog entry. Drop the object or choose another name. A later `watermark` or `checksum` run reuses the Iceberg table this migration created after a previous run completed. A second `none` run fails when the table already exists. Native Snowflake tables can be reused on any strategy.
 
 ## Where the table is stored
 
@@ -300,7 +300,7 @@ With `FULL_INGEST`, `targetFileSize` defaults to `128MB` and `postLoadOptimize` 
 
 ## Limitations
 
-- **No incremental sync.** `synchronization` does not apply to Iceberg targets. Each run performs the full load for that table. `full-replace` is rejected for Iceberg targets.
+- **Synchronization.** `none` is the default. A second `none` run against an existing Iceberg table fails with `IcebergTargetExistsError` instead of appending. `full-replace` is rejected at configuration validation. `watermark` and `checksum` run on a Snowflake-managed table this migration creates (`catalog: SNOWFLAKE`, with no `sourceDataStage`). A later run of either strategy reuses that table after a previous run completed. The first `watermark` load registers files with `ADD_FILES_COPY`. A later run with `trackModifications` and a primary key merges changed rows. `scai data migrate create-workflow` rejects `watermark` and `checksum` for an Iceberg target before the workflow starts, and it accepts `full-replace`, which the orchestrator then rejects. See [Choosing a synchronization strategy](../manual-migration/data-migration-configuration-reference#choosing-a-synchronization-strategy).
 - **The target table is unpartitioned.** `CREATE ICEBERG TABLE` is emitted without `PARTITION BY`. `columnNamesToPartitionBy` only splits the source extract. To partition the migrated table, copy it into a new Iceberg table with a partition transform such as `MONTH(order_ts)` after migration. Prefer time transforms or `BUCKET(n, col)` over a raw high-cardinality column, because one statement that writes more than about 100,000 partitions can fail.
 - **Row cap per extract partition.** The default cap of 500,000 rows per partition on Worker-side strategies, and the table-level `maxPartitionSizeRows` override, apply to Iceberg targets too.
 

@@ -118,6 +118,16 @@ GRANT USAGE ON SCHEMA CONNECTORS.METADATA TO ROLE <role_name>;
 GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>;
 ```
 
+Quote `<connector_name>` when the display name contains a space, a hyphen, or another character
+that isn’t valid in an unquoted identifier. Snowsight uses the display name as the identifier. For
+a connector named `dbt - zv880`:
+
+Copy code
+
+```
+GRANT USAGE ON METADATA CONNECTOR CONNECTORS.METADATA."dbt - zv880" TO ROLE <role_name>;
+```
+
 If you stored your connector in a different database or schema, replace `CONNECTORS` and `METADATA`
 with the actual database and schema names. To find the connector’s location, run:
 

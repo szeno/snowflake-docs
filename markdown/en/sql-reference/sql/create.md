@@ -69,6 +69,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table)
 > - [CREATE INTERACTIVE TABLE](/sql-reference/sql/create-interactive-table)
 > - [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository)
+> - [CREATE INGRESS POLICY](/sql-reference/sql/create-ingress-policy)
 > - [CREATE JOIN POLICY](/sql-reference/sql/create-join-policy)
 > - [CREATE LISTING](/sql-reference/sql/create-listing)
 > - [CREATE MAINTENANCE POLICY](/sql-reference/sql/create-maintenance-policy)
@@ -107,6 +108,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE TABLE](/sql-reference/sql/create-table) , [CREATE TABLE … CLONE](/sql-reference/sql/create-clone)
 > - [CREATE TAG](/sql-reference/sql/create-tag)
 > - [CREATE TASK](/sql-reference/sql/create-task) , [CREATE TASK … CLONE](/sql-reference/sql/create-clone)
+> - [CREATE TASK GRAPH](/sql-reference/sql/create-task-graph)
 > - [CREATE TYPE](/sql-reference/sql/create-type)
 > - [CREATE VIEW](/sql-reference/sql/create-view)
 

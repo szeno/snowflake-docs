@@ -58,54 +58,90 @@ AI_PARSE_DOCUMENT( <file_object> [, <options> ] [, <return_error_details> ] )
 `return_error_details`
 :   A BOOLEAN flag that indicates whether to return error details in case of error. When set to TRUE, the function returns
     an OBJECT that contains `value`, `error`, and `metadata` fields. The `value` field contains the parsed document
-    data, the `error` field contains the error message (or NULL on success), and `metadata` is a top-level field
-    rather than a subfield of the parsed output. See [Error behavior](#error-behavior) for details.
+    data, the `error` field contains the error message (or NULL on success), and `metadata` is returned alongside
+    `value` and `error`. `value` uses the shape in [Returns](#label-ai-parse-document-returns). See
+    [Error behavior](#error-behavior) for details.
 
 ## Returns
 
-A JSON object (as a string) that contains the extracted data and associated metadata. The `options` argument
-determines the structure of the returned object.
+By default the function returns the JSON as a string, so use
+[PARSE\_JSON](/sql-reference/functions/parse_json) to read the fields in SQL. If parsing fails, the function returns NULL. Every
+successful result includes `metadata.pageCount`.
 
-Tip
+Page splitting is on when `'page_split'` is TRUE or `'page_filter'` is specified.
 
-To use the output in SQL, convert it to an OBJECT value using the [PARSE\_JSON](/sql-reference/functions/parse_json) function.
+**Page splitting off.** The document is one `content` string: plain text in OCR mode, or Markdown in LAYOUT mode.
 
-If the `'page_split'` option is set, the output has the following structure:
+Copy code
 
-> - `"pages"`: An array of JSON objects, each containing text extracted from the document. If the document has only
->   one page, the output still contains a `"pages"` array (which contains a single object). Each page has the following fields:
->   - `"content"`: Plain text (in OCR mode) or Markdown-formatted text (in LAYOUT mode).
->   - `"index"`: The page index in the file, starting at 0. Page numbers and formats specified in the document are ignored.
+```
+{
+  "content": "Document text.",
+  "metadata": {
+    "pageCount": 1
+  }
+}
+```
 
-If `'page_split'` is FALSE or is not present, the output has the following structure:
+**Page splitting on.** `pages` is an array of page objects, including for a one-page file. With `'page_filter'`, the
+array contains only the selected pages. `index` is the zero-based position in the original file. Printed page numbers
+are ignored. `dimensions` has `height` and `width`.
 
-> - `"content"`: Plain text (in OCR mode) or Markdown-formatted text (in LAYOUT mode).
+Copy code
 
-Note
+```
+{
+  "metadata": {
+    "pageCount": 140
+  },
+  "pages": [
+    {
+      "content": "Page text.",
+      "index": 0
+    }
+  ]
+}
+```
 
-Document metadata such as `pageCount` is not included in the output structures above. To return metadata, pass
-`TRUE` as the `return_error_details` argument. The function then returns an OBJECT with top-level `value`, `error`,
-and `metadata` fields; `metadata` contains fields such as `pageCount`.
+**Images.** `images` is included only when `'mode'` is `'LAYOUT'` and `'extract_images'` is TRUE. It is a top-level
+array when page splitting is off, and an array on each page when page splitting is on. The array is `[]` when there are
+no images. Markdown in `content` refers to an image by `id`, for example `![img-0.jpeg](img-0.jpeg)`.
 
-If the `"extract_images"` option is set to TRUE, the output includes an additional field:
+| Field | Description |
+| --- | --- |
+| `id` | Image identifier, such as `img-0.jpeg`. |
+| `top_left_x`, `top_left_y` | Upper-left corner on the page. |
+| `bottom_right_x`, `bottom_right_y` | Lower-right corner on the page. |
+| `image_base64` | Image data encoded as a base64 string. |
 
-> - `"images"`: An array of JSON objects, each representing an extracted image. Each image object has the following fields:
->   - `"id"`: A unique identifier for the image.
->   - `"top_left_x"`, `"top_left_y"`, `"bottom_right_x"`, `"bottom_right_y"`: The coordinates of the bounding box of the image on the page.
->   - `"image_base64"`: The extracted image data encoded as a base64 string.
+Expand
+
+Show lessSee more
+
+Copy code
+
+```
+{
+  "id": "img-0.jpeg",
+  "top_left_x": 666,
+  "top_left_y": 697,
+  "bottom_right_x": 1026,
+  "bottom_right_y": 816,
+  "image_base64": "data:image/jpeg;base64,..."
+}
+```
 
 ## Error behavior
 
 By default, if AI\_PARSE\_DOCUMENT can’t process the input, the function returns NULL. If the query processes multiple
 rows, rows with errors return NULL and don’t prevent the query from completing.
 
-The return value on error depends on the `return_error_details`
-argument. The following table shows the return value based on the `return_error_details` argument:
+The following table shows the return value based on the `return_error_details` argument:
 
 > | `return_error_details` | Return value | Description |
 > | --- | --- | --- |
 > | FALSE Not passed | NULL |  |
-> | TRUE | OBJECT with `value`, `error`, and `metadata` fields | `value`: An OBJECT containing the parsed document data, or NULL if an error occurred. `error`: A VARCHAR value that contains the error message if an error occurred, or NULL if the function succeeded. The `error` field inside `value` (renamed from `errorInformation`) contains per-document error details when present. `metadata`: An OBJECT containing document metadata such as page count. This field is at the top level rather than inside the parsed output. |
+> | TRUE | OBJECT with `value`, `error`, and `metadata` fields | `value`: An OBJECT containing the parsed document data, or NULL if an error occurred. `error`: A VARCHAR value that contains the error message if an error occurred, or NULL if the function succeeded. The `error` field inside `value` (renamed from `errorInformation`) contains per-document error details when present. `metadata`: An OBJECT containing document metadata such as page count. This field is returned alongside `value` and `error`. |
 >
 > Expand
 >

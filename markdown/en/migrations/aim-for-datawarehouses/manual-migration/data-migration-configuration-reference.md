@@ -25,8 +25,8 @@ Names that require quoting (or brackets) must be manually quoted. For example: `
 | `defaultTableConfiguration` | `TableConfiguration` |  | Shared settings inherited by all tables in the `tables` array. Table-specific values override these defaults. |
 | `affinity` | `String` |  | Optional affinity tag that routes this workflow’s tasks to matching Workers. See [Affinity](#affinity). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Default handling for source `INTERVAL` columns across all tables. Defaults to `"interval"`. See [INTERVAL data type handling](#interval-data-type-handling). |
-| `preflight` | `Boolean` |  | When `true`, caps each table to a single partition and writes to a transient `PREFLIGHT_<workflowId>` schema instead of the configured target. Defaults to `false`. See [Preflight: a bounded dry run](#preflight-bounded-dry-run). |
-| `preflightKeepSchema` | `Boolean` |  | When `preflight` is `true`, skips cleanup so the transient schema survives for inspection. Defaults to `false`. |
+| `preflight` | `Boolean` |  | When `true`, caps each table to a single partition and loads it into a transient copy of the target table in a `PREFLIGHT_<workflowId>` schema, instead of the configured target. The real target tables must already exist. Defaults to `false`. See [Preflight: a bounded dry run](#preflight-bounded-dry-run). |
+| `preflightKeepSchema` | `Boolean` |  | When `preflight` is `true`, skips cleanup so the transient schema survives for inspection. You then drop it yourself. Defaults to `false`. See [Keeping the preflight schema](#keeping-the-preflight-schema). |
 | `cleanUpTransientResources` | `String` (`"never"`, `"on-success"`, `"always"`) |  | When to delete this workflow’s intermediate stage files. Defaults to `"on-success"`. See [Cleaning up transient resources](#cleaning-up-transient-resources). |
 
 Expand
@@ -37,7 +37,7 @@ When `defaultTableConfiguration` is present, each object in `tables` is merged w
 
 ### Preflight: a bounded dry run
 
-Setting `preflight: true` runs the migration as a bounded smoke test. Each table is capped at **one partition**, and the data lands in a transient `PREFLIGHT_<workflowId>` schema rather than your configured target schema. It exercises the whole pipeline (connectivity, extraction, staging, type mapping, and load) without touching production tables.
+Setting `preflight: true` runs the migration as a bounded smoke test. Each table is capped at **one partition**, which loads into a transient copy of the target table in a `PREFLIGHT_<workflowId>` schema. Your configured target tables are never written to. Your Orchestrator and Workers send one partition per table along the same path a real load takes: source connection, extraction, staging, and the load into a table with your target’s columns and types.
 
 Copy code
 
@@ -47,6 +47,90 @@ preflightKeepSchema: false # true leaves PREFLIGHT_<workflowId> in place for ins
 ```
 
 Run it the same way you run any other workflow. AIM DMV drops the transient schema when the workflow ends unless `preflightKeepSchema` is `true`.
+
+#### Before you run a preflight
+
+- **The real target tables must already exist.** AIM DMV creates each transient copy with `CREATE TRANSIENT TABLE IF NOT EXISTS <copy> LIKE <real_target>`, so the copy takes its structure from the real target. A normal migration creates a missing native target from the source schema, but a preflight can’t: if the real target doesn’t exist, that table’s setup task fails. Deploy the converted DDL first. See [CREATE TABLE … LIKE](/sql-reference/sql/create-table#label-create-table-like).
+- **The services must be running.** A preflight uses the same Orchestrator, Workers, warehouse, and compute pool as a real load, and it’s billed the same way while it runs. If the services suspended themselves, resume them first. See [Resuming services before the next wave](../data-migration-validation/deploy-workers#resuming-services-before-the-next-wave) and [Controlling cost on SPCS](../data-migration-validation/deploy-workers#controlling-cost-on-spcs).
+- **The migration role must be able to create schemas in each target database.** See [Target database privileges](../data-migration-validation/required-privileges#target-database-privileges).
+
+#### What a preflight does
+
+| Step | What happens |
+| --- | --- |
+| Redirect | Each table’s target becomes `<target_database>.PREFLIGHT_<workflowId>.<copy_name>`. The schema is created in the real target’s database, so a workflow whose targets span several databases creates one `PREFLIGHT_<workflowId>` schema in each. `<copy_name>` is the real target’s `<DATABASE>_<SCHEMA>_<TABLE>` in uppercase, with every character other than `A`–`Z`, `0`–`9`, and `_` replaced by `_`. For example, workflow 42 loads `SALES_DB.PUBLIC.ORDERS` into `SALES_DB.PREFLIGHT_42.SALES_DB_PUBLIC_ORDERS`. If two tables produce the same copy name in one database, the workflow fails when it starts, with a configuration error. |
+| Setup | Before a table’s first task, AIM DMV runs `CREATE TRANSIENT SCHEMA IF NOT EXISTS` for the schema and `CREATE TRANSIENT TABLE IF NOT EXISTS ... LIKE` for the copy. |
+| Planning | Metadata extraction, schema extraction, and partition planning run against the whole source table, as they do in a real load. |
+| Load | One partition per table is extracted, staged, and loaded into the copy. See [Which rows a preflight loads](#which-rows-a-preflight-loads). |
+| CHECK constraints | Removed from the copy before the load, as they are from a real target. They’re restored only when `preflightKeepSchema` is `true`. See [CHECK constraints](#check-constraints). |
+| Cleanup | Unless `preflightKeepSchema` is `true`, the schema is dropped after every other task finishes. See [Cleaning up after a preflight](#cleaning-up-after-a-preflight). |
+
+Expand
+
+Show lessSee more
+
+#### Which rows a preflight loads
+
+A preflight caps each table at one partition of its partition plan, not at a number of rows:
+
+- **A table that fits in one partition is loaded in full.** With [automatic partition sizing](#partition-size), a small table usually gets a single partition, so the preflight moves the whole table. That isn’t a sample, and it takes as long as a real load of that table.
+- **A table with several partitions loads only one.** It’s picked by its position in the plan, not at random, and it can hold few rows or none. A table can complete with no rows loaded.
+- **The rest of the table isn’t read.** Values that appear only in other partitions, such as unusually long strings or out-of-range dates, aren’t tested.
+
+#### Reading a preflight result
+
+A preflight that completes shows that, for each table, one partition was extracted, staged, and loaded into a copy of the real target, with the Workers, credentials, extraction strategy, and type mappings in this workflow. Check it as you would any workflow, with `scai data migrate status <WORKFLOW_ID>` or the `TABLE_PROGRESS` view and `PARTITION_METADATA` table described in [SnowConvert AI database objects](../data-migration-validation/snowconvert-ai-database). AIM DMV records only the partition it ran, so those counts describe that partition, not the whole table.
+
+A table that fails shows a problem to fix before the real load, such as a missing target table, source connectivity or credentials, the extraction strategy’s prerequisites, such as its external stage, or a value that doesn’t load into the target’s column type.
+
+A completed preflight doesn’t show:
+
+- **How a full load performs.** Duration, throughput, cost, and load on the source all depend on the partitions it didn’t run.
+- **That the rest of the data loads.** Only one partition per table was read.
+- **That loads into the real targets succeed.** A preflight never writes to them.
+- **That the migrated data is correct.** A preflight doesn’t validate data. After the real load, run [data validation](../data-migration-validation/data-validation).
+
+To look at the rows a preflight loaded, set `preflightKeepSchema: true`. Otherwise the schema is dropped when the workflow ends.
+
+#### When to run a preflight
+
+Run a preflight before the **first** real load of a set of tables, once their DDL is deployed and the Workers are set up. It’s most useful when something in the path is new: the first wave, a new source server, a new extraction strategy, or a new Worker deployment.
+
+Warning
+
+Don’t run a preflight between a full load and later incremental runs of the same tables. A preflight records partition metadata for its tables like any other migration workflow. A later workflow that uses `checksum` or `watermark` [synchronization](#synchronizationstrategy-model) reuses the most recent metadata for each source table, which would be the preflight’s single partition. Run the preflight first, then the full load with the default `strategy: none`, so later incremental runs build on the full load’s partitions.
+
+#### Keeping the preflight schema
+
+With `preflightKeepSchema: true`, AIM DMV doesn’t queue the drop task, and it restores CHECK constraints on the copies after the load so they match the real targets. The schema then stays until you drop it, and its tables keep using storage.
+
+Inspect the copies:
+
+Copy code
+
+```
+SHOW TABLES IN SCHEMA SALES_DB.PREFLIGHT_42;
+SELECT COUNT(*) FROM SALES_DB.PREFLIGHT_42.SALES_DB_PUBLIC_ORDERS;
+```
+
+When you’re done, drop the schema in each target database the workflow used:
+
+Copy code
+
+```
+DROP SCHEMA IF EXISTS SALES_DB.PREFLIGHT_42 CASCADE;
+```
+
+#### Cleaning up after a preflight
+
+Without `preflightKeepSchema`, the drop is a cleanup task in the workflow. Once every other task has finished, whether it succeeded or failed, the Orchestrator runs `DROP SCHEMA IF EXISTS <target_database>.PREFLIGHT_<workflowId> CASCADE` in each target database. The schema stays until an Orchestrator runs that task.
+
+You’re responsible for dropping:
+
+- Schemas you kept with `preflightKeepSchema: true`.
+- Any `PREFLIGHT_<workflowId>` schema left behind, for example when no Orchestrator ran the cleanup task.
+
+The schema drop doesn’t remove staged files. `cleanUpTransientResources` governs those, as for any workflow. See [Cleaning up transient resources](#cleaning-up-transient-resources).
 
 Three related things are easy to confuse:
 
@@ -60,7 +144,7 @@ Expand
 
 Show lessSee more
 
-Use preflight when you want to prove the pipeline works end to end. Use `whereClauseCriteria` when you want a real sample of rows in the real target.
+Use preflight when you want to check that one partition per table gets through the pipeline without touching the real targets. Use `whereClauseCriteria` when you want a real sample of rows in the real target.
 
 Warning
 
@@ -90,6 +174,19 @@ Defines the settings for migrating a single table.
 Expand
 
 Show lessSee more
+
+### Views and dynamic tables in migration
+
+Data migration copies source tables into Snowflake tables. Before it extracts an entry, AIM DMV reads the source object’s type with the same catalog classification that validation uses (see [How catalog kinds are classified](./data-validation-configuration-reference#how-catalog-kinds-are-classified)):
+
+- **Table:** the entry is migrated.
+- **View, including a materialized view:** the entry fails before extraction with `'<name>' is a VIEW, not a TABLE. Data migration does not support views.` Remove the entry, or migrate the view’s base tables instead.
+- **Not found:** the entry fails with a table-not-found error.
+- **Unrecognized catalog kind:** the entry is migrated, and the task records a warning that the object type is unrecognized and results may be unexpected.
+
+The target must be a Snowflake table or a [Snowflake-managed Iceberg table](../data-migration-validation/iceberg). AIM DMV loads the target with `COPY INTO`, and incremental synchronization can also run `MERGE` and `DELETE` against it. [Dynamic tables are read-only](/user-guide/dynamic-tables/decision-guide#label-dynamic-tables-limitations), so a dynamic table isn’t a supported migration target. AIM DMV doesn’t detect a dynamic-table target before it loads, so the load fails. To populate a dynamic table, migrate its base tables and let Snowflake refresh it.
+
+Validation is different: it can compare a source view with a Snowflake table, including a dynamic table. See [Source and target object types](./data-validation-configuration-reference#source-and-target-object-types).
 
 ### ColumnTypeMapping and ColumnNameMapping models
 
@@ -231,7 +328,7 @@ Inferred keys are cached per source table and reused by later workflows against 
 
 Note
 
-Automatic key selection applies to tables. Views don’t expose the catalog metadata needed for inference, so you must set `columnNamesToPartitionBy` explicitly when migrating a view.
+Automatic key selection reads table catalog metadata. Data migration doesn’t migrate views; see [Views and dynamic tables in migration](#views-and-dynamic-tables-in-migration).
 
 Set `columnNamesToPartitionBy` explicitly when you know a better partitioning column than the one AIM DMV would infer, or when a fallback selection (such as a non-unique first column) would create unevenly sized partitions.
 
@@ -293,7 +390,7 @@ Show lessSee more
 | `"cet_as"` | SQL Server and Azure Synapse | Source-side `CREATE EXTERNAL TABLE AS SELECT` writes Parquet to Azure Blob; Snowflake loads from the external stage. SQL Server support requires Azure SQL Managed Instance, SQL Server 2022 or later, or Azure Synapse. Azure SQL Database isn’t supported. |
 | `"export_data"` | BigQuery only | BigQuery `EXPORT DATA` writes Parquet to GCS; Snowflake loads from the external stage. See [Migrating Data from Google BigQuery](../data-migration-validation/migrate-bigquery). |
 | `"cloud_direct"` | SQL Server, Azure Synapse, Redshift, Oracle, Teradata, PostgreSQL, and IBM DB2 | Worker streams results directly to S3, GCS, or Azure Blob and Snowflake loads from the external stage. |
-| `"tpt"` | Teradata only | Accepted for compatibility. The Orchestrator treats `tpt` as `"regular"`. `externalStage` is not required. |
+| `"tpt"` | Teradata only | Legacy alias for `"regular"`. The Orchestrator treats `tpt` as `"regular"`. The Worker uses Teradata Parallel Transporter only when its own configuration allows it and `tbuild` is installed, which is never the case on SPCS. See [Teradata TPT selection](#teradata-tpt-selection). `externalStage` is not required. |
 
 Expand
 
@@ -305,29 +402,94 @@ See [Extraction strategies](#extraction-strategies) for YAML examples and platfo
 
 | Field | Type | Required | Description |
 | --- | --- | --- | --- |
-| `strategy` | `String` (`"none"`, `"checksum"`, `"watermark"`) |  | Synchronization method. `"none"` (default) re-extracts fully on every run. |
-| `checksumExpression` | `String` |  | `checksum` only. Custom SQL aggregate expression that returns a single value per partition (for example a row-version column or `MAX(last_modified)`). Only partitions whose value changed since the last run are cleared and re-extracted. When omitted, the default per-column hash is used. May reference pseudo-columns or system columns (for example `MAX(ORA_ROWSCN)` on Oracle). |
+| `strategy` | `String` (`"none"`, `"full-replace"`, `"checksum"`, `"watermark"`) |  | Synchronization method. `"none"` (default) re-extracts fully on every run and appends the rows. `"full-replace"` re-extracts fully and deletes each partition’s target rows before loading. Rejected for Iceberg targets. |
+| `checksumExpression` | `String` |  | `checksum` only. Any other strategy is rejected at configuration validation. Custom SQL aggregate expression that returns a single value per partition (for example a row-version column or `MAX(last_modified)`). Only partitions whose value changed since the last run are cleared and re-extracted. When omitted, the default per-column hash is used. May reference pseudo-columns or system columns (for example `MAX(ORA_ROWSCN)` on Oracle). |
 | `watermarkColumn` | `String` | `watermark` only | Monotonically increasing column name. May be a **pseudo-column or system column** not present in the migrated schema (for example Oracle `ORA_ROWSCN`). AIM DMV projects it into the extract for change detection but does not migrate it to the target. |
-| `trackModifications` | `Boolean` |  | `watermark` only. If `true`, uses the primary key to deduplicate modified rows after `COPY INTO`. Requires `primaryKeyColumns`. |
-| `trackDeletions` | `Boolean` |  | `watermark` only. If `true`, extracts a full primary-key snapshot of each source partition on every incremental run and deletes target rows absent from the snapshot before loading new rows. Requires `primaryKeyColumns`. Independent of `trackModifications`; the two can be combined. |
+| `trackModifications` | `Boolean` |  | `watermark` only. If `true`, merges modified rows into the target by primary key after `COPY INTO` (warehouse loading only). Requires `primaryKeyColumns`, configured or inferred. Without a key, the merge doesn’t run and updated rows are appended. With `watermark`, it’s rejected with `loading.strategy: snowpipe`. Other strategies accept the flag but never act on it. |
+| `trackDeletions` | `Boolean` |  | `watermark` only. Any other strategy is rejected at configuration validation. If `true`, extracts a full primary-key snapshot of each source partition on every incremental run and deletes target rows absent from the snapshot before loading new rows. Requires `primaryKeyColumns`. Independent of `trackModifications`; the two can be combined. Supported with Snowpipe loading. |
 
 Expand
 
 Show lessSee more
 
-Both incremental strategies carry a cost and a coverage caveat:
+Both `trackModifications` and `trackDeletions` are **off by default**. With the `watermark` strategy, leaving them off changes what an incremental run does to updated and deleted source rows: updated rows are appended as a second version, and deleted rows stay on the target. See [Choosing a synchronization strategy](#choosing-a-synchronization-strategy).
 
-- **`checksum`** recomputes a checksum on the source for **every partition on every run**, so the detection pass itself has a fixed cost proportional to table size. A custom `checksumExpression` over an indexed row-version or SCN column is usually much cheaper than the default per-column hash.
-- **`watermark`** only reads the watermark column, but it can’t see rows that changed without the watermark advancing.
+### Choosing a synchronization strategy
 
-Warning
+The following table compares the strategies by what each one compares, what a run reloads, how it treats updates and deletes, and where it applies. Each strategy has its own subsection after the table.
 
-With the `watermark` strategy, `trackModifications` and `trackDeletions` are **off by default**, which changes what an incremental run does to updated and deleted source rows:
+| Strategy | What it compares | What a run reloads | Updates and deletes | Native targets | Iceberg targets |
+| --- | --- | --- | --- | --- | --- |
+| `none` (default) | Nothing. Every run extracts every row. | All rows, appended to the target. | Not reflected. A rerun adds a second copy of each row, and deleted rows stay. | Supported | Supported. A second `none` run against an existing table fails. |
+| `full-replace` | Nothing. Every run extracts every row. | All rows. Each partition’s target rows are deleted before the partition loads. | Reflected. The partition is rebuilt from the source each run. | Supported | Rejected at configuration validation. |
+| `checksum` | One checksum per partition, computed on the source. | Only partitions whose checksum changed, in full. | Reflected in each changed partition, because the partition is rebuilt. | Supported | Supported on a Snowflake-managed table this migration creates. A later run reuses that table after a completed run. |
+| `watermark` | The highest stored value of `watermarkColumn`. | Rows above the stored value. | Inserts are appended. Updates and deletes are missed unless `trackModifications` and `trackDeletions` are set. | Supported | Supported on a Snowflake-managed table this migration creates. A later run reuses that table. With `trackModifications` and a primary key, that later run merges changed rows. |
 
-- **Updated rows are duplicated.** Without `trackModifications: true`, a row whose watermark advances is re-extracted and **appended**, leaving both the old and new versions on the target. Set `trackModifications: true` (with `primaryKeyColumns`) to deduplicate by primary key after the load.
-- **Deleted rows are not removed.** Without `trackDeletions: true`, a row deleted at the source **stays** on the target. Set `trackDeletions: true` (with `primaryKeyColumns`) to delete target rows that no longer exist at the source.
+Expand
 
-Enable both when the source table receives updates or deletes and you need the target to stay in sync. They apply only to the `watermark` strategy.
+Show lessSee more
+
+#### none (default)
+
+- **Compares:** Nothing. The run doesn’t read the target or the previous run’s state. The partition stores only the strategy name.
+- **Reloads:** Every row in every partition, on every run.
+- **Inserts, updates, and deletes:** Every run appends the extracted rows. Source updates and deletes never reach the target. A rerun against a populated target duplicates every row.
+- **Required keys or columns:** None.
+- **Performance and cost:** One full extract and load per run. Cost grows with table size, and the source does no change detection.
+- **Blind spots and failure cases:** Rerunning against a target that already has rows duplicates them. Empty the target, or switch to `full-replace`, before a second load.
+- **Native and Iceberg:** Supported on native targets and on Iceberg targets. A second `none` run against an existing Iceberg table fails with `IcebergTargetExistsError` instead of appending.
+- **Choose it when:** The table loads once, such as the initial load of a set of tables, or the table is small enough to reload in full.
+- **Avoid it when:** The workflow reruns against a populated target without clearing it, or the target must follow later source changes.
+
+#### full-replace
+
+- **Compares:** Nothing. Like `none`, it doesn’t compare the source with the target or with a previous run.
+- **Reloads:** Every row in every partition, on every run. Before each partition loads, the target rows for that partition are deleted. An unpartitioned table is cleared with a whole-table delete.
+- **Inserts, updates, and deletes:** After a successful run, the target holds the source rows for each partition the run covers. Updates and deletes are reflected because the partition is rebuilt. Any row in the target partition that the source doesn’t supply is deleted, including rows written by other processes.
+- **Required keys or columns:** None. It doesn’t need a watermark or a primary key. It rejects `checksumExpression` and `trackDeletions`.
+- **Performance and cost:** The same extraction cost as `none`, plus one `DELETE` on the Snowflake target per partition. The first load skips the delete because the target doesn’t exist yet.
+- **Blind spots and failure cases:** The delete runs before the load. If the load fails after the delete, the partition has no rows until a later run completes. The next run overwrites any manual change to the target.
+- **Native and Iceberg:** Native targets only. An Iceberg target is rejected at configuration validation, with a message that begins “Synchronization strategy ‘full-replace’ is not supported for Iceberg targets”. `scai data migrate create-workflow` accepts `full-replace` for an Iceberg target, and the orchestrator then rejects it. The delete runs on Snowflake, so it works for every supported source platform.
+- **Choose it when:** You want a repeatable full reload that matches the source on each run, and the table has no reliable watermark or change signal. Use it to replace rows left by an earlier `none` run.
+- **Avoid it when:** The target holds rows the workflow doesn’t own, the table is too large to reload on every run, or the target is an Iceberg table.
+
+#### checksum
+
+- **Compares:** One checksum per partition, computed on the source on every run and compared with the value stored by the last successful run. The default checksum hashes a normalized set of columns. `checksumExpression` replaces the hash with a SQL aggregate over the partition.
+- **Reloads:** The checksum of every partition, on every run. A partition whose checksum changed is cleared and reloaded in full. Unchanged partitions aren’t extracted.
+- **Inserts, updates, and deletes:** A change that moves a partition’s checksum is reflected for that whole partition, so updated and deleted rows in a changed partition are reflected too. A change the checksum can’t see isn’t reflected. See [Changes a checksum may not detect](#changes-a-checksum-may-not-detect).
+- **Required keys or columns:** None. The partition columns set how much data a changed row reloads. `checksumExpression` must not contain `;`.
+- **Performance and cost:** The source computes the checksum of every partition on every run, even when nothing changed. Cost grows with table size. An expression over an indexed row-version or SCN column is usually much cheaper than the default hash.
+- **Blind spots and failure cases:** The default hash skips or normalizes some column types, so changes confined to them don’t trigger a reload. A custom expression sees only what it measures. A partition whose expression returns `NULL` is treated as unchanged on later runs. The first run always extracts every partition.
+- **Native and Iceberg:** Supported on native targets. Supported on a Snowflake-managed Iceberg table this migration creates from a relational extract (`catalog: SNOWFLAKE`, with no `sourceDataStage`). A later run reuses that table when an earlier run of the same table completed, and it clears and reloads a partition whose checksum changed. `scai data migrate create-workflow` rejects `checksum` for an Iceberg target before the workflow starts.
+- **Choose it when:** The table has no reliable monotonic column, such as a dimension table, and you need any change detected at partition granularity.
+- **Avoid it when:** Reloading one changed partition is too costly for the table, or the checksum misses the columns that change and no expression fixes that.
+
+#### watermark
+
+- **Compares:** The highest value of `watermarkColumn` stored by the last successful run. Before `COPY INTO`, a run reads the maximum from its staged rows and keeps it as a candidate. The candidate becomes the stored maximum only when the partition completes, after `COPY INTO` succeeds.
+- **Reloads:** Rows whose watermark value is greater than the stored maximum. With `trackDeletions`, the run also extracts the full primary-key list of each partition.
+- **Inserts, updates, and deletes:**
+  - Inserts are appended.
+  - Updates are appended as a second version unless `trackModifications: true`. With it, changed rows are merged into the target by primary key. This applies to warehouse loading only.
+  - Deletes aren’t reflected unless `trackDeletions: true`. With it, target rows whose primary key is missing from the source snapshot are deleted before the new rows load. Deletion tracking runs on incremental runs, not on the initial load.
+- **Required keys or columns:** `watermarkColumn` is required and must increase on every change you want to migrate. It can be a pseudo-column or system column that isn’t migrated, such as Oracle `ORA_ROWSCN`. `primaryKeyColumns` is required for `trackDeletions`. `trackModifications` merges only when a primary key is available. Keys can be configured or inferred.
+- **Performance and cost:** Each run reads the watermark column of each partition. `trackDeletions` scans the full primary-key set of each partition on every run, which adds load on the source for large partitions. `trackModifications` stages the changed rows in a transient table and runs a `MERGE` on the warehouse.
+- **Blind spots and failure cases:**
+  - A row updated without advancing `watermarkColumn` is never extracted again.
+  - A row whose watermark value isn’t above the stored maximum is never extracted, including late-arriving rows with older values.
+  - Deletes aren’t seen without `trackDeletions`.
+  - An empty partition has no candidate, so the stored maximum doesn’t change and the next run starts from the same point.
+  - If `COPY INTO` succeeds but the partition doesn’t reach completion, the stored maximum doesn’t advance. The next run extracts those rows again and appends them, unless `trackModifications` merges them by primary key.
+- **Native and Iceberg:** Supported on native targets. Supported on the same Snowflake-managed Iceberg tables as `checksum`. The first load registers the extracted Parquet with `ADD_FILES_COPY`. A later run with `trackModifications: true` and a primary key merges changed rows into the table. `resetPartitions: enabledWithDedup` is rejected for an Iceberg target. `trackModifications` is rejected with `loading.strategy: snowpipe`. `trackDeletions` works with Snowpipe. `scai data migrate create-workflow` rejects `watermark` for an Iceberg target before the workflow starts.
+- **Choose it when:** The table has a reliable column that increases on every change you need to migrate, such as `UPDATED_AT`, and a full reload is too costly. Add `trackModifications` and `trackDeletions` when the source updates or deletes rows.
+- **Avoid it when:** No column increases on every change, updates don’t change the column, or the source backfills rows with older values.
+
+#### State and reruns
+
+- A run stores its state per partition in `PARTITION_METADATA.SYNCHRONIZATION_DATA`. `none` and `full-replace` store only their strategy name. `checksum` stores the checksum. `watermark` stores the column and the stored maximum.
+- A table with no stored state is extracted in full, whichever strategy you choose. A table that’s empty on the first run has no stored maximum, so the first run after rows appear extracts all of them.
+- A preflight records partition metadata like any other run. Don’t run one between a full load and later `checksum` or `watermark` runs of the same tables. See [When to run a preflight](#when-to-run-a-preflight).
 
 ### Changes a checksum may not detect
 
@@ -355,24 +517,52 @@ If one of these applies to a column you need to track:
 
 ### Affinity
 
-Affinity routes workflow tasks to specific Workers. Use it when you run more than one Worker pool and need each workflow to land on the right pool, for example SPCS Workers for one source and on-premises Workers for another, or separate pools per team.
+Affinity routes workflow tasks to specific Workers. Use it when you run more than one Worker group and need each workflow to land on the right group, for example SPCS Workers for one source and on-premises Workers for another, or separate pools per team.
 
 Set `affinity` on the workflow YAML and the same value (or a matching wildcard) on the Worker:
 
-- Workflow: top-level `affinity` in the migration or validation YAML
+- Workflow: top-level `affinity` in the migration or validation YAML. There’s no per-table affinity: every task that the Orchestrator creates for the workflow carries the workflow’s value.
 - Worker TOML: `[application].affinity`
 - SPCS service: `AGENT_AFFINITY` in the container environment
+
+The Orchestrator matches workflows by affinity too, through `DATA_MIGRATION_ORCHESTRATOR_AFFINITY`. Leave it unset. See [Orchestrator affinity](#orchestrator-affinity).
 
 The string format is yours to define. Examples of valid values: `sql-server`, `DEV_SERVER`, `onprem-redshift`, `::blue::`.
 
 Matching rules:
 
 - A task without affinity is picked up by any Worker.
-- A Worker without affinity picks up any task.
-- A task with a given affinity is not picked up by a Worker with a different affinity.
-- A Worker affinity may include `*` wildcards. For example, Worker affinity `team-*` matches workflow affinities `team-blue` and `team-red`.
+- A Worker without affinity picks up any task, including tasks that carry an affinity.
+- A Worker with an affinity also picks up tasks without affinity.
+- Otherwise, the Worker’s affinity must equal the task’s affinity exactly. The comparison is case-sensitive: `S1` doesn’t match `s1`.
+- A Worker affinity can include `*` wildcards. For example, Worker affinity `team-*` matches workflow affinities `team-blue` and `team-red`. Only the Worker (or Orchestrator) value is a pattern; the workflow’s value is always compared as literal text. If a Worker affinity contains `*`, any `%` or `_` in that value also acts as a wildcard, so don’t use those characters there.
 
 Validation workflows use the same `affinity` field and the same matching rules as migration.
+
+#### Project default affinity
+
+Every SnowConvert AI project has a default affinity, so a workflow and a Worker that you create in the same project match even when you never choose a value. The default has the form `<project-name>-<id>`, for example `northwind-3f9a1c2b`: the project name in lowercase with other characters replaced by hyphens, followed by the first eight hexadecimal digits of the project ID. It’s stored as `default_affinity` in `.scai/config/project.yml`, or in `.scai/config/project.local.yml`, which takes precedence. Change it with `scai project defaults set --affinity <value>`.
+
+When you omit `--affinity`, these commands apply the project default:
+
+- `scai data migrate generate-config` and `scai data validate generate-config` write it as the workflow’s `affinity`.
+- `scai data worker setup` writes it as the SPCS service’s `AGENT_AFFINITY`.
+- `scai data worker generate-config` writes it as `[application].affinity`.
+
+A value that you pass with `--affinity` replaces the default for that command only. This has two consequences when you build Workers or workflows outside these commands:
+
+- A Worker whose affinity you set by hand, for example `AGENT_AFFINITY: s1` in a service specification, doesn’t pick up workflows that carry the project default. Generate those workflows with `--affinity s1`, or set `affinity: s1` in the YAML.
+- A workflow that you generate with `--affinity s1` isn’t picked up by Workers that carry the project default. When you submit it, `scai data migrate create-workflow` (or `scai data validate create-workflow`) warns that the workflow’s affinity differs from the project’s default affinity. The warning is expected when you route on purpose; check that a running Worker carries the same value.
+
+#### Orchestrator affinity
+
+The Orchestrator reads its affinity from `DATA_MIGRATION_ORCHESTRATOR_AFFINITY` and claims only the workflows that match it, using the rules above. When the variable is unset, the Orchestrator claims every workflow and creates each workflow’s tasks with that workflow’s affinity, which is what routes them to the right Workers. `scai data orchestrator setup` and `scai data orchestrator start` never set it.
+
+Keep the Orchestrator without an affinity, including when you route work to several Worker groups. One Orchestrator serves every affinity. If you set the variable, workflows whose affinity doesn’t match stay `pending`. The Orchestrator logs its value at startup as `Orchestrator affinity: <value>`, where `None` means unset.
+
+#### Affinity in rate-limit rules
+
+The `AFFINITY` column of a [rate-limit](#rate-limiting) rule is compared with each task’s affinity exactly, without wildcards. Set it to the workflow affinity you want to cap. A rule without `AFFINITY` applies to tasks of every affinity.
 
 ### INTERVAL data type handling
 
@@ -428,7 +618,7 @@ Each table can set **`extraction.strategy`** (or inherit from **`defaultTableCon
 | **`export_data`** | BigQuery only | Server-side `EXPORT DATA` writes Parquet to GCS. Snowflake loads from an external stage on the same prefix. See [Migrating Data from Google BigQuery](../data-migration-validation/migrate-bigquery). |
 | **`cloud_direct`** | SQL Server, Azure Synapse, Redshift, Oracle, Teradata, PostgreSQL, and IBM DB2 | Worker streams query results directly to S3, GCS, or Azure Blob, skipping local disk and re-upload. On **IBM DB2** this is the preferred extract when an object store and external stage are available. See [Migrating Data from IBM DB2](../data-migration-validation/migrate-db2). |
 | **`regular`** (default) | All | Worker pulls data over the source connection, then uploads to the Snowflake internal stage. On **PostgreSQL**, **`regular`** with COPY (`use_copy = true`) is the recommended extract. On **IBM DB2**, **`regular`** is the default when the workflow omits a strategy. |
-| **`tpt`** | Teradata only | Accepted for compatibility. The Orchestrator treats `tpt` as `regular`, so the Worker reads through the Teradata driver. Use `write_nos` for a server-side export. See [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). |
+| **`tpt`** | Teradata only | Legacy alias for **`regular`**. The Orchestrator treats `tpt` as `regular`. A Teradata Worker uses Teradata Parallel Transporter only when its own configuration allows it and `tbuild` is installed, which is never the case on SPCS. Use `write_nos` for a server-side export. See [Teradata TPT selection](#teradata-tpt-selection). |
 
 Expand
 
@@ -515,7 +705,7 @@ defaultTableConfiguration:
     externalStage: TARGET_DB.DATA_MIGRATION.CLOUD_LANDING
 ```
 
-**Teradata tpt:**
+**Teradata tpt (legacy alias for `regular`):**
 
 `tpt` is accepted for compatibility and runs as `regular`.
 
@@ -564,14 +754,15 @@ The Worker configuration file uses [TOML](https://toml.io/) format. For cloud da
 | --- | --- | --- | --- |
 | Top level | `selected_task_source` | `String` | Required. Use `"snowflake_stored_procedure"`. |
 | `[task_source.snowflake_stored_procedure]` | `connection_name` | `String` | Snowflake connection name for task-queue stored procedures, or `"@SPCS_CONNECTION"` on SPCS. |
-| `[application]` | `max_parallel_tasks` | `Integer` | Maximum parallel tasks (threads). |
-| `[application]` | `task_fetch_interval` | `Integer` | Seconds between idle polls for new tasks. |
+| `[application]` | `max_parallel_tasks` | `Integer` | Maximum parallel tasks (threads). Defaults to `4`. The SPCS Worker image uses `2` unless you set `MAX_PARALLEL_TASKS`. See [Worker container: core settings](#worker-container-core-settings). |
+| `[application]` | `task_fetch_interval` | `Integer` | Seconds between idle polls for new tasks. Defaults to `5`. |
 | `[application]` | `lease_refresh_interval` | `Integer` | Optional. Seconds between task lease renewals (default `120`). |
 | `[application]` | `affinity` | `String` | Optional. Worker affinity for task routing. May include `*` wildcards. See [Affinity](#affinity). |
 | `[application]` | `snowflake_database_for_metadata` | `String` | Optional. Database holding the migration and validation metadata procedures (default `SNOWCONVERT_AI`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_DATABASE_FOR_METADATA`. |
 | `[application]` | `snowflake_schema_for_data_migration_metadata` | `String` | Optional. Schema holding the migration task-queue procedures (default `DATA_MIGRATION`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_MIGRATION_METADATA`. |
 | `[application]` | `snowflake_schema_for_data_validation_metadata` | `String` | Optional. Schema holding validation-specific objects such as the results stage and file format (default `DATA_VALIDATION`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA`. |
 | `[application]` | `local_results_directory` | `String` | Optional. Base directory for exported Parquet/CSV before upload. |
+| `[idle_shutdown]` | `minutes` | `Integer` | Optional. Minutes without work after which the Worker shuts itself down (default `60`). `DM_IDLE_SHUTDOWN_MINUTES` overrides it. See [Idle shutdown settings](#idle-shutdown-settings). |
 | `[connections.source.*]` | (per engine) | `Object` | Source database connection. Typically one active source section. |
 | `[connections.source.*]` | `plugin_class` | `String` | Optional. Fully qualified class name of a custom extraction plugin that replaces the built-in extractor for this source connection. See [Preparing a custom extraction plugin](../data-migration-validation/data-migration-advanced-configuration#preparing-a-custom-extraction-plugin). |
 | `[connections.source.sqlserver]` | `prefer_native_driver` | `Boolean` | Optional. Defaults to `true`. Set to `false` to force the ODBC fallback. |
@@ -650,7 +841,7 @@ The database and migration schema keys are read from **TOML or the CLI only** at
 
 Note
 
-SPCS and container entrypoints may copy Orchestrator environment values into the Worker TOML when the container starts, which is why an SPCS Worker can appear to honor the environment variables directly.
+The Worker container image is the exception. Its entrypoint writes `CUSTOM_SNOWFLAKE_DATABASE_FOR_METADATA`, `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_MIGRATION_METADATA`, and `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA` into these `[application]` keys at startup, and `scai data worker setup` sets all three in the service specification. See [Orchestrator and Worker settings](#shared-environment-variables).
 
 See [Customizing metadata database and schema names](../data-migration-validation/required-privileges#customizing-metadata-database-and-schema-names) for the privileges these objects need.
 
@@ -701,33 +892,65 @@ Warning
 
 Command substitution executes arbitrary shell commands with the Worker’s own privileges, so treat the configuration file as trusted code. It’s disabled by default: set `SECRET_MANAGERS_ALLOW_CMD_SUBSTITUTION=true` only on hosts where you control who can edit Worker configuration, and prefer a REST provider when one is available.
 
-### Environment variables
+## Environment variables
 
-Most configuration lives in the workflow YAML and Worker TOML. These environment variables cover the settings that don’t:
+Most settings live in the workflow YAML and the Worker TOML. Environment variables matter in three places:
 
-**Orchestrator:**
+- **The Orchestrator process** reads its Snowflake connection, metadata locations, and tuning settings from its environment.
+- **Settings shared by the Orchestrator and Workers**, such as task retries and metadata storage mode, are read by both processes. Set them to the same values on both.
+- **The Worker container image** that `scai data worker setup` deploys to SPCS has no Worker TOML of its own. At startup, its entrypoint builds the Worker TOML from environment variables. A Worker that you start from a TOML file on your own host doesn’t run that entrypoint, so the Worker container variables don’t affect it unless a row says otherwise. Set the TOML key listed in each table instead.
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `SNOWFLAKE_CONNECTION_NAME` |  | Required. Name of the Snowflake connection the Orchestrator uses, matching an entry in your connections file. |
-| `CUSTOM_SNOWFLAKE_DATABASE_FOR_METADATA` | `SNOWCONVERT_AI` | Metadata database. See [Matching metadata locations](#matching-metadata-locations). |
-| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_MIGRATION_METADATA` | `DATA_MIGRATION` | Migration metadata schema. |
-| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA` | `DATA_VALIDATION` | Validation metadata schema. |
-| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_COMMON_METADATA` | `COMMON` | Shared metadata schema. |
-| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_TEMP_METADATA` | `TEMP` | Schema for transient Snowpipe stage and pipe objects. |
-| `SNOWFLAKE_METADATA_STORAGE_MODE` | Probed at startup | `HYBRID`, `STANDARD`, or `ICEBERG`. See [Metadata storage mode](#metadata-storage-mode). |
-| `SNOWFLAKE_METADATA_EXTERNAL_VOLUME` | Unset | Required when the storage mode is `ICEBERG`. There’s no fallback if it’s missing. |
-| `DM_IDLE_SHUTDOWN_MINUTES` | `60` | How long the Orchestrator stays up with no work before shutting itself down. |
+The tables in this section use these columns:
+
+- **Required**: whether the process fails, or the strategy doesn’t work, without the variable.
+- **Default**: the value used when the variable is unset. “None” means the setting is left out.
+- **TOML key** (Worker tables only): the Worker TOML key that the container entrypoint writes, which is also the key to set on a Worker you run from TOML.
+- **Set by `scai`**: whether `scai` writes the variable into the SPCS service specification. “No” means you add the variable to the specification yourself.
+
+Values marked **Secret** must come from a Snowflake `SECRET` bound in the specification’s `secrets` section, not from `env`, because `DESCRIBE SERVICE` shows `env` values. See [Passing other secrets to the Worker](./manual-spcs-worker-setup#passing-other-secrets-to-the-worker).
+
+Important
+
+`scai data worker update` keeps variables that you added to the service specification yourself, because it reuses the deployed specification. It re-creates the service with the new image, which returns the service to one instance. `scai data worker setup --yes` drops the service and re-creates it from its own specification, so add your variables again after you run it.
+
+### Orchestrator settings
+
+The Orchestrator reads these variables from its own environment. On SPCS, add the ones that `scai` doesn’t set to the Orchestrator service specification:
+
+| Variable | Required | Default | Description | Set by `scai` |
+| --- | --- | --- | --- | --- |
+| `SNOWFLAKE_CONNECTION_NAME` | Local Orchestrator, unless you set `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, and `SNOWFLAKE_PASSWORD` | None | Name of a connection in your connections file. On SPCS, the Orchestrator authenticates with the service’s OAuth token and ignores this variable. | Yes, for a local Orchestrator |
+| `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD` | Local Orchestrator without `SNOWFLAKE_CONNECTION_NAME` | None | Password authentication when no connection name is set. The Orchestrator stops if any of the three is missing. `SNOWFLAKE_PASSWORD` is **Secret**. | No |
+| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_COMMON_METADATA` | No | `COMMON` | Shared metadata schema. | Yes |
+| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_TEMP_METADATA` | No | `TEMP` | Schema for transient Snowpipe stage and pipe objects. | Yes |
+| `SNOWFLAKE_METADATA_EXTERNAL_VOLUME` | When `SNOWFLAKE_METADATA_STORAGE_MODE` is `ICEBERG` | None | External volume for Iceberg metadata tables. There’s no fallback to native tables if it’s missing. | No |
+| `SNOWFLAKE_USE_HYBRID_TABLES` | No | None | Legacy storage-mode selector. `1`, `true`, `yes`, or `on` selects `HYBRID`; `0`, `false`, `no`, or `off` selects `STANDARD`. Prefer `SNOWFLAKE_METADATA_STORAGE_MODE`. Setting both to different modes, or this variable to true with `ICEBERG`, is an error. | No |
+| `DM_SPCS_SUSPEND_AGENT_SERVICE` | No | None, so the Orchestrator suspends no Worker | On SPCS, the one Worker service that the Orchestrator suspends at idle shutdown, before it suspends itself. Takes a single fully qualified service name; `scai` qualifies the name that you pass to `--worker-service-name`. Other Worker services suspend only themselves. See [Idle shutdown settings](#idle-shutdown-settings). | Yes: `DATA_EXCHANGE_WORKER_SERVICE` in the migration metadata schema (`SNOWCONVERT_AI.DATA_MIGRATION` by default), or the name from `scai data orchestrator setup --worker-service-name` |
+| `DM_SPCS_SUSPEND_ORCHESTRATOR_SERVICE` | No | The Orchestrator’s own service, from the `SNOWFLAKE_SERVICE_NAME` that SPCS sets | On SPCS, the service that the Orchestrator suspends last at idle shutdown, normally its own. | Yes: `DATA_MIGRATION_SERVICE` in the migration metadata schema (`SNOWCONVERT_AI.DATA_MIGRATION` by default) |
+| `ORCHESTRATOR_MAX_TASK_WORKERS` | No | `8` | Number of persistent threads the Orchestrator uses to run tasks. Positive integer. An invalid or non-positive value falls back to the default with a warning. | No |
+| `ORCHESTRATOR_TASK_PULL_INTERVAL_SECONDS` | No | `20` | Seconds between Orchestrator pulls from the task queue. Positive integer. An invalid or non-positive value falls back to the default with a warning. | No |
+| `ORCHESTRATOR_WORKFLOW_CYCLE_INTERVAL_SECONDS` | No | `10` | Seconds between workflow cycles. Non-negative integer; `0` is allowed. An invalid or negative value falls back to the default with a warning. | No |
+| `ORCHESTRATOR_SF_CONNECTION_MAX_AGE_SECONDS` | No | `10800` (3 hours) | Age after which the Orchestrator replaces a Snowflake connection at the next safe point. `0` or a negative value turns age-based replacement off. A value that isn’t an integer falls back to the default with a warning. | No |
+| `DATA_MIGRATION_ORCHESTRATOR_AFFINITY` | No | None, so the Orchestrator claims every workflow | Orchestrator affinity. Leave it unset. When set, the Orchestrator claims only matching workflows and the rest stay `pending`. See [Orchestrator affinity](#orchestrator-affinity). | No |
 
 Expand
 
 Show lessSee more
 
-**Worker:**
+### Orchestrator and Worker settings
 
-| Variable | Default | Purpose |
-| --- | --- | --- |
-| `SECRET_MANAGERS_*` |  | External secret resolution. See [Resolving credentials from an external secret manager](#external-secret-manager). |
+Both processes read these variables. Set each one to the same value for the Orchestrator and every Worker, except `DM_IDLE_SHUTDOWN_MINUTES`, which each process applies to itself:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `DM_IDLE_SHUTDOWN_MINUTES` | No | `60` | Minutes without work after which the process shuts itself down. Each process applies its own value. On a Worker, it overrides the TOML key. A value that isn’t a positive integer falls back to `60`, not to the TOML key, with a warning. See [Idle shutdown settings](#idle-shutdown-settings). | `[idle_shutdown]` `minutes` | No |
+| `DMVF_TASK_MAX_RETRIES` | No | `3` | Retries a failed task gets after its first attempt, so up to four attempts by default. Tasks that aren’t safe to repeat always get `0`. Non-negative integer; any other value is rejected with an error. | None | No |
+| `DMVF_TASK_RETRY_BACKOFF_SECONDS` | No | `30` | Delay before the first retry. Each later retry waits twice as long as the one before. `0` retries immediately. Non-negative integer. | None | No |
+| `DMVF_TASK_RETRY_BACKOFF_MAX_SECONDS` | No | `600` | Upper bound on any one retry delay. Non-negative integer. | None | No |
+| `SNOWFLAKE_METADATA_STORAGE_MODE` | On Workers, when metadata uses `ICEBERG` | Orchestrator: probed at startup. Worker: native tables. | `HYBRID`, `STANDARD`, or `ICEBERG`, case-insensitive. The Orchestrator uses it to choose how metadata tables are created. See [Metadata storage mode](#metadata-storage-mode). Workers don’t probe: they only check whether the value is `ICEBERG`, and use it to write their events in the form that Iceberg metadata tables expect. | None | No |
+| `CUSTOM_SNOWFLAKE_DATABASE_FOR_METADATA` | No | `SNOWCONVERT_AI` | Metadata database. A Worker that you run from TOML reads only the TOML key. See [Matching metadata locations](#matching-metadata-locations). | `[application]` `snowflake_database_for_metadata` | Yes |
+| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_MIGRATION_METADATA` | No | `DATA_MIGRATION` | Migration metadata schema. A Worker that you run from TOML reads only the TOML key. | `[application]` `snowflake_schema_for_data_migration_metadata` | Yes |
+| `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA` | No | `DATA_VALIDATION` | Validation metadata schema. A Worker that you run from TOML uses the TOML key, and falls back to this variable when the key is unset. | `[application]` `snowflake_schema_for_data_validation_metadata` | Yes |
 
 Expand
 
@@ -735,9 +958,185 @@ Show lessSee more
 
 Note
 
-The storage mode is resolved once and cached for the life of the process. **Restart the Orchestrator** after changing `SNOWFLAKE_METADATA_STORAGE_MODE`.
+The Orchestrator resolves the storage mode once and caches it for the life of the process. **Restart the Orchestrator** after you change `SNOWFLAKE_METADATA_STORAGE_MODE`.
 
-On SPCS, Snowflake injects service identity variables such as `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_HOST`, and `SNOWFLAKE_WAREHOUSE` automatically. Don’t set them yourself.
+A Worker that you run from TOML also reads the `SECRET_MANAGERS_*` variables. See [Resolving credentials from an external secret manager](#external-secret-manager).
+
+### Idle shutdown settings
+
+The Orchestrator and every Worker shut themselves down after a period without work. Idle shutdown is always on, and each process measures its own period:
+
+| Process | Idle when | Period | On SPCS | On your own hosts or in Kubernetes |
+| --- | --- | --- | --- | --- |
+| Orchestrator | It has no active, pending, or upcoming work. | `DM_IDLE_SHUTDOWN_MINUTES`, default `60` | Suspends the Worker service in `DM_SPCS_SUSPEND_AGENT_SERVICE`, then the service in `DM_SPCS_SUSPEND_ORCHESTRATOR_SERVICE`. | Exits. |
+| Worker | It has pulled no tasks and holds none. | `DM_IDLE_SHUTDOWN_MINUTES`, then `[idle_shutdown]` `minutes`, default `60` | Suspends its own service. | Exits. |
+
+Expand
+
+Show lessSee more
+
+- `scai` sets neither `DM_IDLE_SHUTDOWN_MINUTES` nor `[idle_shutdown]` `minutes`, so the services it creates use 60 minutes.
+- `DM_SPCS_SUSPEND_AGENT_SERVICE` names one Worker service. Every other Worker service is suspended only by its own idle shutdown.
+- If a Worker can’t suspend its own service, it stays up and retries after 1, 2, 4, 8, and 16 minutes, then waits for another full idle period.
+- A suspended service stays suspended until you resume it with `scai data orchestrator start` or `scai data worker start`.
+
+For what this means when you run several Workers, and how to resume them before the next wave, see [Idle shutdown with several Workers](../data-migration-validation/deploy-workers#idle-shutdown-with-several-workers).
+
+### Worker container: Core settings
+
+These variables apply to every Worker container, whatever the source platform:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `DATA_SOURCE_TYPE` | For every source except SQL Server | `sqlserver` | Selects the driver the container installs at startup and the source section it writes. For the platforms in this documentation, use `sqlserver`, `azure_synapse`, `redshift`, `oracle`, `postgresql`, or `teradata`. An unrecognized value stops the container. Leaving it unset for another platform installs the SQL Server driver and writes a SQL Server connection. | Section name, for example `[connections.source.redshift]` | Yes |
+| `DATA_SOURCE_HOST` | Yes | None | Source host. For Azure Synapse, the workspace SQL endpoint. | `host` | Yes |
+| `DATA_SOURCE_PORT` | For `redshift`, `oracle`, and `postgresql` | `teradata`: `1025`. `azure_synapse`: `1433`. `sqlserver`: `443`. Others: none. | Source port. Without a value for Redshift, Oracle, or PostgreSQL, the Worker can’t parse its configuration and exits. For SQL Server, set it explicitly: the fallback is `443`, not the SQL Server default `1433`. | `port` | Yes |
+| `DATA_SOURCE_DATABASE` | Yes | None | Source database. For Oracle, the service name. For Azure Synapse, the dedicated pool name, or `master` for a serverless pool. | `database` | Yes |
+| `DATA_SOURCE_USERNAME` | For password authentication | None | Source user. Not used with Azure Synapse `azure_ad` mode. | `username` | Yes, from the `username` key of the source `PASSWORD` secret |
+| `DATA_SOURCE_PASSWORD` | For password authentication | None | **Secret.** Source password. Not used with Azure Synapse `azure_ad` mode. | `password` | Yes, from the `password` key of the source `PASSWORD` secret |
+| `MAX_PARALLEL_TASKS` | No | `WORKER_COUNT`, which the image sets to `2` | Tasks each Worker instance runs at once. The Worker TOML default is `4`, so a container Worker runs half as many tasks as a TOML Worker unless you set this variable. Size instance resources to match. See [Instance count and resource sizing](./manual-spcs-worker-setup#instance-count-and-resource-sizing). | `[application]` `max_parallel_tasks` | No |
+| `WORKER_COUNT` | No | `2` | Older name for `MAX_PARALLEL_TASKS`. Used only when `MAX_PARALLEL_TASKS` is unset. | `[application]` `max_parallel_tasks` | No |
+| `AGENT_AFFINITY` | No | None, so the Worker picks up any task. `scai data worker setup` always sets it. | Worker affinity. Can include `*` wildcards. See [Affinity](#affinity). | `[application]` `affinity` | Yes, from `--affinity`, or the [project default affinity](#project-default-affinity) when you omit it |
+| `PREFER_NATIVE_DRIVER` | No | None, so the native driver is used | `true` or `false`, case-insensitive. Any other value stops the container. `false` forces the ODBC fallback. | `prefer_native_driver` | No |
+| `DATA_SOURCE_SESSION_LABEL` | No | None | Label appended to the reserved `SNOWFLAKE-AIM-DMV/<version>` session identifier: `program_name` on SQL Server and Azure Synapse, `application_name` on Redshift and PostgreSQL. Oracle and Teradata ignore it; use `ORACLE_CLIENT_INFO` or `TERADATA_QUERY_BAND` instead. | `session_label` | No |
+
+Expand
+
+Show lessSee more
+
+The image fixes some TOML values that no environment variable changes: `task_fetch_interval = 5` and `debug_mode = false` for every source, `use_bcp = true` for SQL Server, and `auth_method = "standard"` with `auto_detect_driver = false` for Redshift. To change them, run the Worker from your own TOML.
+
+### Worker container: Snowflake connection
+
+On SPCS, keep the default connection. The Worker then authenticates with the service’s OAuth token and uses the `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_HOST`, `SNOWFLAKE_DATABASE`, and `SNOWFLAKE_SCHEMA` variables that Snowflake sets in every service container. Don’t set those four yourself. Snowflake doesn’t set `SNOWFLAKE_WAREHOUSE`. For more information, see [Snowpark Container Services: SQL execution](/developer-guide/snowpark-container-services/spcs-execute-sql). The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `SNOWFLAKE_CONNECTION_NAME` | No | `@SPCS_CONNECTION` | `@SPCS_CONNECTION` uses the SPCS OAuth token. Outside SPCS, set `MY_SNOWFLAKE_CONNECTION` to use the connection that the container builds from `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, and `SNOWFLAKE_PASSWORD`. | `connection_name` in `[task_source.snowflake_stored_procedure]` and `[connections.target.snowflake_connection_name]` | No |
+| `SNOWFLAKE_WAREHOUSE` | On SPCS, unless the service sets `QUERY_WAREHOUSE` | None | Warehouse for the Worker’s Snowflake sessions. When it’s unset, a session on SPCS uses the service’s `QUERY_WAREHOUSE`. If you set both, use the same warehouse. | `warehouse` in the connections file | Yes, from the Snowflake connection’s warehouse or `--warehouse` |
+| `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD` | Outside SPCS, for `MY_SNOWFLAKE_CONNECTION` | None | Password authentication for the connection the container builds. `SNOWFLAKE_PASSWORD` is **Secret**. | `account`, `user`, and `password` in the connections file | No |
+| `SNOWFLAKE_ROLE` | No | None | Role added to the connection the container builds outside SPCS. | `role` in the connections file | No |
+
+Expand
+
+Show lessSee more
+
+### Worker container: SQL Server and Azure Synapse
+
+These variables apply when `DATA_SOURCE_TYPE` is `sqlserver` or `azure_synapse`. On every start, a SQL Server container installs Microsoft ODBC Driver 18 and the BCP tools, and an Azure Synapse container installs Microsoft ODBC Driver 18, whichever driver the connection uses. `regular` extraction from SQL Server always uses BCP in the container. The `cet_as` variables apply to the `cet_as` strategy; see [Migrating Data from SQL Server](../data-migration-validation/migrate-sql-server#using-cetas-extraction). The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `DATA_SOURCE_ENCRYPT` | No | None, so the driver default applies | Encrypt the connection. `true` or `false`; any other value stops the container. | `encrypt` | Yes, from the source connection |
+| `DATA_SOURCE_TRUST_SERVER_CERTIFICATE` | No | None, so the driver default applies | Trust the server certificate. `true` or `false`; any other value stops the container. | `trust_server_certificate` | Yes, from the source connection |
+| `DATA_SOURCE_MODE` | No | `sql_auth` | Azure Synapse only. `sql_auth` uses `DATA_SOURCE_USERNAME` and `DATA_SOURCE_PASSWORD`. `azure_ad` uses a service principal from `DATA_SOURCE_CLIENT_ID` and `DATA_SOURCE_CLIENT_SECRET`. | `mode` | Yes, from the source connection |
+| `DATA_SOURCE_POOL_TYPE` | No | `dedicated` | Azure Synapse only. `dedicated` or `serverless`. | `pool_type` | Yes, from the source connection |
+| `DATA_SOURCE_CLIENT_ID` | For `azure_ad` | None | Azure Synapse only. Service principal client ID. | `client_id` | Yes, from the `username` key of the source secret in `azure_ad` mode |
+| `DATA_SOURCE_CLIENT_SECRET` | For `azure_ad` | None | **Secret.** Azure Synapse only. Service principal client secret. | `client_secret` | Yes, from the `password` key of the source secret in `azure_ad` mode |
+| `DATA_SOURCE_ODBC_DRIVER` | No | `ODBC Driver 18 for SQL Server` | Azure Synapse only. ODBC driver name. | `odbc_driver` | No |
+| `DATA_SOURCE_QUERY_TIMEOUT_SECONDS` | No | None, so queries don’t time out | Azure Synapse only. Integer query timeout in seconds, so a blocked extract fails instead of hanging. | `query_timeout_seconds` | No |
+| `DATA_SOURCE_CET_AS_EXTERNAL_DATA_SOURCE` | For `cet_as` | None | `EXTERNAL DATA SOURCE` on the source. The Worker turns CETAS on only when this variable and `DATA_SOURCE_CET_AS_FILE_FORMAT` are both set; with only one, CETAS stays off without an error. | `cet_as_external_data_source` | Yes, from the Worker configuration |
+| `DATA_SOURCE_CET_AS_FILE_FORMAT` | For `cet_as` | None | Parquet `EXTERNAL FILE FORMAT` on the source. | `cet_as_file_format` | Yes, from the Worker configuration |
+| `DATA_SOURCE_CET_AS_PATH_PREFIX` | No | None, so files land at the container root | Path inside the container. Must match the external stage URL so `COPY INTO` reads the same files. | `cet_as_path_prefix` | Yes, from the Worker configuration |
+| `DATA_SOURCE_CET_AS_TABLE_SCHEMA` | No | `dbo` | Schema for the transient external table that CETAS creates. The source user needs `CREATE TABLE` there. | `cet_as_table_schema` | No |
+
+Expand
+
+Show lessSee more
+
+### Worker container: Amazon Redshift
+
+These variables apply when `DATA_SOURCE_TYPE` is `redshift` and a table uses the `unload` strategy. `regular` extraction ignores them. See [Migrating Data from Amazon Redshift](../data-migration-validation/migrate-redshift). The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `UNLOAD_S3_BUCKET` | For `unload` | None | S3 bucket that Redshift unloads to. | `unload_s3_bucket` | Yes, from the Worker configuration |
+| `UNLOAD_IAM_ROLE_ARN` | For `unload` | None | IAM role that Redshift assumes to write to the bucket. An identifier, not a credential. | `unload_iam_role_arn` | Yes, from the Worker configuration |
+| `UNLOAD_S3_PREFIX` | No | None | Path inside the bucket. Must match the external stage URL. | `unload_s3_prefix` | Yes, from the Worker configuration |
+| `UNLOAD_FILE_FORMAT` | No | `parquet` | The Worker also accepts `csv`, but the Redshift migration queries are built for Parquet output, so keep the default. | `unload_file_format` | No |
+| `UNLOAD_MAX_FILE_SIZE_MB` | No | `256` | Integer maximum size, in MB, of each unloaded file. | `unload_max_file_size_mb` | No |
+
+Expand
+
+Show lessSee more
+
+### Worker container: Oracle
+
+These variables apply when `DATA_SOURCE_TYPE` is `oracle`. The container uses the `oracledb` thin driver and installs no Oracle client. The `DBMS_CLOUD` variables apply to the `dbms_cloud` strategy; see [Migrating Data from Oracle](../data-migration-validation/migrate-oracle). The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `DBMS_CLOUD_CREDENTIAL_NAME` | For `dbms_cloud` | None | Name of the Oracle `DBMS_CLOUD` credential. The name only, not the credential’s secret. | `dbms_cloud_credential_name` | Yes, from the Worker configuration |
+| `DBMS_CLOUD_FILE_URI_PREFIX` | For `dbms_cloud` | None | Object storage URI prefix that Oracle writes to. Must match the external stage URL. | `dbms_cloud_file_uri_prefix` | Yes, from the Worker configuration |
+| `ORACLE_CLIENT_INFO` | No | None | Session tag in the form `name=value;name2=value2`, written to the `CLIENT_INFO` slot of `DBMS_APPLICATION_INFO`. `MODULE` and `ACTION` carry the reserved application name and version. | `client_info` | No |
+| `ORACLE_WALLET_LOCATION` | No | None | Has no effect. The container writes this value to a key that the Worker’s Oracle connection doesn’t read. For a wallet (mTLS) connection, run the Worker from TOML and set `wallet_directory`. | None | No |
+| `TNS_ADMIN` | No | None | Not read by the container entrypoint. The Worker sets `TNS_ADMIN` itself, from the `tns_admin` TOML key, while it opens an Oracle connection. | `tns_admin` | No |
+
+Expand
+
+Show lessSee more
+
+### Worker container: Teradata
+
+These variables apply when `DATA_SOURCE_TYPE` is `teradata`. On every start, the container installs the `teradatasql` driver from PyPI. It includes no Teradata ODBC driver and no `tbuild`. The `WRITE_NOS_*` variables apply to the `write_nos` strategy; see [Migrating Data from Teradata](../data-migration-validation/migrate-teradata). The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `TERADATA_AUTHENTICATION` | No | `TD2` | Logon mechanism, case-insensitive. Common values: `TD2`, `TDNEGO`, `LDAP`, `KRB5`, `JWT`, and `BEARER`. | `authentication` | Yes, from the source connection |
+| `TERADATA_JWT_TOKEN` | For `JWT` | None | **Secret.** JWT passed to `teradatasql` when the mechanism is `JWT`. | `jwt_token` | No |
+| `TERADATA_BEARER_TOKEN` | For `BEARER` | None | **Secret.** OAuth bearer token passed to `teradatasql` when the mechanism is `BEARER`. | `bearer_token` | No |
+| `TERADATA_DBC_NAME` | No | None | DBC name or COP alias override. | `dbc_name` | No |
+| `TERADATA_ODBC_DRIVER` | No | None | ODBC driver name for the ODBC fallback. Setting it also turns off driver auto-detection. The container includes no Teradata ODBC driver. | `odbc_driver` | No |
+| `TERADATA_QUERY_BAND` | No | None | Query band in the form `name=value;name2=value2`, merged with the reserved `ApplicationName=SNOWFLAKE-AIM-DMV` and `Version` entries, which you can’t override. | `query_band` | No |
+| `WRITE_NOS_LOCATION_SCHEME` | For `write_nos` | None | `/s3/`, `/az/`, or `/gs/`. `write_nos` is configured only when this variable and `WRITE_NOS_LOCATION_HOST` are both set. | `write_nos_location_scheme` | Yes, from the Worker configuration |
+| `WRITE_NOS_LOCATION_HOST` | For `write_nos` | None | Object storage host, for example `myaccount.blob.core.windows.net`. | `write_nos_location_host` | Yes, from the Worker configuration |
+| `WRITE_NOS_LOCATION_CONTAINER` | No | None | Bucket or container, optionally with a path. Must match the external stage URL. | `write_nos_location_container` | Yes, from the Worker configuration |
+| `WRITE_NOS_FUNCTION_MAPPING` | One credential mode for `write_nos` | None | Function mapping name. The recommended credential mode. | `write_nos_function_mapping` | Yes, from the Worker configuration |
+| `WRITE_NOS_AUTHORIZATION_NAME` | One credential mode for `write_nos` | None | Name of a Teradata authorization object. The name only, not the credential. | `write_nos_authorization_name` | Yes, from the Worker configuration |
+| `WRITE_NOS_ACCESS_ID` | One credential mode for `write_nos`, with `WRITE_NOS_ACCESS_KEY` | None | **Secret.** Object storage access ID. | `write_nos_access_id` | No |
+| `WRITE_NOS_ACCESS_KEY` | One credential mode for `write_nos`, with `WRITE_NOS_ACCESS_ID` | None | **Secret.** Object storage access key. | `write_nos_access_key` | No |
+| `TPT_MAX_SESSIONS` | No | `4` | Integer maximum TPT sessions. Has no effect in the container; see [Teradata TPT selection](#teradata-tpt-selection). | `tpt_max_sessions` | No |
+| `TPT_DELIMITER` | No | ASCII file separator (U+001C) | TPT field delimiter. Has no effect in the container. | `tpt_delimiter` | No |
+| `TPT_TBUILD_EXECUTABLE` | No | `tbuild` | Path to `tbuild`. Read by the Worker process, not the container entrypoint, so it also applies to a Worker that you run from TOML. | None (environment only) | No |
+
+Expand
+
+Show lessSee more
+
+Choose exactly one `write_nos` credential mode. `scai data worker setup` forwards the location, function mapping, and authorization name, but not `WRITE_NOS_ACCESS_ID` or `WRITE_NOS_ACCESS_KEY`. To use that mode on SPCS, bind both from secrets yourself.
+
+#### Teradata TPT selection
+
+`tpt` in a workflow is a legacy alias for `regular`. The Worker, not the workflow, decides whether a Teradata bulk extract uses Teradata Parallel Transporter (TPT):
+
+- It uses TPT when `use_tpt_for_bulk` is `true` (the default) **and** `tbuild` is found on `PATH` or at `TPT_TBUILD_EXECUTABLE`.
+- Otherwise it extracts through `teradatasql`, and `tpt_max_sessions` and `tpt_delimiter` have no effect.
+
+The Worker container image doesn’t include `tbuild`, so **TPT never runs on SPCS** and SPCS Workers always extract through `teradatasql`. To use TPT, run the Worker from TOML on a host with Teradata Tools and Utilities installed. For a server-side export on SPCS, use `write_nos`.
+
+### Worker container: `cloud_direct`
+
+These variables configure the `[connections.target.s3]`, `[connections.target.gcs]`, or `[connections.target.blob]` section that the `cloud_direct` strategy writes to. The container writes no target section unless `CLOUD_DIRECT_OBJECT_STORE` and a bucket or container name are both set. The following table lists each variable:
+
+| Variable | Required | Default | Description | TOML key | Set by `scai` |
+| --- | --- | --- | --- | --- | --- |
+| `CLOUD_DIRECT_OBJECT_STORE` | For `cloud_direct` | None | `s3`, `gcs`, or `blob`, in lowercase or uppercase. Any other value writes no target section. The `scai` object store value `azure` corresponds to `blob`. | Target section name | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_BUCKET_NAME` | For `s3` and `gcs` | None | Bucket name. For `blob`, used as the container name when `CLOUD_DIRECT_CONTAINER_NAME` is unset. | `bucket_name` | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_CONTAINER_NAME` | For `blob`, unless `CLOUD_DIRECT_BUCKET_NAME` is set | `CLOUD_DIRECT_BUCKET_NAME` | Azure container name. | `container_name` | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_PREFIX` | No | None | Path inside the bucket or container. Must match the external stage URL. | `prefix` | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_ACCOUNT_NAME` | For `blob`, unless you use a connection string | None | Azure storage account name. | `account_name` | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_USE_DEFAULT_CREDENTIAL` | No | None | `blob` only. `true` or `false`; any other value stops the container. `true` uses the Azure default credential chain. An SPCS service has no Azure managed identity, so on SPCS use a SAS token, account key, or connection string instead. | `use_default_credential` | Yes, from the Worker configuration |
+| `CLOUD_DIRECT_SAS_TOKEN` | One `blob` credential | None | **Secret.** Azure SAS token. | `sas_token` | Yes. `scai` stores the value in a `GENERIC_STRING` secret and binds it. |
+| `CLOUD_DIRECT_ACCOUNT_KEY` | One `blob` credential | None | **Secret.** Azure storage account key. | `account_key` | Yes. `scai` stores the value in a `GENERIC_STRING` secret and binds it. |
+| `CLOUD_DIRECT_CONNECTION_STRING` | One `blob` credential | None | **Secret.** Azure connection string. When it’s set, the Worker uses it and ignores the account name. | `connection_string` | Yes. `scai` stores the value in a `GENERIC_STRING` secret and binds it. |
+
+Expand
+
+Show lessSee more
+
+Important
+
+For `s3` and `gcs` targets, the container writes only the bucket and prefix. Neither the container nor `scai` passes S3 or Google Cloud Storage credentials, so an SPCS Worker can’t authenticate to those targets through AIM DMV configuration. On SPCS, use an Azure Blob target. For S3 or Google Cloud Storage, run the Worker from TOML on a host that has credentials for the store. The Worker also needs egress to the storage account; see [Driver download hosts by platform](./manual-spcs-worker-setup#driver-download-hosts-by-platform).
 
 ### Metadata storage mode
 
@@ -778,7 +1177,7 @@ Rules are rows in the **`RATE_LIMIT`** table in your migration metadata schema, 
 | --- | --- |
 | `SCOPE_PATTERN` | `LIKE` pattern matched against the task scope. `%` and `_` wildcards apply. |
 | `WORKFLOW_ID` | Optional. Restricts the rule to one workflow. `NULL` matches any. |
-| `AFFINITY` | Optional. Restricts the rule to one Worker affinity. `NULL` matches any. |
+| `AFFINITY` | Optional. Restricts the rule to tasks whose affinity equals this value exactly. Wildcards don’t apply, and a rule with a value never matches tasks without an affinity. `NULL` matches any. See [Affinity in rate-limit rules](#affinity-in-rate-limit-rules). |
 | `TARGET_CONCURRENT_TASKS` | Target number of concurrently executing matching tasks. |
 | `ENABLED` | Set to `FALSE` to turn a rule off without deleting it. |
 

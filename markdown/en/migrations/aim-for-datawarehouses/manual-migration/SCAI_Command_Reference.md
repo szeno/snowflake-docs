@@ -339,7 +339,7 @@ Set project-level defaults (Snowflake connection, source connection, warehouse, 
 Copy code
 
 ```
-scai project defaults set [[-c <NAME>]] [[-s <NAME>]] [[--warehouse <NAME>]] [[--database <NAME>]] [[--schema <NAME>]] [[--role <NAME>]]
+scai project defaults set [[-c <NAME>]] [[-s <NAME>]] [[--warehouse <NAME>]] [[--database <NAME>]] [[--schema <NAME>]] [[--role <NAME>]] [[--affinity <AFFINITY>]]
 ```
 
 **Prerequisites:**
@@ -350,7 +350,7 @@ scai project defaults set [[-c <NAME>]] [[-s <NAME>]] [[--warehouse <NAME>]] [[-
 **Behavior:**
 
 - Only provided flags are persisted for the project
-- Always writes to project.local.yml (gitignored), never to the shared project.yml
+- Always writes to project.local.yml (gitignored), never to the shared project.yml, except `--affinity`, which writes `default_affinity` to the shared project.yml
 - Snowflake fields: loads saved connection profiles, merges existing project Snowflake defaults to your current connection without modifying it, then tests it
 - Source (-s): tests the source connection for the project’s source language and defines it as the project’s default source connection (if valid)
 
@@ -364,6 +364,7 @@ scai project defaults set [[-c <NAME>]] [[-s <NAME>]] [[--warehouse <NAME>]] [[-
 | `--database <NAME>` | Project default Snowflake database. | No |
 | `--schema <NAME>` | Project default Snowflake schema. | No |
 | `--role <NAME>` | Project default Snowflake role. | No |
+| `--affinity <AFFINITY>` | Default affinity applied to data workflows and Workers when no explicit `--affinity` is given. Supports `*` wildcards (for example `team-*`). See [Project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). | No |
 
 Expand
 
@@ -393,13 +394,13 @@ Clear project-level defaults for the current project. Always clears from project
 Copy code
 
 ```
-scai project defaults unset [[--connection]] [[--source-connection]] [[--warehouse]] [[--database]] [[--schema]] [[--role]]
+scai project defaults unset [[--connection]] [[--source-connection]] [[--warehouse]] [[--database]] [[--schema]] [[--role]] [[--affinity]]
 ```
 
 **Behavior:**
 
 - Only flags you pass clear the matching field; other fields are unchanged
-- Always clears from project.local.yml (gitignored), never from the shared project.yml
+- Always clears from project.local.yml (gitignored), never from the shared project.yml, except `--affinity`, which clears `default_affinity` from the shared project.yml
 
 **Options:**
 
@@ -410,6 +411,7 @@ scai project defaults unset [[--connection]] [[--source-connection]] [[--warehou
 | `--warehouse` | Clear project default warehouse. | No |
 | `--database` | Clear project default database. | No |
 | `--schema` | Clear project default schema. | No |
+| `--affinity` | Clear the stored default affinity. The project then uses the affinity derived from its name and ID. | No |
 
 Expand
 
@@ -1962,7 +1964,7 @@ scai data migrate generate-config [--where <WHERE>] [-o <OUTPUT_PATH>] [--affini
 | --- | --- | --- | --- |
 | `--where <WHERE>` | SQL-like WHERE clause to filter tables from the Code Unit Registry. Run ‘scai code where’ for syntax reference. | No |  |
 | `-o, --output` | Output file path for the generated YAML configuration. Defaults to .scai/config/data-migration-config.yaml. | No | .scai/config/data-migration-config.yaml |
-| `--affinity` | Affinity tag written to the workflow YAML. Matching Workers pick up the workflow’s tasks. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |  |
+| `--affinity` | Affinity tag written to the workflow YAML. Matching Workers pick up the workflow’s tasks. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No | [Project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity) |
 
 Expand
 
@@ -2334,7 +2336,7 @@ scai data validate generate-config [--where <WHERE>] [-o <OUTPUT_PATH>] [--affin
 | --- | --- | --- | --- |
 | `--where <WHERE>` | SQL-like WHERE clause to filter tables from the Code Unit Registry. Run ‘scai code where’ for syntax reference. | No |  |
 | `-o, --output` | Output file path for the generated YAML configuration. Defaults to .scai/config/data-validation-config.yaml. | No | .scai/config/data-validation-config.yaml |
-| `--affinity` | Affinity tag written to the workflow YAML. Matching Workers pick up the workflow’s tasks. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |  |
+| `--affinity` | Affinity tag written to the workflow YAML. Matching Workers pick up the workflow’s tasks. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No | [Project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity) |
 
 Expand
 
@@ -2515,6 +2517,10 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
 | `--custom-image` | Custom container image path to use instead of auto-resolving the latest. Format: /db/schema/repo/image\_name:tag | No |
+| `-s, --source-connection <SOURCE_CONNECTION>` | Name of the source database connection the Worker reads from (managed with `scai connection`). Uses the default source connection if not specified. | No |
+| `--affinity <AFFINITY>` | Affinity written to the service’s `AGENT_AFFINITY`. Only workflows with a matching affinity are picked up. Supports `*` wildcards (for example `team-*`). Defaults to the [project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). | No |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service, so multiple Workers can coexist in one account. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. | No |
+| `-y, --yes` | Skip the confirmation prompt. On an existing service, drops and re-creates it. Without it, a re-run doesn’t change the deployed service’s affinity or source. | No |
 
 Expand
 
@@ -2619,7 +2625,7 @@ scai data worker generate-config [PATH] [-c <CONNECTION>] [--role <ROLE>] [--war
 | --- | --- | --- |
 | `[PATH]` | Output path for the generated configuration file (file or directory). Defaults to ~/.snowflake/scai/dew\_configuration.toml. | No |
 | `-y, --yes` | Skip the confirmation prompt. | No |
-| `--affinity` | Affinity tag written to the Worker TOML (`[application].affinity`). May include `*` wildcards (for example `team-*`). See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |
+| `--affinity` | Affinity tag written to the Worker TOML (`[application].affinity`). Can include `*` wildcards (for example `team-*`). Defaults to the [project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
@@ -2786,10 +2792,13 @@ scai data orchestrator setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFL
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
 | `--custom-image` | Custom container image path to use instead of auto-resolving the latest. Format: /db/schema/repo/image\_name:tag | No |
+| `--worker-service-name <SERVICE_NAME>` | Name of the Worker SPCS service that the Orchestrator suspends on idle shutdown. Takes one name, which must match the `--service-name` given to `scai data worker setup`. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. Pass it again with `--yes` when you re-create an existing Orchestrator service. | No |
 
 Expand
 
 Show lessSee more
+
+The command doesn’t set an Orchestrator affinity, so the Orchestrator claims workflows of every affinity. See [Orchestrator affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#orchestrator-affinity).
 
 **Output:** Status messages indicating progress of each setup step.
 

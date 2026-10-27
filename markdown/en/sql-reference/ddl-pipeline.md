@@ -18,3 +18,14 @@ Snowflake provides a full set of DDL commands for creating and managing streams 
 - [DROP TASK](/sql-reference/sql/drop-task)
 - [EXECUTE TASK](/sql-reference/sql/execute-task)
 - [SHOW TASKS](/sql-reference/sql/show-tasks)
+
+## Task graph management
+
+- [CREATE TASK GRAPH](/sql-reference/sql/create-task-graph)
+- [ALTER TASK GRAPH](/sql-reference/sql/alter-task-graph)
+- [DESCRIBE TASK GRAPH](/sql-reference/sql/desc-task-graph)
+- [EXECUTE TASK GRAPH](/sql-reference/sql/execute-task-graph)
+- [DROP TASK GRAPH](/sql-reference/sql/drop-task-graph)
+- [SHOW TASK GRAPHS](/sql-reference/sql/show-task-graphs)
+- [SHOW COMMITTED TASKS](/sql-reference/sql/show-committed-tasks)
+- [DESCRIBE COMMITTED TASK](/sql-reference/sql/desc-committed-task)

@@ -14,8 +14,9 @@ families available in your account and region, use
 [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families).
 
 If you configure backup instance families for a compute pool, choose a backup that is
-workload-compatible with the primary: generally a larger size from the same subsection
-in the tables that follow. See
+workload-compatible with the primary: generally a larger size of the same instance
+family. On Google Cloud, GEN\_X64\_G1 and CPU\_X64 instance families can’t be backup
+instance families for each other. See
 [BACKUP\_INSTANCE\_FAMILIES](/sql-reference/sql/create-compute-pool#label-create-compute-pool-backup-instance-families).
 
 For pricing information, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).

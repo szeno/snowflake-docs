@@ -165,6 +165,21 @@ The lists below are the differences from versions before 5.0.
 - Fixed S3 external-stage operations that don’t provide a session token.
 - Fixed GET results from stage subdirectories so the `file` column reports the downloaded file name.
 
+## Version 4.8.1 (Oct 26, 2026)
+
+### Changes
+
+- Dropped support for Python 3.10. The minimum supported version is now Python 3.11.
+- Bumped vendored `urllib3` to 2.8.0. This includes the upstream fix for importing the connector on Python built against OpenSSL 4, where `ssl.PROTOCOL_TLSv1` no longer exists.
+- Raised the minimum `certifi` requirement to 2026.10.18.
+- Raised the `filelock` upper bound to allow installation of filelock 4.x.
+
+### Bug fixes
+
+- Fixed `write_pandas()` identifier quoting. Parquet field paths are quoted identifiers. Iceberg option values are escaped string literals. `quote_identifiers=False` accepts only valid unquoted identifiers.
+- Fixed large result set batch chunk downloads logging every transient retry at ERROR with a traceback. Intermediate retries now log at WARNING. Only the final failure, after all retries are exhausted, logs at ERROR with a traceback. These retry and failure logs include the S3 request IDs (`x-amz-request-id` and `x-amz-id-2`) when present.
+- Fixed a spurious `RequestsDependencyWarning` emitted at import time by the vendored `requests` library when `chardet` 7.x or a newer `charset_normalizer` is installed. `check_compatibility()` still requires `chardet` >= 3.0.2 and `charset_normalizer` >= 2.0.0, but no longer rejects newer major versions.
+
 ## Version 4.8.0 (Sep 30, 2026)
 
 ### Security fixes

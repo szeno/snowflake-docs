@@ -115,6 +115,7 @@ CREATE COMPUTE POOL [ IF NOT EXISTS ] <name>
     - **Hardware features**: same network and placement capabilities your services require, such as EFA or placement groups.
     - **CPU architecture**: same instruction set as the primary. x86\_64 container images do not run on ARM nodes, and vice versa.
     - **Service density**: the backup family must support the `MAX_INSTANCES_PER_NODE` your services are configured to use.
+    - **Storage type** (Google Cloud only): GEN\_X64\_G1 and CPU\_X64 instance families use incompatible block storage volume types, so neither can be a backup instance family for the other. For more information, see [Snowpark Container Services: Google Cloud Instance Families](/developer-guide/snowpark-container-services/instance-families-gcp).
 
     When choosing backup families, a reliable starting point is to use the next-larger size within the same family. For example, `GEN_X64_G2_8` is a sound backup for a `GEN_X64_G2_4` primary because it shares the same architecture, network capabilities, and local storage ratios while providing more vCPU and memory headroom.
 

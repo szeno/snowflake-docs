@@ -54,7 +54,9 @@ The agent sets `validation_configuration.extraction.strategy` and `externalStage
 
 ## Re-validating only what changed
 
-Scheduled re-validation of a large table doesn’t have to compare every partition every time. **Incremental validation** detects which partitions changed since the last run and re-validates only those. It’s read-only: nothing is written to the target.
+Validating a large table again doesn’t have to compare every partition every time. **Incremental validation** detects which partitions changed since the last run and re-validates only those. It’s read-only: nothing is written to the target.
+
+A run is one validation command that you invoke, and incremental validation is that command run again, not a loop inside AIM DMV. A run is incremental only when an earlier run of the table exists, so the first run with `synchronization` set still validates everything. To repeat runs on a timetable, see [Running validation on a schedule](#running-validation-on-a-schedule).
 
 **Prompt:**
 
@@ -71,6 +73,100 @@ Note
 `trackModifications` and `trackDeletions` are not supported for Data Validation.
 
 See [Incremental validation](../manual-migration/data-validation-configuration-reference#incremental-validation) for the property shape, prerequisites, and what “Not validated” means on unchanged partitions. Review [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect) before choosing `checksum`.
+
+## Running validation on a schedule
+
+To repeat a validation on a timetable, for example a nightly incremental validation, create a Snowflake task that inserts a new workflow and resumes the SPCS services. [Submitting a validation from a Snowflake task](#submitting-a-validation-from-a-snowflake-task) shows the task. AIM DMV doesn’t create the task or start the next run itself. Each insert is one new workflow. You can also run `scai data validate create-workflow` from a scheduler on a host. That command names the workflow with a timestamp and a unique suffix.
+
+**Prompt:**
+
+Copy code
+
+```
+Run the ORDERS validation again
+```
+
+The agent submits the same validation configuration again as a new run on the shared Orchestrator and Workers. It doesn’t schedule later runs. If the Orchestrator or a Worker isn’t running, the agent tells you which one and offers to start it. See [Incremental validation](../manual-migration/data-validation-configuration-reference#incremental-validation) for what a later run skips.
+
+On SPCS, each externally scheduled run follows this sequence:
+
+1. **Resume the services.** The Orchestrator and every Worker suspend themselves after `DM_IDLE_SHUTDOWN_MINUTES` without work, 60 minutes by default, so they’re usually suspended when the next run is due. Submitting a workflow doesn’t resume a suspended service: a workflow submitted while they’re suspended is created and stays `pending`. Resume the Orchestrator and every Worker service first, as described in [Resuming services before the next wave](./deploy-workers#resuming-services-before-the-next-wave). A Snowflake-to-Snowflake validation doesn’t use Workers, so resume only the Orchestrator.
+2. **Run the workflow and wait for it.** Run `scai data validate create-workflow --watch`, which blocks until the run finishes. Without `--watch`, the command returns as soon as the workflow is submitted, so its exit code doesn’t reflect the run.
+3. **Check the result.** With `--watch`, the command exits `0` when the run finishes with every table validated, and `1` when a table fails validation, a table isn’t validated, or the command can’t complete. Use `scai data validate status <WORKFLOW_NAME>` for a run’s progress and errors, and `scai data validate list` to find recent runs. See the [SCAI command reference](../manual-migration/SCAI_Command_Reference).
+4. **Re-validate what failed.** To repeat only the failed partitions and levels of a finished run, use `scai data validate revalidate <WORKFLOW_NAME>`, which creates a child workflow. See [Re-validating what failed](./data-validation#re-validating-what-failed).
+5. **Let idle shutdown stop the services.** After the run, each service suspends itself once it has been idle for its `DM_IDLE_SHUTDOWN_MINUTES`. See [Idle shutdown](./deploy-workers#idle-shutdown) and [Controlling cost on SPCS](./deploy-workers#controlling-cost-on-spcs).
+
+`scai data validate start` doesn’t use the SPCS services. It runs the Orchestrator, and a Worker when the source needs one, as local processes for as long as the command runs and blocks until the run finishes, so a scheduler on a host that can reach the source can run it without resuming anything.
+
+Don’t start the next run of the same tables until the previous run finishes. When a run starts, it skips each table that another validation workflow is initializing or running, as long as that workflow has sent a heartbeat within the last 15 minutes and both workflows have the same affinity or either has none. Each skipped table is reported as `Skipped '<table>': already being validated by workflow '<name>' (created <time>, affinity '<affinity>') to avoid duplicate data / race conditions.` A workflow that’s still `pending` doesn’t hold its tables. When every table is skipped, the run finishes with exit code `0` and the warning “The validation finished without validating any table: every configured table is already being validated by another active workflow. Re-run once that workflow finishes.” Treat that warning as a run that did nothing.
+
+### Submitting a validation from a Snowflake task
+
+A task you create can do the first two steps of the sequence above. It inserts a pending validation workflow, then resumes the Orchestrator and the Workers. You choose how the task runs: add a `SCHEDULE`, chain it after another task, or execute it yourself. AIM DMV doesn’t create this task.
+
+The task below inserts one table. Put in the JSON only the tables that this run should validate, and build that JSON in the task when the list changes. The object is the workflow configuration. See [Validation configuration](../manual-migration/data-validation-configuration-reference#validation-configuration). When the list is too complex for the task body, a Python procedure can build it and the task can call that procedure.
+
+Give every run its own workflow name. The example builds one from the current UTC time. `STATUS` is omitted, so the new row stays `pending` until the Orchestrator picks it up.
+
+The `WORKFLOW` table is in the migration metadata schema, `SNOWCONVERT_AI.DATA_MIGRATION` by default. `TARGET_CLOUD_STAGE_NAME` is the validation metadata stage, `@SNOWCONVERT_AI.DATA_VALIDATION.TASK_RESULTS` by default. If you customized the metadata database or either schema, use those names in the task.
+
+The `ALTER SERVICE` statements resume the default services in the migration metadata schema. The Orchestrator service is `DATA_MIGRATION_SERVICE`. The Worker service is `DATA_EXCHANGE_WORKER_SERVICE`. Resume every Worker the validation uses. A Worker created with `scai data worker setup --service-name` has that name, not the default. A Snowflake-to-Snowflake validation doesn’t use a Worker, so resume only the Orchestrator. Set `AFFINITY` to the Worker’s affinity when that Worker won’t claim a workflow that has none.
+
+Copy code
+
+```
+CREATE OR REPLACE TASK SNOWCONVERT_AI.DATA_MIGRATION.START_DATA_VALIDATION
+  WAREHOUSE = <WAREHOUSE>
+  COMMENT = 'Insert a pending data-validation workflow and resume the orchestrator and data-exchange services.'
+AS
+BEGIN
+  INSERT INTO SNOWCONVERT_AI.DATA_MIGRATION.WORKFLOW (
+      NAME,
+      WORKFLOW_TYPE,
+      SOURCE_PLATFORM,
+      TARGET_CLOUD_TYPE,
+      TARGET_CLOUD_STAGE_NAME,
+      TARGET_CLOUD_URL,
+      SCHEMA_VERSION,
+      INITIATOR_ID,
+      CONFIGURATION,
+      AFFINITY
+  )
+  SELECT
+      'VALIDATION_' || TO_VARCHAR(CONVERT_TIMEZONE('UTC', CURRENT_TIMESTAMP()), 'YYYYMMDDHH24MISS'),
+      'data-validation',
+      '<SOURCE_PLATFORM>',
+      'snowflake:stage',
+      '@SNOWCONVERT_AI.DATA_VALIDATION.TASK_RESULTS',
+      '',
+      '1.0',
+      '',
+      PARSE_JSON($$
+        {
+          "sourcePlatform": "<SOURCE_PLATFORM>",
+          "targetPlatform": "Snowflake",
+          "validationConfiguration": {
+            "schemaValidation": true,
+            "metricsValidation": true,
+            "rowValidation": false
+          },
+          "tables": [
+            {
+              "fullyQualifiedName": "<FULLY_QUALIFIED_NAME>"
+            }
+          ]
+        }
+      $$),
+      NULL;
+
+  ALTER SERVICE IF EXISTS SNOWCONVERT_AI.DATA_MIGRATION.DATA_MIGRATION_SERVICE RESUME;
+  ALTER SERVICE IF EXISTS SNOWCONVERT_AI.DATA_MIGRATION.DATA_EXCHANGE_WORKER_SERVICE RESUME;
+END;
+```
+
+The task returns after the insert and the resume. It doesn’t wait for the validation to finish. Check the run with `scai data validate status` and `scai data validate list`.
+
+After the first run, confirm that the services suspend once the workflow is done. Each service suspends itself after `DM_IDLE_SHUTDOWN_MINUTES` without work, 60 minutes by default. See [Idle shutdown](./deploy-workers#idle-shutdown) and [Controlling cost on SPCS](./deploy-workers#controlling-cost-on-spcs).
 
 ## Stopping L3 early when a table is clearly failing
 
@@ -167,6 +263,28 @@ Validate the ORDERS_SUMMARY view. Partition by ORDER_DATE (same key as the ORDER
 ```
 
 The agent sets `column_names_to_partition_by`, `indexColumnList`, `sourceWhereClause`, and `targetWhereClause` on the view entry. See [Automatic partition and index key selection](../manual-migration/data-validation-configuration-reference#automatic-partition-and-index-key-selection) and [Per-table and per-view entry](../manual-migration/data-validation-configuration-reference#per-table-and-per-view-entry).
+
+The same rules apply to source materialized views, which AIM DMV classifies as views. Put a view under `views`, or under `objects` with `objectType: VIEW` or no `objectType`. An `objectType: VIEW` key inside `tables` is ignored, and the entry is validated as a table. See [Source and target object types](../manual-migration/data-validation-configuration-reference#source-and-target-object-types) for every source and target pairing and for which catalog kinds count as tables and views.
+
+## Validating a view against a dynamic table
+
+A source view is sometimes rebuilt in Snowflake as a [dynamic table](/user-guide/dynamic-tables/overview) instead of a view. Snowflake reports a dynamic table as a table, so AIM DMV validates the pair as a source view against a target table:
+
+- L1 records the object type as `WARNING`, with the comment “Source view materialized as a Snowflake table.” A warning doesn’t fail L1, so L2 and L3 run when they’re enabled.
+- The source is still a view, so AIM DMV can’t infer its keys. Set `columnNamesToPartitionBy` and `indexColumnList` on the entry, and `targetIndexColumnList` when the dynamic table’s column names differ from the view’s.
+- A dynamic table can lag its base tables by up to its [target lag](/user-guide/dynamic-tables/target-lag) (`TARGET_LAG`). Validate only after the dynamic table has refreshed past the latest change to its base tables. Otherwise L2 and L3 compare the current view with an older state of the dynamic table and report mismatches that aren’t real.
+
+**Prompt:**
+
+Copy code
+
+```
+Validate the dbo.ORDER_TOTALS view against the ORDER_TOTALS dynamic table in Snowflake. Align rows on ORDER_ID and partition by ORDER_ID
+```
+
+The agent adds the view under `views` with `indexColumnList`, `targetIndexColumnList`, and `columnNamesToPartitionBy`, and sets `targetName` when the dynamic table’s name differs from the view’s. Before you start the run, check that the dynamic table’s latest refresh succeeded after your last load into its base tables, for example with [DYNAMIC\_TABLE\_REFRESH\_HISTORY](/sql-reference/functions/dynamic_table_refresh_history), or refresh it manually with [ALTER DYNAMIC TABLE … REFRESH](/sql-reference/sql/alter-dynamic-table).
+
+AIM DMV doesn’t migrate data into a dynamic table. Migrate the data into the dynamic table’s base tables, let Snowflake refresh the dynamic table, and then validate the source view against it. See [Dynamic tables](../manual-migration/data-validation-configuration-reference#dynamic-tables-as-validation-targets) for the validation behavior and [Views and dynamic tables in migration](../manual-migration/data-migration-configuration-reference#views-and-dynamic-tables-in-migration) for the migration limitation.
 
 ## Validating INTERVAL columns
 

@@ -40,7 +40,7 @@ The agent sets `columnNamesToPartitionBy` on the tables you name. See [What make
 
 Note
 
-Views don’t expose the catalog metadata needed for automatic inference. If your migration includes a view, tell the agent which column to partition by.
+Data migration copies tables only. A source view, including a materialized view, fails before extraction, so migrate its base tables instead. A dynamic table isn’t a supported migration target either. See [Views and dynamic tables in migration](../manual-migration/data-migration-configuration-reference#views-and-dynamic-tables-in-migration). To compare a source view with its Snowflake counterpart after migration, see [Validating views](./data-validation-advanced-configuration#validating-views).
 
 ## Migrating INTERVAL columns
 
@@ -89,7 +89,7 @@ A Worker imports and runs `plugin_class` in-process with its own privileges. Onl
 
 ## Incremental sync after the first load
 
-Once an initial full load completes, switch qualifying tables to incremental synchronization instead of re-extracting everything on every run.
+Once an initial full load completes, switch qualifying tables to incremental synchronization instead of re-extracting everything on every run. A run is one migration command that you invoke. Incremental sync is that command run again, not a loop inside AIM DMV: a `watermark` or `checksum` run reuses the partition metadata that the earlier run stored, and `none` and `full-replace` runs reuse nothing. To repeat runs on a timetable, see [Running a migration on a schedule](#running-a-migration-on-a-schedule).
 
 **Prompt:**
 
@@ -99,21 +99,98 @@ Copy code
 Set up incremental sync for the ORDERS table using the UPDATED_AT column
 ```
 
-The agent sets `synchronization.strategy: watermark` and `watermarkColumn`, or `checksum` when there’s no reliable watermark column, and asks whether to also track deletions. The watermark can be a pseudo-column or system column not in the migrated schema (for example Oracle `ORA_ROWSCN` when there’s no `UPDATED_AT` column). For `checksum`, you can supply a custom aggregate expression such as `MAX(ORA_ROWSCN)`. See [SynchronizationStrategy model](../manual-migration/data-migration-configuration-reference#synchronizationstrategy-model).
-
-Both strategies have blind spots. `checksum` skips some legacy large-object types and can round some floating-point values; `watermark` misses rows that changed without advancing the watermark. Review [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect) before relying on either for a table where silent drift matters.
-
-## Smoke-testing the pipeline before a real load
+The agent sets `synchronization.strategy: watermark` and `watermarkColumn: UPDATED_AT`. It sets `trackModifications` and `trackDeletions` to `true` only when the table has a primary key and the target is already populated. Otherwise it leaves them off, so updated rows are appended as a second version and deleted rows stay on the target. The watermark can be a pseudo-column or system column that isn’t migrated, such as Oracle `ORA_ROWSCN`. See [Choosing a synchronization strategy](../manual-migration/data-migration-configuration-reference#choosing-a-synchronization-strategy) for the full comparison.
 
 **Prompt:**
 
 Copy code
 
 ```
-Before we migrate for real, run this workflow as a preflight so I can confirm the whole pipeline works
+Keep the DIM_CUSTOMER table in sync. It has no UPDATED_AT column.
 ```
 
-The agent sets `preflight: true` at the workflow root, and `preflightKeepSchema: true` if you want the transient schema left behind for inspection. See [Preflight: a bounded dry run](../manual-migration/data-migration-configuration-reference#preflight-bounded-dry-run).
+The agent sets `synchronization.strategy: checksum`. When the source has a cheap change signal, such as Oracle `ORA_ROWSCN` or a row-version column, it sets `checksumExpression` to a SQL aggregate over that signal, such as `MAX(ORA_ROWSCN)`. Otherwise it uses the default checksum. A partition whose checksum changed is cleared and reloaded, so the reload doesn’t append a second copy of rows that are already on the target. Every run still computes the checksum of every partition, including partitions that didn’t change. See [checksum](../manual-migration/data-migration-configuration-reference#checksum) and [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect) before you rely on it for a table where silent drift matters.
+
+Each incremental strategy has blind spots. `checksum` skips some legacy large-object types and can round some floating-point values, and `watermark` misses rows that changed without advancing the watermark.
+
+## Repeatable full reloads
+
+`checksum` already avoids a second copy without a watermark, at the cost of computing a checksum for every partition on every run. Use a full reload when you want every partition extracted and replaced on every run, with no checksum.
+
+**Prompt:**
+
+Copy code
+
+```
+Reload the CUSTOMERS table completely on every run so the target matches the source and nothing is duplicated
+```
+
+The agent sets `synchronization.strategy: full-replace`. Each run extracts every partition and deletes that partition’s target rows before loading it, so a rerun overwrites the earlier load. For an Iceberg target, the agent leaves `full-replace` unset, because the orchestrator rejects it. A second `none` run fails when the Iceberg table already exists. A later `watermark` or `checksum` run reuses a Snowflake-managed Iceberg table after a completed run. See [Choosing a synchronization strategy](../manual-migration/data-migration-configuration-reference#choosing-a-synchronization-strategy) for the behavior of each strategy.
+
+Warning
+
+`full-replace` deletes every row in the target partition before loading it. Rows that you added to the target by hand, or that other processes wrote, are removed by the next run. Confirm that the target table belongs to the migration before you choose this strategy.
+
+## Running a migration on a schedule
+
+To repeat a migration on a timetable, for example a nightly incremental sync, create a Snowflake task that inserts a new workflow and resumes the SPCS services. [Submitting a validation from a Snowflake task](./data-validation-advanced-configuration#submitting-a-validation-from-a-snowflake-task) shows that task. For a migration, set `WORKFLOW_TYPE` to `data-migration` and `TARGET_CLOUD_STAGE_NAME` to `@SNOWCONVERT_AI.DATA_MIGRATION.TASK_RESULTS`. AIM DMV doesn’t create the task or start the next run itself. Each insert is one new workflow. You can also run `scai data migrate create-workflow` from a scheduler on a host. That command names the workflow with a timestamp and a unique suffix.
+
+**Prompt:**
+
+Copy code
+
+```
+Run the ORDERS incremental sync again
+```
+
+The agent submits the same workflow configuration again as a new run on the shared Orchestrator and Workers. It doesn’t schedule later runs. If the Orchestrator or a Worker isn’t running, the agent tells you which one and offers to start it. See [State and reruns](../manual-migration/data-migration-configuration-reference#state-and-reruns) for what each strategy reuses from earlier runs.
+
+On SPCS, each externally scheduled run follows this sequence:
+
+1. **Resume the services.** The Orchestrator and every Worker suspend themselves after `DM_IDLE_SHUTDOWN_MINUTES` without work, 60 minutes by default, so they’re usually suspended when the next run is due. Submitting a workflow doesn’t resume a suspended service: a workflow submitted while they’re suspended is created and stays `pending`. Resume the Orchestrator and every Worker service first, as described in [Resuming services before the next wave](./deploy-workers#resuming-services-before-the-next-wave).
+2. **Run the workflow and wait for it.** Run `scai data migrate create-workflow --watch`, which blocks until the run finishes. Without `--watch`, the command returns as soon as the workflow is submitted, so its exit code doesn’t reflect the run.
+3. **Check the result.** With `--watch`, the command exits `0` when the run finishes without failures, and `1` when a partition fails, a table doesn’t finish preprocessing, or the command can’t complete. Use `scai data migrate status <WORKFLOW_NAME>` for a run’s progress and errors, and `scai data migrate list` to find recent runs. See the [SCAI command reference](../manual-migration/SCAI_Command_Reference).
+4. **Run again after a failure.** There’s no command that re-runs a failed migration workflow. Run the same command again, which creates a new workflow. To retry only the failed tasks of the existing workflow, see [Managing workflow lifecycle](./snowconvert-ai-database#workflow-management-procedures).
+5. **Let idle shutdown stop the services.** After the run, each service suspends itself once it has been idle for its `DM_IDLE_SHUTDOWN_MINUTES`. See [Idle shutdown](./deploy-workers#idle-shutdown) and [Controlling cost on SPCS](./deploy-workers#controlling-cost-on-spcs).
+
+`scai data migrate start` doesn’t use the SPCS services. It runs a local Orchestrator and Worker for as long as the command runs and blocks until the run finishes, so a scheduler on a host that can reach the source can run it without resuming anything.
+
+Don’t start the next run of the same tables until the previous run finishes. When a run starts, it skips each table that another migration workflow is initializing or running, as long as that workflow has sent a heartbeat within the last 15 minutes and both workflows have the same affinity or either has none. Each skipped table is reported as `Skipped '<table>': already being processed by workflow '<name>' (created <time>, affinity '<affinity>') to avoid duplicate data / race conditions.` A workflow that’s still `pending` doesn’t hold its tables. When every table is skipped, the run finishes with exit code `0` and the warning “The migration finished without migrating any table: every configured table is already being migrated by another active workflow. Re-run once that workflow finishes.” Treat that warning as a run that did nothing.
+
+Note
+
+`scheduled_start_time` isn’t a scheduling setting. The Orchestrator’s idle-shutdown safety check reads it from a workflow’s stored configuration, but nothing in AIM DMV writes it, `scai` has no option for it, and the workflow configuration schema rejects it as an unknown key.
+
+## Smoke-testing the pipeline before a real load
+
+A **preflight** sends one partition of each table through the real pipeline into transient copies of your target tables, so you find connection, extraction, and load problems before the first real load. It doesn’t test the whole workload. It doesn’t show how long the full load takes or whether the rest of the data loads, and on a small table the one partition is the whole table, not a sample.
+
+**Prompt:**
+
+Copy code
+
+```
+Before we migrate for real, run this workflow as a preflight so I can check the pipeline
+```
+
+The agent sets `preflight: true` at the workflow root and runs the workflow. Before it runs, it checks that the real target tables are deployed: a preflight copies each target’s structure, so it can’t create a missing target the way a real load does. When the preflight finishes, the agent reports which tables completed and which failed, and reminds you that the result covers one partition per table. See [Preflight: a bounded dry run](../manual-migration/data-migration-configuration-reference#preflight-bounded-dry-run) for the prerequisites, which rows a preflight loads, and how to read the result.
+
+**Prompt:**
+
+Copy code
+
+```
+Run the preflight but keep the transient schema so I can look at what was loaded
+```
+
+The agent also sets `preflightKeepSchema: true`. After the run, it gives you the `PREFLIGHT_<workflowId>` schema in each target database and the `DROP SCHEMA` statement to run when you’re done, because AIM DMV doesn’t drop a kept schema for you. See [Keeping the preflight schema](../manual-migration/data-migration-configuration-reference#keeping-the-preflight-schema) and [Cleaning up after a preflight](../manual-migration/data-migration-configuration-reference#cleaning-up-after-a-preflight).
+
+Decide before you start:
+
+- **Whether to keep the transient schema.** Keep it to inspect the loaded rows, and drop it yourself afterward.
+- **When to run it.** Run it before the first full load of the tables. A preflight between a full load and later `checksum` or `watermark` runs of the same tables makes those runs reuse the preflight’s single partition.
+
+A preflight runs on the same Orchestrator, Workers, and compute pool as a real load. For cost, see [Controlling cost on SPCS](./deploy-workers#controlling-cost-on-spcs).
 
 ## Migrating to Apache Iceberg™ tables
 

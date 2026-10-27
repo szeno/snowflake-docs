@@ -4,7 +4,8 @@ Modifies the properties of an existing [DCM project](/user-guide/dcm-projects/dc
 
 See also:
 :   [CREATE DCM PROJECT](/sql-reference/sql/create-dcm-project) , [DESCRIBE DCM PROJECT](/sql-reference/sql/desc-dcm-project), [DROP DCM PROJECT](/sql-reference/sql/drop-dcm-project), [EXECUTE DCM PROJECT](/sql-reference/sql/execute-dcm-project), [SHOW DCM PROJECTS](/sql-reference/sql/show-dcm-projects),
-    [SHOW DEPLOYMENTS IN DCM PROJECT](/sql-reference/sql/show-deployments-in-dcm-project)
+    [SHOW DEPLOYMENTS IN DCM PROJECT](/sql-reference/sql/show-deployments-in-dcm-project), [SYSTEM$UNMANAGE\_ENTITY\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_entity_from_dcm_project),
+    [SYSTEM$UNMANAGE\_FROM\_DCM\_PROJECT](/sql-reference/functions/system_unmanage_from_dcm_project)
 
 ## Syntax
 
@@ -18,9 +19,6 @@ ALTER DCM PROJECT [ IF EXISTS ] <name> SET
 ALTER DCM PROJECT [ IF EXISTS ] <name> UNSET
   [ LOG_LEVEL ]
   [ COMMENT ]
-
-ALTER DCM PROJECT <name>
-  UNMANAGE GRANT <grant_specification>
 
 ALTER DCM PROJECT <name>
   DROP DEPLOYMENT <deployment_name>
@@ -71,12 +69,6 @@ ALTER DCM PROJECT <name>
     When unsetting a property or parameter, specify only the property or parameter name (unless the syntax above indicates that you
     should specify the value). Specifying the value returns an error.
 
-`UNMANAGE GRANT grant_specification`
-:   Removes the specified grant from the project’s management scope without revoking the underlying privilege. Write
-    `grant_specification` as you would write a [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) statement, but omit the leading `GRANT` keyword.
-    Remove the corresponding `GRANT` statement from the project definitions before the next deployment to prevent the project from managing it
-    again.
-
 `DROP DEPLOYMENT deployment_name`
 :   Deletes the specified retained deployment record and its artifacts. This operation doesn’t reverse the infrastructure changes made by that
     deployment.
@@ -125,15 +117,6 @@ Copy code
 
 ```
 ALTER DCM PROJECT my_project SET COMMENT = 'Updated project for Q4 data management';
-```
-
-The following example stops managing a grant without revoking the privilege:
-
-Copy code
-
-```
-ALTER DCM PROJECT my_project
-  UNMANAGE GRANT SELECT ON TABLE my_db.my_schema.my_table TO ROLE analyst;
 ```
 
 The following example deletes the retained deployment record named `DEPLOYMENT$1`:

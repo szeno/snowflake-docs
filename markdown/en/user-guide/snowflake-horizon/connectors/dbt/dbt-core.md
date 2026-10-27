@@ -33,14 +33,21 @@ Generate `manifest.json`:
 Copy code
 
 ```
-dbt compile --full-refresh
+dbt compile
 ```
 
 Warning
 
 `dbt docs generate` also writes a `manifest.json`, but that file doesn’t contain enough lineage
-information. Use the `manifest.json` produced by `dbt compile --full-refresh`, and copy it to
+information. Use the `manifest.json` from `dbt compile`, `dbt run`, or `dbt build`, and copy it to
 another location before running `dbt docs generate` so it isn’t overwritten.
+
+Note
+
+`dbt compile --full-refresh` is optional. It compiles incremental models as a full SELECT instead
+of a MERGE, which keeps upstream lineage in the compiled SQL. It doesn’t run the models. Leave the
+flag off for a project that rejects `flags.FULL_REFRESH`. Adding it fails the command, and there
+is no manifest to upload.
 
 Generate `catalog.json`:
 

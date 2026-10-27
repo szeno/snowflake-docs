@@ -468,6 +468,8 @@ Capturing message content is opt in, so these attributes are populated only when
 specification has both `logging.enabled` and `logging.capture_payload.request_response` set to `true`.
 Payload capture records nothing on its own while logging is off. To turn them on, see
 [Change the specification](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-change-specification).
+They are also not captured for users excluded through `logging.capture_payload.exclude_tags`; see
+[Exclude users from payload capture](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-exclude-from-capture).
 
 Once it’s on, the captured prompts and responses are retained in the event table in your own account.
 Treat that data as sensitive: it contains everything your users sent through the gateway.

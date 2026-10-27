@@ -56,6 +56,7 @@ For all policy objects:
     - [aggregation policies](/user-guide/aggregation-policies)
     - [authentication policy](/user-guide/authentication-policies)
     - [feature policy](/user-guide/feature-policies)
+    - [ingress policy](/user-guide/ingress-policies)
     - [masking policy](/user-guide/security-column-intro)
     - [network policy](/user-guide/network-policies)
     - [packages policy](/developer-guide/udf/python/packages-policy)

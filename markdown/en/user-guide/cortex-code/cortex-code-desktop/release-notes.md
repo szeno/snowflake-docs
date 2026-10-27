@@ -13,6 +13,7 @@ For information about Cortex Code Desktop, see [Cortex Code Desktop](/user-guide
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v1.22.1](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-22-1) | October 2026 | Defer to Production for Snowflake-managed dbt runs, agent-named sessions, Snowflake object discovery for everyone, and Apps panel filters |
 | [v1.21.7](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-7) | October 2026 | Manage automations from chat, redesigned MCP connection controls, Stop for multi-statement SQL, and dbt Docs from the editor |
 | [v1.21.6](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-6) | September 2026 | Grouped model picker with a thinking effort control, agent-managed default model, and SSH, proxy, and Windows fixes |
 | [v1.21.5](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-5) | September 2026 | Recovery guidance when a local dbt executable is missing, clearer skill and plugin installation errors, and more accurate agent memory guidance |

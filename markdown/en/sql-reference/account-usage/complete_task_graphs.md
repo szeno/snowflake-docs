@@ -14,7 +14,7 @@ The view avoids the 10,000 row limitation of the [COMPLETE\_TASK\_GRAPHS](/sql-r
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ROOT\_TASK\_NAME | TEXT | Name of the root task. |
+| ROOT\_TASK\_NAME | TEXT | Name of the root task. NULL for task graph objects. |
 | DATABASE\_NAME | TEXT | Name of the database that contains the graph. |
 | SCHEMA\_NAME | TEXT | Name of the schema that contains the graph. |
 | STATE | TEXT | State of the graph run:   - `SUCCEEDED`: All tasks in the graph ran successfully to completion, or the root task run succeeded and one or more child task runs were skipped. - `FAILED`: One or more task runs in the graph failed, or the root task run succeeded and one or more child task runs failed. - `CANCELLED`: One or more task runs in the graph were cancelled, or the root task run succeeded and one or more child task runs were cancelled.   Note that if the state of the root task run is SKIPPED, the function does not return a row for the run. |
@@ -26,13 +26,15 @@ The view avoids the 10,000 row limitation of the [COMPLETE\_TASK\_GRAPHS](/sql-r
 | QUERY\_START\_TIME | TIMESTAMP\_LTZ | Time when the query in the root task definition started to run. This timestamp aligns with the start time for the query returned by QUERY\_HISTORY. |
 | NEXT\_SCHEDULED\_TIME | TIMESTAMP\_LTZ | Time when the standalone or root task (in a [DAG](/user-guide/tasks-graphs#label-task-dag) of tasks) is next scheduled to start running, assuming the current run of the standalone task or [DAG](/user-guide/tasks-graphs#label-task-dag) started at the SCHEDULED\_TIME time completes in time. |
 | COMPLETED\_TIME | TIMESTAMP\_LTZ | Time when the last task in the [DAG](/user-guide/tasks-graphs#label-task-dag) was completed. |
-| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a [DAG](/user-guide/tasks-graphs#label-task-dag). This ID matches the ID column value in the SHOW TASKS output for the same task. |
-| GRAPH\_VERSION | NUMBER | Integer identifying the version of the [DAG](/user-guide/tasks-graphs#label-task-dag) that was run, or is scheduled to be run. |
+| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a root-task-based graph. This ID matches the ID column value in the SHOW TASKS output for the same task. NULL for task graph objects. |
+| GRAPH\_VERSION | NUMBER | Integer identifying the version of the task graph that was run, or is scheduled to be run. |
 | RUN\_ID | NUMBER | Time when the standalone or root task in a [DAG](/user-guide/tasks-graphs#label-task-dag) is/was originally scheduled to start running. Format is epoch time (in milliseconds).     *Original* scheduled time refers to rare instances when the system may reschedule the same task to run at a different time to retry it or rebalance the load. If that happens, RUN\_ID shows the original scheduled run time and SCHEDULED\_TIME shows the rescheduled run time.     Note that RUN\_ID may not be a unique identifier for the current task/graph run prior to retry. You may use GRAPH\_RUN\_GROUP\_ID column as a replacement for RUN\_ID. |
 | ATTEMPT\_NUMBER | NUMBER | Integer representing the number of attempts to run this task. Initially one. |
 | CONFIG | TEXT | Displays the graph level configuration used during the graph run if explicitly set. Otherwise displays NULL. |
 | GRAPH\_RUN\_GROUP\_ID | TEXT | Identifier for the graph run. When a graph run has multiple task runs, each task run will show the same GRAPH\_RUN\_GROUP\_ID. The combination of GRAPH\_RUN\_GROUP\_ID, and ATTEMPT\_NUMBER can be used to uniquely identify a graph run. |
 | BACKFILL\_INFO | OBJECT | Reserved for future use. The returned value for all rows is NULL. |
+| GRAPH\_ID | TEXT | Unique identifier for the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
+| GRAPH\_NAME | TEXT | Name of the [task graph object](/user-guide/task-graph-object). NULL for root-task-based graphs. |
 
 Expand
 

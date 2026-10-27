@@ -12,6 +12,7 @@ For specific syntax, usage notes, and examples, see:
 **Account and Session Operations:**
 
 > - [ALTER ACCOUNT](/sql-reference/sql/alter-account) (account administrators only)
+> - [ALTER ACCOUNT SET INGRESS POLICY](/sql-reference/sql/alter-account-set-ingress-policy)
 > - [ALTER ORGANIZATION](/sql-reference/sql/alter-organization) (organization administrators only)
 > - [ALTER SESSION](/sql-reference/sql/alter-session) (all users)
 
@@ -45,6 +46,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER STORAGE INTEGRATION](/sql-reference/sql/alter-storage-integration)
 > - [ALTER ROLE](/sql-reference/sql/alter-role)
 > - [ALTER USER](/sql-reference/sql/alter-user)
+> - [ALTER USER SET INGRESS POLICY](/sql-reference/sql/alter-user-set-ingress-policy)
 > - [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse)
 
 **Database Objects:**
@@ -72,6 +74,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER FUNCTION (DMF)](/sql-reference/sql/alter-function-dmf)
 > - [ALTER GIT REPOSITORY](/sql-reference/sql/alter-git-repository)
 > - [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table)
+> - [ALTER INGRESS POLICY](/sql-reference/sql/alter-ingress-policy)
 > - [ALTER JOIN POLICY](/sql-reference/sql/alter-join-policy)
 > - [ALTER LISTING](/sql-reference/sql/alter-listing)
 > - [ALTER MAINTENANCE POLICY](/sql-reference/sql/alter-maintenance-policy)
@@ -111,6 +114,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER TABLE (event tables)](/sql-reference/sql/alter-table-event-table)
 > - [ALTER TAG](/sql-reference/sql/alter-tag)
 > - [ALTER TASK](/sql-reference/sql/alter-task)
+> - [ALTER TASK GRAPH](/sql-reference/sql/alter-task-graph)
 > - [ALTER TYPE](/sql-reference/sql/alter-type)
 > - [ALTER VIEW](/sql-reference/sql/alter-view)
 

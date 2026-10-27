@@ -247,6 +247,8 @@ Snowflake CLI provides the following commands that you can use inside your SQL q
 - [!result](#label-snowcli-sql-query-result-cmd), which displays the result of a SQL query.
 - [!abort](#label-snowcli-sql-query-abort-cmd), which aborts an active SQL query.
 - [!edit](#label-snowcli-sql-query-edit-cmd), which opens an external editor to modify and execute SQL commands.
+- [!set](#label-snowcli-sql-query-set-cmd), which changes the output format for later statements.
+- [!spool](#label-snowcli-sql-query-spool-cmd), which appends later query results to a file.
 
 Tip
 
@@ -562,6 +564,161 @@ To enter commands in an external editor, follow these steps:
    | USER1          |
    +----------------+
    ```
+
+### Set the output format
+
+The `!set` query command changes a session option. The only supported option is `output_format`. Other SnowSQL `!set` options aren’t supported.
+
+Copy code
+
+```
+!set output_format=<format>
+```
+
+`<format>` is one of `TABLE`, `JSON`, `JSON_EXT`, `CSV`, or `PLAIN`. The value is case-insensitive. SnowSQL layouts such as `fancy_grid`, `html`, and `tsv` aren’t supported.
+
+`PLAIN` prints query results without box drawing. `--format PLAIN` selects the same layout. For JSON and `JSON_EXT` sample output, see .
+
+The new format applies to later statements in that `snow sql` run. It doesn’t rewrite a result that is already printed.
+
+The command works in the REPL and in noninteractive input (`-q`, `-f`, or `--stdin`).
+
+Copy code
+
+```
+snow sql -q "select 1 as n; !set output_format=plain; select 2 as n;"
+```
+
+```
+select 1 as n;
++---+
+| n |
+|---|
+| 1 |
++---+
+
+select 2 as n;
+n
+2
+```
+
+In the REPL:
+
+Copy code
+
+```
+> select 1 as n;
+```
+
+```
++---+
+| n |
+|---|
+| 1 |
++---+
+```
+
+Copy code
+
+```
+> !set output_format=plain
+> select 2 as n;
+```
+
+```
+n
+2
+```
+
+### Write query results to a file
+
+The `!spool` query command appends later query results to a file and still prints them on the terminal.
+
+- `!spool <file>` starts spooling. If a spool file is already open, the command closes it first.
+- `!spool off` stops spooling.
+
+The path can be quoted. `~` expands to your home directory. Results are appended as UTF-8.
+
+New spool files are restricted to the current user. Format follows `--format` or `!set output_format`.
+
+The command works in the REPL and in noninteractive input (`-q`, `-f`, or `--stdin`). To capture an entire `snow sql` run, use shell redirection. For the SnowSQL mapping, see [Save query results to a file](/user-guide/snowsql-migrate#label-snowsql-query-json).
+
+Copy code
+
+```
+snow sql -q '!spool /tmp/spool_example; select 2 as n; !spool off'
+```
+
+In the REPL:
+
+Copy code
+
+```
+> select 1 as n;
+```
+
+```
++---+
+| n |
+|---|
+| 1 |
++---+
+```
+
+Copy code
+
+```
+> !spool /tmp/spool_example
+> select 2 as n;
+```
+
+```
++---+
+| n |
+|---|
+| 2 |
++---+
+```
+
+Copy code
+
+```
+> !spool off
+> select 3 as n;
+```
+
+```
++---+
+| n |
+|---|
+| 3 |
++---+
+```
+
+Only the results written while spooling is on are in the file:
+
+Copy code
+
+```
+cat /tmp/spool_example
+```
+
+```
++---+
+| n |
+|---|
+| 2 |
++---+
+```
+
+To spool in CSV format, set the format first:
+
+Copy code
+
+```
+> !set output_format=csv
+> !spool /tmp/spool_example
+```
 
 ## Entering multiple commands in a single transaction
 

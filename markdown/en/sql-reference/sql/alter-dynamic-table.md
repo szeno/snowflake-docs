@@ -60,7 +60,6 @@ ALTER DYNAMIC TABLE [ IF EXISTS ] <name> UNSET
   [ FROZEN WHERE ],
   [ EXECUTE AS USER ],
   [ ROW_TIMESTAMP ],
-  [ DCM PROJECT ]
 ```
 
 Where:
@@ -426,12 +425,6 @@ Where:
     - `FROZEN WHERE`
     - `EXECUTE AS USER`
     - `ROW_TIMESTAMP`
-    - `DCM PROJECT`
-
-`UNSET DCM PROJECT`
-
-> Detaches the dynamic table from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the dynamic table and the DCM project without dropping the dynamic table. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Clustering actions (`clusteringAction`)
 

@@ -51,8 +51,7 @@ ALTER TABLE [ IF EXISTS ] <name> DROP STORAGE LIFECYCLE POLICY
                                         ERROR_LOGGING                       |
                                         CONTACT <purpose>                   |
                                         COMMENT                             |
-                                        ROW_TIMESTAMP                       |
-                                        DCM PROJECT
+                                        ROW_TIMESTAMP
                                         }
                                         [ , ... ]
 ```
@@ -485,11 +484,6 @@ Do not specify copy options using the CREATE STAGE, ALTER STAGE, CREATE TABLE, o
     - `ROW_TIMESTAMP`
 
     You cannot unset the CONTACT property with other properties in the same statement.
-
-`UNSET DCM PROJECT`
-
-> Detaches the table from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the table and the DCM project without dropping the table. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Clustering actions (`clusteringAction`)
 

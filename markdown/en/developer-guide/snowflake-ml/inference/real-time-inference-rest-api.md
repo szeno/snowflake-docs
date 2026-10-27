@@ -261,10 +261,6 @@ curl -X POST "<endpoint_url>" \
 
 ## Online feature store integration
 
-Note
-
-This feature is in public preview. For more information about preview features, see [Preview Features](/release-notes/preview-features).
-
 If you are using [online feature store backed by Snowflake Postgres](/developer-guide/snowflake-ml/feature-store/online-feature-store), you can integrate it with real-time inference
 for automatic feature lookup. This allows the model service to fetch feature values from a registered feature view
 at inference time, reducing the data you need to include in each request.

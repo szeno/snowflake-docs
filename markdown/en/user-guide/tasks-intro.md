@@ -1086,6 +1086,8 @@ SQLPython
 
 - [SYSTEM$CURRENT\_USER\_TASK\_NAME](/sql-reference/functions/system_current_user_task_name)
 - [SYSTEM$TASK\_RUNTIME\_INFO](/sql-reference/functions/system_task_runtime_info)
+- [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state)
+- [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state)
 - [TASK\_HISTORY](/sql-reference/functions/task_history)
 - [TASK\_DEPENDENTS](/sql-reference/functions/task_dependents)
 

@@ -76,8 +76,7 @@ ALTER SCHEMA [ IF EXISTS ] <name> UNSET {
                                         CLASSIFICATION_PROFILE              |
                                         ENABLE_DATA_COMPACTION              |
                                         OAUTH_AUTHORIZATION_SERVER          |
-                                        OAUTH_SCOPES_SUPPORTED              |
-                                        DCM PROJECT
+                                        OAUTH_SCOPES_SUPPORTED
                                         }
                                         [ , ... ]
 
@@ -384,11 +383,6 @@ ALTER SCHEMA [ IF EXISTS ] <name> { ENABLE | DISABLE } MANAGED ACCESS
 
     You can reset multiple properties/parameters with a single ALTER statement; however, each property/parameter must be separated by a
     comma. When resetting a property/parameter, specify only the name; specifying a value for the property will return an error.
-
-`UNSET DCM PROJECT`
-
-> Detaches the schema from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the schema and the DCM project without dropping the schema. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 `{ ENABLE | DISABLE } MANAGED ACCESS`
 :   Enable managed access for a schema, or disable to convert a managed access schema to a regular schema. Managed access schemas centralize

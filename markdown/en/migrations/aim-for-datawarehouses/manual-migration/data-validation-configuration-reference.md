@@ -44,9 +44,9 @@ Show lessSee more
 | `acceptedTransformations` | `Array` |  | Global accepted-transformation rules. Merged with per-table rules. |
 | `databaseMappings` | `Object` |  | Map of source database names to Snowflake database names. |
 | `schemaMappings` | `Object` |  | Map of source schema names to Snowflake schema names. |
-| `tables` | `Array` | See note | Table entries to validate (each tagged `objectType = "TABLE"`). |
-| `views` | `Array` | See note | View entries using the same shape as `tables` (each tagged `objectType = "VIEW"`). |
-| `objects` | `Array` | See note | Entries using the same shape as `tables`, plus an optional `objectType` (`TABLE` or `VIEW`). Omitting `objectType` resolves the type at runtime against the target Snowflake catalog. See [Objects with runtime type detection](#objects-with-runtime-type-detection). |
+| `tables` | `Array` | See note | Table entries to validate. Every entry is validated as a `TABLE`; an `objectType` key on the entry is ignored. |
+| `views` | `Array` | See note | View entries using the same shape as `tables`. Every entry is validated as a `VIEW`; an `objectType` key on the entry is ignored. |
+| `objects` | `Array` | See note | Entries using the same shape as `tables`, plus an optional `objectType` (`TABLE` or `VIEW`). Omitting `objectType` resolves the type at runtime against the source catalog and the target Snowflake catalog. See [Objects with runtime type detection](#objects-with-runtime-type-detection). |
 | `targetPartitionSizeRows` | `Integer` |  | Desired rows per partition. Mutually exclusive with `targetPartitionSizeMb`. |
 | `targetPartitionSizeMb` | `Integer` |  | Desired MB per partition. Default is 200 MB when both are omitted. |
 | `useSnowpipeForResults` | `Boolean` |  | When `true` (default), L2/L3 results from Worker-based workflows are ingested via Snowpipe. Snowflake-to-Snowflake workflows ignore this flag and never use Snowpipe. |
@@ -71,10 +71,114 @@ Show lessSee more
 
 The top-level `objects` array is an alternative to `tables` and `views` that lets you list objects without committing to a type. Each entry uses the same shape as a `tables` or `views` entry, plus an optional `objectType`:
 
-- When `objectType` is `TABLE` or `VIEW`, the entry behaves exactly like the corresponding `tables` or `views` entry.
-- When `objectType` is omitted, AIM DMV resolves the type at runtime against the target Snowflake catalog. Only `TABLE` and `VIEW` are supported. If a detected type is something else (for example a materialized view) or the object doesn’t exist on the target, only that object’s check fails; other objects continue.
+- When `objectType` is `TABLE` or `VIEW` (case-insensitive), the entry behaves exactly like the corresponding `tables` or `views` entry. Any other value is rejected when the workflow is created.
+- When `objectType` is omitted, AIM DMV reads the object’s type from the source catalog and from the target Snowflake catalog before L1 runs, and checks the pair. See [Source and target object types](#source-and-target-object-types) for which pairs continue and which stop. A stopped object doesn’t affect the other objects in the workflow.
+
+`objectType` is honored only on `objects` entries. On a `tables` or `views` entry, the section decides the type and an `objectType` key is ignored, so `objectType: VIEW` inside `tables` still validates the entry as a table. To validate a view, list it under `views`, or under `objects` with `objectType: VIEW` or no `objectType`.
 
 `tables`, `views`, and `objects` can be combined freely in the same workflow.
+
+## Source and target object types
+
+AIM DMV validates tables and views. It reads each object’s type from the source catalog and from the target Snowflake catalog, and classifies each side as `TABLE`, `VIEW`, or unsupported. An object that the catalog lookup doesn’t find is treated as missing. AIM DMV doesn’t check table subtypes: an object is supported when its catalog kind maps to `TABLE` or `VIEW` in [How catalog kinds are classified](#how-catalog-kinds-are-classified), and unsupported otherwise.
+
+### Supported pairings
+
+The source and target types decide whether validation continues:
+
+| Source | Target | Result |
+| --- | --- | --- |
+| Table | Table | Validation continues. L1 records the object type as `SUCCESS`. |
+| View | View | Validation continues. L1 records the object type as `SUCCESS`. |
+| View | Table | Validation continues. L1 records the object type as `WARNING` with the comment “Source view materialized as a Snowflake table.” A warning doesn’t fail L1, so L2 and L3 run when they’re enabled. |
+| Table | View | Not supported. The object doesn’t reach L2 or L3. |
+| Missing or unsupported | Any | Not supported. The object doesn’t reach L2 or L3. |
+| Any | Missing or unsupported | Not supported. The object doesn’t reach L2 or L3. |
+
+Expand
+
+Show lessSee more
+
+Where an unsupported pairing stops depends on how the entry is declared:
+
+- **`objects` entry without `objectType`:** the type check runs before L1, so the object stops before L1, L2, or L3 run. The task error names the problem, for example “Source object type TABLE does not match target object type VIEW”, or “Source object ‘…’ is missing or is not a table or view”.
+- **`tables` or `views` entry, or `objects` entry with `objectType`:** L1 runs and records the object type comparison as `FAILURE` (“Source table compared with a Snowflake view.”, or a comment that names the missing or unsupported side). L2 and L3 don’t run for that object, even when `continueOnFailure` is `true`. If the object doesn’t exist at all, the L1 metadata query returns no rows and the object fails with a [SchemaError](#schemaerror).
+
+Validation always queries the source with the source type. A source view keeps the view catalog path even when its Snowflake counterpart is a table.
+
+### Keys for source views
+
+Automatic partition and index key inference reads table catalog metadata, so it applies only to objects whose source type is `TABLE`. A source object classified as `VIEW`, including every materialized view in [How catalog kinds are classified](#how-catalog-kinds-are-classified), needs its keys supplied:
+
+- `columnNamesToPartitionBy` when L2 or L3 is enabled.
+- `indexColumnList` when L3 is enabled, plus `targetIndexColumnList` when the target column names differ.
+
+Set the keys on the entry or in `defaultTableConfiguration`. Keys stored for the same source object by an earlier workflow also count. Without them, the object fails with “Cannot automatically infer partition key for view ‘…’” (or `index key`), and the message asks you to specify the key in the workflow configuration. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection).
+
+### How catalog kinds are classified
+
+Each platform’s catalog kinds map to `TABLE` or `VIEW` as follows. Snowflake rows apply both to a Snowflake source and to every target lookup. Any kind not listed is unsupported.
+
+| Platform | Catalog | Classified as `TABLE` | Classified as `VIEW` |
+| --- | --- | --- | --- |
+| SQL Server, Azure Synapse | `sys.objects.type` | `U` | `V`, including indexed views |
+| Amazon Redshift | `information_schema.tables.table_type` | `BASE TABLE` | `VIEW` |
+| PostgreSQL | `pg_class.relkind` | `r` (table), `p` (partitioned table) | `v` (view), `m` (materialized view) |
+| Oracle | `ALL_OBJECTS.object_type` | `TABLE` | `VIEW`, `MATERIALIZED VIEW` |
+| Teradata | `DBC.TablesV.TableKind` | `T` (table), `Q` (queue table) | `V` |
+| Snowflake | `INFORMATION_SCHEMA.TABLES.TABLE_TYPE` | `BASE TABLE`, `LOCAL TEMPORARY` | `VIEW`, `MATERIALIZED VIEW` |
+
+Expand
+
+Show lessSee more
+
+A Snowflake secure view reports `VIEW` and a secure materialized view reports `MATERIALIZED VIEW`, so both count as views. Because the target lookup uses the same mapping, a Snowflake materialized view as the target counts as a view: a source view validated against it is the view-to-view pairing, and a source table validated against it is the unsupported table-to-view pairing.
+
+### Dynamic tables
+
+Snowflake reports a dynamic table as `BASE TABLE`, so AIM DMV validates it exactly like a table. There’s no separate dynamic-table check. A source table validated against a dynamic table is the table-to-table pairing; a source view validated against a dynamic table is the view-to-table pairing, which records the L1 warning and continues to L2 and L3 when they’re enabled. For the end-to-end setup, including the required keys and waiting for the dynamic table to refresh, see [Validating a view against a dynamic table](../data-migration-validation/data-validation-advanced-configuration#validating-a-view-against-a-dynamic-table).
+
+The following entry validates a SQL Server view against a dynamic table with a different name. The source is a view, so it supplies every key explicitly:
+
+Copy code
+
+```
+sourcePlatform: sqlserver
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: true
+views:
+  - fullyQualifiedName: SALES.dbo.ORDER_TOTALS
+    targetDatabase: SALES
+    targetSchema: DBO
+    targetName: ORDER_TOTALS_DT
+    columnNamesToPartitionBy:
+      - ORDER_ID
+    indexColumnList:
+      - ORDER_ID
+    targetIndexColumnList:
+      - ORDER_ID
+```
+
+Other Snowflake table kinds, such as dynamic Apache Iceberg™ tables and interactive tables, aren’t checked by name either. They validate only when Snowflake `INFORMATION_SCHEMA.TABLES` reports them as `BASE TABLE` or `VIEW`; any other `TABLE_TYPE` is unsupported. For Snowflake-managed Iceberg tables that AIM DMV migrated, declare the Iceberg profile on the validation workflow as described in [Validating spec v2 and spec v3 tables](../data-migration-validation/iceberg#validating-spec-v2-and-spec-v3-tables).
+
+This section describes validation only. Data migration doesn’t load data into a dynamic table; see [Views and dynamic tables in migration](./data-migration-configuration-reference#views-and-dynamic-tables-in-migration).
+
+### Objects that aren’t supported
+
+AIM DMV can’t validate the following objects:
+
+- Snowflake external tables (`EXTERNAL TABLE`), and any other catalog kind not listed in [How catalog kinds are classified](#how-catalog-kinds-are-classified).
+- Teradata tables without a primary index and without partitioning (`TableKind` `O`). That kind isn’t classified as a table, so even a `tables` entry for one fails the L1 object type check.
+- Session-scoped temporary objects. The catalog lookup runs in its own session against the configured database and schema, so it doesn’t find objects that exist only in another session or in a session-private schema. Such an object is treated as missing, even though you can query it from the session that created it:
+  - SQL Server and Azure Synapse local temporary tables (`#name`) aren’t rows of type `U` in the user database’s `sys.objects`. A global temporary table that the lookup finds as type `U` is a table.
+  - Amazon Redshift temporary tables live in a session-specific schema, not the schema the lookup searches.
+  - PostgreSQL temporary tables live in a `pg_temp_N` schema, not the schema the lookup searches.
+  - Oracle private temporary tables aren’t in `ALL_OBJECTS`. Global temporary tables are listed as `TABLE`.
+  - Teradata volatile tables aren’t in `DBC.TablesV`.
+
+Snowflake temporary tables are session-scoped too. The lookup classifies `LOCAL TEMPORARY` as a table, but it can only classify a temporary table that’s visible to the lookup’s own session.
 
 ## Validation configuration
 
@@ -252,7 +356,7 @@ What to check:
 - Check that the object has been deployed to Snowflake and that its data has been migrated.
 - Check the database, schema and object names and how they are cased. Check any column mappings too.
 - Grant the validation user access to the object on both sides.
-- For views, check that the object type in the configuration is correct.
+- For views, check that the entry is under `views` or `objects`, not `tables`. An `objectType` key inside `tables` is ignored. See [Source and target object types](#source-and-target-object-types).
 
 ### TimeoutError
 
@@ -409,7 +513,7 @@ Three rules apply:
 | `indexColumnList` | `String[]` |  | Columns used to align rows on the source (required for L3). Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
 | `targetIndexColumnList` | `String[]` |  | Columns used to align rows on the target. |
 | `columnMappings` | `Object` |  | Map of source column name to target column name. |
-| `objectType` | `String` |  | `TABLE` (default) or `VIEW`. Set to `VIEW` to validate a view from a flat `tables` list instead of the `views` array. |
+| `objectType` | `String` |  | `TABLE` or `VIEW` (case-insensitive); any other value is rejected. Honored only on `objects` entries, where omitting it triggers runtime type detection. Ignored on `tables` and `views` entries, which are always validated as tables and views respectively. See [Objects with runtime type detection](#objects-with-runtime-type-detection). |
 | `columnNamesToPartitionBy` | `String[]` |  | Columns for range-based partitioning during L2/L3. Can be omitted and inferred automatically. See [Automatic partition and index key selection](#automatic-partition-and-index-key-selection). |
 | `targetPartitionSizeRows` | `Integer` |  | Per-table rows per partition override. |
 | `targetPartitionSizeMb` | `Integer` |  | Per-table MB per partition override. |
@@ -482,7 +586,7 @@ When `columnNamesToPartitionBy` or `indexColumnList` is omitted for a table that
 - **Partition key**: clustered, sort, or distribution key columns when available, otherwise a unique index, otherwise the first non-boolean schema column as a last resort.
 - **Index key** (for L3 row alignment): the declared primary key, otherwise the first unique index as a fallback.
 
-Inferred keys are cached per source table and reused by later workflows. A manually specified `columnNamesToPartitionBy` or `indexColumnList` always takes precedence. Views can’t be inferred; set these explicitly when validating a view, and prefer a partition key that matches the underlying tables plus a `sourceWhereClause` to limit the scan. See [Validating views](../data-migration-validation/data-validation-advanced-configuration#validating-views).
+Inferred keys are cached per source table and reused by later workflows. A manually specified `columnNamesToPartitionBy` or `indexColumnList` always takes precedence. Views can’t be inferred; set these explicitly for every source object classified as a view, including materialized views (see [Keys for source views](#keys-for-source-views)). Prefer a partition key that matches the underlying tables plus a `sourceWhereClause` to limit the scan. See [Validating views](../data-migration-validation/data-validation-advanced-configuration#validating-views).
 
 Each partition key must be a **real, physical column name**. Persisted computed columns (SQL Server) and virtual columns (Oracle) qualify. Bare SQL expressions, pseudo-columns (for example Oracle `ROWID`, `ROWNUM`, or `ORA_ROWSCN`), and hidden system columns are **not** valid: AIM DMV quotes partition key names as identifiers, so those values won’t resolve. To partition on a derived value, add a persisted or virtual computed column on the source and reference that column name.
 
@@ -490,7 +594,7 @@ Index keys deserve particular attention when you enable L3. They’re what lets 
 
 ## Incremental validation
 
-By default, every validation run compares every partition of every table. **Incremental validation** detects which partitions changed since the last run and re-validates only those, which cuts cost and runtime on scheduled re-validation of large tables.
+By default, every validation run compares every partition of every table. **Incremental validation** detects which partitions changed since the last run and re-validates only those, which cuts cost and runtime when you validate large tables again. Each run is a validation command that you invoke. AIM DMV doesn’t schedule runs; see [Running validation on a schedule](../data-migration-validation/data-validation-advanced-configuration#running-validation-on-a-schedule).
 
 Incremental validation uses the same `synchronization` block as [incremental sync](./data-migration-configuration-reference#synchronizationstrategy-model) in data migration, but it’s **read-only**: nothing is written to the target, and no rows are moved or reconciled.
 

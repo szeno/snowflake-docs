@@ -78,7 +78,7 @@ Deploy converted DDL before migration so target types match your expectations, e
 
 ### Incremental sync
 
-After an initial full load, use **`watermark`** or **`checksum`** synchronization in the workflow configuration for incremental loads. The default strategy, **`none`**, runs full loads only and does not track changes. See [Data migration configuration reference](../manual-migration/data-migration-configuration-reference).
+After an initial full load, use **`watermark`** or **`checksum`** synchronization in the workflow configuration for incremental loads. Use **`full-replace`** to reload each partition in full without duplicating rows. The default strategy, **`none`**, extracts every row on each run and appends it, so rerunning it against a populated native target duplicates data. On a Snowflake-managed Iceberg table this migration creates, **`watermark`** and **`checksum`** reuse the table on a later run, **`full-replace`** is rejected, and a second **`none`** run fails if the table already exists. See [Choosing a synchronization strategy](../manual-migration/data-migration-configuration-reference#choosing-a-synchronization-strategy) to pick one for each table.
 
 ## Related content
 

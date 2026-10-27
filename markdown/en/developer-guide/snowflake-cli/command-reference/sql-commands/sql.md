@@ -190,7 +190,7 @@ None
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. Default: TABLE.
 
 `--verbose, -v`

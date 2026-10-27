@@ -4,6 +4,8 @@ In Snowflake, you can manage multiple tasks with a *task graph*, also known as a
 
 Build task graphs that have dynamic behavior by specifying logic-based operations in the task body using runtime values, graph level configuration, and return values of parent tasks.
 
+You can also declare a task graph as a `TASK GRAPH` object. The object holds graph-wide settings and default settings for its member tasks, and lets you edit a running graph without suspending it first. See [Declare Task Graph as an object](/user-guide/task-graph-object).
+
 You can create tasks and task graphs using [supported languages and tools](/developer-guide/stored-procedure/stored-procedures-overview#label-stored-procedures-handler-languages) like SQL, JavaScript, Python,
 Java, Scala, or Snowflake Scripting. This topic provides SQL examples. For Python examples, see [Managing Snowflake tasks and task graphs with Python](/developer-guide/snowflake-python-api/snowflake-python-managing-tasks).
 
@@ -20,8 +22,11 @@ in parallel.
 
 When a task has multiple parents, the task waits for all
 preceding tasks to successfully complete before starting.
-(The task may also run when some parent tasks are skipped. For
+(The task might also run when some parent tasks have not run. For
 more information, see [Skip or suspend a child task](#label-child-task-suspended)).
+
+To run a task on other outcomes, such as when a parent task fails or is skipped, use
+[Control when tasks run with advanced branching](#label-task-graph-advanced-branching).
 
 The following example creates a serverless task graph that starts
 with a root task that is scheduled to run every minute. The root
@@ -192,6 +197,128 @@ CREATE OR REPLACE TASK task_root
   SUSPEND_TASK_AFTER_NUM_FAILURES = 3   --  Task graph suspends after 3 consecutive failures
   AS SELECT 1;
 ```
+
+## Control when tasks run with advanced branching
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Advanced branching is a public preview feature, available to all accounts.
+
+By default, a child task in a task graph runs only when all of its predecessors succeed. If a predecessor fails, the child task isn’t
+scheduled, so it never appears in task history and its successors never run.
+
+*Advanced branching* lets a task run on other outcomes, such as when all of its predecessors failed, when at least one succeeded, or when
+a specific upstream task was skipped. Use it to build error handling, fallback paths, and cleanup logic directly into a task graph.
+
+To use advanced branching, call one of the following functions in the `WHEN` clause of a child task:
+
+| Function | Description |
+| --- | --- |
+| [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) | Evaluates the completion states of all of the task’s predecessors against a condition, such as `ALL_FAILED`, `ALL_DONE`, or `NONE_FAILED_MIN_ONE_SUCCEEDED`. |
+| [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) | Returns the state that one specific task in the graph completed in, such as `SUCCEEDED`, `FAILED`, or `SKIPPED`. |
+
+Expand
+
+Show lessSee more
+
+For example, the following task graph loads two tables in parallel, then runs one task when both loads succeed and a different task when
+either load fails:
+
+Copy code
+
+```
+CREATE OR REPLACE TASK task_root
+  SCHEDULE = '60 MINUTE'
+  AS SELECT 1;
+
+CREATE OR REPLACE TASK task_load_orders
+  WAREHOUSE = my_warehouse
+  AFTER task_root
+  AS
+    INSERT INTO orders SELECT * FROM orders_staging;
+
+CREATE OR REPLACE TASK task_load_customers
+  WAREHOUSE = my_warehouse
+  AFTER task_root
+  AS
+    INSERT INTO customers SELECT * FROM customers_staging;
+
+-- Runs only when both loads succeed. ALL_SUCCEEDED is the default
+-- condition, so stating it explicitly is optional.
+CREATE OR REPLACE TASK task_publish
+  WAREHOUSE = my_warehouse
+  AFTER task_load_orders, task_load_customers
+  WHEN SYSTEM$PREDECESSORS_STATE('ALL_SUCCEEDED')
+  AS
+    CALL publish_daily_snapshot();
+
+-- Runs when either load fails.
+CREATE OR REPLACE TASK task_alert
+  WAREHOUSE = my_warehouse
+  AFTER task_load_orders, task_load_customers
+  WHEN SYSTEM$PREDECESSORS_STATE('AT_LEAST_ONE_FAILED')
+  AS
+    CALL send_load_failure_alert();
+```
+
+You can combine these functions with the other expressions that a `WHEN` clause supports, including
+[SYSTEM$STREAM\_HAS\_DATA](/sql-reference/functions/system_stream_has_data) and [SYSTEM$GET\_PREDECESSOR\_RETURN\_VALUE](/sql-reference/functions/system_get_predecessor_return_value). The task runs
+only when the whole expression evaluates to `TRUE`.
+
+A task always waits for all of its resumed predecessors to reach a terminal state before it evaluates its condition. A task using
+`AT_LEAST_ONE_FAILED` doesn’t run the moment the first predecessor fails. Snowflake waits for the remaining predecessors to finish first.
+
+### How advanced branching changes scheduling
+
+Snowflake treats a task graph as using advanced branching when any task in the graph calls
+[SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) or [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state). This behavior applies
+to the whole graph, not to individual tasks, and Snowflake determines it for each graph run.
+
+The following table compares the two behaviors:
+
+| Behavior | Task graph with advanced branching | Task graph without advanced branching |
+| --- | --- | --- |
+| Task scheduling | Every task in the graph attempts to run and appears in task history, whatever state its predecessors completed in. Each task then evaluates its own `WHEN` clause to decide whether to run or be skipped. | Only tasks whose predecessors all succeeded are scheduled. Tasks downstream of a failure never appear in task history. |
+| Default predecessor condition | A task that doesn’t specify a predecessor condition behaves as though its `WHEN` clause ends with `AND SYSTEM$PREDECESSORS_STATE('ALL_SUCCEEDED')`, so its behavior is unchanged. | Every task in the graph uses `ALL_SUCCEEDED`. |
+
+Expand
+
+Show lessSee more
+
+If the root task is skipped or canceled, the rest of the graph doesn’t run, whether or not the graph uses advanced branching.
+
+Because every task in the graph attempts to run, a task graph that uses advanced branching produces more task history rows than the same graph
+without it. Tasks whose conditions aren’t met are recorded with a `SKIPPED` state. Each scheduled task also
+evaluates its `WHEN` condition in the cloud services layer, which accrues a nominal charge even when the task is skipped. For more
+information, see [CREATE TASK](/sql-reference/sql/create-task).
+
+### Retries with advanced branching
+
+When a task graph that uses advanced branching is retried, either automatically through `TASK_AUTO_RETRY_ATTEMPTS` or manually through
+[EXECUTE TASK … RETRY LAST](/sql-reference/sql/execute-task), Snowflake initially retries only the failed tasks that have no failed ancestors. In
+other words, the retry starts from the earliest failed tasks in the graph.
+
+After a retried task completes, Snowflake reevaluates the conditions of its successors using the states that its predecessors completed in
+across all attempts of the graph run. A successor that was skipped on an earlier attempt can therefore run on a later one, and its
+successors will also be reevaluated.
+
+Consider a graph where `task_a` precedes `task_b`, which precedes `task_c`, and `task_b` uses `ALL_DONE`:
+
+- First attempt: `task_a` fails. `task_b` is still scheduled, its `ALL_DONE` condition is met, and it runs and succeeds. `task_c` is
+  scheduled, and it fails.
+- Retry: only `task_a` is retried, because `task_c` has a failed ancestor. If `task_a` succeeds, `task_b` runs again, and then `task_c`
+  runs again.
+
+For more information about retries, see [Retry a failed task](#label-task-graph-retry-failed-task) and [Automatic retries](#label-task-graph-automatic-retries).
+
+### Advanced branching considerations
+
+[SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) and [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) each have their own
+restrictions on which task types can call them and how they resolve task names. For details, see the Usage notes on each function’s
+reference page.
+
+A suspended child task isn’t scheduled, and it isn’t counted among a task’s predecessors. Predecessor conditions evaluate only the resumed
+predecessors. For more information about suspended child tasks, see [Skip or suspend a child task](#label-child-task-suspended).
 
 ## Unlink parent and child tasks
 

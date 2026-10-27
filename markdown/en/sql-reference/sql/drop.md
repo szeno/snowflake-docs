@@ -62,6 +62,7 @@ For specific syntax, usage notes, and examples, see:
 - [DROP ICEBERG TABLE](/sql-reference/sql/drop-iceberg-table)
 - [DROP IMAGE REPOSITORY](/sql-reference/sql/drop-image-repository)
 - [DROP INDEX](/sql-reference/sql/drop-index)
+- [DROP INGRESS POLICY](/sql-reference/sql/drop-ingress-policy)
 - [DROP JOIN POLICY](/sql-reference/sql/drop-join-policy)
 - [DROP LISTING](/sql-reference/sql/drop-listing)
 - [DROP MAINTENANCE POLICY](/sql-reference/sql/drop-maintenance-policy)
@@ -97,6 +98,7 @@ For specific syntax, usage notes, and examples, see:
 - [DROP TABLE](/sql-reference/sql/drop-table)
 - [DROP TAG](/sql-reference/sql/drop-tag)
 - [DROP TASK](/sql-reference/sql/drop-task)
+- [DROP TASK GRAPH](/sql-reference/sql/drop-task-graph)
 - [DROP TYPE](/sql-reference/sql/drop-type)
 - [DROP VIEW](/sql-reference/sql/drop-view)
 

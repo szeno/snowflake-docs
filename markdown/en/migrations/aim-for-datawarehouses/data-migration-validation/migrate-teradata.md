@@ -7,7 +7,7 @@ This page covers Teradata-specific setup for [Data migration](./data-migration).
 Before you migrate data from Teradata, make sure the following are in place:
 
 - **Teradata connectivity on Workers**: Install **`teradatasql`** (preferred, pure Python) or register a Teradata ODBC driver on each Worker host. Default gateway port is **1025** unless your site uses another.
-- **Teradata Tools and Utilities (for `tpt`)**: If you use the **`tpt`** extraction strategy, **`tbuild`** must be on `PATH` or set via **`TPT_TBUILD_EXECUTABLE`**.
+- **Teradata Tools and Utilities (for TPT)**: A Worker uses TPT only when **`tbuild`** is on `PATH` or set through **`TPT_TBUILD_EXECUTABLE`**. The SPCS Worker image doesn’t include `tbuild`, so TPT never runs on SPCS. See [Teradata TPT selection](../manual-migration/data-migration-configuration-reference#teradata-tpt-selection).
 - **NOS / WRITE\_NOS (for `write_nos`)**: Teradata **NOS / WRITE\_NOS** must be enabled on the source system, and you need cloud storage credentials aligned with your Snowflake external stage.
 - **Snowflake external stage (for `write_nos`)**: Create an external stage whose URL matches the bucket or container Teradata writes to.
 
@@ -19,7 +19,7 @@ Teradata supports three extraction strategies. Pick **one** per table (or inheri
 | --- | --- | --- | --- |
 | **`write_nos`** (recommended when prerequisites are met) | **Required** (same bucket/container Teradata writes to) | **External** stage | `write_nos_*` TOML fields; Teradata NOS enabled. Use for **all** tables once cloud storage and the external stage are set up. |
 | **`regular`** | Omit | Internal migration stage | `teradatasql` or Teradata ODBC; optional `odbc_driver`, `dbc_name`, `authentication`. Use when volume is genuinely small, or when WRITE\_NOS prerequisites aren’t available yet. |
-| **`tpt`** | Omit | Internal migration stage (same as `regular`) | **`tbuild`** on `PATH` or **`TPT_TBUILD_EXECUTABLE`**. Worker-side bulk export when WRITE\_NOS isn’t an option. |
+| **`tpt`** | Omit | Internal migration stage (same as `regular`) | Legacy alias for `regular`. The Worker uses TPT only when **`tbuild`** is on `PATH` or set through **`TPT_TBUILD_EXECUTABLE`**, which is never the case on SPCS. |
 
 Expand
 
@@ -152,7 +152,7 @@ Copy code
 Use tpt extraction for the ORDERS table
 ```
 
-Under **`regular`** extraction, the Worker auto-enables TPT when `tbuild` is available unless you set **`use_tpt_for_bulk = false`** in Worker TOML.
+`tpt` is a legacy alias for **`regular`**: both run the same way. Under either value, the Worker uses TPT when `tbuild` is available, unless you set **`use_tpt_for_bulk = false`** in Worker TOML, and otherwise extracts through `teradatasql`. SPCS Workers always use `teradatasql` because the image doesn’t include `tbuild`. See [Teradata TPT selection](../manual-migration/data-migration-configuration-reference#teradata-tpt-selection).
 
 ## Data type mappings
 

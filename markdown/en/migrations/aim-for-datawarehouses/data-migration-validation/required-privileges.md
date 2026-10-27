@@ -107,7 +107,8 @@ These privileges cover the operations AIM DMV performs on the target during a wo
 | Create target tables | `CREATE TABLE IF NOT EXISTS <table> (...)` | Auto-creates tables from the source schema. |
 | Load data | `COPY INTO <table> FROM @stage/...` | Bulk loads from Parquet or CSV. |
 | Upsert and dedup | `MERGE INTO <table>` and `DELETE FROM <table>` | Watermark sync and incremental deduplication. |
-| Preflight schema | `CREATE TRANSIENT SCHEMA IF NOT EXISTS PREFLIGHT_<id>` | Dry-run validation before the real load. |
+| Preflight schema | `CREATE TRANSIENT SCHEMA IF NOT EXISTS PREFLIGHT_<id>` | Bounded dry run before the real load. |
+| Preflight tables | `CREATE TRANSIENT TABLE IF NOT EXISTS PREFLIGHT_<id>.<copy> LIKE <tgt>` | Copies the structure of the real target, which must already exist. |
 | Preflight cleanup | `DROP SCHEMA IF EXISTS PREFLIGHT_<id> CASCADE` | Removes the transient schema after the workflow. |
 | Staging tables | `CREATE OR REPLACE TRANSIENT TABLE <stg> LIKE <tgt>` | Intermediate staging for upserts. |
 | Staging cleanup | `DROP TABLE IF EXISTS <staging_table>` | Removes the staging table after the merge. |
@@ -267,6 +268,8 @@ GRANT USAGE ON SECRET <db>.<schema>.<secret_name> TO ROLE <migration_role>;
 GRANT USAGE ON INTEGRATION <eai_name> TO ROLE <migration_role>;
 ```
 
+Grant `USAGE` on every other secret bound into the Worker service too, such as an Azure `cloud_direct` credential or a Teradata token. For which Worker variables are secrets, see [Environment variables](../manual-migration/data-migration-configuration-reference#environment-variables).
+
 ## Quick-start role setup
 
 Copy this script and replace the placeholders (`<wh>`, `<target_db>`, `<target_schema>`, `<migration_user>`, and the optional integrations) for your environment. Uncomment the external stage and Iceberg sections only if you use them.
@@ -344,9 +347,9 @@ Expand
 
 Show lessSee more
 
-Workers need matching values in their own configuration, because they read these locations from Worker TOML rather than from the Orchestrator’s environment. See [Matching metadata locations between the Orchestrator and Workers](../manual-migration/data-migration-configuration-reference#matching-metadata-locations).
+Workers need matching values in their own configuration, because they read these locations from Worker TOML rather than from the Orchestrator’s environment. The SPCS Worker image builds that TOML from the same environment variables, and `scai data worker setup` sets them. See [Matching metadata locations between the Orchestrator and Workers](../manual-migration/data-migration-configuration-reference#matching-metadata-locations).
 
-For the other environment variables AIM DMV reads, including metadata storage mode, secret resolution, and Teradata TPT paths, see [Environment variables](../manual-migration/data-migration-configuration-reference#environment-variables).
+For every other environment variable the Orchestrator and Workers read, including metadata storage mode, task retries, secret resolution, and Teradata TPT selection, see [Environment variables](../manual-migration/data-migration-configuration-reference#environment-variables).
 
 ## Source platform privileges
 

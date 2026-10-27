@@ -33,7 +33,6 @@ ALTER AUTHENTICATION POLICY [ IF EXISTS ] <name> UNSET
   [ PAT_POLICY ]
   [ WORKLOAD_IDENTITY_POLICY ]
   [ COMMENT ]
-  [ DCM PROJECT ]
 ```
 
 ## Parameters
@@ -384,11 +383,6 @@ ALTER AUTHENTICATION POLICY [ IF EXISTS ] <name> UNSET
 
 `UNSET ...`
 :   Specifies the properties to unset for the authentication policy, which resets them to their defaults.
-
-`UNSET DCM PROJECT`
-
-> Detaches the authentication policy from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the authentication policy and the DCM project without dropping the authentication policy. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 ## Access control requirements
 

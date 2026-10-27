@@ -519,7 +519,7 @@ Note
 ### Save query results to a file
 
 Snowflake CLI doesn’t support every [SnowSQL output formatting option](/user-guide/snowsql-use#label-snowsql-export-data).
-Supported `--format` values are `TABLE`, `JSON`, `JSON_EXT`, and `CSV`. There is no `-o output_file` equivalent; use shell redirection.
+Supported `--format` values are `TABLE`, `JSON`, `JSON_EXT`, `CSV`, and `PLAIN`. To capture a whole run, use shell redirection. To append later results during a session, use [`!spool`](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-query-spool-cmd). To change format mid-session, use [`!set output_format`](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-query-set-cmd).
 
 - SnowSQL
 
@@ -538,6 +538,13 @@ Supported `--format` values are `TABLE`, `JSON`, `JSON_EXT`, and `CSV`. There is
   ```
   snow sql -f test.sql --format json > result.json
   snow sql -f test.sql --format csv > result.csv
+  ```
+- Snowflake CLI (in session)
+
+  Copy code
+
+  ```
+  snow sql -q '!set output_format=json; !spool result.json; select 1 as n; !spool off'
   ```
 
 ### Run queries using variables
@@ -657,7 +664,9 @@ The following table shows how SnowSQL features are integrated into Snowflake CLI
 | Execute a query from a file using the `-f` or `--filename FILE` options. | Use `snow sql -f` or `--filename`. The option is repeatable. |
 | Execute a query from command-line input using the `-q` or `--query TEXT` options. | Use `snow sql -q` or `--query`; for example, `snow sql -q "select emp_id FROM employees"`. |
 | Query templating with the option to provide variables using the `--variable` command-line option, such as `--variable db_key=$DB_KEY`. | Snowflake CLI supports `-D` or `--variable` and `snowflake.yml` `env` values (`<% ctx.env.name %>`). For more information, see [Using variables for SQL templates](/developer-guide/snowflake-cli/sql/execute-sql#label-cli-sql-templating) and [Storing variables in the `snowflake.yml` project definition file](/developer-guide/snowflake-cli/sql/execute-sql#label-cli-sql-env-vars). |
-| [Interactive SQL shell mode](/user-guide/snowsql-use#label-using-commands). | Use [interactive mode](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode). The REPL and noninteractive `snow sql` both accept `;>` to schedule a query and print its query ID. `!queries`, `!result`, and `!abort` work in the REPL and in noninteractive input. `!edit` fails outside the REPL. The command prints `The edit command can only be used in interactive mode.` |
+| [Interactive SQL shell mode](/user-guide/snowsql-use#label-using-commands). | Use [interactive mode](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-interactive-mode). The REPL and noninteractive `snow sql` both accept `;>` to schedule a query and print its query ID. `!queries`, `!result`, `!abort`, `!set`, and `!spool` work in the REPL and in noninteractive input. `!edit` fails outside the REPL. The command prints `The edit command can only be used in interactive mode.` |
+| `!set <option>=<value>` | `!set output_format=<format>` is supported (`TABLE`, `JSON`, `JSON_EXT`, `CSV`, `PLAIN`). Other SnowSQL `!set` options aren’t supported. For more information, see [Set the output format](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-query-set-cmd). |
+| `!spool <file>` and `!spool off` | `!spool` is supported. Results are appended to the file and still printed on the terminal. For more information, see [Write query results to a file](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-query-spool-cmd). |
 | Include, or source, one or more SQL files from another SQL file:  Copy code  ``` !source file1.sql; !source file2.sql; !source http://example.com/my.sql ``` | `!source` and `!load` are supported. Snowflake CLI fetches `https://` URLs. A plaintext `http://` URL is rejected before any fetch, and the command prints `Plaintext http:// sources are not allowed`. An `https://` URL that redirects to `http://` is rejected too. Local-only mode (`--local-only`, `SNOWFLAKE_CLI_SQL_LOCAL_ONLY`, or `cli.sql_local_only`) blocks `https://` URLs, and the command prints `Loading SQL from URLs is disabled (--local-only)`. For more information, see [Working with SQL query commands](/developer-guide/snowflake-cli/sql/execute-sql#label-snowcli-sql-query-commands). |
 | Stop after a SQL error (`-o exit_on_error=true`). | In noninteractive `snow sql`, a failed SQL statement stops the command and returns a nonzero exit code. There is no continue-on-error switch. For exit codes, see [Enhanced error codes](/developer-guide/snowflake-cli/command-reference/sql-commands/sql#label-snowcli-enhanced-error-codes). |
 

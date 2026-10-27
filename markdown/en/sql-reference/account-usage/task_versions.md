@@ -14,7 +14,7 @@ indicate the tasks that comprised a [task graph](/user-guide/tasks-graphs#label-
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a DAG. This ID matches the ID column value in the SHOW TASKS output for the same task. Matches ROOT\_TASK\_ID in [complete task graphs](/sql-reference/account-usage/complete_task_graphs) and [task history](/sql-reference/account-usage/task_history). |
+| ROOT\_TASK\_ID | TEXT | Unique identifier for the root task in a DAG. This ID matches the ID column value in the SHOW TASKS output for the same task. Matches ROOT\_TASK\_ID in [complete task graphs](/sql-reference/account-usage/complete_task_graphs) and [task history](/sql-reference/account-usage/task_history). NULL for task graph objects. |
 | GRAPH\_VERSION | NUMBER | Integer identifying the version of the task. Matches GRAPH\_VERSION in [complete task graphs](/sql-reference/account-usage/complete_task_graphs). |
 | GRAPH\_VERSION\_CREATED\_ON | TIMESTAMP\_LTZ | Date and time when this version of the task graph was saved. |
 | NAME | TEXT | Name of the task. |
@@ -38,6 +38,7 @@ indicate the tasks that comprised a [task graph](/user-guide/tasks-graphs#label-
 | TARGET\_COMPLETION\_INTERVAL | TEXT | The window of time when the task should perform. Only used for serverless tasks. Optional for serverless tasks, required for [serverless triggered tasks](/user-guide/tasks-intro#label-tasks-triggered). |
 | SCHEDULING\_MODE | TEXT | Reserved for future functionality. Displays UNKNOWN. |
 | GRAPH\_VERSION\_CREATED\_BY\_USER | TEXT | Name of the user who created this version of the task graph. NULL if the user information is not available. Displays `DROPPED_USER(<id>)` if the user has since been dropped. |
+| GRAPH\_ID | TEXT | Unique identifier for the [task graph object](/user-guide/task-graph-object). Matches GRAPH\_ID in [complete task graphs](/sql-reference/account-usage/complete_task_graphs) and [task history](/sql-reference/account-usage/task_history). NULL for root-task-based graphs. |
 
 Expand
 

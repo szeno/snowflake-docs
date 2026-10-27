@@ -7,7 +7,7 @@ dedicated, personal storage location where users can create, organize, and manag
 
 Automatic provisioning removes the administrative requirement for users to manually select or request access to a shared database, which
 ensures a dedicated development environment. When a user is dropped from the system, their associated PDB and all its objects are
-automatically transferred to ACCOUNTADMIN ownership.
+automatically transferred to the role that executes the DROP USER command.
 
 ### Advantages of a PDB
 

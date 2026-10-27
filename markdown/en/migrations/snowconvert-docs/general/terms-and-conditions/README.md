@@ -1,5 +1,3 @@
-# SnowConvert AI - Conversion Software Terms of Use
+# SnowConvert AI - Terms of use
 
-For the most current and authoritative version of the Conversion Software Terms of Use, please visit the official Snowflake legal site:
-
-[Conversion Software Terms of Use](https://www.snowflake.com/en/legal/technical-services-and-education/conversion-software-terms/)
+SCAI is Client Software governed by either 1) the written agreement between Snowflake (or its affiliate) and your organization governing use of the Snowflake Service (the “Agreement”), or if no such written agreement exists, 2) the Snowflake Terms of Service published at <https://www.snowflake.com/legal>.

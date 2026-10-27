@@ -57,7 +57,6 @@ ALTER TASK [ IF EXISTS ] <name> UNSET
   [ SERVERLESS_TASK_MAX_STATEMENT_SIZE ]
   [ CONTACT <purpose> [ , ... ]]
   [ EXECUTE AS USER ]
-  [ DCM PROJECT ]
 
 ALTER TASK [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>'
   [ , <tag_name> = '<tag_value>' ... ]
@@ -141,11 +140,6 @@ ALTER TASK [ IF EXISTS ] <name> REMOVE WHEN
     To detach a contact from the task, specify `UNSET CONTACT purpose`. You cannot unset the CONTACT property with other properties in
     the same statement.
 
-`UNSET DCM PROJECT`
-
-> Detaches the task from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the task and the DCM project without dropping the task. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
-
 `sql`
 :   Specifies the SQL code to execute when the task runs:
 
@@ -164,7 +158,9 @@ ALTER TASK [ IF EXISTS ] <name> REMOVE WHEN
 `WHEN boolean_expr`
 :   Specifies a Boolean SQL expression. When a task is triggered, it validates the conditions of the expression to determine whether to
     execute. If the conditions of the expression are not met, then the task skips the current run. Any tasks that identify this task
-    as a predecessor also do not run.
+    as a predecessor also don’t run, unless the task graph uses
+    [advanced branching](/user-guide/tasks-graphs#label-task-graph-advanced-branching). In a task graph that uses advanced branching, every
+    task is scheduled and evaluates its own `WHEN` clause, whatever state its predecessors completed in.
 
     Validating the conditions of the WHEN expression does not require a virtual warehouse. The validation is instead processed in the cloud
     services layer. A nominal charge accrues each time a task evaluates its WHEN condition and does not run. The charges accumulate each time
@@ -190,6 +186,26 @@ ALTER TASK [ IF EXISTS ] <name> REMOVE WHEN
     [SYSTEM$GET\_PREDECESSOR\_RETURN\_VALUE](/sql-reference/functions/system_get_predecessor_return_value)
     :   Retrieves the return value for the predecessor task in a task graph.
         Used to decide whether the task should run based on the returned result.
+
+    [Preview Feature](/release-notes/preview-features) — Open
+
+    [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) and [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) are public preview
+    features, available to all accounts.
+
+    [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state)
+    :   Indicates whether the predecessors of the task completed in the states described by a specified condition, such as `ALL_FAILED` or
+        `ALL_DONE`. Used to run a task on outcomes other than “all predecessors succeeded.”
+
+    [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state)
+    :   Returns the state that a specified task in the current task graph run completed in, such as `SUCCEEDED`, `FAILED`, or `SKIPPED`. Used to
+        branch on the outcome of one specific task rather than on the outcome of all of the task’s predecessors.
+
+    Note
+
+    Adding [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) or [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) to any task in
+    a task graph changes how Snowflake schedules every task in that graph. Removing the last call to either function from a graph reverts the
+    graph to the default scheduling behavior. For details, see
+    [How advanced branching changes scheduling](/user-guide/tasks-graphs#label-task-graph-advanced-branching-scheduling).
 
 `REMOVE WHEN`
 :   Remove the `WHEN` condition that you have specified.
@@ -336,6 +352,15 @@ Copy code
 
 ```
 ALTER TASK mytask MODIFY WHEN SYSTEM$STREAM_HAS_DATA('MYSTREAM');
+```
+
+The following example modifies the WHEN condition of a child task so that it runs only when all of its predecessors reach a terminal
+state, whatever that state is:
+
+Copy code
+
+```
+ALTER TASK mytask MODIFY WHEN SYSTEM$PREDECESSORS_STATE('ALL_DONE');
 ```
 
 Update an existing task with new or replacement default configuration:

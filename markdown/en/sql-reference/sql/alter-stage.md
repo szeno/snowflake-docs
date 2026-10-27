@@ -16,8 +16,6 @@ ALTER STAGE [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_nam
 
 ALTER STAGE <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 
-ALTER STAGE [ IF EXISTS ] <name> UNSET DCM PROJECT
-
 -- Internal stage
 ALTER STAGE [ IF EXISTS ] <name> SET
   [ FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM } [ formatTypeOptions ] } ) ]
@@ -202,11 +200,6 @@ ALTER STAGE [ IF EXISTS ] <name> REFRESH [ SUBPATH = '<relative-path>' ]
 `UNSET STAGE_UNDROP_RETENTION_TIME_IN_DAYS`
 
 > Removes the value set on the stage so that the stage inherits the value from its schema, database, or account.
-
-`UNSET DCM PROJECT`
-
-> Detaches the stage from the [DCM project](/user-guide/dcm-projects/dcm-projects-overview) that currently manages it.
-> The command removes the association between the stage and the DCM project without dropping the stage. See [Detach objects from a DCM project](/user-guide/dcm-projects/dcm-projects-manage#label-dcm-projects-detach-object) for more information.
 
 > `FILE_FORMAT = ( FORMAT_NAME = 'file_format_name' )` or `FILE_FORMAT = ( TYPE = CSV | JSON | AVRO | ORC | PARQUET | XML | CUSTOM [ ... ] )`
 > :   Modifies the file format for the stage, which can be either:
