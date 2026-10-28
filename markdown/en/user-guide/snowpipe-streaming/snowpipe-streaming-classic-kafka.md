@@ -249,6 +249,10 @@ For Snowpipe Streaming billing information, see [Costs for Snowpipe Streaming Cl
 
 See [Snowpipe Streaming limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-limitations#label-snowpipe-streaming-limitations).
 
+### Multiple connectors loading the same topic into the same table
+
+When the Kafka connector uses the `[topic]_[partition]` channel naming format with Snowpipe Streaming classic, two independent connectors that ingest the same topic partition into the same Snowflake table use the same channel name. Only one channel with that name can ingest into the table at a time. Opening the channel from one connector invalidates the previously opened channel from the other connector, causing a channel-ownership conflict.
+
 ### Failover limitations
 
 When a secondary failover group is promoted to primary, the Kafka connector with Snowpipe Streaming requires manual interaction. Exactly-once semantics are still preserved.

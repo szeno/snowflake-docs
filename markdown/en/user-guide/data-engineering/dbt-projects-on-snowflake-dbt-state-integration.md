@@ -15,7 +15,7 @@ dbt State is supported on the following dbt versions in dbt Projects on Snowflak
 | Supported dbt version | dbt State support |
 | --- | --- |
 | dbt 2.0.0 | Supported |
-| dbt Fusion 2.0.0-preview.210 | Supported |
+| dbt 2.0.0-preview.210 | Supported |
 | dbt Core 1.12.3 | Supported |
 | dbt Core 1.11.11 | Supported |
 | dbt Core 1.10.15 | Supported |

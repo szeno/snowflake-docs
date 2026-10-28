@@ -1,6 +1,6 @@
 # Migrating Snowflake SQLAlchemy from 1.x to 2.x
 
-This guide helps you upgrade the Snowflake SQLAlchemy dialect (`snowflake-sqlalchemy`) from any 1.x release to 2.0.0. Most changes apply the same way whichever 1.x release you start from. The few that landed partway through 1.x name the release that introduced them, so check those against your current version.
+This guide helps you upgrade the Snowflake SQLAlchemy dialect (`snowflake-sqlalchemy`) from any 1.x release to 2.x (2.0.0 and 2.1). Most changes apply the same way whichever 1.x release you start from. The few that landed partway through 1.x name the release that introduced them, so check those against your current version. Changes that apply only from 2.1 are marked **(2.1)**.
 
 Note
 
@@ -8,18 +8,18 @@ This isn’t the same as upgrading SQLAlchemy itself. `snowflake-sqlalchemy` 2.x
 
 ## At a glance
 
-| Area | 1.x (latest 1.11.1) | 2.0.0 |
-| --- | --- | --- |
-| SQLAlchemy | `>=1.4.19` (1.4 and 2.0 both supported) | `>=2.0.44,<2.1` (2.0 only) |
-| Python | `>=3.8` | `>=3.11` (3.11 through 3.14) |
-| `snowflake-connector-python` | `<5.0.0` | `>=5.0.0` (5.x required) |
-| Async (`asyncio`) | Not supported | Supported (requires `greenlet`) |
+| Area | 1.x (latest 1.11.1) | 2.0.0 | 2.1 |
+| --- | --- | --- | --- |
+| SQLAlchemy | `>=1.4.19` (1.4 and 2.0 both supported) | `>=2.0.44,<2.1` (2.0 only) | `>=2.0.44,<2.2` (2.0 and 2.1) |
+| Python | `>=3.8` | `>=3.11` (3.11 through 3.14) | `>=3.11` (3.11 through 3.14) |
+| `snowflake-connector-python` | `<5.0.0` | `>=5.0.0` (5.x required) | `>=5.1.0,<6.0` |
+| Async (`asyncio`) | Not supported | Supported (requires `greenlet`) | Supported (install the `[async]` extra) |
 
 Expand
 
 Show lessSee more
 
-For most projects, the required actions are moving to SQLAlchemy 2.0, Python 3.11 or later, and connector 5.x. In addition, the new `enable_structured_type_json` flag is on by default, and the `force_div_is_floordiv` and `legacy_url_params` options were removed.
+For most projects, the required actions are moving to SQLAlchemy 2.0.44 or later, Python 3.11 or later, and connector 5.x (5.1.0 or later for 2.1). In addition, the new `enable_structured_type_json` flag is on by default, and the `force_div_is_floordiv` and `legacy_url_params` options were removed.
 
 ## Am I affected?
 
@@ -27,7 +27,9 @@ For most projects, the required actions are moving to SQLAlchemy 2.0, Python 3.1
 | --- | --- |
 | Already on SQLAlchemy 2.0 and Python 3.11 or later | Drop-in upgrade. Then skim [behavioral differences](#label-behavioral-differences-to-review). |
 | On SQLAlchemy 1.4 | Migrate the app to SQLAlchemy 2.0 first, then upgrade. Until then, pin `snowflake-sqlalchemy<2.0.0`. |
-| On SQLAlchemy 2.1 | Pin `SQLAlchemy>=2.0.44,<2.1`. Importing `snowflake.sqlalchemy` fails on SQLAlchemy 2.1. |
+| On SQLAlchemy 2.1 | Use Snowflake SQLAlchemy 2.1. Version 2.0.0 fails at `import snowflake.sqlalchemy` on SQLAlchemy 2.1. |
+| Hand-write connection URLs whose database or schema contains `+`, `%2F`, or a quoted `/` | **(2.1)** Path decoding changed. See [URL database and schema path decoding](#label-sqlalchemy-migrate-url-path-decoding). |
+| Use async engines | **(2.1)** Install `snowflake-sqlalchemy[async]`. See [Async requires the async extra](#label-sqlalchemy-migrate-async-extra). |
 | On Python 3.10 or older | Upgrade the interpreter to 3.11 through 3.14 first. |
 | On `snowflake-connector-python` 4.x or older | Upgrade to connector 5.x. |
 | Import `snowflake.sqlalchemy.compat` anywhere | Remove that import. The module was deleted. |
@@ -47,7 +49,7 @@ Show lessSee more
 
 ## Step-by-step upgrade
 
-1. Make sure your application runs on **SQLAlchemy 2.0**, version 2.0.44 or later and earlier than 2.1. Migrate from 1.4 if needed, using SQLAlchemy’s guide linked above.
+1. Make sure your application runs on **SQLAlchemy 2.0.44 or later** (earlier than 2.1 for 2.0.0, earlier than 2.2 for 2.1). Migrate from 1.4 if needed, using SQLAlchemy’s guide linked above.
 2. Make sure you’re on **Python 3.11 through 3.14**.
 3. Upgrade the dialect:
 
@@ -57,7 +59,7 @@ Show lessSee more
    pip install --upgrade "snowflake-sqlalchemy>=2.0.0,<3"
    ```
 
-   The dialect requires `SQLAlchemy>=2.0.44,<2.1` and `snowflake-connector-python>=5.0.0`, so pip upgrades both if needed. If you pin `snowflake-connector-python<5.0.0` yourself, remove that pin. To use async engines on a platform where SQLAlchemy doesn’t install `greenlet` automatically (for example, Apple silicon macOS), also run `pip install "sqlalchemy[asyncio]>=2.0.44,<2.1"`.
+   Version 2.1 requires `SQLAlchemy>=2.0.44,<2.2` and `snowflake-connector-python>=5.1.0,<6.0`, so pip upgrades both if needed. If you pin `snowflake-connector-python<5.0.0` yourself, remove that pin. To use async engines, install the `async` extra instead: `pip install --upgrade "snowflake-sqlalchemy[async]>=2.0.0,<3"`.
 4. Verify the install:
 
    Copy code
@@ -221,11 +223,33 @@ create_engine(URL(...), force_div_is_floordiv=True)
 create_engine(URL(...))
 ```
 
+### URL database and schema path decoding (2.1)
+
+This applies to connection URLs that you write by hand. URLs built with the `snowflake.sqlalchemy.URL` helper connect to the same database and schema as in 2.0.0. Version 2.1 reads the URL path using Snowflake identifier rules, so the same string can now select a different database or schema:
+
+| URL path | 1.x and 2.0.0 | 2.1 |
+| --- | --- | --- |
+| `a+b/sch` | `a b`, `sch` | `a+b`, `sch` |
+| `a%2Fb` | database `a%2Fb` | `a`, `b` |
+| `"a/b"/sch` | `ArgumentError` | `"a/b"`, `sch` |
+
+Expand
+
+Show lessSee more
+
+A `+` is no longer read as a space; write a space as `%20`. An encoded `/` (`%2F`) outside double quotes now separates the database from the schema; a `/` inside double quotes is part of the name.
+
+`sqlalchemy.engine.URL.create(...)` values are used as passed on SQLAlchemy 2.1. On SQLAlchemy 2.0, the dialect can’t tell them from a parsed URL string, so a name containing `%` and no raw `"` is still percent-decoded, as in 2.0.0; write a literal `%` as `%25`. See [Special characters in database and schema names](/developer-guide/sqlalchemy/sqlalchemy-connect#label-sqlalchemy-special-chars-db-schema).
+
+### Async requires the async extra (2.1)
+
+Snowflake SQLAlchemy 2.0.0 capped SQLAlchemy below 2.1, where `greenlet` still came by default on common platforms. Version 2.1 allows SQLAlchemy 2.1, which no longer installs `greenlet`, so an upgrade that doesn’t add the `async` extra installs cleanly but fails when you create an async engine. Switch your requirement to `snowflake-sqlalchemy[async]`.
+
 ## Breaking changes
 
-### SQLAlchemy 1.4 support dropped, and SQLAlchemy 2.1 not supported
+### SQLAlchemy 1.4 support dropped
 
-The dialect requires SQLAlchemy `>=2.0.44,<2.1` and is no longer tested against 1.4. SQLAlchemy 2.1.0 removed internal APIs that the dialect imports, so `import snowflake.sqlalchemy` fails on 2.1.
+The dialect requires SQLAlchemy `>=2.0.44` (earlier than 2.1 for 2.0.0, earlier than 2.2 for 2.1) and is no longer tested against 1.4. SQLAlchemy 2.1.0 removed internal APIs that version 2.0.0 imports, so `import snowflake.sqlalchemy` fails on SQLAlchemy 2.1 with 2.0.0. Version 2.1 supports both SQLAlchemy 2.0 and 2.1.
 
 Copy code
 
@@ -233,8 +257,8 @@ Copy code
   # requirements.txt
 - SQLAlchemy>=1.4.19
 - snowflake-sqlalchemy<2.0.0
-+ SQLAlchemy>=2.0.44,<2.1
-+ snowflake-sqlalchemy>=2.0.0
++ SQLAlchemy>=2.0.44,<2.2
++ snowflake-sqlalchemy>=2.1.0
 ```
 
 If you can’t move off SQLAlchemy 1.4 yet, pin `snowflake-sqlalchemy<2.0.0`.
@@ -325,7 +349,7 @@ snowflake-sqlalchemy<2.0.0
 | Symptom | Fix |
 | --- | --- |
 | Resolver installs an old dialect or errors on SQLAlchemy 1.4 | Move the app to SQLAlchemy 2.0, then install `snowflake-sqlalchemy>=2.0.0`. |
-| `import snowflake.sqlalchemy` fails with an `ImportError` from `sqlalchemy.orm` | You’re on SQLAlchemy 2.1. Pin `SQLAlchemy>=2.0.44,<2.1`. |
+| `import snowflake.sqlalchemy` fails with an `ImportError` from `sqlalchemy.orm` | You have Snowflake SQLAlchemy 2.0.0 on SQLAlchemy 2.1. Upgrade Snowflake SQLAlchemy to 2.1, or keep SQLAlchemy in `>=2.0.44,<2.1`. |
 | Resolver refuses to install 2.0 on Python 3.10 or older | Upgrade to Python 3.11 through 3.14, then run `pip install "snowflake-sqlalchemy>=2.0.0"`. |
 | Resolver can’t satisfy `snowflake-connector-python` | Remove your own `snowflake-connector-python<5.0.0` pin. 2.0 requires connector 5.x. |
 | `ImportError: ... snowflake.sqlalchemy.compat` | Remove the import. |
@@ -334,7 +358,8 @@ snowflake-sqlalchemy<2.0.0
 | Integer `//` results changed | Expected when coming from a release older than 1.11.1. `//` now floors. |
 | `ArgumentError` about a connection parameter that can’t be set via the URL query string | Pass it with `connect_args=`. |
 | `REGEXP_*` SQL changed | Expected when coming from a release older than 1.10.1. Update test expectations. |
-| `create_async_engine()` raises an `ImportError` about `greenlet` | Run `pip install "sqlalchemy[asyncio]>=2.0.44,<2.1"`. |
+| `create_async_engine()` raises an `ImportError` about `greenlet` | Run `pip install "snowflake-sqlalchemy[async]"`. |
+| A hand-written URL connects to the wrong database or schema after upgrading to 2.1 | See [URL database and schema path decoding](#label-sqlalchemy-migrate-url-path-decoding). |
 | Reflected UUID values are strings, not `uuid.UUID` | Expected. Use `UUID(as_uuid=True)`. |
 | Type-string comparisons fail after reflection | Use `isinstance()`. |
 | Reflected hybrid table index names are lowercase | Expected. Look up unquoted index names in lowercase. |

@@ -26,7 +26,7 @@ Note
 
 Hovering on the path label will show a tooltip with the full path, this applies to any field that contains a shortened path (input folder path, output folder path, etc.).
 
-Then, enter your access code and click on the ‘**Save & Start Conversion’** button. The conversion will be executed using **only** the selected subfolder as the input.
+If you don’t have an active Snowflake connection, enter your access code. Then click **Save & Start Conversion**. The conversion will be executed using **only** the selected subfolder as the input.
 
 [![image](/static/images/migrations/sc-assets/Screenshot2025-01-03at9.48.22PM.png "image")](/static/images/migrations/sc-assets/Screenshot2025-01-03at9.48.22PM.png)
 

@@ -42,7 +42,7 @@ the QUERY\_INSIGHTS view.
 | `JOIN` | `QUERY_INSIGHT_EXPLODING_JOIN` | [Exploding join (not nested)](#label-query-insight-exploding-join) |
 | `AGGREGATION` | `QUERY_INSIGHT_INEFFICIENT_AGGREGATE` | [Unnecessary aggregation](#label-query-insight-inefficient-aggregate) |
 | `UNION` | `QUERY_INSIGHT_UNNECESSARY_UNION_DISTINCT` | [Unnecessary UNION [ DISTINCT ] clause](#label-query-insight-unnecessary-union-distinct) |
-| `WAREHOUSE` | `QUERY_INSIGHT_REMOTE_SPILLAGE` | [Remote spillage](#label-query-insight-remote-spillage) |
+| `WAREHOUSE` | `QUERY_INSIGHT_REMOTE_SPILLING` | [Remote spilling](#label-query-insight-remote-spilling) |
 | `WAREHOUSE` | `QUERY_INSIGHT_QUEUED_OVERLOAD` | [Query was in the queue for the warehouse for too long](#label-query-insight-queued-overload) |
 
 Expand
@@ -158,7 +158,7 @@ The UNION [ DISTINCT ] clause isn’t necessary because the input sets are disjo
 
 To improve performance, use UNION ALL, rather than UNION [ DISTINCT ].
 
-### Remote spillage
+### Remote spilling
 
 This query scanned more data than the warehouse had capacity to store. As a result, the warehouse
 [spilled data](/user-guide/ui-snowsight-activity#label-spillage) to storage, which slowed down the processing of the query.

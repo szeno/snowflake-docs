@@ -88,6 +88,7 @@ accountParams ::=
   CLIENT_ENCRYPTION_KEY_SIZE = <integer>
   CORTEX_ENABLED_CROSS_REGION = { 'DISABLED' | 'ANY_REGION' | '<list_of_regions>' }
   DISALLOWED_SPCS_WORKLOAD_TYPES = { '<list_of_workload_types>' | 'ALL' }
+  DISABLE_EXECUTE_DATA_METRIC_FUNCTION_GRANT_TO_PUBLIC = TRUE | FALSE
   DISABLE_USER_PRIVILEGE_GRANTS = TRUE | FALSE
   DEFAULT_DBT_VERSION = { '<version>' }
   ENABLE_EGRESS_COST_OPTIMIZER = TRUE | FALSE
@@ -597,6 +598,14 @@ Associate a network policy named `mypolicy` with your account:
 >
 > ```
 > ALTER ACCOUNT SET NETWORK_POLICY = mypolicy;
+> ```
+
+Opt out of the automatic EXECUTE DATA METRIC FUNCTION grant to `SNOWFLAKE.PUBLIC`. Set the parameter before the grant exists. The setting takes effect at the next setup or upgrade and doesn’t revoke a grant that already exists. For more information, see [DISABLE\_EXECUTE\_DATA\_METRIC\_FUNCTION\_GRANT\_TO\_PUBLIC](/sql-reference/parameters#label-disable-execute-data-metric-function-grant-to-public).
+
+> Copy code
+>
+> ```
+> ALTER ACCOUNT SET DISABLE_EXECUTE_DATA_METRIC_FUNCTION_GRANT_TO_PUBLIC = TRUE;
 > ```
 
 Disable user privilege grants:

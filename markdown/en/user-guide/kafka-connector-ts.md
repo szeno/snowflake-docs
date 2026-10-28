@@ -267,7 +267,7 @@ The issue manifests itself in the log file by repeatedly logging this log messag
 `[Worker-xyz] [timestamp] INFO [my-connector|task-id] [SF_INGEST] Channel is marked as closed`
 
 This can typically happen when you configure your connector to ingest topics via regex.
-We recommend applying the following set of options to the Kafka configuration file (for example, `<kafka_dir>/config/connect-distributed.properties`):
+We recommend applying the following set of options to the connector’s configuration file (for example, `<path>/<config_file>.json` for distributed mode, or `<kafka_dir>/config/SF_connect.properties` for standalone mode):
 
 `consumer.override.partition.assignment.strategy`
 :   Configure partition assignment strategy to tasks as `org.apache.kafka.clients.consumer.CooperativeStickyAssignor` - this will cause even distribution of ingested channels to available tasks, reducing the risk of re-balancing. Note that `CooperativeStickyAssignor` requires Kafka Connect version 3.0.1 or later because of [this known issue](https://issues.apache.org/jira/browse/KAFKA-12487).

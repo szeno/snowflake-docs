@@ -14,6 +14,10 @@ You can upload up to 250 files at a time. Each file can be up to 250 MB.
 To load larger files, or a large number of files, use [Snowflake CLI](/developer-guide/snowflake-cli/index).
 For more information, see [Bulk loading from a local file system](/user-guide/data-load-local-file-system).
 
+To load new files continuously as they arrive in cloud storage, select **Ingestion** » **Add Data** in the navigation menu, and then select **Set up Snowpipe with CoCo**. CoCo in Snowsight opens and guides you through setting up Snowpipe. This choice appears only when CoCo in Snowsight is enabled for your account. For more information, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco).
+
+To have CoCo run a one-time load of files that are already on a stage or in cloud storage, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
 ## Load data using Snowsight
 
 When loading your data, you can either [create a new table](#label-data-load-ui-new-table), or [load data into an existing table](#label-data-load-from-stage-to-table).

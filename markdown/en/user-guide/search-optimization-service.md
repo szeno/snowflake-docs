@@ -7,6 +7,11 @@ This feature requires Enterprise Edition (or higher). To inquire about upgrading
 The search optimization service can significantly improve the performance of certain types of lookup and analytical
 queries. An extensive set of filtering predicates are supported (see [Identifying queries that can benefit from search optimization](/user-guide/search-optimization/queries-that-benefit)).
 
+You can also create [secondary indexes](/user-guide/search-optimization/secondary-indexes) for selective
+point lookups and range queries. A secondary index can prune micro-partitions or return a result directly
+when the query is covered by the index. These indexes aren’t
+[secondary indexes on hybrid tables](/user-guide/tables-hybrid-index).
+
 Note
 
 To start with a tutorial that compares execution time with and without search optimization, see

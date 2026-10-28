@@ -954,7 +954,7 @@ Pipe objects are created and managed to load data using Snowpipe.
 | --- | --- |
 | APPLYBUDGET | Enables adding or removing a pipe from a budget. |
 | MONITOR | Enables viewing details for the pipe (using DESCRIBE PIPE or SHOW PIPES). |
-| OPERATE | Enables viewing details for the pipe (using DESCRIBE PIPE or SHOW PIPES), pausing or resuming the pipe, and refreshing the pipe. |
+| OPERATE | Enables viewing details for the pipe (using DESCRIBE PIPE or SHOW PIPES), pausing or resuming the pipe, and refreshing the pipe. Also required to stream data with Snowpipe Streaming through a named pipe; for the full set of privileges Snowpipe Streaming requires, see [Access control](/user-guide/snowpipe-streaming/snowpipe-streaming-access-control). |
 | OWNERSHIP | Grants full control over the pipe. Only a single role can hold this privilege on a specific object at a time. Note that in a [managed access schema](/user-guide/security-access-control-configure#label-managed-access-schemas), only the schema owner (i.e. the role with the OWNERSHIP privilege on the schema) or a role with the MANAGE GRANTS privilege can grant or revoke privileges on objects in the schema, including future grants. |
 | ALL [ PRIVILEGES ] | Grants all privileges, except OWNERSHIP, on the pipe. |
 

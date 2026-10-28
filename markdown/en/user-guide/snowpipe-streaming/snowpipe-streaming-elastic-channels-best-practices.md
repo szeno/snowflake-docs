@@ -86,7 +86,7 @@ Set the `Content-Encoding` header only when the payload is already compressed in
 
 ## Retry safely
 
-Direct REST clients should retry transient errors (HTTP 429, 500, 503) using exponential backoff with random variation in retry delays (jitter). A network timeout or missing response is ambiguous: the original request might already have been accepted.
+Direct REST clients own request retries. Use the delay, 1-hour budget, and status-code rules in [REST API retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy). A network timeout or missing response is ambiguous: the original request might already have been accepted.
 
 For REST requests, use the **same `requestId`** on every retry of the same rowset (batch of rows). Set `retryCount=0` on the first attempt and increment it on each retry. This enables server-side request correlation for support diagnostics. A `retryCount` greater than `0` signals that duplicates are possible; it does not prove that a duplicate occurred.
 

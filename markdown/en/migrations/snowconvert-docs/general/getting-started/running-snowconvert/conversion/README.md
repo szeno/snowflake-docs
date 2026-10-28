@@ -2,7 +2,9 @@
 
 ## How to Execute a Conversion
 
-To execute a conversion, you need a valid access code. You can request one for free from the app by clicking the link ‘Get an Access Code’:
+An access code is no longer required when you provide an active Snowflake connection. Sign in with your Snowflake account, or enter the connection when you [create a project](/migrations/snowconvert-docs/general/user-guide/project-creation).
+
+If you don’t have an active Snowflake connection, request an access code from the app by clicking the link ‘Get an Access Code’:
 
 [![Link to get an access code in SnowConvert AI](/static/images/migrations/sc-assets/GetAccessCodeLink.png "image")](/static/images/migrations/sc-assets/GetAccessCodeLink.png)
 
@@ -21,7 +23,7 @@ To execute a conversion fill out the required fields in the **‘Project Creatio
 - Project name
 - Source language (Teradata, Oracle, SQL Server and Redshift)
 - Input and output folder
-- A valid access code
+- An active Snowflake connection, or a valid access code if you don’t have one
 
 [![Project Creation page in SnowConvert AI](/static/images/migrations/sc-assets/Screenshot2025-01-03at5.18.38PM.png "image")](/static/images/migrations/sc-assets/Screenshot2025-01-03at5.18.38PM.png)
 

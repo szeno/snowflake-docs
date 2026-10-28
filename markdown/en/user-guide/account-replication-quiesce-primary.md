@@ -208,18 +208,18 @@ unaffected.
 
 [SHOW FAILOVER GROUPS](/sql-reference/sql/show-failover-groups) and
 [SHOW REPLICATION GROUPS](/sql-reference/sql/show-replication-groups) include a `read_only`
-column:
+column. You can set read-only mode only on a primary failover group.
 
 | Column | Type | Description |
 | --- | --- | --- |
-| `read_only` | BOOLEAN | `TRUE` when the primary failover group is in read-only mode. `FALSE` when the primary failover group is in read-write mode. |
+| `read_only` | BOOLEAN | `TRUE` for a primary failover group in read-only mode. `FALSE` for a primary failover group that isn’t in read-only mode. NULL for a secondary failover group. NULL for a replication group, whether primary or secondary. |
 
 Expand
 
 Show lessSee more
 
-The column is visible from both the source and target accounts. Use it to verify that the
-source has been quiesced before triggering a final refresh and promote.
+The column is visible from both the source and target accounts. Check the primary failover group:
+`TRUE` means the source is quiesced. A secondary failover group returns NULL.
 
 ## Constraints when a primary failover group is in read-only mode
 

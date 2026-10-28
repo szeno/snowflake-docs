@@ -30,7 +30,7 @@ None
 `-l, --migrate-local-overrides / --no-migrate-local-overrides`
 :   Merge values in snowflake.local.yml into the main project definition. The snowflake.local.yml file will not be migrated, instead its values will be reflected in the output snowflake.yml file. If unset and snowflake.local.yml is present, an error will be raised.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

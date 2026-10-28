@@ -30,8 +30,14 @@ The following topics provide an overview of data loading concepts, tasks, tools,
 [Bulk loading from a local file system](/user-guide/data-load-local-file-system)
 :   Instructions for loading data in bulk using the COPY command.
 
+[Bulk load files with CoCo](/user-guide/data-load-bulk-coco)
+:   Instructions for loading files once with CoCo from a stage, a cloud storage path, or your computer.
+
 [Snowpipe](/user-guide/data-load-snowpipe-intro)
 :   Instructions for loading data continuously using Snowpipe.
+
+[Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco)
+:   Instructions for setting up Snowpipe auto-ingest with CoCo from a cloud storage path.
 
 [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview)
 :   Instructions for loading data streams continuously using Snowpipe Streaming.

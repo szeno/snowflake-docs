@@ -2,6 +2,8 @@
 
 This topic describes how to set up a pipe that loads files from an Amazon S3 bucket as soon as they arrive. When a file lands in the bucket, Amazon S3 sends an event notification to an Amazon Simple Queue Service (SQS) queue that Snowflake manages, and Snowpipe loads the file into your target table. For an overview of automated loading on every cloud provider, see [Automate Snowpipe with cloud event notifications](/user-guide/data-load-snowpipe-auto).
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) set up the pipeline from your S3 path instead, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco). After you approve a temporary access request in the AWS Management Console, Snowflake creates the IAM role and its trust policy, connects bucket notifications, and creates the storage integration, stage, and pipe, so that you don’t need to follow the steps in this topic manually. Temporary access isn’t available for AWS GovCloud or China deployments. CoCo can also generate Terraform or CloudFormation for your team to deploy.
+
 To set up automated loading from Amazon S3, complete the following steps:
 
 1. [Create a storage integration and an external stage](#label-data-load-snowpipe-secure-access-s3) so that Snowflake can read the bucket.

@@ -196,7 +196,7 @@ Snowflake supports the following Asia Pacific and China regions:
 | ap-southeast-7 | Asia Pacific (Thailand) |  |
 | cn-northwest-1 | China (Ningxia) | The China region is separate from other Snowflake regions. It utilizes a separate domain name (`snowflakecomputing.cn`) and is wholly operated by Digital China Cloud Technology Limited (DCC), an authorized operating partner of Snowflake, Inc. Customers who wish to create and use Snowflake accounts in the China region must sign a separate agreement with DCC in accordance with all applicable rules and regulations.  Additionally, customers cannot use self-service to create their initial account in the China region. Instead, they must request the account through [DCC](mailto:snowflake.hosting@dcclouds.com). Once the initial account is created within their org, they can create additional accounts in the org using all other supported methods.  Customers with existing Snowflake accounts are not able to access resources in the China region, and vice versa. Some features might not be available in the China region. |
 | **Google Cloud Platform (GCP)** | | | |
-| GCP | australia-southeast2 | Australia Southeast 2 (Melbourne) |  |
+| GCP | australia-southeast2 | Australia Southeast 2 (Melbourne) | Completed assessment and supports compliance with IRAP - Protected |
 | **Microsoft Azure** | | | |
 | Microsoft Azure | australiaeast | Australia East (New South Wales) | Completed assessment and supports compliance with IRAP - Protected |
 | centralindia | Central India (Pune) |  |

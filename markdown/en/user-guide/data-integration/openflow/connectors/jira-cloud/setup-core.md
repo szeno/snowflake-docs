@@ -379,13 +379,23 @@ Column names in the `ISSUE` table are derived from Jira field display names by:
 1. Uppercasing the display name.
 2. Replacing spaces with underscores.
 3. Removing every character that isn’t a letter, digit, or underscore.
+4. Prefixing the result with an underscore if it’s empty or starts with a digit.
 
-For example, the display name `OF Test (Multi-User)` becomes the column `OF_TEST_MULTIUSER`.
+For example, the display name `OF Test (Multi-User)` becomes the column `OF_TEST_MULTIUSER`, and
+`1st Owner` becomes `_1ST_OWNER`.
 
-If two fields produce the same column name after this transformation, the second field’s column
-is suffixed with `__<flattened_field_id>` to keep names unique. For example, two fields with
-display name `Custom Field` and IDs `customfield_1` and `customfield_2` produce columns
-`CUSTOM_FIELD` and `CUSTOM_FIELD__CUSTOMFIELD_2`.
+The connector appends `__<flattened_field_id>` to the column name in the following cases:
+
+- Two fields produce the same column name. The second field’s column gets the suffix. For example,
+  two fields with display name `Custom Field` and IDs `customfield_1` and `customfield_2` produce
+  columns `CUSTOM_FIELD` and `CUSTOM_FIELD__CUSTOMFIELD_2`.
+- A field produces `ID` or `KEY`. These names are reserved for the issue’s own ID and key columns.
+- A custom field produces `UPDATED`. This name is reserved for the standard **Updated** field.
+- A field produces a name that Snowflake doesn’t allow as a column name, even when quoted:
+  `CURRENT_DATE`, `CURRENT_TIME`, `CURRENT_TIMESTAMP`, `CURRENT_USER`, `LOCALTIME`, or
+  `LOCALTIMESTAMP`. For more information, see [Reserved & limited keywords](/sql-reference/reserved-keywords).
+  For example, a custom field with display name `Current Date` and ID `customfield_10123`
+  produces the column `CURRENT_DATE__CUSTOMFIELD_10123`.
 
 Jira field types are mapped to Snowflake column types as follows:
 

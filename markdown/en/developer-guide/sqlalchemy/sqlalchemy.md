@@ -9,7 +9,7 @@ Snowflake SQLAlchemy runs on top of the Snowflake Connector for Python as a [dia
 Snowflake SQLAlchemy 2.x requires:
 
 - Python 3.11 or later.
-- SQLAlchemy 2.0.44 or later, but earlier than 2.1 (`>=2.0.44,<2.1`).
+- SQLAlchemy 2.0.44 through 2.1.x (`>=2.0.44,<2.2`). Snowflake SQLAlchemy 2.0.0 supports only SQLAlchemy 2.0 (`>=2.0.44,<2.1`); SQLAlchemy 2.1 requires Snowflake SQLAlchemy 2.1 or later.
 
 ### Snowflake Connector for Python
 
@@ -33,7 +33,7 @@ pip install --upgrade snowflake-sqlalchemy
 
 `pip` automatically installs all required modules, including the Snowflake Connector for Python.
 
-Snowflake SQLAlchemy 2.x requires Python 3.11 or later, SQLAlchemy `>=2.0.44,<2.1`, and `snowflake-connector-python>=5.0.0`. If you’re upgrading from 1.x, see [Migrating Snowflake SQLAlchemy from 1.x to 2.x](/developer-guide/sqlalchemy/sqlalchemy-migrate).
+Snowflake SQLAlchemy 2.1 requires Python 3.11 or later, SQLAlchemy `>=2.0.44,<2.2`, and `snowflake-connector-python>=5.1.0,<6.0`. (Snowflake SQLAlchemy 2.0.0 requires SQLAlchemy `>=2.0.44,<2.1` and `snowflake-connector-python>=5.0.0`.) If you’re upgrading from 1.x, see [Migrating Snowflake SQLAlchemy from 1.x to 2.x](/developer-guide/sqlalchemy/sqlalchemy-migrate).
 
 To use pandas with Snowflake SQLAlchemy, install the `pandas` extra:
 
@@ -41,6 +41,14 @@ Copy code
 
 ```
 pip install "snowflake-sqlalchemy[pandas]"
+```
+
+To use [async engines](/developer-guide/sqlalchemy/sqlalchemy-async), install the `async` extra:
+
+Copy code
+
+```
+pip install "snowflake-sqlalchemy[async]"
 ```
 
 ## Verifying your installation

@@ -37,6 +37,12 @@ We highly recommend completing the free course “[SnowConvert AI for Conversion
 You can sign in to SnowConvert AI with your Snowflake credentials (same as that you use to login to <http://app.snowflake.com/>).
 If you do not have Snowflake credentials, create a free trial account at <https://signup.snowflake.com/>
 
+### Access code
+
+An access code is no longer required when you provide an active Snowflake connection. Sign in with your Snowflake credentials, or enter a Snowflake connection when you [create a project](/migrations/snowconvert-docs/general/user-guide/project-creation).
+
+If you don’t have an active Snowflake connection, you can still request an access code. For those steps, see [How to execute a conversion](/migrations/snowconvert-docs/general/getting-started/running-snowconvert/conversion).
+
 ### Authentication
 
 Ensure that your VPN is connected and you have access to your MFA device for authentication.

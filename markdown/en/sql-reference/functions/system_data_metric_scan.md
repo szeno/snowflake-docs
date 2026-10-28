@@ -39,6 +39,7 @@ SYSTEM$DATA_METRIC_SCAN(
     supported:
 
     > - SNOWFLAKE.CORE.ACCEPTED\_VALUES
+    > - SNOWFLAKE.CORE.ACCEPTED\_VALUES\_PERCENT
     > - SNOWFLAKE.CORE.BLANK\_COUNT
     > - SNOWFLAKE.CORE.BLANK\_PERCENT
     > - SNOWFLAKE.CORE.DUPLICATE\_COUNT
@@ -51,9 +52,10 @@ SYSTEM$DATA_METRIC_SCAN(
 **Optional:**
 
 `ARGUMENT_EXPRESSION => 'boolean-expression'`
-:   Required if the specified data metric function is [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values). Disallowed for all other DMFs.
+:   Required if the specified data metric function is [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) or
+    [ACCEPTED\_VALUES\_PERCENT](/sql-reference/functions/dmf_accepted_values_percent). Disallowed for all other DMFs.
 
-    Specifies a Boolean expression used to evaluate whether a record passes or fails the ACCEPTED\_VALUES data quality check. The
+    Specifies a Boolean expression used to evaluate whether a record passes or fails the ACCEPTED\_VALUES or ACCEPTED\_VALUES\_PERCENT data quality check. The
     SYSTEM$DATA\_METRIC\_SCAN function returns records that do *not* match the Boolean expression. The expression can include the following
     operators and functions:
 
@@ -65,9 +67,9 @@ SYSTEM$DATA_METRIC_SCAN(
 
     The column in the Boolean expression must be the same column specified in the ARGUMENT\_NAME argument.
 
-    If the ACCEPTED\_VALUES DMF is [associated with the object](/user-guide/data-quality-working#label-dmf-associate) specified by REF\_ENTITY\_NAME, the
-    SYSTEM$DATA\_METRIC\_SCAN function ignores the Boolean expression that was specified when ACCEPTED\_VALUES was associated with the
-    object.
+    If the ACCEPTED\_VALUES or ACCEPTED\_VALUES\_PERCENT DMF is [associated with the object](/user-guide/data-quality-working#label-dmf-associate) specified by
+    REF\_ENTITY\_NAME, the SYSTEM$DATA\_METRIC\_SCAN function ignores the Boolean expression that was specified when the DMF was associated
+    with the object.
 
 `AT_TIMESTAMP => 'timestamp'`
 :   Timestamp that is being passed as an argument to check the results of a DMF evaluation on the table or view in the past.

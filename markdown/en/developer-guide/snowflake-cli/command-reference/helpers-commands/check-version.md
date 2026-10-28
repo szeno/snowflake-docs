@@ -26,7 +26,7 @@ None
 `--refresh`
 :   Query PyPI and Homebrew for the latest version instead of using the local cache. Default: False.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

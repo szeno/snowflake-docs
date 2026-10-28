@@ -56,6 +56,8 @@ Snowflake provides the following main solutions for data loading. The best solut
 
 This option enables loading batches of data from files already available in cloud storage, or copying (i.e. *staging*) data files from a local machine to an internal (i.e. Snowflake) cloud storage location before loading the data into tables using the COPY command.
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) run a bulk load for you from a stage, a cloud storage path, or your computer (in CoCo CLI or CoCo Desktop), see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco). CoCo creates or reuses a file format and table that match your files, and runs the COPY command. CoCo waits for your approval before each statement that creates or changes objects or loads data, in every approval mode.
+
 #### Compute resources
 
 Bulk loading relies on user-provided virtual warehouses, which are specified in the COPY statement. Users are required to size the warehouse appropriately to accommodate expected loads.
@@ -74,6 +76,8 @@ There is no requirement for your data files to have the same number and ordering
 ### Continuous loading using Snowpipe
 
 Snowpipe loads files into standard tables or Apache Iceberg™ tables continuously as the files arrive in a stage, so new data is typically available for analysis within minutes. Use Snowpipe when files arrive throughout the day and you don’t want to schedule batch loads. For more information, see [Snowpipe](/user-guide/data-load-snowpipe-intro).
+
+To set up Snowpipe auto-ingest with [CoCo](/user-guide/cortex-code/cortex-code) from a cloud storage path, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco). Depending on the setup option you choose, CoCo creates the stage, pipe, related objects, and cloud notifications for you, generates deployment files for your team, or does some of each.
 
 #### Snowpipe compute and billing
 

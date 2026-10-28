@@ -17,6 +17,8 @@ Snowflake doesn’t support the following SQLAlchemy features:
 | `DISTINCT ON` | Use `QUALIFY` with a window function, or `GROUP BY`. |
 | `IS TRUE` / `IS FALSE` | Compare with `col == true()` or `col == false()` instead. |
 | Indexes on standard tables | Indexes are only supported on [hybrid tables](/developer-guide/sqlalchemy/sqlalchemy-ddl#label-sqlalchemy-ddl-hybrid). |
+| `Delete.using()` joins that contain the DELETE target table | SQLAlchemy 2.1 only. Raises `CompileError`, because Snowflake rejects the statement with a duplicate alias error. Join an alias of the target table or use a subquery instead. |
+| Negative `timedelta` literals | Raise `CompileError`, because Snowflake interval constants are unsigned. Bound (non-literal) `timedelta` parameters are unaffected. |
 
 Expand
 
@@ -165,7 +167,7 @@ with engine.begin() as conn:
 
 ## Async support
 
-[Async support](/developer-guide/sqlalchemy/sqlalchemy-async) (`create_async_engine()`) depends on `snowflake-connector-python` 5.x and requires `greenlet`. There’s no async-aware Alembic runner; run [Alembic migrations](/developer-guide/sqlalchemy/sqlalchemy-alembic) with a synchronous engine.
+[Async support](/developer-guide/sqlalchemy/sqlalchemy-async) (`create_async_engine()`) depends on `snowflake-connector-python` 5.x and requires `greenlet`, which you install with the `snowflake-sqlalchemy[async]` extra. There’s no async-aware Alembic runner; run [Alembic migrations](/developer-guide/sqlalchemy/sqlalchemy-alembic) with a synchronous engine.
 
 ## Reflecting very large schemas
 

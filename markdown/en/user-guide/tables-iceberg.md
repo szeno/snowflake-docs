@@ -93,7 +93,8 @@ To set up a catalog integration, see [Configure a catalog integration](/user-gui
 Iceberg uses a snapshot-based querying model, where data files are mapped using manifest and metadata files.
 A snapshot represents the state of a table at a point in time and is used to access the complete set of data files in the table.
 
-To learn about table metadata and Time Travel support, see [Metadata and retention for Apache Iceberg™ tables](/user-guide/tables-iceberg-metadata).
+To learn about table metadata and Time Travel support, see [Metadata and retention for Apache Iceberg™ tables](/user-guide/tables-iceberg-metadata). To query a historical snapshot
+of a table, see [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
 
 ### Cross-cloud/cross-region support
 
@@ -255,6 +256,8 @@ The following considerations and limitations apply to Iceberg tables, and are su
 >
 >   - Time travel to any snapshot generated after table creation is supported
 >     as long as you periodically refresh the table before the snapshot expires.
+>     A [version tag](/user-guide/tables-iceberg-time-travel) can still be queried after that snapshot
+>     falls outside the Snowflake data retention period.
 >   - Converting a table that has an un-materialized identity partition column isn’t supported.
 >     An un-materialized identity partition column is created when a table defines an identity transform
 >     using a source column that doesn’t exist in a Parquet file.

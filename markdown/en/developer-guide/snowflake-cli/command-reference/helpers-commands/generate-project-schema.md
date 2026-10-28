@@ -30,7 +30,7 @@ None
 `--output-file, -o FILE`
 :   Write the JSON Schema to this file. When omitted, schema is printed to stdout.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

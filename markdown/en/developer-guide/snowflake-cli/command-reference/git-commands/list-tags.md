@@ -162,7 +162,7 @@ snow git list-tags
 `--server-session-keep-alive`
 :   Keep the session active indefinitely, even if there is no activity from the user.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

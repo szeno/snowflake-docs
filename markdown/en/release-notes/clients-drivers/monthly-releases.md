@@ -34,6 +34,7 @@ To view a list of release note announcements, filtered by date and release type,
 | 4.3.1 | 21-Oct-2026 |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | 3.29.0 | 08-Oct-2026 |  |
 | 3.30.0 | 20-Oct-2026 |  |
+| 3.31.0 | 23-Oct-2026 |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
 | [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 5.0.0 | 15-Oct-2026 |  |
 | 5.1.0 | 21-Oct-2026 |  |

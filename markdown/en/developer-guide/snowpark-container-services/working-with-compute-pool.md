@@ -511,6 +511,6 @@ For more information, see [SHOW PARAMETERS](/sql-reference/sql/show-parameters).
   For more information, see [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege).
 - **Per account limit on compute pool nodes**.
 
-  - The maximum number of nodes you can create in your account (regardless of the number of compute pools) is 750.
+  - The maximum number of active or idle nodes in your account is 750, regardless of the number of compute pools. Nodes in suspended compute pools don’t count toward this limit.
 
   In addition, there is a limit on the number of nodes allowed for each instance family (see the **Node limit** column in the [instance family tables](/developer-guide/snowpark-container-services/instance-families)). If you see an error message like `Requested number of nodes <#> exceeds the node limit for the account`, you have encountered these limits. For more information, contact your account representative.

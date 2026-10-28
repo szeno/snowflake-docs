@@ -53,7 +53,7 @@ The command returns the following columns:
 | `next_scheduled_refresh` | Date and time of the next scheduled refresh. |
 | `owner` | Name of the role with the OWNERSHIP privilege on the replication or failover group. NULL if the replication or failover group is in a different region. |
 | `is_listing_auto_fulfillment_group` | TRUE if the replication group is used for [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment). FALSE otherwise. |
-| `read_only` | `TRUE` when the primary failover group is in read-only mode. `FALSE` when the primary failover group is in read-write mode. For how to set read-only mode, see [Quiesce a primary failover group](/user-guide/account-replication-quiesce-primary). |
+| `read_only` | For a primary failover group, `TRUE` when read-only mode is set and `FALSE` when it isn’t. For a secondary failover group, NULL. For a replication group, whether primary or secondary, NULL.  You can set read-only mode only on a primary failover group. For details, see [Quiesce a primary failover group](/user-guide/account-replication-quiesce-primary). |
 
 Expand
 

@@ -8,6 +8,29 @@ This article contains the release notes for the Snowflake CLI, including the fol
 
 See [Snowflake CLI](/developer-guide/snowflake-cli/index) for documentation.
 
+## Version 3.31.0 (Oct 23, 2026)
+
+### Backward incompatibility
+
+- Dropped support for Python 3.10. Snowflake CLI requires Python 3.11, 3.12, or 3.13.
+
+### New additions
+
+- Streamlit entities support `include_project_definition: true` to opt in to uploading the project-root `snowflake.yml` with `snow streamlit deploy`. When that file is uploaded, deploy emits a warning because stage readers can retrieve it.
+- `snow upgrade` is now generally available. It upgrades a direct install of Snowflake CLI and is listed in `snow --help` without a feature flag. Other install channels refuse and print the direct-install command.
+- `snow sql` accepts `!spool <file>` and `!spool off`. Subsequent query results are appended to the file and still printed on the terminal. Until `!spool off`, TABLE is a static pipe table on both the terminal and the file: no Live refresh and no wrapping to the window. Format follows `--format` / `!set output_format`.
+- `snow sql` accepts `!set output_format=<format>` (`plain`, `table`, `json`, `json_ext`, `csv`). `plain` prints query results without box drawing. `--format PLAIN` selects the same layout.
+- A Streamlit entity in `snowflake.yml` accepts five settings that Snowsight Workspaces writes, and `snow streamlit deploy` applies them. `execute_as` (`OWNER` or `RESTRICTED CALLER`) and `app_warehouse` apply to `SYSTEM$WAREHOUSE_RUNTIME`. A container runtime always uses `OWNER` and ignores `app_warehouse` with a warning. `artifact_repositories` and `schedules` apply to container runtimes. `idle_auto_shutdown_time_seconds` applies to each runtime. `schedules` (`cron_exprs`, maximum 5, and `timezone`, default UTC) makes one warm-up task for each expression, named `<app>__STREAMLIT_LIFECYCLE[_n]`. A deploy changes only the tasks that are different. An empty `cron_exprs` drops the tasks. An empty `artifact_repositories` removes the repositories. The tasks need CREATE TASK, EXECUTE TASK, and EXECUTE MANAGED TASK, and DROP STREAMLIT does not drop them. If `snowflake.yml` does not set a value, the live value does not change. A setting on the incorrect runtime, or on a `--legacy` deploy, stops the deploy before the first SQL. Earlier CLI versions do not accept these keys.
+
+### Fixes and improvements
+
+- `snow streamlit deploy --replace` now applies `main_file` changes to existing versioned apps in place, preserving the app, grants and version history. Files are uploaded before the entrypoint changes; `--prune` runs only after the change succeeds. Accounts that reject the update receive an actionable error.
+- Streamlit deploy now refuses to recreate an existing app with no live stage unless a legacy `ROOT_LOCATION` is known, and rejects `--prune` with an unset `main_file` when the active entrypoint is absent from the bundle.
+- Upgraded the Python interpreter embedded in Linux binaries from 3.10.22 to 3.12.15. macOS and Windows binaries now embed Python 3.12 as well.
+- Bumped lower bound of certifi to 2026.10.19.
+- The direct install script restricts `connections.toml` and `config.toml` to the current user when that user owns the file. `snow upgrade` does the same before it checks permissions, and again before it points at the new version, so a file left readable by other accounts no longer stops `snow upgrade` or the new `snow` from starting. Symlinks and files owned by someone else are left unchanged.
+- Upgraded pip from 26.2.1 to 26.2.2.
+
 ## Version 3.30.0 (Oct 20, 2026)
 
 ### Backward incompatibility

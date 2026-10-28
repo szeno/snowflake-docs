@@ -17,7 +17,8 @@ Hybrid tables support two types of indexes:
   - Indexes for UNIQUE constraints
 - User-defined indexes, known as *secondary indexes*, that you can define on other columns as needed.
   A single index can cover one or more columns. You can use CREATE HYBRID TABLE or CREATE INDEX to
-  define secondary indexes.
+  define secondary indexes. These indexes apply only to hybrid tables. Secondary indexes in the
+  [search optimization service](/user-guide/search-optimization/secondary-indexes) are a different feature.
 
   When you create secondary indexes, you can “include” columns that are not part of the index key but are
   associated and stored with the index itself. See [INCLUDE columns](#label-indexes-with-include-columns).

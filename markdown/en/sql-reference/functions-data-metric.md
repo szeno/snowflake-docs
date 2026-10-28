@@ -3,6 +3,7 @@
 Snowflake provides more than 185 built-in system data metric functions to measure data quality for tables and views:
 
 - [ACCEPTED\_VALUES (system data metric function)](/sql-reference/functions/dmf_accepted_values)
+- [ACCEPTED\_VALUES\_PERCENT (system data metric function)](/sql-reference/functions/dmf_accepted_values_percent)
 - [ACCURACY (system data metric function)](/sql-reference/functions/dmf_accuracy)
 - [ALL\_SPACE\_COUNT (system data metric function)](/sql-reference/functions/dmf_all_space_count)
 - [ALL\_SPACE\_PERCENT (system data metric function)](/sql-reference/functions/dmf_all_space_percent)
@@ -156,6 +157,7 @@ Snowflake provides more than 185 built-in system data metric functions to measur
 - [REFERENTIAL\_INTEGRITY\_COUNT (system data metric function)](/sql-reference/functions/dmf_referential_integrity_count)
 - [RMSE (system data metric function)](/sql-reference/functions/dmf_rmse)
 - [ROW\_COUNT (system data metric function)](/sql-reference/functions/dmf_row_count)
+- [ROW\_COUNT\_DIFFERENCE (system data metric function)](/sql-reference/functions/dmf_row_count_difference)
 - [ROWS\_IN\_PAST\_DAY\_COUNT (system data metric function)](/sql-reference/functions/dmf_rows_in_past_day_count)
 - [ROWS\_IN\_PAST\_DAY\_PERCENT (system data metric function)](/sql-reference/functions/dmf_rows_in_past_day_percent)
 - [ROWS\_IN\_PAST\_HOUR\_COUNT (system data metric function)](/sql-reference/functions/dmf_rows_in_past_hour_count)

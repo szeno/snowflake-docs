@@ -127,7 +127,7 @@ more benefits.
 ## Query Acceleration Service
 
 When you create a new multi-cluster warehouse, Snowflake enables the [Query Acceleration Service (QAS)](/user-guide/query-acceleration-service) by default.
-The default `QUERY_ACCELERATION_MAX_SCALE_FACTOR` is `2` when QAS is enabled automatically at creation time.
+The default `QUERY_ACCELERATION_MAX_SCALE_FACTOR` is `8` when QAS is enabled automatically at creation time.
 
 To disable QAS or change the scale factor, use [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse) or [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) with
 `ENABLE_QUERY_ACCELERATION` and `QUERY_ACCELERATION_MAX_SCALE_FACTOR`.

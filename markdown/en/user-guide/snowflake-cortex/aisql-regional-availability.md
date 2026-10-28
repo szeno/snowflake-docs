@@ -143,13 +143,13 @@ The following functions and models are available in any region via [cross-region
 | Function | Model | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | **AI\_COMPLETE** |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5-5` | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |
-| `claude-sonnet-5-5` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `claude-opus-5-5` | ✔ | ✔ |  |  |  | ✔ | \* | ✔ | ✔ |  |  |  |  |
+| `claude-sonnet-5-5` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
 | `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
 | `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
 | `claude-opus-4-7` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
 | `claude-opus-4-6` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
 | `claude-sonnet-4-6` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
@@ -175,13 +175,13 @@ The following functions and models are available in any region via [cross-region
 | `openai-gpt-4.1 [legacy]` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `gemini-4-argon` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
 | `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
+| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
+| `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
+| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | `grok-4.7` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `kimi-k3` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `kimi-k3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `glm-5.3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `qwen3-32b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-next-80b-a3b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |

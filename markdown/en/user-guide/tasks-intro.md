@@ -847,7 +847,8 @@ For more information about how to create custom roles and role hierarchies, see 
 When you delete the owner role of a task, the task transfers ownership to the role that dropped the owner role. When a task transfers
 ownership, it is automatically paused and new task runs aren’t scheduled until the new owner resumes the task.
 
-If you drop the role while the task is running, the task run completes processing under the dropped role.
+The pause affects only future runs. If a task run is already in progress when you drop the role, that run isn’t interrupted:
+it completes processing under the dropped role.
 
 ### Tasks run by a system service
 

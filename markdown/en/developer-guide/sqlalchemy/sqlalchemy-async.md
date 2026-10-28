@@ -4,24 +4,24 @@ Snowflake SQLAlchemy supports SQLAlchemy’s [`asyncio` extension](https://docs.
 
 ## Requirements
 
-Async support is part of the standard install; you don’t need a separate package:
+Async support is opt-in. Install the `async` extra, which installs `SQLAlchemy[asyncio]` and, with it, [`greenlet`](https://pypi.org/project/greenlet/). The base install is sync-only.
 
 Copy code
 
 ```
-pip install snowflake-sqlalchemy
+pip install "snowflake-sqlalchemy[async]"
 ```
 
+SQLAlchemy 2.1 no longer installs `greenlet` by default. SQLAlchemy 2.0 installs it only on some platforms, such as `x86_64`, `aarch64`, and `amd64`, but not on Apple silicon macOS (`arm64`). Install the `async` extra on SQLAlchemy 2.0 too, rather than relying on SQLAlchemy to install `greenlet`.
+
 - Python 3.11 or later. The 5.x connector dropped Python 3.10 support, so `pip` can’t resolve it on 3.10.
-- `snowflake-connector-python` 5.x (`>=5.0.0`), installed automatically as a base dependency.
-- SQLAlchemy 2.0.44 or later, but earlier than 2.1.
-- [`greenlet`](https://pypi.org/project/greenlet/), which SQLAlchemy’s asyncio extension relies on. SQLAlchemy installs it automatically only on some platforms, such as `x86_64`, `aarch64`, and `amd64`. On other platforms, notably Apple silicon macOS (`arm64`), install it explicitly. Without it, `create_async_engine()` raises an `ImportError` with install instructions when the engine is created. Keep the same SQLAlchemy range so `pip` doesn’t upgrade you to 2.1:
+- `snowflake-connector-python` 5.x, installed automatically as a base dependency.
+- SQLAlchemy 2.0.44 through 2.1.x (`>=2.0.44,<2.2`).
+- `greenlet`, which SQLAlchemy’s asyncio extension relies on, installed by the `async` extra. Without it, async engine creation raises an `ImportError`: `create_snowflake_async_engine()` names `snowflake-sqlalchemy[async]` in the message; on SQLAlchemy 2.1, importing `sqlalchemy.ext.asyncio` fails first with SQLAlchemy’s own `sqlalchemy[asyncio]` hint. Installing either extra fixes it.
 
-  Copy code
+Note
 
-  ```
-  pip install "sqlalchemy[asyncio]>=2.0.44,<2.1"
-  ```
+If you upgrade an async application from Snowflake SQLAlchemy 2.0.0 to 2.1, switch your requirement to `snowflake-sqlalchemy[async]`. Snowflake SQLAlchemy 2.1 allows SQLAlchemy 2.1, which doesn’t install `greenlet`, so an upgrade without the `async` extra installs cleanly but fails when you create the async engine.
 
 ## Quick start
 

@@ -19,6 +19,7 @@ The following request headers apply to all the endpoints for the Snowpipe Stream
 | --- | --- |
 | `Authorization` | Authentication token |
 | `X-Snowflake-Authorization-Token-Type` (optional) | JWT/OAuth |
+| `Content-Type` (required when the request has a body) | Media type of the request body. Use `application/x-ndjson` for append-rows requests. Use `application/json` for open-channel, drop-channel, and bulk channel-status bodies. Use `application/x-www-form-urlencoded` for the scoped-token exchange. |
 | `Content-Encoding` (optional) | Specifies the compression format of the payload. Supported: `gzip`, `zstd`. |
 | `User-Agent` (optional) | Identifies the client application. Recommended format: `SnowpipeStreamingSDK/{version} ({platform}) {LANGUAGE}/{language_version} (app={partner-name})`. Example: `SnowpipeStreamingSDK/1.0.0 (Linux amd64) PYTHON/3.11.0 (app=MyPartnerApp)`. |
 
@@ -27,6 +28,19 @@ Expand
 Show lessSee more
 
 Direct REST clients must group rows into newline-delimited JSON (NDJSON), with one JSON object per line, and handle compression themselves. Both Elastic and Named Channel append requests have a 4 MB payload limit (the payload size sent over the network, after compression if used). Batch rows and use ZSTD or Gzip compression to reduce request overhead; bound batch size and elapsed time before sending.
+
+## Client requirements
+
+A request that doesn’t meet the following requirements returns an HTTP 4xx error. These errors generally aren’t retryable, except for the cases in [Retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy).
+
+The requirements are:
+
+- Use the ingest hostname for your account, the documented HTTP method, and the documented request path and query parameters.
+- Include the [required headers](#request-headers) with valid values, including `Authorization` and the content type the endpoint expects. When you compress a body, set `Content-Encoding` to `gzip` or `zstd`.
+- Send a valid, unexpired authentication token whose role is authorized for the target account, pipe, and table.
+- Stay within the account, channel, request, and byte-rate limits. For those limits, see [Snowpipe Streaming high-performance limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations).
+
+For retry delays, retryable status codes, and Named Channel recovery, see [REST API error handling](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-error-handling).
 
 ## Get Hostname
 
@@ -124,7 +138,7 @@ Expand
 
 Show lessSee more
 
-Elastic requests must not include `offsetToken`, `startOffsetToken`, `endOffsetToken`, or `continuationToken`.
+Send a non-empty NDJSON rowset. Elastic requests must not include `continuationToken`, `offsetToken`, `startOffsetToken`, or `endOffsetToken`.
 
 ### Elastic response and delivery semantics
 
@@ -181,7 +195,7 @@ Request:
 | pipeName | Yes | URI | Pipe name, case-insensitive. |
 | channelName | Yes | URI | The name of the channel that you create or re-open, case-insensitive. |
 | offset\_token | No | Payload | String used to set an offset token when opening a channel. |
-| fail\_on\_uncommitted\_rows | No | Payload | Boolean. When `true`, the server rejects the request with HTTP `409 Conflict` (`ERR_CHANNEL_HAS_UNCOMMITTED_DATA`) if the channel has uncommitted in-flight data. Otherwise, in-flight data is silently discarded and can slow co-located channels on the pipe (default: `false`). |
+| fail\_on\_uncommitted\_rows | No | Payload | Boolean. When `true`, the server rejects the request with HTTP `409 Conflict` (`ERR_CHANNEL_HAS_UNCOMMITTED_DATA`) if the channel has uncommitted in-flight data. Otherwise, in-flight data is silently discarded and can slow co-located channels on the pipe (default: `false`). For how to use this field during recovery, see [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery). |
 | requestId | No | Query parameter | A universally unique identifier (UUID) used to track requests through the system. |
 
 Expand
@@ -225,6 +239,12 @@ Expand
 
 Show lessSee more
 
+#### Open channel requirements
+
+- Use the same `databaseName`, `schemaName`, `pipeName`, and `channelName` for later open, append, drop, and status calls on that channel.
+- Send open requests for one channel name one at a time. Overlapping open calls against the same name are rejected.
+- Store `next_continuation_token` for the next append and `last_committed_offset_token` from this response when the open succeeds. For the recovery sequence, see [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery).
+
 ### Append rows to a Named Channel
 
 The `Append Rows` operation inserts a batch of rows to the given channel.
@@ -238,6 +258,21 @@ later request.
 POST /v2/streaming/data/databases/{databaseName}/schemas/{schemaName}/pipes/{pipeName}/channels/{channelName}/rows
 ```
 
+#### Named Channel append workflow
+
+Every Named Channel append request must include a continuation token. Snowflake issues this token, and your client sends it back unchanged. You get the first token when you open the channel. Each successful append returns the token to use for the next append.
+
+1. Call [Open a Named Channel](#open-a-named-channel). In the JSON response body, read the top-level `next_continuation_token` field and save its value in your client.
+2. Send an Append Rows request. Set these query parameters:
+   - `continuationToken`: The saved token value, unchanged.
+   - `offsetToken`: Your source offset for this batch, such as a Kafka offset. This value records exactly-once progress, and a later open-channel response returns it as `last_committed_offset_token`.
+3. When the append succeeds, read `next_continuation_token` from the append response body. Replace your saved token with this new value, and discard the old one.
+4. Repeat steps 2 and 3 for each batch.
+
+Send appends for one channel one at a time. Wait for each append response before you send the next append, because the next request needs the token from that response.
+
+The request body must be a non-empty NDJSON rowset, and the payload sent on the network must be 4 MB or smaller. For retries, see [REST API retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy). For Named Channel recovery, see [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery).
+
 Request:
 
 | Attribute | Required | Component | Description |
@@ -246,7 +281,8 @@ Request:
 | schemaName | Yes | URI | Schema name, case-insensitive. |
 | pipeName | Yes | URI | Pipe, case-insensitive. |
 | channelName | Yes | URI | Channel name, case-insensitive. |
-| continuationToken | Yes | Query parameter | Continuation token from Snowflake, encapsulates both client and row sequencers. |
+| continuationToken | Yes | Query parameter | Continuation token from Snowflake. It encapsulates both client and row sequencers. Use `next_continuation_token` from the latest successful open or append response. See [Named Channel append workflow](#named-channel-append-workflow). |
+| offsetToken | No | Query parameter | User-defined source offset for this request. Set `offsetToken` on each append so a later open-channel response can return it as `last_committed_offset_token`. For how this token differs from `continuationToken`, see [Roles of `offsetToken` and `continuationToken`](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-snowpipe-streaming-offset-continuation-token). |
 | startOffsetToken | No | Query parameter | Offset token for the first row in the batch. |
 | endOffsetToken | No | Query parameter | Offset token for the last row in the batch. |
 | rows | Yes | Payload | The actual data payload to be ingested in NDJSON format. The maximum allowed size for this attribute is 4 MB. |
@@ -282,7 +318,7 @@ Show lessSee more
 
 ### Drop a Named Channel
 
-The `Drop Channel` operation drops a channel at server side along with its metadata.
+The `Drop Channel` operation drops a Named Channel and its metadata on the server. Set `fail_on_uncommitted_rows` to `true` to reject the drop when uncommitted rows exist. If you leave it `false`, Snowflake can discard in-flight data.
 
 ```
 DELETE /v2/streaming/databases/{databaseName}/schemas/{schemaName}/pipes/{pipeName}/channels/{channelName}
@@ -386,7 +422,7 @@ Show lessSee more
 
 ## Error response structure
 
-The Snowpipe Streaming REST APIs return a JSON payload for error responses. This structure provides actionable information for both automated error handling and human analysis.
+The Snowpipe Streaming REST APIs return a JSON payload for error responses. This structure provides actionable information for both automated error handling and human analysis. For which status codes to retry, how to refresh authentication, and how to recover a Named Channel, see [REST API error handling](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-error-handling).
 
 The response payload has the following structure:
 

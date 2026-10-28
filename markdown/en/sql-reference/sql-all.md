@@ -71,6 +71,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize) | Rewrites supported Apache Iceberg table partitions to clear active position-delete references for live data files. |
 | [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution) | Adds, drops, or replaces partition fields for a Snowflake-managed [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh) | Refreshes the metadata for an [Apache Iceberg™ table](/user-guide/tables-iceberg) that uses an external Iceberg catalog. |
+| [ALTER ICEBERG TABLE … VERSION\_TAG](/sql-reference/sql/alter-iceberg-table-version-tag) | Creates, repoints, or drops a version tag on an [Apache Iceberg™ table](/user-guide/tables-iceberg). |
 | [ALTER INGRESS POLICY](/sql-reference/sql/alter-ingress-policy) | Modifies the body or comment of an existing [ingress policy](/user-guide/ingress-policies). |
 | [ALTER INTEGRATION](/sql-reference/sql/alter-integration) | Modifies the properties for an existing integration. |
 | [ALTER JOIN POLICY](/sql-reference/sql/alter-join-policy) | Replaces the existing rules or comment for a [join policy](/user-guide/join-policies). |
@@ -650,7 +651,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories) | Lists the [image repositories](/developer-guide/snowpark-container-services/tutorials/tutorial-1) for which you have access privileges. |
 | [SHOW IMAGES IN IMAGE REPOSITORY](/sql-reference/sql/show-images-in-image-repository) | Lists the images in an [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository). |
 | [SHOW INDEXES](/sql-reference/sql/show-indexes) | Lists all the indexes in your account for which you have access privileges. |
-| [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies) | Lists the [ingress policies](/user-guide/ingress-policies) that you can see. |
+| [SHOW INDEXES (STANDARD TABLE)](/sql-reference/sql/show-indexes-standard-tables) | Lists secondary indexes on a standard table. | [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies) | Lists the [ingress policies](/user-guide/ingress-policies) that you can see. |
 | [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations) | Lists the integrations in your account. |
 | [SHOW INTERACTIVE TABLES](/sql-reference/sql/show-interactive-tables) | Lists the [interactive tables](/user-guide/interactive) for which you have access privileges. |
 | [SHOW JOIN POLICIES](/sql-reference/sql/show-join-policies) | Lists information about existing [join policies](/user-guide/join-policies), including the creation date, database and schema names, owner, and any available comments. |

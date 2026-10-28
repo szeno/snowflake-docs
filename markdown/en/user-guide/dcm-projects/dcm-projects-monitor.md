@@ -73,18 +73,39 @@ snow dcm drop-deployment --deployment 'DEPLOYMENT$1'
 
 ### Recover an earlier defined state
 
-To recover an earlier definition state, retrieve the retained definitions and effective templating configuration from that deployment,
-including runtime variable overrides. Run a new full `PLAN` against the current account state, review the resulting changeset, and then
-redeploy those definitions.
+To recover an earlier definition state, use `FROM DEPLOYMENT <identifier>`, which reuses the rendered definitions from that deployment.
+They already reflect that deployment’s effective templating configuration, including runtime variable overrides. Run a full `PLAN`
+against the current account state, review the resulting changeset, and then redeploy those definitions:
+
+Copy code
+
+```
+EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
+  PLAN
+  FROM DEPLOYMENT DEPLOYMENT$3;
+
+EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
+  DEPLOY
+  FROM DEPLOYMENT DEPLOYMENT$3;
+```
 
 This process applies the earlier defined state through a new reconciliation. It doesn’t undo DML, restore historical table contents, or
 guarantee the exact prior physical or internal state. Use a separate data-recovery mechanism, such as
 [Time Travel](/user-guide/data-time-travel), to recover historical data, subject to that mechanism’s retention and other constraints.
 
+Using a deployment created by `PURGE` as the source isn’t supported. This restriction prevents accidental purges.
+
 ### Check for drift only
 
-To isolate changes made outside DCM Projects, retrieve the definitions and effective templating configuration from the last deployment, including
-runtime variable overrides. Run a full `PLAN` with those definitions against the same project and account.
+To isolate changes made outside DCM Projects, run a full `PLAN FROM DEPLOYMENT LAST`, which reuses the rendered definitions from the last deployment:
+
+Copy code
+
+```
+EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
+  PLAN
+  FROM DEPLOYMENT LAST;
+```
 
 Don’t use a feature branch for a drift-only check because its intended source changes are combined with account drift. `PLAN DELTA` also
 isn’t a drift-only check: it doesn’t compare unchanged definitions with current account state. This procedure reports drift for review; it

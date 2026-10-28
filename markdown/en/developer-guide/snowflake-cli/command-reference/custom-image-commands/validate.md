@@ -30,7 +30,7 @@ snow custom-image validate
 `--scan-vulnerabilities`
 :   Run vulnerability scan using Grype. Requires Grype to be installed. Default: False.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

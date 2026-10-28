@@ -107,6 +107,9 @@ created with a previous version continue to use that version for anomaly detecti
 - You cannot clone models or share models across roles or accounts. When cloning a schema or database, model objects are skipped.
 - You cannot [replicate](/user-guide/account-replication-intro) an instance of the ANOMALY\_DETECTION
   class.
+- You must enable autocommit in your session before you create a model. If `AUTOCOMMIT` is set to `FALSE`, the
+  `CREATE SNOWFLAKE.ML.ANOMALY_DETECTION` command can fail. To enable autocommit, run
+  `ALTER SESSION SET AUTOCOMMIT = TRUE;` before the command.
 
 ## Preparing for Anomaly Detection
 

@@ -4,7 +4,12 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
+- [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
+- [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
+- [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
+- [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
 - [Oct 23, 2026: CoCo Desktop v1.22.1](/release-notes/2026/other/2026-10-23-coco-desktop-v1-22-1)
 - [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)
@@ -91,6 +96,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Sep 21, 2026: Cortex Agents Compact API (Preview)](/release-notes/2026/other/2026-09-21-cortex-agents-compact-api-preview)
 - [Sep 21, 2026: Lineage preservation through temporary tables and views (General availability)](/release-notes/2026/other/2026-09-21-lineage-temporary-objects)
 - [Sep 18, 2026: Database roles in backups](/release-notes/2026/other/2026-09-18-database-roles-in-backups)
+- [Sep 18, 2026: Directed joins: Set the scan order with FIRST or LAST (General availability)](/release-notes/2026/other/2026-09-18-directed-join-read-order)
 - [Sep 18, 2026: Apache Iceberg™ tables: Partition evolution (General availability)](/release-notes/2026/other/2026-09-18-iceberg-partition-evolution-ga)
 - [Sep 17, 2026: HTML generation in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-09-17-cowork-html-generation-preview)
 - [Sep 17, 2026: Snowpark Container Services backup instance types (General availability)](/release-notes/2026/other/2026-09-17-spcs-backup-instance-types-ga)

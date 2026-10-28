@@ -170,6 +170,7 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [STORAGE\_USAGE view](/sql-reference/account-usage/storage_usage) | USAGE\_VIEWER |
 | [TABLE\_CONSTRAINTS view](/sql-reference/account-usage/table_constraints) | OBJECT\_VIEWER |
 | [TABLE\_DML\_HISTORY view](/sql-reference/account-usage/table_dml_history) | USAGE\_VIEWER |
+| [TABLE\_OPTIMA\_FEATURES view](/sql-reference/account-usage/table_optima_features) | OBJECT\_VIEWER |
 | [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history) | USAGE\_VIEWER |
 | [TABLE\_QUERY\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_query_pruning_history) | USAGE\_VIEWER |
 | [TABLE\_STORAGE\_METRICS view](/sql-reference/account-usage/table_storage_metrics) | USAGE\_VIEWER |

@@ -278,5 +278,9 @@ use the [Snowflake Catalog SDK](/user-guide/tables-iceberg-catalog).
 You can query any snapshots that were committed within the data retention period.
 To specify the data retention period, set the [DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-data-retention-time-in-days) object parameter.
 
+To identify the snapshot that you want to query, you can use a version tag, a snapshot ID, a reference name, or a timestamp.
+You can also use a version tag to keep a snapshot available beyond the data retention period. For more information, see
+[Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
+
 When you delete table data or drop a table, Snowflake deletes objects after the table retention period expires.
 This might incur costs with your cloud storage provider for longer than the table’s lifetime.

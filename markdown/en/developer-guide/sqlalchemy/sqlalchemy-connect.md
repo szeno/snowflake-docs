@@ -105,6 +105,16 @@ engine = create_engine(
 
 To fetch NumPy data types (`numpy.int64`, `numpy.float64`, and `numpy.datetime64`), add `'numpy': True` to `connect_args`. Binding NumPy values works without this setting.
 
+### Special characters in database and schema names
+
+The URL path holds `database` or `database/schema`. A `/` outside double quotes separates the two; inside a quoted identifier such as `"a/b"`, it’s part of the name.
+
+- **`snowflake.sqlalchemy.URL` helper (recommended):** Pass names as you would write them in SQL, for example `database='"my db"', schema='"a/b"'`. The helper percent-encodes them, and the connector receives the original values on SQLAlchemy 2.0 and 2.1.
+- **`sqlalchemy.engine.URL.create(...)`:** On SQLAlchemy 2.1, values are used as passed, so `database='my%20db'` stays `my%20db`. On SQLAlchemy 2.0, the dialect can’t tell a `URL.create()` value from a parsed URL string, so a name that contains `%` and no raw `"` is percent-decoded (`my%20db` becomes `my db`). `database='"a%20b"'` stays `"a%20b"` on both versions. To keep a literal `%` on SQLAlchemy 2.0, quote the name or write the `%` as `%25`.
+- **Hand-written URL strings:** Percent-encode reserved characters in each name with `urllib.parse.quote(name, safe="")`, including the double quotes. SQLAlchemy 2.1 decodes the path itself. On SQLAlchemy 2.0, the dialect decodes each database or schema name that has no raw `"`; unquoted Snowflake identifiers can’t contain `%`, so such a `%` is always an encoding. A name that contains a raw `"` is treated as unencoded on SQLAlchemy 2.0; the other name in the path is still decoded.
+
+Starting with Snowflake SQLAlchemy 2.1, the helper encodes a space as `%20` rather than `+`, because SQLAlchemy 2.1 doesn’t decode `+` in the path. For URLs built with the helper, the resulting connection values are unchanged; only the generated URL string differs. Hand-written URLs are read differently than in 2.0.0: a `+` in the path stays `+` (it used to become a space), and an encoded `%2F` outside quotes separates the database from the schema. For details, see [URL database and schema path decoding](/developer-guide/sqlalchemy/sqlalchemy-migrate#label-sqlalchemy-migrate-url-path-decoding).
+
 ### Using the create\_snowflake\_engine helper
 
 To connect with a case-sensitive (mixed-case) schema name, use `create_snowflake_engine()` instead of building the URL by hand. It quotes the schema name for you. Other keyword arguments are passed to `create_engine()`:

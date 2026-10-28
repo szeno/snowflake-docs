@@ -19,6 +19,7 @@ The SYSTEM$DATA\_METRIC\_SCAN function accepts a DMF as an argument to return th
 data. The following system DMFs can be used as arguments:
 
 > - [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values)
+> - [ACCEPTED\_VALUES\_PERCENT](/sql-reference/functions/dmf_accepted_values_percent)
 > - [BLANK\_COUNT](/sql-reference/functions/dmf_blank_count)
 > - [BLANK\_PERCENT](/sql-reference/functions/dmf_blank_percent)
 > - [DUPLICATE\_COUNT](/sql-reference/functions/dmf_duplicate_count)
@@ -59,7 +60,8 @@ records that existed in the table at the ’2024-08-28 02:00:00 -0700’ timesta
 ### ACCEPTED\_VALUES DMF
 
 You must specify an additional argument when calling the SYSTEM$DATA\_METRIC\_SCAN function to return records identified by the
-[ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) DMF as containing data quality issues. With this argument,
+[ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) or
+[ACCEPTED\_VALUES\_PERCENT](/sql-reference/functions/dmf_accepted_values_percent) DMF as containing data quality issues. With this argument,
 ARGUMENT\_EXPRESSION, you can specify a Boolean expression that determines which rows
 to return. If a value in the column does *not* match the expression, the row is returned.
 

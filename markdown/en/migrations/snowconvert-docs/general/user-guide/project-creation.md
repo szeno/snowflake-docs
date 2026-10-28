@@ -18,7 +18,7 @@ To create a new project, complete the following steps:
    If you don’t want to use Snowflake Cortex for the migration, turn off **AI features**.
 
    For more information about Snowflake Cortex, see [Snowflake AI and ML](https://docs.snowflake.com/en/guides-overview-ai-features).
-4. For **Snowflake connection**, optionally enter the information required to connect to your Snowflake account.
+4. For **Snowflake connection**, optionally enter the information required to connect to your Snowflake account. When you provide an active Snowflake connection, an access code is no longer required.
 5. Select **Save Project**.
 
 After creating a project, you can proceed to the [extraction process](./extraction) to extract database objects from your source system to prepare them for the conversion process.

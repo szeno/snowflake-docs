@@ -142,6 +142,22 @@ Note
 If you drop and recreate a connector, the new connector does not inherit grants from the old
 one. Re-grant `USAGE` to the roles that need it after recreating a connector.
 
+Configuring, syncing, and deleting a connector in **Catalog > Connections** requires `OWNERSHIP`
+of that connector. `USAGE`, `CREATE METADATA CONNECTOR`, and `MANAGE METADATA CONNECTORS` do not
+authorize those actions. The role selected in Snowsight must own the connector, including when
+that role is a secondary role. To give another role those actions, transfer ownership.
+`COPY CURRENT GRANTS` keeps the grants already on the connector, and the new role becomes the owner:
+
+Copy code
+
+```
+GRANT OWNERSHIP ON METADATA CONNECTOR CONNECTORS.METADATA.<connector_name> TO ROLE <role_name>
+  COPY CURRENT GRANTS;
+```
+
+Quote `<connector_name>` when the display name contains a space or a hyphen. Remove a connector
+from **Catalog > Connections**. There is no `DROP METADATA CONNECTOR` statement.
+
 ## Edit metadata
 
 Give data stewards the ability to curate the tags that appear in the catalog without granting more

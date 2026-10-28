@@ -3,6 +3,8 @@
 If you already have an Amazon Web Services (AWS) account and use S3 buckets for storing and managing your data files, you can make use of your existing buckets and folder paths for bulk loading into
 Snowflake. This set of topics describes how to use the COPY command to bulk load from an S3 bucket into tables.
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) run the load for you from an S3 path, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
 As illustrated in the diagram below, loading data from an S3 bucket is performed in two steps:
 
 Step 1:

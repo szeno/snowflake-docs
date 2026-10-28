@@ -647,6 +647,11 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- A schedule isn’t required to create a task. However, a standalone task or the root task in a task graph runs
+  automatically only if it has a schedule or is a [triggered task](/user-guide/tasks-triggered). Otherwise, you can run
+  it on demand with [EXECUTE TASK](/sql-reference/sql/execute-task), which requires the OWNERSHIP or OPERATE privilege on the task.
+  Child tasks can’t have a schedule; they run after their predecessor tasks complete. For more information, see
+  [Define schedules or triggers](/user-guide/tasks-intro#label-tasks-define-schedule-or-triggers) and [Run a task manually](/user-guide/tasks-intro#label-tasks-executing).
 - Tasks run using the task owner’s privileges. For the list of minimum required privileges to run tasks, see
   [Task security](/user-guide/tasks-intro#label-task-security-reqs).
 

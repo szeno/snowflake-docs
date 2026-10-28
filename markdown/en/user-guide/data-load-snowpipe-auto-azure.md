@@ -2,6 +2,8 @@
 
 This topic describes how to set up a pipe that loads files from Microsoft Azure storage as soon as they arrive. When a file is created in your container, [Microsoft Azure Event Grid](https://learn.microsoft.com/en-us/azure/event-grid/overview) sends an event message to an Azure Queue Storage queue. Snowflake reads the message from the queue, and Snowpipe loads the file into your target table. For an overview of automated loading on every cloud provider, see [Automate Snowpipe with cloud event notifications](/user-guide/data-load-snowpipe-auto).
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) set up the pipeline from your Azure storage path instead, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco). Depending on the setup option you choose, CoCo creates the Snowflake objects (such as the integrations, stage, and pipe), generates Terraform or an ARM template for your team to deploy, or does some of each. CoCo also guides you through any follow-up authorization and notification steps, so that you don’t need to follow the steps in this topic manually.
+
 To set up automated loading from Microsoft Azure storage, complete the following steps:
 
 1. [Create a storage integration and an external stage](#label-data-load-snowpipe-azure-storage) so that Snowflake can read the container.

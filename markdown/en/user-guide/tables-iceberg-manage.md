@@ -34,6 +34,9 @@ Copy code
 SELECT col1, col2 FROM my_iceberg_table;
 ```
 
+To query a named snapshot, use a version tag.
+See [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
+
 Note
 
 Along with Snowflake, you can also use an external query engine to query Iceberg tables. For more information,

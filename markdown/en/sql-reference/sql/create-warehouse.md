@@ -363,8 +363,8 @@ This feature requires Enterprise Edition (or higher). To inquire about upgrading
     >     - `FALSE` Disables Query Acceleration
     >
     > Default:
-    > :   - `FALSE` for single-cluster Gen1 warehouses
-    >     - `TRUE` for [Gen2](/user-guide/warehouses-gen2) and [multi-cluster](/user-guide/warehouses-multicluster) warehouses
+    > :   - `TRUE` for standard warehouses of all types (single-cluster Gen1 and [Gen2](/user-guide/warehouses-gen2), and [multi-cluster](/user-guide/warehouses-multicluster))
+    >     - `FALSE` for [Snowpark-optimized](/user-guide/warehouses-snowpark-optimized) warehouses
 
 `QUERY_ACCELERATION_MAX_SCALE_FACTOR = num`
 > Specifies the maximum scale factor for leasing compute resources for query acceleration. The scale factor is used as a multiplier based
@@ -381,8 +381,7 @@ This feature requires Enterprise Edition (or higher). To inquire about upgrading
 > :   `0` to `100`
 >
 > Default:
-> :   `8`, or `2` when Snowflake automatically enables query acceleration for [Gen2](/user-guide/warehouses-gen2) or
->     [multi-cluster](/user-guide/warehouses-multicluster) warehouses at creation time
+> :   `8`
 
 ## Optional parameters (`objectParams`)
 

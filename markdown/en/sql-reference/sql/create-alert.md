@@ -209,13 +209,6 @@ For usage details, see [CREATE ALERT … FROM TEMPLATE usage notes](#label-creat
 
     For more details, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
-`TAG ( tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ] )`
-:   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
-
-    The tag value is always a string, and the maximum number of characters for the tag value is 256.
-
-    For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
-
 `IF( EXISTS( condition ))`
 :   The SQL statement that represents the condition for the alert. You can use the following commands:
 
@@ -232,6 +225,13 @@ For usage details, see [CREATE ALERT … FROM TEMPLATE usage notes](#label-creat
     [call the SYSTEM$SEND\_EMAIL or SYSTEM$SEND\_SNOWFLAKE\_NOTIFICATION stored procedure](/user-guide/notifications/about-notifications).
 
 ## Optional parameters
+
+`TAG ( tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ] )`
+:   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
+
+    The tag value is always a string, and the maximum number of characters for the tag value is 256.
+
+    For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
 
 `WAREHOUSE = warehouse_name`
 :   Specifies the [virtual warehouse](/user-guide/warehouses) that provides compute resources for executing this alert.

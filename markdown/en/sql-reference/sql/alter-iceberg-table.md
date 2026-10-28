@@ -8,14 +8,15 @@ To replace the catalog integration for an externally managed Iceberg table in a 
 catalog integration, see [SYSTEM$SET\_CATALOG\_INTEGRATION](/sql-reference/functions/system_set_catalog_integration).
 
 You can also use an ALTER ICEBERG TABLE statement to refresh or convert a table, optimize a table to clear active position-delete references
-for live data files, alter a structured type column, or evolve partition specs. The syntax for those operations varies considerably. To view
-the syntax, parameter descriptions, usage notes, and examples for these operations, see the following pages:
+for live data files, alter a structured type column, evolve partition specs, or manage version tags. The syntax for those operations varies
+considerably. To view the syntax, parameter descriptions, usage notes, and examples for these operations, see the following pages:
 
 - [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh)
 - [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed)
 - [ALTER ICEBERG TABLE … OPTIMIZE](/sql-reference/sql/alter-iceberg-table-optimize)
 - [ALTER ICEBERG TABLE … ALTER COLUMN … SET DATA TYPE (structured types)](/sql-reference/sql/alter-iceberg-table-alter-column-set-data-type)
 - [ALTER ICEBERG TABLE … ADD | DROP | REPLACE PARTITION BY](/sql-reference/sql/alter-iceberg-table-partition-evolution)
+- [ALTER ICEBERG TABLE … VERSION\_TAG](/sql-reference/sql/alter-iceberg-table-version-tag)
 
 This topic refers to Iceberg tables as simply “tables” except where specifying *Iceberg tables* avoids confusion.
 
@@ -45,6 +46,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
   [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ]
   [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
+  [ TIME_TRAVEL_TIMESTAMP_SOURCE = { 'SNOWFLAKE_METADATA' | 'ICEBERG_METADATA' } ]
 
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ REPLACE_INVALID_CHARACTERS ]
@@ -373,6 +375,20 @@ Where:
         Default: `TRUE`
 
         For a detailed description of this parameter, see [Deprecated: ENABLE\_ICEBERG\_MERGE\_ON\_READ](/user-guide/tables-iceberg-manage#label-enable-iceberg-merge-on-read).
+
+`TIME_TRAVEL_TIMESTAMP_SOURCE = { 'SNOWFLAKE_METADATA' | 'ICEBERG_METADATA' }`
+:   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    Specifies which timeline Snowflake uses to resolve a timestamp in an [AT | BEFORE](/sql-reference/constructs/at-before) clause for the table.
+
+    `SNOWFLAKE_METADATA` (the default) uses the Snowflake transaction timeline. `ICEBERG_METADATA` uses the snapshot commit times
+    recorded in the Iceberg table metadata. `ICEBERG_METADATA` is supported for externally managed tables and isn’t supported for
+    Snowflake-managed tables.
+
+    You can set this parameter at the account, database, schema, or table level. For more information, see
+    [Query a table at a timestamp](/user-guide/tables-iceberg-time-travel#label-tables-iceberg-time-travel-timestamp).
 
 `ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE }`
 :   Enables or disables automatic changes to the table schema from data loaded into the table from source files, including:
@@ -848,7 +864,8 @@ ALTER ICEBERG TABLE user_events SET ALLOW_V3_EXPRESSION_DEFAULTS = TRUE;
 ALTER ICEBERG TABLE user_events ADD COLUMN last_updated DATE DEFAULT CURRENT_DATE();
 ```
 
-The following example sets a tag (`my_tag`) with a value of `customer` on an Iceberg table.
+The following example sets a governance tag (`my_tag`) with a value of `customer` on an Iceberg table.
+To name an Iceberg snapshot, use a [version tag](/sql-reference/sql/alter-iceberg-table-version-tag) instead.
 
 Copy code
 

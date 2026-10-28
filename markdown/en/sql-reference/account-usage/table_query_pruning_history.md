@@ -4,7 +4,7 @@ Schemas:
 # TABLE\_QUERY\_PRUNING\_HISTORY view
 
 Use this Account Usage view to gain a better understanding of data access patterns during
-query execution.
+query execution, including pruning attributed to [Snowflake Optima](/user-guide/snowflake-optima) Metadata and Indexing.
 
 You can use this view in combination with the [COLUMN\_QUERY\_PRUNING\_HISTORY view](/sql-reference/account-usage/column_query_pruning_history). For example,
 you can identify access to target tables by using the TABLE\_QUERY\_PRUNING\_HISTORY view, then
@@ -15,9 +15,10 @@ In particular, these views can help you make a more educated choice for
 
 Each row in this view represents the query pruning history for a specific table within a given time interval. The data is
 aggregated by time interval and includes information about the number of queries executed, partitions scanned, partitions pruned,
-rows scanned, rows pruned, and rows matched.
+rows scanned, rows pruned, rows matched, and Optima-specific pruning metrics.
 
-See also [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history) and [Query Pruning](/user-guide/tables-clustering-micropartitions#label-micropartitions-query-pruning).
+See also [TABLE\_OPTIMA\_FEATURES view](/sql-reference/account-usage/table_optima_features), [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history), and
+[Query Pruning](/user-guide/tables-clustering-micropartitions#label-micropartitions-query-pruning).
 
 ## Columns
 
@@ -44,6 +45,8 @@ See also [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruni
 | ROWS\_SCANNED | NUMBER | Number of rows scanned on this table for queries defined by NUM\_QUERIES. |
 | ROWS\_PRUNED | NUMBER | Number of rows pruned on this table for queries defined by NUM\_QUERIES. These rows were eliminated during query processing and not scanned, improving the efficiency of the query. |
 | ROWS\_MATCHED | NUMBER | Number of rows that matched the WHERE clause filters while scanning this table for the queries defined by NUM\_QUERIES. |
+| OPTIMA\_PARTITIONS\_PRUNED | NUMBER | Number of partitions eliminated from scanning through Snowflake Optima Metadata or Indexing for queries defined by NUM\_QUERIES. |
+| OPTIMA\_ROWS\_PRUNED | NUMBER | Number of rows eliminated from scanning through Snowflake Optima Metadata or Indexing for queries defined by NUM\_QUERIES. |
 
 Expand
 

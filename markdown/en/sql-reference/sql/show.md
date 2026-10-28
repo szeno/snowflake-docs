@@ -103,6 +103,7 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW HYBRID TABLES](/sql-reference/sql/show-hybrid-tables)
 > - [SHOW ICEBERG TABLES](/sql-reference/sql/show-iceberg-tables)
 > - [SHOW INDEXES](/sql-reference/sql/show-indexes)
+> - [SHOW INDEXES (STANDARD TABLE)](/sql-reference/sql/show-indexes-standard-tables)
 > - [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies)
 > - [SHOW INTERACTIVE TABLES](/sql-reference/sql/show-interactive-tables)
 > - [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories)

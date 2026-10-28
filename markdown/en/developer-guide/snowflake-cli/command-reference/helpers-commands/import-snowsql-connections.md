@@ -30,7 +30,7 @@ None
 `--default-connection-name TEXT`
 :   Specifies the name which will be given in Snowflake CLI to the default connection imported from SnowSQL. Default: default.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

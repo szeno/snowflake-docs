@@ -1,6 +1,6 @@
 # Error handling in Snowpipe Streaming high-performance architecture
 
-This topic explains Named Channel error handling for Snowpipe Streaming with high-performance architecture. For Elastic Channel error handling, see [Error handling for Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-error-handling).
+This topic explains Named Channel error handling for Snowpipe Streaming with high-performance architecture, including direct REST API calls. For Elastic Channel error handling, see [Error handling for Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-error-handling). For REST retry delays, retryable status codes, and Named Channel recovery, see [REST API error handling](#rest-api-error-handling).
 
 ## Named Channel error handling
 
@@ -128,7 +128,7 @@ The following table describes common HTTP status codes, their error conditions, 
 | Status code | Error condition | Required action |
 | --- | --- | --- |
 | 409 | Channel invalidated | The channel is no longer valid; for example, superseded by another client. Close the current channel, call `openChannel` to create a new instance, and then resume from the last committed offset. |
-| 429 | Throttling | The client is sending data too quickly. Implement an exponential back-off and retry strategy. |
+| 429 | Throttling | The client is sending data too quickly. Implement an exponential backoff and retry strategy. |
 | 500 / 503 | Service error | Transient network or server-side issues. These errors are typically retryable after a short delay. |
 | 401 | Unauthorized | Authentication failed. Verify credentials, JWT configuration, or role permissions. |
 
@@ -143,7 +143,43 @@ It is critical to distinguish between a channel invalidation and a client invali
 - **InvalidChannelException (HTTP 409)**: Only the specific channel is affected. Reopening the channel is sufficient.
 - **InvalidClientException**: The entire `SnowflakeStreamingIngestClient` is compromised. You must close the existing client, initialize a new one using the factory, and then reopen all associated channels.
 
-### Row-level error logging
+## REST API error handling
+
+Direct REST clients implement retries in their own HTTP client. SDK clients continue to use the retry and reopen behavior earlier in this topic. For endpoint paths, headers, and request fields, see [Snowpipe Streaming REST API endpoints](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api).
+
+A request that doesn’t meet the [client requirements](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#client-requirements) returns an HTTP 4xx error. These errors generally aren’t retryable, except for the cases in [Retry policy](#rest-api-retry-policy).
+
+### Retry policy
+
+If a request fails with a retryable response, retry it with exponential backoff and jitter.
+
+Cap the total retry time at 1 hour. When the retry time is exhausted, stop, return the error to your application, and alert an operator.
+
+Treat these responses as retryable:
+
+- HTTP 404, only when the response `Content-Type` is HTML, or when the `Content-Type` is JSON and both `code` and `message` are empty. A 404 with a payload that matches the [error response structure](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#error-response-structure) isn’t retryable.
+- HTTP 408
+- HTTP 429
+- HTTP 499
+- All HTTP 5xx responses
+
+For HTTP 401 or 403 responses caused by authentication, renew the token and retry the request. If the role isn’t authorized for the pipe or table, fix the privileges before you retry. A permissions failure repeats until the role can access those objects.
+
+### Recover a Named Channel after a REST error
+
+This procedure applies to Named Channels, which support channel lifecycle, continuation tokens, and offset-based recovery. It doesn’t apply to Elastic Channels. For Elastic append retries, see [Error handling for Elastic Channels](/user-guide/snowpipe-streaming/snowpipe-streaming-elastic-channels-error-handling).
+
+1. Stop sending requests on the current channel instance. Don’t call [Drop Channel](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#drop-a-named-channel), because it removes the channel state and metadata that recovery depends on.
+2. Reopen the same channel with the [Open a Named Channel operation](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#open-a-named-channel), with `fail_on_uncommitted_rows` set to `true`. If the open fails with HTTP 409, check the error code:
+   - `ERR_OPEN_CHANNEL_IN_PROGRESS`: Retry for up to 2 minutes, using the [retry policy](#rest-api-retry-policy). If retries are exhausted, stop overlapping open requests for that channel and return the error to your application. Opening with `fail_on_uncommitted_rows` set to `false` doesn’t resolve an open that’s already in progress.
+   - `ERR_CHANNEL_HAS_UNCOMMITTED_DATA`: Retry for up to 2 minutes, using the [retry policy](#rest-api-retry-policy). If retries are exhausted, reopen once more with `fail_on_uncommitted_rows` set to `false`. This discards the in-flight data.
+3. After a successful open:
+   - Read `last_committed_offset_token` and `next_continuation_token` directly from the open-channel response. Store `last_committed_offset_token` for recovery and use `next_continuation_token` for the next append. Don’t call the channel-status API immediately after opening the channel to discover these values.
+   - Read `next_continuation_token` from each successful append response, and use that value for the next append request.
+4. Resume ingestion with the first uncommitted record after `last_committed_offset_token`. For example, if the returned Kafka offset is `20`, resume at offset `21`, not `20`. Snowflake stores source offsets but doesn’t use them to prevent re-ingestion, so replaying the committed record can create a duplicate. For more information, see [Offset tokens and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-offset-tokens).
+   - If `last_committed_offset_token` is `null`, resume from the source position retained by your application.
+
+## Row-level error logging
 
 For row-level error debugging, turn on **error logging** on your target table. When turned on, rows that fail
 during server-side processing are automatically captured in a dedicated error table.

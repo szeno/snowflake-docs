@@ -256,6 +256,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [TABLES](/sql-reference/account-usage/tables) | Object | 90 minutes |  |  |
 | [TABLE\_CONSTRAINTS](/sql-reference/account-usage/table_constraints) | Object | 2 hours |  |  |
 | [TABLE\_DML\_HISTORY](/sql-reference/account-usage/table_dml_history) | Historical | 6 hours |  | Data retained for 1 year. |
+| [TABLE\_OPTIMA\_FEATURES](/sql-reference/account-usage/table_optima_features) | Object | 90 minutes |  |  |
 | [TABLE\_PRUNING\_HISTORY](/sql-reference/account-usage/table_pruning_history) | Historical | 6 hours |  | Data retained for 1 year. |
 | [TABLE\_QUERY\_PRUNING\_HISTORY](/sql-reference/account-usage/table_query_pruning_history) | Historical | 4 hours |  | Data retained for 1 year. |
 | [TABLE\_STORAGE\_METRICS](/sql-reference/account-usage/table_storage_metrics) | Object | 90 minutes |  |  |
@@ -521,6 +522,7 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [STORAGE\_USAGE view](/sql-reference/account-usage/storage_usage) | USAGE\_VIEWER |
 | [TABLE\_CONSTRAINTS view](/sql-reference/account-usage/table_constraints) | OBJECT\_VIEWER |
 | [TABLE\_DML\_HISTORY view](/sql-reference/account-usage/table_dml_history) | USAGE\_VIEWER |
+| [TABLE\_OPTIMA\_FEATURES view](/sql-reference/account-usage/table_optima_features) | OBJECT\_VIEWER |
 | [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history) | USAGE\_VIEWER |
 | [TABLE\_QUERY\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_query_pruning_history) | USAGE\_VIEWER |
 | [TABLE\_STORAGE\_METRICS view](/sql-reference/account-usage/table_storage_metrics) | USAGE\_VIEWER |

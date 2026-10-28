@@ -18,7 +18,7 @@ TypeScriptPython
 Copy code
 
 ```
-import type { AgentResponse, Conversation, Turn } from "@snowflake/cortex-agent-sdk";
+import type { AgentResponse, ClientToolUse, Conversation, PermissionRequest, Turn } from "@snowflake/cortex-agent-sdk";
 
 const convo: Conversation = await client.conversations.create({
   thread: { origin_application: "my-app" },
@@ -167,11 +167,111 @@ const codingTurn: Turn = await convo.send("Write a summary to /workspace/summary
 });
 ```
 
-For approval-based flows, set `permissionPolicy: "always_ask"` and stream events from the returned turn. When a
-`response.tool_use` event includes permission options, show those options to the approver. Send the selected option
-back as a `permission_decision` content item on the next turn.
+For approval-based flows, create a coding conversation with `permissionPolicy: "always_ask"`. `send()` and
+`sendPermissionDecisions()` both use that conversation’s agent. An inline conversation, such as `convo` above, has no
+coding tools and does not emit permission requests. Stream events from the returned turn. When a
+`response.tool_use` event includes permission options, show those options to the approver. Use
+`sendPermissionDecisions()` to continue the conversation after the approver selects options. The helper waits for the
+paused turn and uses its assistant message as the parent of the follow-up turn. If a turn requests multiple
+permissions, include every selected decision in one `sendPermissionDecisions()` call. Any pending request omitted
+from that call is denied. When you pass a `PermissionRequest`, the SDK rejects a decision that is not one of the
+request’s `options`. To explain a denial to the model, include an optional `reason` in the decision object.
 
-Send client-supplied content:
+Copy code
+
+```
+const approvalConversation: Conversation = await client.conversations.create({
+  thread: { origin_application: "my-app" },
+  agent: {
+    type: "coding",
+    spec: {
+      permissionPolicy: "always_ask",
+      workspaceMounts: [{ name: "USER$MYUSER.PUBLIC.DEFAULT$" }],
+      models: { orchestration: "claude-sonnet-4-5" },
+    },
+  },
+});
+
+const pendingTurn: Turn = await approvalConversation.send("Delete the temporary file.");
+const requests = await pendingTurn.permissionRequests();
+
+function selectedDecisionFor(permission: PermissionRequest): string {
+  return permission.options.includes("Allow this command") ? "Allow this command" : "Deny";
+}
+
+function selectedPermissionDecision(permission: PermissionRequest) {
+  const decision = selectedDecisionFor(permission);
+  return {
+    permission,
+    decision,
+    // `reason` is optional and is shown to the model when the decision denies the request.
+    ...(decision === "Deny" ? { reason: "Deleting files is not allowed in this environment." } : {}),
+  };
+}
+
+const response: AgentResponse = requests.length
+  ? await (
+      await approvalConversation.sendPermissionDecisions(
+        requests.map(selectedPermissionDecision),
+      )
+    ).result()
+  : await pendingTurn.result();
+console.log(response.text);
+```
+
+### Execute client-side tools
+
+To configure a generic client-side tool, include it in `tools` and omit a matching entry in `tool_resources`. The
+service emits that tool use with `client_side_execute: true`. Call `clientToolUses()` on the pending turn, execute
+every returned invocation in your application, then send every result in one `sendToolResults()` call. The helper
+constructs the required `tool_result` content and uses the paused assistant message as the follow-up parent.
+
+Copy code
+
+```
+const toolConversation: Conversation = await client.conversations.create({
+  thread: { origin_application: "my-app" },
+  agent: {
+    type: "inline",
+    spec: {
+      models: { orchestration: "claude-sonnet-4-5" },
+      tools: [
+        {
+          tool_spec: {
+            type: "generic",
+            name: "get_weather",
+            description: "Get the current weather for a city.",
+            input_schema: {
+              type: "object",
+              properties: { location: { type: "string" } },
+              required: ["location"],
+            },
+          },
+        },
+      ],
+      // No tool_resources.get_weather entry: the application executes this tool.
+    },
+  },
+});
+
+function executeClientTool(toolUse: ClientToolUse): Record<string, unknown> {
+  // Dispatch to the application's weather service.
+  return { location: toolUse.input.location, temperature_c: 18, condition: "clear" };
+}
+
+const pendingToolTurn: Turn = await toolConversation.send("What is the weather in San Francisco?");
+const toolUses = await pendingToolTurn.clientToolUses();
+const toolResponse: AgentResponse = toolUses.length
+  ? await (
+      await toolConversation.sendToolResults(
+        toolUses.map((toolUse) => ({ toolUse, result: executeClientTool(toolUse) })),
+      )
+    ).result()
+  : await pendingToolTurn.result();
+console.log(toolResponse.text);
+```
+
+For other structured client content, pass a `ConversationInput` array to `send()`:
 
 Copy code
 
@@ -242,30 +342,115 @@ coding_turn: Turn = conversation.send(
 )
 ```
 
-For approval-based flows, set `permission_policy` to `"always_ask"` and stream events from the returned turn. When a
-`response.tool_use` event includes permission options, show those options to the approver. Send the selected option
-back as a `permission_decision` content item on the next turn.
+For approval-based flows, create a coding conversation with `permission_policy` set to `"always_ask"`. `send()` and
+`send_permission_decisions()` both use that conversation’s agent. An inline conversation, such as `conversation`
+above, has no coding tools and does not emit permission requests. Stream events from the returned turn. When a
+`response.tool_use` event includes permission options, show those options to the approver. Use
+`send_permission_decisions()` to continue the conversation after the approver selects options. The helper waits for
+the paused turn and uses its assistant message as the parent of the follow-up turn. If a turn requests multiple
+permissions, include every selected decision in one `send_permission_decisions()` call. Any pending request omitted
+from that call is denied. When you pass a `PermissionRequest`, the SDK rejects a decision that is not one of the
+request’s `options`. To explain a denial to the model, add an optional third `reason` item to the decision tuple.
 
-Send client-supplied content:
+Copy code
+
+```
+approval_conversation: Conversation = client.conversations.create(
+    origin_application="my-app",
+    agent={
+        "type": "coding",
+        "spec": {
+            "models": {"orchestration": "claude-sonnet-4-5"},
+            "permission_policy": "always_ask",
+            "workspace_mounts": [{"name": "USER$MY_USER.PUBLIC.DEFAULT$"}],
+        },
+    },
+)
+pending_turn: Turn = approval_conversation.send("Delete the temporary file.")
+permission_requests = pending_turn.permission_requests()
+
+def selected_decision_for(permission):
+    return "Allow this command" if "Allow this command" in permission.options else "Deny"
+
+def selected_permission_decision(permission):
+    decision = selected_decision_for(permission)
+    if decision == "Deny":
+        # The optional reason is shown to the model for a denied request.
+        return (permission, decision, "Deleting files is not allowed in this environment.")
+    return (permission, decision)
+
+if permission_requests:
+    continued_turn: Turn = approval_conversation.send_permission_decisions(
+        [selected_permission_decision(permission) for permission in permission_requests]
+    )
+    response = continued_turn.result()
+else:
+    response = pending_turn.result()
+
+print(response.text)
+```
+
+### Execute client-side tools
+
+To configure a generic client-side tool, include it in `tools` and omit a matching entry in `tool_resources`. The
+service emits that tool use with `client_side_execute: true`. Call `client_tool_uses()` on the pending turn, execute
+every returned invocation in your application, then send every result in one `send_tool_results()` call. The helper
+constructs the required `tool_result` content and uses the paused assistant message as the follow-up parent.
+
+Copy code
+
+```
+from typing import Any
+
+from cortex_agent_sdk import ClientToolUse
+
+tool_conversation: Conversation = client.conversations.create(
+    origin_application="my-app",
+    agent={
+        "type": "inline",
+        "spec": {
+            "models": {"orchestration": "claude-sonnet-4-5"},
+            "tools": [
+                {
+                    "tool_spec": {
+                        "type": "generic",
+                        "name": "get_weather",
+                        "description": "Get the current weather for a city.",
+                        "input_schema": {
+                            "type": "object",
+                            "properties": {"location": {"type": "string"}},
+                            "required": ["location"],
+                        },
+                    }
+                }
+            ],
+            # No tool_resources["get_weather"] entry: the application executes this tool.
+        },
+    },
+)
+
+def execute_client_tool(tool_use: ClientToolUse) -> dict[str, Any]:
+    # Dispatch to the application's weather service.
+    return {"location": tool_use.input["location"], "temperature_c": 18, "condition": "clear"}
+
+pending_tool_turn: Turn = tool_conversation.send("What is the weather in San Francisco?")
+tool_uses = pending_tool_turn.client_tool_uses()
+if tool_uses:
+    continued_tool_turn = tool_conversation.send_tool_results(
+        [(tool_use, execute_client_tool(tool_use)) for tool_use in tool_uses]
+    )
+    tool_response = continued_tool_turn.result()
+else:
+    tool_response = pending_tool_turn.result()
+print(tool_response.text)
+```
+
+For other structured client content, pass a `ConversationInput` array to `send()`:
 
 Copy code
 
 ```
 from cortex_agent_sdk import ConversationInput
-
-input: ConversationInput = [
-    {
-        "type": "tool_result",
-        "tool_result": {
-            "tool_use_id": tool_use_id,
-            "name": "weather",
-            "status": "success",
-            "content": [{"type": "json", "json": {"temperature_c": 21}}],
-        },
-    },
-    {"type": "text", "text": "Give the user a one-sentence forecast."},
-]
-tool_turn: Turn = conversation.send(input)
 
 document: ConversationInput = [
     {

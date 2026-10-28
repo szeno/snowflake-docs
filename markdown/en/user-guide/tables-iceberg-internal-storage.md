@@ -90,6 +90,16 @@ the default external volume is `SNOWFLAKE_MANAGED` unless a different default is
 When you set `CATALOG = 'SNOWFLAKE'` explicitly, the default external volume is `SNOWFLAKE_MANAGED` unless you override it with
 `EXTERNAL_VOLUME` or a schema, database, or account default that names another volume.
 
+## Move your data to your own cloud storage
+
+You can move your Iceberg table data from Snowflake Storage to your own cloud storage at any time using procedures such as
+[CTAS](/sql-reference/sql/create-iceberg-table-snowflake#create-an-iceberg-table-by-using-the-ctas-variant-syntax); standard rates apply.
+
+As an added benefit, Snowflake will reimburse the eligible Snowflake compute costs for a qualifying one-time migration of Iceberg data
+to customer-owned storage in the same cloud platform and region as your Snowflake account. To get started, contact
+[Snowflake Support](/user-guide/contacting-support). Eligible data must be stored in Snowflake Storage for at least 30 days.
+Additionally, the total data size must be at least 1 TB.
+
 ## Replication
 
 You can replicate Iceberg tables that use Snowflake storage by using a failover or replication group.

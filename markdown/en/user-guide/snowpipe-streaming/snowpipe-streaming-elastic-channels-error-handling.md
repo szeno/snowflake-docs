@@ -104,12 +104,11 @@ The SDK buffers appends and retries transient network and service failures inter
 
 If the SDK reports a terminal append failure, retain the unresolved event and inspect the error before retrying. Recreate an invalidated client as described below. Correct validation, serialization, and persistent authorization errors rather than retrying unchanged input or configuration.
 
-Direct REST clients own request retries:
+Direct REST clients own request retries. Use the delay, 1-hour budget, and status-code rules in [REST API retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy). [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery) doesn’t apply to Elastic Channels.
 
-- HTTP 429 (Too Many Requests) and transient 5xx responses: use exponential backoff with random variation in retry delays (jitter).
-- Network timeout or no response: the request might already have been accepted. If retrying, reuse the same `requestId`, increment `retryCount`, and reconcile possible duplicates.
-- HTTP 400 (Bad Request): correct the request payload before retrying.
-- HTTP 401 / 403: fix authentication or permissions if the failure persists; don’t retry indefinitely with unchanged credentials.
+For an HTTP 400 response, correct the request payload before you retry.
+
+If a network timeout or no response occurs, the request might already have been accepted. If you retry, reuse the same `requestId`, increment `retryCount`, and reconcile possible duplicates.
 
 ## Client invalidation
 

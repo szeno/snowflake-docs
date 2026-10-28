@@ -37,6 +37,9 @@ FROM ...
 [ ... ]
 ```
 
+[Apache Iceberg™ tables](/user-guide/tables-iceberg) also support `VERSION_TAG`, `VERSION_REF`, and `VERSION` in the AT clause. See
+[Iceberg table parameters](#label-at-before-iceberg-parameters).
+
 ## Parameters
 
 `TIMESTAMP => timestamp`
@@ -74,6 +77,44 @@ FROM ...
 
     This keyword is supported only when creating a stream (using [CREATE STREAM](/sql-reference/sql/create-stream)) or querying change data (using
     the [CHANGES](/sql-reference/constructs/changes) clause). For examples, see those topics.
+
+### Iceberg table parameters
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+The following parameters are supported only for [Apache Iceberg™ tables](/user-guide/tables-iceberg), and only in the AT clause:
+
+Copy code
+
+```
+SELECT ...
+FROM ...
+  AT
+  (
+    { VERSION_TAG => '<tag_name>' |
+      VERSION_REF => '<reference_name>' |
+      VERSION => <snapshot_id> }
+  )
+[ ... ]
+```
+
+`VERSION_TAG => 'tag_name'`
+:   Specifies the name of a version tag. The query returns the table as it was in the snapshot that the tag references.
+
+    Tag names are case-sensitive. To create a version tag, see [ALTER ICEBERG TABLE … VERSION\_TAG](/sql-reference/sql/alter-iceberg-table-version-tag).
+
+`VERSION_REF => 'reference_name'`
+:   Specifies the name of a tag or a branch. Use this keyword when you have a reference name but don’t know whether it identifies a
+    tag or a branch.
+
+    Reference names are case-sensitive.
+
+`VERSION => snapshot_id`
+:   Specifies the Iceberg snapshot ID of a snapshot of the table.
+
+For more information, see [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
 
 ## Using the AT TIMESTAMP parameter
 
@@ -252,6 +293,8 @@ As a workaround, you can use a TIMESTAMP parameter that specifies a point in tim
   - The value of the TIMESTAMP parameter must be the same for all tables that belong to the same database. If the tables belong
     to different databases, different TIMESTAMP values may be used.
   - The BEFORE clause is not supported.
+- Time Travel queries against [Apache Iceberg™ tables](/user-guide/tables-iceberg) support additional AT clause parameters. See
+  [Iceberg table parameters](#label-at-before-iceberg-parameters).
 - CREATE DATABASE … CLONE and CREATE SCHEMA … CLONE commands that use Time Travel and specify the time with the STATEMENT parameter
   return an error if any hybrid tables exist in the specified database. The error prompts you to run the command using the
   [IGNORE HYBRID TABLES parameter](/sql-reference/sql/create-clone#label-ignore-hybrid-tables-parameter). When you include this parameter, the command will

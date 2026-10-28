@@ -211,7 +211,7 @@ No `tool_resources` entry is required for basic usage: the sandbox is provisione
 
 ## Example request
 
-The following `agent:run` request combines the most common configuration in a single call: the `code_toolset_all` tool, a mounted workspace, a skill attached from a Snowflake named stage, a disabled bundled skill, a permission policy, and orchestration model and instructions.
+The following `agent:run` request combines the most common configuration in a single call: the `code_toolset_all` tool, a mounted workspace, a skill attached from a Snowflake named stage, a disabled bundled skill, a permission policy, orchestration model and instructions, and thinking effort.
 
 Copy code
 
@@ -220,6 +220,7 @@ Copy code
   "messages": [
     {"role": "user", "content": [{"type": "text", "text": "Forecast next quarter's revenue and write the results to a file."}]}
   ],
+  "thinking_effort": "medium",
   "models": {
     "orchestration": "claude-sonnet-4-5"
   },
@@ -362,9 +363,69 @@ Note
 
 The `mount_path` must be a **top-level** absolute path (for example, `/workspace`, `/project`, `/data`). Nested paths like `/workspace/mydata` are not supported: the sandbox runtime creates a symlink at the specified path but does not create intermediate parent directories. Each workspace requires a unique top-level mount path.
 
-The `name` must be a Snowflake **workspace** object (created with `CREATE WORKSPACE`), not a regular internal stage. Regular stages cannot be mounted as workspaces. A name that is not a valid unquoted identifier must be double-quoted, the same way you would quote it in SQL. `"DB"."SCHEMA"."CASE-1 · title"` is also accepted. A malformed quote, a name that contains `..`, an unsupported `type`, or a `mount_path` that is not an absolute sandbox path is rejected. The error names the `workspace_mounts` entry.
+The `name` must be a Snowflake **workspace** object (created with `CREATE WORKSPACE`), not a regular internal stage. To mount an ordinary stage, a notebook, a Streamlit app, or an agent, use [stage mounts](#label-coding-agent-stage-mounts). A name that is not a valid unquoted identifier must be double-quoted, the same way you would quote it in SQL. `"DB"."SCHEMA"."CASE-1 · title"` is also accepted. A malformed quote, a name that contains `..`, an unsupported `type`, or a `mount_path` that is not an absolute sandbox path is rejected. The error names the `workspace_mounts` entry.
 
 Two different objects whose names collapse to the same sandbox directory are also rejected. For example, `DB.SCHEMA."A B"` and `DB.SCHEMA."A_B"` cannot be mounted in the same request.
+
+## Mounting stages and versioned stages
+
+To mount a Snowflake stage into the sandbox, add `stage_mounts` to the `code_toolset_all` entry in `tool_resources`. The object key is the tool’s `tool_spec.name`. `stage_mounts` is a field on that existing tool resource.
+
+Use `workspace_mounts` for a persistent, writable Snowflake workspace at version `live`. Use `stage_mounts` for any other versioned object, an ordinary stage, a specific version, a custom path, or a read-only mount. Versioned objects include notebooks, Streamlit apps, workspaces, and agents.
+
+Copy code
+
+```
+{
+  "tools": [
+    { "tool_spec": { "type": "code_toolset_all", "name": "code_toolset_all" } }
+  ],
+  "tool_resources": {
+    "code_toolset_all": {
+      "stage_mounts": [
+        {
+          "stage_name": "DB.SCHEMA.MY_NOTEBOOK",
+          "is_vstage": true,
+          "vstage_namespace": "notebook",
+          "vstage_version": "live",
+          "mount_path": "/mnt/notebook",
+          "readonly": true
+        },
+        {
+          "stage_name": "DB.SCHEMA.\"MY.STAGE\"",
+          "is_vstage": false,
+          "mount_path": "/mnt/input",
+          "encryption_type": "sse"
+        }
+      ]
+    }
+  }
+}
+```
+
+`stage_name`, `is_vstage`, and `mount_path` are required.
+
+| Field | Description |
+| --- | --- |
+| `stage_name` | Three-part name. Quoted parts are allowed, as in `DB.SCHEMA."MY.STAGE"`. |
+| `is_vstage` | `true` for a versioned stage, `false` for an ordinary stage. |
+| `mount_path` | Absolute sandbox path. Two mounts cannot use the same path. A `workspace_mounts` entry with no path counts as `/workspace`. |
+| `readonly` | Whether writes from the sandbox are prohibited. Defaults to `false`. |
+| `vstage_namespace` | Required when `is_vstage` is `true`. One of `workspace`, `notebook`, `streamlit`, or `agent`. Snowflake does not infer the namespace. |
+| `vstage_version` | Versioned stages only. `live`, `head`, or a named version. Omit to use the default, `live`. |
+| `encryption_type` | Ordinary stages only. One of `auto`, `sse`, or `cse`. |
+
+Expand
+
+Show lessSee more
+
+The request is rejected when:
+
+- `vstage_namespace` or `vstage_version` is set on an ordinary stage (`is_vstage` is `false`).
+- `encryption_type` is set on a versioned stage.
+- `vstage_namespace` is missing or is not one of the supported values.
+- Two mounts use the same `mount_path`, across `stage_mounts` and `workspace_mounts`.
+- The same stage and path pair appears in both lists.
 
 ## Attaching skills
 
@@ -448,7 +509,7 @@ The `instructions` object fields:
 
 | Field | Description |
 | --- | --- |
-| `system` | Injected as the system prompt. Controls the agent’s persona and behavioral guidelines. |
+| `system` | Extra system instructions, appended to the managed coding-agent prompt. Does not replace the sandbox, tool, or skill instructions. |
 | `response` | Appended as a response instruction. Controls how the agent formats and styles its answers. |
 | `orchestration` | Sets the orchestration instruction. Guides tool selection preferences (for example, “prefer bash”). |
 
@@ -474,6 +535,50 @@ The `instructions` and `models` fields cannot be combined with the `model` or `r
 - **LLM orchestration fields**: `models`, `instructions`, `orchestration`
 
 Mixing them returns an error.
+
+## Thinking effort
+
+Set the optional top-level `thinking_effort` field to control how much reasoning the orchestration model uses. Higher effort can improve results on hard tasks and uses more latency and tokens. Omit the field to keep the default for the model.
+
+`thinking_effort` accepts `minimal`, `low`, `medium`, `high`, `xhigh`, or `max`. Any other value is rejected. The field applies to a request that includes `code_toolset_all`.
+
+Each orchestration model uses a subset of those values. Snowflake sends the highest level that model accepts at or below the request. A request below every level that model accepts is raised to that model’s lowest level. For example, `high` on a model whose highest level is `medium` is sent as `medium`, and `minimal` on a model that starts at `low` is sent as `low`.
+
+| Models | Levels the model uses |
+| --- | --- |
+| `claude-4-sonnet`, `claude-haiku-4-5`, `claude-opus-4-5`, `claude-sonnet-4-5` | `minimal`, `low`, `medium`, `high`, `xhigh`, `max`. `minimal` turns extended thinking off. `xhigh` and `max` use the same thinking budget as `high`. |
+| `openai-gpt-5.6-luna`, `openai-gpt-5.6-sol`, `openai-gpt-5.6-terra` | `minimal`, `low`, `medium`, `high`, `xhigh`, `max` |
+| `claude-fable-5`, `claude-opus-4-7`, `claude-opus-4-8`, `claude-opus-5`, `claude-opus-5-5`, `claude-sonnet-5`, `claude-sonnet-5-5`, `openai-gpt-6-astra` | `low`, `medium`, `high`, `xhigh`, `max` |
+| `claude-opus-4-6`, `claude-sonnet-4-6` | `low`, `medium`, `high`, `max`. An `xhigh` request is sent as `high`. |
+| `openai-gpt-5.5` | `minimal`, `low`, `medium`, `high`, `xhigh` |
+| `grok-4.6` | `low`, `medium`, `high`, `xhigh` |
+| `openai-gpt-5.2`, `openai-gpt-5.4` | `minimal`, `low`, `medium`, `high` |
+| `gemini-3.7-flash`, `gemini-3.8-flash` | `low`, `medium`, `high` |
+| `kimi-k3` | `low`, `high` |
+
+Expand
+
+Show lessSee more
+
+Copy code
+
+```
+{
+  "messages": [
+    {"role": "user", "content": [{"type": "text", "text": "Fix the failing test."}]}
+  ],
+  "thinking_effort": "high",
+  "models": {
+    "orchestration": "claude-sonnet-4-5"
+  },
+  "instructions": {
+    "system": "Prioritize correctness. Report the tests you ran."
+  },
+  "tools": [
+    { "tool_spec": { "type": "code_toolset_all", "name": "code_toolset_all" } }
+  ]
+}
+```
 
 ## When to use each tool type
 

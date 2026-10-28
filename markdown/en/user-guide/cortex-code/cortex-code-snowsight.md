@@ -322,6 +322,8 @@ Show lessSee more
 | Notebooks (EDA and machine learning) | “Build me a notebook for a customer churn prediction use case using pandas for data handling, matplotlib and seaborn for EDA and visualization, and scikit-learn for preprocessing, model training (logistic regression and a tree-based model), evaluation, and interpretation, with clear markdown explaining business impact and results.” |
 | Deep learning | “Create a new notebook and build a CNN for the MNIST dataset.” |
 | Pipeline engineering | “Create a dbt project to transform raw sales data.” |
+| One-time file load | “Load the CSV files on @RAW\_DB.PUBLIC.ORDERS\_STAGE into a new table ORDERS. This is a one-time load.” |
+| Continuous file ingestion | “Continuously ingest data from s3://my-bucket/events/ into RAW\_DB.PUBLIC.EVENTS.” |
 
 Expand
 

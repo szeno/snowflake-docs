@@ -42,7 +42,7 @@ connector, choose the variant that meets your requirements.
 
 [SharePoint API limits](https://learn.microsoft.com/en-us/sharepoint/dev/embedded/development/limits-calling#api-rate-limits) govern how many requests can be made within a given time frame. If your flow exceeds the allowed quota, syncs may slow down or fail with an error. This mostly occurs when your access token makes higher number of requests than the source typically allows. In such cases, Snowflake recommends applying for higher access quota (wherever applicable) or reducing the sync frequency.
 
-### Limitations
+## Limitations
 
 - [Input requirements](/user-guide/snowflake-cortex/parse-document#label-parse-document-requirements).
 - [Known limitations](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-limitations).
@@ -50,6 +50,9 @@ connector, choose the variant that meets your requirements.
   incremental ingestion.
 - The connector ingests only the supported file types and ignores
   others.
+- When using a Cortex Search variant, .doc, .xls, .xlsx, and .ppt files larger than 2 MB are not ingested. This is due to a
+  [Microsoft Graph API limitation](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format)
+  on converting Office files to PDF. .docx and .pptx files are not affected by this limitation.
 
 ### Next steps
 

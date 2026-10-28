@@ -131,6 +131,24 @@ N/A
 - Jira Core 0.10.0: Applied the Merge Interval to audit deletes, snapshot objects, and users, reducing unnecessary Snowflake warehouse wake-ups. Snapshot and user runs no longer remain `IN_PROGRESS` while waiting for the interval.
 - SharePoint 0.29.0, SharePoint (no ACL) 0.13.0, SharePoint to Stage (no Cortex) 0.26.0, and SharePoint to Stage (no Cortex, no ACL) 0.9.0: Changed stage cleanup to remove a deleted item’s files by its item-ID prefix instead of scanning the whole stage, reducing cleanup work on large stages. Removed the unused `Use Legacy Removal Pattern` parameter. Drain existing cleanup queues before upgrading.
 
+## October 13, 2026
+
+### Runtime Server 2026.10.13.2
+
+- Applied security patches and dependency upgrades.
+
+### Runtime Extensions 2026.10.13.2
+
+- CDC MySQL: With GTID tracking enabled, changes to the source server UUID in the binary log no longer trigger journal rotations.
+- Snowpipe Streaming: Added an opt-in Destination metric resolution for reporting rows sent, uncompressed bytes sent, and last ingestion time by destination database, schema, and pipe.
+- EvaluateXPath: Added configurable XML entity-size limits to override JVM defaults included since Java 24.
+- Protobuf: Fixed schema parsing failures during message-name resolution when Confluent Protobuf schemas contain custom options.
+
+### Connectors 2026.10.13.1
+
+- Oracle Embedded License 0.51.0, Oracle Embedded License Public Sector 0.51.0, Oracle Independent License 0.50.0: Added ingested-record counts and commit-to-capture, capture-to-journal, and commit-to-merge latency metrics. Table-level metrics distinguish the source database, schema, and table.
+- Veeva Vault 0.8.0: Fixed CSV parsing failures when field values end with a backslash, which could block initial loads. The connector now uses RFC 4180 CSV parsing and preserves backslashes as literal values.
+
 ## October 12, 2026
 
 ### Runtime Server 2026.10.12.12
@@ -267,6 +285,38 @@ N/A
 
 - SQL Server CT 0.55.0:
   - Removed the Private Preview connector events publishing (Table Consolidation, now discontinued) from the SQL Server Change Tracking flow, including the `Connector Events Table FQN` parameter. Change Tracking snapshot and incremental behavior is unchanged.
+
+## September 29, 2026
+
+### Runtime Server 2026.9.29.2
+
+- Security patches and dependency upgrades.
+- Monitoring: Restored component status history for connector-managed flows so status history is available through the runtime API and UI.
+- Connector assets: Asset upload and download now handle spaces and other special characters consistently in Snowflake stage paths and cloud object URLs.
+- Upgraded the Runtime UI to version 0.91.0.
+
+### Runtime Extensions 2026.9.29.11
+
+- Protobuf: Fixed compilation of Confluent Protobuf schemas containing implicit custom options.
+- LinkedIn Ads: Split daily historical backfills into smaller windows to avoid LinkedIn’s 15,000-element response cap.
+- CDC SQL Server CT: Read retention settings from each source database directly, avoiding failures when catalog metadata visibility prevents instance-wide database-name resolution.
+- Snowpipe Streaming: Deprecated `PutSnowpipeStreaming` SSv1. Existing flows continue to run, but new integrations should use `PublishSnowpipeStreaming` SSv2.
+- CDC PostgreSQL: Detected dead replication connections and reconnected instead of remaining indefinitely attached to an unusable connection.
+- CDC Oracle: Prevented rows from being silently skipped when recoverable connection errors occur during capture, and reconnected cleanly after mid-batch schema lookup failures.
+- CDC SQL Server: Preserved replicated tables during transient empty listings caused by maintenance or failover, preventing later object-exists failures.
+- CDC SQL Server: Connector verification on Snowflake-hosted runtimes now accepts valid JDBC URLs containing semicolon-delimited SQL Server properties.
+- CDC SQL Server CT: When retention has purged the stored bookmark, Ignore mode skips the unsatisfiable change query and retries later instead of waiting for a socket timeout.
+- CDC PostgreSQL and MySQL: Migrating from gen 1 to gen 2 now preserves the configured Iceberg table version and warns when a database-default configuration cannot be preserved exactly.
+- CDC PostgreSQL and MySQL: Added the single-database connector API used to reset an individual table for replication.
+- Snowflake processors: Cache expiration settings for schema creation and table metadata now accept values up to seven days. Defaults are unchanged.
+
+### Connectors 2026.9.29.11
+
+- BigQuery 0.11.0: Prevented incremental replication from deleting journal tables while Snowpipe Streaming still has queued records, avoiding a permanently stalled connector after a merge timeout.
+- LinkedIn Ads 0.16.0: Replaced destructive date-range deletion and reinsertion with a merge, so a truncated report cannot remove previously loaded rows absent from the response.
+- Box 0.21.0: Populated `DOC_METADATA.CREATED_ON` and `MODIFIED_ON` correctly instead of leaving them null because of timestamp parsing differences.
+- Oracle embedded 0.50.0, public-sector 0.50.0, and independent 0.49.0: Added optional commit-journal ingestion containing Oracle CDC commit positions and timestamps.
+- Google Drive 0.24.0, 0.6.0, 0.30.0, and 0.7.0: Removed empty role buckets from document user permission arrays, preventing empty identities from being treated as document viewers.
 
 ## September 25, 2026
 

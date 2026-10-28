@@ -13,6 +13,11 @@ Executes one of the following actions on a [DCM project](/user-guide/dcm-project
 - `EXECUTE DCM PROJECT <name> PURGE` drops all entities, revokes all grants, and removes all attachments currently managed
   by the DCM project.
 
+For `PLAN` and `DEPLOY`, you can either provide the path to the project location that has the `manifest.yml` file
+(`FROM '<source_files_path>'`) or reuse the rendered definitions from a previous deployment (`FROM DEPLOYMENT`).
+Use `FROM DEPLOYMENT` to restore a previous deployment (without restoring data) or to check and remediate
+the account’s drift from that deployment.
+
 See also:
 :   [CREATE DCM PROJECT](/sql-reference/sql/create-dcm-project), [ALTER DCM PROJECT](/sql-reference/sql/alter-dcm-project), [DESCRIBE DCM PROJECT](/sql-reference/sql/desc-dcm-project), [DROP DCM PROJECT](/sql-reference/sql/drop-dcm-project), [SHOW DCM PROJECTS](/sql-reference/sql/show-dcm-projects), [SHOW DEPLOYMENTS IN DCM PROJECT](/sql-reference/sql/show-deployments-in-dcm-project)
 
@@ -23,14 +28,12 @@ Copy code
 ```
 EXECUTE DCM PROJECT <name>
   PLAN [ DELTA ]
-  [ USING [ CONFIGURATION <config_name> ] [ (<expr>, [, <expr>, ...]) ] ]
-  FROM '<source-files_path>'
+  { fromSource | fromDeployment }
   [ OUTPUT_PATH '<output_path>' ]
 
 EXECUTE DCM PROJECT <name>
   DEPLOY [ AS "<deployment_name_alias>" ]
-  [ USING [ CONFIGURATION <name> ] [ (<expr>, [, <expr>, ...]) ] ]
-  FROM '<source-files_path>'
+  { fromSource | fromDeployment }
 
 EXECUTE DCM PROJECT <name>
   TEST ALL
@@ -44,6 +47,23 @@ EXECUTE DCM PROJECT <name>
 EXECUTE DCM PROJECT <name>
   PURGE [ AS "<deployment_name_alias>" ]
 ```
+
+Where:
+
+> Copy code
+>
+> ```
+> fromSource ::=
+>   [ USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , <expr> ... ] ) ] ]
+>   FROM '<source_files_path>'
+> ```
+>
+> Copy code
+>
+> ```
+> fromDeployment ::=
+>   FROM DEPLOYMENT { <deployment_name> | "<deployment_name_alias>" | LAST | LATEST }
+> ```
 
 ## Required parameters
 
@@ -70,11 +90,34 @@ EXECUTE DCM PROJECT <name>
     changes will cause a deployment failure.
 
 `DEPLOY [ AS "deployment_name_alias" ]`
-:   Deploys the changes defined in the project’s definition files to the account; optionally specifies an alias for the deployment.
+:   Deploys the changes defined in the project’s definition files to the account; optionally specifies an alias for the
+    deployment.
 
-`FROM 'source_files_path'`
-:   Specifies the directory that contains the source files for the DCM project. The directory must contain a manifest file and at least one
-    definition file in `/sources/definitions/`. The manifest file provides the templating values in case a configuration was specified.
+`FROM ...`
+:   Specifies the source of the project definitions. `PREVIEW` always reads from a directory of source files. For `PLAN`
+    and `DEPLOY`, provide exactly one of the following:
+
+    - `FROM 'source_files_path'`: Reads the source files for the DCM project from the specified
+      directory. The directory must contain a manifest file and at least one definition file in `/sources/definitions/`. The
+      manifest file provides the templating values in case a configuration was specified.
+    - `FROM DEPLOYMENT`: Reuses the rendered definitions from a previous deployment, instead of reading source files from a
+      directory. Use this to restore a previous deployment (without restoring data) or to check and remediate the
+      account’s drift from that deployment. Identify the deployment with one of the following:
+
+      - `deployment_name`: The deployment’s generated name, in the form `DEPLOYMENT$<num>`.
+      - `"deployment_name_alias"`: The alias set by the `AS` clause, enclosed in double quotes.
+      - `LAST` or `LATEST`: The most recent deployment of the DCM project, of any status. These keywords are synonyms. They
+        don’t skip failed or incomplete deployments.
+
+      If a deployment name and an alias match two different deployments, the deployment name takes precedence.
+
+      To find the name or alias of a previous deployment, run [SHOW DEPLOYMENTS IN DCM PROJECT](/sql-reference/sql/show-deployments-in-dcm-project).
+
+      Using a deployment created by `PURGE` as the source isn’t supported. This restriction prevents accidental
+      purges. To drop everything the DCM project manages, use `PURGE`.
+
+      `FROM DEPLOYMENT` and `USING` are mutually exclusive because `FROM DEPLOYMENT` uses definitions that were already
+      rendered.
 
 `TEST ALL`
 :   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
@@ -111,7 +154,9 @@ EXECUTE DCM PROJECT <name>
 
     If the configuration name is not in all uppercase, enclose it in double quotes.
 
-`USING ( expr [, expr , ... ] )`
+    This option is mutually exclusive with `FROM DEPLOYMENT`, which uses definitions that were already rendered.
+
+`USING ( expr [ , expr ... ] )`
 :   Optionally specifies template variable values. Using this option overrides any default or configuration values for this specific variable.
     The single expression must have the following form: `<variable_name> => <variable_value>`. For lists, use the following form:
     `<variable_name> => [<value1>, <value2>, ...]`. For example: `wh_size => 'MEDIUM'` or `teams => ['TEAM_A', 'TEAM_B']`.
@@ -119,10 +164,13 @@ EXECUTE DCM PROJECT <name>
     This lets you customize deployments for different environments, such as development, staging, or production, without using different
     project definition files.
 
+    This option is mutually exclusive with `FROM DEPLOYMENT`, which uses definitions that were already rendered.
+
 `OUTPUT_PATH 'output_path'`
 :   Specifies a directory where Snowflake writes the rendered project definitions and the raw changeset from a `PLAN` execution. If
     the directory doesn’t exist, Snowflake creates it. Each `PLAN` execution that specifies `OUTPUT_PATH` overwrites any previously
-    rendered output in that directory.
+    rendered output in that directory. If the plan uses `FROM DEPLOYMENT`, Snowflake copies the rendered definitions from that
+    deployment into the specified path.
 
     For more information about the contents of this directory, see
     [The /out/ subfolder](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-out-folder).

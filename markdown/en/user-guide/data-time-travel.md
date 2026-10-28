@@ -9,6 +9,12 @@ It serves as a powerful tool for performing the following tasks:
 - Duplicating and backing up data from key points in the past.
 - Analyzing data usage/manipulation over specified periods of time.
 
+Note
+
+This topic describes Snowflake Time Travel, including data retention periods, cloning, and restoring dropped objects. To query a
+historical snapshot of an Apache Iceberg™ table by version tag, snapshot ID, or reference name, see
+[Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
+
 ## Introduction to Time Travel
 
 ![Time Travel in Continuous Data Protection lifecycle](/static/images/cdp-lifecycle-tt.png)

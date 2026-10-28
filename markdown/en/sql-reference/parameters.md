@@ -38,6 +38,7 @@ Snowflake provides the following account parameters:
 | [COCO\_SNOWSIGHT\_ALLOW\_ALL\_PERMISSION\_OPTIONS\_DISABLED](#label-coco-snowsight-allow-all-permission-options-disabled) | Used to disable allow-all permission options and Bypass approvals for tool calls in Cortex Code in Snowsight. |
 | [CORTEX\_ENABLED\_CROSS\_REGION](#label-cortex-enable-cross-region) | Used to enable cross-region processing of Snowflake Cortex calls in a different region if the call cannot be processed in your account region. |
 | [DEFAULT\_DBT\_VERSION](#label-default-dbt-version) | Used to set the default version for all future dbt project objects created in an account. |
+| [DISABLE\_EXECUTE\_DATA\_METRIC\_FUNCTION\_GRANT\_TO\_PUBLIC](#label-disable-execute-data-metric-function-grant-to-public) | Used to opt out of the automatic EXECUTE DATA METRIC FUNCTION grant to the `SNOWFLAKE.PUBLIC` application role. For more information, see [Data quality: EXECUTE DATA METRIC FUNCTION granted to SNOWFLAKE.PUBLIC by default (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2471). |
 | [DISABLE\_USER\_PRIVILEGE\_GRANTS](#label-disable-user-privilege-grants) | Used to disable granting of privileges directly to users. For more information, see [GRANT privileges to USERS Usage notes](/sql-reference/sql/grant-privilege-user#label-grant-privilege-user-usage-notes). |
 | [DISALLOWED\_SPCS\_WORKLOAD\_TYPES](#label-disallowed-spcs-workload-types) | Used to specify the workload types that are disallowed in your account to deploy to Snowpark Container Services. |
 | [ENABLE\_AUTOMATIC\_SENSITIVE\_DATA\_CLASSIFICATION\_LOG](#label-enable-automatic-sensitive-data-classification-log) | Controls whether events from sensitive data classification are logged to the user event table. |
@@ -1656,6 +1657,27 @@ Values:
 
 Default:
 :   `SYSTEM$STREAMLIT_NOTEBOOK_WH`
+
+## DISABLE\_EXECUTE\_DATA\_METRIC\_FUNCTION\_GRANT\_TO\_PUBLIC
+
+Type:
+:   Account — Can be set only for Account
+
+Data Type:
+:   Boolean
+
+Description:
+:   Controls whether Snowflake grants the EXECUTE DATA METRIC FUNCTION privilege to the `SNOWFLAKE.PUBLIC` application role.
+
+    Set this parameter to `TRUE` before the grant exists if you don’t want account roles to inherit the privilege. The setting takes effect the next time Snowflake runs setup or upgrade for the account. It doesn’t revoke a grant that already exists. After the grant exists, revoke it with `SNOWFLAKE.LOCAL.REVOKE_FROM_PUBLIC_APPLICATION_ROLE`. For the revoke and restore statements, see [Data quality: EXECUTE DATA METRIC FUNCTION granted to SNOWFLAKE.PUBLIC by default (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-2471).
+
+Values:
+:   `TRUE`: Snowflake doesn’t grant EXECUTE DATA METRIC FUNCTION to `SNOWFLAKE.PUBLIC` during setup or upgrade.
+
+    `FALSE`: Snowflake can grant EXECUTE DATA METRIC FUNCTION to `SNOWFLAKE.PUBLIC` when that grant is enabled.
+
+Default:
+:   `FALSE`
 
 ## DISABLE\_UI\_DOWNLOAD\_BUTTON
 

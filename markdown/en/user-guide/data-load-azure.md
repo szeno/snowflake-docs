@@ -10,6 +10,8 @@ information, see [Private connectivity to external stages and Snowpipe automatio
 
 This set of topics describes how to use the COPY command to load data from an Azure container into tables.
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) run the load for you from an Azure path, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
 Snowflake currently supports loading from blob storage only. Snowflake supports the following types of storage accounts:
 
 - Blob storage

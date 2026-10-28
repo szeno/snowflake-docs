@@ -206,6 +206,34 @@ Ways to use it:
 - Build a multi-step pipeline as a task graph with parent-child dependencies, fan-out and fan-in patterns, and finalizer tasks
 - Diagnose issues with tasks: for example, diagnose an auto-suspended task, or a task that runs interactively but fails when run by the scheduler, by inspecting `TASK_HISTORY` and owner-role privileges
 
+### `copy-load`
+
+Load files into a Snowflake table once with `COPY INTO`. CoCo detects the format of your files, creates or reuses a file format with options that match your data, infers or reuses the target table, and runs `COPY INTO` on your warehouse. CoCo waits for your approval before each statement that creates or changes objects or loads data, in every approval mode.
+
+This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+Ways to use it:
+
+- Load files from a stage or a cloud storage path into a new or existing table
+- Upload files from your computer and load them (CoCo CLI and CoCo Desktop)
+- Load files into a Snowflake-managed Iceberg table
+
+For more information, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
+### `snowpipe`
+
+Set up Snowpipe auto-ingest so files in cloud storage load continuously as they arrive. CoCo samples the files and reuses compatible objects. Depending on the setup option you choose, CoCo then creates the storage integration, stage, file format, table, pipe, and cloud notifications for you, generates deployment files for your team, or does some of each.
+
+This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+Ways to use it:
+
+- Continuously ingest files from an Amazon S3, Azure Blob Storage, or Google Cloud Storage path
+- Reuse an existing external stage and storage integration
+- Generate Terraform for the complete pipeline, or deployment files for your cloud team to set up notifications
+
+For more information, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco).
+
 ### `snowpipe-streaming`
 
 Set up, troubleshoot, monitor, optimize, and migrate Snowpipe Streaming pipelines on the high-performance architecture, which uses PIPE objects and the Python SDK (primary) or Java SDK.
@@ -308,7 +336,7 @@ Ways to use it:
 - Build semantic views for Cortex Analyst with verified query representations, metrics, and dimensions
 - Test agents by sending questions and debugging tool configuration issues
 - Generate evaluation datasets from production queries and measure agent accuracy
-- Import Tableau workbooks to automatically create semantic views
+- Import Tableau or Power BI files to automatically create semantic views
 - Audit agent configurations and semantic view quality scores
 - Deploy multi-tool agents combining Cortex Search, Analyst, and custom tools
 - Connect agents to Snowflake Intelligence (CoWork) for end-user access

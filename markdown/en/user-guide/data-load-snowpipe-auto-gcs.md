@@ -2,6 +2,8 @@
 
 This topic describes how to set up a pipe that loads files from a Google Cloud Storage bucket as soon as they arrive. When a file lands in the bucket, Google Cloud Storage publishes a message to a [Google Cloud Pub/Sub](https://cloud.google.com/storage/docs/pubsub-notifications) topic. Snowflake reads the message from a subscription to that topic, and Snowpipe loads the file into your target table. For an overview of automated loading on every cloud provider, see [Automate Snowpipe with cloud event notifications](/user-guide/data-load-snowpipe-auto).
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) set up the pipeline from your Google Cloud Storage path instead, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco). Depending on the setup option you choose, CoCo creates the Snowflake objects (such as the integrations, stage, and pipe), generates Terraform for your team to deploy, or does some of each. CoCo also guides you through any follow-up authorization and notification steps, so that you don’t need to follow the steps in this topic manually.
+
 To set up automated loading from Google Cloud Storage, complete the following steps:
 
 1. [Create a storage integration and an external stage](#label-data-load-snowpipe-auto-gcs-stage) so that Snowflake can read the bucket.

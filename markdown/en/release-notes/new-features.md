@@ -41,9 +41,15 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
+- [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
+- [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
+- [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
+- [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
 - [Python Connector (v4.8.1)](/release-notes/clients-drivers/python-connector-2026)
+- [SQLAlchemy (v2.1.0)](/release-notes/clients-drivers/sqlalchemy-2026)
 - [Oct 23, 2026: CoCo Desktop v1.22.1](/release-notes/2026/other/2026-10-23-coco-desktop-v1-22-1)
 - [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)
 - [Oct 23, 2026: Retrieve Cortex Search (Public Preview)](/release-notes/2026/other/2026-10-23-cortex-search-retrieve-preview)
@@ -51,6 +57,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [October 23, 2026: Snowpark Container Services GEN\_ARM\_G1 and GEN\_X64\_G1 instances on Google Cloud (General availability)](/release-notes/2026/other/2026-10-23-spcs-gcp-gen-instances-ga)
 - [Oct 23, 2026: Atomic deployments, centralized configuration, and advanced branching for task graphs (Preview)](/release-notes/2026/other/2026-10-23-task-graphs-preview)
 - [ODBC Driver (v3.22.0)](/release-notes/clients-drivers/odbc-2026)
+- [Snowflake CLI (v3.31.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowpipe Streaming SDK (v1.9.1)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Spark Connector (v3.2.3)](/release-notes/clients-drivers/spark-connector-2026)
 - [October 22, 2026: Custom runtime images for ML Jobs (General availability)](/release-notes/2026/other/2026-10-22-custom-runtime-images-ml-jobs-ga)

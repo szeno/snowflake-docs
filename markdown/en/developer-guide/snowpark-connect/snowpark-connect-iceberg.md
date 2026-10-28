@@ -785,6 +785,7 @@ Tip
 ### Version tag-based time travel
 
 After you create a tag (see [Tags](#tags)), you can time travel to that snapshot.
+In Snowflake SQL, see [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel).
 
 **What it does:** Read an Iceberg table at a named version tag. Maps to Snowflake
 `AT(VERSION_TAG => '<name>')`.

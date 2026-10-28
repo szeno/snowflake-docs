@@ -13,9 +13,10 @@ identify frequently used columns on those tables by using the COLUMN\_QUERY\_PRU
 
 Each row in this view represents the query pruning history for a specific column within a given time interval. The data is
 aggregated per column, per table, per interval, and includes metrics such as the number of queries executed, partitions scanned,
-partitions pruned, rows scanned, rows pruned, and rows matched.
+partitions pruned, rows scanned, rows pruned, rows matched, and Optima-specific pruning metrics.
 
-See also [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history) and [Query Pruning](/user-guide/tables-clustering-micropartitions#label-micropartitions-query-pruning).
+See also [TABLE\_OPTIMA\_FEATURES view](/sql-reference/account-usage/table_optima_features), [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruning_history), and
+[Query Pruning](/user-guide/tables-clustering-micropartitions#label-micropartitions-query-pruning).
 
 ## Columns
 
@@ -46,6 +47,8 @@ See also [TABLE\_PRUNING\_HISTORY view](/sql-reference/account-usage/table_pruni
 | ROWS\_SCANNED | NUMBER | Number of rows scanned on this table for queries defined by NUM\_QUERIES. |
 | ROWS\_PRUNED | NUMBER | Number of rows pruned on this table for queries defined by NUM\_QUERIES. These rows were eliminated during query processing and not scanned, improving the efficiency of the query. |
 | ROWS\_MATCHED | NUMBER | Number of rows that matched the WHERE clause filters while scanning this table for the queries defined by NUM\_QUERIES. |
+| OPTIMA\_PARTITIONS\_PRUNED | NUMBER | Number of partitions eliminated from scanning through Snowflake Optima Metadata or Indexing for queries defined by NUM\_QUERIES. |
+| OPTIMA\_ROWS\_PRUNED | NUMBER | Number of rows eliminated from scanning through Snowflake Optima Metadata or Indexing for queries defined by NUM\_QUERIES. |
 | SEARCH\_OPTIMIZATION\_SUPPORTED\_EXPRESSIONS | ARRAY | List of supported search optimization expressions on this column that could potentially speed up scanning this table for the queries defined by NUM\_QUERIES. |
 
 Expand

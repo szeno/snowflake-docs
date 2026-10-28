@@ -10,6 +10,8 @@ To set up automated loading, follow the guide for the cloud provider that stores
 - [Automate Snowpipe for Google Cloud Storage](/user-guide/data-load-snowpipe-auto-gcs)
 - [Automate Snowpipe for Microsoft Azure Blob Storage](/user-guide/data-load-snowpipe-auto-azure)
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) set up the pipeline from your cloud storage path instead, see [Set up continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco).
+
 The rest of this topic explains how automated loading works and what to decide before you start. If you want your application to decide when files load, use the [Snowpipe REST API](/user-guide/data-load-snowpipe-rest-overview) instead.
 
 ## How automated loading works

@@ -65,12 +65,6 @@ SHOW WAREHOUSES LIKE 'my_wh'
 +-------+---------------------------+-------------------------------------+
 ```
 
-Note
-
-The scale factor is `8` when you explicitly set `ENABLE_QUERY_ACCELERATION = TRUE` in CREATE WAREHOUSE. When Snowflake
-automatically enables QAS for [Gen2](/user-guide/warehouses-gen2) or [multi-cluster](/user-guide/warehouses-multicluster) warehouses at
-creation time, the default scale factor is `2`.
-
 The query acceleration service might increase the credit consumption rate of a warehouse.
 The maximum scale factor can help limit the consumption rate.
 See [Adjusting the scale factor](#label-query-acceleration-scale-factor) to learn how to specify the
@@ -298,7 +292,7 @@ factor value or the amount of resources requested, the amount of available compu
 availability of resources in the service and the number of other concurrent requests. The query acceleration service only uses as many
 resources as it needs and that are available at the time the query is executed.
 
-If the scale factor is not explicitly set, the default value is `8`, unless QAS is implicitly enabled as part of a Gen2 warehouse, in which case the default is `2`. Setting the scale factor to `0` eliminates the upper bound limit
+If the scale factor is not explicitly set, the default value is `8`. Setting the scale factor to `0` eliminates the upper bound limit
 and allows queries to lease as many resources as necessary and as available to service the query.
 
 ### Example

@@ -3,6 +3,8 @@
 This set of topics describes how to use the COPY command to bulk load data from a local file system into tables using an internal (i.e.
 Snowflake-managed) stage. For instructions on loading data from a cloud storage location that you manage, refer to [Bulk loading from Amazon S3](/user-guide/data-load-s3), [Bulk loading from Google Cloud Storage](/user-guide/data-load-gcs), or [Bulk loading from Microsoft Azure](/user-guide/data-load-azure).
 
+In [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) or [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), CoCo can upload your files and run the load for you. For more information, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
 As illustrated in the diagram below, loading data from a local file system is performed in two, separate steps:
 
 Step 1:

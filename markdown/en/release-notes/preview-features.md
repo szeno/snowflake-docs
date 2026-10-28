@@ -27,6 +27,18 @@ On Request:
 :   Some preview features are provided *On Request*, particularly in the early stages of the preview period. To request access to these
     features for your account, you must contact Snowflake.
 
+Closed:
+:   Some preview features are *Closed*, meaning they’re available only to a limited, invitation-only set of accounts. Closed features are a
+    form of private preview that Snowflake tracks on this page because they’re far enough along to list publicly; most private preview
+    features aren’t listed here at all. See the note below for how to find out about private preview features in general.
+
+Note
+
+The **Features currently in preview** table below lists Public Preview features (*Open* and *On Request*), along with a small number of
+*Closed* features that are far enough along to be tracked here. Snowflake doesn’t publish a central list of Private Preview features.
+Private preview features are made available to selected accounts individually, so to find out whether a specific feature is in private
+preview or to request access to one, contact your Snowflake account team.
+
 Some preview features are available only in certain [Snowflake editions](/user-guide/intro-editions) or in specific
 [cloud platforms](/user-guide/intro-cloud-platforms) or [regions](/user-guide/intro-regions).
 
@@ -36,6 +48,7 @@ The following features are currently available for preview, listed roughly in th
 
 | Feature | Availability | Introduced | Additional reading | Notes |
 | --- | --- | --- | --- | --- |
+| [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel) | Open | October 2026 | [Time Travel for Apache Iceberg™ tables](/user-guide/tables-iceberg-time-travel), [ALTER ICEBERG TABLE … VERSION\_TAG](/sql-reference/sql/alter-iceberg-table-version-tag) | Query a historical snapshot of an Iceberg table by version tag, snapshot ID, reference name, or timestamp. Create and manage version tags with `ALTER ICEBERG TABLE ... VERSION_TAG`. |
 | Atomic deployments and centralized configuration for task graphs | Open | October 2026 | [Create and manage task graphs with SQL](/user-guide/task-graph-object) | Manage graph-wide settings and member task defaults centrally. Stage and commit changes without suspending the pipeline or changing runs already in progress. |
 | Pipeline Builder | Open | October 2026 | [Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-overview) | Build, schedule, and deploy task graphs that run notebooks, Python files, ML Jobs, and SQL from a visual designer in Workspaces. |
 | [Advanced branching for task graphs](/user-guide/tasks-graphs#label-task-graph-advanced-branching) | Open | October 2026 | [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state), [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) | Schedule a task to run on predecessor outcomes other than “all succeeded,” such as when all predecessors failed or a specific predecessor reached a particular state. Use SYSTEM$PREDECESSORS\_STATE or SYSTEM$TASK\_COMPLETION\_STATE in a task’s WHEN clause. |

@@ -113,6 +113,7 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [UNIQUE\_COUNT](/sql-reference/functions/dmf_unique_count) | Determine the number of unique, non-NULL values in a column. |
 |  | [UNIQUE\_PERCENT](/sql-reference/functions/dmf_unique_percent) | Determine what percentage of non-NULL rows have a value that occurs exactly once. |
 | Validity | [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) | Determine whether values in a column match a Boolean expression. |
+|  | [ACCEPTED\_VALUES\_PERCENT](/sql-reference/functions/dmf_accepted_values_percent) | Determine what percentage of values in a column don’t match a Boolean expression. |
 |  | [FUTURE\_TIMESTAMP\_COUNT](/sql-reference/functions/dmf_future_timestamp_count) | Determine how many non-NULL values in a date/timestamp column are in the future relative to the scheduled evaluation time. |
 |  | [FUTURE\_TIMESTAMP\_PERCENT](/sql-reference/functions/dmf_future_timestamp_percent) | Determine what percentage of values in a date/timestamp column are in the future relative to the scheduled evaluation time. |
 |  | [INVALID\_CA\_POSTAL\_CODE\_COUNT](/sql-reference/functions/dmf_invalid_ca_postal_code_count) | Determine how many non-NULL values in a string column are not a valid Canadian postal code. |
@@ -211,6 +212,7 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [UNIX\_ZERO\_COUNT](/sql-reference/functions/dmf_unix_zero_count) | Determine how many non-NULL values in a date/timestamp column are equal to the Unix epoch (1970-01-01). |
 |  | [UNIX\_ZERO\_PERCENT](/sql-reference/functions/dmf_unix_zero_percent) | Determine what percentage of values in a date/timestamp column are equal to the Unix epoch (1970-01-01). |
 | Volume | [ROW\_COUNT](/sql-reference/functions/dmf_row_count) | Determine how many records are in the table or view. |
+|  | [ROW\_COUNT\_DIFFERENCE](/sql-reference/functions/dmf_row_count_difference) | Determine how many more or fewer rows the table has than a reference table. |
 |  | [ROWS\_IN\_PAST\_DAY\_COUNT](/sql-reference/functions/dmf_rows_in_past_day_count) | Determine how many non-NULL values in a timestamp column fall in the 24 hours before the scheduled evaluation time. |
 |  | [ROWS\_IN\_PAST\_DAY\_PERCENT](/sql-reference/functions/dmf_rows_in_past_day_percent) | Determine what percentage of values in a timestamp column fall in the 24 hours before the scheduled evaluation time. |
 |  | [ROWS\_IN\_PAST\_HOUR\_COUNT](/sql-reference/functions/dmf_rows_in_past_hour_count) | Determine how many non-NULL values in a timestamp column fall in the hour before the scheduled evaluation time. |
@@ -249,6 +251,10 @@ Some system DMFs measure closely related conditions:
   `SCHEMA_CHANGE_COUNT` also counts. Renamed columns are counted only by `SCHEMA_CHANGE_COUNT`.
 - `FRESHNESS` measures how long ago a single table was last updated, and `SOURCE_TARGET_LAG` measures how far the latest timestamp in a
   target table trails the latest timestamp in a source table.
+- `ROW_COUNT` counts the rows in a single table, and `ROW_COUNT_DIFFERENCE` returns how many more or fewer rows the table has than a
+  reference table.
+- `ACCEPTED_VALUES` counts the records that don’t match a Boolean expression, and `ACCEPTED_VALUES_PERCENT` returns the percentage of
+  records that don’t match it.
 
 ## Related functions
 

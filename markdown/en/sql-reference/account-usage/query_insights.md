@@ -61,7 +61,7 @@ For the `insight_topic` column, the label can be one of the following:
   - [QUERY\_INSIGHT\_UNNECESSARY\_UNION\_DISTINCT](/user-guide/query-insights#label-query-insight-unnecessary-union-distinct)
 - `WAREHOUSE`: Insights about the warehouse used for the query. This label applies to the following types of insights:
 
-  - [QUERY\_INSIGHT\_REMOTE\_SPILLAGE](/user-guide/query-insights#label-query-insight-remote-spillage)
+  - [QUERY\_INSIGHT\_REMOTE\_SPILLING](/user-guide/query-insights#label-query-insight-remote-spilling)
   - [QUERY\_INSIGHT\_QUEUED\_OVERLOAD](/user-guide/query-insights#label-query-insight-queued-overload)
 
 ## Usage notes

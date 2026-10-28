@@ -26,7 +26,7 @@ None
 `--all, -a`
 :   Include connections from all sources (environment variables, SnowSQL config). By default, only shows connections from configuration files. Default: False.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`

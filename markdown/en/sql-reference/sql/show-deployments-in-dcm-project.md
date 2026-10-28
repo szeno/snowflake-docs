@@ -43,7 +43,7 @@ The command output provides deployment properties and metadata in the following 
 | `name` | Name of the deployment. |
 | `alias` | User-specified deployment alias. |
 | `deployment_file_path` | Full location URL for the deployment. Example: `snow://project/MY_DB.PUBLIC.P/deployment/deployment$2/` |
-| `source_file_path` | Source location where this deployment is created from. This is the value provided with FROM `<source_location>`. |
+| `source_file_path` | Source location where this deployment is created from. |
 | `git_commit_hash` | The Git commit hash that indicates the deployment of files in the Git repository from which the DCM project originates. |
 
 Expand

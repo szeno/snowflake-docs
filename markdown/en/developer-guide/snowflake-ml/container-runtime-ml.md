@@ -103,7 +103,8 @@ The CPU container runtime has different packages than the GPU container runtime.
 
 ## Snowflake Container Runtime packages
 
-The full list of available packages in Snowflake Container Runtime is maintained as part of the [Container Runtime Release Notes](/developer-guide/snowflake-ml/container-runtime/releases).
+The full list of available packages in Snowflake Container Runtime is in the
+[Snowflake Container Runtime release notes](/developer-guide/container-runtime/release-notes).
 
 ## Optimized training
 

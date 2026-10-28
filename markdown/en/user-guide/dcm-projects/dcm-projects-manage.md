@@ -42,6 +42,10 @@ SHOW FUTURE GRANTS IN DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV;
 
 ## Unmanage entities, grants, and attachments from a DCM project
 
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 Unmanaging removes an entity, grant, or attachment from the management scope of a DCM project without dropping the entity, revoking the
 grant, or detaching the attachment. Only the DCM project’s tracking of the entity, grant, or attachment is removed. You can unmanage an
 entity, grant, or attachment when you want to manage it with a different DCM project or manage it manually.
@@ -51,12 +55,6 @@ grant, or remove the attachment on the next deployment.
 
 After you unmanage an entity, grant, or attachment, remove the corresponding statement from your
 [project definition files](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-definition-files) before the next deployment. Otherwise, the DCM project manages it again.
-
-### Unmanage with system functions
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
 
 DCM Projects provides two system functions for unmanaging. Choose the one that fits what you want to unmanage:
 

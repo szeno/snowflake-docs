@@ -75,6 +75,8 @@ Snowflake recommends using ZSTD as the high-performance compression algorithm, a
 
 For Snowflake-side tracing and duplicate detection, include a `requestId` UUID query parameter with each REST request. Use the same `requestId` for all retry attempts on the same rowset (batch of rows). Snowflake logs the request ID and can use it to correlate retried requests and identify potential duplicates. See [Limitations and considerations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations) for per-request payload limits.
 
+For the Named Channel REST append sequence, see [Named Channel append workflow](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#named-channel-append-workflow). For retries, see [REST API retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy).
+
 ## Optimize ingestion performance and cost with MATCH\_BY\_COLUMN\_NAME
 
 Configure your pipe to map the necessary columns from your source data instead of ingesting all data into a single VARIANT column. To do this, use `MATCH_BY_COLUMN_NAME = CASE_SENSITIVE` or apply transformations in your pipe definition. This best practice not only optimizes your ingestion costs but also enhances the overall performance of your streaming data pipeline.
@@ -162,13 +164,17 @@ Don’t assume that an append call always succeeds. Synchronous validation, seri
 
 Some errors surface asynchronously, after rows are buffered rather than at the append call. Monitor Named Channel status (for example, `getChannelStatus` or `row_error_count`) to detect failures that appear later.
 
-### Implement exponential back-off
+### Implement exponential backoff
 
-For retryable errors (429, 500, 503), don’t retry immediately. Use an exponential back-off strategy —– increasing the wait time between each retry —– to allow the system to recover.
+For direct REST clients, don’t retry immediately. Increase the wait between attempts and add jitter so clients don’t retry in lockstep.
+
+For the direct REST delay, retry budget, and retryable status codes, see [REST API retry policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-retry-policy).
 
 ### Verify progress with offset tokens
 
 Periodically call `getLatestCommittedOffsetToken` to track which data was successfully persisted. If a 409 error occurs, use this token to identify the exact point from which to replay data after reopening the channel.
+
+For direct REST Named Channel recovery, see [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery).
 
 ### Monitor channel status
 

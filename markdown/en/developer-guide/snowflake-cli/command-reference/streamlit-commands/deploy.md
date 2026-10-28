@@ -1,6 +1,6 @@
 # snow streamlit deploy
 
-Deploys a Streamlit app defined in the project definition file (snowflake.yml). The bundle always includes main\_file. If environment.yml or a pages directory (pages\_dir, or pages/ by default) exists in the project root, they are included even when omitted from artifacts. The stage name comes from the entity’s stage field (default: streamlit); the command creates that stage if needed. If the app already exists, re-run with –replace to update it. If multiple Streamlits are defined and no entity\_id is provided, the command raises an error.
+Deploys a Streamlit app defined in the project definition file (snowflake.yml). The bundle always includes main\_file. If environment.yml or a pages directory (pages\_dir, or pages/ by default) exists in the project root, they are included even when omitted from artifacts. The stage name comes from the entity’s stage field (default: streamlit); the command creates that stage if needed. If the app already exists, re-run with –replace to update it. If multiple Streamlits are defined and no entity\_id is provided, the command raises an error. Set `include_project_definition: true` on the Streamlit entity to also upload the project-root snowflake.yml itself.
 
 ## Syntax
 
@@ -182,7 +182,7 @@ snow streamlit deploy
 `--server-session-keep-alive`
 :   Keep the session active indefinitely, even if there is no activity from the user.
 
-`--format [TABLE|JSON|JSON_EXT|CSV]`
+`--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
 :   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
@@ -209,11 +209,17 @@ This command creates a Streamlit app object in the database and a schema configu
 
 The command uploads local files to a specified stage and creates a Streamlit app using those files. You must specify the main Python file and query warehouse. By default, the command uploads the `environment.yml` and `pages/` folder if present. The Streamlit app is created in the database and schema configured in the specified `connection`.
 
+Set `include_project_definition: true` on the Streamlit entity to also upload the project-root `snowflake.yml`. When this file is uploaded, deploy warns that users with USAGE on the app or read access to its backing stage can retrieve it.
+
 If you don’t specify a stage name, the `streamlit` stage is used. If the specified stage does not exist, the command creates it. You can modify the behavior by using [command-line options](/developer-guide/snowflake-cli/command-reference/streamlit-commands/deploy).
 
 If you specify the `--replace` option, the command uploads new files and overwrites existing files. It does not remove any files already on the stage.
 
 If you specify the `--prune` option, the command removes files that exist in the stage, but not files in the local filesystem.
+
+For an existing versioned app, `--replace` applies changes to `main_file` in place. Files are uploaded before the entrypoint changes, and pruning runs after a successful change. If the account does not support the update, deploy reports an error and keeps the existing app.
+
+If the app has no live version stage, restore its live version before redeploying. When `main_file` is unset, `--prune` requires the app’s current entrypoint to be included in the bundle.
 
 ## Examples
 

@@ -292,3 +292,5 @@ evaluates the query profile, and provides recommendations including:
 - Clustering key suggestions based on your filter patterns and join columns.
 - Warehouse sizing guidance based on your data volume.
 - Materialized view candidates for frequently run aggregation patterns.
+
+To load test a query under concurrent users, use the `interactive-benchmark` skill in Cortex Code CLI or Cortex Code Desktop. For more information about both skills, see [Cortex Code skills for Snowflake interactive analytics](/user-guide/interactive-skills).

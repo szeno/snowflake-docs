@@ -8,6 +8,8 @@ Snowflake supports Regional Storage and Multi-Regional Storage accounts only.
 
 This set of topics describes how to use the [COPY INTO <table>](/sql-reference/sql/copy-into-table) command to load data from a Cloud Storage bucket into tables.
 
+To have [CoCo](/user-guide/cortex-code/cortex-code) run the load for you from a Cloud Storage path, see [Bulk load files with CoCo](/user-guide/data-load-bulk-coco).
+
 As illustrated in the diagram below, loading data from a Cloud Storage bucket is performed in two steps:
 
 Step 1:

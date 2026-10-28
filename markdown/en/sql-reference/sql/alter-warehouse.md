@@ -427,8 +427,7 @@ Where:
     > :   `0` to `100`
     >
     > Default:
-    > :   `8`, or `2` when Snowflake automatically enables query acceleration for [Gen2](/user-guide/warehouses-gen2) or
-    >     [multi-cluster](/user-guide/warehouses-multicluster) warehouses at creation time
+    > :   `8`
 
 `UNSET ...`
 :   > Specifies one (or more) properties and/or parameters to unset for the database, which resets them to the defaults:

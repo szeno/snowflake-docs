@@ -52,6 +52,15 @@ To get started with interactive analytics:
 If you want to use interactive tables for maximum performance, create the interactive table first using a standard warehouse. For more information, see
 [Creating an interactive table](#label-interactive-create-an-interactive-table).
 
+### Getting started with Cortex Code skills
+
+Cortex Code includes two skills that can guide you through these steps:
+
+- `snowflake-interactive`: Helps you start using interactive warehouses, including creating a warehouse and adding your tables. It also helps you evaluate whether a query is a good fit, choose clustering keys, and troubleshoot issues. Available in Cortex Code CLI, Cortex Code Desktop, and Snowsight.
+- `interactive-benchmark`: Load tests a query on an interactive warehouse to check whether it meets your latency goal under concurrency. Available in Cortex Code CLI and Cortex Code Desktop.
+
+For descriptions and example prompts, see [Cortex Code skills for Snowflake interactive analytics](/user-guide/interactive-skills).
+
 ## Working with interactive warehouses
 
 ### Creating an interactive warehouse
