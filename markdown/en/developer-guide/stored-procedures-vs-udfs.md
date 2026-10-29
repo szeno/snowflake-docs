@@ -135,9 +135,19 @@ list:
   CALL MyStoredProcedure_1(argument_1);
   ```
 
+  The exception is a stored procedure that returns tabular data. You can call it in the FROM clause of a SELECT statement by
+  using the TABLE keyword, as in the following example:
+
+  Copy code
+
+  ```
+  SELECT * FROM TABLE(MyStoredProcedure_2(argument_1));
+  ```
+
 For more details about calling functions and procedures, see the following:
 
 - [Calling a stored procedure](/developer-guide/stored-procedure/stored-procedures-calling)
+- [Selecting from a stored procedure](/developer-guide/stored-procedure/stored-procedures-selecting-from)
 - [Executing a UDF](/developer-guide/udf/udf-calling-sql)
 
 ### Multiple UDFs may be called with one statement; a single stored procedure is called with one statement

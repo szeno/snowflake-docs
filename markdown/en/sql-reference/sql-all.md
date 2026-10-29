@@ -651,7 +651,8 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories) | Lists the [image repositories](/developer-guide/snowpark-container-services/tutorials/tutorial-1) for which you have access privileges. |
 | [SHOW IMAGES IN IMAGE REPOSITORY](/sql-reference/sql/show-images-in-image-repository) | Lists the images in an [image repository](/developer-guide/snowpark-container-services/working-with-registry-repository). |
 | [SHOW INDEXES](/sql-reference/sql/show-indexes) | Lists all the indexes in your account for which you have access privileges. |
-| [SHOW INDEXES (STANDARD TABLE)](/sql-reference/sql/show-indexes-standard-tables) | Lists secondary indexes on a standard table. | [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies) | Lists the [ingress policies](/user-guide/ingress-policies) that you can see. |
+| [SHOW INDEXES (STANDARD TABLE)](/sql-reference/sql/show-indexes-standard-tables) | Lists secondary indexes on a standard table. |
+| [SHOW INGRESS POLICIES](/sql-reference/sql/show-ingress-policies) | Lists the [ingress policies](/user-guide/ingress-policies) that you can see. |
 | [SHOW INTEGRATIONS](/sql-reference/sql/show-integrations) | Lists the integrations in your account. |
 | [SHOW INTERACTIVE TABLES](/sql-reference/sql/show-interactive-tables) | Lists the [interactive tables](/user-guide/interactive) for which you have access privileges. |
 | [SHOW JOIN POLICIES](/sql-reference/sql/show-join-policies) | Lists information about existing [join policies](/user-guide/join-policies), including the creation date, database and schema names, owner, and any available comments. |

@@ -13,7 +13,7 @@ The Snowflake Model Registry provides a unified interface to both engines. The o
 
 **Job-based Batch Inference:** This approach is designed for high-throughput, distributed processing where inference is treated as a standalone compute stage. By decoupling inference from the SQL engine, you can optimize for both price and performance. You can use Batch Inference to help you handle massive datasets or navigate complex computational requirements. This is ideal for processing files, such as images, video, and audio, directly from Snowflake Stages.
 
-For text generation and vision-language models deployed on Snowpark Container Services, you can also run inference from SQL with `AI_COMPLETE` (in preview). See [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
+For text generation and vision-language models deployed on Snowpark Container Services, you can also run inference from SQL with `AI_COMPLETE` (in preview). See [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete). For sentence-transformer models, you can generate text embeddings from SQL with `AI_EMBED` (in preview). See [Bring-your-own model for AI\_EMBED](/developer-guide/snowflake-ml/inference/spcs-ai-embed).
 
 ## When to choose
 

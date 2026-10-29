@@ -142,3 +142,8 @@ provider regions:
 Expand
 
 Show lessSee more
+
+Note
+
+There may be a delay in setting up NAAAPS for new Snowflake regions. During this period, external sharing of a
+Snowflake Native App will not be possible.

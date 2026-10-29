@@ -195,6 +195,33 @@ ALTER SESSION SET LOG_LEVEL = DEBUG;
 If the level parameter is set to different levels for the current session and on the functions and procedures called in that
 session, Snowflake determines the effective level to use. See [How Snowflake determines the level in effect](#label-telemetry-level-effective).
 
+## Viewing telemetry levels
+
+To see the levels that are currently set, use the [SHOW PARAMETERS](/sql-reference/sql/show-parameters) command. Replace `LOG_LEVEL` with
+`TRACE_LEVEL`, `METRIC_LEVEL`, or `LOG_EVENT_LEVEL` to check the other levels.
+
+Copy code
+
+```
+-- Level set for the account.
+SHOW PARAMETERS LIKE 'LOG_LEVEL' IN ACCOUNT;
+
+-- Level set on a database.
+SHOW PARAMETERS LIKE 'LOG_LEVEL' IN DATABASE db1;
+
+-- Level set on a function.
+SHOW PARAMETERS LIKE 'LOG_LEVEL' IN FUNCTION f1(int);
+
+-- Level set for the current session.
+SHOW PARAMETERS LIKE 'LOG_LEVEL' IN SESSION;
+```
+
+In the output, the `value` column shows the current value. The `level` column shows the scope where the value is set, such as
+`ACCOUNT`, `DATABASE`, or `SESSION`. An empty `level` means the parameter is using its default value.
+
+The level shown for an object is the level set at or inherited by that object. The level that Snowflake applies when code
+runs can differ. For details, see [How Snowflake determines the level in effect](#label-telemetry-level-effective).
+
 ## How Snowflake determines the level in effect
 
 You can override the telemetry [level-related parameters](#label-telemetry-levels) (for both [objects](/sql-reference/parameters#label-object-parameters)

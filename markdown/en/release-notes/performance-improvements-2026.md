@@ -9,6 +9,7 @@ The following performance improvements were introduced in 2026:
 
 | Released | Description | Impact |
 | --- | --- | --- |
+| October 2026 | [Dynamic table](/user-guide/dynamic-tables/overview) refresh optimization for [top-level DISTINCT](/user-guide/dynamic-tables/refresh-optimization#label-dynamic-tables-refresh-optimization-deduplication). When the DISTINCT is the top-level operator and the definition has a supported shape, incremental refresh automatically reuses the already stored values. | Reusing stored values can reduce the work required to refresh the DISTINCT results, so deduplicating pipelines refresh faster. |
 | October 2026 | Aggregation queries now reuse previously computed hash values instead of recomputing them. | Lower end-to-end latency for aggregation-heavy workloads. |
 | October 2026 | [Optima Planning](/user-guide/snowflake-optima)’s execution-feedback cardinality correction now applies broadly across join shapes, not just a limited subset. | Better cardinality estimates and faster plans for a wider range of recurring join queries. |
 | October 2026 | [Optima Planning](/user-guide/snowflake-optima)’s execution-feedback cardinality correction now applies to queries that use `FLATTEN`. | Better cardinality estimates and faster plans for recurring queries that flatten semi-structured data. |

@@ -1,9 +1,5 @@
 # Openflow Connector for PostgreSQL: Iceberg table destinations
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Openflow Connector for PostgreSQL supports writing to Snowflake-managed Apache Apache Iceberg™ tables
 as an opt-in destination format. Iceberg v2 and v3 are both supported. Setting **Table Storage Format** = `ICEBERG`
 and choosing an **Iceberg Version** are the only connector-level changes required. The external volume,

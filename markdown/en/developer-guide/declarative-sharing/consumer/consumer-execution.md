@@ -11,6 +11,15 @@ access data included in the app package. This ensures that the app cannot access
 
 The security boundaries for Declarative Shares are more restrictive than those for Native App Framework apps, which can access additional resources in the consumer account when given the appropriate permissions.
 
+## Granting privileges to a Declarative Share
+
+Consumers can’t grant privileges or roles to an installed Declarative Share. For example, granting a
+database role, an account role, or a privilege on an object in the consumer account to the app returns an
+error. Snowflake blocks these grants so that a Declarative Share can’t access consumer data, even
+accidentally.
+
+This differs from Native App Framework apps, which can request privileges and references from the consumer.
+
 ## Embedded code objects in Declarative Shares
 
 Declarative Shares support Snowflake Notebooks as embedded code objects. Providers

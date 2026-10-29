@@ -187,7 +187,7 @@ For more information about SELECT as a statement and the other clauses within th
 
         For `col_name`:
 
-        - The column must exist and cannot be filtered out by `ILIKE` or `EXCEPT`.
+        - The column must exist and cannot be filtered out by `ILIKE` or `EXCLUDE`.
         - You cannot specify the same column more than once in the list of replacements.
         - If the column is in multiple tables (for example, in both tables in a join), the statement fails with an “ambiguous column”
           error.

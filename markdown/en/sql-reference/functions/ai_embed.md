@@ -50,6 +50,10 @@ AI_EMBED( <model> , <input> )
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
+    Bring-your-own model: Open preview
+
+    Alternatively, specify the name of a Snowpark Container Services model inference service that hosts your own sentence-transformer model. These services support text input only; FILE and [PROMPT](/sql-reference/functions/prompt) inputs aren’t supported. For prerequisites, availability, and access requirements, see [Bring-your-own model for AI\_EMBED](/developer-guide/snowflake-ml/inference/spcs-ai-embed).
+
 `input`
 :   The string or image (as a [FILE object](/sql-reference/functions/to_file)) to generate an embedding from. Images must be:
 
@@ -66,6 +70,8 @@ An embedding vector of type VECTOR derived from the input text or image.
 You must use a role that has been granted the SNOWFLAKE.CORTEX\_USER database role *or* the SNOWFLAKE.CORTEX\_EMBED\_USER
 database role to call this function. See [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges) for more information on granting one of
 these privileges.
+
+For models deployed as Snowpark Container Services model inference services, see [Access control requirements](/developer-guide/snowflake-ml/inference/spcs-ai-embed#access-control-requirements).
 
 ## Examples
 

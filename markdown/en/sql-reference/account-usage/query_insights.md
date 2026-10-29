@@ -111,7 +111,7 @@ Copy code
 SELECT query_id, insight_type_id, message, suggestions
   FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_INSIGHTS
   WHERE start_time > TO_DATE(DATEADD(DAY, -7, CURRENT_DATE()))
-    AND total_duration > 3600000;
+    AND total_elapsed_time > 3600000;
 ```
 
 The following example returns the query insights for queries that ran during the past week, took more than an hour to complete,
@@ -123,6 +123,6 @@ Copy code
 SELECT query_id, insight_type_id, message, suggestions
   FROM SNOWFLAKE.ACCOUNT_USAGE.QUERY_INSIGHTS
   WHERE start_time > TO_DATE(DATEADD(DAY, -7, CURRENT_DATE()))
-    AND total_duration > 3600000
+    AND total_elapsed_time > 3600000
     AND warehouse_id = 84412315;
 ```

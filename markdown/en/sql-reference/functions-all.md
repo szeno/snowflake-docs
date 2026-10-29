@@ -674,6 +674,7 @@ The list includes:
 | [MODEL\_MONITOR\_STAT\_METRIC](/sql-reference/functions/model-monitor-stat-metric) | Gets count metrics from a [model monitor](/developer-guide/snowflake-ml/model-registry/model-observability). | [Model monitor functions](/sql-reference/functions-model-monitors) |
 | [MONTHNAME](/sql-reference/functions/monthname) | Returns the three-letter month name for the specified date or timestamp. | [Date & time functions](/sql-reference/functions-date-time) |
 | [MONTHS\_BETWEEN](/sql-reference/functions/months_between) | Returns the number of months between two DATE or TIMESTAMP values. | [Date & time functions](/sql-reference/functions-date-time) |
+| [MY\_BUDGET\_SUMMARY (SNOWFLAKE.LOCAL)](/sql-reference/functions/my_budget_summary-snowflake-local) | Returns the calling user’s limits, usage, and block status for each of their per-user quotas. | [Table functions](/sql-reference/functions-table) |
 | **N** |  |  |
 | [NETWORK\_RULE\_REFERENCES](/sql-reference/functions/network_rule_references) | Returns a row for each object with which the specified network rule is associated or returns a row for each network rule associated with the specified container. | [Information Schema](/sql-reference/info-schema#label-info-schema-functions) , [Table functions](/sql-reference/functions-table) |
 | [NEXT\_DAY](/sql-reference/functions/next_day) | Returns the date of the first specified day of week (DOW) that occurs after the input date. | [Date & time functions](/sql-reference/functions-date-time) |

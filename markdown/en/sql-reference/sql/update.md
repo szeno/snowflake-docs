@@ -73,16 +73,24 @@ Update with join that produces nondeterministic results:
 > Copy code
 >
 > ```
-> select * from target;
+> SELECT * FROM target;
+> ```
 >
+> ```
 > +---+----+
 > | K |  V |
 > |---+----|
 > | 0 | 10 |
 > +---+----+
+> ```
 >
-> Select * from src;
+> Copy code
 >
+> ```
+> SELECT * FROM src;
+> ```
+>
+> ```
 > +---+----+
 > | K |  V |
 > |---+----|
@@ -90,13 +98,19 @@ Update with join that produces nondeterministic results:
 > | 0 | 12 |
 > | 0 | 13 |
 > +---+----+
+> ```
 >
+> Copy code
+>
+> ```
 > -- Following statement joins all three rows in src against the single row in target
 > UPDATE target
 >   SET v = src.v
 >   FROM src
 >   WHERE target.k = src.k;
+> ```
 >
+> ```
 > +------------------------+-------------------------------------+
 > | number of rows updated | number of multi-joined rows updated |
 > |------------------------+-------------------------------------|

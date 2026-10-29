@@ -156,6 +156,7 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 |  | [STAGE\_STORAGE\_USAGE\_HISTORY](/sql-reference/functions/stage_storage_usage_history) | TO BE DEPRECATED - Refer to [STAGE\_STORAGE\_USAGE\_HISTORY view](/sql-reference/account-usage/stage_storage_usage_history). |
 |  | [ESTIMATE\_HYBRID\_TABLE\_STORAGE\_USAGE](/sql-reference/functions/estimate_hybrid_table_storage_usage) | Returns a near-real-time estimate of the total storage used by a hybrid table. |
 | Storage Lifecycle Policies | [STORAGE\_LIFECYCLE\_POLICY\_HISTORY](/sql-reference/functions/storage_lifecycle_policy_history) | Information Schema table function. For more information, see [Storage lifecycle policies](/user-guide/storage-management/storage-lifecycle-policies). |
+| Budgets | [MY\_BUDGET\_SUMMARY (SNOWFLAKE.LOCAL)](/sql-reference/functions/my_budget_summary-snowflake-local) | Returns the calling user’s limits, usage, and block status for each of their per-user quotas. For more information, see [Per-user quotas](/user-guide/budgets/per-user-quotas). |
 | Column-level & Row-level Security | [POLICY\_REFERENCES](/sql-reference/functions/policy_references) |  |
 | Object Tagging | [TAG\_REFERENCES](/sql-reference/functions/tag_references) | Information Schema table function. |
 |  | [TAG\_REFERENCES\_ALL\_COLUMNS](/sql-reference/functions/tag_references_all_columns) | Information Schema table function. |

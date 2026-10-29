@@ -33,7 +33,6 @@ The LISTING\_ACCESS\_HISTORY view provides selected information about consumer q
 | CONSUMER\_ACCOUNT\_LOCATOR | VARCHAR | Account locator of the consumer. |
 | CONSUMER\_ACCOUNT\_NAME | VARCHAR | Account name of the consumer. |
 | CONSUMER\_ACCOUNT\_ORGANIZATION | VARCHAR | Name of the organization for the consumer account. |
-| LISTING\_OBJECTS\_ACCESSED | ARRAY | Use SHARE\_OBJECTS\_ACCESSED as it contains the same data. When IS\_SHARE is FALSE, the value is NULL. See [LISTING\_OBJECTS\_ACCESSED array](#label-listing-objects-accessed-array) for formatting. |
 | REGION\_GROUP | VARCHAR | [Region group](/user-guide/admin-account-identifier#label-region-groups) where the account of the consumer is located. |
 | CONSUMER\_NAME | VARCHAR | Contains the name of the consumer account that accessed, used, or requested a listing. If no name is available, such as for trial accounts, the value is NULL. |
 | IS\_SHARE | BOOLEAN | TRUE if the access was on a share. When TRUE, the SHARE\_OBJECTS\_ACCESSED column provides details about the share objects accessed by the consumer query. |
@@ -198,7 +197,7 @@ Copy code
 
 The APPLICATION\_OBJECTS\_ACCESSED array provides details about the objects in a Native App accessed by a consumer query. The format of an item in the array depends on the type of object that was accessed.
 
-Unlike the LISTING\_OBJECTS\_ACCESSED column array results, APPLICATION\_OBJECTS\_ACCESSED results containing object IDs are unavailable and database names are masked.
+Unlike the SHARE\_OBJECTS\_ACCESSED column array results, APPLICATION\_OBJECTS\_ACCESSED results containing object IDs are unavailable and database names are masked.
 
 Functions:
 
@@ -259,7 +258,9 @@ Copy code
 
 ### LISTING\_OBJECTS\_ACCESSED array
 
-Use [SHARE\_OBJECTS\_ACCESSED Array](#share-objects-accessed-array) instead.
+The LISTING\_OBJECTS\_ACCESSED column was removed from this view by the 2024\_08 behavior change bundle. It contained the same
+data as the SHARE\_OBJECTS\_ACCESSED column. Use [SHARE\_OBJECTS\_ACCESSED array](#label-share-objects-accessed-array) instead. For more information, see
+[LISTING\_ACCESS\_HISTORY view (DATA\_SHARING\_USAGE): Deprecate LISTING\_OBJECTS\_ACCESSED column](/release-notes/bcr-bundles/2024_08/bcr-1758).
 
 ## Examples
 
@@ -290,7 +291,7 @@ select
   count(distinct lah.query_token) as n_queries,
   count(distinct lah.consumer_account_locator) as n_distinct_consumer_accounts
 from SNOWFLAKE.DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY as lah
-join lateral flatten(input=>lah.listing_objects_accessed) as los
+join lateral flatten(input=>lah.share_objects_accessed) as los
 where true
   and query_date between '2022-03-01' and '2022-04-30'
 group by 1,2,3,4,5
@@ -313,7 +314,7 @@ select
   consumer_account_locator,
   count(distinct lah.query_token) as n_queries
 from SNOWFLAKE.DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY as lah
-join lateral flatten(input=>lah.listing_objects_accessed) as los
+join lateral flatten(input=>lah.share_objects_accessed) as los
 where true
   and query_date between '2022-03-01' and '2022-04-30'
 group by 1,2,3,4,5,6
@@ -334,7 +335,7 @@ select
   count(distinct lah.query_token) as n_queries,
   count(distinct lah.consumer_account_locator) as n_distinct_consumer_accounts
 from SNOWFLAKE.DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY as lah
-join lateral flatten(input=>lah.listing_objects_accessed) as los
+join lateral flatten(input=>lah.share_objects_accessed) as los
 join lateral flatten(input=>los.value, path=>'columns') as cols
 where true
   and los.value:"objectDomain"::string in ('Table', 'View')
@@ -357,7 +358,7 @@ accesses as (
     lah.query_token,
     array_agg(distinct los.value:"objectName"::string) as object_names
   from SNOWFLAKE.DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY as lah
-  join lateral flatten(input=>lah.listing_objects_accessed) as los
+  join lateral flatten(input=>lah.share_objects_accessed) as los
   where true
     and los.value:"objectDomain"::string in ('Table', 'View')
     and query_date between '2022-03-01' and '2022-04-30'
@@ -385,7 +386,7 @@ accesses as (
     lah.query_token,
     lah.consumer_account_locator
   from SNOWFLAKE.DATA_SHARING_USAGE.LISTING_ACCESS_HISTORY as lah
-  join lateral flatten(input=>lah.listing_objects_accessed) as los
+  join lateral flatten(input=>lah.share_objects_accessed) as los
   where true
     and los.value:"objectDomain"::string in ('Table', 'View')
     and query_date between '2022-03-01' and '2022-04-30'

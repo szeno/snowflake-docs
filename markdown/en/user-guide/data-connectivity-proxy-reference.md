@@ -175,6 +175,7 @@ TABLE(INFORMATION_SCHEMA.DCP_CLIENT_ROUTE_CHECK(
 | `--drain-timeout-secs` | `300` | Seconds to wait for active tunnels to finish on `SIGTERM` |
 | `--health-check` | None | Run bootstrap validation and exit without starting workers |
 | `--log-level` | `info` | Log verbosity: `error`, `warn`, `info`, `debug`, `trace` |
+| `--proxy-dial-mode` | `auto` | Relay connection mode: `auto`, `direct-only`, or `fallback-only`. Use `fallback-only` with an FQDN-only firewall to connect through the `dcp-proxy-fallback` hostname without attempting direct connections to relay public IPs. |
 
 Expand
 
@@ -190,6 +191,7 @@ Each variable below is an alternative to the equivalent flag. Where both are sup
 | `DCP_METRICS_ADDRESS` | `--metrics-addr` | Full `host:port` for the metrics and `/ready` endpoints. Default `127.0.0.1:9092`. An empty value disables both endpoints. |
 | `DCP_METRICS_PORT` | None | Bare port that binds `0.0.0.0:<port>` — the usual way to expose metrics from a container. Ignored when `DCP_METRICS_ADDRESS` or `--metrics-addr` is set. |
 | `DCP_LOG_LEVEL` | `--log-level` | Log verbosity: `error`, `warn`, `info`, `debug`, `trace`. Default `info`. |
+| `DCP_CONNECTION_MODE` | `--proxy-dial-mode` | Relay connection mode: `auto`, `direct-only`, or `fallback-only`. Default `auto`. Use `fallback-only` with an FQDN-only firewall to connect through the `dcp-proxy-fallback` hostname without attempting direct connections to relay public IPs. |
 
 Expand
 

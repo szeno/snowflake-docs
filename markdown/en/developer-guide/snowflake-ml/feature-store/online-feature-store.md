@@ -930,9 +930,10 @@ Query REST API. For more information about real-time inference, see
 [Deploy models for real-time inference (REST API)](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api).
 
 When your online feature store uses `OnlineStoreType.POSTGRES`, pass `feature_sources_per_function` to
-`create_service()` to map a registered feature view to a model method (such as `predict`). At inference time, the
-model service fetches any missing feature columns from the feature view before invoking the model. You can send only
-entity IDs in the request payload and let the service retrieve the rest.
+`create_service()` to map a registered feature view or feature group to a model method (such as
+`predict`). At inference time, the model service fetches any missing feature columns from that source
+before invoking the model. You can send the join keys in the request payload and let the service
+retrieve the rest.
 
 `mv` is a `ModelVersion` object from the [Snowflake Model Registry](/developer-guide/snowflake-ml/model-registry/overview). Obtain it with `reg.get_model("my_model").version("v1")`, where `reg` is a `snowflake.ml.registry.Registry` object.
 

@@ -1,12 +1,6 @@
 # Request Access in Workspaces
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Available to all accounts. Requires enablement.
-
-To opt in to this public preview, after you
-[enable preview features for your account](/sql-reference/functions/system_enable_preview_access), use the
-[ALTER ACCOUNT](/sql-reference/sql/alter-account) command. For example:
+To enable Request Access in Workspaces for your account, run the [ALTER ACCOUNT](/sql-reference/sql/alter-account) command. For example:
 
 Copy code
 

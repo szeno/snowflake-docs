@@ -497,8 +497,11 @@ Perform the following steps:
    2. From the output, identify and save the values for the following keys:
 
       - `privatelink-vpce-id`
+      - `regionless-privatelink-account-url`
+      - `spcs-registry-privatelink-url` (the image registry URL)
       - `openflow-privatelink-url`
       - `external-telemetry-privatelink-url`
+      - `privatelink_ocsp-url`
 2. Create a VPC endpoint with parameters:
 
    - Type: **PrivateLink Ready partner services**
@@ -510,16 +513,31 @@ Perform the following steps:
    1. Domain: `privatelink.snowflakecomputing.com`
    2. Type: **Private hosted zone**
    3. Select the region and VPC where your Openflow deployment will be running.
-4. Add two `CNAME` records for the URLs identified in the first step:
+4. Add a `CNAME` record for each of the five URLs identified in the first step:
 
-   1. For `openflow-privatelink-url`
+   1. For `regionless-privatelink-account-url`
+
+      - Record name: `regionless-privatelink-account-url` value obtained in the first step
+      - Record type: `CNAME`
+      - Value: DNS name of your VPC endpoint
+   2. For `spcs-registry-privatelink-url` (image registry URL)
+
+      - Record name: `spcs-registry-privatelink-url` value obtained in the first step
+      - Record type: `CNAME`
+      - Value: DNS name of your VPC endpoint
+   3. For `openflow-privatelink-url`
 
       - Record name: `openflow-privatelink-url` value obtained in the first step
       - Record type: `CNAME`
       - Value: DNS name of your VPC endpoint
-   2. For `external-telemetry-privatelink-url`
+   4. For `external-telemetry-privatelink-url`
 
       - Record name: `external-telemetry-privatelink-url` value obtained in the first step
+      - Record type: `CNAME`
+      - Value: DNS name of your VPC endpoint
+   5. For `privatelink_ocsp-url`
+
+      - Record name: `privatelink_ocsp-url` value obtained in the first step
       - Record type: `CNAME`
       - Value: DNS name of your VPC endpoint
 5. Create a dedicated security group for the deployment and enable traffic from the security group to the VPC endpoint:
@@ -596,7 +614,7 @@ As part of the installation process, the Openflow deployment agent authenticates
 System Image Registry to obtain Openflow container images, and configures the cluster to pull all
 workload images from Snowflake-managed repositories. Pulling Openflow images from a customer-owned AWS
 ECR repository is not supported. You can optionally reach the Snowflake image registry over AWS
-PrivateLink, but the registry itself is always the Snowflake System Image Registry.
+PrivateLink by using the `spcs-registry-privatelink-url` value, but the registry itself is always the Snowflake System Image Registry.
 
 ### EKS cluster naming
 

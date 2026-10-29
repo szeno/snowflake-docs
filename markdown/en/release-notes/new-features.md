@@ -43,8 +43,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
+- [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
+- [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
+- [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
+- [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
 - [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
+- [Oct 26, 2026: CoCo Desktop v1.23.0](/release-notes/2026/other/2026-10-26-coco-desktop-v1-23-0)
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
 - [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
@@ -69,6 +74,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Snowflake Python API (v1.14.0)](/release-notes/clients-drivers/snowapi-python-2026)
 - [SnowSQL (v1.5.4)](/release-notes/clients-drivers/snowsql-2026)
 - [October 21, 2026: Declarative Feature Store (General availability)](/release-notes/2026/other/2026-10-21-declarative-feature-store-ga)
+- [Oct 21, 2026: Expanded insights for Snowflake Postgres](/release-notes/2026/other/2026-10-21-snowflake-postgres-insights-extension)
 - [ODBC Driver (v4.2.0)](/release-notes/clients-drivers/odbc-2026)
 - [PHP PDO Driver (v4.3.1)](/release-notes/clients-drivers/php-pdo-2026)
 - [Python Connector (v5.1.0)](/release-notes/clients-drivers/python-connector-2026)
@@ -146,10 +152,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Python Connector (v5.0.0rc4)](/release-notes/clients-drivers/python-connector-2026)
 - [Python Connector (v4.8.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Sep 29, 2026: Response caching for Cortex AI Functions](/release-notes/2026/other/2026-09-29-cortex-response-caching)
-- [Sep 28, 2026: Anthropic Claude Sonnet 5.5 model (Preview)](/release-notes/2026/other/2026-09-28-claude-sonnet-5-5-preview)
-- [Sep 28, 2026: CoCo Desktop v1.21.6](/release-notes/2026/other/2026-09-28-coco-desktop-v1-21-6)
-- [Sep 28, 2026: Inline Stored Procedures for hybrid tables (General availability)](/release-notes/2026/other/2026-09-28-inline-stored-procedures-hybrid-tables-ga)
-- [Snowflake CLI (v3.28.0)](/release-notes/clients-drivers/snowflake-cli-2026)
-- [Snowflake ML Python (v2.3.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

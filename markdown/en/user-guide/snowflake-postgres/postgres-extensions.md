@@ -69,6 +69,7 @@ We currently support PL/PgSQL.
 | Hypopg | Functions | Hypothetical indexes | `CREATE EXTENSION hypopg;` |
 | Incremental | Functions | Incremental batch processing | `CREATE EXTENSION pg_incremental;` |
 | Insert Username | Functions | Will place the current Postgres username in a text field | `CREATE EXTENSION insert_username;` |
+| Insights | Views | Query and workload performance monitoring for Snowflake Postgres instances | `CREATE EXTENSION insights CASCADE;` |
 | Integer Aggregator | Functions | Integer aggregator and enumerator | `CREATE EXTENSION intagg;` |
 | Integer Array | Functions | Sorting and manipulation of integer arrays | `CREATE EXTENSION intarray;` |
 | ISN | Data type | Data type for product numbering (including UPC, ISBN, ISSN) | `CREATE EXTENSION isn;` |

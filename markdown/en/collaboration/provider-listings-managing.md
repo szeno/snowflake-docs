@@ -4,18 +4,43 @@ You might get requests for a listing depending on how you offer your data produc
 
 - You offer a limited trial of a paid listing and consumers request the full data product after a trial.
 - You offer a free listing and choose to manually fulfill your data product in remote regions.
+- You offer a sales-led listing, and consumers select **Contact sales** (or the custom button text you set for the offer) on your listing.
 
-## Review and respond to listing requests
+## Review and respond to requests
 
-To view requests for the data product attached to a listing, do the following:
+All consumer requests appear on the **Requests** page in Provider Studio. The page has two tabs:
+
+- **Contact sales**: Requests from consumers who selected **Contact sales** (or the custom button text you set for the offer) on a sales-led offer.
+- **Listing requests**: Requests for the data product attached to a listing, such as a request for the full data product after a limited trial, or a request for a free listing in a remote region.
+
+To view requests:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Marketplace** » **Provider Studio**.
-3. In the **Listings** section, locate the listing for which you want to view requests.
-4. Select **Consumer Requests** to view requests from consumers.
+2. In the navigation menu, select **Marketplace** » **Provider Studio** » **Requests**.
+3. Select the **Contact sales** tab or the **Listing requests** tab.
 
-   You can review details about the consumer requesting the data product, such as their Snowflake region, company, contact information,
-   and a brief message from the consumer.
+Snowflake also sends email notifications to providers when they get a request.
+
+### Contact sales requests
+
+Note
+
+**Contact sales** requests submitted on or after October 21, 2026 appear on the **Contact sales** tab.
+Earlier requests don’t appear.
+
+Each request on the **Contact sales** tab shows the company that reached out, the listing, and the date of the request.
+
+You can send request notifications to more than one email address by editing your sales-led offer. For
+steps, see
+[Notify your team about Contact sales requests](/user-guide/collaboration/listings/pricing-plans-offers/providers-create-manage-offers#label-contact-sales-request-notifications).
+
+The **Consumer contact email** on your provider profile is included automatically on every sales-led
+offer, so requests reach that address even if you don’t add other recipients.
+
+### Listing requests
+
+On the **Listing requests** tab, you can review details about the consumer requesting the data product, such as their Snowflake region,
+company, contact information, and a brief message from the consumer.
 
 Depending on the type of listing you offer, take next steps:
 
@@ -27,9 +52,6 @@ Depending on the type of listing you offer, take next steps:
 Expand
 
 Show lessSee more
-
-Email notifications are sent to providers to notify them of requests. In Snowsight, you can view them on the **Requests**
-tab in **External sharing** or [Provider Studio](https://app.snowflake.com/#/provider-studio).
 
 ## Fulfill a limited trial request for a full data product
 
@@ -70,23 +92,22 @@ To approve and fulfill listing requests, you must use a role that has been grant
 To approve a request for a data product by a specific consumer:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
-2. In the navigation menu, select **Marketplace** » **Provider Studio**.
-3. Select the listing for which you want to view requests.
-4. For the listing, select **Consumer Requests**.
-5. Select the consumer request that you want to fulfill.
-6. Sign in to the account in the remote region where the consumer is located.
-7. Select the role in that account that has the OWNERSHIP privilege on the share and the shared database objects, or has the necessary
+2. In the navigation menu, select **Marketplace** » **Provider Studio** » **Requests**.
+3. Select the **Listing requests** tab.
+4. Select the consumer request that you want to fulfill.
+5. Sign in to the account in the remote region where the consumer is located.
+6. Select the role in that account that has the OWNERSHIP privilege on the share and the shared database objects, or has the necessary
    privileges on the database objects to be able to add them to a share.
-8. Choose **Select Data**.
-9. If a secure share exists, navigate to the share, and select it. If a share does not exist, navigate to the desired database, and select the
+7. Choose **Select Data**.
+8. If a secure share exists, navigate to the share, and select it. If a share does not exist, navigate to the desired database, and select the
    database objects you want to add to the share.
 
    Note
 
    If you do not see a share, it is either already attached to another listing, or has been previously shared with consumers.
-10. Select **Associate Selected Data** to associate the share in the remote region to this listing.
-11. Select **Done**.
-12. Select **Fulfill Request**.
+9. Select **Associate Selected Data** to associate the share in the remote region to this listing.
+10. Select **Done**.
+11. Select **Fulfill Request**.
 
 The consumer request for that region shows as approved and subsequent consumers in that region can instantly get your data product.
 

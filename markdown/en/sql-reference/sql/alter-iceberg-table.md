@@ -50,6 +50,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
 
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ REPLACE_INVALID_CHARACTERS ]
+  [ PATH_LAYOUT ]
   [ LOG_EVENT_LEVEL ]
   [ ERROR_LOGGING ]
   [ ENABLE_DATA_COMPACTION ]
@@ -277,7 +278,7 @@ Where:
         Default: AUTO
 
     `PATH_LAYOUT = { FLAT | HIERARCHICAL }`
-    :   Specifies the path layout that Snowflake uses when writing Parquet data files to the table. You can set this parameter for an existing table.
+    :   Specifies the path layout that Snowflake uses when writing Parquet data files to the table. You can set this parameter for an existing table. To reset the parameter to the default (`FLAT`), use `UNSET PATH_LAYOUT`.
 
         For more information about this parameter, see [PATH\_LAYOUT](/sql-reference/parameters#label-path-layout).
 

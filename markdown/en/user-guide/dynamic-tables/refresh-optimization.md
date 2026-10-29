@@ -47,6 +47,7 @@ which measures how closely Snowflake stores rows that share the same key values:
 - OUTER JOIN
 - GROUP BY
 - DISTINCT
+- UNION
 - OVER (window functions)
 
 These operators perform well when changes affect fewer than about five percent of grouping or partition keys. If changes spread across many keys or the base tables lack clustering, incremental refresh can be slower than full refresh.
@@ -62,15 +63,16 @@ refresh.
 | WHERE | Evaluates the predicate on changed rows only. | Performs well. Cost scales linearly with changes. A highly selective WHERE might still require warehouse uptime even when the output doesn’t change. |
 | FROM <table> | Scans micro-partitions that Snowflake added or removed since the last refresh. | Cost scales with the volume of changed partitions. Keep changes to about five percent of the base table or less. |
 | UNION ALL | Takes the union of changes from each side. | Performs well. No special considerations. |
+| UNION | Takes the union of the changes from each side but removes duplicate rows across both sides. When the UNION is the top-level operator and the definition has a supported shape, Snowflake reuses the previously computed state. | Move the UNION into its own dynamic table and perform any outer operation such as a join in a downstream dynamic table. |
 | WITH (CTEs) | Computes changes for each Common Table Expression. | Performs well, but avoid overly complex single-table definitions. Consider splitting into multiple dynamic tables. |
 | Scalar aggregates | Fully recalculates the aggregate when any input changes. | Avoid in performance-critical tables. Consider grouping by a constant instead. |
 | GROUP BY | Recalculates aggregates for every grouping key that contains changes. When the GROUP BY is the top-level operator and the definition exposes the grouping keys and aggregates in supported form, Snowflake reuses the previously computed state. | Cluster base tables by grouping keys. Avoid compound expressions in keys. Make the aggregate top-level by splitting dynamic tables if possible. See [Optimize aggregations](#label-dynamic-tables-refresh-optimization-aggregations). |
-| DISTINCT | Equivalent to GROUP BY ALL. | Locality-sensitive. Consider using QUALIFY instead. See [Remove duplicates efficiently](#label-dynamic-tables-refresh-optimization-deduplication). |
+| DISTINCT | Equivalent to GROUP BY ALL. When the DISTINCT is the top-level operator and the definition has a supported shape, Snowflake reuses the previously computed state. | Locality-sensitive. Cluster base tables by the distinct keys. Move the DISTINCT subquery into its own dynamic table and perform any outer operation such as a join in a downstream dynamic table. See [Remove duplicates efficiently](#label-dynamic-tables-refresh-optimization-deduplication). |
 | Window functions | Recalculates the function for every partition that contains changes. | Always include PARTITION BY. Cluster base tables by partition keys. See [Optimize window functions](#label-dynamic-tables-refresh-optimization-windows). |
 | INNER JOIN | Joins changes from each side with the other table. | Performs well when one side is small or changes infrequently. Cluster the less-frequently-changing side. See [Optimize joins](#label-dynamic-tables-refresh-optimization-joins). |
 | OUTER JOIN | Combines inner join logic with NOT EXISTS queries for NULL computation. | Most locality-sensitive operator. See [Optimize joins](#label-dynamic-tables-refresh-optimization-joins). |
 | LATERAL FLATTEN | Applies flatten to changed rows only. | Performs well. Cost scales linearly with changes. |
-| QUALIFY with ranking | Uses an optimized path for ROW\_NUMBER/RANK/DENSE\_RANK … = 1. | Highly efficient when placed at the top-level projection of the dynamic table. See [Remove duplicates efficiently](#label-dynamic-tables-refresh-optimization-deduplication). |
+| QUALIFY with ranking | Uses an optimized path for ROW\_NUMBER/RANK/DENSE\_RANK … = 1. | Highly efficient when placed at the top-level projection of the dynamic table. Include all PARTITION BY and ORDER BY columns in the SELECT list. |
 
 Expand
 
@@ -454,53 +456,87 @@ AS
 
 ### Remove duplicates efficiently
 
-Both [DISTINCT](/sql-reference/sql/select) and [QUALIFY](/sql-reference/constructs/qualify)
-can remove duplicates, but they perform differently with incremental refresh.
+When a DISTINCT appears at the top-level projection of a dynamic table, Snowflake can
+maintain it incrementally by reusing the values already stored in the dynamic table instead
+of recomputing every impacted key from scratch. This optimization is applied automatically
+when the definition meets the requirements listed in this section. Remove redundant DISTINCT
+clauses when your data is already unique or you eliminate duplicates upstream.
 
-**DISTINCT**: Equivalent to `GROUP BY ALL`. Performance depends entirely on data locality.
+For example, the following definitions qualify for this optimization:
 
-**QUALIFY with ROW\_NUMBER = 1**: Snowflake optimizes the pattern
-`QUALIFY ROW_NUMBER() ... = 1` when it appears at the top-level projection of the
-dynamic table.
+- `SELECT DISTINCT customer_id, region FROM dim_customers`
+- `SELECT DISTINCT o.customer_id, c.region FROM raw_orders o JOIN dim_customers c ON o.customer_id = c.customer_id`
 
-Include all PARTITION BY and ORDER BY columns from the OVER() clause in the dynamic table’s SELECT list. This lets the engine track changed partitions without a full table scan.
+The optimization is applied only when a dynamic table is created or recreated. If your
+existing dynamic table already qualifies, recreate it with `CREATE OR REPLACE` to benefit
+from the optimization. `CREATE OR ALTER` is not sufficient.
 
-Use `QUALIFY` when you need the entire row for each key. If you need only one value per
-key, such as the latest `updated_at`, use a top-level `GROUP BY` with `MAX` or `MIN` instead.
-That pattern is eligible for the
-[optimization for top-level aggregates](#label-dynamic-tables-refresh-optimization-top-level-aggregates).
+If a dynamic table does not qualify for this optimization with its current definition, move
+the DISTINCT into its own dynamic table and perform any outer operation such as a join in a
+downstream dynamic table, as shown in the example below.
 
-#### Recommendation: Use QUALIFY instead of DISTINCT
+Note
 
-Using DISTINCT:
+Columns with non-binary collations, `TIMESTAMP_TZ`, and semi-structured `VARIANT`,
+`OBJECT`, or `ARRAY` types are not supported by the optimization because these
+types can have multiple stored representations for the same value.
 
-Copy code
+#### Problem: A join sits above the DISTINCT
 
-```
-CREATE OR REPLACE DYNAMIC TABLE dt_unique_customers
-  TARGET_LAG = '1 hour'
-  WAREHOUSE = transform_wh
-AS
-  SELECT DISTINCT customer_id, customer_name, region
-  FROM dim_customers;
-```
-
-Using QUALIFY (preferred):
+This definition puts the DISTINCT in a subquery and joins a dimension table on top of it,
+so the DISTINCT does not appear at the top-level projection. Snowflake cannot apply
+the optimization:
 
 Copy code
 
 ```
-CREATE OR REPLACE DYNAMIC TABLE dt_unique_customers
+CREATE OR REPLACE DYNAMIC TABLE dt_customer_regions
   TARGET_LAG = '1 hour'
   WAREHOUSE = transform_wh
 AS
-  SELECT customer_id, customer_name, region, segment, updated_at
-  FROM dim_customers
-  QUALIFY ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY updated_at DESC) = 1;
+  SELECT
+    c.region,
+    t.customer_id
+  FROM (
+    SELECT DISTINCT customer_id
+    FROM raw_orders
+  ) t
+  JOIN dim_customers c ON t.customer_id = c.customer_id;
 ```
 
-The QUALIFY version is explicit about which duplicate to keep. Also remove redundant
-DISTINCT clauses when your data is already unique or you eliminate duplicates upstream.
+The join sits above the DISTINCT in the subquery, so the DISTINCT does not appear at the
+top-level projection.
+
+#### Solution: Split the DISTINCT and the join into two dynamic tables
+
+Move the DISTINCT into its own top-level dynamic table, then perform the join in a
+downstream dynamic table that consumes it:
+
+Copy code
+
+```
+CREATE OR REPLACE DYNAMIC TABLE dt_distinct_customers
+  TARGET_LAG = DOWNSTREAM
+  WAREHOUSE = transform_wh
+AS
+  SELECT
+     DISTINCT customer_id
+  FROM raw_orders;
+
+CREATE OR REPLACE DYNAMIC TABLE dt_customer_regions
+  TARGET_LAG = '1 hour'
+  WAREHOUSE = transform_wh
+AS
+  SELECT
+    c.region,
+    s.customer_id
+  FROM dt_distinct_customers s
+  JOIN dim_customers c ON s.customer_id = c.customer_id;
+```
+
+The first dynamic table has the DISTINCT at the top-level projection, so Snowflake can apply
+the optimization. The second dynamic table handles the join and consumes the deduplicated
+results.
 
 ### Limit blocking operators per dynamic table
 

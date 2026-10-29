@@ -42,8 +42,20 @@ Copy code
 ```
 [
   {
+    "credits": 0.247183629,
+    "serviceType": "AI_FUNCTIONS"
+  },
+  {
     "credits": 0.005840921,
     "serviceType": "AUTO_CLUSTERING"
+  },
+  {
+    "credits": 0.508372146,
+    "serviceType": "CORTEX_AGENTS"
+  },
+  {
+    "credits": 0.736491582,
+    "serviceType": "CORTEX_SEARCH"
   },
   {
     "credits": 0.115940725,
@@ -61,7 +73,7 @@ The following table provides descriptions for the key-value pairs in the objects
 | Field | Data type | Description |
 | --- | --- | --- |
 | `credits` | DECIMAL | Number of credits consumed by the service type specified by `serviceType` on the usage date. |
-| `serviceType` | VARCHAR | The service type, which can be one of the following values:   - `AUTO_CLUSTERING` — See [Automatic Clustering](/user-guide/tables-auto-reclustering). - `DATA_QUALITY_MONITORING` — See [Introduction to data quality checks](/user-guide/data-quality-intro). - `MATERIALIZED_VIEW` — See [Working with Materialized Views](/user-guide/views-materialized). - `PIPE` — See [Snowpipe](/user-guide/data-load-snowpipe-intro). - `SEARCH_OPTIMIZATION` — See [Search optimization service](/user-guide/search-optimization-service). - `SERVERLESS_TASK` — See [Introduction to tasks](/user-guide/tasks-intro). - `SNOWPARK_CONTAINER_SERVICES` — See [Snowpark Container Services](/developer-guide/snowpark-container-services/overview). - `WAREHOUSE_METERING` — See [Overview of warehouses](/user-guide/warehouses-overview). |
+| `serviceType` | VARCHAR | The service type, which can be one of the following values:   - `AI_FUNCTIONS` — See [Snowflake Cortex AI Functions (including LLM functions)](/user-guide/snowflake-cortex/aisql). - `AUTO_CLUSTERING` — See [Automatic Clustering](/user-guide/tables-auto-reclustering). - `CORTEX_AGENTS` — See [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents). - `CORTEX_SEARCH` — See [Cortex Search](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview). - `DATA_QUALITY_MONITORING` — See [Introduction to data quality checks](/user-guide/data-quality-intro). - `MATERIALIZED_VIEW` — See [Working with Materialized Views](/user-guide/views-materialized). - `PIPE` — See [Snowpipe](/user-guide/data-load-snowpipe-intro). - `SEARCH_OPTIMIZATION` — See [Search optimization service](/user-guide/search-optimization-service). - `SERVERLESS_TASK` — See [Introduction to tasks](/user-guide/tasks-intro). - `SNOWPARK_CONTAINER_SERVICES` — See [Snowpark Container Services](/developer-guide/snowpark-container-services/overview). - `WAREHOUSE_METERING` — See [Overview of warehouses](/user-guide/warehouses-overview). |
 
 Expand
 
@@ -72,6 +84,7 @@ The following are used in the determination of credit consumption:
 - The credits used by objects in the Snowflake Native App. For example, auto-clustering on tables in the Snowflake Native App.
 - The credits used by the warehouses owned by the Snowflake Native App.
 - The credits used by the compute pools dedicated to the Snowflake Native App.
+- The credits used by Cortex AI Functions that run on warehouses owned by the Snowflake Native App. Cortex AI Functions that run on other warehouses aren’t included, even when the Snowflake Native App calls them.
 
 ### STORAGE\_BYTES\_BREAKDOWN array
 

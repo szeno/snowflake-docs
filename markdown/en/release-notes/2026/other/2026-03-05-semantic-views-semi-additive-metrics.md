@@ -1,4 +1,4 @@
-# Mar 05, 2026: Preventing a semantic view metric from being aggregated across specific dimensions
+# Mar 05, 2026: Excluding dimensions from aggregations of semantic view metrics
 
 If a metric should not be aggregated across specific dimensions, you can now specify those dimensions in the NON ADDITIVE BY
 clause of the [CREATE SEMANTIC VIEW](/sql-reference/sql/create-semantic-view) command.

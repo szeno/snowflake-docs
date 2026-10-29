@@ -39,39 +39,74 @@ push it to Snowflake, and register it. The following steps outline the complete 
 ### Step 1: Authenticate with the image registry
 
 Before pulling the base image or pushing to the Snowflake repository, authenticate the local Docker client with the
-Snowflake image registry using the Snowflake CLI.
+Snowflake image registry using the Snowflake CLI, then get your registry URL.
 
 Copy code
 
 ```
 snow spcs image-registry login
+snow spcs image-registry url
 ```
 
-For more information, see [snow spcs image-registry login](/developer-guide/snowflake-cli/command-reference/spcs/image-registry/login).
+The `url` command prints the host name of your account’s image registry, for example
+`myorg-myacct.registry.snowflakecomputing.com`. The following steps refer to this value as `<registry_url>`.
+
+For more information, see [snow spcs image-registry login](/developer-guide/snowflake-cli/command-reference/spcs-commands/image-registry-commands/login) and
+[snow spcs image-registry url](/developer-guide/snowflake-cli/command-reference/spcs-commands/image-registry-commands/url).
 
 ### Step 2: Select and pull a base image
 
 All custom images must be derived from an official Snowflake ML runtime base image. Base images are specific to the
 hardware type (CPU or GPU) and Python version.
 
-1. Identify the appropriate base image from the [Container Runtime releases](/developer-guide/snowflake-ml/container-runtime/releases).
-2. Pull the base image locally using Docker.
+1. Identify the appropriate base image. To list the base images for the latest Container Runtime version, call
+   the `SYSTEM$GET_LATEST_CONTAINER_RUNTIME_IMAGES` system function:
 
-Copy code
+   Copy code
 
-```
-docker pull <registry_url>/snowflake/images/snowflake_images/container_runtime/cpu_x86_64:2.7.2
-```
+   ```
+   SELECT
+       value:base_image_type::STRING AS base_image_type,
+       value:python_version::STRING AS python_version,
+       value:version::STRING AS version,
+       value:image_path::STRING AS image_path
+     FROM TABLE(FLATTEN(INPUT => PARSE_JSON(SYSTEM$GET_LATEST_CONTAINER_RUNTIME_IMAGES())));
+   ```
+
+   The function returns one entry for each combination of hardware type (`CPU` or `GPU`) and Python version
+   that’s available for the latest runtime version. Choose the row that matches your workload and copy its
+   `image_path` value, for example `/snowflake/images/snowflake_images/container_runtime/cpu_x86_64:<version>`.
+   Any role can call this function; no privileges are required.
+
+   To use an earlier runtime version, see [Container Runtime releases](/developer-guide/snowflake-ml/container-runtime/releases).
+2. Pull the base image locally using Docker. Prefix the `image_path` value with the `<registry_url>` from Step 1.
+
+   Copy code
+
+   ```
+   docker pull <registry_url><image_path>
+   ```
+
+   For example:
+
+   Copy code
+
+   ```
+   docker pull myorg-myacct.registry.snowflakecomputing.com/snowflake/images/snowflake_images/container_runtime/cpu_x86_64:2.10.0
+   ```
 
 ### Step 3: Author the Dockerfile
 
 Create a Dockerfile that uses the selected Snowflake base image. Specify any additional system packages, Python
 libraries, or organizational configuration required for your workloads.
 
+The following example uses the CPU base image for Python 3.10. Replace the registry URL and image path with your
+own values from Steps 1 and 2.
+
 Copy code
 
 ```
-FROM <registry_url>/snowflake/images/snowflake_images/container_runtime/cpu_x86_64:2.7.2
+FROM myorg-myacct.registry.snowflakecomputing.com/snowflake/images/snowflake_images/container_runtime/cpu_x86_64:2.10.0
 
 RUN uv pip install --system --break-system-packages \
     xgboost==2.0.3 \
@@ -143,6 +178,14 @@ Tag the locally built, validated image with the fully qualified URL of the Snowf
    ```
    docker tag my-custom-image:v1 <registry_url>/<database>/<schema>/<image_repo>/my-custom-image:v1
    ```
+
+   For example:
+
+   Copy code
+
+   ```
+   docker tag my-custom-image:v1 myorg-myacct.registry.snowflakecomputing.com/mydb/myschema/my_repo/my-custom-image:v1
+   ```
 2. Push the image:
 
    Copy code
@@ -151,7 +194,13 @@ Tag the locally built, validated image with the fully qualified URL of the Snowf
    docker push <registry_url>/<database>/<schema>/<image_repo>/my-custom-image:v1
    ```
 
-The `registry_url` will look something like `<your_account>.registry.snowflakecomputing.com`.
+   For example:
+
+   Copy code
+
+   ```
+   docker push myorg-myacct.registry.snowflakecomputing.com/mydb/myschema/my_repo/my-custom-image:v1
+   ```
 
 ### Step 7: Create the Custom Runtime Environment
 
@@ -164,6 +213,16 @@ Copy code
 ```
 CREATE CUSTOM RUNTIME ENVIRONMENT my_cre
     IMAGE_PATH = '/<database>/<schema>/<image_repo>/my-custom-image:v1'
+    BASE_IMAGE_TYPE = CPU;
+```
+
+For example:
+
+Copy code
+
+```
+CREATE CUSTOM RUNTIME ENVIRONMENT my_cre
+    IMAGE_PATH = '/mydb/myschema/my_repo/my-custom-image:v1'
     BASE_IMAGE_TYPE = CPU;
 ```
 

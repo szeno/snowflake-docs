@@ -258,12 +258,18 @@ For the supported values of the `log_event_level` property, see
 
 #### `configuration.grant_callback` field
 
-Specifies the schema and name of the callback function for an app with
-containers. The callback function is a stored procedure that can create
-compute pools, services, and perform other setup tasks required by the
-application.
+Specifies the schema and name of a stored procedure that Snowsight calls
+after a consumer grants account-level privileges to an app with containers.
+The procedure can create compute pools, services, and other resources.
 
-This field is required for an app with containers.
+Use this field for an app with `manifest_version: 1` that creates resources
+through the Snowsight privilege-grant flow. The field is optional if the app
+creates resources through another method.
+
+SQL `GRANT` commands and automatic grants with `manifest_version: 2` do not
+invoke this procedure. For version 2, create resources explicitly in the
+setup script or a version initializer. See
+[Create a service in an app](/developer-guide/native-apps/container-services#label-native-apps-container-service-create).
 
 For more information, see [Create a service by using the `grant\_callback` property](/developer-guide/native-apps/container-services#label-native-apps-container-service-grant-callback).
 
@@ -553,7 +559,9 @@ restricted_features:
 
 ## Manifest file example
 
-The following code block is an example of a Snowflake Native App manifest file.
+The following example uses `manifest_version: 2`. The app creates its container
+resources explicitly in the setup script or a version initializer. Automatic
+privilege grants do not invoke `grant_callback`.
 
 Copy code
 
@@ -582,7 +590,6 @@ configuration:
   log_level: INFO
   trace_level: OFF
   metric_level: BASIC
-  grant_callback: my_schema.my_grant_callback
 
 lifecycle_callbacks:
   <callback_name>:

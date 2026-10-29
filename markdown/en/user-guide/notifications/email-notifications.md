@@ -106,3 +106,25 @@ You can call one of the following stored procedures to send an email notificatio
 - [SYSTEM$SEND\_EMAIL](/sql-reference/stored-procedures/system_send_email)
 
   For details, see [Using SYSTEM$SEND\_EMAIL to send email notifications](/user-guide/notifications/email-stored-procedures).
+
+## Send email notifications from scheduled tasks
+
+When a task runs, it uses the privileges of its owner role, not the privileges of the user who created it. Sending an email
+notification works interactively because your current role has access to the notification integration. A scheduled task that
+sends the same email fails unless its owner role has the same access.
+
+To let a task send email notifications, grant the USAGE privilege on the notification integration to the task owner role:
+
+Copy code
+
+```
+GRANT USAGE ON INTEGRATION my_email_int TO ROLE my_task_owner_role;
+```
+
+The task owner role also needs access to the other objects that the task uses, such as:
+
+- The warehouse that runs the task, unless the task is serverless.
+- The database and schema that contain the objects that the task references.
+- Any notebook that the task runs.
+
+For more information about the privileges that tasks require, see [Task security](/user-guide/tasks-intro#label-task-security-reqs).

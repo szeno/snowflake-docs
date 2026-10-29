@@ -272,19 +272,21 @@ Data Type:
 :   Boolean
 
 Description:
-:   Specifies the action that Snowflake performs for in-progress queries if connectivity is lost due to abrupt termination of a session (e.g. network outage, browser termination, service
-    interruption).
+:   Specifies the action that Snowflake performs for in-progress queries if client connectivity is lost (for example, because of a
+    network outage, browser termination, or service interruption).
 
 Values:
-:   `TRUE`: In-progress queries are aborted 5 minutes after connectivity is lost.
+:   `TRUE`: In-progress queries are aborted approximately 5 minutes after client heartbeats are no longer received.
 
-    `FALSE`: In-progress queries are completed.
+    `FALSE`: In-progress queries continue running to completion.
 
 Default:
 :   `FALSE`
 
 Note
 
+- This parameter controls query cancellation only. It doesn’t close or terminate the server-side session. The session remains open
+  and can be reused if the client reconnects.
 - For client drivers, closing the connection from the client side (such as calling `connection.close()`) is different from actually logging out from the Snowflake session. Closing the connection can be associated with cleaning up resources owned by the connection, including but not limited to performing a session logout. Performing a session logout also implies that any queries still running in the same session (for example, queries submitted asynchronously) are canceled after a couple of minutes when the session is logged out, even if the ABORT\_DETACHED\_QUERY parameter is set to `false` (the default value).
 
   Therefore, some Snowflake drivers implement their own business logic to decide whether session logout is performed when the connection is closed.
@@ -4893,7 +4895,7 @@ Description:
     For more information about USER\_TASK\_TIMEOUT\_MS, see [CREATE TASK…USER\_TASK\_TIMEOUT](/sql-reference/sql/create-task#label-create-task-user-task-timeout-ms).
 
 Values:
-:   `0` - `604800000` (7 days). A value of `0` isn’t treated as “no limit”: the task run times out immediately. Specify a value greater than `0`.
+:   `0` - `604800000` (7 days). A value of `0` specifies that the maximum timeout value is enforced.
 
 Default:
 :   `3600000` (1 hour)

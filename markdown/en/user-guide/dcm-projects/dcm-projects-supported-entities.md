@@ -44,6 +44,7 @@ For object types, grants, and attachments still in preview, the completeness of 
 - [Table](#label-dcm-projects-object-type-table)
 - [Tag](#label-dcm-projects-object-type-tag)
 - [Task](#label-dcm-projects-object-type-task)
+- [Task graph](#label-dcm-projects-object-type-task-graph)
 - [View](#label-dcm-projects-object-type-view)
 - [Warehouse](#label-dcm-projects-object-type-warehouse)
 
@@ -83,16 +84,16 @@ information, see [Setting up alerts based on data in Snowflake](/user-guide/aler
 
 Newly deployed alerts are suspended by default.
 
-**Target state:**
+**Desired state:**
 
-You can specify a target state of `STARTED` or `SUSPENDED` for each alert in your definitions. Place the target state keyword
+You can specify a desired state of `STARTED` or `SUSPENDED` for each alert in your definitions. Place the desired state keyword
 immediately before the `IF` keyword in the `DEFINE ALERT` statement. If you define an alert as `STARTED`, Snowflake resumes the
 alert after deployment. This property is independent of other changes to the alert definition. If you define an alert as
 `STARTED` and then suspend it outside of DCM Projects, the next deployment of that same definition starts the alert again.
 
 Note
 
-The target state is a DCM Projects-specific property. It won’t be visible in the DDL of the deployed alert.
+The desired state is a DCM Projects-specific property. It won’t be visible in the DDL of the deployed alert.
 
 Copy code
 
@@ -680,18 +681,21 @@ temporarily, applies the change, and then resumes it again.
 
 Newly deployed tasks are suspended by default.
 
-**Target state:**
+**Desired state:**
 
-You can specify a target state of `STARTED` or `SUSPENDED` for each task in your definitions. Place the target state keyword
+You can specify a desired state of `STARTED` or `SUSPENDED` for each task in your definitions. Place the desired state keyword
 immediately before the `AS` keyword in the `DEFINE TASK` statement. If you define a task as `STARTED`, Snowflake resumes the task
 after deployment. This property is independent of other changes to the task definition. If you define a task as `STARTED` and then
 suspend it outside of DCM Projects, the next deployment of that same definition starts the task again.
 
 DCM Projects handles the dependency resolution between root-task and child-task states.
 
+A task that is a member of a [task graph object](#label-dcm-projects-object-type-task-graph) can’t have its own desired state. For those
+tasks, you set the desired state on the task graph instead.
+
 Note
 
-The target state is a DCM Projects-specific property. It won’t be visible in the DDL of the deployed task.
+The desired state is a DCM Projects-specific property. It won’t be visible in the DDL of the deployed task.
 
 Copy code
 
@@ -713,9 +717,62 @@ AS
   1. Define and deploy the tasks to create the task graph.
   2. Add a `GRANT OWNERSHIP` statement for every task in the graph, and deploy again to transfer ownership to the lower-level role. Ownership
      transfer removes predecessor relationships and detaches child tasks from the graph.
-  3. Deploy again to restore the predecessor relationships and target states from the task definitions.
+  3. Deploy again to restore the predecessor relationships and desired states from the task definitions.
 - `PLAN` only validates that the task can be created successfully. It doesn’t check whether the task will run successfully, as task
   logic is compiled at runtime.
+
+### Task graph
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+DCM Projects supports defining a [task graph](/user-guide/task-graph-object) and its member tasks. A task graph encapsulates the member
+tasks and provides one place for graph-wide settings, including the schedule, overlap policy, retry behavior, and member-task
+defaults. For syntax, see [DEFINE TASK GRAPH](/sql-reference/sql/create-task-graph#label-define-task-graph-syntax).
+
+Define the member tasks with `DEFINE TASK`, using `AFTER` to establish their dependencies. Use `DEFINE TASK GRAPH` to identify the
+root and configure the graph. A task graph has exactly one root.
+
+**Desired state:**
+
+You can set the desired state of the task graph to `STARTED` or `SUSPENDED`. Place the keyword at the end of the `DEFINE TASK GRAPH`
+statement. A member task of a task graph can’t have its own desired state, so don’t specify `STARTED` or `SUSPENDED` in the `DEFINE TASK`
+statements of its members. To set the desired state of a task that isn’t a member of a task graph, see
+[Task](#label-dcm-projects-object-type-task).
+
+Note
+
+The desired state is a DCM Projects-specific property of the task graph. It won’t be visible in the DDL of the deployed task graph.
+
+Copy code
+
+```
+DEFINE TASK MY_DB.MY_SCHEMA.T_ROOT
+AS SELECT 1;
+
+DEFINE TASK MY_DB.MY_SCHEMA.T_TRANSFORM
+  AFTER MY_DB.MY_SCHEMA.T_ROOT
+AS SELECT 2;
+
+DEFINE TASK GRAPH MY_DB.MY_SCHEMA.MY_PIPELINE
+  SCHEDULE = 'USING CRON 0 * * * * UTC'
+  ROOTS = (MY_DB.MY_SCHEMA.T_ROOT)
+  TASK_DEFAULTS (
+    WAREHOUSE = 'MY_WH',
+    LOG_LEVEL = 'INFO'
+  )
+  SUSPENDED
+;
+```
+
+**Limitations:**
+
+- A project can contain both task graphs and root-task-based graphs. A task can move between a root-task-based graph and a task graph only
+  while the graph that contains it is suspended.
+- A single deployment of a task graph can include at most 1,000 tasks and at most 50 roots. Each task graph in a project is deployed
+  separately, so a project can contain two 900-task graphs. A deployment that moves a task from one graph to another applies to both graphs
+  together, and their combined size then counts against the limit.
 
 ### View
 

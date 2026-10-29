@@ -112,6 +112,11 @@ Missing role validation
 Minimum privileges
 :   The provider role committing the `shared_content.yaml` file must have at least the same privileges on shared objects as those being granted to consumers.
 
+No grants to the app
+:   Consumers can’t grant privileges or roles, such as database roles, to an installed Declarative Share.
+    These grants are blocked so that the app can’t access consumer data, even accidentally. For more
+    information, see [Declarative App Consumer-Side Execution Model](/developer-guide/declarative-sharing/consumer/consumer-execution).
+
 No REFERENCE\_USAGE required
 :   Unlike traditional data sharing, providers don’t need to grant REFERENCE\_USAGE privileges to the application package.
 

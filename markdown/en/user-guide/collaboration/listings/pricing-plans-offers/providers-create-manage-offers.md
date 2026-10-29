@@ -424,6 +424,38 @@ SnowsightSQL
      PUBLISH = FALSE;
    ```
 
+## Notify your team about Contact sales requests
+
+For a sales-led offer, **Contact sales** request notifications can go to more than one email address, so
+your sales, partnerships, and alliances teams all get notified at the same time.
+
+**Contact sales** requests submitted on or after October 21, 2026 appear on the **Contact sales** tab
+of the **Requests** page in Provider Studio. Earlier requests don’t appear there. See [Contact sales requests](/collaboration/provider-listings-managing#label-review-contact-sales-requests).
+
+To add recipients for sales-led offer requests:
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. In the navigation menu, select **Marketplace** » **Provider Studio**.
+3. In the right pane, select the **Listings** tab.
+4. Select the listing.
+5. On the **Offers** tab, select the [![More actions for worksheet](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png)](/static/images/snowsight/snowsight-worksheet-vertical-ellipsis.png) button for the sales-led offer, and then select **Edit offer**.
+6. Under **Request form**, add the email addresses.
+
+The **Consumer contact email** on your provider profile is included automatically on every sales-led
+offer, so requests reach that address even if you don’t add other recipients.
+
+To update your **Consumer contact email**:
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. Switch to a role that has the [MODIFY privilege on the profile](/user-guide/data-exchange-marketplace-privileges#label-modify-on-provider-profile).
+3. In the navigation menu, select **Marketplace** » **Provider Studio** » **Profiles**.
+4. Select your profile.
+5. In the **Manage** drop-down menu, select **Update Profile**.
+6. Update the **Consumer contact email**, and then select **Submit for Approval**.
+
+Snowflake reviews the change before it takes effect. For more information, see
+[3. Edit your provider profile](/collaboration/provider-profiles-managing#label-edit-provider-profile).
+
 ## Edit a standard offer
 
 The steps below describe how to edit a standard offer.

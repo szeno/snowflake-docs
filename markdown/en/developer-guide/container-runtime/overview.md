@@ -46,6 +46,12 @@ runs on the Snowflake engine instead of a Spark cluster, with operations compile
 Use Snowpark when you build Snowflake-native pipelines. Use Snowpark Connect when you want Spark-style jobs to run on
 Snowflake without a lift-and-shift rewrite.
 
+## Supported instance families
+
+Starting with Container Runtime 2.10, both x86 and ARM instance families are supported. To learn more about compute
+pool instance families, see
+[Snowpark Container Services: Understanding instance families](/developer-guide/snowpark-container-services/instance-families).
+
 ## Container Runtime lifecycle
 
 Container Runtime versions follow a four-phase lifecycle: Latest, Stable, End of Support, and End of Life. You choose

@@ -72,7 +72,7 @@ Show lessSee more
 - The value in the LAST\_DDL column is updated as follows:
 
   > - When a table or view is created, the LAST\_DDL timestamp is the same as the CREATED timestamp.
-  > - When a table or view is dropped, the LAST\_DDL timestamp is the same as the DELETED timestamp.
+  > - In views that have a DELETED column, when a table or view is dropped, the LAST\_DDL timestamp is the same as the DELETED timestamp.
   > - Last DDL data is not available for operations that occurred before the columns were
   >   [added](/release-notes/bcr-bundles/2023_01/bcr-891). The new DDL fields contain `null` until a DDL operation is executed.
   > - For replicated databases, the LAST\_DDL and LAST\_DDL\_BY fields are only updated for objects in the primary database. After failover, the

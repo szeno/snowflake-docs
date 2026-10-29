@@ -261,9 +261,15 @@ curl -X POST "<endpoint_url>" \
 
 ## Online feature store integration
 
-If you are using [online feature store backed by Snowflake Postgres](/developer-guide/snowflake-ml/feature-store/online-feature-store), you can integrate it with real-time inference
-for automatic feature lookup. This allows the model service to fetch feature values from a registered feature view
-at inference time, reducing the data you need to include in each request.
+If you’re using the [online feature store backed by Snowflake Postgres](/developer-guide/snowflake-ml/feature-store/online-feature-store),
+you can integrate it with real-time inference for automatic feature lookup. The model service fetches
+feature values from a registered [feature view](/developer-guide/snowflake-ml/feature-store/feature-views)
+or [feature group](/developer-guide/snowflake-ml/feature-store/feature-groups) at inference time, so each
+request can send entity keys instead of every feature column.
+
+A feature group bundles one or more feature views into one versioned set. Use a feature group when the
+model needs columns from more than one feature view. Each model method still has one source: either one
+feature view or one feature group.
 
 ### Map a feature view to a model method
 
@@ -303,23 +309,79 @@ mv.create_service(
 The `feature_sources_per_function` parameter maps method names (such as `"predict"`) to a list of registered
 `FeatureView` objects. Currently, only one feature view per function is supported.
 
-### Feature validation
+### Map a feature group to a model method
 
-When you configure feature retrieval, the system validates which features can be fetched from the feature view by
-comparing the feature view’s columns against the model’s signature. Only features that exist in both the feature view
-and the model signature are eligible for automatic lookup.
+Register the feature group before you deploy the service. Every source feature view must already be
+registered with online serving and `OnlineStoreType.POSTGRES`. If two source feature views share a
+join key name, both must use the same Snowpark data type for that column. `register_feature_group`
+checks these constraints.
 
-### Inference requests with feature lookup
-
-To trigger feature lookup at inference time, pass the entity IDs (the join keys defined in the feature view’s entity)
-in your request. Use the same `dataframe_split` or `dataframe_records` format as regular inference requests.
-
-For example, if your feature view uses `USER_ID` as the entity key, include only the entity ID in your request:
+In the following example, `reg_purchases` and `reg_profile` are already
+registered in the online feature store.
 
 Copy code
 
 ```
-# Request with only entity IDs - features are fetched from feature view
+from snowflake.ml.feature_store import FeatureGroup
+
+user_fg = FeatureGroup(
+    name="USER_FG",
+    features=[
+        reg_purchases,
+        reg_profile.slice(["TIER"]).with_name("loyalty"),
+    ],
+    auto_prefix=False,
+    desc="Combined per-user purchase and tier features",
+)
+registered_fg = fs.register_feature_group(user_fg, "v1")
+
+mv.create_service(
+    service_name="myservice",
+    service_compute_pool="my_compute_pool",
+    ingress_enabled=True,
+    feature_sources_per_function={"predict": [registered_fg]},
+)
+```
+
+Pass the object returned by `register_feature_group` or `get_feature_group`. An unregistered feature
+group is rejected.
+
+The model’s input names must match the feature group’s output column names:
+
+- With `auto_prefix=True` (the default), each source feature view’s columns are prefixed with
+  `<fv_name>_<fv_version>_`.
+- With `auto_prefix=False`, columns keep their source names. Use `.with_name(prefix)` on a source
+  when you want a shorter prefix.
+- Join key columns aren’t repeated as feature columns.
+
+For the full naming rules, see [Feature groups](/developer-guide/snowflake-ml/feature-store/feature-groups).
+
+A feature group that includes a real-time feature view with a `RequestSource` needs `request_context`
+when you call `read_feature_group`. Real-time inference lookup sends entity keys only, so use a
+feature group that can be served from those keys. For direct reads that pass request context, see
+[Read a feature group online](/developer-guide/snowflake-ml/feature-store/feature-groups#label-fs-feature-groups-read-online).
+
+### Feature validation
+
+When you configure feature retrieval, Snowflake compares the source columns with the model
+signature. For a feature view, those columns are the feature view’s columns. For a feature group,
+they’re the group’s output columns, including any prefix. Only names that exist in both the source
+and the model signature are fetched automatically. At least one column must overlap, and the source
+must have a primary key.
+
+### Inference requests with feature lookup
+
+To trigger feature lookup at inference time, pass the entity IDs (the join keys defined in the feature view’s entity, or the union of join keys from a feature group’s source feature views)
+in your request. Use the same `dataframe_split` or `dataframe_records` format as regular inference requests.
+
+For a feature view, the join keys are the entity keys on that feature view. For a feature group, the primary key is the union of join keys from the source feature views. Include every key in that union. For more information, see [Primary keys and join behavior](/developer-guide/snowflake-ml/feature-store/feature-groups#label-fs-feature-groups-primary-keys).
+
+If the feature view or feature group uses `USER_ID` as its only join key, include only that column:
+
+Copy code
+
+```
+# Request with only entity IDs. Features are fetched from the feature view or feature group.
 payload = {
     "dataframe_split": {
         "index": [0, 1],
@@ -339,12 +401,13 @@ response = requests.post(
 )
 ```
 
-The model service automatically fetches the missing feature columns from the feature view before invoking the model.
+The model service automatically fetches the missing feature columns from the feature view or feature group before invoking the model.
 
 ### Override feature values
 
-You can override specific feature values by including them in your request. When you pass a feature value in the
-request, that value is used instead of fetching it from the feature view.
+You can override specific feature values by including them in your request. When you pass a feature
+value in the request, that value is used instead of fetching it from the feature view or feature
+group. For a feature group, use the group’s output column name, including any prefix.
 
 Copy code
 
@@ -361,10 +424,11 @@ payload = {
 }
 ```
 
-In this example, `MONTHLY_SPEND` is provided in the request and won’t be fetched from the feature view. Any other
-features required by the model that aren’t in the request are still fetched from the feature view.
+In this example, `MONTHLY_SPEND` is provided in the request and won’t be fetched from the feature view
+or feature group. Any other features required by the model that aren’t in the request are still
+fetched.
 
-To skip feature view lookup entirely, pass all the features required by the model in your request.
+To skip feature lookup entirely, pass all the features required by the model in your request.
 
 ## Passing parameters
 

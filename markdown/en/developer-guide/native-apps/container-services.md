@@ -10,8 +10,8 @@ For information on using a job service in an app, see [Add job services to an ap
 
 ## Privileges required to create a service in the consumer account
 
-In order for an app to create a service in the consumer account, the consumer
-must first grant the following privileges:
+To create a service in the consumer account, an app needs the following
+privileges:
 
 - CREATE COMPUTE POOL
 
@@ -22,6 +22,10 @@ must first grant the following privileges:
   This privilege is required for any service that exposes endpoints. If a service needs
   to make connections to URLs outside of Snowflake, this privilege is required for the
   app to create the required external access integration.
+
+With `manifest_version: 1`, the consumer grants these privileges to the app.
+With `manifest_version: 2`, Snowflake automatically grants these privileges
+when they are requested in the manifest. See [About the manifest file](/developer-guide/native-apps/manifest-overview#label-native-apps-manifest-about).
 
 ## Considerations when creating services within an app
 
@@ -68,6 +72,15 @@ a Snowflake Native App with Snowpark Container Services:
 To create a service in an app, use the [CREATE SERVICE](/sql-reference/sql/create-service) command in the setup
 script. Providers should always consider calling this command from within a stored procedure instead
 of running it directly.
+
+With `manifest_version: 2`, requested privileges that support automatic grants
+are available before the setup script runs. Create the compute pools and
+services explicitly in the setup script, or define a stored procedure and call
+it from the setup script. If the app uses a version initializer, create or
+upgrade services there. See [Use a version initializer to manage service upgrades](/developer-guide/native-apps/update-app-develop#label-native-apps-container-upgrade-version-init).
+
+Make resource creation idempotent so installation retries and upgrades can run
+it again. Automatic privilege grants do not invoke `grant_callback`.
 
 Within an app with containers, services can be created using specification file or by using a
 [specification template](/developer-guide/snowpark-container-services/working-with-services#label-spcs-working-with-services-using-specification-templates).
@@ -123,25 +136,28 @@ account.
 
 ### Create a service by using the `grant_callback` property
 
-`grant_callback` is a property in the manifest file that allows providers to
-specify a callback function. The callback function is a stored procedure that can
-create compute pools, services and perform other setup tasks required by the application.
+For an app with `manifest_version: 1`, use `grant_callback` to specify a stored
+procedure that Snowsight calls after the consumer grants account-level privileges.
+The procedure can create compute pools, services, and other resources.
 
 Note
 
 Using the `grant_callback` property to specify the callback function is only
 supported by Snowflake Native Apps with Snowpark Container Services.
 
-The advantage of specifying a callback function with `grant_callback` is that
-the stored procedure is not called until the consumer grants the required privileges
-to the app. This ensures that the app has the privileges required to create services
-and other objects in the consumer account.
+SQL `GRANT` commands do not invoke the procedure. If the consumer grants
+privileges through SQL, they must call the procedure explicitly after granting
+the required privileges. Automatic grants with `manifest_version: 2` also do
+not invoke the procedure. For version 2, follow
+[Create a service in an app](#label-native-apps-container-service-create) to initialize resources explicitly.
 
 To use `grant_callback`, add it to the `configuration` section of the manifest file:
 
 Copy code
 
 ```
+manifest_version: 1
+
 configuration:
   log_level: INFO
   trace_level: ALWAYS
@@ -170,7 +186,7 @@ Copy code
    END IF;
    IF (ARRAY_CONTAINS('BIND SERVICE ENDPOINT'::VARIANT, privileges)) THEN
       CREATE SERVICE IF NOT EXISTS core.app_service
-       IN COMPUTE POOL my_compute_pool
+       IN COMPUTE POOL app_compute_pool
        FROM SPECIFICATION_FILE = '/containers/service1_spec.yaml';
    END IF;
    RETURN 'DONE';

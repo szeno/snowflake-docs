@@ -4,12 +4,12 @@
 
 Available to all accounts.
 
-Creates, or creates and alters, a [Task Graph Object](/user-guide/task-graph-object) — a first-class database object that encapsulates a set of member tasks and their graph-wide settings.
+Creates a [Task Graph Object](/user-guide/task-graph-object) — a first-class database object that encapsulates a set of member tasks and their graph-wide settings.
 
 This command supports the following variants:
 
-- [sqlsyntax](/sql-reference/sql/create-task-graph#label-create-task-graph-syntax): Creates a new task graph object.
 - [CREATE OR ALTER TASK GRAPH](#label-create-or-alter-task-graph-syntax): Creates the task graph if it doesn’t exist, or alters an existing one to match the statement.
+- [DEFINE TASK GRAPH](#label-define-task-graph-syntax): Declarative definition of a task graph, including its desired state, inside a DCM project.
 
 See also:
 :   [ALTER TASK GRAPH](/sql-reference/sql/alter-task-graph), [DROP TASK GRAPH](/sql-reference/sql/drop-task-graph), [EXECUTE TASK GRAPH](/sql-reference/sql/execute-task-graph), [SHOW TASK GRAPHS](/sql-reference/sql/show-task-graphs), [DESCRIBE TASK GRAPH](/sql-reference/sql/desc-task-graph)
@@ -71,6 +71,19 @@ CREATE OR ALTER TASK GRAPH <name>
 Note
 
 `CREATE OR ALTER TASK GRAPH` does not resume or suspend a graph. Use [ALTER TASK GRAPH](/sql-reference/sql/alter-task-graph) for lifecycle management.
+
+### DEFINE TASK GRAPH
+
+DCM Projects uses `DEFINE TASK GRAPH` statements to create and manage task graphs declaratively inside a DCM project. A `DEFINE TASK GRAPH`
+statement uses the same syntax as [CREATE OR ALTER TASK GRAPH](#label-create-or-alter-task-graph-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`.
+You can use `DEFINE TASK GRAPH` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Task graph](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task-graph).
+
+`DEFINE TASK GRAPH` also accepts a `STARTED` or `SUSPENDED` keyword that isn’t part of `CREATE OR ALTER TASK GRAPH` syntax. The keyword
+sets the desired state of the task graph as a whole. A task that is a member of a task graph can’t have its own desired state. A standalone
+[DEFINE TASK](/sql-reference/sql/create-task#label-define-task-syntax) statement can set `STARTED` or `SUSPENDED` for a task that isn’t a
+member of a task graph.
 
 ## Parameters
 

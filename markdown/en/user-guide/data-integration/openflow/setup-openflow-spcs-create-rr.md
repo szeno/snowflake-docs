@@ -119,6 +119,10 @@ ones.
    Note
 
    For a private connection, use `TYPE = PRIVATE_HOST_PORT` and include the port explicitly. The hostname depends on the source and private connectivity configuration. For SQL Server through a customer-managed Azure Private Link Service, see [Azure Private Link Service for SQL Server](/user-guide/data-integration/openflow/connectors/sql-server/setup#label-sql-server-azure-privatelink).
+
+   Note
+
+   If the source is behind an AWS Network Load Balancer that spans multiple Availability Zones and connections to some or all ports time out, verify that every listener’s target group has healthy targets in each enabled Availability Zone, or consider enabling [cross-zone load balancing](https://docs.aws.amazon.com/elasticloadbalancing/latest/network/network-load-balancers.html#cross-zone-load-balancing). Cross-zone load balancing is disabled by default at the load balancer level and can incur inter-Availability Zone data transfer charges.
 2. Create an external access integration, or add the network rule to an existing one.
    See [CREATE EXTERNAL ACCESS INTEGRATION](/sql-reference/sql/create-external-access-integration) for more information.
 

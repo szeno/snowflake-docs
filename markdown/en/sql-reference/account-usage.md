@@ -83,13 +83,18 @@ ranging from 7 days to 6 months, depending on the view.
 
 ## ACCOUNT\_USAGE views
 
-The ACCOUNT\_USAGE schema contains the following views:
+The ACCOUNT\_USAGE schema contains the following views. The **Type** column identifies each view as one of the following types:
+
+- **Object**: The view displays metadata for objects of a given type in your account, such as databases, pipes, or policies. These
+  views include records for dropped objects. For more information, see [Dropped object records](#dropped-object-records).
+- **Historical**: The view displays records of activity and usage in your account over time, such as queries, logins, and warehouse
+  credit usage. For the retention period of these records, see [Historical data retention](#historical-data-retention).
 
 | View | Type | Latency [1] | Edition [3] | Notes |
 | --- | --- | --- | --- | --- |
 | [ACCESS\_HISTORY](/sql-reference/account-usage/access_history) | Historical | 3 hours | Enterprise Edition (or higher) | Data retained for 1 year. |
 | [AGGREGATE\_ACCESS\_HISTORY](/sql-reference/account-usage/aggregate_access_history) | Historical | 3 hours | Enterprise Edition (or higher) | Data retained for 1 year. |
-| [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) | Historical | 3 hours |  |  |
+| [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [AGGREGATION\_POLICIES](/sql-reference/account-usage/aggregation_policies) | Object | 2 hours |  |  |
 | [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/account-usage/ai_gateway_usage_history) | Historical |  |  | Data retained for 1 year. |
 | [ALERT\_HISTORY](/sql-reference/account-usage/alert_history) | Historical | 3 hours |  | Data retained for 1 year. |
@@ -172,7 +177,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [INDEX\_COLUMNS](/sql-reference/account-usage/index_columns) | Object | 3 hours |  |  |
 | [INDEXES](/sql-reference/account-usage/indexes) | Object | 3 hours |  |  |
 | [INGRESS\_NETWORK\_ACCESS\_HISTORY](/sql-reference/account-usage/ingress_network_access_history) | Historical | 4 hours |  | Data retained for 1 year. |
-| [INTERNAL\_DATA\_TRANSFER\_HISTORY](/sql-reference/account-usage/internal_data_transfer_history) | Historical | 3 hours |  |  |
+| [INTERNAL\_DATA\_TRANSFER\_HISTORY](/sql-reference/account-usage/internal_data_transfer_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [INTERNAL\_STAGE\_NETWORK\_ACCESS\_HISTORY](/sql-reference/account-usage/internal_stage_network_access_history) | Historical | 6 hours |  | Data retained for 1 year. |
 | [JOIN\_POLICIES](/sql-reference/account-usage/join_policies) | Object | 2 hours |  |  |
 | [LISTINGS](/sql-reference/account-usage/listings) | Object | 3 hours |  |  |
@@ -190,8 +195,8 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [NOTEBOOKS\_CONTAINER\_RUNTIME\_HISTORY](/sql-reference/account-usage/notebooks_container_runtime_history) | Historical | 3 hours |  |  |
 | [OBJECT\_ACCESS\_REQUEST\_HISTORY](/sql-reference/account-usage/object_access_request_history) | Historical | 3 hours |  |  |
 | [OBJECT\_DEPENDENCIES](/sql-reference/account-usage/object_dependencies) | Historical | 3 hours |  |  |
-| [ONLINE\_FEATURE\_TABLE\_REFRESH\_HISTORY](/sql-reference/account-usage/online_feature_table_refresh_history) | Historical | 3 hours |  |  |
-| [OPENFLOW\_USAGE\_HISTORY](/sql-reference/account-usage/openflow_usage_history) | Historical | 3 hours |  |  |
+| [ONLINE\_FEATURE\_TABLE\_REFRESH\_HISTORY](/sql-reference/account-usage/online_feature_table_refresh_history) | Historical | 3 hours |  | Data retained for 1 year. |
+| [OPENFLOW\_USAGE\_HISTORY](/sql-reference/account-usage/openflow_usage_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [OUTBOUND\_PRIVATELINK\_ENDPOINTS](/sql-reference/account-usage/outbound_privatelink_endpoints) | Object | 2 hours | Business Critical (or higher) | Data for deleted endpoints is retained for 1 year. |
 | [PASSWORD\_POLICIES](/sql-reference/account-usage/password_policies) | Object | 2 hours |  |  |
 | [PIPES](/sql-reference/account-usage/pipes) | Object | 2 hours |  |  |
@@ -262,7 +267,7 @@ The ACCOUNT\_USAGE schema contains the following views:
 | [TABLE\_STORAGE\_METRICS](/sql-reference/account-usage/table_storage_metrics) | Object | 90 minutes |  |  |
 | [TAG\_REFERENCES](/sql-reference/account-usage/tag_references) | Object | 2 hours |  |  |
 | [TAGS](/sql-reference/account-usage/tags) | Object | 2 hours |  |  |
-| [TASK\_HISTORY](/sql-reference/account-usage/task_history) | Historical | 45 minutes |  |  |
+| [TASK\_HISTORY](/sql-reference/account-usage/task_history) | Historical | 45 minutes |  | Data retained for 1 year. |
 | [TASK\_VERSIONS](/sql-reference/account-usage/task_versions) | Object | 3 hours |  |  |
 | [TRI\_SECRET\_SECURE\_HISTORY](/sql-reference/account-usage/tri-secret-secure-history) | Historical | 2 hours |  |  |
 | [TRUST\_CENTER\_FINDINGS](/sql-reference/account-usage/trust_center_findings) | Historical | 1 hour |  |  |

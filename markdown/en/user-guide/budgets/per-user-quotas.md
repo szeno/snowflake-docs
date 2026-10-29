@@ -567,6 +567,10 @@ You can also review enforcement in Snowsight using the **Enforcement breakdown**
 
 You can also view a list of all blocked users across quotas from the ACCOUNT\_USAGE.QUOTA\_ACCESS\_BLOCK\_HISTORY view.
 
+Individual users can check whether they’re currently blocked by calling
+[MY\_BUDGET\_SUMMARY (SNOWFLAKE.LOCAL)](/sql-reference/functions/my_budget_summary-snowflake-local). For more information, see
+[Check your quota usage](#label-per-user-quota-check-quota-usage).
+
 Note
 
 `GET_CONFIG` includes the `BLOCK_ENFORCEMENT_ENABLED`, `PER_USER_LIMIT_WEEKLY`, and
@@ -1008,6 +1012,24 @@ Note
 The date range must fall in either the current month or the prior calendar month for data to
 be returned. Dates before the prior month do not return any results.
 
+## Check your quota usage
+
+Any user can check their quotas by calling the
+[MY\_BUDGET\_SUMMARY (SNOWFLAKE.LOCAL)](/sql-reference/functions/my_budget_summary-snowflake-local) table function. The function
+returns only the calling user’s information, so users don’t need privileges on the quota or on the
+`ACCOUNT_USAGE` schema, and administrators don’t need to grant any additional access. Users can run the query from any SQL
+client, including Snowsight worksheets:
+
+Copy code
+
+```
+SELECT * FROM TABLE(SNOWFLAKE.LOCAL.MY_BUDGET_SUMMARY());
+```
+
+The function returns one row for each of the user’s quotas and each cycle that has a per-user limit. Each
+row shows the user’s usage, the per-user limit, the percentage consumed, the start and end of the
+current cycle, whether the quota blocks users at the limit, and whether the user is currently blocked.
+
 ## Monitor quota events
 
 Quota-related operational events are recorded in the Snowflake Event Table, providing
@@ -1148,6 +1170,7 @@ Show lessSee more
 | Method | Description |
 | --- | --- |
 | `GET_SPENDING_DETAILS_BY_USERS('<start>', '<end>')` | Return finalized per-user usage for a date range. See [View user spending](#label-per-user-quota-view-spending). |
+| `SNOWFLAKE.LOCAL.MY_BUDGET_SUMMARY()` | Return the calling user’s limits, usage, and block status for each of their quotas. Any user can call it. See [Check your quota usage](#label-per-user-quota-check-quota-usage). |
 
 Expand
 
@@ -1325,3 +1348,4 @@ For more information about the Cost Intelligence skill, see
 - [Custom actions for budgets](/user-guide/budgets/custom-actions)
 - [Cycle-start actions for budgets](/user-guide/budgets/cycle-start-actions)
 - [Budgets roles and privileges](/user-guide/cost-access-control)
+- [MY\_BUDGET\_SUMMARY (SNOWFLAKE.LOCAL)](/sql-reference/functions/my_budget_summary-snowflake-local)

@@ -99,8 +99,11 @@ The term “view” generically refers to all types of views; however, the term 
 views.
 
 A view is basically a named definition of a query. A non-materialized view’s results are created by executing the query at the
-time that the view is referenced in a query. The results are not stored for future use. Performance is slower than with materialized
-views. Non-materialized views are the most common type of view.
+time that the view is referenced in a query. The view itself doesn’t store the results, but Snowflake can reuse the results of a
+previously run query; for more information, see [Using Persisted Query Results](/user-guide/querying-persisted-results). Querying a
+[materialized view](/user-guide/views-materialized) can be faster than querying a non-materialized view, because a materialized
+view’s results are pre-computed. This performance difference can be significant when the view’s query is run frequently or is
+sufficiently complex. Non-materialized views are the most common type of view.
 
 Any query expression that returns a valid result can be used to create a non-materialized view, such as:
 
@@ -281,3 +284,8 @@ For more details, see [Working with Materialized Views](/user-guide/views-materi
   ```
 - Changes to a table are not automatically propagated to views created on that table. For example, if you drop a column in a table, the
   views on that table might become invalid.
+
+  Snowflake resolves the tables and columns that a view definition references each time the view is queried. As a result, if you change
+  the table back so that it matches the view definition again, you don’t need to recreate the view. For example, if you drop a column and
+  then add a column with the same name back to the table, or you drop the table and then create a new table with the same name and
+  columns, queries on the view succeed again.

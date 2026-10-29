@@ -5,7 +5,7 @@ Creates a new [alert](/user-guide/alerts) in the current schema.
 This command supports the following variants:
 
 - [CREATE OR ALTER ALERT](#label-create-or-alter-alert-syntax): Creates an alert if it doesn’t exist or alters an existing alert.
-- [DEFINE ALERT](#label-define-alert-syntax): Declarative definition of an alert’s target state inside a DCM project.
+- [DEFINE ALERT](#label-define-alert-syntax): Declarative definition of an alert, including its desired state, inside a DCM project.
 - [CREATE ALERT … CLONE](#label-create-alert-clone-syntax): Creates a clone of an existing alert.
 - [CREATE ALERT … FROM TEMPLATE](#label-create-alert-from-template-syntax): Creates an alert from an alert template.
 
@@ -75,7 +75,7 @@ place of `CREATE OR ALTER`.
 You can use `DEFINE ALERT` only inside DCM project definition files, not as standalone SQL.
 To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-projects/dcm-projects-overview).
 
-`DEFINE ALERT` also accepts a `STARTED` or `SUSPENDED` target state keyword that isn’t part of `CREATE OR ALTER ALERT`
+`DEFINE ALERT` also accepts a `STARTED` or `SUSPENDED` desired state keyword that isn’t part of `CREATE OR ALTER ALERT`
 syntax. Place the keyword immediately before `IF`:
 
 Copy code
@@ -95,7 +95,7 @@ DEFINE ALERT MY_DB.MY_SCHEMA.ALRT_CHECK_ORDER_VOLUME
 ;
 ```
 
-The target state doesn’t appear in the alert’s DDL after deployment.
+The desired state doesn’t appear in the alert’s DDL after deployment.
 
 ### CREATE ALERT … CLONE
 

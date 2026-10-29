@@ -199,7 +199,7 @@ Ray Data provides scalable, distributed data processing for ML workloads. It can
 
 Note
 
-Snowflake offers a native integration to transform any Snowflake data source to Ray Data. For more information, see the Data Connector and Ray Data Ingestion pages.
+Snowflake offers a native integration to transform any Snowflake data source to Ray Data. For more information, see [Load structured data from Snowflake tables](/developer-guide/snowflake-ml/load-data#label-load-data-from-snowflake-tables) and [Load unstructured data from Snowflake stages](/developer-guide/snowflake-ml/load-data#label-load-data-from-snowflake-stages).
 
 Use Ray Data for:
 
