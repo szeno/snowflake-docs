@@ -757,8 +757,17 @@ time. Any additional configured parameters are passed after the list of user IDs
 
 Note
 
-Stored procedures used as custom actions must use `EXECUTE AS OWNER` and must be granted
-`USAGE` to the `SNOWFLAKE` application before they can be registered.
+Stored procedures used as custom actions must use `EXECUTE AS OWNER`. Before you can register a stored
+procedure, the `SNOWFLAKE` application must be granted the `USAGE` privilege on the stored procedure and on the
+database and schema that contain it. For example, for `cost_mgmt_db.actions.disable_user_proc(VARCHAR)`:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE cost_mgmt_db TO APPLICATION SNOWFLAKE;
+GRANT USAGE ON SCHEMA cost_mgmt_db.actions TO APPLICATION SNOWFLAKE;
+GRANT USAGE ON PROCEDURE cost_mgmt_db.actions.disable_user_proc(VARCHAR) TO APPLICATION SNOWFLAKE;
+```
 
 Add a custom action at a specified threshold:
 

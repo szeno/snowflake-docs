@@ -110,15 +110,17 @@ to create the service user.
    connector (for example, for custom processing in Snowflake), grant those users the execute-as
    role.
 
-### Grant the privilege to create a pipe
+### Grant the privileges to create pipes and streams
 
 The connector uses Snowpipe Streaming with high-performance architecture, which requires a `PIPE`
-object. Grant the additional privilege needed to create it:
+object. The connector also creates a stream on each staging table that it loads. Grant the additional
+privileges needed to create these objects:
 
 Copy code
 
 ```
 GRANT CREATE PIPE ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
+GRANT CREATE STREAM ON SCHEMA <destination_database>.<destination_schema> TO ROLE OPENFLOW_<RUNTIME_NAME>_EXECUTE_AS_RL;
 ```
 
 ## Install the connector

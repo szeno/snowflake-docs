@@ -10,6 +10,29 @@ Snowflake uses semantic versioning for Snowflake Connector for Kafka updates.
 
 See [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) for documentation.
 
+## Version 3.5.6 (Oct 28, 2026)
+
+### Bug fixes
+
+- Updated Jackson to version 2.18.12, Guava to version 33.7.2, httpclient5 to version 5.6.5,
+  and httpcore5 to version 5.4.4 to address security findings.
+- Excluded snappy-java from the Confluent build to address security findings.
+- Upgraded the Snowflake JDBC driver to version 3.28.0 so key-pair authentication honors
+  `loginTimeout` when Snowflake returns HTTP 503.
+
+## Version 3.5.5 (Oct 26, 2026)
+
+### New features
+
+- Upgraded Snowflake Ingest SDK to version 4.4.6.
+
+## Version 4.2.3 (Oct 23, 2026)
+
+### Bug fixes
+
+- Upgraded the Snowpipe Streaming SDK to version 1.9.1 to address CVE-2026-111943.
+- Accepted DATE and TIMESTAMP values that end with `Z`, such as `2026-10-23Z`.
+
 ## Version 4.2.2 (Oct 12, 2026)
 
 ### New features

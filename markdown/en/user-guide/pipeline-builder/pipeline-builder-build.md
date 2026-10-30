@@ -357,8 +357,7 @@ definitions:
 
 ## Use CoCo to build a pipeline
 
-CoCo for Pipeline Builder is coming soon. When it’s available, [CoCo](/user-guide/cortex-code/cortex-code) can create or change a
-pipeline for you:
+[CoCo](/user-guide/cortex-code/cortex-code) can create or change a pipeline for you:
 
 - To create a pipeline, select **Generate with Cortex** in the **Create Pipeline Builder** dialog. Describe the pipeline in the **Prompt**
   field, including the order the steps run in, the schedule, and dependencies, and then select **Generate**.

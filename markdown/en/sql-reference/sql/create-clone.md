@@ -83,6 +83,7 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <name>
   CLONE <source_iceberg_table>
     [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]
     [ COPY GRANTS ]
+    [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
     ...
 ```
 
@@ -245,6 +246,10 @@ To create a clone, your current role must have the following privilege(s) on the
   - If the COPY GRANTS parameter is not used, then the new object clone does not inherit any explicit access privileges granted on
     the original table but does inherit any future grants defined for the object type in the schema (using the
     [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege) … ON FUTURE syntax).
+  - You can also copy grants with the `COPY = ( GRANTS )` parameter. For tables, views, dynamic tables, and
+    Snowflake-managed Apache Iceberg™ tables, `COPY = ( ... )` can also carry over comments and tags from an object being
+    replaced. For more information, see
+    [COPY = ( … )](/sql-reference/sql/create-table#label-create-table-copy-property).
 
   Note
 

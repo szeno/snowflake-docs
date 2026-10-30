@@ -99,6 +99,7 @@ service types in the Account Usage [METERING\_HISTORY view](/sql-reference/accou
 | SERVERLESS\_TASK | ✔ | ✔ | Task |
 | SNOWPARK\_CONTAINER\_SERVICES | ✔ | ✔ | Compute pool |
 | SNOWPIPE\_STREAMING | ✔ | ✔ | Table |
+| TELEMETRY\_DATA\_INGEST | ✔ | ✔ | Event table (by tag only) |
 | WAREHOUSE\_METERING | ✔ | ✔ | Warehouse |
 
 Expand

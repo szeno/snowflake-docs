@@ -26,6 +26,7 @@ CREATE [ OR REPLACE ] [ SECURE ] [ { [ { LOCAL | GLOBAL } ] TEMP | TEMPORARY | V
   [ CHANGE_TRACKING = { TRUE | FALSE } ]
   [ COPY GRANTS ]
   [ COPY TAGS ]
+  [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , <col_name> ... ] ) ] ]
@@ -184,6 +185,8 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
 
     Default: No value (grants are not copied)
 
+    You can also copy grants with the [`COPY = ( GRANTS )`](/sql-reference/sql/create-view#label-create-view-copy-property) parameter.
+
 `COPY TAGS`
 :   Applies [tags](/user-guide/object-tagging/introduction) when you use CREATE OR REPLACE VIEW.
 
@@ -194,6 +197,35 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
     the same tag, the value from the replaced view (carried over by COPY TAGS) takes precedence.
 
     For more information, see [the usage notes for COPY TAGS](/sql-reference/sql/create-view#label-create-view-usage-notes-copy-tags).
+
+    You can also retain tags with the [`COPY = ( TAGS )`](/sql-reference/sql/create-view#label-create-view-copy-property) parameter.
+
+`COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )`
+:   Names the kinds of metadata to carry over from the view being replaced onto the new view. Specify one or more kinds,
+    separated by commas. The parentheses are required.
+
+    | Kind | Carried over |
+    | --- | --- |
+    | `COMMENTS` | The view comment and the column comments of the replaced view. |
+    | `TAGS` | The tags of the replaced view and its columns. Equivalent to [COPY TAGS](/sql-reference/sql/create-view#label-create-view-copy-tags). |
+    | `GRANTS` | The access privileges on the replaced view, except `OWNERSHIP`. Equivalent to [COPY GRANTS](/sql-reference/sql/create-view#label-create-view-copy-grants). |
+
+    Expand
+
+    Show lessSee more
+
+    All three kinds require `OR REPLACE`.
+
+    A column comment is carried over only when the new view defines a column with the same name and the same data type.
+    Column order doesn’t matter. A column that is added, dropped, renamed, or retyped isn’t matched, so it doesn’t receive a
+    comment. The view comment is carried over independently of whether any column matches.
+
+    When the replaced view has a comment, that comment takes precedence over an inline `COMMENT` the statement specifies. An empty
+    string counts as a comment. When the replaced view has no comment, or a matching column has none, the comment produced by the
+    statement is kept.
+
+    You can combine the `COPY = ( ... )` parameter with the `COPY GRANTS` and `COPY TAGS` parameters in the same statement.
+    Specifying the same kind both ways has no additional effect.
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the view.

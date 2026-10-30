@@ -1,5 +1,84 @@
 # DCM Projects for data pipelines
 
+DCM Projects help address the following challenges that feature teams often encounter:
+
+![Challenges for feature teams](/static/images/dcm-projects/challenges_feature_teams.png)
+
+Business units that want to easily author and manage their data pipelines can use DCM Projects to define, test, deploy, and iterate over
+their business logic.
+
+You can:
+
+- Manage Snowflake object types like tables, dynamic tables, views, warehouses, roles, grants, data metric functions, and expectations all in one project.
+- Test and deploy incremental changes to pipelines. You can change configurations, implement transformation logic, and add columns and views.
+- Preview data samples to validate transformation logic before deploying objects.
+- Deploy the same pipeline definition to multiple environments.
+
+For step-by-step examples, see the following developer guides:
+
+- [Build data pipelines with Snowflake DCM Projects](https://www.snowflake.com/en/developers/guides/build-data-pipelines-with-snowflake-dcm-projects/)
+- [DCM Projects for dynamic tables](https://www.snowflake.com/en/developers/guides/dcm-projects-for-dynamic-tables/)
+- [DCM Projects for tasks](https://www.snowflake.com/en/developers/guides/dcm-projects-for-tasks/)
+
+## Pipelines that combine multiple object types
+
+A single DCM project can define a pipeline that spans ingestion, transformation, orchestration, and the semantic layer, so you can
+plan and deploy all of its objects together:
+
+- **Ingestion:** Define [pipes](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-pipe) to load data
+  and [streams](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-stream) to capture changes.
+- **Declarative transformation:** Define
+  [dynamic tables](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-dynamic-table) and views.
+- **Orchestration:** Define [tasks](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task) and task
+  graphs that schedule and run the following:
+  - [Procedures](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-procedure).
+  - [Code Bundles](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle) (preview), which
+    package notebooks and other non-SQL code that the DCM project defines and deploys.
+  - dbt models or entire dbt projects, by running [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
+  - Manual refreshes of dynamic tables.
+- **Semantic layer:** Define
+  [semantic views](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-semantic-view) on top of the
+  transformed data.
+
+## Pipeline Builder
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+[Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-overview) is a visual, AI-assisted designer in Workspaces for
+defining the scheduling and orchestration of data pipelines. You add notebooks, Python files, ML Jobs, and SQL to a canvas, connect
+them to set the order they run in, and configure schedules and compute. Pipeline Builder then generates the tasks, task graphs, and
+Code Bundles for you.
+
+Each pipeline that you build in Pipeline Builder is a DCM project, so you can start with Pipeline Builder to simplify creating and
+configuring the project, and then switch to the DCM Projects interface to extend and configure the same project manually. For example, you
+can add dynamic tables, views, schemas, warehouses, roles, grants, procedures, or functions to the project’s definition files, and then
+plan and deploy all objects together.
+
+### How Pipeline Builder definitions coexist with SQL definitions
+
+Pipeline Builder writes the pipeline to a dedicated YAML definition file inside the `sources/definitions/` folder of the project, and it
+maintains that file as you edit the canvas. This YAML file can complement any other SQL definition files in the project, whether they
+existed before or you add them later. The YAML file and the SQL definition files can’t overlap: each object must be defined in exactly one
+place, so you can’t define the same object in both the Pipeline Builder YAML file and a SQL definition file.
+
+Pipeline Builder only renders the tasks and task graphs that are defined in its YAML file. If you open an existing DCM project in
+Pipeline Builder, tasks and scheduling dependencies that are defined in SQL definition files don’t appear on the canvas.
+
+For details about building and deploying pipelines, see [Build and configure pipelines with Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-build) and
+[Deploy, run, and monitor pipelines](/user-guide/pipeline-builder/pipeline-builder-deploy).
+
+## Recommendations for pipeline objects
+
+- **Dynamic tables:** Define dynamic tables with `INITIALIZE = ON_SCHEDULE` rather than `INITIALIZE = ON_CREATE`. With `ON_CREATE`, each
+  new dynamic table is initialized during deployment, which can significantly prolong the deployment.
+- **Tasks and task graphs:** Specify the target state of each task as `STARTED` or `SUSPENDED` in its definition. Newly deployed tasks
+  are suspended by default, so tasks that should run on their schedule after deployment need the `STARTED` target state. For details,
+  see [Task](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task).
+
+## Pipeline-specific commands
+
 DCM Projects provide a full-lifecycle developer experience that includes capabilities tailored to managing data pipelines.
 
 The pipeline-specific commands don’t apply to all object types. They extend the core commands for the following pipeline use cases:
@@ -7,7 +86,7 @@ The pipeline-specific commands don’t apply to all object types. They extend th
 - [TEST command for data quality expectations](#label-dcm-projects-pipelines-test) attached to managed objects.
 - [PREVIEW command](#label-dcm-projects-pipelines-preview) for checking sample output from a dynamic table, view, or table before deploying.
 
-## TEST command for data quality expectations
+### TEST command for data quality expectations
 
 [Preview Feature](/release-notes/preview-features) — Open
 
@@ -64,7 +143,7 @@ snow dcm test --target STAGE --save-output
 For the TEST ALL output format, including the JSON schema and examples, see the
 [TEST ALL output](/sql-reference/sql/execute-dcm-project#label-dcm-projects-test-output) section of the [EXECUTE DCM PROJECT](/sql-reference/sql/execute-dcm-project) command reference.
 
-## PREVIEW command
+### PREVIEW command
 
 [Preview Feature](/release-notes/preview-features) — Open
 

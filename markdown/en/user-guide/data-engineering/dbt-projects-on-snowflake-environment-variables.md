@@ -1,4 +1,4 @@
-# Use SQL environment variables in dbt Projects on Snowflake
+# Use SQL environment variables and private Git packages
 
 Environment variables have been part of dbt Core for years, but managing them at scale has always meant stitching together `.env` files across a growing team of engineers. These files live on individual machines, drift out of sync, and can’t be reviewed or audited. The dbt Projects on Snowflake `env.yml` is a single, Git-versioned file that provides SQL in YAML capabilities alongside Snowflake secrets support to let admins manage per-developer schemas, dynamic runtime values, secrets, and CI/CD configurations in one place, unlocking workflows dbt Core can’t offer on its own.
 

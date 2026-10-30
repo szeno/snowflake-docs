@@ -241,9 +241,7 @@ Copy code
 
 ```
 SELECT ...
-  FROM [ <input_table> [ [AS] <alias_1> ] ,
-         [ LATERAL ]
-       ]
+  FROM [ <input_table> [ [AS] <alias_1> ] , ]
        TABLE( <table_function>( [ <arg_1> [, ... ] ] ) ) [ [ AS ] <alias_2> ];
 ```
 
@@ -251,7 +249,11 @@ For function-specific syntax, see the documentation for the individual system-de
 
 ## Usage notes
 
-- Table functions can also be applied to a set of rows using the LATERAL construct.
+- A `TABLE()` call in the FROM clause can already reference columns from table expressions earlier in the same FROM
+  clause (for example, to call a table function once for each row of a preceding table), so you don’t need the LATERAL
+  keyword for this. If you want to use LATERAL explicitly, wrap the `TABLE()` call in a subquery:
+  `LATERAL (SELECT * FROM TABLE(...))`. For an example, see
+  [LATERAL](/sql-reference/constructs/join-lateral).
 - To enable using table expressions, Snowflake supports ANSI/ISO standard syntax for table expressions in the [FROM](/sql-reference/constructs/from) clause of queries and subqueries. This syntax is used to
   indicate that an expression returns a collection of rows instead of a single row.
 - This ANSI/ISO syntax is valid only in the [FROM](/sql-reference/constructs/from) clause of the [SELECT](/sql-reference/sql/select) list. You cannot omit these keywords and parentheses from a

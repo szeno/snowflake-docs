@@ -18,7 +18,8 @@ Copy code
 CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
   COMPUTE_FAMILY = '<compute_family>'
   STORAGE_SIZE_GB = <storage_gb>
-  AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }
+  AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH }
+  [ AUTHENTICATION_PROPERTIES = ( <authentication_properties> ) ]
   [ POSTGRES_VERSION = { 16 | 17 | 18 } ]
   [ NETWORK_POLICY = '<network_policy>' ]
   [ HIGH_AVAILABILITY = { TRUE | FALSE } ]
@@ -87,10 +88,15 @@ CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
     at least 1.4x the disk space currently in use. That way, there’s still room to add more data without
     triggering an automatic storage increase.
 
-`AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }`
-:   Specifies the authentication method for the instance. POSTGRES indicates that only Postgres user passwords can be used.
-    POSTGRES\_OR\_SNOWFLAKE also allows the use of short-lived access token passwords. See
-    [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) for more details.
+`AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH }`
+:   Specifies the authentication authority for the instance:
+
+    - `POSTGRES`: Postgres authentication. Only Postgres login roles and passwords. This is the default.
+    - `POSTGRES_OR_SNOWFLAKE`: Snowflake token authentication. The instance accepts Postgres passwords and short-lived Snowflake token passwords.
+    - `EXTERNAL_OAUTH`: External OAuth. Access tokens from an external identity provider. Requires `AUTHENTICATION_PROPERTIES`.
+
+    For the dialog, the stored audience, the limit of 10 accepted tokens, and when two accepted tokens are rejected, see
+    [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
 
 ## Optional parameters
 
@@ -101,6 +107,16 @@ CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
 
     Use this clause to run the command idempotently, for example when re-running a provisioning script
     or a Terraform plan.
+
+`AUTHENTICATION_PROPERTIES = ( <authentication_properties> )`
+:   Specifies the External OAuth configuration. Required when `AUTHENTICATION_AUTHORITY = EXTERNAL_OAUTH`.
+    Specifying these properties with `POSTGRES` or `POSTGRES_OR_SNOWFLAKE` returns an error.
+
+    The properties are `ISSUER`, `AUDIENCE`, and `ACCEPTED_TOKENS`. Each accepted token has `MAPPING_CLAIM`,
+    `SCOPES_CLAIM`, and `SCOPES`.
+
+    For the dialog, the stored audience, the limit of 10 accepted tokens, and when two accepted tokens are rejected, see
+    [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
 
 `POSTGRES_VERSION = { 16 | 17 | 18 }`
 :   Specifies the major version of Postgres to use.
@@ -233,7 +249,7 @@ When you create a new instance, the command returns one row with the following c
 | --- | --- |
 | `status` | Status of the create operation. |
 | `host` | Hostname for connecting to the instance. |
-| `access_roles` | User names and passwords for the `snowflake_admin` and `application` roles. |
+| `access_roles` | User names and passwords for the `snowflake_admin` and `application` roles. For an External OAuth instance, only `snowflake_admin` is returned. |
 | `default_database` | Default database for the instance. |
 
 Expand
@@ -308,6 +324,30 @@ CREATE POSTGRES INSTANCE my_postgres
   STORAGE_SIZE_GB = 50
   AUTHENTICATION_AUTHORITY = POSTGRES;
 ```
+
+Create a Postgres instance that uses External OAuth:
+
+Copy code
+
+```
+CREATE POSTGRES INSTANCE my_postgres
+  COMPUTE_FAMILY = 'STANDARD_S'
+  STORAGE_SIZE_GB = 50
+  AUTHENTICATION_AUTHORITY = EXTERNAL_OAUTH
+  AUTHENTICATION_PROPERTIES = (
+    ISSUER = '<idp_issuer_url>',
+    AUDIENCE = '<audience>',
+    ACCEPTED_TOKENS = (
+      (
+        MAPPING_CLAIM = '<claim>',
+        SCOPES_CLAIM = '<claim>',
+        SCOPES = ('<scope>', '<scope>')
+      )
+    )
+  );
+```
+
+`SCOPES` also accepts a space-separated string. This example uses a parenthesized list because that’s what `DESCRIBE POSTGRES INSTANCE` prints.
 
 Create a Postgres instance only if it does not already exist:
 

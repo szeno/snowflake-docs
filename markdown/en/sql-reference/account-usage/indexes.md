@@ -5,7 +5,7 @@ Schema:
 
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 This Account Usage view displays a row for each index defined in the specified (or current) database.
 

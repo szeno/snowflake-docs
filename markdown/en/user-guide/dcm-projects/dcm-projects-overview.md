@@ -179,10 +179,12 @@ For object types, grants, and attachments still in preview, the completeness of 
 ## Key use cases for DCM Projects
 
 This section describes key use cases for DCM Projects and how they help address challenges that data businesses face at scale.
-These use cases fall into two general categories based on a team’s responsibility:
+For all of these use cases, Cortex Code can author and iterate on the definitions, and you review the PLAN output before you deploy.
 
-- [Platform teams that manage infrastructure and governance](#label-dcm-for-managing-infrastructure)
-- [Feature teams that manage individual data products and pipelines](#label-dcm-for-data-pipelines)
+- [Managing infrastructure](#label-dcm-for-managing-infrastructure) for multiple teams from one parameterized template.
+- [Data pipelines](#label-dcm-for-data-pipelines) that combine ingestion, transformation, and orchestration in one project.
+- [Data governance](#label-dcm-for-data-governance) through declarative grants, an audit trail of deployments, and drift detection.
+- [Applications and the semantic layer](#label-dcm-for-applications-semantic-layer), deployed together with the objects they depend on.
 
 ### DCM Projects for managing infrastructure
 
@@ -273,20 +275,33 @@ This makes it easy for platform teams and admins to make changes such as:
 
 ### DCM Projects for data pipelines
 
-DCM Projects help address the following challenges that feature teams often encounter:
+Feature teams can use DCM Projects to define, test, deploy, and iterate over the business logic of their data pipelines. A single
+DCM project can combine pipes, streams, dynamic tables, views, and the tasks that orchestrate procedures, Code Bundles, and dbt
+projects. For the challenges that DCM Projects address for feature teams, the pipeline-specific commands, and how DCM Projects relate to Pipeline
+Builder, see [DCM Projects for data pipelines](/user-guide/dcm-projects/dcm-projects-pipelines).
 
-![Challenges for feature teams](/static/images/dcm-projects/challenges_feature_teams.png)
+### DCM Projects for data governance
 
-Business units that want to easily author and manage their data pipelines can use DCM Projects to define, test, deploy, and iterate over
-their business logic.
+DCM Projects help platform and security teams manage access and track changes to their accounts:
 
-You can:
+- **Declarative privilege management:** Define roles, database roles, and grants as code, and use Jinja templates to apply the same
+  privilege structure across schemas, databases, and teams. Removing a grant that DCM Projects deployed from the definitions revokes it on the next deployment. Grants added outside of
+  DCM Projects aren’t removed.
+  See [Grants](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-grants).
+- **Audit trail:** Each deployment stores the applied definitions, configuration, and changes as immutable artifacts in the
+  DCM project. See [Monitor and troubleshoot DCM Projects](/user-guide/dcm-projects/dcm-projects-monitor).
+- **Drift detection:** Run PLAN against the current account state to identify changes made outside of DCM Projects, and redeploy to reinstate
+  the defined state. See [Monitor and troubleshoot DCM Projects](/user-guide/dcm-projects/dcm-projects-monitor).
+- **Separation of concerns:** Assign different projects to different owner roles, for example one project for roles and grants
+  and another for databases and warehouses.
 
-- Manage Snowflake object types like tables, dynamic tables, views, warehouses, roles, grants, data metric functions, and expectations all in one project.
-- Test and deploy incremental changes to pipelines. You can change configurations, implement transformation logic, and add columns and views.
-- Preview data samples to validate transformation logic before deploying objects.
-- Deploy the same pipeline definition to multiple environments.
-- Test data quality expectations on pre-prod environments before deploying changes to production.
+### DCM Projects for applications and the semantic layer
 
-DCM Projects provide additional functionality for authoring and managing data pipelines. See [DCM Projects for data pipelines](/user-guide/dcm-projects/dcm-projects-pipelines)
-for details.
+You can deploy applications and the semantic layer together with the tables, views, and grants that they depend on:
+
+- **Semantic views:** Define
+  [semantic views](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-semantic-view) on top of the
+  tables and views in the same project, and deploy them to each environment with the rest of the pipeline.
+- **Streamlit apps (preview):** Reference an existing Streamlit app folder as a project asset and define the
+  [Streamlit app](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-streamlit) in the same project.
+  DCM Projects deploys a new version only when the app’s files change.

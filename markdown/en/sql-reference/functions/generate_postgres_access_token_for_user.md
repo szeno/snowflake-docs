@@ -6,7 +6,7 @@ the AUTHENTICATION\_AUTHORITY attribute set to POSTGRES\_OR\_SNOWFLAKE.
 Short-lived access tokens generated with this function have a 15-minute lifetime. Once expired they can no longer be used to
 establish new connections to the Snowflake Postgres instance.
 
-See [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) for more details.
+For mapping and token steps, see [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
 
 ## Syntax
 

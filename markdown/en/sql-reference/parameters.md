@@ -163,7 +163,7 @@ Snowflake provides the following object parameters:
 | [OAUTH\_AUTHORIZATION\_SERVER](#label-oauth-authorization-server) | Account, Database, Schema | Specifies the name of an External OAuth security integration to use as the authorization server for MCP server Protected Resource Metadata discovery and token enforcement. |
 | [OAUTH\_SCOPES\_SUPPORTED](#label-oauth-scopes-supported) | Account, Database, Schema | Specifies a comma-separated list of OAuth scopes advertised in MCP server Protected Resource Metadata. |
 | [PATH\_LAYOUT](#label-path-layout) | Apache Iceberg™ table | Specifies the path layout for Parquet data files written to partitioned Iceberg tables. |
-| [PURGE\_ON\_DROP\_TABLE](#label-purge-on-drop-table) | Database, Schema, Apache Iceberg™ table | When set to TRUE on a catalog-linked database, schema, or table, automatically forwards the purge intent to the external catalog whenever the table is dropped. Applies only to externally managed Iceberg tables in a catalog-linked database. |
+| [PURGE\_ON\_DROP\_TABLE](#label-purge-on-drop-table) | Database, Schema, Apache Iceberg™ table | When set to TRUE on a catalog-linked database, schema, or table, automatically forwards the purge intent to the external catalog whenever the table is dropped, unless the `DROP` statement specifies `NOPURGE`. Applies only to externally managed Iceberg tables in a catalog-linked database. |
 | [PIPE\_EXECUTION\_PAUSED](#label-pipe-execution-paused) | Schema, Pipe |  |
 | [PREVENT\_UNLOAD\_TO\_INLINE\_URL](#label-prevent-unload-to-inline-url) | User |  |
 | [PREVENT\_UNLOAD\_TO\_INTERNAL\_STAGES](#label-prevent-unload-to-internal-stages) | User |  |
@@ -3627,7 +3627,7 @@ Data Type:
 
 Description:
 :   When set to `TRUE`, automatically forwards the purge intent to the external Iceberg catalog whenever a table is dropped
-    using [DROP ICEBERG TABLE](/sql-reference/sql/drop-iceberg-table) or via the implicit drop performed by
+    using [DROP ICEBERG TABLE](/sql-reference/sql/drop-iceberg-table) (unless the statement specifies `NOPURGE`) or via the implicit drop performed by
     [CREATE OR REPLACE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table-rest). Snowflake forwards purge intent
     in the drop-table request to the catalog. Snowflake never deletes external data files directly; the external
     catalog is responsible for the actual file deletion.
@@ -3635,6 +3635,9 @@ Description:
     This parameter is equivalent to specifying the `PURGE` keyword on individual `DROP TABLE` or `CREATE OR REPLACE TABLE`
     statements, but applies automatically to every qualifying drop within the scope (database, schema, or table) where
     it is set.
+
+    Specifying `NOPURGE` on a [DROP ICEBERG TABLE](/sql-reference/sql/drop-iceberg-table) statement overrides this
+    parameter: the table is dropped without forwarding the purge intent, even when the parameter is set to `TRUE`.
 
     This parameter can only be set on catalog-linked databases, schemas, or externally managed Iceberg tables. Setting
     it on other object types results in an error.

@@ -5,6 +5,64 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.47.0 (October 23, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+The following Spark-compatibility changes are available as opt-in session configurations. All are disabled by default, so existing behavior is unchanged unless you enable them.
+
+- Add `snowpark.connect.csv.writeNullAsEmpty` to write CSV nulls as empty fields
+- Add `snowpark.connect.csv.readQuotedEmptyAsNull` to read quoted empty CSV fields as null
+- Add `snowpark.connect.csv.writeMinimalQuoting` for Spark-style CSV write quoting
+- Add `snowpark.connect.csv.writeSparkTimestampFormat` to write CSV timestamps in Spark’s default formats
+- Add `snowpark.connect.csv.writeJavaFloatingFormat` to write floats and doubles with Java text formatting
+- Add `snowpark.connect.sparkDuplicateColumnResolution` for Spark behavior with `withColumnRenamed` onto an existing column and `ORDER BY` on duplicated names
+- Add `snowpark.connect.cast.implicitTimestampToSparkString` to stringify timestamps in string functions like Spark
+- Add `snowpark.connect.cast.intervalToIntegralTruncates` to truncate day-time intervals cast to integral types
+- Add `snowpark.connect.cast.fractionalToIntegralSparkNarrowing` for Spark-style float-to-integer narrowing
+- Add `snowpark.connect.cast.sparkFloatingToString` for Java-style float and double to string casts
+- Add `snowpark.connect.arrayCastUsesScalarRules` to cast array elements with scalar rules
+- Add `snowpark.connect.comparison.sparkStringDatetimeCast` to return null or raise on invalid strings compared with dates and timestamps
+- Add `snowpark.connect.timestampParseIsoT` to parse ISO `T` timestamp offsets
+- Add `snowpark.connect.window.firstIgnoreNullsRespectsFrame` for Spark’s `first` with `ignorenulls` inside the frame
+- Add `snowpark.connect.window.defaultFrameLastIncludesPeers` to include tied peers in default-frame `last`
+- Add `snowpark.connect.pivot.firstLastIgnoresNulls` for Spark’s pivot `first` and `last` null handling
+- Add `snowpark.connect.column.scopeStarToSourceDataFrame` to scope a DataFrame star to its source plan
+- Add `snowpark.connect.getJsonObject.dotDigitIsKey` to treat numeric path segments like `$.1` as keys in `get_json_object`
+- Add `snowpark.connect.toJson.nullArrayElement` to write null array elements as JSON `null` in `to_json`
+- Add `snowpark.connect.regexpReplace.sparkReplacementSyntax` to read `regexp_replace` replacements with Spark’s `$N` syntax
+- Add `snowpark.connect.split.javaRegexSemantics` for `java.util.regex` semantics in `split`
+- Add `snowpark.connect.text.sparkGlobSemantics` to match Spark file selection and partition columns for non-recursive text globs
+- Add `snowpark.connect.formatString.sparkCompatible` for Spark-compatible `format_string` output
+
+#### Bug fixes
+
+- Allow CSV writes with an explicit unquoted `nullValue=""` when the data contains empty values
+- Fix dynamic partition overwrite removing files of other partitions with a similar key prefix
+- Fix `isin` with more than 50 non-constant values
+- Fix `sum`, `avg` and `try_sum` over day-time intervals
+- Fix sorting by an unorderable type to raise `DATATYPE_MISMATCH.INVALID_ORDERING_TYPE`
+- Raise a clear error for array and struct `MAP` keys
+- Fix writing `TIMESTAMP_LTZ` and `TIMESTAMP_TZ` columns to Parquet
+- Expand `{a,b}` brace globs for local file paths
+- Fix XML reads with the native Spark sandbox: nested structure, column order, directory file selection and `rowTag` mismatches
+- Forward `timeZone` and XML options to the native Spark sandbox
+- Fix `saveAsTable` append to hybrid tables
+- Roll back a failed partition `overwrite` on Iceberg tables
+- Forward `CALL` statements to Snowflake when Spark SQL parsing rejects them
+- Always overwrite stored procedure dependency uploads
+- Reduce round trips at session startup and in stored procedures
+- Pin Iceberg dependencies
+
+#### New features
+
+- Support Iceberg `system.*` partition transform functions
+- Support Iceberg `FOR SYSTEM_TIME AS OF` and `FOR SYSTEM_VERSION AS OF`
+- Add opt-in materialization before window projections to reduce query size
+- Report the catalog kind for catalog-linked databases with unclassified providers
+
 ## 1.46.0 (October 07, 2026)
 
 ### Snowpark Connect for Spark

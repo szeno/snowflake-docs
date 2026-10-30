@@ -331,20 +331,89 @@ When Snowflake upgrades the relay, you don’t need to take action. Active datab
 
 ### Agent-process upgrades
 
-Upgrading the agent binary (replacing the container image) does tear down active TCP connections to the data source. The agent supports
-graceful drain: on receiving `SIGTERM`, it stops accepting new connections and waits for active tunnels to finish before exiting.
+To upgrade an agent, pull the new image and recreate the container. Restarting an existing container doesn’t update its image. Using
+`docker run` with `snowflakedb/dcp-client:latest` can reuse a locally cached image unless you explicitly pull it first to fetch the current
+image tagged as latest, which may be newer.
 
-To upgrade with minimal disruption using graceful drain:
+Replacing the container can interrupt active TCP connections to the data source. The agent supports graceful drain: on receiving
+`SIGTERM`, it stops accepting new connections and waits for active connections to finish before exiting. Connections that are still
+active when the stop timeout expires are interrupted. Usually services using DCP connections will automatically reconnect once DCP
+connectivity is restored following an upgrade.
 
-Copy code
+If you run multiple agents for [high availability](#label-dcp-high-availability), upgrade one instance at a time. If an orchestrator
+manages your agents, use its rollout process to pull the new image and replace each instance instead of running the following Docker
+commands.
 
-```
-# Start a new agent instance first (when running multiple agents for HA)
-docker run -d --name dcp-agent-new ... snowflakedb/dcp-client:<new-version> ...
+The following procedure uses the container name `dcp-agent` and the image `snowflakedb/dcp-client:latest`. Replace the container name if
+needed. To deploy a specific release, use its tag instead of `latest` in the `docker pull`, `docker image inspect`, and replacement
+commands. Available release tags are listed on [Docker Hub](https://hub.docker.com/r/snowflakedb/dcp-client/tags). Select a release tag if
+you need to specify the exact version before the upgrade.
 
-# Wait for routing table to shift traffic to the new instance, then drain the old one
-docker stop --time 300 dcp-agent   # allows up to 300s for active connections to finish
-```
+1. Prepare the complete replacement `docker run` command before stopping the agent. Preserve its credential mounts, environment
+   variables, agent flags, network and DNS settings, `--add-host` mappings, published ports, restart policy, and resource limits.
+
+   Confirm that the bootstrap token hasn’t expired and that the replacement container can read it. The
+   `dcp_agent_bootstrap_jwt_expires_at_seconds` [metric](/user-guide/data-connectivity-proxy-monitor#label-dcp-prometheus) reports its
+   expiry. If you mount a credentials file, preserve that mount. If you pass the token through `DCP_BOOTSTRAP_TOKEN`, preserve or update
+   that setting. If you need a new token, follow [Generate a bootstrap token](#label-dcp-setup-bootstrap-token) and
+   [Write the credentials file](#label-dcp-setup-credentials-file) before continuing. Don’t substitute the example deployment command for
+   your existing configuration if you customized it.
+2. Pull the image before stopping the existing container:
+
+   Copy code
+
+   ```
+   docker pull snowflakedb/dcp-client:latest
+   docker image inspect snowflakedb/dcp-client:latest --format '{{.Id}} {{json .RepoDigests}}'
+   ```
+
+   If the pull fails, leave the existing container running and resolve the error before continuing. Record the image ID returned by
+   `docker image inspect` so you can compare it with the replacement container’s image. If you use `latest`, use the returned repository
+   digest to identify the release on Docker Hub for the version check after the upgrade.
+3. Save any logs you need before removing the container. Then stop it, allowing up to 300 seconds for active connections to finish:
+
+   Copy code
+
+   ```
+   docker stop --time 300 dcp-agent
+   ```
+
+   After the stop command succeeds, remove the stopped container:
+
+   Copy code
+
+   ```
+   docker rm dcp-agent
+   ```
+
+   If the container was started with `--rm`, Docker removes it automatically when it stops. Skip `docker rm` in that case.
+4. Run the replacement command you prepared before stopping the agent, changing only the image reference to the image you pulled.
+5. Verify the replacement container’s image and startup logs:
+
+   Copy code
+
+   ```
+   docker inspect dcp-agent --format '{{.Image}} {{.State.Status}}'
+   docker logs --timestamps --since 5m dcp-agent
+   ```
+
+   Confirm that the container is running and its image ID matches the ID recorded after the pull. Repeat this check for every agent
+   instance you upgrade.
+
+   In the Snowflake account that owns the DCP object, run the following command, replacing `my_dcp_client` with your DCP object name:
+
+   Copy code
+
+   ```
+   DESCRIBE DATA CONNECTIVITY PROXY my_dcp_client;
+   ```
+
+   Confirm that `AGENT_VERSION` reports the intended release, `AGENT_HEALTH` is `HEALTHY`, and `AGENT_STATUS` is
+   `DCP_AGENT_LIFECYCLE_CONNECTED`. `AGENT_VERSION` is the last version reported by the DCP client; it doesn’t verify the image of every
+   container when multiple instances use the same DCP object. For column details, see [Monitor Data Connectivity Proxy](/user-guide/data-connectivity-proxy-monitor).
+
+   Test a new connection from your Snowflake service to the private source and confirm that connector processing resumes. A running
+   container or a healthy status alone doesn’t verify source connectivity.
 
 ## Rotate the bootstrap token without downtime
 

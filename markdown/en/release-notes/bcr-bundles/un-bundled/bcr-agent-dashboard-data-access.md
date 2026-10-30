@@ -60,6 +60,7 @@ Copy code
 ALTER AGENT my_support_agent
   MODIFY LIVE VERSION SET SPECIFICATION =
   $$
+  <existing agent specification>
   orchestration:
     capabilities:
       dashboard_data_access: false

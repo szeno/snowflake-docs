@@ -18,6 +18,7 @@ Copy code
 ```
 CREATE [ OR REPLACE ] [ SECURE ] [ INTERACTIVE ] MATERIALIZED VIEW [ IF NOT EXISTS ] <name>
   [ COPY GRANTS ]
+  [ COPY = ( GRANTS ) ]
   ( <column_list> )
   [ <col1> [ WITH ] MASKING POLICY <policy_name> [ USING ( <col1> , <cond_col1> , ... ) ]
            [ WITH ] PROJECTION POLICY <policy_name>
@@ -110,6 +111,9 @@ CREATE [ OR REPLACE ] [ SECURE ] [ INTERACTIVE ] MATERIALIZED VIEW [ IF NOT EXIS
     Note that the operation to copy grants occurs atomically with the CREATE VIEW statement (i.e. within the same transaction).
 
     Default: No value (grants are not copied).
+
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. For materialized views, `COPY = ( ... )` accepts only
+    `GRANTS`.
 
 `ROW ACCESS POLICY policy_name ON ( col_name [ , col_name ... ] )`
 :   Specifies the [row access policy](/user-guide/security-row-intro) to set on the materialized view.

@@ -30,6 +30,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ APPEND_ONLY = TRUE | FALSE ]
   [ SHOW_INITIAL_ROWS = TRUE | FALSE ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 
 -- Event table
 CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
@@ -38,6 +39,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ COPY GRANTS ]
   ON EVENT TABLE <table_name>
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 
 -- External table
 CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
@@ -48,6 +50,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> | STREAM => '<name>' } ) ]
   [ INSERT_ONLY = TRUE ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 
 -- Directory table
 CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
@@ -56,6 +59,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ COPY GRANTS ]
   ON STAGE <stage_name>
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 
 -- Dynamic table
 CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
@@ -64,6 +68,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ COPY GRANTS ]
   ON DYNAMIC TABLE <table_name>
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 
 -- View
 CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
@@ -75,6 +80,7 @@ CREATE [ OR REPLACE ] STREAM [IF NOT EXISTS]
   [ APPEND_ONLY = TRUE | FALSE ]
   [ SHOW_INITIAL_ROWS = TRUE | FALSE ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
 ```
 
 ## Variant syntax
@@ -89,6 +95,7 @@ transactional [table version](/user-guide/streams-intro#label-streams-table-vers
 > ```
 > CREATE [ OR REPLACE ] STREAM <name> CLONE <source_stream>
 >   [ COPY GRANTS ]
+>   [ COPY = ( GRANTS ) ]
 >   [ ... ]
 > ```
 
@@ -195,9 +202,16 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
       role that executed the CREATE STREAM statement, with the current timestamp when the statement was executed.
     - The operation to copy grants occurs atomically in the CREATE STREAM command (i.e. within the same transaction).
 
-    Note
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. Unlike `COPY GRANTS`, it goes among the properties that
+    follow the source object clause:
 
-    This parameter is not supported currently.
+    Copy code
+
+    ```
+    CREATE OR REPLACE STREAM my_stream ON TABLE my_table COPY = ( GRANTS );
+    ```
+
+    For streams, `COPY = ( ... )` accepts only `GRANTS`.
 
 `{ AT ( { TIMESTAMP => timestamp | OFFSET => time_difference | STATEMENT => id | STREAM => 'name' } ) | BEFORE ( { TIMESTAMP => timestamp | OFFSET => time_difference | STATEMENT => id } ) }`
 :   Creates a stream at a specific time/point in the past (using [Time Travel](/user-guide/data-time-travel)). The

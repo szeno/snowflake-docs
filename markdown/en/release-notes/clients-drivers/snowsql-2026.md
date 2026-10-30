@@ -64,3 +64,15 @@ See [SnowSQL (CLI client)](/user-guide/snowsql) for documentation.
 ### Bug fixes
 
 - None.
+
+## Version 1.4.6 (Oct 29, 2026)
+
+### New features and updates
+
+- Upgraded `snowflake-connector-python`.
+- Upgraded the bundled `certifi` package.
+- Upgraded the bundled Python version for Linux and macOS.
+
+### Bug fixes
+
+- None.

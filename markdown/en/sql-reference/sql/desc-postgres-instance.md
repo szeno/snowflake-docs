@@ -54,7 +54,8 @@ a separate row with its corresponding value.
 | `postgres_version` | Major version of Postgres running on the instance. |
 | `postgres_settings` | Custom [Postgres server settings](/user-guide/snowflake-postgres/postgres-server-settings) configured for the instance. |
 | `high_availability` | Whether [high availability](/user-guide/snowflake-postgres/high-availability) is enabled for the instance (`true` or `false`). |
-| `authentication_authority` | Authentication method used for the instance (currently `POSTGRES`). |
+| `authentication_authority` | Authentication authority for the instance: `POSTGRES`, `POSTGRES_OR_SNOWFLAKE`, or `EXTERNAL_OAUTH`. See [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication). |
+| `authentication_properties` | The stored External OAuth configuration. `None` when the authority isn’t External OAuth. See [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication). |
 | `maintenance_window_start` | Hour of day (0-23, UTC) when a [maintenance window](/user-guide/snowflake-postgres/managing-instances) can start, or `None` if not set. |
 | `state` | Current [state](#instance-states) of the instance. Possible values: `CREATING`, `RESTORING`, `STARTING`, `REPLAYING`, `FINALIZING`, `READY`, `RESTARTING`, `RESUMING`, `SUSPENDING`, `SUSPENDED`. |
 | `comment` | Comment for the Postgres instance, or `None` if not set. |
@@ -162,6 +163,7 @@ The following shows typical output from that command:
 | postgres_settings              | {}                                    |
 | high_availability              | false                                 |
 | authentication_authority       | POSTGRES                              |
+| authentication_properties      | None                                  |
 | maintenance_window_start       | None                                  |
 | state                          | READY                                 |
 | comment                        | None                                  |

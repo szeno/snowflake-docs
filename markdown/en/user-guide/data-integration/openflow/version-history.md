@@ -6,6 +6,92 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 29, 2026
+
+### Control Plane Core 0.139.1
+
+- Fixed an issue in Control Plane UI where creating a runtime was blocked for customers using a database with more than 100 schemas.
+- Security patches and dependency upgrades.
+
+## October 27, 2026
+
+### Runtime Server 2026.10.27.2
+
+- Applied security patches and dependency upgrades.
+- Upgraded the Runtime UI to version 0.94.0.
+- Runtime reliability: Improved Kubernetes client trust-store handling for leader election and state management.
+
+### Runtime Extensions 2026.10.27.11
+
+- SQL Server Change Tracking (GA): Added replication of hidden period columns from temporal tables. Use a column filter to exclude them if they should not land in Snowflake.
+- Jira Cloud Core (GA): Fixed table creation failures for custom fields whose names map to Snowflake reserved column names, such as “Current Date”. These fields are ingested into a column named `<NAME>__<FIELD_ID>`, for example `CURRENT_DATE__CUSTOMFIELD_10123`.
+- Google Drive (GA): Fixed ingestion of native Google Docs and Slides for which Google Drive does not report a file size. Previously these files were silently skipped.
+- Jira Cloud Core (GA): Fixed ingestion becoming stuck after a connector flow upgrade when older FlowFiles were still queued.
+- Salesforce (GA): Updated processors to automatically select `EventDate` as the incremental timestamp field for Real-Time Event Monitoring objects such as `LoginEvent`, which previously failed because Salesforce does not allow filtering these objects on `CreatedDate`.
+- Database CDC connectors: Changed the Table State Service to report itself as invalid on Openflow runtimes running more than one node, preventing Database Change Data Capture connectors from running on a runtime they do not support.
+- SQL Server (GA): Fixed snapshot and cursor-based replication failing with “Error converting data type nvarchar to numeric” for tables whose primary key (or replication key) is a `NUMERIC`, `DECIMAL`, `MONEY`, or `SMALLMONEY` column holding zero or very small values. Affected tables resume automatically after upgrade.
+- Record processing: Added `ConfluentDynamoDBEventReader` to convert DynamoDB-typed JSON documents in Confluent event envelopes into nested records, allowing downstream record processing and schema inference without a separate flattening layer.
+
+#### Gen 2 Connectors
+
+- CDC MySQL and PostgreSQL (Public Preview): Changed snapshot reads to stop when a table is removed from replication, avoiding unnecessary source-database load and delays to other snapshots.
+- SharePoint (Private Preview): Fixed the connector to pick up permission changes, including access granted or revoked on a file or folder, for files that were already ingested. Previously these changes were not reflected until the file was created again.
+- CDC MySQL (Public Preview): Changed the `CaptureChangeMySQL` processor, working in binlog tracking mode, to always reconnect at transaction boundaries. Events processed before reconnecting continue to be skipped. This fixed missing table-map errors when transactions contained several DDL statements and the processor reconnected after partial processing.
+- CDC MySQL and PostgreSQL (Public Preview): Made Iceberg destination tables generally available and removed preview labels from the settings.
+- CDC MySQL and PostgreSQL (Public Preview), CDC SQL Server (Private Preview): Added Verify configuration to the Replication columns step, including preferred, fallback and raw column-filter modes.
+- CDC MySQL and PostgreSQL (Public Preview), CDC SQL Server and SharePoint (Private Preview): Added the ability for connector wizards to refresh available secrets without leaving the current step or losing the selected value. Refresh failures are shown beside the initiating field.
+- SharePoint (Private Preview): Improved discovery and destination-configuration failures to display actionable messages based on API error codes rather than generic errors or backend diagnostic details.
+- SharePoint (Private Preview): Changed saving of Source settings to invalidate cached discovery results, so Replication details reloads with the current configuration instead of showing stale sites and files.
+
+#### Gen 1 Connectors
+
+- Jira Cloud Core 0.12.0 (GA): Changed failed incremental ingestions to rewind their checkpoint and retry the failed window on the next schedule instead of advancing past records that did not reach Snowflake. Upgrade the runtime before upgrading the connector flow.
+- MongoDB 0.29.0 (Public Preview): Increased the time allowed for journal creation to two minutes, reducing replication failures caused by cancellation during table and stream creation.
+- CDC MySQL 0.60.0, CDC PostgreSQL 0.69.0, Oracle embedded license 0.52.0, Oracle public-sector embedded license 0.52.0, Oracle independent license 0.51.0, CDC SQL Server multidatabase 0.54.0, SQL Server Change Tracking multidatabase 0.60.0 (GA): Increased the time allowed for journal creation to two minutes, reducing replication failures caused by cancellation during table and stream creation.
+- CDC MySQL 0.60.0, CDC PostgreSQL 0.69.0, Oracle embedded license 0.52.0, Oracle public-sector embedded license 0.52.0, Oracle independent license 0.51.0, CDC SQL Server multidatabase 0.54.0, SQL Server Change Tracking multidatabase 0.60.0 (GA): Changed removal of a table during its snapshot to stop further source reads for that table, avoiding unnecessary database load and delays to other snapshots.
+- CDC MySQL 0.60.0, CDC PostgreSQL 0.69.0, Oracle embedded license 0.52.0, Oracle public-sector embedded license 0.52.0, Oracle independent license 0.51.0, CDC SQL Server multidatabase 0.54.0, SQL Server Change Tracking multidatabase 0.60.0 (GA): Made Iceberg destination tables generally available and removed preview labels from the storage-format and Iceberg-version settings.
+
+### Runtime Operator 0.85.0
+
+- Security patches and dependency upgrades.
+
+### Control Plane Core 0.139.0
+
+- Fixed an issue where idle runtimes with connectors are not auto-suspended, causing runtimes with no activity to remain running.
+- Fixed an issue with Deployment migration where a Gen 1 Deployment display name could be rejected when attempting to restore it.
+- Improved reliability by fixing transient failures reaching Global Services caused by idle pooled connections timing out on the server side.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.139.0
+
+- Improved runtime failure messages to show the underlying reason why the requested operation failed.
+- Fixed deployment upgrade timeouts that could occur when the runtime operator scaled down the cluster mid-upgrade. The connected-node wait now tracks live replica count instead of a stale snapshot.
+- Fixed an issue where existing BYOC runtimes kept using the old Snowflake account URL after an account URL change. Runtimes now automatically refresh their Snowflake host and account environment when the account URL is updated.
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.98.0
+
+- Oracle connector tiles now collapse into one Gen 1 and one Gen 2 tile, with a licensing dialog for embedded, public sector, and BYOL licenses.
+- Improved search input clear button accessibility.
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.28.0
+
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.10.23-19
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.56.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.74.0
+
+- Fixed an issue where host-log telemetry delivery could stop after agent upgrades when the collector image was evicted from cache and registry credentials had expired.
+- Security patches and dependency upgrades.
+
 ## October 22, 2026
 
 ### Runtime Server 2026.10.22.2

@@ -1,4 +1,4 @@
-# Integrating dbt State with dbt Projects on Snowflake
+# Integrate dbt State with dbt Projects on Snowflake
 
 Important
 
@@ -34,7 +34,7 @@ Before you start, make sure you have:
 - A dbt project that runs on a [supported dbt version](#label-dbt-state-supported-versions).
 - A dbt Platform account.
 - A role that can create secrets, network rules, and external access integrations, or an administrator who can create them for you.
-- An `env.yml` file at the root of your dbt project. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+- An `env.yml` file at the root of your dbt project. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Set up dbt State
 
@@ -234,6 +234,6 @@ dbt State and [Slim CI](/user-guide/data-engineering/dbt-projects-on-snowflake-s
 
 dbt State is a separately billed dbt Labs feature. dbt Labs handles all dbt State billing and services through your dbt Platform account.
 
-Executions of your dbt project object still run on your Snowflake warehouse and incur standard Snowflake compute costs. For more information, see [Understanding costs for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-cost).
+Executions of your dbt project object still run on your Snowflake warehouse and incur standard Snowflake compute costs. For more information, see [Understand costs for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-cost).
 
 For more about dbt State, see [About dbt State](https://docs.getdbt.com/docs/deploy/dbt-state-about?version=2) in the dbt Labs documentation.

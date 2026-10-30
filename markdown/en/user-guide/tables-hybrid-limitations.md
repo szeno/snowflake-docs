@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 The following guidance on [limitations](#label-hybrid-tables-limitations) and
 [unsupported features](#label-hybrid-tables-unsupported) applies to hybrid tables, and is subject
@@ -37,11 +37,11 @@ Reach out to your account team if you have questions.
 
 Clouds and regions
 :   Hybrid tables are generally available in all commercial Amazon Web Services (AWS) and
-    Microsoft Azure [regions](/user-guide/intro-regions).
+    Microsoft Azure [regions](/user-guide/intro-regions). Hybrid tables are available in preview in
+    all commercial Google Cloud [regions](/user-guide/intro-regions).
 
     Note the following restrictions:
 
-    - Hybrid tables are not available in Google Cloud.
     - Hybrid tables are not available in [U.S. SnowGov Regions](/user-guide/intro-regions#label-intro-regions-snowgov-regions).
     - Hybrid tables are not supported in trial accounts.
     - If you are a Virtual Private Snowflake (VPS) customer, contact

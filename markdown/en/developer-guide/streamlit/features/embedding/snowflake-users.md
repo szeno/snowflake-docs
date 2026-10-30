@@ -18,6 +18,8 @@ data.
 - You need an existing Streamlit in Snowflake app on a container runtime. If you don’t have one, see
   [Getting started with Streamlit in Snowflake](/developer-guide/streamlit/getting-started/overview). To check or change an app’s runtime, see
   [Runtime environments for Streamlit apps](/developer-guide/streamlit/app-development/runtime-environments).
+- Your app must use Streamlit version 1.53.0 or later. To set your app’s Streamlit version, see
+  [Manage dependencies for your Streamlit app](/developer-guide/streamlit/app-development/dependency-management).
 - You need the ACCOUNTADMIN role, or another role with the ALTER ACCOUNT privilege, to register
   allowed embedding domains.
 - Your web server must be able to make outbound HTTPS calls to Snowflake.

@@ -15,7 +15,8 @@ ALTER POSTGRES INSTANCE [ IF EXISTS ] <name>
 
 ALTER POSTGRES INSTANCE [ IF EXISTS ] <name> SET
   [ NETWORK_POLICY = '<network_policy>' ]
-  [ AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE } ]
+  [ AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH } ]
+  [ AUTHENTICATION_PROPERTIES = ( <authentication_properties> ) ]
   [ COMMENT = '<string_literal>' ]
   [ HIGH_AVAILABILITY = { TRUE | FALSE } ]
   [ COMPUTE_FAMILY = '<compute_family>' ]
@@ -75,10 +76,22 @@ ALTER POSTGRES INSTANCE [ IF EXISTS ] <name> UNSET TAG <tag_name>
 
         To specify this parameter, you must have been granted the USAGE privilege on the network policy object.
 
-    `AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }`
-    :   Change the authentication method for the instance. POSTGRES indicates that only Postgres user passwords can be used.
-        POSTGRES\_OR\_SNOWFLAKE also allows the use of short-lived access token passwords. See
-        [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) for more details.
+    `AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH }`
+    :   Specifies the authentication authority for the instance:
+
+        - `POSTGRES`: Postgres authentication. Only Postgres login roles and passwords. This is the default.
+        - `POSTGRES_OR_SNOWFLAKE`: Snowflake token authentication. The instance accepts Postgres passwords and short-lived Snowflake token passwords.
+        - `EXTERNAL_OAUTH`: External OAuth. Access tokens from an external identity provider. Requires `AUTHENTICATION_PROPERTIES`.
+
+        For the dialog, the stored audience, the limit of 10 accepted tokens, and when two accepted tokens are rejected, see
+        [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
+
+    `AUTHENTICATION_PROPERTIES = ( <authentication_properties> )`
+    :   Specifies the External OAuth configuration: `ISSUER`, `AUDIENCE`, and `ACCEPTED_TOKENS`. Each accepted token has
+        `MAPPING_CLAIM`, `SCOPES_CLAIM`, and `SCOPES`. Specifying these properties is an error unless the authority is External OAuth.
+
+        For the dialog, the stored audience, the limit of 10 accepted tokens, and when two accepted tokens are rejected, see
+        [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
 
     `COMMENT = 'string_literal'`
     :   Adds or overwrites an existing comment for the Postgres instance.
@@ -343,3 +356,25 @@ Note
 
 Renaming an instance changes its identifier in Snowflake but does *not* change the connection hostname. The
 hostname remains the same, so existing connections and applications continue to work without modification.
+
+Set External OAuth on an instance:
+
+Copy code
+
+```
+ALTER POSTGRES INSTANCE <instance_name>
+  SET AUTHENTICATION_AUTHORITY = EXTERNAL_OAUTH
+      AUTHENTICATION_PROPERTIES = (
+        ISSUER = '<idp_issuer_url>',
+        AUDIENCE = '<audience>',
+        ACCEPTED_TOKENS = (
+          (
+            MAPPING_CLAIM = '<claim>',
+            SCOPES_CLAIM = '<claim>',
+            SCOPES = ('<scope>', '<scope>')
+          )
+        )
+      );
+```
+
+`SCOPES` also accepts a space-separated string. This example uses a parenthesized list because that’s what `DESCRIBE POSTGRES INSTANCE` prints.

@@ -24,11 +24,10 @@ definition file such as `pipeline.yml`, and a `sources/` folder.
 
 [![The Create Pipeline Builder dialog, with fields for name and database and schema](/static/images/screens/pipeline-builder-create-dialog.png)](/static/images/screens/pipeline-builder-create-dialog.png)
 
-Note
+Tip
 
-CoCo for Pipeline Builder is coming soon. When it’s available, select **Generate with Cortex** in the dialog, describe the pipeline in
-the **Prompt** field, and then select **Generate**. For more information, see
-[Use CoCo to build a pipeline](/user-guide/pipeline-builder/pipeline-builder-build#label-pipeline-builder-coco).
+To have CoCo build a first draft for you, select **Generate with Cortex** in the dialog, describe the pipeline in the **Prompt** field,
+and then select **Generate**. For more information, see [Use CoCo to build a pipeline](/user-guide/pipeline-builder/pipeline-builder-build#label-pipeline-builder-coco).
 
 ## Step 2: Add your code to the project
 

@@ -6,7 +6,7 @@ The following improvements are now available for dbt Projects on Snowflake:
   models need to be rebuilt and which models can be reused during an execution. Skipping models that don’t need to run aims to
   reduce execution runtime and warehouse compute. You connect your project to your dbt Platform account through an `env.yml`
   secret and an external access integration. For setup, supported dbt versions, and billing, see
-  [Integrating dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration).
+  [Integrate dbt State with dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-state-integration).
 - **Source freshness**: Source freshness builds on the same dbt artifact support that powers
   [Slim CI](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod). Run `source freshness` from the command
   list in Workspaces, from the dbt project object details page, and when you schedule a dbt project object. Snowflake CLI also

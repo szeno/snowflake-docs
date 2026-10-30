@@ -47,6 +47,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] DYNAMIC TABLE [ IF NOT EXISTS ] <name> (
   [ COMMENT = '<string_literal>' ]
   [ COPY GRANTS ]
   [ COPY TAGS ]
+  [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , <col_name> ... ] ) ] ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -188,6 +189,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] DYNAMIC TABLE <name>
   [
     COPY GRANTS
     COPY TAGS
+    COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )
     TARGET_LAG = { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM }
     WAREHOUSE = <warehouse_name>
     EXECUTE AS USER <user_name>
@@ -240,6 +242,7 @@ WAREHOUSE = <warehouse_name>
 [ COMMENT = '<string_literal>' ]
 [ COPY GRANTS ]
 [ COPY TAGS ]
+[ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
 [ [ WITH ] STORAGE LIFECYCLE POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
 [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -276,6 +279,7 @@ CREATE [ OR REPLACE ] DYNAMIC ICEBERG TABLE <name>
   [
     COPY GRANTS
     COPY TAGS
+    COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )
     TARGET_LAG = { '<num> { seconds | minutes | hours | days }' | DOWNSTREAM }
     WAREHOUSE = <warehouse_name>
     EXECUTE AS USER <user_name>
@@ -693,6 +697,8 @@ For more information about usage and limitations, see
         COPY GRANTS;
     ```
 
+    You can also copy grants with the [`COPY = ( GRANTS )`](/sql-reference/sql/create-dynamic-table#label-create-dynamic-table-copy-property) parameter.
+
 `COPY TAGS`
 :   Applies [tags](/user-guide/object-tagging/introduction) when you use any of these CREATE DYNAMIC TABLE forms:
 
@@ -707,6 +713,39 @@ For more information about usage and limitations, see
 
     For more information, including the effect when you alter columns in the CREATE OR REPLACE statement, see
     [the usage notes for COPY TAGS](/sql-reference/sql/create-dynamic-table#label-create-dynamic-table-usage-notes-copy-tags).
+
+    This parameter is not supported by the CREATE OR ALTER variant syntax.
+
+    You can also retain tags with the [`COPY = ( TAGS )`](/sql-reference/sql/create-dynamic-table#label-create-dynamic-table-copy-property) parameter.
+
+`COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )`
+:   Names the kinds of metadata to carry over from the dynamic table being replaced onto the new dynamic table. Specify one or
+    more kinds, separated by commas. The parentheses are required.
+
+    | Kind | Carried over |
+    | --- | --- |
+    | `COMMENTS` | The dynamic table comment and the column comments of the replaced dynamic table. |
+    | `TAGS` | The tags of the replaced dynamic table and its columns. Equivalent to [COPY TAGS](/sql-reference/sql/create-dynamic-table#label-create-dynamic-table-copy-tags). |
+    | `GRANTS` | The access privileges on the replaced dynamic table, except `OWNERSHIP`. Equivalent to [COPY GRANTS](/sql-reference/sql/create-dynamic-table#label-create-dynamic-table-copy-grants). |
+
+    Expand
+
+    Show lessSee more
+
+    `COMMENTS` and `TAGS` require `OR REPLACE`. `GRANTS` requires `OR REPLACE` or `CLONE`. The parameter is accepted in the
+    `CREATE OR REPLACE DYNAMIC TABLE` and `CLONE` forms, and applies to dynamic Iceberg tables.
+
+    A column comment is carried over only when the new dynamic table defines a column with the same name and the same data
+    type. Column order doesn’t matter. A column that is added, dropped, renamed, or retyped isn’t matched, so it doesn’t receive
+    a comment. The dynamic table comment is carried over independently of whether any column matches.
+
+    When the replaced dynamic table has a comment, that comment takes precedence over a comment the statement itself produces,
+    whether the statement specifies an inline `COMMENT` or inherits one from a `CLONE` source. An empty string counts as a
+    comment. When the replaced dynamic table has no comment, or a matching column has none, the comment produced by the
+    statement is kept.
+
+    You can combine the `COPY = ( ... )` parameter with the `COPY GRANTS` and `COPY TAGS` parameters in the same statement.
+    Specifying the same kind both ways has no additional effect.
 
     This parameter is not supported by the CREATE OR ALTER variant syntax.
 

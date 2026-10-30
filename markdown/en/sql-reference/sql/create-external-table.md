@@ -31,6 +31,7 @@ CREATE [ OR REPLACE ] EXTERNAL TABLE [IF NOT EXISTS]
   FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET } [ formatTypeOptions ] } )
   [ AWS_SNS_TOPIC = '<string>' ]
   [ COPY GRANTS ]
+  [ COPY = ( GRANTS ) ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON (VALUE) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -49,6 +50,7 @@ CREATE [ OR REPLACE ] EXTERNAL TABLE [IF NOT EXISTS]
   PARTITION_TYPE = USER_SPECIFIED
   FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET } [ formatTypeOptions ] } )
   [ COPY GRANTS ]
+  [ COPY = ( GRANTS ) ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON (VALUE) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -68,6 +70,7 @@ CREATE [ OR REPLACE ] EXTERNAL TABLE [IF NOT EXISTS]
   FILE_FORMAT = ( { FORMAT_NAME = '<file_format_name>' | TYPE = { CSV | JSON | AVRO | ORC | PARQUET } [ formatTypeOptions ] } )
   [ TABLE_FORMAT = DELTA ]
   [ COPY GRANTS ]
+  [ COPY = ( GRANTS ) ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON (VALUE) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -155,6 +158,7 @@ Creates a new external table with the column definitions derived from a set of s
 >   USING TEMPLATE <query>
 >   [ ... ]
 >   [ COPY GRANTS ]
+>   [ COPY = ( GRANTS ) ]
 > ```
 
 Note
@@ -409,6 +413,9 @@ For more information about COPY GRANTS, see [COPY GRANTS](/sql-reference/sql/cre
     Note
 
     The operation to copy grants occurs atomically in the CREATE EXTERNAL TABLE command (that is, within the same transaction).
+
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. For external tables, `COPY = ( ... )` accepts only
+    `GRANTS`.
 
 `COMMENT = 'string_literal'`
 :   String (literal) that specifies a comment for the external table.

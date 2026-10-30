@@ -66,6 +66,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ CHANGE_TRACKING = { TRUE | FALSE } ]
   [ COPY GRANTS ]
   [ COPY TAGS ]
+  [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
   [ ERROR_LOGGING = { TRUE | FALSE } ]
   [ COMMENT = '<string_literal>' ]
   [ ICEBERG_VERSION = <integer> ]
@@ -146,6 +147,7 @@ For more information, see [CREATE ICEBERG TABLE (Snowflake as the Iceberg catalo
 >   [ BASE_LOCATION = '<relative_path_from_external_volume>' ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ICEBERG_VERSION = <integer> ]
 >   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
 >   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
@@ -164,6 +166,7 @@ For more information, see [CREATE ICEBERG TABLE … AS SELECT](/sql-reference/sq
 >   [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ... ]
 > ```
 

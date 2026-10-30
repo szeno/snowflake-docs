@@ -57,6 +57,48 @@ UPDATE <target_table>
 
 ## Examples
 
+Create a table and insert some rows:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE employees (id INTEGER, name VARCHAR, salary NUMBER(10, 2));
+
+INSERT INTO employees (id, name, salary) VALUES
+  (1, 'Alice', 50000),
+  (2, 'Bob', 60000),
+  (3, 'Carol', 70000);
+```
+
+Update a single column for the rows that match a condition:
+
+Copy code
+
+```
+UPDATE employees
+  SET salary = 65000
+  WHERE id = 2;
+```
+
+Update several columns at once, using an expression that refers to the current value:
+
+Copy code
+
+```
+UPDATE employees
+  SET salary = salary * 1.10, name = UPPER(name)
+  WHERE salary < 60000;
+```
+
+Update every row in the table (no WHERE clause):
+
+Copy code
+
+```
+UPDATE employees
+  SET salary = salary + 1000;
+```
+
 Perform a standard update using two tables:
 
 > Copy code

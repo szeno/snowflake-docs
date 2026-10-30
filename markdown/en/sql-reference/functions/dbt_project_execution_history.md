@@ -94,7 +94,7 @@ To view these columns, you must use a role with the MONITOR privilege.
 | STATE | TEXT | State of run, such as HANDLED\_ERROR or SUCCESS. |
 | DBT\_VERSION | TEXT | The dbt Core version used for the run, such as `1.9.4`. |
 | DBT\_SNOWFLAKE\_VERSION | TEXT | The dbt-snowflake adapter version used for the run, such as `1.9.2`. |
-| ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. `NULL` if the run didn’t use an environment. For more information, see [Use SQL environment variables and private Git packages for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
+| ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. `NULL` if the run didn’t use an environment. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
 
 Expand
 

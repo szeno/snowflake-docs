@@ -58,6 +58,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
   AS '<procedure_definition>'
 ```
@@ -81,6 +82,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ VOLATILE | IMMUTABLE ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
 ```
 
@@ -99,6 +101,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ VOLATILE | IMMUTABLE ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
   AS '<procedure_definition>'
 ```
@@ -132,6 +135,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER }]
   AS '<procedure_definition>'
 ```
@@ -156,6 +160,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
 ```
 
@@ -189,6 +194,7 @@ CREATE [ OR REPLACE ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
   AS '<procedure_definition>'
 ```
@@ -210,6 +216,7 @@ CREATE [ OR REPLACE ] [ SECURE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ VOLATILE | IMMUTABLE ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
 ```
 
@@ -229,6 +236,7 @@ CREATE [ OR REPLACE ] PROCEDURE <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ] -- Note: VOLATILE and IMMUTABLE are deprecated.
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ EXECUTE AS { OWNER | CALLER | RESTRICTED CALLER } ]
   AS <procedure_definition>
 ```
@@ -848,6 +856,18 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
     - The [SHOW GRANTS](/sql-reference/sql/show-grants) output for the replacement procedure lists the grantee for the copied privileges as the
       role that executed the CREATE PROCEDURE statement, with the current timestamp when the statement was executed.
     - The operation to copy grants occurs atomically in the CREATE PROCEDURE command (i.e. within the same transaction).
+
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. Unlike `COPY GRANTS`, it goes among the properties that
+    follow the `RETURNS` clause:
+
+    Copy code
+
+    ```
+    CREATE OR REPLACE PROCEDURE my_procedure() RETURNS INT LANGUAGE SQL COPY = ( GRANTS )
+      AS $$ BEGIN RETURN 1; END $$;
+    ```
+
+    For procedures, `COPY = ( ... )` accepts only `GRANTS`.
 
 ### Java
 

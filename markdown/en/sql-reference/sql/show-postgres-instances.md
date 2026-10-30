@@ -82,7 +82,7 @@ The output of the command includes the following columns, which describe the pro
 | `host` | Hostname used to connect to the Postgres instance. |
 | `privatelink_service_identifier` | Identifier for the Private Link service, if Private Link is configured for the instance. |
 | `compute_family` | [Compute family](/user-guide/snowflake-postgres/postgres-instance-sizes) (instance size) of the Postgres instance. |
-| `authentication_authority` | Authentication method used for the instance (currently `POSTGRES`). |
+| `authentication_authority` | Authentication authority for the instance: `POSTGRES`, `POSTGRES_OR_SNOWFLAKE`, or `EXTERNAL_OAUTH`. See [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication). |
 | `storage_size` | Storage size allocated to the Postgres instance, in GB. |
 | `postgres_version` | Major version of Postgres running on the instance. |
 | `postgres_settings` | Custom [Postgres server settings](/user-guide/snowflake-postgres/postgres-server-settings) configured for the instance. |

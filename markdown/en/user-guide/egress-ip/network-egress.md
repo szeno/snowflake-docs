@@ -18,6 +18,7 @@ Using egress IP addresses you generate with Snowflake, you can allow ingress acc
 - [Snowpark Container Services external access](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress)
   and Snowflake Openflow on Snowpark Container Services
 - [Snowflake Git integration](/developer-guide/git/git-setting-up) with IP-restricted Git servers
+- [Customer-hosted Python artifact repositories](/developer-guide/udf/python/customer-hosted-python-artifact-repositories)
 
 When the external resource is on a private network where IP allowlisting isn’t feasible (deny-all-inbound environments), use
 [Data Connectivity Proxy](/user-guide/data-connectivity-proxy) instead of stable egress IPs.

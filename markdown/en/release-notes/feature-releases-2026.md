@@ -4,11 +4,17 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
+- [Oct 30, 2026: External OAuth for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-30-snowflake-postgres-external-oauth-ga)
+- [Oct 29, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-29-dcr)
+- [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
 - [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
+- [Oct 28, 2026: Streamlit in Snowflake container runtime in China (General availability)](/release-notes/2026/other/2026-10-28-sis-container-runtime-china-ga)
+- [Oct 27, 2026: Carry over comments, tags, and privileges with COPY = ( … )](/release-notes/2026/other/2026-10-27-copy-metadata-carry-over)
 - [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
 - [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)

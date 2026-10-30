@@ -13,7 +13,7 @@ See also:
 Copy code
 
 ```
-DROP [ ICEBERG ] TABLE [ IF EXISTS ] <name> [ CASCADE | RESTRICT ] [ PURGE ]
+DROP [ ICEBERG ] TABLE [ IF EXISTS ] <name> [ CASCADE | RESTRICT ] [ PURGE | NOPURGE ]
 ```
 
 ## Parameters
@@ -44,9 +44,21 @@ DROP [ ICEBERG ] TABLE [ IF EXISTS ] <name> [ CASCADE | RESTRICT ] [ PURGE ]
     non-externally-managed table, a non-Iceberg table, or a table outside a catalog-linked database results in a
     compilation error.
 
-    As an alternative to specifying `PURGE` on each statement, you can set the `PURGE_ON_DROP_TABLE` parameter
-    on the table, schema, or catalog-linked database so that every `DROP TABLE` automatically forwards the purge
-    intent to the catalog. For more information, see [PURGE\_ON\_DROP\_TABLE](/sql-reference/sql/drop-iceberg-table#label-purge-on-drop-table-param).
+    By default, `DROP ICEBERG TABLE` doesn’t forward the purge intent; only a statement that specifies `PURGE` does.
+    To forward the purge intent without specifying `PURGE` on each statement, set the `PURGE_ON_DROP_TABLE` parameter
+    to `TRUE` on the table, schema, or catalog-linked database. For more information, see [PURGE\_ON\_DROP\_TABLE](/sql-reference/sql/drop-iceberg-table#label-purge-on-drop-table-param).
+
+`NOPURGE`
+:   When specified for an externally managed Iceberg table in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database),
+    drops the table without forwarding the purge intent to the external Iceberg catalog, even if the
+    `PURGE_ON_DROP_TABLE` parameter is set to `TRUE` on the table, schema, or catalog-linked database.
+
+    By default, `DROP ICEBERG TABLE` doesn’t forward the purge intent, so `NOPURGE` has the same effect as omitting
+    `PURGE`. You only need `NOPURGE` to override `PURGE_ON_DROP_TABLE = TRUE` for a specific drop.
+
+    `NOPURGE` can only be used with externally managed Iceberg tables in a catalog-linked database. Using it on a
+    non-externally-managed table, a non-Iceberg table, or a table outside a catalog-linked database results in a
+    compilation error. You can’t specify both `PURGE` and `NOPURGE` in the same statement.
 
 ## Access control requirements
 
@@ -92,13 +104,18 @@ For general information about roles and privilege grants for performing SQL acti
   remote catalog. To remove the table from the remote catalog, use the catalog’s own API or tooling.
 
   If you use the AWS Glue Data Catalog as your external catalog, the catalog does not honor the purge flag, so
-  the underlying table files are retained regardless of whether `PURGE` is specified. This behavior is specific
-  to the AWS Glue Data Catalog implementation.
+  the underlying table files are retained regardless of whether `PURGE` or `NOPURGE` is specified. This behavior is
+  specific to the AWS Glue Data Catalog implementation.
+
+  Amazon S3 Tables require the purge intent on every drop. To drop a table in a catalog-linked database that uses
+  Amazon S3 Tables, either specify `PURGE` (`DROP ICEBERG TABLE <name> PURGE`) or set `PURGE_ON_DROP_TABLE = TRUE` on
+  the table, schema, or catalog-linked database. A `DROP ICEBERG TABLE` statement that does neither, or that specifies
+  `NOPURGE`, fails, and the table isn’t dropped.
 
 - The `PURGE_ON_DROP_TABLE` parameter, when set to `TRUE` on a table, schema, or catalog-linked database,
   automatically forwards the purge intent to the external catalog on every `DROP TABLE` — without requiring
   the explicit `PURGE` keyword. The same purge intent is also forwarded on the implicit drop performed by
-  `CREATE OR REPLACE TABLE`. For more information and examples, see
+  `CREATE OR REPLACE TABLE`. To drop a single table without forwarding the purge intent, specify `NOPURGE`. For more information and examples, see
   [Dropping an Iceberg table](/user-guide/tables-iceberg-externally-managed-writes#label-tables-iceberg-external-writes-drop-table).
 - Dropping a table does not permanently remove it from the system. Snowflake retains a version of the dropped table in
   [Time Travel](/user-guide/data-time-travel) for the number of days specified by the `DATA_RETENTION_TIME_IN_DAYS` parameter for
@@ -156,6 +173,21 @@ Drop a table in a catalog-linked database and forward the purge intent to the ex
 >
 > ```
 > DROP ICEBERG TABLE my_catalog_linked_db.public.my_iceberg_table PURGE;
+>
+> +-----------------------------------------+
+> | status                                  |
+> |-----------------------------------------|
+> | MY_ICEBERG_TABLE successfully dropped.  |
+> +-----------------------------------------+
+> ```
+
+Drop a table in a catalog-linked database where `PURGE_ON_DROP_TABLE` is set to `TRUE`, without forwarding the
+purge intent:
+
+> Copy code
+>
+> ```
+> DROP ICEBERG TABLE my_catalog_linked_db.public.my_iceberg_table NOPURGE;
 >
 > +-----------------------------------------+
 > | status                                  |

@@ -57,6 +57,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ CHANGE_TRACKING = { TRUE | FALSE } ]
   [ COPY GRANTS ]
   [ COPY TAGS ]
+  [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
   [ ERROR_LOGGING = { TRUE | FALSE } ]
   [ COMMENT = '<string_literal>' ]
   [ ICEBERG_VERSION = <integer> ]
@@ -139,6 +140,7 @@ Creates a new table populated with the data returned by a query. Place the AS SE
 >   [ BASE_LOCATION = '<relative_path_from_external_volume>' ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ICEBERG_VERSION = <integer> ]
 >   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
 >   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
@@ -187,6 +189,7 @@ names, types, defaults, and constraints are copied to the new table:
 >   [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ... ]
 > ```
 
@@ -212,6 +215,7 @@ copying the data. You can also use this variant to clone a table at a specific t
 >     [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]
 >     [COPY GRANTS]
 >     [COPY TAGS]
+>     [COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )]
 >     ...
 > ```
 
@@ -592,6 +596,8 @@ For more information about cloning, see [CREATE <object> … CLONE](/sql-referen
     >   role that executed the CREATE ICEBERG TABLE statement, with the current timestamp when the statement was executed.
     > - The operation to copy grants occurs atomically in the CREATE ICEBERG TABLE command (that is, within the same transaction).
 
+    You can also copy grants with the [`COPY = ( GRANTS )`](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-copy-property) parameter.
+
 `COPY TAGS`
 :   Applies [tags](/user-guide/object-tagging/introduction) when you use any of these CREATE ICEBERG TABLE forms:
 
@@ -607,6 +613,37 @@ For more information about cloning, see [CREATE <object> … CLONE](/sql-referen
 
     For more information, including the effect when you alter columns in the CREATE OR REPLACE statement, see
     [the usage notes for COPY TAGS](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-usage-notes-copy-tags).
+
+    You can also retain tags with the [`COPY = ( TAGS )`](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-copy-property) parameter.
+
+`COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )`
+:   Names the kinds of metadata to carry over from the table being replaced onto the new table. Specify one or more kinds,
+    separated by commas. The parentheses are required.
+
+    | Kind | Carried over |
+    | --- | --- |
+    | `COMMENTS` | The table comment and the column comments of the replaced table. |
+    | `TAGS` | The tags of the replaced table and its columns. Equivalent to [COPY TAGS](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-copy-tags). |
+    | `GRANTS` | The access privileges on the replaced table, except `OWNERSHIP`. Equivalent to [COPY GRANTS](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-copy-grants). |
+
+    Expand
+
+    Show lessSee more
+
+    `COMMENTS` and `TAGS` require `OR REPLACE`. `GRANTS` follows the same rules as `COPY GRANTS`: it requires `OR REPLACE`,
+    `LIKE`, or `CLONE`. The parameter is accepted in the `CREATE OR REPLACE ICEBERG TABLE`, CTAS, `LIKE`, and `CLONE` forms.
+
+    A column comment is carried over only when the new table defines a column with the same name and the same data type.
+    Column order doesn’t matter. A column that is added, dropped, renamed, or retyped isn’t matched, so it doesn’t receive a
+    comment. The table comment is carried over independently of whether any column matches.
+
+    When the replaced table has a comment, that comment takes precedence over a comment the statement itself produces, whether
+    the statement specifies an inline `COMMENT` or inherits one from a `CLONE` or `LIKE` source. An empty string counts as a
+    comment. When the replaced table has no comment, or a matching column has none, the comment produced by the statement is
+    kept.
+
+    You can combine the `COPY = ( ... )` parameter with the `COPY GRANTS` and `COPY TAGS` parameters in the same statement.
+    Specifying the same kind both ways has no additional effect.
 
 `ERROR_LOGGING = { TRUE | FALSE }`
 :   Specifies whether to turn on DML error logging for the table.

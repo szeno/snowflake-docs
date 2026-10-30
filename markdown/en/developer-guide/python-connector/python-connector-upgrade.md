@@ -101,6 +101,12 @@ Note
 
 Before version 5.0, that call raised `InterfaceError` with the same errno.
 
+A connection or cursor `errorhandler` receives only PEP 249 `Error` subclasses. Any other exception, such as `ValueError`, is re-raised and is not recorded in `messages`.
+
+Note
+
+Before version 5.0, `Error.errorhandler_wrapper_from_ready_exception` passed every exception to the handler. For a class that is not `Error`, the handler value was `exception.args`.
+
 ### Step 6: Validate before you switch
 
 Confirm authentication, representative queries, metadata calls, pandas or Arrow fetches, and any PUT or GET your application uses. Move the tested environment to production only after those checks pass.
@@ -174,7 +180,7 @@ Show lessSee more
 
 Every behavior difference between the generally available driver and the version built on the Universal Core is catalogued in the driver source repository, as a machine-readable file listing each entry’s previous behavior, new behavior, classification, and whether it is a breaking change. Read it in full before you upgrade an application you cannot easily roll back:
 
-- [Snowflake Connector for Python behavior-difference catalog](https://github.com/snowflakedb/drivers/blob/main/python/BehaviorDifferences.yaml)
+- [Snowflake Connector for Python behavior-difference catalog](https://github.com/snowflakedb/drivers/tree/main/python/behavior_differences)
 
 The sections above summarize the entries most likely to affect an existing application. The catalog is the complete list.
 
@@ -225,6 +231,11 @@ The following list summarizes breaking differences between versions before 5.0 a
 
 - **Closed cursors raise `InterfaceError` (errno 252006)** from cursor methods. See [Upgrade steps](#label-python-upgrade-steps). *(BD#21)*
 - **Fetching before `execute()` raises `ProgrammingError` (errno 252009).** *(BD#22)*
+- **Exceptions that are not PEP 249 `Error` subclasses are re-raised and skip `errorhandler`.** They are not recorded in `messages`. *(BD#generic-exceptions-not-routed-to-errorhandler)*
+
+  Note
+
+  Before version 5.0, `Error.errorhandler_wrapper_from_ready_exception` passed every exception to the handler. For a class that is not `Error`, the handler value was `exception.args`, and the default handler raised `error_class(error_value)`.
 - **`file_stream` on a statement that is not PUT raises `ProgrammingError`.** *(BD#49)*
 
   Note

@@ -19,8 +19,7 @@ For evaluation methodology and dataset design guidance, see [Best Practices for 
 
 The ability to run a Cortex Agent evaluation requires the role that runs the evaluation to have the following:
 
-- The DATABASE ROLE SNOWFLAKE.CORTEX\_USER role
-- The USE AI FUNCTIONS account-level privilege (or the per-function `USE AI FUNCTION AI_COMPLETE` privilege). Evaluation judges use Cortex LLM inference, which is gated by this privilege. The USE AI FUNCTIONS privilege is granted to the PUBLIC role by default. If your account has revoked it from PUBLIC, grant it explicitly. For more information, see [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges).
+- The SNOWFLAKE.CORTEX\_USER, SNOWFLAKE.CORTEX\_AGENT\_USER, SNOWFLAKE.CORTEX\_ANALYST\_USER, or SNOWFLAKE.CORTEX\_REST\_API\_USER database role
 - The EXECUTE TASK ON ACCOUNT permission
 - The USAGE permission on the database and schema containing your agent
 - The USAGE permission on the database and schema containing your evaluation data
@@ -1036,7 +1035,7 @@ For more information on estimating costs, see [Understanding overall cost](/user
 
 ### Track judge inference usage
 
-Snowflake issues the judge inference calls for an evaluation through the Cortex REST API, so that usage is recorded in [CORTEX\_REST\_API\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_rest_api_usage_history).
+Judge inference usage for an evaluation is recorded in [CORTEX\_REST\_API\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_rest_api_usage_history).
 
 To attribute judge usage to a particular evaluation run, join the request IDs recorded on the run’s `eval` spans to the `REQUEST_ID` column of the view. Each `eval` span carries its request IDs in the `ai.observability.eval.inference_request_ids` key inside the `ai.observability.eval.full_metadata` attribute:
 

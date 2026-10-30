@@ -211,6 +211,71 @@ SELECT id,
 This query can’t be written without LATERAL because the second FLATTEN call depends on the output
 of the first FLATTEN call.
 
+### Calling a UDTF with values from each row
+
+When you call a user-defined table function (UDTF) for each row of a table, wrap the call in `TABLE()`, as you do for any
+table function in the FROM clause. A `TABLE()` call can already reference columns from table expressions earlier in the
+FROM clause, so you don’t need the LATERAL keyword for this. For details, see the
+[table function syntax](/sql-reference/functions-table#label-table-function-syntax).
+
+The following example creates a table of product IDs and a SQL UDTF that returns the orders for one product, and then
+calls the UDTF once for each row of the table:
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE orders (product_id VARCHAR, quantity_sold NUMBER(11, 2));
+INSERT INTO orders (product_id, quantity_sold) VALUES
+  ('compostable bags', 2000),
+  ('re-usable cups', 1000);
+
+CREATE OR REPLACE TABLE products (product_id VARCHAR);
+INSERT INTO products (product_id) VALUES
+  ('compostable bags'),
+  ('re-usable cups');
+
+CREATE OR REPLACE FUNCTION orders_for_product(prod_id VARCHAR)
+  RETURNS TABLE (product_id VARCHAR, quantity_sold NUMBER(11, 2))
+  AS
+  $$
+    SELECT product_id, quantity_sold
+      FROM orders
+      WHERE product_id = prod_id
+  $$;
+```
+
+Copy code
+
+```
+SELECT p.product_id, o.quantity_sold
+  FROM products AS p,
+    TABLE(orders_for_product(p.product_id)) AS o
+  ORDER BY p.product_id;
+```
+
+```
++------------------+---------------+
+| PRODUCT_ID       | QUANTITY_SOLD |
+|------------------+---------------|
+| compostable bags |       2000.00 |
+| re-usable cups   |       1000.00 |
++------------------+---------------+
+```
+
+If you want to combine this call with LATERAL (for example, alongside another LATERAL inline view in the same FROM
+clause), wrap the `TABLE()` call in a subquery:
+
+Copy code
+
+```
+SELECT p.product_id, o.quantity_sold
+  FROM products AS p,
+    LATERAL (SELECT * FROM TABLE(orders_for_product(p.product_id))) AS o
+  ORDER BY p.product_id;
+```
+
+This returns the same result as the previous query.
+
 ## LATERAL versus other approaches
 
 The following table summarizes when to use LATERAL compared to other approaches:

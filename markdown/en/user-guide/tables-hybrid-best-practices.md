@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 This topic describes best practices and important considerations when using hybrid tables.
 To achieve optimal performance with hybrid tables, follow these best practices in

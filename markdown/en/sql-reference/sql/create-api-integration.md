@@ -148,6 +148,30 @@ CREATE [ OR REPLACE ] API INTEGRATION [ IF NOT EXISTS ] <integration_name>
 
 Note that `git_https_api` should not be in quotation marks.
 
+### For artifact repository
+
+Copy code
+
+```
+CREATE [ OR REPLACE ] API INTEGRATION [ IF NOT EXISTS ] <integration_name>
+  API_PROVIDER = artifact_repository_api
+  API_ALLOWED_PREFIXES = ('<...>')
+  [ API_BLOCKED_PREFIXES = ('<...>') ]
+  [ ALLOWED_AUTHENTICATION_SECRETS = ( { <secret_name> [, <secret_name>, ... ] } ) | all | none ]
+  [ USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } ]
+  [ TLS_TRUSTED_CERTIFICATES = ( { <secret_name> [, <secret_name>, ... ] } ) ]
+  ENABLED = { TRUE | FALSE }
+  [ COMMENT = '<string_literal>' ]
+  ;
+```
+
+Note that `artifact_repository_api` should not be in quotation marks.
+
+Note
+
+Customer-hosted Python artifact repositories are in public preview. For details, see
+[Integrate customer-hosted Python artifact repositories](/developer-guide/udf/python/customer-hosted-python-artifact-repositories).
+
 ### For external MCP server
 
 When integrating with an external Model Context Protocol (MCP) server, use either standard
@@ -372,6 +396,34 @@ For an example, see [Setting up Snowflake to use Git](/developer-guide/git/git-s
 
     The default is `TRUE`.
 
+### For artifact repository
+
+For an example, see [Integrate customer-hosted Python artifact repositories](/developer-guide/udf/python/customer-hosted-python-artifact-repositories).
+
+`integration_name`
+:   Specifies the name of the API integration. This name follows the rules for [Object identifiers](/sql-reference/identifiers).
+    The name must be unique among API integrations in your account.
+
+`API_PROVIDER = artifact_repository_api`
+:   Specifies that this integration is used with [CREATE ARTIFACT REPOSITORY](/sql-reference/sql/create-artifact-repository) to connect to a
+    [customer-hosted Python artifact repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories). The only valid
+    value for this purpose is `artifact_repository_api`. The value must not be in quotation marks.
+
+`API_ALLOWED_PREFIXES = (...)`
+:   Explicitly limits requests that use the integration to one or more HTTPS endpoints and resources beneath those endpoints. Supports a
+    comma-separated list of URLs, which are treated as prefixes.
+
+    List every host the repository serves packages from, including any host it redirects downloads to. For details, see
+    [Configure a customer-hosted artifact repository](/developer-guide/udf/python/customer-hosted-python-artifact-repositories#label-customer-hosted-repos-configure).
+
+`ENABLED = { TRUE | FALSE }`
+:   Specifies whether this API integration is enabled or disabled. If the API integration is disabled, the artifact repository will not be
+    accessible.
+
+    The value is case-insensitive.
+
+    The default is `TRUE`.
+
 ### For external MCP server
 
 For end-to-end setup, see [MCP Connectors](/user-guide/snowflake-cortex/cortex-agents-mcp-connectors).
@@ -519,6 +571,35 @@ to connect to a remote Git repository by setting the integration’s API\_PROVID
     [private connectivity](/user-guide/private-connectivity-outbound).
 
     This parameter must be set to `FALSE` (the default) for public Git servers.
+
+    The default is `FALSE`.
+
+### For artifact repository
+
+In addition to parameters for all integrations, use the following parameters when you’re using the integration to connect to a
+customer-hosted artifact repository by setting the integration’s API\_PROVIDER parameter to `artifact_repository_api`.
+
+`ALLOWED_AUTHENTICATION_SECRETS = ( secret_name [, secret_name ... ] | all | none )`
+:   Specifies the secrets that an artifact repository using this integration can reference in its AUTHENTICATION\_SECRET parameter.
+
+    This parameter’s value must be one of the following:
+
+    - One or more fully-qualified Snowflake secret names to allow any of the listed secrets.
+    - (Default) `all` to allow any secret.
+    - `none` to allow no secrets.
+
+`TLS_TRUSTED_CERTIFICATES = ( {secret_name} [, {secret_name} ... ] )`
+:   Specifies secrets containing certificates that Snowflake trusts, in addition to the public certificate authorities it trusts by default,
+    when validating the repository server’s TLS certificate. Use this when the repository presents a self-signed certificate or one
+    issued by your organization’s internal certificate authority.
+
+    This parameter’s value must be one or more fully qualified Snowflake secret names. The secrets must be of type
+    [generic string](/sql-reference/sql/create-secret#label-create-secret-generic-string) whose SECRET\_STRING value is a PEM-encoded certificate. Requires
+    `USE_PRIVATELINK_ENDPOINT = TRUE`. For certificate requirements, see [Step 4 (optional): Trust a privately signed repository certificate](/developer-guide/udf/python/customer-hosted-python-artifact-repositories#label-customer-hosted-repos-private-certs).
+
+`USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }`
+:   Specifies whether this API integration reaches the repository over an outbound private link connection through
+    [private connectivity](/user-guide/private-connectivity-outbound). For setup, see [Private Link setup](/developer-guide/udf/python/customer-hosted-python-artifact-repositories#label-customer-hosted-repos-privatelink-setup).
 
     The default is `FALSE`.
 

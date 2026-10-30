@@ -71,6 +71,7 @@ CREATE [ OR REPLACE ]
   [ COPY GRANTS ]
   [ ERROR_LOGGING = { TRUE | FALSE } ]
   [ COPY TAGS ]
+  [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
   [ COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] AGGREGATION POLICY <policy_name> [ ENTITY KEY ( <col_name> [ , <col_name> ... ] ) ] ]
@@ -216,6 +217,7 @@ Creates a new table populated with the data returned by a query:
 >   [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ... ]
 >   AS <query>
 > ```
@@ -276,6 +278,7 @@ names, types, defaults, and constraints are copied to the new table:
 >   [ CLUSTER BY ( <expr> [ , <expr> , ... ] ) ]
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
+>   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >   [ ... ]
 > ```
 
@@ -306,6 +309,7 @@ copying the data. This variant can also be used to clone a table at a specific t
 >     [ { AT | BEFORE } ( { TIMESTAMP => <timestamp> | OFFSET => <time_difference> | STATEMENT => <id> } ) ]
 >     [ COPY GRANTS ]
 >     [ COPY TAGS ]
+>     [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
 >     [ ... ]
 > ```
 
@@ -731,6 +735,8 @@ For more information about backups, see [Backups for disaster recovery and immut
     > - The operation to copy grants occurs atomically in the CREATE TABLE command (i.e. within the same transaction).
     > - This parameter is not supported by the CREATE OR ALTER variant syntax.
 
+    You can also copy grants with the [`COPY = ( GRANTS )`](/sql-reference/sql/create-table#label-create-table-copy-property) parameter.
+
 `ERROR_LOGGING = { TRUE | FALSE }`
 :   Specifies whether to turn on DML error logging for the table.
 
@@ -759,6 +765,39 @@ For more information about backups, see [Backups for disaster recovery and immut
 
     For more information, including the effect when you alter columns in the CREATE OR REPLACE statement, see
     [the usage notes for COPY TAGS](/sql-reference/sql/create-table#label-create-table-usage-notes-copy-tags).
+
+    You can also retain tags with the [`COPY = ( TAGS )`](/sql-reference/sql/create-table#label-create-table-copy-property) parameter.
+
+`COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )`
+:   Names the kinds of metadata to carry over from the table being replaced onto the new table. Specify one or more kinds,
+    separated by commas. The parentheses are required.
+
+    | Kind | Carried over |
+    | --- | --- |
+    | `COMMENTS` | The table comment and the column comments of the replaced table. |
+    | `TAGS` | The tags of the replaced table and its columns. Equivalent to [COPY TAGS](/sql-reference/sql/create-table#label-create-table-copy-tags). |
+    | `GRANTS` | The access privileges on the replaced table, except `OWNERSHIP`. Equivalent to [COPY GRANTS](/sql-reference/sql/create-table#label-create-table-copy-grants). |
+
+    Expand
+
+    Show lessSee more
+
+    `COMMENTS` and `TAGS` require `OR REPLACE`. `GRANTS` follows the same rules as `COPY GRANTS`: it requires `OR REPLACE`,
+    `LIKE`, or `CLONE`. The parameter is accepted in the `CREATE OR REPLACE TABLE`, CTAS, `LIKE`, and `CLONE` forms.
+
+    A column comment is carried over only when the new table defines a column with the same name and the same data type.
+    Column order doesn’t matter. A column that is added, dropped, renamed, or retyped isn’t matched, so it doesn’t receive a
+    comment. The table comment is carried over independently of whether any column matches.
+
+    When the replaced table has a comment, that comment takes precedence over a comment the statement itself produces, whether
+    the statement specifies an inline `COMMENT` or inherits one from a `CLONE` or `LIKE` source. An empty string counts as a
+    comment. When the replaced table has no comment, or a matching column has none, the comment produced by the statement is
+    kept.
+
+    You can combine the `COPY = ( ... )` parameter with the `COPY GRANTS` and `COPY TAGS` parameters in the same statement.
+    Specifying the same kind both ways has no additional effect.
+
+    For more information, see [the usage notes for COPY = ( … )](/sql-reference/sql/create-table#label-create-table-usage-notes-copy-property).
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the table.
@@ -961,7 +1000,6 @@ For general information about roles and privilege grants for performing SQL acti
       Alternatively, you can create a table with rows in sorted order by using an ORDER BY clause in the CTAS query.
 
 - CREATE OR REPLACE … COPY TAGS
-
   - You don’t need privileges on the tags to use COPY TAGS.
   - You can use COPY TAGS with a CREATE OR REPLACE … CLONE statement, a CREATE OR REPLACE … LIKE statement,
     or a WITH TAG clause. Tags from both sources are combined. If both sources set the same tag, the value from
@@ -979,6 +1017,16 @@ For general information about roles and privilege grants for performing SQL acti
     ```
 
     Only column `a` is still tagged in the new table, although it contains the data from column `b` in the source table.
+
+- CREATE OR REPLACE … COPY = ( … )
+
+  - You don’t need any privileges beyond those required to run the `CREATE OR REPLACE` statement.
+  - The statement is atomic. If the metadata can’t be carried over, the whole statement fails and the previous table is
+    left unchanged.
+  - Column matching follows the same name and data type rules as `COPY TAGS`: renaming or retyping a column means the
+    column in the new table doesn’t receive the carried-over comment.
+  - A statement that specifies `COMMENTS` or `TAGS` without `OR REPLACE` fails, as does a statement that specifies
+    `GRANTS` without `OR REPLACE`, `LIKE`, or `CLONE`. `CREATE OR ALTER TABLE` doesn’t support the parameter.
 - Inside a transaction, any DDL statement (including CREATE TEMPORARY/TRANSIENT TABLE) commits
   the transaction before executing the DDL statement itself. The DDL statement then runs in its own transaction. The
   next statement after the DDL statement starts a new transaction. Therefore, you can’t create, use, and drop a
@@ -1339,6 +1387,44 @@ Specify collation for columns in a table:
 >      'pinata', 
 >      'piñata');
 > ```
+
+Recreate a table and carry over its comments, tags, and privileges without restating them:
+
+> Copy code
+>
+> ```
+> CREATE OR REPLACE TABLE orders (
+>     order_id NUMBER COMMENT 'Primary key assigned by the order service',
+>     order_total NUMBER(12,2) COMMENT 'Order total in USD')
+>   COMMENT = 'One row per customer order';
+>
+> CREATE OR REPLACE TABLE orders (
+>     order_id NUMBER,
+>     order_total NUMBER(12,2),
+>     order_channel VARCHAR COMMENT 'Sales channel the order arrived through')
+>   COPY = (COMMENTS, TAGS, GRANTS);
+> ```
+
+The table comment and the comments on `order_id` and `order_total` are carried over from the replaced table, along with
+any tags and privileges it carried. `order_channel` keeps the comment specified inline, because the replaced table had no
+matching column.
+
+When the replaced table already has a comment, that comment takes precedence over an inline `COMMENT` in the new
+statement:
+
+> Copy code
+>
+> ```
+> CREATE OR REPLACE TABLE orders (
+>     order_id NUMBER,
+>     order_total NUMBER(12,2))
+>   COMMENT = 'Customer orders'
+>   COPY = (COMMENTS);
+> ```
+
+The table comment remains `One row per customer order`, which is carried over from the replaced table. To change a table
+comment, omit `COMMENTS` from the `COPY = ( ... )` parameter, or use [ALTER TABLE](/sql-reference/sql/alter-table) or
+[COMMENT](/sql-reference/sql/comment) after you recreate the table.
 
 ### CREATE TABLE … USING TEMPLATE examples
 

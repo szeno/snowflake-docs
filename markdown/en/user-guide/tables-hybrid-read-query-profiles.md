@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 Unistore workloads pose some interesting questions about query execution that you can investigate by using the Snowsight Query Profile
 feature or information gleaned from [EXPLAIN](/sql-reference/sql/explain) output. In addition to monitoring overall performance and throughput, you

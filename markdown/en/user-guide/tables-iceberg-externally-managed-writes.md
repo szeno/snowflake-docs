@@ -303,9 +303,10 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (id INT, name STRING) PURGE;
 #### PURGE\_ON\_DROP\_TABLE parameter
 
 For catalogs that always require purge on drop — such as Amazon S3 Tables, which does not support dropping a table
-without deleting its files — set `PURGE_ON_DROP_TABLE = TRUE` on the catalog-linked database. This way, every
-`DROP TABLE` and every implicit drop from `CREATE OR REPLACE TABLE` in that database automatically forwards the
-purge intent to the catalog, without requiring the explicit `PURGE` keyword each time.
+without deleting its files — set `PURGE_ON_DROP_TABLE = TRUE` on the catalog-linked database. With the parameter
+set, `DROP TABLE` and the implicit drop from `CREATE OR REPLACE TABLE` in that database forward the purge intent to
+the catalog without the explicit `PURGE` keyword. To drop a single table without forwarding the purge intent, specify
+`NOPURGE` (see [NOPURGE keyword](#label-tables-iceberg-external-writes-nopurge)).
 
 Copy code
 
@@ -325,13 +326,38 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (id INT, name STRING);
 
 You can also set `PURGE_ON_DROP_TABLE` at the schema or table level for finer-grained control.
 
+#### NOPURGE keyword
+
+By default, `DROP TABLE` doesn’t forward the purge intent to the catalog. If `PURGE_ON_DROP_TABLE` is set to `TRUE`
+for the table, its schema, or its catalog-linked database, specify `NOPURGE` on a `DROP TABLE` statement to drop
+that table without forwarding the purge intent. Without `PURGE_ON_DROP_TABLE = TRUE`, `NOPURGE` has the same effect
+as omitting `PURGE`. For example:
+
+Copy code
+
+```
+ALTER DATABASE my_cld SET PURGE_ON_DROP_TABLE = TRUE;
+
+-- Forwards purge=true to the catalog because of PURGE_ON_DROP_TABLE.
+DROP ICEBERG TABLE my_iceberg_table;
+
+-- Forwards purge=false to the catalog; NOPURGE overrides PURGE_ON_DROP_TABLE.
+DROP ICEBERG TABLE my_other_iceberg_table NOPURGE;
+```
+
+You can’t specify both `PURGE` and `NOPURGE` in the same statement. `NOPURGE` applies only to `DROP TABLE`; the
+implicit drop performed by `CREATE OR REPLACE TABLE` follows the `PURGE` keyword and the `PURGE_ON_DROP_TABLE`
+parameter.
+
 Note
 
 - If you use the AWS Glue Data Catalog as your external catalog, the catalog does not honor the purge flag, so
-  the underlying table files are retained regardless of whether `PURGE` is specified or `PURGE_ON_DROP_TABLE`
-  is set to `TRUE`. This behavior is specific to the AWS Glue Data Catalog implementation.
-- Dropping an Amazon S3 Table isn’t currently supported without specifying `PURGE` or setting
-  `PURGE_ON_DROP_TABLE = TRUE` on the containing database.
+  the underlying table files are retained regardless of whether `PURGE` or `NOPURGE` is specified or
+  `PURGE_ON_DROP_TABLE` is set to `TRUE`. This behavior is specific to the AWS Glue Data Catalog implementation.
+- Amazon S3 Tables require the purge intent on every drop. To drop an Amazon S3 Table, either specify `PURGE`
+  (`DROP ICEBERG TABLE <name> PURGE`) or set `PURGE_ON_DROP_TABLE = TRUE` on the table, schema, or catalog-linked
+  database. A `DROP TABLE` statement that does neither, or that specifies `NOPURGE`, fails, and the table isn’t
+  dropped.
 
 ## Writing to externally managed Iceberg tables
 

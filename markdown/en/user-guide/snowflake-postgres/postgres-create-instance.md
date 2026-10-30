@@ -61,7 +61,7 @@ Copy code
 CREATE POSTGRES INSTANCE [ IF NOT EXISTS ] <name>
   COMPUTE_FAMILY = '<compute_family>'
   STORAGE_SIZE_GB = <storage_gb>
-  AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }
+  AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH }
   [ POSTGRES_VERSION = { 16 | 17 | 18 } ]
   [ NETWORK_POLICY = '<network_policy>' ]
   [ HIGH_AVAILABILITY = { TRUE | FALSE } ]
@@ -82,10 +82,12 @@ For the command parameters:
 > `STORAGE_SIZE_GB = storage_gb`
 > :   Specifies storage size in GB. Must be between 10 and 65,535.
 >
-> `AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE }`
-> :   Specifies the authentication method for the instance. POSTGRES indicates that only Postgres user passwords can be used.
->     POSTGRES\_OR\_SNOWFLAKE also allows the use of short-lived access token passwords. See
->     [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) for more details.
+> `AUTHENTICATION_AUTHORITY = { POSTGRES | POSTGRES_OR_SNOWFLAKE | EXTERNAL_OAUTH }`
+> :   Specifies the authentication authority for the instance. `POSTGRES` is Postgres authentication:
+>     only Postgres login roles and passwords. `POSTGRES_OR_SNOWFLAKE` is Snowflake token authentication:
+>     the instance accepts Postgres passwords and short-lived Snowflake token passwords. `EXTERNAL_OAUTH`
+>     is External OAuth and requires `AUTHENTICATION_PROPERTIES`. For the full statement, see
+>     [Configure authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-authentication).
 >
 > `POSTGRES_VERSION = { 16 | 17 | 18 }`
 > :   Specifies the version of Postgres to use.
@@ -125,7 +127,7 @@ When you create the instance, one row with the following columns is returned:
 - `access_roles`
 - `default_database`
 
-The `access_roles` column contains the user name and password for both the `snowflake_admin` and `application` roles. Save these details in a secure location because they cannot be retrieved later.
+The `access_roles` column contains the user name and password for both the `snowflake_admin` and `application` roles. Save these details in a secure location because they cannot be retrieved later. For an External OAuth instance, only `snowflake_admin` is returned.
 
 Creating a new instance takes some time to complete. The instance displays its current
 state as it is building. See the list of [instance states](#instance-states) for

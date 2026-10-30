@@ -80,7 +80,9 @@ The following steps outline how to set this up:
 
      > Note
      >
-     > Egress IP is available only for external access on AWS.
+     > Egress IP is available on AWS Commercial and Azure Commercial deployments. On AWS, allowlist every range the function returns.
+     > On Azure, allowlist only the ranges whose `usage` includes `Stable Egress IP`. For more information, see
+     > [Choose which IP ranges to allowlist](/user-guide/egress-ip/network-egress#label-network-egress-choose-ranges).
      >
      > 1. Call [SYSTEM$GET\_SNOWFLAKE\_EGRESS\_IP\_RANGES](/sql-reference/functions/system_get_snowflake_egress_ip_ranges) to get the current and upcoming IP ranges and their expiration times.
      > 2. Use the IP ranges you obtain to update firewall rules by using APIs, CLIs, or configuration management tools, as described in [Automate IP address range refreshes](/user-guide/egress-ip/network-egress#label-network-egress-refreshing).
@@ -405,11 +407,14 @@ On the Snowflake side, you need to provision a Private Endpoint that reaches you
 
 When provisioning the Private Endpoint, you need to provide two arguments: the Private Link Service ID from your cloud provider and the repository server domain name.
 
-Since Snowflake reaches your repository server through the HTTPS protocol, the domain name must have a valid certificate.
+Since Snowflake reaches your repository server through the HTTPS protocol, the domain name must have a certificate that
+Snowflake can validate.
 
 Note
 
-Customer-hosted artifact repositories currently do not support self-signed certificates (not CA-signed).
+If your repository presents a certificate that is not chained to a publicly trusted certificate authority — a self-signed
+certificate, or one issued by your organization’s internal CA — supply the certificate to Snowflake with
+`TLS_TRUSTED_CERTIFICATES`. See [Step 4 (optional): Trust a privately signed repository certificate](#label-customer-hosted-repos-private-certs).
 
 **Private Endpoint provision for AWS:**
 
@@ -442,6 +447,70 @@ You can check the status of provisioning by calling the [SYSTEM$GET\_PRIVATELINK
 - **AWS**: `Pending` to `Available`
 - **Azure**: `Pending` to `APPROVED`
 - **GCP**: `Pending` to `ACCEPTED`
+
+### Step 4 (optional): Trust a privately signed repository certificate
+
+Snowflake validates your repository’s TLS certificate against the public certificate authorities (CAs) it trusts by default.
+If your repository presents a certificate that does not chain to one of those — common for an internal JFrog Artifactory or
+Nexus reached over Private Link — add the signing certificate to the API integration with `TLS_TRUSTED_CERTIFICATES`.
+
+1. Store each certificate in its own secret, with a `TYPE` of `GENERIC_STRING`. Supply the certificate Snowflake needs to
+   trust the chain, which is not always the one the server presents:
+
+   - Server certificate issued by your internal CA: supply the **CA** certificate, not the server’s leaf certificate.
+   - Genuinely self-signed server certificate: supply that certificate.
+
+   Copy code
+
+   ```
+   CREATE OR REPLACE SECRET my_repo_ca
+     TYPE = GENERIC_STRING
+     SECRET_STRING = $$
+   -----BEGIN CERTIFICATE-----
+   <certificate_body>
+   -----END CERTIFICATE-----
+   $$;
+   ```
+2. Reference the secret from the API integration. `TLS_TRUSTED_CERTIFICATES` requires `USE_PRIVATELINK_ENDPOINT = TRUE`;
+   Snowflake rejects the integration otherwise. You can list more than one secret, which is useful while rotating a CA.
+
+   Copy code
+
+   ```
+   CREATE OR REPLACE API INTEGRATION python_repo_integration_pl
+     API_PROVIDER = ARTIFACT_REPOSITORY_API
+     API_ALLOWED_PREFIXES = ('https://nexus-pl.internal.example.com')
+     USE_PRIVATELINK_ENDPOINT = TRUE
+     ALLOWED_AUTHENTICATION_SECRETS = (my_repo_secret)
+     TLS_TRUSTED_CERTIFICATES = (my_repo_ca)
+     ENABLED = TRUE;
+   ```
+
+`ALTER API INTEGRATION ... SET TLS_TRUSTED_CERTIFICATES` and `... UNSET TLS_TRUSTED_CERTIFICATES` are both supported, and
+[DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) lists the secrets currently attached.
+
+Each certificate you supply must meet the following requirements:
+
+| Property | Requirement |
+| --- | --- |
+| Encoding | PEM. Include the `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` lines, and do not indent them. DER is not supported. |
+| Key type and size | RSA of at least 2048 bits, ECDSA on P-256 or P-384, or Ed25519. RSA keys shorter than 2048 bits are rejected. |
+| Signature algorithm | SHA-256 or stronger. Certificates signed with SHA-1 are rejected, including a SHA-1 signature on an otherwise acceptable CA. |
+| Validity | Expired and not-yet-valid certificates are skipped. If skipping leaves no usable certificate, package resolution fails. |
+| Secret type | `GENERIC_STRING`. |
+
+Expand
+
+Show lessSee more
+
+Your certificates are added to the public CAs Snowflake already trusts, rather than replacing them, so a repository that
+redirects package downloads to a publicly trusted host keeps working.
+
+Important
+
+The secret must be visible to the role that owns the **artifact repository**, which is not necessarily the role that created
+the API integration. If the integration is created by `ACCOUNTADMIN` while the repository is owned by another role, grant
+that role `READ` on the secret. Otherwise the repository is created successfully but every package resolution fails.
 
 ### Step-by-step manual config for AWS (repository server outside of the VPC)
 

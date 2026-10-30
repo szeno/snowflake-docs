@@ -1,4 +1,4 @@
-# Understanding costs for dbt Projects on Snowflake
+# Understand costs for dbt Projects on Snowflake
 
 This topic provides an overview of the costs associated with dbt Projects on Snowflake. For
 general information about Snowflake costs, see [Understanding overall cost](/user-guide/cost-understanding-overall).

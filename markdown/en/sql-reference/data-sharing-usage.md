@@ -27,7 +27,7 @@ The DATA\_SHARING\_USAGE schema contains the following views:
 | [LISTING\_EVENTS\_DAILY](/sql-reference/data-sharing-usage/listing-events-daily) | Historical | up to 2 days | Data retained for 1 year. | Provider |
 | [LISTING\_TELEMETRY\_DAILY](/sql-reference/data-sharing-usage/listing-telemetry-daily) | Historical | up to 2 days | Data retained for 1 year. | Provider |
 | [MARKETPLACE\_DISBURSEMENT\_REPORT](/collaboration/views/marketplace-disbursement-report-ds) | Historical | up to 2 days | Data retained for 1 year. | Provider |
-| [MARKETPLACE\_LISTING\_INVOICE\_STATUS](/collaboration/views/marketplace_listing_invoice_status) | Historical | up to 2 days | Data retained for 1 year. | Provider |
+| [MARKETPLACE\_LISTING\_INVOICE\_STATUS](/collaboration/views/marketplace_listing_invoice_status) | Historical | up to 24 hours | Data retained for 7 years. | Provider |
 | [MARKETPLACE\_PAID\_USAGE\_DAILY](/collaboration/views/marketplace-paid-usage-daily-ds) | Historical | up to 2 days | Data retained for 1 year. | Consumer |
 | [MARKETPLACE\_PROVIDER\_SPCS\_USAGE](/collaboration/views/marketplace-provider-spcs-usage-ds) | Historical | up to 2 days | Data retained for 1 year. | Provider |
 | [MONETIZED\_USAGE\_DAILY](/collaboration/views/monetized-usage-daily-ds) | Historical | up to 2 days | Data retained for 1 year. | Provider |

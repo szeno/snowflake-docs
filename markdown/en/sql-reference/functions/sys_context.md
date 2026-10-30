@@ -11,6 +11,7 @@ See also:
     [SYS\_CONTEXT (SNOWFLAKE$ENVIRONMENT namespace)](/sql-reference/functions/sys_context_snowflake_environment) ,
     [SYS\_CONTEXT (SNOWFLAKE$ORGANIZATION namespace)](/sql-reference/functions/sys_context_snowflake_organization) ,
     [SYS\_CONTEXT (SNOWFLAKE$ORGANIZATION\_SESSION namespace)](/sql-reference/functions/sys_context_snowflake_organization_session) ,
+    [SYS\_CONTEXT (SNOWFLAKE$ORGANIZATION\_SHARING namespace)](/sql-reference/functions/sys_context_snowflake_organization_sharing) ,
     [SYS\_CONTEXT (SNOWFLAKE$SESSION namespace)](/sql-reference/functions/sys_context_snowflake_session) ,
     [SYS\_CONTEXT (SNOWFLAKE$SESSION\_ATTRIBUTES namespace)](/sql-reference/functions/sys_context_snowflake_session_attributes)
 
@@ -51,6 +52,7 @@ SYS_CONTEXT(
     | [SNOWFLAKE$ENVIRONMENT](/sql-reference/functions/sys_context_snowflake_environment) | Properties providing context around the environment in which the function is called. These properties include information about:   - The client, driver, or library that is used to call the function. - The account associated with the session in which the function is called. - The region of that account. |
     | [SNOWFLAKE$ORGANIZATION](/sql-reference/functions/sys_context_snowflake_organization) | Functions providing context around the current organization. |
     | [SNOWFLAKE$ORGANIZATION\_SESSION](/sql-reference/functions/sys_context_snowflake_organization_session) | Properties providing context around the session in which the function is called, when the current account is in an organization. |
+    | [SNOWFLAKE$ORGANIZATION\_SHARING](/sql-reference/functions/sys_context_snowflake_organization_sharing) | Properties and functions providing consumer identity context for row access and masking policies on data shared within an organization. |
     | [SNOWFLAKE$SESSION](/sql-reference/functions/sys_context_snowflake_session) | Properties and functions providing context around the session in which the function is called. |
     | [SNOWFLAKE$SESSION\_ATTRIBUTES](/sql-reference/functions/sys_context_snowflake_session_attributes) | Custom key-value attributes set for the current session using [SET\_SYS\_CONTEXT](/sql-reference/functions/set_sys_context). |
 

@@ -21,7 +21,7 @@ columns explicitly, and use the time filter column table plus worked SQL and ant
 
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 This Organization Usage view displays a row for each hybrid table defined in each account in your organization.
 

@@ -51,6 +51,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION [ IF NOT EXIS
   [ { VOLATILE | IMMUTABLE } ]
   [ RUNTIME_VERSION = <java_jdk_version> ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] ) ]
   [ PACKAGES = ( '<package_name_and_version>' [ , ... ] ) ]
   HANDLER = '<path_to_method>'
@@ -75,6 +76,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION [ IF NOT EXIS
   [ { VOLATILE | IMMUTABLE } ]
   [ RUNTIME_VERSION = <java_jdk_version> ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] )
   HANDLER = '<path_to_method>'
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <name_of_integration> [ , ... ] ) ]
@@ -95,6 +97,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION <name> (
   [ { CALLED ON NULL INPUT | { RETURNS NULL ON NULL INPUT | STRICT } } ]
   [ { VOLATILE | IMMUTABLE } ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   AS '<function_definition>'
 ```
 
@@ -115,6 +118,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] [ AGGREGATE ] FUNCTION
   [ { VOLATILE | IMMUTABLE } ]
   RUNTIME_VERSION = <python_version>
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] ) ]
   [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]
   [ ARTIFACT_REPOSITORY = '<repository_name>' ]
@@ -139,6 +143,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] [ AGGREGATE ] FUNCTION
   [ { VOLATILE | IMMUTABLE } ]
   RUNTIME_VERSION = <python_version>
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ ARTIFACT_REPOSITORY = '<repository_name>' ]
   IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] )
   [ PACKAGES = ( '<package_name>[==<version>]' [ , ... ] ) ]
@@ -169,6 +174,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION [ IF NOT EXIS
   [ { VOLATILE | IMMUTABLE } ]
   [ RUNTIME_VERSION = <scala_version> ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   [ IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] ) ]
   [ PACKAGES = ( '<package_name_and_version>' [ , ... ] ) ]
   HANDLER = '<path_to_method>'
@@ -191,6 +197,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION [ IF NOT EXIS
   [ { VOLATILE | IMMUTABLE } ]
   [ RUNTIME_VERSION = <scala_version> ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   IMPORTS = ( '<stage_path_and_directory_or_file_name_to_read>' [ , ... ] )
   HANDLER = '<path_to_method>'
 ```
@@ -208,6 +215,7 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] FUNCTION <name> (
   [ { VOLATILE | IMMUTABLE } ]
   [ MEMOIZABLE ]
   [ COMMENT = '<string_literal>' ]
+  [ COPY = ( GRANTS ) ]
   AS '<function_definition>'
 ```
 
@@ -553,6 +561,17 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
     - The [SHOW GRANTS](/sql-reference/sql/show-grants) output for the replacement function lists the grantee for the copied privileges as the
       role that executed the CREATE FUNCTION statement, with the current timestamp when the statement was executed.
     - The operation to copy grants occurs atomically in the CREATE FUNCTION command (i.e. within the same transaction).
+
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. Unlike `COPY GRANTS`, it goes among the properties that
+    follow the `RETURNS` clause:
+
+    Copy code
+
+    ```
+    CREATE OR REPLACE FUNCTION my_function() RETURNS INT COPY = ( GRANTS ) AS $$ SELECT 1 $$;
+    ```
+
+    For functions, `COPY = ( ... )` accepts only `GRANTS`.
 
 ### Java
 

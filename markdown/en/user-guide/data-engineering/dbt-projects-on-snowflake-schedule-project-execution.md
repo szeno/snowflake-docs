@@ -1,7 +1,7 @@
 # Schedule execution of dbt project objects on Snowflake
 
 You can use Snowflake [tasks](/user-guide/tasks-intro) or an external orchestrator like Apache Airflow to schedule execution of a dbt project object with the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project) command. To compare native task scheduling with external orchestrators,
-see [Understanding orchestration for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-orchestration).
+see [Understand orchestration for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-orchestration).
 
 From a workspace, you can quickly create and schedule a user-managed task to execute a connected dbt project object. You can also use SQL commands to create a task directly. If a workspace is connected to a dbt project object, you can view all tasks that run the EXECUTE DBT PROJECT command for that object.
 

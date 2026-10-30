@@ -10,6 +10,7 @@ GET\_DDL currently supports the following object types:
 
 - Cortex Agents (see [CREATE AGENT](/sql-reference/sql/create-agent))
 - Cortex Search services (see [CREATE CORTEX SEARCH SERVICE](/sql-reference/sql/create-cortex-search))
+- MCP servers (see [CREATE MCP SERVER](/sql-reference/sql/create-mcp-server))
 - Alerts (see [CREATE ALERT](/sql-reference/sql/create-alert))
 - Databases (see [CREATE DATABASE](/sql-reference/sql/create-database)), including [catalog-linked databases](/sql-reference/sql/create-database-catalog-linked).
 - Data metric functions (see [CREATE DATA METRIC FUNCTION](/sql-reference/sql/create-data-metric-function))
@@ -74,6 +75,7 @@ GET_DDL( '<object_type>' , '[<namespace>.]<object_name>' [ , <use_fully_qualifie
     - FUNCTION (for UDFs, including data metric functions and external functions)
     - ICEBERG\_TABLE
     - INTEGRATION (storage)
+    - MCP\_SERVER
     - PIPE
     - POLICY (aggregation, authentication, data movement, join, masking, password, projection, row access, session, and storage lifecycle policies)
     - PROCEDURE (for stored procedures)
@@ -272,6 +274,31 @@ SELECT GET_DDL('CORTEX_AGENT', 'my_agent');
 ```
 
 For a [secure agent](/user-guide/snowflake-cortex/cortex-agents-secure), GET\_DDL includes the `SECURE = TRUE` property. When the owner role is not activated, the output omits `FROM SPECIFICATION` and the specification body entirely.
+
+### MCP servers
+
+Return the DDL used to create an MCP server named `my_mcp_server`:
+
+Copy code
+
+```
+SELECT GET_DDL('MCP_SERVER', 'my_mcp_server');
+
++------------------------------------------------------------------------+
+| GET_DDL('MCP_SERVER', 'MY_MCP_SERVER')                                 |
++------------------------------------------------------------------------+
+| CREATE MCP SERVER my_mcp_server                                        |
+| FROM SPECIFICATION                                                     |
+| $$                                                                     |
+| tools:                                                                 |
+|   - title: "Loop Agent"                                               |
+|     name: "loop_agent_tool"                                            |
+|     identifier: "MY_DB.MY_SCHEMA.MY_AGENT"                             |
+|     type: "CORTEX_AGENT_RUN"                                           |
+|     description: "An agent that answers questions."                    |
+| $$;                                                                    |
++------------------------------------------------------------------------+
+```
 
 ### Views
 

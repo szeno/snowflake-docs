@@ -100,7 +100,7 @@ Customers are responsible for managing the following controls to ensure a level 
 
 - Securing, keeping confidential, and rotating Postgres instance credentials, including passwords and connection strings.
 - Maintaining appropriate password uniqueness, length, complexity, and expiration.
-- Using [Snowflake Token Authentication for Snowflake Postgres](/user-guide/snowflake-postgres/postgres-token-auth) passwords for interactive user connections.
+- Using [Snowflake token passwords or External OAuth access tokens](/user-guide/snowflake-postgres/postgres-authentication) for interactive user connections.
 - Using restrictive [networking policies and rules](/user-guide/snowflake-postgres/postgres-network).
 - Configuring [SSL certificate verification](/user-guide/snowflake-postgres/postgres-ssl-certs) for your client connections to Snowflake Postgres instances.
 - Configuring user and role-based access controls, including scope and duration of user access.

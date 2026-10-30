@@ -4,25 +4,45 @@ Feature — Generally Available
 
 Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supported.
 
-Snowflake Notebooks run inside a pre-built container environment optimized for scalable AI/ML development powered by Snowflake Container Runtime.
+Snowflake Notebooks run on [Snowflake Container Runtime](/developer-guide/container-runtime/overview), a preconfigured,
+versioned environment for analytics, data engineering, and machine learning on Snowpark Container Services. Container Runtime includes
+Snowflake packages and popular open-source frameworks. Use it for exploration, scheduled pipelines, distributed
+training, hyperparameter tuning, batch inference, and fine-tuning without assembling a separate Python stack for each
+kind of work.
 
 ## Python versions
 
-Snowflake Notebooks support Python versions from 3.10 to 3.12. When creating a notebook service, select the Python version that best fits your workload requirements.
+The Python version in a notebook service comes from the Container Runtime version that you select when you create the
+service.
+
+Container Runtime 3.0, the current Latest runtime, includes Python 3.12. Container Runtime 2.x images include Python
+3.10, 3.11, and 3.12.
+
+For the Python version in each runtime, see
+[Snowflake Container Runtime release notes](/developer-guide/container-runtime/release-notes).
 
 ## Pre-installed Snowflake Container Runtime packages
 
-Snowflake Container Runtime includes approximately 100 packages and libraries that support a wide range of analytics, data engineering,
-and machine learning development tasks inside Snowflake.
+Container Runtime includes Snowflake packages and popular open-source frameworks for analytics, data engineering, and
+machine learning. The following Snowflake packages are preinstalled:
 
-See [Snowflake Container Runtime release notes](/developer-guide/snowflake-ml/container-runtime/releases) for the full list of packages
-in each version.
+- **Snowpark** (`snowflake-snowpark-python`) for DataFrame pipelines and warehouse-pushdown compute.
+- **Snowpark Connect** (`snowpark-connect`) for running Spark-style workloads against Snowflake without a
+  lift-and-shift rewrite.
+- **Snowflake ML** (`snowflake-ml-python`) for feature engineering, modeling, and the model registry, plus distributed
+  data loading, training, and hyperparameter optimization across cores, GPUs, and multi-node compute pools.
+
+For the full list of packages in each version, see
+[Snowflake Container Runtime release notes](/developer-guide/container-runtime/release-notes).
 
 ## Installing additional packages
 
 Snowflake Notebooks provides flexible approaches for managing Python packages, ranging from fully managed runtimes to custom container images. Each option offers different tradeoffs in ease of use, governance, customization, and external connectivity. This guide compares the options and highlights the scenarios where each works best.
 
-By default, the Snowflake Container Runtime provides a Python execution environment, preinstalled with ~100 popular data science and machine learning packages and first-party Snowflake packages such as snowflake-snowpark-python. It is optimized for Snowflake-managed CPU and GPU infrastructure and recommended for most users and general-purpose notebook workloads.
+By default, Snowflake Container Runtime provides a Python execution environment preinstalled with Snowflake packages,
+including Snowpark, Snowpark Connect, and Snowflake ML, and popular open-source data science and machine learning
+packages. It is optimized for Snowflake-managed CPU and GPU infrastructure and recommended for most users and
+general-purpose notebook workloads.
 
 Additional ways of installing packages:
 
@@ -105,25 +125,3 @@ import math_tools
 
 math_tools.add_one(3)
 ```
-
-## Runtime management
-
-### Runtime pinning
-
-All notebook services are pinned to the Runtime selected at creation unless you explicitly change it by editing the service. For example, a notebook
-service created on `Runtime 2.0` will not be automatically upgraded when new Runtime versions are released.
-
-### Runtime vulnerability scanning
-
-Snowflake scans the Runtime images daily for security vulnerabilities. High or critical Common Vulnerabilities and Exposures (CVEs) are addressed by
-releasing new Runtime versions within 30 days of detection.
-
-Existing notebook services can continue using Runtimes with detected CVEs. However, Runtimes with known CVEs cannot be selected when creating new
-notebook services.
-
-### Custom runtime
-
-You can build and register your own custom container images for use with Notebooks and ML Jobs. Custom images let you
-include specific packages, meet compliance requirements, and ensure reproducibility across environments.
-
-For more information, see [Custom runtime images](/developer-guide/snowflake-ml/custom-runtime-images).

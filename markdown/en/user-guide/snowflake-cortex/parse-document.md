@@ -25,16 +25,12 @@ high-fidelity processing of complex, multi-page documents.
 
 ## Processing modes
 
-The AI\_PARSE\_DOCUMENT function offers two modes for processing documents:
+The AI\_PARSE\_DOCUMENT function offers three modes for processing documents:
 
-- **LAYOUT** mode is the preferred choice for most use cases, especially for complex documents. It is optimized for
-  extracting structured content such as tables, headers, and layout relationships, and is required for image
-  extraction.
-- **Image extraction (LAYOUT mode):** Extract embedded images alongside text and layout by setting
-  `'extract_images': true`, enabling multimodal workflows such as RAG, image analysis, and compliance use cases.
-  There is no additional cost for using this parameter.
+- **LAYOUT** mode is recommended for extracting text and document structure, including tables, headers, and layout relationships. To also extract embedded images for further processing, set ‘extract\_images’: true. There is no additional cost for this parameter.
 - **OCR** mode is recommended for fast, high-quality text extraction from scanned or text-heavy documents such as
   contracts, insurance claims, and manuals.
+- **AGENTIC** mode manages the orchestration required to process complex documents, including identifying and classifying visual elements, such as charts, diagrams, screenshots, forms, and images, selecting the appropriate processing actions. and generating semantic summaries, extracting structured data, or both. For more information, see [Agentic mode](#label-parse-document-agentic-mode).
 
 For each mode, use the `page_split` option to split multi-page documents into separate pages in the response.
 You can also use the `page_filter` option to process only specified pages. If using `page_filter`,
@@ -45,6 +41,40 @@ Documents can be processed directly from object storage to avoid unnecessary dat
 
 AI\_PARSE\_DOCUMENT supports documents on stages that use client-side or server-side encryption, including in accounts that
 use PrivateLink or other [network policies](/user-guide/network-policies) that restrict public network access to stages.
+
+### Agentic mode
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+AI\_PARSE\_DOCUMENT in **AGENTIC** mode extends traditional document parsing with automated document understanding. The function identifies and interprets content within complex documents, automatically selecting and executing processing actions to generate semantic summaries and extract structured data from visual elements. Snowflake manages the underlying processing workflow.
+For syntax, options, and the response format, see [AI\_PARSE\_DOCUMENT](/sql-reference/functions/ai_parse_document).
+
+AGENTIC mode supports the following capabilities:
+
+- **Visual understanding:** Identifies and classifies visual elements, including charts, diagrams, screenshots, forms, and product images, and generates semantic summaries describing their content.
+- **Structured data extraction from visual elements:** Extracts details specific to each visual type, such as chart series and values, table headers and cells, and diagram components and relationships.
+
+These results are returned alongside document text and layout in a unified response. AGENTIC mode manages action selection, prompting, model routing, inference, response processing, and result aggregation, without requiring you to build or operate separate processing pipelines.
+
+AGENTIC mode is useful for the following tasks:
+
+- Search and retrieval over information in document text and visuals.
+- Retrieval-augmented generation (RAG) over reports, presentations, manuals, and other documents that combine text and visuals.
+- Structured extraction from charts, tables, and infographics.
+- Compliance and review workflows that require interpreting both text and embedded visuals.
+
+AGENTIC mode supports up to 2,000 images per document. AGENTIC mode doesn’t support the `'extract_images'` option. If
+you set it to TRUE in AGENTIC mode, the function returns NULL. To extract embedded images as base64-encoded data, use
+LAYOUT mode.
+
+Each entry in the response’s `images` array contains a `results` object. For the expected fields, see
+[Expected image result schemas for AGENTIC mode](/sql-reference/functions/ai_parse_document#label-parse-document-agentic-schemas). These schemas describe the expected model-generated output; schema conformance is not guaranteed. Validate the fields your application requires.
+If processing fails for an image, the function returns the available results and includes an error marker for the affected image. For details, see
+[Partial results in AGENTIC mode](/sql-reference/functions/ai_parse_document#label-parse-document-agentic-partial-failures).
+
+For examples, see [Parse a document with agentic mode](#label-parse-document-agentic-parse-example).
 
 ## Examples
 
@@ -747,6 +777,311 @@ Image extraction has the following limitations:
 Extracting images does not incur additional costs. Billing for AI\_PARSE\_DOCUMENT is based on the number of pages
 processed; a single image file is considered a page.
 
+### Parse a document with agentic mode
+
+For an overview of AGENTIC mode, see [Agentic mode](#label-parse-document-agentic-mode).
+
+The following example enables page splitting so that the response contains a `pages` array.
+[PARSE\_JSON](/sql-reference/functions/parse_json) converts the function’s JSON-formatted string into a VARIANT value whose
+fields you can access in SQL.
+
+Copy code
+
+```
+SELECT PARSE_JSON(
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@document_stage', 'report.pdf'),
+    {
+      'mode': 'AGENTIC',
+      'page_split': TRUE
+    }
+  )
+) AS parsed_document;
+```
+
+AGENTIC mode also supports `page_filter` for processing selected page ranges. The following example processes only the
+first three pages of the document (page indexes 0, 1, and 2). Because `page_filter` implies page splitting, you don’t
+need to set `page_split`.
+
+Copy code
+
+```
+SELECT PARSE_JSON(
+  AI_PARSE_DOCUMENT(
+    TO_FILE('@document_stage', 'report.pdf'),
+    {
+      'mode': 'AGENTIC',
+      'page_filter': [{'start': 0, 'end': 3}]
+    }
+  )
+) AS parsed_document;
+```
+
+The following examples show the results of visual understanding and structured data extraction AGENTIC mode generated for individual visuals in documents. Each
+excerpt is the `results` object of one entry in a page’s `images` array, not a standalone response. Some excerpts are
+truncated, and they might not include every field described in [Expected image result schemas for AGENTIC mode](/sql-reference/functions/ai_parse_document#label-parse-document-agentic-schemas).
+
+#### Example 1: Bar chart of export categories
+
+![Horizontal bar chart showing the percentage of exports to the Middle East across product categories.](/static/images/snowflake-cortex/ai_parse_document_agentic/bar-chart-exports.png)
+
+Representative `results` excerpt:
+
+Copy code
+
+```
+{
+  "details": {
+    "chart_type": "bar",
+    "key_values": [
+      "Internal combustion passenger cars: 7.4%",
+      "Smartphones: 6.1%",
+      "Jewellery of precious metal (excl. silver): 3.1%",
+      "Lowest value (Non-industrial diamonds and Non-monetary, unwrought gold): 0.9%"
+    ],
+    "notes": "Bars are sorted in descending order by percentage. The x-axis ranges from 0% to 8% with 2% increments. All values are explicitly labeled next to their respective bars.",
+    "series": [
+      {
+        "name": "Internal combustion passenger cars",
+        "points": [{ "label": "Internal combustion passenger cars", "value": 7.4 }]
+      },
+      {
+        "name": "Smartphones",
+        "points": [{ "label": "Smartphones", "value": 6.1 }]
+      },
+      {
+        "name": "Jewellery of precious metal (excl. silver)",
+        "points": [{ "label": "Jewellery of precious metal (excl. silver)", "value": 3.1 }]
+      },
+      {
+        "name": "Commodities not specified",
+        "points": [{ "label": "Commodities not specified", "value": 2.9 }]
+      },
+      {
+        "name": "Light oils and preparations of petroleum",
+        "points": [{ "label": "Light oils and preparations of petroleum", "value": 1.7 }]
+      },
+      {
+        "name": "Rice",
+        "points": [{ "label": "Rice", "value": 1.5 }]
+      },
+      {
+        "name": "Medium oils and preparations of petroleum",
+        "points": [{ "label": "Medium oils and preparations of petroleum", "value": 1.5 }]
+      },
+      {
+        "name": "Laptops and portable computers",
+        "points": [{ "label": "Laptops and portable computers", "value": 1.4 }]
+      },
+      {
+        "name": "Aeroplanes and other aircraft",
+        "points": [{ "label": "Aeroplanes and other aircraft", "value": 1.3 }]
+      },
+      {
+        "name": "Air conditioning machines",
+        "points": [{ "label": "Air conditioning machines", "value": 1.2 }]
+      },
+      {
+        "name": "Aluminium oxide",
+        "points": [{ "label": "Aluminium oxide", "value": 1.1 }]
+      },
+      {
+        "name": "Non-industrial diamonds",
+        "points": [{ "label": "Non-industrial diamonds", "value": 0.9 }]
+      },
+      {
+        "name": "Non-monetary, unwrought gold",
+        "points": [{ "label": "Non-monetary, unwrought gold", "value": 0.9 }]
+      }
+    ],
+    "title": null,
+    "x_axis": { "label": "Percentage", "units": "%" },
+    "y_axis": { "label": "Product Category", "units": null }
+  },
+  "image_type": "chart",
+  "summary": "A horizontal bar chart displaying the percentage contribution of various product categories to a total, with 'Internal combustion passenger cars' at the top (7.4%) and 'Non-monetary, unwrought gold' at the bottom (0.9%)."
+}
+```
+
+#### Example 2: Dense stacked chart of mortgage distribution
+
+![Stacked bar chart of Non-QM mortgages by rate and vintage.](/static/images/snowflake-cortex/ai_parse_document_agentic/stacked-chart-mortgage.png)
+
+Representative `results` excerpt, truncated for other categories:
+
+Copy code
+
+```
+{
+  "image_type": "chart",
+  "summary": "A stacked bar chart showing the distribution of some monetary value (in dollars) across different categories on the x-axis, broken down by year from <=2019 to 2025. Each bar is segmented by year, with later years (especially 2024 and 2025) dominating the higher value ranges.",
+  "details": {
+    "chart_type": "bar",
+    "title": null,
+    "x_axis": { "label": "Category (likely score or bin range)", "units": null },
+    "y_axis": { "label": "Value", "units": "$" },
+    "series": [
+      {
+        "name": "<=2019",
+        "points": [{ "label": "<=3", "value": 0.5 }]
+      },
+      {
+        "name": "2020",
+        "points": [{ "label": "<=3", "value": 0.25 }]
+      },
+      {
+        "name": "2021",
+        "points": [{ "label": "<=3", "value": 0.5 }]
+      },
+      {
+        "name": "2022",
+        "points": [{ "label": "<=3", "value": 0.25 }]
+      },
+      {
+        "name": "2023",
+        "points": [{ "label": "<=3", "value": 0.25 }]
+      },
+      {
+        "name": "2024",
+        "points": [{ "label": "<=3", "value": 0.25 }]
+      },
+      {
+        "name": "2025",
+        "points": [{ "label": "<=3", "value": 0.25 }]
+      }
+    ]
+  }
+}
+```
+
+#### Example 3: Multi-line chart of delinquency by vintage
+
+![Multi-line chart showing the percentage of loans 60+ days delinquent across vintages from 2018 to 2025.](/static/images/snowflake-cortex/ai_parse_document_agentic/line-chart-delinquency.png)
+
+Representative `results` excerpt, truncated for other years:
+
+Copy code
+
+```
+{
+  "details": {
+    "chart_type": "line",
+    "key_values": [
+      "2018 peaks at ~12.8% around x=28",
+      "2019 peaks at ~10.2% around x=16",
+      "All lines converge roughly between 5%–7% after x=70",
+      "2025 shows the slowest growth, remaining below 6% across the entire range"
+    ],
+    "notes": "Lines for 2018 and 2019 show sharp peaks early in the range, then decline and converge with other years. From 2020 onward, lines rise more gradually. The 2025 line (green) is the lowest throughout the range except at the very beginning. No chart title or axis labels are present beyond units of percentage on the y-axis.",
+    "series": [
+      {
+        "name": "2018",
+        "points": [
+          { "label": "0", "value": 0 },
+          { "label": "4", "value": 1 },
+          { "label": "8", "value": 3 },
+          { "label": "12", "value": 6 },
+          { "label": "16", "value": 9 },
+          { "label": "20", "value": 11 },
+          { "label": "24", "value": 12.5 },
+          { "label": "28", "value": 12.8 },
+          { "label": "32", "value": 7 },
+          { "label": "36", "value": 5 },
+          { "label": "40", "value": 4.5 },
+          { "label": "44", "value": 4.2 },
+          { "label": "48", "value": 4.3 },
+          { "label": "52", "value": 4.5 },
+          { "label": "56", "value": 4.7 },
+          { "label": "60", "value": 5 },
+          { "label": "64", "value": 5.3 },
+          { "label": "68", "value": 5.8 },
+          { "label": "72", "value": 6.5 },
+          { "label": "76", "value": 5.8 },
+          { "label": "80", "value": 6 },
+          { "label": "84", "value": 5.5 },
+          { "label": "88", "value": 5.3 },
+          { "label": "92", "value": 5.2 },
+          { "label": "96", "value": 5.5 },
+          { "label": "100", "value": 5.6 }
+        ]
+      },
+      { "name": "2019", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2020", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2021", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2022", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2023", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2024", "points": [{ "label": "0", "value": 0 }] },
+      { "name": "2025", "points": [{ "label": "0", "value": 0 }] }
+    ],
+    "title": null,
+    "x_axis": { "label": null, "units": null },
+    "y_axis": { "label": null, "units": "%" }
+  },
+  "image_type": "chart",
+  "summary": "A line chart showing trends from 2018 to 2025 across a common x-axis (0–100) and y-axis (0%–14%). Each year is represented by a distinct colored line, with notable peaks around x=28 for 2018 and x=16 for 2019, followed by general convergence and fluctuation toward the end of the range."
+}
+```
+
+#### Example 4: Scatter plot of bank valuation and return on equity
+
+![Scatter plot of emerging-market banks by NTM Price-to-Book Value and NTM Return on Equity.](/static/images/snowflake-cortex/ai_parse_document_agentic/scatter-plot-banks.png)
+
+Representative `results` excerpt:
+
+Copy code
+
+```
+{
+  "details": {
+    "chart_type": "scatter",
+    "key_values": [
+      "Highest NTM P/BV: CL at ~2.2x",
+      "Highest NTM ROE: EG at ~27%",
+      "Lowest NTM P/BV: CN at ~0.5x",
+      "Lowest NTM ROE: TH at ~8%",
+      "EG is an outlier with high ROE but relatively low P/BV"
+    ],
+    "notes": "The dashed diagonal line appears to represent a 1:1 relationship between NTM ROE and NTM P/BV (e.g., 10% ROE corresponds to 1.0x P/BV). Points above the line may indicate overvaluation relative to ROE; points below may indicate undervaluation. Three entities (CZ, PL, HU) are marked in green; the reason for this color distinction is not labeled but may indicate a regional or thematic grouping. Data points are labeled with two-letter country or index codes. No explicit legend is provided.",
+    "series": [
+      {
+        "name": "Countries/Entities",
+        "points": [
+          { "label": "KW", "value": [0.09, 2] },
+          { "label": "IN", "value": [0.125, 1.9] },
+          { "label": "CZ", "value": [0.14, 1.85] },
+          { "label": "CO", "value": [0.16, 1.75] },
+          { "label": "CL", "value": [0.17, 2.2] },
+          { "label": "ZA", "value": [0.18, 1.9] },
+          { "label": "PE", "value": [0.19, 2.05] },
+          { "label": "BR", "value": [0.21, 1.9] },
+          { "label": "MX", "value": [0.2, 1.8] },
+          { "label": "EG", "value": [0.27, 1.6] },
+          { "label": "HU", "value": [0.185, 1.5] },
+          { "label": "PL", "value": [0.18, 1.7] },
+          { "label": "ID", "value": [0.18, 1.8] },
+          { "label": "AE", "value": [0.16, 1.5] },
+          { "label": "QA", "value": [0.14, 1.4] },
+          { "label": "SX7E", "value": [0.145, 1.3] },
+          { "label": "MY", "value": [0.11, 1.3] },
+          { "label": "GR", "value": [0.13, 1] },
+          { "label": "PH", "value": [0.13, 0.9] },
+          { "label": "TH", "value": [0.08, 0.9] },
+          { "label": "KR", "value": [0.095, 0.8] },
+          { "label": "CN", "value": [0.09, 0.5] },
+          { "label": "TR", "value": [0.2, 0.6] },
+          { "label": "SA", "value": [0.13, 1.6] }
+        ]
+      }
+    ],
+    "title": null,
+    "x_axis": { "label": "NTM ROE", "units": "%" },
+    "y_axis": { "label": "NTM P/BV", "units": "x" }
+  },
+  "image_type": "chart",
+  "summary": "A scatter plot showing the relationship between NTM ROE (Return on Equity) on the x-axis and NTM P/BV (Price to Book Value) on the y-axis for multiple countries or entities, labeled with two-letter codes. A dashed diagonal line suggests a baseline or expected relationship."
+}
+```
+
 ## Input requirements
 
 AI\_PARSE\_DOCUMENT is optimized for both digital-born and scanned documents. The following table lists the limitations and
@@ -773,7 +1108,7 @@ Show lessSee more
 | Page splitting | AI\_PARSE\_DOCUMENT can split multi-page documents into individual pages and parse each separately. The output is split per page. |
 | Page filtering | AI\_PARSE\_DOCUMENT can process some of the pages in a document, instead of all of them, by specifying page ranges. This is useful when you know what pages the information you’re looking for is on. |
 | Characters | AI\_PARSE\_DOCUMENT detects the following characters:   - a-z - A-Z - 0-9 - À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ð Ñ Ò Ó Ô   Õ Ö Ø Ù Ú Û Ü Ý Þ ß à á â ã ä å æ ç è é ê   ë ì í î ï ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ   Ą ą Ć ć Č č Đ đ Ę ę ı Ł ł Ń ń ō Œ œ Ś ś Š   š Ÿ Ź ź Ż ż Ž ž ʒ β δ ε з Ṡ - ! “ # $ % & ‘ ( ) \* + , - . / : ; < = > ?   @ [ ] ^ \_ ` { | } ~ ¡ ¢ £ ¥ § © ª « ­ ® ¯   ° ± ² ³ ´ µ ¶ · º » ¿ ‘ † ‡ • ‣ ⁋ ₣ ₤ ₦   ₩ € ₭ ₹ ™ ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ↰ ↱ ↲ ↳ ↴   ↵ |
-| Images | AI\_PARSE\_DOCUMENT can extract embedded images from documents (up to 50 images per document) in addition to generating markup for them. See [Extract and describe images](#label-parse-document-extract-images) for details. |
+| Images | AI\_PARSE\_DOCUMENT can extract embedded images from documents (up to 50 images per document) in addition to generating markup for them. See [Extract and describe images](#label-parse-document-extract-images) for details.  In AGENTIC mode, AI\_PARSE\_DOCUMENT supports up to 2,000 images per document. See [Agentic mode](#label-parse-document-agentic-mode) for details. |
 | Structured elements | AI\_PARSE\_DOCUMENT automatically detects and extracts tables and forms. |
 | Fonts | AI\_PARSE\_DOCUMENT recognizes text in most serif and sans-serif fonts, but may have difficulty with decorative or script fonts. The function also recognizes handwriting. |
 
@@ -856,6 +1191,7 @@ messages:
 | `Provided file cannot be accessed.` | The file can’t be accessed due to insufficient privileges. |
 | `The Parse Document function did not respond in the allowed time.` | Timeout occurred. |
 | `Internal error.` | System error occurred. Wait and try again. |
+| `Invalid OPTIONS for row {row_index}: 'extract_images' is not supported when MODE is 'AGENTIC'` | The `'extract_images'` option is set to TRUE in AGENTIC mode. AGENTIC mode doesn’t support this option. |
 
 Expand
 

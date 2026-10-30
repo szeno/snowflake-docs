@@ -19,6 +19,7 @@ CREATE [ OR REPLACE ] EVENT TABLE [ IF NOT EXISTS ] <name>
   [ CHANGE_TRACKING = { TRUE | FALSE } ]
   [ DEFAULT_DDL_COLLATION = '<collation_specification>' ]
   [ COPY GRANTS ]
+  [ COPY = ( GRANTS ) ]
   [ [ WITH ] COMMENT = '<string_literal>' ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -147,6 +148,9 @@ For more details about cloning, see [CREATE <object> … CLONE](/sql-reference/s
     > - The [SHOW GRANTS](/sql-reference/sql/show-grants) output for the replacement table lists the grantee for the copied privileges as the
     >   role that executed the CREATE EVENT TABLE statement, with the current timestamp when the statement was executed.
     > - The operation to copy grants occurs atomically in the CREATE EVENT TABLE command (in other words, within the same transaction).
+
+    You can also copy grants with the `COPY = ( GRANTS )` parameter. For event tables, `COPY = ( ... )` accepts only
+    `GRANTS`. In the `CLONE` form, specify the parameter before the `CLONE` keyword.
 
 `ROW ACCESS POLICY policy_name ON ( col_name [ , col_name ... ] )`
 :   Specifies the [row access policy](/user-guide/security-row-intro) to set on a table.

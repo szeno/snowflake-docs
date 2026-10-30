@@ -1,6 +1,6 @@
 Feature — Generally Available
 
-Available to accounts in AWS and Microsoft Azure commercial regions only. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
+Generally available to accounts in AWS and Microsoft Azure commercial regions. Available in preview to accounts in all Google Cloud commercial regions. For more information, see [Clouds and regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions).
 
 # Getting started with hybrid tables
 
@@ -53,7 +53,7 @@ This tutorial assumes that you are:
 
 - Familiar with the Snowsight interface
 - Familiar with SQL
-- Using a non-trial Snowflake account in [select AWS regions](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations)
+- Using a non-trial Snowflake account in a [supported commercial region](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-regions)
 - Able to run as a user who has been granted the ACCOUNTADMIN role
 - Aware of [unsupported features and limitations on hybrid tables](/user-guide/tables-hybrid-limitations)
 
