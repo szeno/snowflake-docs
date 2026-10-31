@@ -166,7 +166,7 @@ Return a row for each object, such as a table or view, that has the masking poli
 > use database my_db;
 > use schema information_schema;
 > select *
->   from table(information_schema.policy_references(policy_name => 'my_db.my_schema.ssn_mask'));
+>   from table(policy_references(policy_name => 'my_db.my_schema.ssn_mask'));
 > ```
 
 Return a row for each policy assigned to the table named `my_table`:
@@ -177,5 +177,5 @@ Return a row for each policy assigned to the table named `my_table`:
 > use database my_db;
 > use schema information_schema;
 > select *
->   from table(information_schema.policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
+>   from table(policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
 > ```

@@ -1,6 +1,6 @@
-# Troubleshooting the
+# Troubleshooting the Snowflake Connector for Google Analytics Aggregate Data
 
-This topic provides guidelines for troubleshooting issues with the .
+This topic provides guidelines for troubleshooting issues with the Snowflake Connector for Google Analytics Aggregate Data.
 
 ## Calling the get\_troubleshooting\_data procedure
 
@@ -44,7 +44,7 @@ SELECT * FROM PUBLIC.CONNECTOR_STATS;
 SELECT * FROM PUBLIC.CONNECTOR_ERRORS;
 ```
 
-For information about returned content, see [Monitoring the](/connectors/google/gaad/gaad-connector-monitoring) .
+For information about returned content, see [Monitoring the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-monitoring).
 
 ## Transferring ownership of tables and views in the destination schema
 

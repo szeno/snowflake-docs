@@ -4,6 +4,58 @@ This topic provides release notes for the Snowflake Connector for ServiceNow® V
 information, see
 [Snowflake Connector for ServiceNow](https://other-docs.snowflake.com/en/connectors/servicenow/v2/about).
 
+## Version 5.29.1 (October 28, 2026)
+
+### Behavior changes
+
+Not applicable.
+
+### New features
+
+Not applicable.
+
+### Bug fixes
+
+- Fixed an issue where the `EXPORT_CONNECTOR_STATE` procedure and the scheduled state export failed with the error
+  `Cannot parse sync state json value fetched from database to object`. This issue occurred after the deletions
+  synchronization of a table processed journal entries on version 5.29.0. The connector now exports and imports the new
+  fields of the deletions synchronization state. After you upgrade, call the `EXPORT_CONNECTOR_STATE` procedure again,
+  or wait for the next scheduled export. For more information, see
+  [Exporting the connector state](/connectors/servicenow/managing#label-servicenow-connector-exporting-connector-state-v2).
+
+## Version 5.29.0 (October 23, 2026)
+
+### Behavior changes
+
+- Requests that return invalid JSON are now retried once after 30 seconds. If the retry also fails, the connector
+  reduces the page size. Previously, the connector reduced the page size immediately. For more information, see
+  [Configure the size of a single page fetch for a table](/connectors/servicenow/ingestion#label-servicenow-connector-configure-page-size).
+- The `INGESTED_ROWS` value in the `CONNECTOR_STATS` view is now 0 for `DELETES` runs that find no new journal
+  entries. Previously, it counted the duplicate `DELETE` events that those runs inserted again. This change doesn’t
+  indicate lost progress.
+
+### New features
+
+- Added the `CONFIGURE_EXCLUDE_INACTIVE_COLUMNS_FROM_VIEWS` stored procedure. When set to `true`, columns that are
+  inactive or deleted in the ServiceNow® `sys_dictionary` table are excluded from the `__view` and
+  `__view_with_deleted` views the next time the connector creates the views. The setting doesn’t apply to tables with
+  column filtering. You must recreate `__view_with_references` views with the `CREATE_VIEW_WITH_DISPLAY_VALUES` stored
+  procedure for the change to apply to them. The default is `false`, which preserves the existing behavior. For more
+  information, see [Exclude inactive columns from views](/connectors/servicenow/accessing-data#label-servicenow-connector-configure-exclude-inactive-columns-from-views).
+
+### Bug fixes
+
+- Fixed an issue where calling the `CONFIGURE_DISPLAY_VALUE_FETCHING`, `CONFIGURE_SCAN_EVENT_LOG_IN_INCREMENTAL`, or
+  `CONFIGURE_CHECK_LINK_IN_VIEW_WITH_REFERENCES` stored procedure with `NULL` stored `false` instead of returning an
+  `INVALID_CONFIGURATION` error.
+- Fixed an issue where ingestion didn’t reduce the page size when the External Access function ran out of memory.
+  Tables with large rows kept failing with the error `Function available memory exhausted`. For more information, see
+  [Configure the size of a single page fetch for a table](/connectors/servicenow/ingestion#label-servicenow-connector-configure-page-size).
+- Fixed an issue where the deletions synchronization inserted the `DELETE` events of the most recently processed journal
+  entries again on every run, as long as no newer journal entry appeared. The connector still rescans the last second
+  of the journal to catch late-arriving entries, but it now skips the entries it already processed for that second.
+  The connector doesn’t remove duplicate `DELETE` events that are already in the `__EVENT_LOG` table.
+
 ## Version 5.28.3 (October 7, 2026)
 
 ### Behavior changes

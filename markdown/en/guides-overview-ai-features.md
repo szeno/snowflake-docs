@@ -11,6 +11,7 @@ Machine Learning (ML). These features can help you do more with your data in les
   - [Cortex Analyst](/user-guide/snowflake-cortex/cortex-analyst)
   - [Cortex Fine-tuning](/user-guide/snowflake-cortex/cortex-finetuning)
   - [Cortex Search](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+  - [Cortex Training](/user-guide/snowflake-cortex/cortex-training)
   - [Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork)
   - [Cortex Code](/user-guide/cortex-code/cortex-code)
     - [Cortex Code in Snowsight](/user-guide/cortex-code/cortex-code-snowsight)

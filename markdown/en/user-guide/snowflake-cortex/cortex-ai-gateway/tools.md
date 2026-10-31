@@ -4,10 +4,6 @@
 
 Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
-Important
-
-**Scheduled maintenance:** Tools has a maintenance window on Thursday, October 29, 2026, from 5:00 AM to 3:00 PM EDT (09:00 to 19:00 UTC). During this window, Tools might be unavailable for some accounts for less than 5 minutes.
-
 Tools is a capability of Cortex AI Gateway that connects AI clients to the business tools your organization already uses through the Model Context Protocol (MCP). Tools works with any agent that supports MCP, including CoCo (CLI and Desktop), ChatGPT, Claude, Cursor, and more.
 
 Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. Administrators enable servers and configure access. End users connect to enabled servers and complete any required authorization with the third-party service.

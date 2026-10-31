@@ -29,7 +29,7 @@ If your project does not belong to an organization, you must renew authenticatio
 3. Select **Create**.
 4. Provide the following information:
 
-   - **App name**:
+   - **App name**: Snowflake Connector for Google Analytics Aggregate Data
    - **User support email**: your email address
    - **Developer contact information**: your email address
 5. Select **Save and continue**.
@@ -53,16 +53,16 @@ If your project does not belong to an organization, you must renew authenticatio
 
 In this procedure, you acquire a redirect URL from Snowsight and paste it into your Google Cloud project.
 
-1. In Snowsight, start the configuration wizard.
+1. In Snowsight, start the Snowflake Connector for Google Analytics Aggregate Data configuration wizard.
 2. In the third step of the connector configuration, **Authenticate Google Cloud Platform**, copy the value from the **Redirect URL** section.
 3. In your Google Cloud project, to open the OAuth consent screen creator, select **APIs & Services** » **Credentials**.
 4. Select **Create credentials** » **OAuth client ID**.
 5. In the **Application type** dropdown list, select **Web application**.
-6. In the **Name** box, enter the following name: ID
+6. In the **Name** box, enter the following name: Snowflake Connector for Google Analytics Aggregate Data ID
 7. Select **Authorized redirect URIs** » **Add URI**.
 8. Select **Create**.
 9. Copy the **Your Client ID** and **Your Client Secret** values.
-10. Return to the interface, and paste the values into the corresponding boxes.
+10. Return to the Snowflake Connector for Google Analytics Aggregate Data interface, and paste the values into the corresponding boxes.
 11. Select **Sign in**.
 
 ## Prevent session expiration for the OAuth consent screen
@@ -73,7 +73,7 @@ In this procedure, you acquire a redirect URL from Snowsight and paste it into y
 4. In the **Configured apps** section, select **Add app** » **OAuth App Name Or Client ID**.
 5. Copy the client ID created in [Configure the OAuth client ID](#configure-the-oauth-client-id), and paste it in the box.
 6. Select **Search**.
-7. Select the application name.
+7. Select the Snowflake Connector for Google Analytics Aggregate Data application name.
 8. Select the created **OAuth Client ID** checkbox, and then click **Select**.
 9. In the **Scope** section, select **All users**.
 10. Select **Continue**.

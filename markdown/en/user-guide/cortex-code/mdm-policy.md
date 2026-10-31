@@ -238,7 +238,7 @@ A value that is invalid or larger than 256 KB causes CoCo to deny connections.
 
 Note
 
-CoCo CLI on Windows reads the embedded value from version 1.2.0. Until a 1.2.x release reaches the stable channel, it is available only to users who install from the beta channel (`$env:CORTEX_CHANNEL="beta"` before running `install.ps1`). On earlier CLI versions, use Option 1 (deploy `managed-settings.json` alongside the registry policy).
+CoCo CLI on Windows reads the embedded value from version 1.2.0 (on the stable channel). On earlier CLI versions, use Option 1 (deploy `managed-settings.json` alongside the registry policy).
 
 ## Limitations
 

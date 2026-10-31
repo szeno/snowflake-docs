@@ -10,6 +10,22 @@ Snowflake uses semantic versioning for Node.js Driver updates.
 
 See [Node.js Driver](/developer-guide/node-js/nodejs-driver) for documentation.
 
+## Version 3.4.1 (October 26, 2026)
+
+### New features and updates
+
+- Added the HTTP status of the failed storage request, such as `(HTTP 502)`, to `PUT` and `GET` errors from S3, Azure, and Google Cloud Storage stages. The HTTP status helps you diagnose failures when the storage response can’t be read, such as an S3 `Deserialization error` caused by a proxy that returns a plain-text error.
+
+### Bug fixes
+
+- Fixed concurrent S3 file transfers through a proxy failing with `socket hang up` because finishing one transfer closed the proxy connections that other transfers were still using.
+- Fixed `GET` from S3 and Azure stages failing with `TypeError: Cannot read properties of null (reading 'encryptionMetadata')` when the file metadata request failed but the download itself succeeded (for example, when an HTTPS proxy rejected the TLS handshake). The `GET` now fails with the underlying error before decrypting the file.
+- Fixed a failed `GET` of an encrypted file leaving the still-encrypted download in the local directory when the file metadata request failed or the file couldn’t be decrypted. When the metadata request fails, the error now includes its HTTP status.
+- Fixed `PUT` failing with `Unknown error during PUT of file` after the file was uploaded, when the follow-up request that checks whether the file is on the stage failed.
+- Fixed `GET` from Google Cloud Storage stages hanging indefinitely when the connection broke during the download. The driver now retries the download.
+- Fixed queries failing with `Unable to perform operation using terminated connection.` (`407002`) when the expired session couldn’t be renewed. These queries now fail with the server error that explains the cause, for example, `390114` when the authentication token expired after the connection was idle for too long.
+- Fixed a late session-expired response starting another session renewal on a connection that a failed renewal had already closed.
+
 ## Version 3.4.0 (September 30, 2026)
 
 ### Security fixes

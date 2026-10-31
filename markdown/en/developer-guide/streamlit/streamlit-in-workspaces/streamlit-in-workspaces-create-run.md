@@ -32,39 +32,81 @@ you’re working on it. To publish your app to other users, see
 Deploying publishes your workspace code to a Streamlit object that other users can
 access.
 
+You deploy to a *deploy target*. A deploy target is a deployed copy of your app that
+runs outside the workspace. Each target has its own location, compute, execution role,
+and list of people who can open it. A project can have more than one target, for
+example a `dev` target and a `prod` target. Each target is stored as a `streamlit`
+entity in `snowflake.yml`. For more information, see
+[Deploy targets in snowflake.yml](#label-streamlit-in-workspaces-snowflake-yml).
+
+### Set up a deploy target
+
+1. In the project pane toolbar, select **Settings**.
+2. In the **Targets** tab, select a target under **Deploy targets**, or select
+   **Add deploy target**. A new target starts as a copy of the selected target.
+3. Review the target settings:
+   - **Target name**: The name of the target. It’s also the entity key in `snowflake.yml`.
+   - **App title**: Displayed in the top left corner of the app and in the dashboard.
+   - **App ID (optional)**: The name of the Streamlit object, used in the app URL. If
+     you leave it blank, Snowflake generates one when you first deploy.
+   - **Owner role of deployed app**: The role that owns the Streamlit object. The app
+     runs as this role. Apps deployed from a shared workspace always use the workspace
+     owner role.
+   - **App location**: The database and schema where the Streamlit object is created.
+   - **Execution**: The query warehouse that runs queries in the app, and the compute
+     pool that runs the app.
+4. Select **Save settings**.
+
+### Deploy to one or more targets
+
 1. In the project pane toolbar, select **Deploy**.
-2. In the deploy dialog, review the settings:
+2. Select one or more targets. Each target shows whether it’s deployed and when.
+3. Select **Deploy**. If you selected more than one target, select **Deploy selected**.
 
-   - **App title**: Defaults to the app name in the workspace.
-   - **Location**: The database and schema where the Streamlit object is created.
-   - **Execution**: The compute pool to run the app and the query warehouse to run
-     queries in the app.
-   - **Network**: Any External Access Integrations you want to add to the app.
-   - **Sharing**: Add roles and users that will have USAGE privilege on the app. For more information, see
-     [Share with roles and users](#label-streamlit-in-workspaces-deploy-sharing).
-3. Select **Deploy**.
+Snowflake copies your app files into the Streamlit object for each target and makes the
+app available to users with the appropriate privileges. If a target fails to deploy,
+select **Details** next to it to see the error.
 
-Snowflake copies your app files into the Streamlit object and makes the app available
-to users with the appropriate privileges.
+A target can’t be deployed until it has an app location. If a project has no targets
+that are ready to deploy, select **Add deploy target** to open the app settings.
 
 ### Share with roles and users
 
-In the **Sharing** tab, add roles or users and select **View only** or **View and share** for each. Deploying grants
-USAGE on the app to each one. The list is saved in `snowflake.yml`, so later deploys grant the same access.
+1. In the project pane toolbar, select **Share**.
+2. For each deploy target, add roles or users and select **View only** or
+   **View and share** for each.
+3. Select **Save grants**.
+
+If the target is already deployed, Snowflake grants USAGE on the app right away. If the
+target isn’t deployed yet, Snowflake grants USAGE when you deploy it. In both cases, the
+list is saved in `snowflake.yml` as `grants`, so later deploys grant the same access.
 
 If a user doesn’t have USAGE on the app’s database and schema, a warning icon appears next to their name. Hover over it
-and select **Grant USAGE** to grant it when you deploy. If that grant fails, the app isn’t shared with that user.
+and select **Grant USAGE** to grant it. If that grant fails, the app isn’t shared with that user.
 
 To stop sharing a deployed app with a user, see [Stop sharing an app with a user](/developer-guide/streamlit/features/sharing-streamlit-apps#label-streamlit-sharing-users-remove).
 
 ### Redeploy your app
 
 After you make changes to your code, select **Deploy** again in the project pane.
-Select the deployment target and confirm. The new code overwrites the existing
-Streamlit app.
+Select the targets and confirm. The new code replaces the existing Streamlit app for
+each target, and Snowflake grants the target’s sharing list again.
 
-If you select a different database or schema as the target for the app deployment, the
-previous app continues to run in its original location.
+If you change the app location of a target, the previous app continues to run in its
+original location. To run the app in more than one location, add a deploy target
+instead.
+
+### Remove a deployed app or delete a target
+
+In the deploy menu, select the actions menu next to a target, and then select one of
+the following:
+
+- **Remove deployed app**: Drops the Streamlit object for the target. The target stays in
+  `snowflake.yml`, so you can deploy to it again.
+- **Delete target**: Drops the Streamlit object for the target and removes the target
+  from `snowflake.yml`. You can’t undo this action.
+
+A project needs at least one deploy target, so you can’t delete the last one.
 
 ### Edit a deployed app
 
@@ -78,11 +120,14 @@ Only the app owner can edit and redeploy a deployed app.
 
 ## App settings
 
-The settings dialog lets you configure the following properties for apps in your
-workspace:
+To open the app settings, select **Settings** in the project pane toolbar. The app
+settings have the following tabs:
 
-- **Execution**: The warehouse used to run SQL queries.
-- **External network access** via an [External Access Integration](/developer-guide/external-network-access/external-network-access-overview).
+- **Targets**: Settings for **Preview in workspace** and for each deploy target.
+  **Preview in workspace** is the development app that runs in your workspace. For deploy
+  target settings, see [Set up a deploy target](#label-streamlit-in-workspaces-deploy-target-add).
+- **Network**: External network access via an [External Access Integration](/developer-guide/external-network-access/external-network-access-overview).
+  This setting applies to the development app and to every deploy target.
 
 Note
 
@@ -97,12 +142,71 @@ are used at different times:
 As a result, the query warehouse list shows only warehouses that the app’s role can use on its
 own. If a warehouse you expect is missing, grant USAGE on it to the app’s role.
 
-For apps in workspaces, settings are stored per app, per user. Changing settings on your
-development app doesn’t affect the deployed app.
+Saving the app settings restarts the app and reconnects all user sessions.
 
-For deployed apps, settings are stored on the Streamlit object and apply to all
-viewers. Settings are also written to `snowflake.yml` so they persist across
-deploys.
+Development app settings are stored per app, per user. Changing them doesn’t affect
+deployed apps.
+
+Deploy target settings are saved in `snowflake.yml`. Changes to a target apply to its
+deployed app the next time you deploy that target.
+
+## Deploy targets in snowflake.yml
+
+Workspaces reads and writes `snowflake.yml` as a [Snowflake CLI](/developer-guide/snowflake-cli/project-definitions/about)
+project definition, version 2. Each entity with `type: streamlit` is a deploy target, and
+the entity key is the target name. You can edit the file directly, and you can deploy
+the same project with `snow streamlit deploy`.
+
+When Workspaces saves `snowflake.yml`, it writes settings that are the same for every
+target into a [mixin](/developer-guide/snowflake-cli/project-definitions/specify-entities#label-cli-project-mixins) named `streamlit_shared`, and each target uses that mixin. Settings
+that differ between targets are written on each target. Sharing is written as USAGE
+`grants`. For example:
+
+Copy code
+
+```
+definition_version: 2
+mixins:
+  streamlit_shared:
+    main_file: streamlit_app.py
+    query_warehouse: my_warehouse
+    compute_pool: my_compute_pool
+    runtime_name: SYSTEM$ST_CONTAINER_RUNTIME_PY3_11
+    artifacts:
+      - streamlit_app.py
+      - pyproject.toml
+entities:
+  dev:
+    type: streamlit
+    identifier:
+      name: my_app
+      database: dev_db
+      schema: apps
+    meta:
+      use_mixins:
+        - streamlit_shared
+  prod:
+    type: streamlit
+    identifier:
+      name: my_app
+      database: prod_db
+      schema: apps
+    grants:
+      - privilege: USAGE
+        role: analyst
+    meta:
+      use_mixins:
+        - streamlit_shared
+```
+
+Keep the following in mind:
+
+- The first time Workspaces saves a file that you wrote by hand, it might restructure
+  the file in this way. Comments other than those at the top of the file aren’t kept.
+- `definition_version` must be `2`.
+- Workspaces can’t resolve [templates](/developer-guide/snowflake-cli/project-definitions/create-templates)
+  in an `identifier`. A target with a templated identifier can’t be edited or deployed
+  from Workspaces. To delete it, edit `snowflake.yml`.
 
 ## Collaboration
 

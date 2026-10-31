@@ -15,9 +15,10 @@ API lets you access the tables by using external query engines.
 You can use Horizon Catalog, which is available in all your existing Snowflake accounts, to read and write to Snowflake-managed Iceberg
 tables with external query engines.
 
-You can also access externally managed Iceberg tables in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database)
-through the same Horizon IRC endpoint. For instructions, see
-[Access externally managed Apache Iceberg™ tables in a catalog-linked database with an external engine through Snowflake Horizon Catalog](/user-guide/externally-managed-iceberg-tables-access-horizon-irc).
+You can also access externally managed Iceberg tables through the same Horizon IRC endpoint, whether the tables are in a
+[catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) or in a standard Snowflake database. For
+instructions, see
+[Access externally managed Apache Iceberg™ tables with an external engine through Snowflake Horizon Catalog](/user-guide/externally-managed-iceberg-tables-access-horizon-irc).
 
 ## Query Iceberg tables
 

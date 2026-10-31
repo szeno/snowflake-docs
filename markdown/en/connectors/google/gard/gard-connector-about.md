@@ -2,7 +2,7 @@
 
 Google Analytics is a cloud-based tool that provides insight into how users interact with your website. You can use it to analyze user actions, track the number of visitors and page views, and analyze bounce rates for a page.
 
-The Snowflake Connector for Google Analytics Raw Data enables you to automatically ingest event-level Google Analytics 4 (GA4) data into your Snowflake account. If you want to extract aggregated report data, see [About the](/connectors/google/gaad/gaad-connector-about)  and the [GA4 Reporting API](https://developers.google.com/analytics/devguides/reporting/data/v1).
+The Snowflake Connector for Google Analytics Raw Data enables you to automatically ingest event-level Google Analytics 4 (GA4) data into your Snowflake account. If you want to extract aggregated report data, see [About the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-about) and the [GA4 Reporting API](https://developers.google.com/analytics/devguides/reporting/data/v1).
 
 To extract Snowflake Connector for Google Analytics Raw Data – the granular, event-level details – you must set up a manual link between a GA4 property and a Google Cloud Platform (GCP) project. This enables the export of raw data into BigQuery. The Snowflake Connector for Google Analytics Raw Data then connects to the [BigQuery Storage API](https://cloud.google.com/bigquery/docs/reference/storage/), and downloads the data into your Snowflake account.
 

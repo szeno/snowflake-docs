@@ -269,9 +269,16 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
+- [October 30, 2026: Tri-Secret Secure for Snowflake storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-10-30-iceberg-snowflake-storage-tss-ga)
+- [October 30, 2026: Deep Research in Snowflake CoWork can research the web](/release-notes/2026/other/2026-10-30-snowflake-cowork-deep-research-web)
 - [Oct 30, 2026: External OAuth for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-30-snowflake-postgres-external-oauth-ga)
+- [Oct 30, 2026: UUID data type in hybrid tables (General availability)](/release-notes/2026/other/2026-10-30-uuid-hybrid-tables-ga)
+- [Oct 29, 2026: CoCo Desktop v1.23.1](/release-notes/2026/other/2026-10-29-coco-desktop-v1-23-1)
 - [Oct 29, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-29-dcr)
+- [Oct 29, 2026: Access externally managed Apache Iceberg™ tables through Snowflake Horizon Catalog (General availability)](/release-notes/2026/other/2026-10-29-externally-managed-iceberg-tables-horizon-irc-ga)
+- [Oct 29, 2026: Horizon Iceberg REST Catalog telemetry (General availability)](/release-notes/2026/other/2026-10-29-horizon-irc-telemetry-ga)
 - [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)

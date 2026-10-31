@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The provides several stored procedures that allow you to manage your data ingestion and connector configuration programmatically.
+The Snowflake Connector for Google Analytics Aggregate Data provides several stored procedures that allow you to manage your data ingestion and connector configuration programmatically.
 Below are detailed descriptions of each stored procedure, including their usage, parameters, and examples.
 
 ### Configuring a new report

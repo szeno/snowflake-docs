@@ -17,13 +17,25 @@ The agent uses the code execution tool alongside other configured tools and skil
 
 The agent then generates code and executes it in a secure sandbox. By default, the code execution tool environment is isolated and can only access data passed into the session, plus the workspace stage mounted into the sandbox.
 
-The sandbox doesn’t query your data. When the agent needs data from Snowflake, it runs the query with its SQL tools, outside the sandbox, and the sandbox works with the results.
+When the agent needs data from Snowflake, it runs the query with its SQL tools, outside the sandbox. See [SQL in the sandbox](#sql-in-the-sandbox).
 
 ### Default access scope
 
 The sandbox has read and write access to the workspace stage location mounted into it, which is your default user workspace. The agent sees that workspace as a regular directory. Stages mounted for skills are read-only. Beyond those mounts, the sandbox can’t reach data that wasn’t passed into the session.
 
 Because the workspace is backed by a stage, files the agent writes there outlive the sandbox. The sandbox itself is scoped to a conversation thread and is reused across requests on that thread, but it isn’t shared between threads, and it suspends after a period of inactivity. Don’t rely on in-memory state, such as imported modules or variables, surviving between separate code executions: persist anything you need to reuse as a file in the workspace.
+
+### SQL in the sandbox
+
+The sandbox connects to Snowflake through a child of the caller’s session, with a [restricted session scope](/user-guide/restricted-session-scope) applied that grants no access to tables, views, or semantic views. Its only way to read data is [RESULT\_SCAN](/sql-reference/functions/result_scan) on a query the agent already ran with its SQL tools:
+
+Copy code
+
+```
+SELECT * FROM TABLE(RESULT_SCAN('<query_id>'));
+```
+
+Sandbox code can’t query tables, views, or semantic views, call Cortex AI functions, or run DDL or DML.
 
 ## Enabling the code execution tool
 
@@ -151,5 +163,5 @@ Cortex Agent code execution tool is subject to the following known limitations:
 
 - **Thread-scoped sandbox**: A sandbox is scoped to a single conversation thread. It isn’t shared across threads, and in-memory state isn’t preserved between separate code executions. Files written to the mounted workspace do persist, because the workspace is backed by a stage.
 - **No owner’s rights support**: Calls to agents that use owner’s rights don’t support code execution. See [Enabling the code execution tool](#enabling-the-code-execution-tool).
-- **No data access in the sandbox**: The sandbox doesn’t query your data. The agent runs SQL with its SQL tools instead, outside the sandbox. The sandbox can still call Snowflake REST API endpoints that don’t operate on a securable object, such as the Cortex Agent run and thread APIs, but its session is granted no data access, so those calls can’t reach your data either.
+- **No table access in the sandbox**: Sandbox SQL is limited to RESULT\_SCAN on queries the agent already ran. See [SQL in the sandbox](#sql-in-the-sandbox). The sandbox can still call Snowflake REST API endpoints that don’t operate on a securable object, such as the Cortex Agent run and thread APIs, but its session is granted no data access, so those calls can’t reach your data either.
 - **Limited stage access**: The sandbox can only read and write the workspace stage mounted into it, not arbitrary stages in your account.

@@ -1,4 +1,4 @@
-# Manage the
+# Manage the Snowflake Connector for Google Analytics Aggregate Data
 
 This topic describes typical tasks you might need to perform after installing and configuring the connector.
 
@@ -8,7 +8,7 @@ To set up alerts, do the following:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) as a user with the ACCOUNTADMIN role.
 2. In the navigation menu, select **Catalog** » **Apps**.
-3. Search for the , then select the tile for the connector.
+3. Search for the Snowflake Connector for Google Analytics Aggregate Data, then select the tile for the connector.
 4. Go to the **Settings** section and then select **Email alerts** from the menu on the left.
 5. In the **Email Address** field, provide a Snowflake verified email address.
 
@@ -37,7 +37,7 @@ The connector upgrades are managed automatically by the provider of the applicat
 
 In order to change the secret, external access integration, or the security integration used by the connector without re-installation,
 you need to execute the `UPDATE_CONNECTION_CONFIGURATION` procedure defined in the `PUBLIC` schema.
-Ensure that all of the new objects are defined as described in [Configure the using SQL](/connectors/google/gaad/gaad-connector-configuring-sql) and that the connector has all of the required grants.
+Ensure that all of the new objects are defined as described in [Configure the Snowflake Connector for Google Analytics Aggregate Data using SQL](/connectors/google/gaad/gaad-connector-configuring-sql) and that the connector has all of the required grants.
 
 Copy code
 
@@ -65,7 +65,7 @@ Values passed to UPDATE\_CONNECTION\_CONFIGURATION should be unqualified, upperc
 
 ## Changing the warehouse for the Connector
 
-It is possible to change the warehouse that the uses for its internal tasks without reinstalling the connector.
+It is possible to change the warehouse that the Snowflake Connector for Google Analytics Aggregate Data uses for its internal tasks without reinstalling the connector.
 First, make sure that the connector is paused. It can be done either via UI or using the `PAUSE_CONNECTOR` procedure.
 Then, you need to grant the connector access to the new warehouse:
 
@@ -102,11 +102,11 @@ objects that were created during the installation performed using Snowsight.
 
 Note
 
-To see objects created during the installation, select » **Settings** » **Objects**.
+To see objects created during the installation, select Snowflake Connector for Google Analytics Aggregate Data » **Settings** » **Objects**.
 
 To uninstall the connector, follow these steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) as a user with the ACCOUNTADMIN role.
 2. In the navigation menu, select **Catalog** » **Apps**.
-3. Search for the .
+3. Search for the Snowflake Connector for Google Analytics Aggregate Data.
 4. Select **Uninstall**.

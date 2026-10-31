@@ -1,5 +1,10 @@
 # Fine-tuning (Snowflake Cortex)
 
+Upcoming deprecation
+
+Cortex Fine-tuning is scheduled for deprecation in Q1 2027. For all LLM fine-tuning needs, use
+[Cortex Training](/user-guide/snowflake-cortex/cortex-training) instead. If you have questions, contact your account team.
+
 Feature — Generally Available
 
 Support for this feature is available to accounts in the following regions:

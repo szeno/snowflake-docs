@@ -54,6 +54,22 @@ Expand
 
 Show lessSee more
 
+### Why standard tables don’t enforce constraints
+
+Snowflake doesn’t enforce PRIMARY KEY, UNIQUE, and FOREIGN KEY constraints on standard tables. Checking these constraints on very
+large, distributed, columnar tables would slow down data loading and DML operations. NOT NULL and CHECK constraints are enforced.
+
+Even though they aren’t enforced, these constraints are still useful as metadata and documentation:
+
+- You can migrate DDL from other databases without removing the constraint definitions.
+- BI and data modeling tools can read the constraints to discover keys and relationships between tables.
+- The constraints describe how your tables relate to each other for people who work with the data.
+
+For more information about defining constraints, see [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint).
+
+If you set the RELY property on a constraint, the optimizer can use it for join elimination. Set RELY only if you’ve ensured that
+the data complies with the constraint. For more information, see [Setting the RELY Constraint Property to Eliminate Unnecessary Joins](/user-guide/join-elimination#label-join-elimination-setting-rely).
+
 ## Table constraints
 
 Snowflake supports constraints on permanent, transient, temporary, and hybrid

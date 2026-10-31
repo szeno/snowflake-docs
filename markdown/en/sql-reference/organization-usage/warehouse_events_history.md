@@ -28,6 +28,7 @@ Supported events include:
 - Resuming or suspending a warehouse.
 - Resuming, suspending, or resizing a cluster in a warehouse (single-cluster and multi-cluster warehouses).
 - Stopping or starting additional clusters in a warehouse (multi-cluster warehouses only).
+- Reporting that a warehouse or a cluster has reached a consistent state.
 
 ## Columns
 
@@ -179,8 +180,8 @@ Expand
 
 Show lessSee more
 
-Cost impact: None. Metering occurs for the warehouse event that is logged with the STARTED state before the
-WAREHOUSE\_CONSISTENT event.
+Cost impact: None. This event only records that the warehouse has reached a consistent state; it doesn’t itself
+provision or release compute resources.
 
 For more information, see the cost impact of the warehouse events described in the previous rows.
 
@@ -289,6 +290,23 @@ Expand
 
 Show lessSee more
 
+**CLUSTER\_CONSISTENT**
+
+Indicates that the operations for a cluster have completed and the cluster has reached a consistent state.
+
+|  |  |
+| --- | --- |
+| Cluster number | Number of the cluster that reached a consistent state |
+| Event state | COMPLETED |
+| Event reason | NULL |
+
+Expand
+
+Show lessSee more
+
+Cost impact: None. This event only records that the cluster has reached a consistent state; it doesn’t itself provision
+or release compute resources.
+
 ### EVENT\_REASON descriptions
 
 The following table describes the valid values for the EVENT\_REASON column:
@@ -313,10 +331,10 @@ Show lessSee more
 - Latency for the view may be up to 180 minutes (3 hours).
 
 - An event can produce multiple rows in the view if it triggers additional, related events.
-- The value for the EVENT\_REASON, USER\_NAME, ROLE\_NAME, and QUERY\_ID columns is NULL for a WAREHOUSE\_CONSISTENT event.
+- The value for the `EVENT_REASON`, `USER_NAME`, `ROLE_NAME`, and `QUERY_ID` columns is `NULL` for `WAREHOUSE_CONSISTENT` and `CLUSTER_CONSISTENT` events.
 - The WAREHOUSE\_CONSISTENT event might share the same timestamp with another warehouse event and be listed out of order.
 
-# Warehouse event that indicates that an operation has completed
+### Events that indicate that an operation has completed
 
 Events that create a warehouse, change the size of the warehouse or the number of clusters, or suspend a warehouse are not atomic
 operations. This means that some small amount of time is required for these operations to fully complete.
@@ -328,6 +346,8 @@ warehouse must complete (or time out) before it can be suspended. In some cases,
 If a warehouse event is logged with the STARTED state in the EVENT\_STATE column, it is never
 logged with a COMPLETED state. Instead, an event logged with the STARTED state is always followed by a subsequent WAREHOUSE\_CONSISTENT
 event. If multiple warehouse events are logged with the STARTED event state, those events coalesce to the same WAREHOUSE\_CONSISTENT event.
+
+- A **cluster-related** event logged with the `STARTED` state is followed by a `CLUSTER_CONSISTENT` event for that cluster.
 
 If a warehouse event is logged with the COMPLETED state in the EVENT\_STATE column, no subsequent WAREHOUSE\_CONSISTENT event follows
 unless another pending event is logged with a STARTED state.
@@ -390,14 +410,19 @@ This statement results in the following rows in the WAREHOUSE\_EVENTS\_HISTORY v
 
 | TIMESTAMP | WAREHOUSE\_NAME | EVENT\_NAME | EVENT\_STATE | SIZE | CLUSTER\_COUNT |
 | --- | --- | --- | --- | --- | --- |
-| 2024-05-29 15:13:05.874 +0000 | MY\_WH | ALTER\_WAREHOUSE | STARTED | NULL | NULL |
-| 2024-05-29 15:13:05.874 +0000 | MY\_WH | RESIZE\_WAREHOUSE | STARTED | NULL | NULL |
-| 2024-05-29 15:13:06.036 +0000 | MY\_WH | WAREHOUSE\_CONSISTENT | COMPLETED | SMALL | 1 |
-| 2024-05-29 15:13:06.036 +0000 | MY\_WH | RESIZE\_CLUSTER | COMPLETED | NULL | NULL |
+| 2026-05-29 15:13:05.874 +0000 | MY\_WH | ALTER\_WAREHOUSE | STARTED | NULL | NULL |
+| 2026-05-29 15:13:05.874 +0000 | MY\_WH | RESIZE\_WAREHOUSE | STARTED | NULL | NULL |
+| 2026-05-29 15:13:06.036 +0000 | MY\_WH | RESIZE\_CLUSTER | STARTED | NULL | NULL |
+| 2026-05-29 15:13:06.036 +0000 | MY\_WH | CLUSTER\_CONSISTENT | COMPLETED | NULL | NULL |
+| 2026-05-29 15:13:06.036 +0000 | MY\_WH | WAREHOUSE\_CONSISTENT | COMPLETED | SMALL | 1 |
 
 Expand
 
 Show lessSee more
+
+Note
+
+The relative order of rows that share a timestamp can vary.
 
 #### Events history for a Snowflake-initiated warehouse event
 
@@ -407,6 +432,7 @@ When Snowflake resumes a multi-cluster warehouse, the following warehouse events
 | --- | --- | --- | --- | --- | --- |
 | 2024-04-23 17:04:11.618 +0000 | MY\_WH | SPINUP\_CLUSTER | STARTED | NULL | NULL |
 | 2024-04-23 17:04:11.657 +0000 | MY\_WH | RESUME\_CLUSTER | STARTED | NULL | NULL |
+| 2024-04-23 17:04:11.657 +0000 | MY\_WH | CLUSTER\_CONSISTENT | COMPLETED | NULL | NULL |
 | 2024-04-23 17:04:11.657 +0000 | MY\_WH | WAREHOUSE\_CONSISTENT | COMPLETED | LARGE | 5 |
 
 Expand

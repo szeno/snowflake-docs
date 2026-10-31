@@ -1,6 +1,6 @@
-# ingestion model
+# Snowflake Connector for Google Analytics Aggregate Data ingestion model
 
-This topic describes how the ingests data from the [Google Analytics Data API](https://developers.google.com/analytics/devguides/reporting/data/v1) and how sampling may affect ingested data.
+This topic describes how the Snowflake Connector for Google Analytics Aggregate Data ingests data from the [Google Analytics Data API](https://developers.google.com/analytics/devguides/reporting/data/v1) and how sampling may affect ingested data.
 
 ## Ingestion strategy
 
@@ -11,7 +11,7 @@ The connector uses two ingestion modes:
 
 The ingestion of each report is an independent process. Ingestion processes may be performed in parallel.
 
-See [Set up data ingestion for your instance](/connectors/google/gaad/gaad-connector-setting-up-data) to learn how to configure a report or choose a *sync schedule* and a *start date*.
+See [Set up data ingestion for your Snowflake Connector for Google Analytics Aggregate Data instance](/connectors/google/gaad/gaad-connector-setting-up-data) to learn how to configure a report or choose a *sync schedule* and a *start date*.
 
 ### Choosing interval length
 
@@ -26,7 +26,7 @@ The user cannot set the interval length.
 
 ## Monitoring ingestion
 
-Ingestion metadata is available in the `CONNECTOR_STATS` view. See more: [Monitoring the](/connectors/google/gaad/gaad-connector-monitoring) .
+Ingestion metadata is available in the `CONNECTOR_STATS` view. See more: [Monitoring the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-monitoring).
 
 Copy code
 
@@ -46,7 +46,7 @@ Note
 `FAILED` ingestion doesn’t necessarily mean that the data was lost. The connector may recover from some errors by attempting to download all missing data during the next scheduled report update.
 If succeeding ingestion runs were successful, the connector ingested all missing data.
 
-To receive email notifications about failed ingestion runs, set up alerting. See more: [Manage the](/connectors/google/gaad/gaad-connector-managing) .
+To receive email notifications about failed ingestion runs, set up alerting. See more: [Manage the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-managing).
 
 ## About sampling
 

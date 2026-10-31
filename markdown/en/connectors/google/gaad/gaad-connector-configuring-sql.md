@@ -1,10 +1,10 @@
-# Configure the using SQL
+# Configure the Snowflake Connector for Google Analytics Aggregate Data using SQL
 
-This topic provides information about using SQL to configure the .
+This topic provides information about using SQL to configure the Snowflake Connector for Google Analytics Aggregate Data.
 
 Note
 
-The is typically configured using Snowsight. SQL configuration is
+The Snowflake Connector for Google Analytics Aggregate Data is typically configured using Snowsight. SQL configuration is
 considered an advanced configuration method and should only be used by
 those familiar with the underlying details of connector configuration.
 
@@ -243,4 +243,4 @@ USE DATABASE snowflake_connector_for_google_analytics_aggregate_data;
   );
   ```
 
-After the process is completed successfully, ingestion configuration can begin. For more information, see [Set up data ingestion for your instance](/connectors/google/gaad/gaad-connector-setting-up-data).
+After the process is completed successfully, ingestion configuration can begin. For more information, see [Set up data ingestion for your Snowflake Connector for Google Analytics Aggregate Data instance](/connectors/google/gaad/gaad-connector-setting-up-data).

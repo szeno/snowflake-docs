@@ -146,7 +146,7 @@ ALTER [ SECURITY ] INTEGRATION [ IF EXISTS ] <name> UNSET {
         - `'JWT_BEARER'` when the integration will use a JWT bearer token. `OAUTH_ASSERTION_ISSUER` is required for this grant.
 
     `OAUTH_ASSERTION_ISSUER = 'string_literal'`
-    :   Specifies the issuer of the JWT assertion. Required when `OAUTH_GRANT = 'JWT_BEARER'`. For a Google service account, set this to the `client_email` value from the service account JSON key file. For an example, see the security integration in [Configure the using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
+    :   Specifies the issuer of the JWT assertion. Required when `OAUTH_GRANT = 'JWT_BEARER'`. For a Google service account, set this to the `client_email` value from the service account JSON key file. For an example, see the security integration in [Configure the Snowflake Connector for Google Analytics Aggregate Data using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
 
     `OAUTH_ACCESS_TOKEN_VALIDITY = integer`
     :   Specifies the default lifetime of the OAuth access token (in seconds) issued by an OAuth server.

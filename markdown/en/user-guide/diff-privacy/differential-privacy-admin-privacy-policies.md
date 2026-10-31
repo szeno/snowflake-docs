@@ -288,7 +288,7 @@ privacy policies. There are two different syntax options:
        ref_column_name,
        ref_arg_column_names,
        policy_status
-   FROM TABLE(information_schema.policy_references(policy_name => 'my_db.my_schema.privpolicy'));
+   FROM TABLE(policy_references(policy_name => 'my_db.my_schema.privpolicy'));
    ```
 2. Return a row for each policy assigned to the table named `my_table`. Use the POLICY\_KIND column to identify which policies are privacy
    policies.
@@ -305,7 +305,7 @@ privacy policies. There are two different syntax options:
        ref_column_name,
        ref_arg_column_names,
        policy_status
-   FROM TABLE(information_schema.policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
+   FROM TABLE(policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
    ```
 
 ## Privileges and commands

@@ -50,6 +50,7 @@ some other value when passed zero rows.
 | [HASH\_AGG](/sql-reference/functions/hash_agg) |  |
 | **Semi-structured Data Aggregation** |  |
 | [ARRAY\_AGG](/sql-reference/functions/array_agg) |  |
+| [ARRAY\_SUM](/sql-reference/functions/array_sum) |  |
 | [OBJECT\_AGG](/sql-reference/functions/object_agg) |  |
 | **Linear Regression** |  |
 | [REGR\_AVGX](/sql-reference/functions/regr_avgx) |  |

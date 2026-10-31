@@ -706,7 +706,7 @@ Show lessSee more
 
 Important
 
-Billing for data registration takes effect on November 1, 2026. Data registration
+Billing for data registration takes effect on December 1, 2026. Data registration
 before that date isn’t billed.
 
 For more information about the credits charged for each service, see the

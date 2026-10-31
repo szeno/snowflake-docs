@@ -1,6 +1,6 @@
-# Set up data ingestion for your instance
+# Set up data ingestion for your Snowflake Connector for Google Analytics Aggregate Data instance
 
-This topic describes how to access the in your Snowflake account.
+This topic describes how to access the Snowflake Connector for Google Analytics Aggregate Data in your Snowflake account.
 
 ## Add reports in the connector
 
@@ -8,7 +8,7 @@ To set up data ingestion using Snowsight, follow these steps:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) as a user with the ACCOUNTADMIN role.
 2. In the navigation menu, select **Catalog** » **Apps**.
-3. Search for the Snowflake Connector for , and then select the tile for the connector.
+3. Search for the Snowflake Connector for Snowflake Connector for Google Analytics Aggregate Data, and then select the tile for the connector.
 4. In the **Data sync** section, select **Add report**.
 5. In the new dialog, complete the following fields:
 
@@ -19,7 +19,7 @@ To set up data ingestion using Snowsight, follow these steps:
    | **Dimensions** | Google Analytics 4 dimensions to be included in your report  Dimensions are attributes of your data. For example, the dimension `city` indicates the city from which an event originates. The connector includes the `date` dimension in all reports.  Note  The dimensions field appears after you select the Google Analytics property. At most nine dimensions can be configured.  For more details about the available dimensions, see [API Dimensions & Metrics](https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema). |
    | **Metrics** | Google Analytics 4 metrics to be included in your report  Metrics are quantitative measurements of a report. For example, the metric `active1DayUsers` is the number of distinct active users on your site or app within a one-day period. You must select at least one metric.  Note  The metrics field appears after you select the Google Analytics property. At most 10 metrics can be configured.  For more details about the available metrics, see [API Dimensions & Metrics](https://developers.google.com/analytics/devguides/reporting/data/v1/api-schema). |
    | **Keep empty rows** | If this is selected, the ingested data should contain records with dimension combinations for which all the metrics are zero (indicating that there were no events correlated with those dimensions).  Note  Some dimension combinations might not be present in the ingested data. |
-   | **Avoid sampling** | If selected, the connector may cancel some ongoing ingestion runs and retry with a shorter interval length to download unsampled data, see  [ingestion model](/connectors/google/gaad/gaad-ingestion-model). |
+   | **Avoid sampling** | If selected, the connector may cancel some ongoing ingestion runs and retry with a shorter interval length to download unsampled data, see [Snowflake Connector for Google Analytics Aggregate Data ingestion model](/connectors/google/gaad/gaad-ingestion-model). |
    | **Sync data from** | Start date for the initial load of data |
    | **Sync schedule** | Sync frequency for the ongoing load of data |
 

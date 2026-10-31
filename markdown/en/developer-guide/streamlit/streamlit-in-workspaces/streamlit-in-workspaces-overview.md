@@ -33,6 +33,11 @@ When you work on a Streamlit app in a workspace, there are two distinct states:
   app by clicking **Deploy** in the workspace. Clicking the **Edit** button on the
   deployed app brings you back into your private workspace.
 
+You can deploy one project to more than one location, for example a development
+location and a production location. Each location is a deploy target, stored in
+`snowflake.yml`. For more information, see
+[Deploy your app](/developer-guide/streamlit/streamlit-in-workspaces/streamlit-in-workspaces-create-run#label-streamlit-in-workspaces-deploy).
+
 This separation means you can iterate on your code without affecting anyone else’s
 experience. Keep in mind:
 
@@ -40,7 +45,8 @@ experience. Keep in mind:
   you deploy, even if the development app has been updated.
 - Changes to development app settings aren’t immediately propagated to the deployed
   app.
-- Changes to the deployed app’s settings aren’t saved across deploy actions.
+- Changes to a deploy target’s settings apply to its deployed app the next time you
+  deploy that target.
 
 ### Streamlit files
 

@@ -1,10 +1,10 @@
-# Monitoring the
+# Monitoring the Snowflake Connector for Google Analytics Aggregate Data
 
-This section describes how to monitor the state of the and troubleshoot problems.
+This section describes how to monitor the state of the Snowflake Connector for Google Analytics Aggregate Data and troubleshoot problems.
 
 ## About monitoring the connector
 
-To monitor the state of the and troubleshoot problems, you can use the following database objects to access
+To monitor the state of the Snowflake Connector for Google Analytics Aggregate Data and troubleshoot problems, you can use the following database objects to access
 the connector’s configuration, error messages, and statistics:
 
 | Name | Description |

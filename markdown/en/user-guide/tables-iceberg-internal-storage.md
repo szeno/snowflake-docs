@@ -232,18 +232,9 @@ This feature isn’t available in other government regions or in the People’s 
 
 ### Encryption
 
-Iceberg tables that use Snowflake storage support only server-side encryption (SSE).
-Customer-managed keys (CMK) are not supported, even if your account has
-[Tri-Secret Secure](/user-guide/security-encryption-tss) enabled.
-
-Important
-
-Starting May 26, 2026, accounts that have Tri-Secret Secure enabled may not be able to
-create Iceberg tables that use Snowflake storage. Affected accounts receive an error
-that directs them to contact Snowflake Support to enable the feature.
-
-To enable your account, an account administrator must contact
-[Snowflake Support](/user-guide/contacting-support) to start the enablement process.
+All data in Snowflake storage is encrypted by default. To use customer-managed keys (CMKs) for encryption, see
+[Tri-Secret Secure for Snowflake storage for Apache Iceberg™ tables](/user-guide/tables-iceberg-snowflake-storage-tss). Tri-Secret Secure for Snowflake storage for Iceberg tables isn’t enabled by default. To enable it
+for your account, contact [Snowflake Support](/user-guide/contacting-support).
 
 ### Cloning behavior
 

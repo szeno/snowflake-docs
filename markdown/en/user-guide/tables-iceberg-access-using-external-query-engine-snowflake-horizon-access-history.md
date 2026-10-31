@@ -131,7 +131,7 @@ ORDER BY h.QUERY_START_TIME DESC;
 
 ## Usage notes
 
-- Only **successful** IRC operations are recorded. Failed IRC API calls are not logged.
+- Only **successful** IRC operations are recorded. Failed IRC API calls are not logged. To capture HTTP status codes for both successful and failed IRC requests, see [Capture Horizon Iceberg REST Catalog events in the event table](/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon-telemetry).
 - The `user_name` for IRC records is the Snowflake user that authenticated the IRC client
   (typically a service account configured with a programmatic access token).
 - Latency, truncation, and other behaviors are the same as for other rows in the view. For

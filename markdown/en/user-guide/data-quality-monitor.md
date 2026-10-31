@@ -36,7 +36,7 @@ view, execute the following:
 > USE SCHEMA INFORMATION_SCHEMA;
 > SELECT *
 >   FROM TABLE(
->     INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERENCES(
+>     DATA_METRIC_FUNCTION_REFERENCES(
 >       METRIC_NAME => 'governance.dmfs.count_positive_numbers'
 >     )
 >   );
@@ -59,7 +59,7 @@ To return a row for each DMF assigned to the table named `hr.tables.empl_info`, 
 > USE SCHEMA INFORMATION_SCHEMA;
 > SELECT *
 >   FROM TABLE(
->     INFORMATION_SCHEMA.DATA_METRIC_FUNCTION_REFERENCES(
+>     DATA_METRIC_FUNCTION_REFERENCES(
 >       REF_ENTITY_NAME => 'hr.tables.empl_info',
 >       REF_ENTITY_DOMAIN => 'table'
 >     )

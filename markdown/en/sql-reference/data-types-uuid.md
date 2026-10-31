@@ -26,6 +26,8 @@ The following considerations apply to the UUID data type:
 - Apache Iceberg™ tables support UUID as a column type. You can also store UUID values in Iceberg VARIANT (v3) columns
   and as the element or value type of Iceberg structured types (ARRAY, OBJECT, and MAP). For more information, see
   [Data types for Apache Iceberg™ tables](/user-guide/tables-iceberg-data-types).
+- [Hybrid tables](/user-guide/tables-hybrid) support UUID columns, including as a primary key, a foreign key, or a
+  secondary index.
 
 ## Specify a UUID data type
 
@@ -47,7 +49,6 @@ The following limitations apply to the UUID data type:
 
 - The UUID data type isn’t supported in stored procedures or user-defined functions (UDFs) written in a
   language other than SQL, such as Python or Java.
-- The UUID data type isn’t supported in [hybrid tables](/user-guide/tables-hybrid).
 - The UUID data type isn’t supported in Snowpark.
 - The following features don’t support the UUID data type:
   - [Differential privacy](/user-guide/diff-privacy/differential-privacy-sql-reference)

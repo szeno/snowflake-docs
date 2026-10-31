@@ -325,12 +325,6 @@ doesn’t load-balance individual connections for the same destination across ag
 
 ## Upgrade agents
 
-### Snowflake-managed relay upgrades
-
-When Snowflake upgrades the relay, you don’t need to take action. Active database connections stay up.
-
-### Agent-process upgrades
-
 To upgrade an agent, pull the new image and recreate the container. Restarting an existing container doesn’t update its image. Using
 `docker run` with `snowflakedb/dcp-client:latest` can reuse a locally cached image unless you explicitly pull it first to fetch the current
 image tagged as latest, which may be newer.

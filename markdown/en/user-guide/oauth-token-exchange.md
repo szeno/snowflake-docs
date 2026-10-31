@@ -92,14 +92,15 @@ curl -X POST "https://<account_identifier>.snowflakecomputing.com/oauth/token" \
   --data-urlencode 'act={"sub":"invoice-reconciliation-agent","type":"agent"}'
 ```
 
-If the request succeeds, Snowflake returns HTTP 200. The response body is the issued access token,
-encoded as a JSON string:
-
-Copy code
+If the request succeeds, Snowflake returns HTTP 200. The response body is the issued access token
+as plain text, without a surrounding JSON object or quotes:
 
 ```
-"eyJraWQiOiI..."
+eyJraWQiOiI...
 ```
+
+The response has a `Content-Type` of `application/json`, but the body isn’t valid JSON. Read the
+body as text instead of parsing it as JSON.
 
 Treat the response as a credential. Don’t cache it in intermediaries, and don’t log it.
 
@@ -110,7 +111,7 @@ Treat the response as a credential. Don’t cache it in intermediaries, and don�
 | `grant_type` | Required. `urn:ietf:params:oauth:grant-type:token-exchange`. |
 | `subject_token` | Required. The user’s credential. Send it in the request body. Snowflake also accepts it in an `Authorization: Bearer` header, but that header is more likely to be logged by proxies. |
 | `subject_token_type` | Required. The type of `subject_token`. For supported values, see [Supported subject tokens](#label-oauth-token-exchange-subject-tokens). |
-| `scope` | Recommended. `session:role:<role_name>` limits the agent’s sessions to that single role, with no secondary roles. The role must be granted to the user. If you omit `scope`, sessions use the user’s default role and default secondary roles, which can include every role granted to the user. |
+| `scope` | Recommended. `session:role:<role_name>` limits the agent’s sessions to that single role, with no secondary roles. The role must be granted to the user. If you omit `scope`, sessions use the user’s default role and default secondary roles, which can include every role granted to the user. An unquoted role name is converted to uppercase. To match a role whose name contains lowercase characters, enclose the name in double quotes, for example `session:role:"Data Analyst"`. A quoted name must match the stored role name exactly, including case. The [QUOTED\_IDENTIFIERS\_IGNORE\_CASE](/sql-reference/parameters#label-quoted-identifiers-ignore-case) parameter doesn’t apply to the role name in `scope`. |
 | `authorization_details` | Recommended. A JSON array that contains one Restricted Session Scope entry. For details, see [Set the privilege ceiling](#label-oauth-token-exchange-privilege-ceiling). |
 | `act` | Recommended. A JSON object that identifies the acting party. For details, see [Identify the acting agent](#label-oauth-token-exchange-acting-agent). |
 

@@ -968,10 +968,12 @@ To account for this, the connector limits the number of rows fetched within a si
 The connector uses the following process to determine the page size:
 
 1. Initially, the default page size is set to 10,000 rows.
-2. If the fetch request fails during ingestion because the response size is exceeded, the page size is
+2. If ServiceNow® returns an invalid JSON response, the connector waits 30 seconds and retries the request once.
+3. If the fetch request fails during ingestion because the response size is exceeded, the External Access
+   function runs out of memory, or the retry from the previous step also fails, the page size is
    gradually decreased by 1000, 100, 10 and 1 until the request succeeds or the final page size
    is set to 1.
-3. The successful page size is saved in the connector state and this value is used by subsequent requests.
+4. The successful page size is saved in the connector state and this value is used by subsequent requests.
 
 The current page size for a table is available in the `TABLES_STATE` view. To see the page size, run
 the following command:

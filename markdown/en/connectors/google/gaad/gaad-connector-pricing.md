@@ -1,6 +1,6 @@
-# Cost governance of the
+# Cost governance of the Snowflake Connector for Google Analytics Aggregate Data
 
-This topic provides best practices for cost governance and finding the optimal warehouse size for the .
+This topic provides best practices for cost governance and finding the optimal warehouse size for the Snowflake Connector for Google Analytics Aggregate Data.
 
 ## Measuring the cost of the connector
 
@@ -53,7 +53,7 @@ The query gives only an approximation of the cost.
 
 ### Storage cost
 
-The stores data in two places:
+The Snowflake Connector for Google Analytics Aggregate Data stores data in two places:
 
 - The connector database, which is created from the public share and holds the connector internal state
 - The user-specified schema where the ingested data is stored
@@ -71,7 +71,7 @@ You can get the information from the [TABLE\_STORAGE\_METRICS view](/sql-referen
 
 ## Determining the optimal warehouse size for the connector instance
 
-For the , we recommend starting using an XSMALL warehouse and then experimenting with larger warehouses to possibly improve performance.
+For the Snowflake Connector for Google Analytics Aggregate Data, we recommend starting using an XSMALL warehouse and then experimenting with larger warehouses to possibly improve performance.
 
 To find the optimal warehouse size for the connector, consider these factors:
 

@@ -13,6 +13,7 @@ For information about Cortex Code Desktop, see [Cortex Code Desktop](/user-guide
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v1.23.1](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-23-1) | October 2026 | Customize page for agent settings, fewer approval prompts for file edits, uploads of any file type, and SQL Playground Stop |
 | [v1.23.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-23-0) | October 2026 | Session list grouping and ordering, prompt history for each chat, Snowflake Managed MCP servers for all accounts, and dbt fixes |
 | [v1.22.1](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-22-1) | October 2026 | Defer to Production for Snowflake-managed dbt runs, agent-named sessions, Snowflake object discovery for everyone, and Apps panel filters |
 | [v1.21.7](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-21-7) | October 2026 | Manage automations from chat, redesigned MCP connection controls, Stop for multi-statement SQL, and dbt Docs from the editor |

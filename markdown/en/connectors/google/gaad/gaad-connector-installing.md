@@ -1,14 +1,14 @@
-# Install and configure the
+# Install and configure the Snowflake Connector for Google Analytics Aggregate Data
 
-This topic provides information about installing and configuring the
+This topic provides information about installing and configuring the Snowflake Connector for Google Analytics Aggregate Data
 through Snowsight.
 
-## Install the
+## Install the Snowflake Connector for Google Analytics Aggregate Data
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) as a user with the ACCOUNTADMIN role.
 2. In the navigation menu, select **Marketplace** » **Snowflake Marketplace**.
-3. Search for the , and then select the tile for the connector.
-4. On the page for the , select **Get**.
+3. Search for the Snowflake Connector for Google Analytics Aggregate Data, and then select the tile for the connector.
+4. On the page for the Snowflake Connector for Google Analytics Aggregate Data, select **Get**.
 
    A dialog box is displayed.
 5. Under **Options**, for **Application name**, enter a name for the database to use for the connector instance.
@@ -21,12 +21,12 @@ through Snowsight.
    > This is not the same warehouse that is used by the connector to synchronize data from Google Analytics.
    > In a later procedure, you create a separate warehouse for this purpose.
 
-## Configure the
+## Configure the Snowflake Connector for Google Analytics Aggregate Data
 
 Note
 
-can also be configured using SQL. Configuration using SQL is considered
-an advanced topic. For more information see [Configure the using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
+Snowflake Connector for Google Analytics Aggregate Data can also be configured using SQL. Configuration using SQL is considered
+an advanced topic. For more information see [Configure the Snowflake Connector for Google Analytics Aggregate Data using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) as a user with either the ACCOUNTADMIN role or any other role that meets the following requirements:
 
@@ -56,7 +56,7 @@ an advanced topic. For more information see [Configure the using SQL](/connector
      assigned the DATA\_READER application role. If you want to create a new role, then you need the CREATE ROLE privilege on your account.
      However, this is not necessary to complete the configuration.
 2. In the navigation menu, select **Catalog** » **Apps**.
-3. Select the .
+3. Select the Snowflake Connector for Google Analytics Aggregate Data.
 
    The configuration wizard starts.
 4. Ensure that all prerequisites on the list are met, and mark them as done.
@@ -72,7 +72,7 @@ an advanced topic. For more information see [Configure the using SQL](/connector
    | --- | --- |
    | **Warehouse** | Enter the identifier for a new, dedicated virtual warehouse for the connector.  Specify a name that is unique for your account. The name of the warehouse must be a valid [object identifier](/sql-reference/identifiers-syntax).  The configuration process creates a new `X-Small` warehouse with the specified name. |
    | **Destination Database** | Enter the identifier for a new database that will contain the schema with the tables for the Google Analytics data in Snowflake. Data downloaded from Google Analytics will be stored here.  Specify a name that is unique for your account. The name of the database must be a valid [object identifier](/sql-reference/identifiers-syntax).  The configuration process creates a new database with the specified name. |
-   | **Destination Schema** | Enter the identifier for a new schema that will contain the Google Analytics data in Snowflake.  The ingests Google Analytics data into tables in this schema.  The name of the schema must be a valid [object identifier](/sql-reference/identifiers-syntax).  The configuration process creates a new schema with the specified name. |
+   | **Destination Schema** | Enter the identifier for a new schema that will contain the Google Analytics data in Snowflake.  The Snowflake Connector for Google Analytics Aggregate Data ingests Google Analytics data into tables in this schema.  The name of the schema must be a valid [object identifier](/sql-reference/identifiers-syntax).  The configuration process creates a new schema with the specified name. |
    | **Role** | Enter the identifier for a new custom role for the connector.  This role is granted read access to tables and views that contain the Google Analytics data ingested by the connector.  The name of the role must be a valid [object identifier](/sql-reference/identifiers-syntax).  The configuration process creates a new role with the specified name. |
 
    Expand
@@ -85,7 +85,7 @@ an advanced topic. For more information see [Configure the using SQL](/connector
 
    Note
 
-   The supports two methods of authenticating in Google Analytics: **service accounts** and **OAuth2**. Each method requires
+   The Snowflake Connector for Google Analytics Aggregate Data supports two methods of authenticating in Google Analytics: **service accounts** and **OAuth2**. Each method requires
    additional configuration in your Google Cloud project. For more information, see [Configure service account authentication for Google Cloud](/connectors/google/gaad/gaad-connector-create-service-account-key) and [Configure OAuth authentication for Google Cloud](/connectors/google/gaad/gaad-connector-create-client-id).
 
    - For a **service account**, populate the following fields:
@@ -133,4 +133,4 @@ an advanced topic. For more information see [Configure the using SQL](/connector
 
 After successfully connecting, the connector verifies whether it can access Google Analytics data. If there are any errors, you will be provided with additional instructions.
 
-After the process is completed successfully, ingestion configuration can begin. For more information, see [Set up data ingestion for your instance](/connectors/google/gaad/gaad-connector-setting-up-data).
+After the process is completed successfully, ingestion configuration can begin. For more information, see [Set up data ingestion for your Snowflake Connector for Google Analytics Aggregate Data instance](/connectors/google/gaad/gaad-connector-setting-up-data).

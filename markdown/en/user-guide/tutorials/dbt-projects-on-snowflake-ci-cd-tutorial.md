@@ -80,7 +80,7 @@ For detailed configuration options beyond what this tutorial covers, see the ded
 
 ## Set up your environment
 
-Set up where your dbt project will read and write in Snowflake, then update your `profiles.yml` file.
+Set up where your dbt project will read and write in Snowflake, then update your `dbt_projects_profiles.yml` file.
 
 ### Create a warehouse, database, and schemas
 
@@ -131,9 +131,9 @@ For either option, replace `<your_production_db>` with the name of your existing
 
 To manage CI/CD for a dbt project object, you must include `dbt_projects_profiles.yml` or `profiles.yml` inside your dbt project folder. The selected file defines your dev and prod targets and uses placeholder values that your CI/CD platform’s secrets or variables will later replace.
 
-This tutorial uses `profiles.yml`. Alternatively, use `dbt_projects_profiles.yml`, which takes precedence if both files are present. For more information, see [Use dbt\_projects\_profiles.yml for a unified development-to-production experience](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file).
+This tutorial uses `dbt_projects_profiles.yml`. The local dbt CLI reads only `profiles.yml`, so `dbt_projects_profiles.yml` doesn’t disrupt local dbt workflows. For more information, see [Use dbt\_projects\_profiles.yml for a unified development-to-production experience](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file).
 
-Edit `profiles.yml` to reference the dev and prod databases and schemas you created, as shown below:
+Edit `dbt_projects_profiles.yml` to reference the dev and prod databases and schemas you created, as shown below:
 
 Copy code
 

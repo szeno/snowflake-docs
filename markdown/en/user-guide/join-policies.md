@@ -525,7 +525,7 @@ and views attached to existing join policies. You can use two different syntax o
    ref_column_name,
    ref_arg_column_names,
    policy_status
-    FROM TABLE(INFORMATION_SCHEMA.POLICY_REFERENCES(policy_name => 'my_db.my_schema.jp1'));
+    FROM TABLE(POLICY_REFERENCES(policy_name => 'my_db.my_schema.jp1'));
   ```
 
 - Return information about the policy that is assigned to `join_table`:
@@ -543,7 +543,7 @@ and views attached to existing join policies. You can use two different syntax o
    ref_column_name,
    ref_arg_column_names,
    policy_status
-    FROM TABLE(INFORMATION_SCHEMA.POLICY_REFERENCES(ref_entity_name => 'my_db.my_schema.join_table', ref_entity_domain => 'table'));
+    FROM TABLE(POLICY_REFERENCES(ref_entity_name => 'my_db.my_schema.join_table', ref_entity_domain => 'table'));
   ```
 
   ```

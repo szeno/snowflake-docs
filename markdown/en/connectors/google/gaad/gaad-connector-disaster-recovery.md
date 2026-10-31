@@ -30,7 +30,7 @@ To continue ingesting data after installing a new connector instance, follow the
 
 1. Configure the connector.
 
-   Configure the connector by following the instructions in [Install and configure the](/connectors/google/gaad/gaad-connector-installing) .
+   Configure the connector by following the instructions in [Install and configure the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-installing).
    When choosing the destination database and schema, select the existing schema that contains data ingested by the previous instance of the connector.
 2. Grant required privileges to the connector.
 
@@ -74,7 +74,7 @@ To continue ingesting data after installing a new connector instance, follow the
    call resume_connector();
    ```
 
-At this point, the new instance of the connector should resume ingestion of the existing reports.
+At this point, the new instance of the Snowflake Connector for Google Analytics Aggregate Data connector should resume ingestion of the existing reports.
 
 ## Replicating the destination database and connector state to another snowflake deployment
 
@@ -88,19 +88,19 @@ and replicating the destination database to the secondary account.
 > - **Destination Database** - the database configured as the target for the data ingested by the GAAD connector. This is also the database where the connector’s internal state is exported to.
 > - **Sink Database** - the schema configured as the target for the data ingested by the GAAD connector.
 > - **Internal State** - the internal data and configuration of the GAAD connector, for example report configurations, ingestion state, and error logs.
-> - **GAAD instance** - the connector instance installed on the Snowflake account.
-> - **GAAD** -
+> - **GAAD instance** - the Snowflake Connector for Google Analytics Aggregate Data connector instance installed on the Snowflake account.
+> - **GAAD** - Snowflake Connector for Google Analytics Aggregate Data
 > - **ACCOUNT\_PRIM** - example name of primary account
 > - **ACCOUNT\_SEC** - example name of secondary (replica) account
-> - **APP\_PRIM** - example connector instance name installed on the primary account
-> - **APP\_SEC** - example connector instance name installed on the secondary account
+> - **APP\_PRIM** - example Snowflake Connector for Google Analytics Aggregate Data connector instance name installed on the primary account
+> - **APP\_SEC** - example Snowflake Connector for Google Analytics Aggregate Data connector instance name installed on the secondary account
 > - **DST\_DB.DST\_SCHEMA** - example destination schema name for the GAAD instance (where data is ingested and the connector’s internal state is saved)
 > - **DST\_DB** - example destination database name configured for the GAAD connector
 > - **MYORG** - example name of your organization (both accounts must be in the same organization)
 
 ### Introduction
 
-When installed on your account, the connector (GAAD instance) appears as a regular database that contain data, procedures etc.
+When installed on your account, the Snowflake Connector for Google Analytics Aggregate Data connector (GAAD instance) appears as a regular database that contain data, procedures etc.
 However, it cannot be replicated to a secondary account in the same way as a regular database.
 Currently, there is no native mechanism to replicate the GAAD instance with its internal state to a replica account.
 Specifically, the installed application cannot be added to a replication group.
@@ -137,7 +137,7 @@ You can then replicate both the ingested data and the internal state using the f
 
 1. **Installing GAAD on the primary account**
 
-   Install and configure on the primary account. For detailed instructions, see [Install and configure the](/connectors/google/gaad/gaad-connector-installing) .
+   Install and configure Snowflake Connector for Google Analytics Aggregate Data on the primary account. For detailed instructions, see [Install and configure the Snowflake Connector for Google Analytics Aggregate Data](/connectors/google/gaad/gaad-connector-installing).
 
    On the primary account, create a replication group and add DST\_DB as an allowed database:
 
@@ -169,7 +169,7 @@ You can then replicate both the ingested data and the internal state using the f
    will be replicated according to the configured schedule.
 3. **Installing GAAD on the secondary account**
 
-   Install and configure on the secondary account in the same way as on the primary account.
+   Install and configure Snowflake Connector for Google Analytics Aggregate Data on the secondary account in the same way as on the primary account.
    Point the instance to ingest data into the replicated database and schema.
    While replication is ongoing (until the replication group on the secondary account is dropped),
    the database is in read-only mode. GAAD can be configured to use a read-only database as the ingestion target;

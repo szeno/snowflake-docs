@@ -193,15 +193,15 @@ In this step, you create a workspace in Snowsight that is connected to your GitH
 
    Snowflake connects to the GitHub repository that you specified and opens your new workspace. A single folder in the workspace named `tasty_bytes_dbt_demo` contains the dbt project that you will work with.
 
-### Verify the contents of the profiles.yml file in your dbt project root
+### Verify the contents of the dbt\_projects\_profiles.yml file in your dbt project root
 
 Each dbt project folder in your Snowflake workspace must contain a `dbt_projects_profiles.yml` or `profiles.yml` file that specifies a target `warehouse`, `database`, `schema`, and `role` in Snowflake for the project. The `type` must be set to `snowflake`. dbt requires an `account` and `user`, but these can be left with an empty or arbitrary string because the dbt project runs in Snowflake under the current account and user context.
 
-This tutorial uses `profiles.yml`. Alternatively, hybrid teams can use [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file), which takes precedence if both files are present.
+This tutorial uses [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file). It works the same way as `profiles.yml` but is specifically for dbt Projects on Snowflake. The local dbt CLI reads only `profiles.yml`, so adding `dbt_projects_profiles.yml` never disrupts anyone’s existing local dbt workflow, including a personal `~/.dbt/profiles.yml`.
 
 When you run dbt commands, your workspace reads `dbt_projects_profiles.yml` if it’s present. Otherwise, it reads `profiles.yml`. Each target is listed in the **Profile** dropdown. When you run a dbt command, the workspace uses the selected profile (`target`) to run the command.
 
-Open the `tasty_bytes_dbt_demo/profiles.yml` file, and then verify that your contents match the following example. If you specified different database or warehouse names earlier, replace them with your own.
+Open the `tasty_bytes_dbt_demo/dbt_projects_profiles.yml` file, and then verify that your contents match the following example. If you specified different database or warehouse names earlier, replace them with your own.
 
 Copy code
 
@@ -292,7 +292,7 @@ The first command you must execute for any dbt project is `deps`, which updates 
 
 1. In the workspace, open `tasty_bytes_dbt_demo/packages.yml`. This file contains a `packages:` block that’s commented out by default. Uncomment the block before continuing.
 2. Below the workspace editor, open the **Output** tab so that you can see stdout after you run dbt commands from the workspace.
-3. From the menu bar above the workspace editor, confirm that the default **Project** (**tasty\_bytes\_dbt\_demo**) is selected. You can have any **Profile** selected. This project has the profiles `dev` and `prod` defined in the `profiles.yml` file.
+3. From the menu bar above the workspace editor, confirm that the default **Project** (**tasty\_bytes\_dbt\_demo**) is selected. You can have any **Profile** selected. This project has the profiles `dev` and `prod` defined in the `dbt_projects_profiles.yml` file.
 4. From the command list, select **Deps**.
 5. Next to the execute button, select the down arrow.
 6. In the dbt Deps window, do the following:
@@ -356,7 +356,7 @@ After you compile the project in the workspace, you can view the DAG. You also c
 
 ## Run the dbt dev project and verify the materialized Snowflake objects
 
-Executing the dbt `run` command executes your compiled SQL against the target database and schema using the Snowflake warehouse and role that are specified in the `profiles.yml` file of the project. In this step, you’ll materialize the output of the `Dev` target in your dbt demo project. You then create a SQL worksheet named `dbt_sandbox.sql` in the workspace where you can run SQL to verify object creation.
+Executing the dbt `run` command executes your compiled SQL against the target database and schema using the Snowflake warehouse and role that are specified in the `dbt_projects_profiles.yml` file of the project. In this step, you’ll materialize the output of the `Dev` target in your dbt demo project. You then create a SQL worksheet named `dbt_sandbox.sql` in the workspace where you can run SQL to verify object creation.
 
 Important
 

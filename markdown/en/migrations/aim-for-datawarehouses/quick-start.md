@@ -13,7 +13,7 @@ Ensure the following are installed on your platform:
 - [macOS Apple Silicon](https://snowconvert.snowflake.com/storage/darwin_arm64/beta/aim/Snowflake-AIM-arm64-Pr.dmg)
 - [macOS Intel](https://snowconvert.snowflake.com/storage/darwin_x64/beta/aim/Snowflake-AIM-x64-Pr.dmg)
 - [Windows x64](https://snowconvert.snowflake.com/storage/windows/beta/aim/Snowflake-AIM-Setup-x64-Pr.exe)
-- [Windows x64](https://snowconvert.snowflake.com/storage/windows_arm64/beta/aim/Snowflake-AIM-Setup-arm64-Pr.exe)
+- [Windows arm64](https://snowconvert.snowflake.com/storage/windows_arm64/beta/aim/Snowflake-AIM-Setup-arm64-Pr.exe)
 
 ### Starting the Snowflake AIM for Data Warehouses app for the first time
 

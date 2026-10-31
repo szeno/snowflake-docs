@@ -22,6 +22,7 @@ to which it is applied, and not all objects support all privileges:
 | APPLY AUTHENTICATION POLICY | Global | Grants the ability to add or drop an authentication policy on the Snowflake account or a user in the Snowflake account. |
 | APPLY BACKUP POLICY | Global | Grants the ability to add [backup](/user-guide/backups) policies to backup sets that don’t already have a policy. This privilege is granted to the ACCOUNTADMIN role and can be delegated. |
 | APPLY BACKUP RETENTION LOCK | Global | Grants the ability to create and apply [backup](/user-guide/backups) policies with retention lock. This privilege is granted to the ACCOUNTADMIN role and can be delegated. |
+| APPLY COMMENT | Database, Schema, Table, View, and other supported objects | Grants the ability to set or unset the comment on an object, including column comments on table-like objects. For supported object types, see [Metadata access control](/user-guide/snowflake-horizon/connectors/access-control#apply-comment). |
 | APPLY CONTACT | Global | Grants the ability to associate or detach a [contact](/user-guide/contacts-using) with an object. |
 | APPLY DATA MOVEMENT POLICY | Global | Grants the ability to set a [data movement policy](/user-guide/data-movement-policies) on a tag or on the account. |
 | APPLY FEATURE POLICY | Global | Grants the ability to apply a feature policy for an account or on a specific object. |
@@ -68,7 +69,7 @@ to which it is applied, and not all objects support all privileges:
 | MANAGE CORTEX EXTENSION SECURITY SCAN | Global | Grants the ability to override a Cortex Extension security scan and read its findings. |
 | MANAGE GRANTS | Global, Database, Schema | Grants the ability to grant or revoke privileges on any object as if the invoking role were the owner of the object. When granted on a database or schema, the ability is limited to that container and the objects in it. For details, see [Delegating grant management with container-level MANAGE GRANTS](/user-guide/container-manage-grants-intro). |
 | MANAGE LISTING AUTO FULFILLMENT | Global | Grants the ability to publish listings to remote regions using [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment) and manage auto-fulfillment settings for listings. |
-| MANAGE METADATA CONNECTORS | Global | Grants the ability to set up [Horizon Catalog connectors](/user-guide/snowflake-horizon/connectors) that collect metadata from external systems. |
+| MANAGE METADATA CONNECTORS | Global | Grants the ability to set up [Horizon Catalog connectors](/user-guide/snowflake-horizon/connectors) that collect metadata from external systems. Previously named MANAGE METADATA INGESTION. |
 | MANAGE ORGANIZATION ACCESS | Global | Grants the ability to manage organizational access to a given account. |
 | MANAGE ORGANIZATION CONTACTS | Global | Grants the ability to manage the contacts for an organization. |
 | MANAGE ORGANIZATION SUPPORT CASES | Global | Grants the ability to view, comment on, and manage all Support cases that were opened by the current user in Snowsight. |
@@ -82,6 +83,7 @@ to which it is applied, and not all objects support all privileges:
 | MANAGE WAREHOUSES | Global | Grants the ability to perform operations that require the [MODIFY, MONITOR, and OPERATE privileges on warehouses](#label-warehouse-privileges) in the same account. |
 | MODIFY | Resource Monitor, Warehouse, Data Exchange Listing, Database, Schema, Failover Group, Replication Group, Compute Pool, Model Monitor | Grants the ability to change the settings or properties of an object (for example, on a virtual warehouse, provides the ability to change the size of a virtual warehouse). |
 | MODIFY EVENT TABLE | Global | Grants the ability to set the [EVENT\_TABLE](/sql-reference/parameters#label-event-table) parameter on any object in the account. |
+| MODIFY EXTERNAL METADATA | Metadata Connector | Grants the ability to edit the metadata of the external objects that a [Horizon Catalog connector](/user-guide/snowflake-horizon/connectors/access-control) ingests. Doesn’t grant view access by itself; also requires READ EXTERNAL METADATA or USAGE on the connector. |
 | MODIFY LOG EVENT LEVEL | Global | Enables setting the level of log events captured for stored procedures and UDFs in the current account. For more information, see [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level). |
 | MODIFY LOG LEVEL | Global | Enables setting the level of log messages captured for stored procedures and UDFs in the current account. For more information, see [LOG\_LEVEL](/sql-reference/parameters#label-log-level). |
 | MODIFY METRIC LEVEL | Global | Enables setting the level of metrics data captured for stored procedures and UDFs in the current account. For more information, see [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level). |
@@ -102,6 +104,7 @@ to which it is applied, and not all objects support all privileges:
 | OWNERSHIP | All | Grants the ability to drop, alter, and grant or revoke access to an object. Required to rename an object and create a temporary object with the same name as the object itself. OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role or any role with the MANAGE GRANTS privilege. |
 | PURCHASE DATA EXCHANGE LISTING | Global | Grants the ability to purchase a paid listing. |
 | READ | Stage (internal only), Compute Pool, Git Repository, Image Repository, Cortex Extension, DCM project | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
+| READ EXTERNAL METADATA | Metadata Connector | Grants the ability to view the metadata and lineage of the external objects that a [Horizon Catalog connector](/user-guide/snowflake-horizon/connectors/access-control) ingests. |
 | READ SESSION | Global | Grants the ability to read session context. |
 | READ UNREDACTED AI OBSERVABILITY EVENTS TABLE | Global | Grants the ability to read the unredacted data in an AI observability events table. |
 | READ UNREDACTED ERROR TABLE | Global | Grants the ability to read the unredacted data in an error table. Required when the error table is associated with a base table that has security policies, such as a [masking policy](/user-guide/security-column-intro). For more information about error tables, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging). |
@@ -194,7 +197,7 @@ The remaining sections in this topic describe the specific privileges available 
 | MANAGE CORTEX EXTENSION SECURITY SCAN | Grants the ability to override the security scan status of a Cortex Extension and to read its scan findings. | Also requires MONITOR CORTEX EXTENSIONS. Granted to ACCOUNTADMIN by default. |
 | MANAGE GRANTS | Enables granting or revoking privileges on objects for which the role is not the owner. MANAGE GRANTS can also be granted on a database or schema to limit the ability to that container; see [Delegating grant management with container-level MANAGE GRANTS](/user-guide/container-manage-grants-intro). | Must be granted by a role that holds MANAGE GRANTS WITH GRANT OPTION on the account or, for a database or schema, on that container or a higher container. The SECURITYADMIN role holds account-level MANAGE GRANTS by default. For details, see [How to obtain MANAGE GRANTS on a container](/user-guide/container-manage-grants-using#label-container-manage-grants-using-obtain). |
 | MANAGE LISTING AUTO FULFILLMENT | Grants the ability to publish listings to remote regions using [Cross-Cloud Auto-Fulfillment](/collaboration/provider-listings-auto-fulfillment) and manage auto-fulfillment settings for listings. | In the [organization account](/user-guide/organization-accounts), must be granted by the GLOBALORGADMIN role. In all other accounts, must be granted by the ACCOUNTADMIN role after that role has been [delegated privileges by the ORGADMIN role](/collaboration/provider-listings-auto-fulfillment-manage-privileges#label-delegate-laf-privileges). |
-| MANAGE METADATA CONNECTORS | Grants the ability to set up [Horizon Catalog connectors](/user-guide/snowflake-horizon/connectors) that collect metadata from external systems. | To create a connector, the role also needs USAGE on the database and CREATE METADATA CONNECTOR on the schema that contain it. For details, see [Metadata access control](/user-guide/snowflake-horizon/connectors/access-control). |
+| MANAGE METADATA CONNECTORS | Grants the ability to set up [Horizon Catalog connectors](/user-guide/snowflake-horizon/connectors) that collect metadata from external systems. Previously named MANAGE METADATA INGESTION. | To create a connector, the role also needs USAGE on the database and CREATE METADATA CONNECTOR on the schema that contain it. For details, see [Metadata access control](/user-guide/snowflake-horizon/connectors/access-control). |
 | MANAGE ORGANIZATION ACCESS | Grants the ability to manage organizational access to a given account. |  |
 | MANAGE ORGANIZATION CONTACTS | Grants the ability to manage the contacts of an organization. | Must be granted by the GLOBALORGADMIN role in the [organization account](/user-guide/organization-accounts). |
 | MANAGE ORGANIZATION SUPPORT CASES | Grants the ability to view, comment on, and manage all Support cases that were opened by the current user in Snowsight. |  |
@@ -1369,6 +1372,21 @@ Show lessSee more
 Expand
 
 Show lessSee more
+
+## Metadata connector privileges
+
+| Privilege | Usage |
+| --- | --- |
+| READ EXTERNAL METADATA | Enables viewing the metadata and lineage of the external objects that the connector ingests. |
+| MODIFY EXTERNAL METADATA | Enables editing the metadata of the external objects that the connector ingests. Doesn’t grant view access by itself, so the role also needs READ EXTERNAL METADATA or USAGE on the connector. |
+| USAGE | Enables viewing the metadata and lineage of the external objects that the connector ingests, the same as READ EXTERNAL METADATA. |
+| OWNERSHIP | Grants full control over the connector. Required to configure, sync, or delete the connector. |
+
+Expand
+
+Show lessSee more
+
+To use any of these privileges, a role also needs USAGE on the database and schema that contain the connector. For details, see [Metadata access control](/user-guide/snowflake-horizon/connectors/access-control).
 
 ## Snapshot privileges (for block storage volume snapshots)
 

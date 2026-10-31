@@ -86,6 +86,11 @@ Investigations can take up to 10 minutes to complete. When the report is ready, 
 for the rest of the thread, so follow-up questions such as “break that down by region” run as
 standard chat turns without restarting the research.
 
+If the agent has [web search](/user-guide/snowflake-cortex/cortex-agents-manage#label-cortex-agents-web-search)
+enabled, Deep Research also researches the web as part of an investigation, alongside your data,
+and cites web sources in the report. The web research runs separately from the data analysis and
+has no access to your data. Without web search, investigations use only your data.
+
 Deep Research compared to extended thinking
 
 Deep Research and extended thinking solve different problems and can be used together. Extended

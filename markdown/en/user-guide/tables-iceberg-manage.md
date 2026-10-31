@@ -413,6 +413,9 @@ Snowflake attempts to maintain file sizes close to the target size when writing 
 After you set a target file size, Snowflake immediately starts to create larger files for new Data Manipulation Language (DML) operations.
 Snowflake’s table maintenance operations asynchronously change the existing table files according to the target file size.
 
+For both Snowflake-managed and externally managed Iceberg tables, if you set `TARGET_FILE_SIZE` at the table level,
+Snowflake writes the value to the `write.target-file-size-bytes` table property in the Iceberg metadata.
+
 The following example uses TARGET\_FILE\_SIZE to set a target file size of 128 MB for a Snowflake-managed table:
 
 Copy code

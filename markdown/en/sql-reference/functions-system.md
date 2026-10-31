@@ -23,6 +23,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$ABORT\_TRANSACTION](/sql-reference/functions/system_abort_transaction) |  |
 | [SYSTEM$ACTIVATE\_CMK\_INFO](/sql-reference/functions/system_activate_cmk_info) |  |
 | [SYSTEM$ACTIVATE\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_activate_cmk_info_postgres) |  |
+| [SYSTEM$ACTIVATE\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_activate_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$ADD\_EVENT (for Snowflake Scripting)](/sql-reference/functions/system_add_event) |  |
 | [SYSTEM$ADD\_PRIVATELINK\_ENDPOINT\_HOSTNAME](/sql-reference/functions/system_add_privatelink_endpoint_hostname) |  |
 | [SYSTEM$ADD\_REFERENCE](/sql-reference/functions/system_add_reference) |  |
@@ -43,11 +44,13 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$CREATE\_BILLING\_EVENTS](/sql-reference/functions/system_create_billing_events) |  |
 | [SYSTEM$CREATE\_EVALUATION\_DATASET](/sql-reference/functions/system_create_evaluation_dataset) |  |
 | [SYSTEM$DEACTIVATE\_CMK\_INFO](/sql-reference/functions/system_deactivate_cmk_info) |  |
+| [SYSTEM$DEACTIVATE\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_deactivate_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$DEMIGRATE\_DBT\_PROJECT](/sql-reference/functions/system_demigrate_dbt_project) |  |
 | [SYSTEM$DEPROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_deprovision_privatelink_endpoint) |  |
 | [SYSTEM$DEPROVISION\_PRIVATELINK\_ENDPOINT\_TSS](/sql-reference/functions/system_deprovision_privatelink_endpoint_tss) |  |
 | [SYSTEM$DEREGISTER\_CMK\_INFO](/sql-reference/functions/system_deregister_cmk_info) |  |
 | [SYSTEM$DEREGISTER\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_deregister_cmk_info_postgres) |  |
+| [SYSTEM$DEREGISTER\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_deregister_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$DISABLE\_BEHAVIOR\_CHANGE\_BUNDLE](/sql-reference/functions/system_disable_behavior_change_bundle) |  |
 | [SYSTEM$DISABLE\_DATABASE\_REPLICATION](/sql-reference/functions/system_disable_database_replication) |  |
 | [SYSTEM$DISABLE\_FEATURE\_GROUPS](/sql-reference/functions/system_disable_feature_groups) |  |
@@ -83,6 +86,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT\_TSS](/sql-reference/functions/system_provision_privatelink_endpoint_tss) |  |
 | [SYSTEM$REGISTER\_CMK\_INFO](/sql-reference/functions/system_register_cmk_info) |  |
 | [SYSTEM$REGISTER\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_register_cmk_info_postgres) |  |
+| [SYSTEM$REGISTER\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_register_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$REGISTER\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_register_privatelink_endpoint) |  |
 | [SYSTEM$REMOVE\_ALL\_REFERENCES](/sql-reference/functions/system_remove_all_references) |  |
 | [SYSTEM$REMOVE\_PRIVATELINK\_ENDPOINT\_HOSTNAME](/sql-reference/functions/system_remove_privatelink_endpoint_hostname) |  |
@@ -171,8 +175,10 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$GET\_CMK\_AKV\_CONSENT\_URL](/sql-reference/functions/system_get_cmk_akv_consent_url) |  |
 | [SYSTEM$GET\_CMK\_CONFIG](/sql-reference/functions/system_get_cmk_config) |  |
 | [SYSTEM$GET\_CMK\_CONFIG\_POSTGRES](/sql-reference/functions/system_get_cmk_config_postgres) |  |
+| [SYSTEM$GET\_CMK\_CONFIG\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_get_cmk_config_snowflake_managed_volume) |  |
 | [SYSTEM$GET\_CMK\_INFO](/sql-reference/functions/system_get_cmk_info) |  |
 | [SYSTEM$GET\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_get_cmk_info_postgres) |  |
+| [SYSTEM$GET\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_get_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$GET\_CMK\_KMS\_KEY\_POLICY](/sql-reference/functions/system_get_cmk_kms_key_policy) |  |
 | [SYSTEM$GET\_COMPUTE\_POOL\_PENDING\_MAINTENANCE](/sql-reference/functions/system_get_compute_pool_pending_maintenance) |  |
 | [SYSTEM$GET\_DBT\_LOG](/sql-reference/functions/system_get_dbt_log) |  |
@@ -257,6 +263,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$VERIFY\_CATALOG\_INTEGRATION](/sql-reference/functions/system_verify_catalog_integration) |  |
 | [SYSTEM$VERIFY\_CMK\_INFO](/sql-reference/functions/system_verify_cmk_info) |  |
 | [SYSTEM$VERIFY\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_verify_cmk_info_postgres) |  |
+| [SYSTEM$VERIFY\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_verify_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$VERIFY\_EXTERNAL\_OAUTH\_TOKEN](/sql-reference/functions/system_verify_ext_oauth_token) |  |
 | [SYSTEM$VERIFY\_EXTERNAL\_SECRET\_INTEGRATION](/sql-reference/functions/system_verify_external_secret_integration) |  |
 | [SYSTEM$VERIFY\_EXTERNAL\_VOLUME](/sql-reference/functions/system_verify_external_volume) |  |

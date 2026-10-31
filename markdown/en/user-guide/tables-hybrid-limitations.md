@@ -87,8 +87,6 @@ Data types not supported in indexes
     PRIMARY KEY columns (which are automatically indexed) or explicitly indexed columns. (Hybrid table columns support these
     data types as long as the columns are not indexed.)
 
-    The [UUID](/sql-reference/data-types-uuid) data type isn’t supported for any column in a hybrid table.
-
     The [TIMESTAMP\_TZ](/sql-reference/data-types-datetime#label-datatypes-timestamp-variations) data type (or a [TIMESTAMP](/sql-reference/data-types-datetime#label-datatypes-timestamp) data
     type that resolves to TIMESTAMP\_TZ) is not supported for columns that are indexed using UNIQUE, PRIMARY KEY, and FOREIGN KEY
     constraints. However, TIMESTAMP\_TZ is supported for secondary indexes.

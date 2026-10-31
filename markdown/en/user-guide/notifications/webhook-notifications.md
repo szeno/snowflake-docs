@@ -230,6 +230,12 @@ CREATE OR REPLACE SECRET my_servicenow_webhook_secret
 To create a notification integration of the webhook type, use the
 [CREATE NOTIFICATION INTEGRATION](/sql-reference/sql/create-notification-integration-webhooks) command.
 
+To create the integration, you must use a role that has the following privileges:
+
+- The CREATE NOTIFICATION INTEGRATION privilege on the account.
+- If you set WEBHOOK\_SECRET, the USAGE privilege on the secret, as well as the USAGE privileges on the database and schema
+  containing the secret.
+
 When executing this command, set the following properties to set up the HTTP request that should be sent for the notification.
 
 - Set TYPE to WEBHOOK.
@@ -453,6 +459,10 @@ store only the Base64-encoded credentials in the secret, include the `Basic` pre
 `'Authorization'='Basic SNOWFLAKE_WEBHOOK_SECRET'`.
 
 ## Sending a notification to a webhook
+
+If the integration uses a secret, you must use a role that has the READ privilege on the secret, as well as the USAGE
+privileges on the database and schema containing the secret. The USAGE privilege on the secret that you needed to create the
+integration isn’t enough to send a notification.
 
 To send a notification to a webhook:
 

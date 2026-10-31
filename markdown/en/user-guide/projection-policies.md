@@ -463,7 +463,7 @@ are two different syntax options:
        ref_column_name,
        ref_arg_column_names,
        policy_status
-   FROM TABLE(information_schema.policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
+   FROM TABLE(policy_references(ref_entity_name => 'my_db.my_schema.my_table', ref_entity_domain => 'table'));
    ```
 
 ## Extended example

@@ -13,6 +13,13 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
+- [10.40 Release Notes (Preview)](/release-notes/2026/10_40)
+
+  - [SQL updates](/release-notes/2026/10_40#sql-updates)
+
+    - [IPADDRESS data type (General availability)](/release-notes/2026/10_40#ipaddress-data-type-general-availability)
+  - [Release notes change log](/release-notes/2026/10_40#release-notes-change-log)
+
 ## Recent server releases
 
 - [10.38 Release Notes: Oct 17, 2026 - Oct 22, 2026](/release-notes/2026/10_38)
@@ -41,9 +48,16 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
+- [October 30, 2026: Tri-Secret Secure for Snowflake storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-10-30-iceberg-snowflake-storage-tss-ga)
+- [October 30, 2026: Deep Research in Snowflake CoWork can research the web](/release-notes/2026/other/2026-10-30-snowflake-cowork-deep-research-web)
 - [Oct 30, 2026: External OAuth for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-30-snowflake-postgres-external-oauth-ga)
+- [Oct 30, 2026: UUID data type in hybrid tables (General availability)](/release-notes/2026/other/2026-10-30-uuid-hybrid-tables-ga)
+- [Oct 29, 2026: CoCo Desktop v1.23.1](/release-notes/2026/other/2026-10-29-coco-desktop-v1-23-1)
 - [Oct 29, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-29-dcr)
+- [Oct 29, 2026: Access externally managed Apache Iceberg™ tables through Snowflake Horizon Catalog (General availability)](/release-notes/2026/other/2026-10-29-externally-managed-iceberg-tables-horizon-irc-ga)
+- [Oct 29, 2026: Horizon Iceberg REST Catalog telemetry (General availability)](/release-notes/2026/other/2026-10-29-horizon-irc-telemetry-ga)
 - [SnowSQL (v1.4.6)](/release-notes/clients-drivers/snowsql-2026)
 - [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
@@ -52,6 +66,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
 - [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
 - [Oct 28, 2026: Streamlit in Snowflake container runtime in China (General availability)](/release-notes/2026/other/2026-10-28-sis-container-runtime-china-ga)
+- [ServiceNow® V2 (v5.29.1)](/release-notes/connectors/servicenow-v2-2026)
 - [Oct 27, 2026: Carry over comments, tags, and privileges with COPY = ( … )](/release-notes/2026/other/2026-10-27-copy-metadata-carry-over)
 - [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
@@ -60,6 +75,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
 - [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
+- [Node.js Driver (v3.4.1)](/release-notes/clients-drivers/nodejs-2026)
 - [Python Connector (v4.8.1)](/release-notes/clients-drivers/python-connector-2026)
 - [SQLAlchemy (v2.1.0)](/release-notes/clients-drivers/sqlalchemy-2026)
 - [Oct 23, 2026: CoCo Desktop v1.22.1](/release-notes/2026/other/2026-10-23-coco-desktop-v1-22-1)
@@ -72,6 +88,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Snowflake CLI (v3.31.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowpipe Streaming SDK (v1.9.1)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Spark Connector (v3.2.3)](/release-notes/clients-drivers/spark-connector-2026)
+- [ServiceNow® V2 (v5.29.0)](/release-notes/connectors/servicenow-v2-2026)
 - [October 22, 2026: Custom runtime images for ML Jobs (General availability)](/release-notes/2026/other/2026-10-22-custom-runtime-images-ml-jobs-ga)
 - [Oct 22, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-22-dcr)
 - [Oct 22, 2026: Ingress policies (Preview)](/release-notes/2026/other/2026-10-22-ingress-policies-preview)
@@ -143,20 +160,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 1, 2026: Migration of gen 1 Openflow deployments and runtimes to gen 2 (General availability)](/release-notes/2026/other/2026-10-01-openflow-gen1-to-gen2-migration-ga)
 - [Oct 1, 2026: Remote app operations for Snowflake Native Apps (General availability)](/release-notes/2026/other/2026-10-01-remote-app-operations-ga)
 - [PHP PDO Driver (v4.3.0)](/release-notes/clients-drivers/php-pdo-2026)
-- [Sep 30, 2026: DCM Projects ATTACH MASKING POLICY (Preview)](/release-notes/2026/other/2026-09-30-dcm-attach-masking-policy-preview)
-- [Sep 30, 2026: DCM Projects DEFINE SEMANTIC VIEW (General availability)](/release-notes/2026/other/2026-09-30-dcm-define-semantic-view-ga)
-- [Sep 30, 2026: Dynamic tables continue incrementally refreshing after failover (General availability)](/release-notes/2026/other/2026-09-30-dynamic-tables-incremental-refresh-after-failover)
-- [Sep 30, 2026: Optimized Refresh and RPO Assurance for failover groups (General availability)](/release-notes/2026/other/2026-09-30-optimized-refresh-rpo-assurance-ga)
-- [Sep 30, 2026: Organization Features in Organization Command Center (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-features-ga)
-- [Sep 30, 2026: Organization Command Center 3rd party access configuration (General availability)](/release-notes/2026/other/2026-09-30-organization-hub-command-center-third-party-ga)
-- [Sep 30, 2026: Semantic Studio (General availability)](/release-notes/2026/other/2026-09-30-semantic-studio-ga)
-- [Sep 30, 2026: Spark Monitoring UI (Preview)](/release-notes/2026/other/2026-09-30-spark-monitoring-ui)
-- [.NET Driver (v6.3.0)](/release-notes/clients-drivers/dotnet-2026)
-- [Go Driver (v2.3.0)](/release-notes/clients-drivers/golang-2026)
-- [JDBC Driver (v4.4.0)](/release-notes/clients-drivers/jdbc-2026)
-- [Node.js Driver (v3.4.0)](/release-notes/clients-drivers/nodejs-2026)
-- [ODBC Driver (v4.0.0)](/release-notes/clients-drivers/odbc-2026)
-- [Python Connector (v5.0.0rc4)](/release-notes/clients-drivers/python-connector-2026)
-- [Python Connector (v4.8.0)](/release-notes/clients-drivers/python-connector-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

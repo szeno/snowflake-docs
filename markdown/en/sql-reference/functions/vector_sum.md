@@ -7,7 +7,7 @@ Computes the element-wise sum of [vectors](/user-guide/snowflake-cortex/vector-e
 each element is the sum of the corresponding elements across all input vectors.
 
 See also:
-:   [VECTOR\_MIN](/sql-reference/functions/vector_min) , [VECTOR\_MAX](/sql-reference/functions/vector_max) , [VECTOR\_AVG](/sql-reference/functions/vector_avg) , [SUM](/sql-reference/functions/sum), [Vector Embeddings](/user-guide/snowflake-cortex/vector-embeddings)
+:   [VECTOR\_MIN](/sql-reference/functions/vector_min) , [VECTOR\_MAX](/sql-reference/functions/vector_max) , [VECTOR\_AVG](/sql-reference/functions/vector_avg) , [SUM](/sql-reference/functions/sum) , [ARRAY\_SUM](/sql-reference/functions/array_sum) , [Vector Embeddings](/user-guide/snowflake-cortex/vector-embeddings)
 
 ## Syntax
 

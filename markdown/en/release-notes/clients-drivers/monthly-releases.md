@@ -26,7 +26,7 @@ To view a list of release note announcements, filtered by date and release type,
 | [Go Snowflake Driver](/release-notes/clients-drivers/golang) | TBD | TBD |  |
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | TBD | TBD |  |
-| [Node.js Driver](/release-notes/clients-drivers/nodejs) | TBD | TBD |  |
+| [Node.js Driver](/release-notes/clients-drivers/nodejs) | 3.4.1 | 26-Oct-2026 |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | 4.1.0 | 15-Oct-2026 |  |
 | 4.2.0 | 21-Oct-2026 |  |
 | 3.22.0 | 23-Oct-2026 |  |

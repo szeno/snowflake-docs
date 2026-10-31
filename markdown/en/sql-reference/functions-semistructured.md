@@ -49,6 +49,7 @@ The functions are grouped by type of operation performed:
 |  | [ARRAY\_SIZE](/sql-reference/functions/array_size) |  |
 |  | [ARRAY\_SLICE](/sql-reference/functions/array_slice) |  |
 |  | [ARRAY\_SORT](/sql-reference/functions/array_sort) |  |
+|  | [ARRAY\_SUM](/sql-reference/functions/array_sum) | See also [Aggregate functions](/sql-reference/functions-aggregation). |
 |  | [ARRAY\_TO\_STRING](/sql-reference/functions/array_to_string) |  |
 |  | [ARRAY\_UNION\_AGG](/sql-reference/functions/array_union_agg) | See also [Aggregate functions](/sql-reference/functions-aggregation). |
 |  | [ARRAY\_UNIQUE\_AGG](/sql-reference/functions/array_unique_agg) | See also [Aggregate functions](/sql-reference/functions-aggregation). |

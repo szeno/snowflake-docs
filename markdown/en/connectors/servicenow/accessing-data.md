@@ -143,6 +143,8 @@ Note the following:
 - Although the connector handles changes to the schema, the connector does not reload the data.
 
   As a result, in the case of schema changes, records from the old schema are not updated.
+- By default, the views include columns that are inactive or deleted in ServiceNow®. To exclude them, see
+  [Exclude inactive columns from views](#label-servicenow-connector-configure-exclude-inactive-columns-from-views).
 
 The following is an example of the output for a SELECT statement that retrieves the data from the
 `dest_db.dest_schema.incident_view` view. In this example, the `incident` table in ServiceNow® has columns
@@ -164,6 +166,35 @@ named `ACTIVE`, `APPROVAL`, `CATEGORY`, and `ESCALATION`.
 > | TRUE   | not requested  | database         | 0          |
 > +--------+----------------+------------------+------------+
 > ```
+
+## Exclude inactive columns from views
+
+By default, the `__view` and `__view_with_deleted` views contain a column for every column of the ServiceNow® table,
+including columns that are inactive or deleted in the ServiceNow® `sys_dictionary` table.
+
+To exclude these columns from the views, call the `CONFIGURE_EXCLUDE_INACTIVE_COLUMNS_FROM_VIEWS` stored procedure:
+
+Copy code
+
+```
+CALL CONFIGURE_EXCLUDE_INACTIVE_COLUMNS_FROM_VIEWS(true);
+```
+
+Note the following:
+
+- You can call the procedure only while the connector is running. If you
+  [paused the connector](/connectors/servicenow/managing#label-servicenow-connector-stop-connector-v2), resume it first.
+- The background task that creates the views applies the setting on its next run, after the metadata tables are
+  ingested. For more information, see the note at the beginning of this topic.
+- The setting doesn’t apply to tables with [column filtering](/connectors/servicenow/ingestion#label-servicenow-connector-column-filtering)
+  (`include_columns` or `exclude_columns`). The views of such tables keep all the columns that remain after
+  filtering, even if they are inactive or deleted.
+- To apply the setting to `__view_with_references` views, recreate them with
+  [`CREATE_VIEW_WITH_DISPLAY_VALUES`](#label-servicenow-connector-create-view-with-display-values).
+- If all columns of a table are inactive or deleted, the connector doesn’t change the existing views of that table
+  and records a `VIEWS_CREATION_FAILED` error in the `CONNECTOR_ERRORS` view.
+
+The default is `false`. To include inactive and deleted columns again, call the procedure with `false`.
 
 ## View the event logs for a table
 

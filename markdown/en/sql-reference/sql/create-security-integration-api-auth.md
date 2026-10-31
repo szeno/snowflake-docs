@@ -149,7 +149,7 @@ parameters that you configure when [creating a secret](/sql-reference/sql/create
 `OAUTH_ASSERTION_ISSUER = 'string_literal'`
 :   Specifies the issuer of the JWT assertion. Required when `OAUTH_GRANT = 'JWT_BEARER'`. Snowflake returns an error if you omit it for that grant.
 
-    For a Google service account, set this to the `client_email` value from the service account JSON key file. For an example, see the security integration in [Configure the using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
+    For a Google service account, set this to the `client_email` value from the service account JSON key file. For an example, see the security integration in [Configure the Snowflake Connector for Google Analytics Aggregate Data using SQL](/connectors/google/gaad/gaad-connector-configuring-sql).
 
 `OAUTH_ACCESS_TOKEN_VALIDITY = integer`
 :   Specifies the default lifetime of the OAuth access token (in seconds) issued by an OAuth server.

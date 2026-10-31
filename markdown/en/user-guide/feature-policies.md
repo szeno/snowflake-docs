@@ -1083,7 +1083,7 @@ are two different syntax options:
        ref_entity_name,
        ref_entity_domain,
        policy_status
-   FROM TABLE(information_schema.policy_references(policy_name => 'feature_policy_db.sch.block_create_task_policy'));
+   FROM TABLE(policy_references(policy_name => 'feature_policy_db.sch.block_create_task_policy'));
    ```
 2. Return each feature policy assigned to the account:
 
@@ -1097,7 +1097,7 @@ are two different syntax options:
        ref_entity_name,
        ref_entity_domain,
        policy_status
-   FROM TABLE(information_schema.policy_references(ref_entity_name => 'my_account', ref_entity_domain => 'account'));
+   FROM TABLE(policy_references(ref_entity_name => 'my_account', ref_entity_domain => 'account'));
    ```
 
 ## Replication considerations

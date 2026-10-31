@@ -100,7 +100,7 @@ env_config:
 To manage CI/CD for a dbt project object, include `dbt_projects_profiles.yml` or `profiles.yml` in the root directory of your dbt project.
 Snowflake uses `dbt_projects_profiles.yml` if both files are present.
 
-This tutorial uses `profiles.yml`. Configure its `database` fields to read the `DBT_DATABASE` environment variable:
+This tutorial uses `dbt_projects_profiles.yml`. Configure its `database` fields to read the `DBT_DATABASE` environment variable:
 
 Copy code
 
