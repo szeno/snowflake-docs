@@ -10,6 +10,11 @@ Using budgets incurs the following costs:
 In your task history, you might also see a task named \_FINALIZER\_TASK. Snowflake creates this task for each budget as the
 [finalizer task](/user-guide/tasks-graphs#label-finalizer-task) of \_MEASUREMENT\_TASK, so it runs after each run of \_MEASUREMENT\_TASK.
 
+Note
+
+Per-user quotas use different measurement tasks, which aren’t currently billed. See
+[Cost of per-user quotas](/user-guide/budgets/per-user-quotas#label-per-user-quota-cost).
+
 ## Exploring compute costs
 
 You can view costs for serverless tasks using Snowsight or the Account Usage

@@ -72,6 +72,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE OR ALTER PROCEDURE](/sql-reference/sql/create-procedure#label-create-or-alter-procedure-syntax)
 > - [CREATE OR ALTER ROW ACCESS POLICY](/sql-reference/sql/create-row-access-policy#label-create-or-alter-row-access-policy-syntax)
 > - [CREATE OR ALTER SCHEMA](/sql-reference/sql/create-schema#label-create-or-alter-schema-syntax)
+> - [CREATE OR ALTER SECRET](/sql-reference/sql/create-secret#label-create-or-alter-secret-syntax) (Preview)
 > - [CREATE OR ALTER SEMANTIC VIEW](/sql-reference/sql/create-semantic-view#label-create-or-alter-semantic-view-syntax)
 > - [CREATE OR ALTER STAGE](/sql-reference/sql/create-stage#label-create-or-alter-stage-syntax)
 > - [CREATE OR ALTER STREAM](/sql-reference/sql/create-stream#label-create-or-alter-stream-syntax)

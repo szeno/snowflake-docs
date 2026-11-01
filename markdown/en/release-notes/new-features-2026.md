@@ -270,6 +270,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 ## Feature updates earlier in 2026
 
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
+- [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
 - [October 30, 2026: Tri-Secret Secure for Snowflake storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-10-30-iceberg-snowflake-storage-tss-ga)
 - [October 30, 2026: Deep Research in Snowflake CoWork can research the web](/release-notes/2026/other/2026-10-30-snowflake-cowork-deep-research-web)

@@ -23,7 +23,7 @@ For more information, see [Viewing cost by tag in SQL](/user-guide/cost-attribut
 | USER\_NAME | VARCHAR | User who issued the query. |
 | START\_TIME | TIMESTAMP\_LTZ | Time when query execution started (in the local time zone). |
 | END\_TIME | TIMESTAMP\_LTZ | Time when query execution ended (in the local time zone). |
-| CREDITS\_ATTRIBUTED\_COMPUTE | FLOAT | Number of credits attributed to this query. Includes only the credit usage for the query execution and doesn’t include any warehouse idle time. |
+| CREDITS\_ATTRIBUTED\_COMPUTE | FLOAT | Number of credits attributed to this query. Includes the credit usage for the query execution and doesn’t include warehouse idle time. Gaps between queries that run within the same minute are included; for details, see the usage notes. |
 | CREDITS\_USED\_QUERY\_ACCELERATION | FLOAT | Number of credits consumed by the [Query Acceleration Service](/user-guide/query-acceleration-service) to accelerate the query. NULL if the query is not accelerated.     The total cost for an accelerated query is the sum of this column and the CREDITS\_ATTRIBUTED\_COMPUTE column. |
 
 Expand
@@ -40,8 +40,17 @@ Show lessSee more
   inclusive of any resizing and/or autoscaling of multi-cluster warehouse(s). This cost is attributed based on
   the weighted average of the resource consumption.
 
-  The value doesn’t include any credit usage for warehouse idle time. Idle time is a period
-  of time in which no queries are running in the warehouse and can be measured at the warehouse level.
+  The value doesn’t include credit usage for warehouse idle time. Credits are attributed in one-minute
+  intervals for each cluster of the warehouse. Within each minute, Snowflake attributes the credits for the
+  span from the start of the first query to the end of the last query on that cluster, and splits them among
+  those queries based on their resource consumption. As a result:
+
+  - A gap between two queries in the same minute is attributed to those queries, even though no query is
+    running during the gap.
+  - Time before the first query or after the last query in a minute, and minutes in which no queries run,
+    are idle time and aren’t attributed.
+  - Because idle time is measured for each cluster, a multi-cluster warehouse can accrue idle credits even
+    while at least one query is always running.
 
   The value doesn’t include any other credit usage that is incurred as a result of query execution.
   For example, the following are not included in the query cost:

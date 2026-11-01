@@ -2,6 +2,11 @@
 
 Creates a new secret in the current or specified schema or replaces an existing secret.
 
+This command supports the following variants:
+
+- [CREATE OR ALTER SECRET](#label-create-or-alter-secret-syntax): Creates a secret if it doesn’t exist or alters an existing secret.
+- [DEFINE SECRET](#label-define-secret-syntax): Declarative definition of a secret inside a DCM project.
+
 See also:
 :   [ALTER SECRET](/sql-reference/sql/alter-secret) , [DESCRIBE SECRET](/sql-reference/sql/desc-secret) , [DROP SECRET](/sql-reference/sql/drop-secret) ,
     [SHOW SECRETS](/sql-reference/sql/show-secrets)
@@ -86,6 +91,48 @@ Copy code
 CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   TYPE = WORKLOAD_IDENTITY_FEDERATION
   [ COMMENT = '<string_literal>' ]
+```
+
+## Variant syntax
+
+### CREATE OR ALTER SECRET
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Creates a new secret if it doesn’t already exist, or transforms an existing secret into the secret defined in the statement.
+A CREATE OR ALTER SECRET statement follows the syntax rules of a CREATE SECRET statement and has the same limitations as an
+[ALTER SECRET](/sql-reference/sql/alter-secret) statement.
+
+CREATE OR ALTER SECRET supports the same secret types and properties as CREATE SECRET. For the properties of each type, see
+[Syntax](#label-create-secret-syntax). Write `CREATE OR ALTER SECRET <name>` in place of `CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>`.
+
+For more information, see [CREATE OR ALTER SECRET usage notes](#label-create-or-alter-secret-usage-notes) and [CREATE OR ALTER <object>](/sql-reference/sql/create-or-alter).
+
+### DEFINE SECRET
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+DCM Projects uses `DEFINE SECRET` statements to create and manage secrets declaratively inside a DCM project. A `DEFINE SECRET`
+statement uses the same syntax as [CREATE OR ALTER SECRET](#label-create-or-alter-secret-syntax), with the keyword `DEFINE` in
+place of `CREATE OR ALTER`, for the following secret types: `GENERIC_STRING`, `PASSWORD`, `OAUTH2`, and `CLOUD_PROVIDER_TOKEN`.
+You can use `DEFINE SECRET` only inside DCM project definition files, not as standalone SQL.
+To learn more about DCM Projects, see [Secret](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-secret).
+
+Supply the values of sensitive properties, such as `SECRET_STRING`, `PASSWORD`, and `OAUTH_REFRESH_TOKEN`, through
+[environment secrets](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-env-vars-and-secrets) rather
+than as plain-text literals. For example:
+
+Copy code
+
+```
+DEFINE SECRET MY_DB.MY_SCHEMA.THIRD_PARTY_API_KEY
+  TYPE = GENERIC_STRING
+  SECRET_STRING = {{ _snow.env_secret("API_KEY") }}
+  COMMENT = 'API key for the third-party billing service';
 ```
 
 ## OAuth with client credentials flow required parameters
@@ -233,6 +280,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 | --- | --- | --- |
 | CREATE SECRET | Schema |  |
 | USAGE | Database or schema |  |
+| OWNERSHIP | Secret | Required only when executing a [CREATE OR ALTER SECRET](#label-create-or-alter-secret-syntax) statement for an existing secret. |
 
 Expand
 
@@ -255,6 +303,10 @@ For general information about roles and privilege grants for performing SQL acti
   Attention
 
   Customers should ensure that no personal data (other than for a User object), sensitive data, export-controlled data, or other regulated data is entered as metadata when using the Snowflake service. For more information, see [Metadata fields in Snowflake](/sql-reference/metadata).
+
+## CREATE OR ALTER SECRET usage notes
+
+- All limitations of the [ALTER SECRET](/sql-reference/sql/alter-secret) command apply.
 
 ## Examples
 
@@ -321,4 +373,27 @@ Copy code
 ```
 CREATE SECRET my_db.auth.my_workload
   TYPE = WORKLOAD_IDENTITY_FEDERATION;
+```
+
+### Create and alter a secret using the CREATE OR ALTER SECRET command
+
+Create a generic string secret `my_api_key`:
+
+Copy code
+
+```
+CREATE OR ALTER SECRET my_api_key
+  TYPE = GENERIC_STRING
+  SECRET_STRING = 'sk-1a2b3c4d5e6f';
+```
+
+Alter the secret `my_api_key` to store a new value and add a comment:
+
+Copy code
+
+```
+CREATE OR ALTER SECRET my_api_key
+  TYPE = GENERIC_STRING
+  SECRET_STRING = 'sk-7g8h9i0j1k2l'
+  COMMENT = 'API key for the third-party billing service';
 ```

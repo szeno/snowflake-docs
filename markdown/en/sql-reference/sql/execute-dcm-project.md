@@ -41,6 +41,7 @@ EXECUTE DCM PROJECT <name>
 EXECUTE DCM PROJECT <name>
   PREVIEW <fully_qualified_table_object_name>
   USING CONFIGURATION <config_name>
+  [ ENVIRONMENT ( <bind_variable> ) ]
   FROM '<source_files_path>'
   [ LIMIT <number_of_rows> ]
 
@@ -55,6 +56,7 @@ Where:
 > ```
 > fromSource ::=
 >   [ USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , <expr> ... ] ) ] ]
+>   [ ENVIRONMENT ( <bind_variable> ) ]
 >   FROM '<source_files_path>'
 > ```
 >
@@ -165,6 +167,39 @@ Where:
     project definition files.
 
     This option is mutually exclusive with `FROM DEPLOYMENT`, which uses definitions that were already rendered.
+
+`ENVIRONMENT ( bind_variable )`
+:   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    Supplies the values for the environment variables and secrets that the manifest declares under `templating` as `env_vars` and
+    `env_secrets`. The bind variable must contain a flat JSON object that maps each declared name to its value, for example
+    `{"BUILD_NUMBER": "482", "API_KEY": "..."}`. Definition files reference the values with `_snow.env_var("NAME")` and
+    `_snow.env_secret("NAME")`. DCM Projects masks the values of declared secrets in
+    the `PLAN` and `DEPLOY` output, deployment history artifacts, and logs.
+
+    `ENVIRONMENT` accepts only a bind variable, never a string literal typed into the SQL text. Use a client `?` placeholder, a
+    session variable, or a Snowflake Scripting variable.
+
+    The order of the clauses is fixed. Specify `USING [ CONFIGURATION <config_name> ] [ ( <expr> [ , <expr> ... ] ) ]` first, then
+    `ENVIRONMENT ( <bind_variable> )`, and then `FROM`. Any other order causes the statement to fail. For example:
+
+    Copy code
+
+    ```
+    EXECUTE DCM PROJECT my_project
+      PLAN
+      USING CONFIGURATION DEV (wh_size => 'MEDIUM')
+      ENVIRONMENT (?)
+      FROM '@my_database.my_schema.my_stage/my_project';
+    ```
+
+    `ENVIRONMENT` is supported on `PLAN`, `PREVIEW`, and `DEPLOY`. It isn’t available on `TEST ALL` or `PURGE`, because neither of
+    those commands renders definition files.
+
+    For more information, see
+    [Environment variables and secrets](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-env-vars-and-secrets).
 
 `OUTPUT_PATH 'output_path'`
 :   Specifies a directory where Snowflake writes the rendered project definitions and the raw changeset from a `PLAN` execution. If
@@ -527,6 +562,28 @@ EXECUTE DCM PROJECT my_project
   DEPLOY AS "my_update"
   USING CONFIGURATION PROD
   FROM '@my_database.my_schema.my_stage/my_project';
+```
+
+Execute a DCM project in DEPLOY mode and supply values for the declared environment variables and secrets through a
+Snowflake Scripting variable:
+
+Copy code
+
+```
+EXECUTE IMMEDIATE $$
+DECLARE
+  env_json VARCHAR DEFAULT '{"BUILD_NUMBER": "482", "API_KEY": "..."}';
+  rs RESULTSET;
+BEGIN
+  rs := (
+    EXECUTE DCM PROJECT my_project
+      DEPLOY
+      ENVIRONMENT (:env_json)
+      FROM '@my_database.my_schema.my_stage/my_project'
+  );
+  RETURN TABLE(rs);
+END;
+$$;
 ```
 
 Purge a non-production DCM project to drop all entities, revoke all grants, and remove all attachments it currently manages,

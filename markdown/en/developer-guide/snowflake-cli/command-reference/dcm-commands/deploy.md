@@ -11,6 +11,7 @@ snow dcm deploy
   <identifier>
   --from <from_location>
   --variable <variables>
+  --env-file <env_file>
   --alias <alias>
   --target <target>
   --save-output
@@ -70,6 +71,9 @@ snow dcm deploy
 
 `--variable, -D TEXT`
 :   Variables for the execution context; for example: `-D "&lt;key&gt;=&lt;value&gt;"`. Default: [].
+
+`--env-file, -e FILE`
+:   Path to a `KEY=VALUE` file that supplies values for the environment variables and secrets declared in the project manifest. For a name that’s also set in the shell environment, the shell value takes precedence. For more information, see [Supply values](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-env-vars-supply-values).
 
 `--alias TEXT`
 :   Alias for the deployment.

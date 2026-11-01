@@ -49,20 +49,16 @@ When a user reaches a limit, the quota can take an enforcement action:
 
 ### User selection
 
-A quota can apply to all users in your account, or to a specific set of users selected by tag.
-When you select all users, the quota automatically includes any user added to the account later,
-with no reconfiguration. You can also keep all users in scope while excluding a certain group of
-users by tag.
+A quota’s user scope works in one of two modes:
 
-When you scope by tag, quota scope is determined by the specific tags applied to user objects. In
-Snowflake, tags function as key-value pairs where each key supports a single value per user. When
-multiple tag keys are used for scoping, an operator is required to define the logic for user
-resolution:
-
-- `UNION` (default): This creates a union of users, including any individual who matches at
-  least one defined tag.
-- `INTERSECTION`: This creates an intersection, requiring a user to match every specified tag
-  to be governed.
+- **All users** (default): Every new quota starts in this mode. The quota includes every user in the
+  account, including users added later, with no reconfiguration. You can exclude users by tag or by
+  name.
+- **Users selected by tag**: The quota includes only users who carry the tags you specify. Each tag
+  key supports a single value per user. When you specify more than one tag, choose how the tags
+  combine:
+  - `UNION`: Users who match at least one of the tags are in scope.
+  - `INTERSECTION`: Users who match every tag are in scope.
 
 User resolution occurs dynamically at evaluation time, so changes to tag assignments are
 automatically reflected in the quota without any reconfiguration.
@@ -274,6 +270,32 @@ CREATE SNOWFLAKE.CORE.QUOTA my_quota();
 
 After creating the quota, configure it by following the steps in the sections below.
 
+### Recommended setup order
+
+Configure a new quota in the following order:
+
+1. Create the quota.
+2. Add the monitored domains with `ADD_SHARED_RESOURCE`. See
+   [Supported domains](#label-per-user-quota-supported-resources).
+3. If you want to scope the quota to specific users instead of the default `ALL_USERS` scope, set the
+   user scope with `SET_USER_TAGS`, `INCLUDE_USERS`, or `EXCLUDE_USERS`. See
+   [Specify users in scope](#label-per-user-quota-user-scope).
+4. Verify the scope with `GET_QUOTA_SCOPE` immediately. If you scoped by tags that changed recently,
+   wait about 10 minutes, then verify with `GET_USERS`, which can take up to about 2 hours to reflect
+   the change. Also check that per-user spending matches your expectations with
+   `GET_SPENDING_DETAILS_BY_USERS`.
+5. Set the per-user limits and notifications. See
+   [Set per-user spending limits](#label-per-user-quota-spending-limit) and
+   [Configure notifications](#label-per-user-quota-notifications).
+6. Enable block enforcement with `SET_BLOCK_ENFORCEMENT_ENABLED`. See
+   [Block users at the limit](#label-per-user-quota-enforcement).
+
+Note
+
+If block enforcement is enabled while the scope is taking effect, users you excluded can be briefly
+blocked and receive block emails before the change takes effect. These blocks clear automatically
+within minutes. To avoid this, configure the scope and wait 10 minutes before enabling enforcement.
+
 ## Specify users in scope
 
 By default, a new quota monitors all users in the account, so no scope configuration is required.
@@ -282,9 +304,10 @@ combine both.
 
 ### Scope users with tags
 
-To scope the quota to a subset of users, use the `SET_USER_TAGS` method to specify which users are
-in scope. Pass the tags by reference and specify the operator (`UNION` or `INTERSECTION`). The
-`SET_USER_TAGS` call is atomic and idempotent: any existing tags are overwritten.
+To scope the quota to users selected by tag, call `SET_USER_TAGS` with the tags, passed by reference,
+and how to combine them: `UNION` or `INTERSECTION`. This argument is required, even when you pass a
+single tag; calling `SET_USER_TAGS` without it returns an error. The `SET_USER_TAGS` call is atomic
+and idempotent: any existing tags are overwritten.
 
 Copy code
 
@@ -302,9 +325,25 @@ Note
 
 The role used to set user tags on a quota must have the `APPLYBUDGET` privilege on each tag.
 
+To return a quota to all users, call `SET_USER_TAGS` with an empty tag array and `ALL_USERS` in place
+of `UNION` or `INTERSECTION`:
+
+Copy code
+
+```
+CALL my_quota!SET_USER_TAGS([], 'ALL_USERS');
+```
+
+Note
+
+Pass an empty tag array with `ALL_USERS`. Don’t pass tags with `ALL_USERS` to exclude users. To
+exclude users by tag, use `EXCLUDE_USERS('TAG', ...)` as shown in the following example. After any
+change to the user scope, call `GET_USERS` to confirm which users are in scope.
+
 To keep all users in scope but exclude a subset by tag, use `EXCLUDE_USERS` with the tags that
-identify the users to exclude. In the following example, the quota keeps all users in scope except
-any user tagged with a `usage_tier` tag whose value is `high`:
+identify the users to exclude. Tag exclusions build on the all-users mode. In the
+following example, the quota keeps all users in scope except any user tagged with a `usage_tier`
+tag whose value is `high`:
 
 Copy code
 
@@ -336,9 +375,20 @@ excluded by name stays excluded.
 
 Note
 
-To clear a list, pass an empty array: `INCLUDE_USERS([])` or `EXCLUDE_USERS('USER', [])`. Changing the
-quota’s user scope to all users also clears both lists, so adjust individual users after you set the
-scope.
+To clear a list, pass an empty array: `INCLUDE_USERS([])` or `EXCLUDE_USERS('USER', [])`.
+
+Switching the quota from users selected by tag back to all users clears both lists, so adjust individual users after you
+set the scope:
+
+| Scope change | Effect on the include and exclude lists |
+| --- | --- |
+| From users selected by tag to all users | Both lists are cleared. |
+| From all users to all users (calling `ALL_USERS` again) | Both lists are kept. |
+| From all users to users selected by tag (`UNION` or `INTERSECTION`) | Both lists are kept. |
+
+Expand
+
+Show lessSee more
 
 A user can belong to more than one quota. Each quota evaluates that user’s spending against its own
 limit independently.
@@ -535,7 +585,8 @@ When enforcement is enabled, Snowflake runs a continuous loop for each user in s
 4. **Deny**: The next time the user issues an AI request, the service returns a domain-appropriate
    error that identifies the cause (quota exhausted) rather than a generic authorization failure.
    For AI functions, in-progress calls are terminated when the block takes effect, not just new
-   requests.
+   requests. For the AI Gateway, the block applies only to new requests. Requests already in progress
+   run to completion and are billed, so usage can slightly exceed the limit.
 5. **Cycle reset**: Blocks expire automatically at the cycle boundary (UTC midnight for a daily
    limit, Monday at 00:00 UTC for a weekly limit, the first of the month for a monthly limit). No
    separate clearing step is required, and
@@ -1068,6 +1119,15 @@ WHERE SCOPE['name'] = 'snow.cost.quota'
 ORDER BY TIMESTAMP DESC;
 ```
 
+## Cost of per-user quotas
+
+After you create a quota, Snowflake runs the `_QUOTA_MEASUREMENT_TASK` and
+`_QUOTA_MEASUREMENT_FINALIZER` tasks in your account to measure per-user spending. These tasks don’t
+currently consume billable credits and don’t appear in the
+[SERVERLESS\_TASK\_HISTORY](/sql-reference/account-usage/serverless_task_history) view.
+
+Quotas store a small amount of configuration and usage data, which is billed as standard storage.
+
 ## Quota method reference
 
 The following tables list the methods available on a quota object. Call each method using the
@@ -1098,8 +1158,9 @@ Show lessSee more
 
 | Method | Description |
 | --- | --- |
-| `SET_USER_TAGS([[<tag_ref>, '<value>'], ...], '<operator>')` | Set the user tags and operator (`UNION` or `INTERSECTION`) that define which users are in scope. See [Specify users in scope](#label-per-user-quota-user-scope). |
-| `EXCLUDE_USERS('TAG', [[<tag_ref>, '<value>'], ...])` | Keep all users in scope but exclude those matching the given tags. |
+| `SET_USER_TAGS([[<tag_ref>, '<value>'], ...], '<operator>')` | Scope the quota to users selected by tag. The operator (`UNION` or `INTERSECTION`) is required. See [Specify users in scope](#label-per-user-quota-user-scope). |
+| `SET_USER_TAGS([], 'ALL_USERS')` | Return the quota to all users. Pass an empty tag array. See [Specify users in scope](#label-per-user-quota-user-scope). |
+| `EXCLUDE_USERS('TAG', [[<tag_ref>, '<value>'], ...])` | Keep all users in scope but exclude those matching the given tags. See [Specify users in scope](#label-per-user-quota-user-scope). |
 | `INCLUDE_USERS(['<user>', ...])` | Add specific users to the quota by name, or reverse an earlier exclusion. See [Include or exclude individual users](#label-per-user-quota-user-membership). |
 | `EXCLUDE_USERS('USER', ['<user>', ...])` | Exclude specific users from the quota by name. See [Include or exclude individual users](#label-per-user-quota-user-membership). |
 | `GET_QUOTA_SCOPE()` | Return the attached monitored domains, the users included and excluded by name, and the configured user tags and operator. |

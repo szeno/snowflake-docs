@@ -6,6 +6,12 @@ You can configure the budget so that usage is included if a user is tagged with 
 
 Calling the method replaces any existing user tags that were added to the budget.
 
+Note
+
+This method applies to budgets. [Per-user quotas](/user-guide/budgets/per-user-quotas) have their own
+`SET_USER_TAGS` method, which also accepts the `ALL_USERS` operator. For details, see
+[Specify users in scope](/user-guide/budgets/per-user-quotas#label-per-user-quota-user-scope).
+
 ## Syntax
 
 Copy code

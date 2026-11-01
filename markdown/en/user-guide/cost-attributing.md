@@ -593,8 +593,12 @@ as a result of query execution. For example, the following are not included in t
 For queries that are executed concurrently, the cost of the warehouse is attributed to individual queries based on the weighted
 average of their resource consumption during a given time interval.
 
-The cost per query does not include warehouse *idle time*. Idle time is a period of time in which no queries are running in the
-warehouse and can be measured at the warehouse level.
+The cost per query does not include warehouse *idle time*. Credits are attributed in one-minute intervals for each cluster
+of the warehouse: the span from the start of the first query to the end of the last query in a minute is attributed to
+those queries, including any gaps between them. Time outside that span, and minutes in which no queries run, are idle
+time. Because idle time is measured for each cluster, a multi-cluster warehouse can accrue idle credits even while at
+least one query is always running. For details, see the usage notes for
+[QUERY\_ATTRIBUTION\_HISTORY](/sql-reference/account-usage/query_attribution_history).
 
 ## Additional examples of queries
 

@@ -302,8 +302,9 @@ Snowsight:
 
     1. Verify your email address if you haven’t already done so. For instructions on how to verify your email address, see
        [Verify your email address](/user-guide/ui-snowsight-profile#label-snowsight-verify-email-address).
-    2. Select your username, then select **Profile**
-    3. For **Notifications**, select **Enable notifications from resource monitors**.
+    2. Switch your active role to ACCOUNTADMIN.
+    3. Select your username, then select **Profile**
+    4. For **Notifications**, select **Enable notifications from resource monitors**.
 
        Note
 
@@ -313,6 +314,7 @@ Snowsight:
          - If there is a resource monitor assigned to the account and the account administrator has the OWNERSHIP privilege
            on the account monitor.
          - If there are warehouse monitors in the account. All account administrators can receive notifications for warehouse monitors.
+       - If ACCOUNTADMIN is inherited through another role, or is active only as a secondary role, the option doesn’t appear.
 
 ## Creating resource monitors
 

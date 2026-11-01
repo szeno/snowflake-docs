@@ -6,7 +6,7 @@ DCM Projects definition files support three types of statements:
 - **[Grants](#label-dcm-projects-grants)** — `GRANT` statements that assign privileges and roles
 - **[Attachments](#label-dcm-projects-attachments)** — `ATTACH` statements that associate objects with other objects
 
-You can also reference additional files that your definitions need as [project assets](#label-dcm-project-assets) by specifying paths relative to the folder that contains `manifest.yml`.
+You can also reference additional files that your definitions need as [project assets](#label-dcm-project-assets) by specifying paths relative to the folder that contains `manifest.yml`, and supply [environment variables and secrets](#label-dcm-projects-env-vars-and-secrets) that your definitions reference.
 
 Note
 
@@ -33,6 +33,7 @@ For object types, grants, and attachments still in preview, the completeness of 
 - [Roles](#label-dcm-projects-object-type-role)
   - [Database role](#label-dcm-projects-object-type-database-role)
 - [Schema](#label-dcm-projects-object-type-schema)
+- [Secret](#label-dcm-projects-object-type-secret)
 - [Semantic view](#label-dcm-projects-object-type-semantic-view)
 - [Sequence](#label-dcm-projects-object-type-sequence)
 - [Share](#label-dcm-projects-object-type-share)
@@ -51,6 +52,10 @@ For object types, grants, and attachments still in preview, the completeness of 
 **Assets:**
 
 - [Project assets](#label-dcm-project-assets)
+
+**Environment variables and secrets:**
+
+- [Environment variables and secrets](#label-dcm-projects-env-vars-and-secrets)
 
 **Grants:**
 
@@ -382,6 +387,57 @@ same database. For syntax, see
 
 DCM Projects supports defining schemas. For syntax, see
 [DEFINE SCHEMA](/sql-reference/sql/create-schema#label-define-schema-syntax).
+
+### Secret
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+DCM Projects supports defining [secrets](/sql-reference/sql/create-secret). When you supply sensitive properties through
+[environment secrets](#label-dcm-projects-env-vars-and-secrets), the values aren’t written into your definition files or
+repository, and DCM Projects masks them in changeset output, deployment history artifacts, and logs. `DEFINE SECRET` supports all properties of
+[CREATE SECRET](/sql-reference/sql/create-secret) for the following secret types: `GENERIC_STRING`, `PASSWORD`, `OAUTH2`, and
+`CLOUD_PROVIDER_TOKEN`.
+
+Rotating a masked property shows in the changeset as an `ALTER` operation, but the value renders as `********` on both sides of
+the diff, so you can see that the value has changed.
+
+Warning
+
+Never write a sensitive property (`SECRET_STRING`, `PASSWORD`, or `OAUTH_REFRESH_TOKEN`) as a plain-text literal in a definition
+file. DCM Projects stores the rendered definition, including any literal value it contains, as plain text on the project’s stage. Always
+supply these values through [`_snow.env_secret()`](#label-dcm-projects-env-vars-and-secrets) instead.
+
+The following example defines a `GENERIC_STRING` secret whose value comes from a declared environment secret:
+
+Copy code
+
+```
+DEFINE SECRET DEMO{{env_suffix}}.PROJECTS.THIRD_PARTY_API_KEY
+    TYPE = GENERIC_STRING
+    SECRET_STRING = {{ _snow.env_secret("API_KEY") }}
+    COMMENT = 'API key for the third-party billing service';
+```
+
+An `OAUTH2` secret references an existing `API_AUTHENTICATION` security integration and supplies its refresh token the same way:
+
+Copy code
+
+```
+DEFINE SECRET DEMO{{env_suffix}}.PROJECTS.OAUTH_CREDENTIAL
+    TYPE = OAUTH2
+    API_AUTHENTICATION = MY_OAUTH_INTEGRATION
+    OAUTH_REFRESH_TOKEN = {{ _snow.env_secret("OAUTH_REFRESH_TOKEN") }};
+```
+
+For syntax, see
+[DEFINE SECRET](/sql-reference/sql/create-secret#label-define-secret-syntax).
+
+**Limitations:**
+
+- Every property required for the secret’s type must be specified on every deployment. Omitting a property that a previous
+  deployment set doesn’t preserve its old value. The property is cleared instead.
 
 ### Semantic view
 
@@ -907,6 +963,171 @@ Adding `--save-output` to `snow dcm plan` creates a local `out/` folder that con
 Expand
 
 Show lessSee more
+
+## Environment variables and secrets
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+A DCM project can declare environment variables and secrets in the manifest, then reference them from Jinja templating and
+directly in SQL properties. This approach keeps sensitive values, per-environment configuration, and CI/CD-supplied values out of your
+definition files and Git history.
+
+You supply the values for declared environment variables and secrets when you run an operation in Workspaces, from Snowflake CLI,
+or from SQL. For more information, see [Supply values](#label-dcm-projects-env-vars-supply-values).
+
+### Declare env\_vars and env\_secrets in the manifest
+
+Add optional `env_vars` and `env_secrets` sections under `templating` in `manifest.yml`. Each entry is a single-key mapping, where
+the key is the declared name. Don’t write values for the keys in the manifest file. For example:
+
+Copy code
+
+```
+targets:
+  ...
+
+templating:
+  env_vars:
+    - BUILD_NUMBER:
+    - DEPLOYMENT_REGION:
+  env_secrets:
+    - API_KEY:
+
+  configurations:
+    ...
+```
+
+`env_vars` and `env_secrets` are declared and referenced the same way. The only difference is that DCM Projects masks secret values
+in `PLAN` and `DEPLOY` changeset output, deployment history artifacts, and logs.
+
+### Reference declared names in definition files
+
+Reference a declared name with `_snow.env_var("NAME")` or `_snow.env_secret("NAME")` inside a definition file. For example:
+
+Copy code
+
+```
+DEFINE TASK DEMO{{env_suffix}}.PROJECTS.NIGHTLY_BUILD
+    COMMENT = 'build {{ _snow.env_var("BUILD_NUMBER") }}'
+    WAREHOUSE = DEMO_WH{{env_suffix}}
+AS SELECT 1;
+```
+
+Use `_snow.env_secret("NAME")` the same way, most commonly to supply a secret’s value in a [DEFINE SECRET](#label-dcm-projects-object-type-secret)
+statement.
+
+Using a name that was never declared, or declaring a name but never supplying a value for it, results in an error during `PLAN` or
+`DEPLOY`.
+
+### Supply values
+
+Each time you run `PLAN`, `PREVIEW`, or `DEPLOY`, supply values for the declared names that your definitions use. Select the interface that you use:
+
+Snowflake CLIWorkspacesSQL
+
+Note
+
+Requires Snowflake CLI version 3.24 or later.
+
+Snowflake CLI collects a value for every declared name from the shell environment when you run `snow dcm deploy`, `plan`, or `preview`,
+and forwards the values with the deployment. Export the variables in your shell, or in your CI/CD job, before running the command:
+
+Copy code
+
+```
+export BUILD_NUMBER=482
+export DEPLOYMENT_REGION=us-east-1
+export API_KEY=...
+
+snow dcm deploy
+```
+
+A declared name that isn’t present in the shell doesn’t fail the command by itself. DCM Projects omits it from the deployment and reports an
+error only if a definition needs it to render.
+
+Snowflake CLI submits the collected values to Snowflake as a bind variable, not as literal text in the SQL statement. The values
+aren’t part of the SQL text of the underlying `EXECUTE DCM PROJECT` statement, including the text recorded in query history.
+
+**Use a `.env` file:**
+
+Pass `--env-file` or `-e` with a path to a `KEY=VALUE` file to source declared values from a file instead of exporting them in
+your shell. This is useful for CI/CD jobs and for keeping a team’s non-secret defaults in one place:
+
+Copy code
+
+```
+snow dcm deploy --env-file .env
+```
+
+```
+# .env
+BUILD_NUMBER=482
+DEPLOYMENT_REGION=us-east-1
+```
+
+For a name declared in both places, the shell value takes precedence. The file only fills in names that the shell doesn’t already provide.
+
+Quote a value that contains `#` or has leading or trailing whitespace. Otherwise, the value is silently truncated at the `#` or
+trimmed.
+
+Variable interpolation (`$VAR` or `${VAR}`) isn’t supported. A literal `$` in a value is never rewritten.
+
+Whether a value is declared as `env_vars` or `env_secrets` changes only how DCM Projects handles the value after it reaches Snowflake.
+The declaration doesn’t change how Snowflake CLI reads the value from the file, so keep a `.env` file that contains real values out of Git, the same as you would for
+any file that holds credentials.
+
+In the DCM project pane in Workspaces, select an operation, such as **Plan**. The **Environment Variables** section lists the
+variables and secrets that the manifest declares. Enter a value for each name in one of the following ways:
+
+- Type the value into the field next to the name. Fields for declared secrets show a lock icon and mask the value as you type.
+- Select **Import .env file** to load the values from a `.env` file.
+
+![DCM project pane in Workspaces showing the Plan operation with Environment Variables fields, a masked API_KEY secret, and the Import .env file button](/static/images/dcm-projects/dcm-project-env-vars-input.png)
+
+Then select the run button to start the operation.
+
+The **Override Variables** option in the same pane is separate. It overrides templating variable values from `manifest.yml`, and
+doesn’t supply values for environment variables or secrets.
+
+Supply the values with the `ENVIRONMENT` clause of `EXECUTE DCM PROJECT`. The clause binds a flat JSON object that maps each
+declared name to its value.
+
+`ENVIRONMENT` accepts only a bind variable (a client `?`, a session variable, or a Snowflake Scripting variable), never a literal
+string typed into the SQL text. From a client library, bind the JSON string to a `?` placeholder the same way you would bind any
+other parameter. From a worksheet, use a Snowflake Scripting block to supply the bind:
+
+Copy code
+
+```
+EXECUTE IMMEDIATE $$
+DECLARE
+  env_json VARCHAR DEFAULT '{"BUILD_NUMBER": "482", "API_KEY": "..."}';
+  rs RESULTSET;
+BEGIN
+  rs := (EXECUTE DCM PROJECT MY_DB.MY_SCHEMA.MY_PROJECT
+    DEPLOY
+    ENVIRONMENT (:env_json)
+    FROM '@my_database.my_schema.my_stage/my_project');
+  RETURN TABLE(rs);
+END;
+$$;
+```
+
+`ENVIRONMENT` is supported on `PLAN`, `PREVIEW`, and `DEPLOY`. It isn’t available on `TEST ALL` or `PURGE`, because neither of
+those commands renders definition files.
+
+The clause order is fixed. If you also use `USING`, specify it first, then `ENVIRONMENT`, and then `FROM`. For syntax, see [EXECUTE DCM PROJECT](/sql-reference/sql/execute-dcm-project).
+
+### Sensitive values
+
+Unlike a plain templating variable, a value supplied through `env_secrets` isn’t rendered into plain-text SQL. DCM Projects masks the
+value in `PLAN` and `DEPLOY` changeset output, deployment history artifacts, and logs.
+
+**Limitations:**
+
+- `_snow` is reserved for this and future built-in context functions. Don’t use it as a variable or macro name.
 
 ## Grants
 
