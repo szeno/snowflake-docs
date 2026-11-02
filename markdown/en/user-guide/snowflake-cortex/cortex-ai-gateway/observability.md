@@ -158,6 +158,46 @@ Copy code
 `<gateway-endpoint>/telemetry/v1/traces`. `{env:SNOWFLAKE_TOKEN}` reads the token from an environment
 variable, so it isn’t stored in the file.
 
+### Example: Fireworks Nexus CLI
+
+Fireworks Nexus routes coding-agent model calls to Fireworks. The gateway receives only the OpenTelemetry trace spans, so you can query each turn in `AGENT_TRACE_TABLE`. Before you start, enable client telemetry on the gateway as described in [Send client traces to the gateway](#label-cortex-ai-gateway-client-traces). You need the MONITOR privilege on the gateway to query the table.
+
+1. Install the Nexus CLI and sign in with your Fireworks API Key.
+2. Configure your harness to send traces to the gateway, with a Snowflake programmatic access token (PAT) as the Bearer token:
+
+   - Claude Code: see [Trace Claude requests](#label-cortex-ai-gateway-claude-traces).
+   - OpenCode: see [Example: OpenCode](#example-opencode).
+3. After a run, query the spans:
+
+   Copy code
+
+   ```
+   SELECT * FROM TABLE(AGENT_TRACE_TABLE('SNOWFLAKE')) LIMIT 20;
+   ```
+
+   Claude Code emits a `claude_code.interaction` span for each user turn and a `claude_code.llm_request` span for each model call.
+
+To compare models, summarize Claude Code model calls over the last 7 days:
+
+Copy code
+
+```
+SELECT
+  RECORD_ATTRIBUTES:"gen_ai.request.model"::STRING AS requested_model,
+  COUNT(*)                                         AS turns,
+  SUM(RECORD_ATTRIBUTES:"input_tokens"::NUMBER)    AS input_tokens,
+  SUM(RECORD_ATTRIBUTES:"output_tokens"::NUMBER)   AS output_tokens,
+  ROUND(AVG(RECORD_ATTRIBUTES:"duration_ms"::NUMBER)) AS avg_duration_ms
+FROM TABLE(AGENT_TRACE_TABLE('SNOWFLAKE'))
+WHERE RESOURCE_ATTRIBUTES:"service.name"::STRING = 'claude-code'
+  AND RECORD_ATTRIBUTES:"span.type"::STRING = 'llm_request'
+  AND TIMESTAMP >= DATEADD(day, -7, CURRENT_TIMESTAMP())
+GROUP BY requested_model
+ORDER BY turns DESC;
+```
+
+For Nexus Auto (`auto`) turns, this query groups by the requested model. The span doesn’t record the model that served the turn. Get the served model from `nexus claude usage`, which also reports spend.
+
 ### Trace Claude requests
 
 You can send Claude traces to the gateway from your application, through the Claude SDKs or Claude
