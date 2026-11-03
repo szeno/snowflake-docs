@@ -20,7 +20,8 @@ For end-to-end examples of this workflow, see [Examples](#label-classify-auto-ex
 A classification profile defines the criteria that are used to automatically classify tables in a database. These
 criteria include:
 
-- How long a table should exist before automatically classifying it.
+- How long a table should exist before automatically classifying it. [Autopilot](/user-guide/classify-intro#label-classify-autopilot)
+  can manage this timing for you.
 - How long before previously classified tables should be reclassified.
 - Whether system and custom tags are automatically set on columns after the classification. You can decide whether you want Snowflake
   to automatically apply suggested tags or prefer to review proposed tag assignments, then apply them yourself.
@@ -37,6 +38,48 @@ command to create an instance of the CLASSIFICATION\_PROFILE
 [class](/sql-reference/snowflake-db-classes).
 
 For an example of using the CREATE CLASSIFICATION\_PROFILE command to create a classification profile, see [Examples](#label-classify-auto-example).
+
+## Use Autopilot in a classification profile
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to Enterprise Edition or higher.
+
+[Autopilot](/user-guide/classify-intro#label-classify-autopilot) is the default configuration. When you create a classification profile,
+`scheduling_mode` is already `AUTO`. You don’t need to set `'scheduling_mode': 'AUTO'`.
+
+Copy code
+
+```
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
+  my_classification_profile({
+    'auto_tag': false
+  });
+```
+
+To turn Autopilot off, explicitly set `'scheduling_mode': 'CUSTOM'`. If you set `minimum_object_age_for_classification_days` or
+`maximum_classification_validity_days`, Snowflake also sets `scheduling_mode` to `CUSTOM` and turns Autopilot off:
+
+Copy code
+
+```
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
+  my_classification_profile({
+    'scheduling_mode': 'CUSTOM',
+    'maximum_classification_validity_days': 30,
+    'minimum_object_age_for_classification_days': 0,
+    'auto_tag': true
+  });
+```
+
+To turn Autopilot back on for an existing profile, call the
+[<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode) method:
+
+Copy code
+
+```
+CALL my_classification_profile!ENABLE_AUTO_SCHEDULING_MODE();
+```
 
 ## Use AI mode in a classification profile
 

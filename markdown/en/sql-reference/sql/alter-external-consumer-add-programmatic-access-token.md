@@ -1,9 +1,5 @@
 # ALTER EXTERNAL CONSUMER … ADD PROGRAMMATIC ACCESS TOKEN (PAT)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Creates a Programmatic Access Token (PAT) for an external consumer. The token is used by the external consumer
 to authenticate with an Iceberg REST Catalog client when accessing shared data via [Open Data Sharing](/user-guide/open-data-sharing).
 

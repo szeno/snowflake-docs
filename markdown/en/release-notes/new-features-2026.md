@@ -269,6 +269,8 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
+- [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
@@ -285,15 +287,18 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
+- [Oct 28, 2026: OpenAI GPT-5.6 Luna, GPT-5.6 Terra, and GPT-6 Luna in AI Functions (Preview)](/release-notes/2026/other/2026-10-28-openai-models-ai-functions-preview)
 - [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
 - [Oct 28, 2026: Streamlit in Snowflake container runtime in China (General availability)](/release-notes/2026/other/2026-10-28-sis-container-runtime-china-ga)
 - [Oct 27, 2026: Carry over comments, tags, and privileges with COPY = ( … )](/release-notes/2026/other/2026-10-27-copy-metadata-carry-over)
 - [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
 - [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
+- [Oct 27, 2026: OpenAI GPT-6.1 Terra (Preview)](/release-notes/2026/other/2026-10-27-openai-gpt-61-terra-preview)
 - [Oct 26, 2026: CoCo Desktop v1.23.0](/release-notes/2026/other/2026-10-26-coco-desktop-v1-23-0)
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
 - [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
+- [Oct 26, 2026: Autopilot for sensitive data classification (Public Preview)](/release-notes/2026/other/2026-10-26-sensitive-data-classification-autopilot-preview)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
 - [Oct 23, 2026: CoCo Desktop v1.22.1](/release-notes/2026/other/2026-10-23-coco-desktop-v1-22-1)
 - [Oct 23, 2026: Responses API for the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-23-cortex-rest-api-responses-api)

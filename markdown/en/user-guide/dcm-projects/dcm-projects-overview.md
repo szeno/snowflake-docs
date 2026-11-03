@@ -123,20 +123,6 @@ DCM project object
 - If you want to execute local definitions using Snowflake CLI, you also need privileges to create a temporary stage in the schema of your target
   DCM project object.
 
-## Cost
-
-DCM Projects are available for all Snowflake editions. There are no DCM Projects-specific costs beyond the compute cost incurred by DCM Projects operations.
-
-DCM Projects operations such as PLAN and DEPLOY are primarily metadata operations and incur
-[Cloud Services compute](/user-guide/cost-understanding-compute#label-cloud-services-credit-usage) cost, similar to running DDL
-scripts with ALTER or CREATE statements. Warehouse compute cost can also apply, for example when rendering Jinja templates or when
-querying DCM Projects deployment history in Information Schema.
-
-In Snowsight Workspaces, the `DCM ANALYZE` command only runs in the background while you’re actively editing a project’s
-definition files.
-
-Warehouse size doesn’t affect the latency of DCM Projects execution. An X-Small warehouse is sufficient.
-
 ## Considerations and limitations
 
 ### Project size and performance
@@ -175,6 +161,20 @@ For object types, grants, and attachments still in preview, the completeness of 
 - Because definition files are Jinja2 templates, all of the limitations for Jinja2 templates apply.
 - DCM templating variables are not intended for sensitive information like credentials. The rendered SQL definitions don’t redact any
   values inserted by environment variables.
+
+### Cost
+
+DCM Projects are available for all Snowflake editions. There are no DCM Projects-specific costs beyond the compute cost incurred by DCM Projects operations.
+
+DCM Projects operations such as PLAN and DEPLOY are primarily metadata operations and incur
+[Cloud Services compute](/user-guide/cost-understanding-compute#label-cloud-services-credit-usage) cost, similar to running DDL
+scripts with ALTER or CREATE statements. Warehouse compute cost can also apply, for example when rendering Jinja templates or when
+querying DCM Projects deployment history in Information Schema.
+
+In Snowsight Workspaces, the `DCM ANALYZE` command only runs in the background while you’re actively editing a project’s
+definition files.
+
+Warehouse size doesn’t affect the latency of DCM Projects execution. An X-Small warehouse is sufficient.
 
 ## Key use cases for DCM Projects
 

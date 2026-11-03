@@ -21,33 +21,38 @@ AI_COMPLETE(
 `model`
 :   A string specifying the model to be used. For text only inputs, you can use one of the following models:
 
-    - `claude-4-opus`
-    - `claude-4-sonnet`
-    - `claude-3-7-sonnet`
-    - `claude-3-5-sonnet`
-    - `deepseek-r1`
-    - `llama3-8b`
-    - `llama3-70b`
+    - `claude-haiku-4-5`
+    - `claude-opus-4-5`
+    - `claude-opus-4-6`
+    - `claude-opus-4-7`
+    - `claude-opus-4-8`
+    - `claude-opus-5`
+    - `claude-opus-5-5`
+    - `claude-sonnet-4-5`
+    - `claude-sonnet-4-6`
+    - `claude-sonnet-5`
+    - `gemini-3.1-flash-lite`
+    - `gemini-3.1-pro`
+    - `gemini-3.5-flash`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
+    - `glm-5.3`
+    - `grok-4.7`
     - `llama3.1-8b`
-    - `llama3.1-70b`
-    - `llama3.1-405b`
     - `llama3.3-70b`
-    - `llama4-maverick`
-    - `llama4-scout`
-    - `mistral-large`
-    - `mistral-large2`
-    - `mistral-7b`
-    - `mixtral-8x7b`
-    - `openai-gpt-4.1`
+    - `mistral-large3`
     - `openai-gpt-5`
-    - `openai-gpt-5-chat`
     - `openai-gpt-5-mini`
     - `openai-gpt-5-nano`
     - `openai-gpt-5.1`
-    - `openai-o4-mini`
-    - `snowflake-arctic`
-    - `snowflake-llama-3.1-405b`
-    - `snowflake-llama-3.3-70b`
+    - `openai-gpt-5.2`
+    - `openai-gpt-5.4`
+    - `openai-gpt-5.4-mini`
+    - `openai-gpt-5.4-nano`
+    - `qwen3-32b`
+    - `qwen3-next-80b-a3b`
+    - `qwen3-vl-235b-a22b`
 
     Model availability changes over time. A model in the
     [legacy](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-model-lifecycle)
@@ -58,9 +63,6 @@ AI_COMPLETE(
 
     For image inputs, you can use one of the following models:
 
-    - `claude-3-7-sonnet`
-    - `claude-4-opus`
-    - `claude-4-sonnet`
     - `claude-haiku-4-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
@@ -71,28 +73,18 @@ AI_COMPLETE(
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
-    - `gemini-2.5-flash`
-    - `gemini-2.5-flash-lite`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
-    - `llama4-maverick`
-    - `llama4-scout`
-    - `openai-gpt-4.1`
     - `openai-gpt-5`
-    - `openai-gpt-5-chat`
     - `openai-gpt-5-mini`
     - `openai-gpt-5-nano`
     - `openai-gpt-5.1`
     - `openai-gpt-5.2`
     - `openai-gpt-5.4`
-    - `pixtral-large`
 
     For document inputs, you can use one of the following models:
 
-    - `claude-3-7-sonnet`
-    - `claude-4-opus`
-    - `claude-4-sonnet`
     - `claude-haiku-4-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
@@ -103,8 +95,6 @@ AI_COMPLETE(
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
-    - `gemini-2.5-flash`
-    - `gemini-2.5-flash-lite`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
@@ -153,7 +143,7 @@ The following example compares two images by passing both as input to the AI\_CO
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('claude-sonnet-5',
   PROMPT('Are both image {0} and image {1} pictures of cats?',
     TO_FILE('@myimages', 'sleepingcat.png'), TO_FILE('@myimages', 'jumpingcat.png'))) AS image_classification;
 ```
@@ -174,7 +164,7 @@ Copy code
 
 ```
 CREATE TABLE image_table AS
-    (SELECT TO_FILE('@myimages', RELATIVE_PATH) AS img FROM DIRECTORY(@myimages));
+    (SELECT TO_FILE('@myimages', RELATIVE_PATH) AS img_file FROM DIRECTORY(@myimages));
 ```
 
 Then, apply the AI\_COMPLETE function to the column containing the FILE objects. The following example classifies each image in the table:
@@ -211,7 +201,7 @@ objects within the query:
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('openai-gpt-5.4',
     PROMPT('Classify the input image {0} in no more than 2 words. Respond in JSON',
         TO_FILE('@myimages', img_path))) AS image_classification
 FROM image_table;
@@ -222,7 +212,7 @@ You can also retrieve the images to be processed directly from a stage’s direc
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('gemini-3.1-pro',
     PROMPT('Classify the input image {0} in no more than 2 words. Respond in JSON',
         TO_FILE('@myimages', RELATIVE_PATH))) as image_classification
 FROM DIRECTORY(@myimages);
@@ -237,7 +227,7 @@ prompt in the `prompt` column.
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('openai-gpt-5-mini',
     PROMPT('Given the input image {0}, {1}. Respond in JSON',
         TO_FILE('@myimages', img_path), prompt)) AS image_result
 FROM image_table;

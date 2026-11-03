@@ -47,16 +47,16 @@ To resolve:
 
 Warning
 
-With server-side validation (the default), the connector infers column types from the first observed record values and does not use a schema registry, so an inferred type can differ from the declared type. For example:
+With server-side validation (the default), schema evolution infers new-column types from incoming values rather than schema registry definitions, so an inferred type can differ from the declared type. Registry-backed converters can still deserialize records. For example:
 
-- A field declared as `FLOAT64` (double) in a schema registry can be inferred as `NUMBER(38,0)` if the first records carry whole numbers with no fractional digits, which silently truncates the decimal portion of all later values.
-- Binary columns can’t be inferred, and a string like `"2026-04-13"` can be interpreted as DATE instead of TEXT.
+- A field declared as `FLOAT64` (double) in a schema registry can be inferred as a numeric column rather than `DOUBLE` if the first records carry whole numbers with no fractional digits. Later fractional values might not retain the intended precision.
+- Binary columns can’t be inferred, and a string like `"2026-04-13"` can be interpreted as `DATE` instead of `TEXT`.
 
-These changes are not recoverable after ingestion begins. If your source uses a schema registry or a strongly typed schema (for example, Avro or Protobuf), use client-side validation.
+Schema evolution doesn’t correct an existing column’s type automatically. Using Avro or Protobuf alone doesn’t require client-side validation. Choose a validation mode based on your target schema and type requirements; see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode).
 
 If schema evolution produces unexpected column types:
 
-- Use client-side validation (`snowflake.validation=client_side`), which creates columns from the declared schema-registry types. For more information, see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode).
+- For a compatible target schema, use client-side validation (`snowflake.validation=client_side`) to map converter-provided schema types to new columns. The mappings don’t preserve every type; for example, Kafka Connect logical decimals map to `VARCHAR`. For the Iceberg configuration restrictions, see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
 - Pre-create the table with the correct schema before starting the connector.
 
 Note

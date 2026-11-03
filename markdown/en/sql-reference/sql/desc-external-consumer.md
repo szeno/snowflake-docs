@@ -1,9 +1,5 @@
 # DESCRIBE EXTERNAL CONSUMER
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Describes an external consumer, including its properties and current configuration.
 
 DESCRIBE can be abbreviated to DESC.

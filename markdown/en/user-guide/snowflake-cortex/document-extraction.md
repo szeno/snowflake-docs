@@ -12,6 +12,8 @@ can be used with other functions to create custom document processing pipelines 
 
 AI\_EXTRACT can process documents of various formats in multiple languages and extract information from both text-heavy
 paragraphs and content in a graphical form, such as logos, handwritten text (for example, signatures), tables, or checkmarks.
+File extraction supports documents of up to 1,000 pages when [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) is enabled. Without cross-region inference, the limit is 125 pages.
+
 AI\_EXTRACT can extract information in the following structured formats:
 
 - Entity: Ask questions in natural language or describe the information to be extracted (such as city, street, or ZIP
@@ -30,44 +32,6 @@ PrivateLink or other [network policies](/user-guide/network-policies) that restr
 Tip
 
 For more information on AI\_EXTRACT, including supported languages, regional availability, and cost, see [AI\_EXTRACT](/sql-reference/functions/ai_extract).
-
-## Extraction quality
-
-AI\_EXTRACT uses `arctic-extract`, a proprietary vision-based large language model (LLM) that delivers high extraction accuracy.
-The following table presents the model’s scores on various standard benchmarks, with the scores of other popular models for comparison:
-
-### Visual question answering (VQA)
-
-| Offering | DocVQA score |
-| --- | --- |
-| Human evaluation | 0.9811 |
-| **Snowflake Arctic-Extract** | 0.9433 |
-| Azure OpenAI GPT-o3 | 0.9339 |
-| Google Gemini 2.5-Pro | 0.9316 |
-| Google Anthropic Claude 4 Sonnet | 0.9119 |
-| Azure Document Intelligence + GPT-o3 | 0.8853 |
-| Google Document AI + Gemini | 0.8497 |
-| Azure OpenAI GPT-o3 | 0.9339 |
-| AWS Textract | 0.8313 |
-
-Expand
-
-Show lessSee more
-
-### Text-only question answering (SQuAD v2)
-
-| Offering | ANLS | Exact match |
-| --- | --- | --- |
-| **Snowflake Arctic-Extract** | 81.18 | 78.74 |
-| Anthropic Claude 4 Sonnet | 80.54 | 77.10 |
-| Meta LLaMA 3.1 405B | 80.37 | 76.56 |
-| Meta LLaMA 4 Scout | 74.30 | 70.70 |
-| OpenAI GPT 4.1 | 70.71 | 66.81 |
-| Meta LLaMA 3.1 8B | 59.13 | 54.48 |
-
-Expand
-
-Show lessSee more
 
 ## Question optimization for extracting information
 
@@ -124,15 +88,10 @@ three columns — `Item Description`, `Quantity`, and `Price` — that data can 
 You can copy the column names from the document so that they’re exactly the same.
 For example, don’t name the columns `product_code` or `REPORT_DATE`; instead, name them `Product Code` or `Report Date`.
 
-### Skip the empty rows
-
-When you create a fine-tuning dataset, skip the rows with no answer (where the returned answer would be `None`).
-
 ### Define the columns in the same order they appear in the document
 
 To improve accuracy, define the columns in the same order as they appear in the document, which is usually from left to right,
-or top to bottom for the [transposed tables](#label-ai-extract-table-extraction-best-practices-transpose-tables). If you
-choose to define the order differently, training might be needed.
+or top to bottom for the [transposed tables](#label-ai-extract-table-extraction-best-practices-transpose-tables).
 
 However, for columns where values are the same for multiple rows, such as `Invoice Number` and `Invoice Date`, add these columns at the beginning.
 For example:
@@ -188,8 +147,6 @@ Try to semantically distinguish a column. Don’t use names such as `col1`, `val
 In some cases, transposition can work better, especially when the row names don’t differ between documents or differ slightly and
 are within a closed set of values.
 
-Note that training on the specified column set might improve the results.
-
 ### Use the parent name as a prefix when working with hierarchical headers
 
 To extract information from tables with hierarchical headers, join the header path using each parent name as a prefix. For example,
@@ -241,7 +198,7 @@ in the following ways:
 ### Compare data from two different periods of time
 
 If you want to compare data from two different periods of time, for example, years 2023 and 2024 in financial documents such as annual reports,
-you can prefix the columns with “current” and “previous”. Note that training might be needed to improve the results.
+you can prefix the columns with “current” and “previous”.
 
 ## Examples: Extract information from a purchase and sale agreement
 

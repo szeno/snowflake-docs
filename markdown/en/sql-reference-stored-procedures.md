@@ -14,6 +14,7 @@ Snowflake supports the following stored procedures, grouped by feature:
 
 | Feature | Stored procedure |
 | --- | --- |
+| [Access control](/user-guide/security-access-control-configure#label-snowflake-public-application-roles) | - [GRANT\_TO\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_grant_to_public_application_role) - [REVOKE\_FROM\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_revoke_from_public_application_role) |
 | [Cortex Powered Object Descriptions](/user-guide/sql-cortex-descriptions) | - [AI\_GENERATE\_TABLE\_DESC](/sql-reference/stored-procedures/ai_generate_table_desc) |
 | [Data classification](/user-guide/classify-intro) | - [ASSOCIATE\_SEMANTIC\_CATEGORY\_TAGS](/sql-reference/stored-procedures/associate_semantic_category_tags) - [SYSTEM$CLASSIFY](/sql-reference/stored-procedures/system_classify) - [SYSTEM$CLASSIFY\_SCHEMA](/sql-reference/stored-procedures/system_classify_schema) - [SYSTEM$CANCEL\_CLASSIFY\_SCHEMA](/sql-reference/stored-procedures/system_cancel_classify_schema) |
 | [Data sharing and collaboration](/guides-overview-sharing) | - [SYSTEM$REQUEST\_LISTING\_AND\_WAIT](/sql-reference/stored-procedures/system_request_listing_and_wait) |

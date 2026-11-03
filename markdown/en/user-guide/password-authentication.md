@@ -8,7 +8,7 @@ A password policy specifies the requirements that must be met to create and rese
 
 Snowflake provides two options for password policies:
 
-- A built-in password policy to facilitate the initial user provisioning process.
+- A built-in password policy that Snowflake enforces when no custom password policy is set on the account or the user.
 - A schema-level password policy object that can be set at the level of the Snowflake account, an individual user, or both depending on
   the use cases and needs of the user administrator.
 
@@ -46,10 +46,10 @@ Using SCIM
     to manage the user password to access Snowflake in either your identity provider or using a password policy in Snowflake.
 
     Currently, users provisioned to Snowflake with SCIM are required to have their password meet the
-    [default Snowflake password policy](#label-snowflake-password-policy). This requirement can be bypassed if you choose to use this
+    [built-in password policy](#label-snowflake-password-policy). This requirement can be bypassed if you choose to use this
     password policy feature.
 
-    To bypass the default password policy requirement, follow the instructions in the [Using Password Policies](#using-password-policies) section (in this topic).
+    To bypass the built-in password policy requirement, follow the instructions in the [Using Password Policies](#using-password-policies) section (in this topic).
 
 Monitoring passwords
 :   To monitor passwords:
@@ -66,25 +66,48 @@ During the initial user creation, it is possible to set a weak password for the 
 of the password policy that is in effect. This gives administrators the option to use generic passwords for the user during the
 creation process. If this pathway is chosen, Snowflake strongly recommends setting the `MUST_CHANGE_PASSWORD` property to
 `TRUE` to require users to change their password on their next login, including the initial login. When a user resets
-their password, they must choose one that conforms to the password policy in effect, whether it is a Snowflake-provided policy or a custom
+their password, they must choose one that conforms to the password policy in effect, whether it is the built-in policy or a custom
 one.
 
 Additionally, Snowflake allows creating users without an initial password to support business processes in which new users are not allowed
 to log into the system. If this occurs, the user’s `PASSWORD` property value will be `NULL`. However, as a general rule,
 Snowflake expects that users are created with initial passwords.
 
-### Snowflake-provided password policy
+### Built-in password policy
+
+If neither the account nor the user has a password policy set, Snowflake enforces a built-in password policy for that user. The built-in
+policy determines which new passwords Snowflake accepts when a password is reset or changed (for example, from `'test12345'` to
+`'q@-*DaC2yjZoq3Re4JYX'`) with the [ALTER USER](/sql-reference/sql/alter-user) command or the web interface. It also determines how many failed
+login attempts Snowflake allows before it locks the user.
 
 A password can be any case-sensitive string up to 256 characters, including blank spaces and special (that is, non-alphanumeric) characters,
 such as exclamation points (`!`), percent signs (`%`), and asterisks (`*`).
 
-In the context of resetting an existing password (for example, change `'test12345'` to `'q@-*DaC2yjZoq3Re4JYX'`), Snowflake
-enforces the following password policy as a minimum requirement while using the [ALTER USER](/sql-reference/sql/alter-user) command and the
-web interface:
+The following table lists the requirements of the built-in password policy, expressed as the properties of a
+[custom password policy](#label-custom-password-policies):
 
-- Must be at least 14 characters long.
-- Must contain at least 1 digit.
-- Must contain at least 1 uppercase letter and 1 lowercase letter.
+| Property | Value | Requirement |
+| --- | --- | --- |
+| `PASSWORD_MIN_LENGTH` | 14 | A password must contain at least 14 characters. |
+| `PASSWORD_MAX_LENGTH` | 256 | A password can contain up to 256 characters. |
+| `PASSWORD_MIN_UPPER_CASE_CHARS` | 1 | A password must contain at least 1 uppercase letter. |
+| `PASSWORD_MIN_LOWER_CASE_CHARS` | 1 | A password must contain at least 1 lowercase letter. |
+| `PASSWORD_MIN_NUMERIC_CHARS` | 1 | A password must contain at least 1 digit. |
+| `PASSWORD_MIN_SPECIAL_CHARS` | 0 | A password doesn’t need to contain special characters. |
+| `PASSWORD_MIN_AGE_DAYS` | 0 | A user can change their password again immediately after changing it. |
+| `PASSWORD_MAX_AGE_DAYS` | 0 | Passwords don’t expire. |
+| `PASSWORD_MAX_RETRIES` | 5 | After 5 failed attempts to enter the password, Snowflake locks the user. |
+| `PASSWORD_LOCKOUT_TIME_MINS` | 15 | A locked user can try to enter the password again after 15 minutes. |
+| `PASSWORD_HISTORY` | 5 | A user can’t reuse their current password or their 5 previous passwords. |
+
+Expand
+
+Show lessSee more
+
+These values match the defaults for a new password policy that you create with [CREATE PASSWORD POLICY](/sql-reference/sql/create-password-policy), except
+for `PASSWORD_MAX_AGE_DAYS`. A new password policy requires users to change their password every 90 days by default, but the built-in
+policy doesn’t expire passwords. To require users to change their passwords periodically, create a password policy and set it on the
+account or the user. For details, see [Using password policies](#label-using-password-policies) (in this topic).
 
 Snowflake strongly recommends the following guidelines for creating the strongest passwords possible:
 

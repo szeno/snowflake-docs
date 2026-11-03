@@ -42,8 +42,9 @@ CREATE [ OR REPLACE ] SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE
 
     | Key | Type | Default | Description |
     | --- | --- | --- | --- |
-    | `minimum_object_age_for_` `classification_days` | INTEGER |  | Required: Specifies the minimum number of days an object must exist in order to be classified.  To classify objects immediately, specify `0`. |
-    | `maximum_classification_` `validity_days` | INTEGER |  | Optional: Specifies the number of days since the last classification event before a table is classified again using automatic classification.  Specify this value to ensure that tables are reclassified. If you omit this key, objects are never reclassified.  The value must be greater than or equal to `1`. |
+    | `scheduling_mode` | STRING | `AUTO` | Optional: Specifies whether [Autopilot](/user-guide/classify-intro#label-classify-autopilot) manages classification timing.   - `AUTO`: Autopilot is on. Snowflake manages classification timing, reclassification schedules, and minimum object age. - `CUSTOM`: Autopilot is off. You set the schedule and minimum object age yourself.   If you set `minimum_object_age_for_classification_days` or `maximum_classification_validity_days`, Snowflake automatically sets `scheduling_mode` to `CUSTOM`. To turn Autopilot back on, call [<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode). |
+    | `minimum_object_age_for_` `classification_days` | INTEGER |  | Required when `scheduling_mode` is `CUSTOM`. Specifies the minimum number of days an object must exist in order to be classified.  To classify objects immediately, specify `0`.  Omit this key when Autopilot is on (`scheduling_mode` is `AUTO`). Setting this key automatically sets `scheduling_mode` to `CUSTOM`. |
+    | `maximum_classification_` `validity_days` | INTEGER |  | Optional: Specifies the number of days since the last classification event before a table is classified again using automatic classification.  Specify this value to ensure that tables are reclassified. If you omit this key, objects are never reclassified.  The value must be greater than or equal to `1`.  Setting this key automatically sets `scheduling_mode` to `CUSTOM`. |
     | `snowflake_semantic_` `categories` | ARRAY |  | Optional: Specifies a list of Snowflake [native semantic categories](/user-guide/classify-native) (types of data) and optional countries to use for classification. Snowflake identifies data as sensitive only if the data is classified as belonging to the specified categories (and countries, if provided). The array can contain the following keys:   - `category` — Required string that specifies a native semantic category. - `country_codes` — Optional array that specifies two-letter country codes. Snowflake identifies data as belonging to a category   only if a semantic subcategory exists for the specified country.   To determine if a semantic subcategory exists for a country and obtain the two-letter code for a country, see [native semantic categories](/user-guide/classify-native).  See [Classify data using a subset of native semantic categories](/user-guide/classify-auto#label-classify-auto-subset). |
     | `ai_mode` | BOOLEAN | FALSE | Optional: When `TRUE`, enables [AI mode](/user-guide/classify-intro#label-classify-ai-mode) to use LLMs to identify additional semantic categories beyond those identified by standard classification.  When `FALSE`, only standard classification is used.  LLM usage is billed under the `AI_SENSITIVE_DATA_CLASSIFICATION` [service type](/sql-reference/service-types). Serverless compute for classification continues to be billed under `SENSITIVE_DATA_CLASSIFICATION`. |
     | `auto_tag` | BOOLEAN | TRUE | Optional: When `TRUE`, sets the recommended classification system tags on the columns in the specified object when the classification process is complete.  When `FALSE`, automatic tagging does not occur. |
@@ -109,6 +110,7 @@ For general information about roles and privilege grants for performing SQL acti
 You can call the following methods on the instance of the CLASSIFICATION\_PROFILE class that you create:
 
 - [<classification\_profile\_name>!DESCRIBE](/sql-reference/classes/classification_profile/methods/describe)
+- [<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode)
 - [<classification\_profile\_name>!SET\_AI\_MODE](/sql-reference/classes/classification_profile/methods/set_ai_mode)
 - [<classification\_profile\_name>!SET\_AUTO\_TAG](/sql-reference/classes/classification_profile/methods/set_auto_tag)
 - [<classification\_profile\_name>!SET\_CLASSIFY\_VIEWS](/sql-reference/classes/classification_profile/methods/set_classify_views)
@@ -134,6 +136,35 @@ You can call the following methods on the instance of the CLASSIFICATION\_PROFIL
   preference.
 
 ## Examples
+
+Create an instance with [Autopilot](/user-guide/classify-intro#label-classify-autopilot) enabled:
+
+Copy code
+
+```
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE my_classification_profile(
+  {
+    'scheduling_mode': 'AUTO',
+    'auto_tag': false
+  }
+);
+```
+
+Create an instance with a custom schedule. Setting `minimum_object_age_for_classification_days` or
+`maximum_classification_validity_days` sets `scheduling_mode` to `CUSTOM`:
+
+Copy code
+
+```
+CREATE OR REPLACE SNOWFLAKE.DATA_PRIVACY.CLASSIFICATION_PROFILE my_classification_profile(
+  {
+    'scheduling_mode': 'CUSTOM',
+    'maximum_classification_validity_days': 30,
+    'minimum_object_age_for_classification_days': 0,
+    'auto_tag': true
+  }
+);
+```
 
 Create an instance and specify basic criteria to automatically classify tables in a database:
 

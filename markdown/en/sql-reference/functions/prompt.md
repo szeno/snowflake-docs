@@ -92,7 +92,7 @@ WHERE AI_FILTER(PROMPT('The reviewer enjoyed the restaurant: {0}, Rating: {1}', 
 Copy code
 
 ```
-AI_COMPLETE('claude-4-sonnet',
+SELECT AI_COMPLETE('claude-sonnet-4-6',
     PROMPT('Classify the input image {0} in no more than 2 words. Respond in JSON', img_file)) AS image_classification
 FROM image_table;
 ```

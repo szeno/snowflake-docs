@@ -136,7 +136,7 @@ Copy code
 
 ```
 SELECT AI_COMPLETE(
-    model => 'mistral-large2',
+    model => 'mistral-large3',
     prompt => 'Return the customer sentiment for the following review: New kid on the block, this pizza joint! The pie arrived neither in a flash nor a snail\'s pace, but the taste? Divine! Like a symphony of Italian flavors, it was a party in my mouth. But alas, the party was a tad pricey for my humble abode\'s standards. A mixed bag, I\'d say!',
     response_format => {
             'type':'json',
@@ -168,7 +168,7 @@ Copy code
 
 ```
 SELECT AI_COMPLETE(
-    model => 'mistral-large2',
+    model => 'mistral-large3',
     prompt => 'Return the customer sentiment for the following review: New kid on the block, this pizza joint! The pie arrived neither in a flash nor a snail\'s pace, but the taste? Divine! Like a symphony of Italian flavors, it was a party in my mouth. But alas, the party was a tad pricey for my humble abode\'s standards. A mixed bag, I\'d say!',
     response_format => {
             'type':'json',
@@ -185,7 +185,7 @@ Response:
 ```
 {
     "created": 1738683744,
-    "model": "mistral-large2",
+    "model": "mistral-large3",
     "structured_output": [
         {
         "raw_message": {
@@ -574,7 +574,7 @@ Copy code
 select ai_complete(
     model => 'claude-sonnet-4-6',
     prompt => 'Extract structured data from this customer interaction note: Customer Sarah Jones complained about the mobile app crashing during checkout. She tried to purchase 3 items: a red XL jacket ($89.99), blue running shoes ($129.50), and a fitness tracker ($199.00). The app crashed after she entered her shipping address at 123 Main St, Portland OR, 97201. She has been a premium member since January 2024.',
-    'response_format' => {
+    response_format => {
             'type': 'json',
             'schema': {
 'type': 'object',
@@ -662,7 +662,6 @@ select ai_complete(
 'required': ['customer', 'issue','cart']
 }
         }
-    }
 );
 ```
 
@@ -754,7 +753,7 @@ response format. The more complex the task, the more you can improve the accurac
   the prompt to optimize performance.
 - **Complex reasoning tasks** prompt models to perform more open-ended ambiguous tasks, such as assessing and scoring
   the quality of a call based on the relevance, professionalism, and faithfulness of answers. For these use cases, we
-  recommend using the most powerful models like Anthropic’s `claude-sonnet-4-6` or Mistral AI’s `mistral-large2` and
+  recommend using the most powerful models like Anthropic’s `claude-sonnet-4-6` or Mistral AI’s `mistral-large3` and
   adding “Respond in JSON”, and details about the schema you want to generate in the prompt.
 
 For the most consistent results, set the `temperature` option to 0 when you call COMPLETE, regardless of the task or

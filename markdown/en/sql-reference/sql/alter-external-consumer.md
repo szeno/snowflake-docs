@@ -1,10 +1,6 @@
 # ALTER EXTERNAL CONSUMER
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-Modifies the properties of an existing external consumer, or manages its Programmatic Access Tokens (PATs).
+Modifies the properties of an existing external consumer, or manages its programmatic access tokens (PATs) and workload identities.
 
 See also:
 :   [CREATE EXTERNAL CONSUMER](/sql-reference/sql/create-external-consumer) ,
@@ -13,6 +9,7 @@ See also:
     [ALTER EXTERNAL CONSUMER … REMOVE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-remove-programmatic-access-token) ,
     [ALTER EXTERNAL CONSUMER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-rotate-programmatic-access-token) ,
     [ALTER EXTERNAL CONSUMER … MODIFY PROGRAMMATIC ACCESS TOKEN (PAT)](/sql-reference/sql/alter-external-consumer-modify-programmatic-access-token) ,
+    [Workload identity federation for external consumers](/user-guide/open-data-sharing-workload-identity) ,
     [SHOW EXTERNAL CONSUMERS](/sql-reference/sql/show-external-consumers)
 
 ## Syntax
@@ -39,12 +36,10 @@ Copy code
 ALTER EXTERNAL CONSUMER [ IF EXISTS ] <name> RENAME TO <new_name>
 ```
 
-For PAT operations, see:
+For PAT operations, see the PAT commands listed under **See also**. For workload identity operations (`ADD`, `MODIFY`, and `REMOVE WORKLOAD IDENTITY`), see [Workload identity federation for external consumers](/user-guide/open-data-sharing-workload-identity).
 
-- [ALTER EXTERNAL CONSUMER … ADD PAT](/sql-reference/sql/alter-external-consumer-add-programmatic-access-token)
-- [ALTER EXTERNAL CONSUMER … REMOVE PAT](/sql-reference/sql/alter-external-consumer-remove-programmatic-access-token)
-- [ALTER EXTERNAL CONSUMER … ROTATE PAT](/sql-reference/sql/alter-external-consumer-rotate-programmatic-access-token)
-- [ALTER EXTERNAL CONSUMER … MODIFY PAT](/sql-reference/sql/alter-external-consumer-modify-programmatic-access-token)
+You can’t change an external consumer’s region with ALTER EXTERNAL CONSUMER. To use a different region, create a new external
+consumer.
 
 ## Parameters
 

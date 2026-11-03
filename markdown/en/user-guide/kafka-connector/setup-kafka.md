@@ -556,7 +556,7 @@ Note
 
 Auto-creating a standard Snowflake table is supported in all connector versions. The `snowflake.autocreate.table.type` and `snowflake.iceberg.create.table.options` properties, which add Iceberg table auto-creation and let you disable auto-creation, are supported by the Kafka connector version 4.1.0 and later.
 
-These properties control whether and how the connector auto-creates the target table when it’s missing. An existing table is always used as-is, regardless of these settings.
+These properties control whether and how the connector auto-creates the target table when it’s missing. An existing table isn’t recreated or altered by these properties, but incompatible configuration combinations are still rejected.
 
 `snowflake.autocreate.table.type`
 :   Controls table auto-creation:
@@ -583,7 +583,7 @@ Note
 
 Server-side schema evolution is supported for Iceberg tables.
 
-Client-side schema evolution isn’t supported for Iceberg tables.
+The connector rejects `snowflake.autocreate.table.type=iceberg` with `snowflake.validation=client_side`, even when the target table already exists. Client-side evolution can add columns to a pre-created Iceberg v3 table with `RECORD_METADATA VARIANT` and a compatible schema when auto-creation is set to `none` or left at `snowflake`. For setup and type restrictions, see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
 
 #### Migration and compatibility properties
 

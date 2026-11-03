@@ -1,9 +1,5 @@
 # SHOW USER PROGRAMMATIC ACCESS TOKENS FOR EXTERNAL CONSUMER
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Lists the Programmatic Access Tokens (PATs) associated with an external consumer.
 
 See also:

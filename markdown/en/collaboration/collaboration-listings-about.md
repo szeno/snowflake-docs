@@ -45,6 +45,22 @@ When you offer a listing, you choose how to make your data product available to 
 
   See [About Snowflake Marketplace](/collaboration/collaboration-marketplace-about) for more about publishing on the Snowflake Marketplace.
 
+### Make listings available to open clients
+
+You can also make your listings, and the Snowflake-managed Iceberg tables in them, available to open clients outside Snowflake. These
+are engines and tools, such as Apache Spark™, that read data through the Apache Iceberg™ REST Catalog API. To reach open clients, add
+the `open_sharing` field to the listing manifest, create an external consumer for each party, and add the external consumers to the
+listing. You don’t need to create a separate share or a separate listing.
+
+When you add external consumers to a listing:
+
+- Snowflake consumers keep their existing access to everything in the share.
+- External consumers can read only the Snowflake-managed Iceberg tables in the share. Other objects in the share, such as standard
+  tables, aren’t visible to external consumers.
+- External consumers get live, read-only access. The data stays in place, with no ETL pipelines or copies.
+
+To add open-client access to a new or existing listing, see [Share data with non-Snowflake consumers](/user-guide/open-data-sharing).
+
 ## Listing access options
 
 When you offer a listing, you choose how consumers can access your data product:
@@ -77,7 +93,7 @@ For example, in response to a request you might offer:
 
 - A free private listing to a consumer with whom you have an existing business relationship or with whom you have negotiated payment terms.
 - A paid private listing to a consumer, using one of the [pricing models](/collaboration/provider-listings-pricing-model) offered
-  by Snowflake.
+  by Snowflake, if your organization is [enabled for paid private listings](/collaboration/provider-listings-creating-publishing#label-paid-private-listing-approval).
 
 Limited trial listings let providers make a data product visible to and free to try by anyone on the Snowflake Marketplace, but fully available
 only to consumers that they choose to do business with. This type of listing is best for providing customer-specific data, or for cases

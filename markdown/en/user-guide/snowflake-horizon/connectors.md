@@ -15,6 +15,24 @@ For information about encryption, network security, credentials management, and 
 shared-responsibility model,
 see [Security and data protection](/user-guide/snowflake-horizon/connectors/security).
 
+## Cost and refresh schedule
+
+There’s no charge for adding connectors, for ingesting metadata from connected sources, or for
+storing the metadata, lineage, and popularity data that connectors collect.
+
+### Refresh schedule
+
+Horizon Catalog refreshes the metadata from each connected source every 24 hours.
+
+### Costs that still apply
+
+- **Your warehouse:** Snowsight uses your active warehouse for some steps, such as checking your
+  privileges when you create a connection. These queries consume credits at standard warehouse
+  rates.
+- **The external source:** Connectors run metadata and lineage queries against the source system,
+  for example on a Databricks SQL warehouse. The provider of that system bills for any compute
+  that these queries use.
+
 ## BI connectors
 
 - [Amazon QuickSight](/user-guide/snowflake-horizon/connectors/quicksight)

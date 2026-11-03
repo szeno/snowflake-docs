@@ -8,6 +8,8 @@ This section describes the **dbt output format** for SSIS: how Data Flow Tasks a
 
 The default conversion path is a dbt project. Eligible Data Flow graphs that connect a Flat File Source to an OLE DB Destination emit Direct COPY and do not create a dbt project. The `--SimplifySsisDataFlows` flag is not part of this dbt documentation series.
 
+If you prefer plain Snowflake SQL over dbt projects, you can convert each Data Flow Task into a stored procedure instead. For that output format, see [Snowflake Scripting output](snowflake-scripting/README).
+
 ## How a Data Flow becomes a dbt project
 
 Each Data Flow Task is converted into a standalone dbt project with a three-tier model architecture.

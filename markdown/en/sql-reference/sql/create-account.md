@@ -43,7 +43,7 @@ CREATE ACCOUNT <name>
 
     Optional if the `ADMIN_RSA_PUBLIC_KEY` parameter is specified.
 
-    For more information about passwords in Snowflake, see [Snowflake-provided password policy](/user-guide/password-authentication#label-snowflake-password-policy).
+    For more information about passwords in Snowflake, see [Built-in password policy](/user-guide/password-authentication#label-snowflake-password-policy).
 
 `ADMIN_RSA_PUBLIC_KEY = 'string_literal'`
 :   Assigns a public key to the initial administrative user of the account in order to implement

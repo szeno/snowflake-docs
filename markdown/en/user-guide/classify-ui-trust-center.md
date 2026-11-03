@@ -86,14 +86,22 @@ To set up sensitive data classification with advanced settings, complete the fol
 12. Select **Next**.
 13. Specify the database, schema, and name of the [classification profile](/user-guide/classify-intro#label-classify-classification-profiles) where all of your
     settings will be saved.
-14. In the **AI Mode** section, optionally select **AI Mode** to improve the accuracy of classification using a large language model.
+14. In the **Autopilot** section, Autopilot is already selected to provide cost and performance benefits from Snowflake-driven
+    optimizations. If you don’t want to use it, turn it off and manually set the schedule and minimum object age.
+
+    [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to Enterprise Edition or higher.
+
+    For more information, see [Autopilot](/user-guide/classify-intro#label-classify-autopilot).
+15. In the **AI Mode** section, optionally select **AI Mode** to improve the accuracy of classification using a large language model.
 
     Note
 
     Currently, AI mode only supports the OpenAI GPT-5 Mini model.
-15. Select the cadence at which previously classified objects are re-classified.
-16. Specify if you want to exclude certain objects from the classification process. For information about excluding specific objects, see [Excluding data from sensitive data classification](/user-guide/classify-auto-exclude).
-17. Select **Enable**.
+16. Select the cadence at which previously classified objects are re-classified.
+17. Specify if you want to exclude certain objects from the classification process. For information about excluding specific objects, see [Excluding data from sensitive data classification](/user-guide/classify-auto-exclude).
+18. Select **Enable**.
 
 ## Review classification results
 

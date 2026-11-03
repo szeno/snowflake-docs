@@ -47,7 +47,7 @@ CREATE MANAGED ACCOUNT <name>
 
 `ADMIN_PASSWORD = user_password`
 :   Password for the initial user in the managed account. The password is a string literal that must be enclosed in single or double quotes
-    and must conform to the [Snowflake-provided password policy](/user-guide/password-authentication#label-snowflake-password-policy).
+    and must conform to the [Built-in password policy](/user-guide/password-authentication#label-snowflake-password-policy).
 
 `TYPE = READER`
 :   Specifies the type of managed account. Currently, the only type supported is `READER` (i.e. reader accounts used for data sharing).

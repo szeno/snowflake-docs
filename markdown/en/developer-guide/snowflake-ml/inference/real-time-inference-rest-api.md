@@ -472,6 +472,9 @@ curl -X POST "<endpoint_url>/predict" \
       }'
 ```
 
+On a service with [LoRA adapters](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters),
+set `params.model` to select an adapter.
+
 ## Python examples
 
 1. `dataframe_split` format

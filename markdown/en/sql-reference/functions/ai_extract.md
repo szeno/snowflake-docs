@@ -36,7 +36,6 @@ Copy code
 ```
 AI_EXTRACT( file => <file>,
             responseFormat => <responseFormat>,
-            [ config => <config_object> ],
             [ scores => TRUE | FALSE ] )
 ```
 
@@ -169,23 +168,13 @@ AI_EXTRACT( file => <file>,
     object in addition to `response`. For the output format, SQL examples, and limitations, see
     [Extraction scores](#label-ai-extract-scores).
 
-`config => config_object`
-:   An [OBJECT](/sql-reference/data-types-semistructured#label-data-type-object) value that specifies the configuration settings. You can use an
-    [OBJECT constant](/sql-reference/data-types-semistructured#label-object-constant) to specify this object.
-
-    You can specify the following key-value pairs in this object:
-
-    | Key | Description |
-    | --- | --- |
-    | `scale_factor` | A numeric value from 1.0 through 4.0. Scales pages of an input file before they are processed by the underlying model, which can enhance OCR quality and improve extraction results.  Use `scale_factor` if you receive unexpected or unclear responses in the following scenarios:   - Documents with page sizes larger than A4 - Documents containing small text, detailed visual elements, or dense layouts - Extracted text contains typos or character-level OCR errors   If omitted, AI\_EXTRACT uses the default value (`'scale_factor': 1.0`). |
-
-    Expand
-
-    Show lessSee more
-
 ## Returns
 
 A JSON object containing the extracted information. The structure of the response depends on the type of extraction.
+
+When [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) is enabled and AI\_EXTRACT can’t process a file, the `error` field contains the error for that document. The statement continues for
+any other documents. This includes a document that exceeds the 1,000-page limit, a corrupted file, and a file that isn’t in a
+supported format. Without cross-region inference, a file that AI\_EXTRACT can’t process fails the SQL statement. For the page limit in that case, see [Usage notes](#label-ai-extract-usage-notes).
 
 ### Entity extraction
 
@@ -485,6 +474,17 @@ For information about granting this privilege, see [Cortex LLM privileges](/user
 
 - AI\_EXTRACT is optimized for both digital-born and scanned documents.
 - You can’t use both `text` and `file` parameters simultaneously in the same function call.
+- With [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) enabled:
+
+  - File extraction supports documents of up to 1,000 pages. A document that exceeds the limit returns an error for that document.
+  - A request that extracts many fields from a document returns one combined result.
+  - If AI\_EXTRACT can’t process a file, the `error` field contains the error for that document and the statement continues. This includes a document that exceeds the page limit, a corrupted file, and a file that isn’t in a supported format.
+  - `scale_factor` is no longer needed. AI\_EXTRACT now delivers improved extraction quality without manual scaling adjustments. Existing calls continue to work unchanged; any `scale_factor` value is ignored.
+- Without cross-region inference:
+
+  - File extraction supports documents of up to 125 pages.
+  - A file that AI\_EXTRACT can’t process fails the SQL statement. This includes a corrupted file and a file that isn’t in a supported format.
+  - The `scale_factor` parameter still applies. It scales pages of an input file before extraction, which can improve results for pages larger than A4, small text, or dense layouts. Set it to a numeric value from 1.0 through 4.0. The default is 1.0.
 - You can either ask questions in natural language or describe information to be extracted (such as city, street, ZIP code); for example:
 
   ```
@@ -522,7 +522,6 @@ For information about granting this privilege, see [Cortex LLM privileges](/user
 - Urdu
 - Vietnamese
 
-- The documents must be no more than 125 pages long.
 - In a single AI\_EXTRACT call, you can ask a maximum of 100 questions for entity extraction, and a maximum of 10 questions for table extraction.
 
   A table extraction question is equal to 10 entity extraction questions. For example, you can ask 4 table extraction questions and
@@ -543,22 +542,6 @@ statement) are supported.
 
   - For paged file formats (PDF, DOCX, TIF, TIFF), each page is counted as 970 tokens.
   - For image file formats (JPEG, JPG, PNG), each individual image file is billed as a page and counted as 970 tokens.
-- Using the `scale_factor` parameter changes how many tokens are consumed and how many pages can be processed per call:
-
-  - The number of input tokens consumed increases proportionally with `scale_factor`.
-  - The maximum number of pages per document that can be processed by AI\_EXTRACT decreases by `scale_factor`.
-
-  **Relationship of scale\_factor to number of tokens and pages**
-
-  > | `scale_factor` value | Token count per page | Max. number of pages per document |
-  > | --- | --- | --- |
-  > | 2 | 970 \* 2 = 1940 tokens | 125/2 = 62.5 (rounded down to 62) |
-  > | 2.5 | 970 \* 2.5 = 2425 tokens | 125/2.5 = 50 |
-  > | 4 | 970 \* 4 = 3880 tokens | 125/4 = 31.25 (rounded down to 31) |
-  >
-  > Expand
-  >
-  > Show lessSee more
 - Snowflake recommends executing queries that call the Cortex AI\_EXTRACT function in a smaller warehouse (no larger than
   MEDIUM). Larger warehouses don’t increase performance.
 
@@ -589,14 +572,15 @@ AI\_EXTRACT can produce the following error messages:
 | `Not found.` | The file was not found. |
 | `Provided file cannot be found.` | The file was not found. |
 | `Provided file cannot be accessed.` | The current user does not have sufficient privileges to access the file. |
-| `The provided file format {file_extension} isn't supported.` | The document is not in a supported format. |
-| `The provided file isn't in the expected format or is corrupted.` | The document is corrupted or isn’t in a supported format. |
+| `The provided file format {file_extension} isn't supported.` | The document isn’t in a supported format. With cross-region inference enabled, AI\_EXTRACT returns this error for that document. Otherwise, the statement fails. |
+| `The provided file isn't in the expected format or is corrupted.` | The document is corrupted or isn’t in a supported format. With cross-region inference enabled, AI\_EXTRACT returns this error for that document. Otherwise, the statement fails. |
 | `Empty request.` | No parameters were provided. |
 | `Missing or empty response format.` | No response format was provided. |
 | `Invalid response format.` | The response format is not valid JSON. |
 | `Duplicate feature name found: {feature_name}.` | The response format contains one or more duplicate feature names. |
 | `Too many questions: {number} complex and {number} simple = {number} total, complex question weight {number}`. | The number of questions exceeds the allowed limit. |
-| `Maximum number of 125 pages exceeded. The document has {actual_pages} pages.` | The document exceeds the 125-page limit. |
+| `Maximum number of 1000 pages exceeded. The document has {actual_pages} pages.` | Cross-region inference is enabled, and the document exceeds the 1,000-page limit. AI\_EXTRACT returns this error for that document. |
+| `Maximum number of 125 pages exceeded. The document has {actual_pages} pages.` | Cross-region inference isn’t enabled, and the document exceeds the 125-page limit. |
 | `Page size in pixels exceeds 10000x10000. The page size is {actual_px} pixels.` | Image input or a converted document page is larger than the supported dimensions. |
 | `Page size in inches exceeds 50x50 (3600x3600 pt). The page size is {actual_in} inches ({actual_pt} pt).` | Page is larger than the supported dimensions. |
 | `Maximum file size of 104857600 bytes exceeded. The file size is {actual_size} bytes.` | The document is larger than 100 MB. |
@@ -777,30 +761,6 @@ SELECT AI_EXTRACT(
 );
 ```
 
-### Extraction with a custom scale factor
-
-The following example extracts the `employees` array from the `report.pdf` file using a scale factor of 2.0:
-
-Copy code
-
-```
-SELECT AI_EXTRACT(
-  file => TO_FILE('@db.schema.files', 'report.pdf'),
-  responseFormat => {
-    'schema': {
-      'type': 'object',
-      'properties': {
-        'employees': {
-          'description': 'What are the surnames of employees?',
-          'type': 'array'
-        }
-      }
-    }
-  },
-  config => {'scale_factor': 2.0}
-);
-```
-
 ### Extraction using a fine-tuned `arctic-extract` model
 
 To use the fine-tuned `arctic-extract` model for inference with the [AI\_EXTRACT](/sql-reference/functions/ai_extract) function,
@@ -824,18 +784,6 @@ SELECT AI_EXTRACT(
   model => 'db.schema.my_tuned_model',
   file => TO_FILE('@db.schema.files','document.pdf'),
   responseFormat => [['name', 'What is the first name of the employee?'], ['city', 'Where does the employee live?']]
-);
-```
-
-The following example extracts data from the `invoice.pdf` file, using a fine-tuned `arctic-extract` model and a scale factor of 2.0:
-
-Copy code
-
-```
-SELECT AI_EXTRACT(
-  model => 'db.schema.my_tuned_model',
-  file => TO_FILE('@db.schema.files', 'invoice.pdf'),
-  config => {'scale_factor': 2.0}
 );
 ```
 

@@ -9,6 +9,10 @@ The following OpenAI models are now generally available in the Cortex REST API:
 
 These models support cross-region inference with `CORTEX_ENABLED_CROSS_REGION` set to `AWS_US`, `AWS_GLOBAL`, or `ANY_REGION`.
 
+Note
+
+Availability of `openai-gpt-5.6-luna`, `openai-gpt-5.6-sol`, `openai-gpt-5.6-terra`, and later OpenAI models can vary by account because of model provider requirements. If a request fails with the error `Due to model provider requirements, this account is not eligible for this model at this time.`, contact [Snowflake Support](/user-guide/contacting-support).
+
 For more information, see [Model availability](/user-guide/snowflake-cortex/cortex-rest-api#label-cortex-complete-llm-model-availability).
 
 ## OpenAI GPT-6 Sol and Luna models (Preview)

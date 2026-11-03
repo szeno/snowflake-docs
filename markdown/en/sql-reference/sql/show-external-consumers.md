@@ -1,9 +1,5 @@
 # SHOW EXTERNAL CONSUMERS
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Lists the external consumers defined in the account.
 
 See also:

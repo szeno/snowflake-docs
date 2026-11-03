@@ -150,6 +150,11 @@ System application roles:
     - Budgets: [Application roles to manage the account budget](/user-guide/budgets#label-budgets-application-roles).
     - Data Quality and data metric functions (DMFs): [View results of a data metric function](/user-guide/data-quality-results).
 
+Snowflake public application roles:
+:   Snowflake manages the `SNOWFLAKE.PUBLIC` and `SNOWFLAKE.APP_PUBLIC` application roles to provide selected capabilities broadly to
+    account users and Snowflake Native Apps. Unlike system application roles, you don’t grant these roles; Snowflake applies them automatically. For
+    more information, see [SNOWFLAKE.PUBLIC and SNOWFLAKE.APP\_PUBLIC](/user-guide/security-access-control-configure#label-snowflake-public-application-roles).
+
 Service roles:
 :   To allow a role access to service endpoints, grant the service role to that role. You can grant a service role to an account role, an
     application role, or a database role. For more information, see [Managing service-related privileges](/developer-guide/snowpark-container-services/working-with-services#label-spcs-manage-service-related-privileges).

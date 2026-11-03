@@ -1,9 +1,5 @@
 # Enforce CoCo policy with MDM
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Administrators can deliver CoCo policy through a Mobile Device Management (MDM) system, such as Jamf or Microsoft Intune, so that standard users can’t change or remove it. This applies to the CoCo clients, [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop).
 
 The controls on this page add to the existing permission, sandbox, and UI settings described in [Managed settings (organization policy)](/user-guide/cortex-code/managed-settings). You can deliver them in the same `managed-settings.json` file and system paths, or through an MDM profile.

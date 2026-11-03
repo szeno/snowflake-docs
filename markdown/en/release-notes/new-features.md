@@ -48,6 +48,9 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
+- [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
+- [JDBC Driver (v5.0.0-RC1)](/release-notes/clients-drivers/jdbc-2026)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
@@ -65,6 +68,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
+- [Oct 28, 2026: OpenAI GPT-5.6 Luna, GPT-5.6 Terra, and GPT-6 Luna in AI Functions (Preview)](/release-notes/2026/other/2026-10-28-openai-models-ai-functions-preview)
 - [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
 - [Oct 28, 2026: Streamlit in Snowflake container runtime in China (General availability)](/release-notes/2026/other/2026-10-28-sis-container-runtime-china-ga)
 - [ServiceNow® V2 (v5.29.1)](/release-notes/connectors/servicenow-v2-2026)
@@ -72,9 +76,11 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
 - [Oct 27, 2026: Continuous and bulk file loading with CoCo (General availability)](/release-notes/2026/other/2026-10-27-file-loading-coco-ga)
 - [October 27, 2026: Cortex Code skills for interactive analytics](/release-notes/2026/other/2026-10-27-interactive-cortex-code-skills)
+- [Oct 27, 2026: OpenAI GPT-6.1 Terra (Preview)](/release-notes/2026/other/2026-10-27-openai-gpt-61-terra-preview)
 - [Oct 26, 2026: CoCo Desktop v1.23.0](/release-notes/2026/other/2026-10-26-coco-desktop-v1-23-0)
 - [Oct 26, 2026: Custom error messages for feature policy rules](/release-notes/2026/other/2026-10-26-feature-policy-rule-error-messages)
 - [Oct 26, 2026: Secondary indexes (General availability)](/release-notes/2026/other/2026-10-26-secondary-indexes-ga)
+- [Oct 26, 2026: Autopilot for sensitive data classification (Public Preview)](/release-notes/2026/other/2026-10-26-sensitive-data-classification-autopilot-preview)
 - [Oct 26, 2026: Trust Center, Data Security scanner package (General availability)](/release-notes/2026/other/2026-10-26-trust-center-data-security-scanner-package-ga)
 - [Node.js Driver (v3.4.1)](/release-notes/clients-drivers/nodejs-2026)
 - [Python Connector (v4.8.1)](/release-notes/clients-drivers/python-connector-2026)
@@ -156,6 +162,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 05, 2026: OpenAI GPT-6.1 Sol model (Preview)](/release-notes/2026/other/2026-10-05-openai-gpt-61-sol-preview)
 - [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
 - [Snowpark Python (v1.55.1)](/release-notes/clients-drivers/snowpark-python-2026)
-- [Oct 2, 2026: Snowflake Native Apps: Observability for Cortex Agents](/release-notes/2026/other/2026-10-02-native-apps-agent-observability)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

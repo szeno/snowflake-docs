@@ -599,16 +599,18 @@ and client-side), Error Tables, and Dead Letter Queues, see [Validation and erro
 
 ## Schema evolution
 
-For tables with `ENABLE_SCHEMA_EVOLUTION=TRUE`, the connector automatically evolves their schema, based on the incoming Kafka records. All connector created tables default to `ENABLE_SCHEMA_EVOLUTION=TRUE`.
+For tables with `ENABLE_SCHEMA_EVOLUTION=TRUE`, schema evolution depends on the validation mode. With `snowflake.validation=server_side`, Snowflake infers new-column types from serialized values and evolves the table asynchronously. With `client_side`, the connector uses the converter-provided Kafka Connect schema when available, or infers types from values when it isn’t, and runs evolution DDL before retrying the record. All connector-created tables default to `ENABLE_SCHEMA_EVOLUTION=TRUE`. For mode-specific prerequisites and type mappings, see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode).
 
 Schema evolution is limited to the following operations:
 
-- Adding new columns. The connector will add new columns to the table if the incoming Kafka records contain new fields that are not present in the table.
-- Dropping the NOT NULL constraint from columns that are missing data in the inserted records
+- Adding new top-level columns with supported types when incoming Kafka records contain fields that aren’t present in the table.
+- Dropping `NOT NULL` constraints where supported. Client-side evolution detects missing or null fields; server-side behavior depends on the target table. For server-side Iceberg restrictions, see [Table schema evolution](/user-guide/data-load-schema-evolution).
+
+Neither mode widens existing column types or evolves fields inside structured columns. For Iceberg-specific configuration and type restrictions, see [Schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
 
 ## Using the connector with Apache Iceberg™ tables
 
-The connector can ingest data into a Snowflake-managed Apache Iceberg™ table. You must create the Iceberg table manually before running the connector; the connector doesn’t create Iceberg tables automatically. Server-side schema evolution is supported for Iceberg tables; client-side schema evolution isn’t. For more information, see [Validation and error handling](/user-guide/kafka-connector/validation-error-handling).
+Kafka connector v4 supports ingestion and server-side schema evolution for Snowflake-managed Iceberg v2 and v3 tables. Start with server-side validation (`snowflake.validation=server_side`). Client-side evolution can also add columns to pre-created Iceberg v3 tables with compatible schemas. Starting with version 4.1.0, set `snowflake.autocreate.table.type=iceberg` to auto-create a missing table using server-side validation, or create the table beforehand. For configuration examples and schema evolution limitations, see [Load data into Iceberg tables](/user-guide/kafka-connector/iceberg).
 
 The Iceberg table can use either of the following storage options:
 
@@ -664,6 +666,7 @@ Copy code
 
 ```
 CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+    RECORD_METADATA VARIANT,
     id number(38,0),
     name varchar,
     body_temperature number(4,2),
@@ -674,7 +677,9 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
   )
   EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
   CATALOG = 'SNOWFLAKE'
-  ICEBERG_VERSION = 3;
+  ICEBERG_VERSION = 3
+  ENABLE_SCHEMA_EVOLUTION = TRUE
+  ERROR_LOGGING = TRUE;
 ```
 
 To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and provide a `BASE_LOCATION`:
@@ -683,6 +688,7 @@ To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and pr
 >
 > ```
 > CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+>     RECORD_METADATA VARIANT,
 >     id number(38,0),
 >     name varchar,
 >     body_temperature number(4,2),
@@ -694,25 +700,30 @@ To use your own external volume, set `EXTERNAL_VOLUME` to the volume name and pr
 >   EXTERNAL_VOLUME = 'my_volume'
 >   CATALOG = 'SNOWFLAKE'
 >   BASE_LOCATION = 'my_location/my_iceberg_table'
->   ICEBERG_VERSION = 3;
+>   ICEBERG_VERSION = 3
+>   ENABLE_SCHEMA_EVOLUTION = TRUE
+>   ERROR_LOGGING = TRUE;
 > ```
 >
 > Copy code
 >
 > ```
 > CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
+>     RECORD_METADATA VARIANT,
 >     id INT,
 >     name string,
 >     body_temperature float,
 >     approved_coffee_types array(string),
 >     animals_possessed variant,
 >     date_added date,
->     options object(can_walk boolean, can_talk boolean),
+>     options object(can_walk boolean, can_talk boolean)
 >     )
 >   EXTERNAL_VOLUME = 'my_volume'
 >   CATALOG = 'SNOWFLAKE'
 >   BASE_LOCATION = 'my_location/my_iceberg_table'
->   ICEBERG_VERSION = 3;
+>   ICEBERG_VERSION = 3
+>   ENABLE_SCHEMA_EVOLUTION = TRUE
+>   ERROR_LOGGING = TRUE;
 > ```
 
 Note

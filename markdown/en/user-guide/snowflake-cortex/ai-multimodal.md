@@ -657,12 +657,8 @@ prompt (for example, “what animal is this?”) also contribute to the model’
 | Model | Context window (tokens) | File types | File size | Files per prompt |
 | --- | --- | --- | --- | --- |
 | `openai-gpt-4.1` | 1,047,576 | .jpg, .jpeg, .png, .webp, .gif | 10MB | 5 |
-| `claude-4-opus` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
-| `claude-4-sonnet` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
-| `claude-3-7-sonnet` | 200,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `claude-sonnet-4-6` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `llama4-maverick` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 10 |
-| `llama-4-scout` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 10 |
 | `pixtral-large` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 8 |
 | `voyage-multimodal-3` | 32,768 | .jpg, .png, .pg, .gif, .bmp | 10 MB | 5 |
 | `gemini-3.1-pro` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |

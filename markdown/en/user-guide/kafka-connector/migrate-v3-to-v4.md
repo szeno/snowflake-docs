@@ -54,7 +54,9 @@ and [Offset migration properties](/user-guide/kafka-connector/setup-kafka#label-
 
 Important
 
-Choose your validation mode deliberately. Set `snowflake.validation=client_side` if your source uses a schema registry or a strongly typed schema (for example, Avro or Protobuf), so that columns are created from the declared types. The v4 default, `server_side`, infers column types from the first observed record values and doesn’t use a schema registry, which can silently downgrade a type (for example, a declared `FLOAT64` inferred as `NUMBER(38,0)`, truncating decimals). For more information, see [Validation modes](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode).
+Start with `snowflake.validation=server_side`, the default for standard Snowflake and Snowflake-managed Iceberg tables. This includes standard-table pipelines that don’t need schema evolution. Choose `client_side` for a compatible target schema when you need connector-side type mapping for new columns or client-detected validation errors routed to a Kafka dead-letter queue. Avro or Protobuf records alone don’t require `client_side`. For the pre-created Iceberg v3 path, see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
+
+Pre-create columns when you need exact types or precision in either mode. Server-side evolution infers new-column types from values; client-side evolution can use a converter-provided schema, but its mappings don’t preserve every declared type. For example, Kafka Connect logical decimal fields map to `VARCHAR`. After reviewing the migration settings above, set `snowflake.streaming.validate.compatibility.with.classic=false` before starting a server-side configuration. For details, see [Choose a validation mode](/user-guide/kafka-connector/validation-error-handling#label-kafkahp-choosing-validation-mode) and [Iceberg limitations](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-limitations).
 
 ## Migration paths
 

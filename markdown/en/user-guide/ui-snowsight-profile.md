@@ -96,7 +96,7 @@ To change your password:
 6. Enter a new password, and confirm your new password.
 7. Select **Confirm**.
 
-Your new password must comply with the password policy. See [Snowflake-provided password policy](/user-guide/password-authentication#label-snowflake-password-policy).
+Your new password must comply with the password policy. See [Built-in password policy](/user-guide/password-authentication#label-snowflake-password-policy).
 
 ## Enroll in multi-factor authentication (MFA)
 

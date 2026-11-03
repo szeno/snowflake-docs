@@ -22,6 +22,7 @@ follows:
 ```
 {
    "auto_tag": true | false ,
+   "scheduling_mode": "AUTO" | "CUSTOM" ,
    "maximum_classification_validity_days": <integer>,
    "minimum_object_age_for_classification_days": <integer>
    "column_tag_map": <object>

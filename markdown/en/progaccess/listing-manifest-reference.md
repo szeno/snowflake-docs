@@ -850,6 +850,10 @@ The `access` field is **required** when `external_targets` is specified, and it 
 - `organization`: When creating a private listing, specify the organization name and accounts that can access the listing.
 - `account`: When creating a private listing, specify the organization name and accounts that can access the listing.
 - `all_organizations`: When creating a public listing, set this to `true`.
+- `external_consumers`: An array of [external consumers](/user-guide/open-data-sharing) that can access the listing from outside
+  Snowflake through the Iceberg REST Catalog API. To use this sub-field, the manifest must also include the
+  [`open_sharing`](/progaccess/listing-manifest-reference#label-listing-api-manifest-open-sharing) field. You can combine `external_consumers` with `organization` entries
+  in the same `access` list.
 
 ### `external_targets` examples
 
@@ -875,6 +879,22 @@ The follow example shows how to use `external_targets` to share public listings.
 > external_targets:
 >   access:
 >     - all_organizations: true
+> . . .
+> ```
+
+The following example shares a listing with a Snowflake account and two external consumers:
+
+> Copy code
+>
+> ```
+> . . .
+> open_sharing:
+>   catalog_identifier: "my-listing-catalog"
+> external_targets:
+>   access:
+>     - organization: OrgName2
+>       accounts: [acc1]
+>     - external_consumers: [ACME_CONSUMER, EU_CONSUMER]
 > . . .
 > ```
 
@@ -973,6 +993,34 @@ offers:
   - name: PRICING_PLAN_1_DEFAULT_OFFER
     type: FILE
     path: offers/PRICING_PLAN_1_DEFAULT_OFFER.yaml
+. . .
+```
+
+## `open_sharing`
+
+The `open_sharing` field makes the listing available to external consumers outside Snowflake through the Iceberg REST Catalog API.
+It’s required when `external_targets.access` includes `external_consumers`. For more information, see
+[Share data with non-Snowflake consumers](/user-guide/open-data-sharing).
+
+The `open_sharing` field includes the following sub-field:
+
+- `catalog_identifier` (String): The identifier for the listing’s open-sharing catalog. Snowflake uses this value as the prefix of
+  the catalog name that external consumers connect to. To get the full catalog name, call
+  [SYSTEM$GET\_LISTING\_URL\_FOR\_EXTERNAL\_CONSUMER](/sql-reference/functions/system_get_listing_url_for_external_consumer).
+
+External consumers can read only the Snowflake-managed Iceberg tables in the listing’s share.
+
+### `open_sharing` example
+
+Copy code
+
+```
+. . .
+open_sharing:
+  catalog_identifier: "my-listing-catalog"
+external_targets:
+  access:
+    - external_consumers: [ACME_CONSUMER]
 . . .
 ```
 

@@ -49,14 +49,14 @@ contextualized document summarization, and technical report exploration.
 
 ![Title page of "Breaking the Gridlock" EU report](/static/images/cortex-functions/breaking-the-gridlock.png)
 
-The following example uses Anthropic’s Claude Opus 4 model to analyze data represented in a chart within the context of
+The following example uses Anthropic’s Claude Sonnet 5 model to analyze data represented in a chart within the context of
 the document `hdr2023-24snapshoten.pdf` stored in the `@docs` stage.
 
 Copy code
 
 ```
 SELECT AI_COMPLETE(
-  MODEL => 'claude-4-opus',
+  MODEL => 'claude-sonnet-5',
   PROMPT => PROMPT('Compare the distributions of HDI in each group: low HDI group, medium HDI group, high HDI group and very high HDI group visualized in {0}', TO_FILE('@docs', 'hdr2023-24snapshoten.pdf'))
 );
 ```
@@ -101,7 +101,7 @@ categories showing much stronger recovery rates than those in lower HDI categori
 
 ![First page of EU Resolution 1008/2008](/static/images/cortex-functions/eu-resolution-1008-2008.png)
 
-The following example uses Anthropic’s Claude Sonnet 4 model to extract the summary of a legal text with a complex
+The following example uses Anthropic’s Claude Opus 5 model to extract the summary of a legal text with a complex
 layout. The document `CELEX_32008R1008_EN_TXT.pdf` is stored inthe @docs stage; the prompt narrows the summarization
 context.
 
@@ -109,7 +109,7 @@ Copy code
 
 ```
 SELECT AI_COMPLETE(
-  MODEL => 'claude-4-sonnet',
+  MODEL => 'claude-opus-5',
   PROMPT => PROMPT('summarize the changes from the perspective of private aviation {0}', TO_FILE('@docs', 'CELEX_32008R1008_EN_TXT.pdf'))
 );
 ```
@@ -203,8 +203,6 @@ model’s context window.
 | `gemini-3.1-pro` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 3,000 | 20 |
 | `gemini-3.1-flash-lite` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `gemini-3.5-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
-| `claude-4-sonnet` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
-| `claude-4-opus` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-haiku-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-sonnet-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-opus-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
@@ -249,9 +247,6 @@ benchmark is used for evaluating model capabilities in multimodal and long conte
 
 | Model | MMLongBench-Doc score |
 | --- | --- |
-| claude-3-7-sonnet | 52.8% |
-| claude-4-sonnet | 50.2% |
-| claude-4-opus | 53.0% |
 | claude-haiku-4-5 | 48.9% |
 | claude-sonnet-4-5 | 61.4% |
 | claude-opus-4-5 | 63.8% |

@@ -561,7 +561,7 @@ WITH transcriptions AS
 SELECT
     AI_SENTIMENT(transcribed_call, ['Professionalism', 'Resolution',
         'Wait Time', 'Market Conditions']) AS call_sentiment,
-    AI_COMPLETE('claude-4-opus', CONCAT('Summarize how the agent can improve in 50 words',
+    AI_COMPLETE('claude-sonnet-5', CONCAT('Summarize how the agent can improve in 50 words',
         transcribed_call)) AS agent_assessment
 FROM transcriptions
 ```

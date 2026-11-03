@@ -10,11 +10,6 @@ When you share data as a provider, you can do the following:
   See [Set up a provider profile](#label-creating-provider-profile-marketplace).
 - Charge consumers for access to listings within Snowflake. See [Set up Stripe to get paid for listings](#label-set-up-stripe-listings).
 
-Every private paid listing can have a price per consumer. If the trial and purchase price
-for a listing differ, Snowflake recommends changing the price of the existing listing
-so the consumer doesn’t need to reinstall the listing.
-To learn more about listing monetization, see [Paid listings pricing models](/collaboration/provider-listings-pricing-model).
-
 ## Requirements to become a provider
 
 To offer listings to consumers privately or on the Snowflake Marketplace, you must meet the following requirements:
@@ -118,13 +113,10 @@ See [Legal requirements for providers and consumers of listings](/collaboration/
 
 ## Provide paid listings
 
-To publish paid listings to consumers privately or on the Snowflake Marketplace, do the following:
+To publish paid listings on the Snowflake Marketplace, do the following:
 
 1. Make sure that your account is eligible to provide paid listings. See [Who can provide paid listings](#label-monetization-provider-region-support).
-2. Before creating a paid listing that you want to publish on the Snowflake Marketplace, contact your business development partner at Snowflake.
-   If you do not have a business development partner, use the **Contact Marketplace Operations** button in
-   [Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING
-   privilege. This step is required for listing approval.
+2. Create a provider profile and submit it for approval. See [Set up a provider profile](#label-creating-provider-profile-marketplace).
 3. Set up a payout method to get paid for listings. See [Set up Stripe to get paid for listings](#label-set-up-stripe-listings).
 
 Note
@@ -225,5 +217,3 @@ To enroll in the MCD program, consumers can opt-in by submitting an MCD program 
 
 A consumer can apply an unused MCD program balance to their service consumption payment. Any invoice that *exceeds* the consumer’s MCD program balance must be paid in
 full using other payment methods such as a credit card, ACH transfer, wire transfer or a SWIFT transfer. The consumer’s MCD program balance is applied first and then one of their alternate listed payment methods is used to pay any remaining balance.
-
-Every private paid listing can have a price per consumer. If the trial and purchase price for a listing differ, Snowflake recommends that you change the price of the existing listing so that the consumer doesn’t need to reinstall the listing. For more information about listing monetization, see [Paid listings pricing models](/collaboration/provider-listings-pricing-model).

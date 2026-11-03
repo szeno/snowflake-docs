@@ -27,6 +27,8 @@ and will give you a good idea of what a state-of-the-art model can do.
 
 - `claude-sonnet-5-5` (Public Preview) is Anthropic’s latest Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. It requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
 - `claude-sonnet-5` is Anthropic’s Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. With a 1,000,000-token context window and up to 64,000 output tokens, it’s well-suited for agentic workflows and for analyzing large inputs in a single call.
+- `openai-gpt-5.6-terra` (Public Preview) is OpenAI’s balanced model for everyday production work, suited to code generation, content workflows, structured data extraction, and general-purpose agentic tasks. With a 1,050,000-token context window and up to 128,000 output tokens, it handles large inputs in a single call. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
+- `openai-gpt-6.1-terra` (Public Preview) is OpenAI’s GPT-6.1 balanced model. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud).
 - `llama3.3-70b` is an open source model that demonstrates state-of-the-art performance ideal for chat applications,
   content creation, and enterprise applications. It is a highly performant, cost effective model that enables diverse use
   cases with a context window of 128K. `llama3-70b` is still supported and has a context window of 8K.
@@ -34,6 +36,8 @@ and will give you a good idea of what a state-of-the-art model can do.
 ### Small models
 
 - `claude-haiku-4-5` is Anthropic’s fast and cost-efficient Claude Haiku model, optimized for low-latency, high-throughput workloads. With a 200,000-token context window and up to 64,000 output tokens, it’s well-suited for simple summarization, classification, and question-answering tasks where speed and cost matter more than top-tier reasoning.
+- `openai-gpt-6-luna` (Public Preview) is OpenAI’s model for repeatable work at scale, such as summarizing documents, extracting information, and answering focused questions. It accepts text and images, has a 1,050,000-token context window and up to 128,000 output tokens, and supports adjustable reasoning effort. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
+- `openai-gpt-5.6-luna` (Public Preview) is OpenAI’s fast, low-cost model for high-volume tasks like classification, summarization, and routing, where latency and cost per token matter most. It has a 1,050,000-token context window and up to 128,000 output tokens. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
 - `openai-gpt-5-mini` is OpenAI’s small, fast variant of the GPT-5 family, designed for low-latency tasks where quick responses matter more than top-tier reasoning. It has a 272,000-token context window and up to 8,192 output tokens. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from Azure US).
 - `llama3.1-8b` is ideal for tasks that require low to moderate reasoning. It’s a light-weight, ultra-fast model with a context window
   of 128K. `llama3-8b` provides a smaller context window and relatively lower accuracy.
@@ -80,6 +84,9 @@ In the AWS Europe West 1 (Ireland) region:
 |  | `claude-opus-4-5` | 200,000 | 64,000 |
 |  | `claude-sonnet-4-5` | 200,000 | 64,000 |
 |  | `claude-haiku-4-5` | 200,000 | 64,000 |
+|  | `openai-gpt-6-luna` | 1,050,000 | 128,000 |
+|  | `openai-gpt-5.6-terra` | 1,050,000 | 128,000 |
+|  | `openai-gpt-5.6-luna` | 1,050,000 | 128,000 |
 |  | `openai-gpt-5.4-mini` | 400,000 | 128,000 |
 |  | `openai-gpt-5.4-nano` | 400,000 | 128,000 |
 |  | `openai-gpt-5.1` | 272,000 | 8,192 |
@@ -157,12 +164,13 @@ The following functions and models are available in any region via [cross-region
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
 | `openai-gpt-6.1-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6.1-terra` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-luna` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-terra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-luna` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-terra` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-5.6-luna` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.4` | ✔ |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ | ✔ |  |
 | `openai-gpt-5.4-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
@@ -186,7 +194,7 @@ The following functions and models are available in any region via [cross-region
 | `qwen3-32b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-next-80b-a3b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
 | `qwen3-vl-235b-a22b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
-| `snowflake-decision-fast` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `snowflake-decision-fast` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
 | `mistral-large3` | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |
 | `mistral-large2 [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
 | `mixtral-8x7b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |

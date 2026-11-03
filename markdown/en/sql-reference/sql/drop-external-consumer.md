@@ -1,11 +1,6 @@
 # DROP EXTERNAL CONSUMER
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-Removes an external consumer from the account. Dropping an external consumer immediately revokes access for any listings
-that were shared with that consumer.
+Removes an external consumer from the account. You can’t drop an external consumer while any listing targets it.
 
 See also:
 :   [CREATE EXTERNAL CONSUMER](/sql-reference/sql/create-external-consumer) ,
@@ -50,9 +45,22 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- Dropping an external consumer revokes access to all listings shared with that consumer. The listings themselves are not affected.
-- All Programmatic Access Tokens associated with the external consumer are invalidated when the consumer is dropped.
-- Dropped external consumers cannot be recovered.
+- You can’t drop an external consumer while any listing targets it in `external_targets.access.external_consumers`. This applies
+  to published and unpublished listings. The command fails with an error that names the listings, for example:
+
+  Copy code
+
+  ```
+  Cannot drop external consumer 'ACME_CONSUMER' because it is targeted by active listing(s), please retarget or drop those listings then retry. Listings (showing 1 of 1): ACME_LISTING
+  ```
+
+  To drop the external consumer, first do one of the following for each listing named in the error:
+
+  - Remove the external consumer from the listing’s `external_targets` by using [ALTER LISTING](/sql-reference/sql/alter-listing).
+  - Drop the listing by using [DROP LISTING](/sql-reference/sql/drop-listing). You must unpublish a published listing before you can drop it.
+- All programmatic access tokens (PATs) and workload identities associated with the external consumer are dropped when the consumer
+  is dropped.
+- Dropped external consumers can’t be recovered.
 
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully
   without returning an error.
@@ -73,4 +81,26 @@ Copy code
 
 ```
 DROP EXTERNAL CONSUMER IF EXISTS acme_consumer;
+```
+
+Remove an external consumer from a listing, and then drop it. In this example, `acme_listing` targets `acme_consumer` and
+`other_consumer`. The listing is updated to target only `other_consumer`:
+
+Copy code
+
+```
+ALTER LISTING acme_listing AS
+$$
+title: "Acme listing"
+description: "Shared with external consumers"
+open_sharing:
+  catalog_identifier: "acme-listing-catalog"
+listing_terms:
+  type: "OFFLINE"
+external_targets:
+  access:
+    - external_consumers: [OTHER_CONSUMER]
+$$;
+
+DROP EXTERNAL CONSUMER acme_consumer;
 ```

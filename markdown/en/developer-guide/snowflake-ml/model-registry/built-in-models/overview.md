@@ -14,5 +14,6 @@ The Snowflake Model Registry supports the following built-in model types:
 - [MLFlow PyFunc](/developer-guide/snowflake-ml/model-registry/built-in-models/mlflow)
 - [Sentence Transformer](/developer-guide/snowflake-ml/model-registry/built-in-models/sentence-transformer)
 - [Hugging Face pipeline](/developer-guide/snowflake-ml/model-registry/built-in-models/hugging-face)
+- [LoRA adapters](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters)
 
 Other types of models are supported via the `snowflake.ml.model.CustomModel` class (see [Bring your own model types via serialized files](/developer-guide/snowflake-ml/model-registry/bring-your-own-model-types))

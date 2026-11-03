@@ -991,6 +991,10 @@ has the following inputs and outputs.
 
 By providing the `snowflake.ml.model.openai_signatures.OPENAI_CHAT_SIGNATURE` signature, while logging the model, the model will be compatible with the OpenAI API. This allows the users to pass *openai.client.ChatCompletion* style requests to the model.
 
+To use this version as the base for [LoRA adapters](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters),
+log it with `OPENAI_CHAT_WITH_PARAMS_SIGNATURE` instead, so callers can select an adapter with `model`. Log the
+adapters themselves with :class:`~snowflake.ml.model.PeftAdapter`.
+
 Note
 
 Text generation pipelines where `return_tensors` is True are not supported.

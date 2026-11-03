@@ -44,7 +44,7 @@ As an SAP® administrator, perform the following steps:
 
 A pop-up window opens that provides an activation link to the SAP Snowflake account.
 If you are the SAP Snowflake system owner, select this link and complete the activation flow
-in SAP Snowflake (see [Activating the SAP Snowflake Account](https://help.sap.com/docs/business-data-cloud/sap-snowflake/introducing-sap-snowflake)).
+in SAP Snowflake (see [Activating the SAP Snowflake Account](https://help.sap.com/docs/business-data-cloud/sap-snowflake/f4672900f59e4b878a3be16606f7d3e6)).
 
 If not, share the activation link with the SAP Snowflake owner and ask them to complete the activation flow.
 

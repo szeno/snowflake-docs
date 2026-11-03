@@ -20,26 +20,6 @@ For step-by-step examples, see the following developer guides:
 - [DCM Projects for dynamic tables](https://www.snowflake.com/en/developers/guides/dcm-projects-for-dynamic-tables/)
 - [DCM Projects for tasks](https://www.snowflake.com/en/developers/guides/dcm-projects-for-tasks/)
 
-## Pipelines that combine multiple object types
-
-A single DCM project can define a pipeline that spans ingestion, transformation, orchestration, and the semantic layer, so you can
-plan and deploy all of its objects together:
-
-- **Ingestion:** Define [pipes](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-pipe) to load data
-  and [streams](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-stream) to capture changes.
-- **Declarative transformation:** Define
-  [dynamic tables](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-dynamic-table) and views.
-- **Orchestration:** Define [tasks](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task) and task
-  graphs that schedule and run the following:
-  - [Procedures](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-procedure).
-  - [Code Bundles](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle) (preview), which
-    package notebooks and other non-SQL code that the DCM project defines and deploys.
-  - dbt models or entire dbt projects, by running [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
-  - Manual refreshes of dynamic tables.
-- **Semantic layer:** Define
-  [semantic views](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-semantic-view) on top of the
-  transformed data.
-
 ## Pipeline Builder
 
 [Preview Feature](/release-notes/preview-features) — Open
@@ -49,7 +29,7 @@ Available to all accounts.
 [Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-overview) is a visual, AI-assisted designer in Workspaces for
 defining the scheduling and orchestration of data pipelines. You add notebooks, Python files, ML Jobs, and SQL to a canvas, connect
 them to set the order they run in, and configure schedules and compute. Pipeline Builder then generates the tasks, task graphs, and
-Code Bundles for you.
+Code Bundles for you. Pipeline Builder currently supports task-based pipelines that execute notebooks, Python files, ML Jobs, and SQL.
 
 Each pipeline that you build in Pipeline Builder is a DCM project, so you can start with Pipeline Builder to simplify creating and
 configuring the project, and then switch to the DCM Projects interface to extend and configure the same project manually. For example, you
@@ -69,13 +49,25 @@ Pipeline Builder, tasks and scheduling dependencies that are defined in SQL defi
 For details about building and deploying pipelines, see [Build and configure pipelines with Pipeline Builder](/user-guide/pipeline-builder/pipeline-builder-build) and
 [Deploy, run, and monitor pipelines](/user-guide/pipeline-builder/pipeline-builder-deploy).
 
-## Recommendations for pipeline objects
+## Pipelines that combine multiple object types
 
-- **Dynamic tables:** Define dynamic tables with `INITIALIZE = ON_SCHEDULE` rather than `INITIALIZE = ON_CREATE`. With `ON_CREATE`, each
-  new dynamic table is initialized during deployment, which can significantly prolong the deployment.
-- **Tasks and task graphs:** Specify the target state of each task as `STARTED` or `SUSPENDED` in its definition. Newly deployed tasks
-  are suspended by default, so tasks that should run on their schedule after deployment need the `STARTED` target state. For details,
-  see [Task](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task).
+A single DCM project can define a pipeline that spans ingestion, transformation, orchestration, and the semantic layer, so you can
+plan and deploy all of its objects together:
+
+- **Ingestion:** Define [pipes](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-pipe) to load data
+  and [streams](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-stream) to capture changes.
+- **Declarative transformation:** Define
+  [dynamic tables](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-dynamic-table) and views.
+- **Orchestration:** Define [tasks](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task) and task
+  graphs that schedule and run the following:
+  - [Procedures](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-procedure).
+  - [Code Bundles](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-code-bundle) (preview), which
+    package notebooks and other non-SQL code that the DCM project defines and deploys.
+  - dbt models or entire dbt projects, by running [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
+  - Manual refreshes of dynamic tables.
+- **Semantic layer:** Define
+  [semantic views](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-semantic-view) on top of the
+  transformed data.
 
 ## Pipeline-specific commands
 
@@ -185,3 +177,13 @@ Copy code
 ```
 snow dcm preview --object DCM_PROJECT_DEV.SERVE.V_DASHBOARD_KPI_SUMMARY --limit 100
 ```
+
+## Recommendations for pipelines
+
+- **Separate deployments from data transformation runs:** Keep infrastructure deployment and metadata changes (DDL statements)
+  separate from data transformation runs (DML statements). Dynamic tables are one example: define them with
+  `INITIALIZE = ON_SCHEDULE` rather than `INITIALIZE = ON_CREATE`. With `ON_CREATE`, each new dynamic table is initialized during
+  deployment, which can significantly prolong the deployment.
+- **Tasks and task graphs:** Specify the target state of each task as `STARTED` or `SUSPENDED` in its definition. Newly deployed tasks
+  are suspended by default, so tasks that should run on their schedule after deployment need the `STARTED` target state. For details,
+  see [Task](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-task).

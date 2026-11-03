@@ -66,6 +66,31 @@ classification profile also controls which databases are being classified with t
 You can also [use SQL commands](/user-guide/classify-auto) to create and modify a classification profile. If you are using SQL,
 associating the classification profile with a database to start the classification process is a separate step.
 
+### Autopilot
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to Enterprise Edition or higher.
+
+**Autopilot** is the default configuration for sensitive data classification. It lets Snowflake manage when objects are classified and
+reclassified so you get an optimized classification experience without tuning schedules or minimum object age. Snowflake automatically
+manages classification timing, reclassification schedules, and minimum object age to optimize performance and cost.
+
+When Autopilot is enabled, Snowflake does the following:
+
+- Classifies new objects shortly after they’re created, instead of waiting for a `minimum_object_age_for_classification_days` threshold.
+- Reuses classification results when a CREATE OR REPLACE replaces an existing table.
+- Reclassifies objects on the existing reclassification cadence in 30 days.
+
+Use Autopilot to get the latest optimizations for classification.
+
+Autopilot is selected by default when you [set up classification with advanced settings](/user-guide/classify-ui-trust-center#label-classify-trust-center-advanced)
+in the Trust Center. If you don’t want to use it, turn it off and set the schedule and minimum object age yourself.
+
+When you create a classification profile with SQL, Autopilot is already on. To turn it off, set `'scheduling_mode': 'CUSTOM'`. To turn
+Autopilot back on, call [<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode). For more information, see
+[Use Autopilot in a classification profile](/user-guide/classify-auto#label-classify-auto-autopilot).
+
 ### AI mode
 
 [Preview Feature](/release-notes/preview-features) — Open

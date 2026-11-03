@@ -9,7 +9,7 @@ Checking availability programmatically
 
 Run `SHOW CORTEX BASE MODELS IN SCHEMA SNOWFLAKE.MODELS` to see the models your current role can use, including their release stage and cross-region scopes. See [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models).
 
-✔ GA. \* Public preview. \*\* Private preview, available only to accounts that Snowflake has enabled. Legacy: only accounts that already used the model can keep calling it. Preview models aren’t suitable for production workloads. A blank cell means the model isn’t available there.
+✔ GA. \* Public preview. \*\* Private preview, available only to accounts that Snowflake has enabled. Legacy: only accounts that already used the model can keep calling it, until its end-of-life date. See [Model lifecycle: legacy and end-of-life](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-model-lifecycle). Preview models aren’t suitable for production workloads. A blank cell means the model isn’t available there.
 
 † Azure US FedRAMP High Plus accounts reach these models through cross-region inference, with processing on AWS in the United States. See [US FedRAMP High and DoD gov regions](/user-guide/snowflake-cortex/cross-region-inference#label-cortex-cross-region-fedramp-dod).
 
@@ -85,6 +85,8 @@ Show lessSee more
 | `llama3.3-70b` | ✔ |  |  |  |  |
 | `llama3.1-70b` | Legacy | Legacy |  |  |  |
 | `llama3.1-8b` | ✔ | ✔ |  |  |  |
+| `llama3-70b` | Legacy |  |  |  |  |
+| `llama3-8b` | Legacy |  |  |  |  |
 
 Expand
 
@@ -136,15 +138,20 @@ Show lessSee more
 
 ### OpenAI
 
+Note
+
+Availability of `openai-gpt-5.6-luna`, `openai-gpt-5.6-sol`, `openai-gpt-5.6-terra`, and later OpenAI models can vary by account because of model provider requirements. If a request fails with the error `Due to model provider requirements, this account is not eligible for this model at this time.`, contact [Snowflake Support](/user-guide/contacting-support).
+
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo |
 | --- | --- | --- | --- | --- | --- |
 | `openai-gpt-6.1-sol` | \*\* | \* | \* |  | \* |
+| `openai-gpt-6.1-terra` | \* | \* |  |  |  |
 | `openai-gpt-6-astra` | \*\* | ✔ | \*\* |  | \*\* |
-| `openai-gpt-6-sol` | \*\* | \* | \* |  |  |
-| `openai-gpt-6-luna` | \*\* | \* | \* |  |  |
-| `openai-gpt-5.6-sol` | \*\* | ✔ | \*\* |  | \*\* |
-| `openai-gpt-5.6-terra` | \*\* | ✔ | \*\* |  | \*\* |
-| `openai-gpt-5.6-luna` | \*\* | ✔ | \*\* |  | \*\* |
+| `openai-gpt-6-sol` | \*\* | \* | \* |  | \* |
+| `openai-gpt-6-luna` | \* | \* | \* |  | \* |
+| `openai-gpt-5.6-sol` | \*\* | ✔ | \* |  | \* |
+| `openai-gpt-5.6-terra` | \* | ✔ | \* |  | \* |
+| `openai-gpt-5.6-luna` | \* | ✔ | \* |  | \* |
 | `openai-gpt-5.5` | \*\* | \*\* | \*\* |  | \*\* |
 | `openai-gpt-5.4` | ✔ | ✔ | ✔ | ✔ | ✔ |
 | `openai-gpt-5.4-mini` | ✔ |  |  |  |  |
@@ -486,6 +493,7 @@ Cross-regionNorth America
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | `openai-gpt-6.1-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6.1-terra` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-luna` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
@@ -523,7 +531,7 @@ Cross-regionNorth AmericaSouth AmericaEuropeAsia-Pacific
 
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `snowflake-decision-fast` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `snowflake-decision-fast` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ | ✔ |
 | `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ | ✔ |
 | `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ | ✔ |

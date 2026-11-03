@@ -40,6 +40,9 @@ If your requirement is instead to delegate the ability to decide which roles rec
   `GRANT INHERITED <privilege> ON ALL <object_type_plural> IN <container>` replaces multiple grants for existing and new
   objects. Adding a new object to a container, such as a new table in a database, requires no follow-up grant
   administration.
+- **Faster object listing at scale:** When a role’s access comes from an inherited grant on a container, Snowflake
+  resolves that access once at the container instead of checking grants on each object. Commands such as `SHOW TABLES`
+  run faster than with per-object direct grants, and the time saved grows with the number of contained objects.
 - **Reduce grant proliferation and simplify role hierarchy:** One inherited grant takes the place of many individual
   records. Inherited grants allow access to be managed at the container level instead of using object-specific roles.
   This simplifies the grant catalog and the role hierarchy complexity, making role-based access easier to reason about

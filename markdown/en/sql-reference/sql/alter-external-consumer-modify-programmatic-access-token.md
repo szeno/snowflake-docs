@@ -1,9 +1,5 @@
 # ALTER EXTERNAL CONSUMER … MODIFY PROGRAMMATIC ACCESS TOKEN (PAT)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Modifies the properties of a Programmatic Access Token (PAT) for an external consumer.
 
 See also:

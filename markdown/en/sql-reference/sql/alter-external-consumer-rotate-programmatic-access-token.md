@@ -1,9 +1,5 @@
 # ALTER EXTERNAL CONSUMER … ROTATE PROGRAMMATIC ACCESS TOKEN (PAT)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Rotates a Programmatic Access Token (PAT) for an external consumer, generating a new token secret and expiring the existing one.
 The new secret uses the same `DAYS_TO_EXPIRY` value set when the token was first created.
 

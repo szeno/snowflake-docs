@@ -200,6 +200,7 @@ Snowflake supports the following Asia Pacific and China regions:
 | **Microsoft Azure** | | | |
 | Microsoft Azure | australiaeast | Australia East (New South Wales) | Completed assessment and supports compliance with IRAP - Protected |
 | centralindia | Central India (Pune) |  |
+| eastasia | East Asia (Hong Kong) |  |
 | japaneast | Japan East (Tokyo) | Completed assessment and supports compliance with ISMAP |
 | koreacentral | Korea Central (Seoul) |  |
 | southeastasia | Southeast Asia (Singapore) |  |

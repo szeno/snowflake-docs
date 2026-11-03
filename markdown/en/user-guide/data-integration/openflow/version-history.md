@@ -6,6 +6,12 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## October 30, 2026
+
+### Control Plane Core 0.139.2
+
+- Fixed an issue that could prevent connectors with queued data from being terminated or deleted.
+
 ## October 29, 2026
 
 ### Control Plane Core 0.139.1

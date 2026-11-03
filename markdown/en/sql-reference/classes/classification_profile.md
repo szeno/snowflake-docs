@@ -15,6 +15,7 @@ Allows you to set up sensitive data classification so the tables in a schema are
 ## CLASSIFICATION\_PROFILE methods
 
 - [<classification\_profile\_name>!DESCRIBE](/sql-reference/classes/classification_profile/methods/describe)
+- [<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode)
 - [<classification\_profile\_name>!SET\_AI\_MODE](/sql-reference/classes/classification_profile/methods/set_ai_mode)
 - [<classification\_profile\_name>!SET\_AUTO\_TAG](/sql-reference/classes/classification_profile/methods/set_auto_tag)
 - [<classification\_profile\_name>!SET\_CLASSIFY\_VIEWS](/sql-reference/classes/classification_profile/methods/set_classify_views)

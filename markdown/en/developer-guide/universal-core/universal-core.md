@@ -91,9 +91,9 @@ The Universal Core is being rolled out across Snowflake drivers progressively. T
 
 | Driver | Universal Core status | How it ships |
 | --- | --- | --- |
-| Python (`snowflake-connector-python`) | Generally available | Same package |
+| Python (`snowflake-connector-python` 5.x) | Generally available | Same package |
 | ODBC (Snowflake ODBC Driver 4.x) | Generally available | New major version, 4.x; replaces 3.x on the machine |
-| JDBC | Private preview | New Maven artifacts, `snowflake-jdbc-native` and `snowflake-jdbc-native-all` |
+| JDBC (Snowflake JDBC Driver 5.x) | Public preview | `snowflake-jdbc-native` with a platform classifier. `snowflake-jdbc-native-all` bundles every platform. See [Migrating from JDBC Driver 4.x to 5.x](/developer-guide/jdbc/jdbc-migrate-5x). |
 | Node.js | Planned |  |
 | .NET | Planned |  |
 | Go | Planned |  |
@@ -103,4 +103,4 @@ Expand
 
 Show lessSee more
 
-Each driver’s own documentation page notes its Universal Core status. For ODBC 4.x, see [Migrating from ODBC Driver 3.x to 4.x](/developer-guide/odbc/odbc-migration). For drivers currently in preview, see the driver-specific Universal Core page for installation instructions, known behavior differences, and migration guidance.
+Each driver’s own documentation page notes its Universal Core status. For ODBC 4.x, see [Migrating from ODBC Driver 3.x to 4.x](/developer-guide/odbc/odbc-migration). For the Snowflake Connector for Python, see [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade). For JDBC Driver 5.x, see [Migrating from JDBC Driver 4.x to 5.x](/developer-guide/jdbc/jdbc-migrate-5x).

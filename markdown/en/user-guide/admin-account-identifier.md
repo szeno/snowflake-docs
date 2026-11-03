@@ -391,6 +391,7 @@ If your account locator is `xy12345`:
 | Switzerland North (Zurich) | `xy12345.switzerland-north.azure` |  |
 | UAE North (Dubai) | `xy12345.uae-north.azure` |  |
 | Central India (Pune) | `xy12345.central-india.azure` |  |
+| East Asia (Hong Kong) | `xy12345.east-asia.azure` |  |
 | Japan East (Tokyo) | `xy12345.japan-east.azure` |  |
 | Korea Central (Seoul) | `xy12345.korea-central.azure` |  |
 | Southeast Asia (Singapore) | `xy12345.southeast-asia.azure` |  |
@@ -504,6 +505,7 @@ The following table displays the complete list of Snowflake Region IDs:
 | Switzerland North (Zurich) | `switzerlandnorth` | `azure_switzerlandnorth` |  |
 | UAE North (Dubai) | `uaenorth` | `azure_uaenorth` |  |
 | Central India (Pune) | `centralindia` | `azure_centralindia` |  |
+| East Asia (Hong Kong) | `eastasia` | `azure_eastasia` |  |
 | Japan East (Tokyo) | `japaneast` | `azure_japaneast` |  |
 | Korea Central (Seoul) | `koreacentral` | `azure_koreacentral` |  |
 | Southeast Asia (Singapore) | `southeastasia` | `azure_southeastasia` |  |

@@ -593,3 +593,36 @@ GRANT MONITOR USAGE ON ACCOUNT TO ROLE custom;
 
 GRANT IMPORTED PRIVILEGES ON DATABASE snowflake TO ROLE custom;
 ```
+
+## SNOWFLAKE.PUBLIC and SNOWFLAKE.APP\_PUBLIC
+
+Snowflake uses the `SNOWFLAKE.PUBLIC` and `SNOWFLAKE.APP_PUBLIC` application roles to provide selected capabilities broadly. These roles are different from the account-level `PUBLIC` role.
+
+- `SNOWFLAKE.PUBLIC` is granted to the account-level `PUBLIC` role, so every user in the account receives its capabilities. Snowflake manages the role. You can revoke an individual capability only when Snowflake marks that capability as administrator-revocable.
+- `SNOWFLAKE.APP_PUBLIC` applies to installed Snowflake Native Apps. Snowflake activates this application role automatically when an application runs. Consumers can’t revoke individual capabilities from it.
+
+To view the capabilities that are currently enabled, run:
+
+Copy code
+
+```
+SHOW GRANTS TO APPLICATION ROLE SNOWFLAKE.PUBLIC;
+
+SHOW GRANTS TO APPLICATION ROLE SNOWFLAKE.APP_PUBLIC;
+```
+
+To revoke or restore an administrator-revocable capability on `SNOWFLAKE.PUBLIC`, a role with the `SNOWFLAKE.SNOWFLAKE_PUBLIC_GRANT_ADMIN` application role calls [SNOWFLAKE.LOCAL.REVOKE\_FROM\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_revoke_from_public_application_role) or [SNOWFLAKE.LOCAL.GRANT\_TO\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_grant_to_public_application_role). For example:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+CALL SNOWFLAKE.LOCAL.REVOKE_FROM_PUBLIC_APPLICATION_ROLE('PRIVILEGE', 'USE_AI_FUNCTIONS');
+```
+
+Not every capability that `SHOW GRANTS` lists is administrator-revocable; the stored procedure returns an error for those that aren’t. When you revoke a capability, users who receive it only through `SNOWFLAKE.PUBLIC` lose it, so grant it directly to the roles that still need it first.
+
+A revoked capability stays revoked across Snowflake upgrades until you restore it. Use these stored procedures instead of `REVOKE` statements, which don’t remove capabilities from `SNOWFLAKE.PUBLIC` or persist across upgrades. Revoking a capability from `SNOWFLAKE.PUBLIC` doesn’t remove it from `SNOWFLAKE.APP_PUBLIC`, so installed Snowflake Native Apps keep it.
+
+For the initial set of capabilities on `SNOWFLAKE.APP_PUBLIC`, see [Snowflake Native Apps: Bootstrap core Snowflake capabilities to native applications](/release-notes/bcr-bundles/un-bundled/bcr-2437).

@@ -4,7 +4,16 @@ This topic describes how the Snowflake Connector for Kafka validates data and ha
 
 ## Validation modes
 
-The connector supports two validation modes, controlled by the `snowflake.validation` configuration property.
+Start with server-side validation (`snowflake.validation=server_side`, the default). Use it for standard Snowflake tables, including pipelines that don’t need schema evolution, and for Snowflake-managed Iceberg tables.
+
+Choose a mode based on the target table and your type or error-routing requirements. Using Avro or Protobuf alone doesn’t require client-side validation:
+
+- **Standard Snowflake table, no connector-side type or error-routing requirement:** Use `server_side`.
+- **Standard Snowflake table, new columns should use declared schema types:** Use `client_side`, subject to the type mappings described in [Client-side validation](#label-kafkahp-client-side-validation), or pre-create the columns and use `server_side`.
+- **Standard Snowflake table, client-detected validation errors must go to a Kafka dead-letter queue:** Use `client_side`.
+- **Snowflake-managed Iceberg table:** Start with `server_side`. A pre-created Iceberg v3 table with a compatible schema can also use client-side evolution; see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution). Iceberg auto-creation with `snowflake.autocreate.table.type=iceberg` requires `server_side`.
+
+The `snowflake.validation` configuration property controls the mode. Schema evolution also requires the appropriate table settings and privileges; selecting a validation mode alone doesn’t enable it.
 
 ### Server-side validation (default)
 
@@ -14,7 +23,7 @@ Copy code
 snowflake.validation=server_side
 ```
 
-With server-side validation, data is sent to Snowflake without client-side type checking.
+With server-side validation, the connector doesn’t validate rows against the target table’s column types before sending them to Snowflake. Kafka converters still deserialize records and can enforce the source schema.
 The Snowflake backend performs validation and schema evolution, aligned with the behavior of
 COPY and Snowpipe.
 
@@ -27,17 +36,18 @@ COPY and Snowpipe.
 
 Important
 
-With server-side validation, the connector infers column types after serializing each record to JSON. As a result:
+With server-side schema evolution, Snowflake infers new-column types from record values serialized as JSON, not from schema registry definitions. Existing columns keep their predefined types. As a result:
 
 - Schema registry information about numerical precision might be lost.
 - Binary data results in [VARCHAR](/sql-reference/data-types-text#varchar) columns being created, with the data ingested as base64-encoded strings.
 
-To preserve declared types from a schema registry, use client-side validation (`snowflake.validation=client_side`), or pre-create the table columns with the intended types before ingestion.
+Client-side evolution can use declared types from a converter-provided Kafka Connect schema, subject to the mappings described in [Client-side validation](#label-kafkahp-client-side-validation). For either table type, pre-create columns when you need exact types or precision. For Iceberg configuration and type restrictions, see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
 
 **When to use server-side validation:**
 
-- You want maximum throughput.
-- You can manage error tables in Snowflake.
+- You want the default mode for a standard Snowflake table, including when schema evolution isn’t needed.
+- You’re ingesting into a Snowflake-managed Iceberg table.
+- You want maximum throughput and Snowflake error tables for rejected records.
 - You’re using user-defined pipes for in-flight transformations.
 
 ### Client-side validation
@@ -52,20 +62,28 @@ With client-side validation, the connector validates data types and schema compa
 sending rows to Snowflake.
 
 - Invalid records are handled according to the `errors.tolerance` setting (see below).
-- Schema evolution DDL is executed by the connector when new fields are detected.
+- With schema evolution enabled, the connector runs DDL to add new top-level columns or drop `NOT NULL` constraints when a field is missing or null. It doesn’t widen existing column types or evolve nested structured fields.
 - Supports Dead Letter Queue (DLQ) for routing invalid records.
 - Only works with the default pipe (`{tableName}-STREAMING`). If a user-created pipe
   exists and client-side validation is enabled, the connector fails with `ERROR_5030`.
 
 Note
 
-Client-side schema evolution isn’t supported for [Apache Iceberg tables](/user-guide/tables-iceberg). To ingest into Iceberg tables, use server-side validation (`snowflake.validation=server_side`, the default). Because server-side validation infers column types from values rather than from a schema registry, pre-create the Iceberg table columns with the intended types to avoid type downgrades.
+Client-side evolution can add columns to a pre-created Snowflake-managed Iceberg v3 table with `RECORD_METADATA VARIANT` and a compatible schema. It doesn’t work with `snowflake.autocreate.table.type=iceberg` or structured column schemas. For setup and restrictions, see [Client-side schema evolution for Iceberg](/user-guide/kafka-connector/iceberg#label-kafkahp-iceberg-client-side-evolution).
+
+When the converter supplies a populated Kafka Connect `STRUCT` schema, client-side evolution maps its field types to Snowflake column types. Without that schema, it infers types from incoming values. Registry registration alone doesn’t alter the table; evolution is triggered by fields in incoming records.
+
+Declared types aren’t preserved exactly. For example, `FLOAT32` maps to `FLOAT`, `FLOAT64` to `DOUBLE`, bytes to `BINARY`, and the Kafka Connect logical decimal type to `VARCHAR`. Decimal precision and scale aren’t used to create a `NUMBER` column. Structs and maps map to `VARIANT`; arrays map to unstructured `ARRAY`. Pre-create columns when you need exact types or precision.
+
+Client-side evolution requires `ENABLE_SCHEMA_EVOLUTION=TRUE` and a direct `EVOLVE SCHEMA` or `OWNERSHIP` grant to the connector role. The client validator doesn’t support structured `OBJECT`, `ARRAY`, or `MAP` column schemas. If validation initialization fails, the connector logs a warning and disables client-side validation for that channel; connector-side evolution doesn’t run.
 
 **When to use client-side validation:**
 
-- You need a Dead Letter Queue for error handling.
-- You’re migrating from v3 and want familiar behavior.
-- You need the connector to control validation.
+For a table with column types supported by the client validator:
+
+- You need new columns to use the connector’s mappings of declared schema types rather than value-based server inference.
+- You need client-detected validation errors routed to a Kafka dead-letter queue. Errors detected only by Snowflake aren’t routed there.
+- You deliberately retain connector-side validation when migrating a v3 pipeline.
 
 ## Error handling
 

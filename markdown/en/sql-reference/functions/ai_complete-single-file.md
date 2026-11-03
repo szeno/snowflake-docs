@@ -24,9 +24,6 @@ AI_COMPLETE(
 `model`
 :   A string specifying the model to be used. Specify one of the following models:
 
-    > - `claude-3-7-sonnet`
-    > - `claude-4-opus`
-    > - `claude-4-sonnet`
     > - `claude-haiku-4-5`
     > - `claude-opus-4-5`
     > - `claude-opus-4-6`
@@ -38,17 +35,12 @@ AI_COMPLETE(
     > - `claude-sonnet-4-6`
     > - `claude-sonnet-5`
     > - `gemini-3.1-pro`
-    > - `llama4-maverick`
-    > - `llama4-scout`
-    > - `openai-gpt-4.1`
     > - `openai-gpt-5`
-    > - `openai-gpt-5-chat`
     > - `openai-gpt-5-mini`
     > - `openai-gpt-5-nano`
     > - `openai-gpt-5.1`
     > - `openai-gpt-5.2`
     > - `openai-gpt-5.4`
-    > - `pixtral-large`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -101,7 +93,7 @@ Comparison between inflation rates in 2023 and in 2024 ([Statista](https://www.s
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('gemini-3.1-pro',
     'Which country will observe the largest inflation change in 2024 compared to 2023?',
     TO_FILE('@myimages', 'highest-inflation.png'));
 ```
@@ -124,7 +116,7 @@ This example extracts the entities (objects) from an image and returns the resul
 Copy code
 
 ```
-SELECT AI_COMPLETE('claude-sonnet-4-6',
+SELECT AI_COMPLETE('claude-opus-4-6',
     'Extract the kitchen appliances identified in this image. Respond in JSON only with the identified appliances.',
     TO_FILE('@myimages', 'kitchen.png'));
 ```

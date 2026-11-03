@@ -1,9 +1,5 @@
 # CREATE EXTERNAL CONSUMER
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Creates a new external consumer identity, or replaces an existing one, for use with [Open Data Sharing](/user-guide/open-data-sharing).
 External consumers represent parties outside of Snowflake that access shared Iceberg data using the Iceberg REST Catalog API.
 
@@ -19,6 +15,7 @@ Copy code
 
 ```
 CREATE [ OR REPLACE ] EXTERNAL CONSUMER [ IF NOT EXISTS ] <name>
+  [ REGION = '<region_group>.<snowflake_region>' ]
   [ COMMENT = '<string_literal>' ]
   [ EMAIL = '<email_address>' ]
 ```
@@ -36,11 +33,30 @@ CREATE [ OR REPLACE ] EXTERNAL CONSUMER [ IF NOT EXISTS ] <name>
 `OR REPLACE`
 :   Replaces an existing external consumer with the same name. The existing consumer and its properties are replaced by the new definition.
 
+    The new external consumer doesn’t inherit the PATs or workload identities of the external consumer that it replaces. Add them again
+    after you replace the consumer.
+
 `IF NOT EXISTS`
 :   Creates the external consumer only if one with the same name does not already exist. If one already exists, the command does nothing
     and completes successfully.
 
     `OR REPLACE` and `IF NOT EXISTS` are mutually exclusive.
+
+`REGION = 'region_group.snowflake_region'`
+:   Specifies the region that Snowflake stores and serves shared data from for the external consumer. For example,
+    `'PUBLIC.AWS_EU_CENTRAL_1'`. The region group must be `PUBLIC`. Only AWS and Azure commercial regions are supported; if you specify an
+    unsupported region, the command fails. For more information, see
+    [Share with external consumers in other regions](/user-guide/open-data-sharing#label-open-data-sharing-regions).
+
+    The region doesn’t restrict where the external consumer’s client connects from.
+
+    If the region is different from your provider account’s region, Snowflake auto-fulfills any listing that targets this external
+    consumer to that region, which incurs replication and storage costs. For more information, see
+    [Auto-fulfillment for listings](/collaboration/provider-listings-auto-fulfillment).
+
+    If you omit `REGION`, the external consumer uses the region of your provider account.
+
+    You can’t change `REGION` after you create the external consumer. To use a different region, create a new external consumer.
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the external consumer.
@@ -72,7 +88,12 @@ For general information about roles and privilege grants for performing SQL acti
 - CREATE OR REPLACE *<object>* statements are atomic. That is, when an object is replaced, the old object is deleted and the new object is created in a single transaction.
 
 - External consumers are restricted identities. You cannot grant Snowflake roles or standard user options to an external consumer.
-- External consumers must authenticate using Programmatic Access Tokens (PATs). See [ALTER EXTERNAL CONSUMER … ADD PAT](/sql-reference/sql/alter-external-consumer-add-programmatic-access-token).
+- External consumers authenticate with Programmatic Access Tokens (PATs) or workload identity federation (WIF). See
+  [ALTER EXTERNAL CONSUMER … ADD PAT](/sql-reference/sql/alter-external-consumer-add-programmatic-access-token) and
+  [Workload identity federation for external consumers](/user-guide/open-data-sharing-workload-identity).
+- Each external consumer supports only one region. To serve the same party in more than one region, create a separate external consumer
+  for each region.
+- External consumers don’t support failover or disaster recovery (DR) yet.
 
 ## Examples
 
@@ -92,4 +113,12 @@ Copy code
 
 ```
 CREATE EXTERNAL CONSUMER IF NOT EXISTS acme_consumer;
+```
+
+Create an external consumer in the EU (Frankfurt) region:
+
+Copy code
+
+```
+CREATE EXTERNAL CONSUMER acme_eu_consumer REGION = 'PUBLIC.AWS_EU_CENTRAL_1';
 ```

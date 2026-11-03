@@ -1,18 +1,10 @@
 # JDBC Driver
 
-JDBC 0.0.6 Private Preview - Universal Core
+[Preview Feature](/release-notes/preview-features) — Snowflake JDBC Driver 5.x
 
-A version of the Snowflake JDBC Driver built on the Universal Core is available in private preview.
-Preview participants can download the `snowflake-jdbc-native-all` JAR from
-[Maven Central](https://repo1.maven.org/maven2/net/snowflake/snowflake-jdbc-native-all/).
+Snowflake JDBC Driver 5.x, built on the Universal Core, is in public preview. It is published as `snowflake-jdbc-native` and `snowflake-jdbc-native-all` and does not replace JDBC Driver 4.x. This page documents 4.x, which remains the default and the version Snowflake recommends for production. Use of this preview is subject to [Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
 
-Use this driver only if you are participating in the private preview, subject to
-[Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
-It may be unstable and is not ready for use with production data. Use it only for internal evaluation;
-do not use it to process personal data or other data subject to compliance or legal requirements.
-
-The documentation below applies to the existing JDBC driver. For the Universal Core version, follow the
-[preview installation instructions](https://github.com/snowflakedb/drivers/blob/main/jdbc/README.md#consuming-the-driver).
+See [Migrating from JDBC Driver 4.x to 5.x](/developer-guide/jdbc/jdbc-migrate-5x).
 
 Note
 
@@ -38,3 +30,4 @@ For a complete list of the connection parameters the driver accepts, including w
 - [JDBC Driver diagnostic service](/developer-guide/jdbc/jdbc-diagnostic-service)
 - [JDBC Driver connection parameter reference](/developer-guide/jdbc/jdbc-parameters)
 - [JDBC Driver API support](/developer-guide/jdbc/jdbc-api)
+- [Migrating from JDBC Driver 4.x to 5.x](/developer-guide/jdbc/jdbc-migrate-5x)

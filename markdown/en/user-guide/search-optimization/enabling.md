@@ -62,6 +62,12 @@ table.
 
 In general, enabling search optimization only for specific columns is the best practice.
 
+If you use [Gen2 standard warehouses](/user-guide/warehouses-gen2) or [Adaptive Warehouses](/user-guide/warehouses-adaptive),
+Snowflake proactively monitors for instances where the search optimization service would improve performance. When it finds
+one, it adds the relevant indexes, whether they are [secondary indexes](/user-guide/search-optimization/secondary-indexes) or
+search optimization indexes. Unlike when you use the search optimization service manually, automatic indexes don’t incur
+additional cost.
+
 The following sections explain how to configure search optimization for a table:
 
 - [Enabling search optimization for specific columns](#label-search-optimization-service-configuration-adding)

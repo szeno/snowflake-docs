@@ -47,6 +47,9 @@ For general information about roles and privilege grants for performing SQL acti
 Calling this method does not return the object. Because of this, you can’t use method chaining to call another method on the
 return value of this method. Instead, call each method in a separate SQL statement.
 
+Setting this value turns off [Autopilot](/user-guide/classify-intro#label-classify-autopilot) and sets `scheduling_mode` to `CUSTOM`.
+To turn Autopilot back on, call [<classification\_profile\_name>!ENABLE\_AUTO\_SCHEDULING\_MODE](/sql-reference/classes/classification_profile/methods/enable_auto_scheduling_mode).
+
 ## Examples
 
 Set the minimum number of days to be `1` before a table can be automatically classified:

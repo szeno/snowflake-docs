@@ -50,7 +50,7 @@ CoCo uses the warehouse, database, and schema from your session and asks for any
 
 ### Step 2: Confirm the file format
 
-CoCo lists the files at the source and detects the format and compression from the file names. It asks only about details it can’t detect, such as whether CSV fields contain line breaks or JSON objects span more than one line. If the source has no files yet, CoCo stops and asks you to add at least one sample file.
+CoCo lists the files at the source and detects the format and compression from the file names. It asks about details it can’t detect, such as whether CSV fields contain line breaks or JSON objects span more than one line. For Parquet files, it also asks which scanner to use. If the source has no files yet, CoCo stops and asks you to add at least one sample file.
 
 If a compatible file format already exists in the schema, CoCo offers to reuse it. Otherwise, CoCo shows the `CREATE FILE FORMAT` statement and creates the file format after you approve. If the load needs a new stage or storage integration, or an upload of files from your computer, CoCo also shows those statements and runs them after you approve. For the options that CoCo sets, see [What CoCo configures for you](#label-bulk-coco-optimizations).
 
@@ -59,7 +59,7 @@ Important
 Before you approve the file format, check that these options suit your files:
 
 - **`MULTI_LINE = FALSE` for CSV and JSON files:** For uncompressed CSV files, this option lets Snowflake split large files and scan them in parallel. However, Snowflake treats each CSV record that has a line break inside a field, and each JSON object that spans more than one line, as an error. With CoCo’s default error handling, that error stops the load. CoCo asks about these line breaks and sets `MULTI_LINE = TRUE` only if you say that your files have them. For more information, see `MULTI_LINE` for [CSV](/sql-reference/sql/copy-into-table#label-multi-line-csv) and [JSON](/sql-reference/sql/copy-into-table#label-multi-line-json).
-- **`USE_VECTORIZED_SCANNER = TRUE` for Parquet files:** This option can significantly reduce the time that it takes to load Parquet files. However, the vectorized scanner handles some data differently than the default scanner. For example, it always treats `BINARY_AS_TEXT` as `FALSE`, and it loads map types, `NULL` values in nested data, and time and timestamp values differently. Iceberg loads that use `LOAD_MODE = ADD_FILES_COPY` require this option. For the full list of differences, see [USE\_VECTORIZED\_SCANNER](/sql-reference/sql/copy-into-table#label-use-vectorized-scanner).
+- **`USE_VECTORIZED_SCANNER = TRUE` for Parquet files:** This option can significantly reduce the time that it takes to load Parquet files. However, the vectorized scanner handles some data differently than the default scanner. For example, it always treats `BINARY_AS_TEXT` as `FALSE`, and it loads map types, `NULL` values in nested data, and time and timestamp values differently. CoCo asks whether to use the vectorized scanner or the default scanner, except for Iceberg loads that use `LOAD_MODE = ADD_FILES_COPY`, which require the vectorized scanner. For the full list of differences, see [USE\_VECTORIZED\_SCANNER](/sql-reference/sql/copy-into-table#label-use-vectorized-scanner).
 
 ### Step 3: Review the table
 
@@ -87,7 +87,7 @@ CoCo creates a named file format and sets options that follow Snowflake’s reco
 | CSV with no line breaks inside fields | `MULTI_LINE = FALSE`, and `COMPRESSION = NONE` for uncompressed files, so that Snowflake can split large files and scan them in parallel. |
 | JSON with one object per line (NDJSON or JSONL) | `MULTI_LINE = FALSE`, without `STRIP_OUTER_ARRAY`. |
 | JSON with a single top-level array | `STRIP_OUTER_ARRAY = TRUE`, so that each array element loads as a row. |
-| Parquet | `USE_VECTORIZED_SCANNER = TRUE` for faster reads, and `USE_LOGICAL_TYPE = TRUE` so that timestamps and decimals from Spark or pandas keep their types. |
+| Parquet | `USE_VECTORIZED_SCANNER = TRUE` for faster reads, and `USE_LOGICAL_TYPE = TRUE` so that timestamps and decimals from Spark or pandas keep their types. If you choose the default scanner, CoCo omits `USE_VECTORIZED_SCANNER`. |
 | Parquet, Avro, or ORC | Automatic compression detection, because these formats record their compression inside the file. |
 
 Expand

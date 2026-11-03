@@ -129,6 +129,10 @@ supports the following top-level sections. Only `output` is required.
     - `engine_options`: Inference engine settings:
       - `engine`: The inference engine, one of `DEFAULT`, `VLLM`, or `PYTHON_GENERIC`.
       - `engine_args_override`: A list of engine arguments to override (for example, `--max-model-len=18048` for vLLM).
+    - `adapters`: Optional list of LoRA adapters to attach for the job. Each item has the keys `name`,
+      `version`, and optional `alias`. Set `input.params.model` to the alias of the adapter to use for the whole job.
+      Requires the `VLLM` engine. See
+      [LoRA adapters](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters).
 
 `input`
 :   Configures how the input rows are processed.
@@ -176,6 +180,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 | CREATE SERVICE | Schema | Schema in which the job service is created. |
 | USAGE | Compute pool |  |
 | USAGE | Model | Model referenced by the `MODEL` clause. |
+| READ | Model | Each [LoRA adapter](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters) attached in `inference.adapters`. |
 | READ | Stage | Input stage and the stage where the specification is stored. |
 | WRITE | Stage | Output stage where results are written (the specification’s `output.stage_location`). |
 | READ | Image Repository | Repository of images referenced by the specification. |

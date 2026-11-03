@@ -1,9 +1,5 @@
 # ALTER EXTERNAL CONSUMER … REMOVE PROGRAMMATIC ACCESS TOKEN (PAT)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Revokes a Programmatic Access Token (PAT) from an external consumer. Once removed, the token can no longer
 be used to authenticate.
 

@@ -16,6 +16,10 @@ Open Data Sharing supports the following use cases:
   [Using auto-fulfillment with open table formats](/collaboration/use-auto-fulfillment-with-open-table-formats).
 - **Share data with non-Snowflake consumers.** Share live, read-only Iceberg table data with consumers outside
   Snowflake using standard Iceberg REST Catalog APIs. External consumers connect using any IRC-compatible engine
-  or tool. For more information, see [Share data with non-Snowflake consumers](/user-guide/open-data-sharing).
+  or tool. You can add external consumers to an existing listing, so the same listing serves Snowflake consumers and open clients. For
+  more information, see [Share data with non-Snowflake consumers](/user-guide/open-data-sharing).
+
+  External consumers authenticate by using a programmatic access token (PAT) or workload identity federation (WIF). For more
+  information, see [Workload identity federation for external consumers](/user-guide/open-data-sharing-workload-identity) and [Connect to an open-sharing catalog](/user-guide/open-data-sharing-connect).
 
 [![Zero-ETL sharing for open table formats — register data in Snowflake Horizon Catalog, then share cross-region and cross-cloud to commercial and government cloud consumers](/static/images/collaboration/open-format-sharing-zero-etl.png)](/static/images/collaboration/open-format-sharing-zero-etl.png)

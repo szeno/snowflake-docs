@@ -567,8 +567,9 @@ reflect the bootstrap path.
 
 ##### Revoke or restore the bootstrap grant
 
-To remove default access to all models through the bootstrap grant, call the following procedure
-as ACCOUNTADMIN:
+To remove default access to all models through the bootstrap grant, call
+[SNOWFLAKE.LOCAL.REVOKE\_FROM\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_revoke_from_public_application_role) with a role that has the `SNOWFLAKE.SNOWFLAKE_PUBLIC_GRANT_ADMIN` application role, such as
+ACCOUNTADMIN:
 
 Copy code
 
@@ -583,7 +584,8 @@ After the revoke, re-run `SHOW GRANTS TO APPLICATION ROLE SNOWFLAKE.PUBLIC` and 
 `CORTEX-MODEL-ROLE-ALL` is no longer listed. Then grant specific model application roles to the
 roles that need them.
 
-To restore the bootstrap grant after you’ve revoked it:
+To restore the bootstrap grant after you’ve revoked it, call
+[SNOWFLAKE.LOCAL.GRANT\_TO\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_grant_to_public_application_role):
 
 Copy code
 
@@ -599,7 +601,7 @@ Important
 A raw `REVOKE APPLICATION ROLE SNOWFLAKE."CORTEX-MODEL-ROLE-ALL" FROM ROLE PUBLIC` statement does
 **not** remove the bootstrap grant from `SNOWFLAKE.PUBLIC`, and it doesn’t persist that intent
 across Snowflake upgrades. Always use
-`SNOWFLAKE.LOCAL.REVOKE_FROM_PUBLIC_APPLICATION_ROLE` to revoke the bootstrap grant.
+[SNOWFLAKE.LOCAL.REVOKE\_FROM\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_revoke_from_public_application_role) to revoke the bootstrap grant.
 
 If you previously ran `GRANT APPLICATION ROLE SNOWFLAKE."CORTEX-MODEL-ROLE-ALL" TO ROLE PUBLIC`
 yourself, you can still revoke that customer-managed grant with
@@ -688,7 +690,7 @@ SELECT AI_COMPLETE('claude-sonnet-4-6', 'Hello');
 - Revoking `CORTEX-MODEL-ROLE-ALL` from the account-level PUBLIC role does not remove the
   [bootstrap grant](#label-cortex-model-role-all-bootstrap) on `SNOWFLAKE.PUBLIC`. Use
   `SHOW GRANTS TO APPLICATION ROLE SNOWFLAKE.PUBLIC` to check, and
-  `SNOWFLAKE.LOCAL.REVOKE_FROM_PUBLIC_APPLICATION_ROLE` to revoke.
+  [SNOWFLAKE.LOCAL.REVOKE\_FROM\_PUBLIC\_APPLICATION\_ROLE](/sql-reference/stored-procedures/snowflake_local_revoke_from_public_application_role) to revoke.
 - Qualified model object identifiers are quoted and therefore case-sensitive. For more information, see
   [QUOTED\_IDENTIFIERS\_IGNORE\_CASE](/sql-reference/parameters#label-quoted-identifiers-ignore-case).
 

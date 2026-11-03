@@ -18,7 +18,7 @@ Cortex REST API supports three industry-standard API specifications. Pick the on
 | --- | --- | --- | --- |
 | Compatibility | [OpenAI Chat Completions API](https://platform.openai.com/docs/api-reference/chat/create) | [Anthropic Messages API](https://docs.anthropic.com/en/api/messages) | [OpenAI Responses API](https://platform.openai.com/docs/api-reference/responses/create) |
 | Endpoint | `/api/v2/cortex/v1/chat/completions` | `/api/v2/cortex/v1/messages` | `/api/v2/cortex/v1/responses` |
-| Supported models | All models (OpenAI, Claude, Llama, Mistral, DeepSeek, Snowflake) | Claude models only | OpenAI models only |
+| Supported models | All models (OpenAI, Claude, Llama, Mistral, DeepSeek, Snowflake) | Claude models only | OpenAI models on AWS only |
 | SDK support | OpenAI Python and JavaScript SDKs | Anthropic Python SDK | OpenAI Python and JavaScript SDKs |
 | Best for | Most use cases; multi-model flexibility | Existing Anthropic integrations; Anthropic API parity | Existing integrations and clients built on the OpenAI Responses API |
 
@@ -203,7 +203,7 @@ In the preceding examples, replace the following:
 
 Available to all accounts.
 
-The Responses API follows the OpenAI specification and supports OpenAI models only. You can use the OpenAI SDK
+The Responses API follows the OpenAI specification and supports OpenAI models on AWS only. You can use the OpenAI SDK
 directly. The API doesn’t keep conversation state, so send the full conversation in `input` with every request. See
 [Limitations](#label-cortex-rest-api-responses-limitations).
 
@@ -386,6 +386,7 @@ For the regions and cross-region routing scopes each model runs in, see [Regiona
 | `openai-gpt-6-luna` | Public preview |
 | `openai-gpt-6-sol` | Public preview |
 | `openai-gpt-6.1-sol` | Public preview |
+| `openai-gpt-6.1-terra` | Public preview |
 | `openai-gpt-5.6-luna` | GA |
 | `openai-gpt-5.6-sol` | GA |
 | `openai-gpt-5.6-terra` | GA |
@@ -2668,7 +2669,7 @@ POST https://<account_identifier>.snowflakecomputing.com/api/v2/cortex/v1/respon
 
 Note
 
-The Responses API supports **OpenAI models only**. For other models, use the Chat Completions API or the
+The Responses API supports **OpenAI models on AWS only**. For other models, use the Chat Completions API or the
 Messages API.
 
 The Responses API’s public preview status applies only to OpenAI models that are in public preview or
@@ -2744,7 +2745,7 @@ The Responses API supports the following features for OpenAI models:
 
 #### Limitations
 
-- **OpenAI models only.** Requests for Claude, Llama, Mistral, and other models are rejected.
+- **OpenAI models on AWS only.** Requests for Claude, Llama, Mistral, and other models are rejected.
 - **No conversation state.** `store` is always treated as `false`, so responses
   aren’t stored. You can’t retrieve a response with `GET /responses/{id}` or continue one with `previous_response_id`.
   Send the full conversation history in `input` on every request.

@@ -114,6 +114,11 @@ See [Privileges required for working with listings](/collaboration/provider-beco
 
 ### Create a paid private listing
 
+Paid private listings require Marketplace Operations approval and organization-level enablement. Approval is subject to review and is limited to eligible datasets and Snowflake Native Apps.
+If you only need custom pricing or terms for a consumer, use a [private offer](/user-guide/collaboration/listings/pricing-plans-offers/pricing-plans-and-offers#label-listings-offers) on a public paid listing instead.
+To request enablement, use the **Contact Marketplace Operations** button in [Provider Studio](https://app.snowflake.com/#/provider-studio)
+and explain why a public paid listing doesn’t meet your needs.
+
 The following example shows how to create a private listing that includes a pricing plan and an offer.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -259,13 +264,6 @@ Tip
 To ensure a seamless transition for your high-priority clients, consider implementing a dedicated validation window following the data migration. This allows sensitive accounts an allocated period to verify that their information has successfully moved from the initial share to the final listing.
 
 ## Share data or apps publicly on Snowflake Marketplace
-
-Note
-
-Before you create and publish a paid listing on Snowflake Marketplace, contact your business development partner at Snowflake.
-If you do not have a business development partner, use the **Contact Marketplace Operations** button in
-[Provider Studio](https://app.snowflake.com/#/provider-studio). You must use the ACCOUNTADMIN role or a role with the CREATE LISTING privilege.
-This step is required for listing approval.
 
 To publish data, Snowflake Native Apps, or Connected Apps on Snowflake Marketplace, your role must have the required privileges to create a listing. See [Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares). For how public free, public paid, public connected, Snowflake Native App, and dataset listings differ, see [Listing types](#label-listing-types-overview).
 

@@ -383,6 +383,7 @@ Show lessSee more
 | `num_workers` | Number of workers that handle requests in parallel within one service instance. Determined automatically if omitted. |
 | `max_batch_rows` | Maximum number of rows processed in a single batch. Determined automatically if omitted. Larger values can improve throughput. |
 | `engine_options` | An `EngineOptions` instance that selects a custom inference engine. |
+| `adapters` | Optional LoRA adapters to attach to the job: a mapping from alias to adapter `ModelVersion`, or a list of adapter `ModelVersion`s. Requires the vLLM engine. See [LoRA adapters](/developer-guide/snowflake-ml/model-registry/built-in-models/lora-adapters). |
 
 Expand
 
@@ -391,6 +392,9 @@ Show lessSee more
 `EngineOptions` takes an `engine` value and an optional `engine_args_override` list of command-line
 arguments for that engine. The `engine` value accepts an `InferenceEngine` enum member or a
 case-insensitive string such as `"vllm"` or `"python_generic"`.
+
+When `adapters` is set, set `input_spec.params["model"]` to the alias of the adapter to use for the whole job. If
+omitted, the base model is used.
 
 ### Image build
 

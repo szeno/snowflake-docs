@@ -1,5 +1,159 @@
 # SnowConvert AI - Recent Release Notes
 
+## Version 2.52.5 (November 2, 2026)
+
+### CLI
+
+#### New Features
+
+- Added effort estimates for Oracle and Teradata, and added EWI group details to the assessment.
+- Added an option to convert SSIS packages into a single dbt project, and an option to materialize SSIS full-replace marts as Dynamic Tables.
+- Added a Dynamic SQL pattern category chart to the assessment.
+- Added support for importing DataStage `.dsx` files as native ETL with `scai code add`.
+
+#### Improvements
+
+- Procedure conversion now defaults to native Snowflake SQL during code conversion setup.
+- IBM DB2 projects now use the new project structure and the code unit registry.
+- `scai code extract` now shows progress and can be cancelled with Ctrl+C while it updates the code unit registry.
+- `scai` auto-update is now skipped while another `scai` command is running, and versions still in use by a running `scai` are kept.
+- The effort estimate Comments column now explains repeated EWI hours.
+- Lineage now reports read-only tables correctly and resolves aliases and CTE names.
+
+#### Bug Fixes
+
+- Fixed an issue where the official `scai` PowerShell installer failed to parse on Windows.
+- Fixed an issue where `scai` rejected an encrypted key-pair private key.
+- Fixed an issue where re-running `scai code convert` reported success while writing no converted SQL.
+- Fixed an issue where `scai code deploy` reported success when prerequisites were missing.
+- Fixed an issue where `scai code add` registered SSIS packages twice when an `.ispac` and loose `.dtsx` files were both present.
+- Fixed an issue where data migration and data validation config generation lost quotes or uppercased mixed-case Snowflake target names.
+- Fixed an issue where a `;` in a Teradata password split the connection string.
+
+### Desktop App
+
+#### New Features
+
+- Added an option to resume the previous agent session after a restart, and to continue with context in a fresh session.
+- Added the ability to update `scai` from the app, and the app now shows which `scai` version it uses.
+- Added a folder picker to setup for source and ETL folders.
+- Added a sound or notification when the agent pauses on a question.
+- Added support for pasting images into the Send Feedback dialog, and for correcting feedback already sent.
+
+#### Improvements
+
+- The model picker now lists the models available in Cortex Code instead of a fixed list.
+- Autonomous mode now warns before it starts that data loads replace rows in target tables.
+- The app now warns how much RAM a large migration needs before it runs.
+- Agent replies are now shorter and free of internal jargon.
+- Increased text size on macOS and made chat typing more responsive.
+- A single SQL Server source connection can now span several databases.
+- Oracle connection details are now requested through a setup card.
+
+#### Bug Fixes
+
+- Fixed an issue where re-running a table’s data migration in autonomous mode duplicated rows.
+- Fixed an issue where a Duo MFA push was sent for every SQL statement on password plus MFA connections.
+- Fixed an issue where every Snowflake query failed with `Master token can never be renewed` after the app sat idle overnight, and the app now recovers from disconnections without a restart.
+- Fixed an issue where the app stayed on “Still connecting to Snowflake” while updating an unsupported Cortex Code CLI.
+- Fixed an issue where the in-app update hung mid-install on Windows.
+- Fixed an issue where a blank second window opened at launch on macOS.
+- Fixed an issue where new projects were rejected as “not empty” or bounced back to the home page.
+- Fixed an issue where the app crashed or memory grew during long autonomous conversations.
+- Fixed an issue where the Objects list and dashboard showed wrong statuses for escalated, finished, and out-of-scope objects.
+- Fixed an issue where far fewer deployed and migrated objects were shown after Snowflake PAT changes.
+- Fixed an issue where `externalbrowser` SSO sign-ins failed connection checks after 30 seconds.
+- Fixed an issue where the selected option on setup cards was unreadable in light mode.
+
+### Conversion Engine
+
+#### New Features
+
+##### SQL Server
+
+- Added conversion of additional XML `nodes()` shreds to Snowflake.
+- Added conversion of supported `UPDATE` and `INSERT` `OUTPUT INTO` forms.
+
+#### Bug Fixes
+
+##### Oracle
+
+- Fixed scalar `SELECT * INTO` over a set query by hoisting it.
+
+##### SQL Server
+
+- Removed a false `SSC-EWI-0126` on a single-variable `TRUNCATE EXEC`.
+- Routed DRS/HARS replica-state joins to the HADR rewrite.
+- Marked the `sysobjects` `OBJECT_PRIVILEGES` fallback with `SSC-FDM-TS0185`.
+- Converted identity `SELECT` assignments.
+- Converted table-level `PRIMARY KEY` constraints written without a preceding comma.
+- Converted `STRING_ESCAPE` with `json` to Snowflake JSON escaping.
+- Ignored the `CONVERT` style for typed non-date sources.
+- Treated a three-part call named like an XML method as a cross-database function unless its leading part is in scope.
+- Restored the catalog EWI under dynamic SQL and converted `sys.indexes.is_unique`.
+- Converted unary plus on character concatenation operands.
+- Translated `IS DISTINCT FROM`, quotes inside brackets, `NULL` defaults, and bare `$`.
+- Kept `HASHBYTES` markers next to arrow comments and converted `VARCHAR` compositions.
+- Classified SQL Server-generated CDC functions as out of scope and named the capture instance.
+- Truncated character values stored into declared-length local variables and casts.
+- Fixed `DATETRUNC` synonym typing, ISO week, and deferred week/`DATEFIRST` handling.
+- Marked uncollated text comparisons.
+- Matched SQL Server `DECIMAL` scale inside `ROUND`.
+- Reported a local variable whose user-defined type has no definition in the input with `SSC-EWI-TS0170`.
+- Converted `TRUNCATE`/`SWITCH`/`DROP` flows inside procedures to a row copy.
+- Converted `COLUMNPROPERTY` flags and ordinal over `sys.columns` rows.
+- Shredded XML local variables declared from `VARCHAR` parameters.
+- Converted `sp_MSreplraiserror` to a helper call.
+- Converted `sys.objects` `object_id` compared with `OBJECT_ID` of a variable.
+- Parsed `DELETE FROM OPENQUERY` and `EXEC OPENDATASOURCE` remote procedure calls.
+- Emitted `SSC-EWI-TS0108` when an external file format is declared `DELTA`.
+- Stopped reporting a dynamic SQL splice key as a function name.
+- Parsed and converted `DROP TYPE`.
+- Read `BIT` operands of `&`, `|`, and `^` as numbers for `BITAND`, `BITOR`, and `BITXOR`.
+
+### Data Validation
+
+#### Improvements
+
+- Added support for additional table and view types.
+- Added opt-in metrics validation (L2) in Direct Mode so views without keys can be validated.
+- The data exchange service can now auto-suspend when it is safe to do so.
+- Improved Redshift connection resiliency and BigQuery partition key selection.
+- Added support for Kerberos Windows authentication in the data exchange worker image.
+- Added support for explicit credentials for S3 and GCS `cloud_direct` in the Data Exchange Agent.
+- The data validation failure summary now names each failed or unvalidated table.
+- Added a procedure to grant privileges to workers and the orchestrator.
+
+#### Bug Fixes
+
+- Fixed an issue where data validation failed with `INT0002` on every table, and validations without partitions stayed pending.
+- Fixed data validation failures on SQL Server computed columns, `int` vs `NUMBER(38,0)`, `xml` as `VARIANT`, Oracle unconstrained `NUMBER`, and Teradata `FLOAT`.
+- Fixed an issue where interactive Direct Mode re-runs appended rows instead of replacing them.
+- Fixed an issue where IBM DB2 `CLOB` and `DBCLOB` values over 32767 bytes were truncated and rows were dropped on fetch.
+- Fixed an issue where wide BigQuery `INT64` values landed as quoted JSON strings in arrays and structs.
+- Fixed an issue where an all-`NULL` `varbinary` column failed the whole table load.
+- Fixed an issue where data migration failed for Teradata tables that share a name across databases.
+
+### Others
+
+#### Testing Framework
+
+##### Improvements
+
+- Improved `scai testbed` compile and generate performance on large workloads, and unrelated tables’ testbed phases now run concurrently.
+
+##### Bug Fixes
+
+- Fixed an issue where SQL Server testbed sandbox setup created invalid schemas or wrote into the real source database.
+- Fixed an issue where testbed mining emitted constant predicates whose value was an unresolved column reference.
+
+#### Migration Plugin
+
+##### Bug Fixes
+
+- Fixed an issue where `configure` failed to log in when `connections.toml` had a dotted account.
+- Old `scai` versions installed by the plugin hook are now pruned.
+
 ## Version 2.51.3 (October 22, 2026)
 
 ### CLI

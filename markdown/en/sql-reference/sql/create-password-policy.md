@@ -170,6 +170,9 @@ For additional details on password policy DDL and privileges, see [DDL commands]
 
 ## Usage notes
 
+- The default values of the optional parameters apply only to password policies that you create. If neither the account nor the user
+  has a password policy set, Snowflake enforces a built-in password policy that doesn’t expire passwords. For the requirements of the
+  built-in policy, see [Built-in password policy](/user-guide/password-authentication#label-snowflake-password-policy).
 - If you want to replace an existing password policy and need to see the current definition of the policy, call the
   [GET\_DDL](/sql-reference/functions/get_ddl) function or run the [DESCRIBE PASSWORD POLICY](/sql-reference/sql/desc-password-policy) command.
 
