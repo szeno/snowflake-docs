@@ -31,7 +31,7 @@ NULL\_COUNT, DUPLICATE\_COUNT, and ROW\_COUNT) and for most custom DMFs.
 
 The following system DMFs aren’t supported with WITHIN GROUP:
 
-- FRESHNESS, because it operates on the table as a whole and doesn’t take column arguments.
+- FRESHNESS and SECONDS\_SINCE\_ROW\_COUNT\_CHANGE, because they operate on the table as a whole and don’t take column arguments.
 - DMFs with a reference table (REFERENTIAL\_INTEGRITY\_COUNT, ROW\_COUNT\_DIFFERENCE, and SOURCE\_TARGET\_LAG), because they compare
   two tables and can’t be evaluated within a single group.
 

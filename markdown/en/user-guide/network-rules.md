@@ -290,6 +290,9 @@ Show lessSee more
 
 ### Working with Snowflake-managed network rules
 
+To reference or use the Snowflake-managed network rules in the `SNOWFLAKE.NETWORK_SECURITY` schema, a role needs the
+`SNOWFLAKE.NETWORK_SECURITY_ADMIN` application role. For an example, see the `GRANT APPLICATION ROLE` statement later in this section.
+
 To see the current list of Snowflake-managed network rules, run the [SHOW NETWORK RULES](/sql-reference/sql/show-network-rules) command to list the network rules in the SNOWFLAKE.NETWORK\_SECURITY schema:
 
 Copy code

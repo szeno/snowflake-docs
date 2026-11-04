@@ -21,8 +21,9 @@ TASK_HISTORY(
       [, DATABASE_NAME => '<string>' ]
       [, SCHEMA_NAME => '<string>' ]
       [, ERROR_ONLY => { TRUE | FALSE } ]
-      [, ROOT_TASK_ID => '<string>']
-      [, GRAPH_ID => '<string>'] )
+      [, ROOT_TASK_ID => '<string>' ]
+      [, GRAPH_ID => '<string>' ]
+      [, GRAPH_RUN_GROUP_ID => '<string>' ] )
 ```
 
 ## Arguments
@@ -74,6 +75,9 @@ All the arguments are optional.
 
 `GRAPH_ID =>string`
 :   Unique identifier for a [task graph object](/user-guide/task-graph-object). Specify the GRAPH\_ID to show the history of all member tasks in the task graph. Mutually exclusive with ROOT\_TASK\_ID.
+
+`GRAPH_RUN_GROUP_ID => string`
+:   Specifies a graph run group ID to return task runs for that group, including automatic retry attempts.
 
 ## Usage notes
 
@@ -143,6 +147,17 @@ Expand
 Show lessSee more
 
 ## Examples
+
+Retrieve task runs for the graph run group:
+
+Copy code
+
+```
+SELECT NAME, STATE, ATTEMPT_NUMBER, ERROR_CODE, ERROR_MESSAGE
+  FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    GRAPH_RUN_GROUP_ID => '00000000-0000-0000-0000-000000000000'))
+  ORDER BY ATTEMPT_NUMBER, SCHEDULED_TIME;
+```
 
 Retrieve the 100 most recent task executions (completed, still running, or scheduled in the future) in the account. Note that the maximum
 number of rows returned by the function is limited to 100 by default:

@@ -1,9 +1,5 @@
 # Inference with Cortex AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
-
 The Cortex AI Gateway exposes an inference endpoint that accepts requests in industry-standard API
 formats. Any client that lets you override its base URL can send requests through the gateway,
 including coding agents, agent frameworks, and the official OpenAI and Anthropic SDKs.
@@ -349,24 +345,3 @@ Requests sent through the gateway are recorded in two places:
 
 For cost attribution, budgets, and per-user quotas, see
 [Cost management for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/cost-management).
-
-## Legal notices
-
-Where your configuration of Cortex AI Gateway uses a model provided on the
-[Model and Service Pass-Through Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/ai-features/model-pass-through-terms/),
-your use of that model is further subject to the terms for that model on that page.
-
-The data classification of inputs and outputs is as set forth in the following table.
-
-| Input data classification | Output data classification | Designation |
-| --- | --- | --- |
-| Customer Data | Customer Data | Preview AI Features [[1]](#footnote-1) |
-
-Expand
-
-Show lessSee more
-
-[1]
-Represents the defined term used in the Preview AI Terms and Acceptable Use Policy.
-
-For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).

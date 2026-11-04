@@ -51,6 +51,32 @@ Note
 
 Other Snowflake tools (VS Code Extension, Cortex Code, SnowConvert) also read `connections.toml`. If it exists, Snowflake CLI uses connections from it instead of `config.toml`.
 
+## Enable automatic upgrades
+
+Automatic upgrades are off until you opt in. They apply only to a standalone install, and they stay on the same major version.
+
+- Add the `auto_upgrade` setting to the `config.toml` file:
+
+  Copy code
+
+  ```
+  [cli]
+  auto_upgrade = true
+  ```
+- Set the `SNOWFLAKE_CLI_AUTO_UPGRADE` environment variable. The variable overrides `config.toml`. `1`, `true`, `yes`, and `on` turn it on. Any other value turns it off.
+
+  Copy code
+
+  ```
+  export SNOWFLAKE_CLI_AUTO_UPGRADE=1
+  ```
+
+`--no-auto-upgrade` skips the upgrade for that command.
+
+Set `auto_upgrade_allow_major = true` in the same `[cli]` section to install the next major version. [`snow upgrade`](/developer-guide/snowflake-cli/command-reference/upgrade-commands/upgrade) ignores this setting.
+
+Automatic upgrades are disabled when `cli.air_gapped` or `SNOWFLAKE_CLI_AIR_GAPPED` is set.
+
 ## Location of the `.toml` configuration file
 
 By default Snowflake CLI chooses a configuration directory and reads `config.toml` from that directory.

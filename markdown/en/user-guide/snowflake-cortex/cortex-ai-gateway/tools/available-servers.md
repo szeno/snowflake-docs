@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 Tools provides the following MCP servers. Select a server in the table for its connection details and any setup it requires.
 
@@ -14,7 +14,7 @@ Before you can connect to any of these servers, an administrator must enable it 
 
 When a user access to a role that has been granted the `SNOWFLAKE$OPS.MCP$USER` database role, MCP servers they can access are automatically discoverable in CoCo Desktop and CLI. Users must still authorize the servers before they can be used by any agent.
 
-For any other MCP client, select **AI & ML** > **AI Gateway** > **MCP & Tools** in Snowsight. In the new tab, select **MCP Connections** to find the server’s connection URL and client instructions. See [Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client).
+For any other MCP client, select **AI Gateway** > **MCP & Tools** in Snowsight. In the new tab, select **MCP Connections** to find the server’s connection URL and client instructions. See [Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client).
 
 ## All servers
 

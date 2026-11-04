@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 Tools records tool-call activity in your Snowflake account. Use the `AGENT_TRACE_TABLE` table function to review these traces. For how to query traces and the access requirements, see [Cortex AI Gateway observability](/user-guide/snowflake-cortex/cortex-ai-gateway/observability).
 
@@ -11,7 +11,7 @@ You can also use the Activity catalog to review tool-call activity for AI client
 ## View activity in Tools
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**.
+2. Select **AI Gateway** > **MCP & Tools**.
 3. In the new tab, select **Activity**.
 
 The Activity page has two tabs: **Dashboard** and **Connections**.

@@ -196,4 +196,8 @@ aws apigateway get-rest-apis --query 'items[*].id' --output text --profile | tr 
 done
 ```
 
+### Why do the egress VPC IDs have an expiration date?
+
+The `expires` value tells you how long the associated VPC ID is guaranteed to remain valid. Snowflake automatically extends these expiration dates once per quarter, so the date you see in the output of [SYSTEM$GET\_SNOWFLAKE\_PLATFORM\_INFO](/sql-reference/functions/system_get_snowflake_platform_info) moves forward over time. To make sure that you have the latest information, query the function again before the `expires` date.
+
 Ref: 1910

@@ -45,7 +45,7 @@ The output of the command includes the following columns, which describe the pro
 | `database_name` | The database that the run is stored in. |
 | `schema_name` | The schema that the run is stored in. |
 | `experiment_name` | The experiment that the run belongs to. |
-| `metadata` | A JSON object containing the run status and metrics.  The `status` field of the run indicates if it’s `RUNNING` or `FINISHED`.  The `metrics` field reports the metrics of the run. Only the latest metric value (the one with the highest `step`) is included. |
+| `metadata` | A JSON object containing the run status and metrics.  The `status` field of the run is one of `RUNNING`, `PAUSED`, `FINISHED`, `FAILED`, or `CANCELLED`. For more information, see [Run statuses](/developer-guide/snowflake-ml/experiments#label-ml-experiments-run-statuses).  The `metrics` field reports the metrics of the run. Only the latest metric value (the one with the highest `step`) is included. |
 
 Expand
 

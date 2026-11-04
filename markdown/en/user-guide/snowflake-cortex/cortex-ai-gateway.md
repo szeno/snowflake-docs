@@ -1,9 +1,5 @@
 # Cortex AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
-
 Cortex AI Gateway is where you govern how AI clients in your organization reach the models and systems
 they act on. It gives platform teams one place to grant access to models, attribute spend, and see what
 AI has done on behalf of your users, while application teams get a single endpoint to build against.
@@ -14,7 +10,7 @@ provisioned automatically, so there’s nothing to create before you start.
 by default, so the gateway is reachable without any setup; revoke it if you want to restrict who can
 send traffic.
 
-To open Cortex AI Gateway, sign in to Snowsight and select **AI & ML** > **Cortex AI Gateway**.
+To open Cortex AI Gateway, sign in to Snowsight and select **AI Gateway** in the navigation menu.
 
 ## Capabilities
 
@@ -22,7 +18,9 @@ To open Cortex AI Gateway, sign in to Snowsight and select **AI & ML** > **Corte
 | --- | --- |
 | [Inference](/user-guide/snowflake-cortex/cortex-ai-gateway/inference) | Gives coding agents, third-party clients, and SDKs a single governed endpoint to send model requests to. |
 | [Observability](/user-guide/snowflake-cortex/cortex-ai-gateway/observability) | Records traces and spans for every request, including the models called, step timing, token counts, errors, and custom attributes. |
+| [Trace analytics](/user-guide/snowflake-cortex/cortex-ai-gateway/observability/trace-analytics) (Preview) | Charts model usage, reliability, MCP tool calls, and sessions from the trace table in Snowsight. |
 | [Cost management](/user-guide/snowflake-cortex/cortex-ai-gateway/cost-management) | Attributes gateway spend to teams and users, and applies budgets and per-user quotas to it. |
+| [Tools](/user-guide/snowflake-cortex/cortex-ai-gateway/tools) (Preview) | Connects AI clients to business tools over the Model Context Protocol (MCP), and controls which servers and tools they can reach. |
 
 Expand
 
@@ -42,7 +40,7 @@ The following privileges apply to the gateway:
 | Privilege | Grants the ability to |
 | --- | --- |
 | USAGE | Send inference requests through the gateway. |
-| MONITOR | Query gateway usage data, including the related Account Usage views. |
+| MONITOR | Query gateway usage data, including the related Account Usage views, and read every user’s traces. Without MONITOR, a role with USAGE can read only its own traces. |
 
 Expand
 
@@ -108,9 +106,19 @@ DESCRIBE AI GATEWAY SNOWFLAKE;
 Gateway monitoring is split across two kinds of surfaces:
 
 - **Activity** surfaces request and response counts, token counts, and latency. For request-level
-  detail, see [Observability for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability).
+  detail, see [Observability for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability). For charts of usage,
+  errors, tool calls, and sessions, see
+  [Trace analytics for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability/trace-analytics).
 - **Cost** surfaces credit usage across models and users. For cost reporting, see
   [Cost management for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/cost-management).
+
+## Pricing
+
+Gateway inference is billed the same way as
+[Cortex Inference](/user-guide/snowflake-cortex/cortex-rest-api): in AI Credits, per token processed,
+at each model’s rate. See
+[Pricing](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-inference-pricing)
+for details, and [Snowflake AI pricing](/user-guide/snowflake-cortex/pricing) for the AI Credit rate table.
 
 ## Gateway specification
 
@@ -255,3 +263,27 @@ Anyone who can set a listed tag on a user can exclude that user from payload cap
 dedicated to this purpose, and limit which roles have the APPLY privilege on it or the global APPLY
 TAG privilege. See
 [Introduction to object tagging](/user-guide/object-tagging/introduction).
+
+## Legal notices
+
+Where your configuration of Cortex AI Gateway uses a model provided on the
+[Model and Service Pass-Through Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/ai-features/model-pass-through-terms/),
+your use of that model is further subject to the terms for that model on that page.
+
+The data classification of inputs and outputs are as set forth in the following table.
+
+| Input data classification | Output data classification | Designation |
+| --- | --- | --- |
+| Usage Data | Inference and Tool results: Customer Data | Inference: Covered AI Features [[1]](#footnote-1)  Tools: Preview AI Features [[2]](#footnote-2) |
+
+Expand
+
+Show lessSee more
+
+[1]
+Represents the defined term used in the AI Terms and Acceptable Use Policy.
+
+[2]
+Represents the defined term used in the Preview AI Terms and Acceptable Use Policy.
+
+For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).

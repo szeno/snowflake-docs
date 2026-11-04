@@ -37,7 +37,7 @@ Before configuring private link for the Openflow Runtime UI, enable PrivateLink 
 
 Perform the following steps:
 
-1. Retrieve Snowflake’s VPC endpoint service ID and Openflow PrivateLink URLs:
+1. Retrieve Snowflake’s VPC endpoint service name and Openflow PrivateLink URLs:
 
    1. As a user with the ACCOUNTADMIN role, execute
 
@@ -48,12 +48,19 @@ Perform the following steps:
    ```
 
    1. From the output, identify and save the values for the following keys:
-
       - `privatelink-vpce-id`
       - `openflow-privatelink-url`
       - `external-telemetry-privatelink-url`
-   2. Construct the Runtime URL
 
+   Note
+
+   `privatelink-vpce-id` is the service name of Snowflake’s VPC endpoint service.
+   The value has the form `com.amazonaws.vpce.<region>.vpce-svc-<id>`.
+   Enter this value in the service name field when you create the VPC endpoint.
+   Your VPC ID (`vpc-<id>`) identifies the VPC where the deployment runs.
+   AWS assigns a separate VPC endpoint ID (`vpce-<id>`) to the endpoint after you create it.
+
+   2. Construct the Runtime URL
       - `of--<org>-<account>.spcs.<shard-id>.privatelink.snowflake.app`
 2. Create a VPC endpoint with parameters:
 
@@ -64,8 +71,8 @@ Perform the following steps:
    use the existing AWS VPC endpoint and add the additional OpenFlow DNS records to your Route 53.
 
    - Type: `PrivateLink Ready partner services`
-   - Service: `privatelink-vpce-id` value obtained in the previous step.
-   - VPC: The VPC where your Openflow deployment will be running.
+   - Service name: `privatelink-vpce-id` value obtained in the previous step.
+   - VPC: The VPC where your Openflow deployment will be running. Select this VPC by its VPC ID (`vpc-<id>`).
    - Subnets: Select two availability zones and private subnets where your Openflow deployment will run.
 3. Set up a Route 53 private hosted zone for Openflow UI with the following parameters:
 

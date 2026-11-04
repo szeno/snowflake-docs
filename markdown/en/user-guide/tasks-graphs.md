@@ -123,6 +123,24 @@ Before starting the task graph, use [ALTER TASK … RESUME](/sql-reference/sql/a
 
 To run a single instance of a task graph, use [EXECUTE TASK](/sql-reference/sql/execute-task) on the root task. When you run the root task, all resumed child tasks in the task graph are executed in the order defined by the task graph.
 
+By default, `EXECUTE TASK` returns after scheduling the run. To wait for the entire task graph to
+complete, specify `AWAIT` on the root task:
+
+Copy code
+
+```
+EXECUTE TASK my_root_task AWAIT;
+```
+
+The command waits for all tasks included in the run, including the finalizer task and any automatic
+retries. Suspended child tasks are skipped. If the graph succeeds or is skipped, the command returns
+the status and graph run group ID. If the graph fails or is canceled, the command returns an error.
+
+Use `AWAIT` when subsequent statements in a script or stored procedure depend on the task graph’s
+results. If the graph is already running and its `OVERLAP_POLICY` prevents a new run from starting
+immediately, the command returns an error without queueing another run. For timeout behavior and
+other restrictions, see [EXECUTE TASK](/sql-reference/sql/execute-task).
+
 ### Run a task on a schedule or as a triggered task
 
 In the root task, define when the task graph runs. Task graphs can run on a recurring schedule, or they can be triggered by an event. For more information, see the following topics:

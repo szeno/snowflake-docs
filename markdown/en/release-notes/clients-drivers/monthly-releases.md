@@ -18,6 +18,35 @@ Tip
 To view a list of release note announcements, filtered by date and release type, see
 [All release notes](/release-notes/all-release-notes).
 
+## November 2026 release notes
+
+| Client | Version | Date | BCR? |
+| --- | --- | --- | --- |
+| [.NET Driver](/release-notes/clients-drivers/dotnet) | TBD | TBD |  |
+| [Go Snowflake Driver](/release-notes/clients-drivers/golang) | TBD | TBD |  |
+| [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
+| [JDBC Driver](/release-notes/clients-drivers/jdbc) | 4.4.1 | 02-Nov-2026 |  |
+| 5.0.0-RC1 | 02-Nov-2026 |  |
+| [Node.js Driver](/release-notes/clients-drivers/nodejs) | TBD | TBD |  |
+| [ODBC Driver](/release-notes/clients-drivers/odbc) | TBD | TBD |  |
+| [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | TBD | TBD |  |
+| [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | TBD | TBD |  |
+| [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
+| [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | TBD | TBD |  |
+| [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | TBD | TBD |  |
+| [Snowpipe Streaming SDK](/release-notes/clients-drivers/snowpipe-streaming-sdk) | TBD | TBD |  |
+| [Snowflake Python APIs](/release-notes/clients-drivers/snowapi-python) | TBD | TBD |  |
+| [Snowpark Library for Python](/release-notes/clients-drivers/snowpark-python) | TBD | TBD |  |
+| [Snowpark Library for Scala and Java](/release-notes/clients-drivers/snowpark-scala-java) | TBD | TBD |  |
+| [Snowpark Connect for Spark](/release-notes/clients-drivers/snowpark-connect) | TBD | TBD |  |
+| [Snowpark ML](/release-notes/clients-drivers/snowpark-ml) | TBD | TBD |  |
+| [SnowSQL](/release-notes/clients-drivers/snowsql) | TBD | TBD |  |
+| [SQLAlchemy](/release-notes/clients-drivers/sqlalchemy) | TBD | TBD |  |
+
+Expand
+
+Show lessSee more
+
 ## October 2026 release notes
 
 | Client | Version | Date | BCR? |

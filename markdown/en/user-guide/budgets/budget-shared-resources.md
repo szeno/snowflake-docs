@@ -95,10 +95,6 @@ Supported AI feature domains include:
 - `SNOWFLAKE INTELLIGENCE` — Snowflake CoWork workloads
 - `AI GATEWAY` — Cortex AI Gateway
 
-  [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-  Available to all accounts.
-
 Tip
 
 You can use the [SYSTEM$SHOW\_BUDGET\_SHARED\_RESOURCE\_CANDIDATES](/sql-reference/functions/system_show_budget_shared_resource_candidates) function to return a list of resources that can be added as
@@ -150,10 +146,6 @@ For the SNOWFLAKE INTELLIGENCE domain, specifying an explicit object reference i
 
 ### Add the AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Add the AI Gateway by domain. Each account has a single gateway, named `SNOWFLAKE`, so the domain
 covers it.
 
@@ -191,10 +183,6 @@ Using tags to define the scope of a budget is required for shared resources such
    - **Cortex Code**
    - **Cortex Agents**
    - **AI Gateway**
-
-     [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-     Available to all accounts.
    - **Snowflake CoWork**
 8. Configure AI Functions.
 

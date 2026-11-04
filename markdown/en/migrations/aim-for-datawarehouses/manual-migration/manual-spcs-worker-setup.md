@@ -1,6 +1,6 @@
 # Manual SPCS worker setup
 
-This page is for operators who need to create Snowpark Container Services (SPCS) Worker objects by hand. For most projects, prefer the Snowflake AIM Agent for Data Warehouses or SnowConvert AI CLI (`scai data worker setup`), which create the secret, network rule, external access integration, and service for you. Manual creation is not recommended unless your environment requires it.
+This page is for operators who need to create Snowpark Container Services (SPCS) Worker objects by hand. For most projects, prefer the Snowflake AIM Agent for Data Warehouses or SnowConvert AI CLI (`scai data worker setup`), which create the secret, network rule, external access integration, and service for you. With `--dcp`, the CLI also creates the Data Connectivity Proxy objects. Manual creation is not recommended unless your environment requires it.
 
 For deployment scenarios and when to use SPCS versus customer-hosted Workers, see [Deploying workers](../data-migration-validation/deploy-workers).
 
@@ -55,14 +55,16 @@ To cap what the pool and the warehouse can spend, put both in a budget. See [Cap
 
 ## Network access objects
 
-Workers in SPCS need outbound access from Snowflake to the source database and, for some platforms, to package hosts where drivers are downloaded at container startup. Create a [network rule](https://docs.snowflake.com/en/user-guide/network-rules) and an [external access integration](https://docs.snowflake.com/en/developer-guide/external-network-access/external-network-access-overview), then attach the integration to the Worker service.
+Workers in SPCS need a path to the source database and, for some platforms, to package hosts where drivers are downloaded at container startup. On the direct-egress path, create a [network rule](/user-guide/network-rules) and an [external access integration](/developer-guide/external-network-access/external-network-access-overview), then attach the integration to the Worker service. A Worker created with `--dcp` reaches the source host through a separate Data Connectivity Proxy rule and integration. The source host leaves the direct egress rule.
 
-Create the secret, network rule, and external access integration in a database and schema your role can manage. The examples below use placeholders; they are not tied to the AIM DMV metadata database.
+Create the secret, network rule, and external access integration in a database and schema your role can manage. The direct-egress examples below use placeholders. They are not tied to the AIM DMV metadata database. The Data Connectivity Proxy names later in this section are the ones `scai data worker setup --dcp` creates.
 
 ### Setup flow
 
+This flow is the direct-egress path. The network rule includes the source host. With `--dcp`, omit the source host from this rule.
+
 1. Create a **secret** with source database credentials (if the Worker reads them from Snowflake).
-2. Create a **network rule** listing every host and port the Worker must reach (source database and any driver download hosts).
+2. Create a **network rule** listing every host and port the Worker must reach directly (the source database on this path, and any driver download hosts).
 3. Create an **external access integration** that references the network rule.
 4. Create or alter the Worker **service** with `EXTERNAL_ACCESS_INTEGRATIONS = (<integration_name>)`.
 
@@ -87,13 +89,57 @@ CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION <source_type>_EAI
   ENABLED = TRUE;
 ```
 
-When you use SnowConvert AI CLI (`scai data worker setup`) with a SQL Server, Azure Synapse, Amazon Redshift, PostgreSQL, Oracle, or Teradata source connection, the CLI creates these objects for you, including the driver download hosts for that platform. Use this page when you need to create them yourself, for example when you use `--skip-egress`.
+When you use SnowConvert AI CLI (`scai data worker setup`) with a SQL Server, Azure Synapse, Amazon Redshift, PostgreSQL, Oracle, or Teradata source connection, the CLI creates these objects for you, including the driver download hosts for that platform. Use this page when you need to create them yourself, for example when you use `--skip-egress`. `--dcp` and `--skip-egress` together fail before any object is created.
 
 Note
 
-Account-level network policies, source-system firewalls, and corporate proxies are your responsibility. Verify egress from SPCS to every host in your network rule before starting a workflow.
+Account-level network policies, source-system firewalls, and corporate proxies are your responsibility. On the direct-egress path, verify egress from SPCS to every host in your network rule before starting a workflow. A Worker created with `--dcp` reaches the source host through the agent instead.
+
+### Data Connectivity Proxy objects
+
+`scai data worker setup --dcp <PROXY_NAME>` adds the objects below and leaves the source `host:port` out of the direct egress rule. A private DNS name would fail resolution on a direct rule. `<TYPE>` is the source type in uppercase: `SQLSERVER`, `ORACLE`, `POSTGRESQL`, `REDSHIFT`, `TERADATA`, or `SYNAPSE`. `<METADATA_DB>` is the AIM metadata database. The schema is `PUBLIC`.
+
+A custom `--service-name` prefixes the derived secret, rule, and integration names with that name and an underscore. The default service name `DATA_EXCHANGE_WORKER_SERVICE` uses no prefix.
+
+| Object | Name | Role |
+| --- | --- | --- |
+| Password secret | `<METADATA_DB>.PUBLIC.<TYPE>_SECRET` | Unchanged. Source credentials. Not created for Windows authentication. The existing keytab secrets are used instead. |
+| Direct network rule | `<METADATA_DB>.PUBLIC.<TYPE>_EGRESS_RULE` | `MODE = EGRESS`. Driver-download hosts and any cloud-direct hosts. The source `host:port` isn’t in this list. |
+| Direct integration | `SCAI_EAI_<TYPE>_<METADATA_DB>` | Allows the direct rule. Attached to the Worker when there is anything to allow directly. |
+| Data Connectivity Proxy network rule | `<METADATA_DB>.PUBLIC.<TYPE>_DCP_RULE` | `MODE = DATA_CONNECTIVITY_PROXY_EGRESS`, `TYPE = HOST_PORT`, `VALUE_LIST = ('<host>:<port>')`. |
+| Data Connectivity Proxy integration | `SCAI_EAI_DCP_<TYPE>_<METADATA_DB>` | `ALLOWED_NETWORK_RULES` contains only the Data Connectivity Proxy rule. The proxy attaches to this integration, so the direct egress rule must not be added to it. |
+| Data Connectivity Proxy | The `--dcp` name, uppercased | `EXTERNAL_ACCESS_INTEGRATIONS` includes the Data Connectivity Proxy integration. `ENABLED = TRUE`. |
+
+Expand
+
+Show lessSee more
+
+The Worker service’s `EXTERNAL_ACCESS_INTEGRATIONS` lists the direct integration and the Data Connectivity Proxy integration. A source with no direct hosts gets only the Data Connectivity Proxy integration. Oracle is the case with no driver host.
+
+The CLI alters an integration or network rule that already matches. It doesn’t replace it, because replacing an integration detaches it from the proxy and from services. `created_on` on those objects doesn’t change. When several Workers share one proxy, add the new integration to the proxy’s existing list. Don’t replace that list with only the new integration.
+
+Copy code
+
+```
+CREATE NETWORK RULE <metadata_db>.PUBLIC.<TYPE>_DCP_RULE
+  MODE = DATA_CONNECTIVITY_PROXY_EGRESS
+  TYPE = HOST_PORT
+  VALUE_LIST = ('<host>:<port>');
+
+CREATE EXTERNAL ACCESS INTEGRATION SCAI_EAI_DCP_<TYPE>_<METADATA_DB>
+  ALLOWED_NETWORK_RULES = (<metadata_db>.PUBLIC.<TYPE>_DCP_RULE)
+  ENABLED = TRUE;
+
+CREATE DATA CONNECTIVITY PROXY <proxy_name>
+  EXTERNAL_ACCESS_INTEGRATIONS = (SCAI_EAI_DCP_<TYPE>_<METADATA_DB>)
+  ENABLED = TRUE;
+```
+
+See [CREATE DATA CONNECTIVITY PROXY](/user-guide/data-connectivity-proxy-reference#label-dcp-create). For how to run the agent, see [Reach a private source with Data Connectivity Proxy](../data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 
 ## Allowing SPCS to reach your source system (inbound access)
+
+This section is the direct-egress path. It applies when the Worker calls the source host from Snowflake. A Worker created with `--dcp` doesn’t use it for the source host, so you don’t allowlist Snowflake egress IPs for that host. Allowlisting `SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES()` remains the way a direct-egress source accepts the Worker.
 
 An egress network rule only controls what the Worker is *allowed* to call out to. Your source system also needs to *accept* the connection: SPCS containers connect from Snowflake-managed IP addresses, not from an address you control, so the source system’s firewall, security group, or VPC ingress rules must explicitly allow those addresses.
 
@@ -217,7 +263,7 @@ SELECT SYSTEM$GET_SERVICE_STATUS('<worker_service_name>');
 
 Every instance should report `READY`.
 
-Also complete the **inbound access** step above: your Redshift cluster’s security group must allow connections from your account’s Snowflake egress IP ranges on port 5439.
+Also complete the **inbound access** step above when the Worker uses direct egress: your Redshift cluster’s security group must allow connections from your account’s Snowflake egress IP ranges on port 5439. A Worker created with `--dcp` reaches the cluster through the Data Connectivity Proxy agent, so the cluster doesn’t need those Snowflake egress ranges for the source port.
 
 ## Passing other secrets to the Worker
 
@@ -244,7 +290,7 @@ The role that owns the service needs `USAGE` on each secret. See [Workers on Sno
 
 ## Driver download hosts by platform
 
-Workers download some database drivers when the container starts. Include your **source host and port** in every network rule, plus the driver download hosts for your platform.
+Workers download some database drivers when the container starts. On the direct-egress path, include your **source host and port** in the egress network rule, plus the driver download hosts for your platform. A Worker created with `--dcp` leaves the source host out of that rule. The source `host:port` is listed only on the Data Connectivity Proxy network rule. Driver download hosts stay on the direct egress rule.
 
 Note
 

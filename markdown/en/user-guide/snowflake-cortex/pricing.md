@@ -38,6 +38,7 @@ The following features use AI Credit pricing. For complete details, see Table 6 
 | Cortex Agents | AI Credit |
 | Snowflake CoWork | AI Credit |
 | Cortex REST API | AI Credit |
+| Cortex AI Gateway | AI Credit |
 | AI Functions | AI Credit |
 | Cortex Search | AI Credit |
 | Cortex Batch Search | AI Credit |
@@ -78,6 +79,10 @@ AI Functions (such as AI\_COMPLETE, AI\_EMBED, AI\_CLASSIFY, and AI\_EXTRACT) ar
 ### Cortex REST API
 
 The Cortex REST API is billed in AI Credits per million tokens. Prompt caching is supported, with cache reads billed at a reduced rate compared to standard input tokens. The specific per-token rate depends on the model you select.
+
+### Cortex AI Gateway
+
+Cortex AI Gateway is billed the same way as the Cortex REST API: in AI Credits, per token processed, at each model’s rate. For details, see [Pricing](/user-guide/snowflake-cortex/cortex-ai-gateway/inference#label-cortex-ai-gateway-inference-pricing).
 
 ### AI Parse Doc
 

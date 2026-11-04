@@ -258,6 +258,8 @@ GRANT MONITOR ON FUTURE PIPES IN SCHEMA SNOWCONVERT_AI.TEMP TO ROLE <migration_r
 
 Required when you run Workers in SPCS, which reads source credentials from a secret and reaches the source system through an external access integration. For the full SPCS setup, see [Deploying workers](./deploy-workers).
 
+A Worker created with `scai data worker setup --dcp` also needs privileges on the Data Connectivity Proxy. Creating the proxy requires `CREATE DATA CONNECTIVITY PROXY` on the account, or the `ACCOUNTADMIN` role. Reusing one requires `USAGE` on the proxy. Creating the proxy’s integration, and adding an integration to a shared proxy, requires `CREATE INTEGRATION` on the account. Issuing certificates and minting the bootstrap token require `OWNERSHIP` of the proxy. See [Reach a private source with Data Connectivity Proxy](./deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
+
 Copy code
 
 ```

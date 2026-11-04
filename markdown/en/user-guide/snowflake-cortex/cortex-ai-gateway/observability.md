@@ -1,9 +1,5 @@
 # Observability for Cortex AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
-
 Cortex AI Gateway records traces and spans for all requests traversing the gateway. Traces give you
 full execution transparency into agent behavior: which models were invoked, step timing, token
 consumption, and failure reasons.
@@ -17,8 +13,12 @@ Copy code
 SELECT * FROM TABLE(AGENT_TRACE_TABLE('SNOWFLAKE'));
 ```
 
-Querying `AGENT_TRACE_TABLE` requires the MONITOR privilege on the gateway object. See
+With the MONITOR or OWNERSHIP privilege on the gateway, `AGENT_TRACE_TABLE` returns every user’s spans.
+With USAGE only, it returns just your own. See
 [Access control](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-access-control).
+
+To chart this data in Snowsight instead of querying it, see
+[Trace analytics for Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/observability/trace-analytics).
 
 Note
 

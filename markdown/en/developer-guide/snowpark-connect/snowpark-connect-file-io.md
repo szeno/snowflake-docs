@@ -327,7 +327,7 @@ df.write.mode("overwrite").parquet("@my_stage/out/")
 
 | Mode | Spark name | Behavior in Snowpark Connect for Spark |
 | --- | --- | --- |
-| Error if exists | `error` / `errorifexists` | Default. Fails if data already exists at the target path or table. |
+| Error if exists | `error` | Default. Fails if data already exists at the target path or table. The `errorifexists` alias isn’t supported. Use `error` instead for the same behavior. |
 | Overwrite | `overwrite` | Removes existing files at the target path before writing. For table writes, replaces the table. |
 | Append | `append` | Adds new files alongside existing ones. Uses a random filename prefix to avoid conflicts. |
 | Ignore | `ignore` | Skips the write if data already exists. **Supported for Parquet file writes and table writes only.** CSV, JSON, and text file writes raise an error for this mode. |

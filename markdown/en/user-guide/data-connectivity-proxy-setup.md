@@ -1,7 +1,8 @@
 # Set up Data Connectivity Proxy
 
 Complete these steps to create a Data Connectivity Proxy (DCP) object, deploy an agent on your network, and route Openflow connector
-traffic to a private data source.
+traffic to a private data source. The same agent and proxy also serve an AIM Data Exchange Worker on Snowpark Container Services
+created with `scai data worker setup --dcp`.
 
 The agent host needs at least 1 vCPU and 512 MB of memory. For the full prerequisite list, see
 [Prerequisites](/user-guide/data-connectivity-proxy#label-dcp-prerequisites).

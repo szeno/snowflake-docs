@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 This page is for end users connecting to servers that their administrator has enabled in Tools. CoCo Desktop and CoCo CLI discover enabled servers automatically when your account role has the required access and database-role grant. You don’t need to copy a server URL or add a configuration file entry for those servers, but you must authorize your own connection when the server requires user authentication.
 
@@ -36,7 +36,7 @@ For any other MCP-compatible client, including Claude Desktop, Claude Code, Curs
 ### Copy the connection URL
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**. Tools opens in a new tab.
+2. Select **AI Gateway** > **MCP & Tools**. Tools opens in a new tab.
 3. Select **MCP Connections**.
 4. Find the server you want to connect to and review its client instructions.
 5. Copy the connection URL shown for that server.

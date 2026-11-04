@@ -485,7 +485,7 @@ Before starting with the PrivateLink configuration, make sure that PrivateLink i
 
 Perform the following steps:
 
-1. Retrieve Snowflake’s VPC endpoint service ID and Openflow PrivateLink URLs:
+1. Retrieve Snowflake’s VPC endpoint service name and Openflow PrivateLink URLs:
 
    1. Run the following SQL command using the `ACCOUNTADMIN` role:
 
@@ -502,11 +502,19 @@ Perform the following steps:
       - `openflow-privatelink-url`
       - `external-telemetry-privatelink-url`
       - `privatelink_ocsp-url`
+
+   Note
+
+   `privatelink-vpce-id` is the service name of Snowflake’s VPC endpoint service.
+   The value has the form `com.amazonaws.vpce.<region>.vpce-svc-<id>`.
+   Enter this value in the service name field when you create the VPC endpoint.
+   Your VPC ID (`vpc-<id>`) identifies the VPC where the deployment runs.
+   AWS assigns a separate VPC endpoint ID (`vpce-<id>`) to the endpoint after you create it.
 2. Create a VPC endpoint with parameters:
 
    - Type: **PrivateLink Ready partner services**
-   - Service: `privatelink-vpce-id` value obtained in the previous step.
-   - VPC: The VPC where your Openflow deployment will be running.
+   - Service name: `privatelink-vpce-id` value obtained in the previous step.
+   - VPC: The VPC where your Openflow deployment will be running. Select this VPC by its VPC ID (`vpc-<id>`).
    - Subnets: Select two availability zones and private subnets where your Openflow deployment will be running.
 3. Set up Route 53 private hosted zone with the following parameters:
 

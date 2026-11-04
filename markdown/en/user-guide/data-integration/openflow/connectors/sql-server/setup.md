@@ -44,7 +44,7 @@ You must perform these tasks as a database administrator.
    ```
    ALTER DATABASE <database>
      SET CHANGE_TRACKING = ON
-     (CHANGE_RETENTION = 5 DAYS, AUTO_CLEANUP = ON);
+     (CHANGE_RETENTION = 3 DAYS, AUTO_CLEANUP = ON);
 
    ALTER TABLE <schema>.<table>
      ENABLE CHANGE_TRACKING
@@ -68,15 +68,12 @@ You must perform these tasks as a database administrator.
 
    Important
 
-   Set `CHANGE_RETENTION` to a window that’s long enough to keep change data available for data
-   continuity. SQL Server removes tracked changes once they’re older than the retention period, so if
-   the connector can’t read changes before they expire, it can’t replicate them incrementally and the
-   affected tables require a full reload.
-
-   A longer retention window, such as 5 days, gives you time to detect and react to problems, such as
-   a paused connector, a network outage, or a failed replication cycle, and to mitigate them without
-   reloading entire tables. Choose a value that covers the longest interruption you expect to recover
-   from, balanced against the additional storage that retained change data consumes in SQL Server.
+   Snowflake recommends a `CHANGE_RETENTION` of at least 72 hours (`3 DAYS`). This gives you time to
+   detect and recover from an interruption such as a paused connector, a network outage, or a failed
+   replication cycle without a full reload. If SQL Server removes tracked changes before the
+   connector reads them, the affected tables require a full reload. A longer window uses more storage
+   in SQL Server. If you use [scheduled replication](#configure-scheduling-of-merge-tasks), the
+   retention window must be longer than the configured schedule.
 2. Create a login for the SQL Server instance:
 
    Copy code

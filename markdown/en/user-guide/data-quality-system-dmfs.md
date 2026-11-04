@@ -54,6 +54,7 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [UNTRIMMED\_STRING\_COUNT](/sql-reference/functions/dmf_untrimmed_string_count) | Determine how many non-NULL values in a string column have leading or trailing whitespace. |
 |  | [UNTRIMMED\_STRING\_PERCENT](/sql-reference/functions/dmf_untrimmed_string_percent) | Determine what percentage of non-NULL values in a string column have leading or trailing whitespace. |
 | Freshness | [FRESHNESS](/sql-reference/functions/dmf_freshness) | Determine the freshness of a table’s data based on a timestamp column or the most recent [DML operation](/sql-reference/sql-dml). |
+|  | [SECONDS\_SINCE\_ROW\_COUNT\_CHANGE](/sql-reference/functions/dmf_seconds_since_row_count_change) | Determine how many seconds have passed since a DML operation last changed the number of rows in a table. |
 |  | [SOURCE\_TARGET\_LAG](/sql-reference/functions/dmf_source_target_lag) | Determine how far, in seconds, the latest timestamp in a target table trails the latest timestamp in a source table. |
 | Machine Learning | [ACCURACY](/sql-reference/functions/dmf_accuracy) | Determine what percentage of predicted values in a column are equal to the actual values in another column. |
 |  | [MAE](/sql-reference/functions/dmf_mae) | Determine the mean absolute error between a column of predicted values and a column of actual values. |
@@ -251,6 +252,9 @@ Some system DMFs measure closely related conditions:
   `SCHEMA_CHANGE_COUNT` also counts. Renamed columns are counted only by `SCHEMA_CHANGE_COUNT`.
 - `FRESHNESS` measures how long ago a single table was last updated, and `SOURCE_TARGET_LAG` measures how far the latest timestamp in a
   target table trails the latest timestamp in a source table.
+- `FRESHNESS` without a column measures the time since any DML operation on a table, and `SECONDS_SINCE_ROW_COUNT_CHANGE` measures
+  the time since a DML operation last changed the number of rows in the table. For example, an UPDATE resets `FRESHNESS` but not
+  `SECONDS_SINCE_ROW_COUNT_CHANGE`.
 - `ROW_COUNT` counts the rows in a single table, and `ROW_COUNT_DIFFERENCE` returns how many more or fewer rows the table has than a
   reference table.
 - `ACCEPTED_VALUES` counts the records that don’t match a Boolean expression, and `ACCEPTED_VALUES_PERCENT` returns the percentage of

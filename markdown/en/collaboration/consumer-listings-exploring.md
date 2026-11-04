@@ -20,6 +20,30 @@ After you find a listing relevant to your use cases, explore it further.
 - Get a free listing. See [Access and install listings as a consumer](/collaboration/consumer-listings-access).
 - Review the data dictionary. See [Preview the contents of a listing with data dictionaries](#label-consumer-data-dictionary).
 - Trial a paid or limited trial listing. See [Trial a listing](#label-trial-paid-listing).
+- Get a remote MCP server. See [Access remote MCP servers on the Snowflake Marketplace](/collaboration/consumer-listings-access#label-access-remote-mcp-servers).
+
+## Browse listings with remote MCP servers
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+During preview, [Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/tools), which you
+use to enable remote MCP servers, is available only in AWS commercial regions, excluding Asia Pacific
+(New Zealand), Asia Pacific (Malaysia), and Europe (Spain).
+
+Remote MCP servers are Model Context Protocol (MCP) endpoints that providers host outside Snowflake
+and list on the Snowflake Marketplace. You can use remote MCP servers in Cortex Code and other
+MCP-compatible AI clients.
+
+To find remote MCP servers on the Snowflake Marketplace, follow these steps:
+
+1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
+2. In the navigation menu, select **Marketplace** » **Snowflake Marketplace**.
+3. Select the **Remote MCPs** category, or select **View all** next to **Featured Remote MCPs**.
+
+Before you enable a server, review the listing description for what each tool does, whether it takes
+actions, and what data it sends to the provider.
+
+To enable and use a remote MCP server, see [Access remote MCP servers on the Snowflake Marketplace](/collaboration/consumer-listings-access#label-access-remote-mcp-servers).
 
 ## View listing information
 

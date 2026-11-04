@@ -152,8 +152,10 @@ For general information about roles and privilege grants for performing SQL acti
   For example:
 
   `192.168.1.0/24`
-- When a network policy includes values for both `ALLOWED_IP_LIST` and `BLOCKED_IP_LIST`, Snowflake applies the
-  blocked list first.
+- When a network policy includes both allowed values (in `ALLOWED_IP_LIST` or `ALLOWED_NETWORK_RULE_LIST`) and blocked
+  values (in `BLOCKED_IP_LIST` or `BLOCKED_NETWORK_RULE_LIST`) for the same identifier, the blocked
+  list always takes precedence; the identifier is blocked even though it’s also in the allowed list. For more
+  details, see [Interaction between allowed lists and blocked lists](/user-guide/network-policies#label-interaction-between-allowed-lists-and-blocked-lists).
 - The maximum number of characters for the `ALLOWED_IP_LIST` list is 100,000. Snowflake returns an error message when this
   character limit is exceeded.
 - After creating a network policy, you must associate it with your account before Snowflake enforces the policy. You can associate a

@@ -35,9 +35,15 @@ As a database administrator, perform the following tasks:
 1. [Configure wal\_level](#configure-wal-level)
 2. [Review other server settings](#label-postgres-review-server-settings)
 3. [Create a publication](#create-a-publication)
-4. Ensure that there is enough disk space on your PostgreSQL server for the WAL.
-   This is because once created, a replication slot causes PostgreSQL to retain the WAL data from the position held by the replication slot,
-   until the connector confirms and advances that position.
+4. Provision enough disk space on your PostgreSQL server for at least 72 hours of WAL at your peak
+   change rate.
+   Snowflake recommends this window so you can detect and recover from an interruption, such as a
+   paused connector, a network outage, or a failed replication cycle, without a full reload.
+   A replication slot causes PostgreSQL to retain WAL from the position the slot holds until the
+   connector confirms and advances that position.
+   If `max_slot_wal_keep_size` is set, size it for this same window. See [Review server settings](#label-postgres-review-server-settings).
+   If you use [scheduled replication](#label-of-postgres-ingestion-parameters), the retained WAL must
+   cover a window longer than the configured schedule.
 5. Ensure that every table enabled for replication has one of the following identity key configurations:
    - **Primary key**: The connector uses primary key columns as the identity key and requires the table’s REPLICA IDENTITY to be set to `DEFAULT`.
    - **Unique index (for tables without a primary key)**: Use a unique index that meets the requirements in [Configure replica identity for tables without a primary key](#label-postgres-configure-replica-identity-using-index) as the identity key. You must run `ALTER TABLE <table_name> REPLICA IDENTITY USING INDEX <index_name>` before enabling replication.
@@ -73,6 +79,7 @@ Aside from `wal_level`, review and adjust the following PostgreSQL server settin
 | `max_replication_slots` | Allow at least **1** logical replication slot per connector instance. |
 | `max_wal_senders` | Allow at least **1** WAL sender per connector instance. |
 | `max_connections` | Allow enough connections to cover each connector instance, in addition to your other database connections. Every connector instance uses 1 connection during regular operation, and up to 8 connections when snapshotting tables. |
+| `max_slot_wal_keep_size` | If you set this limit, size it to hold at least 72 hours of WAL at your peak change rate. A value that is too small invalidates the replication slot, and the affected tables require a full reload. |
 
 Expand
 

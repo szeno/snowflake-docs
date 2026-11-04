@@ -172,8 +172,8 @@ Treat `tool_input` and `tool_output` as **VARCHAR-style strings** in your JSON (
 
 | Key | Description | Used by |
 | --- | --- | --- |
-| `tool_name` | The name of the tool as exposed to the agent: Cortex Analyst tool name (its semantic view name also matches), Cortex Search service name, a custom tool name, or the fixed name `web_search` for web search. Use the same identifier the agent sees in its traces. | TSA (required to define the expected tool call). TEA (required to match actual tool calls to expected tool calls). |
-| `tool_input` | Optional string. Natural-language or structured **text** describing what input you expect the agent to pass (for example a paraphrase of the question or a short JSON blob as text). | TEA only (optional, provide if validation of the tool input is important). |
+| `tool_name` | The name of the tool as exposed to the agent: Cortex Analyst tool name (its semantic view name also matches), Cortex Search service name, a custom tool name, or the fixed name `web_search` for web search or `agent_router` for the agent router. Use the same identifier the agent sees in its traces. | TSA (required to define the expected tool call). TEA (required to match actual tool calls to expected tool calls). |
+| `tool_input` | Optional string or JSON object (see the following tool-specific examples). Natural-language or structured **text**, or a JSON object, describing what input you expect the agent to pass (for example a paraphrase of the question or a short JSON blob as text). | TEA only (optional, provide if validation of the tool input is important). |
 | `tool_output` | Optional string. Natural-language or structured **text** describing what you expect the tool to return (result data from a query, a SQL string, citations, JSON, and so on). | TEA only (optional, provide if validation of the tool output is important). |
 
 Expand
@@ -227,6 +227,19 @@ Copy code
   "tool_name": "get_weather",
   "tool_input": "City San Francisco and date August 2, 2019.",
   "tool_output": "Temperature near 14 C and units metric."
+}
+```
+
+**Agent router** – Use `agent_router` for `tool_name`. In `tool_input`, provide a JSON object with `subagent_name` set to the expected agent name (matched case-insensitively; plain text isn’t evaluated). `agent_router` calls are ignored when `ground_truth_invocations` omits `agent_router`.
+
+Copy code
+
+```
+{
+  "tool_name": "agent_router",
+  "tool_input": {
+    "subagent_name": "MY_DB.MY_SCHEMA.SALES_AGENT"
+  }
 }
 ```
 

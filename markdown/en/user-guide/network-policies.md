@@ -44,9 +44,11 @@ identifiers of the same type; only the allowed identifiers have access. For exam
 address to the allowed list, all other IPv4 addresses are blocked. There is no need to use the blocked list to restrict access from other
 IP addresses.
 
-If a network policy has the same IP address values in both the `ALLOWED_IP_LIST` and the `BLOCKED_IP_LIST` parameters, Snowflake
-applies the values in the `BLOCKED_IP_LIST` parameter first. This behavior also applies to the `ALLOWED_NETWORK_RULE_LIST` and
-the `BLOCKED_NETWORK_RULE_LIST` parameters.
+If a network policy has the same IP address values in both the `ALLOWED_IP_LIST` and the `BLOCKED_IP_LIST` parameters, the
+blocked values always take precedence: Snowflake blocks the IP address, and including it in `ALLOWED_IP_LIST` doesn’t override
+the block. The same precedence applies to the `ALLOWED_NETWORK_RULE_LIST` and `BLOCKED_NETWORK_RULE_LIST` parameters: if the
+same network rule, or overlapping identifiers within different network rules, appear in both lists, the blocked values take
+precedence.
 
 [Private connectivity](/user-guide/private-connectivity-inbound) network rules — that is, network rules of type AWSVPCEID or
 AZURELINKID — take precedence over IPV4 and IPV6 network rules. If an incoming request uses private connectivity and there is a network

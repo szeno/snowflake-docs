@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 As an administrator, you enable MCP servers in Tools and configure which account roles can access them. Users complete any required authorization with the third-party service.
 
@@ -23,7 +23,7 @@ This database-role grant is required in addition to access to the individual MCP
 ## Enable an MCP server
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**. Tools opens in a new tab.
+2. Select **AI Gateway** > **MCP & Tools**. Tools opens in a new tab.
 3. Find the MCP server you want to make available to your users.
 4. Complete any [provider-specific setup](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-server-oauth-setup).
 5. Enable the server.
@@ -34,7 +34,7 @@ Users also need access to the server through their account roles. Automatic conf
 
 CoCo Desktop and CLI discover enabled servers automatically when the user’s account role has server access and the [required database-role grant](#label-gateway-tools-client-access-role). Users don’t need to copy an MCP URL or create a configuration entry for those servers, but they still complete any required authorization. In Desktop, users find these servers under **Agent Settings** > **MCP** > **Snowflake Managed**. In CLI, users enter `/mcp` and find them in the **Managed** list.
 
-Users of other MCP clients select **AI & ML** > **AI Gateway** > **MCP & Tools** in Snowsight, then select **MCP Connections** in the new tab for connection details and client instructions. Share [Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client#label-gateway-tools-third-party-clients) with these users.
+Users of other MCP clients select **AI Gateway** > **MCP & Tools** in Snowsight, then select **MCP Connections** in the new tab for connection details and client instructions. Share [Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client#label-gateway-tools-third-party-clients) with these users.
 
 ## Next step
 

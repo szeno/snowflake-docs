@@ -48,9 +48,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
+- [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
+- [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [JDBC Driver (v5.0.0-RC1)](/release-notes/clients-drivers/jdbc-2026)
+- [JDBC Driver (v4.4.1)](/release-notes/clients-drivers/jdbc-2026)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
@@ -62,6 +66,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 29, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-29-dcr)
 - [Oct 29, 2026: Access externally managed Apache Iceberg™ tables through Snowflake Horizon Catalog (General availability)](/release-notes/2026/other/2026-10-29-externally-managed-iceberg-tables-horizon-irc-ga)
 - [Oct 29, 2026: Horizon Iceberg REST Catalog telemetry (General availability)](/release-notes/2026/other/2026-10-29-horizon-irc-telemetry-ga)
+- [Snowpark Python (v1.56.0)](/release-notes/clients-drivers/snowpark-python-2026)
 - [SnowSQL (v1.4.6)](/release-notes/clients-drivers/snowsql-2026)
 - [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)

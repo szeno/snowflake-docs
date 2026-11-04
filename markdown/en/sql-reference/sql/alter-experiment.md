@@ -13,6 +13,9 @@ Copy code
 ALTER EXPERIMENT <experiment_name> ADD RUN <run_name>
 
 ALTER EXPERIMENT <experiment_name> COMMIT RUN <run_name>
+  [ WITH STATUS = { 'FINISHED' | 'FAILED' | 'CANCELLED' } ]
+
+ALTER EXPERIMENT <experiment_name> MODIFY RUN <run_name> SET STATUS = { 'RUNNING' | 'PAUSED' }
 
 ALTER EXPERIMENT <experiment_name> DROP RUN <run_name>
 ```
@@ -46,6 +49,15 @@ ALTER EXPERIMENT <experiment_name> DROP RUN <run_name>
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
     For information on how to retrieve the results and artifacts of an experiment run, see [Complete a run](/developer-guide/snowflake-ml/experiments#label-ml-experiments-complete).
+
+`WITH STATUS = { 'FINISHED' | 'FAILED' | 'CANCELLED' }`
+:   Sets the final status of the committed run. For information about each status, see [Run statuses](/developer-guide/snowflake-ml/experiments#label-ml-experiments-run-statuses).
+
+    Default: `'FINISHED'`
+
+`MODIFY RUN run_name SET STATUS = { 'RUNNING' | 'PAUSED' }`
+:   Pauses a running run or resumes a paused run. You can only log metrics, parameters, and artifacts to a run with
+    the `RUNNING` status. You can’t change the status of a committed run.
 
 `DROP RUN run_name`
 :   Deletes the run with the identifier `run_name`.
@@ -94,4 +106,21 @@ Copy code
 
 ```
 ALTER EXPERIMENT my_experiment COMMIT RUN run_1;
+```
+
+The following example pauses the run named `run_2` and then resumes it:
+
+Copy code
+
+```
+ALTER EXPERIMENT my_experiment MODIFY RUN run_2 SET STATUS = 'PAUSED';
+ALTER EXPERIMENT my_experiment MODIFY RUN run_2 SET STATUS = 'RUNNING';
+```
+
+The following example completes the run named `run_2` and records it as cancelled:
+
+Copy code
+
+```
+ALTER EXPERIMENT my_experiment COMMIT RUN run_2 WITH STATUS = 'CANCELLED';
 ```

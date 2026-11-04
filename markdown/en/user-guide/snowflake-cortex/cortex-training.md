@@ -55,8 +55,8 @@ The server-side Cortex Training runtime includes the following layers and servic
 
 ## Why use it
 
-- **No GPU procurement.** Pay for the GPU hours you use instead of holding idle capacity while
-  non-GPU parts of your pipeline run.
+- **No GPU procurement.** With Cortex Training On Demand, pay for the GPU hours you use instead of
+  holding idle capacity while non-GPU parts of your pipeline run.
 - **No infrastructure management.** Snowflake maintains the distributed training infrastructure
   and its training and inference optimizations, so your team spends its time on modeling work.
 - **High GPU utilization through job multiplexing.** Cortex Training dynamically schedules
@@ -113,28 +113,19 @@ LoRA (low-rank adaptation) and full-parameter training.
 
 ## Billing
 
-Cortex Training bills for on-demand GPU usage, in [AI Credits](/user-guide/snowflake-cortex/pricing).
+Cortex Training On Demand bills for on-demand GPU usage, in [AI Credits](/user-guide/snowflake-cortex/pricing).
+For pricing, see the
+[Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 For pricing on reserved GPU capacity, contact your account team.
-
-### Rates
-
-Each GPU that a job holds is charged at the hourly rate for its hardware type:
-
-| GPU | AI Credits per GPU-hour |
-| --- | --- |
-| NVIDIA H200 (141 GB) | 4.80 |
-| NVIDIA B300 (288 GB) | 9.00 |
-
-Expand
-
-Show lessSee more
 
 Important
 
 Usage is metered **per second**, with no minimum. You pay only for the GPU time your jobs
 hold, not for full hours.
 
-### When billing starts and stops
+### When on-demand billing starts and stops
+
+For Cortex Training On Demand, billing works as follows:
 
 - **Not billed** while a job is submitted, validated, or queued, before GPU capacity is assigned
   to it.
@@ -146,9 +137,6 @@ hold, not for full hours.
 To stop charges for a job that you’re no longer using, cancel it. For more information, see
 [Cancel a job](/user-guide/snowflake-cortex/cortex-training/job-management#label-cortex-training-cancel-job).
 
-For example, a training job that holds 2 H200 GPUs for 90 minutes of billed time, including
-initialization, uses 2 × 1.5 hours × 4.80 = 14.40 AI Credits.
-
 ## Next steps
 
 - [Get started with Cortex Training](/user-guide/snowflake-cortex/cortex-training/get-started)
@@ -158,17 +146,17 @@ initialization, uses 2 × 1.5 hours × 4.80 = 14.40 AI Credits.
 
 ## Legal notices
 
-The data classification of inputs and outputs are as set forth in the following table.
+The data classification of inputs and outputs is as set forth in the following table.
 
 | Input data classification | Output data classification | Designation |
 | --- | --- | --- |
-| Usage Data | Customer Data | Generally available functions are Covered AI Features. Preview functions are Preview AI Features.  [[1]](#footnote-1) |
+| Customer Data | Customer Data | Preview AI Features [[1]](#footnote-1) |
 
 Expand
 
 Show lessSee more
 
 [1]
-Represents the defined term used in the AI Terms and Acceptable Use Policy.
+Represents the defined term used in the Preview AI Terms and Acceptable Use Policy.
 
 For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).

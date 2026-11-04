@@ -48,15 +48,22 @@ architecture, see [Set up XStream for single-tenant databases](#label-setup-xstr
 
 You must enable the `ARCHIVELOG` mode to ensure that change data is available for replication.
 
-If you use AWS RDS for Oracle, you must also configure the retention period for archived redo logs.
-Determine this period based on the volume of changes in the source database and your storage capacity.
+Snowflake recommends retaining archived redo logs for at least 72 hours on every deployment,
+including on-premises Oracle, Oracle Cloud Infrastructure, and AWS RDS for Oracle. This gives you
+time to detect and recover from an interruption such as a paused connector, a network outage, or a
+failed replication cycle without a full reload. If the source removes archived redo logs
+before the connector reads them, the affected tables require a full reload. A longer window uses
+more storage. If you use [scheduled replication](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#configure-scheduling-of-merge-tasks),
+the retention window must be longer than the configured schedule.
 
-To set the retention period, for example to 24 hours, follow the procedures in the following table:
+For on-premises databases and for Oracle Cloud Infrastructure, set your archived redo log retention
+policy to at least 72 hours. On AWS RDS for Oracle, set the retention period to 72 hours using the
+procedures in the following table:
 
 | Database version | Procedure |
 | --- | --- |
-| AWS RDS (Standard) | Run the following:  Copy code  ``` begin     rdsadmin.rdsadmin_util.set_configuration(         name  => 'archivelog retention hours',         value => '24'); end; / commit; ```  For more information, see [Retaining archived redo logs](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.Oracle.CommonDBATasks.RetainRedoLogs.html). |
-| AWS RDS Custom | 1. Create a text file named `/opt/aws/rdscustomagent/config/redo_logs_custom_configuration.json`. 2. Add a JSON object to this file in the following format: `{"archivedLogRetentionHours" : "24"}`.   For more information, see [Restoring an RDS Custom for Oracle instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/custom-backup.pitr.html). |
+| AWS RDS (Standard) | Run the following:  Copy code  ``` begin     rdsadmin.rdsadmin_util.set_configuration(         name  => 'archivelog retention hours',         value => '72'); end; / commit; ```  For more information, see [Retaining archived redo logs](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Appendix.Oracle.CommonDBATasks.RetainRedoLogs.html). |
+| AWS RDS Custom | 1. Create a text file named `/opt/aws/rdscustomagent/config/redo_logs_custom_configuration.json`. 2. Add a JSON object to this file in the following format: `{"archivedLogRetentionHours" : "72"}`.   For more information, see [Restoring an RDS Custom for Oracle instance](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/custom-backup.pitr.html). |
 
 Expand
 

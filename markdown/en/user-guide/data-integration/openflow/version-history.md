@@ -6,6 +6,28 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 3, 2026
+
+### Runtime Server 2026.11.3.2
+
+- Applied security patches and dependency upgrades.
+- Scheduling: Corrected CRON scheduling to execute only once after Daylight Saving Time changes.
+- Clustering: Prevented decommissioning a node when it is the only connected node.
+
+### Runtime Extensions 2026.11.3.2
+
+- Kafka: Added support for hex-encoded Kafka keys in PublishKafka.
+- Flow Versioning: Fixed the Bitbucket flow registry client failing to commit large flows to Bitbucket Cloud.
+- Flow Versioning: Changed the GitLab flow registry client to use the file’s last commit to determine the latest version.
+
+#### Gen 2 Connectors
+
+N/A
+
+#### Gen 1 Connectors
+
+N/A
+
 ## October 30, 2026
 
 ### Control Plane Core 0.139.2

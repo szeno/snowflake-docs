@@ -2495,7 +2495,7 @@ Create the Data Exchange Worker SPCS service on the specified compute pool.
 Copy code
 
 ```
-scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>]
+scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--dcp <PROXY_NAME>]
 ```
 
 **Prerequisites:**
@@ -2507,6 +2507,10 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 
 - Creates the DEW SPCS service if it does not exist (idempotent)
 - Waits for the service to reach a running state
+- With `--dcp <PROXY_NAME>`, reaches the source through that Data Connectivity Proxy, creating or reusing the proxy. The source host isn’t placed on the direct egress rule. Mutually exclusive with `--skip-egress`: passing both fails before any object is created.
+- `<PROXY_NAME>` is an unquoted Snowflake identifier. The CLI stores it in uppercase. A quoted or invalid name fails before any object is created. The source host must be a DNS name. An IP address fails before any object is created.
+- `--dcp` applies only when the Worker service is created. If the service already exists and `--yes` is omitted, setup doesn’t attach the tunnel. It warns that `--dcp` applies only when the Worker is created, and tells you to run the command again with `--yes`. `--yes` drops and recreates the service from the CLI specification, including the tunnel integrations. Integrations and the network rule that already match are left in place.
+- Privileges, the agent command that setup prints, and the route check are on [Reach a private source with Data Connectivity Proxy](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 
 **Options:**
 
@@ -2518,9 +2522,10 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
 | `--custom-image` | Custom container image path to use instead of auto-resolving the latest. Format: /db/schema/repo/image\_name:tag | No |
 | `-s, --source-connection <SOURCE_CONNECTION>` | Name of the source database connection the Worker reads from (managed with `scai connection`). Uses the default source connection if not specified. | No |
+| `--dcp <PROXY_NAME>` | Reach the source through the named Data Connectivity Proxy tunnel, creating or reusing that proxy. Mutually exclusive with `--skip-egress`. | No |
 | `--affinity <AFFINITY>` | Affinity written to the service’s `AGENT_AFFINITY`. Only workflows with a matching affinity are picked up. Supports `*` wildcards (for example `team-*`). Defaults to the [project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). | No |
-| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service, so multiple Workers can coexist in one account. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. | No |
-| `-y, --yes` | Skip the confirmation prompt. On an existing service, drops and re-creates it. Without it, a re-run doesn’t change the deployed service’s affinity or source. | No |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service, so multiple Workers can coexist in one account. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. A name other than the default prefixes the derived secret, network rule, and integration names with that name and an underscore. | No |
+| `-y, --yes` | Skip the confirmation prompt. On an existing service, drops and re-creates it. Without it, a re-run doesn’t change the deployed service’s affinity, source, or Data Connectivity Proxy attachment. | No |
 
 Expand
 
@@ -2538,6 +2543,9 @@ scai data worker setup --compute-pool MY_COMPUTE_POOL
 
 # Set up with a specific role
 scai data worker setup --compute-pool MY_COMPUTE_POOL --role MY_ROLE
+
+# Reach a private source through a Data Connectivity Proxy
+scai data worker setup --compute-pool MY_COMPUTE_POOL --source-connection my-source --dcp MY_PROXY
 ```
 
 ---

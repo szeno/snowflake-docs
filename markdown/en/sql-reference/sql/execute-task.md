@@ -1,7 +1,10 @@
 # EXECUTE TASK
 
-Manually triggers an asynchronous single run of a task (either a standalone task or the root task in a
+Manually triggers a single run of a task (either a standalone task or the root task in a
 [task graph](/user-guide/tasks-graphs#label-task-dag)) independent of the schedule defined for the task.
+
+By default, the command runs asynchronously and returns after scheduling the run. Specify `AWAIT`
+to wait for the task or task graph to complete before the command returns.
 
 A successful run of a root task triggers a cascading run of child tasks in the task graph as their precedent task completes, as though the
 root task had run on its defined schedule.
@@ -18,6 +21,7 @@ Copy code
 ```
 EXECUTE TASK <name>
   [ USING CONFIG = <configuration_string> ]
+  [ AWAIT ]
 
 EXECUTE TASK <name> RETRY LAST
 
@@ -55,6 +59,13 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
     ```
     CONFIG = $${"learning_rate": 0.2, "environment": "testing"}$$
     ```
+
+    To wait for a run with this configuration to complete, specify `AWAIT` after the configuration
+    string. For details, see [Synchronous execution with AWAIT](#label-execute-task-await).
+
+`AWAIT`
+:   Runs the task or task graph synchronously and waits for the run to complete. For run behavior,
+    timeouts, and output, see [Synchronous execution with AWAIT](#label-execute-task-await).
 
 `RETRY LAST`
 :   Re-execute the last failed task of the [task graph](/user-guide/tasks-graphs#label-task-dag) with `name` restarting from where the tasks failed.
@@ -108,6 +119,8 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
 
 ## Usage notes
 
+### General task behavior
+
 - Executing a task requires either the OWNERSHIP or OPERATE privilege on the task.
 
   When the EXECUTE TASK command triggers a task run, Snowflake verifies that the role with the OWNERSHIP privilege on the task also has
@@ -117,14 +130,6 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
   run the task.
 - By default, Snowflake runs tasks by using the system user with the privileges of the task owner role.
   To run a task as a specific user, configure the task with EXECUTE AS USER. For more information, see [Run tasks with user privileges](/user-guide/tasks-intro#label-user-based-security-for-tasks).
-- For the USING CONFIG option:
-
-  - If the task graph is currently executing and you run this command, Snowflake waits for the current execution to
-    complete before starting a new execution with the dynamic configuration.
-  - If you run this command multiple times while a task is executing, Snowflake uses the configuration from the most recent
-    command for the next run. Previous configurations are replaced and won’t be executed.
-  - The dynamic configuration only applies to the single execution triggered by this command. Subsequent
-    scheduled runs use the default CONFIG parameter from the task definition.
 - The SQL command can only execute a standalone task or the root task in a task graph. If a child task is input, the command returns a
   user error.
 - Manually executing a standalone or root task establishes a version of the task. The standalone task or entire task graph completes its
@@ -140,6 +145,26 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
   As a best practice when testing new or modified task graphs, set the root task to run on its intended production schedule
   but leave it in a suspended state. When you have tested the task graph successfully, resume the root task. Note that you must
   resume any suspended child tasks in the task graph for testing; otherwise, they are skipped during runs of the task graph.
+- If a task fails with an unexpected error, you can receive a notification about the error.
+  For more information, see [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
+- To view the task information you can either:
+
+  - In Snowsight, in the navigation menu, select **Transformation** » **Tasks**.
+  - Call the [COMPLETE\_TASK\_GRAPHS](/sql-reference/functions/complete_task_graphs) table function, and examine the results.
+
+### Asynchronous execution
+
+By default, `EXECUTE TASK` schedules a run and returns a status message without waiting for the run
+to complete. The following notes describe scheduling and configuration for asynchronous execution:
+
+- For the USING CONFIG option:
+
+  - If the task graph is currently executing and you run this command, Snowflake waits for the current execution to
+    complete before starting a new execution with the dynamic configuration.
+  - If you run this command multiple times while a task is executing, Snowflake uses the configuration from the most recent
+    command for the next run. Previous configurations are replaced and won’t be executed.
+  - The dynamic configuration only applies to the single execution triggered by this command. Subsequent
+    scheduled runs use the default CONFIG parameter from the task definition.
 - If no instance of the task is running, a new run starts immediately.
 - If another instance is scheduled (that is, if the task shows a SCHEDULED state in the [TASK\_HISTORY](/sql-reference/functions/task_history)
   output), the requested run replaces the scheduled run. The requested run starts immediately, using the current timestamp as the scheduled time.
@@ -153,17 +178,56 @@ EXECUTE TASK <name> RETRY GRAPH RUN GROUP '<graph_run_group_id>'
     [OVERLAP\_POLICY](/sql-reference/sql/create-task#label-create-task-optional-parameters) in the CREATE TASK documentation.
 
   If the EXECUTE TASK command is executed again before the next scheduled run starts, the requested run replaces the scheduled run.
-- If a task fails with an unexpected error, you can receive a notification about the error.
-  For more information on configuring task error notifications refer to [Set up alerts and notifications for tasks](/user-guide/tasks-errors).
-- To view the task information you can either:
 
-  - In Snowsight, in the navigation menu, select **Transformation** » **Tasks**.
-  - Call the [COMPLETE\_TASK\_GRAPHS](/sql-reference/functions/complete_task_graphs) table function, and examine the results.
+### Synchronous execution with AWAIT
+
+Use `EXECUTE TASK ... AWAIT` to run a task or task graph synchronously. The command waits for the
+run to complete before returning, so subsequent SQL statements in a script or stored procedure can
+use the run’s results.
+
+#### Run behavior
+
+- For a standalone task, the command waits for that task to complete. For a task graph, the command
+  waits for the entire graph, including any finalizer task.
+- The command waits through all automatic retries configured with `TASK_AUTO_RETRY_ATTEMPTS` and
+  returns the outcome of the final attempt.
+- The requested run must be able to start immediately. When another run is in progress and the
+  task’s `OVERLAP_POLICY` prevents a new run from starting, the command returns an error without
+  queueing a new run. For more information, see
+  [Overlapping task graph runs](/user-guide/tasks-graphs#label-task-graph-overlapping-runs).
+- Like asynchronous execution, `EXECUTE TASK ... AWAIT` replaces a future scheduled run with the requested run.
+- Manual retries with `RETRY LAST` or `RETRY GRAPH RUN GROUP` don’t support `AWAIT`.
+
+#### Timeouts and cancellation
+
+[STATEMENT\_TIMEOUT\_IN\_SECONDS](/sql-reference/parameters#label-statement-timeout-in-seconds) limits how long the command
+waits. When the statement times out or you cancel the statement, waiting stops, but the task or
+task graph continues running. The task run is still subject to its own timeout settings,
+including [USER\_TASK\_TIMEOUT\_MS](/sql-reference/parameters#label-user-task-timeout-ms).
+
+## Output
+
+By default, `EXECUTE TASK` returns a status message after scheduling the run.
+
+With `AWAIT`, a successful or skipped run returns one row with the following columns:
+
+| Column | Description |
+| --- | --- |
+| `MESSAGE` | A message indicating that the task or task graph completed or was skipped. |
+| `GRAPH_RUN_GROUP_ID` | The identifier for the graph run group started by the command. You can use it to query the [TASK\_HISTORY](/sql-reference/functions/task_history), [CURRENT\_TASK\_GRAPHS](/sql-reference/functions/current_task_graphs), or [COMPLETE\_TASK\_GRAPHS](/sql-reference/functions/complete_task_graphs) table function. |
+| `STATUS` | `SUCCEEDED` or `SKIPPED`. |
+
+Expand
+
+Show lessSee more
+
+If the run fails or is canceled, the command returns an error instead of a result row. The error
+includes the graph run group ID and, when available, error details. You can use the graph run group ID to query task history for details.
 
 ## Examples
 
-The following examples show how to manually trigger a task run, how to retry a specific
-previous graph run, and how to use a dynamic CONFIG.
+The following examples show how to manually trigger a task run, wait for a run to complete, retry a
+specific previous graph run, and use a dynamic configuration.
 
 ### Manually trigger a task run
 
@@ -173,6 +237,38 @@ Copy code
 
 ```
 EXECUTE TASK mytask;
+```
+
+### Wait for a task run to complete
+
+Run `mytask` and wait for it to complete:
+
+Copy code
+
+```
+EXECUTE TASK mytask AWAIT;
+```
+
+A successful run returns output similar to the following:
+
+```
++----------------------------------------------+--------------------------------------+-----------+
+| MESSAGE                                      | GRAPH_RUN_GROUP_ID                   | STATUS    |
+|----------------------------------------------+--------------------------------------+-----------|
+| Task graph 'MYDB.MYSCHEMA.MYTASK' completed. | 00000000-0000-0000-0000-000000000000 | SUCCEEDED |
++----------------------------------------------+--------------------------------------+-----------+
+```
+
+To retrieve task history for this run, including any automatic retry attempts, use the returned
+graph run group ID:
+
+Copy code
+
+```
+SELECT NAME, STATE, ATTEMPT_NUMBER, ERROR_CODE, ERROR_MESSAGE
+  FROM TABLE(INFORMATION_SCHEMA.TASK_HISTORY(
+    GRAPH_RUN_GROUP_ID => '00000000-0000-0000-0000-000000000000'))
+  ORDER BY ATTEMPT_NUMBER, SCHEDULED_TIME;
 ```
 
 ### Retry a specific graph run

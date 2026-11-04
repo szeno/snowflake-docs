@@ -117,7 +117,7 @@ and AI domains can’t be combined in the same quota.
 | SNOWFLAKE INTELLIGENCE | Credit usage for Snowflake CoWork (formerly Snowflake Intelligence) operations attributed to the user. |
 | CORTEX AGENT | Credit usage for Cortex Agents operations attributed to the user. |
 | CORTEX CODE | Credit usage for Snowflake CoCo (formerly Cortex Code) operations attributed to the user. Includes spend from Snowflake CoCo CLI, Snowflake CoCo in Snowsight, and Snowflake CoCo Desktop. |
-| AI GATEWAY | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  Credit usage for AI Gateway operations attributed to the user. |
+| AI GATEWAY | Credit usage for AI Gateway operations attributed to the user. |
 
 Expand
 
@@ -177,10 +177,6 @@ CALL my_quota!ADD_SHARED_RESOURCE(
 
 ### Add the AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Add the AI Gateway by domain. Each account has a single gateway, named `SNOWFLAKE`, so the domain
 covers it.
 
@@ -205,7 +201,10 @@ CALL my_quota!ADD_SHARED_RESOURCE('AI GATEWAY');
   the same per-user limits.
 - Collective spending limits across all users in a quota are not supported. Each user’s limit
   is evaluated independently.
-- Quota evaluation is not real time but occurs within minutes. A slight lag might occur between a user being blocked and the data appearing in Snowsight.
+- Quota evaluation doesn’t happen in real time. Snowflake counts AI usage against a quota within minutes.
+  Snowflake counts warehouse usage against a quota only after it attributes warehouse credits to individual
+  queries, which can happen several hours after a query finishes. A slight lag might also occur between a
+  user being blocked and the data appearing in Snowsight.
 - Notifications are sent at most once per threshold per user within a 24-hour period for
   projected spend thresholds. Actual spend thresholds trigger at most once per cycle.
 - Each email address used for notifications must be verified. If a user’s email is not available,
@@ -800,6 +799,10 @@ breached, the stored procedure is invoked for each user who has exceeded the thr
 
 Custom actions are evaluated against the monthly per-user limit only. You can configure them with SQL
 for any resource scope, but Snowsight offers them only for quotas scoped to warehouses.
+
+For quotas scoped to warehouses, a custom action runs only after Snowflake attributes the warehouse usage
+to the quota, which can happen several hours after the query finishes. Users can keep running queries during
+that delay, so set thresholds with some buffer for that additional usage.
 
 The quota evaluation process passes the list of user IDs who have exceeded their quota
 thresholds during the current quota run as the first argument to the stored procedure. Every

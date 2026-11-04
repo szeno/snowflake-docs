@@ -318,8 +318,9 @@ the source database must retain the binary log long enough to cover the time sin
 and the new connector is started.
 Make sure the `binlog_expire_logs_seconds` parameter of the MySQL server is high enough, and keep the reinstallation time to a minimum.
 
-The value of `binlog_expire_logs_seconds` needs to be longer than the expected time to reinstall the connector.
-Typically 86400s, a day in seconds, is sufficient; however, longer times might be appropriate to ensure time to reinstall.
+Snowflake recommends retaining binary logs for at least 72 hours (`259200`), so the logs cover the time
+between stopping the old connector and starting the new one.
+For more information, see .
 
 ### Prerequisites
 

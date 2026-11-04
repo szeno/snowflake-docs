@@ -44,8 +44,8 @@ connector, choose the variant that meets your requirements.
 
 ## Limitations
 
-- [Input requirements](/user-guide/snowflake-cortex/parse-document#label-parse-document-requirements).
-- [Known limitations](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-limitations).
+- [Cortex Parse Document limitations and requirements](/user-guide/snowflake-cortex/parse-document#label-parse-document-requirements)
+- [Cortex Search limitations](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-limitations)
 - Changes caused by moving or renaming folders aren’t captured during
   incremental ingestion.
 - The connector ingests only the supported file types and ignores

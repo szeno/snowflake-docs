@@ -4,6 +4,9 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
+- [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
+- [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)

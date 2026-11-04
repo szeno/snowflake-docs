@@ -16,7 +16,7 @@ These views should be used when calculating AI usage and AI-related spend. Toget
 
 | Name | Available in | SERVICE\_TYPE | Time Zone | Units | DATES |
 | --- | --- | --- | --- | --- | --- |
-| [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/account-usage/ai_gateway_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/ai_gateway_usage_history) | AI\_INFERENCE | UTC Converted to local [1] | Tokens | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts. |
+| [AI\_GATEWAY\_USAGE\_HISTORY](/sql-reference/account-usage/ai_gateway_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/ai_gateway_usage_history) | AI\_INFERENCE | UTC Converted to local [1] | Tokens |  |
 | [CORTEX\_AGENT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_agent_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_agent_usage_history) | CORTEX\_AGENTS | UTC Converted to local [1] | Tokens, Tools | Data begins 11/10/2025 |
 | [CORTEX\_AI\_FUNCTIONS\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_ai_functions_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_ai_functions_usage_history) | AI\_FUNCTIONS | UTC Converted to local [1] | Tokens | Data begins 1/5/2026 |
 | [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history) | ACCOUNT\_USAGE, [ORGANIZATION\_USAGE](/sql-reference/organization-usage/cortex_code_cli_usage_history) | CORTEX\_CODE\_CLI | UTC | Tokens, Tools | Data begins 2/16/2026 |
@@ -91,7 +91,7 @@ Two differences from budgets are worth keeping in mind when you choose between t
 | Cortex Code Desktop | [Shared resource budgets](/user-guide/budgets/budget-shared-resources), [daily credit usage limits](/user-guide/cortex-code/credit-usage-limit), [per-user quotas](/user-guide/budgets/per-user-quotas) |
 | Snowflake CoWork | [Resource budgets](/user-guide/snowflake-cortex/snowflake-cowork/cowork-resource-budgets), [shared resource budgets](/user-guide/budgets/budget-shared-resources), [per-user quotas](/user-guide/budgets/per-user-quotas) |
 | Cortex Search | [Resource budgets](/user-guide/snowflake-cortex/cortex-search/cortex-search-resource-budgets) |
-| AI Gateway | [Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open  Available to all accounts.  [Shared resource budgets](/user-guide/budgets/budget-shared-resources#label-budget-shared-resource-ai-gateway), [per-user quotas](/user-guide/budgets/per-user-quotas#label-per-user-quota-ai-gateway) |
+| AI Gateway | [Shared resource budgets](/user-guide/budgets/budget-shared-resources#label-budget-shared-resource-ai-gateway), [per-user quotas](/user-guide/budgets/per-user-quotas#label-per-user-quota-ai-gateway) |
 
 Expand
 

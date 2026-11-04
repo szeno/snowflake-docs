@@ -12,6 +12,7 @@ Supported events include:
 - Resuming or suspending a warehouse.
 - Resuming, suspending, or resizing a cluster in a warehouse (single-cluster and multi-cluster warehouses).
 - Stopping or starting additional clusters in a warehouse (multi-cluster warehouses only).
+- Converting a warehouse or a cluster to a different warehouse type.
 - Reporting that a warehouse or a cluster has reached a consistent state.
 
 ## Columns
@@ -41,15 +42,26 @@ Show lessSee more
 
 The following sections describe the valid values for the EVENT\_NAME column for warehouse-related and cluster-related events.
 
-# Warehouse-related events
+#### Warehouse-related events
 
-The following table describes the valid values for the EVENT\_NAME column for warehouse-related events:
+The following sections describe the valid values for the EVENT\_NAME column for warehouse-related events:
+
+**CONVERT\_WAREHOUSE**
+
+Triggered by converting a warehouse to a different warehouse type or hardware generation, including:
+
+- Standard to Snowpark-optimized, or Snowpark-optimized to standard.
+- Standard or Snowpark-optimized to an [Adaptive Warehouse](/user-guide/warehouses-adaptive), or the reverse.
+- Gen1 to Gen2, or Gen2 to Gen1.
+
+This event is logged whether the warehouse is running or suspended. Converting an Adaptive Warehouse back to standard
+or Snowpark-optimized is logged with the CONVERT\_TO\_STANDARD or CONVERT\_TO\_SNOWPARK\_OPTIMIZED event reason.
 
 |  |  |
 | --- | --- |
 | Cluster number | None (N/A) |
 | Event state | COMPLETED or STARTED |
-| Event reason | CONVERT\_TO\_SNOWPARK\_OPTIMIZED, CONVERT\_TO\_STANDARD, or CONVERT\_RESOURCE\_CONSTRAINT |
+| Event reason | CONVERT\_TO\_ADAPTIVE, CONVERT\_TO\_SNOWPARK\_OPTIMIZED, CONVERT\_TO\_STANDARD, or CONVERT\_RESOURCE\_CONSTRAINT |
 
 Expand
 
@@ -61,6 +73,10 @@ Tip
 
 For information about cost implications of changing the RESOURCE\_CONSTRAINT property, see
 [considerations for changing RESOURCE\_CONSTRAINT while a warehouse is running or suspended](/user-guide/warehouses-gen2#label-gen-2-standard-warehouses-altering).
+
+**CREATE\_WAREHOUSE**
+
+Triggered by the creation of a new warehouse.
 
 |  |  |
 | --- | --- |
@@ -76,6 +92,11 @@ Cost impact: None if the cluster is created with INITIALLY\_SUSPENDED = TRUE. Ot
 when all compute resources are provisioned for the warehouse or the warehouse starts processing statements (if the
 warehouse starts processing statements before the resources are fully provisioned).
 
+**DROP\_WAREHOUSE**
+
+Triggered when the operation to drop an existing warehouse starts. The warehouse can continue quiescing and releasing
+compute resources after this event is logged.
+
 |  |  |
 | --- | --- |
 | Cluster number | None (N/A) |
@@ -88,6 +109,12 @@ Show lessSee more
 
 Cost impact: Metering on the compute resources for the warehouse stops after all currently executing queries complete.
 
+**ALTER\_WAREHOUSE**
+
+Triggered when the properties of an existing warehouse are changed, including resizing the warehouse. If the warehouse
+is resized, additional RESIZE\_WAREHOUSE events are triggered. This event can also trigger RESUME\_WAREHOUSE or
+SUSPEND\_WAREHOUSE events.
+
 |  |  |
 | --- | --- |
 | Cluster number | None (N/A) |
@@ -99,6 +126,12 @@ Expand
 Show lessSee more
 
 Cost impact: Depends on the event(s) that are triggered by the ALTER statement.
+
+**RESIZE\_WAREHOUSE**
+
+Triggered by changing the size of a warehouse, which increases or decreases the compute resources in each cluster in
+the warehouse. For a running warehouse, this event also triggers a RESIZE\_CLUSTER event for each cluster in the
+warehouse.
 
 |  |  |
 | --- | --- |
@@ -116,6 +149,11 @@ executing queries.
 
 Resizing a suspended warehouse does not provision any new resources for the warehouse.
 
+**RESUME\_WAREHOUSE**
+
+Triggered when a suspended warehouse starts resuming or a new warehouse is created with INITIALLY\_SUSPENDED = FALSE.
+This event also triggers a RESUME\_CLUSTER event for each cluster in the warehouse.
+
 |  |  |
 | --- | --- |
 | Cluster number | None (applies to all clusters) |
@@ -128,6 +166,11 @@ Show lessSee more
 
 Cost impact: Metering begins after all the compute resources are provisioned for the warehouse.
 
+**SUSPEND\_WAREHOUSE**
+
+Triggered when a running warehouse starts suspending. This event also triggers a SUSPEND\_CLUSTER event for each cluster
+in the warehouse.
+
 |  |  |
 | --- | --- |
 | Cluster number | None (applies to all clusters) |
@@ -139,6 +182,10 @@ Expand
 Show lessSee more
 
 Cost impact: Metering on the compute resources for the warehouse stops after all running statements complete.
+
+**WAREHOUSE\_CONSISTENT**
+
+Triggered when pending changes to a warehouse complete. For more information, see [Usage notes](#usage-notes).
 
 |  |  |
 | --- | --- |
@@ -155,26 +202,22 @@ provision or release compute resources.
 
 For more information, see the cost impact of the warehouse events described in the previous rows.
 
-|  |  |  |
-| --- | --- | --- |
-| Cluster number | NULL |  |
-| Event state | COMPLETED |  |
-| Event reason | NULL | NULL |
-| Event reason | NULL | NULL |
+#### Cluster-related events
 
-Expand
+The following sections describe the valid values for the EVENT\_NAME column for cluster-related events:
 
-Show lessSee more
+**CONVERT\_CLUSTER**
 
-## Cluster-related events
-
-The following table describes the valid values for the EVENT\_NAME column for cluster-related events:
+Triggered by the conversion of a warehouse from standard to Snowpark-optimized, from Snowpark-optimized to standard, or
+from one hardware generation to another. This event is only emitted when the conversion happens while the warehouse is
+running. Converting a warehouse to or from an [Adaptive Warehouse](/user-guide/warehouses-adaptive) doesn’t emit this
+event.
 
 |  |  |
 | --- | --- |
 | Cluster number | Number of the converted cluster (always `1` for a single-cluster warehouse) |
-| Event state | COMPLETED or STARTED |
-| Event reason | CONVERT\_TO\_SNOWPARK\_OPTIMIZED or CONVERT\_TO\_STANDARD |
+| Event state | STARTED |
+| Event reason | CONVERT\_TO\_SNOWPARK\_OPTIMIZED, CONVERT\_TO\_STANDARD, or CONVERT\_RESOURCE\_CONSTRAINT |
 
 Expand
 
@@ -186,6 +229,10 @@ Tip
 
 For information about cost implications of changing the RESOURCE\_CONSTRAINT property, see
 [considerations for changing RESOURCE\_CONSTRAINT while a warehouse is running or suspended](/user-guide/warehouses-gen2#label-gen-2-standard-warehouses-altering).
+
+**RESUME\_CLUSTER**
+
+Triggered when a suspended cluster is resumed.
 
 |  |  |
 | --- | --- |
@@ -199,17 +246,25 @@ Show lessSee more
 
 Cost impact: Metering starts on the compute resources for the cluster after they are provisioned.
 
+**SUSPEND\_CLUSTER**
+
+Triggered when a running cluster is suspended.
+
 |  |  |
 | --- | --- |
 | Cluster number | Number of the suspended cluster (always `1` for a single-cluster warehouse) |
 | Event state | STARTED |
-| Event reason: | - WAREHOUSE\_AUTOSUSPEND or WAREHOUSE\_SUSPEND (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) - RESOURCE\_MONITOR\_SUSPEND |
+| Event reason | - WAREHOUSE\_AUTOSUSPEND or WAREHOUSE\_SUSPEND (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) - RESOURCE\_MONITOR\_SUSPEND |
 
 Expand
 
 Show lessSee more
 
 Cost impact: Metering stops on the compute resources for the cluster after all currently executing queries complete.
+
+**RESIZE\_CLUSTER**
+
+Triggered when a cluster is resized, usually as a result of resizing a warehouse.
 
 |  |  |
 | --- | --- |
@@ -225,6 +280,10 @@ Cost impact: Depends on whether compute resources are added or removed due to re
 start metering when they are provisioned. Removed resources stop metering after they finish processing any currently
 executing queries.
 
+**SPINUP\_CLUSTER**
+
+Triggered when a cluster is started (multi-cluster warehouse only).
+
 |  |  |
 | --- | --- |
 | Cluster number | Number of the cluster that was started |
@@ -237,6 +296,10 @@ Show lessSee more
 
 Cost impact: Metering starts on the compute resources for the cluster after they are provisioned.
 
+**SPINDOWN\_CLUSTER**
+
+Triggered when a running cluster is shut down (multi-cluster warehouse only).
+
 |  |  |
 | --- | --- |
 | Cluster number | Number of the cluster that was shut down |
@@ -248,17 +311,6 @@ Expand
 Show lessSee more
 
 Cost impact: Metering stops on the compute resources for the cluster after all currently executing queries complete.
-
-|  |  |  |
-| --- | --- | --- |
-| Cluster number | Number of the cluster that was shut down |  |
-| Event state | STARTED |  |
-| Event reason | - WAREHOUSE\_RESIZE (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) | - WAREHOUSE\_RESIZE (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) |
-| Event reason | - WAREHOUSE\_RESIZE (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) | - WAREHOUSE\_RESIZE (single-cluster warehouse) - MULTICLUSTER\_SPINDOWN (multi-cluster warehouse) |
-
-Expand
-
-Show lessSee more
 
 **CLUSTER\_CONSISTENT**
 
@@ -291,6 +343,10 @@ The following table describes the valid values for the EVENT\_REASON column:
 | RESOURCE\_MONITOR\_SUSPEND | A warehouse was suspended because the credit quota for the resource monitor for the warehouse was reached. |
 | MULTICLUSTER\_SPINUP | A new or suspended cluster was provisioned in a multi-cluster warehouse; not applicable to single-cluster warehouses. |
 | MULTICLUSTER\_SPINDOWN | A running cluster was shut down in a multi-cluster warehouse; not applicable to single-cluster warehouses. |
+| CONVERT\_TO\_ADAPTIVE | A warehouse was converted to an Adaptive Warehouse. |
+| CONVERT\_TO\_SNOWPARK\_OPTIMIZED | A warehouse was converted to a Snowpark-optimized warehouse, including from an Adaptive Warehouse. |
+| CONVERT\_TO\_STANDARD | A warehouse was converted to a standard warehouse, including from an Adaptive Warehouse. |
+| CONVERT\_RESOURCE\_CONSTRAINT | The hardware generation or resource constraint of a warehouse was changed, for example from Gen1 to Gen2. |
 
 Expand
 
@@ -313,11 +369,13 @@ For example, if a warehouse is suspended using an ALTER WAREHOUSE … SUSPEND st
 warehouse must complete (or time out) before it can be suspended. In some cases, multiple warehouse events might be in-flight
 (for example, resize and suspend). When all warehouse events have completed, the warehouse is in a *consistent* state.
 
-If a warehouse event is logged with the STARTED state in the EVENT\_STATE column, it is never
-logged with a COMPLETED state. Instead, an event logged with the STARTED state is always followed by a subsequent WAREHOUSE\_CONSISTENT
-event. If multiple warehouse events are logged with the STARTED event state, those events coalesce to the same WAREHOUSE\_CONSISTENT event.
+For events logged with the STARTED state in the EVENT\_STATE column that are not paired with a COMPLETED event,
+completion is reported by a separate event:
 
 - A **cluster-related** event logged with the `STARTED` state is followed by a `CLUSTER_CONSISTENT` event for that cluster.
+- A `DROP_WAREHOUSE` event logged with the `STARTED` state is accompanied by a `SUSPEND_WAREHOUSE` event and a `SUSPEND_CLUSTER`
+  event for each cluster that is suspended. The drop is complete when the `WAREHOUSE_CONSISTENT` event that follows is
+  logged. Each suspended cluster is also followed by a `CLUSTER_CONSISTENT` event.
 
 If a warehouse event is logged with the COMPLETED state in the EVENT\_STATE column, no subsequent WAREHOUSE\_CONSISTENT event follows
 unless another pending event is logged with a STARTED state.

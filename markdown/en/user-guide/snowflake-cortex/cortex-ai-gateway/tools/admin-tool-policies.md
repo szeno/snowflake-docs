@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 As an administrator, you control which tools each MCP server exposes to your users’ AI clients. Configuring tool availability lets you limit what AI can do with a given server. For example, you can allow read-only tools while keeping write or delete tools unavailable.
 
@@ -17,7 +17,7 @@ If you don’t configure tool availability for an app, all tools are available b
 Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools, including configuring tool availability.
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway** > **MCP & Tools**.
+2. Select **AI Gateway** > **MCP & Tools**.
 3. In the new tab, select **Access**.
 4. Find the policy for the MCP server you want to configure.
 5. Select **Edit**.

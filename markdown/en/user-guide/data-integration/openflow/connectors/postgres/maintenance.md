@@ -428,7 +428,10 @@ The connector creates its own replication slot with a name starting with
 it advances the slot, so that PostgreSQL can trim its WAL log and free up disk space.
 
 When the connector is paused, the slot isn’t advanced, and changes to the source database keep increasing the WAL
-log size. You should not keep the connector paused for extended periods of time, especially on high-traffic databases.
+log size. Keep any pause within the 72-hour WAL window described in
+,
+especially on high-traffic databases. If PostgreSQL removes WAL the slot still needs, the affected
+tables require a full reload.
 
 When the connector is removed, whether by dropping it with `DROP OPENFLOW CONNECTOR` (gen 2), deleting it from the Openflow canvas,
 or any other means, such as deleting the whole Openflow instance, the replication slot remains in place, and must be dropped manually.
@@ -447,7 +450,9 @@ Warning
 
 For the connector to be able to continue replicating from the same CDC stream position where it stopped before reinstallation,
 the source database must retain the WAL long enough to cover the time between when the old connector stops and the new connector starts.
+Snowflake recommends retaining at least 72 hours of WAL for that interval. If `max_slot_wal_keep_size` is set, size it for the same window.
 Ensure the `max_wal_size` parameter of the PostgreSQL server is high enough, depending on your traffic, and keep the reinstallation time to a minimum.
+For more information, see .
 
 ### Prerequisites
 

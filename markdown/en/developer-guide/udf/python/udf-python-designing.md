@@ -128,6 +128,9 @@ compute resources.
 Put expensive initialization code into the module scope. There, it will be performed once when the UDF is initialized.
 Avoid rerunning the expensive initialization code on every UDF handler invocation.
 
+To load a large object such as an ML model once per query and share it across worker processes, use the
+`@udf_init_once` decorator. For more information, see [Initializing shared state once in Python UDFs](/developer-guide/udf/python/udf-python-init-once#label-udf-python-init-once).
+
 ## Handling errors
 
 A Python function used as a UDF can use the normal Python exception-handling techniques to catch errors within the

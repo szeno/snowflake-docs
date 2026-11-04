@@ -279,8 +279,8 @@ the source database must retain the archived redo logs long enough to cover the 
 and before the new connector is started.
 Ensure the archived redo log retention period of the Oracle database is high enough, and keep the reinstallation time to a minimum.
 
-Typically a retention period of 24 hours is sufficient; however, longer times might be appropriate to ensure time to reinstall.
-For more information on configuring archived redo log retention, see [Openflow Connector for Oracle: Configure the Oracle database](/user-guide/data-integration/openflow/connectors/oracle/setup-oracledb).
+Snowflake recommends a retention period of at least 72 hours.
+For more information on configuring archived redo log retention, see [Configure the retention period for archived redo logs](/user-guide/data-integration/openflow/connectors/oracle/setup-oracledb#label-set-up-archived-redo-logs-retention-period).
 
 ### Prerequisites
 

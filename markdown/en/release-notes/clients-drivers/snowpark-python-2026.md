@@ -10,79 +10,92 @@ Snowflake uses semantic versioning for [Snowpark Library for Python](/developer-
 
 See [Snowpark Developer Guide for Python](/developer-guide/snowpark/python/index) for documentation.
 
-Warning
-
-Because Python 3.8 has reached its [End of Life](https://devguide.python.org/versions/), deprecation warnings will be triggered when you use `snowpark-python` with Python 3.8. For more information, see [Snowflake Python Runtime Support](/developer-guide/python-runtime-support-policy). Snowpark Python 1.24.0 will be the last client and server version to support Python 3.8, in accordance with [Anaconda’s policy](https://forum.anaconda.com/t/python-3-8-reaches-end-of-life/87265). Upgrade your existing Python 3.8 objects to Python 3.9 or later.
-
-## Version 1.55.3: Oct 21, 2026
+## Version 1.56.0: Oct 29, 2026
 
 ### Snowpark Python API updates
 
+#### New features
+
+- Added `DataFrameReader.documents()` (private preview) to read staged documents into DataFrames. Provide a schema to extract structured fields, or omit it to return parsed document content. Schema-based reads also return an `EXTRACTION_SCORES` column with model-reported scores from 0 to 1 for each top-level field. The reader can process a single file or a document directory, automatically configures token limits, and splits long documents across model calls. It also parallelizes processing across documents, and isolates single-file failures so that other documents in the directory can continue processing.
+
 #### Improvements
+
+- Eager schema validation (`context.configure_development_features(enable_eager_schema_validation=True)`) now raises errors for invalid column references in `DataFrame.filter` and `DataFrame.sort` when the DataFrame is created.
+
+#### Bug fixes
+
+- Fixed a bug where the DataFrame trace and missing-object information were missing from errors raised during DataFrame creation when debuggability features are enabled by `context.configure_development_features`.
+- Fixed a bug where `Session.client_telemetry` failed to obtain a workload identity authentication token when using the universal driver connector.
+
+## Version 1.55.3: Oct 21, 2026
+
+### Snowpark Python API updates {#label-snowpark-python-1553-api}
+
+#### Improvements {#label-snowpark-python-1553-api-improvements}
 
 - Removed the `experimental` tag from `DataFrame.to_polars()`.
 - `DataFrame.to_polars()` now uses `transport="parquet"` by default instead of `transport="arrow"`.
 
-#### Bug fixes
+#### Bug fixes {#label-snowpark-python-1553-api-bug-fixes}
 
 - Fixed a bug where `DataFrameReader.jdbc` (PrPr) timed out on slow external data sources. The source query is now executed lazily.
 
-### Snowpark pandas API updates
+### Snowpark pandas API updates {#label-snowpark-python-1553-pandas}
 
-#### Bug fixes
+#### Bug fixes {#label-snowpark-python-1553-pandas-bug-fixes}
 
 - Fixed a bug where `Index.to_pandas()` returned an integer `Index` whose width (for example, `int8` or `int32`) depended on the integer width that the server returned, instead of the `int64` type that Snowpark pandas uses for all integer types. This fix also affects `Index.astype` to any integer type.
 
 ## Version 1.55.2: Oct 13, 2026
 
-### Improvements
+### Improvements {#label-snowpark-python-1552-improvements}
 
 - Added support for `cloudpickle` 3.1.2, in addition to previously supported versions.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1552-bug-fixes}
 
 - Fixed a bug where a nested UDxF registered inside a stored procedure inherited inaccessible app-package stage paths from the procedure’s `IMPORTS` clause.
 
 ## Version 1.55.1: Oct 05, 2026
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1551-bug-fixes}
 
 - Fixed a bug where `pandas_udf` with an explicit `packages` list omitted pandas when using a non-conda artifact repository, such as PyPI, which is the default for Python 3.14.
 - Fixed a bug where `Session.write_pandas` raised a connector error instead of the Snowpark table-does-not-exist message when the target table was missing and `auto_create_table=False`.
 - Fixed a bug where `ai_extract` routed `FILE`-type inputs to the `TEXT` overload when `scores` or `config` were also supplied.
 - Fixed the schema expression for nullable `FILE` columns.
 
-### Documentation
+### Documentation {#label-snowpark-python-1551-documentation}
 
 - Updated `ai_redact(..., mode="detect")` and `DataFrame.ai.redact(..., mode="detect")` to document that detect mode returns an `ARRAY` of span objects, not an `OBJECT` with a `spans` field.
 
 ## Version 1.55.0: Sep 10, 2026
 
-### Snowpark Python API updates
+### Snowpark Python API updates {#label-snowpark-python-1550-api}
 
-#### New features
+#### New features {#label-snowpark-python-1550-api-new-features}
 
 - Added `DataFrame.to_polars()` to convert a Snowpark DataFrame to a Polars DataFrame. The method supports an optional `transport="parquet"` mode for large workloads where data transfer accounts for most of the execution time.
 - Added interval type support for Python UDFs and stored procedures. Use `datetime.timedelta` as the type annotation for day-time interval (`DayTimeIntervalType`) parameters and return values, and `YearMonthInterval` (a type annotation sentinel from `snowflake.snowpark.types`) for year-month interval (`YearMonthIntervalType`) parameters and return values.
 - Added support for a `table_properties` key in the `iceberg_config` dictionary of `DataFrameWriter.save_as_table`. This key generates a `TABLE_PROPERTIES = ('k'='v', ...)` clause when creating an Apache Iceberg™ table with `CREATE TABLE` or `CREATE TABLE AS SELECT`.
 
-#### Bug fixes
+#### Bug fixes {#label-snowpark-python-1550-api-bug-fixes}
 
 - Fixed a bug where registering a UDF, UDTF, or stored procedure with an integer optional argument failed with `SQL compilation error: invalid default argument expression`. Integer defaults were generated with a redundant `:: INT` cast, but a parameter default accepts only a constant expression. The redundant cast is no longer generated.
 
-#### Documentation
+#### Documentation {#label-snowpark-python-1550-api-documentation}
 
 - Documented the JSON Schema `response_format` structure for `ai_extract` and `DataFrame.ai.extract`.
 
-### Snowpark pandas API updates
+### Snowpark pandas API updates {#label-snowpark-python-1550-pandas}
 
-#### Bug fixes
+#### Bug fixes {#label-snowpark-python-1550-pandas-bug-fixes}
 
 - Fixed a bug where referencing `modin.pandas` inside a Snowpark pandas `apply()` function raised a `ModuleNotFoundError`.
 
 ## Version 1.54.0: Jul 29, 2026
 
-### New features
+### New features {#label-snowpark-python-1540-new-features}
 
 - Added the `ai_count_tokens` function to `snowflake.snowpark.functions` to estimate token counts for AI function calls.
 - Added the `ai_multi_embed` function to `snowflake.snowpark.functions` to generate multimodal embeddings from text, images, audio, or video files.
@@ -91,12 +104,12 @@ Because Python 3.8 has reached its [End of Life](https://devguide.python.org/ver
 - Added the `DataFrame.ai.redact` method to detect and redact PII from text columns via the DataFrame API.
 - Added the `DataFrame.ai.translate` method to translate text columns between languages via the DataFrame API.
 
-### Improvements
+### Improvements {#label-snowpark-python-1540-improvements}
 
 - Removed the `experimental` tag from all AI SQL functions in `DataFrameAIFunctions` (`complete`, `filter`, `agg`, `classify`, `similarity`, `sentiment`, `embed`, `summarize_agg`, `transcribe`, `parse_document`, `extract`, `count_tokens`, `split_text_markdown_header`, `split_text_recursive_character`) and `RelationalGroupedDataFrame.ai_agg`.
 - Updated `DataFrame.ai.count_tokens` to match the standalone `ai_count_tokens` function: `function_name` is now the required first parameter, and `model` is optional. This method also adds `options` and `return_error_details` parameters.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1540-bug-fixes}
 
 - Fixed a bug where `DataFrame.ai.count_tokens` called the deprecated `SNOWFLAKE.CORTEX.COUNT_TOKENS` function instead of the `AI_COUNT_TOKENS` SQL function. Token counts may differ slightly due to the updated tokenizer.
 - Reverted the change introduced in 1.53.0 that eliminated unnecessary `SELECT *` from joins, which was causing performance regressions. This has no functional impact.
@@ -107,11 +120,11 @@ No user-facing changes in this release.
 
 ## Version 1.53.0: Jul 09, 2026
 
-### New features
+### New features {#label-snowpark-python-1530-new-features}
 
 - Added the `udf_init_once` decorator in `snowflake.snowpark.functions` for marking functions to be executed once during pre-fork initialization on Snowflake workers, matching the server-side `_snowflake.udf_init_once` API.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1530-bug-fixes}
 
 - Fixed a bug where stage paths and file format names that contain single quotes were not consistently escaped when generating SQL, which could produce malformed statements. This affects `INFER_SCHEMA` (used by `DataFrameReader.csv`/`json`/`parquet`/`orc`/`avro`) and `COPY FILES` (used by `FileOperation.copy_files`).
 - Fixed a bug where single quotes and backslashes in stage/file paths were not correctly escaped when generating `COPY INTO` / `PUT` / `GET` SQL, which could produce malformed statements. This affects `DataFrame.write.csv`/`copy_into_location` and the Snowpark-pandas `DataFrame.to_csv` stage path.
@@ -122,52 +135,52 @@ No user-facing changes in this release.
 - Fixed a bug where single quotes and backslashes in `comment` (`create_or_replace_view` / dynamic table / `save_as_table`), collation specs (`Column.collate`), VARIANT/OBJECT subfield keys (`Column[...]`), and `DataFrame`/`Session.flatten` paths were not correctly escaped when generating SQL, which could produce malformed statements. Backslash sequences (for example, `\t`, `\n`) in these values are now applied literally rather than interpreted.
 - Fixed a bug where string values in the AI functions (`ai_extract`, `ai_classify`, `ai_similarity`, `ai_parse_document`, `ai_transcribe`, `ai_complete`) configuration and `response_format` were not correctly escaped when generating the SQL object literal, which could produce malformed statements when a value contained single quotes or backslashes (for example, an apostrophe in a natural-language question).
 
-### Dependency updates
+### Dependency updates {#label-snowpark-python-1530-dependency-updates}
 
 - Lifted `protobuf` restriction for Python 3.14 from `==5.29.3` to `>=5.29.3,<6.34`.
 - Capped `pandas` to `<3.0.0` for the `[pandas]` install extra, as Snowpark Python pandas-related features may not be fully compatible with pandas 3.0 or later.
 
 ## Version 1.52.0: Jun 10, 2026
 
-### New features
+### New features {#label-snowpark-python-1520-new-features}
 
 - Added `get_wif_token` to `snowflake.snowpark.secrets` for workload identity federation tokens on the Snowflake server (not available in SPCS file-based secret environments).
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1520-bug-fixes}
 
 - Fixed a bug where copying a `DataFrame` via `copy.copy()` lost post-aggregate state, causing subsequent `.limit()` or `.sort()` to generate incorrect SQL.
 - Fixed a bug where calling `DataFrame.alias()` twice on the same DataFrame (for example, for a self-join) caused both aliases to share the same internal column-mapping dictionary. This made `col("R", "col")` resolve to the same column as `col("L", "col")`, producing incorrect join conditions and filter expressions.
 - Fixed a bug where `cloudpickle` could not be resolved when registering a Python stored procedure or UDF with `runtime_version='3.13'`.
 
-### Improvements
+### Improvements {#label-snowpark-python-1520-improvements}
 
 - Improved CTE optimization to deduplicate identical subtrees in self-joins, which were previously emitted as repeated subqueries.
 - Reduced the size of generated query text for repeated join operations.
 
-### Deprecations
+### Deprecations {#label-snowpark-python-1520-deprecations}
 
 - Removed support for Python 3.9.
 
 ## Version 1.51.1: May 28, 2026
 
-### Documentation
+### Documentation {#label-snowpark-python-1511-documentation}
 
 - Clarified that the JDBC driver JAR referenced via `udtf_configs.imports` in `DataFrameReader.jdbc()` must be downloaded from the database vendor and uploaded to a Snowflake stage.
 
 ## Version 1.51.0: May 18, 2026
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1510-bug-fixes}
 
 - Fixed a bug where `AsyncJob.result("no_result")` sometimes silently returned without raising an error for failed queries.
 - Fixed a bug where `INTERVAL YEAR TO MONTH` values with zero months were displayed incorrectly (for example, `INTERVAL '0-4' YEAR TO MONTH` instead of `INTERVAL '4-0' YEAR TO MONTH`) when using `snowflake-connector-python>=4.3.0`.
 
-### Improvements
+### Improvements {#label-snowpark-python-1510-improvements}
 
 - When `Session.reduce_describe_query_enabled` is enabled, fewer DESCRIBE queries are issued when the outer query only projects or renames columns from an inner subquery whose column types are already known.
 
 ## Version 1.50.1: May 06, 2026
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1501-bug-fixes}
 
 - Fixed a bug where using parameter bindings for `CALL` queries issued through `session.sql` would raise an error.
 - Fixed a bug where `StringType` columns from Iceberg tables were not recognized as max-size strings.
@@ -175,11 +188,11 @@ No user-facing changes in this release.
 
 ## Version 1.50.0: Apr 23, 2026
 
-### New features
+### New features {#label-snowpark-python-1500-new-features}
 
 - Added `artifact_repository` support to `udtf_configs` in `session.read.dbapi()`, enabling users to specify a custom artifact repository (for example, PyPI) for packages used by the internal UDTF during distributed ingestion.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1500-bug-fixes}
 
 - Fixed a bug where the `TRY_CAST` reader option was ignored when calling `DataFrameReader.schema().csv()`.
 - Fixed a bug where `event_table_telemetry` was using incorrect resource attributes.
@@ -187,33 +200,33 @@ No user-facing changes in this release.
 - Fixed a bug where CTE optimization incorrectly deduplicated subtrees containing non-deterministic data generation functions (for example, `uuid_string()`).
 - Fixed a bug where vectorized UDFs using non-Anaconda package repositories did not specify the pandas package by default.
 
-### Snowpark pandas API updates
+### Snowpark pandas API updates {#label-snowpark-python-1500-pandas}
 
-#### Dependency updates
+#### Dependency updates {#label-snowpark-python-1500-pandas-dependency-updates}
 
 - Updated the supported `pandas` versions to <=2.4 (was previously <=2.3.1).
 
 ## Version 1.49.0: Apr 13, 2026
 
-### New features
+### New features {#label-snowpark-python-1490-new-features}
 
 - Allow a user-specified schema when reading Parquet files from a stage.
 
-### Improvements
+### Improvements {#label-snowpark-python-1490-improvements}
 
 - Restored the following query improvements that were reverted in 1.47.0 due to bugs:
   - Reduced the size of queries generated by certain `DataFrame.join` operations.
   - Removed redundant aliases in generated queries (for example, `SELECT "A" AS "A"` is now always simplified to `SELECT "A"`).
 - Removed warning that `DataFrameReader.dbapi` feature was in private preview.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1490-bug-fixes}
 
 - Fixed a bug where `Session.create_dataframe` raised `TypeError` when a `StringType` column was given a non-string Python value (for example, `int`, `float`, `bool`, `Decimal`) for a small local relation (below the array bind threshold); `VALUES` SQL generation now coerces these types to string literals, consistent with the large-data bind-parameter path.
 - Fixed a bug where `DataFrame.approxQuantile` did not accept a `Column` for the `col` parameter.
 
-### Snowpark Local Testing updates
+### Snowpark Local Testing updates {#label-snowpark-python-1490-local-testing}
 
-#### Bug fixes
+#### Bug fixes {#label-snowpark-python-1490-local-testing-bug-fixes}
 
 - Fixed a bug where `concat` produced extra NaN rows and mismatched values after a `filter` operation in local testing.
 - Fixed a bug where `dense_rank()` would fail with `ValueError` on NULL partition values.
@@ -221,7 +234,7 @@ No user-facing changes in this release.
 
 ## Version 1.48.1: Mar 31, 2026
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1481-bug-fixes}
 
 - Fixed a bug where chained `DataFrame.filter()` calls with raw SQL text containing `OR` produced incorrect results.
 - Fixed a Snowflake platform compatibility issue where `concat(lit('"'), ...)` could lose the leading quote through chained set-operation plans.
@@ -229,12 +242,12 @@ No user-facing changes in this release.
 
 ## Version 1.48.0: Mar 23, 2026
 
-### New features
+### New features {#label-snowpark-python-1480-new-features}
 
 - Added support for DIRECTED JOIN.
 - Added support for the `INCLUDE_METADATA` copy option in `DataFrame.copy_into_table`, allowing users to include file metadata columns in the target table.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1480-bug-fixes}
 
 - Fixed a bug in `Session.client_telemetry` where traces did not include a Snowflake-style trace ID.
 - Fixed a bug where saving a Snowpark DataFrame into an Iceberg table in overwrite mode raised an error because `StringType` was saved with the wrong length.
@@ -244,17 +257,17 @@ No user-facing changes in this release.
 - Fixed a bug where passing a DataFrame created from a SQL `SET` command to Streamlit’s `st.write` method would raise an exception.
 - Fixed a bug where the account-level default artifact repository setting was not reflected in creation of stored procedures/UDFs.
 
-### Improvements
+### Improvements {#label-snowpark-python-1480-improvements}
 
 - Use internal describe to get return type when executing a stored procedure.
 
 ## Version 1.47.0: Mar 05, 2026
 
-### New features
+### New features {#label-snowpark-python-1470-new-features}
 
 - Added support for the `array_union_agg` function in the `snowflake.snowpark.functions` module.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1470-bug-fixes}
 
 - Fixed a bug where `Session.udf.register_from_file` did not properly process the `strict` and `secure` parameters.
 - Fixed a bug where an error was raised on a string value in a `DecimalType` column when creating a DataFrame with small data (< array binding threshold).
@@ -264,25 +277,25 @@ No user-facing changes in this release.
 
 ## Version 1.46.0: Feb 25, 2026
 
-### New features
+### New features {#label-snowpark-python-1460-new-features}
 
 - Added support for the `DECFLOAT` data type that allows users to represent decimal numbers exactly with 38 digits of precision and a dynamic base-10 exponent.
 - Added support for the `DEFAULT_PYTHON_ARTIFACT_REPOSITORY` parameter that allows users to configure the default artifact repository at the account, database, and schema level.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1460-bug-fixes}
 
 - Fixed a bug where `cloudpickle` was not automatically added to the package list when using `artifact_repository` with custom packages, causing `ModuleNotFoundError` at runtime.
 - Fixed a bug when reading XML with a custom schema that resulted in element attributes being included when a column was not of the `StructType` type.
 - Fixed a bug where `Session.udf.register_from_file` did not properly process the `strict` and `secure` parameters.
 
-### Improvements
+### Improvements {#label-snowpark-python-1460-improvements}
 
 - Reduced the size of queries generated by certain `DataFrame.join` operations.
 - Removed redundant aliases in generated queries (for example, `SELECT "A" AS "A"` is now always simplified to `SELECT "A"`).
 
 ## Version 1.45.0: Jan 26, 2026
 
-### New features
+### New features {#label-snowpark-python-1450-new-features}
 
 - Allow user input schema when reading an XML file on a stage.
 - Added support for the following functions in `functions.py`:
@@ -299,11 +312,11 @@ No user-facing changes in this release.
   - `split_part`
 - Added the `preserve_parameter_names` flag to stored procedure, UDF, UDTF, and UDAF creation.
 
-### Bug fixes
+### Bug fixes {#label-snowpark-python-1450-bug-fixes}
 
 - Fixed a bug where `opentelemetry` was not correctly imported when using `Session.client_telemetry.enable_event_table_telemetry_collection`.
 
-### Improvements
+### Improvements {#label-snowpark-python-1450-improvements}
 
 - `snowflake.snowpark.context.configure_development_features` is effective for multiple sessions including newly created sessions after the configuration. There is no longer a duplicate experimental warning.
 - Removed the experimental warning from `DataFrame.to_arrow` and `DataFrame.to_arrow_batches`.

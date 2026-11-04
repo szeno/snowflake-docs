@@ -70,9 +70,14 @@ scai data worker generate-config .scai/settings/DataExchangeWorkerConfig.toml --
 scai data orchestrator setup --compute-pool MY_COMPUTE_POOL --connection my-snowflake
 scai data worker setup --compute-pool MY_COMPUTE_POOL --connection my-snowflake
 
+# SPCS Worker for a source only your private network can resolve:
+scai data worker setup --compute-pool MY_COMPUTE_POOL --source-connection prod-sql --dcp MY_PROXY
+
 # Local Worker (customer environment):
 scai data worker start --local .scai/settings/DataExchangeWorkerConfig.toml
 ```
+
+Pass `--dcp` when Snowflake can’t reach the source directly. The flag creates or reuses a Data Connectivity Proxy and attaches the Worker to it. A setup without the flag still uses direct egress. Customer-hosted Workers remain a valid choice. See [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 
 Edit the generated TOML using examples on your platform page. Full Worker property reference: [Data migration configuration reference](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#worker-configuration). To route workflows to a specific Worker pool, set matching affinity on the Worker and the workflow; see [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity).
 
@@ -151,7 +156,7 @@ Global options such as `--json`, `--log-debug`, `-c` / `--connection`, `--wareho
 | `scai data worker start --auto-config [PATH]` | Emit a Worker TOML template |
 | `scai data orchestrator setup --compute-pool <POOL>` | Create or resume Orchestrator on SPCS |
 | `scai data orchestrator stop` | Suspend Orchestrator SPCS service |
-| `scai data worker setup --compute-pool <POOL>` | Create Worker SPCS service |
+| `scai data worker setup --compute-pool <POOL>` | Create a Worker SPCS service. Add `--dcp <PROXY_NAME>` when Snowflake can’t reach the source directly. |
 | `scai data worker stop` | Suspend Worker SPCS service |
 | `scai data migrate generate-config` | Generate workflow YAML from the project |
 | `scai data migrate create-workflow --config <path>` | Submit a migration workflow |

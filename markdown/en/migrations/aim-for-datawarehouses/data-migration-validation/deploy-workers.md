@@ -19,7 +19,7 @@ Workers (and the Orchestrator) can run in several places. Mix and match per comp
 | **Snowpark Container Services (SPCS)** | You want Worker compute inside Snowflake, without provisioning or patching your own hosts. Snowflake manages the compute pool’s lifecycle; you manage the service. | Prefer the Snowflake AIM Agent for Data Warehouses or `scai data worker setup`. See [SPCS walkthrough](#snowpark-container-services) below. |
 | **Customer-hosted virtual machines or bare metal** | You want Workers close to the source system (same data center or VPC), or your organization requires source access to originate from infrastructure it directly controls. | Install the Worker binary or container runtime, provide it a TOML configuration file, and ensure it has network access to both the source system and Snowflake. Use the Snowflake AIM Agent for Data Warehouses or SnowConvert AI CLI (`scai data worker start --local <config.toml>`) to generate the configuration and start the process. |
 | **Kubernetes (outside Snowflake)** | You already operate a Kubernetes cluster and want Workers managed alongside other workloads, with your own scaling, scheduling, and secrets management. | Deploy the Worker container image with your usual Kubernetes tooling (Deployment or Job, depending on whether you want it long-running or run-to-completion). Supply the same TOML configuration as a mounted config file or generated from a ConfigMap/Secret, and ensure the cluster’s egress allows the pod to reach both the source system and Snowflake. If you run multiple deployment types together, use [affinity](../manual-migration/data-migration-configuration-reference#affinity) to route each workflow to the right Worker pool. |
-| **Mixed** | Different tables or source systems have different constraints, for example one source is only reachable from an on-premises network while another can be reached from SPCS. | Run multiple Worker deployments concurrently and use [affinity](../manual-migration/data-migration-configuration-reference#affinity) to route each workflow to the right Workers. |
+| **Mixed** | Different tables or source systems have different constraints, for example one source is only reachable from an on-premises network while another can be reached from SPCS. | Run multiple Worker deployments concurrently and use [affinity](../manual-migration/data-migration-configuration-reference#affinity) to route each workflow to the right Workers. A private source can also stay on an SPCS Worker attached with `--dcp`. See [Reach a private source with Data Connectivity Proxy](#reach-a-private-source-with-data-connectivity-proxy). |
 
 Expand
 
@@ -40,18 +40,18 @@ Worker configuration examples show source credentials inline for readability. Ho
 
 Deploy on SPCS when you want Orchestrator and Worker compute inside Snowflake rather than on customer-hosted machines. You can run both components on SPCS, both outside Snowflake, or mix the two (for example Orchestrator on SPCS and Workers in your data center).
 
-For Workers on SPCS, **Snowflake must be able to reach your source system**. That is a hard requirement: the Worker originates outbound connections from Snowflake to the source database (and often to driver download hosts). Before you choose SPCS, confirm that:
+For Workers on SPCS, the Worker needs a path to the source database, and often to public hosts where drivers are downloaded. Two paths reach the source:
 
-- Your account can open outbound access to the source host and port through a [network rule](/user-guide/network-rules) and an [external access integration](/developer-guide/external-network-access/external-network-access-overview).
-- The source system can accept those connections (inbound allowlisting of Snowflake egress IPs). See [Allowing SPCS to reach your source system](#allowing-spcs-to-reach-your-source-system-inbound-access).
+- **Direct egress.** Snowflake opens the connection to the source host. Your account needs a [network rule](/user-guide/network-rules) and an [external access integration](/developer-guide/external-network-access/external-network-access-overview), and the source must accept connections from Snowflake egress IPs. See [Allowing SPCS to reach your source system](#allowing-spcs-to-reach-your-source-system-inbound-access).
+- **Data Connectivity Proxy.** Use this when the source is only reachable from a private network that Snowflake can’t egress to, and you still want the Worker on SPCS. `scai data worker setup --dcp` attaches that Worker to a proxy. An agent on your network opens an outbound TLS connection to Snowflake on port 443, and the Worker’s connection to the source goes through that tunnel. You don’t open an inbound port, and you don’t allowlist Snowflake egress IPs for the source host. See [Reach a private source with Data Connectivity Proxy](#reach-a-private-source-with-data-connectivity-proxy).
 
-If the source is only reachable from a private network that Snowflake can’t egress to, deploy Workers on customer-hosted VMs or Kubernetes next to the source instead, and keep the Orchestrator on SPCS if you want.
+Driver download hosts stay on the direct egress path either way. Customer-hosted VMs or Kubernetes next to the source remain a valid choice. You can keep the Orchestrator on SPCS with either Worker placement.
 
 ### What you typically prepare
 
 You usually create a **compute pool** and warehouse before the agent or CLI deploys services. For `INSTANCE_FAMILY` sizing and `SHOW COMPUTE POOL INSTANCE FAMILIES`, see [Manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup#prerequisites).
 
-The agent or CLI then typically creates the Worker **secret**, **network rule**, **external access integration**, and **service**. Avoid recreating those by hand unless you have a reason to. Full SQL templates live on the [manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup) page.
+The agent or CLI then typically creates the Worker **secret**, **network rule**, **external access integration**, and **service**. With `--dcp`, it also creates the Data Connectivity Proxy rule, integration, and proxy. Avoid recreating those by hand unless you have a reason to. Full SQL templates live on the [manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup) page.
 
 ### How many Worker instances
 
@@ -78,15 +78,19 @@ The Orchestrator creates the AIM DMV metadata database and schema objects on sta
 
 ### Network access for Workers
 
-Workers in SPCS run inside Snowflake’s network. Outbound connectivity from Snowflake to the source is required: without it, the Worker can’t extract or validate data. The usual path is:
+Workers in SPCS run inside Snowflake’s network. The Worker can’t extract or validate data without a path to the source. On the direct-egress path, Snowflake calls the source host itself:
 
 1. Allow outbound access with a network rule and external access integration (created for you by the agent or CLI in normal setups).
 2. Attach that integration to the Worker service.
 3. Allow inbound connections on the source system from Snowflake egress IPs (your responsibility; see the next section).
 
+A Worker created with `--dcp` doesn’t use that inbound allowlist for the source host. The source host is reached through the Data Connectivity Proxy tunnel. Driver download hosts still use the direct egress rule. See [Reach a private source with Data Connectivity Proxy](#reach-a-private-source-with-data-connectivity-proxy).
+
 Driver download hosts and hand-written SQL for secrets, rules, and services are documented under [Manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup).
 
 ### Allowing SPCS to reach your source system (inbound access)
+
+This section is the direct-egress path. It applies when the Worker calls the source host from Snowflake. A Worker created with `--dcp` doesn’t use it for the source host, so you don’t allowlist Snowflake egress IPs for that host. Allowlisting `SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES()` remains the way a direct-egress source accepts the Worker.
 
 An egress network rule only controls what the Worker is *allowed* to call out to. Your source system also needs to *accept* the connection: SPCS containers connect from Snowflake-managed IP addresses, not from an address you control, so the source system’s firewall, security group, or VPC ingress rules must explicitly allow those addresses.
 
@@ -104,6 +108,102 @@ SELECT SYSTEM$GET_SNOWFLAKE_EGRESS_IP_RANGES();
 Warning
 
 If Workers on SPCS can reach the source host over the network but the connection is refused or times out, check the source system’s inbound rules first. This is one of the most common causes of Worker connectivity failures on SPCS.
+
+### Reach a private source with Data Connectivity Proxy
+
+Use this path when the source is only reachable from a private network and you still want the Worker on SPCS. `scai data worker setup --dcp <PROXY_NAME>` attaches the Worker to a [Data Connectivity Proxy](/user-guide/data-connectivity-proxy). An agent on your network opens an outbound TLS connection to Snowflake on port 443. The Worker’s connection to the source goes through that tunnel. You don’t open an inbound port on the source, and you don’t add Snowflake egress IPs to the source host’s allowlist.
+
+A setup that omits `--dcp` is unchanged. It creates the direct egress rule, puts the source host in that rule, and attaches only the direct external access integration.
+
+Copy code
+
+```
+scai data worker setup --compute-pool <COMPUTE_POOL> --source-connection <SOURCE_CONNECTION> --dcp <PROXY_NAME>
+```
+
+`<PROXY_NAME>` is an unquoted Snowflake identifier: a letter or underscore, then letters, digits, underscores, or `$`. The CLI stores it in uppercase. A quoted or invalid name fails before any object is created. `--dcp` and `--skip-egress` together also fail before any object is created. `--skip-egress` still means you already created the secret, rules, and integrations yourself.
+
+The source connection’s host must be a DNS name. An IPv4 or IPv6 address is rejected before any object is created. If the source has no DNS name, add a hosts entry on the agent host and use that name in the source connection. The agent resolves the name on its own network.
+
+`--dcp` applies only when the Worker service is created:
+
+- If the service doesn’t exist, setup creates the tunnel objects and attaches them.
+- If the service exists and you omit `--yes`, setup doesn’t attach the tunnel. It warns that `--dcp` applies only when the Worker is created, and tells you to run the command again with `--yes`.
+- `--yes` on an existing service drops and recreates the service from the CLI specification, including the tunnel integrations. Integrations and the network rule that already match are left in place. Their `created_on` doesn’t change. The CLI alters those objects. It doesn’t replace them, because replacing an integration detaches it from the proxy and from services.
+
+Several Workers can share one proxy. Each Worker has its own Data Connectivity Proxy integration, because each integration allows one source endpoint. Setup adds the new integration to the proxy and keeps every integration already listed. It won’t rewrite an integration name it can’t reproduce exactly, and it stops rather than drop another Worker’s integration.
+
+For the object names, see [Data Connectivity Proxy objects](../manual-migration/manual-spcs-worker-setup#data-connectivity-proxy-objects).
+
+#### Privileges
+
+| Action | Privilege |
+| --- | --- |
+| Create the proxy | `CREATE DATA CONNECTIVITY PROXY` on the account, or the `ACCOUNTADMIN` role |
+| Reuse a proxy | `USAGE` on that proxy. Without it, Snowflake reports the proxy as missing. |
+| Create the Data Connectivity Proxy integration, and add an integration to a shared proxy | `CREATE INTEGRATION` on the account |
+| Issue certificates and mint the bootstrap token | `OWNERSHIP` of the proxy. A role that only has `USAGE` can’t do either. |
+| Run the route check | `USAGE` on the proxy |
+
+Expand
+
+Show lessSee more
+
+The proxy owner mints the token and gives it to the person who starts the agent. `<days>` is 1 to 90. Grants that let a migration role use the proxy don’t include this call. Replacement tokens also come from the owner.
+
+Copy code
+
+```
+SELECT SYSTEM$GENERATE_DATA_CONNECTIVITY_PROXY_BOOTSTRAP_TOKEN('<PROXY_NAME>', <days>);
+```
+
+See [CREATE DATA CONNECTIVITY PROXY](/user-guide/data-connectivity-proxy-reference#label-dcp-create) and [SYSTEM$GENERATE\_DATA\_CONNECTIVITY\_PROXY\_BOOTSTRAP\_TOKEN](/user-guide/data-connectivity-proxy-reference#label-dcp-bootstrap-token-fn).
+
+Creating a proxy runs `SELECT SYSTEM$ISSUE_PER_ACCOUNT_CERTIFICATES()`. The return means issuance was accepted. Later calls do nothing. Setup then reads the route check’s `CERTIFICATES` stage once. `SUCCESS` means the certificates are already confirmed. `IN_PROGRESS`, or no row yet, is what that stage reports until an agent connects. The agent starts after setup returns, so setup doesn’t wait. It logs that state and continues. The agent confirms the certificates once it bootstraps. See [SYSTEM$ISSUE\_PER\_ACCOUNT\_CERTIFICATES](/sql-reference/functions/system_issue_per_account_certificates).
+
+Reusing a proxy your role can already see doesn’t create the proxy and doesn’t reissue certificates. Issuance requires `OWNERSHIP`. Setup warns when that proxy’s `CERTIFICATES` stage isn’t `SUCCESS`.
+
+#### Start the agent
+
+When the tunnel objects are ready, setup prints this command:
+
+Copy code
+
+```
+docker run -d --name dcp-agent --restart unless-stopped \
+  -v /etc/dcp-agent/secrets:/etc/dcp-agent/secrets:ro \
+  snowflakedb/dcp-client:latest
+```
+
+The image is `snowflakedb/dcp-client:latest`. The agent reads `/etc/dcp-agent/secrets/dcp-bootstrap-token`. The CLI mounts the secrets directory, so a token replaced by rename is visible to the running agent. Store the token, set file permissions, rotate it, and publish metrics with [Set up Data Connectivity Proxy](/user-guide/data-connectivity-proxy-setup). That page mounts the token file and publishes a metrics port. Both mounts work.
+
+The agent host must resolve the source hostname and open the source port. It also needs outbound access to Snowflake on port 443. The account network policy must allow the agent host’s public egress IP. A missing IP surfaces as `token validation failed`.
+
+Before you start the agent, [`DESCRIBE DATA CONNECTIVITY PROXY`](/user-guide/data-connectivity-proxy-reference#label-dcp-describe-cmd) reporting `AGENT_HEALTH = DOWN` is expected. After the agent is up, expect:
+
+- `AGENT_HEALTH = HEALTHY`
+- `AGENT_STATUS = DCP_AGENT_LIFECYCLE_CONNECTED`
+- `BOOTSTRAP_STATUS = DCP_AGENT_BOOTSTRAP_SUCCEEDED`
+- `DATA_PATH_STATUS = DCP_AGENT_DATA_PATH_HEALTHY`
+
+`AGENT_HEALTH = HEALTHY` means the agent is connected to Snowflake. It doesn’t mean traffic reaches the source. Confirm that with the route check. Every stage must be `SUCCESS`. Prefix the function with the metadata database, as the CLI prints it. An unqualified `INFORMATION_SCHEMA.DCP_CLIENT_ROUTE_CHECK` doesn’t resolve when the session has no current database.
+
+Copy code
+
+```
+SELECT STAGE, STATUS, REASON
+FROM TABLE(<METADATA_DB>.INFORMATION_SCHEMA.DCP_CLIENT_ROUTE_CHECK(
+  AGENT_ID => '<PROXY_NAME>',
+  DESTINATION => '<host>:<port>'));
+```
+
+See [Check route reachability](/user-guide/data-connectivity-proxy-monitor#label-dcp-route-check).
+
+Read the `CERTIFICATES` stage before the agent is running. Later stages stay `IN_PROGRESS` until the agent is up, so they aren’t a certificate failure. After the agent is healthy, the first stage that isn’t `SUCCESS` is the fault: the agent, the network rule, or the source.
+
+`scai data doctor` doesn’t run this check. A TCP connection from the Worker to the link-local address `169.254.0.1` isn’t evidence that a tunnel exists. That address accepts a socket when no tunnel exists.
+
+Driver download hosts remain on the direct egress rule. A private source doesn’t remove the need for SPCS to reach those public package hosts.
 
 ## Controlling cost on SPCS
 

@@ -22,7 +22,8 @@ COMPLETE_TASK_GRAPHS(
       [ RESULT_LIMIT => <integer> ]
       [, ROOT_TASK_NAME => '<string>' ]
       [, GRAPH_NAME => '<string>' ]
-      [, ERROR_ONLY => { TRUE | FALSE } ] )
+      [, ERROR_ONLY => { TRUE | FALSE } ]
+      [, GRAPH_RUN_GROUP_ID => '<string>' ] )
 ```
 
 ## Arguments
@@ -48,6 +49,9 @@ All the arguments are optional.
 
 `ERROR_ONLY => { TRUE | FALSE }`
 :   When set to TRUE, this function returns only graph runs that failed or were cancelled.
+
+`GRAPH_RUN_GROUP_ID => string`
+:   Specifies a graph run group ID to return completed runs for that group, including automatic retries.
 
 ## Usage notes
 
@@ -103,6 +107,18 @@ Expand
 Show lessSee more
 
 ## Examples
+
+Retrieve completed attempts for the graph run group returned by `EXECUTE TASK ... AWAIT`:
+
+Copy code
+
+```
+SELECT GRAPH_RUN_GROUP_ID, STATE, ATTEMPT_NUMBER, FIRST_ERROR_TASK_NAME,
+       FIRST_ERROR_CODE, FIRST_ERROR_MESSAGE
+  FROM TABLE(INFORMATION_SCHEMA.COMPLETE_TASK_GRAPHS(
+    GRAPH_RUN_GROUP_ID => '00000000-0000-0000-0000-000000000000'))
+  ORDER BY ATTEMPT_NUMBER;
+```
 
 Retrieve the 1000 most recent completed graph executions in the account. Note that the maximum number of rows returned by the function is
 limited to 1000 by default. To change the number of rows returned, modify the RESULT\_LIMIT argument value:

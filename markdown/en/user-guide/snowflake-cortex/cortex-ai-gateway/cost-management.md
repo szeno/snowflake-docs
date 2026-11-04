@@ -1,9 +1,5 @@
 # Cost management for Cortex AI Gateway
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to accounts in Amazon Web Services (AWS), Microsoft Azure, and Google Cloud Platform (GCP) commercial regions, with the exception of AWS Europe (Spain). For the full list of commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
-
 The gateway is a natural unit for cost reporting: inference requests from external agents and AI
 clients land in a unified, governed source of truth, with attribution to the Snowflake user who made
 each request. This topic covers how to see what the gateway is spending and how to limit it.

@@ -178,9 +178,10 @@ for `OAUTH_CLIENT = TABLEAU_SERVER`.
         For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
 
     `USE_PRIVATELINK_FOR_AUTHORIZATION_ENDPOINT = { TRUE | FALSE }`
-    :   When TRUE, the interaction between Snowflake as the authorization server and the user who is authenticating uses
-        [private connectivity](/user-guide/private-connectivity-inbound). Interactions between Snowflake and the client, including the
-        initial request to the authorization endpoint, still happen over the public internet.
+    :   When TRUE, Snowflake redirects authorization requests from the public endpoint to a private endpoint. This ensures that the
+        subsequent authentication exchange between the client and Snowflake’s authorization server occurs over
+        [private connectivity](/user-guide/private-connectivity-inbound). The client’s initial request might still be sent to the
+        public endpoint over the internet before the redirect.
 
         Default: `FALSE`
 
@@ -373,9 +374,10 @@ Use these parameters when `OAUTH_CLIENT = CUSTOM` in the security integration.
         For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
 
     `USE_PRIVATELINK_FOR_AUTHORIZATION_ENDPOINT = { TRUE | FALSE }`
-    :   When TRUE, the interaction between Snowflake as the authorization server and the user who is authenticating uses
-        [private connectivity](/user-guide/private-connectivity-inbound). Interactions between Snowflake and the client, including the
-        initial request to the authorization endpoint, still happen over the public internet.
+    :   When TRUE, Snowflake redirects authorization requests from the public endpoint to a private endpoint. This ensures that the
+        subsequent authentication exchange between the client and Snowflake’s authorization server occurs over
+        [private connectivity](/user-guide/private-connectivity-inbound). The client’s initial request might still be sent to the
+        public endpoint over the internet before the redirect.
 
         Default: `FALSE`
 

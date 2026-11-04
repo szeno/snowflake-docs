@@ -181,7 +181,7 @@ The following functions and models are available in any region via [cross-region
 | `openai-gpt-5-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-5-nano` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
 | `openai-gpt-4.1 [legacy]` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `gemini-4-argon` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
+| `gemini-4-argon` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
 | `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |

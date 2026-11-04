@@ -25,10 +25,6 @@ Copy code
     - `SNOWFLAKE INTELLIGENCE`
     - `AI GATEWAY`
 
-      [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
-
-      Available to all accounts.
-
     Unless you specify a second argument, the budget tracks consumption for all resources within the specified domain.
 
 `'instance'`
@@ -152,7 +148,3 @@ CALL finance_budget!ADD_SHARED_RESOURCE(
 ```
 
 ### AI Gateway resources
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.

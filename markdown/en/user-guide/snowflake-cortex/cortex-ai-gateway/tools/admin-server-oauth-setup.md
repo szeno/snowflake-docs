@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 Currently, only users with the `ACCOUNTADMIN` role can administer MCP servers in Tools. Provider-side setup can also require administrator permissions in the third-party service.
 
@@ -57,7 +57,7 @@ Show lessSee more
 ### Enter a configuration value
 
 1. Sign in to Snowsight.
-2. Select **AI & ML** > **AI Gateway**.
+2. Select **AI Gateway**.
 3. Select **MCP & Tools**. Tools opens in a new tab.
 4. Find the server you want to configure.
 5. Enter the required value or values, then save.
@@ -76,7 +76,7 @@ The Snowflake MCP server exposes Cortex Search, Cortex Analyst, and SQL executio
 
 Complete the provider-side prerequisites for the server you’re enabling. Where a Snowflake-managed OAuth application is available, you don’t need to register a replacement unless your organization requires its own application. The OAuth registration steps below apply when you supply your own client credentials. Provider permissions, API enablement, and consent requirements still apply even when you use a preconfigured application.
 
-To enter client credentials, select **AI & ML** > **AI Gateway** > **MCP & Tools** in Snowsight. In the new tab, open the server’s configuration, enter the client ID and client secret, and save. Use `https://identity.snowflake.com/oauth2/callback` for authorization-code clients. Don’t copy callback URLs from older Natoma instructions.
+To enter client credentials, select **AI Gateway** > **MCP & Tools** in Snowsight. In the new tab, open the server’s configuration, enter the client ID and client secret, and save. Use `https://identity.snowflake.com/oauth2/callback` for authorization-code clients. Don’t copy callback URLs from older Natoma instructions.
 
 For authorization-code flows that require a callback URL, register the following URL with the provider. Upwind and Wiz use client credentials instead and don’t require a callback URL or per-user consent:
 
@@ -171,7 +171,7 @@ For current OAuth client registration and consent requirements, see Google’s [
 
 #### Step 4: Configure each server
 
-1. In Snowsight, select **AI & ML** > **AI Gateway** > **MCP & Tools**.
+1. In Snowsight, select **AI Gateway** > **MCP & Tools**.
 2. In the new tab, find the Google server you want to enable.
 3. Enter the **Client ID** and **Client Secret** from Step 3.
 4. Save, then repeat for each Google Workspace server you want to enable.

@@ -134,15 +134,58 @@ Please note that this feature does not work with legacy notebooks.
 
 ## Complete a run
 
-Completing a run makes it immutable and presents it as finished in Snowsight.
+Completing a run makes it immutable and records its final status in Snowsight.
 
-If you started a run as part of a `with` statement, the run is automatically completed when exiting scope. Otherwise, you can end a run by calling your experiment’s `end_run(name: Optional[str])` method with the name of the run to complete:
+If you started a run as part of a `with` statement, the run is automatically completed when exiting scope. If the scope exits normally, the run’s status is set to `FINISHED`. If the scope exits because of an exception, the run’s status is set to `FAILED`.
+
+Otherwise, you can end a run by calling your experiment’s `end_run(run_name: Optional[str], status: Optional[str])` method with the name of the run to complete. Use the optional `status` argument to set the run’s final status to `FINISHED`, `FAILED`, or `CANCELLED`. If you don’t specify a status, the run is set to `FINISHED`.
 
 Copy code
 
 ```
-experiment.end_run("my_run")
+exp.end_run("my_run")
+
+# Mark a run that you stopped early as cancelled
+exp.end_run("my_other_run", status="CANCELLED")
 ```
+
+### Pause and resume a run
+
+You can pause a run to stop logging to it temporarily, and resume it later. Pausing the active run deactivates it, so a surrounding `with` statement doesn’t complete the run when it exits scope. To pause a run, call the `pause_run(run_name: Optional[str])` method. If you don’t specify a run name, the active run is paused.
+
+To resume a paused run, call `start_run` with the name of the paused run:
+
+Copy code
+
+```
+with exp.start_run("my_run"):
+  # .. Train your model and log artifacts
+  exp.pause_run()
+
+# Later, resume the run and continue logging
+with exp.start_run("my_run"):
+  # .. Continue training
+```
+
+You can’t log metrics, parameters, or artifacts to a paused run. Resume the run first.
+
+### Run statuses
+
+Each run has one of the following statuses:
+
+| Status | Description |
+| --- | --- |
+| `RUNNING` | The run is active. This is the only status that accepts new metrics, parameters, and artifacts. New runs start with this status. |
+| `PAUSED` | The run is paused. Call `start_run` with the run’s name to return it to `RUNNING`. |
+| `FINISHED` | The run completed successfully. |
+| `FAILED` | The run failed, either because its `with` statement exited with an exception or because it was ended with `status="FAILED"`. |
+| `CANCELLED` | The run was ended with `status="CANCELLED"`. |
+
+Expand
+
+Show lessSee more
+
+`FINISHED`, `FAILED`, and `CANCELLED` are final statuses. A run with a final status can’t be modified or resumed.
 
 ## Compare runs within an experiment
 
@@ -238,9 +281,7 @@ ALTER EXPERIMENT my_experiment DROP RUN my_run;
 
 Snowflake Experiments are subject to the following limitations:
 
-- Each schema is limited to 500 experiments.
-- Each experiment is limited to 500 runs.
-- Runs are limited to 1000 unique parameters and 200 unique metrics.
+- Runs are limited to 1000 unique parameters, with a combined total of 250,000 characters across all parameters.
 
 ## Cost considerations
 

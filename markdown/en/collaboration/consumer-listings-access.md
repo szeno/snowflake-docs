@@ -39,6 +39,60 @@ You can access free and paid listings on the Snowflake Marketplace. To access a 
 
 To access a paid listing on the Snowflake Marketplace, see [Accessing paid listings](#label-access-paid-listings).
 
+## Access remote MCP servers on the Snowflake Marketplace
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+During preview, [Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/tools), which you
+use to enable remote MCP servers, is available only in AWS commercial regions, excluding Asia Pacific
+(New Zealand), Asia Pacific (Malaysia), and Europe (Spain).
+
+Remote MCP servers are Model Context Protocol (MCP) endpoints that providers host outside Snowflake
+and list on the Snowflake Marketplace. You enable remote MCP servers through
+[Cortex AI Gateway](/user-guide/snowflake-cortex/cortex-ai-gateway/tools), and then use them in
+Cortex Code and other MCP-compatible AI clients. To find remote MCP servers, see
+[Browse listings with remote MCP servers](/collaboration/consumer-listings-exploring#label-browse-remote-mcp-servers).
+
+### Before you begin
+
+An administrator with the ACCOUNTADMIN role must enable a remote MCP server and grant access to the
+roles that use it. Users with those roles can then connect to the server.
+
+### Enable a remote MCP server (administrators)
+
+1. Open the listing, and then select **Get MCP**.
+
+   If the listing includes more than one server, the **Connect remote MCP** dialog opens. Select the
+   servers that you want, and then select **Connect**. To connect a single server, you can also
+   select **Get MCP** next to that server in the **Remote MCPs** section.
+
+   Cortex AI Gateway opens in a new tab and shows the server.
+2. Select **Enable**.
+3. Grant access to the roles that should use the server.
+
+For details on enabling servers, granting access, and configuring which tools are available, see
+[Distributing access to MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-personal-connections) and
+[Configuring tool availability for an MCP server](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/admin-tool-policies).
+
+### Connect to a remote MCP server (users)
+
+Open the listing. The button that appears depends on whether your role has access to the server:
+
+- **Connect MCP:** An administrator enabled the server and granted your role access. Select
+  **Connect MCP**, and then follow the prompts to authorize the server. See
+  [Use a remote MCP server in Cortex Code](#label-remote-mcp-consumer-use).
+- **View MCP connections:** Your role doesn’t have access to the server yet. Send the listing link to
+  your account administrator, and ask them to enable the server and grant your role access. See
+  [Enable a remote MCP server (administrators)](#label-remote-mcp-consumer-enable).
+
+### Use a remote MCP server in Cortex Code
+
+After your role has access to a server, Cortex Code Desktop and Cortex Code CLI discover it
+automatically. Authorize the server, and then ask questions that use its tools.
+
+To add the server to another AI client, such as Claude, Cursor, or VS Code, see
+[Adding an MCP server to your AI client](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/user-configure-client).
+
 ## Accessing paid listings
 
 You can access paid listings that are privately shared with you, called private listings, or paid listings on the Snowflake Marketplace.

@@ -110,6 +110,8 @@ The `ADD` and `REMOVE` commands are in preview, and are available to all account
 `ADD { ALLOWED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) }`
 :   Adds a network rule to the allowed or blocked list of the network policy without removing existing ones.
 
+    Specify the network rule list using parentheses, for example `ALLOWED_NETWORK_RULE_LIST = ('rule_name')`.
+
 `REMOVE { ALLOWED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) | BLOCKED_NETWORK_RULE_LIST = ( 'network_rule' [ , ... ] ) }`
 :   Removes a network rule from the allowed or blocked list of the network policy.
 
@@ -155,9 +157,11 @@ For general information about roles and privilege grants for performing SQL acti
   For example:
 
   `192.168.1.0/24`
-- When a network policy includes values for both `ALLOWED_IP_LIST` and `BLOCKED_IP_LIST`, Snowflake applies the blocked list
-  first.
-- Do not add `0.0.0.0/0` to `BLOCKED_IP_LIST`. Because Snowflake applies the blocked list first, this would block your own
+- When a network policy includes both allowed values (in `ALLOWED_IP_LIST` or `ALLOWED_NETWORK_RULE_LIST`) and blocked
+  values (in `BLOCKED_IP_LIST` or `BLOCKED_NETWORK_RULE_LIST`) for the same identifier, the blocked
+  list always takes precedence; the identifier is blocked even though it’s also in the allowed list. For more
+  details, see [Interaction between allowed lists and blocked lists](/user-guide/network-policies#label-interaction-between-allowed-lists-and-blocked-lists).
+- Do not add `0.0.0.0/0` to `BLOCKED_IP_LIST`. Because blocked list values take precedence, this would block your own
   access. Additionally, in order to block all IP addresses except a select list, you only need to add IP addresses to `ALLOWED_IP_LIST`.
   Snowflake automatically blocks all IP addresses not included in the allowed list.
 - Regarding metadata:
@@ -234,4 +238,41 @@ Output from SHOW NETWORK POLICIES includes the updated policy name, and comment 
 |-------------------------------+------------------------------------------|----------------------------|----------------------------|----------------------------------|----------------------------------|
 |...                            |                     |                    |                            |                            |                                  |                                  |
 +-------------------------------+---------------------+--------------------+----------------------------+----------------------------+----------------------------------+----------------------------------+
+```
+
+Unlike `SET`, the `ADD` and `REMOVE` actions are additive: they change the allowed or blocked network rule list without replacing the entire
+list. Add `extra_access_rule` to the allowed network rule list of `limit_access_policy` without removing the rules already present:
+
+Copy code
+
+```
+ALTER NETWORK POLICY limit_access_policy ADD ALLOWED_NETWORK_RULE_LIST = ('extra_access_rule');
+DESC NETWORK POLICY limit_access_policy;
+```
+
+```
++---------------------------+--------------------------------------+
+| name                      | value                                |
+|---------------------------+---------------------------------------
+| ALLOWED_NETWORK_RULE_LIST | ALLOW_ACCESS_RULE,EXTRA_ACCESS_RULE  |
+| BLOCKED_NETWORK_RULE_LIST | BLOCK_ACCESS_RULE                    |
++---------------------------+---------------------------------------+
+```
+
+Remove `extra_access_rule` from the allowed network rule list, leaving the rest of the list unchanged:
+
+Copy code
+
+```
+ALTER NETWORK POLICY limit_access_policy REMOVE ALLOWED_NETWORK_RULE_LIST = ('extra_access_rule');
+DESC NETWORK POLICY limit_access_policy;
+```
+
+```
++---------------------------+-------------------+
+| name                      | value             |
+|---------------------------+-------------------|
+| ALLOWED_NETWORK_RULE_LIST | ALLOW_ACCESS_RULE |
+| BLOCKED_NETWORK_RULE_LIST | BLOCK_ACCESS_RULE |
++---------------------------+-------------------+
 ```

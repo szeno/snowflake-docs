@@ -172,6 +172,7 @@ Snowflake provides more than 185 built-in system data metric functions to measur
 - [SCHEMA\_CHANGE\_COUNT (system data metric function)](/sql-reference/functions/dmf_schema_change_count)
 - [SCHEMA\_CHANGE\_DROP\_COUNT (system data metric function)](/sql-reference/functions/dmf_schema_change_drop_count)
 - [SCHEMA\_CHANGE\_TYPE\_COUNT (system data metric function)](/sql-reference/functions/dmf_schema_change_type_count)
+- [SECONDS\_SINCE\_ROW\_COUNT\_CHANGE (system data metric function)](/sql-reference/functions/dmf_seconds_since_row_count_change)
 - [SKEW (system data metric function)](/sql-reference/functions/dmf_skew)
 - [SOURCE\_TARGET\_LAG (system data metric function)](/sql-reference/functions/dmf_source_target_lag)
 - [SPECIAL\_CHARACTER\_COUNT (system data metric function)](/sql-reference/functions/dmf_special_character_count)

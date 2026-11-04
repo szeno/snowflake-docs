@@ -2,7 +2,7 @@
 
 [Preview Feature](/release-notes/preview-features) — Open
 
-Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Available to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 Tools is a capability of Cortex AI Gateway that connects AI clients to the business tools your organization already uses through the Model Context Protocol (MCP). Tools works with any agent that supports MCP, including CoCo (CLI and Desktop), ChatGPT, Claude, Cursor, and more.
 
@@ -31,7 +31,7 @@ Show lessSee more
 
 ## Regional availability
 
-Tools is available in Public Preview to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand), Asia Pacific (Malaysia), and Europe (Spain). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
+Tools is available in Public Preview to accounts in Amazon Web Services (AWS) commercial regions only, excluding Asia Pacific (New Zealand) and Middle East (UAE). For the full list of AWS commercial regions, see [Supported cloud regions](/user-guide/intro-regions).
 
 ## Related MCP features
 
@@ -40,24 +40,3 @@ Tools connects your AI clients outward to third-party business tools. If instead
 ## Next step
 
 [Browse available MCP servers](/user-guide/snowflake-cortex/cortex-ai-gateway/tools/available-servers)
-
-## Legal notices
-
-Where your configuration of Cortex AI Gateway uses a model provided on the
-[Model and Service Pass-Through Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/ai-features/model-pass-through-terms/),
-your use of that model is further subject to the terms for that model on that page.
-
-The data classification of inputs and outputs is as set forth in the following table.
-
-| Input data classification | Output data classification | Designation |
-| --- | --- | --- |
-| Customer Data | Customer Data | Preview AI Features [[1]](#footnote-1) |
-
-Expand
-
-Show lessSee more
-
-[1]
-Represents the defined term used in the Preview AI Terms and Acceptable Use Policy.
-
-For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).

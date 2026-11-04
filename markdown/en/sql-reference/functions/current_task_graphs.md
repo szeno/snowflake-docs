@@ -21,7 +21,8 @@ Copy code
 CURRENT_TASK_GRAPHS(
       [ RESULT_LIMIT => <integer> ]
       [, ROOT_TASK_NAME => '<string>' ]
-      [, GRAPH_NAME => '<string>' ] )
+      [, GRAPH_NAME => '<string>' ]
+      [, GRAPH_RUN_GROUP_ID => '<string>' ] )
 ```
 
 ## Arguments
@@ -44,6 +45,9 @@ All the arguments are optional.
 `GRAPH_NAME => string`
 :   A case-insensitive string specifying the name of a [task graph object](/user-guide/task-graph-object). Only non-qualified names are supported. Only graph runs for the
     specified task graph are returned. If multiple task graphs have the same name, the function returns the graph runs for each of them. Mutually exclusive with ROOT\_TASK\_NAME.
+
+`GRAPH_RUN_GROUP_ID => string`
+:   Specifies a graph run group ID to return only scheduled or executing runs for that group.
 
 ## Usage notes
 

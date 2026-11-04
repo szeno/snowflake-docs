@@ -38,7 +38,7 @@ As a database administrator, perform the following tasks:
    | `binlog_row_metadata` | Set to `full`.  The connector requires all row metadata to operate, most importantly, column names and primary key information.  Under Microsoft Azure Database for MySQL the `binlog_row_metadata` field isn’t user modifiable. Raise a Microsoft support ticket to change this value. |
    | `binlog_row_image` | Set to `full`.  The connector requires that all columns be written into the binary log.  Not applicable in Amazon Aurora, where it is fixed at the right value. |
    | `binlog_row_value_options` | Leave empty.  This option only affects JSON columns, where it can be set to include only the modified parts of JSON documents for `UPDATE` statements. The connector requires that full documents are written into the binary log. |
-   | `binlog_expire_logs_seconds` | Snowflake recommends setting the [binary log expiration period (binlog\_expire\_logs\_seconds)](https://dev.mysql.com/doc/refman/8.4/en/replication-options-binary-log.html#sysvar_binlog_expire_logs_seconds) to at least 72 hours (`259200`).  Retention has to cover the entire window between a replication problem starting, someone noticing it, and the fix being applied. Once the expiration period elapses, MySQL can remove binary log files automatically, and Openflow can’t replicate data from files that no longer exist, so the data is lost. Time spent paused counts toward that window, whether the pause is planned maintenance or an unnoticed failure.  If you’re using scheduled replication, the value needs to be longer than the configured schedule. |
+   | `binlog_expire_logs_seconds` | Snowflake recommends setting [binlog\_expire\_logs\_seconds](https://dev.mysql.com/doc/refman/8.4/en/replication-options-binary-log.html#sysvar_binlog_expire_logs_seconds) to at least 72 hours (`259200`).  This gives you time to detect and recover from an interruption such as a paused connector, a network outage, or a failed replication cycle without a full reload. If MySQL removes binary logs before the connector reads them, the affected tables require a full reload. A longer window uses more disk for binary logs. If you use [scheduled replication](#label-of-mysql-ingestion-parameters), the retention window must be longer than the configured schedule. |
    | `binlog_legacy_event_pos` | Set to `ON`.  Required only when the source is MariaDB. The connector requires this flag to track binary log positions correctly during replication.  Not applicable to MySQL. |
 
    Expand
@@ -55,6 +55,7 @@ As a database administrator, perform the following tasks:
    binlog_row_metadata = full
    binlog_row_image = full
    binlog_row_value_options =
+   binlog_expire_logs_seconds = 259200
    ```
 2. Increase the value of `sort_buffer_size`.
 
@@ -70,7 +71,7 @@ As a database administrator, perform the following tasks:
    `Out of sort memory, consider increasing server sort buffer size`.
    This indicates that `sort_buffer_size` should be raised.
 3. If you’re using Amazon RDS databases, then increase the retention period relevant to *binlog\_expire\_logs\_seconds* using *rds\_set\_configuration*.
-   For example, if you want to store binlog for 24 hours, then call `mysql.rds_set_configuration('binlog retention hours', 24)`.
+   To store the binary log for 72 hours, call `mysql.rds_set_configuration('binlog retention hours', 72)`.
 4. When using a read replica to connect, enable binary logging on the replica, then configure the
    replica to log the events received from its source into its own binary log.
 

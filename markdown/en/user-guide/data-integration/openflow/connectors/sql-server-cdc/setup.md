@@ -57,7 +57,29 @@ You must perform these tasks as a database administrator.
    The connector requires that CDC is enabled on the databases and tables before replication
    starts. You can also enable CDC on additional tables while the connector is running.
 
-   Note
+   Important
+
+   Snowflake recommends a source retention window of at least 72 hours. SQL Server CDC keeps change
+   rows for the cleanup job’s retention period, which is measured in minutes and defaults to 4320
+   minutes (72 hours). Change tracking’s `CHANGE_RETENTION` option doesn’t apply to this connector.
+   To set the cleanup retention explicitly, run the following command in each replicated database:
+
+   Copy code
+
+   ```
+   EXEC sys.sp_cdc_change_job
+     @job_type = N'cleanup',
+     @retention = 4320;
+   ```
+
+   For more information, see [sys.sp\_cdc\_change\_job](https://learn.microsoft.com/en-us/sql/relational-databases/system-stored-procedures/sys-sp-cdc-change-job-transact-sql).
+
+   A 72-hour retention window gives you time to detect and recover from an interruption such as a
+   paused connector, a network outage, or a failed replication cycle without a full reload. If the
+   cleanup job removes change data before the connector reads it, the affected tables require a full
+   reload. A longer window uses more storage in the CDC change tables. If you use
+   [scheduled replication](#configure-scheduling-of-merge-tasks), the retention window must be longer
+   than the configured schedule.
 
    **Platform-specific variants for enabling CDC at the database level.** The
    `sp_cdc_enable_table` call shown above is the same on every platform; only the
