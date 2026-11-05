@@ -70,7 +70,7 @@ The Openflow Connectors Dashboard displays the following information:
 :   Shows how much data all connectors that match the primary filter criteria for time frame and event table have sent to Snowflake during the selected time period.
     Use this metric to quickly identify ingestion anomalies over a specific time period.
 
-For custom telemetry queries beyond the dashboard, see [Monitor Openflow using telemetry data](/user-guide/data-integration/openflow/monitor).
+For custom telemetry queries beyond the dashboard, see [Openflow telemetry](/user-guide/data-integration/openflow/monitor).
 
 Note
 
@@ -138,16 +138,23 @@ To monitor the connector details, select [![Vertical more icon](/static/images/i
 
 ### Database connectors
 
-The details page shows the following information for each table that is part of the Database connector configuration:
+The details page for a Database connector shows table replication metrics and connector metrics.
+
+#### Table replication metrics
+
+The details page shows the following replication information for the tables that are part of the Database connector
+configuration:
 
 **Table replication status**
 :   Tables can either be in **Active** or **Failed** replication status. The replication status is based on the most recent telemetry event
     that is available for the table. Events that cause replication to fail for a table immediately result in a **Failed** replication
     status in the dashboard. Use the **Failure Reason** message to identify the issue.
 
-**Error distribution**
-:   Helps you understand when the connector experienced issues, so that you can identify any potential problems with source systems,
-    connector configuration, or the Snowflake destination.
+**Tables by replication phase**
+:   Shows how many of the connector’s tables are in each replication phase.
+
+**Tables by last ingestion time**
+:   Shows when each of the connector’s tables last ingested data during the last hour.
 
 **Table name**
 :   Shows the schema and table names for all tables that are configured to be replicated by the connector. The list matches the
@@ -161,7 +168,18 @@ The details page shows the following information for each table that is part of 
     phase, progress to the **Snapshot Load** phase, perform the initial load, and ultimately enter the **Incremental Replication** phase
     when individual change data capture events are processed.
 
-**Last Ingested**
+**Rows ingested**
+:   Shows, for the selected time frame, how many rows were loaded into the destination table during initial snapshots and how many
+    change records were logged in the journal table during incremental replication.
+
+    On SQL Server, the connector combines some source events during capture, so this number can be lower than the number of
+    source changes.
+
+**E2E latency**
+:   Shows, for the selected time frame, the end-to-end (E2E) latency. This is the total time for changes to become queryable in
+    Snowflake after a transaction is committed in the source database.
+
+**Last Ingestion**
 :   Shows the timestamp of the last inserted record into the destination table during the selected time frame. When looking at this
     metric, consider a short delay between the records being ingested and events being logged and available to query.
 
@@ -171,6 +189,21 @@ The details page shows the following information for each table that is part of 
     the selected time frame, switch to a longer window such as **Last 24 hours** or **Last 7 days** to retrieve it.
 
 You can use the **Replication status**, **Replication phase**, and time frame filters to narrow down the table list.
+
+#### Connector metrics
+
+In addition to the general connector metrics **Average throughput** and **Total data ingested**, Database connectors support
+the following connector-level metrics:
+
+**End-to-end latency**
+:   Shows the total time for changes to become queryable in Snowflake after a transaction is committed in the source database.
+
+**Capture latency**
+:   Shows the time for the connector to capture a change after a transaction is committed in the source database.
+
+**Flow processing time**
+:   Shows the time for the connector to process an event. The time is measured from when the connector reads the event from the
+    source until the connector sends the event to Snowflake.
 
 ### All connectors
 
@@ -212,11 +245,11 @@ that contribute to the failure.
 
 You can start AI-assisted troubleshooting at two scopes:
 
-**Troubleshoot a whole connector**
+**Troubleshoot a connector**
 :   Use this option to investigate everything affecting a connector. The AI assistant looks at all errors and metrics for the connector
     during the selected time frame and reports back with the most impactful issues and how to address them.
 
-    To troubleshoot a whole connector, do one of the following:
+    To troubleshoot a connector, do one of the following:
 
     - In the connectors list, select the troubleshoot icon next to the status on the row of an **Unhealthy** connector. In the list, the
       control is an icon only, without a text label.
@@ -306,10 +339,12 @@ Use the **Last Hour** filter for the best performance and the most up-to-date vi
 - The connector details page for Database connectors displays up to 75,000 tables.
 - The **Deployment** and **Runtime** filters use internal names that differ from the display names in the Openflow UI.
   For details on matching these names, see [Filtering connectors](#label-openflow-dashboard-filtering).
-- The **Last Ingested** column for Database connector tables shows **More than 3 days ago** when the connector hasn’t performed
+- The **Last Ingestion** column for Database connector tables shows **More than 3 days ago** when the connector hasn’t performed
   a merge query in more than 3 days, because the connector stops emitting the last-ingestion metric after that period.
   If the last ingestion timestamp falls outside the selected time frame, switch to a longer window such as **Last 24 hours**
   or **Last 7 days** to retrieve it.
+- End-to-end latency is calculated from the timestamps of completed merge queries. If no records were merged into the
+  destination table during the selected time frame, end-to-end latency shows 0.
 
 ## Known issues
 

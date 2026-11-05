@@ -6,7 +6,7 @@ Caution
 legacy command-line client. Snowflake will only add new features and enhancements to Snowflake CLI. Snowflake supports SnowSQL 1.5.x through
 April 16, 2028. Earlier minor versions have earlier support end dates.
 
-If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation). If you already use
+If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation). If you already use
 SnowSQL, see [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
 
 This topic describes how to connect to Snowflake by entering connection parameters manually. The topic then explains how to configure a default connection for ease of use, as well as one or more

@@ -191,6 +191,8 @@ None
 
 The `snow app setup` command bootstraps a new Snowflake App Runtime project by generating an `app.yml` file. Edit `app.yml` after the command completes, then run `snow app deploy` to ship your changes.
 
+If an application service with the same name already exists in the resolved database and schema, `snow app setup` warns that deploying the project will replace that app. Pass a different `--app-name` to create a separate app instead.
+
 Starting with Snowflake CLI version 3.17.0, `snow app` commands support both Snowflake Native Apps (`application` and `application package` entities) and Snowflake App Runtime (`snowflake-app` entities). Shared subcommands such as `bundle`, `deploy`, `validate`, `open`, `events`, and `teardown` select the correct flow automatically based on the entity type in the project file.
 
 ## Examples

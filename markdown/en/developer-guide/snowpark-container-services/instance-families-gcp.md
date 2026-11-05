@@ -1,4 +1,4 @@
-# Snowpark Container Services: Google Cloud Instance Families
+# Snowpark Container Services: Google Cloud instance families
 
 Feature — Generally Available
 
@@ -18,13 +18,13 @@ Region availability is subject to change. To retrieve current availability and
 instance family specifications programmatically, use
 [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families).
 
-## Current Generation Instance Families
+## Current generation instance families
 
-### General Compute Instance Families
+### General compute instance families
 
 Current generation instances recommended for general-purpose workloads.
 
-#### x86 General Compute
+#### x86 general compute
 
 Current generation x86 instances for general-purpose workloads.
 
@@ -64,7 +64,7 @@ multi-platform container images.
 
 GEN\_ARM\_G1 can’t be a backup instance family for x86 compute pools.
 
-### High Memory Instance Families
+### High memory instance families
 
 Current generation x86 instances optimized for memory-intensive workloads.
 
@@ -78,7 +78,7 @@ Expand
 
 Show lessSee more
 
-### GPU Accelerated Instance Families
+### GPU accelerated instance families
 
 Google Cloud GPU instance families feature two NVIDIA GPU architectures, each suited to different AI and ML workloads.
 
@@ -109,7 +109,7 @@ Expand
 
 Show lessSee more
 
-## Previous Generation Instance Families
+## Previous generation instance families
 
 ### General compute instance families
 

@@ -23,10 +23,6 @@ created with the FROM parameter. For more information, see [Understanding the di
 
 ## Container runtime file structure
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 When you use a container runtime, your entrypoint file can have any name that follows
 standard file naming conventions and can be located anywhere in your source
 directory. However, with the introduction of `st.navigation`\_ in Streamlit v1.36, the most common

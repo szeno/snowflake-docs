@@ -12,7 +12,7 @@ The tutorial uses a [Snowflake notebook](/user-guide/ui-snowsight/notebooks) to 
 
 ## 1: Initial configuration
 
-In this initial configure, you create a Snowflake notebook, import libraries you need, and define constants that are used by cells in the subsequent steps.
+In this initial configuration, you create a Snowflake notebook, import libraries you need, and define constants that are used by cells in the subsequent steps.
 
 1. Create a Snowflake notebook.
 
@@ -47,7 +47,7 @@ In this initial configure, you create a Snowflake notebook, import libraries you
 
 ## 2: Create Snowflake objects
 
-Before you can create a service, you need Snowflake objects, such as a database, a user, a role, a compute pool, and an image repository. Some of these objects are account-scoped object that require administrative privileges to create them. The names of the objects created are defined in the preceding step.
+Before you can create a service, you need Snowflake objects, such as a database, a user, a role, a compute pool, and an image repository. Some of these objects are account-scoped objects that require administrative privileges to create them. The names of the objects created are defined in the preceding step.
 
 ### 2.1: Create account-scoped Snowflake objects
 
@@ -86,7 +86,7 @@ root.grants.grant(Grant(
     ))
 
 # CREATE COMPUTE POOL IF NOT EXISTS tutorial_compute_pool
-#   MIN_NODES = 1 MAX_NODES = 1
+#   MIN_NODES = 1 MAX_NODES = 2
 #   INSTANCE_FAMILY = CPU_X64_XS
 root.compute_pools.create(
     mode=CreateMode.if_not_exists,
@@ -179,7 +179,7 @@ print("Created schema:", schema.name)
 repo = schema.image_repositories.create(
     ImageRepository(name=repo_name),
     mode=CreateMode.if_not_exists)
-print("Create image repository:", repo.fully_qualified_name)
+print("Created image repository:", repo.fully_qualified_name)
 
 repo_url = repo.fetch().repository_url
 print("image registry hostname:", repo_url.split("/")[0])
@@ -199,7 +199,7 @@ The Python code also prints out useful information about the repository (the rep
 
 ## 3: Build an image and upload
 
-You download locally the code as described in [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1), use Docker commands to build the image, and upload it to the image repository in your account.
+You download the code locally as described in [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1), use Docker commands to build the image, and upload it to the image repository in your account.
 
 1. Create and run the cell to obtain the hostname of your image registry and the URL to your image repository.
 
@@ -356,7 +356,7 @@ Create a service and a service function to communicate with the service.
 
    schema = root.databases[database_name].schemas[schema_name]
 
-   # CREATE FUNCTION my_echo_udf (inputtext VARCHAR)
+   # CREATE FUNCTION my_echo_function (inputtext VARCHAR)
    #  RETURNS VARCHAR
    #  SERVICE=echo_service
    #  ENDPOINT=echoendpoint
@@ -413,22 +413,22 @@ In this section, you use the service as follows:
       # helper to check if service is ready and return endpoint url
       def get_ingress_for_endpoint(svc, endpoint):
           for _ in range(10): # only try 10 times
-        # Find the target endpoint.
-        target_endpoint = None
-        for ep in svc.get_endpoints():
-            if ep.is_public and ep.name == endpoint:
-                target_endpoint = ep
-                break;
-        else:
-            print(f"Endpoint {endpoint} not found")
-            return None
+              # Find the target endpoint.
+              target_endpoint = None
+              for ep in svc.get_endpoints():
+                  if ep.is_public and ep.name == endpoint:
+                      target_endpoint = ep
+                      break;
+              else:
+                  print(f"Endpoint {endpoint} not found")
+                  return None
 
-        # Return endpoint URL or wait for it to be provisioned.
-        if target_endpoint.ingress_url.startswith("Endpoints provisioning "):
-            print(f"{target_endpoint.ingress_url} is still in provisioning. Wait for 10 seconds.")
-            time.sleep(10)
-        else:
-            return target_endpoint.ingress_url
+              # Return endpoint URL or wait for it to be provisioned.
+              if target_endpoint.ingress_url.startswith("Endpoints provisioning "):
+                  print(f"{target_endpoint.ingress_url} is still in provisioning. Wait for 10 seconds.")
+                  time.sleep(10)
+              else:
+                  return target_endpoint.ingress_url
           print("Timed out waiting for endpoint to become available")
 
       endpoint_url = get_ingress_for_endpoint(echo_service, "echoendpoint")
@@ -502,7 +502,7 @@ In Tutorial 2, you use the SQL interface to create a Snowpark Container Services
    job_name = "test_job"
 
    # cleanup previous job if present.
-   schema.services[job_name].drop()(if_exists=True)
+   schema.services[job_name].drop(if_exists=True)
 
    specification = f"""
     spec:
@@ -555,7 +555,7 @@ In Tutorial 2, you use the SQL interface to create a Snowpark Container Services
    schema.functions["my_echo_function(TEXT)"].drop()
    schema.services[service_name].drop()
    ```
-2. Drop the image repository to avoid paying for storage. Note that, if you have any other images stored in the repository they will be deleted.
+2. Drop the image repository to avoid paying for storage. Note that, if you have any other images stored in the repository, they will be deleted.
 
    Copy code
 
@@ -574,7 +574,7 @@ In Tutorial 2, you use the SQL interface to create a Snowpark Container Services
    Copy code
 
    ```
-   root.compute_pool[compute_pool_name].suspend()
+   root.compute_pools[compute_pool_name].suspend()
    ```
 
 ## What’s next?

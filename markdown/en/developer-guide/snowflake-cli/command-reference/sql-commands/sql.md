@@ -23,6 +23,7 @@ snow sql
   --connection <connection>
   --host <host>
   --port <port>
+  --protocol <protocol>
   --account <account>
   --user <user>
   --password <password>
@@ -50,6 +51,8 @@ snow sql
   --oauth-enable-refresh-tokens
   --oauth-enable-single-use-refresh-tokens
   --client-store-temporary-credential
+  --secondary-roles <secondary_roles>
+  --server-session-keep-alive
   --format <format>
   --verbose
   --debug
@@ -82,17 +85,17 @@ None
 `--single-transaction / --no-single-transaction`
 :   Connects with autocommit disabled. Wraps BEGIN/COMMIT around statements to execute them as a single transaction, ensuring all commands complete successfully or no change is applied. Default: False.
 
-`--enable-templating [LEGACY%STANDARD%JINJA%ALL%NONE]`
+`--enable-templating [LEGACY|STANDARD|JINJA|ALL|NONE]`
 :   Syntax used to resolve variables before passing queries to Snowflake. Default: [<\_EnabledTemplating.LEGACY: ‘LEGACY’>, <\_EnabledTemplating.STANDARD: ‘STANDARD’>].
 
 `--local-only`
-:   Restrict !source and !load to local files. When set, !source/!load directives that reference http:// or https:// URLs are rejected instead of being fetched. Use this flag in environments where SQL inputs should not trigger outbound network requests, or when running SQL files whose content should be reviewed locally before execution. [env var: SNOWFLAKE\_CLI\_SQL\_LOCAL\_ONLY | config: cli.sql\_local\_only].
+:   Restrict !source and !load to local files. When set, !source/!load directives that reference https:// URLs are rejected instead of being fetched. Use this flag in environments where SQL inputs should not trigger outbound network requests, or when running SQL files whose content should be reviewed locally before execution. [env var: SNOWFLAKE\_CLI\_SQL\_LOCAL\_ONLY | config: cli.sql\_local\_only].
 
 `--no-prompt-exit-repl`
 :   Do not prompt before exiting the REPL.
 
 `--prompt-format TEXT`
-:   Format string for the interactive SQL REPL prompt. Ignored with `-q`, `-f`, or `-i`. Unset keeps the default prompt. Placeholders: `[user]`, `[host]`, `[account]`, `[role]`, `[warehouse]`, `[database]`, `[schema]`, and `[connection]` (the `-c` connection name). They update after USE. Missing values render as `(no user)`, `(no database)`, and so on. A backslash followed by n is a newline; prefix a bracket or backslash with a backslash to make it literal. Unknown tokens, including colour `[#rrggbb]` / `[bg:#rrggbb]`, are dropped with a warning. Quoted `prompt_format` in the `[cli]` section of `config.toml` sets the default.
+:   Format string for the interactive SQL REPL prompt. Ignored with `-q`, `-f`, or `-i`. Unset keeps the default prompt. Placeholders: `[user]`, `[host]`, `[account]`, `[role]`, `[warehouse]`, `[database]`, `[schema]`, and `[connection]` (the `-c` connection name). They update after USE. Missing values render as `(no user)`, `(no database)`, and so on. A backslash followed by n is a newline; prefix a bracket or backslash with a backslash to make it literal. Use `[#rrggbb]` for foreground colour and `[bg:#rrggbb]` for background colour; each applies to following prompt text only. Unknown tokens are dropped with a warning. Quoted `prompt_format` in the `[cli]` section of `config.toml` sets the default.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.
@@ -108,6 +111,9 @@ None
 
 `--port INTEGER`
 :   Port for the connection. Overrides the value specified for the connection.
+
+`--protocol TEXT`
+:   Protocol to use for the connection, for example `https`. Overrides the value specified for the connection.
 
 `--account, --accountname TEXT`
 :   Name assigned to your Snowflake account. Overrides the value specified for the connection.
@@ -190,8 +196,14 @@ None
 `--client-store-temporary-credential`
 :   Store the temporary credential.
 
+`--secondary-roles TEXT`
+:   Secondary roles mode applied when the session starts. Supported values are `ALL` and `NONE`; pass `NONE` to run the session only with the primary role.
+
+`--server-session-keep-alive`
+:   Keep the session active indefinitely, even if there is no activity from the user.
+
 `--format [TABLE|JSON|JSON_EXT|CSV|PLAIN]`
-:   Specifies the output format. Default: TABLE.
+:   Specifies the output format. [env var: SNOWFLAKE\_CLI\_OUTPUT\_FORMAT | config: cli.output\_format]. Default: TABLE.
 
 `--verbose, -v`
 :   Displays log entries for log levels *info* and higher. Default: False.

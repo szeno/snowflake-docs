@@ -286,7 +286,7 @@ WITH result AS (
 )
 
 -- Pass to large language model as context
-SELECT AI_COMPLETE('mistral-7b',
+SELECT AI_COMPLETE('llama3.1-8b',
     CONCAT('Answer this question: ', query_text, ' using this text: ', content)) FROM result;
 ```
 

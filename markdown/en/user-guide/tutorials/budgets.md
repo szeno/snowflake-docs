@@ -291,7 +291,7 @@ step. You will be creating the following objects:
    > 2. Grant the USAGE privilege on the warehouse to custom roles, `account_budget_admin` and `budget_admin`:
    >
    >    1. In the navigation menu, select **Compute** » **Warehouses**.
-   >    2. Select warehouse you just created `na_finance_wh`.
+   >    2. Select the warehouse you just created `na_finance_wh`.
    >    3. In the **Privileges** tile, select **+ Privilege**.
    >    4. For the **Role**, select the `account_budget_admin` role.
    >    5. For the **Privileges**, select USAGE.
@@ -300,7 +300,7 @@ step. You will be creating the following objects:
    > 3. Grant the USAGE and APPLYBUDGET privileges on the warehouse to role `budget_owner`:
    >
    >    1. In the navigation menu, select **Compute** » **Warehouses**.
-   >    2. Select warehouse you just created `na_finance_wh`.
+   >    2. Select the warehouse you just created `na_finance_wh`.
    >    3. In the **Privileges** tile, select **+ Privilege**.
    >    4. For the **Role**, select the `budget_owner` role.
    >    5. For the **Privileges**, select APPLYBUDGET and USAGE.
@@ -322,7 +322,7 @@ step. You will be creating the following objects:
    >    Copy code
    >
    >    ```
-   >    GRANT APPLYBUDGET ON DATABASE  na_finance_db TO ROLE budget_owner;
+   >    GRANT APPLYBUDGET ON DATABASE na_finance_db TO ROLE budget_owner;
    >    ```
    >
    > 1. Create a database:

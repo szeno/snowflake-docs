@@ -51,7 +51,7 @@ You need the service running before you can proceed.
 Code (a Python application) is provided to create a job service.
 
 1. Download [SnowparkContainerServices-Tutorials.zip](/static/samples/spcs/SnowparkContainerServices-Tutorials.zip).
-2. Unzip the content, which includes one directory for each tutorial. The `Tutorial-3` directory has the following files:
+2. Unzip the content, which includes one directory for each tutorial. The `Tutorial-4` directory has the following files:
    - `service_to_service.py`
    - `Dockerfile`
    - `service_to_service_spec.yaml`
@@ -79,7 +79,7 @@ You will need information about the repository (the repository URL and the regis
      ```
      <orgname>-<acctname>.registry.snowflakecomputing.com/tutorial_db/data_schema/tutorial_repository
      ```
-   - The host name in the repository URL is registry host name. An example is shown:
+   - The host name in the repository URL is the registry host name. An example is shown:
 
      ```
      <orgname>-<acctname>.registry.snowflakecomputing.com
@@ -430,7 +430,7 @@ Use the following steps to test the Tutorial 4 Docker image:
    ```
    SERVER_PORT=8000 python3 echo_service.py
    ```
-2. Open another terminal window and, run the Python code provided for this tutorial:
+2. Open another terminal window and run the Python code provided for this tutorial:
 
    Copy code
 

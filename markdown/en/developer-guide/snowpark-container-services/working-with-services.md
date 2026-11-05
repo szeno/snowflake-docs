@@ -483,9 +483,9 @@ Also, note the following:
 
 ## Modify and drop services
 
-After your create a service or a job service, you can perform the following actions:
+After you create a service or a job service, you can perform the following actions:
 
-- Use the [DROP SERVICE](/sql-reference/sql/drop-service) command to remove a service from a schema, Snowflake terminates all the service containers.
+- Use the [DROP SERVICE](/sql-reference/sql/drop-service) command to remove a service from a schema. Snowflake terminates all the service containers.
 - Call the [<service\_name>!SPCS\_CANCEL\_JOB](/sql-reference/functions/spcs_cancel_job) function to cancel a job service. When you cancel a job, Snowflake stops the job from running and removes the resources allocated for the job run.
 - Use the [ALTER SERVICE](/sql-reference/sql/alter-service) command to modify the service; for example, suspend or resume the service, change the
   number of instances running, and direct Snowflake to redeploy your service by using a new service specification.
@@ -577,7 +577,7 @@ When multiple service instances are running, Snowflake performs a rolling update
 
 ## Get information about services
 
-You can use the these commands:
+You can use these commands:
 
 - Use the [DESCRIBE SERVICE](/sql-reference/sql/desc-service) command to retrieve the properties and status of a service. The output returns all service properties.
 - Use the [SHOW SERVICES](/sql-reference/sql/show-services) command to list current services (including job services) for which you have permissions. The output provides some of the properties and status for these services.
@@ -587,12 +587,12 @@ You can use the these commands:
   - **List the services in the account, in a specific database, or in a specific schema:** For example, use the IN ACCOUNT filter to list
     services in your Snowflake account, regardless of which
     database or schema the services belong to. This is useful if you have Snowflake services
-    created in multiple databases and schemas in your account. Like all other commands, SHOW SERVICES IN ACCOUNTS is gated by privileges, returning only the services for which the role you are using has viewing permissions.
+    created in multiple databases and schemas in your account. Like all other commands, SHOW SERVICES IN ACCOUNT is gated by privileges, returning only the services for which the role you are using has viewing permissions.
 
     You can also specify IN DATABASE or IN SCHEMA to list the services in the current (or specified) database or schema.
   - **List the services running in a compute pool:** For example, use IN COMPUTE POOL filter to list the services running in a compute pool.
   - **List the services that start with a prefix or that match a pattern:** You can apply the LIKE and STARTS WITH filters to filter the services by name.
-  - **List job services. or exclude job services from the list:** You can use SHOW JOB SERVICES or SHOW SERVICES EXCLUDE JOBS to list only
+  - **List job services or exclude job services from the list:** You can use SHOW JOB SERVICES or SHOW SERVICES EXCLUDE JOBS to list only
     job services or exclude job services.
 
   You can also combine these options to customize the SHOW SERVICES output.
@@ -636,7 +636,7 @@ The following list shows the privileges that you can grant a role to perform ope
 
 Each SQL command reference provides access control requirements for the commands. For more information, see [SHOW SERVICES](/sql-reference/sql/show-services), [ALTER SERVICE](/sql-reference/sql/alter-service), and [DROP SERVICE](/sql-reference/sql/drop-service).
 
-The following rule apply to future grants on services:
+The following rules apply to future grants on services:
 
 - You can define future grants to a role on services that aren’t created. For example, the following command grants MONITOR privilege on a future service (myservice) to a role (service\_admin\_role).
 
@@ -873,14 +873,14 @@ table with rows (“a”, “b” …).
 
 #### Configuring batch processing
 
-The [CREATE FUNCTION](/sql-reference/sql/create-function-spcs) and [ALTER FUNCTION](/sql-reference/sql/alter-function-spcs) commands support parameters that configure how Snowflake handles batches of data processed by your service..
+The [CREATE FUNCTION](/sql-reference/sql/create-function-spcs) and [ALTER FUNCTION](/sql-reference/sql/alter-function-spcs) commands support parameters that configure how Snowflake handles batches of data processed by your service.
 
 - Configuring batch size
 
   You can use the MAX\_BATCH\_ROWS parameter to limit the batch size, that is, the maximum number of rows Snowflake sends to your service in a single request. This helps control the volume of data transferred. This can also result in more, smaller batches that might be processed in parallel if your service supports multiple instances or concurrent requests.
 - Handling errors
 
-  You can use the these parameters for batch error handling: `ON_BATCH_FAILURE`, `MAX_BATCH_RETRIES`, and `BATCH_TIMEOUT_SECS`.
+  You can use these parameters for batch error handling: `ON_BATCH_FAILURE`, `MAX_BATCH_RETRIES`, and `BATCH_TIMEOUT_SECS`.
 
 For example, the following ALTER FUNCTION command configures the MAX\_BATCH\_ROWS and MAX\_BATCH\_RETRIES parameters of the `my_echo_udf` service function:
 
@@ -927,7 +927,7 @@ GRANT USAGE ON DATABASE service_db TO ROLE func_user;
 GRANT USAGE ON SCHEMA my_schema TO ROLE func_user;
 GRANT USAGE ON FUNCTION test_udf(varchar) TO ROLE func_user;
 USE ROLE func_user;
-SELECT my_test_udf('abcd');
+SELECT test_udf('abcd');
 ```
 
 ### Ingress: Using a service from outside Snowflake

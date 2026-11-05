@@ -34,9 +34,9 @@ To enable ingress requests from your network to your service’s public endpoint
 
    You can enable per-account hostname routing by setting the
    [ENABLE\_PER\_ACCOUNT\_APP\_SERVICE\_PRIVATELINK\_URL](/sql-reference/parameters#label-enable-per-account-app-service-privatelink-url)
-   account parameter to `TRUE`.When enabled, the `app-service-privatelink-url` key returned by the function returns
+   account parameter to `TRUE`. When enabled, the `app-service-privatelink-url` key returned by the function returns
    a per-account wildcard hostname in the format `*.orgname-account-name.region.cloud.privatelink.snowflake.app`.
-   Before enablement, the function returns a `app-service-privatelink-url-next` key with this value. Use this value to create a
+   Before enablement, the function returns an `app-service-privatelink-url-next` key with this value. Use this value to create a
    single CNAME record scoped to your account for all Snowpark Container Services endpoints.
 
    Update your private DNS entries and firewall rules to use the new URL format before you enable this parameter.
@@ -51,7 +51,7 @@ To enable ingress requests from your network to your service’s public endpoint
 The following apply for public endpoints that services expose:
 
 - Each endpoint can serve both HTTPS-encrypted traffic and WebSocket-encrypted traffic.
-- Each endpoint has their own top-level domain, with no shared elements with Snowsight. This ensures that browsers isolate services from Snowsight and services from each other, mitigating risks of cross-origin attacks.
+- Each endpoint has its own top-level domain, with no shared elements with Snowsight. This ensures that browsers isolate services from Snowsight and services from each other, mitigating risks of cross-origin attacks.
 
 ## Outbound connectivity
 

@@ -14,8 +14,8 @@ In this tutorial you create a task graph with the following two tasks:
 
    Note
 
-   For simplicity, this SQL job only creates a table. In actual work, you use the table to perform more complex computations, such as model training.
-2. A dependent job service task that queries the sales\_number table and returns results as JSON.
+   For simplicity, this SQL task only creates a table. In actual work, you use the table to perform more complex computations, such as model training.
+2. A dependent job service task that queries the `sales_number` table and returns results as JSON.
 
 ### Prerequisites
 
@@ -192,7 +192,7 @@ SHOW IMAGE REPOSITORIES;
 1. Open a terminal window, and then change your directory to the directory that contains the files that you saved.
 2. To build a Docker image, execute the following `docker build` command by using the Docker CLI.
 
-The command ends with a period (.) which specifies current working directory as the `PATH` for files to use for building the image.
+The command ends with a period (.), which specifies the current working directory as the `PATH` for files to use for building the image.
 
 > Copy code
 >
@@ -322,7 +322,7 @@ from snowflake.core.task.context import TaskContext
 from snowflake.core.task.dagv1 import DAG, DAGOperation, DAGTask
 from snowflake.snowpark import Session
 
-def prepare_dataset_task(session: Session)-> str:
+def prepare_dataset_task(session: Session) -> str:
     table_name = f"{DATABASE_NAME}.{SCHEMA_NAME}.daily_agg"
     session.sql(f"""
         create or replace table {table_name} (date timestamp, id number, name string, total_sales number)

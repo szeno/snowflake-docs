@@ -24,6 +24,9 @@ Snowflake CLI supports commands for the following objects and activities:
 - dcm commands
 
   - [snow dcm commands](/developer-guide/snowflake-cli/command-reference/dcm-commands/overview)
+- Feedback command
+
+  - [snow feedback](/developer-guide/snowflake-cli/command-reference/feedback-commands/feedback)
 - Git commands
 
   - [snow git commands](/developer-guide/snowflake-cli/command-reference/git-commands/overview)
@@ -61,3 +64,6 @@ Snowflake CLI supports commands for the following objects and activities:
 - Streamlit commands
 
   - [snow streamlit commands](/developer-guide/snowflake-cli/command-reference/streamlit-commands/overview)
+- Upgrade command
+
+  - [snow upgrade](/developer-guide/snowflake-cli/command-reference/upgrade-commands/upgrade)

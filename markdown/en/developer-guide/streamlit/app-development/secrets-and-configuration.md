@@ -60,10 +60,6 @@ Important
 
 ## Secrets in container runtimes
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 You can use [st.secrets](https://docs.streamlit.io/develop/api-reference/connections/st.secrets) to access Snowflake secrets in your container runtime Streamlit in Snowflake apps. This allows you to
 securely store and retrieve sensitive information such as API keys, credentials, and other configuration values.
 Just like Streamlit does for `.streamlit/secrets.toml` in local development, Streamlit in Snowflake populates

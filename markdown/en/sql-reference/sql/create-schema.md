@@ -146,10 +146,9 @@ For more details, see [CREATE <object> … CLONE](/sql-reference/sql/create-clon
 > [Child Objects and Data Retention Time](/user-guide/object-clone#label-child-objects-and-data-retention-time).
 
 `IGNORE HYBRID TABLES`
-:   Ignore hybrid tables, which are not cloned. Use this option to clone a schema that contains hybrid tables.
-    The cloned schema includes other objects but skips hybrid tables.
+:   Ignore hybrid tables, which are not cloned. The cloned schema includes other objects but skips hybrid tables.
 
-    If you don’t use this option and your schema contains one or more hybrid tables, the command ignores hybrid tables silently. However, the error handling for schemas that contain hybrid tables will change in an upcoming release; therefore, you may want to add this parameter to your commands preemptively.
+    If you omit this option and the source schema contains one or more hybrid tables, the command fails. Schema clones cannot copy hybrid tables. For more information, see [Clone databases that contain hybrid tables](/user-guide/tables-hybrid-clone).
 
 `WITH MANAGED ACCESS`
 :   Specifies a managed schema. Managed access schemas centralize privilege management with the schema owner.

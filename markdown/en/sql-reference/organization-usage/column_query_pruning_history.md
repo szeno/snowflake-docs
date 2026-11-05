@@ -85,7 +85,6 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 6 hours.
-- Data is retained for 1 year.
 - This view does not include pruning information for [hybrid tables](/user-guide/tables-hybrid).
 - The ACCESS\_TYPE column contains one of the following values:
 

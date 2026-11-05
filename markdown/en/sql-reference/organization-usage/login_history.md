@@ -86,3 +86,15 @@ Show lessSee more
   occur when authentication fails before the user can be resolved, such as when OAuth client credentials are invalid or
   when a key pair authentication attempt references an unrecognized user.
 - To see the blocking status of potentially malicious IP addresses, examine the LOGIN\_DETAILS column output. For examples, see [View network login details](/user-guide/malicious-ip-protection#label-malicious-ip-view-login-details).
+
+The following example returns rows from about 24 months ago:
+
+Copy code
+
+```
+SELECT *
+FROM SNOWFLAKE.ORGANIZATION_USAGE.LOGIN_HISTORY
+WHERE EVENT_TIMESTAMP >= DATEADD(month, -24, CURRENT_TIMESTAMP())
+ORDER BY EVENT_TIMESTAMP DESC
+LIMIT 100;
+```

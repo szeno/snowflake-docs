@@ -167,7 +167,7 @@ The advanced chat-style (multi-message) form of COMPLETE is not currently suppor
 ## Using Snowflake Cortex AI functions with Snowflake CLI
 
 Snowflake Cortex AI Functions are available in [Snowflake CLI](/developer-guide/snowflake-cli/index) version 2.4.0
-and later. See [Introducing Snowflake CLI](/developer-guide/snowflake-cli/introduction/introduction) for more information about using Snowflake CLI.
+and later. See [Introducing Snowflake CLI](/developer-guide/snowflake-cli/introduction) for more information about using Snowflake CLI.
 The functions are the old-style functions, those with names that don’t begin with “AI”.
 
 The following examples illustrate using the `snow cortex` commands on single values. The `-c` parameter specifies which connection to use.

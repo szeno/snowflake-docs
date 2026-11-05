@@ -11,4 +11,4 @@ To use these instances, specify a size-specific instance family, such as `GEN_AR
 For pricing information, see the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 For specifications of all Google Cloud instance families, see
-[Snowpark Container Services: Google Cloud Instance Families](/developer-guide/snowpark-container-services/instance-families-gcp).
+[Snowpark Container Services: Google Cloud instance families](/developer-guide/snowpark-container-services/instance-families-gcp).

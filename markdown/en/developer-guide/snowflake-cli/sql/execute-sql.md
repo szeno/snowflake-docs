@@ -247,7 +247,7 @@ Snowflake CLI provides the following commands that you can use inside your SQL q
 - [!result](#label-snowcli-sql-query-result-cmd), which displays the result of a SQL query.
 - [!abort](#label-snowcli-sql-query-abort-cmd), which aborts an active SQL query.
 - [!edit](#label-snowcli-sql-query-edit-cmd), which opens an external editor to modify and execute SQL commands.
-- [!set](#label-snowcli-sql-query-set-cmd), which changes the output format for later statements.
+- [!set](#label-snowcli-sql-query-set-cmd), which changes the output format or [hides query results](#label-snowcli-sql-query-set-quiet) for later statements.
 - [!spool](#label-snowcli-sql-query-spool-cmd), which appends later query results to a file.
 
 Tip
@@ -567,7 +567,7 @@ To enter commands in an external editor, follow these steps:
 
 ### Set the output format
 
-The `!set` query command changes a session option. The only supported option is `output_format`. Other SnowSQL `!set` options aren’t supported.
+The `!set` query command changes a session option. The supported options are `output_format` and [`quiet`](#label-snowcli-sql-query-set-quiet). Other SnowSQL `!set` options aren’t supported.
 
 Copy code
 
@@ -628,6 +628,32 @@ Copy code
 ```
 n
 2
+```
+
+### Hide query results
+
+The `!set quiet` query command hides query results on the terminal for later statements in that `snow sql` run.
+
+Copy code
+
+```
+!set quiet=true
+!set quiet=false
+```
+
+- `quiet=true` hides query results on the terminal, including the elapsed-time footer. Errors still print.
+- `quiet=false` shows query results again. Leaving `quiet` unset also shows results.
+- The value is case-insensitive. `yes`, `on`, and `1` are accepted for `true`, and `no`, `off`, and `0` are accepted for `false`.
+- An empty value, such as `!set quiet=`, is rejected and doesn’t change the current setting.
+
+While `quiet` is on, results are still appended to an open [`!spool`](#label-snowcli-sql-query-spool-cmd) file. The `--silent` option is unaffected by `!set quiet`.
+
+The following example writes a result to a spool file without printing it on the terminal:
+
+Copy code
+
+```
+snow sql -q '!spool /tmp/spool_example; !set quiet=true; select 1 as n; !set quiet=false; !spool off'
 ```
 
 ### Write query results to a file

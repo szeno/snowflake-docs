@@ -6,6 +6,50 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 4, 2026
+
+### Control Plane Core 0.140.0
+
+- Runtimes in Snowflake Deployments that can’t create or resume due to insufficient cloud capacity now show this in the failure message.
+- Fixed intermittent runtime creation failures due to a background update on the Deployment occurring at the same time.
+- Fixed migration being blocked for runtimes that no longer report a Runtime Gateway version.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.140.0
+
+- Fixed crashes in runtimes using the Oracle CDC connector.
+- Runtimes in Snowflake Deployments that can’t create or resume due to insufficient cloud capacity now show this in the failure message.
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.99.0
+
+- Added View connectors and Go to canvas buttons to Gen 2 runtime rows, so installed connectors are one click away.
+
+### Runtime Operator 0.86.0
+
+- Runtime scale-down now waits for the cluster to be ready, no longer hangs on a stuck node, and reports its progress.
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.11.2-19
+
+- Requests now get a retryable error instead of an auth failure when Snowflake is briefly unreachable.
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.57.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.77.0
+
+- Deployment updates no longer make unnecessary image-pull secret and ingress certificate changes on every run, reducing overall CPU usage on the Agent host.
+- Fixed encrypted EBS volumes failing to attach on deployments using a customer-managed KMS key.
+- Agent upgrades now use an updated Snowflake CLI version.
+- Security patches and dependency upgrades.
+
+### Openflow Token Refresher 1.23.0
+
+- Security patches and dependency upgrades.
+
 ## November 3, 2026
 
 ### Runtime Server 2026.11.3.2

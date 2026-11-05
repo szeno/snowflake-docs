@@ -68,7 +68,7 @@ WHERE true
   AND logger LIKE '%veeva%';
 ```
 
-For more information about monitoring Openflow flows, see [Monitor Openflow using telemetry data](/user-guide/data-integration/openflow/monitor).
+For more information about monitoring Openflow flows, see [Openflow telemetry](/user-guide/data-integration/openflow/monitor).
 
 ## Troubleshooting
 

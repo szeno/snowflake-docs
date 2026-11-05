@@ -1,13 +1,13 @@
 # Use Gateways to route ingress requests to multiple endpoints
 
-If you want to expose multiple service endpoints behind a single host name, you can create a *gateway*
-. A gateway has a hostname similar to a public service endpoint. For more information about public service endpoints, see [Configure service ingress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-ingress).
+If you want to expose multiple service endpoints behind a single host name, you can create a *gateway*.
+A gateway has a hostname similar to a public service endpoint. For more information about public service endpoints, see [Configure service ingress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-ingress).
 
-Gateways route [ingress requests](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-ingress), including [inference requests](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api), from outside Snowflake to one or more service endpoints. With Gateways, you can do the following:
+Gateways route [ingress requests](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-ingress), including [inference requests](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api), from outside Snowflake to one or more service endpoints. With gateways, you can do the following:
 
 - **Traffic split among services:** You can allow multiple services to share the same hostname. Routing is done based on the percentage given for each service. This is useful in the following scenarios:
 
-  - **A/B testing scenario:** You might choose to update a service and deploy it while keeping the original service running. For testing, you might choose to route a certain percentage of incoming ingress requests to the updated service for testing.
+  - **A/B testing scenario:** You might choose to update a service and deploy it while keeping the original service running. For testing, you might choose to route a certain percentage of incoming ingress requests to the updated service.
   - **High-availability scenario:** You have a highly available service that is deployed across, say, two compute pools, where each compute pool is created in a different [placement group](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-placement-group). You might choose to use the gateway to split incoming ingress requests.
 - **Shadow traffic:** You can send all requests to a primary endpoint and mirror a percentage of requests to one or more shadow endpoints. The primary endpoint handles production responses. Responses from shadow endpoints aren’t returned to clients. Use shadow traffic to test a challenger service with production request patterns without directing production responses through that service.
 
@@ -18,8 +18,8 @@ Gateways route [ingress requests](/developer-guide/snowpark-container-services/s
 
 The following list shows the differences between a service endpoint and a gateway:
 
-- **Browser security:** Service endpoint supports CORS configuration (corsSettings) and cloud service provider (CSP) headers for browser-based access through external access integrations. A gateway currently doesn’t support CORS or CSP headers.
-- **Caller’s rights:** Service endpoint supports caller’s rights. A gateway currently doesn’t support caller’s rights.
+- **Browser security:** A service endpoint supports CORS configuration (corsSettings) and cloud service provider (CSP) headers for browser-based access through external access integrations. A gateway currently doesn’t support CORS or CSP headers.
+- **Caller’s rights:** A service endpoint supports caller’s rights. A gateway currently doesn’t support caller’s rights.
 - **Role-based access control (RBAC):** When you use a service endpoint, access is managed by using [service roles](/developer-guide/snowpark-container-services/working-with-services#label-spcs-manage-service-related-privileges-service-roles).
   When you use a gateway, access is managed by granting the USAGE privilege on the gateway object. Users accessing a gateway don’t need service roles for the underlying service endpoints.
 

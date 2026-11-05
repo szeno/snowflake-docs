@@ -24,7 +24,7 @@ organization name and your Open Catalog account name; for example: `<orgname>.<m
 ## Create a Snowflake CLI connection for Open Catalog
 
 To configure Snowflake Open Catalog to use SSO, you need a Snowflake CLI connection for Open Catalog. Follow these steps to create this
-connection. If you don’t already have Snowflake CLI installed, see [Installing Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation).
+connection. If you don’t already have Snowflake CLI installed, see [Installing Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation).
 
 Important
 

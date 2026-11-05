@@ -20,7 +20,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
 This Organization Usage view provides information on the session, including information on the authentication method to Snowflake and the
-Snowflake login event. Snowflake returns one row for each session created over the last year.
+Snowflake login event. Snowflake returns one row for each session created over the last year by default.
 
 ## Columns
 

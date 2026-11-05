@@ -32,7 +32,7 @@ skill and use the Snowflake CLI for deployment.
 
 ### Snowflake CLI
 
-Install the Snowflake CLI using [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+Install the Snowflake CLI using [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 
 Confirm you’re on the latest version with
 [`snow helpers check-version`](/developer-guide/snowflake-cli/command-reference/helpers-commands/check-version):

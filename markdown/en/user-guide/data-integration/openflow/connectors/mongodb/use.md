@@ -86,3 +86,5 @@ Note
 The Openflow runtime canvas doesn’t display state changes, only the current state. However, state changes are recorded in logs when they occur.
 
 If a permanent failure prevents replication, follow the procedure in the preceding section to remove the collection from replication, address the underlying problem, and then re-add the collection.
+
+To monitor the replication status of collections with metrics, see [Monitor the Openflow Connector for MongoDB](/user-guide/data-integration/openflow/connectors/mongodb/monitor).

@@ -44,6 +44,52 @@ To keep the table in sync with your Delta table, set a refresh interval on the c
 refresh, or refresh the table manually with [ALTER ICEBERG TABLE … REFRESH](/sql-reference/sql/alter-iceberg-table-refresh). For more information,
 see [Automatically refresh Apache Iceberg™ tables](/user-guide/tables-iceberg-auto-refresh).
 
+## Schema changes
+
+When you refresh a Delta Direct table, Snowflake reconciles the table’s columns with the Delta table’s current schema.
+The following sections describe which changes Snowflake applies and which it rejects.
+
+### Top-level columns
+
+- **Add a column:** Snowflake adds the column. Existing rows return `NULL` for it.
+- **Drop a column:** Snowflake removes the column from the table definition. Its values remain in the existing Parquet
+  files, but queries no longer return them.
+- **Rename a column:** Snowflake recognizes a rename only when column mapping is enabled on the Delta table (the
+  `delta.columnMapping.mode` property set to `name` or `id`). With column mapping enabled, the column keeps its data under
+  the new name. Without column mapping, Snowflake sees the old name removed and a new name added, so the new column has no
+  values for existing rows.
+- **Reorder columns:** No change to the table.
+
+### Structured columns
+
+These rules apply to `OBJECT`, `ARRAY`, and `MAP` columns at any nesting depth. Snowflake matches subfields by identity,
+which is the physical name when column mapping is enabled and the column name otherwise.
+
+- **Add a subfield:** Existing rows return `NULL` for the new subfield.
+- **Rename a subfield:** Supported only when column mapping is enabled. The subfield keeps its data under the new name.
+- **Drop a subfield:** The subfield is removed from the table definition. Its values remain in the Parquet files, but
+  queries no longer return them.
+- **Reorder subfields:** No change to the table.
+- **Widen a scalar inside the structure:** See [Type changes](#label-tables-iceberg-delta-direct-type-changes).
+
+### Type changes
+
+Snowflake supports the following type widenings, both at the top level and inside structured columns:
+
+- `BYTE` to `SHORT` or `INT`
+- `SHORT` to `INT`
+
+Snowflake doesn’t currently support the following changes. A refresh that encounters one fails with error `091989`:
+
+- Changing the kind of a structured type, for example from `MAP` to `ARRAY`, from `ARRAY` to `OBJECT`, or from `OBJECT` to a
+  scalar type.
+- Changing the nullability of a structured column itself, for example dropping `NOT NULL` from a `STRUCT`, `ARRAY`, or `MAP`.
+- Widenings other than the ones listed above, such as `INT` to `LONG`, `FLOAT` to `DOUBLE`, a `DECIMAL` precision or scale
+  change, or `DATE` to `TIMESTAMP_NTZ`.
+- Narrowing a type, or changing a type to an unrelated type family, such as `STRING` to `LONG` or `BOOLEAN` to `LONG`.
+
+To apply one of these changes, drop and recreate the table.
+
 ## Storage access and metadata writes
 
 Delta Direct only needs read access to your storage. If your external volume allows writes, Snowflake can also write

@@ -15,7 +15,7 @@ including user-defined functions, stored procedures, Streamlit in Snowflake, and
 
 ## Get started
 
-To start using Snowflake CLI, [install it](/developer-guide/snowflake-cli/installation/installation), then configure a connection.
+To start using Snowflake CLI, [install it](/developer-guide/snowflake-cli/installation), then configure a connection.
 For details, including the supported authentication methods, see
 [Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
 
@@ -23,8 +23,8 @@ For details, including the supported authentication methods, see
 
 This guide introduces and explains how to install and use Snowflake CLI. It includes the following sections:
 
-- [Introducing Snowflake CLI](/developer-guide/snowflake-cli/introduction/introduction)
-- [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation)
+- [Introducing Snowflake CLI](/developer-guide/snowflake-cli/introduction)
+- [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation)
 - [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect)
 - [Bootstrapping a project from a template](/developer-guide/snowflake-cli/bootstrap-project/bootstrap)
 - [About project definition files](/developer-guide/snowflake-cli/project-definitions/about)

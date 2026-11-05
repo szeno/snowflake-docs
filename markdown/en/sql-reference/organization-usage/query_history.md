@@ -19,7 +19,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 [Performance (Organization Usage)](/sql-reference/organization-usage#label-org-usage-performance): bound every scan on history views, list
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
-This Organization Usage view can be used to query Snowflake query history by various dimensions (time range, session, user, warehouse, etc.) within the last 365 days (1 year).
+This Organization Usage view can be used to query Snowflake query history by various dimensions (time range, session, user, warehouse, etc.) within the last 365 days (1 year) by default.
 
 The view is available in both the ORGANIZATION\_USAGE and READER\_ACCOUNT\_USAGE schemas with the following differences:
 
@@ -220,3 +220,27 @@ For the [PUT](/sql-reference/sql/put) and [GET](/sql-reference/sql/get) commands
 an EXECUTION\_STATUS of `success` in the [QUERY\_HISTORY](/sql-reference/account-usage/query_history)
 does \_not\_ mean that data files were successfully uploaded or downloaded.
 Instead, the status indicates that Snowflake received authorization to proceed with the file transfer.
+
+The following example returns rows from about 24 months ago:
+
+Copy code
+
+```
+SELECT *
+FROM SNOWFLAKE.ORGANIZATION_USAGE.QUERY_HISTORY
+WHERE START_TIME >= DATEADD(month, -24, CURRENT_TIMESTAMP())
+ORDER BY START_TIME DESC
+LIMIT 100;
+```
+
+The following example checks whether the view contains rows older than 12 months:
+
+Copy code
+
+```
+SELECT
+  MIN(START_TIME) AS earliest_record,
+  MAX(START_TIME) AS latest_record,
+  COUNT_IF(START_TIME < DATEADD(month, -12, CURRENT_TIMESTAMP())) AS records_older_than_12_months
+FROM SNOWFLAKE.ORGANIZATION_USAGE.QUERY_HISTORY;
+```

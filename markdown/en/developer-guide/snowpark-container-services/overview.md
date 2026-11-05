@@ -75,10 +75,10 @@ The Snowpark Container Services documentation primarily uses SQL commands and fu
 
 ## Available regions and considerations
 
-Snowpark Container Services is in all [regions](/user-guide/intro-regions) except the following:
+Snowpark Container Services is in all [regions](/user-guide/intro-regions), including the regions that support
+[public sector (government) workloads](/user-guide/intro-regions#label-us-gov-regions).
 
-- Snowpark Container Services supports [public sector (government) workloads](/user-guide/intro-regions#label-us-gov-regions) in the AWS US East (Commercial Gov - N. Virginia) region and is not available in other AWS or Azure government regions.
-- Currently, Snowpark Container Services in the GCP Dammam region uses the global endpoints for Google Cloud APIs.
+In the GCP Dammam region, Snowpark Container Services currently uses the global endpoints for Google Cloud APIs.
 
 ## What’s next?
 

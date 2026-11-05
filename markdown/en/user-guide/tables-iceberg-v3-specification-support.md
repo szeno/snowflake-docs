@@ -191,7 +191,6 @@ Consider the following information when you use Iceberg v3 features:
 The following Snowflake features aren’t supported for Iceberg v3:
 
 - Append-only streams on externally managed Iceberg tables
-- [dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake)
 - [Schema inference](/sql-reference/functions/infer_schema#label-iceberg-infer-schema-column-definitions)
 - [Snowpipe Streaming classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview)
 - SnowGov Regions
@@ -221,6 +220,7 @@ supported. Supported features include those in the following list:
 | Data protection policies | The following data protection policies are supported:   - Masking policies - Row access policies - Projection policies - Aggregation policies - Privacy policies - Join policies |
 | [Data protection policy enforcement from Apache Spark](/user-guide/tables-iceberg-query-using-external-query-engine-snowflake-horizon-enforce-access-policies) |  |
 | Data quality monitoring |  |
+| [dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake) | With dbt Core 1.12 or later, set the `iceberg_version` config to `3` on a model to create an Iceberg v3 table. For more information, see [Snowflake and Apache Iceberg](https://docs.getdbt.com/docs/build/iceberg/adapters/snowflake-iceberg-support) in the dbt documentation.  With earlier dbt versions, set the ICEBERG\_VERSION\_DEFAULT parameter to `3` on the account, database, or schema. Iceberg tables that dbt creates use that default. For more information, see [ICEBERG\_VERSION\_DEFAULT](/sql-reference/parameters#label-iceberg-version-default). |
 | [Dynamic tables](/user-guide/dynamic-tables/create-iceberg) | Use a v3 Iceberg table (Snowflake-managed or externally managed) as the source of a dynamic table or dynamic Iceberg table. Use a v3 Iceberg table as the target of a dynamic Iceberg table. |
 | [Horizon Iceberg REST Catalog API](/user-guide/tables-iceberg-access-using-external-query-engine-snowflake-horizon) | You can read and write Snowflake-managed Iceberg v3 tables by using an external engine. |
 | [LOB (Large Object)](/release-notes/bcr-bundles/2025_03/bcr-1942) |  |

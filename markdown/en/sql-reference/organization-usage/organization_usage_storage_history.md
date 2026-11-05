@@ -11,7 +11,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 [Performance (Organization Usage)](/sql-reference/organization-usage#label-org-usage-performance): bound every scan on history views, list
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
-The ORGANIZATION\_USAGE\_STORAGE\_HISTORY view in the ORGANIZATION\_USAGE schema provides storage cost visibility across accounts in your organization. You can use it to query the daily storage usage, in bytes, for each account within the last 12 months. Each row represents the storage attributed to a single account on a given date.
+The ORGANIZATION\_USAGE\_STORAGE\_HISTORY view in the ORGANIZATION\_USAGE schema provides storage cost visibility across accounts in your organization. You can use it to query the daily storage usage, in bytes, for each account within the last 12 months by default. Each row represents the storage attributed to a single account on a given date.
 
 This view is available only in the [organization account](/user-guide/organization-accounts). Users with the GLOBALORGADMIN role, or users granted the SNOWFLAKE.ORGANIZATION\_USAGE\_VIEWER application role, can access it. For details, see [Accessing the ORGANIZATION\_USAGE schema](/sql-reference/organization-usage#label-org-usage-access-org-account).
 
@@ -33,5 +33,4 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 24 hours (1 day).
-- The data is retained for 365 days (1 year).
 - This view reports storage attributed to each account. For billed database and stage storage at the organization level, see [STORAGE\_DAILY\_HISTORY](/sql-reference/organization-usage/storage_daily_history).

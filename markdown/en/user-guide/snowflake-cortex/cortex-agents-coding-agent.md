@@ -17,7 +17,7 @@ You can call a Coding Agent from the REST API, SQL, or a Snowflake-managed MCP s
 | --- | --- | --- |
 | REST API | `POST /api/v2/cortex/agent:run` | Streams server-sent events (SSE) by default. Set `stream` to `false` for a single JSON response. |
 | SQL | [AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/agent_run-snowflake-cortex) | A single JSON string. Streaming isn’t supported. |
-| MCP | `CODING_AGENT` tool on a [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) | One `tools/call` result. The server collects the agent response. The call sends `text`, and optionally `thread_id`. |
+| MCP | `CODING_AGENT` tool on a [Snowflake-managed MCP server](/user-guide/snowflake-cortex/cortex-agents-mcp) | One `tools/call` result. The server collects the agent response. The call sends `text`. To continue, pass `thread_id` and `parent_message_id`. Set `background` to `true` to start the run and poll it. |
 
 Expand
 

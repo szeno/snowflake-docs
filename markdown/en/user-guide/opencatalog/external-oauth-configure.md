@@ -16,7 +16,7 @@ Microsoft Entra ID are similar.
 - Create one or more catalogs in your Open Catalog account.
 - Ensure that you have an account with an identity provider (IdP). For demonstration purposes, this topic uses Auth0 as the IdP. To create an Auth0
   account for your company or organization, see <https://auth0.com/>. However, the process is similar for Okta and Microsoft Entra ID.
-- You must have [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) installed on your machine.
+- You must have [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation) installed on your machine.
 - To configure External OAuth, you must have the service admin role in Open Catalog. For more information, see [User roles](https://other-docs.snowflake.com/en/opencatalog/access-control#user-roles). In Snowflake CLI, this role is printed as POLARIS\_ACCOUNT\_ADMIN.
 
 ## Before you begin

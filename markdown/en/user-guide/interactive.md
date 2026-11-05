@@ -452,13 +452,13 @@ For the list of supported AWS, GCP, and Azure regions, see [Cloud availability f
 
 When added to a replication group, interactive tables and warehouses are replicated to the target account. Interactive table replication behaves the same as standard table replication.
 
-Interactive warehouse replication assumes interactive warehouse support in the target region. Snowflake doesn’t validate interactive warehouse replication in the target region at this time. When using interactive warehouses and replication you must ensure that target region supports interactive warehouses.
+Interactive warehouse replication assumes interactive warehouse support in the target region. Snowflake doesn’t validate interactive warehouse replication in the target region at this time. When using interactive warehouses and replication you must ensure that the target region supports interactive warehouses.
 
 The interactive warehouse in the target account will auto-resume upon querying. However, due to cache warming requirements, the performance of the warehouse is not guaranteed. To ensure consistent performance, you **must** keep the warehouse running in the target region.
 
 ## Cost and billing considerations
 
-Interactive warehouses incur compute charges when active. The minimum billable period for an interactive warehouse is one hour, and at one-second granularity thereafter.
+Interactive warehouses incur compute charges when active. The minimum billable period for an interactive warehouse is one hour and at one-second granularity thereafter.
 
 Note
 

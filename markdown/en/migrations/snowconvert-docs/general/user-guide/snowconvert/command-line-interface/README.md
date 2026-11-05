@@ -25,7 +25,7 @@ The SnowConvert AI CLI will also allow developers to create skills and agents th
   - **macOS** — Apple Silicon (arm64) or Intel (x64)
   - **Windows** — Windows 10, Windows 11, or Windows Server (x64 or arm64). Also requires the [Microsoft Visual C++ Redistributable](#windows-visual-cpp-redistributable) (see below).
   - **Linux** — x64 or arm64
-- Snowflake CLI: recommended for Snowflake connection configuration [SnowCLI Install Guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
+- Snowflake CLI: recommended for Snowflake connection configuration [SnowCLI Install Guide](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation)
 - A source database to extract from, or a set of code to use
 
 ### Windows: Microsoft Visual C++ Redistributable (required)

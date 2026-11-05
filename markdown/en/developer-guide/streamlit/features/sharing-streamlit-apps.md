@@ -1,9 +1,5 @@
 # Sharing Streamlit in Snowflake apps
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 This topic covers how to share Streamlit in Snowflake apps with roles and individual users, and the URLs for sharing apps
 with or without the Snowsight interface.
 

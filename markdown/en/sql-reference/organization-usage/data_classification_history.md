@@ -21,7 +21,7 @@ columns explicitly, and use the time filter column table plus worked SQL and ant
 
 This Organization Usage view displays all historical sensitive data classification results for each table in each account in your organization. Unlike
 [DATA\_CLASSIFICATION\_LATEST view](/sql-reference/organization-usage/data_classification_latest), which shows only the most recent classification per table,
-this view shows all classification events over time, limited to the last 365 days.
+this view shows all classification events over time, limited to the last 365 days by default.
 
 ## Columns
 
@@ -59,7 +59,7 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 5 hours.
-- Data is retained for 365 days (one year). Rows are removed only when a classification event is older than one year.
+- By default, rows are removed when a classification event is older than one year.
 - Unlike [DATA\_CLASSIFICATION\_LATEST view](/sql-reference/organization-usage/data_classification_latest), this view retains data for classification events
   even when the associated table, schema, or database is dropped. The `TABLE_NAME`, `SCHEMA_NAME`, and `DATABASE_NAME`
   columns reflect the table and its database/schema location recorded for that classification result, but do not preserve historical

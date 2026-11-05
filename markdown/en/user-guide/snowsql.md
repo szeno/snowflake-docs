@@ -6,7 +6,7 @@ Caution
 legacy command-line client. Snowflake will only add new features and enhancements to Snowflake CLI. Snowflake supports SnowSQL 1.5.x through
 April 16, 2028. Earlier minor versions have earlier support end dates.
 
-If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation). If you already use
+If you’re starting a new project, [install Snowflake CLI](/developer-guide/snowflake-cli/installation). If you already use
 SnowSQL, see [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate).
 
 SnowSQL is a command-line client for connecting to Snowflake to execute SQL queries and perform all DDL and DML operations, including loading data into and unloading data out of database tables.
@@ -39,7 +39,7 @@ Snowflake provides platform-specific versions of SnowSQL for download for the pl
 
 **Next Topics:**
 
-- [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation)
+- [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation)
 - [Migrating from SnowSQL to Snowflake CLI](/user-guide/snowsql-migrate)
 - [Installing SnowSQL](/user-guide/snowsql-install-config)
 - [Configuring SnowSQL](/user-guide/snowsql-config)

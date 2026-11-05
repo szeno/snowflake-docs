@@ -21,7 +21,7 @@ columns explicitly, and use the time filter column table plus worked SQL and ant
 
 This Organization Usage view displays the aggregated execution history of
 [storage lifecycle policies](/user-guide/storage-management/storage-lifecycle-policies).
-This view shows historical data from the past 12 months and only includes policy executions
+This view shows historical data from the past 12 months by default and only includes policy executions
 that have completed successfully or with failures. The view doesn’t include queued, currently executing, or cancelled
 policy executions.
 

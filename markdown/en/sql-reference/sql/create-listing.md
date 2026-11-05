@@ -94,6 +94,8 @@ Expand
 
 Show lessSee more
 
+You can’t create a listing by using the GLOBALORGADMIN role, which is used for organization administration.
+
 Operating on an object in a schema requires at least one privilege on the parent database and at least one privilege on the parent schema.
 
 For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).

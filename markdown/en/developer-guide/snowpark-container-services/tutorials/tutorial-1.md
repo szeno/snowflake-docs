@@ -124,13 +124,13 @@ To create a service, you need the following items:
 
 - A [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool). Snowflake runs your service in the specified compute pool. You created a compute pool named `tutorial_compute_pool` as part of the common setup.
 - A [service specification](/developer-guide/snowpark-container-services/specification-reference). This specification provides Snowflake with the information
-  needed to configure and run your service. For more information, see [Snowpark Container Services: Working with services](/developer-guide/snowpark-container-services/working-with-services). In this tutorial, you provide the specification inline, in CREATE SERVICE command. You can also save the specification to a file in your Snowflake stage and provide file information in the CREATE SERVICE command as shown in Tutorial 2.
+  needed to configure and run your service. For more information, see [Snowpark Container Services: Working with services](/developer-guide/snowpark-container-services/working-with-services). In this tutorial, you provide the specification inline, in the CREATE SERVICE command. You can also save the specification to a file in your Snowflake stage and provide file information in the CREATE SERVICE command as shown in Tutorial 2.
 
 The following sections explain how to create a service by using SQL or Snowsight. Use one of the methods to create a service.
 
 Note
 
-You can create a service by using SQL or Snowsight. However, you can’t perform the preceding step, by uploading an image to image repository, cannot be done using Snowsight.
+You can create a service by using SQL or Snowsight. However, you can’t perform the preceding step, uploading an image to the image repository, using Snowsight.
 
 ### Create a service by using SQL
 
@@ -252,7 +252,7 @@ The SQL version of creating the service in the preceding section includes an env
 
 ## 4: Use the service
 
-First, setup the context for the SQL statements in this section, execute the following:
+First, set up the context for the SQL statements in this section by executing the following:
 
 Copy code
 
@@ -274,7 +274,7 @@ In the following sections you use these methods to communicate with the Echo ser
 
 A service function is one of the methods available to communicate with your service. A service function is a user-defined
 function (UDF) that you associate with the service endpoint. When the service function is executed, it sends a request to the
-service endpoint, and hen receives a response.
+service endpoint, and then receives a response.
 
 To create a service function, execute the following command:
 
@@ -308,7 +308,7 @@ The example service function, `my_echo_udf`, can take either a single string or 
   SELECT my_echo_udf('hello!');
   ```
 
-  Snowflake sends a POST request to the service endpoint (`echoendpoint`). Upon receiving the request, the service echos the input string in the response:
+  Snowflake sends a POST request to the service endpoint (`echoendpoint`). Upon receiving the request, the service echoes the input string in the response:
 
   ```
   +--------------------------+
@@ -609,7 +609,7 @@ Copy code
   <body>
     <h1>Welcome to echo service!</h1>
     <form action="{{ url_for("ui") }}" method="post">
-      <label for="input">Input:<label><br />
+      <label for="input">Input:</label><br />
       <input type="text" id="input" name="input"><br />
     </form>
     <h2>Input:</h2>
@@ -676,7 +676,7 @@ In the service specification:
 - The `readinessProbe` field identifies the `port` and `path` that Snowflake can use to send an HTTP GET
   request to the readiness probe to verify that the service is ready to handle traffic.
 
-  The service code (`echo_python.py`) implements the readiness probe as follows:
+  The service code (`echo_service.py`) implements the readiness probe as follows:
 
   Copy code
 
@@ -759,14 +759,14 @@ To test the Tutorial 1 Docker image:
      in response as shown:
 
      ```
-     {"data":[[0,"I said Hello Friend"],[1,"I said Hello World"]]}
+     {"data":[[0,"I said Hello friend"],[1,"I said Hello World"]]}
      ```
    - **Using a web browser:**
 
      1. In your browser, on the same computer, open `http://localhost:8080/ui`.
 
         This sends a GET request to port 8080, which the service is listening on. The service executes the `ui()`
-        function, which renders a HTML form as shown:
+        function, which renders an HTML form as shown:
 
         ![Web form to communicate with echo service.](/static/images/spcs/Snowpark-Containers-T1-web-ui-10.png)
      2. Enter the string “Hello” in the **Input** box, and press **Return**.

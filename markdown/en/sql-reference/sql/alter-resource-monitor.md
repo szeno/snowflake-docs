@@ -56,8 +56,14 @@ Where:
 
         If you set a time without specifying a time zone, UTC is used as the default time zone.
 
+        Specify the timestamp as a string in one of these formats: `'YYYY-MM-DD'`, `'YYYY-MM-DD HH:MI'`, or
+        `'YYYY-MM-DD HH:MI <time_zone>'` (for example, `'2026-10-15 13:30 PST'`). Seconds aren’t supported; a value that includes
+        seconds returns an invalid date/time format error.
+
     `END_TIMESTAMP = timestamp`
     :   The date and time when the resource monitor suspends the assigned warehouses.
+
+        Use the same timestamp formats as `START_TIMESTAMP`.
 
     `NOTIFY_USERS = ( user_name [ , user_name , ... ] )`
     :   Specifies the list of users to receive email notifications on resource monitors. If a user identifier includes spaces or special

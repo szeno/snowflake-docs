@@ -8,6 +8,25 @@ This article contains the release notes for the Snowflake CLI, including the fol
 
 See [Snowflake CLI](/developer-guide/snowflake-cli/index) for documentation.
 
+## Version 3.32.1 (Nov 02, 2026)
+
+### New additions
+
+- `snow dbt execute` now accepts the `check` and `clone` commands. These previously failed with a CLI “No such command” error.
+- `snow sql` accepts `!set quiet=true` and `!set quiet=false`. `quiet=true` hides query results on the terminal, including the elapsed-time footer, and still appends them to an open `!spool` file. Errors still print. Leaving `quiet` unset shows results. An empty `!set quiet=` is rejected and does not change the current setting. `--silent` is unchanged.
+- [`snow feedback`](/developer-guide/snowflake-cli/command-reference/feedback-commands/feedback) is now generally available.
+
+### Fixes and improvements
+
+- Upgraded the Python interpreter embedded in Linux binaries from 3.12.15 to 3.12.16.
+- Upgraded GitPython from 3.2.0 to 3.2.1.
+- Upgraded snowflake-connector-python from 4.7.5 to 4.8.1.
+- `snow streamlit deploy` revokes `WITH GRANT OPTION` when `with_grant_option` is removed from a Streamlit grant in `snowflake.yml`. The privilege itself stays in place.
+- `snow streamlit deploy --legacy` now always runs on the warehouse runtime and rejects any other `runtime_name`. A versioned deploy that omits `runtime_name` leaves the runtime unset, and applies container-only settings for a `compute_pool` only when creating a new app.
+- `snow app version drop` works with both sync and async drops and says the drop might take a few minutes.
+- `snow app setup` warns when an application service with the same name already exists in the resolved database and schema, because deploying the project would replace that app. `--dry-run` shows the warning too, and `--format json` reports it as `app_exists`. Setup still completes, so you can deploy over the existing app on purpose.
+- Auto-upgrade follows the opt-in in `cli.auto_upgrade` or `SNOWFLAKE_CLI_AUTO_UPGRADE`. It no longer also requires the `ENABLE_SNOW_AUTO_UPGRADE` feature flag. `--no-auto-upgrade` is listed in `snow --help`.
+
 ## Version 3.31.0 (Oct 23, 2026)
 
 ### Backward incompatibility

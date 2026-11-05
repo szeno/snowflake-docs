@@ -63,7 +63,6 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 210 minutes (3.5 hours).
-- The data is retained for 365 days (1 year).
 
 ## Examples
 

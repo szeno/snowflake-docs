@@ -14,16 +14,16 @@ documentation.
 Review the following prerequisites to ensure you can complete the tutorials:
 
 - **A Snowflake account:** Note that trial accounts are not supported.
-- **[Snowflake CLI](/developer-guide/snowflake-cli/index) (optional):** An open-source command-line tool for developing, deploying, and managing Snowflake applications and workloads. It supports developer workflows for Snowpark, Streamlit in Snowflake, Snowflake Native Apps, Snowpark Container Services, notebooks, Git repositories, and data pipelines, including dbt and DCM Projects, in addition to executing SQL and managing Snowflake objects and stages. These tutorials are tested using the [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) web interface and [Snowflake CLI](/developer-guide/snowflake-cli/index). For installation instructions, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+- **[Snowflake CLI](/developer-guide/snowflake-cli/index) (optional):** An open-source command-line tool for developing, deploying, and managing Snowflake applications and workloads. It supports developer workflows for Snowpark, Streamlit in Snowflake, Snowflake Native Apps, Snowpark Container Services, notebooks, Git repositories, and data pipelines, including dbt and DCM Projects, in addition to executing SQL and managing Snowflake objects and stages. These tutorials are tested using the [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) web interface and [Snowflake CLI](/developer-guide/snowflake-cli/index). For installation instructions, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 - **Docker Desktop:** These tutorials provide instructions for using Docker Desktop. For installation instructions, see
-  <https://docs.docker.com/get-docker/>. Note that you can use any OCI-compliant clients to create images, such as Docker, Podman,
+  <https://docs.docker.com/get-docker/>. Note that you can use any OCI-compliant client to create images, such as Docker, Podman,
   or Nerdctl.
 
 ## Create Snowflake objects
 
 Run the SQL provided using either [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) or [Snowflake CLI](/developer-guide/snowflake-cli/index).
 
-1. Login to Snowflake as a user with the ACCOUNTADMIN role.
+1. Log in to Snowflake as a user with the ACCOUNTADMIN role.
 2. Using the ACCOUNTADMIN role, execute the following script, replacing `user_name` with the name of your Snowflake user who will test the tutorials. For these tutorials, you might choose the same user who executes this script or another user in your Snowflake account. The script does the following:
 
    - Creates a role (`test_role`) and other Snowflake objects. To create the role and objects, you must use the ACCOUNTADMIN role.
@@ -83,7 +83,7 @@ Run the SQL provided using either [Snowsight](/user-guide/ui-snowsight-gs#label-
    Note that:
 
    - You create an image repository to store your service code (container images).
-   - You create a Snowflake stage to store your service specification files in tutorial 2 and 3.
+   - You create a Snowflake stage to store your service specification files in tutorials 2 and 3.
 
 ## Verify that you are ready to continue
 

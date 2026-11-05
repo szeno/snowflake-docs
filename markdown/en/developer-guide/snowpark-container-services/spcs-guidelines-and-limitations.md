@@ -11,7 +11,7 @@
 
     - Each service can support up to 10 EAIs (see [CREATE SERVICE](/sql-reference/sql/create-service) and [ALTER SERVICE](/sql-reference/sql/alter-service)).
     - Each EAI can have up to 100 host names.
-  - When accessing the public endpoint from the internet, you might find that username/password authentication works, but SSO results in a blank page or the error: “OAuth client integration with the given client ID is not found.”. For information about addressing this issue, see [Ingress and SSO considerations](/developer-guide/snowpark-container-services/service-network-communications#label-additional-considerations-ingress-sso).
+  - When accessing the public endpoint from the internet, you might find that username/password authentication works, but SSO results in a blank page or the error: “OAuth client integration with the given client ID is not found.” For information about addressing this issue, see [Ingress and SSO considerations](/developer-guide/snowpark-container-services/service-network-communications#label-additional-considerations-ingress-sso).
 - **Image platform requirements:** Container images must match the CPU architecture of the compute pool’s instance family: `linux/amd64` for x86 instance families and `linux/arm64` for ARM instance families. For more information, see [Snowpark Container Services: Understanding instance families](/developer-guide/snowpark-container-services/instance-families).
 - **Service containers are not privileged:** Service containers do not run as privileged, and therefore cannot change
   the configuration of the hardware on the host and can change only limited OS configurations. Service containers can only
@@ -42,14 +42,14 @@
 - **Ownership transfer of services:** [Ownership transfer](/sql-reference/sql/grant-ownership) or future ownership transfer for services, including job services, isn’t supported.
 - **Ownership transfer of service functions:**
 
-  The ownership of a service function can be transferred different role. If the new owner role doesn’t have USAGE privilege on the service, function invocations will fail. You need to grant USAGE privilege to the new function owner role.
+  The ownership of a service function can be transferred to a different role. If the new owner role doesn’t have USAGE privilege on the service, function invocations will fail. You need to grant USAGE privilege to the new function owner role.
 - **Replication:** When dealing with replication in Snowflake, note the following:
 
   - Snowpark Container Services objects, such as services, compute pools, and repositories, cannot be replicated.
   - If you create a repository within a database, the entire database cannot be replicated. In cases where the database contains
     other resources, such as services or compute pools, the database replication process will succeed, but these
     individual objects within the database will not be replicated.
-- **Job services timeout:** Snowpark Container Services job services runs synchronously by default. If a statement times out, the job service is canceled. The
+- **Job services timeout:** Snowpark Container Services job services run synchronously by default. If a statement times out, the job service is canceled. The
   default statement timeout is two days. Customers can change the timeout by setting the parameter STATEMENT\_TIMEOUT\_IN\_SECONDS
   using ALTER SESSION.
 
@@ -59,7 +59,7 @@
   ALTER SESSION SET statement_timeout_in_seconds=<time>
   ```
 
-  Set it before running the EXECUTE JOB SERVICE command. You can run job services asynchronously, by specifying `ASYNC=true`, to avoid job services from being interrupted by a statement timeout.
+  Set it before running the EXECUTE JOB SERVICE command. You can run job services asynchronously, by specifying `ASYNC=true`, to prevent job services from being interrupted by a statement timeout.
 - **File staging commands support in Google Cloud:** To use the PUT, GET, LIST, or REMOVE command with Snowflake client libraries on Google Cloud, update your clients to at least the following versions.
 
   | Client | Version |

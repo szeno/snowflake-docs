@@ -82,7 +82,6 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 6 hours.
-- Data is retained for 1 year.
 - This view does not include pruning information for [hybrid tables](/user-guide/tables-hybrid).
 - For complex filtering conditions that can’t benefit from a pushdown optimization, rows might not be filtered out during the table scan operation, even if they do not match the filtering condition. Therefore, these rows are counted in the ROWS\_MATCHED value.
 - This view retains data for the 1,000 longest-running table scans per query. Only extremely complex queries

@@ -293,13 +293,7 @@ The following table lists the template groups and templates that you can choose.
 |  | **Upstream failure alert** | Monitors [dynamic table](/user-guide/dynamic-tables/overview) upstream failures, triggering an alert when a refresh fails because of an upstream dependency. |
 | **ICEBERG** | **Refresh status alert** | Monitors auto-refresh status changes for tables in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), triggering an alert when refresh leaves a healthy state. |
 |  | **Discovery failure alert** | Monitors discovery and sync failures for a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), triggering an alert when catalog objects fail to sync. |
-| **OPENFLOW** | **Connector backpressure (object count)** | Monitors the connector queue count to determine if it exceeds the backpressure threshold, which can indicate that the downstream system can’t keep up with the data flow rate. |
-|  | **Connector backpressure (bytes)** | Monitors the connector queued bytes to determine if it exceeds the backpressure threshold, which can indicate that there is memory pressure in the data pipeline. |
-|  | **High queued bytes alert** | Monitors the connector queue bytes to determine if it approaches the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
-|  | **High queued count alert** | Monitors the connector queue object count to determine if it approaches the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
-|  | **No data alert** | Monitors for connectors that have an active processing time but are not receiving or sending any data, which can indicate potential data flow issues. |
-|  | **Runtime high error rate alert** | Monitors the Openflow runtime processors for a high volume of ERROR-level logs, which can indicate processing failures. |
-|  | **Table replication failure alert** | Monitors for table replication transitions to a FAILED state, which can indicate a critical data synchronization issue. |
+| **OPENFLOW** | Templates for Openflow connectors and runtimes | Monitor Openflow connectors and runtimes for problems such as back pressure, errors, stopped data flow, low storage space, and tables that fail to replicate. For the list of templates, see [Set up alerts for Openflow](/user-guide/data-integration/openflow/alerts). |
 | **TASKS** | **Error rate alert** | Triggers an alert when the cumulative task error rate exceeds a specified threshold. |
 
 Expand

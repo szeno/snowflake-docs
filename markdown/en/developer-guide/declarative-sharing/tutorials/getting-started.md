@@ -42,7 +42,7 @@ Before getting started, make sure that you meet the following requirements:
 
   Snowflake CLI allows you to manage Snowflake objects and perform various tasks.
 
-  For more information on Snowflake CLI installation, see the [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+  For more information on Snowflake CLI installation, see the [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 - You’ll require access to two Snowflake accounts:
 
   - **Provider account**, used to create and publish the Declarative Share.
@@ -100,7 +100,7 @@ These files include:
 The [Snowflake CLI](/developer-guide/snowflake-cli/index) tool is
 required to build, deploy, and install the application in this tutorial.
 If you do not have Snowflake CLI on your machine, install it as per instructions
-available in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+available in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 
 After Snowflake CLI is installed, you need to configure a connection to Snowflake in your
 [configuration file](/developer-guide/snowflake-cli/connecting/configure-cli#label-cli-config-locations). This tutorial uses `connections.toml`.

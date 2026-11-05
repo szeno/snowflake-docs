@@ -1,6 +1,6 @@
 # Exploring storage cost
 
-Total Storage cost is the sum of costs associated with:
+Total storage cost is the sum of costs associated with:
 
 - Staged file storage
 - Database table storage
@@ -38,7 +38,7 @@ credit consumption by tag. For details, refer to [Exploring Compute Costs](/user
 
 When viewing the bar graph that displays storage history, you can filter the data either **By Type** or **By Object**.
 
-Filtering **By Type** shows the size of storage for each storage type: **Database**, **Fail Safe**, and **Stage**. Storage
+Filtering **By Type** shows the size of storage for each storage type: **Database**, **Fail-safe**, and **Stage**. Storage
 associated with Time Travel is included in the Database category.
 
 Filtering **By Object** graphs the size of storage for each object, for example the size of a particular database or stage.
@@ -106,8 +106,8 @@ The following views provide usage and cost information related to storage.
 | APPLICATION\_DAILY\_USAGE\_HISTORY | Daily storage usage consumption for Snowflake Native Apps in an account within the last 365 days. | [ACCOUNT\_USAGE](/sql-reference/account-usage/application_daily_usage_history) |
 | DATABASE\_STORAGE\_USAGE\_HISTORY | Daily storage in bytes for databases (including data in Time Travel), Fail-safe, and hybrid tables in the account/organization. | [ORGANIZATION\_USAGE](/sql-reference/organization-usage/database_storage_usage_history) [ACCOUNT\_USAGE](/sql-reference/account-usage/database_storage_usage_history) |
 | HYBRID\_TABLES | Data storage in bytes for each hybrid table row in the account. | [ACCOUNT\_USAGE](/sql-reference/account-usage/hybrid_tables) |
-| LISTING\_AUTO\_FULFILLMENT\_ DATABASE\_STORAGE\_DAILY | Data storage in bytes for databases fulfilled to other regions by Cross-Cloud Auto-Fulfillment. | [DATA\_SHARING\_USAGE](/sql-reference/data-sharing-usage/listing-auto-fulfillment-database-storage-daily) |
-| LISTING\_AUTO\_FULFILLMENT\_ USAGE\_HISTORY | Estimated usage associated with fulfilling data products to other regions by using Cross-Cloud Auto-Fulfillment. Refer to the SERVICE\_TYPE of STORAGE. | [ORGANIZATION\_USAGE](/sql-reference/organization-usage/listing_auto_fulfillment_usage_history) |
+| LISTING\_AUTO\_FULFILLMENT\_DATABASE\_STORAGE\_DAILY | Data storage in bytes for databases fulfilled to other regions by Cross-Cloud Auto-Fulfillment. | [DATA\_SHARING\_USAGE](/sql-reference/data-sharing-usage/listing-auto-fulfillment-database-storage-daily) |
+| LISTING\_AUTO\_FULFILLMENT\_USAGE\_HISTORY | Estimated usage associated with fulfilling data products to other regions by using Cross-Cloud Auto-Fulfillment. Refer to the SERVICE\_TYPE of STORAGE. | [ORGANIZATION\_USAGE](/sql-reference/organization-usage/listing_auto_fulfillment_usage_history) |
 | POSTGRES\_STORAGE\_USAGE\_HISTORY | Data storage in bytes for Snowflake Postgres instances. | [ACCOUNT\_USAGE](/sql-reference/account-usage/postgres_storage_usage_history) |
 | STORAGE\_DAILY\_HISTORY | Average daily storage for storage in bytes. Combines database storage (DATABASE\_STORAGE\_USAGE\_HISTORY) and stage storage (STAGE\_STORAGE\_USAGE\_HISTORY). | [ORGANIZATION\_USAGE](/sql-reference/organization-usage/storage_daily_history) |
 | STAGE\_STORAGE\_USAGE\_HISTORY | Average daily storage usage, in bytes, for all the Snowflake stages including named internal stages and default staging areas. | [ORGANIZATION\_USAGE](/sql-reference/organization-usage/stage_storage_usage_history) [ACCOUNT\_USAGE](/sql-reference/account-usage/stage_storage_usage_history) |

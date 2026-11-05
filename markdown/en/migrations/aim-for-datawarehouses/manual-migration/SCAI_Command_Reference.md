@@ -565,7 +565,7 @@ scai connection add-sql-server [OPTIONS]
 
 **Authentication methods:**
 
-- Windows: Windows Authentication (Integrated Security)
+- Windows: Windows Authentication (Integrated Security). On Snowpark Container Services, also set `kerberos_principal` in `~/.snowflake/scai/connections/sqlserver.toml`. See [Windows authentication](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-sql-server#windows-authentication).
 - Standard: SQL Server Authentication (username/password)
 
 **Operation modes:**
@@ -604,6 +604,10 @@ scai connection add-sql-server
 
 # Windows Authentication
 scai connection add-sql-server --source-connection my-sqlserver --auth windows --server-url localhost --database mydb
+
+# Windows Authentication for a Snowpark Container Services Worker.
+# Then add kerberos_principal to ~/.snowflake/scai/connections/sqlserver.toml.
+scai connection add-sql-server --source-connection my-sqlserver --auth windows --server-url sql01.corp.example.com --database SourceDb --port 1433
 
 # Standard Authentication
 scai connection add-sql-server --source-connection my-sqlserver --auth standard --server-url localhost --database mydb --username sa
@@ -2507,6 +2511,7 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 
 - Creates the DEW SPCS service if it does not exist (idempotent)
 - Waits for the service to reach a running state
+- For a SQL Server Windows connection that sets `kerberos_principal`, mounts the existing `DEW_KERBEROS_KEYTAB` and `DEW_KERBEROS_KRB5_CONF` secrets and doesn’t create a SQL password secret. Create those secrets before setup. See [Windows authentication](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-sql-server#windows-authentication).
 - With `--dcp <PROXY_NAME>`, reaches the source through that Data Connectivity Proxy, creating or reusing the proxy. The source host isn’t placed on the direct egress rule. Mutually exclusive with `--skip-egress`: passing both fails before any object is created.
 - `<PROXY_NAME>` is an unquoted Snowflake identifier. The CLI stores it in uppercase. A quoted or invalid name fails before any object is created. The source host must be a DNS name. An IP address fails before any object is created.
 - `--dcp` applies only when the Worker service is created. If the service already exists and `--yes` is omitted, setup doesn’t attach the tunnel. It warns that `--dcp` applies only when the Worker is created, and tells you to run the command again with `--yes`. `--yes` drops and recreates the service from the CLI specification, including the tunnel integrations. Integrations and the network rule that already match are left in place.

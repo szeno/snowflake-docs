@@ -310,7 +310,7 @@ In this step, you use Snowflake CLI to generate a JSON Web Token (JWT) for key-p
 
 Note
 
-- You must have [Snowflake CLI](/developer-guide/snowflake-cli/installation/installation) installed on your machine.
+- You must have [Snowflake CLI](/developer-guide/snowflake-cli/installation) installed on your machine.
 - You can also use Python, Java, or Node.js to generate a JWT. For an example, see the following sections:
   - [Python example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-python)
   - [Java example](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair-java)

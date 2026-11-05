@@ -21,7 +21,7 @@ columns explicitly, and use the time filter column table plus worked SQL and ant
 
 Use this Organization Usage view to view the credit usage for
 [catalog-linked databases](/user-guide/tables-iceberg-catalog-linked-database)
-across accounts in your organization within the last 12 months.
+across accounts in your organization within the last 12 months by default.
 
 ## Columns
 

@@ -5,7 +5,7 @@ Feature — Generally Available
 Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, and Google Cloud Platform commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions).
 
 Snowpark Container Services provides an
-[OCIv2](https://github.com/opencontainers/distribution-spec/blob/main/spec.md)-compliant image registry service and a storage unit call repository to store images.
+[OCIv2](https://github.com/opencontainers/distribution-spec/blob/main/spec.md)-compliant image registry service and a storage unit called a repository to store images.
 
 ## Image registry
 

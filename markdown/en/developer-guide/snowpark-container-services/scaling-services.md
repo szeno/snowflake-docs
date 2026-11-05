@@ -100,7 +100,7 @@ The following list provides details from the syntax:
     cases you might need to filter the metric further. For example, if the service exposes multiple public endpoints and you are interested in
     connections per second to a specific endpoint. This is where *labels* are useful.
 
-    Each label is a key-value pair. For the `network.ingress.cps` metric, you can limit checking this metrics to a specific endpoint by adding
+    Each label is a key-value pair. For the `network.ingress.cps` metric, you can limit checking this metric to a specific endpoint by adding
     the following key-value pair:
 
     Copy code
@@ -442,7 +442,7 @@ specification.
 
 Scale-down policies are specified in much the same way as is described in the previous section for suspend policies. The only change you must make is to
 replace `suspend` with `scaleDown` in `autoScalingPolicies`. The main difference between scale-down and suspend policies is that a scale-down policy lets Snowflake reduce the number of service
-instances only down to the `MinInstances` value specified when you create the service. For more information, see [CREATE SERVICE](/sql-reference/sql/create-service). The number of instances will never
+instances only down to the `MIN_INSTANCES` value specified when you create the service. For more information, see [CREATE SERVICE](/sql-reference/sql/create-service). The number of instances will never
 reach zero. In contrast, a suspend policy reduces the number of running service instances all the way to zero. This difference can be
 important, as it takes time to start a service, so you typically want to be more careful about when to suspend. If you scale down too much,
 the existing instances can handle the extra load while the system adds more instances to your service to handle the load.
@@ -479,7 +479,7 @@ spec:
 ```
 
 The preceding `scaleUp` autoscaling policy specifies two metric conditions that are based on the `container.cpu.usage` and `container.memory.usage`
-platform metrics. This metric tracks the CPU core utilization and memory usage by the service containers.
+platform metrics. These metrics track the CPU core utilization and memory usage by the service containers.
 
 Periodically (currently, every 30 seconds), the autoscaling policy evaluator performs the following tasks:
 

@@ -21,7 +21,7 @@ Copy code
 ## Arguments
 
 `START_TIME => constant_expr`
-:   Start time (in TIMESTAMP\_LTZ format) for the time range from which to retrieve metrics. For available functions to construct data, time, and timestamp data, see [Date & time functions](/sql-reference/functions-date-time).
+:   Start time (in TIMESTAMP\_LTZ format) for the time range from which to retrieve metrics. For available functions to construct date, time, and timestamp data, see [Date & time functions](/sql-reference/functions-date-time).
 
     If the `START_TIME` isn’t specified, it defaults to one day ago.
 
@@ -42,7 +42,7 @@ The function returns the following columns:
 | `UNIT` | VARCHAR | Unit of the metric returned. |
 | `INSTANCE_ID` | NUMBER | Name of the service instance if the metric is related to the service instance. |
 | `CONTAINER_NAME` | VARCHAR | Name of the container if the metric is related to the container. For example, a volume metric won’t have container name. |
-| `RESOURCE` | VARCHAR | Hardware — for example, GPU — the metrics is about. This column isn’t populated. |
+| `RESOURCE` | VARCHAR | Hardware — for example, GPU — the metric is about. This column isn’t populated. |
 | `RECORD` | OBJECT | Key-value pairs that provide metric information. |
 | `RECORD_ATTRIBUTES` | OBJECT | Key-value pairs that provide additional information about the metric. |
 
@@ -92,7 +92,7 @@ Copy code
 SELECT * from TABLE(mydb.myschema.my_test_job!SPCS_GET_METRICS(start_time => DATEADD('day', -3, CURRENT_TIMESTAMP())));
 ```
 
-Retrieve metrics from the past day for the `spcs_get_metrics` job instance `0` in the container named `main`.
+Retrieve metrics from the past day for the `my_test_job` job instance `0` in the container named `main`.
 
 Copy code
 

@@ -1,4 +1,4 @@
-# Snowpark Container Services: AWS Instance Families
+# Snowpark Container Services: AWS instance families
 
 Feature — Generally Available
 
@@ -18,13 +18,13 @@ Region availability is subject to change. To retrieve current availability and
 instance family specifications programmatically, use
 [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families).
 
-## Current Generation Instance Families
+## Current generation instance families
 
-### General Compute Instance Families
+### General compute instance families
 
 Current generation instances recommended for general-purpose workloads.
 
-#### x86 General Compute
+#### x86 general compute
 
 Current generation x86 instances for general-purpose workloads.
 
@@ -39,7 +39,7 @@ Expand
 
 Show lessSee more
 
-#### ARM General Compute
+#### ARM general compute
 
 Current generation ARM instances for general-purpose workloads.
 
@@ -61,7 +61,7 @@ ARM instances require container images built for the `linux/arm64` platform.
 x86 instances require `linux/amd64`. For multi-architecture deployments, use
 multi-platform container images.
 
-### High Memory Instance Families
+### High memory instance families
 
 Current generation x86 instances optimized for memory-intensive workloads.
 
@@ -76,7 +76,7 @@ Expand
 
 Show lessSee more
 
-### GPU Accelerated Instance Families
+### GPU accelerated instance families
 
 AWS GPU instance families feature four NVIDIA GPU architectures, each suited to different AI and ML workloads.
 
@@ -137,9 +137,9 @@ Expand
 
 Show lessSee more
 
-## Previous Generation Instance Families
+## Previous generation instance families
 
-### General Compute Instance Families
+### General compute instance families
 
 Previous generation x86 instances. For new workloads, use GEN\_X64\_G2 instances instead.
 
@@ -155,7 +155,7 @@ Expand
 
 Show lessSee more
 
-### High Memory Instance Families
+### High memory instance families
 
 Previous generation x86 instances optimized for memory. For new workloads, use MEM\_X64\_G2 instances instead.
 

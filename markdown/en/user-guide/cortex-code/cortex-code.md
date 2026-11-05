@@ -148,7 +148,7 @@ For detailed setup instructions, release history, troubleshooting, and advanced 
 - [CoCo CLI](/user-guide/cortex-code/cortex-code-cli)
 - [Snowflake CoCo for Excel](/user-guide/cortex-code/cortex-code-excel-integration)
 - [Snowflake CoCo for Google Sheets](/user-guide/cortex-code/cortex-code-sheets-integration)
-- [CoCo automations in CLI and Snowsight](/user-guide/cortex-code/cortex-code-automations)
+- [CoCo automations in CLI, Snowsight, and Desktop](/user-guide/cortex-code/cortex-code-automations)
 - [CoCo changelog](/user-guide/cortex-code/changelog)
 - [Observability](/user-guide/cortex-code/observability)
 - [Cortex Agent SDK](/user-guide/snowflake-cortex/cortex-agent-sdk/cortex-agent-sdk)

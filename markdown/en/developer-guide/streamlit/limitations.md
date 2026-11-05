@@ -20,6 +20,21 @@ The following limitations apply to all Streamlit in Snowflake apps, regardless o
   [Streamlit in Snowflake: Replication enabled by default (Generally enabled)](/release-notes/bcr-bundles/2026_04/bcr-2316).
 - Using `.so` files isn’t supported.
 
+## Government region availability
+
+The Streamlit in Snowflake container runtime is available in the following AWS government regions:
+
+- US East (Commercial Gov - N. Virginia)
+- US West (Commercial Gov - Oregon)
+- US Gov East 1 (FedRAMP High Plus)
+- US Gov West 1 (FedRAMP High Plus)
+
+Container runtimes aren’t available in other government regions. For more information about government regions,
+see [U.S. regions supporting public sector workloads](/user-guide/intro-regions#label-us-gov-regions).
+
+The container runtime isn’t yet FedRAMP-authorized. Access is restricted for accounts that require authorization
+before enablement. For account availability and authorization status, contact your Snowflake account team.
+
 ## Limitations and changes that vary by runtime
 
 The following table compares limitations that differ between warehouse runtimes and container runtimes.

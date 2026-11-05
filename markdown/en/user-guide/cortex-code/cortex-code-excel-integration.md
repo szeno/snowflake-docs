@@ -320,11 +320,10 @@ the PivotTable and its sheet. Clear or move what’s below or beside the PivotTa
 ### Refresh when the workbook opens
 
 You can have CoCo refresh a workbook each time it opens. To turn this on, in the pane header select **More** (…) >
-**Settings**, then under **This workbook**, select **Refresh when this workbook opens**. The setting’s description
-reads: “Re-runs every CoCo table in this workbook, on every sheet, each time it opens. Each run uses warehouse
-credits.”
+**Settings**, then under **Auto-refresh**, turn on **Refresh when opening**. The setting’s description reads:
+“Re-runs every CoCo table on every sheet when you open this file. Each run uses warehouse credits.”
 
-[![The This workbook section of CoCo Settings, showing the Refresh when this workbook opens checkbox and its description.](/static/images/screens/cortex-code-excel-refresh-on-open.png)](/static/images/screens/cortex-code-excel-refresh-on-open.png)
+[![The Auto-refresh section of CoCo Settings, showing the Refresh when opening switch and its description.](/static/images/screens/cortex-code-excel-refresh-on-open.png)](/static/images/screens/cortex-code-excel-refresh-on-open.png)
 
 The workbook stores its request to refresh on open in the file, along with its saved queries, so anyone who opens a
 copy receives both. Your agreement to run those queries isn’t stored in the file. It applies only to you, for the

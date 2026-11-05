@@ -301,7 +301,7 @@ snow spcs service list-roles my_service
 
 Note
 
-The current role must have OPERATE privilege on the service to set properties.
+The current role must have the OWNERSHIP privilege on the service to set or unset properties.
 
 To set a service’s property or parameter, enter a [snow spcs service set](/developer-guide/snowflake-cli/command-reference/spcs-commands/service-commands/set) command similar to the following:
 
@@ -324,7 +324,7 @@ To reset a service’s property or parameter to its default value, enter a comma
 Copy code
 
 ```
-snow spcs compute-pool unset tutorial_compute_pool --auto-resume
+snow spcs service unset echo_service --min-instances --max-instances
 ```
 
 ```

@@ -63,3 +63,15 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 15 minutes.
+
+The following example returns rows from about 24 months ago:
+
+Copy code
+
+```
+SELECT *
+FROM SNOWFLAKE.ORGANIZATION_USAGE.METERING_HISTORY
+WHERE START_TIME >= DATEADD(month, -24, CURRENT_TIMESTAMP())
+ORDER BY START_TIME DESC
+LIMIT 100;
+```

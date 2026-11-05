@@ -26,6 +26,8 @@ set_context_info = true
 
 Set `prefer_native_driver = false` to force ODBC. Set `set_context_info = false` if your audit triggers or other applications already use the SQL Server session’s `CONTEXT_INFO` slot.
 
+For Windows authentication, use the same source connection as data migration. On Snowpark Container Services that connection needs a Kerberos keytab. See [Windows authentication](./migrate-sql-server#windows-authentication).
+
 Set `source_platform: sqlserver` in the validation workflow YAML. For partitioning, row alignment, and tolerance settings that apply to all platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
 **Example workflow excerpt:**

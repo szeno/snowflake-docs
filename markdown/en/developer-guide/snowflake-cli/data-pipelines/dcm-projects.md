@@ -4,7 +4,7 @@ You can manage a DCM project using Snowflake CLI. For more information about DCM
 
 ## Install Snowflake CLI with DCM project features
 
-To use the `snow dcm` commands, you must install Snowflake CLI version 3.24.0 or later. For more information, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+To use the `snow dcm` commands, you must install Snowflake CLI version 3.24.0 or later. For more information, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 
 ## Verify you have a valid connection to Snowflake
 

@@ -34,7 +34,7 @@ cloud storage.
 ## Step 1: Create a Snowflake CLI connection for Open Catalog
 
 To set up private connectivity in Open Catalog, you need a Snowflake CLI connection for Open Catalog. Follow these steps to create this
-connection. If you don’t already have Snowflake CLI installed, see [Installing Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation).
+connection. If you don’t already have Snowflake CLI installed, see [Installing Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation).
 
 ### Before you begin
 

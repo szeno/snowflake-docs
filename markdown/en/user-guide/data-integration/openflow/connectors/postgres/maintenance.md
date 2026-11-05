@@ -38,6 +38,8 @@ Replication state for table <database_name>.<schema_name>.<table_name> changed f
 
 If a permanent failure prevents table replication, remove the table from replication. After you address the problem that caused the failure, you can add the table back to replication. For more information, see [Restart table replication](#label-of-postgres-restart-table-replication).
 
+To monitor the replication status of tables with metrics, see [Monitor the Openflow Connector for PostgreSQL](/user-guide/data-integration/openflow/connectors/postgres/monitor).
+
 ## Restart table replication
 
 Note

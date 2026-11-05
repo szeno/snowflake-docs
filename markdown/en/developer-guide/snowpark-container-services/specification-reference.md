@@ -204,7 +204,7 @@ The following sections explain the types of containers fields.
 
 For each container, only name and image are required fields.
 
-- `name` is the image name. This name can be used to identify a specific container for the purposes of observability (for example, [logs](/developer-guide/snowpark-container-services/monitoring-services#label-snowpark-containers-working-with-services-local-logs),
+- `name` is the container name. This name can be used to identify a specific container for the purposes of observability (for example, [logs](/developer-guide/snowpark-container-services/monitoring-services#label-snowpark-containers-working-with-services-local-logs),
   [metrics](/developer-guide/snowpark-container-services/working-with-services#label-spcs-accessing-compute-pool-metrics)).
 - `image` is the name of the image you uploaded to a Snowflake image repository in your Snowflake account.
 
@@ -253,10 +253,10 @@ these values in the specification file as follows:
   spec:
     containers:
     - name: echo
-   image: <image_name>
-   command:
-   - python3.9
-   - main.py
+      image: <image_name>
+      command:
+      - python3.9
+      - main.py
   ```
 - To override the argument “Bob”, add the
   `containers.args` field in the specification file:
@@ -267,9 +267,9 @@ these values in the specification file as follows:
   spec:
     containers:
     - name: echo
-   image: <image_name>
-   args:
-     - Alice
+      image: <image_name>
+      args:
+        - Alice
   ```
 
 ### `containers.env` field
@@ -335,7 +335,7 @@ spec:
 ```
 
 Note that, because you changed the port number your service listens on,
-the specification must also update the endpoint (`endpoints.port field` value) as shown.
+the specification must also update the endpoint (`endpoints.port` field value) as shown.
 
 ### `containers.readinessProbe` field
 

@@ -1,9 +1,5 @@
 # Migrating between runtime environments
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 You can migrate a Streamlit app between warehouse runtimes and container runtimes by
 updating the app’s RUNTIME\_NAME and COMPUTE\_POOL properties. However, some features
 are only supported in one type of runtime environment, so there are some considerations

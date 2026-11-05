@@ -6,8 +6,13 @@
 - Backups with retention lock and backups with legal holds are available for Business Critical Edition (or higher).
   To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Creates a [backup](/user-guide/backups) set for a table, a schema, or a database. Once the backup set exists, you can
-add a new backup (backup) to the backup set at any time by running an ALTER BACKUP SET command. Snowflake also adds backups
+Creates a [backup](/user-guide/backups) set for one of the following:
+
+- A table, including a dynamic table or a Snowflake Storage for Apache Iceberg™ table
+- A schema
+- A database
+
+Once the backup set exists, you can add a new backup (backup) to the backup set at any time by running an ALTER BACKUP SET command. Snowflake also adds backups
 to the backup set automatically, if you defined a schedule in a [backup policy](/user-guide/backups#label-snapshots-concept-snapshot-policy)
 and associated that backup policy with the backup set.
 
@@ -36,7 +41,7 @@ Copy code
 
 ```
 CREATE [ OR REPLACE ] BACKUP SET [ IF NOT EXISTS ] <name>
-   FOR [ DYNAMIC ] TABLE <table_name>
+   FOR [ DYNAMIC ] [ ICEBERG ] TABLE <table_name>
    [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
    [ WITH BACKUP POLICY <policy_name> ]
    [ COMMENT = <string> ]
@@ -77,7 +82,7 @@ Copy code
 
 ```
 CREATE OR ALTER BACKUP SET <name>
-   FOR [ DYNAMIC ] TABLE <table_name>
+   FOR [ DYNAMIC ] [ ICEBERG ] TABLE <table_name>
    [ WITH BACKUP POLICY <policy_name> ]
    [ COMMENT = <string> ]
 ```
@@ -111,9 +116,17 @@ CREATE OR ALTER BACKUP SET <name>
 
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
-`FOR [ DYNAMIC ] TABLE table_name`
-:   Specifies the name of the table or dynamic table. In that case, the backup set represents backups
-    of a single table.
+`FOR [ DYNAMIC ] [ ICEBERG ] TABLE table_name`
+:   Specifies the name of a table. The backup set represents backups of that single table.
+
+    - For a standard table, use `FOR TABLE`.
+    - For a dynamic table, use `FOR DYNAMIC TABLE`.
+    - For a Snowflake Storage for Apache Iceberg™ table, use `FOR ICEBERG TABLE`.
+    - For a dynamic Iceberg table that uses Snowflake Storage, use `FOR DYNAMIC ICEBERG TABLE`.
+
+    If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can promote `FOR TABLE`
+    or `FOR DYNAMIC TABLE` to the corresponding Iceberg variant. Prefer the explicit Iceberg syntax
+    for Iceberg tables.
 
 `FOR SCHEMA schema_name`
 :   Specifies the name of the schema. In that case, the backup set represents backups
@@ -215,6 +228,21 @@ This restriction applies even to privileged roles such as ACCOUNTADMIN, and to S
 For that reason, be careful when specifying retention lock and a long expiration
 period in a backup policy.
 
+Feature — Generally Available
+
+Backups for Snowflake Storage for Apache Iceberg™ tables are generally available
+on Amazon Web Services (AWS) only.
+
+- For Iceberg tables and dynamic Iceberg tables, only
+  [Snowflake Storage for Apache Iceberg™ tables](/user-guide/tables-iceberg-internal-storage) are
+  supported, and only on Amazon Web Services (AWS). Iceberg tables on customer-managed storage,
+  Iceberg tables that use an external catalog, and transient Iceberg tables aren’t supported.
+- The `FOR` clause must match the object type. For example, use `FOR ICEBERG TABLE` for an
+  Iceberg table. If you use the wrong clause, the command fails.
+- If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can promote
+  `FOR TABLE` to `FOR ICEBERG TABLE`, and `FOR DYNAMIC TABLE` to
+  `FOR DYNAMIC ICEBERG TABLE`. Prefer the explicit Iceberg keywords in your SQL.
+
 ### CREATE OR ALTER BACKUP SET
 
 - All limitations of the [ALTER BACKUP SET](/sql-reference/sql/alter-backup-set) command apply.
@@ -241,6 +269,26 @@ Copy code
 ```
 CREATE BACKUP SET t1_backups
   FOR TABLE t1
+  WITH BACKUP POLICY hourly_backup_policy;
+```
+
+Create a backup set for a Snowflake Storage for Apache Iceberg™ table:
+
+Copy code
+
+```
+CREATE BACKUP SET iceberg_table_backups
+  FOR ICEBERG TABLE my_iceberg_table
+  WITH BACKUP POLICY hourly_backup_policy;
+```
+
+Create a backup set for a dynamic Iceberg table that uses Snowflake Storage:
+
+Copy code
+
+```
+CREATE BACKUP SET dynamic_iceberg_table_backups
+  FOR DYNAMIC ICEBERG TABLE my_dynamic_iceberg_table
   WITH BACKUP POLICY hourly_backup_policy;
 ```
 

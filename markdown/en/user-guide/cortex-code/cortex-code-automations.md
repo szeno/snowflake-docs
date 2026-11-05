@@ -1,4 +1,4 @@
-# CoCo automations in CLI and Snowsight (*Preview*)
+# CoCo automations in CLI, Snowsight, and Desktop (*Preview*)
 
 [Preview Feature](/release-notes/preview-features)  — Open
 
@@ -12,12 +12,13 @@ schedule in a Snowflake-managed sandbox, even when your terminal or browser is c
 creates a Cortex thread that you can open to inspect the agent’s messages, tool calls, results, and
 final response.
 
-Automations created from CoCo CLI and CoCo in Snowsight are the same Snowflake objects. You can
-create an automation from one surface and monitor or manage it from the other.
+Automations created from CoCo CLI, CoCo in Snowsight, and the **Cloud** tab in CoCo Desktop are the
+same Snowflake objects. You can create an automation from one surface and monitor or manage it from
+another.
 
 Important
 
-This page describes Snowflake-hosted automations shared by CoCo CLI and CoCo in Snowsight. CoCo
+This page describes Snowflake-hosted automations, which CoCo Desktop calls cloud automations. CoCo
 Desktop also supports local automations, but those run on your computer and have a separate
 lifecycle and permission model. For more information, see [CoCo Desktop automations](/user-guide/cortex-code/cortex-code-desktop/automations).
 
@@ -74,6 +75,8 @@ Before you use automations, the following requirements must be met:
   administrator changes the grant.
 - To attach an MCP server, workspace stage, or Snowflake secret, your role must also have the
   privileges required to use that object.
+- In CoCo Desktop, the **Cloud** tab of the **Automations** page appears only in accounts where CoCo
+  automations are enabled. To hide it, set the `chat.automations.cloud.enabled` setting to `false`.
 
 Because `EXECUTE AGENT TASK` is granted to `PUBLIC` by default, administrators who want to limit
 automations to selected roles must first revoke the privilege from `PUBLIC`, then grant it to those
@@ -275,6 +278,25 @@ cortex automation create \
 Hooks run with the same access as the rest of the automation and without an interactive approval
 prompt, so treat a hook the same way you would treat any unattended script.
 
+## Create an automation in CoCo Desktop
+
+In CoCo Desktop, Snowflake-hosted automations are called cloud automations. Open the **Automations**
+page from the Agent view sidebar, then select the **Cloud** tab. You can create a cloud automation in
+the following ways:
+
+- **From a template:** On the **Cloud** tab, select **Get started** on a template card, such as
+  **CoCo Usage Report**, **Pipeline Failure Alert**, **Data Quality Sweep**, or
+  **Weekly Session Review**. CoCo Desktop checks your access, creates the automation, and offers to
+  run a test. A test run takes about three minutes and uses a few credits. Each report appears in the
+  automation’s run history and is sent to your email address. To get reports by email, verify your
+  email address in Snowsight.
+- **With CoCo:** Select **New** > **Create with CoCo**, then describe the automation in the chat.
+- **With a form:** Select **New** > **Set up manually**, then choose **Cloud**. Enter a title and the
+  instruction for each run, choose a schedule other than **Manual** and a model, and optionally
+  enter a **GitHub secret** that contains a GitHub personal access token.
+
+The new automation appears on the **Cloud** tab, and in CoCo CLI and CoCo in Snowsight.
+
 ## Monitor and manage automations
 
 The Automations interface in Snowsight lists your automations and their current state. Select an
@@ -282,6 +304,13 @@ automation to view its schedule, next run, last run, model, instruction, and run
 
 From Snowsight, you can run an automation immediately, pause or resume its schedule, edit its
 configuration, or delete it.
+
+In CoCo Desktop, the **Cloud** tab of the **Automations** page lists your automations. Select an
+automation to view its instruction, latest output, and run history, and a **Details** section with
+the model, task name, GitHub access, MCP servers, and hooks. Use **Edit**, **Run now**, and
+**Delete** to manage it, and select its status to suspend or resume its schedule. A dot on an
+automation marks a run that you haven’t viewed yet, and the sidebar shows how many new runs there
+are.
 
 Use the following CLI commands to manage the same automations:
 
@@ -402,6 +431,9 @@ The following limits and behaviors apply during the public preview:
 Confirm that your account is in a supported deployment and that you meet the access requirements for
 the CoCo surface that you use. If the feature is still unavailable, contact your Snowflake account
 team.
+
+In CoCo Desktop, the **Cloud** tab appears only in accounts where CoCo automations are enabled, and
+only while the `chat.automations.cloud.enabled` setting isn’t set to `false`.
 
 ### Creating or running an automation returns an access error
 

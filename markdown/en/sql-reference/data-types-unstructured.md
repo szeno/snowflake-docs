@@ -70,6 +70,10 @@ Show lessSee more
 
 - FILE values may become inconsistent with the underlying staged files. FILE values are not updated when you modify or
   delete the underlying file. Conversely, if a FILE value is deleted from a table, the underlying file is not affected.
+  To bring a FILE value up to date after the underlying file changes, create a new FILE value for the file by calling
+  [TO\_FILE](/sql-reference/functions/to_file) or [TRY\_TO\_FILE](/sql-reference/functions/try_to_file) again, and then
+  replace the stored value with it. The new value reflects the file’s current metadata, such as SIZE, ETAG, and
+  LAST\_MODIFIED.
 - Permissions on the underlying files are governed by the type of URL that was specified when creating the FILE. Stage
   file URLs and stage/path combinations give permanent permission to callers that have access to the associated stage.
   Scoped URLs give temporary user-based access to the underlying file for a 24-hour period.

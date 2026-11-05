@@ -27,13 +27,31 @@ Note
 
 To find a user, search by Snowflake username. When the `2026_08` behavior change bundle is enabled and the account permits access to protected user data, you can also search by name or email address. For the account setting and rollout details, see [User lookup behavior change](/release-notes/bcr-bundles/2026_08/bcr-2429).
 
-## Create and share an HTML report from CoCo Desktop
+## Create and share an artifact from CoCo Desktop
 
-When working with an HTML file in [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop/index), ask CoCo to create an artifact from it and grant access to the roles you specify. Creating and sharing a dashboard artifact from CoCo Desktop isn’t supported.
+[Preview Feature](/release-notes/preview-features)  — Open
 
-For example:
+Artifacts in [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop/index) is available in accounts where artifacts are available in Snowsight.
 
-> Create a Report artifact from this HTML file and share it with the analytics\_team role.
+CoCo Desktop can publish the HTML and Markdown files that the agent writes as artifacts in your Snowflake account. Creating and sharing a dashboard artifact from CoCo Desktop isn’t supported.
+
+To publish a file, do one of the following:
+
+- In the chat, find the file in the files card that lists the HTML and Markdown files the agent wrote, then select **Publish artifact**.
+- Ask CoCo to create an artifact from the file and grant access to the roles you specify. For example:
+
+  > Create a Report artifact from this HTML file and share it with the analytics\_team role.
+
+To manage access, open the **Share** dialog. Add roles or users, and choose an access level for each recipient:
+
+- **Can view**: Open the artifact.
+- **Can publish**: Open the artifact, edit it in a CoCo Desktop session, and select **Publish changes** to update the same artifact. This level grants the `WRITE` privilege on the artifact.
+
+Select **Save** to apply your changes, or **Cancel** to discard them. The owner can also delete the artifact from the **Share** dialog.
+
+The **Artifacts** page in the Agent view sidebar lists your artifacts. **All** shows the artifacts that you own and the ones shared with you, and **Favorites** shows the ones that you marked. Favorites are stored in Snowflake, so they appear on every device and in Snowsight. **Copy link** offers **Copy CoWork link** and **Copy Snowsight link**. When Snowflake CoWork isn’t available in your account, **Copy link** copies the Snowsight link.
+
+To turn off Artifacts in CoCo Desktop, disable the `chat.artifacts.enabled` setting.
 
 ## Open a shared artifact
 

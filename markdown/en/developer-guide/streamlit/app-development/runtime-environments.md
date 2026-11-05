@@ -41,9 +41,8 @@ Show lessSee more
 
 ## Container runtimes
 
-Feature — Generally Available
-
-Not supported in government regions.
+For availability in government regions and FedRAMP authorization status, see
+[Government region availability](/developer-guide/streamlit/limitations#label-streamlit-government-region-availability).
 
 A container runtime provides a dedicated instance of your Streamlit app that is shared
 among all viewers. Each viewer connects to the same instance of the app, which means

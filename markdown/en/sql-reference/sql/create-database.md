@@ -292,10 +292,9 @@ You must have the IMPORT SHARE privilege to create a database from a share.
 > [Child Objects and Data Retention Time](/user-guide/object-clone#label-child-objects-and-data-retention-time).
 
 `IGNORE HYBRID TABLES`
-:   Ignore hybrid tables, which will not be cloned. Use this option to clone a database that contains hybrid tables.
-    The cloned database includes other objects but skips hybrid tables.
+:   Ignore hybrid tables, which will not be cloned. The cloned database includes other objects but skips hybrid tables.
 
-    If you don’t use this option and your database contains one or more hybrid tables, the command ignores hybrid tables silently. However, the error handling for databases that contain hybrid tables will change in an upcoming release; therefore, you may want to add this parameter to your commands preemptively.
+    If you omit this option, hybrid tables in the source database are cloned with the database. Cloning those tables copies their data and is not a metadata-only operation. For requirements, cost, and limitations, see [Clone databases that contain hybrid tables](/user-guide/tables-hybrid-clone).
 
 `DATA_RETENTION_TIME_IN_DAYS = integer`
 :   Specifies the number of days for which Time Travel actions (CLONE and UNDROP) can be performed on the database, as well as specifying the

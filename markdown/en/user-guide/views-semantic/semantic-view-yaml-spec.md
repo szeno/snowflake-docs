@@ -931,6 +931,64 @@ semantic view. Drop all materializations first if you need to remove the propert
 
 For more information, see [Setting the maximum staleness of the materialized dimensions and metrics](/user-guide/views-semantic/materializations#label-semantic-views-materializing-prereqs-staleness).
 
+## Level of detail (LOD) metrics
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+LOD metrics are defined at the model level. Add `lod_dimension_type` and `lod_dimensions` to an entry under the
+top-level `facts` or `dimensions` key. You can also write an LOD expression inline in a metric `expr`.
+
+- `lod_dimension_type` is required on each model-level LOD entry. Valid values are `fixed`, `include`, and `exclude`.
+- `lod_dimensions` is a list of dimensions that define the grain. Each entry has a `table` and a `dimension`. The
+  `table` field can be omitted if the dimension name is unambiguous in the semantic view.
+- An empty list (`lod_dimensions: []`) is valid for every type. With `fixed`, it’s the scalar form, the same as
+  `FIXED DIMENSIONS ()` in DDL. With `include` or `exclude`, it doesn’t change the query grain, the same as
+  `INCLUDE DIMENSIONS ()` or `EXCLUDE DIMENSIONS ()` in DDL.
+- `lod_dimension_type` and `lod_dimensions` aren’t allowed under `tables[].facts` or `tables[].dimensions`.
+
+The following example defines a FIXED fact at the customer grain and a metric that averages it:
+
+Copy code
+
+```
+facts:
+  - name: orders_per_customer
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+
+metrics:
+  - name: avg_orders_per_customer
+    expr: AVG(orders_per_customer)
+```
+
+The following example defines an EXCLUDE fact, and an INCLUDE metric written inline:
+
+Copy code
+
+```
+facts:
+  - name: regional_revenue_excl_cat
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: exclude
+    lod_dimensions:
+      - table: orders
+        dimension: category
+
+metrics:
+  - name: avg_customer_rev_by_region
+    expr: AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.customer_id))
+```
+
+For the full set of LOD examples in DDL and YAML, see [Defining level of detail (LOD) metrics](/user-guide/views-semantic/sql#label-semantic-views-lod).
+LOD metrics work in SQL queries against semantic views. Cortex Analyst and Cortex Agents don’t use LOD metrics yet.
+
 ## Example semantic view YAML
 
 Here’s a complete example of a semantic view YAML specification:

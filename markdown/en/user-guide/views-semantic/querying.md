@@ -482,7 +482,7 @@ When you specify the name of a semantic view in the `FROM` clause, you can refer
 using their bare (unqualified) names or using dot-notation to qualify them with the entity (logical table) name.
 
 **Bare names** work when a calculation name is unique across all entities in the semantic view, or when you reference
-derived metrics and LOD metrics that are not bound to a specific entity:
+derived metrics and [LOD metrics](/user-guide/views-semantic/querying#label-semantic-views-querying-lod) that are not bound to a specific entity:
 
 Copy code
 
@@ -989,6 +989,98 @@ SELECT * FROM SEMANTIC_VIEW (
   DIMENSIONS date.date, date.year
   METRICS store_sales.avg_7_days_sales_quantity_30_days_ago
 );
+```
+
+## Querying level of detail metrics
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+LOD metrics work in SQL queries against semantic views. You can query them with the `SEMANTIC_VIEW` clause or
+by specifying the semantic view name in the FROM clause. Cortex Analyst and Cortex Agents don’t use LOD metrics
+yet.
+
+The examples in this section use the `sales_sv` semantic view from
+[Defining level of detail (LOD) metrics](/user-guide/views-semantic/sql#label-semantic-views-lod). The
+definitions are shown there in both DDL and YAML.
+
+### Query rules for LOD metrics
+
+- Reference a named LOD fact or metric by its bare name. Don’t add an entity prefix.
+- You can reference a FIXED calculation in `FACTS`, `DIMENSIONS`, or `METRICS`. In `METRICS`, it must be inside an
+  aggregate function.
+- You can reference an INCLUDE or EXCLUDE calculation only in `METRICS`, as the sole argument of an aggregate
+  function. You can’t reference one in `DIMENSIONS` or `FACTS`.
+- You can’t write an LOD expression inline in a query. Define it in the semantic view first.
+- You can’t combine an ad-hoc dimension expression, such as `customers.customer_id + 100`, with an INCLUDE or EXCLUDE
+  metric in the same query.
+
+### Example: query a FIXED metric with the SEMANTIC\_VIEW clause
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS avg_orders_per_customer
+)
+ORDER BY region;
+```
+
+```
++--------+-------------------------+
+| REGION | AVG_ORDERS_PER_CUSTOMER |
+|--------+-------------------------|
+| North  |                     3.0 |
+| South  |                     2.0 |
++--------+-------------------------+
+```
+
+### Example: query the same metric in the FROM clause
+
+Copy code
+
+```
+SELECT customers.region, AGG(avg_orders_per_customer) AS avg_orders
+  FROM sales_sv
+  GROUP BY customers.region
+  ORDER BY customers.region;
+```
+
+```
++--------+------------+
+| REGION | AVG_ORDERS |
+|--------+------------|
+| North  |        3.0 |
+| South  |        2.0 |
++--------+------------+
+```
+
+### Example: query an INCLUDE metric
+
+The same INCLUDE metric returns different values for different query grains. The following query groups by
+segment:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.segment
+  METRICS avg_customer_rev_by_region
+)
+ORDER BY segment;
+```
+
+```
++----------+----------------------------+
+| SEGMENT  | AVG_CUSTOMER_REV_BY_REGION |
+|----------+----------------------------|
+| Premium  |                     800.00 |
+| Standard |                     250.00 |
++----------+----------------------------+
 ```
 
 ## Using subqueries in semantic view queries

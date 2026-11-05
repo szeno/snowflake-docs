@@ -111,21 +111,21 @@ spec:
   spec:
     containers:
     - name: echo
-   image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
-   volumeMounts:
-   - name: block-vol
-     mountPath: /opt/block/path
-   readinessProbe:
-     port: 8080
-     path: /healthcheck
+      image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
+      volumeMounts:
+      - name: block-vol
+        mountPath: /opt/block/path
+      readinessProbe:
+        port: 8080
+        path: /healthcheck
     endpoints:
     - name: echoendpoint
-   port: 8080
-   public: true
+      port: 8080
+      public: true
     volumes:
     - name: block-vol
-   source: block
-   size: 10Gi
+      source: block
+      size: 10Gi
   $$;
   ```
 - Create a service with a block storage volume initialized from a snapshot.
@@ -139,24 +139,24 @@ spec:
   spec:
     containers:
     - name: echo
-   image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:tutorial
-   volumeMounts:
-   - name: vol-from-snapshot
-     mountPath: /opt/block/path
-   readinessProbe:
-     port: 8080
-     path: /healthcheck
+      image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:tutorial
+      volumeMounts:
+      - name: vol-from-snapshot
+        mountPath: /opt/block/path
+      readinessProbe:
+        port: 8080
+        path: /healthcheck
     endpoints:
     - name: echoendpoint
-   port: 8080
-   public: true
+      port: 8080
+      public: true
     volumes:
     - name: vol-from-snapshot
-   source: block
-   size: 50Gi
-   blockConfig:
-     initialContents:
-       fromSnapshot: BACKUP_DB.SNAPSHOTS.MY_SNAPSHOT
+      source: block
+      size: 50Gi
+      blockConfig:
+        initialContents:
+          fromSnapshot: BACKUP_DB.SNAPSHOTS.MY_SNAPSHOT
   $$
   ```
 
@@ -181,12 +181,12 @@ Depending on the cloud provider the following considerations apply:
 
   - The maximum IOPS that can be configured is 500 IOPS per GiB of volume size, to a maximum of 80,000 IOPS. For example, the
     maximum IOPS of a 10 GiB volume can be 500 \* 10 = 5000. Accordingly, note that the maximum IOPS of 80,000 can only be configured if your volume is 160 GiB or larger.
-  - The maximum throughput that can be configured is 1 MiB/second for every 4 IOPS, to a maximum of 2000 MiBs/second.
+  - The maximum throughput that can be configured is 1 MiB/second for every 4 IOPS, to a maximum of 2000 MiB/second.
     For example, with the default 3000 IOPS you can configure throughput up to 750 MiB/second (3000/4=750).
 - Configuring iops and throughput for Azure:
 
-  - After a volume size of 6 GB, the supported number of IOPS increase by 500 for each GB beyond 6 GB (disks-types). The maximum IOPS of a 10GB volume can be 500 \* 4 + 3000 = 5000. Accordingly, note that the maximum IOPS of 80,000 can only be configured if your volume is 160 GiB or larger.
-  - After 6 GB, the maximum throughput that can be configured is 0.25 MiB/second for every IOPS, to a maximum of 1200 MiBs/second. For example, with the default 3000 IOPS you can configure throughput up to 750 MiB/second (3000\*0.25=750).
+  - After a volume size of 6 GB, the supported number of IOPS increases by 500 for each GB beyond 6 GB (disks-types). The maximum IOPS of a 10 GB volume can be 500 \* 4 + 3000 = 5000. Accordingly, note that the maximum IOPS of 80,000 can only be configured if your volume is 160 GiB or larger.
+  - After 6 GB, the maximum throughput that can be configured is 0.25 MiB/second for every IOPS, to a maximum of 1200 MiB/second. For example, with the default 3000 IOPS you can configure throughput up to 750 MiB/second (3000\*0.25=750).
 - Configuring iops and throughput for Google Cloud:
 
   - For CPU instances:
@@ -271,7 +271,7 @@ You can require the SNOWFLAKE\_FULL encryption type for all Snowpark Container S
 block-storage volumes and snapshots in the account by setting
 the [ENABLE\_SPCS\_BLOCK\_STORAGE\_SNOWFLAKE\_FULL\_ENCRYPTION\_ENFORCEMENT](/sql-reference/parameters#label-enable-spcs-block-storage-snowflake-full-encryption-enforcement) parameter to TRUE for the account.
 
-After this parameter is enabled, creation of block-storage volumes and snapshot with the SNOWFLAKE\_SSE encryption type isn’t permitted.
+After this parameter is enabled, creation of block-storage volumes and snapshots with the SNOWFLAKE\_SSE encryption type isn’t permitted.
 
 ## Example
 

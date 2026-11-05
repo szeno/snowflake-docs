@@ -94,7 +94,7 @@ ALTER FUNCTION [ IF EXISTS ] <name> ( [ <arg_data_type> , ... ] )
         More details about this parameter are in [CREATE FUNCTION (Snowpark Container Services)](/sql-reference/sql/create-function-spcs).
 
     `MAX_BATCH_ROWS = integer`
-    :   Specifies the [batch size](/developer-guide/snowpark-container-services/working-with-services#label-snowpark-containers-working-with-services-batch-size-concurrency) when sending data to a service to increase concurrency
+    :   Specifies the [batch size](/developer-guide/snowpark-container-services/working-with-services#label-snowpark-containers-working-with-services-batch-size-concurrency) when sending data to a service to increase concurrency.
 
     `MAX_BATCH_RETRIES = integer`
     :   Specifies the number of times you want Snowflake to retry a failed batch.
@@ -175,7 +175,7 @@ Set the CURRENT\_USER context header for a service function:
 Copy code
 
 ```
-ALTER FUNCTION my_echo_udf(VARCHAR) SET CONTEXT_HEADER = (CURRENT_USER);
+ALTER FUNCTION my_echo_udf(VARCHAR) SET CONTEXT_HEADERS = (CURRENT_USER);
 ```
 
 Unset MAX\_BATCH\_ROWS for a service function:

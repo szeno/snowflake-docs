@@ -16,7 +16,7 @@ Run the SQL in one interactive [Snowflake CLI](/developer-guide/snowflake-cli/sq
 
 For this tutorial you need to:
 
-- [Install Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+- [Install Snowflake CLI](/developer-guide/snowflake-cli/installation).
 - Download a Snowflake provided JSON data file.
 - Create a database, a table, and a virtual warehouse for this tutorial.
 

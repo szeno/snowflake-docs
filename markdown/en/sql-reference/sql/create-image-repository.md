@@ -8,7 +8,7 @@ Creates a new [image repository](/developer-guide/snowpark-container-services/wo
 current schema.
 
 See also:
-:   [DROP IMAGE REPOSITORY](/sql-reference/sql/drop-image-repository) , [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories)
+:   [ALTER IMAGE REPOSITORY](/sql-reference/sql/alter-image-repository) , [DROP IMAGE REPOSITORY](/sql-reference/sql/drop-image-repository) , [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories)
 
 ## Syntax
 

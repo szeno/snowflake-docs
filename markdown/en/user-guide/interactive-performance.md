@@ -141,7 +141,7 @@ Choose a warehouse size to fit the needs of your workloads. Experiment with your
 
 Tip
 
-For good performance, pick a cache size that’s sufficient to hold your *working set*. The warehouse doesn’t need fit your entire table into the cache.
+For good performance, pick a cache size that’s sufficient to hold your *working set*. The warehouse doesn’t need to fit your entire table into the cache.
 
 | Working Set or Data Cache Size (Approximate Maximum) | Warehouse Size |
 | --- | --- |
@@ -218,7 +218,7 @@ In Query Profile, queued queries spend a significant portion of their time queui
 **What to try:**
 
 - Scale out by setting `MIN_CLUSTER_COUNT` and `MAX_CLUSTER_COUNT` to run a multi-cluster interactive warehouse. If `MAX_CLUSTER_COUNT` is greater than `MIN_CLUSTER_COUNT`, Snowflake adds clusters automatically as load increases.
-- If your workload has a predictable ramp-up (for example, at the start of a business day), use [task based multi-cluster sizing](/user-guide/interactive#label-interactive-task-based-multi-cluster-sizing) to scale out the warehouse.
+- If your workload has a predictable ramp-up (for example, at the start of a business day), use [task-based multi-cluster sizing](/user-guide/interactive#label-interactive-task-based-multi-cluster-sizing) to scale out the warehouse.
 
 ### Using search optimization for point lookups
 
@@ -262,7 +262,7 @@ that can analyze your queries and recommend how to configure interactive analyti
 The skill helps you with clustering key selection, warehouse sizing, table attachment, and overall
 performance tuning.
 
-To use the skill, start Cortex Code (CLI, Desktop or in Snowsight) and describe your workload. For example:
+To use the skill, start Cortex Code (CLI, Desktop, or Snowsight) and describe your workload. For example:
 
 ```
 I have the following query:

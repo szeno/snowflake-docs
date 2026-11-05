@@ -85,7 +85,7 @@ a subset of your app files, you can use the following commands:
 
 Note
 
-[Snowflake CLI](/developer-guide/snowflake-cli/installation/installation) version 3.14.0
+[Snowflake CLI](/developer-guide/snowflake-cli/installation) version 3.14.0
 or later is required. Version 3.14+ uses the modern CREATE STREAMLIT syntax by default.
 
 If you have a complete set of edited app files on your local machine (including its
@@ -103,10 +103,6 @@ snow streamlit deploy --replace
 The way your edits take effect depends on your app’s [runtime type](/developer-guide/streamlit/app-development/runtime-environments).
 
 ### Container runtime
-
-Feature — Generally Available
-
-Not supported in government regions.
 
 When you edit a container runtime app:
 

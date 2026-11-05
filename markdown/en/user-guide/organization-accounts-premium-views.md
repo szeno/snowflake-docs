@@ -15,7 +15,7 @@ For a list of premium views, see [Organization Usage](/sql-reference/organizatio
 
 Note
 
-It can take two weeks from the time the organization account is created until premium views are fully populated with 365 days of
+It can take up to 24 hours from the time the organization account is created until premium views are fully populated with 365 days of
 historical data from accounts.
 
 ## Costs associated with premium views

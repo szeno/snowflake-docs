@@ -8,11 +8,11 @@ Snowflake supports [various storage volume types](/developer-guide/snowpark-cont
 
 With stage volumes your service can access an internal stage’s objects as if they are files on your file system, simplifying your service code compared to using a Snowflake driver and [GET](/sql-reference/sql/get) and [PUT](/sql-reference/sql/put) SQL commands to access these objects. Stage volumes can also perform better for scenarios with streaming reads or writes of large data files.
 
-If your file system operations can easily be translated to streaming GET and PUT operations, then Stage volumes will work well for your scenario. If your application needs to rename or move files, modify existing files, or perform file system based locking, then stage volume is not a good fit for your workload.
+If your file system operations can easily be translated to streaming GET and PUT operations, then stage volumes will work well for your scenario. If your application needs to rename or move files, modify existing files, or perform file system based locking, then stage volume is not a good fit for your workload.
 
 Note
 
-There are currently two implementations of stage volumes; a generally available version and a deprecated version. Snowflake recommends that you use the generally available version for new services and that you migrate your existing applications from the deprecated version.
+There are currently two implementations of stage volumes: a generally available version and a deprecated version. Snowflake recommends that you use the generally available version for new services and that you migrate your existing applications from the deprecated version.
 
 The stage volume implementation streams file contents directly to and from cloud storage, ensuring that you always get the latest contents. Consider the following points when you use a stage volume:
 
@@ -74,7 +74,7 @@ You can include the following optional fields in `stageConfig`:
   constraints or read/write failures. For more information,
   see [Common guidelines for both implementations of stage volumes](#label-spcs-stage-volume-common-guidelines-both-stage-vol-impl).
 
-  To avoid these problems, check the [CPU and memory metrics](/developer-guide/snowpark-container-services/monitoring-services#label-monitoring-services-platform-metrics) for the container (`stage-mount-v2-sidecar-<stage-volume-name>`). Snowflake adds this container to your service that provides the implementation of the stage volume you configured. This lets you to see exactly what resources your stage volume is using and determine if it is constrained by CPU or memory. Use these metrics to update the CPU and memory limits as needed.
+  To avoid these problems, check the [CPU and memory metrics](/developer-guide/snowpark-container-services/monitoring-services#label-monitoring-services-platform-metrics) for the container (`stage-mount-v2-sidecar-<stage-volume-name>`). Snowflake adds this container to your service that provides the implementation of the stage volume you configured. This lets you see exactly what resources your stage volume is using and determine if it is constrained by CPU or memory. Use these metrics to update the CPU and memory limits as needed.
 - `stageConfig.metadataCache` field: If your application frequently retrieves file metadata or lists files on a Snowflake stage in a
   loop, and you don’t expect the data to change often, you can enable metadata caching for the Snowflake stage storage volume to significantly
   improve performance. The cache stores this metadata for a specified time period, after which it is cleared. If the application then
@@ -138,15 +138,15 @@ The information you provide in this field is consistent across all supported sto
   spec:
     containers:
     - name: echo
-   image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
-   volumeMounts:
-   - name: stage-vol
-     mountPath: /path/to/stage
+      image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
+      volumeMounts:
+      - name: stage-vol
+        mountPath: /path/to/stage
     volumes:
     - name: stage-vol
-   source: stage
-   stageConfig:
-     name: "@mydb.myschema.ai_models_stage"
+      source: stage
+      stageConfig:
+        name: "@mydb.myschema.ai_models_stage"
   $$;
   ```
 - Create a service with a stage subpath `mydb.myschema.ai_models_stage/subpath` mounted at `/path/to/stage` in the main container.
@@ -160,23 +160,23 @@ The information you provide in this field is consistent across all supported sto
   spec:
     containers:
     - name: echo
-   image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
-   volumeMounts:
-   - name: stage-vol
-     mountPath: /path/to/stage
+      image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
+      volumeMounts:
+      - name: stage-vol
+        mountPath: /path/to/stage
     volumes:
     - name: stage-vol
-   source: stage
-   stageConfig:
-     name: "@mydb.myschema.ai_models_stage/subpath"
-     metadataCache: 1h
-     resources:
-       requests:
-         cpu: 0.35
-         memory: 0.4Gi
-       limits:
-         cpu: 2.0
-         memory: 1Gi
+      source: stage
+      stageConfig:
+        name: "@mydb.myschema.ai_models_stage/subpath"
+        metadataCache: 1h
+        resources:
+          requests:
+            cpu: 0.35
+            memory: 0.4Gi
+          limits:
+            cpu: 2.0
+            memory: 1Gi
   $$;
   ```
 
@@ -231,7 +231,7 @@ To create a service where service containers use Snowflake stage volume, specify
 
 ### Example (deprecated)
 
-In the example service specification, the app container mounts an internal stage `@model_stage` by using the deprecated stage volume implementations:
+In the example service specification, the app container mounts an internal stage `@model_stage` by using the deprecated stage volume implementation:
 
 Copy code
 
@@ -271,7 +271,7 @@ This section provides you with guidelines to follow when you implement applicati
 
 - Concurrent writes to the same file from multiple stage mounts — same stage volume mounted on different containers — aren’t recommended.
 - The absence of a local disk cache improves consistency across mounts. File changes are flushed directly to the backing stage upon closing the file, with no local disk buffering. Reads always return the latest data, making the new stage mount better for sharing data between services.
-- Read and write data in large, contiguous chunks for optimal performance. The performance penalty for small reads and writes when compared to the generally available stage volume implementation, can mitigate the performance gains from the new implementation.
+- Read and write data in large, contiguous chunks for optimal performance. The performance penalty for small reads and writes when compared to the generally available stage volume implementation can mitigate the performance gains from the new implementation.
 
 ## Limitations when using stage volumes
 
@@ -303,9 +303,9 @@ This section describes limitations you should be aware of when you implement app
 
 ### Limitations when using the generally available version of the stage volume implementation
 
-- Random writes, and file appends aren’t supported.
+- Random writes and file appends aren’t supported.
 - Each stage that is mounted requires 512 MB memory per stage. This means that there is
   a limitation on the number of stage volumes that can be used based on instance size. Mounting the
   volume on multiple containers doesn’t increase memory consumption.
-- A maximum of 20 stage volumes are allowed per service. For more information, see
+- A maximum of 20 stage volumes is allowed per service. For more information, see
   [spec.volumes](/developer-guide/snowpark-container-services/specification-reference#label-snowpark-containers-spec-volume).

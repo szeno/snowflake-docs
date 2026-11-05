@@ -100,7 +100,7 @@ to which it is applied, and not all objects support all privileges:
 | MONITOR SECURITY | Global | Grants the ability to call system functions pertaining to [Customer-managed keys](/user-guide/security-encryption-manage#label-customer-managed-keys). |
 | MONITOR USAGE | Global | Grants the ability to monitor account-level usage and historical information for databases and warehouses; for more details, see [Enabling non-account administrators to monitor usage and billing history](/user-guide/security-access-control-configure#label-allow-other-users-to-monitor-usage-billing-history). Additionally grants the ability to view managed accounts using [SHOW MANAGED ACCOUNTS](/sql-reference/sql/show-managed-accounts). |
 | MONITOR USER | Global | Grants the ability to view users and all their properties in the account. |
-| OPERATE | Warehouse, Task, Dynamic table, Alert, Compute Pool, Service | Grants the ability to start, stop, suspend, or resume a virtual warehouse. Grants the ability to suspend or resume a task. Grants the ability to suspend, resume, or refresh a dynamic table. Grants the ability to suspend or resume a compute pool. Grants the ability to suspend or resume a Snowpark Container Services service, upgrade service, set, and unset service properties. |
+| OPERATE | Warehouse, Task, Dynamic table, Alert, Compute Pool, Service | Grants the ability to start, stop, suspend, or resume a virtual warehouse. Grants the ability to suspend or resume a task. Grants the ability to suspend, resume, or refresh a dynamic table. Grants the ability to suspend or resume a compute pool. Grants the ability to suspend or resume a Snowpark Container Services service and upgrade the service. Setting or unsetting service properties requires the OWNERSHIP privilege on the service. |
 | OWNERSHIP | All | Grants the ability to drop, alter, and grant or revoke access to an object. Required to rename an object and create a temporary object with the same name as the object itself. OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role or any role with the MANAGE GRANTS privilege. |
 | PURCHASE DATA EXCHANGE LISTING | Global | Grants the ability to purchase a paid listing. |
 | READ | Stage (internal only), Compute Pool, Git Repository, Image Repository, Cortex Extension, DCM project | Grants the ability to perform any operations that require reading from an internal stage ([GET](/sql-reference/sql/get), [LIST](/sql-reference/sql/list), [COPY INTO <table>](/sql-reference/sql/copy-into-table), etc.). Grants the ability to download an image from an image repository. READ privilege on stage and image repository is required to create a Snowpark Container Services service. For models, READ grants the ability to run inference methods along with read-only access to the model’s underlying artifacts and metadata. |
@@ -1318,6 +1318,8 @@ Show lessSee more
 | OWNERSHIP | Enables full control over the image repository. The role with this privilege can also delete an image repository. |
 | READ | Enables listing and downloading images from an image repository. |
 | WRITE | Enables listing and downloading images from a repository. Also enables pushing images in the repository. |
+| SERVICE READ | Enables a container service to list and download images from a repository. This is needed for the image building step of [model serving](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api). |
+| SERVICE WRITE | Enables a container service to push images in the repository. This is needed for the image building step of [model serving](/developer-guide/snowflake-ml/inference/real-time-inference-rest-api). |
 
 Expand
 
@@ -1328,7 +1330,7 @@ Show lessSee more
 | Privilege | Usage |
 | --- | --- |
 | DROP | Enables dropping a Snowpark Container Services service. |
-| OPERATE | Enables suspending or resuming a service, upgrading service, and modifying service properties. |
+| OPERATE | Enables suspending or resuming a service and upgrading the service. To set or unset service properties, the role needs the OWNERSHIP privilege. |
 | OWNERSHIP | Enables full control over the service. The role with this privilege can also remove a service from a schema. |
 | MONITOR | Enables monitoring a service and getting runtime status. |
 

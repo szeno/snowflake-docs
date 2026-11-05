@@ -9,6 +9,7 @@ This command supports the following variants:
 - [CREATE DYNAMIC TABLE FROM BACKUP SET](#label-create-dt-backup-syntax): Restores a dynamic table from a backup.
 - [CREATE DYNAMIC TABLE … CLONE](#label-create-dt-clone-syntax): Creates a clone of an existing dynamic table.
 - [CREATE DYNAMIC ICEBERG TABLE](#label-create-dt-iceberg-syntax): Creates a dynamic Apache Iceberg™ table.
+- [CREATE DYNAMIC ICEBERG TABLE FROM BACKUP SET](#label-create-dit-backup-syntax): Restores a dynamic Apache Iceberg™ table from a backup.
 
 See also:
 :   [ALTER DYNAMIC TABLE](/sql-reference/sql/alter-dynamic-table), [DESCRIBE DYNAMIC TABLE](/sql-reference/sql/desc-dynamic-table), [DROP DYNAMIC TABLE](/sql-reference/sql/drop-dynamic-table), [SHOW DYNAMIC TABLES](/sql-reference/sql/show-dynamic-tables)
@@ -161,6 +162,54 @@ For more information about backups, see [Backups for disaster recovery and immut
 
 `backup_set`
 :   Specifies the name of a backup set created for a specific dynamic table.
+    You can use the SHOW BACKUP SETS command to locate the right backup set.
+
+`backup_id`
+:   Specifies the identifier of a specific backup within that backup set.
+    You can use the SHOW BACKUPS IN BACKUP SET command to locate the right identifier within the backup
+    set, based on the creation date and time for the backup.
+
+### CREATE DYNAMIC ICEBERG TABLE FROM BACKUP SET
+
+Feature — Generally Available
+
+Backups for Snowflake Storage for Apache Iceberg™ tables are generally available
+on Amazon Web Services (AWS) only.
+
+Copy code
+
+```
+CREATE DYNAMIC ICEBERG TABLE <name> FROM BACKUP SET <backup_set> IDENTIFIER '<backup_id>'
+```
+
+The FROM BACKUP SET clause restores a dynamic Iceberg table that uses Snowflake Storage from a
+backup.
+You don’t specify other table properties because they’re all the same as in the backed-up table.
+
+This form doesn’t have a CREATE OR REPLACE clause. You typically either restore the
+dynamic Iceberg table under a new name and recover any data or other objects from this new table,
+or rename the original table and then restore the table under the original name.
+
+Note
+
+The backup set is associated with the internal table ID of the original table.
+Any more backups you add to the backup set use the original table, even if you
+changed its name. If you want to make backups of the newly restored table, create a
+new backup set for it.
+
+When you restore a dynamic Iceberg table from a backup, Snowflake
+[automatically initializes](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization)
+the new table during its initial refresh.
+
+For more information about backups, see [Backups for disaster recovery and immutable storage](/user-guide/backups).
+
+If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can promote
+`CREATE DYNAMIC TABLE ... FROM BACKUP SET` to this dynamic Iceberg restore variant. Prefer
+`CREATE DYNAMIC ICEBERG TABLE ... FROM BACKUP SET` in your SQL.
+
+`backup_set`
+:   Specifies the name of a backup set created for a specific dynamic Iceberg table that uses
+    Snowflake Storage.
     You can use the SHOW BACKUP SETS command to locate the right backup set.
 
 `backup_id`

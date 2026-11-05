@@ -29,7 +29,7 @@ Consumer data is protected using the following:
 - Encryption in transit and at rest.
 - Fine-grained access controls.
 
-The Snowflake Native App Framework ensures that app with containers can only access the specific data and resources to which
+The Snowflake Native App Framework ensures that an app with containers can only access the specific data and resources to which
 an app has been granted access. This minimizes the risk of data exfiltration.
 
 ## Additional approval requirements for apps with containers

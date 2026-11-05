@@ -307,6 +307,8 @@ On every start, the Worker container installs Microsoft ODBC Driver 18 from Micr
 
 If a host is missing, the driver install fails, the container exits, and SPCS restarts it repeatedly. `PREFER_NATIVE_DRIVER` (`prefer_native_driver` in Worker TOML) changes which driver the connection uses, not which hosts the container needs.
 
+Windows authentication on SPCS doesn’t use a SQL password secret. Create `DEW_KERBEROS_KEYTAB` and `DEW_KERBEROS_KRB5_CONF` as `GENERIC_STRING` secrets, and include every domain controller on the egress rule together with the SQL Server host. See [Windows authentication](../data-migration-validation/migrate-sql-server#windows-authentication).
+
 ### Amazon Redshift
 
 Recommended allowlist (plus your Redshift endpoint):

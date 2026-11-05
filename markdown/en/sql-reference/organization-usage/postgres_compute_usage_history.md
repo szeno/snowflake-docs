@@ -13,7 +13,7 @@ columns explicitly, and use the time filter column table plus worked SQL and ant
 
 The POSTGRES\_COMPUTE\_USAGE\_HISTORY view in the ORGANIZATION\_USAGE schema can be
 used to query the total hourly compute credit usage across all [Postgres instances](/user-guide/snowflake-postgres/about)
-in your organization for the last 365 days (1 year).
+in your organization for the last 365 days (1 year) by default.
 
 ## Columns
 
@@ -33,7 +33,6 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 24 hours (1 day).
-- The data is retained for 365 days (1 year).
 - The POSTGRES\_COMPUTE\_USAGE\_HISTORY view and the Snowsight cost management tools can return different daily compute usage
   values. This discrepancy is caused by the methods used to determine compute usage. To determine these values, the
   POSTGRES\_COMPUTE\_USAGE\_HISTORY view uses the current session’s [TIMEZONE](/sql-reference/parameters#label-timezone) parameter and the Snowsight cost

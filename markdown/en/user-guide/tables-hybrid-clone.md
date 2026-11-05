@@ -55,8 +55,9 @@ CREATE OR REPLACE SCHEMA clone_ht_schema CLONE ht_schema IGNORE HYBRID TABLES;
 
 ## Usage notes for cloning hybrid tables
 
-- You cannot create clones that include hybrid tables by using the AT BEFORE, OFFSET, or STATEMENT (query UUID) parameters.
-  You must specify either no parameters at all or AT TIMESTAMP with an explicitly cast TIMESTAMP value.
+- Point-in-time clones that include hybrid tables support `TIMESTAMP` and `OFFSET` with `AT` or `BEFORE`.
+  Specifying the time with `STATEMENT` (a query ID) is not supported when the clone includes hybrid tables.
+  Append `IGNORE HYBRID TABLES` to clone at a statement and skip the hybrid tables.
 - Consistent with the behavior for standard tables, the history of a source table that is cloned is not retained by the clone itself. Cloned tables lose all the prior history of their source tables, which means that
   you cannot use Time Travel to see any past state after they have been cloned. Time Travel can be used to see the new history of tables that accrues after the cloning operation.
 - Cloning hybrid tables is a size-of-data operation, while cloning standard tables is a metadata-only operation. This difference has an impact on compute cost, storage cost, and performance.

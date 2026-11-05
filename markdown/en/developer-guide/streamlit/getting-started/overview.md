@@ -67,7 +67,7 @@ To view your app, sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snows
 
 Note
 
-[Snowflake CLI](/developer-guide/snowflake-cli/installation/installation) version 3.14.0
+[Snowflake CLI](/developer-guide/snowflake-cli/installation) version 3.14.0
 or later is required. Version 3.14+ uses the modern CREATE STREAMLIT syntax by default.
 
 1. Initialize a new Streamlit project:

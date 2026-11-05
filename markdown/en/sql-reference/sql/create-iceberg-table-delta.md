@@ -171,6 +171,8 @@ For general information about roles and privilege grants for performing SQL acti
   - You can use the Parquet physical type `int96` for TIMESTAMP, but Snowflake doesn’t support `int96` for TIMESTAMP\_NTZ.
 
   - For more information about Delta data types and Iceberg tables, see [Delta data types](/user-guide/tables-iceberg-data-types#label-tables-iceberg-delta-source-data-types).
+  - Snowflake supports only the schema changes and type widenings described in
+    [Schema changes](/user-guide/tables-iceberg-delta-direct#label-tables-iceberg-delta-direct-schema-changes).
   - The following Delta Lake features aren’t currently supported: Row Tracking, change data files, change metadata,
     DataChange, CDC, protocol evolution.
 - Considerations for creating tables:

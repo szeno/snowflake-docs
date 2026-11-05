@@ -53,7 +53,7 @@ To set up Snowflake for this tutorial, complete the following before continuing:
      Users with the ACCOUNTADMIN or SECURITYADMIN role can create users.
 2. Install Snowflake CLI
 
-   To install Snowflake CLI, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+   To install Snowflake CLI, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 3. Configure a connection
 
    Before you can run SQL, define a connection to your Snowflake account. See [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect).

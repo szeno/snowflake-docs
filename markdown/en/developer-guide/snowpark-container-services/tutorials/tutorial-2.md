@@ -56,7 +56,7 @@ You will need information about the repository (the repository URL and the regis
      ```
      <orgname>-<acctname>.registry.snowflakecomputing.com/tutorial_db/data_schema/tutorial_repository
      ```
-   - The host name in the repository URL is registry host name. An example is shown:
+   - The host name in the repository URL is the registry host name. An example is shown:
 
      ```
      <orgname>-<acctname>.registry.snowflakecomputing.com
@@ -66,7 +66,7 @@ You will need information about the repository (the repository URL and the regis
 
 1. Open a terminal window, and change to the directory containing the files you unzipped.
 2. To build a Docker image, execute the following `docker build` command using the Docker CLI.
-   Note the command specifies current working directory (.)
+   Note the command specifies the current working directory (.)
    as the `PATH` for files to use for building the image.
 
    Copy code
@@ -193,7 +193,7 @@ Now you are ready to create a job.
      | Job TUTORIAL_2_JOB_SERVICE completed successfully with status: DONE.               |
      +------------------------------------------------------------------------------------+
      ```
-2. The job service runs a simple query and saves result to the results table.
+2. The job service runs a simple query and saves the result to the results table.
    You can verify the job service successfully completed by querying the results table:
 
    Copy code
@@ -228,7 +228,7 @@ Now you are ready to create a job.
       +---------------+-------------+------------------------+-------------+----------------+--------+------------------------+----------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------+---------------+------------+
       | database_name | schema_name | service_name           | instance_id | container_name | status | message                | image_name                                                                                                                             | image_digest                                                            | restart_count | start_time |
       |---------------+-------------+------------------------+-------------+----------------+--------+------------------------+----------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------+---------------+------------|
-      | TUTORIAL_DB   | DATA_SCHEMA | TUTORIAL_2_JOB_SERVICE | 0           | main           | DONE   | Completed successfully | myorg-myacct.registry.snowflakecomputing.com/tutorial_db/tutorial_db/data_schema/tutorial_repository/my_job_image:latest | sha256:aa3fa2e5c1552d16904a5bbc97d400316ebb4a608bb110467410485491d9d8d0 |             0 |            |
+      | TUTORIAL_DB   | DATA_SCHEMA | TUTORIAL_2_JOB_SERVICE | 0           | main           | DONE   | Completed successfully | myorg-myacct.registry.snowflakecomputing.com/tutorial_db/data_schema/tutorial_repository/my_job_image:latest | sha256:aa3fa2e5c1552d16904a5bbc97d400316ebb4a608bb110467410485491d9d8d0 |             0 |            |
       +---------------+-------------+------------------------+-------------+----------------+--------+------------------------+----------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------+---------------+------------+
       ```
    2. To get the job service log information, use the system function [SYSTEM$GET\_SERVICE\_LOGS](/sql-reference/functions/system_get_service_logs):
@@ -384,7 +384,7 @@ def run_job():
       f"Executing query [{query}] and writing result to table [{result_table}]"
     )
     res = session.sql(query)
-    # If the table already exists, the query result must match the table scheme.
+    # If the table already exists, the query result must match the table schema.
     # If the table does not exist, this will create a new table.
     res.write.mode("append").save_as_table(result_table)
 
@@ -463,7 +463,7 @@ Use the following steps to test the Tutorial 2 Docker image:
    Copy code
 
    ```
-   docker build --rm -t my_service:local .
+   docker build --rm -t my_job:local .
    ```
 2. To launch your code, execute the `docker run` command, providing `<orgname>-<acctname>`, `<username>`, and
    `<password>`:

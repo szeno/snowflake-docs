@@ -258,6 +258,20 @@ Copy code
 ALTER SERVICE echo_service SET MIN_INSTANCES=3 MAX_INSTANCES=5;
 ```
 
+Upgrade the code for a service. After you upload the updated image to your image repository, specify the service specification file
+in a stage. Snowflake redeploys the service with the new code, replacing one service instance at a time
+(a rolling upgrade):
+
+Copy code
+
+```
+ALTER SERVICE echo_service
+  FROM @tutorial_stage
+  SPECIFICATION_FILE = 'echo_spec.yaml';
+```
+
+For more information, see [Updating service code and redeploying the service](/developer-guide/snowpark-container-services/working-with-services#updating-service-code-and-redeploying-the-service).
+
 Restore a snapshot on an existing block volume associated with instances 0 and 2 of the `example_service` service.
 
 Copy code

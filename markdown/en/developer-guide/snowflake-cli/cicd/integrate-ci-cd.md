@@ -78,7 +78,7 @@ uv tool install snowflake-cli
 snow --version
 ```
 
-For installation options on specific operating systems, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation). For connection management (including using environment variables to avoid storing credentials on the runner), see [Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
+For installation options on specific operating systems, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation). For connection management (including using environment variables to avoid storing credentials on the runner), see [Managing Snowflake connections](/developer-guide/snowflake-cli/connecting/configure-connections).
 
 ## Typical pipeline stages
 

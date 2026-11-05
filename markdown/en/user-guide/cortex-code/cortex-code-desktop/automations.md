@@ -1,12 +1,15 @@
 # Automations
 
-Automations let you automate recurring work with CoCo. Each automation is a saved prompt that runs on a schedule. When an automation fires, CoCo starts a new chat session, sends your prompt to the agent, and notifies you when it finishes.
+Automations let you automate recurring work with CoCo. Each automation is a saved prompt that runs on a schedule. CoCo Desktop has two kinds of automations:
 
-Automations are available in all CoCo Desktop builds. They are stored locally per machine and per OS user. They are not synced across devices.
+- **Local automations** run on your computer. When one fires, CoCo starts a new chat session, sends your prompt to the agent, and notifies you when it finishes. Local automations are available in all CoCo Desktop builds. They are stored locally per machine and per OS user. They are not synced across devices.
+- **Cloud automations** run in Snowflake on a schedule, even while your computer is off. They are in preview. See [Cloud automations](#label-cortex-code-desktop-automations-cloud).
+
+Most of this page describes local automations.
 
 Important
 
-Automations only run while CoCo is open and your computer is awake. If the app is closed or the machine is asleep when an automation is due, the run is skipped. When you reopen the app, the most recent missed run for each automation is caught up automatically and shown as a “catch-up” run in history. Older missed runs are discarded.
+Local automations only run while CoCo is open and your computer is awake. If the app is closed or the machine is asleep when an automation is due, the run is skipped. When you reopen the app, the most recent missed run for each automation is caught up automatically and shown as a “catch-up” run in history. Older missed runs are discarded.
 
 ## What automations are good for
 
@@ -18,7 +21,7 @@ Automations only run while CoCo is open and your computer is awake. If the app i
 ## Quick start
 
 1. Open the **Automations** view from the activity bar.
-2. Click **New automation**.
+2. Click **New**, then select **Set up manually**. If your account has Cloud automations, choose **Local**.
 3. Give the automation a title and write a prompt describing what you want the agent to do.
 4. Pick how often it should run (for example, **Daily at 9:00**).
 5. Click **Create**. The automation starts firing on the schedule you chose.
@@ -26,9 +29,11 @@ Automations only run while CoCo is open and your computer is awake. If the app i
 
 The next run time is shown on the automation’s card. You can pause, edit, delete, or **Run now** at any time.
 
+To have CoCo set up an automation for you in a chat, click **New**, then select **Create with CoCo**, and describe what the automation should do.
+
 ## Creating an automation
 
-When you click **New automation**, you’ll see a form with these fields:
+When you click **New** and select **Set up manually**, you’ll see a form with these fields. If your account has Cloud automations, the form first asks where the automation runs: **Cloud** or **Local**. Choose **Local** for the fields described here.
 
 ### Title
 
@@ -114,6 +119,10 @@ Click an automation to open its detail view, which adds:
 - **Status:** current state, last run result, next scheduled fire.
 - **Previous runs:** recent run history. Click any entry to open that run’s chat session and review what the agent did.
 
+When your account has Cloud automations, the detail view shows a sortable run history and a preview of the latest output instead.
+
+A dot on an automation marks its newest run that you haven’t viewed yet, with failed runs taking precedence. The Agent view sidebar shows how many new runs there are. Opening the automation clears its dot.
+
 ## Run history
 
 CoCo keeps the most recent **50 runs** per automation. Each entry records:
@@ -134,3 +143,23 @@ When a run completes, CoCo shows a desktop notification. Click it to jump to the
 If an automation tries to use a tool that requires approval, the run pauses and waits for you to approve or deny it from the chat session. To avoid stalls on future runs, click **Run now** after creating an automation, watch the session for any tool prompts, and approve them.
 
 To skip approval prompts entirely for an automation, use a bypass [permission mode](/user-guide/cortex-code/cortex-code-desktop/permission-modes).
+
+## Cloud automations
+
+[Preview Feature](/release-notes/preview-features)  — Open
+
+Available in accounts where CoCo automations are enabled.
+
+Cloud automations run in Snowflake as agent tasks on a schedule, even while your computer is off or CoCo Desktop is closed. They are the same Snowflake-hosted automations that you can create and manage in CoCo CLI and CoCo in Snowsight.
+
+Cloud automations are listed on the **Cloud** tab of the **Automations** page. The **Cloud** tab and a **Cloud Preview** badge beside the **Automations** title appear only in accounts where CoCo automations are enabled. To turn off Cloud automations, set the `chat.automations.cloud.enabled` setting to `false`.
+
+You can create a cloud automation in the following ways:
+
+- **From a template:** On the **Cloud** tab, click **Get started** on a template card, such as **CoCo Usage Report** or **Pipeline Failure Alert**. CoCo Desktop checks your access, creates the automation, and offers to run a test. Each report appears in the automation’s run history and is sent to your email address.
+- **With CoCo:** Click **New**, select **Create with CoCo**, and describe the automation in the chat.
+- **With a form:** Click **New**, select **Set up manually**, and choose **Cloud**. A cloud automation needs a schedule other than **Manual**, and can optionally use a **GitHub secret** for GitHub access.
+
+Click a cloud automation to view its instruction, latest output, run history, and details. Use **Edit**, **Run now**, and **Delete** to manage it, and select its status to suspend or resume its schedule.
+
+A cloud automation runs in a Snowflake-managed sandbox, so it can’t use files, MCP servers, or skills from your computer. For requirements, cost, security, and limits, see [CoCo automations in CLI, Snowsight, and Desktop (Preview)](/user-guide/cortex-code/cortex-code-automations).

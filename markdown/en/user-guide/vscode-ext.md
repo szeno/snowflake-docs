@@ -230,7 +230,7 @@ You can use the VS Code extension to create and manage a Snowflake Native App. F
 
 Note
 
-To make sure you have the latest VS Code extension Snowflake Native App functionality, Snowflake recommends upgrading to the most recent version of the Snowflake CLI. See [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+To make sure you have the latest VS Code extension Snowflake Native App functionality, Snowflake recommends upgrading to the most recent version of the Snowflake CLI. See [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 
 Snowflake CLI versions 2.2.X and 3.X.X are supported.
 

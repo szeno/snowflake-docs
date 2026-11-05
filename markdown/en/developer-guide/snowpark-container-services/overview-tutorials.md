@@ -16,4 +16,4 @@ These tutorials provide step-by-step instructions for you to explore Snowpark Co
 :   Provides step-by-step instructions to create your first Snowpark Container Services job service.
 
 [Tutorial 3: Create a service and a job using the Snowflake Python APIs](/developer-guide/snowpark-container-services/tutorials/tutorial-1-with-sf-python)
-:   Provides step-by-step instructions to create a service using Snowflake Python API.
+:   Provides step-by-step instructions to create a service and a job using the Snowflake Python APIs.

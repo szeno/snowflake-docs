@@ -19,7 +19,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 [Performance (Organization Usage)](/sql-reference/organization-usage#label-org-usage-performance): bound every scan on history views, list
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
-This Organization Usage view displays the average daily data storage usage, in bytes, for each account in your organization for the last 365 days (1 year). Each row is the storage for a single account on a given date, including data in:
+This Organization Usage view displays the average daily data storage usage, in bytes, for each account in your organization for the last 365 days (1 year) by default. Each row is the storage for a single account on a given date, including data in:
 
 - Database tables.
 - Files in all internal stages.

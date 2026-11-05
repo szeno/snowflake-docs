@@ -62,7 +62,7 @@ Clone the [connectors-native-sdk](https://github.com/snowflakedb/connectors-nati
 
 The [Snowflake CLI](/developer-guide/snowflake-cli/index) tool is
 required to build, deploy, and install the connector. If you do not have Snowflake CLI on your
-machine, install it as per instructions available in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+machine, install it as per instructions available in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 
 After the tool is installed, you need to configure a connection to Snowflake in your
 [configuration file](/developer-guide/snowflake-cli/connecting/configure-cli#label-cli-config-locations).

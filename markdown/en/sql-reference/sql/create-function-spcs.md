@@ -299,7 +299,7 @@ The following alterations are not supported:
 
 - RETURNS
 - Volatility (VOLATILE/IMMUTABLE)
-- Null handling (CALLED ON NULL INPUT / RETURNS NULL ON NULL)
+- Null handling (CALLED ON NULL INPUT / RETURNS NULL ON NULL INPUT)
 
 ## Examples
 

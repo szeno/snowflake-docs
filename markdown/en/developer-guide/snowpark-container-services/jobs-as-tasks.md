@@ -28,12 +28,12 @@ AS
 
 Note
 
-- Snowflake job tasks supports the [Serverless model](/user-guide/tasks-intro#label-tasks-compute-resources-serverless), so you don’t specify a warehouse in the CREATE TASK statement.
-- When you run a job service as a task, you should run the job service synchronously, otherwise the task will report completion before the job service is completed.
+- Snowflake job tasks support the [Serverless model](/user-guide/tasks-intro#label-tasks-compute-resources-serverless), so you don’t specify a warehouse in the CREATE TASK statement.
+- When you run a job service as a task, you should run the job service synchronously; otherwise the task will report completion before the job service is completed.
 
 ## Passing data into and out of jobs running as tasks
 
-[Task graphs](/user-guide/tasks-graphs) enable you to create and manage complex, multi-step data pipelines that seamlessly integrate job services running as tasks. You can use the [supported system functions](/user-guide/tasks-graphs#label-task-graph-with-logic) in your job service code to access the task context and use it to fetch task graph configuration, and runtime information of the executing task.
+[Task graphs](/user-guide/tasks-graphs) enable you to create and manage complex, multi-step data pipelines that seamlessly integrate job services running as tasks. You can use the [supported system functions](/user-guide/tasks-graphs#label-task-graph-with-logic) in your job service code to access the task context and use it to fetch task graph configuration and runtime information of the executing task.
 
 When you run job services as tasks, you can use the following data-sharing options between tasks in a task graph:
 

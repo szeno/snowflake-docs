@@ -16,6 +16,8 @@ To use skills and plugins in CoCo on Snowsight, you need:
 
 Snowflake provides built-in skills that are available from any page in Snowsight. Type `/` to see and select from the available skills. The list of built-in skills evolves as feature teams add new skills to Snowsight.
 
+For a reference of the skills bundled with CoCo CLI, see [CoCo CLI bundled skills](/user-guide/cortex-code/bundled-skills).
+
 ## Personal skills
 
 You can create your own skills in a workspace to tailor CoCo to your specific workflows.

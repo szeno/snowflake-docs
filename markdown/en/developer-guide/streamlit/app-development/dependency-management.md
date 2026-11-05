@@ -126,10 +126,6 @@ Show lessSee more
 
 ## Managing dependencies for container runtimes
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 PyPI is the default package index used by uv to install Python packages in your container runtime.
 Container-runtime apps require a Snowflake artifact repository to install packages from an
 external package index like PyPI. Without one, you can only use packages shipped with the runtime or included

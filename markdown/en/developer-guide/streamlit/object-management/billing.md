@@ -16,10 +16,6 @@ own AUTO\_RESUME and AUTO\_SUSPEND values.
 
 ### Container runtime
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 If your Streamlit app uses a container runtime, you are billed for the usage of the
 underlying Snowpark Container Services compute pool. In this case, the Streamlit app is a long-running
 service. The Streamlit server runs continuously on a node of the compute pool, allowing

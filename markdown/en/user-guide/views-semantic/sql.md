@@ -1515,6 +1515,850 @@ METRICS (
     AS SUM(balance)
 ```
 
+### Defining level of detail (LOD) metrics
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Level of detail (LOD) metrics calculate a value at a grain that’s different from the query grain. Without
+LOD, each metric is calculated at the grain defined by the dimensions in the query. With LOD, you can:
+
+- Fix a calculation to an exact set of dimensions, no matter what the query groups by (`FIXED`).
+- Add dimensions to the query grain for one calculation (`INCLUDE`).
+- Remove dimensions from the query grain for one calculation (`EXCLUDE`).
+
+You can define LOD calculations as facts, as dimensions, or inline in a metric. LOD metrics work in SQL queries
+that run against semantic views. Cortex Analyst and Cortex Agents don’t use LOD metrics yet.
+
+Note
+
+LOD metrics are available in SQL queries against semantic views (`SEMANTIC_VIEW` and direct FROM-clause queries).
+Cortex Analyst and Cortex Agents don’t use LOD metrics yet.
+
+The examples in this section use the following sample data. Alice and Bob are in the North region, and Carol and Dan are in the South region.
+The regional totals are $1,300 for North and $800 for South, and the grand total is $2,100.
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE customers (
+  customer_id INT,
+  name VARCHAR,
+  region VARCHAR,
+  segment VARCHAR
+);
+
+CREATE OR REPLACE TABLE orders (
+  order_id INT,
+  customer_id INT,
+  category VARCHAR,
+  amount NUMBER(10,2)
+);
+
+INSERT INTO customers VALUES
+  (1, 'Alice', 'North', 'Premium'),
+  (2, 'Bob', 'North', 'Standard'),
+  (3, 'Carol', 'South', 'Premium'),
+  (4, 'Dan', 'South', 'Standard');
+
+INSERT INTO orders VALUES
+  (101, 1, 'Electronics', 400.00),
+  (102, 1, 'Electronics', 200.00),
+  (103, 1, 'Clothing', 300.00),
+  (104, 1, 'Clothing', 100.00),
+  (105, 2, 'Electronics', 200.00),
+  (106, 2, 'Clothing', 100.00),
+  (107, 3, 'Electronics', 300.00),
+  (108, 3, 'Electronics', 200.00),
+  (109, 3, 'Clothing', 100.00),
+  (110, 4, 'Electronics', 200.00);
+```
+
+#### Base semantic view
+
+The following semantic view defines every type of LOD metric used in the examples in this section. Each
+example below shows the part of the definition that it uses.
+
+Copy code
+
+```
+CREATE OR REPLACE SEMANTIC VIEW sales_sv
+  TABLES (
+    customers AS my_db.my_schema.customers PRIMARY KEY (customer_id),
+    orders AS my_db.my_schema.orders
+  )
+  RELATIONSHIPS (
+    orders(customer_id) REFERENCES customers
+  )
+  FACTS (
+    orders.order_amount AS amount,
+    orders_per_customer AS COUNT(orders.order_id)
+      FIXED DIMENSIONS (customers.customer_id),
+    revenue_per_customer AS SUM(orders.order_amount)
+      FIXED DIMENSIONS (customers.customer_id),
+    grand_total_revenue AS SUM(orders.order_amount)
+      FIXED DIMENSIONS (),
+    region_total_fixed AS SUM(orders.order_amount)
+      FIXED DIMENSIONS (customers.region),
+    num_orders_incl_customer AS COUNT(orders.order_id)
+      INCLUDE DIMENSIONS (customers.customer_id),
+    regional_revenue_excl_cat AS SUM(orders.order_amount)
+      EXCLUDE DIMENSIONS (orders.category),
+    region_total_excl_customer AS SUM(orders.order_amount)
+      EXCLUDE DIMENSIONS (customers.customer_id)
+  )
+  DIMENSIONS (
+    customers.customer_id AS customer_id,
+    customers.region AS region,
+    customers.segment AS segment,
+    orders.order_id AS order_id,
+    orders.category AS category,
+    orders_by_region AS COUNT(orders.order_id)
+      FIXED DIMENSIONS (customers.region)
+  )
+  METRICS (
+    orders.total_revenue AS SUM(amount),
+    orders.order_count AS COUNT(orders.order_id),
+    avg_orders_per_customer AS AVG(orders_per_customer),
+    avg_revenue_per_customer AS AVG(revenue_per_customer),
+    pct_of_total AS SUM(orders.order_amount) / AVG(grand_total_revenue),
+    avg_orders_per_customer_inline AS AVG(COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id)),
+    avg_orders_incl_customer AS AVG(num_orders_incl_customer),
+    avg_customer_rev_by_region AS AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.customer_id)),
+    avg_regional_rev_by_segment AS AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.region)),
+    pct_of_regional_total_named AS SUM(orders.order_amount) / AVG(regional_revenue_excl_cat),
+    pct_of_regional_total AS SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (orders.category)),
+    pct_of_region_by_segment AS SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (customers.segment)),
+    region_rev_via_fixed AS AVG(region_total_fixed),
+    region_rev_via_exclude AS AVG(region_total_excl_customer)
+  );
+```
+
+The same semantic view in YAML:
+
+Copy code
+
+```
+name: sales_sv
+tables:
+  - name: customers
+    base_table:
+      database: my_db
+      schema: my_schema
+      table: customers
+    primary_key:
+      columns: [customer_id]
+    dimensions:
+      - name: customer_id
+        expr: customer_id
+        data_type: NUMBER
+      - name: region
+        expr: region
+        data_type: VARCHAR
+      - name: segment
+        expr: segment
+        data_type: VARCHAR
+  - name: orders
+    base_table:
+      database: my_db
+      schema: my_schema
+      table: orders
+    dimensions:
+      - name: order_id
+        expr: order_id
+        data_type: NUMBER
+      - name: category
+        expr: category
+        data_type: VARCHAR
+    facts:
+      - name: order_amount
+        expr: amount
+        data_type: NUMBER(10,2)
+    metrics:
+      - name: total_revenue
+        expr: SUM(amount)
+      - name: order_count
+        expr: COUNT(order_id)
+
+relationships:
+  - name: orders_to_customers
+    left_table: orders
+    right_table: customers
+    relationship_columns:
+      - left_column: customer_id
+        right_column: customer_id
+
+facts:
+  - name: orders_per_customer
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+  - name: revenue_per_customer
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+  - name: grand_total_revenue
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: fixed
+    lod_dimensions: []
+  - name: region_total_fixed
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: region
+  - name: num_orders_incl_customer
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: include
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+  - name: regional_revenue_excl_cat
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: exclude
+    lod_dimensions:
+      - table: orders
+        dimension: category
+  - name: region_total_excl_customer
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: exclude
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+
+dimensions:
+  - name: orders_by_region
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: region
+
+metrics:
+  - name: avg_orders_per_customer
+    expr: AVG(orders_per_customer)
+  - name: avg_revenue_per_customer
+    expr: AVG(revenue_per_customer)
+  - name: pct_of_total
+    expr: SUM(orders.order_amount) / AVG(grand_total_revenue)
+  - name: avg_orders_per_customer_inline
+    expr: AVG(COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id))
+  - name: avg_orders_incl_customer
+    expr: AVG(num_orders_incl_customer)
+  - name: avg_customer_rev_by_region
+    expr: AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.customer_id))
+  - name: avg_regional_rev_by_segment
+    expr: AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.region))
+  - name: pct_of_regional_total_named
+    expr: SUM(orders.order_amount) / AVG(regional_revenue_excl_cat)
+  - name: pct_of_regional_total
+    expr: SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (orders.category))
+  - name: pct_of_region_by_segment
+    expr: SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (customers.segment))
+  - name: region_rev_via_fixed
+    expr: AVG(region_total_fixed)
+  - name: region_rev_via_exclude
+    expr: AVG(region_total_excl_customer)
+```
+
+#### FIXED LOD metrics
+
+`FIXED DIMENSIONS (dim, ...)` calculates the expression at exactly the listed dimensions. The query then
+aggregates the fixed values to the query grain.
+
+##### Named FIXED fact
+
+Define the calculation as a fact, then reference the fact in a metric. Each customer’s order count is
+calculated at the customer grain. The metric averages those counts for each region:
+
+Copy code
+
+```
+-- In FACTS
+orders_per_customer AS COUNT(orders.order_id)
+  FIXED DIMENSIONS (customers.customer_id),
+
+-- In METRICS
+avg_orders_per_customer AS AVG(orders_per_customer)
+```
+
+Copy code
+
+```
+facts:
+  - name: orders_per_customer
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+
+metrics:
+  - name: avg_orders_per_customer
+    expr: AVG(orders_per_customer)
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS avg_orders_per_customer
+)
+ORDER BY region;
+```
+
+```
++--------+-------------------------+
+| REGION | AVG_ORDERS_PER_CUSTOMER |
+|--------+-------------------------|
+| North  |                     3.0 |
+| South  |                     2.0 |
++--------+-------------------------+
+```
+
+North is the average of Alice (4 orders) and Bob (2 orders). South is the average of Carol (3 orders) and Dan
+(1 order). Without a `DIMENSIONS` clause, the result is 2.5, the average of all four customers:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  METRICS avg_orders_per_customer
+);
+```
+
+```
++-------------------------+
+| AVG_ORDERS_PER_CUSTOMER |
+|-------------------------|
+|                     2.5 |
++-------------------------+
+```
+
+##### Scalar FIXED LOD for percent of total
+
+`FIXED DIMENSIONS ()` calculates the expression once, for the grand total. The value doesn’t change with the
+query grain, so you can use it as a denominator:
+
+Copy code
+
+```
+-- In FACTS
+grand_total_revenue AS SUM(orders.order_amount)
+  FIXED DIMENSIONS (),
+
+-- In METRICS
+pct_of_total AS SUM(orders.order_amount) / AVG(grand_total_revenue)
+```
+
+Copy code
+
+```
+facts:
+  - name: grand_total_revenue
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: fixed
+    lod_dimensions: []
+
+metrics:
+  - name: pct_of_total
+    expr: SUM(orders.order_amount) / AVG(grand_total_revenue)
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS orders.total_revenue, pct_of_total
+)
+ORDER BY region;
+```
+
+```
++--------+---------------+--------------+
+| REGION | TOTAL_REVENUE | PCT_OF_TOTAL |
+|--------+---------------+--------------|
+| North  |       1300.00 |        0.619 |
+| South  |        800.00 |        0.381 |
++--------+---------------+--------------+
+```
+
+##### FIXED LOD in DIMENSIONS
+
+You can define a FIXED calculation as a dimension. This exposes a coarser-grain value that you can group or
+filter by. In this example, every customer in North sees 6 orders, and every customer in South sees 4:
+
+Copy code
+
+```
+-- In DIMENSIONS
+orders_by_region AS COUNT(orders.order_id)
+  FIXED DIMENSIONS (customers.region)
+```
+
+Copy code
+
+```
+dimensions:
+  - name: orders_by_region
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: fixed
+    lod_dimensions:
+      - table: customers
+        dimension: region
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.customer_id, customers.region, orders_by_region
+  METRICS orders.total_revenue
+)
+ORDER BY region, customer_id;
+```
+
+```
++-------------+--------+------------------+---------------+
+| CUSTOMER_ID | REGION | ORDERS_BY_REGION | TOTAL_REVENUE |
+|-------------+--------+------------------+---------------|
+|           1 | North  |                6 |       1000.00 |
+|           2 | North  |                6 |        300.00 |
+|           3 | South  |                4 |        600.00 |
+|           4 | South  |                4 |        200.00 |
++-------------+--------+------------------+---------------+
+```
+
+##### Inline FIXED LOD
+
+To use a FIXED calculation in only one metric, write it inline. The result is the same as the named fact:
+
+Copy code
+
+```
+-- In METRICS
+avg_orders_per_customer_inline AS AVG(
+  COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id)
+)
+```
+
+Copy code
+
+```
+metrics:
+  - name: avg_orders_per_customer_inline
+    expr: AVG(COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id))
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS avg_orders_per_customer_inline
+)
+ORDER BY region;
+```
+
+```
++--------+---------------------------------+
+| REGION | AVG_ORDERS_PER_CUSTOMER_INLINE  |
+|--------+---------------------------------|
+| North  |                             3.0 |
+| South  |                             2.0 |
++--------+---------------------------------+
+```
+
+#### INCLUDE LOD metrics
+
+`INCLUDE DIMENSIONS (dim, ...)` calculates the expression at the query grain plus the listed dimensions. Use
+INCLUDE when you want a finer grain than the query.
+
+##### Named INCLUDE fact
+
+The following fact counts orders at the grain of the query plus `customer_id`. When you query by region, the
+grain is region and customer. When you query by segment, the grain is segment and customer:
+
+Copy code
+
+```
+-- In FACTS
+num_orders_incl_customer AS COUNT(orders.order_id)
+  INCLUDE DIMENSIONS (customers.customer_id),
+
+-- In METRICS
+avg_orders_incl_customer AS AVG(num_orders_incl_customer)
+```
+
+Copy code
+
+```
+facts:
+  - name: num_orders_incl_customer
+    expr: COUNT(orders.order_id)
+    data_type: NUMBER(38,0)
+    lod_dimension_type: include
+    lod_dimensions:
+      - table: customers
+        dimension: customer_id
+
+metrics:
+  - name: avg_orders_incl_customer
+    expr: AVG(num_orders_incl_customer)
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS avg_orders_incl_customer
+)
+ORDER BY region;
+```
+
+```
++--------+--------------------------+
+| REGION | AVG_ORDERS_INCL_CUSTOMER |
+|--------+--------------------------|
+| North  |                      3.0 |
+| South  |                      2.0 |
++--------+--------------------------+
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.segment
+  METRICS avg_orders_incl_customer
+)
+ORDER BY segment;
+```
+
+```
++----------+--------------------------+
+| SEGMENT  | AVG_ORDERS_INCL_CUSTOMER |
+|----------+--------------------------|
+| Premium  |                      3.5 |
+| Standard |                      1.5 |
++----------+--------------------------+
+```
+
+##### Inline INCLUDE LOD
+
+The following metric averages customer revenue within each query group. The same metric returns different
+values for different query grains:
+
+Copy code
+
+```
+-- In METRICS
+avg_customer_rev_by_region AS AVG(
+  SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.customer_id)
+)
+```
+
+Copy code
+
+```
+metrics:
+  - name: avg_customer_rev_by_region
+    expr: AVG(SUM(orders.order_amount) INCLUDE DIMENSIONS (customers.customer_id))
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS avg_customer_rev_by_region
+)
+ORDER BY region;
+```
+
+```
++--------+----------------------------+
+| REGION | AVG_CUSTOMER_REV_BY_REGION |
+|--------+----------------------------|
+| North  |                     650.00 |
+| South  |                     400.00 |
++--------+----------------------------+
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.segment
+  METRICS avg_customer_rev_by_region
+)
+ORDER BY segment;
+```
+
+```
++----------+----------------------------+
+| SEGMENT  | AVG_CUSTOMER_REV_BY_REGION |
+|----------+----------------------------|
+| Premium  |                     800.00 |
+| Standard |                     250.00 |
++----------+----------------------------+
+```
+
+In the North region, the INCLUDE grain is region plus customer, so the per-customer totals are $1,000 (Alice)
+and $300 (Bob). The average is $650.
+
+#### EXCLUDE LOD metrics
+
+`EXCLUDE DIMENSIONS (dim, ...)` calculates the expression at the query grain minus the listed dimensions. Use
+EXCLUDE to compute a coarser total, such as a regional total, next to a finer value.
+
+##### Named EXCLUDE fact
+
+The following fact calculates the revenue for each region, without the category. The metric divides each
+category’s revenue by the regional total:
+
+Copy code
+
+```
+-- In FACTS
+regional_revenue_excl_cat AS SUM(orders.order_amount)
+  EXCLUDE DIMENSIONS (orders.category),
+
+-- In METRICS
+pct_of_regional_total_named AS SUM(orders.order_amount) / AVG(regional_revenue_excl_cat)
+```
+
+Copy code
+
+```
+facts:
+  - name: regional_revenue_excl_cat
+    expr: SUM(orders.order_amount)
+    data_type: NUMBER(38,2)
+    lod_dimension_type: exclude
+    lod_dimensions:
+      - table: orders
+        dimension: category
+
+metrics:
+  - name: pct_of_regional_total_named
+    expr: SUM(orders.order_amount) / AVG(regional_revenue_excl_cat)
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region, orders.category
+  METRICS pct_of_regional_total_named
+)
+ORDER BY region, category;
+```
+
+```
++--------+-------------+-----------------------------+
+| REGION | CATEGORY    | PCT_OF_REGIONAL_TOTAL_NAMED |
+|--------+-------------+-----------------------------|
+| North  | Clothing    |                       0.385 |
+| North  | Electronics |                       0.615 |
+| South  | Clothing    |                       0.125 |
+| South  | Electronics |                       0.875 |
++--------+-------------+-----------------------------+
+```
+
+##### Inline EXCLUDE LOD
+
+You can also write the EXCLUDE calculation inline. The following metric returns each category’s share of its
+region’s revenue:
+
+Copy code
+
+```
+-- In METRICS
+pct_of_regional_total AS SUM(orders.order_amount) /
+  AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (orders.category))
+```
+
+Copy code
+
+```
+metrics:
+  - name: pct_of_regional_total
+    expr: SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (orders.category))
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region, orders.category
+  METRICS orders.total_revenue, pct_of_regional_total
+)
+ORDER BY region, category;
+```
+
+```
++--------+-------------+---------------+-----------------------+
+| REGION | CATEGORY    | TOTAL_REVENUE | PCT_OF_REGIONAL_TOTAL |
+|--------+-------------+---------------+-----------------------|
+| North  | Clothing    |        500.00 |                 0.385 |
+| North  | Electronics |        800.00 |                 0.615 |
+| South  | Clothing    |        100.00 |                 0.125 |
+| South  | Electronics |        700.00 |                 0.875 |
++--------+-------------+---------------+-----------------------+
+```
+
+The following metric calculates each segment’s share of its region’s revenue:
+
+Copy code
+
+```
+-- In METRICS
+pct_of_region_by_segment AS SUM(orders.order_amount) /
+  AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (customers.segment))
+```
+
+Copy code
+
+```
+metrics:
+  - name: pct_of_region_by_segment
+    expr: SUM(orders.order_amount) / AVG(SUM(orders.order_amount) EXCLUDE DIMENSIONS (customers.segment))
+```
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region, customers.segment
+  METRICS orders.total_revenue, pct_of_region_by_segment
+)
+ORDER BY region, segment;
+```
+
+```
++--------+----------+---------------+--------------------------+
+| REGION | SEGMENT  | TOTAL_REVENUE | PCT_OF_REGION_BY_SEGMENT |
+|--------+----------+---------------+--------------------------|
+| North  | Premium  |       1000.00 |                    0.769 |
+| North  | Standard |        300.00 |                    0.231 |
+| South  | Premium  |        600.00 |                    0.750 |
+| South  | Standard |        200.00 |                    0.250 |
++--------+----------+---------------+--------------------------+
+```
+
+If the excluded dimension isn’t in the query, the EXCLUDE calculation has no effect. The following query groups
+only by region, so the category isn’t part of the query grain. Each region’s share is 1.0:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region
+  METRICS orders.total_revenue, pct_of_regional_total
+)
+ORDER BY region;
+```
+
+```
++--------+---------------+-----------------------+
+| REGION | TOTAL_REVENUE | PCT_OF_REGIONAL_TOTAL |
+|--------+---------------+-----------------------|
+| North  |       1300.00 |                   1.0 |
+| South  |        800.00 |                   1.0 |
++--------+---------------+-----------------------+
+```
+
+#### Filters and LOD metrics
+
+FIXED and INCLUDE/EXCLUDE LOD metrics treat filters differently:
+
+- **FIXED**: The filter is applied after the LOD calculation. The FIXED value is calculated from all the data,
+  and then the rows are filtered.
+- **INCLUDE and EXCLUDE**: The filter is applied before the LOD calculation. The data is narrowed first, and then
+  the LOD grain is applied to the filtered data.
+
+The following query filters to Alice. The FIXED metric still reflects all of North, but the EXCLUDE metric
+reflects only Alice’s orders:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  sales_sv
+  DIMENSIONS customers.region, customers.customer_id
+  METRICS region_rev_via_fixed, region_rev_via_exclude
+  WHERE customers.customer_id = 1
+);
+```
+
+```
++--------+-------------+----------------------+------------------------+
+| REGION | CUSTOMER_ID | REGION_REV_VIA_FIXED | REGION_REV_VIA_EXCLUDE |
+|--------+-------------+----------------------+------------------------|
+| North  |           1 |              1300.00 |                1000.00 |
++--------+-------------+----------------------+------------------------+
+```
+
+#### Rules and limitations
+
+- LOD names are referenced without an entity prefix. Use `orders_per_customer`, not `orders.orders_per_customer`.
+- LOD calculations are always aggregated. Use aggregate functions when you reference a fact, and reference
+  metrics directly.
+- An LOD calculation can’t reference another LOD calculation. For example, you can’t divide one LOD fact by
+  another.
+- An aggregate function in a metric can reference only one LOD calculation. It can’t combine two LOD
+  calculations or mix an LOD calculation with other expressions.
+- `FIXED DIMENSIONS` accepts only defined dimensions. You can’t use expressions such as
+  `customers.customer_id + 1`.
+- `FIXED DIMENSIONS` and `INCLUDE DIMENSIONS` entries must be non-LOD facts or dimensions. An LOD dimension in one of
+  these clauses fails with an error.
+- A metric with a table prefix, such as `orders.avg_orders`, can’t reference an LOD calculation. For example,
+  `orders.avg_orders AS AVG(orders_per_customer)` fails with “Entity-level expressions cannot reference LOD expression”.
+- A metric with a table prefix can’t contain an inline LOD expression. Define the LOD calculation as a fact or dimension,
+  or use a metric without a table prefix.
+- LOD dimensions and LOD metrics can’t be used in materializations. A materialization that includes an LOD dimension
+  fails with “LOD expressions are not supported in materializations.” An LOD metric fails because it’s a derived (global)
+  metric.
+- INCLUDE and EXCLUDE can be defined in facts, dimensions, or metrics. In a query, you can reference them only in
+  `METRICS`, as the sole argument of an aggregate function. You can’t reference them in `DIMENSIONS` or `FACTS`.
+- You can’t write an LOD expression inline in a `SEMANTIC_VIEW` query. Define it in the semantic view first.
+- You can’t combine an ad-hoc dimension expression with an INCLUDE or EXCLUDE metric in the same query.
+- In YAML, `lod_dimension_type` and `lod_dimensions` are allowed only at the model level, under `facts` or
+  `dimensions`. They aren’t allowed under `metrics`, or under table-level `facts`.
+
 ### Marking a fact or metric as private
 
 If you are defining a fact or metric only for use in calculations in the semantic view and you don’t want the fact or metric to

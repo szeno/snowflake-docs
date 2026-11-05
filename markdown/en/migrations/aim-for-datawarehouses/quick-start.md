@@ -7,7 +7,7 @@ Ensure the following are installed on your platform:
 1. [Python](https://www.python.org/downloads)
 2. [Git](https://git-scm.com/install)
 3. [Snowflake CoCo CLI](/user-guide/cortex-code/cortex-code-cli)
-4. [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation)
+4. [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation)
 5. Download links for the Snowflake AIM for Data Warehouses app:
 
 - [macOS Apple Silicon](https://snowconvert.snowflake.com/storage/darwin_arm64/beta/aim/Snowflake-AIM-arm64-Pr.dmg)

@@ -15,7 +15,7 @@ To install and configure the Snowflake CLI, follow these steps:
 
 1. Install the Snowflake CLI for your operating system.
 
-   For more information, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+   For more information, see [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 2. Set up a connection to your Snowflake account.
 
    For more information, see [Configuring Snowflake CLI](/developer-guide/snowflake-cli/connecting/configure-cli).

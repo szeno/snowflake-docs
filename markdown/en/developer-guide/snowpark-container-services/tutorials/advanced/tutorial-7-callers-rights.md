@@ -1,4 +1,4 @@
-# Tutorial 7:Create a Snowpark Container Services service that uses caller’s rights
+# Tutorial 7: Create a Snowpark Container Services service that uses caller’s rights
 
 ## Introduction
 
@@ -31,7 +31,7 @@ There are two parts to this tutorial:
 1. Download the service code for this tutorial.
 2. Build a Docker image for Snowpark Container Services, and upload the image to a repository in your account.
 3. Create a service.
-4. Communicate with the service using network ingress to connect with the public endpoint that the service exposes. Using a web browser, you login to the public endpoint and execute the SELECT CURRENT\_USER(); command. Verify the command output to ensure that the container executed the command as the logged-in user.
+4. Communicate with the service using network ingress to connect with the public endpoint that the service exposes. Using a web browser, you log in to the public endpoint and execute the SELECT CURRENT\_USER(); command. Verify the command output to ensure that the container executed the command as the logged-in user.
 
 **Part 2: Understand the service**. This section provides an overview of the service code and highlights how the application code uses the caller’s rights.
 
@@ -261,7 +261,7 @@ The service exposes a public endpoint (see the inline specification provided in 
    Copy code
 
    ```
-   SELECT CURRENT_USER(), CURRENT_ROLE()DONE;
+   SELECT CURRENT_USER(), CURRENT_ROLE();
    ```
 
    Because you included the `executeAsCaller` capability in the service specification, when a request arrives, Snowflake inserts the `Sf-Context-Current-User-Token` header in the request and then forwards the request to your service endpoint.
@@ -302,7 +302,7 @@ To demonstrate the scenario, you create a new role (`ingress_user_role`) and a t
 
 ### Create roles and resources
 
-1. Create a role (`ingress_user_role`) and a database (`ingress_user_db`) that only this role can access. You then grant this role to the your user, so that the user can log in to the service’s public endpoint and query this table.
+1. Create a role (`ingress_user_role`) and a database (`ingress_user_db`) that only this role can access. You then grant this role to your user, so that the user can log in to the service’s public endpoint and query this table.
 
    Copy code
 
@@ -385,9 +385,9 @@ To demonstrate the scenario, you create a new role (`ingress_user_role`) and a t
    p6bye-myorg-myacct.snowflakecomputing.app
    ```
 2. Append `/ui` to the endpoint URL, and paste it in the web browser. This causes the service to execute the `ui()` function
-   (see `echo_service.py`).:
+   (see `main.py`).
    Note that the first time you access the endpoint URL, you will be asked to log in to Snowflake. For this test, use the same user that
-   you used to create the service to ensure that the user has the necessary privileges.:
+   you used to create the service to ensure that the user has the necessary privileges.
 3. Use the same user that you used to create the service. Upon successful login, the service shows the following Web UI.
 
    ![Web form to communicate with the query service.](/static/images/spcs/spcs-tutorial-query-service-10.png)
@@ -402,10 +402,10 @@ To demonstrate the scenario, you create a new role (`ingress_user_role`) and a t
 
    For illustration purposes the service code in this tutorial executes the query both as the caller and the service user.
 
-   - **Executes the query on behalf of the caller (ingress user):** In this case, the code uses the user token provided by Snowflake to construct a login token for connecting with Snowflake. Thus, the service uses the caller’s rights. Snowflake executes the query on behalf of the caller. Because the caller is using the `ingress_user_role role` that has the privilege to query the `ingress_user_table` table, the query returns one row in the result:
+   - **Executes the query on behalf of the caller (ingress user):** In this case, the code uses the user token provided by Snowflake to construct a login token for connecting with Snowflake. Thus, the service uses the caller’s rights. Snowflake executes the query on behalf of the caller. Because the caller is using the `ingress_user_role` role that has the privilege to query the `ingress_user_table` table, the query returns one row in the result:
 
      ```
-     ['this table is only accessible to ingress_user_role']
+     ['this table is only accessible to the ingress_user_role']
      ```
    - **Executes the query on behalf of the service user:** In this case, the code does not use the user token that Snowflake provides in the request when constructing the login token to connect with Snowflake. Thus, Snowflake executes the query on behalf of the service user. Because the service owner uses the default `test_role`, which does not have permission to query the table, you see an error:
 
@@ -437,7 +437,7 @@ You also use service specification when creating the service. The following sect
 #### main.py file
 
 This Python file contains the code that implements a minimal HTTP server that executes a query in the request and returns query results. The code
-provides a web user interface (UI) for submitting echo requests.
+provides a web user interface (UI) for submitting queries.
 
 Copy code
 
@@ -671,12 +671,12 @@ RUN pip install --upgrade pip && pip install flask snowflake-snowpark-python
 CMD ["python", "main.py"]
 ```
 
-The Dockerfile contains instructions to install the Flask library ind the Docker container. The code in `main.py`
+The Dockerfile contains instructions to install the Flask library in the Docker container. The code in `main.py`
 relies on the Flask library to handle HTTP requests.
 
 #### /template/basic\_ui.html
 
-The query service exposes the `echoendpoint` endpoint publicly (see service specification), enabling communication with the
+The query service exposes the `execute` endpoint publicly (see service specification), enabling communication with the
 service over the web. When you load the public endpoint URL with `/ui` appended in your browser, the query service displays
 this form.
 
@@ -695,7 +695,7 @@ Copy code
   <body>
     <h1>Welcome to the query service!</h1>
     <form action="{{ url_for("ui") }}" method="post">
-      <label for="query">query:<label><br />
+      <label for="query">query:</label><br />
       <input type="text" id="query" name="query" size="50"><br />
     </form>
     <h2>Query:</h2>
@@ -740,12 +740,12 @@ serviceRoles:
 In the service specification, the `spec`, `capabilities`, and `serviceRoles` are the top-level fields.
 
 - `spec` provides specification details (see [Service specification reference](/developer-guide/snowpark-container-services/specification-reference)). Note that the service exposes one public endpoint (`execute`) that enables ingress access to the service from the public web.
-- `capabilities` Specifies the `executeAsCaller` capability. This tells Snowflake that the application intends to use [caller’s rights](/developer-guide/snowpark-container-services/spcs-execute-sql#label-spcs-additional-considerations-configuring-callers-rights).
+- `capabilities` specifies the `executeAsCaller` capability. This tells Snowflake that the application intends to use [caller’s rights](/developer-guide/snowpark-container-services/spcs-execute-sql#label-spcs-additional-considerations-configuring-callers-rights).
 - `serviceRoles` specifies one service role (`ui_usage`) and endpoint name (`execute`) to grant the USAGE privilege on.
 - The `readinessProbe` field identifies the `port` and `path` that Snowflake can use to send an HTTP GET
   request to the readiness probe to verify that the service is ready to handle traffic.
 
-  The service code (`echo_python.py`) implements the readiness probe as follows:
+  The service code (`main.py`) implements the readiness probe as follows:
 
   Copy code
 

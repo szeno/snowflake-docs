@@ -62,7 +62,7 @@ The following example shows how to write and submit a simple Spark application w
 
 If the application has dependencies, like files it needs to read, you can deploy them from a Snowflake stage. The following example shows how to deploy an application and its dependencies from a Snowflake stage.
 
-1. To upload files to a stage from the terminal, you can use the Snowflake CLI. Note that SnowSQL is the legacy CLI and if you are already using it, you can use that as well to upload files to a stage. If you have not already installed the Snowflake CLI, you can install it by following the instructions in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+1. To upload files to a stage from the terminal, you can use the Snowflake CLI. Note that SnowSQL is the legacy CLI and if you are already using it, you can use that as well to upload files to a stage. If you have not already installed the Snowflake CLI, you can install it by following the instructions in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 2. Create a new CSV file in your local IDE called `sample_employees.csv` with the following content:
 
    ```

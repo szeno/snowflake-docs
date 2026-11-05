@@ -125,16 +125,11 @@ Cortex-related views in the [SNOWFLAKE.ACCOUNT\_USAGE](/sql-reference/account-us
 - [CORTEX\_ANALYST\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_analyst_usage_history)
 - [CORTEX\_DOCUMENT\_PROCESSING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_document_processing_usage_history)
 - [CORTEX\_FINE\_TUNING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_fine_tuning_usage_history)
-- [CORTEX\_FUNCTIONS\_QUERY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_query_usage_history)
-- [CORTEX\_FUNCTIONS\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_functions_usage_history)
+- [CORTEX\_AI\_FUNCTIONS\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_ai_functions_usage_history)
+- [CORTEX\_AISQL\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_aisql_usage_history)
 - [CORTEX\_PROVISIONED\_THROUGHPUT\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_provisioned_throughput_usage_history)
 - [CORTEX\_SEARCH\_DAILY\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_daily_usage_history)
 - [CORTEX\_SEARCH\_SERVING\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_search_serving_usage_history)
-
-Note
-
-CORTEX\_FUNCTIONS\_QUERY\_USAGE\_HISTORY and CORTEX\_FUNCTIONS\_USAGE\_HISTORY log essentially the same events. It
-is not necessary to monitor both.
 
 [Create alerts on new data](/user-guide/alerts#label-alerts-type-streaming) in these views to notify you when new AI features are
 used in your account. For example, the following SQL statement creates an alert that sends a Slack message when any AI function is used:
@@ -144,7 +139,7 @@ Copy code
 ```
 CREATE ALERT my_alert
   IF (EXISTS (
-    SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_FUNCTIONS_QUERY_USAGE_HISTORY))
+    SELECT * FROM SNOWFLAKE.ACCOUNT_USAGE.CORTEX_AI_FUNCTIONS_USAGE_HISTORY))
   THEN
     BEGIN
       CALL SYSTEM$SEND_SNOWFLAKE_NOTIFICATION(

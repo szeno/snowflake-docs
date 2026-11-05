@@ -19,7 +19,7 @@ On the machine that submits the job, you need:
 - **Python 3.10 or later** (earlier than 3.13). The Snowpark Submit CLI is written in Python, but your application itself can be Python,
   Java, or Scala.
 - **Snowflake CLI** (`snow`). Used to manage connections and upload files to stages. For installation instructions, see
-  [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+  [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 - **A Snowflake warehouse**. The virtual warehouse on which your Spark job executes. The role you use for Snowpark Submit needs USAGE
   privilege on that warehouse.
 - **A Snowflake compute pool**. An SPCS compute pool that hosts the Spark driver. If you don’t have one, create it in

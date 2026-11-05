@@ -89,7 +89,7 @@ Snowflake CLI is a command-line interface for Snowflake. It is a tool that you c
 IDE.
 
 1. DCM Projects require Snowflake CLI version 3.24.0 or higher for the commands and options documented in this guide. Install or upgrade
-   Snowflake CLI as described in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation/installation).
+   Snowflake CLI as described in [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation).
 2. Configure your connection to your Snowflake account, as described in [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect). Confirm you have a working connection:
 
    Copy code
@@ -127,7 +127,7 @@ SnowsightLocal IDE
    Snowflake clones files from that branch into your workspace editor.
 3. Navigate to the folder where you have your DCM project definition files or want to create them.
 
-1. [Install Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation).
+1. [Install Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation).
 
    The [Snowflake extension](https://docs.snowflake.com/en/user-guide/vscode-ext) for VS Code is not needed here, but can be helpful.
 2. [Connect to Snowflake](https://docs.snowflake.com/en/developer-guide/snowflake-cli/connecting/connect).

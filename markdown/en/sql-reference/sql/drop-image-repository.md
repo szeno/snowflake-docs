@@ -8,7 +8,7 @@ Removes the specified [image repository](/developer-guide/snowpark-container-ser
 the current or specified schema.
 
 See also:
-:   [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository) , [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories)
+:   [CREATE IMAGE REPOSITORY](/sql-reference/sql/create-image-repository) , [ALTER IMAGE REPOSITORY](/sql-reference/sql/alter-image-repository) , [SHOW IMAGE REPOSITORIES](/sql-reference/sql/show-image-repositories)
 
 ## Syntax
 

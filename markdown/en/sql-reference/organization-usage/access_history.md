@@ -504,6 +504,18 @@ Expand
 
 Show lessSee more
 
+The following example returns rows from about 24 months ago:
+
+Copy code
+
+```
+SELECT *
+FROM SNOWFLAKE.ORGANIZATION_USAGE.ACCESS_HISTORY
+WHERE QUERY_START_TIME >= DATEADD(month, -24, CURRENT_TIMESTAMP())
+ORDER BY QUERY_START_TIME DESC
+LIMIT 100;
+```
+
 ## Usage notes: Truncation
 
 When a record exceeds the size limit for the view, Snowflake applies a progressive truncation strategy that preserves the most critical audit information while reducing the record size. Truncation adheres to the following general guidelines:

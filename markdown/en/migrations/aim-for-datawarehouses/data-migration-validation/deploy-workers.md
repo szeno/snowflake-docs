@@ -53,6 +53,8 @@ You usually create a **compute pool** and warehouse before the agent or CLI depl
 
 The agent or CLI then typically creates the Worker **secret**, **network rule**, **external access integration**, and **service**. With `--dcp`, it also creates the Data Connectivity Proxy rule, integration, and proxy. Avoid recreating those by hand unless you have a reason to. Full SQL templates live on the [manual SPCS worker setup](../manual-migration/manual-spcs-worker-setup) page.
 
+SQL Server Windows authentication is the exception. Create the Kerberos keytab and `krb5.conf` secrets yourself before `scai data worker setup`, and add each domain controller to the egress rule. See [Windows authentication](./migrate-sql-server#windows-authentication).
+
 ### How many Worker instances
 
 More Worker instances mean more concurrent extraction and load, which increases throughput. The source system is usually the constraint — keep adding Workers until you see diminishing returns or the source starts to struggle, then scale back.

@@ -9,13 +9,13 @@ Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, a
 In [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1), you learned how to
 [access a public endpoint by using a web browser](/developer-guide/snowpark-container-services/tutorials/tutorial-1#label-snowpark-containers-tutorial-1-step-4).
 Using the browser, you sent a request to the public endpoint, which is the ingress endpoint.
-This required you to first authenticated with Snowflake, and then
+This required you to first authenticate with Snowflake, and then
 you interacted with the service by using the web UI that the service provides.
 
 In this tutorial, you access the same public endpoint programmatically.
 The tutorial shows you three different options
 to authenticate when you log into Snowflake: by using a programmatic access token (PAT),
-by using a JSON Web Token (JWT), and using a Session Token from the Python Connector
+by using a JSON Web Token (JWT), and by using a Session Token from the Python Connector.
 
 ## Prerequisites
 
@@ -27,7 +27,7 @@ by using a JSON Web Token (JWT), and using a Session Token from the Python Conne
    ```
    DESC SERVICE echo_service;
    ```
-3. In the `status` column, verify that it shows that the service status as RUNNING.
+3. In the `status` column, verify that it shows the service status as RUNNING.
 
    If the status is PENDING, it indicates that the service is still starting.
 4. To investigate why the service isn’t RUNNING,
@@ -198,7 +198,7 @@ example steps:
 > ```
 > $ python ./invokeUsingPat.py \
 >   --spcs_url "https://<endpoint-id>-<orgname>-<acctname>.snowflakecomputing.app/ui" \
->   –pat ${pat}
+>   --pat ${pat}
 > ```
 >
 > When the request arrives, the service executes the `ui()` function, which
@@ -332,7 +332,7 @@ requests to the public endpoint that the `echo_service` exposes.
                 lifetime: timedelta = LIFETIME, renewal_delay: timedelta = RENEWAL_DELTA):
         """
         __init__ creates an object that generates JWTs for the specified user, account identifier, and private key.
-        :param account: Your Snowflake account identifier. See https://docs.snowflake.com/en/user-guide/admin-account-identifier.html. Note that if you are by using the account locator, exclude any region information from the account locator.
+        :param account: Your Snowflake account identifier. See https://docs.snowflake.com/en/user-guide/admin-account-identifier.html. Note that if you are using the account locator, exclude any region information from the account locator.
         :param user: The Snowflake username.
         :param private_key_file_path: Path to the private key file used for signing the JWTs.
         :param lifetime: The number of minutes (as a timedelta) during which the key will be valid.
@@ -422,7 +422,7 @@ requests to the public endpoint that the `echo_service` exposes.
 
             # Regenerate the actual token
             token = jwt.encode(payload, key=self.private_key, algorithm=JWTGenerator.ALGORITHM)
-            # If you are by using a version of PyJWT prior to 2.0, jwt.encode returns a byte string instead of a string.
+            # If you are using a version of PyJWT prior to 2.0, jwt.encode returns a byte string instead of a string.
             # If the token is a byte string, convert it to a string.
             if isinstance(token, bytes):
               token = token.decode('utf-8')
@@ -607,7 +607,7 @@ Specifically, the code performs the following actions:
      For more information, see [token format](/developer-guide/sql-api/authenticating#label-sql-api-authenticating-key-pair). `iss` is one of the JWT’s fields. This field value includes
      the Snowflake account name and a user name. Therefore, you provide these values as parameters.
    - Two `timedelta` parameters provide the following information:
-     - `lifetime` specifies the number of minutes during which the key will be valid (60 minutes).
+     - `lifetime` specifies the number of minutes during which the JWT will be valid (59 minutes by default).
      - `renewal_delay` specifies the number of minutes from now after which the JWT generator should renew the JWT.
 2. The code calls the `token_exchange()` function to connect to Snowflake, and
    then exchange the JWT for an OAuth token:

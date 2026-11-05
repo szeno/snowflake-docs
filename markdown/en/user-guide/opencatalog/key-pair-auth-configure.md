@@ -17,7 +17,7 @@ For example:
 ## Prerequisites
 
 - [Create a catalog](https://other-docs.snowflake.com/en/opencatalog/create-catalog) in your Open Catalog account.
-- You must have [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation/installation) installed on your
+- You must have [Snowflake CLI](https://docs.snowflake.com/en/developer-guide/snowflake-cli/installation) installed on your
   machine. In addition, you must create a Snowflake CLI connection for Open Catalog. To create this connection, see
   [Create a Snowflake CLI connection for Open Catalog](#create-a-snowflake-cli-connection-for-open-catalog) below.
 - To configure key pair authentication, you must have the service admin role in Open Catalog. For more information, see [User roles](https://other-docs.snowflake.com/en/opencatalog/access-control#user-roles). In Snowflake CLI, this role is printed as POLARIS\_ACCOUNT\_ADMIN.

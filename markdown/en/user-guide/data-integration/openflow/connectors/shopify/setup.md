@@ -225,4 +225,4 @@ The connector starts querying the Shopify Admin API and loading data into Snowfl
 - For more information about resetting connector state, see
   [Maintain the Openflow Connector for Shopify](/user-guide/data-integration/openflow/connectors/shopify/maintain).
 - For more information about monitoring the flow, see
-  [Monitor Openflow using telemetry data](/user-guide/data-integration/openflow/monitor).
+  [Openflow telemetry](/user-guide/data-integration/openflow/monitor).

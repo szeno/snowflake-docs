@@ -240,7 +240,7 @@ The following table lists the objects that are included in a database or schema 
 | Dynamic tables | Yes | Permanent dynamic tables are included in backups. Dynamic transient tables aren’t supported. For more information, see [Backups: Transient tables are no longer supported](/release-notes/bcr-bundles/2026_06/bcr-2360).  When you restore a dynamic table from a backup, the table is restored in a suspended state. Snowflake [automatically initializes](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization) the new table during its first refresh. |
 | External tables | No |  |
 | Hybrid tables | No |  |
-| Apache Iceberg™ tables | No | Dynamic Iceberg tables are also not included in backups. |
+| Apache Iceberg™ tables | Yes | Only [Snowflake Storage for Apache Iceberg™ tables](/user-guide/tables-iceberg-internal-storage) are included, and only on Amazon Web Services (AWS). Dynamic Iceberg tables that use Snowflake Storage are also included on AWS. Transient Iceberg tables, Iceberg tables on customer-managed storage, and Iceberg tables that use an external catalog aren’t included in backups. |
 | Table constraints | Yes |  |
 | Event tables | No |  |
 | Sequences | Yes |  |
@@ -1056,9 +1056,9 @@ A dynamic table always involves a reference to some other table. For that reason
 to use schema backups or database backups for dynamic tables, so that the original table and
 the dynamic table can be included in the same backup.
 
-If you make a table backup for a dynamic table, you include the keyword DYNAMIC in the CREATE BACKUP
-SET command, and in the CREATE TABLE command when you restore from a backup. The following example
-sets up the dynamic table, a table backup set for that table, and creates the first backup:
+If you make a table backup for a dynamic table, include the keyword `DYNAMIC` in the CREATE BACKUP
+SET command and in the CREATE DYNAMIC TABLE command when you restore from a backup. The following
+example sets up a dynamic table, creates a backup set for it, and adds the first backup:
 
 Copy code
 
@@ -1074,27 +1074,94 @@ CREATE BACKUP SET dynamic_table_backups
 ALTER BACKUP SET dynamic_table_backups ADD BACKUP;
 ```
 
-The following example shows how to determine the backup IDs for backups created at various times.
-In this case, the newest backup is the first row in the result set. Then you use the ID of the backup
-in the CREATE DYNAMIC TABLE command.
+Feature — Generally Available
+
+Backups for Snowflake Storage for Apache Iceberg™ tables are generally available
+on Amazon Web Services (AWS) only.
+
+For a dynamic Iceberg table that uses [Snowflake Storage for Apache Iceberg™ tables](/user-guide/tables-iceberg-internal-storage),
+also include the keyword `ICEBERG` in the CREATE BACKUP SET and CREATE DYNAMIC TABLE commands. The
+following example creates a dynamic Iceberg table that uses Snowflake Storage, creates a backup set
+for it, and adds the first backup:
 
 Copy code
 
 ```
-SHOW BACKUPS IN BACKUP SET dynamic_table_backups
+CREATE DYNAMIC ICEBERG TABLE my_dynamic_iceberg_table
+  TARGET_LAG = '1 minute'
+  WAREHOUSE = my_wh
+  EXTERNAL_VOLUME = 'SNOWFLAKE_MANAGED'
+  CATALOG = 'SNOWFLAKE'
+  AS SELECT * FROM my_base_table WHERE col1 IS NOT NULL;
+
+CREATE BACKUP SET dynamic_iceberg_table_backups
+  FOR DYNAMIC ICEBERG TABLE my_dynamic_iceberg_table;
+
+ALTER BACKUP SET dynamic_iceberg_table_backups ADD BACKUP;
+```
+
+To restore either type of dynamic table, determine the backup ID and use the same dynamic-table
+keywords that you used to create the backup set. In the following syntax, include `ICEBERG` only
+for a dynamic Iceberg table:
+
+Copy code
+
+```
+SHOW BACKUPS IN BACKUP SET <backup_set_name>
   ->> SELECT "created_on", "backup_id" FROM $1
         ORDER BY "created_on" DESC;
 
-CREATE DYNAMIC TABLE restored_dynamic_table
-  FROM BACKUP SET dynamic_table_backups
+CREATE DYNAMIC [ ICEBERG ] TABLE <restored_table_name>
+  FROM BACKUP SET <backup_set_name>
     IDENTIFIER '<backup_id_from_SHOW_BACKUPS_output>';
 ```
 
 Tip
 
-When you restore a dynamic table from a backup, Snowflake
+When you restore a dynamic table or dynamic Iceberg table from a backup, Snowflake
 [automatically initializes](/user-guide/dynamic-tables/overview#label-dynamic-tables-initialization)
 the new table during its first refresh.
+
+If the schema that contains a dynamic Iceberg table uses
+`DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can promote `FOR DYNAMIC TABLE` and
+`CREATE DYNAMIC TABLE ... FROM BACKUP SET` to the dynamic Iceberg variants. Prefer the explicit
+`DYNAMIC ICEBERG` keywords in your SQL.
+
+### Create a backup for an Iceberg table
+
+Feature — Generally Available
+
+Backups for Snowflake Storage for Apache Iceberg™ tables are generally available
+on Amazon Web Services (AWS) only.
+
+You can create a backup set for [Snowflake Storage for Apache Iceberg™ tables](/user-guide/tables-iceberg-internal-storage)
+by using the `FOR ICEBERG TABLE` clause. The following example creates a backup set for the Iceberg
+table `my_iceberg_table`, adds a backup, and restores the table under a new name:
+
+Copy code
+
+```
+CREATE BACKUP SET iceberg_table_backups
+  FOR ICEBERG TABLE my_iceberg_table;
+
+ALTER BACKUP SET iceberg_table_backups ADD BACKUP;
+
+SHOW BACKUPS IN BACKUP SET iceberg_table_backups
+  ->> SELECT "created_on", "backup_id" FROM $1
+        ORDER BY "created_on" DESC;
+
+CREATE ICEBERG TABLE restored_iceberg_table
+  FROM BACKUP SET iceberg_table_backups
+    IDENTIFIER '<backup_id_from_SHOW_BACKUPS_output>';
+```
+
+If the schema that contains the table uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`,
+Snowflake can promote `FOR TABLE` and `CREATE TABLE ... FROM BACKUP SET` to the Iceberg
+variants. Prefer the explicit `ICEBERG` keywords in your SQL.
+
+Iceberg tables on customer-managed storage and Iceberg tables that use an external catalog aren’t
+supported for backups. For more information about Snowflake-managed Iceberg tables, see
+[Apache Iceberg™ tables](/user-guide/tables-iceberg).
 
 ### Add and remove legal holds
 
@@ -1147,7 +1214,8 @@ INFORMATION\_SCHEMA.BACKUPS or ACCOUNT\_USAGE.BACKUPS views.
 When you use replication in combination with database, schema, and table backups, you specify the databases that contain the
 backup sets and backup policies in your replication groups and failover groups. You can control how your backup-related
 objects are replicated by organizing your replication groups and failover groups, and choosing which databases and schemas
-contain your backup sets and backup policies. For more information, see [Backup replication for database, schema, and table backups](/user-guide/account-replication-intro#label-backup-replication).
+contain your backup sets and backup policies. Iceberg table and dynamic Iceberg table backup sets replicate like other
+table backup sets. For more information, see [Backup replication for database, schema, and table backups](/user-guide/account-replication-intro#label-backup-replication).
 
 The backup sets and backup policies are database objects. Snowflake replicates the backup sets and backup
 policies along with the databases and schemas that contain them.

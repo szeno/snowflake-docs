@@ -141,8 +141,7 @@ SELECT AI_COMPLETE(
 
 Tip
 
-As shown in this example, you can use tagging in the prompt to control the kind of response generated. See
-[A guide to prompting LLaMA 2](https://replicate.com/blog/how-to-prompt-llama) for tips.
+As shown in this example, you can use tagging in the prompt to control the kind of response generated.
 
 ### Controlling model parameters
 

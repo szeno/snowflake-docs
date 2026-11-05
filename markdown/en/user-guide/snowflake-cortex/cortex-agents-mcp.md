@@ -115,17 +115,17 @@ tools:
       openWorldHint: false
 ```
 
-The agent tool response includes all intermediate steps by design: reasoning traces, tool calls, search results, and citations.
-This can result in large response payloads (200 KB or more). To reduce the payload size when the agent uses Cortex Search,
-configure `max_results` in the agent’s search tool resources to limit the number of search results returned per query.
+The full agent tool response is available to MCP clients. See [`content_cel_filter`](#label-cortex-mcp-content-cel-filter) to learn how clients can control which parts they retrieve.
 
 A coding agent tool runs a Cortex coding agent without a stored agent object. Add a tool with type `CODING_AGENT` to the MCP server specification. Snowflake adds the `code_toolset_all` tool on every run. That tool gives the agent a managed sandbox where it can write and run code. The sandbox stays attached to the conversation thread. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
 
 Omit `identifier`. There is no stored agent to point at.
 
-`config` is optional. It can include `model`, `instructions`, `tools`, `tool_resources`, and `skills`. Leave `messages`, `thread_id`, `parent_message_id`, `stream`, `background`, and `origin_application` out of `config`. The MCP call supplies those. The server returns the agent reply as one `tools/call` result.
+`config` is optional. It can include any field of the [Cortex Agents run request](/user-guide/snowflake-cortex/cortex-agents-run), such as `model`, `instructions`, `tools`, `tool_resources`, and `skills`.
 
 You can put other tools in `config`. Snowflake appends `code_toolset_all` after those tools. Do not also add `code_execution`. A run can include `code_toolset_all` or `code_execution`, but not both.
+
+The appended tool uses the default permission policy, `always_ask`. A state-modifying tool such as `write`, `edit`, or `bash` then waits for approval, and the MCP call ends before that tool runs. Set `tool_resources.code_toolset_all.permission_policy.type` to `always_allow` when the call should run those tools in one request. `always_allow` removes the approval gate: the agent runs any command and modifies any resource its role can reach. Use it only in a trusted automation. See [Sandbox permission policy](/user-guide/snowflake-cortex/cortex-agents-coding-agent#label-coding-agent-permission-policy). To let the caller answer the prompt instead, see [Answer a permission prompt](#label-cortex-mcp-permission-decisions).
 
 Copy code
 
@@ -139,6 +139,10 @@ tools:
       model: "claude-sonnet-4-6"
       instructions:
         response: "Write and run code when that answers the question."
+      tool_resources:
+        code_toolset_all:
+          permission_policy:
+            type: always_allow
 ```
 
 Using the Analyst tool, your client can generate SQL from natural language text. Use the following code to specify the tool configuration.
@@ -570,6 +574,8 @@ GRANT USAGE ON AGENT <database_name>.<schema_name>.<agent_name> TO ROLE <mcp_acc
 
 GRANT ROLE <mcp_access_role> TO USER <username>;
 ```
+
+`tools/list` omits `CORTEX_AGENT_RUN` tools when the active role does not have `USAGE` on the referenced agent.
 
 The role also needs privileges on the resources configured for the agent. Grant only the privileges for the resources that the agent uses. For example:
 
@@ -1017,6 +1023,8 @@ The Snowflake MCP server currently only supports tool capabilities.
 
 The MCP clients can discover and invoke tools with `tools/list` and `tools/call` requests.
 
+A `tools/list` entry has `name`, `description`, and `inputSchema`. `title` is present when the specification sets it. `annotations` is present by default. The server does not return `outputSchema`.
+
 To discover or invoke tools, issue a POST call as shown in the [tools/list request](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools):
 
 As of August 20, 2026, the server returns `tools/call` responses as a
@@ -1112,7 +1120,7 @@ Copy code
 
 ### Call an agent tool
 
-`CORTEX_AGENT_RUN` and `CODING_AGENT` take the same call arguments. `text` is required. Omit `thread_id` on the first turn. The server creates a Cortex thread and returns its id. Pass that id on later calls to continue the same conversation. For a coding agent, that thread also keeps the sandbox.
+`CORTEX_AGENT_RUN` and `CODING_AGENT` take the same call arguments. `text` is required. Omit `thread_id` and `parent_message_id` on the first turn. The server creates a Cortex thread and returns `thread_id` and `message_id`. Pass both on later calls to continue the same conversation. For a coding agent, that thread also keeps the sandbox.
 
 Copy code
 
@@ -1131,7 +1139,7 @@ POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
     }
 ```
 
-A later turn passes the returned id:
+A later turn passes the returned ids:
 
 Copy code
 
@@ -1145,17 +1153,122 @@ POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
             "name": "ask_coding_agent",
             "arguments": {
                 "text": "Break it down by region.",
-                "thread_id": 12345
+                "thread_id": "12345",
+                "parent_message_id": "67890"
             }
         }
     }
 ```
 
-Omit `parent_message_id` to continue from the latest message on that thread. Pass `0` to start a new conversation on the same thread.
+`parent_message_id` is required when `thread_id` is set. Pass the `message_id` from the previous result to continue from that message. Pass `"0"` to start a new branch at the thread root. Send both ids as strings.
 
-The result text is the agent’s reply and includes `thread_id`. Pass that id on the next call.
+### Answer a permission prompt
 
-These thread arguments are available when `ENABLE_MCP_AGENT_RUN_THREAD_CONTINUATION` is enabled, which is the default. When it is off, the server hides `thread_id` and `parent_message_id`, and each call is a new run.
+A sandbox tool such as `write` can end the turn while it waits for approval. The server reports the pause and accepts an answer on the same agent tool. This is not a new tool. Send `permission_decisions` and omit `text`.
+
+A synchronous call that is waiting puts a readable prompt in `content[0].text`. `structuredContent.text` stays the agent message. `structuredContent` also includes `status` (`input_required`), `pending_permissions`, and `next_step`. Each pending entry has `tool_use_id`, `tool`, `summary`, and `options`. Options that grant access for the rest of the session are omitted. Ask the user, then call the same tool with `thread_id`, `parent_message_id` of the waiting message, and one decision per call you want to allow. A decision is the `tool_use_id` and one offered option, or `Deny` with an optional `reason`. Calls you leave out are denied.
+
+Copy code
+
+```
+POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
+    {
+        "jsonrpc": "2.0",
+        "id": 3,
+        "method": "tools/call",
+        "params": {
+            "name": "ask_coding_agent",
+            "arguments": {
+                "thread_id": "12345",
+                "parent_message_id": "67890",
+                "permission_decisions": [
+                    {
+                        "tool_use_id": "toolu_write",
+                        "decision": "Allow this command"
+                    }
+                ]
+            }
+        }
+    }
+```
+
+The call waits for the next agent message. The decision objects are the user message sent to the agent. They are not repeated in the result.
+
+### Choose which content blocks come back
+
+The calling client can set `content_cel_filter` on a synchronous agent call or on `AGENT_RUN_RESULT` to select the content blocks returned. To re-read a finished run with a different filter, it can call [`AGENT_RUN_RESULT`](#label-cortex-mcp-agent-supplementary-tools).
+
+- `compact` (the default) keeps a compact subset with the information that is likely relevant to most clients.
+- `full` keeps every content block.
+- `outline` replaces `content` with one short entry per block (its index, type, and size), so a later call can pick one part, for example `content.filter(c, c.type == 'table')` or `[content[3]]`.
+- Any other string is a [CEL](https://cel.dev) expression. `content` is the list of blocks and `response` is the whole message. The expression’s value replaces `content`. For example, `content.filter(c, c.type == 'text')` keeps the text blocks.
+
+If a CEL expression fails to evaluate, the result contains the outline and the error, so the client can retry with a corrected expression.
+
+### Cortex Agent supplementary tools
+
+If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake adds these tools to `tools/list`. Do not add them to the `CREATE MCP SERVER` specification.
+
+| Tool | Purpose |
+| --- | --- |
+| `ASYNC_AGENT_RUN_STATUS` | Reads one run. Returns `in_progress`, `input_required`, `completed`, `cancelled`, or `failed`, and a `next_step`. |
+| `AGENT_RUN_RESULT` | Returns the stored assistant message of a finished run, synchronous or background. Accepts `content_cel_filter`. |
+| `ASYNC_AGENT_RUN_CANCEL` | Stops a run that is `in_progress`. A run that has already finished returns its current status. |
+
+Expand
+
+Show lessSee more
+
+`AGENT_RUN_RESULT` is useful without `background` too. For example, a client can request `outline` on the agent call, then read only the blocks it needs from the result.
+
+### Run an agent tool in the background
+
+For `CORTEX_AGENT_RUN` and `CODING_AGENT` tools, the calling client can set the `background` argument to `true` to return immediately with a run handle. The run can be polled and managed with the [Cortex Agent supplementary tools](#label-cortex-mcp-agent-supplementary-tools).
+
+Copy code
+
+```
+POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
+    {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/call",
+        "params": {
+            "name": "customer_agent",
+            "arguments": {
+                "text": "What was revenue last quarter?",
+                "background": true
+            }
+        }
+    }
+```
+
+The result includes `run_id`, `thread_id`, `status` (`in_progress`), and `next_step`. `run_id` is `{thread_id}-{user_message_id}`.
+
+Poll status with that id:
+
+Copy code
+
+```
+POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
+    {
+        "jsonrpc": "2.0",
+        "id": 2,
+        "method": "tools/call",
+        "params": {
+            "name": "ASYNC_AGENT_RUN_STATUS",
+            "arguments": {
+                "run_id": "12345-7"
+            }
+        }
+    }
+```
+
+When `status` is `completed`, `next_step` names `AGENT_RUN_RESULT`. Call it with the same `run_id`. `content[0].text` is the JSON text of `structuredContent`, and that object is the assistant message plus `run_id`, `thread_id`, and `message_id`. To continue that thread, call the same agent tool with `thread_id` and `parent_message_id` set to that `message_id`.
+
+`input_required` means the run is waiting for a permission decision. Status and result both return `pending_permissions`, `message_id`, and a readable `text`. Answer by calling the agent tool again with `permission_decisions`, `thread_id`, `parent_message_id`, and `background` set to `true`. See [Answer a permission prompt](#label-cortex-mcp-permission-decisions).
+
+To stop a run, call `ASYNC_AGENT_RUN_CANCEL` with the same `run_id`.
 
 ## Limitations
 

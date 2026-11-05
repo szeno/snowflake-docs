@@ -81,7 +81,7 @@ This topic discusses common issues and how you might resolve them.
 ## Ingress
 
 - If authentication fails, it might be because of the network policy associated with the user or account.
-- When accessing the public endpoint from the internet, you might find that username/password authentication works, but SSO results in a blank page or the error: “OAuth client integration with the given client ID is not found.”. For information about addressing this issue, see [Ingress and SSO considerations](/developer-guide/snowpark-container-services/service-network-communications#label-additional-considerations-ingress-sso).
+- When accessing the public endpoint from the internet, you might find that username/password authentication works, but SSO results in a blank page or the error: “OAuth client integration with the given client ID is not found.” For information about addressing this issue, see [Ingress and SSO considerations](/developer-guide/snowpark-container-services/service-network-communications#label-additional-considerations-ingress-sso).
 - When a client receives a 5XX error from an ingress endpoint (500/503/504), the client should retry, with some backoff. We recommend bounded [exponential backoff](https://en.wikipedia.org/wiki/Exponential_backoff).
 - A CORS pre-flight request returns status 404-Endpoint does not exist:
 
@@ -91,7 +91,7 @@ This topic discusses common issues and how you might resolve them.
   The CORS request did not have any form of authentication. Due to the inability to distinguish between CORS requests and redirects/anchor tags, we have to assume it’s a redirect/anchor tag case and return a 302.
 - Response status 403 “Rejecting a CORS request since cookie was present, and request does not have an auth header”.
 
-  This occurs when a cross-origin non-GET non-HEAD request is attempting to use cookie as the authentication method. The Authentication header is required for these cross-origin requests. This error occurs when the request has cookies present and the Authentication header is not present.
+  This occurs when a cross-origin non-GET non-HEAD request is attempting to use a cookie as the authentication method. The Authentication header is required for these cross-origin requests. This error occurs when the request has cookies present and the Authentication header is not present.
 - Error message “Cross-Origin Request Blocked: The Same Origin Policy disallows reading the remote resource at …”.
 
   Browser returns this error when the service indicated it does not support the requested cross-origin access. This typically happens because the `Origin` provided by the browser does not match one of the origins specified in `Access-Control-Allow-Origin` in the service specification for the endpoint. For these to match, both the scheme (HTTP/HTTPS) and hostname must match.

@@ -33,9 +33,6 @@ SHOW [ TERSE ] DATABASES [ HISTORY ] [ LIKE '<pattern>' ]
     - `database_name`
     - `schema_name`
 
-    Note that `kind`, `database_name`, and `schema_name` always display `NULL` because the columns are not
-    applicable for databases.
-
     Default: No value (all columns are included in the output)
 
 `HISTORY`
@@ -117,8 +114,13 @@ SHOW [ TERSE ] DATABASES [ HISTORY ] [ LIKE '<pattern>' ]
 ## Usage notes
 
 - The `HISTORY` and `WITH PRIVILEGES` parameters are mutually exclusive; they cannot both be used in the same statement.
-- For a [personal database](/user-guide/personal-databases), the value in the `kind` column is `PERSONAL DATABASE`.
-- For [catalog-linked databases](/user-guide/tables-iceberg-catalog-linked-database), the `kind` column is `CATALOG-LINKED DATABASE`.
+- The `kind` column shows the type of each database:
+  - `STANDARD`: A database you create in your account. Databases that aren’t one of the other types below show this value.
+  - `PERSONAL DATABASE`: A [personal database](/user-guide/personal-databases).
+  - `CATALOG-LINKED DATABASE`: A [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database).
+  - `IMPORTED DATABASE`: A database created from a share that another account provides. See [Reshare incoming data as a resharer](/collaboration/resharing-as-resharer).
+  - `APPLICATION`: A database created by installing a [native app](/developer-guide/native-apps/native-apps-about).
+  - `APPLICATION PACKAGE`: The package a provider creates to build a [native app](/developer-guide/native-apps/native-apps-about).
 - The `resharing_settings` column returns an OBJECT that describes the resharing configuration of an imported database. It is populated
   only for imported databases (`kind` is `IMPORTED DATABASE`) and is `NULL` for local databases. The object
   includes the `enabled` field, which is `true` when the database can be reshared, and `only_within_organization`, which is `true` when

@@ -8,10 +8,10 @@ Available to all accounts.
 
 Snowflake CoCo for Google Sheets brings CoCo directly into Google Sheets. It adds CoCo as a chat pane inside the
 spreadsheet you already use, connected to your live Snowflake data. From the pane you can query data, build pivot
-tables and charts, write formulas, and format your sheets using natural language, without exporting data out of
-Snowflake and without learning a separate tool. It also extends Snowflake governance into Google Sheets: queries run
-under your own role, so access control, masking, and row access policies continue to apply to the data that reaches
-your spreadsheet.
+tables and charts, write formulas, and format your sheets using natural language, and then refresh that data later,
+without exporting data out of Snowflake and without learning a separate tool. It also extends Snowflake governance into Google
+Sheets: queries run under your own role, so access control, masking, and row access policies continue to apply to the
+data that reaches your spreadsheet.
 
 The add-on is part of Snowflake CoCo. For an overview of the other CoCo experiences, see
 [CoCo](/user-guide/cortex-code/cortex-code).
@@ -40,6 +40,8 @@ The add-on is part of Snowflake CoCo. For an overview of the other CoCo experien
 - **Use governed objects and semantic views:** Query the tables, views, and semantic views you are permissioned for.
   Metric definitions come from Snowflake semantic views rather than being recreated per spreadsheet, so results stay
   consistent across users and reports.
+- **Intelligently refresh data:** Re-run the queries to get the latest data on demand, and review the new results
+  before they’re applied. See [Intelligent refresh](#label-cortex-code-sheets-refresh).
 - **Run CoCo skills:** Use skills such as report generation, analysis, and summaries from inside the spreadsheet.
   Enter `/` in the pane to see and select the available skills.
 - **Preview before every change:** See a clear before-and-after of every write and accept or reject it before it is
@@ -55,13 +57,16 @@ Some features of Snowflake CoCo for Excel aren’t available in Google Sheets. S
 Snowflake CoCo for Google Sheets runs as an Apps Script project in your spreadsheet and opens a CoCo pane in a sidebar
 next to your sheet. When you make a request, CoCo interprets it, runs the corresponding query or action against your
 Snowflake account using your privileges, and writes the results into the sheet. Data is read from Snowflake at query
-time, so the results reflect your live data when CoCo writes them. CoCo doesn’t refresh the results afterward. To get
-current data, ask CoCo to run the query again.
+time, so the results reflect your live data when CoCo writes them. CoCo saves the query behind each result it loads,
+so you can bring the data up to date later without asking for it again. See
+[Intelligent refresh](#label-cortex-code-sheets-refresh).
 
 The CoCo pane connects to Snowflake directly from your browser. The add-on’s Apps Script code, which runs on Google’s
 servers, is the only part that reads and writes the spreadsheet. It never receives your Snowflake sign-in tokens, and
-it has no permission to make network requests. The script asks Google for access only to the spreadsheet that it’s
-copied into, plus permission to show its menu and sidebar.
+it has no permission to make network requests. The script asks Google for permission to see, edit, create, and delete
+all your Google Sheets spreadsheets, plus permission to show its menu and sidebar. It needs the broader spreadsheet permission because
+it creates and resizes tables through the Google Sheets API, which access to only the current spreadsheet doesn’t
+allow. The script reads and writes only the spreadsheet that it’s copied into.
 
 Before CoCo writes anything to your spreadsheet, it shows a preview of the change and records a citation to the source
 of each written value. For more information about these behaviors, see
@@ -169,6 +174,51 @@ Every value CoCo writes back carries a citation to the query or metric that prod
 number in the spreadsheet back to its source in Snowflake, so results can be verified rather than taken on trust. CoCo
 stores citations in a hidden sheet named `_CORTEX_CITATIONS` in the same spreadsheet.
 
+## Intelligent refresh
+
+CoCo can re-run the Snowflake queries behind the data it loaded, so you can bring a spreadsheet up to date without
+asking for the data again. Snowflake CoCo for Google Sheets refreshes data only when you start a refresh. It doesn’t
+refresh data when the spreadsheet opens.
+
+### Refresh data from the pane
+
+When CoCo loads the results of a Snowflake query into your sheet, it writes the results as plain cells, creates a named
+range over them whose name starts with `CocoTable_`, and saves the query with the spreadsheet. CoCo finds the data
+later by its named range, not by a cell address, so moving the data, inserting rows above it, or renaming the sheet
+doesn’t break refresh. If you ask CoCo to turn the data into a Google Sheets table, or you convert it to a table
+yourself, the table keeps the saved query.
+
+To start a refresh, use any of the following. All three run the same refresh:
+
+- In the pane header, select **Refresh data**.
+- On an empty chat, select **Refresh sheet data**.
+- In the pane, enter `/refresh`. The `/` menu describes the command as “Re-run the Snowflake queries behind data on
+  this sheet.”
+
+[![The CoCo pane header in Google Sheets, with the Refresh data button highlighted between the All chats and More buttons.](/static/images/screens/cortex-code-sheets-refresh-data.png)](/static/images/screens/cortex-code-sheets-refresh-data.png)
+
+By default, a refresh covers the data on the active sheet that CoCo loaded from a query. To refresh specific results,
+select cells that overlap them before you start the refresh. CoCo refreshes each result that the selection touches,
+always in full. Selecting a single cell doesn’t narrow the refresh. If the selected cells don’t touch data that CoCo
+loaded from a query, nothing is refreshed.
+
+CoCo re-runs each saved query directly, without a request to the model, under your current role and warehouse. It
+then shows the new results as a preview that you accept or reject. When a refresh covers more than one result, you
+choose which results to apply. Only read-only queries run: if a saved query isn’t read-only, CoCo skips that result
+and tells you. You can’t start a refresh while another preview is waiting for you to accept or reject it.
+
+Refresh has the following limits:
+
+- If the new results have more or fewer rows or columns than the data they replace, CoCo inserts or deletes cells only
+  below or beside the data, and any table or named range in those cells moves with them. If the shift would split a
+  table or named range, CoCo doesn’t refresh that data, and it names the table or named range that’s in the way. Move
+  the data, or move the table or named range that’s in the way, and then run the refresh again.
+- A refresh counts toward the Google Sheets cell limit like any other write. If the refreshed data doesn’t fit in the
+  spreadsheet, CoCo doesn’t write it. See [Limitations](#label-cortex-code-sheets-limitations).
+- If a refresh stops partway, for example because you stop it or the connection to Snowflake is lost, the data can
+  hold a mix of old and new rows. CoCo reports how many rows it wrote and doesn’t retry. Run the refresh again to
+  finish it.
+
 ## Authentication and access control
 
 You sign in to Snowflake from the pane using OAuth. CoCo authenticates with your own Snowflake identity and operates
@@ -264,13 +314,16 @@ The following limits come from Google Sheets:
 - Google Sheets limits the total number of cells in a spreadsheet, and empty columns count toward that limit. CoCo
   checks a query result against the limit before it writes. If the result fits only without the destination sheet’s
   trailing empty columns, CoCo tells you in the preview that it will delete those columns when you accept. If the result
-  doesn’t fit, CoCo refuses the import.
+  doesn’t fit, CoCo refuses the import. CoCo applies the same check to a [refresh](#label-cortex-code-sheets-refresh).
+  If the refreshed data fits only without the sheet’s trailing empty columns, CoCo deletes those columns when you
+  accept the refresh. If the refreshed data doesn’t fit, CoCo doesn’t write it.
 
 The following Snowflake CoCo for Excel features aren’t available in Google Sheets:
 
 - `CORTEX` functions in cells, such as `=CORTEX.ASK()`.
-- Intelligent refresh, including **Refresh data**, `/refresh`, and **Refresh when this workbook opens**. Query results
-  are written to the sheet as cell values, and CoCo doesn’t refresh them.
+- [Refresh when the workbook opens](/user-guide/cortex-code/cortex-code-excel-integration#label-cortex-code-excel-refresh-on-open).
+  In Google Sheets, CoCo refreshes data only when you start a refresh. See
+  [Intelligent refresh](#label-cortex-code-sheets-refresh).
 
 ## Feedback
 
@@ -286,6 +339,12 @@ Any Snowflake compute or storage consumed separately from CoCo usage is billed a
 as described in the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf). Examples
 include virtual warehouse compute used to run your queries and storage costs.
+
+[Refreshing data](#label-cortex-code-sheets-refresh) from the pane doesn’t consume CoCo tokens. The spreadsheet stores
+the SQL behind each result that CoCo loaded, and a refresh runs that saved SQL directly, without a request to the
+model. This applies to **Refresh data**, **Refresh sheet data**, and `/refresh`. Each refresh still uses virtual
+warehouse compute to run the queries. If you ask CoCo in a chat message to refresh data, that request consumes CoCo
+tokens like any other CoCo request.
 
 To set daily credit usage limits for CoCo users, see
 [Managing CoCo credit usage limits](/user-guide/cortex-code/credit-usage-limit).

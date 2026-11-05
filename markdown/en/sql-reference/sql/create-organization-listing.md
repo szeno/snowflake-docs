@@ -65,6 +65,8 @@ Expand
 
 Show lessSee more
 
+You can’t create a listing by using the GLOBALORGADMIN role, which is used for organization administration.
+
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this SQL command must have at least one of the following
 [privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
 

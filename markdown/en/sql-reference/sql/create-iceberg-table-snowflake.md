@@ -8,6 +8,8 @@ This command supports the following variants:
 
 - CREATE ICEBERG TABLE … AS SELECT (creates a populated table; also referred to as CTAS)
 - CREATE ICEBERG TABLE … LIKE (creates an empty copy of an existing table)
+- CREATE ICEBERG TABLE … CLONE (creates a clone of an existing table)
+- [CREATE ICEBERG TABLE … FROM BACKUP SET](#label-create-iceberg-table-from-backup-set-syntax) (restores a table from a backup under a new name)
 
 This topic refers to Iceberg tables as simply “tables” except where specifying *Iceberg tables* avoids confusion.
 
@@ -228,6 +230,51 @@ being cloned.
 For more information about the COPY GRANTS parameter, see [COPY GRANTS](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-copy-grants) in this document.
 
 For more information about cloning, see [CREATE <object> … CLONE](/sql-reference/sql/create-clone) and [Cloning and Apache Iceberg™ tables](/user-guide/object-clone#label-cloning-and-iceberg-tables).
+
+### CREATE ICEBERG TABLE … FROM BACKUP SET
+
+Feature — Generally Available
+
+Backups for Snowflake Storage for Apache Iceberg™ tables are generally available
+on Amazon Web Services (AWS) only.
+
+Restores a Snowflake Storage for Apache Iceberg™ table from a backup under a new name:
+
+Copy code
+
+```
+CREATE ICEBERG TABLE <name> FROM BACKUP SET <backup_set> IDENTIFIER '<backup_id>'
+```
+
+The FROM BACKUP SET clause restores an Iceberg table from a backup. You don’t specify other table
+properties because they’re all the same as in the backed-up table.
+
+This form doesn’t have a CREATE OR REPLACE clause. You typically either restore the
+table under a new name and recover any data or other objects from this new table,
+or rename the original table and then restore the table under the original name.
+
+Note
+
+The backup set is associated with the internal table ID of the original table.
+Any more backups you add to the backup set use the original table, even if you
+changed its name. If you want to make backups of the newly restored table, create a
+new backup set for it.
+
+For more information about backups, see [Backups for disaster recovery and immutable storage](/user-guide/backups).
+
+If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can promote
+`CREATE TABLE ... FROM BACKUP SET` to this Iceberg restore variant. Prefer
+`CREATE ICEBERG TABLE ... FROM BACKUP SET` in your SQL.
+
+`backup_set`
+:   Specifies the name of a backup set created for a specific Snowflake Storage for Apache Iceberg™
+    table.
+    You can use the SHOW BACKUP SETS command to locate the right backup set.
+
+`backup_id`
+:   Specifies the identifier of a specific backup within that backup set.
+    You can use the SHOW BACKUPS IN BACKUP SET command to locate the right identifier within the backup
+    set, based on the creation date and time for the backup.
 
 ## Required parameters
 

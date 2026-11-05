@@ -62,7 +62,7 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 24 hours.
-- The view provides daily block storage and snapshot usage within the last 365 days (1 year).
+- By default, the view provides daily block storage and snapshot usage within the last 365 days (1 year).
 - Snapshots are not associated with compute pools; therefore, for snapshots the view has the NULL value in the COMPUTE\_POOL\_NAME and
   COMPUTE\_POOL\_ID columns.
 - The BYTES column shows average usage of block storage volumes for a specific day, for a specific storage type, and for a specific compute

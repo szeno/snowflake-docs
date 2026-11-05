@@ -701,7 +701,12 @@ Snowflake recommends setting up alerts so that you’re notified of ingestion er
 replication without having to check the connector manually. This applies to both gen 1 and gen 2
 connectors.
 
-Openflow writes telemetry, including logs and metrics, to an event table. Build an alert on that
-telemetry with a scheduled query: see [Monitor Openflow using telemetry data](/user-guide/data-integration/openflow/monitor) for the
-available telemetry and example queries, and [Setting up alerts based on data in Snowflake](/user-guide/alerts) for how to create an alert
-from a query.
+Create alerts from the templates that Snowflake provides for Openflow:
+
+- For tables that fail to replicate or stop receiving data, see
+  [Alerts](/user-guide/data-integration/openflow/connectors/mysql/monitor#label-openflow-db-alerts).
+- For problems that apply to all connectors, such as errors and back pressure, see
+  [Set up alerts for Openflow](/user-guide/data-integration/openflow/alerts).
+
+To build your own alert on the telemetry that Openflow writes to your event table, see
+[Openflow telemetry](/user-guide/data-integration/openflow/monitor) and [Setting up alerts based on data in Snowflake](/user-guide/alerts).

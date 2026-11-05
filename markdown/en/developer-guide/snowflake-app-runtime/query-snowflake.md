@@ -136,4 +136,4 @@ If none of those are present, the helper fails with
 `No Snowflake credentials found.`
 
 To wire the tokens yourself instead of using `lib/snowflake.ts`, see
-[Tutorial 7:Create a Snowpark Container Services service that uses caller’s rights](/developer-guide/snowpark-container-services/tutorials/advanced/tutorial-7-callers-rights).
+[Tutorial 7: Create a Snowpark Container Services service that uses caller’s rights](/developer-guide/snowpark-container-services/tutorials/advanced/tutorial-7-callers-rights).

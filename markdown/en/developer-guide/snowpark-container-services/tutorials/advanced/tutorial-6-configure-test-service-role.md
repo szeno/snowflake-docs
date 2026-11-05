@@ -8,11 +8,11 @@ Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, a
 
 In Tutorial 1, you use the same role to create and test a service. The role that creates the service is the service’s owner role, so you’re able to communicate with the service by using that role.
 
-In this tutorial, you explore by using a different role to communicate with the service.
+In this tutorial, you explore using a different role to communicate with the service.
 
 You grant this role the USAGE privilege by using a [service role](/developer-guide/snowpark-container-services/working-with-services#label-spcs-manage-service-related-privileges-service-roles) that you define in the service specification.
 
-In this tutorial, you modify the [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1) as follows:
+In this tutorial, you modify [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1) as follows:
 
 1. Create a new role that you will use to communicate with the service.
 2. Modify the service specification as follows:
@@ -110,7 +110,7 @@ Follow [Common Setup](/developer-guide/snowpark-container-services/tutorials/com
 
    This service role grants the `service_function_user_role` USAGE privilege on the `echoendpoint` endpoint.
 
-   To demonstrate that the service role name is case in-sensitive, the example uses the `echoendpoint_Role` role name.
+   To demonstrate that the service role name is case-insensitive, the example uses the `echoendpoint_Role` role name.
 
 ## Use the service
 
@@ -128,7 +128,7 @@ Create a service function to communicate with the service. You create a service 
      ENDPOINT=echoendpoint
      AS '/echo';
    ```
-2. Try creating another service function that refers to the `echoservice2` endpoint for which the role has no access privilege. Therefore, the command should *fail*.
+2. Try creating another service function that refers to the `echoendpoint2` endpoint for which the role has no access privilege. Therefore, the command should *fail*.
 
    Copy code
 
@@ -149,7 +149,7 @@ Create a service function to communicate with the service. You create a service 
 
 ## Clean up
 
-To remove the resources you created, follow the steps in [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1) steps to clean up other resources created in Tutorial 1.
+To remove the resources you created, follow the steps in [Tutorial 1](/developer-guide/snowpark-container-services/tutorials/tutorial-1) to clean up other resources created in Tutorial 1.
 
 ## What’s next?
 

@@ -19,7 +19,7 @@ When you query a specific view in the `SNOWFLAKE.ORGANIZATION_USAGE` schema, fol
 [Performance (Organization Usage)](/sql-reference/organization-usage#label-org-usage-performance): bound every scan on history views, list
 columns explicitly, and use the time filter column table plus worked SQL and anti-patterns there.
 
-This Organization Usage view can be used to query the amount of time spent loading data into Snowflake tables using [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) within the last 365 days (1 year). The view displays the amount of data loaded and timestamp of the Snowpipe Streaming client calls for accounts in your organization.
+This Organization Usage view can be used to query the amount of time spent loading data into Snowflake tables using [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) within the last 365 days (1 year) by default. The view displays the amount of data loaded and timestamp of the Snowpipe Streaming client calls for accounts in your organization.
 
 ## Columns
 

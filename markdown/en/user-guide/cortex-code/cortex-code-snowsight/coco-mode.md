@@ -161,7 +161,7 @@ seven days, select the automation. To review what CoCo did in a run, select the 
 chat.
 
 For requirements, cost, and prompt guidance, see
-[CoCo automations in CLI and Snowsight](/user-guide/cortex-code/cortex-code-automations).
+[CoCo automations in CLI, Snowsight, and Desktop](/user-guide/cortex-code/cortex-code-automations).
 
 ## Approve tool calls
 

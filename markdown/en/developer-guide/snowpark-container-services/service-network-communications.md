@@ -401,15 +401,15 @@ Follow these steps to enable your service to access these domains on the interne
        $$
        spec:
          containers:
-     - name: main
-       image: /db/data_schema/tutorial_repository/my_echo_service_image:tutorial
-       env:
-         TEST_FILE_STAGE: source_stage/test_file
-       args:
-         - read_secret.py
+         - name: main
+           image: /db/data_schema/tutorial_repository/my_echo_service_image:tutorial
+           env:
+             TEST_FILE_STAGE: source_stage/test_file
+           args:
+             - read_secret.py
          endpoints:
-     - name: read
-       port: 8080
+         - name: read
+           port: 8080
        $$;
      ```
 
@@ -427,12 +427,12 @@ Follow these steps to enable your service to access these domains on the interne
        EXTERNAL_ACCESS_INTEGRATIONS = (GOOGLE_APIS_ACCESS_INTEGRATION)
        FROM SPECIFICATION $$
        spec:
-         container:
+         containers:
          - name: curl
-     image: /tutorial_db/data_schema/tutorial_repo/alpine-curl:latest
-     command:
-     - "curl"
-     - "http://google.com/"
+           image: /tutorial_db/data_schema/tutorial_repo/alpine-curl:latest
+           command:
+           - "curl"
+           - "http://google.com/"
        $$;
      ```
 

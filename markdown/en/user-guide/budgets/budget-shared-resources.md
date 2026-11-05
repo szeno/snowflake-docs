@@ -187,7 +187,7 @@ Using tags to define the scope of a budget is required for shared resources such
 8. Configure AI Functions.
 
    - By default, all AI functions are selected, and future AI functions are automatically included.
-   - You can also choose to selectively choose specific functions (for example, `AI_CLASSIFY`, `AI_COMPLETE`). For a complete list, see [Snowflake Cortex AI Functions (including LLM functions)](/user-guide/snowflake-cortex/aisql).
+   - You can also select specific functions (for example, `AI_CLASSIFY`, `AI_COMPLETE`). For a complete list, see [Snowflake Cortex AI Functions (including LLM functions)](/user-guide/snowflake-cortex/aisql).
 9. Configure Cortex Code.
 
    - By default, future Cortex Code interfaces are automatically included.
@@ -199,13 +199,13 @@ Using tags to define the scope of a budget is required for shared resources such
 11. Configure Cortex Agents.
 
     - By default, all Cortex Agents are automatically included.
-    - You can also choose to select specific Cortex Agent.
+    - You can also select a specific Cortex Agent.
 12. Configure AI Gateway.
 
     - The account’s single gateway, `SNOWFLAKE`, is selected by default. There’s nothing to choose.
 13. Review your selections.
 
-Confirm that the correct resources are selected, ensure that any selected tags correctly reflect the intended scope.
+Confirm that the correct resources are selected, and ensure that any selected tags correctly reflect the intended scope.
 
 14. Complete the remaining configuration and click **Create**
 

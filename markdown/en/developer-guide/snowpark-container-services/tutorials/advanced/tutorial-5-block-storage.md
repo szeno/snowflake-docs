@@ -29,21 +29,21 @@ This tutorial provides step-by-step instructions for you to create a simple serv
    spec:
      containers:
      - name: echo
-    image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
-    volumeMounts:
-    - name: block-vol1
-      mountPath: /opt/block/path
-    readinessProbe:
-      port: 8080
-      path: /healthcheck
+       image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:latest
+       volumeMounts:
+       - name: block-vol1
+         mountPath: /opt/block/path
+       readinessProbe:
+         port: 8080
+         path: /healthcheck
      endpoints:
      - name: echoendpoint
-    port: 8080
-    public: true
+       port: 8080
+       public: true
      volumes:
      - name: block-vol1
-    source: block
-    size: 10Gi
+       source: block
+       size: 10Gi
    $$;
    ```
 
@@ -56,7 +56,7 @@ This tutorial provides step-by-step instructions for you to create a simple serv
    Copy code
 
    ```
-   DESC SERVICE echo_service;
+   DESC SERVICE my_service;
    ```
 
    Verify the `status` column shows the service status as RUNNING; if the status is PENDING, it indicates the service is still starting. To investigate why the service is not RUNNING, execute the [SHOW SERVICE CONTAINERS IN SERVICE](/sql-reference/sql/show-service-containers-in-service) command and review the `status` of individual containers:
@@ -64,7 +64,7 @@ This tutorial provides step-by-step instructions for you to create a simple serv
    Copy code
 
    ```
-   SHOW SERVICE CONTAINERS IN SERVICE echo_service;
+   SHOW SERVICE CONTAINERS IN SERVICE my_service;
    ```
 
 ## Take a snapshot
@@ -83,7 +83,7 @@ This tutorial provides step-by-step instructions for you to create a simple serv
      INSTANCE 0
      COMMENT='new snapshot';
    ```
-2. Review the snapshot
+2. Review the snapshot:
 
    - List snapshots using [SHOW SNAPSHOTS](/sql-reference/sql/show-snapshots).
 
@@ -109,8 +109,7 @@ This tutorial provides step-by-step instructions for you to create a simple serv
 
 ## Use the snapshot
 
-1. You can use the snapshot two ways:
-
+1. You can use the snapshot in two ways:
    - **Use snapshot to create a new service:** When creating a new service, you can use the snapshot as the initial content for a block storage volume as shown. The following CREATE SERVICE command creates another service (`new_service`) with a 50 Gi block storage volume. The inline specification includes the snapshot name to use for initializing the block storage volume.
 
      Copy code
@@ -125,10 +124,10 @@ This tutorial provides step-by-step instructions for you to create a simple serv
          image: /tutorial_db/data_schema/tutorial_repository/my_echo_service_image:tutorial
          volumeMounts:
          - name: fromsnapshotvol
-     mountPath: /opt/block/path
+           mountPath: /opt/block/path
          readinessProbe:
-     port: 8080
-     path: /healthcheck
+           port: 8080
+           path: /healthcheck
        endpoints:
        - name: echoendpoint
          port: 8080
@@ -138,8 +137,8 @@ This tutorial provides step-by-step instructions for you to create a simple serv
          source: block
          size: 50Gi
          blockConfig:
-     initialContents:
-       fromSnapshot: MY_SNAPSHOT
+           initialContents:
+             fromSnapshot: MY_SNAPSHOT
      $$
      min_instances=3
      max_instances=3;
@@ -154,7 +153,7 @@ This tutorial provides step-by-step instructions for you to create a simple serv
         ALTER SERVICE my_service SUSPEND;
         ```
      2. Restore the snapshot on the block storage volume mounted on the container of the
-        new\_service instance. You are running only one instance of the Echo Service, so you specify instance ID 0.
+        `my_service` instance. You are running only one instance of the Echo Service, so you specify instance ID 0.
 
         Copy code
 
@@ -169,10 +168,10 @@ This tutorial provides step-by-step instructions for you to create a simple serv
         Copy code
 
         ```
-        DESC SERVICE echo_service;
+        DESC SERVICE my_service;
         ```
 
-        The `status` column should show the service status as RUNNING;
+        The `status` column should show the service status as RUNNING.
 2. Use the [DROP SNAPSHOT](/sql-reference/sql/drop-snapshot) command to drop the snapshot.
 
    Copy code

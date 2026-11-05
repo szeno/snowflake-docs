@@ -61,6 +61,8 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
 
     - `identifier`: Fully qualified name of the underlying object (for example, `database.schema.object_name`)
 
+    If an MCP server has at least one of the `CORTEX_AGENT_RUN` or `CODING_AGENT` tools, Snowflake automatically adds three tools: `ASYNC_AGENT_RUN_STATUS`, `AGENT_RUN_RESULT`, and `ASYNC_AGENT_RUN_CANCEL`. If `CORTEX_AGENT_RUN` or `CODING_AGENT` is invoked with `"background": true`, it returns immediately with a handle; that handle can be passed to `ASYNC_AGENT_RUN_STATUS` or `ASYNC_AGENT_RUN_CANCEL` to get the status or cancel a run respectively. `AGENT_RUN_RESULT` can be used to fetch a result from a run (whether background or not). See [Cortex Agent supplementary tools](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-agent-supplementary-tools) and [Run an agent tool in the background](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-background-agent-run).
+
     For `GENERIC` tools:
 
     - `identifier`: Fully qualified name of the UDF or stored procedure
@@ -72,8 +74,8 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
     For `CODING_AGENT` tools:
 
     - Add the tool to the server specification. Omit `identifier`. This tool does not reference a stored agent object.
-    - `config`: Optional agent configuration, such as `model`, `instructions`, `tools`, `tool_resources`, and `skills`. Leave `messages`, `thread_id`, `parent_message_id`, `stream`, `background`, and `origin_application` out of `config`. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
-    - Snowflake appends `code_toolset_all` after any tools in `config`. A run can include `code_toolset_all` or `code_execution`, but not both.
+    - `config`: Optional agent configuration. It can include any field of the [Cortex Agents run request](/user-guide/snowflake-cortex/cortex-agents-run), such as `model`, `instructions`, `tools`, `tool_resources`, and `skills`. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
+    - Snowflake appends `code_toolset_all` after any tools in `config`. A run can include `code_toolset_all` or `code_execution`, but not both. The appended tool defaults to `always_ask`, so a state-modifying tool pauses and the call ends before it runs. Set `tool_resources.code_toolset_all.permission_policy.type` to `always_allow` for a trusted automation that should run those tools in one call. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent#label-coding-agent-permission-policy).
 
 ## Access control requirements
 
@@ -244,7 +246,7 @@ CREATE MCP SERVER agent_server
 
 **Example 6: Create MCP server with a coding agent tool**
 
-Add a `CODING_AGENT` tool to the server specification. Clients call the tool with a `text` argument and can pass `thread_id` to continue the conversation.
+Add a `CODING_AGENT` tool to the server specification. Clients call the tool with a `text` argument. A later call passes the returned `thread_id` and `message_id` as `thread_id` and `parent_message_id`. `parent_message_id` is required whenever `thread_id` is set. Pass `"0"` to start a new branch at the thread root.
 
 Copy code
 
@@ -260,5 +262,9 @@ CREATE MCP SERVER coding_agent_server
           model: "claude-sonnet-4-6"
           instructions:
             response: "Write and run code when that answers the question."
+          tool_resources:
+            code_toolset_all:
+              permission_policy:
+                type: always_allow
   $$;
 ```

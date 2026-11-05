@@ -200,11 +200,11 @@ For an example with step-by-step instructions, see [Create a service with caller
 #### Accessing a service with caller’s rights configured
 
 *Configuring caller’s rights* means that your service is establishing a Snowflake connection on behalf of the caller. How you log in to the
-service’s ingress endpoints, either programmatically or by using a browser, remains the same. After log in, the following behaviors and options apply:
+service’s ingress endpoints, either programmatically or by using a browser, remains the same. After logging in, the following behaviors and options apply:
 
 - **Accessing a public endpoint using a browser:** After you log into an endpoint, the service establishes a connection to Snowflake on behalf
   of the calling user using the default role of the user. If there is no default role configured for the user, the PUBLIC role is used.
-- **Accessing a public endpoint programmatically:** When [logging into an endpoint programmatically](/user-guide/oauth-custom#label-oauth-token-exchange) using JWT token, you can optionally set the `scope` parameter to specify the role to activate
+- **Accessing a public endpoint programmatically:** When [logging into an endpoint programmatically](/user-guide/oauth-custom#label-oauth-token-exchange) using a JWT token, you can optionally set the `scope` parameter to specify the role to activate.
 
 Currently, after a service establishes a caller’s rights connection to Snowflake on behalf of the caller, switching roles is not supported. If your application needs to use different roles to access different objects, you must change the user’s default secondary roles property.
 

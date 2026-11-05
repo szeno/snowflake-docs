@@ -99,7 +99,7 @@ In this section, you create the Snowflake objects required by an app with contai
 
 ### Create a warehouse and image repository
 
-To create the required objects, perform the following either through Snowsight or Snowflake CLI.
+To create the required objects, perform the following through either Snowsight or Snowflake CLI.
 
 1. To set the current context in Snowsight to use the `tutorial_role` role, run the following command:
 
@@ -228,10 +228,10 @@ Within the `na-spcs-tutorial` folder, this command creates the following files a
 ```
 ├── README.md
 ├── app
-    └── manifest.yml
-    └── README.md
-    └── setup_script.sql
-├── snowflake.yml
+│   ├── manifest.yml
+│   ├── README.md
+│   └── setup_script.sql
+└── snowflake.yml
 ```
 
 In later sections you modify these files and add additional resources to your app.
@@ -261,17 +261,17 @@ should have the following structure within the `na-spcs-tutorial` folder:
 
 ```
 ├── app
-      └── manifest.yml
-      └── README.md
-      └── setup_script.sql
+│   ├── manifest.yml
+│   ├── README.md
+│   └── setup_script.sql
 ├── README.md
 ├── service
-      └── echo_service.py
-      ├── echo_spec.yaml
-      ├── Dockerfile
-      └── templates
-         └── basic_ui.html
-├── snowflake.yml
+│   ├── echo_service.py
+│   ├── echo_spec.yaml
+│   ├── Dockerfile
+│   └── templates
+│       └── basic_ui.html
+└── snowflake.yml
 ```
 
 ## Build an image for a Snowpark Container Services service
@@ -369,7 +369,7 @@ To build a Docker image and upload it to the image repository, follow these step
    ```
 
 In this section, you created a Docker image containing the echo service and pushed it to the
-`tutorial_repository` image repository you created earlier in the tutorial.
+`tutorial_image_repo` image repository you created earlier in the tutorial.
 
 In the next section, you create an application package that uses this image.
 
@@ -413,17 +413,17 @@ To modify the manifest file for the app, follow these steps:
    manifest_version: 1
 
    artifacts:
-   setup_script: setup_script.sql
-   readme: README.md
-   container_services:
-      images:
-      - /tutorial_image_database/tutorial_image_schema/tutorial_image_repo/my_echo_service_image:tutorial
+     setup_script: setup_script.sql
+     readme: README.md
+     container_services:
+       images:
+       - /tutorial_image_database/tutorial_image_schema/tutorial_image_repo/my_echo_service_image:tutorial
 
    privileges:
    - BIND SERVICE ENDPOINT:
-     description: "A service that can respond to requests from public endpoints."
+       description: "A service that can respond to requests from public endpoints."
    - CREATE COMPUTE POOL:
-     description: "Permission to create compute pools for running services"
+       description: "Permission to create compute pools for running services"
    ```
 
    This example includes the following:
@@ -523,22 +523,22 @@ In this section, you modify the project definition file used by the Snowflake CL
    ```
    definition_version: 2
    entities:
-   na_spcs_tutorial_pkg:
-      type: application package
-      manifest: app/manifest.yml
-      artifacts:
+     na_spcs_tutorial_pkg:
+       type: application package
+       manifest: app/manifest.yml
+       artifacts:
          - src: app/*
            dest: ./
          - service/echo_spec.yaml
-      meta:
+       meta:
          role: tutorial_role
          warehouse: tutorial_warehouse
-   na_spcs_tutorial_app:
-      type: application
-      from:
+     na_spcs_tutorial_app:
+       type: application
+       from:
          target: na_spcs_tutorial_pkg
-      debug: false
-      meta:
+       debug: false
+       meta:
          role: tutorial_role
          warehouse: tutorial_warehouse
    ```
@@ -581,7 +581,7 @@ You can run SQL commands using either Snowsight or the Snowflake CLI.
 
 To grant the privileges and test the app, perform the following steps from a Snowflake worksheet:
 
-1. Grant the `CREATE COMPUTE POOL` privilege to the app by running the following:
+1. Grant the `CREATE COMPUTE POOL` and `BIND SERVICE ENDPOINT` privileges to the app by running the following:
 
    Copy code
 
@@ -634,7 +634,7 @@ To grant the privileges and test the app, perform the following steps from a Sno
    You see the following message from the service you configured in an earlier section:
 
    ```
-   ``Bob said hello``
+   Bob said hello
    ```
 
 ## Tear down the app and objects created in the tutorial

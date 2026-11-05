@@ -433,6 +433,12 @@ These parameters are part of the syntax for defining a [fact](/sql-reference/sql
 `AS sql_expr`
 :   Specifies the SQL expression for computing the dimension, fact, or metric.
 
+    [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    For a level of detail (LOD) expression, the `sql_expr` combines an aggregate function with a `FIXED`, `INCLUDE`, or `EXCLUDE DIMENSIONS` clause. This is a row-level expression, for example `COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id)`. To define an LOD metric, wrap the expression in another aggregate function, for example `AVG(COUNT(orders.order_id) FIXED DIMENSIONS (customers.customer_id))`. For details, see [Defining level of detail (LOD) metrics](/user-guide/views-semantic/sql#label-semantic-views-lod).
+
     See [Defining facts, dimensions, and metrics](/user-guide/views-semantic/sql#label-semantic-views-create-facts-dimensions-metrics). For the validation rules for these expressions, see
     [How Snowflake validates semantic views](/user-guide/views-semantic/validation-rules).
 

@@ -343,9 +343,10 @@ following changes:
    all, the container needs access to the package index, which requires an external access
    integration and consumer approval. See [Allow access to a package index](#label-streamlit-container-eai-na).
 5. **Review your app code for container-runtime compatibility.** If your code uses
-   `get_active_session()`, replace it with `st.connection("snowflake").session()`. Review shared state
-   for thread safety because the container runtime serves multiple viewers concurrently. For more
-   information, see [Migrating between runtime environments](/developer-guide/streamlit/migrations-and-upgrades/runtime-migration).
+   `get_active_session()`, replace it with `st.connection("snowflake").session()`. Don’t store
+   viewer-specific values in shared connection state or cache viewer-specific query results across
+   viewers. See [Share one runtime across viewers](#label-streamlit-container-concurrency-na). For thread safety, see
+   [Migrating between runtime environments](/developer-guide/streamlit/migrations-and-upgrades/runtime-migration).
 
 Your permission callbacks and object references are unchanged by the runtime switch.
 
@@ -451,6 +452,7 @@ GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
 GRANT USAGE ON STREAMLIT core.app_ui TO APPLICATION ROLE app_public;
 ```
 
+The example uses fixed resource names for a single installation in the consumer account.
 Use `IF NOT EXISTS` when creating the compute pool and query warehouse so that an upgrade reuses
 them rather than recreating them. The example creates a warehouse owned by the app; choose its size
 based on your query workload.
@@ -474,16 +476,75 @@ CREATE OR REPLACE STREAMLIT core.app_ui
   RUNTIME_NAME    = 'SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'
   COMPUTE_POOL    = myapp_streamlit_pool
   QUERY_WAREHOUSE = myapp_query_warehouse
-  EXTERNAL_ACCESS_INTEGRATIONS = (core.pypi_eai);
+  EXTERNAL_ACCESS_INTEGRATIONS = (myapp_pypi_eai);
 ```
 
 Important
 
-The COMPUTE\_POOL parameter of the CREATE STREAMLIT command requires a literal object name. You can’t
-pass the pool name with `IDENTIFIER(:variable)`, so you can’t use the naming pattern described in
-[Add the CREATE COMPUTE POOL command to the setup script](/developer-guide/native-apps/container-compute-pool#label-native-apps-cont-create-compute-pool-setup-script) to prefix the pool name with the
-application name. Because compute pools are account-level objects, choose a name that’s unlikely to
-collide with a pool created by another app in the same consumer account.
+Pass a literal object name to `COMPUTE_POOL`; you can’t use `IDENTIFIER(:variable)` for this
+parameter. The fixed names in this example aren’t suitable for multiple installations of the same app
+in one account.
+
+To support multiple installations in the same account, derive the resource names from
+`CURRENT_DATABASE()`, which returns the application name during setup. Compute pools and warehouses
+are account-level objects, so each name must be unique in the consumer account. Use `IDENTIFIER` to create
+the compute pool and warehouse, and build the `CREATE STREAMLIT` statement with `EXECUTE IMMEDIATE`
+to supply a literal pool name. The following setup-script example replaces the fixed-name resource
+and Streamlit creation statements above for an app that doesn’t install Python packages. It assumes
+that you’ve already created the `app_public` application role and the `core` versioned schema:
+
+Copy code
+
+```
+CREATE OR REPLACE PROCEDURE core.create_app_ui()
+  RETURNS VARCHAR
+  LANGUAGE SQL
+  EXECUTE AS OWNER
+AS $$
+DECLARE
+  pool_name VARCHAR DEFAULT CURRENT_DATABASE() || '_STREAMLIT_POOL';
+  warehouse_name VARCHAR DEFAULT CURRENT_DATABASE() || '_QUERY_WAREHOUSE';
+  pool_id VARCHAR;
+  warehouse_id VARCHAR;
+  streamlit_ddl VARCHAR;
+BEGIN
+  pool_id := '"' || REPLACE(pool_name, '"', '""') || '"';
+  warehouse_id := '"' || REPLACE(warehouse_name, '"', '""') || '"';
+
+  CREATE COMPUTE POOL IF NOT EXISTS IDENTIFIER(:pool_id)
+    MIN_NODES = 1
+    MAX_NODES = 3
+    INSTANCE_FAMILY = CPU_X64_S
+    AUTO_RESUME = TRUE;
+
+  CREATE WAREHOUSE IF NOT EXISTS IDENTIFIER(:warehouse_id)
+    WAREHOUSE_SIZE = XSMALL
+    AUTO_SUSPEND = 60
+    AUTO_RESUME = TRUE
+    INITIALLY_SUSPENDED = TRUE;
+
+  streamlit_ddl := 'CREATE OR REPLACE STREAMLIT core.app_ui '
+    || 'FROM ''/code_artifacts/streamlit'' '
+    || 'MAIN_FILE = ''streamlit_app.py'' '
+    || 'RUNTIME_NAME = ''SYSTEM$ST_CONTAINER_RUNTIME_PY3_11'' '
+    || 'COMPUTE_POOL = ' || pool_id || ' '
+    || 'QUERY_WAREHOUSE = ' || warehouse_id;
+
+  EXECUTE IMMEDIATE :streamlit_ddl;
+  RETURN 'Streamlit object created';
+END;
+$$;
+
+CALL core.create_app_ui();
+GRANT USAGE ON SCHEMA core TO APPLICATION ROLE app_public;
+GRANT USAGE ON STREAMLIT core.app_ui TO APPLICATION ROLE app_public;
+```
+
+The procedure double-quotes the resource names and escapes any embedded double quotes. The pool and
+warehouse are created with the same quoted names that `COMPUTE_POOL` and `QUERY_WAREHOUSE` reference,
+so names that include lowercase letters match. `IF NOT EXISTS` reuses the resources during upgrades. If the app needs an external access
+integration, derive a unique integration name for each installation and include that name in the
+generated `EXTERNAL_ACCESS_INTEGRATIONS` clause. See [Allow access to a package index](#label-streamlit-container-eai-na).
 
 ### Specify Python packages
 
@@ -587,9 +648,16 @@ approves it.
          description: "Creates an EAI so the app can install Python packages from PyPI"
    ```
 2. In the setup script, create the network rule, the integration, and the app specification after
-   creating the `core` schema and before creating the Streamlit object. All three statements succeed
-   at installation time. The integration stays inert until the consumer approves the specification,
-   so you don’t need callbacks or conditional logic:
+   creating the `core` schema and before creating the Streamlit object. Create the app specification
+   directly in the setup script. A procedure that a consumer calls after installation can’t create it and
+   fails with error 99310 (`Only an Application can create or drop an Application Specification`). The
+   integration stays inert until the consumer approves the specification, so you don’t need callbacks or
+   conditional logic.
+
+   Create the external access integration with an unqualified name. An external access integration is
+   an account-level object, so its name must be unique in the consumer account. The network rule is a
+   schema object, so qualify it with the schema. When the app can be installed more than once in the
+   same account, include the application name in the integration name.
 
    Copy code
 
@@ -599,7 +667,7 @@ approves it.
      TYPE       = HOST_PORT
      VALUE_LIST = ('pypi.org', 'files.pythonhosted.org');
 
-   CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION core.pypi_eai
+   CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION myapp_pypi_eai
      ALLOWED_NETWORK_RULES = (core.pypi_network_rule)
      ENABLED               = TRUE;
 
@@ -610,7 +678,7 @@ approves it.
      HOST_PORTS  = ('pypi.org', 'files.pythonhosted.org');
    ```
 
-   Every hostname in HOST\_PORTS must match a value in the `VALUE_LIST` property of the network rule
+   Every hostname in `HOST_PORTS` must match a value in the `VALUE_LIST` property of the network rule
    that the integration uses.
 3. Reference the integration from the CREATE STREAMLIT statement with the
    EXTERNAL\_ACCESS\_INTEGRATIONS parameter, as shown in
@@ -777,6 +845,23 @@ GRANT SELECT ON TABLE consumer_db.public.consumer_table TO ROLE viewer_default_r
 For more information, see [Use owner’s rights and restricted caller’s rights in an app](/developer-guide/native-apps/restricted-callers-rights) and
 [Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
 
+### Share one runtime across viewers
+
+The container runtime serves viewers concurrently in a shared process.
+
+Use shared `st.cache_data` and `st.cache_resource` caches only for data and resources that every viewer
+is allowed to access. Don’t cache query results that depend on a viewer’s identity or privileges across
+viewers. Otherwise, a viewer can receive another viewer’s cached results without a new query checking
+their access. Restricted caller’s rights connections are session-scoped. If you cache query results
+from these connections, set `scope="session"` in the cache decorator. See
+[Restricted caller’s rights and Streamlit in Snowflake](/developer-guide/streamlit/features/restricted-callers-rights).
+
+Keep viewer-specific UI state in `st.session_state`.
+
+Each viewer gets a separate run of the app script. Global variables and objects created at import
+time in imported modules are shared across viewers. Keep shared mutable state thread-safe. For more
+information, see [Migrating between runtime environments](/developer-guide/streamlit/migrations-and-upgrades/runtime-migration).
+
 ### What consumers experience
 
 Consumers install an app that contains a container-runtime Streamlit app with the same
@@ -801,8 +886,8 @@ The following additional limitations apply to container-runtime Streamlit apps i
 
 - The app must create its own compute pool. A container-runtime Streamlit app in a Snowflake Native App can’t
   run on the consumer account’s default Streamlit compute pool.
-- The COMPUTE\_POOL parameter of CREATE STREAMLIT requires a literal object name, so you can’t
-  generate the pool name from the application name.
+- An external access integration name must be unique in the consumer account. See
+  [Allow access to a package index](#label-streamlit-container-eai-na).
 - A compute pool that the app creates can’t be shared with a different app.
 - The warehouse selector in Snowsight has no effect on the SQL that a container-runtime
   Streamlit app runs.

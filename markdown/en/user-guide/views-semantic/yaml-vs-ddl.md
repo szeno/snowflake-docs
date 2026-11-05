@@ -49,6 +49,7 @@ YAML and DDL conventions.
 | Derived metrics (view-scoped) | Yes (model-level `metrics`) | Yes (no table prefix in `METRICS`) | Both support entity-scoped and cross-entity derived metrics. |
 | Window function metrics | Yes (in `expr`) | Yes (full syntax with `PARTITION BY EXCLUDING`) | Both support window functions in metric expressions. DDL has explicit `PARTITION BY EXCLUDING` syntax. |
 | Semi-additive metrics | Yes (`non_additive_dimensions`) | Yes (`NON ADDITIVE BY (...)`) | YAML uses `ascending`/`descending`; DDL uses `ASC`/`DESC`. DDL also supports `NON ADDITIVE ALIGNED BY`. |
+| Level of detail (LOD) metrics (Public Preview) | Yes (`lod_dimension_type` and `lod_dimensions` on model-level `facts` or `dimensions`, or inline in a metric `expr`) | Yes (`FIXED`, `INCLUDE`, or `EXCLUDE DIMENSIONS ( ... )` after `AS <sql_expr>`, or inline in a metric) | YAML uses `lod_dimension_type: fixed | include | exclude`. An empty `lod_dimensions: []` is valid for every type. With `fixed`, it’s the scalar form, `FIXED DIMENSIONS ()` in DDL. LOD entries must be at the model level in YAML. |
 | Window functions in dimensions/facts | Yes (in `expr`) | Yes | Both support `ROW_NUMBER`, `DENSE_RANK`, `LAG`, `LEAD`, and other window functions. |
 | Descriptions / Comments | Yes (`description`) | Yes (`COMMENT = '...'`) | Different field names, same purpose. Supported at every level (view, table, dimension, fact, metric). |
 | Synonyms | Yes (`synonyms`) | Yes (`WITH SYNONYMS = (...)`) | Supported on tables, dimensions, facts, and metrics in both formats. |

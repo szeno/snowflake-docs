@@ -10,6 +10,27 @@ Snowflake uses semantic versioning for Go Snowflake Driver updates.
 
 See [Go Snowflake Driver](/developer-guide/golang/go-driver) for documentation.
 
+## Version 2.4.0 (Nov 04, 2026)
+
+### New features and updates
+
+- Added query timing fields to `SnowflakeQueryStatus`: `TotalDuration`, `GsCompileDuration`, `GsExecDuration`, `XpExecDuration`, `QueryRetryTime`, and `FaultHandlingTime`. `GetQueryStatus` now returns these values.
+- Added `UploadStream` and `UploadStreamWithConfig` on `SnowflakeConnection` to upload a single stage object from an `io.Reader`. Gzip compression is the default, and the driver appends `.gz` unless the destination name already ends with `.gz`. The destination name is the object name only, and an optional prefix (`UploadStreamConfig.DestPrefix`) selects the stage directory. The payload stays in memory until 128 MiB, then spills to disk. Prefer these methods over `WithFilePutStream`, which still buffers the entire file.
+- Added the `SF_TEMPORARY_CREDENTIAL_CACHE_FILE_NAME` environment variable to override the Linux token cache file name. The default file name is `credential_cache_v2.json`.
+
+### Bug fixes
+
+- Fixed token cache keys to use lowercase URLs and identifiers and PascalCase token types (`IdToken`, `MfaToken`, `OauthAccessToken`, and `OauthRefreshToken`) so the keys match other Snowflake drivers.
+- Changed where cached tokens are stored so they can be shared across Snowflake drivers. macOS Keychain and Windows Credential Manager entries now use the service name `snowflake_credential_cache`, and the Linux cache file is `credential_cache_v2.json`.
+- Fixed the Linux token cache directory lookup to read `XDG_CACHE_HOME` instead of `XDG_CACHE_DIR`. When `SF_TEMPORARY_CREDENTIAL_CACHE_DIR` is set but can’t be used, the driver disables caching and logs a warning instead of falling back to another directory.
+- Fixed the Linux token cache lock to use `flock` on a `.lck` file next to the cache file. A corrupt cache file is now replaced on the next write instead of disabling caching.
+- Fixed a leak of a `gosnowflake-cgo` temporary directory when `loadCore` returned before cleanup was registered, including on an unsupported platform, a statically linked binary, or a failed library write.
+- Fixed Azure workload identity authentication on a virtual machine that has only a user-assigned managed identity. The driver now sends `client_id` on the IMDS token request when `WorkloadIdentityAzureClientID` or `MANAGED_IDENTITY_CLIENT_ID` is set.
+- Fixed a panic when an `ARRAY` or `OBJECT` value arrives as native Arrow. When structured types are disabled, the driver returns the existing structured-types error. When the value has no field metadata, the driver returns an error that names the Arrow type. Previously both cases terminated the process.
+- Fixed external browser authentication hanging when an idle connection reached the callback listener before the browser redirect.
+- Fixed downloads from Azure Git repositories that failed because the request path included `blobs/` twice.
+- Fixed a data race in `WithFileGetStream` that could panic or return corrupted bytes when an S3 object was downloaded in multiple parts.
+
 ## Version 2.3.0 (Sep 30, 2026)
 
 ### Security fixes

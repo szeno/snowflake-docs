@@ -33,10 +33,6 @@ Show lessSee more
 
 ## Container runtime logging
 
-Feature — Generally Available
-
-Not supported in government regions.
-
 Container-runtime Streamlit apps run inside a Snowpark Container Services container. Snowflake automatically
 captures anything your app emits to standard output and standard error and stores it in
 the account’s event table. You can view these logs in Snowsight or query them
