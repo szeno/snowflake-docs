@@ -99,6 +99,8 @@ When queries are executed repeatedly, such changes might affect eligibility for 
   - [QUERY\_HISTORY](/sql-reference/account-usage/query_history) records the first execution of each query in detail.
   - [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) logs later successful runs of the same query to reduce logging volume.
 
+  Don’t use QUERY\_HISTORY to benchmark latency or calculate percentiles such as P90 and P99, because it doesn’t contain all executions. Use AGGREGATE\_QUERY\_HISTORY instead.
+
   Currently, neither view shows whether a specific execution used the optimizations in this public preview. For eligible repeatable queries, execution latency should consistently fall in the low double-digit millisecond range within a few minutes of starting a new session.
 
 ## Getting started

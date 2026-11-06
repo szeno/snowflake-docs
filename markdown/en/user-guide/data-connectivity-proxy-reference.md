@@ -199,7 +199,7 @@ Show lessSee more
 
 ## Limitations
 
-- DCP is available for Snowflake Openflow and for an AIM Data Exchange Worker on Snowpark Container Services. Support for additional services is planned. To attach a Worker, see [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
+- DCP is available for all Snowpark Container Services, including Snowflake Openflow, AIM Data Exchange Workers, Notebooks in Workspaces, Streamlit apps, and Code Bundles. To attach a Worker, see [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 - A single DCP object corresponds to one network scope. For data sources in isolated networks, deploy a separate agent and DCP object per
   network.
 - Corporate HTTP proxy support (routing the agent’s outbound traffic through an enterprise-managed forward proxy) isn’t supported.

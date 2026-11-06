@@ -151,6 +151,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [TRUST\_CENTER\_FINDINGS](/sql-reference/organization-usage/trust_center_findings) | Historical | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year |
 | [TYPES](/sql-reference/organization-usage/types) | Object | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [USAGE\_IN\_CURRENCY\_DAILY](/sql-reference/organization-usage/usage_in_currency_daily) [2] | Historical | 72 hours | No | 1 year |
+| [USER\_AI\_USAGE\_HISTORY](/sql-reference/organization-usage/user_ai_usage_history) | Historical | 24 hours | [Premium view](/user-guide/organization-accounts-premium-views) (only available in organization account). |
 | [USERS](/sql-reference/organization-usage/users) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [VIEWS](/sql-reference/organization-usage/views) | Object | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [WAREHOUSE\_EVENTS\_HISTORY](/sql-reference/organization-usage/warehouse_events_history) | Historical | under 3 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |

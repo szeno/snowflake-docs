@@ -32,7 +32,7 @@ SYSTEM$GET_TAG_ON_CURRENT_COLUMN( '<tag_name>' )
   (UDF).
 - Note that this function applies to all table-like objects (e.g. views).
 - If the tag is a [multi-value tag](/user-guide/object-tagging/multi-value-tags) and more than one value is assigned, this function
-  returns an error. Don’t reference multi-value tags in policy conditions.
+  returns an error. To test one value in a policy condition, use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column).
 - The tag must exist when calling this system function; otherwise, Snowflake returns the following error message:
 
   Copy code

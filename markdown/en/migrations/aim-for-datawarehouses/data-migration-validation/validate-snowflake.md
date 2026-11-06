@@ -12,34 +12,34 @@ This page covers Snowflake-to-Snowflake setup for [Data validation](./data-valid
 
 You don’t add a `[connections.source.*]` Worker TOML section. Set `SNOWFLAKE_CONNECTION_NAME` (or `--connection` / `--connection-name`) to a named Snowflake CLI connection that can query both the source and target objects.
 
-Set `source_platform: snowflake` in the validation workflow YAML. Use three-part Snowflake names (`DATABASE.SCHEMA.OBJECT`) for `fully_qualified_name`, and map databases or schemas when the target names differ.
+Set `sourcePlatform: snowflake` in the validation workflow YAML. Use three-part Snowflake names (`DATABASE.SCHEMA.OBJECT`) for `fullyQualifiedName`, and map databases or schemas when the target names differ.
 
 **Example workflow excerpt:**
 
 Copy code
 
 ```
-source_platform: snowflake
-target_database: TARGET_DB
-database_mappings:
+sourcePlatform: snowflake
+targetDatabase: TARGET_DB
+databaseMappings:
   SOURCE_DB: TARGET_DB
-schema_mappings:
+schemaMappings:
   SRC: PUBLIC
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
 tables:
-  - fully_qualified_name: SOURCE_DB.SRC.CUSTOMERS
-    column_names_to_partition_by:
+  - fullyQualifiedName: SOURCE_DB.SRC.CUSTOMERS
+    columnNamesToPartitionBy:
       - CUSTOMER_ID
-  - fully_qualified_name: SOURCE_DB.SRC.ORDERS
-    column_names_to_partition_by:
+  - fullyQualifiedName: SOURCE_DB.SRC.ORDERS
+    columnNamesToPartitionBy:
       - ORDER_ID
     indexColumnList:
       - ORDER_ID
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 ## Validation behavior
@@ -50,14 +50,14 @@ Snowflake-to-Snowflake cloud validation uses a different compute path from other
 | --- | --- | --- |
 | Compute | Workers extract, stage files, and load results | The Orchestrator runs comparison SQL inside Snowflake |
 | Workers | Required | Not required |
-| Result ingestion | Snowpipe (default) or `COPY INTO` | Direct writes; `use_snowpipe_for_results` is ignored and treated as off |
+| Result ingestion | Snowpipe (default) or `COPY INTO` | Direct writes; `useSnowpipeForResults` is ignored and treated as off |
 | L3 row validation | MD5 row hashes on Workers, then cell drill-down | SQL multiplicity checks and `MINUS` set-difference in the warehouse, with SQL cell detail when index columns are present |
 
 Expand
 
 Show lessSee more
 
-L1 still compares `INFORMATION_SCHEMA` metadata. L2 still compares per-column metrics (min, max, average, and similar). Numeric comparisons honor `comparison_configuration.tolerance`.
+L1 still compares `INFORMATION_SCHEMA` metadata. L2 still compares per-column metrics (min, max, average, and similar). Numeric comparisons honor `comparisonConfiguration.tolerance`.
 
 When the unfiltered target table has zero rows, L1 still runs if enabled; L2 and L3 aren’t scheduled for that table.
 
@@ -84,7 +84,7 @@ Show lessSee more
 
 ## Platform-specific considerations
 
-- **Starting validation**: Set `source_platform: snowflake` in the workflow YAML, then submit with `scai data validate create-workflow` or `scai data validate start`. You only need a running Orchestrator; you can omit starting a Worker.
+- **Starting validation**: Set `sourcePlatform: snowflake` in the workflow YAML, then submit with `scai data validate create-workflow` or `scai data validate start`. You only need a running Orchestrator; you can omit starting a Worker.
 
 ## Related content
 

@@ -68,7 +68,7 @@ Note
 
 If you don’t deploy the DDL before starting data migration, types will be inferred, which may not be as accurate as required.
 
-For an early test run, use a separate workflow whose `tables` array lists only the tables you want to validate, with `whereClauseCriteria` to limit rows and a small `partitionSize`.
+For an early test run, use a separate workflow whose `tables` array lists only the tables you want to validate, with `whereClauseCriteria` to limit rows and a small `targetPartitionSizeRows`. See [Partition size](../manual-migration/data-migration-configuration-reference#partition-size).
 
 ### Numeric precision and scale
 

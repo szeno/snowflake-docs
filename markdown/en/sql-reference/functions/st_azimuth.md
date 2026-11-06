@@ -108,7 +108,8 @@ Copy code
 
 ```
 SELECT ST_AZIMUTH(
-    TO_GEOMETRY('POINT(0 1)', TO_GEOMETRY('POINT(0 0)')
+    TO_GEOMETRY('POINT(0 1)'),
+    TO_GEOMETRY('POINT(0 0)')
 );
 
 +------------------------------------------------------------------+
@@ -118,18 +119,19 @@ SELECT ST_AZIMUTH(
 +------------------------------------------------------------------+
 ```
 
-The following example returns the azimuth in degrees for an origin Point (0, 1) and a target Point (0.707, 0.707):
+The following example returns the azimuth in radians for an origin Point (0, 0) and a target Point (0.707, 0.707):
 
 Copy code
 
 ```
 SELECT ST_AZIMUTH(
-    TO_GEOMETRY('POINT(0 0)', TO_GEOMETRY(0.707 0.707')
+    TO_GEOMETRY('POINT(0 0)'),
+    TO_GEOMETRY('POINT(0.707 0.707)')
 );
 
-+-------------------------------------------------------------------------+
-| ST_AZIMUTH(TO_GEOMETRY('POINT(0 0)'), TO_GEOMETRY('POINT(0.707 0.707')) |
-|-------------------------------------------------------------------------|
-| 0.7853981634                                                            |
-+-------------------------------------------------------------------------+
++--------------------------------------------------------------------------+
+| ST_AZIMUTH(TO_GEOMETRY('POINT(0 0)'), TO_GEOMETRY('POINT(0.707 0.707)')) |
+|--------------------------------------------------------------------------|
+| 0.7853981634                                                             |
++--------------------------------------------------------------------------+
 ```

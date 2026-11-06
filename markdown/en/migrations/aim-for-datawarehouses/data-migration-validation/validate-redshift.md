@@ -29,7 +29,7 @@ auth_method = "standard"
 ## Validation behavior
 
 - **After UNLOAD migrations**: Schema and metrics validation still run **SQL against live Redshift**. For L3, reuse **UNLOAD** with the same Worker `unload_*` TOML and Snowflake `externalStage` as migration. Grant the Redshift cluster IAM role the [Amazon S3](./required-privileges#amazon-s3) writer actions. Ensure the Worker can reach the cluster and that large partition result sets stay within timeout and spool limits.
-- **Iceberg targets**: For spec v2 tables, set `tableType: iceberg` and `icebergConfig.icebergSpec: v2` on the validation workflow so L1 expects `VARCHAR` for both `TIMESTAMP` and `TIMESTAMPTZ`, and L3 compares those columns as the stored UTC ISO text. Metrics validation does not run for Iceberg tables. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg#validating-spec-v2-and-spec-v3-tables).
+- **Iceberg targets**: For spec v2 tables, set `tableType: iceberg` and `icebergConfig.icebergSpec: v2` on the validation workflow so L1 expects `VARCHAR` for both `TIMESTAMP` and `TIMESTAMPTZ`, and L3 compares those columns as the stored UTC ISO text. Metrics validation runs on Iceberg tables and leaves out columns stored as `VARCHAR` that no metric can read as the source type. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg#validating-spec-v2-and-spec-v3-tables).
 
 For partitioning and `indexColumnList`, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
@@ -38,23 +38,23 @@ For partitioning and `indexColumnList`, see [Data validation configuration refer
 Copy code
 
 ```
-source_platform: redshift
-target_database: TARGET_DB
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+sourcePlatform: redshift
+targetDatabase: TARGET_DB
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
 tables:
-  - fully_qualified_name: snowconvert_demo.ecommerce_raw.customers
-    column_names_to_partition_by:
+  - fullyQualifiedName: snowconvert_demo.ecommerce_raw.customers
+    columnNamesToPartitionBy:
       - customer_id
-  - fully_qualified_name: snowconvert_demo.ecommerce_raw.orders
-    column_names_to_partition_by:
+  - fullyQualifiedName: snowconvert_demo.ecommerce_raw.orders
+    columnNamesToPartitionBy:
       - order_id
     indexColumnList:
       - order_id
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 ## Data type mappings

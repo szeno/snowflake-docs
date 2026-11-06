@@ -173,7 +173,8 @@ Show lessSee more
 ## Platform-specific considerations
 
 - **Server-side export (UNLOAD)**: Prefer UNLOAD for all tables once S3, the Redshift IAM role, and the Snowflake external stage are in place. Reserve **`regular`** for genuinely small volume or when those prerequisites aren’t set up yet. See [Using UNLOAD extraction](#using-unload-extraction).
-- Use UNLOAD + larger `partitionSize` targets when UNLOAD produces large Parquet files from wide tables. `partitionSize: "auto"` works well in most cases.
+- With UNLOAD, automatic partition sizing works well in most cases: leave `targetPartitionSizeMb` and `targetPartitionSizeRows` unset, and AIM DMV uses its server-side export sizing, which has no default row cap per partition. Those two fields set only how much source data each UNLOAD covers, not the size of the Parquet files it writes. See [Partition size](../manual-migration/data-migration-configuration-reference#partition-size).
+- To change the Parquet file size, set `unload_max_file_size_mb` on the Worker’s Redshift connection. It sets UNLOAD `MAXFILESIZE` and defaults to `256` MB. When one partition stages too many files for a single `COPY INTO`, set `loadSegmentation.targetSegmentSizeMb` to split the load. See [Load segmentation](../manual-migration/data-migration-configuration-reference#load-segmentation).
 - When using IAM authentication, confirm the Redshift IAM role has both S3 write access and the correct trust relationship for your cluster.
 - For tables migrated via UNLOAD, keep the source cluster accessible during validation. Cloud Data Validation runs SQL against live Redshift even when the original migration used UNLOAD.
 - **Anti-locking**: No automatic hint is added on Redshift. Set `queryModifiers` only when you need custom source SQL hints. See [Anti-locking and query modifiers](../manual-migration/data-migration-configuration-reference#anti-locking-and-query-modifiers).

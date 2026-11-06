@@ -5,7 +5,7 @@ Feature — Generally Available
 Snowpark Container Services is available to accounts in [AWS, Microsoft Azure, and Google Cloud Platform commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. For more information, see [Available regions and considerations](/developer-guide/snowpark-container-services/overview#label-snowpark-containers-overview-available-regions).
 
 Lists the available [compute pool instance families](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pools-instance-family-table)
-that you can use to create a compute pool.
+that you can use to create a compute pool in the region of your current account.
 
 See also:
 :   [CREATE COMPUTE POOL](/sql-reference/sql/create-compute-pool) , [ALTER COMPUTE POOL](/sql-reference/sql/alter-compute-pool)
@@ -39,9 +39,15 @@ Expand
 
 Show lessSee more
 
+## Usage notes
+
+- Instance family availability varies by region and can change over time. The output includes only the instance
+  families that are available in the region of your current account. To check availability in a different region,
+  run the command from an account in that region.
+
 ## Examples
 
-The following command lists the compute pool instance families:
+The following command lists the compute pool instance families available in the region of your current account:
 
 Copy code
 

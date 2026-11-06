@@ -48,9 +48,13 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
+- [Nov 4, 2026: HTML reports (Preview)](/release-notes/2026/other/2026-11-04-html-reports-preview)
 - [Nov 4, 2026: Backups for Snowflake Storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-11-04-iceberg-backups)
 - [November 4, 2026: Background runs and additional supplementary tools for agents in the Snowflake-managed MCP server](/release-notes/2026/other/2026-11-04-mcp-async-agent-tools)
+- [Nov 4, 2026: AIM-Virtualization 3.180](/release-notes/aim-virtualization/aim-virtualization-3.180)
 - [Go Driver (v2.4.0)](/release-notes/clients-drivers/golang-2026)
+- [Snowflake ML Python (v2.8.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
 - [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
@@ -59,6 +63,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
+- [Nov 2, 2026: SECRET object tagging](/release-notes/2026/other/2026-11-02-secret-object-tagging)
 - [Nov 02, 2026: Level of detail (LOD) expressions in semantic views (Preview)](/release-notes/2026/other/2026-11-02-semantic-views-lod-metrics-preview)
 - [JDBC Driver (v5.0.0-RC1)](/release-notes/clients-drivers/jdbc-2026)
 - [JDBC Driver (v4.4.1)](/release-notes/clients-drivers/jdbc-2026)
@@ -85,6 +90,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 28, 2026: Openflow legacy runtime metrics deprecated](/release-notes/2026/other/2026-10-28-openflow-legacy-runtime-metrics-deprecation)
 - [Oct 28, 2026: Request Access in Workspaces (General availability)](/release-notes/2026/other/2026-10-28-request-access-workspaces-ga)
 - [Oct 28, 2026: Streamlit in Snowflake container runtime in China (General availability)](/release-notes/2026/other/2026-10-28-sis-container-runtime-china-ga)
+- [Snowflake ML Python (v2.7.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [ServiceNow® V2 (v5.29.1)](/release-notes/connectors/servicenow-v2-2026)
 - [Oct 27, 2026: Carry over comments, tags, and privileges with COPY = ( … )](/release-notes/2026/other/2026-10-27-copy-metadata-carry-over)
 - [Oct 27, 2026: DCM Projects DEFINE TASK GRAPH (Preview)](/release-notes/2026/other/2026-10-27-dcm-define-task-graph-preview)
@@ -171,11 +177,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 06, 2026: Kimi K3 model (Preview)](/release-notes/2026/other/2026-10-06-kimi-k3-preview)
 - [Oct 6, 2026: Data lineage for storage integrations, external tables, model monitors, and Cortex Search services](/release-notes/2026/other/2026-10-06-lineage-integrations-monitors-search)
 - [Snowflake ML Python (v2.4.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Oct 5, 2026: Change the type of an organization user](/release-notes/2026/other/2026-10-05-change-organization-user-type)
-- [Oct 05, 2026: Enforce CoCo policy with MDM (Preview)](/release-notes/2026/other/2026-10-05-coco-mdm-policy-preview)
-- [October 5, 2026: Cortex Agent code execution tool (General availability)](/release-notes/2026/other/2026-10-05-cortex-agents-code-execution-tool-ga)
-- [Oct 05, 2026: OpenAI GPT-6.1 Sol model (Preview)](/release-notes/2026/other/2026-10-05-openai-gpt-61-sol-preview)
-- [Oct 5, 2026: WITH GRANT OPTION for role grants](/release-notes/2026/other/2026-10-05-role-grant-option)
-- [Snowpark Python (v1.55.1)](/release-notes/clients-drivers/snowpark-python-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

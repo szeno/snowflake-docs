@@ -14,7 +14,7 @@ Support for this feature is available to accounts in the following regions:
 > - Azure East US 2 (Virginia)
 
 Support for inference of fine-tuned models is available to accounts in regions that support the COMPLETE function for the base model.
-For details, see [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+For details, see [Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
 
 The Snowflake Cortex Fine-tuning function offers a way to customize large language models for your specific task.
 This topic describes how the feature works and how to get started with creating your own fine-tuned model.

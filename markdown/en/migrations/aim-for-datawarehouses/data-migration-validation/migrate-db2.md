@@ -9,6 +9,7 @@ This page covers IBM DB2-specific setup for [Data migration](./data-migration). 
 - **Worker driver**: The Worker image includes the native DB2 driver. You don’t install a DB2 ODBC driver.
 - **Authentication**: Username and password only. SSL, LDAP, and Kerberos aren’t supported.
 - **Network**: The Worker host must reach the DB2 host on the configured port. Default port is **50000**. A Worker on Snowpark Container Services needs an external access integration that allows that host. See [Deploying workers](./deploy-workers).
+- **Worker host**: `scai data worker setup` doesn’t provision a DB2 Worker on Snowpark Container Services. It fails with error `DMG0038` (`WorkerSetupUnsupportedSource`): “Worker setup does not support source dialect ‘Db2’ yet”. Run the Worker on your own host.
 - **Privileges**: `SELECT` on every table being migrated. Catalog views used for schema and key discovery are readable by `PUBLIC` by default. See [IBM DB2](./required-privileges#ibm-db2).
 
 ## Connectivity and extraction
@@ -37,7 +38,7 @@ Expand
 
 Show lessSee more
 
-`cloud_direct` needs a Worker target section (`[connections.target.s3]`, `[connections.target.gcs]`, or `[connections.target.blob]`) and `extraction.externalStage` whose URL covers that bucket or container and prefix. When more than one of those target sections is present, the Worker prefers S3, then GCS, then Azure Blob, unless the workflow sets `storageBackend`. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
+`cloud_direct` needs `extraction.externalStage` whose URL covers the same bucket or container and prefix. The customer-hosted Worker writes to the storage configured in `[connections.target.s3]`, `[connections.target.gcs]`, or `[connections.target.blob]`. When more than one of those target sections is present, the Worker prefers S3, then GCS, then Azure Blob. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 **Workflow example:**
 

@@ -55,11 +55,13 @@ When –json is present, the CLI writes a single JSON document to stdout at the 
 - `scai data validate resume`
 - `scai data validate cancel`
 - `scai data orchestrator setup`
+- `scai data orchestrator update`
 - `scai data orchestrator start`
 - `scai data orchestrator stop`
 - `scai data orchestrator status`
 - `scai data worker setup`
-- `scai data worker start (--auto-config)`
+- `scai data worker update`
+- `scai data worker start`
 - `scai data worker stop`
 - `scai data worker status`
 - `scai data worker generate-config`
@@ -130,7 +132,7 @@ scai code deploy --all
 | `scai project` | View and manage project configuration |
 | `scai connection` | Manage source database connections (SqlServer, Redshift, Teradata, Oracle, Postgresql, BigQuery, AzureSynapse) |
 | `scai code` | Code operations: extract, convert, add, deploy, find, where |
-| `scai data` | Data operations: migrate, validate, worker, orchestrator, doctor |
+| `scai data` | Data operations: migrate, validate, worker, orchestrator, doctor, migrate-schema |
 | `scai assessment` | Generate migration planning insights from source code and SnowConvert reports |
 | `scai license` | Install offline license for air-gapped environments |
 | `scai terms` | View and accept terms and conditions |
@@ -562,11 +564,13 @@ scai connection add-sql-server [OPTIONS]
 - Network access to the SQL Server instance
 - For Windows auth: Valid domain credentials
 - For standard auth: SQL Server username and password
+- For service-principal auth: a Microsoft Entra ID application (client) ID and client secret
 
 **Authentication methods:**
 
 - Windows: Windows Authentication (Integrated Security). On Snowpark Container Services, also set `kerberos_principal` in `~/.snowflake/scai/connections/sqlserver.toml`. See [Windows authentication](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-sql-server#windows-authentication).
 - Standard: SQL Server Authentication (username/password)
+- Service principal: Microsoft Entra ID service principal. Pass the client ID with `--user` and the client secret with `--password`. `--encrypt` defaults to true in this mode.
 
 **Operation modes:**
 
@@ -578,15 +582,15 @@ scai connection add-sql-server [OPTIONS]
 | Option | Description | Required |
 | --- | --- | --- |
 | `-s, --source-connection <SOURCE_CONNECTION>` | Name for this source connection profile | No |
-| `--auth <AUTH>` | Authentication method (windows, standard) | No |
-| `--user <USER>` | Username | No |
+| `--auth <AUTH>` | Authentication method (windows, standard, service-principal) | No |
+| `--user <USER>` | Username (or Client ID for service-principal) | No |
 | `--database <DATABASE>` | Database name | No |
 | `--connection-timeout <SECONDS>` | Connection timeout in seconds | No |
 | `--server-url <URL>` | SQL Server URL | No |
 | `--port <PORT>` | Port number | No |
-| `--password <PASSWORD>` | Password | No |
+| `--password <PASSWORD>` | Password (or Client Secret for service-principal) | No |
 | `--trust-server-certificate` | Trust server certificate | No |
-| `--encrypt` | Encrypt connection | No |
+| `--encrypt` | Encrypt connection. Defaults to false for windows and standard, and to true for service-principal. | No |
 
 Expand
 
@@ -610,7 +614,10 @@ scai connection add-sql-server --source-connection my-sqlserver --auth windows -
 scai connection add-sql-server --source-connection my-sqlserver --auth windows --server-url sql01.corp.example.com --database SourceDb --port 1433
 
 # Standard Authentication
-scai connection add-sql-server --source-connection my-sqlserver --auth standard --server-url localhost --database mydb --username sa
+scai connection add-sql-server --source-connection my-sqlserver --auth standard --server-url localhost --database mydb --user sa
+
+# Microsoft Entra ID service principal (Azure SQL)
+scai connection add-sql-server --source-connection my-azuresql --auth service-principal --server-url myserver.database.windows.net --database mydb --user <client-id> --password <client-secret>
 ```
 
 ---
@@ -1746,7 +1753,7 @@ scai code resync
 
 ### scai data
 
-Data operations: migrate, validate, worker, orchestrator, doctor
+Data operations: migrate, validate, worker, orchestrator, doctor, migrate-schema
 
 #### scai data migrate
 
@@ -1769,6 +1776,7 @@ scai data migrate start [--config <DATA_MIGRATION_CONFIG_PATH>] [-c <CONNECTION>
 
 - Reads the migration configuration and runs the data migration workflow
 - When –config is omitted, the generated workflow config is written to the OS temp directory and deleted when the run finishes
+- Waits for the workflow to finish, and exits with a failure when the finished workflow has failed partitions or tables that were never preprocessed. See [Exit status for a finished workflow](#exit-status-for-a-finished-workflow).
 
 **Options:**
 
@@ -1784,6 +1792,20 @@ Expand
 Show lessSee more
 
 **Output:** Returns a WORKFLOW\_ID for tracking progress
+
+**Exit status for a finished workflow:**
+
+| Workflow result | Exit status |
+| --- | --- |
+| Finished, every table preprocessed, no failed partition | Success |
+| Finished with one or more failed partitions, or with tables that were never preprocessed | Failure. The error lists the counts, for example `2 partition(s) failed, 1 table(s) were not preprocessed`. With `--json`, the error details carry the workflow name so you can read each table’s outcome. |
+| Finished without any table, because another active workflow already owns every configured table | Success, with the warning `WORKFLOW_FINISHED_WITH_NO_TABLES`. Run the command again after that workflow finishes. |
+
+Expand
+
+Show lessSee more
+
+The same rule applies to `scai data migrate create-workflow --watch`. `scai data migrate status` reports failed partitions but doesn’t exit with a failure for them.
 
 **Examples:**
 
@@ -1829,7 +1851,7 @@ scai data migrate create-workflow [--config <DATA_MIGRATION_CONFIG_PATH>] [-c <C
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |  |
-| `-w, --watch` | Wait for the workflow to complete. | No | False |
+| `-w, --watch` | Wait for the workflow to complete. A finished workflow with failed partitions or tables that were never preprocessed exits with a failure. See [Exit status for a finished workflow](#exit-status-for-a-finished-workflow). | No | False |
 
 Expand
 
@@ -1881,6 +1903,8 @@ Expand
 Show lessSee more
 
 **Output:** Progress bars for table preprocessing and partition processing. Error details if workflow failed.
+
+The command reports failed partitions, but it doesn’t exit with a failure for them. To fail a script on failed partitions, run `scai data migrate start` or `scai data migrate create-workflow --watch`. See [Exit status for a finished workflow](#exit-status-for-a-finished-workflow).
 
 **Examples:**
 
@@ -1948,27 +1972,43 @@ Generate a YAML configuration file for data migration.
 Copy code
 
 ```
-scai data migrate generate-config [--where <WHERE>] [-o <OUTPUT_PATH>] [--affinity <AFFINITY>]
+scai data migrate generate-config [--where <WHERE>] [-o <OUTPUT_PATH>] [--affinity <AFFINITY>] [--target-database <TARGET_DATABASE>] [--target-schema <TARGET_SCHEMA>] [--sync-strategy <STRATEGY>] [--extraction-strategy <STRATEGY>] [--object-store <STORE>] [--iceberg] [-y]
 ```
 
 **Prerequisites:**
 
 - A migration project initialized with ‘scai init’
 - Code added and converted (‘scai code add’ and ‘scai code convert’)
+- Outside a project: `--source-language` and a source connection, so the command can list the source tables
 
 **Behavior:**
 
 - Resolves source and target table names from the Code Unit Registry
+- Outside a project, with `--source-language`, connects to the source database, lists its tables, and writes a prefilled config. Without a project and without `--source-language`, writes a template of `<PLACEHOLDER>` values. Inside a project, `--source-language` is an error.
 - Generates a YAML config for ‘scai data migrate start’ (–config optional; defaults to .scai/config/data-migration-config.yaml)
-- Sets synchronization strategy to ‘none’ and extraction strategy to ‘regular’
+- Sets synchronization strategy to ‘none’ and extraction strategy to ‘regular’ unless you pass `--sync-strategy` or `--extraction-strategy`
+- With `--extraction-strategy`, writes `externalStage` as `<EXTERNAL_STAGE>`. Bucket, role, stage, prefix, and credential fields are placeholders to fill in before `create-workflow`.
+- With `--iceberg`, writes an Apache Iceberg™ block for every table. `icebergSpec`, `storageMode`, `loadMode`, `externalVolume`, `baseLocationPrefix`, and `externalStage` are placeholders. See [Iceberg configuration](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 **Options:**
 
 | Option | Description | Required | Default |
 | --- | --- | --- | --- |
+| `-l, --source-language <SOURCE_LANGUAGE>` | Source dialect, for example `sqlserver`, `redshift`, `teradata`, `oracle`, `postgresql`, or `bigquery`. Use it outside a project to read the table list from the source database. Inside a project it’s an error, because tables come from the Code Unit Registry. Requires `--source-connection` or a default source connection for the dialect. | No |  |
+| `-s, --source-connection <SOURCE_CONNECTION>` | Source connection to read the table list from (managed with `scai connection`). Uses the default source connection for the dialect when omitted. Requires `--source-language`. | No |  |
 | `--where <WHERE>` | SQL-like WHERE clause to filter tables from the Code Unit Registry. Run ‘scai code where’ for syntax reference. | No |  |
 | `-o, --output` | Output file path for the generated YAML configuration. Defaults to .scai/config/data-migration-config.yaml. | No | .scai/config/data-migration-config.yaml |
 | `--affinity` | Affinity tag written to the workflow YAML. Matching Workers pick up the workflow’s tasks. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No | [Project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity) |
+| `--sync-strategy <STRATEGY>` | Synchronization strategy for every table: `none` (one full load) or `full-replace` (deletes the target partition before loading, so a re-run overwrites instead of appending). | No | `none` |
+| `--extraction-strategy <STRATEGY>` | Extraction strategy for every table. Omit it, or pass `regular`, to keep the default. Other values: `unload` (Redshift, S3), `export_data` (BigQuery, Google Cloud Storage), `cet_as` (SQL Server and Azure Synapse, Azure), `write_nos` (Teradata; requires `--object-store`), `dbms_cloud` (Oracle), and `cloud_direct` (requires `--object-store`). | No | `regular` |
+| `--object-store <STORE>` | Object store for `cloud_direct` or `write_nos`: `s3`, `gcs`, or `azure`. For `cloud_direct`, writes a `[connections.target.s3]`, `[connections.target.gcs]`, or `[connections.target.blob]` section with placeholders. For `write_nos`, sets `write_nos_location_scheme` to `/s3/`, `/gs/`, or `/az/`. `unload`, `export_data`, and `cet_as` imply their store and don’t take this option. | No |  |
+| `--export-data-gcs-bucket <BUCKET>` | BigQuery only. Google Cloud Storage bucket, without `gs://`, that `EXPORT DATA` writes to. Written as `exportDataGcsBucket`, which `scai data migrate start` copies into the Worker config. `extraction.externalStage` must point at the same bucket. | No |  |
+| `--export-data-gcs-prefix <PREFIX>` | BigQuery only. Path inside `--export-data-gcs-bucket` that `EXPORT DATA` writes under. Written as `exportDataGcsPrefix`. | No |  |
+| `-d, --target-database <TARGET_DATABASE>` | Target database for every table, replacing the database names recorded in the Code Unit Registry. Use it when the deploy target database differs. | No |  |
+| `--target-schema <TARGET_SCHEMA>` | Target schema for every table, replacing the schema names recorded in the Code Unit Registry. Use it when the deploy target schema differs, for example when SQL Server keeps the source `dbo` schema. | No |  |
+| `--database-bindings <PATH_OR_NAME>` | A `database-bindings.yaml` file written by a bindable-format conversion, or a name listed under `database_bindings` in `.scai/config/project.local.yml`. Resolves each table’s target database from its `snow:` section and its source database from its `source:` section. `--target-database` overrides the target half. | No |  |
+| `--iceberg` | Target Snowflake-managed Iceberg tables instead of native tables. SQL Server, Redshift, and Teradata sources only. Requires a cloud `--extraction-strategy`; `regular` is rejected. | No | False |
+| `-y, --yes` | Skip the confirmation prompt. | No | False |
 
 Expand
 
@@ -1992,6 +2032,18 @@ scai data migrate generate-config -o my-config.yaml
 
 # Set workflow affinity
 scai data migrate generate-config --affinity my-team
+
+# Override the target database and schema
+scai data migrate generate-config --target-database MY_DATABASE --target-schema MY_SCHEMA
+
+# Stream extracts straight to Google Cloud Storage with cloud_direct
+scai data migrate generate-config --extraction-strategy cloud_direct --object-store gcs
+
+# Generate an Iceberg config
+scai data migrate generate-config --iceberg --extraction-strategy unload
+
+# Generate a config outside a project from a SQL Server source connection
+scai data migrate generate-config --source-language sqlserver --source-connection my-sqlserver
 ```
 
 ---
@@ -2499,7 +2551,7 @@ Create the Data Exchange Worker SPCS service on the specified compute pool.
 Copy code
 
 ```
-scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--dcp <PROXY_NAME>]
+scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--source-connection <SOURCE_CONNECTION>] [--service-name <SERVICE_NAME>] [--affinity <AFFINITY>] [--skip-egress | --dcp <PROXY_NAME>] [--resume-compute-pool] [--custom-image <IMAGE>] [-y]
 ```
 
 **Prerequisites:**
@@ -2510,7 +2562,10 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 **Behavior:**
 
 - Creates the DEW SPCS service if it does not exist (idempotent)
+- Provisions source access for SQL Server, Azure Synapse, Teradata, Amazon Redshift, Oracle, and PostgreSQL source connections. A source connection for any other platform, such as BigQuery or IBM DB2, fails with `WorkerSetupUnsupportedSource`. A supported platform whose authentication can’t run on SPCS fails with `WorkerSourceConnectionUnsupportedAuth`.
 - Waits for the service to reach a running state
+- Fails fast when the compute pool is suspended. Pass `--resume-compute-pool` to resume the pool first.
+- Creates the source secret, the egress network rule, and the external access integration. With `--skip-egress`, setup creates none of them and uses objects that already exist under the derived names. See [Network access objects](/migrations/aim-for-datawarehouses/manual-migration/manual-spcs-worker-setup#network-access-objects).
 - For a SQL Server Windows connection that sets `kerberos_principal`, mounts the existing `DEW_KERBEROS_KEYTAB` and `DEW_KERBEROS_KRB5_CONF` secrets and doesn’t create a SQL password secret. Create those secrets before setup. See [Windows authentication](/migrations/aim-for-datawarehouses/data-migration-validation/migrate-sql-server#windows-authentication).
 - With `--dcp <PROXY_NAME>`, reaches the source through that Data Connectivity Proxy, creating or reusing the proxy. The source host isn’t placed on the direct egress rule. Mutually exclusive with `--skip-egress`: passing both fails before any object is created.
 - `<PROXY_NAME>` is an unquoted Snowflake identifier. The CLI stores it in uppercase. A quoted or invalid name fails before any object is created. The source host must be a DNS name. An IP address fails before any object is created.
@@ -2527,9 +2582,11 @@ scai data worker setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CO
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
 | `--custom-image` | Custom container image path to use instead of auto-resolving the latest. Format: /db/schema/repo/image\_name:tag | No |
 | `-s, --source-connection <SOURCE_CONNECTION>` | Name of the source database connection the Worker reads from (managed with `scai connection`). Uses the default source connection if not specified. | No |
+| `--skip-egress` | Don’t create the source secret, network rule, or external access integration. Setup assumes they already exist with the derived names. Mutually exclusive with `--dcp`. | No |
 | `--dcp <PROXY_NAME>` | Reach the source through the named Data Connectivity Proxy tunnel, creating or reusing that proxy. Mutually exclusive with `--skip-egress`. | No |
 | `--affinity <AFFINITY>` | Affinity written to the service’s `AGENT_AFFINITY`. Only workflows with a matching affinity are picked up. Supports `*` wildcards (for example `team-*`). Defaults to the [project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). | No |
-| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service, so multiple Workers can coexist in one account. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. A name other than the default prefixes the derived secret, network rule, and integration names with that name and an underscore. | No |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service, so multiple Workers can coexist in one account. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. A name other than the default prefixes the derived secret, network rule, and integration names with that name and an underscore. Because those names don’t collide, a distinct `--service-name` is what lets several Workers for the same source dialect run side by side, for example one per source server, each with its own `--source-connection` and `--affinity`. See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |
+| `--resume-compute-pool` | Resume the compute pool before setting up the service if it’s suspended. Without it, a suspended pool fails setup. | No |
 | `-y, --yes` | Skip the confirmation prompt. On an existing service, drops and re-creates it. Without it, a re-run doesn’t change the deployed service’s affinity, source, or Data Connectivity Proxy attachment. | No |
 
 Expand
@@ -2549,6 +2606,13 @@ scai data worker setup --compute-pool MY_COMPUTE_POOL
 # Set up with a specific role
 scai data worker setup --compute-pool MY_COMPUTE_POOL --role MY_ROLE
 
+# Set up, resuming the pool if suspended
+scai data worker setup --compute-pool MY_COMPUTE_POOL --resume-compute-pool
+
+# Two Workers for two SQL Server sources, each routed by affinity
+scai data worker setup --compute-pool MY_COMPUTE_POOL --source-connection sql-east --service-name SQL_EAST_WORKER --affinity sql-east
+scai data worker setup --compute-pool MY_COMPUTE_POOL --source-connection sql-west --service-name SQL_WEST_WORKER --affinity sql-west
+
 # Reach a private source through a Data Connectivity Proxy
 scai data worker setup --compute-pool MY_COMPUTE_POOL --source-connection my-source --dcp MY_PROXY
 ```
@@ -2562,26 +2626,33 @@ Resume the Data Exchange Worker SPCS service, or run the local worker process wh
 Copy code
 
 ```
-scai data worker start [--local [<CONFIG_FILE> | --auto-config [PATH]]] [-c <CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>]
+scai data worker start [--local <CONFIG_FILE> [--detach]] [-c <CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--service-name <SERVICE_NAME>] [--resume-compute-pool]
 ```
 
 **Prerequisites:**
 
 - DEW service previously bootstrapped with ‘scai data worker setup’ (cloud mode)
 - Python 3.11 or higher installed (local mode)
-- A valid data exchange agent configuration file (local mode)
+- A valid data exchange agent configuration file (local mode). Generate one with `scai data worker generate-config`.
 
 **Behavior:**
 
-- Default (cloud): issues ALTER SERVICE … RESUME on the DEW SPCS service
-- –local: installs the data exchange agent (if needed) and starts it as a foreground process
+- Default (cloud): issues ALTER SERVICE … RESUME on the DEW SPCS service named by `--service-name`
+- –local: starts the data exchange agent as a foreground process using the provided CONFIG\_FILE
+- –local –detach: starts it in the background and returns once every worker thread is polling for tasks. Exits with a failure and the end of its log if the process exits, or if `--ready-timeout` runs out first.
+- Fails fast if the service’s compute pool is suspended. Pass `--resume-compute-pool` to resume it first.
 
 **Options:**
 
 | Option | Description | Required | Default |
 | --- | --- | --- | --- |
 | `--local` | Run the data exchange worker as a local process (requires a DEW config file) instead of resuming the SPCS service. | No | False |
-| `--auto-config <PATH>` | Automatically generates the configuration file for the data exchange agent. Optionally accepts a target path; defaults to ~/.snowflake/scai/dew\_configuration.toml. Cannot be used with CONFIG\_FILE. | No |  |
+| `--detach` | With `--local`: start the Worker in the background and return once it reports ready. Stop it with `scai data worker stop --local`. | No | False |
+| `--ready-timeout <SECONDS>` | With `--detach`: how long to wait for the process to report ready before stopping it and failing. | No | 120 |
+| `--skip-doctor` | With `--local`: skip the doctor checks that run first. Use it only right after a `scai data doctor` run that passed. | No | False |
+| `--local-results-directory <PATH>` | With `--local`: directory where the local Worker writes result data. | No | ~/.data\_exchange\_agent/result\_data |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service to resume, as passed to `scai data worker setup --service-name`. Sanitized to a safe SQL identifier and uppercased. | No | `DATA_EXCHANGE_WORKER_SERVICE` |
+| `--resume-compute-pool` | Resume the compute pool before resuming the service if it’s suspended. Without it, a suspended pool fails the resume. | No | False |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |  |
@@ -2600,14 +2671,20 @@ Copy code
 # Resume cloud DEW service
 scai data worker start
 
+# Resume a named Worker service
+scai data worker start --service-name SQL_EAST_WORKER
+
 # Resume with a specific role
 scai data worker start --role MY_ROLE
 
-# Run local worker with config
-scai data worker start --local my-agent-config.yaml
+# Resume, resuming the pool if suspended
+scai data worker start --resume-compute-pool
 
-# Generate local config template
-scai data worker start --local --auto-config
+# Run local worker with config
+scai data worker start --local my-agent-config.toml
+
+# Start a local worker in the background, returning once it's ready
+scai data worker start --local my-agent-config.toml --detach
 ```
 
 ---
@@ -2666,29 +2743,32 @@ scai data worker generate-config -c my-snowflake
 
 ##### scai data worker stop
 
-Suspend or drop the Data Exchange Worker SPCS service.
+Suspend or drop the Data Exchange Worker SPCS service, or stop a local Worker.
 
 Copy code
 
 ```
-scai data worker stop [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--drop]
+scai data worker stop [--local [CONFIG_FILE] [--exit-timeout <SECONDS>]] [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--service-name <SERVICE_NAME>] [--drop]
 ```
 
 **Prerequisites:**
 
-- Snowflake connection with appropriate privileges
+- Snowflake connection with appropriate privileges (cloud path only)
 
 **Behavior:**
 
-- By default, suspends the DEW service (can be resumed later)
+- By default, suspends the DEW service named by `--service-name` (can be resumed later)
 - Use –drop to permanently remove the service
-- –local is advisory only (local worker is a foreground process; use Ctrl-C to stop it)
+- With `--local`, sends a graceful stop signal (SIGTERM on macOS and Linux) to the local Worker started with the same CONFIG\_FILE, or with the project default when you omit it. Waits up to `--exit-timeout` seconds for it to exit and removes its PID file. A Worker still running after the wait fails with `DMG0075` and its PID, and its PID file is kept so another stop can find it.
 
 **Options:**
 
 | Option | Description | Required | Default |
 | --- | --- | --- | --- |
+| `--local` | Stop the local Worker process instead of the SPCS service. Pass the same `[CONFIG_FILE]` used to start it, or omit it to use the project default. | No | False |
+| `--exit-timeout <SECONDS>` | With `--local`: how long to wait for the process to exit after the stop signal before failing. | No | 30 |
 | `--drop` | Drop the service instead of suspending it. Suspending is the default behavior. | No | False |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service to suspend or drop, as passed to `scai data worker setup --service-name`. Sanitized to a safe SQL identifier and uppercased. | No | `DATA_EXCHANGE_WORKER_SERVICE` |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |  |
@@ -2697,7 +2777,7 @@ Expand
 
 Show lessSee more
 
-**Output:** Status message indicating whether the service was suspended or dropped.
+**Output:** Status message indicating whether the service was suspended, dropped, or the local Worker stopped.
 
 **Examples:**
 
@@ -2707,16 +2787,126 @@ Copy code
 # Suspend the DEW service
 scai data worker stop
 
+# Suspend a named Worker service
+scai data worker stop --service-name SQL_EAST_WORKER
+
 # Suspend with a specific role
 scai data worker stop --role MY_ROLE
 
 # Drop the DEW service permanently
 scai data worker stop --drop
+
+# Stop a local worker (project default config)
+scai data worker stop --local
 ```
 
 ---
 
-#### scai data orchestrator
+##### scai data worker update
+
+Drop and re-create the deployed Data Exchange Worker so it picks up the image version pinned by this `scai` release. Keeps the existing source specification, affinity, and external access integrations.
+
+Copy code
+
+```
+scai data worker update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--service-name <SERVICE_NAME>] [--yes]
+```
+
+**Prerequisites:**
+
+- Service previously bootstrapped with ‘scai data worker setup’
+- Snowflake connection with appropriate privileges
+
+**Behavior:**
+
+- Reads the deployed service’s compute pool, so `--compute-pool` isn’t needed
+- Succeeds without changes when the service already runs the pinned version
+- When an update is available, drops and re-creates the service from the deployed specification, which briefly interrupts it
+- Prompts before interrupting a running service, and before a downgrade, a release-channel switch, or an image replacement whose version order can’t be determined, even when the service is suspended. Pass `--yes` for automation.
+- Upgrades a suspended service on the same channel without a prompt
+- Keeps the source configuration, affinity, external access integrations, and the deployed query warehouse, unless you pass `--warehouse`
+- Runs when requested, even when global auto-update is turned off
+- Resumes the deployed compute pool if it’s suspended
+
+**Options:**
+
+| Option | Description | Required | Default |
+| --- | --- | --- | --- |
+| `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service to update, as passed to `scai data worker setup --service-name`. Sanitized to a safe SQL identifier and uppercased. | No | `DATA_EXCHANGE_WORKER_SERVICE` |
+| `-y, --yes` | Skip the confirmation prompt. | No | False |
+| `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
+| `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
+| `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |  |
+
+Expand
+
+Show lessSee more
+
+**Output:** Status message indicating whether the service was upgraded or already current.
+
+**Examples:**
+
+Copy code
+
+```
+# Upgrade to the pinned image
+scai data worker update
+
+# Upgrade non-interactively
+scai data worker update --yes
+
+# Upgrade a named Worker
+scai data worker update --service-name SQL_EAST_WORKER
+```
+
+---
+
+##### scai data worker list
+
+List the Data Exchange Workers for the metadata database: the live local Workers and the deployed SPCS Workers.
+
+Copy code
+
+```
+scai data worker list [-c <CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>]
+```
+
+**Behavior:**
+
+- Shows each Worker’s Location (`Local` or `SPCS`), Name, State, Affinity, and Version
+- Reads local Workers from their on-disk markers. Reads SPCS Workers from the account when a Snowflake connection resolves; without one, lists local Workers only.
+- With `--json`, also reports each local Worker’s source connection, config path, and metadata database
+
+**Options:**
+
+| Option | Description | Required |
+| --- | --- | --- |
+| `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |
+| `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
+| `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
+
+Expand
+
+Show lessSee more
+
+**Output:** A table of local and SPCS Workers, or a message when none are found.
+
+**Examples:**
+
+Copy code
+
+```
+# List all workers
+scai data worker list
+
+# List workers for a specific connection
+scai data worker list -c my-snowflake
+
+# Machine-readable output
+scai data worker list --json
+```
+
+---
 
 ##### scai data worker status
 
@@ -2775,6 +2965,8 @@ scai data worker status --watch --poll-interval 2
 
 ---
 
+#### scai data orchestrator
+
 ##### scai data orchestrator setup
 
 Start the Data Migration Service on a compute pool and wait for infrastructure to be ready.
@@ -2782,7 +2974,7 @@ Start the Data Migration Service on a compute pool and wait for infrastructure t
 Copy code
 
 ```
-scai data orchestrator setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>]
+scai data orchestrator setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFLAKE_CONNECTION>] [--worker-service-name <SERVICE_NAME>] [--resume-compute-pool] [-y]
 ```
 
 **Prerequisites:**
@@ -2795,6 +2987,7 @@ scai data orchestrator setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFL
 - Creates the SNOWCONVERT\_AI.DATA\_MIGRATION schema if needed
 - Starts the Data Migration Service on the specified compute pool
 - Waits for the Data Migration Service to set up the objects in the SNOWCONVERT\_AI.DATA\_MIGRATION schema
+- Fails fast if the compute pool is suspended. Pass `--resume-compute-pool` to resume it first.
 
 **Options:**
 
@@ -2806,6 +2999,8 @@ scai data orchestrator setup --compute-pool <COMPUTE_POOL> [--connection <SNOWFL
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
 | `--custom-image` | Custom container image path to use instead of auto-resolving the latest. Format: /db/schema/repo/image\_name:tag | No |
 | `--worker-service-name <SERVICE_NAME>` | Name of the Worker SPCS service that the Orchestrator suspends on idle shutdown. Takes one name, which must match the `--service-name` given to `scai data worker setup`. Sanitized to a safe SQL identifier and uppercased. Defaults to `DATA_EXCHANGE_WORKER_SERVICE`. Pass it again with `--yes` when you re-create an existing Orchestrator service. | No |
+| `--resume-compute-pool` | Resume the compute pool before setting up the service if it’s suspended. Without it, a suspended pool fails setup. | No |
+| `-y, --yes` | Skip the confirmation prompt. | No |
 
 Expand
 
@@ -2993,6 +3188,64 @@ scai data orchestrator status --watch --poll-interval 2
 
 ---
 
+##### scai data orchestrator update
+
+Drop and re-create the deployed Data Migration Service so it picks up the image version pinned by this `scai` release.
+
+Copy code
+
+```
+scai data orchestrator update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--yes]
+```
+
+**Prerequisites:**
+
+- Service previously bootstrapped with ‘scai data orchestrator setup’
+- Snowflake connection with appropriate privileges
+
+**Behavior:**
+
+- Reads the deployed service’s compute pool, so `--compute-pool` isn’t needed
+- Succeeds without changes when the service already runs the pinned version
+- When an update is available, drops and re-creates the service, which briefly interrupts it
+- Prompts before interrupting a running service, and before a downgrade, a release-channel switch, or an image replacement whose version order can’t be determined, even when the service is suspended. Pass `--yes` for automation.
+- Upgrades a suspended service on the same channel without a prompt
+- Keeps the deployed query warehouse unless you pass `--warehouse`
+- Runs when requested, even when global auto-update is turned off
+- Resumes the deployed compute pool if it’s suspended
+
+**Options:**
+
+| Option | Description | Required | Default |
+| --- | --- | --- | --- |
+| `-y, --yes` | Skip the confirmation prompt. | No | False |
+| `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
+| `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
+| `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |  |
+
+Expand
+
+Show lessSee more
+
+**Output:** Status message indicating whether the service was upgraded or already current.
+
+**Examples:**
+
+Copy code
+
+```
+# Upgrade to the pinned image
+scai data orchestrator update
+
+# Upgrade non-interactively
+scai data orchestrator update --yes
+
+# Upgrade with a specific connection
+scai data orchestrator update --connection my-snowflake
+```
+
+---
+
 #### scai data doctor
 
 Run health checks for a data migration or validation setup: Snowflake grants, DEW config, orchestrator connectivity, workflow config schema, and partition key feasibility.
@@ -3006,7 +3259,9 @@ scai data doctor [OPTIONS]
 **Behavior:**
 
 - Snowflake grants check (CLI-side): verifies the resolved role has the privileges required for cloud data operations. Reports PASS/FAIL/WARN/SKIP.
-- DEW health check: spawns the local DEW Python process and validates its configuration file (~/.scai/dew\_configuration.toml).
+- DEW health check: spawns the local DEW Python process and validates its configuration file (`--worker-config`, by default `.scai/config/dew_configuration.toml` under the project root, or the current directory outside a project).
+- With `--spcs-mode`, runs the privilege checks for that deployment mode. `full-spcs` also skips the local Worker checks (RAM, CPU, disk, and Worker config), because the Worker doesn’t run on this machine. Run `scai data worker status` to inspect the deployed service instead.
+- `full-local` and `hybrid` report a local Worker Python environment that didn’t build, or a Worker source connection that can’t be resolved, as a failure instead of a warning. `full-local` does the same for the Orchestrator’s Python environment. `--local-processes` sets which processes run on this machine and overrides what `--spcs-mode` implies.
 - Orchestrator health check: spawns the local orchestrator Python process to verify Snowflake connectivity and (when –config is provided) the workflow YAML schema.
 - Partition key feasibility (Phase 2.5): when a migration config is resolved, runs NULL-ratio and cardinality queries against the source database for every table that has columnNamesToPartitionBy configured.
 - With –analyze-partition-keys: for tables with no configured partition column, suggests a candidate from the table’s primary key (via the Code Unit Registry) and probes it as well.
@@ -3027,9 +3282,13 @@ scai data doctor [OPTIONS]
 | Option | Description | Required |
 | --- | --- | --- |
 | `-c, --connection <CONNECTION>` | Snowflake connection name to use for target-side grant checks. Uses the project default when omitted. | No |
-| `--source-connection <SOURCE_CONNECTION>` | Source database connection name to use for partition key feasibility probes. Falls back to the project default source connection when omitted. | No |
+| `-s, --source-connection <SOURCE_CONNECTION>` | Source database connection name to use for partition key feasibility probes. Falls back to the project default source connection when omitted. | No |
 | `--config <PATH>` | Path to the migration or validation workflow YAML file. Enables workflow config schema validation and (for migration configs) partition key feasibility checks. When –analyze-partition-keys is used without –config, defaults to the project’s standard migration config path. | No |
-| `--analyze-partition-keys` | For tables in the migration config that have no columnNamesToPartitionBy configured, suggest a candidate column from the table’s primary key (via the Code Unit Registry) and run partition feasibility analysis (NULL ratio, cardinality) against the source database. Requires –source or a project default source connection. When –config is omitted, falls back to the project default migration config path. | No |
+| `--analyze-partition-keys` | For tables in the migration config that have no columnNamesToPartitionBy configured, suggest a candidate column from the table’s primary key (via the Code Unit Registry) and run partition feasibility analysis (NULL ratio, cardinality) against the source database. Requires `-s, --source-connection` or a project default source connection. When `--config` is omitted, uses the project’s default migration config. | No |
+| `--worker-config <PATH>` | Path to the Worker config (`dew_configuration.toml`) to check. Defaults to `.scai/config/dew_configuration.toml` under the project root, or the current directory outside a project. | No |
+| `--spcs-mode <MODE>` | Run privilege checks for a deployment mode: `full-spcs` (Orchestrator and Worker both on SPCS), `hybrid` (Orchestrator on SPCS, Worker local), or `full-local` (both local; no SPCS required). When omitted, deployment-mode checks are skipped and the local Worker checks run. | No |
+| `--local-processes <PROCESSES>` | Comma-separated list of the processes that run on this machine: `orchestrator`, `worker`, or both, or `none` when neither does. A listed process’s Python environment that didn’t build, or the Worker’s source connection that can’t be resolved, is reported as a failure instead of a warning. Runs no deployment-mode checks of its own. Overrides the placement that `--spcs-mode` implies: naming `worker` runs the local Worker checks even under `full-spcs`, and leaving it out skips them. | No |
+| `--driver-path <DRIVER_PATH>` | Path to the source database driver (`.dll` or `.nupkg`). Required for Oracle and Teradata if not previously cached. | No |
 
 Expand
 
@@ -3059,6 +3318,61 @@ scai data doctor --analyze-partition-keys --source-connection my-sqlserver
 
 # Full check: explicit config, source connection, and partition key suggestion
 scai data doctor --config data-migration-config.yaml --source-connection my-sqlserver --analyze-partition-keys
+
+# Check privileges for an Orchestrator on SPCS with a local Worker
+scai data doctor --spcs-mode hybrid --worker-config .scai/config/dew_configuration.toml
+
+# Orchestrator on SPCS; only the Worker runs on this machine
+scai data doctor --spcs-mode full-spcs --local-processes worker
+```
+
+---
+
+#### scai data migrate-schema
+
+Apply pending `DATA_MIGRATION` schema migrations without starting the Orchestrator, then exit.
+
+Copy code
+
+```
+scai data migrate-schema [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>]
+```
+
+**Prerequisites:**
+
+- Snowflake connection with privileges to create schemas and tables in the metadata database
+
+**Behavior:**
+
+- Runs the same tracker-gated schema migrations that the Orchestrator applies when it starts
+- Creates `DATA_MIGRATION.WORKFLOW` and the related metadata objects when they’re missing
+- Idempotent when the schema is already current
+- Doesn’t start the Orchestrator process
+
+**Options:**
+
+| Option | Description | Required |
+| --- | --- | --- |
+| `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |
+| `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
+| `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |
+
+Expand
+
+Show lessSee more
+
+**Output:** Success when the schema is ready. Exits with a failure if a migration fails.
+
+**Examples:**
+
+Copy code
+
+```
+# Apply schema with the default connection
+scai data migrate-schema
+
+# Apply schema with a named connection
+scai data migrate-schema --connection my-snowflake
 ```
 
 ---

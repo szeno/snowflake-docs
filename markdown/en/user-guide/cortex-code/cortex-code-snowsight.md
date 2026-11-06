@@ -211,7 +211,7 @@ Two things determine which models you can choose:
   [Control model access](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-access-control).
 - **Regional availability:** whether the model runs in your account’s region, or is reachable
   through cross-region inference. For per-model regions, see
-  [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability). If a
+  [Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability). If a
   model isn’t available in your region, a user with the
   `ACCOUNTADMIN` role must enable [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
 

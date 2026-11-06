@@ -10,8 +10,9 @@ An instance family specifies the vCPU, memory, storage, and egress bandwidth
 available to nodes in a compute pool. The available instance families vary by
 cloud provider. Within each cloud provider, instance families are grouped as
 current generation or previous generation. To view the instance
-families available in your account and region, use
+families available in the region of your current account, use
 [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families).
+Availability varies by region. If an instance family you need isn’t listed, contact your Snowflake account team.
 
 If you configure backup instance families for a compute pool, choose a backup that is
 workload-compatible with the primary: generally a larger size of the same instance

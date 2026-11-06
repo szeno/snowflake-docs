@@ -5,6 +5,12 @@ Schemas:
 
 This Account Usage view can be used to query Snowflake query history by various dimensions (time range, session, user, warehouse, and so on) within the last 365 days (1 year).
 
+Caution
+
+**Don’t use this view to benchmark hybrid table performance.** QUERY\_HISTORY doesn’t contain all executions of queries against hybrid tables. Short-running queries that operate only on hybrid tables don’t generate a record. Other hybrid table queries are recorded only when they meet certain conditions, such as running longer than approximately 500 milliseconds, or when they’re sampled. As a result, don’t use this view to calculate average, median, P90, or P99 latencies for hybrid table workloads.
+
+To measure hybrid table latency, use the [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) view. It includes all executions and provides latency percentiles.
+
 The view is available in both the ACCOUNT\_USAGE and READER\_ACCOUNT\_USAGE schemas with the following differences:
 
 - The following columns are available *only* in the reader account view:

@@ -13,6 +13,7 @@ For information about CoCo Desktop, see [CoCo Desktop](/user-guide/cortex-code/c
 
 | Version | Date | Highlights |
 | --- | --- | --- |
+| [v1.25.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-25-0) | November 2026 | Anchored dbt lineage, a faster dbt Action Bar, one timeout for dbt runs, update status in the app menu, and Windows update fixes |
 | [v1.24.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-24-0) | November 2026 | Artifacts and Cloud automations in preview, sharing with Can publish access, simpler automation creation, and run status at a glance |
 | [v1.23.1](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-23-1) | October 2026 | Customize page for agent settings, fewer approval prompts for file edits, uploads of any file type, and SQL Playground Stop |
 | [v1.23.0](/user-guide/cortex-code/cortex-code-desktop/release-notes/v1-23-0) | October 2026 | Session list grouping and ordering, prompt history for each chat, Snowflake Managed MCP servers for all accounts, and dbt fixes |

@@ -25,7 +25,7 @@ Key characteristics of multi-value tags:
 | Tag definition | Created with default behavior (`MULTI_VALUE` is false or omitted). | Tag is created or altered with `MULTI_VALUE = TRUE`. You can’t set `MULTI_VALUE` back to false. |
 | Assigning values | Use `SET TAG` / `UNSET TAG` on the object or column. | Use `ADD VALUE` and `DROP VALUE` on `ALTER TABLE` to add or remove values; you can add the first value with `ADD VALUE` directly. `SET TAG` replaces the entire value set with the value you set (it doesn’t append). `UNSET TAG` removes the tag (see [ALTER TABLE ADD VALUE and DROP VALUE (multi-value tags)](#label-multi-value-tags-alter-table-add-drop)). |
 | Propagation conflicts | Propagation uses your tag’s `ON_CONFLICT` behavior for a single winner value unless you adopt merge semantics separately. | `ON_CONFLICT = MERGE` is allowed only when the tag has `MULTI_VALUE = TRUE`; use it so multiple source values can accumulate on the target (for example on views). |
-| `SYSTEM$GET_TAG` and policy helpers | Return the one tag value when a single value is present. | Return an error when more than one value exists. Use [SYSTEM$TAG\_VALUE\_CONTAINS](/sql-reference/functions/system_tag_value_contains) for checks, or keep policy logic on single-value tags only (see [Multi-value tags and masking policies](#label-multi-value-tags-policies)). |
+| `SYSTEM$GET_TAG` and policy helpers | Return the one tag value when a single value is present. | Return an error when more than one value exists. Use [SYSTEM$TAG\_VALUE\_CONTAINS](/sql-reference/functions/system_tag_value_contains) to test a named object. In a policy body, use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column) or [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table) (see [Multi-value tags and policies](#label-multi-value-tags-policies)). |
 
 Expand
 
@@ -279,14 +279,24 @@ SELECT SYSTEM$TAG_VALUE_CONTAINS('data_source_tag', 'v_combined', 'TABLE', 'supp
 
 Changes to source table tags (adding or dropping values) automatically propagate to dependent objects.
 
-## Multi-value tags and masking policies
+## Multi-value tags and policies
 
-The [SYSTEM$GET\_TAG\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_get_tag_on_current_table) and [SYSTEM$GET\_TAG\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_get_tag_on_current_column) functions, which are used in masking policy and row access policy conditions, don’t support tags with multiple values.
+[SYSTEM$GET\_TAG\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_get_tag_on_current_table) and [SYSTEM$GET\_TAG\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_get_tag_on_current_column) return an error when more than one value is assigned to the tag.
 
-If you need to use tags with masking policies, use single-value tags for the policy logic. You can use multi-value tags on
-the same objects for other classification purposes, but don’t reference multi-value tags in policy conditions.
+To test one value in a policy body, call [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column) from a column-level protection policy, such as a masking policy or a projection policy. Call [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table) from a [data protection policy](/user-guide/data-protection-policies-snowsight).
 
-For application-level logic that needs to check multi-value tags, use `SYSTEM$TAG_VALUE_CONTAINS` in your queries:
+Copy code
+
+```
+CREATE MASKING POLICY mask_sensitive
+  AS (val STRING) RETURNS STRING ->
+    CASE
+      WHEN SYSTEM$TAG_VALUE_CONTAINS_ON_CURRENT_COLUMN('sensitivity', 'pii') THEN '***MASKED***'
+      ELSE val
+    END;
+```
+
+For a check outside a policy, use `SYSTEM$TAG_VALUE_CONTAINS` in your query:
 
 Copy code
 
@@ -301,7 +311,9 @@ SELECT
 - The `MULTI_VALUE` property can’t be set to FALSE. After a tag is configured as multi-value, it can’t be reverted.
 - The default limit is 10 values per multi-value tag per object.
 - `SYSTEM$GET_TAG`, `SYSTEM$GET_TAG_ON_CURRENT_TABLE`, and `SYSTEM$GET_TAG_ON_CURRENT_COLUMN` return an error when
-  called on a tag with multiple values assigned. Use `SYSTEM$TAG_VALUE_CONTAINS` instead.
+  called on a tag with multiple values assigned. Use [SYSTEM$TAG\_VALUE\_CONTAINS](/sql-reference/functions/system_tag_value_contains) to test a value on a
+  named object. In a policy body, use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column) or
+  [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table).
 - Adding a duplicate value is a no-op (no error is raised, and the value count does not increase).
 - `ADD VALUE` and `DROP VALUE` operations require the tag to have `MULTI_VALUE = TRUE`. Running these operations on a
   single-value tag returns an error.

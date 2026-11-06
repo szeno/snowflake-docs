@@ -145,6 +145,8 @@ As long as there are difference in the SQL text, the QUERY\_HASH and QUERY\_PARA
 
 Latency for the view may be up to 180 minutes (3 hours).
 
+The percentile values in the OBJECT columns, such as `median`, `p90`, and `p99`, are calculated for each one-minute interval and each parameterized query. Don’t average these values across intervals to calculate an overall percentile for a workload.
+
 ## Examples
 
 You can use the AGGREGATE\_QUERY\_HISTORY view to monitor for potential problems with errors, queueing, lock blocking, or hybrid table throttling.

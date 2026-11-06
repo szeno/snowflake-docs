@@ -12,4 +12,4 @@ Expand
 Show lessSee more
 
 For a full list of regions where the `llama3.1-405b` and other models are available, see
-[Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+[Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).

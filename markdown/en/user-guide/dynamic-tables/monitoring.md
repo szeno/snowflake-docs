@@ -304,8 +304,15 @@ To query for upstream failures instead, change the filter to `value:state = 'UPS
 
 ### Create an alert on refresh failures
 
-An alert on new data triggers when new rows matching a condition are inserted into the event table. The following
-example sends a Slack notification when any dynamic table in `mydb` fails to refresh.
+To alert on dynamic table refresh events without writing the condition SQL, use a Dynamic Tables template in
+[Alerts in Snowsight](/user-guide/alerts-ui) or
+[CREATE ALERT … FROM TEMPLATE](/sql-reference/sql/create-alert#label-create-alert-from-template-syntax).
+Set `LOG_EVENT_LEVEL` as described earlier on this page. The templates available in your account can change; choose
+a template in the UI or list them with
+[SYSTEM$LIST\_ALERT\_TEMPLATES](/sql-reference/functions/system_list_alert_templates).
+
+You can also create a custom alert that queries the event table directly. An alert on new data triggers when new
+rows matching a condition are inserted into the event table.
 
 Note
 

@@ -509,7 +509,7 @@ For more information, see [SHOW PARAMETERS](/sql-reference/sql/show-parameters).
   ```
 
   For more information, see [GRANT <privileges> … TO ROLE](/sql-reference/sql/grant-privilege).
-- **Per account limit on compute pool nodes**.
+- **Per-account limit on compute pool nodes:**
 
   - The maximum number of active or idle nodes in your account is 750, regardless of the number of compute pools. Nodes in suspended compute pools don’t count toward this limit.
 

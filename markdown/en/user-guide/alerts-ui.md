@@ -10,15 +10,23 @@ The alerts management feature in Snowsight provides the following benefits:
 
 - **Centralized visibility of alerts:** In the Snowflake Alerts Center, you can view all alerts, the history of these alerts, and
   the execution status of these alerts.
-- **Templates for creating alerts:** You can quickly create alerts for the following features by using the alert templates
-  provided in the Snowflake Alerts UI. Note: Once an alert is generated from a template, it is equivalent to any other alert with
-  regard to lifecycle management, and contains no special properties.
+- **Templates for creating alerts:** You can quickly create alerts for Snowflake features by using the alert templates
+  provided in the Snowflake Alerts UI. The template groups in the menu can include the following features. Snowflake
+  manages the catalog, so the groups and templates available in your account can change.
 
   - [Tasks](/user-guide/tasks-intro)
+  - [Warehouses](/user-guide/warehouses-overview)
   - [Openflow](/user-guide/data-integration/openflow/about)
   - [Data quality](/user-guide/data-quality-intro)
   - [Dynamic tables](/user-guide/dynamic-tables/overview)
   - [Iceberg tables](/user-guide/tables-iceberg-catalog-linked-database) (catalog-linked databases)
+  - Snowpark [user-defined functions](/developer-guide/udf/udf-overview) and
+    [stored procedures](/developer-guide/stored-procedure/stored-procedures-overview)
+  - [Snowpipe](/user-guide/data-load-snowpipe-intro)
+  - [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview)
+
+  After you create an alert from a template, it is an ordinary alert: it has no special properties, and you manage its
+  lifecycle the same way you manage any other alert.
 - **Proactive monitoring of Snowflake features:** You can easily configure notifications for failures, latency, or data anomalies
   to ensure your pipelines and budgets remain healthy.
 
@@ -27,10 +35,14 @@ The alerts management feature in Snowsight provides the following benefits:
 Before you can use Snowsight to create, monitor, and manage alerts, you must fulfill the following prerequisites:
 
 - [Prerequisites for task alerts](#prerequisites-for-task-alerts)
+- [Prerequisites for warehouse alerts](#prerequisites-for-warehouse-alerts)
 - [Prerequisites for Openflow alerts](#prerequisites-for-openflow-alerts)
 - [Prerequisites for data quality alerts](#prerequisites-for-data-quality-alerts)
 - [Prerequisites for dynamic table alerts](#prerequisites-for-dynamic-table-alerts)
 - [Prerequisites for Iceberg catalog-linked database alerts](#prerequisites-for-iceberg-catalog-linked-database-alerts)
+- [Prerequisites for Snowpark function and procedure alerts](#prerequisites-for-snowpark-function-and-procedure-alerts)
+- [Prerequisites for Snowpipe alerts](#prerequisites-for-snowpipe-alerts)
+- [Prerequisites for Snowpipe Streaming alerts](#prerequisites-for-snowpipe-streaming-alerts)
 - [Setting up notifications for alerts](#setting-up-notifications-for-alerts)
 - [Creating a role for accessing alerts in Snowsight](#creating-a-role-for-accessing-alerts-in-sf-web-interface)
 
@@ -80,12 +92,28 @@ If you plan to create, manage, and monitor alerts on [tasks](/user-guide/tasks-i
     ```
     ALTER TASK my_task SET LOG_EVENT_LEVEL = INFO;
     ```
+- Templates that compare a finished run with its historical average don’t read the event table, so you don’t set
+  `LOG_EVENT_LEVEL` for them. They use the historical average in [TASK\_HISTORY view](/sql-reference/account-usage/task_history) and read
+  the finished run from [TASK\_HISTORY](/sql-reference/functions/task_history).
 - Verify the privileges that have been granted to the role that you plan to use to access Snowsight.
 
   That role must be granted the privileges to query the [TASK\_HISTORY view](/sql-reference/account-usage/task_history) and
   [QUERY\_HISTORY view](/sql-reference/account-usage/query_history) in the ACCOUNT\_USAGE schema.
 
   For information, see [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
+
+### Prerequisites for warehouse alerts
+
+Warehouse templates monitor query duration, queue time, and failure rate. They read
+[QUERY\_HISTORY view](/sql-reference/account-usage/query_history). Grant the role that you use in Snowsight the privileges to query
+that view. For information, see [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
+
+Templates that watch queries that are still running also read
+[QUERY\_HISTORY , QUERY\_HISTORY\_BY\_\*](/sql-reference/functions/query_history). That function returns queries run by the current user, and queries run by
+other users on warehouses where the role has the MONITOR or OPERATE privilege.
+
+[QUERY\_HISTORY view](/sql-reference/account-usage/query_history) can lag by up to 45 minutes. The warehouse templates use a lookback
+window that accounts for that lag.
 
 ### Prerequisites for Openflow alerts
 
@@ -94,6 +122,10 @@ Openflow is configured to log events. For information, see the following section
 
 - [[Optional] Configure an Openflow-specific event table](/user-guide/data-integration/openflow/setup-openflow-byoc#label-openflow-event-table) (if you are using Openflow BYOC)
 - [[Optional] Configure an Openflow-specific event table](/user-guide/data-integration/openflow/setup-openflow-spcs-deployment#label-openflow-spcs-event-table) (if you are using Openflow Snowflake)
+
+In the **Alert template** menu, Openflow templates appear in two blocks: templates for Openflow connectors, and templates
+that apply only to Gen2 (Openflow Object Model) connectors. Choose the block that matches the connectors you want to
+monitor. Fill in the fields the template shows, including any runtime, connector, or table filters.
 
 ### Prerequisites for data quality alerts
 
@@ -104,10 +136,9 @@ For information, see [Use SQL to set up data metric functions](/user-guide/data-
 ### Prerequisites for dynamic table alerts
 
 The [dynamic table](/user-guide/dynamic-tables/overview) alerts monitor refresh status events that are recorded to an event
-table. Make sure that event logging is configured for the dynamic tables that you want to monitor, including the severity
-level needed for refresh failures and upstream failures.
-
-For information, see [Set up alerts with the event table](/user-guide/dynamic-tables/monitoring#label-dynamic-tables-monitor-event-table-alerts).
+table. Set the [LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level) parameter so the events you want to monitor are captured. For which severity
+levels record which refresh states, see
+[Set up alerts with the event table](/user-guide/dynamic-tables/monitoring#label-dynamic-tables-monitor-event-table-alerts).
 
 ### Prerequisites for Iceberg catalog-linked database alerts
 
@@ -116,6 +147,40 @@ that you have a catalog-linked database with a catalog integration configured. G
 catalog-linked database don’t emit the events that these alerts monitor.
 
 For information, see [Use a catalog-linked database for Apache Iceberg™ tables](/user-guide/tables-iceberg-catalog-linked-database).
+
+### Prerequisites for Snowpark function and procedure alerts
+
+Templates in the FUNCTIONS group monitor [Java, Python, and Scala](/developer-guide/udf/udf-overview) user-defined
+functions and stored procedures. SQL UDFs aren’t monitored.
+
+These templates read the event table. Depending on the template you choose, you must emit log messages, metrics, or both
+from the objects you want to monitor:
+
+- For templates that watch handler logs, set the [LOG\_LEVEL](/sql-reference/parameters#label-log-level) parameter to at least `ERROR` on the function,
+  procedure, or a parent object.
+- For templates that watch invocation duration or resource usage, set the [METRIC\_LEVEL](/sql-reference/parameters#label-metric-level) parameter to `ALL`
+  so Snowflake writes auto-instrumented metrics to the event table.
+
+For information, see [Logging messages from functions and procedures](/developer-guide/logging-tracing/logging) and
+[Emitting metrics data from handler code](/developer-guide/logging-tracing/metrics-handler).
+
+### Prerequisites for Snowpipe alerts
+
+[Snowpipe](/user-guide/data-load-snowpipe-intro) templates read pipe events from the event table. Set the
+[LOG\_EVENT\_LEVEL](/sql-reference/parameters#label-log-event-level) parameter on the pipes (or a parent object) so the events you want to monitor are captured.
+
+Some events are more verbose than others. For example, file-received events are recorded at `DEBUG`. If a template never
+fires, confirm that `LOG_EVENT_LEVEL` includes the events described on
+[Monitor events for Snowpipe](/user-guide/data-load-snowpipe-monitor-events).
+
+### Prerequisites for Snowpipe Streaming alerts
+
+The [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) alerts monitor telemetry
+from the high-performance Snowpipe Streaming architecture (PIPE objects and channels). Make sure that Snowpipe Streaming
+is configured and that streaming telemetry is recorded to an event table.
+
+For information, see [Snowpipe Streaming key concepts](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview) and
+[Named Channels and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels).
 
 ### Setting up notifications for alerts
 
@@ -283,7 +348,14 @@ To create an alert in Snowsight, complete the following steps:
 10. From the **Alert template** menu, choose one of the template groups for Snowflake features, and choose the template that
     you want to use to create the alert.
 
-The following table lists the template groups and templates that you can choose.
+The following table lists the template groups and templates. Snowflake can add, remove, or change templates. To confirm
+the templates in your account, call
+[SYSTEM$LIST\_ALERT\_TEMPLATES](/sql-reference/functions/system_list_alert_templates) and
+[SYSTEM$GET\_ALERT\_TEMPLATE](/sql-reference/functions/system_get_alert_template).
+
+Fulfill the [prerequisites](#label-alerts-center-prerequisites) for the feature before you create an alert from that
+group. The Openflow group lists templates in two blocks: Openflow connectors, and Gen2 (Openflow Object Model)
+connectors.
 
 | Template group | Template | Description |
 | --- | --- | --- |
@@ -291,10 +363,44 @@ The following table lists the template groups and templates that you can choose.
 |  | **Expectation violations alert** | Monitors for [data quality expectation violations](/user-guide/data-quality-expectations), triggering an alert when defined expectations are violated. |
 | **DYNAMIC\_TABLES** | **Refresh failure alert** | Monitors [dynamic table](/user-guide/dynamic-tables/overview) refresh failures, triggering an alert when a dynamic table’s own refresh fails. |
 |  | **Upstream failure alert** | Monitors [dynamic table](/user-guide/dynamic-tables/overview) upstream failures, triggering an alert when a refresh fails because of an upstream dependency. |
+| **FUNCTIONS** | **Error rate alert** | Monitors Java, Python, and Scala [UDFs and stored procedures](/developer-guide/extensibility) for ERROR-level or FATAL-level log messages, triggering an alert for each function or procedure that logs an error. |
+|  | **Long-running invocation alert** | Monitors Java, Python, and Scala [UDFs and stored procedures](/developer-guide/extensibility), triggering an alert when a single invocation runs longer than a duration threshold. |
 | **ICEBERG** | **Refresh status alert** | Monitors auto-refresh status changes for tables in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), triggering an alert when refresh leaves a healthy state. |
 |  | **Discovery failure alert** | Monitors discovery and sync failures for a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), triggering an alert when catalog objects fail to sync. |
-| **OPENFLOW** | Templates for Openflow connectors and runtimes | Monitor Openflow connectors and runtimes for problems such as back pressure, errors, stopped data flow, low storage space, and tables that fail to replicate. For the list of templates, see [Set up alerts for Openflow](/user-guide/data-integration/openflow/alerts). |
+| **OPENFLOW** | **Connector backpressure (object count)** | Monitors the connector queue count to determine if it exceeds the backpressure threshold, which can indicate that the downstream system can’t keep up with the data flow rate. |
+|  | **Connector backpressure (bytes)** | Monitors the connector queued bytes to determine if it exceeds the backpressure threshold, which can indicate that there is memory pressure in the data pipeline. |
+|  | **Connector health alert** | Monitors the health of Openflow connectors, triggering an alert when connector health degrades within the lookback window. |
+|  | **Data staleness alert** | Monitors an Openflow pipeline, triggering an alert when its data hasn’t been updated within the expected time window. |
+|  | **High queued bytes alert** | Monitors the connector queue bytes to determine if it approaches the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
+|  | **High queued count alert** | Monitors the connector queue object count to determine if it approaches the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
+|  | **High runtime storage usage alert** | Monitors Openflow runtime storage volumes (FlowFile, Content, Provenance, and Configuration Resources), triggering an alert when a volume reaches the usage threshold. |
+|  | **No data alert** | Monitors for connectors that have an active processing time but are not receiving or sending any data, which can indicate potential data flow issues. |
+|  | **Out of memory alert** | Monitors Openflow runtime logs for `OutOfMemoryError` entries, which indicate JVM heap exhaustion that can stop every connector on the runtime. |
+|  | **High error rate alert** | Monitors each Openflow connector for processor errors, triggering an alert when the processor error count exceeds a threshold, which can indicate processing failures. |
+|  | **Table replication failure alert** | Monitors for table replication transitions to a FAILED state, which can indicate a critical data synchronization issue. |
+|  | **Connector backpressure (object count) (Gen2)** | Monitors [gen 2 Openflow](/user-guide/data-integration/openflow/gen2/index) connectors, triggering an alert when a connector’s queued object count exceeds the backpressure threshold across enough of the lookback window, which can indicate downstream lag. |
+|  | **Connector backpressure (bytes) (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when a connector’s queued bytes exceed the backpressure threshold across enough of the lookback window, which can indicate memory pressure. |
+|  | **Connector health alert (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when processor errors or failed change data capture (CDC) table replications are detected within the lookback window. |
+|  | **Data staleness alert (Gen2)** | Monitors tables replicated by gen 2 Openflow connectors, triggering an alert when a table’s data hasn’t been ingested within the staleness threshold. You specify the tables to monitor. |
+|  | **High queued bytes alert (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when a connector’s queued bytes approach the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
+|  | **High queued count alert (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when a connector’s queued object count approaches the backpressure threshold (>80%), which can provide an early warning before backpressure occurs. |
+|  | **High runtime storage usage alert (Gen2)** | Monitors gen 2 Openflow runtime storage volumes (FlowFile, Content, Provenance, and Configuration Resources), triggering an alert when a volume reaches the usage threshold. |
+|  | **No data alert (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when a connector hasn’t received or sent any data in the lookback window. |
+|  | **Out of memory alert (Gen2)** | Monitors gen 2 Openflow runtime logs for `OutOfMemoryError` entries, which indicate JVM heap exhaustion that can stop every connector on the runtime. |
+|  | **High error rate alert (Gen2)** | Monitors gen 2 Openflow connectors, triggering an alert when the processor error count exceeds a threshold in the lookback window. |
+|  | **Table replication failure alert (Gen2)** | Monitors tables replicated by gen 2 Openflow connectors, triggering an alert when a table enters a FAILED state in the lookback window. |
+| **SNOWPIPE** | **Files received for paused pipe alert** | Monitors paused [Snowpipe](/user-guide/data-load-snowpipe-intro) pipes, triggering an alert when files arrive for a paused pipe, which can indicate that data is landing in the stage without being loaded. |
+|  | **Notification channel error alert** | Monitors the cloud notification channels that feed [Snowpipe](/user-guide/data-load-snowpipe-intro) pipes, triggering an alert when a channel reports an error (for example, because the queue is misconfigured or its permissions were revoked). Available for Azure and Google Cloud notification channels. |
+|  | **Pipe error alert** | Monitors [Snowpipe](/user-guide/data-load-snowpipe-intro) pipes, triggering an alert when a pipe transitions to a stopped or error state. |
+|  | **Pipe throttled alert** | Monitors [Snowpipe](/user-guide/data-load-snowpipe-intro) pipes, triggering an alert when a pipe is rate-limited by throttling, which can delay loading. |
+| **SNOWPIPE\_STREAMING** | **Authentication failure alert** | Monitors [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) channels for repeated authentication or permission failures. |
+|  | **High row error rate alert** | Monitors [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) ingest for a high rate of rejected rows relative to rows parsed. |
+|  | **Channel limit exceeded alert** | Monitors [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) pipes for exceeding the maximum number of concurrent open channels. |
 | **TASKS** | **Error rate alert** | Triggers an alert when the cumulative task error rate exceeds a specified threshold. |
+|  | **Long-running task** | Monitors successful [task](/user-guide/tasks-intro) runs, triggering an alert when a run takes longer than its historical average by a configured multiplier. |
+| **WAREHOUSE** | **Long-running query** | Monitors queries on [warehouses](/user-guide/warehouses-overview) that are still running or that recently finished, triggering an alert when a query exceeds a duration threshold. |
+|  | **Warehouse queue overload** | Monitors [warehouses](/user-guide/warehouses-overview), triggering an alert when queries spend excessive time queued because the warehouse is overloaded. |
+|  | **Query failure rate** | Monitors query executions on [warehouses](/user-guide/warehouses-overview), triggering an alert when the failure rate in a lookback window exceeds a threshold. |
 
 Expand
 

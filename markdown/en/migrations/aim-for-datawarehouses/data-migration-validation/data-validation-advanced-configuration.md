@@ -20,11 +20,11 @@ Copy code
 Run full row-level validation on the ORDERS and CUSTOMERS tables, but keep the rest at schema and metrics validation only
 ```
 
-The agent sets `row_validation: true` for the tables you named (globally it stays off). See [Validation levels](./data-validation#validation-levels).
+The agent sets `rowValidation: true` for the tables you named (globally it stays off). See [Validation levels](./data-validation#validation-levels).
 
 ## Choosing an L3 extraction strategy
 
-L3 needs a source-side signature extract before Snowflake can compare row hashes. The optional `validation_configuration.extraction` block uses the **same strategy names as data migration**. When the source has a native export, that export is the recommended L3 extract:
+L3 needs a source-side signature extract before Snowflake can compare row hashes. The optional `validationConfiguration.extraction` block uses the **same strategy names as data migration**. When the source has a native export, that export is the recommended L3 extract:
 
 | Source | Recommended strategy |
 | --- | --- |
@@ -50,7 +50,7 @@ Copy code
 Use UNLOAD for L3 signature extraction on this Redshift validation workflow, with the same external stage as migration
 ```
 
-The agent sets `validation_configuration.extraction.strategy` and `externalStage` (and Worker TOML fields if needed). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) for the property shape, platform gating, and [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage). Snowflake stage grants and object-store IAM are on [Required privileges](./required-privileges#external-stage-and-storage-integration).
+The agent sets `validationConfiguration.extraction.strategy` and `externalStage` (and Worker TOML fields if needed). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) for the property shape, platform gating, and [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage). Snowflake stage grants and object-store IAM are on [Required privileges](./required-privileges#external-stage-and-storage-integration).
 
 ## Re-validating only what changed
 
@@ -180,7 +180,24 @@ Copy code
 Enable early stopping for row hashing on the ORDERS table, and stop after 200 mismatches
 ```
 
-The agent sets `early_stopping_for_row_hashing: true` and lowers `max_failed_rows_number` on the tables you name (or globally, if you ask for that). See [Validation configuration](../manual-migration/data-validation-configuration-reference#validation-configuration) for all early-stopping options and defaults.
+The agent sets `earlyStoppingForRowHashing: true` and lowers `maxFailedRowsNumber` on the tables you name (or globally, if you ask for that). See [Validation configuration](../manual-migration/data-validation-configuration-reference#validation-configuration) for all early-stopping options and defaults.
+
+## Validating wide tables and LOB columns
+
+Two defaults matter on tables with many columns or with large text and binary columns:
+
+- L2 computes metrics for 50 columns per query. On a table with hundreds of columns, that query can exhaust source temporary space, for example Oracle `ORA-01652`.
+- L3 leaves source LOB columns, such as `CLOB`, `BLOB`, `TEXT`, `NTEXT`, and `IMAGE`, out of the comparison. L1 still checks them. L2 coverage depends on the platform’s metric templates. A difference inside a LOB value doesn’t show up as an L3 mismatch. Each excluded LOB column gets one `SKIPPED` row in the L3 results.
+
+**Prompt:**
+
+Copy code
+
+```
+HR.WIDE_EVENTS has 400 columns and its metrics query fails on Oracle temp space. Also compare the CLOB columns on HR.CONTRACTS at row level.
+```
+
+The agent sets `maxColumnsPerMetricsBatch` on the wide table and `includeLobColumnsInRowValidation: true` in the `validationConfiguration` of the table with LOB columns. See [Wide tables](../manual-migration/data-validation-configuration-reference#wide-tables) and [LOB columns in L3](../manual-migration/data-validation-configuration-reference#lob-columns-in-l3).
 
 ## Declaring expected source-to-target differences (accepted transformations)
 
@@ -191,7 +208,7 @@ Accepted transformations apply only when **L3 row validation is enabled**:
 - Tables **without** rules write `MISMATCH` directly from row hashing.
 - Tables **with** rules use a provisional **`POSSIBLE_MISMATCH`** path until cell drill-down and reconcile complete. Rows that match an accepted rule are cleared; the rest become `MISMATCH`.
 
-Rules can appear at the workflow root, under global `validation_configuration`, or on an individual table. Matching scopes are unioned. Each rule names either an exact `column` or a `columnPattern` regex, plus the expected `sourceValue` and `targetValue` (use `null` for SQL NULL).
+Rules can appear at the workflow root, under global `validationConfiguration`, or on an individual table. Matching scopes are unioned. Each rule names either an exact `column` or a `columnPattern` regex, plus the expected `sourceValue` and `targetValue` (use `null` for SQL NULL).
 
 **Prompt:**
 
@@ -201,7 +218,7 @@ Copy code
 We intentionally remap STATUS = 'ACTIVE' on the source to STATUS = '1' on the target. Don't flag that as a mismatch.
 ```
 
-The agent adds an `acceptedTransformations` rule at the appropriate scope.
+The agent adds an `acceptedTransformations` rule at the appropriate scope and sets `useSnowpipeForResults: false`. Accepted transformations aren’t supported on the Snowpipe results path, which is the default for Worker-based workflows, so a workflow that keeps the default is rejected when it’s created. See [Accepted transformations (configuration reference)](../manual-migration/data-validation-configuration-reference#accepted-transformations).
 
 ### Caveat: `POSSIBLE_MISMATCH` after the workflow finishes
 
@@ -262,7 +279,7 @@ Copy code
 Validate the ORDERS_SUMMARY view. Partition by ORDER_DATE (same key as the ORDERS table the view is built on), align rows on ORDER_ID, and only validate the last 30 days
 ```
 
-The agent sets `column_names_to_partition_by`, `indexColumnList`, `sourceWhereClause`, and `targetWhereClause` on the view entry. See [Automatic partition and index key selection](../manual-migration/data-validation-configuration-reference#automatic-partition-and-index-key-selection) and [Per-table and per-view entry](../manual-migration/data-validation-configuration-reference#per-table-and-per-view-entry).
+The agent sets `columnNamesToPartitionBy`, `indexColumnList`, `sourceWhereClause`, and `targetWhereClause` on the view entry. See [Automatic partition and index key selection](../manual-migration/data-validation-configuration-reference#automatic-partition-and-index-key-selection) and [Per-table and per-view entry](../manual-migration/data-validation-configuration-reference#per-table-and-per-view-entry).
 
 The same rules apply to source materialized views, which AIM DMV classifies as views. Put a view under `views`, or under `objects` with `objectType: VIEW` or no `objectType`. An `objectType: VIEW` key inside `tables` is ignored, and the entry is validated as a table. See [Source and target object types](../manual-migration/data-validation-configuration-reference#source-and-target-object-types) for every source and target pairing and for which catalog kinds count as tables and views.
 
@@ -318,7 +335,7 @@ The agent explains the platform-specific tradeoff and, if you confirm, sets the 
 
 ## Adjusting numeric tolerance for metrics
 
-L2 aggregate comparisons (sum, average, and similar) use a relative tolerance by default, since floating-point and precision differences between platforms are expected.
+L2 aggregate comparisons (sum, average, and similar) use an absolute tolerance of `0.001` by default, since floating-point and precision differences between platforms are expected. For large values, you can add a relative tolerance. A pair passes when either tolerance passes.
 
 **Prompt:**
 
@@ -328,7 +345,7 @@ Copy code
 Our source and target use different floating-point precisions, so metric comparisons are noisy. Can we loosen the tolerance?
 ```
 
-The agent sets `comparisonConfiguration.tolerance` to a value you agree on. See [Comparison configuration](../manual-migration/data-validation-configuration-reference#comparison-configuration).
+The agent sets `comparisonConfiguration.tolerance` (an absolute difference) or `comparisonConfiguration.relativeTolerance` (a fraction of the target value) to a value you agree on. See [Comparison configuration](../manual-migration/data-validation-configuration-reference#comparison-configuration).
 
 ## Overriding L2 metrics or L1 type mapping
 
@@ -360,7 +377,7 @@ Copy code
 Only validate active customers, and skip the internal AUDIT_* columns
 ```
 
-The agent sets `sourceWhereClause` and `targetWhereClause` to filter rows on both sides, and `column_selection_list` (with `use_column_selection_as_exclude_list` for the audit columns) to filter columns. See [Filtering compared rows](../manual-migration/data-validation-configuration-reference#filtering-compared-rows) and [Column filtering with regex patterns](../manual-migration/data-validation-configuration-reference#column-filtering-with-regex-patterns).
+The agent sets `sourceWhereClause` and `targetWhereClause` to filter rows on both sides, and `columnSelectionList` (with `useColumnSelectionAsExcludeList` for the audit columns) to filter columns. See [Filtering compared rows](../manual-migration/data-validation-configuration-reference#filtering-compared-rows) and [Column filtering with regex patterns](../manual-migration/data-validation-configuration-reference#column-filtering-with-regex-patterns).
 
 ## Related content
 

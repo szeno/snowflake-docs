@@ -20,7 +20,7 @@ Names that require quoting (or brackets) must be manually quoted. For example: `
 
 | Property | Type | Required | Description |
 | --- | --- | --- | --- |
-| `schemaVersion` | `String` |  | Version of the configuration schema (for example, `"1.0.0"`). Accepts `major`, `major.minor`, or `major.minor.patch`. Defaults to `"1.0.0"` when omitted. |
+| `schemaVersion` | `String` |  | Version of the configuration schema (for example, `"1.0.0"`). Accepts `major`, `major.minor`, or `major.minor.patch`. Optional, with no default: when omitted, no version check runs. When set, the major version must be `1` or lower; a higher major version is rejected with `Schema version '<value>' is not supported; maximum supported major version is 1`. |
 | `tables` | `TableConfiguration[]` | Yes | An array of table-specific configurations defining which tables to migrate and how. Must contain at least one entry. |
 | `defaultTableConfiguration` | `TableConfiguration` |  | Shared settings inherited by all tables in the `tables` array. Table-specific values override these defaults. |
 | `affinity` | `String` |  | Optional affinity tag that routes this workflow’s tasks to matching Workers. See [Affinity](#affinity). |
@@ -170,6 +170,7 @@ Defines the settings for migrating a single table.
 | `loadSegmentation` | `LoadSegmentation` |  | Splits a single `COPY INTO` into multiple parallel statements, each targeting a subset of staged files. Useful when many files are staged for one partition (common with Redshift UNLOAD). See [Load segmentation](#load-segmentation). |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints appended to source queries to reduce locking on busy source tables. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
+| `continueIdentityColumns` | `Boolean` |  | When `true`, continues each target identity and sequence-default column past the migrated keys after the final load. Native targets only. Defaults to `false`. See [Identity columns and sequences](#identity-columns-and-sequences). |
 
 Expand
 
@@ -314,7 +315,14 @@ Expand
 
 Show lessSee more
 
-Specify at most one of the two fields; setting both on the same table is a configuration error.
+Specify at most one of the two fields. Setting both on the same table fails with `Only one of 'targetPartitionSizeMb' or 'targetPartitionSizeRows' may be specified`.
+
+Whether auto sizing also caps the rows in a partition depends on where the data is extracted:
+
+- **Worker-side strategies** (`regular` and `cloud_direct`): auto sizing caps each partition at 500,000 rows. The Worker holds a whole partition in memory, so a narrow table whose megabyte target would allow tens of millions of rows is split at the row cap instead.
+- **Server-side export strategies** (`unload`, `write_nos`, `dbms_cloud`, `cet_as`, and `export_data`): auto sizing has no default row cap. The source database writes the files, so the Worker never holds the partition in memory. Only an explicit `maxPartitionSizeRows` limits the rows in these partitions.
+
+Set `maxPartitionSizeRows` on a table to cap the rows in each partition. On worker-side strategies, it replaces the default cap of 500,000 rows. On server-side export strategies, which have no default cap, it sets one. It also caps an explicit `targetPartitionSizeMb` or `targetPartitionSizeRows`.
 
 ### Automatic partition key selection
 
@@ -373,11 +381,12 @@ Copy code
 | --- | --- | --- | --- |
 | `strategy` | `String` |  | Extraction method. See the table below. Defaults to `"regular"`. |
 | `externalStage` | `String` | See description | Required when `strategy` is `"unload"`, `"write_nos"`, `"dbms_cloud"`, `"cet_as"`, `"export_data"`, or `"cloud_direct"`. Snowflake external stage whose URL matches the bucket or container that receives the extracted files. |
-| `pluginClass` | `String` |  | Optional. Fully qualified class name of a [custom extraction plugin](../data-migration-validation/data-migration-advanced-configuration#preparing-a-custom-extraction-plugin) to use instead of a built-in strategy. |
 
 Expand
 
 Show lessSee more
+
+The `extraction` object accepts only `strategy` and `externalStage`; any other key fails workflow validation. A custom extraction plugin isn’t set in the workflow. Set `plugin_class` on the Worker’s `[connections.source.*]` section instead. See [Using a custom extraction plugin](#using-a-custom-extraction-plugin).
 
 **Accepted values for `strategy`:**
 
@@ -718,7 +727,7 @@ Copy code
 
 ## Constraints, identity columns, and sequences
 
-AIM DMV data migration moves **table data**. It creates each target table with its columns and data types and loads rows; it does **not** author source **constraints** (CHECK, UNIQUE, PRIMARY KEY, FOREIGN KEY) or **identity columns**, **auto-increment columns**, or **sequences** from the source schema. Convert that DDL with SnowConvert — it translates constraints and identity/sequence definitions into Snowflake equivalents — and apply it as part of schema conversion. During a data load, CHECK constraints and generators are handled differently.
+AIM DMV data migration moves **table data**. It creates each target table with its columns and data types and loads rows; it does **not** author source **constraints** (CHECK, UNIQUE, PRIMARY KEY, FOREIGN KEY) or **identity columns**, **auto-increment columns**, or **sequences** from the source schema. The one exception is the per-column sequence that [`continueIdentityColumns`](#identity-columns-and-sequences) adds to a table AIM DMV creates. Convert that DDL with SnowConvert, which translates constraints and identity and sequence definitions into Snowflake equivalents, and apply it as part of schema conversion. During a data load, CHECK constraints and generators are handled differently.
 
 ### CHECK constraints
 
@@ -728,23 +737,43 @@ During a [`preflight`](#preflight-bounded-dry-run) dry run the constraints are r
 
 ### Identity columns and sequences
 
-Migration copies the values in an identity/auto-increment column (or a sequence-fed column) as ordinary data, but it does not create or advance the target’s generator. Snowflake fixes a sequence’s or identity column’s starting value **at creation time** and has no runtime “reseed”, so create the target generator with a `START` past the highest migrated value:
+Migration copies the values in an identity, auto-increment, or sequence-fed column as ordinary data. Snowflake fixes the starting value of a sequence or identity column when the generator is created and can’t reseed it later. Without further configuration, the target generator keeps its original start, so new inserts can collide with migrated keys.
 
-Copy code
+Set [`continueIdentityColumns: true`](#tableconfiguration-model) on a table, or under `defaultTableConfiguration`, to have AIM DMV continue the generators for you. The default is `false`. After the final load, AIM DMV sets each target identity column and each column whose default is a sequence’s `NEXTVAL` to hand out the larger of these two values next:
 
-```
--- 1. Read the loaded maximum.
-SELECT MAX(ID) AS max_id FROM TARGET_DB.PUBLIC.ORDERS;
+- The source generator’s next value, where the source reports it. For SQL Server this is `IDENT_CURRENT` plus one increment.
+- `MAX(column) + 1` on the loaded target.
 
--- 2. Create the sequence starting after it (substitute max_id + 1).
-CREATE SEQUENCE IF NOT EXISTS TARGET_DB.PUBLIC.ORDERS_SEQ START = <max_id + 1> INCREMENT = 1;
+How AIM DMV gets there depends on the target column:
 
--- 3. Use it as the column default for new inserts.
-ALTER TABLE TARGET_DB.PUBLIC.ORDERS
-  ALTER COLUMN ID SET DEFAULT TARGET_DB.PUBLIC.ORDERS_SEQ.NEXTVAL;
-```
+- **Sequence default:** AIM DMV replaces the sequence and points the column at it:
 
-Do this once the final data load completes. For [incremental sync](#synchronizationstrategy-model), reseed at cutover, when writes move to Snowflake — otherwise later incremental loads would collide with generator values already handed out. SnowConvert emits the sequence/identity DDL during schema conversion; adjust its `START` to clear the migrated range.
+  Copy code
+
+  ```
+  CREATE OR REPLACE SEQUENCE <sequence> START = <next_value> INCREMENT = <increment>;
+  ALTER TABLE <table> ALTER COLUMN <column> SET DEFAULT <sequence>.NEXTVAL;
+  ```
+- **`IDENTITY` or `AUTOINCREMENT` column:** Snowflake can’t change the `START` of such a column in place, so AIM DMV recreates the table. It reads the table’s `GET_DDL` output, rewrites each column’s `START` to the next value, and runs that DDL as `CREATE OR REPLACE <table> ... COPY GRANTS AS SELECT <columns> FROM <table>`. This statement rewrites the whole table. AIM DMV then re-adds the table’s foreign keys and CHECK constraints. When the target is empty and its identity starts short of the source’s next value, AIM DMV recreates the empty table before the load, so no rows are copied. When the target already had rows, it recreates the loaded table after the load. The task fails for a target that can’t be recreated this way: a hybrid, dynamic, or external table, a table a stream reads, or a table with a masking, row access, projection, aggregation, or join policy.
+- **Table AIM DMV creates:** each source identity column mapped to an integer type gets a per-column sequence default, which AIM DMV then continues as a sequence default.
+
+`continueIdentityColumns` applies only to native targets. Iceberg targets have no generators, so AIM DMV ignores the setting for them, and a [`preflight`](#preflight-bounded-dry-run) run skips it. When AIM DMV can’t read the source generator’s state, or can’t match a source identity column to a target column, it records a warning on the task and continues from `MAX(column) + 1`.
+
+Every workflow run with `continueIdentityColumns` set continues the generators again after its final load. With [incremental sync](#synchronizationstrategy-model), the generators stay past the migrated range at cutover.
+
+If you leave `continueIdentityColumns` off, continue the generators yourself after the final load, with a `START` past `MAX(column)`. How depends on the target column:
+
+- **Sequence default:** create a sequence that starts past the loaded maximum, then point the column at it. Snowflake can only change one sequence default to another, so this works only when the column already has a sequence default:
+
+  Copy code
+
+  ```
+  CREATE SEQUENCE IF NOT EXISTS TARGET_DB.PUBLIC.ORDERS_SEQ START = <max_id + 1> INCREMENT = 1;
+  ALTER TABLE TARGET_DB.PUBLIC.ORDERS
+    ALTER COLUMN ID SET DEFAULT TARGET_DB.PUBLIC.ORDERS_SEQ.NEXTVAL;
+  ```
+- **`IDENTITY` or `AUTOINCREMENT` column:** Snowflake can’t change `START` in place. Recreate the table with the new `START` (`CREATE OR REPLACE TABLE ... COPY GRANTS AS SELECT`, as AIM DMV does when `continueIdentityColumns` is on), or turn on `continueIdentityColumns`.
+- **Column with no default:** Snowflake can’t add a sequence default with `ALTER`. Define the default when you create the table, or recreate the table.
 
 ## Worker configuration
 

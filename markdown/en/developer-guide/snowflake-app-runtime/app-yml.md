@@ -402,7 +402,9 @@ Commands Snowflake runs during the install phase, before the build. Each
 entry under `commands` is an argv-style list, passed directly without a
 shell. Use `install` for setup steps such as installing dependencies.
 
-Top-level only. Optional; defaults to `npm ci` when omitted.
+Top-level only. Optional. If omitted, Snowflake uses the install command
+derived from the detected project. Set `install.commands` to override that
+command.
 
 Copy code
 
@@ -415,8 +417,10 @@ install:
 ### build
 
 Commands Snowflake runs during the build phase. Each entry under `commands`
-is an argv-style list. Top-level only. Optional; defaults to `npm run build`
-when omitted.
+is an argv-style list. Top-level only. Optional. If omitted, Snowflake derives
+the build command from the detected project. For Node.js projects, Snowflake
+runs the package’s build script when one is defined. Set `build.commands` to
+override the detected command.
 
 Copy code
 
@@ -429,9 +433,9 @@ build:
 ### run
 
 The entry-point command that starts the application container. `command`
-is an argv-style list. Top-level only. Optional; defaults to `npm start`
-when omitted. Templates that need a different command (for example Next.js
-`node .next/standalone/server.js`) must declare `run` explicitly.
+is an argv-style list. Top-level only. If omitted, Snowflake uses the start
+command derived from the detected project. Set `run.command` to override that
+command. If Snowflake can’t determine a start command, you must provide one.
 
 Copy code
 

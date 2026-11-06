@@ -26,7 +26,7 @@ export_data_gcs_bucket = "my-migration-bucket"
 export_data_gcs_prefix = "bigquery-validation"
 ```
 
-Set `source_platform: bigquery` in the validation workflow YAML.
+Set `sourcePlatform: bigquery` in the validation workflow YAML.
 
 Row validation supports `export_data` and `regular`. With a GCS bucket, prefer `export_data` and set `extraction.externalStage` to a stage on the same prefix. Without a bucket, `regular` extracts the signatures through the Worker to the internal stage. `cloud_direct` isn’t supported. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
@@ -35,26 +35,26 @@ Row validation supports `export_data` and `regular`. With a GCS bucket, prefer `
 Copy code
 
 ```
-source_platform: bigquery
-target_database: TARGET_DB
-schema_mappings:
+sourcePlatform: bigquery
+targetDatabase: TARGET_DB
+schemaMappings:
   sales: PUBLIC
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
   extraction:
     strategy: export_data
     externalStage: TARGET_DB.PUBLIC.GCS_EXPORT_STAGE
 tables:
-  - fully_qualified_name: sales.customers
-    column_names_to_partition_by:
+  - fullyQualifiedName: sales.customers
+    columnNamesToPartitionBy:
       - customer_id
-  - fully_qualified_name: sales.orders
-    column_names_to_partition_by:
+  - fullyQualifiedName: sales.orders
+    columnNamesToPartitionBy:
       - order_id
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 ## Data type mappings
@@ -99,9 +99,10 @@ Show lessSee more
 ## Platform-specific considerations
 
 - Reuse the same `[connections.source.bigquery]` Worker block as migration.
-- Set `source_platform: bigquery`.
+- Set `sourcePlatform: bigquery`.
 - Schema, metrics, and row validation are all available. Ask for row validation per table.
 - Prefer `export_data` for row validation when a GCS bucket and a matching external stage exist. Otherwise use `regular`.
+- Tables, table clones, and table snapshots validate as tables. Views and materialized views validate as views, so supply their keys as described in [Keys for source views](../manual-migration/data-validation-configuration-reference#keys-for-source-views). Temporary tables aren’t in the dataset, so they’re treated as missing, and external tables aren’t supported. See [How catalog kinds are classified](../manual-migration/data-validation-configuration-reference#how-catalog-kinds-are-classified).
 - Validation queries run and are billed in `project_id`.
 - **Anti-locking**: BigQuery reads don’t take locks, so no hint is added.
 

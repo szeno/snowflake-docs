@@ -96,15 +96,15 @@ These dates don’t correspond to a behavior change bundle, but are subject to c
 
 ### Phase 3: Strong authentication for all users
 
-Phase 3 will be enforced in accounts on a rolling basis during a three-month period. You’ll receive a notification with the enforcement
-date for your account.
+Phase 3 will be enforced in accounts on a rolling basis beginning August 2026. You’ll receive a notification with the enforcement date for
+your account. Enforcement dates vary by account and are shown in the Strong Authentication Hub.
 
 **August 2026 - October 2026** [[3]](#footnote-3)
 
 | Objective | New behavior |
 | --- | --- |
-| Mandatory MFA for all human users | When this phase is enforced, all new and existing human users must use a second factor when authenticating with a password, with no exceptions. |
-| No legacy service users | When this phase is enforced, all non-human users are blocked from using a password to authenticate.  The `LEGACY_SERVICE` user type is fully deprecated. All existing user objects with `TYPE=LEGACY_SERVICE` are migrated to `TYPE=SERVICE`, which prevents them from using a password. |
+| Strong Authentication for human users | When this phase is enforced, human users cannot authenticate with a password alone. |
+| No legacy service users | When this phase is enforced, all non-human users are blocked from using a password to authenticate, and existing user objects with `TYPE=LEGACY_SERVICE` are migrated to `TYPE=SERVICE`, which prevents them from using a password. |
 
 Expand
 
@@ -113,4 +113,5 @@ Show lessSee more
 To learn how to implement strong authentication to meet the requirements of this phase, see [Strong Authentication Hub](/user-guide/strong-authentication-hub).
 
 [3]
-These dates don’t correspond to a behavior change bundle, but are subject to change.
+These dates don’t correspond to a behavior change bundle and are subject to change. Enforcement dates vary by
+account, and may be extended where additional time is required to migrate complex workloads.

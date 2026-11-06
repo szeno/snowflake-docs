@@ -189,6 +189,7 @@ A tag can be set on a column using a CREATE TABLE, CREATE VIEW, ALTER TABLE … 
 |  | Procedure | Set a tag on a stored procedure with an [ALTER PROCEDURE](/sql-reference/sql/alter-procedure) statement. |
 |  | Projection policy |  |
 |  | Semantic view |  |
+|  | Secret |  |
 |  | Session policy |  |
 |  | Snapshot | For [block storage volume snapshots](/developer-guide/snowpark-container-services/block-storage-volume). |
 |  | Stage | Set a tag on a stage with an [ALTER STAGE](/sql-reference/sql/alter-stage) statement. |

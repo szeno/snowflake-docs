@@ -23,7 +23,7 @@ host = "db.example.com"
 port = "1521"
 ```
 
-Set `source_platform: oracle` in the validation workflow YAML.
+Set `sourcePlatform: oracle` in the validation workflow YAML.
 
 For partitioning, `indexColumnList`, and other workflow settings shared across platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
@@ -32,25 +32,25 @@ For partitioning, `indexColumnList`, and other workflow settings shared across p
 Copy code
 
 ```
-source_platform: oracle
-target_database: TARGET_DB
-schema_mappings:
+sourcePlatform: oracle
+targetDatabase: TARGET_DB
+schemaMappings:
   HR: HR
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
 tables:
-  - fully_qualified_name: HR.EMPLOYEES
-    column_names_to_partition_by:
+  - fullyQualifiedName: HR.EMPLOYEES
+    columnNamesToPartitionBy:
       - EMPLOYEE_ID
-  - fully_qualified_name: HR.DEPARTMENTS
-    column_names_to_partition_by:
+  - fullyQualifiedName: HR.DEPARTMENTS
+    columnNamesToPartitionBy:
       - DEPARTMENT_ID
     indexColumnList:
       - DEPARTMENT_ID
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 ## Data type mappings

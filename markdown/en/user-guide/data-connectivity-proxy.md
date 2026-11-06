@@ -18,7 +18,7 @@ Use DCP when Snowflake needs to reach a data source that isn’t accessible from
 - Any source that’s accessible within your network but not reachable over the internet
 - Environments where opening inbound firewall rules is prohibited by policy (zero-trust, deny-all-inbound architectures)
 
-DCP is available for Snowflake Openflow and for an AIM Data Exchange Worker on Snowpark Container Services. Support for additional Snowflake services is planned for a future release. To attach a Worker, see [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
+DCP is available for all Snowpark Container Services, including Snowflake Openflow, AIM Data Exchange Workers, Notebooks in Workspaces, Streamlit apps, and Code Bundles. To attach a Worker, see [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 
 ## How DCP compares to other private connectivity options
 

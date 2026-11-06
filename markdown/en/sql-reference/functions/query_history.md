@@ -17,6 +17,12 @@ See also:
 > [QUERY\_HISTORY view](/sql-reference/account-usage/query_history) (Account Usage)
 > [Monitor query activity with Query History](/user-guide/ui-snowsight-activity) (Snowsight dashboard)
 
+Caution
+
+**Don’t use this function to benchmark hybrid table performance.** QUERY\_HISTORY doesn’t contain all executions of queries against hybrid tables. Short-running queries that operate only on hybrid tables don’t generate a record. Other hybrid table queries are recorded only when they meet certain conditions, such as running longer than approximately 500 milliseconds, or when they’re sampled. As a result, don’t use the QUERY\_HISTORY family of functions to calculate average, median, P90, or P99 latencies for hybrid table workloads.
+
+To measure hybrid table latency, use the [AGGREGATE\_QUERY\_HISTORY](/sql-reference/account-usage/aggregate_query_history) view. It includes all executions and provides latency percentiles.
+
 ## Syntax
 
 Copy code

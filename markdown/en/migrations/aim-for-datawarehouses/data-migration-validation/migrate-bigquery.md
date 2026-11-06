@@ -6,6 +6,7 @@ This page covers Google BigQuery-specific setup for [Data migration](./data-migr
 
 - **Worker client**: The Worker image includes the `google-cloud-bigquery` client. You don’t install an ODBC or JDBC driver.
 - **Authentication**: A Google Cloud service-account key file, or Application Default Credentials on the Worker host. On Snowpark Container Services, pass the key as a Snowflake secret. See [Google BigQuery](../manual-migration/manual-spcs-worker-setup#google-bigquery).
+- **Worker on Snowpark Container Services**: `scai data worker setup` doesn’t create a BigQuery Worker service. It fails with error `DMG0038` (`WorkerSetupUnsupportedSource`): “Worker setup does not support source dialect ‘BigQuery’ yet”. Create the service by hand as described in [Google BigQuery](../manual-migration/manual-spcs-worker-setup#google-bigquery), or run the Worker on your own host.
 - **Network**: The Worker must reach the BigQuery API. A Worker on Snowpark Container Services needs an external access integration that allows the BigQuery hosts. See [Deploying workers](./deploy-workers).
 - **Privileges**: Read access on the dataset and permission to run query jobs in the billing project. `export_data` also needs write access to the GCS prefix. See [Google BigQuery](./required-privileges#google-bigquery).
 
@@ -25,7 +26,16 @@ credentials_file = "/secrets/bigquery-sa.json"
 
 When `credentials_file` is omitted, the Worker uses Application Default Credentials. Set `query_labels` (`"name=value;name2=value2"`) to tag every query job so you can find the migration’s jobs in `INFORMATION_SCHEMA.JOBS`.
 
-In the workflow, `source.databaseName` is the project and `source.schemaName` is the dataset.
+In the workflow, `source.databaseName` is the project and `source.schemaName` is the dataset. The `source` block also accepts `projectName` and `datasetName` as aliases of `databaseName` and `schemaName`:
+
+Copy code
+
+```
+source:
+  projectName: my-gcp-project
+  datasetName: sales
+  tableName: customers
+```
 
 AIM DMV accepts two extraction strategies:
 
@@ -94,6 +104,28 @@ extraction:
   strategy: export_data
   externalStage: TARGET_DB.PUBLIC.GCS_EXPORT_STAGE
 ```
+
+You can also name the bucket and prefix in the workflow, with these top-level keys:
+
+| Property | Description |
+| --- | --- |
+| `exportDataGcsBucket` | BigQuery only. GCS bucket, without `gs://`, that `EXPORT DATA` writes to. |
+| `exportDataGcsPrefix` | BigQuery only. Optional path inside `exportDataGcsBucket`. Don’t include `gs://`. Leading and trailing slashes are stripped. When omitted, files land under the bucket root plus the relative path. Needs `exportDataGcsBucket`. |
+
+Expand
+
+Show lessSee more
+
+For example:
+
+Copy code
+
+```
+exportDataGcsBucket: my-migration-bucket
+exportDataGcsPrefix: bigquery-exports
+```
+
+`scai data migrate generate-config` writes these keys when you pass `--export-data-gcs-bucket` and, optionally, `--export-data-gcs-prefix`. On a source other than BigQuery, either option fails with error `DMG0054`. `--export-data-gcs-prefix` without `--export-data-gcs-bucket` fails with error `DMG0055`. When `scai data migrate start` runs the Worker on your own host, it copies the keys into `export_data_gcs_bucket` and `export_data_gcs_prefix` in the Worker’s `[connections.source.bigquery]` section, replacing the values there. A Worker on Snowpark Container Services doesn’t read them from the workflow: set `EXPORT_DATA_GCS_BUCKET` and `EXPORT_DATA_GCS_PREFIX` in its service specification. See [Google BigQuery](../manual-migration/manual-spcs-worker-setup#google-bigquery).
 
 The identity that runs the BigQuery job needs `storage.objects.create` and `storage.objects.delete` on the prefix. The Snowflake storage integration needs read access to the same prefix. Stage URLs often use `gcs://` while the Worker uses `gs://`. Both refer to the same bucket. See [Google Cloud Storage](./required-privileges#l3-extraction-gcs-iam).
 

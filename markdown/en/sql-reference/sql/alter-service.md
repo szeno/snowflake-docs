@@ -225,6 +225,10 @@ Expand
 
 Show lessSee more
 
+When setting or unsetting only [SERVICE\_CALLER\_TOKEN\_VALIDITY\_SECS](/sql-reference/parameters#service-caller-token-validity-secs),
+the role requires the MANAGE SERVICE CALLER ACCESS privilege on the account instead of OWNERSHIP on the service.
+Changing other service properties in the same statement also requires OWNERSHIP.
+
 Operating on an object in a schema requires at least one privilege on the parent database and at least one privilege on the parent schema.
 
 For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).

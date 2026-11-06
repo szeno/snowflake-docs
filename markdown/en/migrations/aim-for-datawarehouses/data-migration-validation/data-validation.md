@@ -16,11 +16,11 @@ Confirms that table structure is preserved: table name, column names, ordinal po
 
 ### Metrics validation (L2)
 
-Compares aggregate statistics: row count, min, max, sum, average, null count, distinct count, standard deviation, and variance (metrics vary by column type).
+Compares aggregate statistics: row count, min, max, sum, average, null count, standard deviation, and variance (metrics vary by column type). Distinct count is opt-in; see [L2 distinct count](../manual-migration/data-validation-configuration-reference#l2-distinct-count).
 
 ### Row validation (L3)
 
-Performs row-level comparison. When `row_validation` is enabled, most source platforms extract a source-side signature (primary-key columns plus an MD5 row hash) per partition, compare those signatures in Snowflake, then drill into individual cells on mismatches. When the source has a native export, that export is the recommended L3 extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./validate-bigquery)), or **regular** (PostgreSQL). For **IBM DB2**, prefer **`cloud_direct`** when an object store and a matching external stage are available, and use **`regular`** otherwise. Signature Parquet for object-store strategies lands on a Snowflake external stage (Amazon S3, Azure Blob, or GCS, depending on the source). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) (including [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage)) and [External stage and storage integration](./required-privileges#external-stage-and-storage-integration) for object-store grants. Snowflake-to-Snowflake validation compares rows with SQL set-difference inside Snowflake instead of signature extract on Workers. See [Validating Data from Snowflake](./validate-snowflake).
+Performs row-level comparison. When `rowValidation` is enabled, most source platforms extract a source-side signature (primary-key columns plus an MD5 row hash) per partition, compare those signatures in Snowflake, then drill into individual cells on mismatches. When the source has a native export, that export is the recommended L3 extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./validate-bigquery)), or **regular** (PostgreSQL). For **IBM DB2**, prefer **`cloud_direct`** when an object store and a matching external stage are available, and use **`regular`** otherwise. Signature Parquet for object-store strategies lands on a Snowflake external stage (Amazon S3, Azure Blob, or GCS, depending on the source). See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction) (including [object storage backends](../manual-migration/data-validation-configuration-reference#l3-extraction-object-storage)) and [External stage and storage integration](./required-privileges#external-stage-and-storage-integration) for object-store grants. Snowflake-to-Snowflake validation compares rows with SQL set-difference inside Snowflake instead of signature extract on Workers. See [Validating Data from Snowflake](./validate-snowflake).
 
 Row validation is disabled by default and is typically applied only where needed because it’s the most resource-intensive level.
 
@@ -179,17 +179,17 @@ Start with a small subset of tables, keep L3 disabled on the first run, use `sou
 
 When L3 validation runs across many partitions, processing every partition can be expensive. **Early stopping** lets AIM DMV skip remaining L3 partition work once enough mismatches have been found, so you don’t keep scanning a table that already clearly fails validation.
 
-During L3, the Orchestrator periodically checks how many mismatch rows have been ingested into the results tables. When the count reaches **`max_failed_rows_number`**, pending partition tasks for that stage are skipped.
+During L3, the Orchestrator periodically checks how many mismatch rows have been ingested into the results tables. When the count reaches **`maxFailedRowsNumber`**, pending partition tasks for that stage are skipped.
 
-Configure early stopping in **`validation_configuration`** (globally or per table):
+Configure early stopping in **`validationConfiguration`** (globally or per table):
 
 | Option | Default | Purpose |
 | --- | --- | --- |
-| `max_failed_rows_number` | `1000` | Mismatch threshold that triggers early stop; also caps reported mismatches per partition |
-| `early_stopping_for_row_hashing` | `false` | Stop remaining row-hash partitions once the threshold is reached |
-| `early_stopping_for_cell_by_cell_comparison` | `true` | Stop remaining cell drill-down partitions once the threshold is reached |
-| `early_stop_check_interval_minutes` | `5` (when early stopping is enabled) | How often the Orchestrator rechecks the mismatch count |
-| `early_stop_check_interval_seconds` | unset | Alternative to minutes (mutually exclusive) |
+| `maxFailedRowsNumber` | `1000` | Mismatch threshold that triggers early stop; also caps reported mismatches per partition |
+| `earlyStoppingForRowHashing` | `false` | Stop remaining row-hash partitions once the threshold is reached |
+| `earlyStoppingForCellByCellComparison` | `true` | Stop remaining cell drill-down partitions once the threshold is reached |
+| `earlyStopCheckIntervalMinutes` | `5` (when early stopping is enabled) | How often the Orchestrator rechecks the mismatch count |
+| `earlyStopCheckIntervalSeconds` | unset | Alternative to minutes (mutually exclusive) |
 
 Expand
 
@@ -221,7 +221,7 @@ Accepted transformations declare source-to-target value pairs that migration leg
 
 Accepted transformations apply only when **L3 row validation is enabled**. Tables without rules write `MISMATCH` directly from row hashing. Tables with rules use a provisional **`POSSIBLE_MISMATCH`** path until cell drill-down and reconcile complete.
 
-Add an `acceptedTransformations` array to the validation workflow file. Rules merge from the workflow root, global `validation_configuration`, and per-table entries.
+Add an `acceptedTransformations` array to the validation workflow file. Rules merge from the workflow root, global `validationConfiguration`, and per-table entries. On Worker-based workflows, also set `useSnowpipeForResults: false`. It defaults to `true`, and accepted transformations on the Snowpipe results path are rejected when the workflow is created.
 
 For configuration examples, the full property reference, and how to query provisional results, see [Accepted transformations](../manual-migration/data-validation-configuration-reference#accepted-transformations) and [The SNOWCONVERT\_AI database](./snowconvert-ai-database#provisional-mismatches-accepted-transformations).
 

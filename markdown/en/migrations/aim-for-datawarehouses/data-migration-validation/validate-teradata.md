@@ -113,40 +113,40 @@ Grant the Worker source user `SELECT` on `DBC.ColumnsQV` to enable full view met
 
 **Metrics validation:** Full support for tables. Full support for views.
 
-**Row validation:** Requires the [**HASH\_MD5 UDF**](#hash_md5-udf). Use **`indexColumnList`** for row alignment. Set **`column_names_to_partition_by`** and **`target_partition_size_mb`** or **`target_partition_size_rows`** on wide tables.
+**Row validation:** Requires the [**HASH\_MD5 UDF**](#hash_md5-udf). Use **`indexColumnList`** for row alignment. Set **`columnNamesToPartitionBy`** and **`targetPartitionSizeMb`** or **`targetPartitionSizeRows`** on wide tables.
 
 **Example validation workflow excerpt:**
 
 Copy code
 
 ```
-source_platform: teradata
-target_platform: Snowflake
-target_database: MY_DATABASE
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: true
-  max_failed_rows_number: 1000
-  early_stopping: true
-comparison_configuration:
+sourcePlatform: teradata
+targetPlatform: Snowflake
+targetDatabase: MY_DATABASE
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: true
+  maxFailedRowsNumber: 1000
+  earlyStoppingForRowHashing: true
+comparisonConfiguration:
   tolerance: 0.001
 tables:
-  - fully_qualified_name: my_database.sales_transactions
-    target_schema: PUBLIC
-    target_name: SALES_TRANSACTIONS
+  - fullyQualifiedName: my_database.sales_transactions
+    targetSchema: PUBLIC
+    targetName: SALES_TRANSACTIONS
     indexColumnList:
       - TRANSACTION_ID
-    column_names_to_partition_by:
+    columnNamesToPartitionBy:
       - TRANSACTION_ID
-    target_partition_size_mb: 200
+    targetPartitionSizeMb: 200
 views:
-  - fully_qualified_name: my_database.sales_summary_view
-    target_schema: PUBLIC
-    target_name: SALES_SUMMARY_VIEW
+  - fullyQualifiedName: my_database.sales_summary_view
+    targetSchema: PUBLIC
+    targetName: SALES_SUMMARY_VIEW
     indexColumnList:
       - ID
-    target_partition_size_rows: 50000
+    targetPartitionSizeRows: 50000
 ```
 
 ## Character set handling
@@ -196,7 +196,7 @@ During validation comparisons, these Teradata source types map automatically to 
 | JSON, XML |  | No |  |
 | ST\_GEOMETRY |  | No |  |
 | INTERVAL types | INTERVAL | Yes | Native `INTERVAL` comparison by default. See [INTERVAL data type handling](../manual-migration/data-validation-configuration-reference#interval-data-type-handling). |
-| PERIOD types |  | No |  |
+| PERIOD types | PERIOD or VARCHAR | Yes | Native Snowflake `PERIOD` by default. Set `periodHandling: "varchar"` when the table was migrated as `VARCHAR`. See [PERIOD data type handling](../manual-migration/data-validation-configuration-reference#period-data-type-handling). |
 | ARRAY |  | No |  |
 | LONG VARCHAR, GRAPHIC, VARGRAPHIC, UNICODE types | VARCHAR | Partial | Row-level and metrics validation not supported |
 
@@ -204,7 +204,7 @@ Expand
 
 Show lessSee more
 
-Use `comparison_configuration.type_mapping_file_path` to supply a custom mapping file when needed.
+Use `comparisonConfiguration.typeMappingFilePath` to supply a custom mapping file when needed.
 
 ## Platform-specific considerations
 
@@ -218,8 +218,8 @@ Use `comparison_configuration.type_mapping_file_path` to supply a custom mapping
   Run cloud data validation for my Teradata tables, with schema and metrics validation on all tables and row-level validation on sales_transactions
   ```
 - **After `tpt` or `write_nos` migrations**: Schema and metrics still read Teradata over SQL. For L3, reuse **WRITE\_NOS** with the same external stage and Worker `write_nos_*` settings as migration. Ensure Teradata objects you validate are reachable and match the validation workflow names.
-- **L3 cost control**: Enable **`early_stopping`** and tune **`max_failed_rows_number`** per table to avoid scanning partitions on a table that has clearly failed.
-- **Partitioning**: Use **`column_names_to_partition_by`** so wide tables don’t time out on metrics and row-level validation scans.
+- **L3 cost control**: Enable **`earlyStoppingForRowHashing`** and tune **`maxFailedRowsNumber`** per table to avoid scanning partitions on a table that has clearly failed.
+- **Partitioning**: Use **`columnNamesToPartitionBy`** so wide tables don’t time out on metrics and row-level validation scans.
 
   **Prompt:**
 

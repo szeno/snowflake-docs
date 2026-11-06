@@ -8,6 +8,12 @@ Snowpipe can record events in your active event table as it processes files and 
 - Measure how long Snowpipe takes to load each file.
 - Get alerted when a pipe or a file has an error.
 
+You can create alerts from [templates](/user-guide/alerts-ui) that read these Snowpipe events. Create them in Snowsight
+(**Monitoring** » **Alerts**) or with
+[CREATE ALERT … FROM TEMPLATE](/sql-reference/sql/create-alert#label-create-alert-from-template-syntax).
+The templates available in your account can change; choose a template in the UI or list them with
+[SYSTEM$LIST\_ALERT\_TEMPLATES](/sql-reference/functions/system_list_alert_templates).
+You still need to set `LOG_EVENT_LEVEL` as shown in this topic so the events the template reads are captured.
 Pipes that load Apache Iceberg™ tables record the same events as pipes that load standard tables.
 
 Note

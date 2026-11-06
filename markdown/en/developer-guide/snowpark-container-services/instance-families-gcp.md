@@ -14,9 +14,15 @@ For pricing information, see the [Snowflake Service Consumption Table](https://w
 
 Note
 
-Region availability is subject to change. To retrieve current availability and
-instance family specifications programmatically, use
+Instance family availability varies by region and can change over time. To list the instance families
+available in the region of your current account, run
 [SHOW COMPUTE POOL INSTANCE FAMILIES](/sql-reference/sql/show-compute-pool-instance-families).
+If an instance family you need isn’t listed, contact your Snowflake account team.
+
+The **Node limit** column shows the default maximum number of nodes of each instance family that an account can use.
+An account can also have at most 750 active or idle nodes in total, across all instance families. For more
+information, see
+[Guidelines and limitations](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-guidelines-limitations).
 
 ## Current generation instance families
 
@@ -28,13 +34,13 @@ Current generation instances recommended for general-purpose workloads.
 
 Current generation x86 instances for general-purpose workloads.
 
-| Instance Family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region Availability |
-| --- | --- | --- | --- | --- | --- | --- |
-| CPU\_X64\_XS | 1 | 6 | 100 | 10.0 | 500 | Available everywhere |
-| CPU\_X64\_S | 3 | 13 | 100 | 10.0 | 500 | Available everywhere |
-| CPU\_X64\_M | 6 | 28 | 100 | 16.0 | 500 | Available everywhere |
-| CPU\_X64\_SL | 14 | 58 | 100 | 32.0 | 500 | Available everywhere |
-| CPU\_X64\_L | 28 | 116 | 100 | 32.0 | 500 | Available everywhere |
+| Instance Family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit |
+| --- | --- | --- | --- | --- | --- |
+| CPU\_X64\_XS | 1 | 6 | 100 | 10.0 | 500 |
+| CPU\_X64\_S | 3 | 13 | 100 | 10.0 | 500 |
+| CPU\_X64\_M | 6 | 28 | 100 | 16.0 | 500 |
+| CPU\_X64\_SL | 14 | 58 | 100 | 32.0 | 500 |
+| CPU\_X64\_L | 28 | 116 | 100 | 32.0 | 500 |
 
 Expand
 
@@ -44,13 +50,13 @@ Show lessSee more
 
 Current generation ARM instances for general-purpose workloads.
 
-| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region availability |
-| --- | --- | --- | --- | --- | --- | --- |
-| GEN\_ARM\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 | Available everywhere |
-| GEN\_ARM\_G1\_4 | 3 | 13 | 100 | 23.0 | 150 | Available everywhere |
-| GEN\_ARM\_G1\_8 | 6 | 28 | 100 | 23.0 | 150 | Available everywhere |
-| GEN\_ARM\_G1\_16 | 14 | 58 | 100 | 23.0 | 150 | Available everywhere |
-| GEN\_ARM\_G1\_32 | 28 | 116 | 100 | 23.0 | 150 | Available everywhere |
+| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit |
+| --- | --- | --- | --- | --- | --- |
+| GEN\_ARM\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 |
+| GEN\_ARM\_G1\_4 | 3 | 13 | 100 | 23.0 | 150 |
+| GEN\_ARM\_G1\_8 | 6 | 28 | 100 | 23.0 | 150 |
+| GEN\_ARM\_G1\_16 | 14 | 58 | 100 | 23.0 | 150 |
+| GEN\_ARM\_G1\_32 | 28 | 116 | 100 | 23.0 | 150 |
 
 Expand
 
@@ -68,11 +74,11 @@ GEN\_ARM\_G1 can’t be a backup instance family for x86 compute pools.
 
 Current generation x86 instances optimized for memory-intensive workloads.
 
-| Instance Family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region Availability |
-| --- | --- | --- | --- | --- | --- | --- |
-| HIGHMEM\_X64\_S | 6 | 58 | 100 | 16.0 | 500 | Available everywhere |
-| HIGHMEM\_X64\_M | 28 | 240 | 100 | 32.0 | 500 | Available everywhere |
-| HIGHMEM\_X64\_SL | 92 | 654 | 100 | 67.0 | 500 | Not available in me-central2 |
+| Instance Family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit |
+| --- | --- | --- | --- | --- | --- |
+| HIGHMEM\_X64\_S | 6 | 58 | 100 | 16.0 | 500 |
+| HIGHMEM\_X64\_M | 28 | 240 | 100 | 32.0 | 500 |
+| HIGHMEM\_X64\_SL | 92 | 654 | 100 | 67.0 | 500 |
 
 Expand
 
@@ -86,10 +92,10 @@ Google Cloud GPU instance families feature two NVIDIA GPU architectures, each su
 
 Ada Lovelace GPU for efficient AI inference and media workloads.
 
-| Instance Family | vCPU | Memory (GiB) | NVMe Storage (GB) | Bandwidth limit (Gbps) | GPU | GPU Memory per Instance (GB) | Node limit | Region Availability |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GPU\_GCP\_NV\_L4\_1\_24G | 6 | 28 | 100 | 16.0 | 1 NVIDIA L4 | 24 | 10 | Available everywhere |
-| GPU\_GCP\_NV\_L4\_4\_24G | 44 | 178 | 100 | 50.0 | 4 NVIDIA L4 | 24 | 10 | Available everywhere |
+| Instance Family | vCPU | Memory (GiB) | NVMe Storage (GB) | Bandwidth limit (Gbps) | GPU | GPU Memory per Instance (GB) | Node limit |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GPU\_GCP\_NV\_L4\_1\_24G | 6 | 28 | 100 | 16.0 | 1 NVIDIA L4 | 24 | 10 |
+| GPU\_GCP\_NV\_L4\_4\_24G | 44 | 178 | 100 | 50.0 | 4 NVIDIA L4 | 24 | 10 |
 
 Expand
 
@@ -99,11 +105,11 @@ Show lessSee more
 
 High-throughput Ampere GPU for large-scale model training and large dataset processing.
 
-| Instance Family | vCPU | Memory (GiB) | NVMe Storage (GB) | Bandwidth limit (Gbps) | GPU | GPU Memory per Instance (GB) | Node limit | Region Availability |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| GPU\_A100\_G1\_12 | 10 | 77 | 100 | 10.0 | 1 NVIDIA A100 | 40 | On Request | Only available in us-central1 and europe-west4 |
-| GPU\_A100\_G1\_48 | 44 | 324 | 100 | 50.0 | 4 NVIDIA A100 | 160 | On Request | Only available in us-central1 and europe-west4 |
-| GPU\_GCP\_NV\_A100\_8\_40G | 92 | 654 | 100 | 100.0 | 8 NVIDIA A100 | 320 | On Request | Only available in us-central1 and europe-west4 |
+| Instance Family | vCPU | Memory (GiB) | NVMe Storage (GB) | Bandwidth limit (Gbps) | GPU | GPU Memory per Instance (GB) | Node limit |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| GPU\_A100\_G1\_12 | 10 | 77 | 100 | 10.0 | 1 NVIDIA A100 | 40 | On Request |
+| GPU\_A100\_G1\_48 | 44 | 324 | 100 | 50.0 | 4 NVIDIA A100 | 160 | On Request |
+| GPU\_GCP\_NV\_A100\_8\_40G | 92 | 654 | 100 | 100.0 | 8 NVIDIA A100 | 320 | On Request |
 
 Expand
 
@@ -120,13 +126,13 @@ other because they use incompatible block storage volume types. To use GEN\_X64\
 create a new compute pool with a GEN\_X64\_G1 instance family and deploy your services
 to that pool. For more information, see [Backup instance types](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-backup-instance-types).
 
-| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit | Region availability |
-| --- | --- | --- | --- | --- | --- | --- |
-| GEN\_X64\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 | Available everywhere |
-| GEN\_X64\_G1\_4 | 3 | 13 | 100 | 10.0 | 150 | Available everywhere |
-| GEN\_X64\_G1\_8 | 6 | 28 | 100 | 16.0 | 150 | Available everywhere |
-| GEN\_X64\_G1\_16 | 14 | 58 | 100 | 32.0 | 150 | Available everywhere |
-| GEN\_X64\_G1\_32 | 28 | 116 | 100 | 32.0 | 150 | Available everywhere |
+| Instance family | vCPU | Memory (GiB) | Storage (GB) | Bandwidth limit (Gbps) | Node limit |
+| --- | --- | --- | --- | --- | --- |
+| GEN\_X64\_G1\_2 | 1 | 6 | 100 | 10.0 | 150 |
+| GEN\_X64\_G1\_4 | 3 | 13 | 100 | 10.0 | 150 |
+| GEN\_X64\_G1\_8 | 6 | 28 | 100 | 16.0 | 150 |
+| GEN\_X64\_G1\_16 | 14 | 58 | 100 | 32.0 | 150 |
+| GEN\_X64\_G1\_32 | 28 | 116 | 100 | 32.0 | 150 |
 
 Expand
 

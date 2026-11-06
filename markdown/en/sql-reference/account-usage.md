@@ -272,6 +272,7 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [TRI\_SECRET\_SECURE\_HISTORY](/sql-reference/account-usage/tri-secret-secure-history) | Historical | 2 hours |  |  |
 | [TRUST\_CENTER\_FINDINGS](/sql-reference/account-usage/trust_center_findings) | Historical | 1 hour |  |  |
 | [TYPES](/sql-reference/account-usage/types) | Object | 2 hours |  |  |
+| [USER\_AI\_USAGE\_HISTORY](/sql-reference/account-usage/user_ai_usage_history) | Historical | 1 hour |  | Data retained for 1 year. |
 | [USERS](/sql-reference/account-usage/users) | Object | 2 hours |  |  |
 | [VIEWS](/sql-reference/account-usage/views) | Object | 90 minutes |  |  |
 | [WAREHOUSE\_EVENTS\_HISTORY](/sql-reference/account-usage/warehouse_events_history) | Historical | 3 hours |  | Data retained for 1 year. |
@@ -537,6 +538,7 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [TASK\_HISTORY view](/sql-reference/account-usage/task_history) | USAGE\_VIEWER |
 | [TASKS view](/sql-reference/account-usage/tasks) | OBJECT\_VIEWER |
 | [TRUST\_CENTER\_FINDINGS view](/sql-reference/account-usage/trust_center_findings) | SECURITY\_VIEWER |
+| [USER\_AI\_USAGE\_HISTORY view](/sql-reference/account-usage/user_ai_usage_history) | USAGE\_VIEWER |
 | [USERS view](/sql-reference/account-usage/users) | SECURITY\_VIEWER |
 | [VIEWS view](/sql-reference/account-usage/views) | OBJECT\_VIEWER |
 | [WAREHOUSE\_EVENTS\_HISTORY view](/sql-reference/account-usage/warehouse_events_history) | USAGE\_VIEWER |

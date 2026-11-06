@@ -23,6 +23,7 @@ CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   API_AUTHENTICATION = <security_integration_name>
   OAUTH_SCOPES = ( '<scope_1>' [ , '<scope_2>' ... ] )
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **OAuth with authorization code grant flow:**
@@ -36,6 +37,7 @@ CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   OAUTH_REFRESH_TOKEN_EXPIRY_TIME = '<string_literal>'
   API_AUTHENTICATION = <security_integration_name>
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **Cloud provider:**
@@ -48,6 +50,7 @@ CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   API_AUTHENTICATION = '<cloud_provider_security_integration>'
   ENABLED = { TRUE | FALSE }
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **Basic authentication:**
@@ -60,6 +63,7 @@ CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   USERNAME = '<username>'
   PASSWORD = '<password>'
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **Generic string:**
@@ -71,6 +75,7 @@ CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   TYPE = GENERIC_STRING
   SECRET_STRING = '<string_literal>'
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **Symmetric key:**
@@ -81,6 +86,7 @@ Copy code
 CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   TYPE = SYMMETRIC_KEY
   ALGORITHM = GENERIC
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 **Workload identity federation:**
@@ -91,6 +97,7 @@ Copy code
 CREATE [ OR REPLACE ] SECRET [ IF NOT EXISTS ] <name>
   TYPE = WORKLOAD_IDENTITY_FEDERATION
   [ COMMENT = '<string_literal>' ]
+  [ WITH TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
 ```
 
 ## Variant syntax
@@ -271,6 +278,13 @@ Symmetric key secrets generate a cryptographic key that can be used for cryptogr
 
     Default: No value
 
+`TAG ( tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ] )`
+:   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
+
+    The tag value is always a string, and the maximum number of characters for the tag value is 256.
+
+    For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -362,6 +376,18 @@ CREATE SECRET service_now_creds_pw
   TYPE = PASSWORD
   USERNAME = 'jsmith1'
   PASSWORD = 'W3dr@fg*7B1c4j';
+```
+
+Create a secret with a tag:
+
+Copy code
+
+```
+CREATE SECRET service_now_creds_tagged
+  TYPE = PASSWORD
+  USERNAME = 'jsmith1'
+  PASSWORD = 'W3dr@fg*7B1c4j'
+  WITH TAG (cost_center = 'sales');
 ```
 
 ### Workload identity federation

@@ -98,7 +98,7 @@ Show lessSee more
 
 Note
 
-If the secret specified in `GIT_CREDENTIALS` is in a different database or schema than the Git repository, the executing role must also have USAGE on that secret’s parent database and schema. This allows Snowflake to resolve the secret’s fully qualified name and match it against the API integration’s `ALLOWED_AUTHENTICATION_SECRETS` list. USAGE on the secret object itself is not required.
+If the secret specified in `GIT_CREDENTIALS` is in a different database or schema than the Git repository, either the executing role or the Git repository owner role must have USAGE on that secret’s parent database and schema. Snowflake uses that role’s privileges to resolve the secret’s fully qualified name and match it against the API integration’s `ALLOWED_AUTHENTICATION_SECRETS` list.
 
 ## Examples
 

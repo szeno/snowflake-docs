@@ -269,6 +269,8 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
+- [Nov 4, 2026: HTML reports (Preview)](/release-notes/2026/other/2026-11-04-html-reports-preview)
 - [Nov 4, 2026: Backups for Snowflake Storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-11-04-iceberg-backups)
 - [November 4, 2026: Background runs and additional supplementary tools for agents in the Snowflake-managed MCP server](/release-notes/2026/other/2026-11-04-mcp-async-agent-tools)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
@@ -279,6 +281,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
+- [Nov 2, 2026: SECRET object tagging](/release-notes/2026/other/2026-11-02-secret-object-tagging)
 - [Nov 02, 2026: Level of detail (LOD) expressions in semantic views (Preview)](/release-notes/2026/other/2026-11-02-semantic-views-lod-metrics-preview)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)

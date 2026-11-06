@@ -6,6 +6,35 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 5, 2026
+
+### Runtime Server 2026.11.5.2
+
+- Applied security patches and dependency upgrades.
+- Upgraded the Runtime UI to version `0.95.0`.
+
+### Runtime Extensions 2026.11.5.2
+
+- Snowflake: Trimmed leading and trailing whitespace, such as a trailing newline from a paste, from the Snowflake warehouse, database, schema, and role before they are used. Validation is unchanged, so existing flows remain valid after upgrading.
+- Snowflake Parameter Provider: Added the optional External Secret Tag Key property. When set, only external secrets carrying that tag key are listed and fetched, which makes fetching parameters fast when the external secret integration can see many secrets.
+- CDC PostgreSQL (GA): Changed how composite column types are resolved: the type is now looked up together with its schema name. As a result, a composite whose name matches a built-in type, such as a composite named `money`, is now replicated as text instead of as that built-in type. After upgrading, the connector emits a one-time DDL event for each table that already replicates a composite column. Destination columns and values for other composites are unchanged, and replication continues.
+- CDC Oracle (GA): Changed `CaptureChangeOracle` verification to fail when a replicating table is not covered by both DML and DDL rules in the XStream capture rule set. The check is skipped if the connect user lacks `SELECT` on `DBA_XSTREAM_RULES`.
+- Jira Cloud (Core) (GA): Added support for exclusions in the Project Keys Filter: prefix a project key with `-` (for example `-HR, -LEGAL`) to ingest every project except the excluded ones, including projects created later.
+- Jira Cloud (Core) (GA): Added the optional `Created After` parameter to ingest only issues created on or after a given date.
+- Jira Cloud (Core) (GA): Fixed deleted issues being missed when a single sync window contains more audit records than the configured page size.
+- Jira Cloud (Agile) (Public Preview): Skipped boards that Jira lists but will not open, so the remaining boards still replicate.
+- Jira Cloud: Fixed Jira connectors failing on a connection dropped while reading a Jira response; the request is now routed to retry.
+
+#### Gen 2 Connectors
+
+- CDC MySQL and PostgreSQL (Public Preview): Fixed a table reset leaving the stateless process group stopped; the connector now stops and starts the whole flow so all process groups restart when the reset completes.
+
+#### Gen 1 Connectors
+
+- Jira Cloud (Core) 0.14.0 (GA): Added support for exclusions in the Project Keys Filter: prefix a project key with `-` to ingest every project except the excluded ones, including projects created later.
+- Jira Cloud (Core) 0.14.0 (GA): Added the optional `Created After` ingestion parameter to ingest only issues created on or after that date. Leaving it unset keeps the current behavior.
+- MySQL 0.61.0, PostgreSQL 0.70.0, SQL Server CT 0.61.0, SQL Server CDC 0.55.0, Oracle (Embedded License) 0.53.0, Oracle (Independent License) 0.52.0, Oracle (Embedded License, Public Sector) 0.53.0 (GA): Changed snapshot handling so a failure while fetching a source table schema is retried with backoff for up to about three days, after which the table is marked as failed (the same as a table that is not found) instead of retrying indefinitely.
+
 ## November 4, 2026
 
 ### Control Plane Core 0.140.0

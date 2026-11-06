@@ -7,7 +7,6 @@ Available to all AWS, Azure, and GCP commercial regions. PrivateLink is supporte
 ## Notebook services and runtime
 
 - The number of notebook services allowed in an account is subject to the Snowpark Container Services [account limits](/developer-guide/snowpark-container-services/working-with-compute-pool#guidelines-and-limitations).
-- Notebook services can only run on x86-based compute pools. ARM-based compute pools are not yet supported.
 - Users may create multiple services and assign notebooks to different services as needed. Services can be shared across Workspaces but are scoped to per user.
 - Notebook services may be restarted over the weekend for container service maintenance. After a restart, you must rerun notebooks and reinstall any
   packages to restore variables and packages. For more information, see [Service maintenance](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-compute-setup#label-nb-in-ws-service-maintenance).

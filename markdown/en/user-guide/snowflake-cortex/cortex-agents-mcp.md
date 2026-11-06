@@ -1164,9 +1164,7 @@ POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
 
 ### Answer a permission prompt
 
-A sandbox tool such as `write` can end the turn while it waits for approval. The server reports the pause and accepts an answer on the same agent tool. This is not a new tool. Send `permission_decisions` and omit `text`.
-
-A synchronous call that is waiting puts a readable prompt in `content[0].text`. `structuredContent.text` stays the agent message. `structuredContent` also includes `status` (`input_required`), `pending_permissions`, and `next_step`. Each pending entry has `tool_use_id`, `tool`, `summary`, and `options`. Options that grant access for the rest of the session are omitted. Ask the user, then call the same tool with `thread_id`, `parent_message_id` of the waiting message, and one decision per call you want to allow. A decision is the `tool_use_id` and one offered option, or `Deny` with an optional `reason`. Calls you leave out are denied.
+A sandbox tool such as `write` can end the turn while it waits for approval. Each pending permission has `tool_use_id`, `tool`, `summary`, and `options`. Clients should take user input, and call the same tool with the `thread_id`, `parent_message_id` of the waiting message, and one decision in `permission_decisions` per pending permission. A decision is the `tool_use_id` and one offered option, or `Deny` with an optional `reason`. If a pending decision is left out, it is treated as a denial.
 
 Copy code
 
@@ -1192,7 +1190,7 @@ POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
     }
 ```
 
-The call waits for the next agent message. The decision objects are the user message sent to the agent. They are not repeated in the result.
+The call automatically runs one more turn of the agent.
 
 ### Choose which content blocks come back
 
@@ -1207,7 +1205,7 @@ If a CEL expression fails to evaluate, the result contains the outline and the e
 
 ### Cortex Agent supplementary tools
 
-If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake adds these tools to `tools/list`. Do not add them to the `CREATE MCP SERVER` specification.
+If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake automatically adds these tools to `tools/list`.
 
 | Tool | Purpose |
 | --- | --- |
@@ -1219,11 +1217,13 @@ Expand
 
 Show lessSee more
 
+Note that all these tools respect Snowflake access control; a user cannot use these tools to access runs or threads that they don’t have access to.
+
 `AGENT_RUN_RESULT` is useful without `background` too. For example, a client can request `outline` on the agent call, then read only the blocks it needs from the result.
 
 ### Run an agent tool in the background
 
-For `CORTEX_AGENT_RUN` and `CODING_AGENT` tools, the calling client can set the `background` argument to `true` to return immediately with a run handle. The run can be polled and managed with the [Cortex Agent supplementary tools](#label-cortex-mcp-agent-supplementary-tools).
+For `CORTEX_AGENT_RUN` and `CODING_AGENT` tools, callers can set the `background` argument to `true` to return immediately with a run handle. The run can be polled and managed with the [Cortex Agent supplementary tools](#label-cortex-mcp-agent-supplementary-tools).
 
 Copy code
 

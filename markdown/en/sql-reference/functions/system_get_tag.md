@@ -71,6 +71,7 @@ SYSTEM$GET_TAG( '<tag_name>' , '<obj_name>' , '<obj_domain>' )
     > - `'REPLICATION GROUP'`
     > - `'ROLE'`
     > - `'SCHEMA'`
+    > - `'SECRET'`
     > - `'SHARE'`
     > - `'SNAPSHOT POLICY'` (deprecated; prefer `'BACKUP POLICY'`)
     > - `'SNAPSHOT SET'` (deprecated; prefer `'BACKUP SET'`)

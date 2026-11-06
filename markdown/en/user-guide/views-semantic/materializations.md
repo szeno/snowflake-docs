@@ -301,7 +301,7 @@ materialization’s filter:
 | `WHERE order_year > 2020` | ✓ Yes | Identical to the materialization filter. |
 | `WHERE order_year > 2022` | ✓ Yes | More restrictive than the filter, and `order_year` is a materialized dimension so Snowflake can apply the extra filter on top of the stored data. |
 | `WHERE order_year > 2019` | ✗ No | Less restrictive — the materialization doesn’t contain rows from 2020 or earlier. |
-| `WHERE order_year > 2020 AND category = 'X'` | ✗ No | `category` is not a materialized dimension, so the extra filter can’t be applied to the stored data. |
+| `WHERE order_year > 2020 AND category = 'X'` | ✓ Yes | `category` is a materialized dimension, so Snowflake can apply the extra filter on top of the stored data. |
 
 Expand
 

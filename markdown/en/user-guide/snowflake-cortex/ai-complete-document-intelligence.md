@@ -259,7 +259,7 @@ Show lessSee more
 
 ### Regional availability
 
-See [Regional availability](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+See [Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
 
 ### Error conditions
 

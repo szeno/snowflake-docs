@@ -10,7 +10,7 @@ Use this function when a tag might have more than one value. [SYSTEM$GET\_TAG](/
 returns an error when multiple values exist. For more information, see [Multi-value tags](/user-guide/object-tagging/multi-value-tags).
 
 See also:
-:   [SYSTEM$GET\_TAG](/sql-reference/functions/system_get_tag) , [Multi-value tags](/user-guide/object-tagging/multi-value-tags)
+:   [SYSTEM$GET\_TAG](/sql-reference/functions/system_get_tag) , [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column) , [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table) , [Multi-value tags](/user-guide/object-tagging/multi-value-tags)
 
 ## Syntax
 
@@ -49,6 +49,7 @@ Returns a BOOLEAN: TRUE if the value is assigned to the tag on the object, FALSE
 - Works with both single-value and multi-value tags.
 - Unlike `SYSTEM$GET_TAG`, does not error when multiple values exist.
 - Value comparison is case-sensitive.
+- To test a tag value inside a column-level protection policy, such as a masking policy or a projection policy, use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column). To test a tag value on the table inside a [data protection policy](/user-guide/data-protection-policies-snowsight), use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table).
 - Requires privileges to run a [DESCRIBE <object>](/sql-reference/sql/desc) operation on the object and USAGE on the database and schema where the tag exists.
 
 ## Examples

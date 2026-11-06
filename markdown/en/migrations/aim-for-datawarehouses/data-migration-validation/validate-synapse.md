@@ -2,7 +2,7 @@
 
 This page covers Azure Synapse Analytics-specific setup for [Data validation](./data-validation). For workflow field definitions, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
-Validation supports both the **dedicated SQL pool** (`azure_synapse`) and the **serverless SQL pool** (`azure_synapse_serverless`). Set `source_platform` to the value that matches the pool you migrated from.
+Validation supports both the **dedicated SQL pool** (`azure_synapse`) and the **serverless SQL pool** (`azure_synapse_serverless`). Set `sourcePlatform` to the value that matches the pool you migrated from.
 
 ## Prerequisites
 
@@ -29,12 +29,12 @@ encrypt = true
 trust_server_certificate = true
 ```
 
-Set `source_platform: azure_synapse` (or `azure_synapse_serverless`) in the validation workflow YAML. For partitioning, row alignment, and tolerance settings that apply to all platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
+Set `sourcePlatform: azure_synapse` (or `azure_synapse_serverless`) in the validation workflow YAML. For partitioning, row alignment, and tolerance settings that apply to all platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
 ## Validation behavior
 
 - **After CETAS migrations**: Validation still runs **SQL against live Synapse** for source-side metrics and row checks. Ensure the Worker can reach the Synapse endpoint and that large partition result sets stay within timeout limits.
-- **Serverless SQL pool**: Metadata and row-count queries differ from the dedicated pool because the serverless pool doesn’t expose the dedicated pool’s system statistics. Set `source_platform: azure_synapse_serverless` so the correct queries are used.
+- **Serverless SQL pool**: Metadata and row-count queries differ from the dedicated pool because the serverless pool doesn’t expose the dedicated pool’s system statistics. Set `sourcePlatform: azure_synapse_serverless` so the correct queries are used.
 - **Iceberg targets**: Validation compares whatever is in Snowflake (native or Iceberg). Iceberg targets don’t change source-side validation SQL on Synapse.
 
 **Example workflow excerpt:**
@@ -42,27 +42,27 @@ Set `source_platform: azure_synapse` (or `azure_synapse_serverless`) in the vali
 Copy code
 
 ```
-source_platform: azure_synapse
-target_database: TARGET_DB
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
-comparison_configuration:
+sourcePlatform: azure_synapse
+targetDatabase: TARGET_DB
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
+comparisonConfiguration:
   tolerance: 0.001
 tables:
-  - fully_qualified_name: MY_DB.dbo.store_employee
-    target_name: target_employee
-    column_names_to_partition_by:
+  - fullyQualifiedName: MY_DB.dbo.store_employee
+    targetName: target_employee
+    columnNamesToPartitionBy:
       - ID
-  - fully_qualified_name: MY_DB.dbo.sales
-    column_names_to_partition_by:
+  - fullyQualifiedName: MY_DB.dbo.sales
+    columnNamesToPartitionBy:
       - ID
     indexColumnList:
       - ID
-    validation_configuration:
-      row_validation: true
-      max_failed_rows_number: 500
+    validationConfiguration:
+      rowValidation: true
+      maxFailedRowsNumber: 500
 ```
 
 ## Data type mappings

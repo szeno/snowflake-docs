@@ -40,7 +40,7 @@ Snowflake object that grants an SPCS service permission to reach external hosts 
 
 ## Extraction strategy
 
-How AIM DMV reads data from the source during **migration**, and how it extracts L3 signature Parquet during **validation**. When the source has a native export, that export is the recommended extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./migrate-bigquery)), or **regular** (PostgreSQL). For IBM DB2, prefer **`cloud_direct`** when an object store and external stage are available, and use **`regular`** otherwise. Validation uses the same strategy names under `validation_configuration.extraction`. See [Extraction strategies](../manual-migration/data-migration-configuration-reference#extraction-strategies) and [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
+How AIM DMV reads data from the source during **migration**, and how it extracts L3 signature Parquet during **validation**. When the source has a native export, that export is the recommended extract: **UNLOAD** (Redshift), **WRITE\_NOS** (Teradata), **DBMS\_CLOUD** (Oracle), **CETAS** (SQL Server / Synapse), **EXPORT DATA** ([BigQuery](./migrate-bigquery)), or **regular** (PostgreSQL). For IBM DB2, prefer **`cloud_direct`** when an object store and external stage are available, and use **`regular`** otherwise. Validation uses the same strategy names under `validationConfiguration.extraction`. See [Extraction strategies](../manual-migration/data-migration-configuration-reference#extraction-strategies) and [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 ## Hybrid table
 
@@ -122,7 +122,7 @@ Unit of work assigned to a Worker. Pending and in-progress tasks are stored in `
 
 ## Tolerance
 
-Relative numeric threshold for L2 metrics comparison (`comparisonConfiguration.tolerance`, default `0.001`). Does not apply to L3 cell comparison.
+Numeric threshold for L2 metrics comparison. `comparisonConfiguration.tolerance` is an absolute difference (default `0.001`), and the optional `comparisonConfiguration.relativeTolerance` is a fraction of the target value. A pair passes if either check passes. Does not apply to L3 cell comparison. See [Comparison configuration](../manual-migration/data-validation-configuration-reference#comparison-configuration).
 
 ## UNLOAD
 

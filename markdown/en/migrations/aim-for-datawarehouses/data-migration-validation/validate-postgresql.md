@@ -25,32 +25,32 @@ ssl_mode = "Require"
 use_copy = true
 ```
 
-Set `source_platform: postgresql` in the validation workflow YAML. Set **`ssl_mode`** in Worker TOML to match your PostgreSQL host’s TLS requirement (`Disable`, `Allow`, `Prefer`, `Require`, or `VerifyFull`).
+Set `sourcePlatform: postgresql` in the validation workflow YAML. Set **`ssl_mode`** in Worker TOML to match your PostgreSQL host’s TLS requirement (`Disable`, `Allow`, `Prefer`, `Require`, or `VerifyFull`).
 
 **Example workflow excerpt:**
 
 Copy code
 
 ```
-source_platform: postgresql
-target_database: TARGET_DB
-schema_mappings:
+sourcePlatform: postgresql
+targetDatabase: TARGET_DB
+schemaMappings:
   public: PUBLIC
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
 tables:
-  - fully_qualified_name: public.customers
-    column_names_to_partition_by:
+  - fullyQualifiedName: public.customers
+    columnNamesToPartitionBy:
       - customer_id
-  - fully_qualified_name: public.orders
-    column_names_to_partition_by:
+  - fullyQualifiedName: public.orders
+    columnNamesToPartitionBy:
       - order_id
     indexColumnList:
       - order_id
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 ## Data type mappings

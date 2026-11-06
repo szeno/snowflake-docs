@@ -14,6 +14,10 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ OAUTH_SCOPES = ( '<scope_1>' [ , '<scope_2>' ... ] ) ]
                                       [ COMMENT = '<string_literal>' ]
+
+ALTER SECRET [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
+
+ALTER SECRET [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 ```
 
 **OAuth with authorization code grant flow:**
@@ -24,6 +28,10 @@ Copy code
 ALTER SECRET [ IF EXISTS ] <name> SET [ OAUTH_REFRESH_TOKEN = '<token>' ]
                                       [ OAUTH_REFRESH_TOKEN_EXPIRY_TIME = '<string_literal>' ]
                                       [ COMMENT = '<string_literal>' ]
+
+ALTER SECRET [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
+
+ALTER SECRET [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 ```
 
 **Cloud provider:**
@@ -37,6 +45,10 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ API_AUTHENTICATION = '<cloud_provider_security_integration>' ]
                                       [ COMMENT = '<string_literal>' ]
+
+ALTER SECRET [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
+
+ALTER SECRET [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 ```
 
 **Basic authentication:**
@@ -47,6 +59,10 @@ Copy code
 ALTER SECRET [ IF EXISTS ] <name> SET [ USERNAME = '<username>' ]
                                       [ PASSWORD = '<password>' ]
                                       [ COMMENT = '<string_literal>' ]
+
+ALTER SECRET [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
+
+ALTER SECRET [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 ```
 
 **Generic string:**
@@ -56,6 +72,10 @@ Copy code
 ```
 ALTER SECRET [ IF EXISTS ] <name> SET [ SECRET_STRING = '<string_literal>' ]
                                       [ COMMENT = '<string_literal>' ]
+
+ALTER SECRET [ IF EXISTS ] <name> SET TAG <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' ... ]
+
+ALTER SECRET [ IF EXISTS ] <name> UNSET TAG <tag_name> [ , <tag_name> ... ]
 ```
 
 ## OAuth with client credentials flow parameters
@@ -149,6 +169,13 @@ Available to all accounts.
 
         Default: No value
 
+    `TAG tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ]`
+    :   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
+
+        The tag value is always a string, and the maximum number of characters for the tag value is 256.
+
+        For information about specifying tags in a statement, see [Tag quotas](/user-guide/object-tagging/introduction#label-object-tagging-quota).
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -172,7 +199,7 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- ALTER SECRET doesn’t support UNSET. To remove the comment from a secret, set it to an empty string:
+- `ALTER SECRET` doesn’t support `UNSET COMMENT`. To remove the comment from a secret, set it to an empty string:
 
   Copy code
 
@@ -195,3 +222,19 @@ Modify the comment for a secret:
 > ```
 > ALTER SECRET service_now_creds_pw SET COMMENT = 'production secret for servicenow';
 > ```
+
+Set a tag on a secret:
+
+Copy code
+
+```
+ALTER SECRET service_now_creds_pw SET TAG cost_center = 'sales';
+```
+
+Unset a tag on a secret:
+
+Copy code
+
+```
+ALTER SECRET service_now_creds_pw UNSET TAG cost_center;
+```

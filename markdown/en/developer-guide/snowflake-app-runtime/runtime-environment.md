@@ -23,6 +23,12 @@ app.listen(port, hostname);
 `HOSTNAME` is the bind address. Users reach the app over HTTPS at a
 `*.snowflakecomputing.app` URL; the app serves plain HTTP.
 
+## Node.js
+
+Apps run on Node.js 22. You can use `npm`, `npx`, and `pnpm` for install and
+build steps. Snowflake doesn’t preinstall Node.js packages, so list your
+dependencies in `package.json`.
+
 ## Built-in environment variables
 
 Snowflake sets these at runtime. Read them from `process.env` (or

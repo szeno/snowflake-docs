@@ -28,33 +28,33 @@ Set `prefer_native_driver = false` to force ODBC. Set `set_context_info = false`
 
 For Windows authentication, use the same source connection as data migration. On Snowpark Container Services that connection needs a Kerberos keytab. See [Windows authentication](./migrate-sql-server#windows-authentication).
 
-Set `source_platform: sqlserver` in the validation workflow YAML. For partitioning, row alignment, and tolerance settings that apply to all platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
+Set `sourcePlatform: sqlserver` in the validation workflow YAML. For partitioning, row alignment, and tolerance settings that apply to all platforms, see [Data validation configuration reference](../manual-migration/data-validation-configuration-reference).
 
 **Example workflow excerpt:**
 
 Copy code
 
 ```
-source_platform: sqlserver
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
-comparison_configuration:
+sourcePlatform: sqlserver
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
+comparisonConfiguration:
   tolerance: 0.001
 tables:
-  - fully_qualified_name: SampleStoreDB.dbo.store_employee
-    target_name: target_employee
-    column_names_to_partition_by:
+  - fullyQualifiedName: SampleStoreDB.dbo.store_employee
+    targetName: target_employee
+    columnNamesToPartitionBy:
       - ID
-  - fully_qualified_name: SampleStoreDB.dbo.Sales_Simple
-    column_names_to_partition_by:
+  - fullyQualifiedName: SampleStoreDB.dbo.Sales_Simple
+    columnNamesToPartitionBy:
       - ID
     indexColumnList:
       - ID
-    validation_configuration:
-      row_validation: true
-      max_failed_rows_number: 500
+    validationConfiguration:
+      rowValidation: true
+      maxFailedRowsNumber: 500
     sourceWhereClause: "is_deleted = 0"
     targetWhereClause: "is_deleted = 0"
 ```
@@ -67,7 +67,7 @@ tables:
 | DATE, TIME, DATETIME types | DATE / TIME / TIMESTAMP | Yes |  |
 | CHAR, VARCHAR, NCHAR, NVARCHAR | VARCHAR | Yes |  |
 | BINARY, VARBINARY, UNIQUEIDENTIFIER | BINARY / VARCHAR | Yes | UUID compared as an uppercase string |
-| TEXT, NTEXT | VARCHAR | Yes | Row-level comparison reads the full value; very large values may hit memory limits |
+| TEXT, NTEXT | VARCHAR | Yes | L1 and L2 check these columns. L3 leaves them out unless `includeLobColumnsInRowValidation` is `true`. See [LOB columns in L3](../manual-migration/data-validation-configuration-reference#lob-columns-in-l3) |
 | XML, SQL\_VARIANT | VARIANT | Partial | Schema-level comparison only |
 | GEOGRAPHY | GEOGRAPHY | Yes | Compared as despaced Well-Known Text |
 | GEOMETRY | GEOMETRY | Yes | Compared as despaced Well-Known Text |
@@ -79,7 +79,7 @@ Show lessSee more
 
 Note
 
-Metrics validation (L2) summarizes each column with aggregates such as NULL count and distinct count; it doesn’t compare the values themselves. For `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, `UNIQUEIDENTIFIER`, `XML`, and `SQL_VARIANT`, a value change that preserves those aggregates (for example, editing a GUID or an XML document without changing the column’s distinct count) passes L2 without a mismatch. To compare the actual values of `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, and `UNIQUEIDENTIFIER` columns, enable [row validation (L3)](./data-validation#row-validation-l3). `XML` and `SQL_VARIANT` are compared at the schema level only and aren’t value-compared at any level.
+Metrics validation (L2) summarizes each column with aggregates such as NULL count, min, and max; it doesn’t compare the values themselves. Distinct count is added only when you opt in with [`includeCountDistinct`](../manual-migration/data-validation-configuration-reference#l2-distinct-count). For `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, `UNIQUEIDENTIFIER`, `XML`, and `SQL_VARIANT`, a value change that preserves those aggregates (for example, editing a GUID or an XML document without changing the column’s NULL count) passes L2 without a mismatch. To compare the actual values of `VECTOR`, `GEOGRAPHY`, `GEOMETRY`, and `UNIQUEIDENTIFIER` columns, enable [row validation (L3)](./data-validation#row-validation-l3). `XML` and `SQL_VARIANT` are compared at the schema level only and aren’t value-compared at any level.
 
 ## Platform-specific considerations
 

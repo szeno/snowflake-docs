@@ -5,8 +5,7 @@ Categories:
 
 Returns the tag string value assigned to the table based upon the specified tag or NULL if a tag is not assigned to the specified table.
 
-Use this function in the [masking policy](/user-guide/security-column-intro) conditions or the
-[row access policy](/user-guide/security-row-intro) conditions.
+Use this function in [data protection policy](/user-guide/data-protection-policies-snowsight) conditions.
 
 ## Syntax
 
@@ -25,13 +24,13 @@ SYSTEM$GET_TAG_ON_CURRENT_TABLE( '<tag_name>' )
 
 ## Usage notes
 
-- Currently, this function can only be used in a masking policy or row access policy condition to dynamically evaluate the tag string value
+- Currently, this function can only be used in a [data protection policy](/user-guide/data-protection-policies-snowsight) condition to dynamically evaluate the tag string value
   set on a table.
 
   Snowflake returns an error while using the function in a SELECT query, view, materialized view, or a user-defined function (UDF).
 - Note that this function applies to all table-like objects (e.g. views).
 - If the tag is a [multi-value tag](/user-guide/object-tagging/multi-value-tags) and more than one value is assigned, this function
-  returns an error. Don’t reference multi-value tags in policy conditions.
+  returns an error. To test one value in a policy condition, use [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table).
 - The tag must exist when calling this system function; otherwise, Snowflake returns the following error message:
 
   Copy code

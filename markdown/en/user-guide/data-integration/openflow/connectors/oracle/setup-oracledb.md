@@ -230,6 +230,14 @@ This user requires specific privileges to facilitate replication:
   Without these grants, replication isn’t affected, but the connector logs a single
   warning and disables the health check until you restart the processor.
 
+  When you verify the `CaptureChangeOracle` processor configuration, the connector also checks
+  that every replicated table is covered by both DML and DDL rules in the XStream capture rule set.
+  To allow this check to run, also grant SELECT access to:
+
+  - DBA\_XSTREAM\_RULES
+
+  This grant is optional. Without it, the connector skips the capture rule check during verification.
+
   `ALL_INDEXES` and `ALL_IND_COLUMNS` are required so the connector can detect
   unique constraints and unique indexes as replication keys when a table has no
   primary key. For more information on the selection algorithm, see

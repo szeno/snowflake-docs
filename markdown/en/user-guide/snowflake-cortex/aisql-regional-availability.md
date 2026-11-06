@@ -1,49 +1,213 @@
 # Models and regional availability for Cortex AI Functions
 
-Snowflake Cortex AI Functions support a range of language and embedding models with varying capabilities, context-window
-sizes, and regional availability. Use this reference to choose a model for your workload, check its input and output
-limits, confirm that it’s available in your region, and understand
+Snowflake Cortex AI Functions support a range of language and embedding models with varying capabilities and
+context-window sizes. Use this reference to choose a model for your workload, check its input and output limits,
+confirm which regions a function runs in, and understand
 [legacy and end-of-life access](#label-cortex-model-lifecycle).
+
+Per-model availability is on the Model availability page
+
+This page does not list availability for individual models. To look up a specific model name, see
+[Model availability](/user-guide/snowflake-cortex/model-availability), which covers every Cortex model across all
+products.
 
 ## Choosing a model
 
-The Snowflake Cortex AI\_COMPLETE function supports multiple models of varying capability, latency, and cost. These models
-have been carefully chosen to align with common customer use cases. To achieve the best
-[performance per credit](/user-guide/snowflake-cortex/aisql-cost), choose a model that’s a good match for the content size and
-complexity of your task. Here are brief overviews of the available models.
+The Snowflake Cortex AI\_COMPLETE function supports models from several providers, with varying capability, latency, and
+cost. To achieve the best [performance per credit](/user-guide/snowflake-cortex/aisql-cost), choose a model that’s a good
+match for the content size and complexity of your task. The following sections group models by family. For each model’s
+input and output limits, see [Model restrictions](#label-cortex-llm-model-restrictions).
 
 ### Large models
 
-If you’re not sure where to start, try the most capable models first to establish a baseline to evaluate other models.
-`claude-opus-5` and `gemini-3.1-pro` are the most capable models offered by Snowflake Cortex,
-and will give you a good idea of what a state-of-the-art model can do.
+If you’re not sure where to start, try a large model first to establish a quality baseline, then evaluate smaller models
+against it.
 
-- `claude-opus-5-5` (Public Preview) is Anthropic’s latest Claude Opus model, with further gains in coding, long-horizon agentic work, and professional tasks like document drafting and data analysis. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call. It requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
-- `claude-opus-5` is Anthropic’s flagship Claude Opus model, with improved performance on coding, long-horizon agentic work, and professional tasks like document drafting and data analysis. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call.
-- `claude-opus-4-8` is Anthropic’s Claude Opus model, built for advanced reasoning, long-running agentic workflows, and complex coding tasks. With a 1,000,000-token context window and up to 128,000 output tokens, it can analyze large document collections and produce detailed responses in a single call.
-- `gemini-3.1-pro` (Public Preview) is Google’s most capable Gemini model available in Snowflake Cortex, suited for advanced reasoning and multimodal tasks. It supports up to 64,000 output tokens and requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
+- **Anthropic Claude Opus** (`claude-opus-5-5`, Public Preview; `claude-opus-5`): Anthropic’s most capable models,
+  suited for complex reasoning, coding, long-horizon agentic work, and analysis of large document collections. Both
+  models have a 1,000,000-token context window and up to 128,000 output tokens.
+- **Google Gemini** (`gemini-4-argon`, Public Preview): Google’s most capable Gemini model in Snowflake Cortex,
+  suited for advanced reasoning and multimodal tasks, with a 1,000,000-token context window.
+- **OpenAI GPT Astra** (`openai-gpt-6-astra`, Public Preview): OpenAI’s most capable model, suited for complex,
+  demanding reasoning work.
+- **OpenAI GPT Sol** (`openai-gpt-6-sol`, `openai-gpt-5.6-sol`, Public Preview): OpenAI’s frontier models for
+  agentic coding and long-horizon tasks.
 
 ### Medium models
 
-- `claude-sonnet-5-5` (Public Preview) is Anthropic’s latest Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. It requires [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
-- `claude-sonnet-5` is Anthropic’s Claude Sonnet model, with strong performance on coding, tool use, and agentic tasks at lower latency and cost than the Claude Opus models. With a 1,000,000-token context window and up to 64,000 output tokens, it’s well-suited for agentic workflows and for analyzing large inputs in a single call.
-- `openai-gpt-5.6-terra` (Public Preview) is OpenAI’s balanced model for everyday production work, suited to code generation, content workflows, structured data extraction, and general-purpose agentic tasks. With a 1,050,000-token context window and up to 128,000 output tokens, it handles large inputs in a single call. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
-- `openai-gpt-6.1-terra` (Public Preview) is OpenAI’s GPT-6.1 balanced model. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud).
-- `llama3.3-70b` is an open source model that demonstrates state-of-the-art performance ideal for chat applications,
-  content creation, and enterprise applications. It is a highly performant, cost effective model that enables diverse use
-  cases with a context window of 128K. `llama3-70b` is still supported and has a context window of 8K.
+Medium models balance quality with lower latency and cost, and suit most production workloads.
+
+- **Anthropic Claude Sonnet** (`claude-sonnet-5-5`, Public Preview; `claude-sonnet-5`): strong performance on coding,
+  tool use, and agentic tasks at lower latency and cost than Claude Opus. `claude-sonnet-5` has a 1,000,000-token
+  context window and up to 64,000 output tokens.
+- **xAI Grok** (`grok-4.7`, Public Preview): a general-purpose model for reasoning and agentic tasks, with a
+  500,000-token context window.
+- **OpenAI GPT Terra** (`openai-gpt-6.1-terra`, `openai-gpt-5.6-terra`, Public Preview): balanced models for
+  everyday production work, including code generation, content workflows, and structured data extraction.
+  `openai-gpt-5.6-terra` has a 1,050,000-token context window and up to 128,000 output tokens.
 
 ### Small models
 
-- `claude-haiku-4-5` is Anthropic’s fast and cost-efficient Claude Haiku model, optimized for low-latency, high-throughput workloads. With a 200,000-token context window and up to 64,000 output tokens, it’s well-suited for simple summarization, classification, and question-answering tasks where speed and cost matter more than top-tier reasoning.
-- `openai-gpt-6-luna` (Public Preview) is OpenAI’s model for repeatable work at scale, such as summarizing documents, extracting information, and answering focused questions. It accepts text and images, has a 1,050,000-token context window and up to 128,000 output tokens, and supports adjustable reasoning effort. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
-- `openai-gpt-5.6-luna` (Public Preview) is OpenAI’s fast, low-cost model for high-volume tasks like classification, summarization, and routing, where latency and cost per token matter most. It has a 1,050,000-token context window and up to 128,000 output tokens. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from AWS US).
-- `openai-gpt-5-mini` is OpenAI’s small, fast variant of the GPT-5 family, designed for low-latency tasks where quick responses matter more than top-tier reasoning. It has a 272,000-token context window and up to 8,192 output tokens. To use it, your account must have [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference) enabled (cross-cloud or from Azure US).
-- `llama3.1-8b` is ideal for tasks that require low to moderate reasoning. It’s a light-weight, ultra-fast model with a context window
-  of 128K. `llama3-8b` provides a smaller context window and relatively lower accuracy.
-- `mistral-7b` is ideal for your simplest summarization, structuring, and question-answering tasks that need to be
-  done quickly. It offers low latency and high throughput processing for multiple pages of text with its 32K context
-  window.
+Small models are fast and cost-efficient, and suit high-volume tasks like classification, extraction, and summarization.
+
+- **Anthropic Claude Haiku** (`claude-haiku-4-5`): optimized for low-latency, high-throughput workloads, with a
+  200,000-token context window and up to 64,000 output tokens.
+- **Google Gemini Flash** (`gemini-3.8-flash`): a fast, low-cost Gemini model for high-volume tasks, with a
+  1,000,000-token context window.
+- **OpenAI GPT Luna** (`openai-gpt-6-luna`, `openai-gpt-5.6-luna`, Public Preview): fast, low-cost models for
+  repeatable work at scale, such as summarizing documents, extracting information, and answering focused questions.
+  Both have a 1,050,000-token context window and up to 128,000 output tokens.
+- **OpenAI GPT mini and nano** (`openai-gpt-5.4-mini`, `openai-gpt-5.4-nano`): small, fast GPT models, each with a
+  400,000-token context window and up to 128,000 output tokens.
+
+Many of these models are available only through
+[cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference). Check
+[Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region) for your
+region before you choose.
+
+Note
+
+Availability of `openai-gpt-5.6-luna`, `openai-gpt-5.6-sol`, `openai-gpt-5.6-terra`, and later OpenAI models can vary by account because of model provider requirements. If a request fails with the error `Due to model provider requirements, this account is not eligible for this model at this time.`, contact [Snowflake Support](/user-guide/contacting-support).
+
+## Function availability by region
+
+Snowflake Cortex AI functions are available in the following regions. If your region is not listed for a particular
+function, use
+[cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
+
+The tables in this section cover the functions themselves. The models that `AI_COMPLETE` and `AI_EMBED` accept have
+their own regional availability, documented in
+[Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region). A
+function being available in your region does not mean every model it accepts is, so check both.
+
+Note
+
+- You can call AI\_COUNT\_TOKENS in all regions. Supported functions and models are listed in [supported functions and models](/sql-reference/functions/ai_count_tokens#label-ai-count-tokens-supported). The models themselves are available only in the regions specified in the tables below.
+
+Cross-RegionNorth AmericaEuropeAsia-Pacific
+
+The following functions are available in any region via
+[cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
+
+| Function | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **AI\_COMPLETE** | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| **AI\_EMBED** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
+| **AI\_AGG** |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_REDACT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
+| **AI\_SENTIMENT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
+| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  | ✔ |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_TRANSCRIBE** | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
+| **SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
+| **SUMMARIZE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **TRANSLATE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+| **AI\_TRANSLATE** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
+
+Expand
+
+Show lessSee more
+
+The following functions are available natively in North American regions.
+
+| Function | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | AWS US East (Commercial Gov - N. Virginia) | Azure East US 2 (Virginia) | Azure East US (Virginia) | Azure West US (Washington) | Azure West US 3 (Arizona) | Azure North Central US (Illinois) | Azure South Central US (Texas) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **AI\_COMPLETE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **AI\_EMBED** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  |  | ✔ | ✔ |  |  | ✔ |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_REDACT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **AI\_TRANSCRIBE** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
+| **SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **SUMMARIZE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| **TRANSLATE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+
+Expand
+
+Show lessSee more
+
+The following functions are available natively in European regions.
+
+| Function | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS Europe West 2 (London) | Azure West Europe (Netherlands) |
+| --- | --- | --- | --- | --- |
+| **AI\_COMPLETE** | ✔ | ✔ | ✔ | ✔ |
+| **AI\_EMBED** | ✔ | ✔ |  | ✔ |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_CLASSIFY IMAGE** | ✔ |  |  |  |
+| **AI\_EXTRACT** | ✔ | ✔ |  | ✔ |
+| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_FILTER IMAGE** | ✔ |  |  |  |
+| **AI\_AGG** | ✔ | ✔ |  | ✔ |
+| **AI\_REDACT** | ✔ | ✔ |  | ✔ |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |
+| **AI\_SIMILARITY IMAGE** | ✔ |  |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |
+| **AI\_TRANSCRIBE** | ✔ |  |  |  |
+| **SENTIMENT** | ✔ | ✔ |  | ✔ |
+| **ENTITY\_SENTIMENT** | ✔ |  |  | ✔ |
+| **EXTRACT\_ANSWER** | ✔ | ✔ |  | ✔ |
+| **SUMMARIZE** | ✔ | ✔ |  | ✔ |
+| **TRANSLATE** | ✔ | ✔ |  | ✔ |
+
+Expand
+
+Show lessSee more
+
+The following functions are available natively in Asia-Pacific regions:
+
+| Function | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) |
+| --- | --- | --- |
+| **AI\_COMPLETE** | ✔ | ✔ |
+| **AI\_EMBED** | ✔ | ✔ |
+| **AI\_EXTRACT** | ✔ | ✔ |
+| **AI\_CLASSIFY TEXT** | ✔ | ✔ |
+| **AI\_CLASSIFY IMAGE** |  |  |
+| **AI\_FILTER TEXT** | ✔ | ✔ |
+| **AI\_FILTER IMAGE** |  |  |
+| **AI\_AGG** | ✔ | ✔ |
+| **AI\_SIMILARITY TEXT** | ✔ | ✔ |
+| **AI\_SIMILARITY IMAGE** |  |  |
+| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |
+| **AI\_TRANSCRIBE** |  |  |
+| **EXTRACT\_ANSWER** | ✔ | ✔ |
+| **SENTIMENT** | ✔ | ✔ |
+| **ENTITY\_SENTIMENT** |  | ✔ |
+| **SUMMARIZE** | ✔ | ✔ |
+| **TRANSLATE** | ✔ | ✔ |
+
+Expand
+
+Show lessSee more
+
+† Functions are available to Azure US FedRAMP High Plus accounts through cross-region inference with processing on AWS in the United States. See [US FedRAMP High and DoD gov regions](/user-guide/snowflake-cortex/cross-region-inference#label-cortex-cross-region-fedramp-dod).
+
+The following Snowflake Cortex AI functions are available in the following extended regions.
+
+| Function | AWS US East 2 (Ohio) | AWS CA Central 1 (Central) | AWS SA East 1 (São Paulo) | AWS Europe West 2 (London) | AWS Europe Central 1 (Frankfurt) | AWS Europe North 1 (Stockholm) | AWS AP Northeast 1 (Tokyo) | AWS AP South 1 (Mumbai) | AWS AP Southeast 2 (Sydney) | AWS AP Southeast 3 (Jakarta) | Azure South Central US (Texas) | Azure West US 2 (Washington) | Azure UK South (London) | Azure North Europe (Ireland) | Azure Switzerland North (Zürich) | Azure Central India (Pune) | Azure Japan East (Tokyo, Saitama) | Azure Southeast Asia (Singapore) | Azure Australia East (New South Wales) | Google Cloud Europe West 2 (London) | Google Cloud Europe West 4 (Netherlands) | Google Cloud US Central 1 (Iowa) | Google Cloud US East 4 (N. Virginia) |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **AI\_EMBED** | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
+| **AI\_EXTRACT** | ✔ | ✔ | ✔ | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | ✔ | ✔ | Cross-region only | Cross-region only | Cross-region only | Cross-region only |
+
+Expand
+
+Show lessSee more
 
 ## Model restrictions
 
@@ -129,271 +293,6 @@ In the AWS Europe West 1 (Ireland) region:
 | **SENTIMENT** | Snowflake managed model | 512 | n/a |
 | **SUMMARIZE** | Snowflake managed model | 32,000 | 4,096 |
 | **TRANSLATE** | Snowflake managed model | 100,000 (input only) | 100,000 |
-
-Expand
-
-Show lessSee more
-
-## Regional availability
-
-Snowflake Cortex AI functions are available in the following regions. If your region is not listed for a particular function,
-use [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
-
-Note
-
-- You can call AI\_COUNT\_TOKENS in all regions. Supported functions and models are listed in [supported functions and models](/sql-reference/functions/ai_count_tokens#label-ai-count-tokens-supported). The models themselves are available only in the regions specified in the tables below.
-
-Cross-RegionNorth AmericaEuropeAsia-Pacific
-
-The following functions and models are available in any region via [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference).
-
-| Function | Model | Cross Cloud (Any Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **AI\_COMPLETE** |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5-5` | ✔ | ✔ |  |  |  | ✔ | \* | ✔ | ✔ |  |  |  |  |
-| `claude-sonnet-5-5` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
-| `claude-fable-5-1` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-fable-5` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `claude-opus-5` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
-| `claude-sonnet-5` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-opus-4-8` | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
-| `claude-opus-4-7` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-opus-4-6` | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |
-| `claude-sonnet-4-6` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `claude-opus-4-5` | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |  |
-| `claude-haiku-4-5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `openai-gpt-6.1-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6.1-terra` | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-astra` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-luna` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-sol` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-terra` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.6-luna` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.5` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-5.4` | ✔ |  | ✔ | ✔ | ✔ |  |  |  |  | ✔ | ✔ | ✔ |  |
-| `openai-gpt-5.4-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-5.4-nano` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-5.2` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-5.1` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
-| `openai-gpt-5` | ✔ |  |  |  |  |  |  |  |  | ✔ |  | ✔ |  |
-| `openai-gpt-5-mini` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-5-nano` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `openai-gpt-4.1 [legacy]` | ✔ |  |  |  |  |  |  |  |  | ✔ |  |  |  |
-| `gemini-4-argon` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `gemini-3.7-flash` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
-| `gemini-3.5-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  | \* |
-| `gemini-3.1-flash-lite` | ✔ |  |  |  |  |  |  |  |  |  |  |  | ✔ |
-| `grok-4.7` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `grok-4.6` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `kimi-k3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `glm-5.3` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |
-| `qwen3-32b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
-| `qwen3-next-80b-a3b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
-| `qwen3-vl-235b-a22b` | ✔ | ✔ |  |  |  |  |  | ✔ |  |  |  |  |  |
-| `snowflake-decision-fast` | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |
-| `mistral-large3` | \* | \* |  |  |  |  | \* | \* |  |  |  |  |  |
-| `mistral-large2 [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `mixtral-8x7b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `mistral-7b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `llama4-maverick [legacy]` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `llama3.3-70b` | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `llama3.1-8b` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `e5-base-v2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `nv-embed-qa-4` | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |
-| `multilingual-e5-large` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| `voyage-multilingual-2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-|  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| **AI\_EXTRACT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |
-| **AI\_FILTER TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |
-| **AI\_AGG** |  | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_REDACT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ |  |
-| **AI\_SENTIMENT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  | ✔ |  |
-| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_TRANSCRIBE** | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |
-| **SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |
-| **SUMMARIZE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **TRANSLATE** | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-| **AI\_TRANSLATE** | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ |  | ✔ |  | ✔ |  |
-
-Expand
-
-Show lessSee more
-
-The following functions and models are available natively in North American regions.
-
-| Function | Model | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | AWS US East (Commercial Gov - N. Virginia) | Azure East US 2 (Virginia) | Azure East US (Virginia) | Azure West US (Washington) | Azure West US 3 (Arizona) | Azure North Central US (Illinois) | Azure South Central US (Texas) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **AI\_COMPLETE** |  |  |  |  |  |  |  |  |  |
-| `llama4-maverick [legacy]` | ✔ |  |  |  |  |  |  |  |  |
-| `llama3.1-8b` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `llama3.1-70b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `llama3.3-70b` | ✔ |  |  |  |  |  |  |  |  |
-| `llama3-70b [legacy]` | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| `llama3-8b [legacy]` | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| `openai-gpt-4.1 [legacy]` |  |  |  | ✔ |  |  |  |  |  |
-| `mistral-large2 [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `mixtral-8x7b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `mistral-7b [legacy]` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |
-| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |
-| `e5-base-v2` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `nv-embed-qa-4` | ✔ |  |  |  |  |  |  |  |  |
-| `multilingual-e5-large` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| `voyage-multilingual-2` | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-|  |  |  |  |  |  |  |  |  |  |
-| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **AI\_CLASSIFY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
-| **AI\_EXTRACT** | ✔ | ✔ |  |  | ✔ | ✔ |  |  | ✔ |
-| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **AI\_FILTER IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
-| **AI\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **AI\_REDACT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **AI\_SIMILARITY IMAGE** | ✔ | ✔ |  |  |  |  |  |  |  |
-| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **AI\_TRANSCRIBE** | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| **SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| **ENTITY\_SENTIMENT** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| **EXTRACT\_ANSWER** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| **SUMMARIZE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-| **TRANSLATE** | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
-
-Expand
-
-Show lessSee more
-
-The following functions and models are available natively in European regions.
-
-| Function | Model | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS Europe West 2 (London) | Azure West Europe (Netherlands) |
-| --- | --- | --- | --- | --- |
-| **AI\_COMPLETE** |  |  |  |  |
-| `claude-sonnet-4-6` |  |  | ✔ |  |
-| `claude-opus-4-6` |  |  | ✔ |  |
-| `llama4-maverick [legacy]` |  |  |  |  |
-| `llama3.1-8b` | ✔ | ✔ |  | ✔ |
-| `llama3.1-70b [legacy]` | ✔ | ✔ |  | ✔ |
-| `llama3.3-70b` |  |  |  |  |
-| `llama3-70b [legacy]` | ✔ |  |  | ✔ |
-| `llama3-8b [legacy]` | ✔ |  |  | ✔ |
-| `openai-gpt-4.1 [legacy]` |  |  |  |  |
-| `mistral-large2 [legacy]` | ✔ | ✔ |  | ✔ |
-| `mixtral-8x7b [legacy]` | ✔ | ✔ |  | ✔ |
-| `mistral-7b [legacy]` | ✔ | ✔ |  | ✔ |
-|  |  |  |  |  |
-| **AI\_EMBED** |  |  |  |  |
-| `e5-base-v2` | ✔ |  |  | ✔ |
-| `snowflake-arctic-embed-m` | ✔ | ✔ |  | ✔ |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ |  | ✔ |
-| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ |  | ✔ |
-| `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ |  | ✔ |
-| `nv-embed-qa-4` |  |  |  |  |
-| `multilingual-e5-large` | ✔ | ✔ |  | ✔ |
-| `voyage-multilingual-2` | ✔ | ✔ |  | ✔ |
-|  |  |  |  |  |
-| **AI\_CLASSIFY TEXT** | ✔ | ✔ |  | ✔ |
-| **AI\_CLASSIFY IMAGE** | ✔ |  |  |  |
-| **AI\_EXTRACT** | ✔ | ✔ |  | ✔ |
-| **AI\_FILTER TEXT** | ✔ | ✔ |  | ✔ |
-| **AI\_FILTER IMAGE** | ✔ |  |  |  |
-| **AI\_AGG** | ✔ | ✔ |  | ✔ |
-| **AI\_REDACT** | ✔ | ✔ |  | ✔ |
-| **AI\_SIMILARITY TEXT** | ✔ | ✔ |  | ✔ |
-| **AI\_SIMILARITY IMAGE** | ✔ |  |  |  |
-| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |  | ✔ |
-| **AI\_TRANSCRIBE** | ✔ |  |  |  |
-| **SENTIMENT** | ✔ | ✔ |  | ✔ |
-| **ENTITY\_SENTIMENT** | ✔ |  |  | ✔ |
-| **EXTRACT\_ANSWER** | ✔ | ✔ |  | ✔ |
-| **SUMMARIZE** | ✔ | ✔ |  | ✔ |
-| **TRANSLATE** | ✔ | ✔ |  | ✔ |
-
-Expand
-
-Show lessSee more
-
-The following functions and models are available natively in Asia-Pacific regions:
-
-| Function | Model | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) |
-| --- | --- | --- |
-| **AI\_COMPLETE** |  |  |
-| `llama4-maverick [legacy]` |  |  |
-| `llama3.1-8b` | ✔ | ✔ |
-| `llama3.1-70b [legacy]` | ✔ | ✔ |
-| `llama3.3-70b` |  |  |
-| `llama3-70b [legacy]` |  | ✔ |
-| `llama3-8b [legacy]` | ✔ | ✔ |
-| `openai-gpt-4.1 [legacy]` |  |  |
-| `mistral-large2 [legacy]` | ✔ | ✔ |
-| `mixtral-8x7b [legacy]` | ✔ | ✔ |
-| `mistral-7b [legacy]` | ✔ | ✔ |
-|  |  |  |
-| **AI\_EMBED** |  |  |
-| `e5-base-v2` | ✔ | ✔ |
-| `snowflake-arctic-embed-m` | ✔ | ✔ |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ |
-| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ |
-| `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ |
-| `nv-embed-qa-4` |  |  |
-| `multilingual-e5-large` | ✔ | ✔ |
-| `voyage-multilingual-2` | ✔ | ✔ |
-|  |  |  |
-| **AI\_EXTRACT** | ✔ | ✔ |
-| **AI\_CLASSIFY TEXT** | ✔ | ✔ |
-| **AI\_CLASSIFY IMAGE** |  |  |
-| **AI\_FILTER TEXT** | ✔ | ✔ |
-| **AI\_FILTER IMAGE** |  |  |
-| **AI\_AGG** | ✔ | ✔ |
-| **AI\_SIMILARITY TEXT** | ✔ | ✔ |
-| **AI\_SIMILARITY IMAGE** |  |  |
-| **AI\_SUMMARIZE\_AGG** | ✔ | ✔ |
-| **AI\_TRANSCRIBE** |  |  |
-| **EXTRACT\_ANSWER** | ✔ | ✔ |
-| **SENTIMENT** | ✔ | ✔ |
-| **ENTITY\_SENTIMENT** |  | ✔ |
-| **SUMMARIZE** | ✔ | ✔ |
-| **TRANSLATE** | ✔ | ✔ |
-
-Expand
-
-Show lessSee more
-
-\* Indicates a public preview function or model. Public preview features aren’t suitable for production workloads.
-
-\*\* Indicates a private preview model. Private preview models are available only to accounts that Snowflake has explicitly enabled, and they aren’t suitable for production workloads.
-
-† Models are available to Azure US FedRAMP High Plus accounts through cross-region inference with processing on AWS in the United States. See [US FedRAMP High and DoD gov regions](/user-guide/snowflake-cortex/cross-region-inference#label-cortex-cross-region-fedramp-dod).
-
-The following Snowflake Cortex AI functions and models are available in the following extended regions.
-
-| Function | Model | AWS US East 2 (Ohio) | AWS CA Central 1 (Central) | AWS SA East 1 (São Paulo) | AWS Europe West 2 (London) | AWS Europe Central 1 (Frankfurt) | AWS Europe North 1 (Stockholm) | AWS AP Northeast 1 (Tokyo) | AWS AP South 1 (Mumbai) | AWS AP Southeast 2 (Sydney) | AWS AP Southeast 3 (Jakarta) | Azure South Central US (Texas) | Azure West US 2 (Washington) | Azure UK South (London) | Azure North Europe (Ireland) | Azure Switzerland North (Zürich) | Azure Central India (Pune) | Azure Japan East (Tokyo, Saitama) | Azure Southeast Asia (Singapore) | Azure Australia East (New South Wales) | Google Cloud Europe West 2 (London) | Google Cloud Europe West 4 (Netherlands) | Google Cloud US Central 1 (Iowa) | Google Cloud US East 4 (N. Virginia) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **AI\_EMBED** |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| `multilingual-e5-large` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| **AI\_EXTRACT** | ✔ | ✔ | ✔ | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | Cross-region only | ✔ | Cross-region only | ✔ | ✔ | ✔ | ✔ | Cross-region only | Cross-region only | Cross-region only | Cross-region only |
 
 Expand
 

@@ -180,21 +180,31 @@ LIMIT 100;
 
 ## Fault tolerance
 
-In any distributed system, failures happen. For mission-critical workloads it is on users to configure the service to be resilient against node and zonal failures.
+In any distributed system, failures happen. For mission-critical workloads, you can configure your inference service to be resilient against node, zonal, and regional failures. The following table summarizes how to configure for each failure scenario.
 
-### Node Failure Resilience
+| Failure scenario | How to configure |
+| --- | --- |
+| **Node failure** | Run multiple service instances and over-provision capacity by setting `min_instances` above the minimum required baseline. |
+| **Placement group (zone) failure** | Distribute instances across multiple placement groups by running the service on a compute pool with `PLACEMENT_GROUP = 'DISTRIBUTED'`. |
+| **Regional failure** | Deploy a second copy in another Snowflake account and region, then route or fail over traffic between the regions. |
+
+Expand
+
+Show lessSee more
+
+### Node failure resilience
 
 To tolerate standard node failures, Snowflake recommends over-provisioning by 50% or maintaining a minimum of 3 instances (whichever is higher).
 
 **Example:** If you need 4 instances to support peak traffic, you should provision 6 instances
 
-### Zonal Failure Resilience
+### Zonal failure resilience
 
-For mission-critical workloads that require resilience against a full zonal failure, you can use a distributed [compute pool](/sql-reference/sql/create-compute-pool) when creating a [service](/sql-reference/sql/create-service). Distributed compute pools are created with the PLACEMENT\_GROUP parameter set to DISTRIBUTED. For more information about distributed compute pools, see [Compute pool placement](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-placement-group).
+For workloads that must survive the loss of a full placement group, run the service on a distributed [compute pool](/sql-reference/sql/create-compute-pool). When you set `PLACEMENT_GROUP` to `DISTRIBUTED`, Snowflake attempts to distribute the pool’s nodes across all available placement groups. If one placement group goes down, you don’t lose all the nodes. If a placement group has insufficient capacity, Snowflake provisions nodes in other placement groups, which can result in an uneven distribution. For more information, see [Compute pool placement](/developer-guide/snowpark-container-services/working-with-compute-pool#label-spcs-working-with-compute-pool-placement-group).
 
-### Configuration Guide
+Combine this with node failure resilience: set `min_instances` so that the instances left after losing one placement group can still carry peak traffic.
 
-#### Convert an Existing Pool
+#### Convert an existing pool
 
 Warning
 
@@ -211,7 +221,7 @@ ALTER COMPUTE POOL my_pool
 ALTER COMPUTE POOL my_pool RESUME;
 ```
 
-#### Revert an Existing Pool
+#### Revert an existing pool
 
 Warning
 
@@ -237,3 +247,51 @@ Copy code
 ```
 DESCRIBE COMPUTE POOL my_service_pool;
 ```
+
+### Route requests through a gateway
+
+Within a region, send client requests to a [Snowflake Gateway](/developer-guide/snowflake-ml/inference/stable-endpoints-api-reference) rather than directly to a service. The gateway gives clients one stable URL and automatically fails over to healthy endpoints when a target becomes unavailable. You can also use it to split traffic between model versions during a rollout.
+
+### Regional failure resilience
+
+A Snowflake account and its compute pools, services, and gateways all live in one cloud region. To keep serving through a regional outage, deploy the model in a second account in another region and route traffic between the two regions:
+
+1. Create a second account in another region, in the same Snowflake organization.
+2. Replicate the database that contains your model registry schema to the second account. Use a replication group for one-way replication, or a failover group if the second account is also your disaster recovery target. Failover groups require Business Critical Edition (or higher). For more information, see [Introduction to replication and failover across multiple accounts](/user-guide/account-replication-intro).
+3. The replicated database is read-only. Copy the approved version into a local database in the second account so that account owns and serves its own model:
+
+   Copy code
+
+   ```
+   CREATE MODEL serving_db.registry.my_model
+     WITH VERSION v1
+     FROM MODEL replica_db.registry.my_model
+     VERSION v1;
+   ```
+
+   For more information, see [Using multiple schemas](/developer-guide/snowflake-ml/model-registry/model-management#label-model-management-lifecycle-multiple-schemas).
+4. Create the compute pools, services, and gateways in each account, and apply the same node and zonal resilience settings in both regions.
+5. Expose a single client-facing endpoint through a global DNS or traffic-management service, such as Amazon Route 53, Azure Traffic Manager, or Google Cloud DNS, and route requests to the healthy regional deployment. Because each account has its own gateway URL and credentials, configure client authentication for both regions in advance.
+
+Tip
+
+Start with active/passive routing and a warm standby: keep the secondary region’s services running at a small `min_instances` and scale up on failover. A cold standby with no running services costs less, but starting services during an outage can take minutes and depends on available capacity. Use active/active routing if you need near-zero failover time or lower latency for clients in both regions.
+
+#### Roll out new model versions in both regions
+
+Clients reach each region through that region’s gateway, so you can roll out a new model version without changing client URLs. In the primary account, promote and deploy the new version as usual. In the secondary account, after the replication refresh brings in the new version:
+
+1. Add the new version to the local model from the replica:
+
+   Copy code
+
+   ```
+   ALTER MODEL serving_db.registry.my_model
+     ADD VERSION v2
+     FROM MODEL replica_db.registry.my_model
+     VERSION v2;
+   ```
+2. Create a service for the new version, using the same compute pool and resilience settings as the primary region.
+3. Use `ALTER GATEWAY` to shift traffic from the old version’s service to the new one, the same way you do in the primary region. For more information, see [Stable Endpoints & API Reference](/developer-guide/snowflake-ml/inference/stable-endpoints-api-reference).
+
+To keep both regions serving the same version, run these steps from one CI/CD pipeline, triggered from your Git repository, that deploys to both accounts. For example, each release can promote the version in the primary account, wait for the replication refresh, copy the version into the secondary account, and apply the same service settings and gateway specification in both regions. Store the gateway specifications in Git so that both regions use the same configuration, and fail the release if either region fails. For more information, see [Integrating CI/CD with Snowflake CLI](/developer-guide/snowflake-cli/cicd/integrate-ci-cd).

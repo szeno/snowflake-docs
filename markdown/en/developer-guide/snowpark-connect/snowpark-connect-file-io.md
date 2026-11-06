@@ -327,10 +327,10 @@ df.write.mode("overwrite").parquet("@my_stage/out/")
 
 | Mode | Spark name | Behavior in Snowpark Connect for Spark |
 | --- | --- | --- |
-| Error if exists | `error` | Default. Fails if data already exists at the target path or table. The `errorifexists` alias isn’t supported. Use `error` instead for the same behavior. |
+| Error if exists | `error` | Default. For table writes, fails if the table already exists. For file writes to a stage path, existing files aren’t detected, and new files are added alongside existing ones (the same behavior as `append`). The `errorifexists` alias isn’t supported. Use `error` instead. |
 | Overwrite | `overwrite` | Removes existing files at the target path before writing. For table writes, replaces the table. |
 | Append | `append` | Adds new files alongside existing ones. Uses a random filename prefix to avoid conflicts. |
-| Ignore | `ignore` | Skips the write if data already exists. **Supported for Parquet file writes and table writes only.** CSV, JSON, and text file writes raise an error for this mode. |
+| Ignore | `ignore` | For table writes, skips the write if the table already exists. For Parquet file writes, the mode is accepted, but existing files aren’t detected and new files are added. CSV, JSON, and text file writes raise an error for this mode. |
 
 Expand
 
@@ -368,9 +368,10 @@ df.coalesce(1).write.parquet("@my_stage/single_output/")
 When `coalesce(1)` is used without `partitionBy`, Snowpark Connect for Spark routes the write into a single
 Snowflake file.
 
-### `repartition(n)` for multiple output files
+### `repartition(n)` and output file count
 
-When you request `n` output files, Snowpark Connect for Spark produces `n` files with Spark-compatible names:
+`repartition(n)` doesn’t control the number of output files for non-partitioned writes. Snowflake determines
+the file count:
 
 PythonJavaScala
 
@@ -392,8 +393,8 @@ Copy code
 df.repartition(8).write.parquet("@my_stage/8way_output/")
 ```
 
-Rows are distributed across the `n` target files so each file gets roughly the same amount of
-data. When you combine `repartition(n)` with `partitionBy`, the per-partition directory layout
+To limit the size of each file, use `snowflake_max_file_size`. To produce a single file, use `coalesce(1)` or
+the `single` option. When you combine `repartition(n)` with `partitionBy`, the per-partition directory layout
 takes precedence and Snowflake controls the file count inside each `col=value/` directory.
 
 ### `single` and `snowflake_max_file_size` write options
@@ -403,7 +404,7 @@ Snowpark Connect for Spark provides two additional write options for explicit co
 | Option | Description |
 | --- | --- |
 | `single` | Set to `true` to force a single output file regardless of how many input partitions the DataFrame has. Equivalent to `coalesce(1)` for non-partitioned writes. Ignored when used with `partitionBy`. |
-| `snowflake_max_file_size` | Maximum size in bytes per output file. Larger values reduce the file count; smaller values produce more files. When single-file behavior is active and this option isn’t set, Snowpark Connect for Spark defaults the cap to 1 GB. |
+| `snowflake_max_file_size` | Maximum size in bytes per output file. Values below 1 MB (1048576) are treated as 1 MB. Larger values reduce the file count; smaller values produce more files. When single-file behavior is active and this option isn’t set, Snowpark Connect for Spark defaults the cap to 1 GB. With `single` set to `true`, the write fails if the output exceeds this size. |
 
 Expand
 
@@ -447,13 +448,13 @@ For best performance, use splittable compression formats such as `BZ2` or `SNAPP
 Snowflake to decompress and process file chunks in parallel, which is significantly faster for large files than
 non-splittable formats like `GZIP`.
 
-Snowpark Connect for Spark normalizes codec names: `UNCOMPRESSED` becomes `NONE`, and Spark’s `BZIP2` becomes `BZ2`
-for CSV, JSON, and text. Compression can also be inferred from file extensions (`.gz`, `.bz2`,
+Snowpark Connect for Spark normalizes codec names for CSV, JSON, and text: `UNCOMPRESSED` becomes `NONE`, and Spark’s
+`BZIP2` becomes `BZ2`. Parquet writes always use `SNAPPY`. Compression can also be inferred from file extensions (`.gz`, `.bz2`,
 `.snappy`, `.deflate`).
 
 | CSV / JSON / Text | Parquet |
 | --- | --- |
-| GZIP, BZ2, BROTLI, ZSTD, DEFLATE, RAW\_DEFLATE, NONE | SNAPPY, LZO, NONE |
+| GZIP, BZ2, BROTLI, ZSTD, DEFLATE, RAW\_DEFLATE, NONE | SNAPPY (writes); SNAPPY, LZO, NONE (reads, auto-detected) |
 
 Expand
 
@@ -621,7 +622,6 @@ don’t have to filter them out manually:
 | --- | --- |
 | `_SUCCESS` | Spark write-completion marker |
 | `_metadata`, `_common_metadata` | Parquet metadata sidecars |
-| `*.crc` | Hadoop checksum files |
 | `.DS_Store`, other `.*` files | macOS and hidden files |
 | Any file starting with `_` or `.` | General Hadoop convention |
 
@@ -630,13 +630,14 @@ Expand
 Show lessSee more
 
 This exclusion applies to CSV, JSON, Parquet, and XML reads at any directory depth, including inside
-partition subdirectories (for example, `year=2025/_SUCCESS` is skipped).
+partition subdirectories (for example, `year=2025/_SUCCESS` is skipped). Files ending in `.crc` aren’t excluded
+unless their names start with `_` or `.`. Remove them from the read path or exclude them with `pathGlobFilter`.
 
 Snowpark Connect for Spark also anchors read paths so that files outside your requested prefix are never picked up.
 For example, reading from `@stage/sales/` won’t accidentally include files from `@stage/sales_archive/`.
 
-If you set `pathGlobFilter` to a pattern that explicitly matches hidden or metadata files
-(for example, `_*`), that pattern takes precedence and those files are included.
+`pathGlobFilter` doesn’t override automatic exclusion: files whose names start with `_` or `.` are always
+skipped, even if the pattern matches them.
 
 ## Directory listing (recursiveFileLookup)
 
@@ -648,11 +649,11 @@ subdirectories when you pass a directory path.
 - `false` — list only direct children of the read path (depth-0). Hive-style partition directories
   (`key=value/`) are still discovered.
 
-When you omit `recursiveFileLookup`, Snowpark Connect for Spark 1.29.0 retains the prior behavior and lists files recursively.
-In a future release, omitting the option will match Apache Spark 3.5 (depth-0 listing with Hive partition discovery).
+When you omit `recursiveFileLookup`, Snowpark Connect for Spark lists only direct children of the read path (depth-0) with
+Hive partition discovery, matching Apache Spark 3.5. Earlier versions, starting with 1.29.0, listed files
+recursively by default.
 
-If your workloads read nested data under a directory root that is not Hive-partitioned, set the option
-explicitly now to avoid surprises when the default changes:
+If your workloads read nested data under a directory root that is not Hive-partitioned, set the option to `true`:
 
 Copy code
 
@@ -660,7 +661,7 @@ Copy code
 df = spark.read.option("recursiveFileLookup", "true").csv("@my_stage/sales/")
 ```
 
-For more details about the planned default change, see
+For more details about the default change, see
 [Directory listing (recursiveFileLookup)](/developer-guide/snowpark-connect/snowpark-connect-compatibility#label-snowpark-connect-compatibility-directory-listing)
 in the compatibility guide.
 
@@ -707,10 +708,10 @@ Show lessSee more
 | `rowsToInferSchema` | `INFER_SCHEMA_OPTIONS.MAX_RECORDS_PER_FILE` | Read only. Default 20000. Sets the number of rows sampled per file when inferring the schema. Reduce this value to speed up reads when the data is uniform. Requires `inferSchema = true`. |
 | `mode` | `ON_ERROR` | Controls error handling on read. `DROPMALFORMED` maps to `CONTINUE`, `FAILFAST` maps to `ABORT_STATEMENT`. `PERMISSIVE` (the Spark default) is only partially supported. |
 | `ignoreLeadingWhiteSpace` / `ignoreTrailingWhiteSpace` | `TRIM_SPACE` | If either option is `true`, Snowflake trims whitespace from both sides. One-sided trimming isn’t available. |
-| `mergeSchema` | (internal) | When `true`, Snowpark Connect for Spark infers schemas per file group and produces a union schema. Requires `header = true` and `inferSchema = true`. New columns across files become nullable. Type widening (for example, `INT` to `STRING`) is supported. |
+| `mergeSchema` | (internal) | When `true`, Snowpark Connect for Spark infers schemas per file group and produces a union schema. Requires `header = true` and `inferSchema = true`. New columns across files become nullable. Type widening (for example, `INT` to `STRING`) is supported. Single-letter values such as `y` and `n` can be inferred as `BOOLEAN`; supply an explicit schema if that isn’t intended. Multi-file reads with `header = true` and `inferSchema = true` currently produce a union schema whether or not `mergeSchema` is set. |
 | `relaxTypesToInferSchema` | (internal) | When `true`, widens narrow numeric types to match Spark’s inference behavior (for example, `Short` to `Integer`, small `Decimal` to `Long`). Enabled automatically when `rowsToInferSchema` is set. |
-| `pathGlobFilter` | `PATTERN` | Filters which files to read based on a glob pattern. |
-| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. In a future release, the default when omitted will align with Apache Spark. |
+| `pathGlobFilter` | `PATTERN` | Filters which files to read. The value is passed to Snowflake `PATTERN` and is interpreted as a regular expression, not a glob. For example, use `.*\.csv` instead of `*.csv`. |
+| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. Defaults to depth-0 listing, matching Apache Spark. |
 
 Expand
 
@@ -727,15 +728,15 @@ In addition, Snowpark Connect for Spark always sets the following on CSV reads:
 | Spark option | Snowflake file format option | Notes |
 | --- | --- | --- |
 | `multiLine` | `STRIP_OUTER_ARRAY` + `MULTI_LINE` | Both Snowflake options are set to the same value. When `true`, the reader handles files that contain a JSON array at the top level or span multiple lines. |
-| `dateFormat` | `DATE_FORMAT` | Default `auto`. Unlike CSV, JSON date format strings are **not** converted from Java patterns. Pass Snowflake-compatible format tokens directly. |
+| `dateFormat` | `DATE_FORMAT` | Default `auto`. Both Java `SimpleDateFormat` patterns (for example, `dd/MM/yyyy`) and Snowflake format tokens (for example, `DD/MM/YYYY`) are accepted. |
 | `timestampFormat` | `TIMESTAMP_FORMAT` | Default `auto`. Same as `dateFormat`: pass Snowflake-compatible tokens. |
 | `encoding` | `ENCODING` | Default `UTF-8`. |
 | `mode` | `ON_ERROR` | Controls error handling on read. `DROPMALFORMED` maps to `CONTINUE`, `FAILFAST` maps to `ABORT_STATEMENT`. `PERMISSIVE` (the Spark default) is only partially supported. |
 | `dropFieldIfAllNull` | (schema inference) | When `true`, fields that are null in every sampled row are dropped from the inferred schema. |
 | `rowsToInferSchema` | `INFER_SCHEMA_OPTIONS.MAX_RECORDS_PER_FILE` | Read only. Sets the number of rows sampled per file when inferring the schema. Reduce this value to speed up reads when the data is uniform. |
 | `relaxTypesToInferSchema` | (internal) | When `true`, widens narrow numeric types to match Spark’s inference behavior (for example, `Short` to `Integer`, small `Decimal` to `Long`). Enabled automatically when `rowsToInferSchema` is set. |
-| `pathGlobFilter` | `PATTERN` | Filters which files to read. |
-| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. In a future release, the default when omitted will align with Apache Spark. |
+| `pathGlobFilter` | `PATTERN` | Filters which files to read. The value is passed to Snowflake `PATTERN` and is interpreted as a regular expression, not a glob. For example, use `.*\.json` instead of `*.json`. |
+| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. Defaults to depth-0 listing, matching Apache Spark. |
 | `compression` | `COMPRESSION` | See [Compression](#compression). |
 
 Expand
@@ -750,12 +751,12 @@ before unloading. On the write path, `nullValue` is mapped to `NULL_IF` and `com
 
 | Spark option | Snowflake file format option | Notes |
 | --- | --- | --- |
-| `pathGlobFilter` | `PATTERN` | Filters which files to read. |
-| `compression` | `COMPRESSION` | Default `SNAPPY` for writes, `AUTO` for reads. Allowed values: `AUTO`, `LZO`, `SNAPPY`, `NONE`. `UNCOMPRESSED` is also accepted and normalized to `NONE`. |
+| `pathGlobFilter` | `PATTERN` | Filters which files to read. The value is passed to Snowflake `PATTERN` and is interpreted as a regular expression, not a glob. For example, use `.*\.parquet` instead of `*.parquet`. |
+| `compression` | `COMPRESSION` | `AUTO` for reads. Parquet writes always use `SNAPPY`; the `compression` option is currently ignored on Parquet writes. |
 | `mergeSchema` | (internal) | When `true` and reading from multiple paths, Snowpark Connect for Spark infers the schema from each file and produces a union schema. New columns are added; type widening across files (for example, `INT` to `STRING`) isn’t supported. |
 | `rowsToInferSchema` | (internal) | Read only. Default 20000. Controls the sample size used by Snowpark Connect for Spark when discovering complex types (STRUCT, MAP, ARRAY) inside Parquet VARIANT columns. |
 | `nullValue` | `NULL_IF` | Write only. Sets the string that represents null values in the output files. |
-| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. In a future release, the default when omitted will align with Apache Spark. |
+| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. Defaults to depth-0 listing, matching Apache Spark. |
 
 Expand
 
@@ -778,7 +779,7 @@ Text I/O uses a CSV file format internally with `FIELD_DELIMITER = NONE`.
 | `lineSep` / `linesep` | `RECORD_DELIMITER` | Default `\n`. Controls the line separator for both reads and writes. |
 | `wholetext` | `RECORD_DELIMITER = NONE` | When `true`, each file is read as a single row. |
 | `compression` | `COMPRESSION` | Default `auto` for reads, `NONE` for writes. |
-| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. In a future release, the default when omitted will align with Apache Spark. |
+| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. Defaults to depth-0 listing, matching Apache Spark. |
 
 Expand
 
@@ -797,17 +798,17 @@ the files and merging field types across all input.
 | `rowTag` | `rowTag` | Specifies the XML element that maps to a DataFrame row. Defaults to `ROW` if not set. |
 | `inferSchema` | `inferSchema` | Default `true`. When a user schema is provided, Snowpark Connect for Spark forces `inferSchema=false` to keep the read single-pass. |
 | `samplingRatio` | `samplingRatio` | Default `1.0`. Fraction of rows to sample when inferring the schema. |
-| `mode` | `mode` | Default `PERMISSIVE`. Controls error handling: `PERMISSIVE`, `DROPMALFORMED`, or `FAILFAST`. `PERMISSIVE` is partially supported: if input data doesn’t match the specified schema type and can’t be coerced, an error might be thrown instead of placing the row in the corrupt record column. |
-| `columnNameOfCorruptRecord` | `columnNameOfCorruptRecord` | Default `_corrupt_record`. Column name used to store malformed rows in `PERMISSIVE` mode. |
+| `mode` | `mode` | Default `PERMISSIVE`. Controls error handling: `PERMISSIVE`, `DROPMALFORMED`, or `FAILFAST`. Rows that fail `rowValidationXSDPath` validation are handled according to the mode. Values that can’t be cast to the specified schema type raise a Snowflake cast error (`100071`) in every mode; they aren’t dropped (`DROPMALFORMED`) or placed in the corrupt record column (`PERMISSIVE`). |
+| `columnNameOfCorruptRecord` | `columnNameOfCorruptRecord` | Default `_corrupt_record`. Column name used to store rows that fail XSD validation in `PERMISSIVE` mode. |
 | `attributePrefix` | `attributePrefix` | Default `_`. Prefix added to XML attribute names in the DataFrame schema. Can’t equal `valueTag`. |
 | `valueTag` | `valueTag` | Default `_VALUE`. Tag name for the text content of mixed-content elements. Can’t be empty. |
 | `encoding` | `charset` | Renamed internally. Default `UTF-8`. |
-| `excludeAttribute` | `excludeAttributes` | Renamed internally. Default `false`. |
+| `excludeAttribute` | `excludeAttributes` | Renamed internally. Default `false`. Not currently applied: attributes are always included. Drop attribute columns after the read if needed. |
 | `ignoreSurroundingSpaces` | `ignoreSurroundingWhitespace` | Renamed internally. Default `false`. |
-| `ignoreNamespace` | `ignoreNamespace` | Default `false`. When `true`, XML namespace prefixes are stripped from element and attribute names. |
+| `ignoreNamespace` | `ignoreNamespace` | Default `false`. Not currently supported for namespace-prefixed row tags. Set `rowTag` to the prefixed name (for example, `p:item`); column names keep their prefixes. |
 | `nullValue` | `nullValue` | Default `""`. String value to interpret as null. |
 | `pathGlobFilter` | `PATTERN` | Filters which files to read. |
-| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. In a future release, the default when omitted will align with Apache Spark. |
+| `recursiveFileLookup` | (see [Directory listing](#label-snowpark-connect-file-io-recursive-file-lookup)) | Controls whether reads descend into nested subdirectories. Supported in 1.29.0+. Defaults to depth-0 listing, matching Apache Spark. |
 | `rowValidationXSDPath` | `rowValidationXSDPath` | Path to an XSD file on a stage (for example, `@my_stage/schema.xsd`) to validate each XML row against. Local XSD files are automatically uploaded to the stage. Rows that fail validation are handled according to the `mode` setting. |
 
 Expand
@@ -848,9 +849,9 @@ Some patterns don’t have exact Snowflake equivalents:
 
 Important
 
-This conversion applies only to **CSV**. For JSON, date and timestamp format strings are passed directly to
-Snowflake without conversion. Use Snowflake-compatible format tokens (such as `YYYY-MM-DD`) when setting
-`dateFormat` or `timestampFormat` on JSON readers.
+The conversion table above is documented for **CSV**. JSON readers accept both Java patterns and
+Snowflake-compatible format tokens (such as `YYYY-MM-DD`) for `dateFormat`. For `timestampFormat` on JSON
+readers, use Snowflake-compatible format tokens.
 
 ## Partitioned data
 
@@ -942,7 +943,7 @@ recent.show()
 Partition discovery behavior:
 
 - Partition columns appear at the **end** of the schema, in the order they appear in the directory tree.
-- Partition value types are inferred from the observed values: all integers become `IntegerType`, all
+- Partition value types are inferred from the observed values: all integers become `LongType`, all
   floating-point values become `DoubleType`, otherwise `StringType`. You can override a partition
   column’s type by supplying a `.schema(...)` that includes it.
 - `null` values in a partition column are written as the directory segment `__HIVE_DEFAULT_PARTITION__`
@@ -1003,17 +1004,17 @@ Iceberg table writes. For stage-based file writes, use the session configuration
 
 ## Known limitations
 
-- **Save mode support varies by format**: `ignore` mode is supported only for Parquet file writes and table writes.
-  CSV, JSON, and text file writes raise an error for `ignore` mode.
+- **Save mode support varies by format**: `ignore` mode skips the write only for table writes. Parquet file
+  writes accept `ignore` but add new files even when data exists. CSV, JSON, and text file writes raise an
+  error for `ignore` mode.
 - **ORC and Avro**: These formats aren’t supported for read or write.
-- **Bucketed writes**: `bucketBy` and `sortBy` aren’t supported for file or table writes.
+- **Bucketed writes**: `bucketBy` and `sortBy` aren’t supported. For table writes they’re silently ignored (no
+  error is raised), and the table is written without bucketing or sorting.
 - **One-sided whitespace trimming**: Spark’s `ignoreLeadingWhiteSpace` and `ignoreTrailingWhiteSpace` both map
   to `TRIM_SPACE`, which trims from both sides. Trimming only leading or only trailing whitespace isn’t possible.
 - **CSV quote semantics**: Spark’s `quote` option and Snowflake’s `FIELD_OPTIONALLY_ENCLOSED_BY` have different
   semantics. Snowflake treats enclosure as optional, while Spark applies mandatory quoting rules.
 - **Text column constraint**: Text writes require exactly one string column in the DataFrame.
-- **XML MapType**: `MapType` isn’t supported for XML reads. Use `StructType` to represent key-value
-  structures.
 - **XML via Spark SQL**: Reading XML files with `spark.sql()` (for example,
   `SELECT * FROM xml.`@stage/file.xml``) isn’t supported. Use the `DataFrameReader` API instead.
 - **`input_file_name()` requires opt-in metadata**: Unlike Spark, file metadata isn’t populated by default. Set

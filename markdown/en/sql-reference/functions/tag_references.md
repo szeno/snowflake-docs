@@ -60,6 +60,7 @@ TAG_REFERENCES( '<object_name>' , '<object_domain>' )
     > - `'REPLICATION GROUP'`
     > - `'ROLE'`
     > - `'SCHEMA'`
+    > - `'SECRET'`
     > - `'SHARE'`
     > - `'SNAPSHOT POLICY'` (deprecated; prefer `'BACKUP POLICY'`)
     > - `'SNAPSHOT SET'` (deprecated; prefer `'BACKUP SET'`)

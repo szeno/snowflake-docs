@@ -256,6 +256,8 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$STREAM\_HAS\_DATA](/sql-reference/functions/system_stream_has_data) |  |
 | [SYSTEM$SUPPORTED\_DBT\_VERSIONS](/sql-reference/functions/system_supported_dbt_versions) |  |
 | [SYSTEM$TAG\_VALUE\_CONTAINS](/sql-reference/functions/system_tag_value_contains) |  |
+| [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_COLUMN](/sql-reference/functions/system_tag_value_contains_on_current_column) |  |
+| [SYSTEM$TAG\_VALUE\_CONTAINS\_ON\_CURRENT\_TABLE](/sql-reference/functions/system_tag_value_contains_on_current_table) |  |
 | [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) |  |
 | [SYSTEM$TASK\_RUNTIME\_INFO](/sql-reference/functions/system_task_runtime_info) |  |
 | [SYSTEM$TYPEOF](/sql-reference/functions/system_typeof) |  |

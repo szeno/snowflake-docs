@@ -89,7 +89,7 @@ tables:
       - order_id
 ```
 
-Tune `columnNamesToPartitionBy` and `partitionSize` for large tables. For a serverless SQL pool, set `source_platform: azure_synapse_serverless`.
+Tune `columnNamesToPartitionBy` and `targetPartitionSizeMb` or `targetPartitionSizeRows` for large tables. See [Partition size](../manual-migration/data-migration-configuration-reference#partition-size). For a serverless SQL pool, set `source_platform: azure_synapse_serverless`.
 
 ### Iceberg targets
 
@@ -247,7 +247,7 @@ Show lessSee more
   ```
   Set up Azure Synapse data migration for my project, including the Worker connection and CETAS extraction
   ```
-- **Partitioning**: Tune `columnNamesToPartitionBy` and `partitionSize` for large or uneven tables.
+- **Partitioning**: Tune `columnNamesToPartitionBy` and `targetPartitionSizeMb` or `targetPartitionSizeRows` for large or uneven tables.
 
   **Prompt:**
 

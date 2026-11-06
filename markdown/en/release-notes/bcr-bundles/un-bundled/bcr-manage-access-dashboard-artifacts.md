@@ -42,7 +42,8 @@ What viewers see depends on the Artifact type:
   that their own roles can access.
 - Report Artifacts (HTML reports), File Artifacts (such as PDF and PPT files), and Thread Artifacts
   (Snowflake CoWork conversations) are static snapshots that don’t run SQL. Viewers see the text
-  and visualizations directly.
+  and visualizations directly. A viewer with access to a Report Artifact can see embedded data
+  without being granted access to the underlying source data.
 
 ## Account-wide sharing setting
 

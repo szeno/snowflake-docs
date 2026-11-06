@@ -313,10 +313,10 @@ Set `tableType` and `icebergConfig` on `defaultTableConfiguration` or on each ta
 Copy code
 
 ```
-source_platform: redshift
-validation_configuration:
-  schema_validation: true
-  row_validation: true
+sourcePlatform: redshift
+validationConfiguration:
+  schemaValidation: true
+  rowValidation: true
 defaultTableConfiguration:
   tableType: iceberg
   icebergConfig:
@@ -337,12 +337,12 @@ tables:
 What each level does against this profile:
 
 - **Schema (L1)** checks names, types, and precision against the spec v2 types. Expected differences are widened integers, `FLOAT` and `REAL` as `DOUBLE`, and time, timestamps, and large character values as `VARCHAR`.
-- **Metrics (L2)** does not run for Iceberg tables. It is not a setting on this profile. Use schema validation and row validation.
+- **Metrics (L2)** runs on Iceberg tables. A column that the profile stores as `VARCHAR` when its source type isn’t text is left out of the metrics query, unless a metric reads that text as the source type. Each column left out gets a `WARNING` row whose `EVALUATION_CRITERIA` names the reason: `NO_COMPARABLE_METRIC` when no metric reads the stored text, or `CAST_NOT_TOTAL` when the parser can’t read every source value. Results written by an earlier release show `FLATTENED_TO_VARCHAR` instead. Row validation still compares those columns.
 - **Rows (L3)** compares cells. Cell mismatches must not appear. A row-count or byte-size difference can be tolerated when the cells still match. Redshift `TIMESTAMP` and `TIMESTAMPTZ` are compared as the UTC ISO text UNLOAD wrote. Redshift `TIME`, `TIMETZ`, and `VARBYTE` source values are normalized to that same UNLOAD text. Semi-structured values stored as `VARCHAR` are compared as canonical JSON. Geospatial values stored as `VARCHAR` are compared as text.
 
 Reuse the same L3 extract strategy and external stage you used for migration. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
-For spec v3, declare `icebergSpec: v3` and the same `storageMode` and `loadMode` the migration used. Schema validation then expects that profile. With `ADD_FILES_COPY`, validation follows the staged Parquet footer. With `FULL_INGEST`, it expects native temporal and geospatial types. Metrics validation does not run.
+For spec v3, declare `icebergSpec: v3` and the same `storageMode` and `loadMode` the migration used. Schema validation then expects that profile. With `ADD_FILES_COPY`, validation follows the staged Parquet footer. With `FULL_INGEST`, it expects native temporal and geospatial types. Metrics validation runs on spec v3 too, and leaves out columns stored as `VARCHAR` the same way.
 
 **Prompt:**
 

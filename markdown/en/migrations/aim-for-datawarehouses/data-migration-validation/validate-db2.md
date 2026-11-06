@@ -26,32 +26,32 @@ host = "db2.example.com"
 port = "50000"
 ```
 
-Set `source_platform: db2` in the validation workflow YAML.
+Set `sourcePlatform: db2` in the validation workflow YAML.
 
-Row validation uses the same two transports as migration. With a bucket, prefer `cloud_direct`. Without a bucket, `regular` extracts through the Worker to an internal stage. `regular` doesn’t need an external stage. When row validation uses object storage, set `extraction.strategy` to `cloud_direct` and `extraction.externalStage` to the stage name. When more than one of `[connections.target.s3]`, `[connections.target.gcs]`, and `[connections.target.blob]` is present, the Worker prefers S3, then GCS, then Azure Blob, unless the workflow sets `storageBackend`. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
+Row validation uses the same two transports as migration. With a bucket, prefer `cloud_direct`. Without a bucket, `regular` extracts through the Worker to an internal stage. `regular` doesn’t need an external stage. When row validation uses object storage, set `extraction.strategy` to `cloud_direct` and `extraction.externalStage` to the stage name. When more than one of `[connections.target.s3]`, `[connections.target.gcs]`, and `[connections.target.blob]` is present, the Worker prefers S3, then GCS, then Azure Blob. See [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction).
 
 **Example workflow excerpt:**
 
 Copy code
 
 ```
-source_platform: db2
-target_database: TARGET_DB
-schema_mappings:
+sourcePlatform: db2
+targetDatabase: TARGET_DB
+schemaMappings:
   MYSCHEMA: PUBLIC
-validation_configuration:
-  schema_validation: true
-  metrics_validation: true
-  row_validation: false
+validationConfiguration:
+  schemaValidation: true
+  metricsValidation: true
+  rowValidation: false
 tables:
-  - fully_qualified_name: MYSCHEMA.CUSTOMERS
-    column_names_to_partition_by:
+  - fullyQualifiedName: MYSCHEMA.CUSTOMERS
+    columnNamesToPartitionBy:
       - CUSTOMER_ID
-  - fully_qualified_name: MYSCHEMA.ORDERS
-    column_names_to_partition_by:
+  - fullyQualifiedName: MYSCHEMA.ORDERS
+    columnNamesToPartitionBy:
       - ORDER_ID
-    validation_configuration:
-      row_validation: true
+    validationConfiguration:
+      rowValidation: true
 ```
 
 Validation can compare a DB2 view with a Snowflake view. Ask for that the same way you ask for a table.
@@ -102,9 +102,10 @@ Show lessSee more
 ## Platform-specific considerations
 
 - Reuse the same `[connections.source.db2]` Worker block as migration.
-- Set `source_platform: db2`.
+- Set `sourcePlatform: db2`.
 - Schema, metrics, and row validation are all available. Ask for row validation per table.
 - Prefer `cloud_direct` for row validation when a bucket and a matching external stage exist. Otherwise use `regular`.
+- Tables and created global temporary tables validate as tables. Views and materialized query tables validate as views, so supply their keys as described in [Keys for source views](../manual-migration/data-validation-configuration-reference#keys-for-source-views). Declared global temporary tables aren’t in `SYSCAT.TABLES`, so they’re treated as missing. See [How catalog kinds are classified](../manual-migration/data-validation-configuration-reference#how-catalog-kinds-are-classified).
 - `ROWID` isn’t validated.
 - **Anti-locking**: No automatic hint is added on IBM DB2. Set `queryModifiers` only when you need a custom source SQL hint. See [Anti-locking and query modifiers](../manual-migration/data-validation-configuration-reference#anti-locking-and-query-modifiers).
 

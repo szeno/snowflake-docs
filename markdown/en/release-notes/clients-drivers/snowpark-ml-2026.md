@@ -46,6 +46,111 @@ This example uses the library and signature for version 1.27.0 of the package. U
   Use the `imports` argument instead.
 - The `snowflake.ml.model.models.huggingface_pipeline.HuggingfacePipelineModel` class has been deprecated and will be removed in a future release.
 
+## Version 2.8.0 (2026-11-04)
+
+### New Features
+
+- Cortex: Added `cortex.evaluate()` and `cortex.optimize_prompt()`, which run AI function evaluation and
+  prompt optimization as Snowflake experiments on a versioned `snowflake.ml.Dataset`. `evaluate()` scores an
+  `AI_COMPLETE` model and prompt template with one metric and returns an `EvaluationJob`, whose `result()` is an
+  `EvaluationResult`. `optimize_prompt()` searches for better prompts and models and returns an
+  `OptimizationJob`, whose `result()` is an `OptimizationResult` with the cost/quality frontier of `Candidate`s and
+  selectors such as `best_quality()`, `cheapest()`, and `best_under_cost()`. Prompt placeholders `{0}`, `{1}`, …
+  must match the `inputs` columns.
+- Registry: Added support for logging TabICL tabular foundation model classifiers and regressors. A
+  fitted estimator is served *bound*: its training frame is packaged as the context and the estimator
+  is re-fit on load, so `predict` runs as a scalar function over the named feature columns. An unfitted
+  estimator is served *unbound* (in-context-learning): `predict` is a partitioned table function whose
+  input carries both the labeled context and the rows to score.
+
+### Bug Fixes
+
+- Cortex: `cortex.evaluate()` now works on AI function experiment executors before V14. It previously
+  failed with “specification must contain a top-level ‘evaluation’ or ‘optimization’ section”.
+- Feature Store: A streaming feature view’s backfill now pre-imports `copy`, `re`, `numpy` (as `np`) and
+  `pandas` (as `pd`), the names `StreamConfig` already allows a transformation function to use without
+  importing them. Previously only `pd` was available, so a function using bare `np` passed registration
+  and then failed during backfill.
+- Feature Store: Online reads over the WebSocket transport now raise `INVALID_ARGUMENT`, as HTTP reads do, when a
+  realtime feature view’s UDF fails in its own code (`UDF_EXECUTION_FAILED`), instead of an internal error.
+
+### Behavior Changes
+
+### Deprecations
+
+## Version 2.7.0 (2026-10-28)
+
+### New Features
+
+- Modeling: Added `preprocessing.FrequencyEncoder`, which encodes each category by its observed frequency
+  (`normalize=True`, the default) or raw count (`normalize=False`) from `fit` — a compact encoding for
+  high-cardinality categorical features. Encoding runs entirely in Snowflake for Snowpark DataFrames; local
+  pandas encoding uses the optional `category_encoders` package.
+- Feature Store: Online feature reads on the Postgres-backed Online Feature Store can now use a WebSocket
+  transport, which authenticates once per connection instead of once per request. Opt in by setting
+  `SNOWFLAKE_ML_ONLINE_WS_ENABLED=true`; `SNOWFLAKE_ML_ONLINE_WS_POOL_SIZE` sets how many connections are held
+  open, `SNOWFLAKE_ML_ONLINE_WS_PIPELINE_DEPTH` how many requests may be in flight per connection, and
+  `SNOWFLAKE_ML_ONLINE_WS_MAX_CONN_AGE_SECONDS` the longest a connection is held before it is replaced (connections
+  are otherwise replaced just before the lifetime the service advertises for each). Leaving
+  the flag unset or unrecognised keeps every read on HTTP, and reads fall back to HTTP automatically whenever
+  the WebSocket endpoint cannot serve, so behaviour is unchanged unless the flag is set. Requires the
+  `websocket-client` package.
+- Experiment Tracking: Runs can be paused and cancelled. `pause_run` moves a running run to `PAUSED`,
+  and `start_run` resumes a paused run back to `RUNNING`. `end_run` accepts `"CANCELLED"` in addition
+  to `"FINISHED"` and `"FAILED"`. Metrics, parameters, and artifacts can only be logged while a run is
+  running.
+
+### Bug Fixes
+
+- Feature Store: Feature column names are now written to the online feature table specification as the
+  name the column is actually stored under. A case-sensitive column was previously registered with its
+  quote delimiters attached (`"myCol"` instead of `myCol`), so the online columns did not match the
+  offline table the feature view was built from, and registration reported no error. A case-sensitive
+  secondary aggregation key is corrected the same way. A tiled feature view aggregating a case-sensitive
+  source column now resolves its partial columns instead of failing to build, and a case-sensitive feature
+  column is no longer dropped from an upstream source’s column list, nor does a case-sensitive entity
+  column appear among a realtime feature view’s features. Aggregation output
+  names derived from a case-sensitive source column are well-formed as well; they previously produced an
+  invalid identifier such as `"MYCOL"_SUM_24H`. `Feature.alias` now escapes an interior quote instead of
+  emitting it verbatim.
+- Feature Store: Postgres-backed online reads now return a column whose name is not plain upper case, such as
+  `feeSum2d` or `fee sum`, under its stored name with its values. The pandas result previously filled such a
+  column with NaN, and the Snowpark result renamed a mixed-case column to upper case (`FEESUM2D`).
+- Feature Store: Declarative `plan` no longer emits spurious `COLUMN_REMOVED` warnings for a batch feature view it
+  already reports as unchanged. The up-to-date check now applies the same `refresh_mode` normalization as the
+  planner, and the output-column diff ignores server-derived secondary-key columns. A genuine column removal still
+  warns.
+- Feature Store: `get_feature_view` no longer fails with “timestamp\_col … is not found in input dataframe” for tiled
+  feature views when the session’s current database differs from the feature store’s, or when the feature store
+  schema name is case-sensitive.
+- Feature Store: Imperatively registered batch feature views now stamp the source `query` in `FV_SOURCE_REFS`, so a
+  declarative export/init over them builds a valid `BatchSource`, and a bare
+  `update_feature_view(updated_feature_df=...)` evolve re-stamps the new binding.
+- Feature Store: The synthetic `FV_SOURCE_REFS` source name is now version-qualified (`<FV>_<VERSION>__SOURCE`), so two
+  versions of one batch feature view no longer collapse to one source and replan as `RECREATE_SOURCE`.
+- Registry: Models packaged with pip dependencies no longer embed a copy of the local `snowflake-ml-python` just
+  because its version is missing from the Snowflake Anaconda channel. Such models now install `snowflake-ml-python`
+  from PyPI.
+- ML Jobs: `MLJob.target_instances` now reports the instance count the job was submitted with instead of reading
+  `1` when the service’s live instance count is not yet available.
+- ML Jobs: `MLJob.get_logs(limit=n)` and `MLJob.show_logs(limit=n)` now return the most recent `n` lines when the
+  logs are read from the event table, as they already do for local container logs, instead of the first `n`.
+
+### Behavior Changes
+
+- Feature Store: `Feature.alias` now keeps the case of a name that is already written with double
+  quotes, so `alias('"myCol"')` produces the column `myCol` rather than `MYCOL`. It also rejects a
+  name that cannot form a valid identifier, such as `alias("total amount")`, instead of emitting a
+  broken one; pass `case_sensitive=True` to use such a name verbatim as a quoted column.
+- Feature Store: Defining a batch feature view whose aggregations read source columns that differ only in case,
+  such as `"feeAmount"` and `"FeeAmount"`, now raises a `ValueError`. Both columns map to the same internal tile
+  column, so their aggregations would otherwise share one column’s data.
+- Registry: `ModelVersion.create_service(block=True)` waits for the Snowflake
+  deploy statement to finish instead of failing locally after 30 minutes per
+  model-build status poll.
+
+### Deprecations
+
 ## Version 2.6.0 (2026-10-20)
 
 ### New Features
