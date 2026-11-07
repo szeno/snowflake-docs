@@ -48,13 +48,18 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [.NET Driver (v6.5.0)](/release-notes/clients-drivers/dotnet-2026)
 - [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
+- [Nov 5, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-05-dcr)
+- [Nov 05, 2026: Organization users and user groups in Organization Command Center (Preview)](/release-notes/2026/other/2026-11-05-organization-hub-command-center-users-preview)
 - [Nov 4, 2026: HTML reports (Preview)](/release-notes/2026/other/2026-11-04-html-reports-preview)
 - [Nov 4, 2026: Backups for Snowflake Storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-11-04-iceberg-backups)
 - [November 4, 2026: Background runs and additional supplementary tools for agents in the Snowflake-managed MCP server](/release-notes/2026/other/2026-11-04-mcp-async-agent-tools)
 - [Nov 4, 2026: AIM-Virtualization 3.180](/release-notes/aim-virtualization/aim-virtualization-3.180)
 - [Go Driver (v2.4.0)](/release-notes/clients-drivers/golang-2026)
+- [Python Connector (v5.2.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Snowflake ML Python (v2.8.0)](/release-notes/clients-drivers/snowpark-ml-2026)
+- [Nov 3, 2026: On-demand table creation for catalog-linked databases (General availability)](/release-notes/2026/other/2026-11-03-cld-on-demand-table-creation)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
 - [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
@@ -68,6 +73,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [JDBC Driver (v5.0.0-RC1)](/release-notes/clients-drivers/jdbc-2026)
 - [JDBC Driver (v4.4.1)](/release-notes/clients-drivers/jdbc-2026)
 - [Snowflake CLI (v3.32.1)](/release-notes/clients-drivers/snowflake-cli-2026)
+- [Nov 1, 2026: Apache Iceberg™ tables: Read and write across Snowflake accounts with Snowflake Horizon Catalog, now without managing secrets (General availability)](/release-notes/2026/other/2026-11-01-horizon-catalog-integration-wif-ga)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
@@ -167,6 +173,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
+- [Oct 8, 2026: Organization Trust Center Configuration in Command Center (Preview)](/release-notes/2026/other/2026-10-08-organization-hub-command-center-trust-center-preview)
 - [Oct 8, 2026: Stable egress IP addresses on Azure (General availability)](/release-notes/2026/other/2026-10-08-stable-egress-ip-azure-ga)
 - [Snowflake CLI (v3.29.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowpipe Streaming SDK (v1.9.0)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
@@ -174,8 +181,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)
 - [Oct 7, 2026: Zero-copy integration for Workday Data Cloud (General availability)](/release-notes/2026/other/2026-10-07-workday-data-cloud-zerocopy-ga)
 - [ServiceNow® V2 (v5.28.3)](/release-notes/connectors/servicenow-v2-2026)
-- [Oct 06, 2026: Kimi K3 model (Preview)](/release-notes/2026/other/2026-10-06-kimi-k3-preview)
-- [Oct 6, 2026: Data lineage for storage integrations, external tables, model monitors, and Cortex Search services](/release-notes/2026/other/2026-10-06-lineage-integrations-monitors-search)
-- [Snowflake ML Python (v2.4.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

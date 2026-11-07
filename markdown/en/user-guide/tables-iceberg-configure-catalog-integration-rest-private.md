@@ -24,18 +24,21 @@ For general information about outbound private connectivity in Snowflake, includ
 This topic covers the configuration steps for the following catalog types:
 
 - Generic Iceberg REST catalogs
+- Snowflake Horizon Catalog
 - AWS Glue Data Catalog
-- Databricks Unity Catalog
 - Amazon S3 Tables
+- Databricks Unity Catalog
 
 Note
 
-- Private connectivity is only supported for catalog integrations on AWS that use AWS PrivateLink and Azure that use Azure Private Link.
-- Private connectivity is only available within the same cloud provider; the catalog and the Snowflake deployment must be running in the same cloud provider.
+- Catalog endpoint provisioning is supported on AWS with AWS PrivateLink and Azure with Azure Private Link.
+- For a provisioned catalog endpoint, the catalog and the Snowflake account must be hosted on the same cloud provider.
 - To use catalog-vended credentials with private connectivity to storage, see [Configure private connectivity to storage for catalog-vended credentials](/user-guide/tables-iceberg-vended-credentials-private-connectivity).
 - For Amazon S3 Tables, this catalog-server private connectivity flow is required when you use private connectivity. S3 Tables uses
   catalog-vended credentials. For the complete S3 Tables flow, including the bucket policy and the paired S3 storage endpoint, see
   [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
+- For Snowflake Horizon Catalog in another Snowflake account, see
+  [Use private connectivity for the catalog API](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-private).
 
 ## Step 1: Gather private connectivity information for your catalog
 
@@ -43,11 +46,45 @@ You must gather private connectivity information to specify it later when you [p
 When you provision a corresponding private connectivity endpoint, you create an AWS PrivateLink endpoint in Snowflake when your Snowflake
 account is hosted in AWS or you create an Azure private endpoint when your Snowflake account is hosted on Azure.
 
-Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST catalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 - To gather private connectivity information for your catalog, see the documentation for the remote REST Iceberg catalog.
 
   The following example is an AWS VPC Endpoint Service ID in AWS: `com.amazonaws.vpce.us-west-2.vpce-svc-0123456789abcdef`.
+
+The provider account contains the Iceberg tables and exposes them through Horizon Catalog. The consumer account contains the catalog
+integration. For the complete connection workflow, see [Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon).
+
+When you configure `CATALOG_API_TYPE = PRIVATE`, the route for catalog API requests depends on the accounts’ regions:
+
+- If the provider and consumer accounts are in the same region, Snowflake routes catalog API requests internally. You don’t need to
+  provision a catalog endpoint in the consumer account.
+- If the accounts are in different regions, provision a private endpoint in the consumer account to reach the provider’s catalog API.
+
+This routing applies to catalog API requests. To also use private connectivity for table storage with vended credentials, follow
+[Configure private connectivity to storage for catalog-vended credentials](/user-guide/tables-iceberg-vended-credentials-private-connectivity).
+
+In the provider account, run:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+SELECT SYSTEM$GET_PRIVATELINK_CONFIG();
+```
+
+Record `regionless-privatelink-account-url`, the provider account’s PrivateLink hostname. Prefix it with `https://` and append
+`/polaris/api/catalog` to form the private catalog URL.
+
+For accounts in different regions, also gather the endpoint information for your cloud:
+
+AWSAzure
+
+Record `privatelink-vpce-id`, the provider’s endpoint service name. Use this value when you provision the catalog endpoint in the
+consumer account.
+
+Record `privatelink-pls-id`, the provider’s Private Link service alias. Obtain the resource ID associated with this alias for endpoint
+provisioning. For instructions, see [Return values for SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config#label-get-privatelink-config-output).
 
 You must find the provider service name and host name for your AWS Glue Data Catalog:
 
@@ -66,6 +103,16 @@ Note
 
 Alternatively, to retrieve these values, you can use the describe-vpc-endpoint-services subcommand from the AWS command line. For
 more information, see [Provision private connectivity endpoints](/user-guide/private-manage-endpoints-aws#label-private-link-external-access-aws-create-endpoints).
+
+Amazon S3 Tables is a fully managed AWS service. You don’t gather any catalog-side endpoint information; AWS publishes the
+provider service name and host name as standard values for each AWS region.
+
+- **Provider service name** (`<provider_service_name>`): `com.amazonaws.<region>.s3tables`
+- **Host name** (`<host_name>`): `s3tables.<region>.amazonaws.com`
+
+Replace `<region>` with the AWS region where your S3 Tables bucket lives (for example, `us-west-2`).
+
+For background, see [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 AWSAzure
 
@@ -125,22 +172,12 @@ You must find the resource ID for your Databricks workspace in the Azure portal 
       For example, if your Databricks per-workspace URL is `https://adb-1234567890123456.12.azuredatabricks.net`, your
       Databricks workspace host name is `adb-1234567890123456.12.azuredatabricks.net`.
 
-Amazon S3 Tables is a fully managed AWS service. You don’t gather any catalog-side endpoint information; AWS publishes the
-provider service name and host name as standard values for each AWS region.
-
-- **Provider service name** (`<provider_service_name>`): `com.amazonaws.<region>.s3tables`
-- **Host name** (`<host_name>`): `s3tables.<region>.amazonaws.com`
-
-Replace `<region>` with the AWS region where your S3 Tables bucket lives (for example, `us-west-2`).
-
-For background, see [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
-
 ## Step 2: Provision a private connectivity endpoint
 
 In this step, you provision a private connectivity endpoint in the Snowflake VPC or VNet to enable Snowflake to connect to the remote
 Iceberg REST catalog by using private connectivity.
 
-Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST catalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 - To provision a private connectivity endpoint, call the [SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint) system function.
 
@@ -157,6 +194,48 @@ Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon 
     'my.catalog.com'
     );
   ```
+
+If the provider and consumer accounts are in the same region, continue to
+[Step 5](#label-iceberg-rest-private-step3). Snowflake routes the catalog connection internally.
+
+For accounts in different regions, provision the endpoint in the consumer account. Use the provider’s PrivateLink account hostname
+from [Step 1](#label-tables-iceberg-configure-catalog-integration-rest-private-gather-private-connectivity-information-catalog), without
+`https://` or the catalog API path.
+
+AWSAzure
+
+Use the provider’s endpoint service name returned as `privatelink-vpce-id`:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT(
+  '<provider_service_name>',
+  '<provider_privatelink_account_hostname>'
+);
+```
+
+Snowflake approves the connection automatically. You don’t need to run a PrivateLink authorization function.
+
+Use the provider’s Private Link service resource ID obtained in Step 1:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT(
+  '<provider_resource_id>',
+  '<provider_privatelink_account_hostname>'
+);
+```
+
+Authorize the private endpoint after provisioning. The connection isn’t approved automatically. Complete endpoint authorization before
+you continue to Step 3.
+
+For cloud-specific requirements, see [SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint).
 
 - To provision a private connectivity endpoint, call the [SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint) system function:
 
@@ -191,6 +270,28 @@ Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon 
   You only need to provision one private connectivity endpoint in the Snowflake VPC. This is because, with AWS Glue, you can use one Glue private connectivity endpoint to
   access everything managed by the AWS Glue Data Catalog in the same region. For more information, see [Creating an interface VPC endpoint for AWS Glue](https://docs.aws.amazon.com/glue/latest/dg/vpc-interface-endpoints.html#vpc-endpoint-create)
   in the AWS documentation.
+
+To provision a private connectivity endpoint for the S3 Tables service, call the
+[SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint) system function:
+
+Copy code
+
+```
+USE ROLE ACCOUNTADMIN;
+
+SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT(
+  'com.amazonaws.<region>.s3tables',
+  's3tables.<region>.amazonaws.com'
+);
+```
+
+Replace `<region>` with your AWS region (for example, `us-west-2`).
+
+Note
+
+Private connectivity for Amazon S3 Tables also requires a private connectivity endpoint for S3 storage.
+For the complete flow, including the storage endpoint and the bucket policy, see
+[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 You only need to provision one private connectivity endpoint. Unity requires just one private connectivity endpoint to access everything managed by the Unity Catalog in the same region.
 
@@ -266,32 +367,11 @@ AWSAzure
   );
   ```
 
-To provision a private connectivity endpoint for the S3 Tables service, call the
-[SYSTEM$PROVISION\_PRIVATELINK\_ENDPOINT](/sql-reference/functions/system_provision_privatelink_endpoint) system function:
-
-Copy code
-
-```
-USE ROLE ACCOUNTADMIN;
-
-SELECT SYSTEM$PROVISION_PRIVATELINK_ENDPOINT(
-  'com.amazonaws.<region>.s3tables',
-  's3tables.<region>.amazonaws.com'
-);
-```
-
-Replace `<region>` with your AWS region (for example, `us-west-2`).
-
-Note
-
-Private connectivity for Amazon S3 Tables also requires a private connectivity endpoint for S3 storage.
-For the complete flow, including the storage endpoint and the bucket policy, see
-[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
-
 ## Step 3: Verify the endpoint status
 
 In this step, you verify the endpoint status of the private connectivity endpoint in the Snowflake VPC or VNet that you provisioned in the
-previous step.
+previous step. For Horizon Catalog connections between accounts in the same region, skip this step because no catalog endpoint is
+provisioned.
 
 - To verify the endpoint status, call the [SYSTEM$GET\_PRIVATELINK\_ENDPOINTS\_INFO](/sql-reference/functions/system_get_privatelink_endpoints_info) system function:
 
@@ -301,7 +381,7 @@ previous step.
   SELECT SYSTEM$GET_PRIVATELINK_ENDPOINTS_INFO();
   ```
 
-  The endpoint is ready to use when the `status` changes from `pending` to `available`.
+  The endpoint is ready to use when the `status` is `Available` on AWS or `APPROVED` on Azure.
 
 ## Step 4: Additional catalog-specific configuration
 
@@ -312,10 +392,18 @@ Note
 For some catalogs or some types of private connectivity endpoints, you also need to approve the connection or allowlist the private
 connectivity endpoints on the catalog server side.
 
-Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST catalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 - To complete the additional configuration steps, see the documentation for the remote REST Iceberg catalog, and then proceed
   to [the next step](#label-iceberg-rest-private-step3).
+
+Horizon Catalog authorizes the consumer through a service user and role grants in the provider account.
+After you create the catalog integration in [Step 5](#label-iceberg-rest-private-step3), retrieve its workload identity and configure
+the provider service user before verifying the connection. For instructions, see
+[Step 3: Retrieve the catalog integration identity (consumer account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-get-identity) and
+[Step 4: Create and authorize a service user (provider account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-create-user).
+
+No additional configuration is required. Proceed to [the next step](#label-iceberg-rest-private-step3).
 
 No additional configuration is required. Proceed to [the next step](#label-iceberg-rest-private-step3).
 
@@ -373,13 +461,11 @@ To approve the private connectivity from Snowflake, complete the following steps
 4. From the list of private endpoint connections, click the **checkbox** next to the private endpoint connection that you want to approve.
 5. Above the list, click the **Approve** button.
 
-No additional configuration is required. Proceed to [the next step](#label-iceberg-rest-private-step3).
-
 ## Step 5: Create a catalog integration
 
 In this step, to enable private connectivity, you configure a catalog integration for the catalog REST endpoint.
 
-Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST catalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 - To configure this catalog integration, run the [CREATE CATALOG INTEGRATION](/sql-reference/sql/create-catalog-integration-rest) command.
 
@@ -412,6 +498,37 @@ Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon 
 
   For more information, including the supported authentication methods, see [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest).
 
+In the consumer account, create a `POLARIS` catalog integration with workload identity federation. Use the provider account’s private
+catalog URL from
+[Step 1](#label-tables-iceberg-configure-catalog-integration-rest-private-gather-private-connectivity-information-catalog):
+
+Copy code
+
+```
+CREATE CATALOG INTEGRATION horizon_catalog_int
+  CATALOG_SOURCE = POLARIS
+  TABLE_FORMAT = ICEBERG
+  REST_CONFIG = (
+    CATALOG_URI = 'https://<orgname>-<provider_account_name>.privatelink.snowflakecomputing.com/polaris/api/catalog'
+    CATALOG_API_TYPE = PRIVATE
+    CATALOG_NAME = '<database_name>'
+    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+  )
+  REST_AUTHENTICATION = (
+    TYPE = OAUTH
+    OAUTH_GRANT_TYPE = TOKEN_EXCHANGE
+    OAUTH_ALLOWED_SCOPES = ('session:role:<role_name>')
+  )
+  ENABLED = TRUE;
+```
+
+Use a database and role in the provider account. After creating the integration, retrieve its identity and configure the provider
+service user. For instructions, see [Step 3: Retrieve the catalog integration identity (consumer account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-get-identity) and
+[Step 4: Create and authorize a service user (provider account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-create-user).
+
+This example uses vended credentials. To also configure private access from the consumer account to table storage, see
+[Configure private connectivity to storage for catalog-vended credentials](/user-guide/tables-iceberg-vended-credentials-private-connectivity).
+
 - To configure this catalog integration, follow the steps in [Configure a catalog integration for AWS Glue Iceberg REST](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue).
 
   Important
@@ -439,6 +556,42 @@ Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon 
     )
     ENABLED = TRUE;
   ```
+
+To configure this catalog integration, run the [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) command
+with `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES` and catalog-vended credentials enabled.
+
+Important
+
+For S3 Tables with outbound private connectivity, you must specify `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES`,
+`ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS`, and `DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE)`.
+
+For example:
+
+Copy code
+
+```
+CREATE OR REPLACE CATALOG INTEGRATION s3tables_catalog_int_private
+  CATALOG_SOURCE = ICEBERG_REST
+  TABLE_FORMAT = ICEBERG
+  REST_CONFIG = (
+    CATALOG_URI = 'https://s3tables.<region>.amazonaws.com/iceberg'
+    CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES
+    CATALOG_NAME = 'arn:aws:s3tables:<region>:<account_id>:bucket/<table_bucket_name>'
+    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = 'arn:aws:iam::<account_id>:role/<role_name>'
+    SIGV4_SIGNING_REGION = '<region>'
+  )
+  DEFAULT_STORAGE_CONFIG = (
+    USE_PRIVATELINK_ENDPOINT = TRUE
+  )
+  ENABLED = TRUE;
+```
+
+For the full S3 Tables setup, including IAM role configuration and the bucket policy, see
+[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 AWSAzure
 
@@ -584,43 +737,10 @@ AWSAzure
     [gathered private connectivity information for your catalog](#label-tables-iceberg-configure-catalog-integration-rest-private-gather-private-connectivity-information-catalog).
     For example, `https://adb-1234567890123456.12.azuredatabricks.net` is a Databricks per-workspace URL.
 
-To configure this catalog integration, run the [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) command
-with `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES` and catalog-vended credentials enabled.
-
-Important
-
-For S3 Tables with outbound private connectivity, you must specify `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES`,
-`ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS`, and `DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE)`.
-
-For example:
-
-Copy code
-
-```
-CREATE OR REPLACE CATALOG INTEGRATION s3tables_catalog_int_private
-  CATALOG_SOURCE = ICEBERG_REST
-  TABLE_FORMAT = ICEBERG
-  REST_CONFIG = (
-    CATALOG_URI = 'https://s3tables.<region>.amazonaws.com/iceberg'
-    CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES
-    CATALOG_NAME = 'arn:aws:s3tables:<region>:<account_id>:bucket/<table_bucket_name>'
-    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
-  )
-  REST_AUTHENTICATION = (
-    TYPE = SIGV4
-    SIGV4_IAM_ROLE = 'arn:aws:iam::<account_id>:role/<role_name>'
-    SIGV4_SIGNING_REGION = '<region>'
-  )
-  DEFAULT_STORAGE_CONFIG = (
-    USE_PRIVATELINK_ENDPOINT = TRUE
-  )
-  ENABLED = TRUE;
-```
-
-For the full S3 Tables setup, including IAM role configuration and the bucket policy, see
-[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
-
 ## Step 6: Verify your catalog integration
+
+For Horizon Catalog, complete the service-user authorization in the provider account before verifying the integration in the consumer
+account.
 
 - To verify your catalog integration configuration, call the SYSTEM$VERIFY\_CATALOG\_INTEGRATION function.
 
@@ -630,11 +750,19 @@ For the full S3 Tables setup, including IAM role configuration and the bucket po
 
 We recommend that you update the configuration for your remote catalog so that it’s only accessible through private connectivity.
 
-Generic Iceberg REST catalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST catalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 - To disable public access to your catalog, see the documentation for the remote catalog that you want to connect to through private connectivity.
 
+In the provider account, manage public access by following [Private connectivity for inbound network traffic](/user-guide/private-connectivity-inbound).
+These settings apply to access to the provider account, including its Horizon Catalog API. Coordinate account-level access policies
+with the provider’s administrator.
+
 AWS Glue Data Catalog doesn’t support restricting access to only allowlisted VPC endpoints.
+
+No additional configuration is required at the catalog level. For Amazon S3 Tables, restricting access to allowlisted
+VPC endpoints is configured through the S3 Tables bucket policy. For instructions, see
+[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 AWSAzure
 
@@ -643,10 +771,6 @@ AWSAzure
 
 - To disable public access to your catalog, see [Configure Front-end Private Link](https://learn.microsoft.com/en-us/azure/databricks/security/network/front-end/front-end-private-connect)
   in the Azure Databricks documentation.
-
-No additional configuration is required at the catalog level. For Amazon S3 Tables, restricting access to allowlisted
-VPC endpoints is configured through the S3 Tables bucket policy. For instructions, see
-[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 ## Next steps
 

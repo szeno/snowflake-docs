@@ -32,8 +32,15 @@ NULL\_COUNT, DUPLICATE\_COUNT, and ROW\_COUNT) and for most custom DMFs.
 The following system DMFs aren’t supported with WITHIN GROUP:
 
 - FRESHNESS and SECONDS\_SINCE\_ROW\_COUNT\_CHANGE, because they operate on the table as a whole and don’t take column arguments.
+- DMFs that measure table metadata (SCHEMA\_CHANGE\_COUNT, SCHEMA\_CHANGE\_ADD\_COUNT, SCHEMA\_CHANGE\_DROP\_COUNT,
+  SCHEMA\_CHANGE\_TYPE\_COUNT, and TABLE\_SIZE\_BYTES), because they measure the table rather than its rows.
 - DMFs with a reference table (REFERENTIAL\_INTEGRITY\_COUNT, ROW\_COUNT\_DIFFERENCE, and SOURCE\_TARGET\_LAG), because they compare
   two tables and can’t be evaluated within a single group.
+- The outlier DMFs (OUTLIER\_COUNT, OUTLIER\_PERCENT, EXTREME\_OUTLIER\_COUNT, EXTREME\_OUTLIER\_PERCENT, and their IQR and ZSCORE
+  variants).
+- R\_SQUARED.
+
+If you use WITHIN GROUP with one of these DMFs, an error is returned when you create the association.
 
 Note
 

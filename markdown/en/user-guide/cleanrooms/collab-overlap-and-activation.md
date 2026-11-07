@@ -43,7 +43,7 @@ Show lessSee more
 
 ### Prerequisites
 
-1. Standard templates already exist in the template registry. You can confirm by calling *REGISTRY.VIEW\_REGISTERED\_TEMPLATES* to check if *standard\_audience\_overlap\_v0* and *standard\_audience\_overlap\_activation\_v0* already exist. If not, the below must be executed:
+1. Standard templates already exist in the template registry. You can confirm by calling *REGISTRY.VIEW\_REGISTERED\_TEMPLATES* to check if *standard\_audience\_overlap\_v0* and *standard\_audience\_overlap\_activation\_v0* already exist. If not, call [REGISTRY.REGISTER\_STANDARD\_DCR\_TEMPLATES](/user-guide/cleanrooms/collaboration-api-reference#label-dcr-collaboration-register-standard-dcr-templates-reference):
 
 Copy code
 

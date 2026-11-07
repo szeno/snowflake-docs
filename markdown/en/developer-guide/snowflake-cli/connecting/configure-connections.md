@@ -751,7 +751,7 @@ When using OIDC as a provider, you need to retrieve the token from your environm
 - `SNOWFLAKE_CONNECTIONS_<connection_name>_TOKEN` environment variable
 - `token_file_path` in your `config.toml` file
 
-For more information, see [Snowflake CLI GitHub Action](/developer-guide/snowflake-cli/cicd/github-action).
+For more information, see [GitHub Actions](/developer-guide/cicd/github-action).
 
 #### Connect to Snowflake using a temporary WIF connection
 

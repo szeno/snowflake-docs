@@ -37,6 +37,9 @@ For more information, including costs associated with premium views, see [Premiu
 
 Organizations with more than one account sometimes need someone to manage a user or role in multiple accounts. If you don’t want to create
 a separate user or role in each account, then you can create an organization user and organization user group in the organization account.
+You can also manage organization users and user groups from the
+[Organization users and user groups](/user-guide/organization-hub-command-center-users) tile in Organization Command
+Center (preview).
 
 For more information, see [Organization users](/user-guide/organization-users).
 

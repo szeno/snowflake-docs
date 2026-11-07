@@ -1,7 +1,8 @@
 # TRUST\_CENTER schema
 
 In the SNOWFLAKE database, the TRUST\_CENTER schema contains views that contain data about the
-[Trust Center extensions](/user-guide/trust-center/trust-center-extensions).
+[Trust Center extensions](/user-guide/trust-center/trust-center-extensions), and stored procedures for organization-level
+scanner configuration.
 
 ## TRUST\_CENTER views
 
@@ -14,6 +15,11 @@ The TRUST\_CENTER schema provides the following views:
 Expand
 
 Show lessSee more
+
+## TRUST\_CENTER stored procedures
+
+The TRUST\_CENTER schema also provides stored procedures that set organization-level scanner package and scanner defaults.
+For syntax and examples, see [Trust Center organization-level configuration procedures](/sql-reference/trust_center/trust-center-org-config).
 
 ## Accessing views in the TRUST\_CENTER schema
 

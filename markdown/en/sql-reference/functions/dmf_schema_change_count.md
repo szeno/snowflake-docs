@@ -27,5 +27,6 @@ The function returns a scalar value with a NUMBER data type.
 
 ## Usage notes
 
-You can’t call this function directly. To learn how to associate the function with a table or view so it runs at regular
-intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).
+- You can’t call this function directly. To learn how to associate the function with a table or view so it runs at regular
+  intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).
+- You can’t use [WITHIN GROUP](/user-guide/data-quality-group-by) with this function.

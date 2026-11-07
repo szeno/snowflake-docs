@@ -393,6 +393,10 @@ Note
 To identify tables that Snowflake created but couldn’t initialize, use the
 [SHOW ICEBERG TABLES](/sql-reference/sql/show-iceberg-tables) command. For more information, see [Identify tables that were created but couldn’t be initialized](/user-guide/tables-iceberg-catalog-linked-database#label-catalog-linked-db-identify-tables-not-initialized).
 
+You can query a table by name before the next sync. If the table exists in your remote catalog,
+Snowflake creates it as part of that query. For more information, see
+[On-demand table creation](/user-guide/tables-iceberg-catalog-linked-database#label-catalog-linked-db-on-demand-creation).
+
 ## Step 8: Work with Iceberg tables
 
 After the catalog sync completes, you can query and insert data into your Unity Catalog-managed Iceberg tables

@@ -29,9 +29,15 @@ allow.
 
 ## Prerequisites
 
-You must use the ACCOUNTADMIN role, or a role with equivalent privileges, to
-enable Cortex Code and to change its setup, profiles, connectors, and
-integrations.
+Only users who are granted the ACCOUNTADMIN role can see the CoCo Admin page and
+use it to enable Cortex Code and change its setup, connectors, and integrations.
+
+A role that is granted the CREATE AGENT privilege on the `CORTEX_CODE.CONFIG`
+schema can also open the CoCo Admin page, to manage profiles on the Profiles tab.
+Before you open the page, switch to that role in Snowsight. The page checks your
+current role, so a privilege that you hold only through a role that isn’t active
+doesn’t count. For the privileges that each profile task requires, see
+[Access control requirements](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-access).
 
 ## Open the CoCo Admin page
 
@@ -273,40 +279,162 @@ each dialog.
 
 ### Profiles tab
 
-A CoCo profile is a default configuration (model, skills, and behavior) that you
-publish for selected roles. Roles control who can see and use the profile; which
-profile actually applies depends on the account default and on any selection the
-user makes in their client (Snowsight, Desktop, or CLI). Users can override,
-customize, or opt out at session time, so a profile sets good defaults without
-locking users in.
+A profile sets the model, skills, and instructions that CoCo uses for the users
+it applies to. Users don’t need to install or configure anything. You can create
+two kinds of profile:
 
-Each profile defines:
+- **Default profile:** sets default settings, such as the model and skills, for
+  everyone in the account who uses CoCo. It’s the profile named `DEFAULT`, and
+  it’s granted to the PUBLIC role. An account has one default profile.
+- **Team profile:** sets shared settings for a specific team, such as data
+  scientists or data engineers. You grant it to the roles that the team’s users
+  have, such as `DATA_SCIENTIST` or `DATA_ENGINEER`.
 
-| Field | Description |
-| --- | --- |
-| **Profile name** | The name of the profile. |
-| **Roles** | The roles that can use this profile. Which profile applies depends on the account default and on the user’s own selection. |
-| **Model** | The default model, for example Auto or a specific model you choose. |
-| **Skills** | The skills enabled by default. |
-| **System instructions** | Guidance for how the profile should behave. |
-| **Response instructions** | Guidance for how responses should be written. |
+Users don’t need to do anything to get a profile. CoCo applies one to their new
+chats automatically when either of these is true:
 
-Expand
+- The default profile exists and the user’s role can see it.
+- The user’s role can see exactly one profile.
 
-Show lessSee more
+In [CoCo mode](/user-guide/cortex-code/cortex-code-snowsight/coco-mode), users
+choose a profile for each session, or set a default profile for new sessions in
+CoCo mode settings.
 
-#### Create a profile
+Users can still choose another profile, choose another model for a chat, or add
+their own skills. For the full rules, see
+[How a profile is chosen automatically](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-selection).
 
-1. On the Profiles tab, select **Create profile**.
-2. Enter a **Profile name** and an optional **Description**.
-3. Under **Roles with access**, select the roles this profile applies to.
-4. Select a default **Model** (or leave **Auto** to let CoCo choose).
-5. (Optional) Select **Add** to add one or more skills.
-6. (Optional) Enter **System instructions** and **Response instructions**.
+The Profiles tab lists the profiles in the `CORTEX_CODE.CONFIG` schema, with the
+default profile first. If the account has no profiles, the tab shows a
+**Default profile** card and a **Team profile** card to start from. You can
+return to the Profiles tab at any time to change a profile’s model, skills,
+instructions, or roles, or to delete it.
+
+#### Set up profiles for the first time
+
+1. Enable Cortex Code for your account and grant users access to it, as
+   described in [Part 1: Enable Cortex Code](#label-cortex-code-admin-enable).
+2. Decide which kind of profile you need:
+   - To give everyone the same model and skills, create the default profile.
+   - To give different teams different settings, create a team profile for
+     each team.
+3. If a profile uses skills, make sure that each skill is on a Snowflake stage
+   or in the skill catalog. For more information, see
+   [Skill locations](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-skill-sources).
+4. Create the profile, as described in
+   [Create the default profile](#label-cortex-code-admin-create-default-profile)
+   or [Create a team profile](#label-cortex-code-admin-create-profile).
+5. Test the profile as a user would. For the steps, see
+   [Verify a profile](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-verify).
+
+The Profiles tab is available to users who are granted the ACCOUNTADMIN role. To
+let another role manage profiles without ACCOUNTADMIN, grant it the CREATE AGENT
+privilege on the `CORTEX_CODE.CONFIG` schema. If the `CORTEX_CODE` database and
+`CONFIG` schema don’t exist yet, create the first profile as a user who is
+granted ACCOUNTADMIN, which creates them, or create them with
+`CREATE DATABASE` and `CREATE SCHEMA`. Then run the following statements as
+ACCOUNTADMIN:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CORTEX_CODE TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CORTEX_CODE.CONFIG TO ROLE <role_name>;
+GRANT CREATE AGENT ON SCHEMA CORTEX_CODE.CONFIG TO ROLE <role_name>;
+```
+
+#### Create the default profile
+
+1. On the Profiles tab, do one of the following:
+
+   - If the account has no profiles, select **Create default profile** on the
+     **Default profile** card.
+   - Otherwise, open the **Create profile** menu, and then select **Create
+     default profile**. This option appears only while the account has no
+     default profile.
+
+   The profile name `DEFAULT`, the description, and the PUBLIC role are filled
+   in and can’t be changed.
+2. Select a **Default model**, or leave **Auto** to let Snowflake choose.
+3. Optionally, under **Skills**, select **Add**, and then select **Add from
+   stage** or **Add from skill catalog**.
+4. Optionally, enter **Orchestration instructions** and **Response
+   instructions**.
+5. Select **Create profile**.
+
+To change the default profile later, return to the Profiles tab and edit the
+`DEFAULT` profile. Only the role that owns `DEFAULT` can edit it, which is
+ACCOUNTADMIN if you created it as a user who is granted ACCOUNTADMIN. For more
+information, see
+[The default profile](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-default).
+
+#### Create a team profile
+
+1. On the Profiles tab, select **Create profile**. If the account has no
+   profiles, select **Create profile for a team** on the **Team profile** card.
+2. Enter a **Profile name**, such as `DATA_ENGINEERING`, and an optional
+   **Description**.
+3. Under **Roles with access**, select the roles that can use the profile, such
+   as `DATA_ENGINEER`.
+4. Select a **Model**, or leave **Auto** to let Snowflake choose.
+5. Optionally, under **Skills**, select **Add**, and then select **Add from
+   stage** or **Add from skill catalog**.
+6. Optionally, enter **Orchestration instructions** and **Response
+   instructions**.
 7. Select **Create profile**.
 
+The default profile is granted to PUBLIC, and every role inherits PUBLIC. So if
+the account has a default profile, the team’s users get the default profile
+until they choose the team profile. To have a team get its profile
+automatically, make the team profile the only one that the team’s role can see:
+on the Profiles tab, edit the `DEFAULT` profile and, in its **Manage** section,
+replace PUBLIC with the roles that should use it. Only the role that owns
+`DEFAULT` can edit it. For more information, see
+[Plan profiles for your account](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-plan).
+
+#### Grants that CoCo Admin adds
+
+If your user is granted the ACCOUNTADMIN role, CoCo Admin creates the profile as
+ACCOUNTADMIN, whatever your active role is, so ACCOUNTADMIN owns the profile. It
+also creates the `CORTEX_CODE` database and `CONFIG` schema if they don’t
+exist. It grants USAGE on the database, the schema, and the profile to the
+roles that you selected.
+
+If your user isn’t granted ACCOUNTADMIN, CoCo Admin grants USAGE on the profile
+only. Grant USAGE on the `CORTEX_CODE` database and the `CORTEX_CODE.CONFIG`
+schema to the same roles, or their users can’t see the profile:
+
+Copy code
+
+```
+GRANT USAGE ON DATABASE CORTEX_CODE TO ROLE <role_name>;
+GRANT USAGE ON SCHEMA CORTEX_CODE.CONFIG TO ROLE <role_name>;
+```
+
+For how CoCo chooses a profile, the privileges each task requires, how users
+choose a profile, and how to manage profiles with SQL, see
+[CoCo Profiles](/user-guide/cortex-code/cortex-code-snowsight/profiles).
+
 #### View, edit, or delete a profile
+
+Only the role that owns a profile, or a role that inherits the owning role, can
+edit or delete it. Other roles see the profile, but **Edit** and **Delete** aren’t
+available. For example, a role that has CREATE AGENT on `CORTEX_CODE.CONFIG` can’t
+edit or delete profiles that ACCOUNTADMIN created, including `DEFAULT`. To let
+another role manage such a profile, transfer ownership of the profile to that
+role:
+
+Copy code
+
+```
+GRANT OWNERSHIP ON AGENT CORTEX_CODE.CONFIG.<profile_name>
+  TO ROLE <role_name> COPY CURRENT GRANTS;
+```
 
 - Select **Quick view** on a profile row to open a details panel showing its
   roles, model, and skills, with **Edit** and **Delete** actions.
 - Select the row’s **More actions** menu for **Edit** and **Delete profile**.
+- To change which roles can use a profile, edit the profile and open its
+  **Manage** section. A role that you add there gets USAGE on the profile only.
+  If the role doesn’t already have USAGE on the `CORTEX_CODE` database and the
+  `CORTEX_CODE.CONFIG` schema, grant it.

@@ -18,6 +18,9 @@ Snowflake bills your account for the following usage:
 - Create table. Snowflake will bill your account for this usage under the CREDITS\_USED\_COMPUTE usage type through auto refresh.
   The cost for this usage is described in Table 5 of the [Snowflake service consumption table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf) on the Snowflake website.
   Refer to the Snowflake-managed compute column for the Automated Refresh and Data Registration row.
+- Creating a table when you query it before Snowflake has registered it. That work runs on the
+  virtual warehouse that runs your statement, and Snowflake bills it as normal warehouse usage. For more information, see
+  [On-demand table creation](#label-catalog-linked-db-on-demand-creation).
 
 Snowflake won’t bill you for any cloud services that you use during table creation.
 
@@ -142,6 +145,72 @@ USE DATABASE my_linked_db;
 
 SELECT * FROM my_namespace.my_iceberg_table
   LIMIT 20;
+```
+
+If the table exists in your remote catalog but Snowflake hasn’t registered it yet, that statement
+creates the table instead of failing. For more information, see [On-demand table creation](#label-catalog-linked-db-on-demand-creation).
+
+## On-demand table creation
+
+Snowflake discovers new tables from your remote catalog automatically, on a regular sync interval.
+On-demand table creation lets you skip that wait: if you reference a table that exists in your
+remote catalog but isn’t registered in your catalog-linked database yet, Snowflake creates it as
+part of running your statement instead of returning an error.
+
+Normally, a table becomes available in a catalog-linked database only after Snowflake’s automatic
+discovery process syncs with your remote catalog. If you add a table to the remote catalog and then
+immediately query it from Snowflake by name, the query can fail because Snowflake hasn’t
+discovered the table yet.
+
+With on-demand table creation, referencing a not-yet-registered table by name triggers Snowflake to
+create it during that statement, provided the table exists in the remote catalog. This can also
+create the schema if the schema itself isn’t registered yet. You don’t need to wait for the next
+discovery cycle.
+
+### Reference a table before it’s registered
+
+If you run a statement against a table that exists in your remote catalog but isn’t yet registered
+in your catalog-linked database, Snowflake creates the table (and its schema, if that’s also
+missing) and then completes your statement against it. That first statement might take longer than
+later ones, because Snowflake creates the table as part of running it.
+
+Copy code
+
+```
+USE DATABASE my_linked_db;
+
+SELECT * FROM my_namespace.new_iceberg_table
+  LIMIT 20;
+```
+
+On-demand table creation applies to the following statements:
+
+- `SELECT`, including tables referenced in common table expressions (CTEs), subqueries, and views.
+- The `SELECT` part of `CREATE TABLE ... AS SELECT` and `CREATE VIEW ... AS SELECT`.
+- DML statements such as `INSERT`, `UPDATE`, `DELETE`, and `MERGE`, whether the statement reads from
+  or writes to the table. For `INSERT ... SELECT` and `MERGE`, this applies to both the target table and
+  the source table.
+- `DESCRIBE TABLE`.
+
+On-demand table creation doesn’t apply to other statements, such as `CREATE` (for the table being
+created), `DROP`, `ALTER` (including `ALTER ICEBERG TABLE ... REFRESH`), `GRANT`, `REVOKE`, and
+`COMMENT`. Until Snowflake registers a table, the table doesn’t appear in the output of
+[SHOW ICEBERG TABLES](/sql-reference/sql/show-iceberg-tables) or in [INFORMATION\_SCHEMA](/sql-reference/info-schema) and
+[ACCOUNT\_USAGE](/sql-reference/account-usage) views.
+
+If the table doesn’t exist in your remote catalog either, the statement returns a standard
+object-does-not-exist error, the same as it would for any missing table. The same is true if
+Snowflake would need to create the schema and the schema’s namespace is excluded by the database’s
+ALLOWED\_NAMESPACES or BLOCKED\_NAMESPACES list.
+
+Snowflake runs this creation on the virtual warehouse that runs your statement, and bills it as
+normal warehouse usage. The `CREATE ICEBERG TABLE` statement that Snowflake runs to create the table
+appears in your query history even though you didn’t run it yourself.
+
+If Snowflake can’t create the table, the statement returns an error similar to the following:
+
+```
+SQL Execution Error: Create of table 'my_iceberg_table' in the catalog-linked database failed: reason
 ```
 
 ## Write to your remote catalog

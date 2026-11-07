@@ -21,7 +21,11 @@ The pandas-oriented API methods work with:
 
 - Snowflake Connector for Python.
 - PyArrow 14.0.1 or later, which the `pandas` extra installs.
-- pandas earlier than 3.0.0. The minimum is 1.0.0 on Python before 3.13, and 2.1.2 on Python 3.13 and later.
+- pandas 1.0.0 or later on Python before 3.13, pandas 2.1.2 or later on Python 3.13 and 3.14, and pandas 3.0.0 or later on Python 3.15 and later. There is no upper bound.
+
+Note
+
+Connector versions before 5.2.0 limit pandas to versions below 3.0.0 in the `pandas` extra, so pip does not install pandas 3 with that extra.
 
 Note
 

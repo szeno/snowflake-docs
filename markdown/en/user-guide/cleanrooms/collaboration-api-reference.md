@@ -261,6 +261,41 @@ To unregister items in a custom registry:
 
 ---
 
+### REGISTER\_STANDARD\_DCR\_TEMPLATES
+
+Schema:
+:   REGISTRY
+
+Registers the built-in standard clean room templates, such as `standard_audience_overlap_v0` and
+`standard_audience_overlap_activation_v0`, in your account’s registry so that you can use them in a collaboration. To check whether
+the standard templates are already registered, call [REGISTRY.VIEW\_REGISTERED\_TEMPLATES](#label-dcr-collaboration-view-registered-templates-reference).
+
+#### Syntax
+
+Copy code
+
+```
+REGISTER_STANDARD_DCR_TEMPLATES()
+```
+
+#### Arguments
+
+None.
+
+#### Example
+
+Copy code
+
+```
+USE ROLE SAMOOHA_APP_ROLE;
+CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.REGISTRY.REGISTER_STANDARD_DCR_TEMPLATES();
+```
+
+For examples that use the standard templates, see [Overlap and activation](/user-guide/cleanrooms/collab-overlap-and-activation) and
+[Tutorial: Get started with collaboration clean rooms (Snowsight)](/user-guide/cleanrooms/tutorials/collaboration-basic-ui-tutorial).
+
+---
+
 ### ADD\_TEMPLATE\_REQUEST
 
 Schema:
@@ -1961,11 +1996,18 @@ SELECT "COLLABORATION_SPEC" FROM $1 WHERE "SOURCE_NAME" = $collaboration_name;
 
 #### Access requirements
 
-If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was granted privileges by calling one of the following procedures:
+If you’re not using the SAMOOHA\_APP\_ROLE role, you must use a role that was granted privileges by calling one of the procedures in the following groups.
+
+To view specific joined collaborations only:
 
 - `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('READ', 'COLLABORATION', '{collaboration name}', '{role name}')`
-- `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('RUN', 'COLLABORATION', '{collaboration name}', '{role name}')`
+
+To view all collaborations, including invited collaborations (also requires IMPORT SHARE ON ACCOUNT):
+
 - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('VIEW COLLABORATIONS', '{role name}')`
+
+Alternatively, these account-level privileges also allow the role to call this procedure:
+
 - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('CREATE COLLABORATION', '{role name}')`
 - `GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE('JOIN COLLABORATION', '{role name}')`
 
@@ -2945,9 +2987,13 @@ GRANT_PRIVILEGE_ON_ACCOUNT_TO_ROLE( '<privilege>', '<account_role_name>' );
       - IMPORT SHARE
       - MANAGE SHARE TARGET
       - EXECUTE TASK (if using auto-join in the INITIALIZE procedure)
-    - `VIEW COLLABORATIONS`: Grants permission to run COLLABORATION.VIEW\_COLLABORATIONS. Requires the following privileges to be granted manually to the role:
+    - `VIEW COLLABORATIONS`: Grants permission to run COLLABORATION.VIEW\_COLLABORATIONS and see all collaborations, including invited collaborations. Requires the following privileges to be granted manually to the role:
 
       - IMPORT SHARE ON ACCOUNT
+
+      A role that only needs to view specific, already-joined collaborations doesn’t need `VIEW COLLABORATIONS` or IMPORT SHARE. Instead, call
+      `GRANT_PRIVILEGE_ON_OBJECT_TO_ROLE('READ', 'COLLABORATION', '{collaboration name}', '{role name}')`. That role sees only the
+      collaborations you grant it access to, and it can’t see invited collaborations or other joined collaborations.
     - `REGISTER DATA OFFERING`: Grants permission to run REGISTRY.REGISTER\_DATA\_OFFERING and REGISTRY.UNREGISTER\_DATA\_OFFERING. This permission is required for any analysis runner to join a collaboration that implements activation.
     - `VIEW REGISTERED DATA OFFERINGS`: Grants permission to run REGISTRY.VIEW\_REGISTERED\_DATA\_OFFERINGS.
     - `REGISTER TEMPLATE`: Grants permission to run REGISTRY.REGISTER\_TEMPLATE and REGISTRY.UNREGISTER\_TEMPLATE.

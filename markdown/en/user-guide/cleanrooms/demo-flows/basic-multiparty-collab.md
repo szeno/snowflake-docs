@@ -551,7 +551,7 @@ CALL samooha_by_snowflake_local_db.collaboration.view_templates(
   $collaboration_name
 );
 
--- Run bob's template.
+-- Run the template.
 -- Replace the placeholders with your variables.
 CALL samooha_by_snowflake_local_db.collaboration.run(
   $collaboration_name,

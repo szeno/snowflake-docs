@@ -20,6 +20,22 @@ Ways to use it:
 - Configure MCP servers, manage Snowflake connections, and set up integrations
 - Understand how to resume sessions, manage context, and use file references with @
 
+## SQL
+
+### `sql-author`
+
+Write or fix Snowflake SQL by inspecting the real schema and validating the final statement before presenting it. CoCo loads this skill for tasks that read, write, fix, run, or debug Snowflake SQL.
+
+This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+Ways to use it:
+
+- Write a new query after checking table structure, column names, and types in your account
+- Fix a failing statement, such as an invalid identifier, type mismatch, or object-not-found error, while preserving the original result shape
+- Compile-validate the final SQL before you run it, and diagnose privilege errors instead of rewriting the query
+
+For `CREATE FUNCTION` or `CREATE PROCEDURE` with `LANGUAGE PYTHON`, CoCo also loads [`snowpark-python`](#label-bundled-skill-snowpark-python) for the Python handler.
+
 ## Development and applications
 
 ### `developing-with-streamlit`
@@ -210,6 +226,10 @@ Ways to use it:
 
 Load files into a Snowflake table once with `COPY INTO`. CoCo detects the format of your files, creates or reuses a file format with options that match your data, infers or reuses the target table, and runs `COPY INTO` on your warehouse. CoCo waits for your approval before each statement that creates or changes objects or loads data, in every approval mode.
 
+CoCo loads this skill when you ask for a one-time or bulk load, or for `COPY INTO`. If you name files or a location but don’t say whether the load is one-time or continuous, CoCo asks first. If the load is continuous, CoCo uses the [`snowpipe`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-snowpipe) skill instead.
+
+Before you start, you need at least one file at the source, a warehouse, and a role with the privileges for the objects that CoCo creates or uses. For the full list, see the [prerequisites for bulk loading with CoCo](/user-guide/data-load-bulk-coco#label-bulk-coco-prerequisites).
+
 This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
 
 Ways to use it:
@@ -223,6 +243,10 @@ For more information, see [Bulk load files with CoCo](/user-guide/data-load-bulk
 ### `snowpipe`
 
 Set up Snowpipe auto-ingest so files in cloud storage load continuously as they arrive. CoCo samples the files and reuses compatible objects. Depending on the setup option you choose, CoCo then creates the storage integration, stage, file format, table, pipe, and cloud notifications for you, generates deployment files for your team, or does some of each.
+
+CoCo loads this skill when you ask to load files from cloud storage continuously as they arrive, to create a pipe, or to generate Terraform or other deployment files for a Snowpipe pipeline or its cloud notifications. If you name files or a location but don’t say whether the load is one-time or continuous, CoCo asks first. If the load is one-time, CoCo uses the [`copy-load`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-copy-load) skill instead.
+
+Before you start, you need a cloud storage location or an existing external stage with sample files, a warehouse for setup queries, and a role with the privileges for the objects that CoCo creates or uses. Depending on the setup option, you also need access to authorize the cloud setup, or help from your cloud administrator. For the full list, see the [prerequisites for continuous file ingestion with CoCo](/user-guide/data-load-snowpipe-auto-coco#label-snowpipe-coco-prerequisites).
 
 This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
 
@@ -548,6 +572,19 @@ Ways to use it:
 - Create, alter, view, attach, detach, or drop an authentication policy
 - Restrict authentication methods or client types: for example, enforce MFA, configure PAT expiry, require a minimum driver version, or limit workload identity federation
 - Get a recommended starting-point set of policies, tailored to your account’s recent login history
+
+### `guardrails-guide`
+
+Guide you through the `/guardrails` panel and Restricted Session Scope (RSS), which limits the SQL and roles that the agent can use in a session. Cortex Code loads this skill when you ask to create, apply, or remove an RSS scope, or to restrict the agent’s SQL or roles. It also loads when a SQL error contains “Restricted session scope”.
+
+Scopes are objects in your `USER$<USERNAME>.RSS` schema. You activate a scope mid-session through the `/guardrails` panel.
+
+Ways to use it:
+
+- Create a named RSS scope in your `USER$<USERNAME>.RSS` schema
+- Activate a scope mid-session, or remove one while keeping your session variables and temporary tables
+- Start Cortex Code with the `--sql-read-only` option, which applies a `SNOWFLAKE$DATA_READ_WITH_AI` scope
+- Start Cortex Code with the `--with-restricted-session-scope=<name>` option to apply an existing scope
 
 ## Data sharing and marketplace
 

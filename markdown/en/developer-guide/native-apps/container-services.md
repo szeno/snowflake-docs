@@ -23,6 +23,29 @@ privileges:
   to make connections to URLs outside of Snowflake, this privilege is required for the
   app to create the required external access integration.
 
+## Grant service role access to the application role
+
+The BIND SERVICE ENDPOINT privilege lets a service *expose* endpoints, but it doesn’t by
+itself grant any role access to *reach* those endpoints. To allow an application role to
+access a service’s endpoints, the app’s setup script must also grant that application
+role the service role that controls endpoint access.
+
+In most cases, grant the predefined `ALL_ENDPOINTS_USAGE` service role, which Snowflake
+creates for every service and which grants access to all of the service’s endpoints:
+
+Copy code
+
+```
+GRANT SERVICE ROLE core.app_service!ALL_ENDPOINTS_USAGE TO APPLICATION ROLE app_public;
+```
+
+If the service specification defines its own service roles for fine-grained access to
+specific endpoints, grant one of those service roles to the application role instead.
+
+Granting USAGE on the database and schema that contain the service is not sufficient on
+its own to allow endpoint access. The service role grant is the privilege that controls
+endpoint access. For more information about service roles and endpoint access, see
+[Privileges needed to access the service endpoints (service roles)](/developer-guide/snowpark-container-services/working-with-services#label-spcs-manage-service-related-privileges-service-roles).
 With `manifest_version: 1`, the consumer grants these privileges to the app.
 With `manifest_version: 2`, Snowflake automatically grants these privileges
 when they are requested in the manifest. See [About the manifest file](/developer-guide/native-apps/manifest-overview#label-native-apps-manifest-about).

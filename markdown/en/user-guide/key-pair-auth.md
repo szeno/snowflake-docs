@@ -54,6 +54,10 @@ Snowflake supports cryptographic keys generated using the following algorithms:
 
 These signatures use the SHA-256, SHA-384, and SHA-512 hash algorithms, respectively.
 
+Note
+
+All [Universal Core](/developer-guide/universal-core/universal-core) drivers which were released in or after November 2026, also support ECDSA keys, in addition to RSA.
+
 Tip
 
 The command to generate an encrypted key prompts for a passphrase to regulate access to the key. Snowflake recommends using a passphrase

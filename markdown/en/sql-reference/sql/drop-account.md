@@ -3,7 +3,7 @@
 Drops an account, which initiates the process of [deleting the account](/user-guide/organizations-manage-accounts-delete).
 
 See also:
-:   [CREATE ACCOUNT](/sql-reference/sql/create-account), [SHOW ACCOUNTS](/sql-reference/sql/show-accounts), [UNDROP ACCOUNT](/sql-reference/sql/undrop-account)
+:   [CREATE ACCOUNT](/sql-reference/sql/create-account), [SHOW ACCOUNTS](/sql-reference/sql/show-accounts), [UNDROP ACCOUNT](/sql-reference/sql/undrop-account), [SYSTEM$VALIDATE\_ACCOUNT\_DELETION](/sql-reference/functions/system_validate_account_deletion)
 
 ## Syntax
 
@@ -29,6 +29,7 @@ DROP ACCOUNT [ IF EXISTS ] <name> GRACE_PERIOD_IN_DAYS = <integer>
 
 - Only [organization administrators](/user-guide/organization-administrators) can execute the command.
 - The organization administrator cannot drop the account they are currently logged in to.
+- Before you drop an account, call [VALIDATE\_ACCOUNT\_DELETION](/sql-reference/functions/system_validate_account_deletion) to list every condition that blocks the drop.
 
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully
   without returning an error.

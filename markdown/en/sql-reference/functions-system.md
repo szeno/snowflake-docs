@@ -180,6 +180,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$GET\_CMK\_INFO\_POSTGRES](/sql-reference/functions/system_get_cmk_info_postgres) |  |
 | [SYSTEM$GET\_CMK\_INFO\_SNOWFLAKE\_MANAGED\_VOLUME](/sql-reference/functions/system_get_cmk_info_snowflake_managed_volume) |  |
 | [SYSTEM$GET\_CMK\_KMS\_KEY\_POLICY](/sql-reference/functions/system_get_cmk_kms_key_policy) |  |
+| [SYSTEM$GET\_COLUMN\_COMMENT\_PROPAGATION\_SOURCE](/sql-reference/functions/system_get_column_comment_propagation_source) |  |
 | [SYSTEM$GET\_COMPUTE\_POOL\_PENDING\_MAINTENANCE](/sql-reference/functions/system_get_compute_pool_pending_maintenance) |  |
 | [SYSTEM$GET\_DBT\_LOG](/sql-reference/functions/system_get_dbt_log) |  |
 | [SYSTEM$GET\_DEBUG\_STATUS](/sql-reference/functions/system_get_debug_status) |  |
@@ -261,6 +262,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$TASK\_COMPLETION\_STATE](/sql-reference/functions/system_task_completion_state) |  |
 | [SYSTEM$TASK\_RUNTIME\_INFO](/sql-reference/functions/system_task_runtime_info) |  |
 | [SYSTEM$TYPEOF](/sql-reference/functions/system_typeof) |  |
+| [SYSTEM$VALIDATE\_ACCOUNT\_DELETION](/sql-reference/functions/system_validate_account_deletion) |  |
 | [SYSTEM$VALIDATE\_STORAGE\_INTEGRATION](/sql-reference/functions/system_validate_storage_integration) |  |
 | [SYSTEM$VERIFY\_CATALOG\_INTEGRATION](/sql-reference/functions/system_verify_catalog_integration) |  |
 | [SYSTEM$VERIFY\_CMK\_INFO](/sql-reference/functions/system_verify_cmk_info) |  |

@@ -59,9 +59,7 @@ integration.
     - Login flows that start at the PrivateLink Snowsight URL,
       `https://app.<region>.privatelink.snowflakecomputing.com/<org>/<account>/`.
       This URL is the PrivateLink equivalent of `app.snowflake.com`, so
-      `DEFAULT` redirects those flows to the IdP. The account-specific
-      PrivateLink URL, `<locator>.<region>.privatelink.snowflakecomputing.com`,
-      doesn’t use this redirect.
+      `DEFAULT` redirects those flows to the IdP.
     - Any other interface key listed below that you don’t explicitly
       configure. For example, if you set `DEFAULT` but not
       `STREAMLIT`, Streamlit in Snowflake app-viewer URLs use the
@@ -196,7 +194,12 @@ The procedure relies on the standard OIDC `prompt=login` parameter,
 which Snowflake honors to suppress the IdP redirect for a single
 sign-in attempt.
 
-To use it:
+If the URL is already a Snowflake login page, such as `/console/login`
+on an account locator host, append `?prompt=login` to that URL and
+load it.
+
+For Snowsight and other flows that redirect before the login page
+appears:
 
 1. In your browser, open the developer tools and select the Network
    tab.

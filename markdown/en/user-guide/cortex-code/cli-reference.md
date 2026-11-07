@@ -391,6 +391,9 @@ where you don’t need a back-and-forth conversation.
 Use `-p` for inline prompts or `cortex exec` for prompts from files or stdin. Slash commands don’t
 work in batch mode because there’s no interactive prompt.
 
+Because there’s no prompt, tool calls that need approval are denied unless you pre-approve them
+with `--allowed-tools`. For details and examples, see [Tools in batch mode](/user-guide/cortex-code/tools#label-coco-tools-batch-mode).
+
 | Command | Description |
 | --- | --- |
 | `cortex -p "<prompt>"` | Run single prompt and exit |

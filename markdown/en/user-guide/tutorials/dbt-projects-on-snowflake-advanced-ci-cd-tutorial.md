@@ -227,7 +227,7 @@ ALTER USER gitlab_cicd_service_user
   SET DEFAULT_WAREHOUSE = 'TASTY_BYTES_DBT_WH';
 ```
 
-For more information, see [GitLab CI/CD component](/developer-guide/snowflake-cli/cicd/gitlab-component).
+For more information, see [GitLab CI/CD component](/developer-guide/cicd/gitlab-component).
 
 The subject uses an Azure DevOps service connection identifier. Replace `<azure-ad-tenant-id>` with your Microsoft Entra tenant ID.
 
@@ -251,7 +251,7 @@ ALTER USER ado_cicd_service_user
   SET DEFAULT_WAREHOUSE = 'TASTY_BYTES_DBT_WH';
 ```
 
-For more information, see [Azure DevOps extension](/developer-guide/snowflake-cli/cicd/azure-devops-extension).
+For more information, see [Azure DevOps extension](/developer-guide/cicd/azure-devops-extension).
 
 The `DEFAULT_ROLE` property selects a default role but doesn’t grant it, so each example includes a separate `GRANT ROLE` command.
 

@@ -16,7 +16,8 @@ Copy code
 
 ```
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> CONVERT TO MANAGED
-  [ BASE_LOCATION = '<directory_for_table_files>' ]
+  [ { FILE_PATH | BASE_LOCATION } = '<directory_for_table_files>' ]
+  [ DROP_FROM_SOURCE_CATALOG = { TRUE | FALSE } ]
   [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]
 ```
 
@@ -30,8 +31,9 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> CONVERT TO MANAGED
 
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
-`[ BASE_LOCATION = 'directory_for_table_files' ]`
+`[ { FILE_PATH | BASE_LOCATION } = 'directory_for_table_files' ]`
 :   The path to a directory where Snowflake can write data and metadata files for the table.
+    `FILE_PATH` and `BASE_LOCATION` are equivalent.
     Specify a relative path from the table’s `EXTERNAL_VOLUME` location.
     For more information, see [Data and metadata directories](/user-guide/tables-iceberg-managing-external-volumes#label-tables-iceberg-configure-external-volume-base-location).
 
@@ -39,6 +41,23 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> CONVERT TO MANAGED
     `BASE_LOCATION`.
 
     This directory can’t be changed after you convert a table.
+
+`DROP_FROM_SOURCE_CATALOG = { TRUE | FALSE }`
+:   Specifies whether to remove the table’s entry from the external source catalog after conversion.
+
+    This clause applies to an unmanaged Iceberg table that is registered in an external catalog that supports dropping
+    the table, such as an Iceberg REST catalog.
+
+    - `TRUE`: Converts the table to a Snowflake-managed Iceberg table, then removes that table’s entry from the
+      external source catalog.
+    - `FALSE`: Converts the table and leaves the source-catalog entry in place.
+
+    Removing the catalog entry doesn’t delete the underlying data files.
+
+    The catalog integration’s credentials need permission to drop the table in the source catalog, for example
+    `TABLE_DROP` or the equivalent privilege on that catalog.
+
+    Default: `FALSE`
 
 `STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED }`
 :   Specifies the storage serialization policy for the table.
@@ -78,6 +97,30 @@ For general information about roles and privilege grants for performing SQL acti
 
 - Only the table owner (that is, the role with the OWNERSHIP privilege on the table) or higher can execute this command.
 - Converting a table in a catalog-linked database isn’t supported.
+- `DROP_FROM_SOURCE_CATALOG = TRUE` removes the table from the external catalog after conversion.
+  A failed drop doesn’t undo the conversion.
+- Before converting with `DROP_FROM_SOURCE_CATALOG = TRUE`, Snowflake checks that it can reach the source catalog
+  and manage the table there. If the check fails, the statement fails and the table isn’t converted:
+
+  ```
+  SQL execution error: Cannot convert table to managed with DROP_FROM_SOURCE_CATALOG = TRUE: Snowflake cannot manage the source catalog table '<database_name>'.'<schema_name>'.'<table_name>'. Reason: <reason>. Either remove DROP_FROM_SOURCE_CATALOG = TRUE from the statement, or grant DROP TABLE permission on the source catalog and retry.
+  ```
+
+  The check can fail for the following reasons:
+
+  - The catalog doesn’t support dropping the table.
+  - The table isn’t in the source catalog.
+  - Snowflake’s credentials can’t access the catalog.
+- If the conversion succeeds but the later drop from the source catalog fails, the table remains a
+  Snowflake-managed Iceberg table. The statement still reports success, with a warning:
+
+  ```
+  Statement executed successfully. Warning: source catalog entry was not dropped (<reason>); drop it manually if needed.
+  ```
+
+  If the failure is a permissions error, the reason states that Snowflake’s credentials lack permission to drop the
+  table. Grant `TABLE_DROP` (or the catalog’s equivalent privilege) on the source catalog. Then either run the
+  statement again with `DROP_FROM_SOURCE_CATALOG = TRUE`, or drop the source-catalog entry manually.
 - If conversion is blocked because the table has active position-delete files, the error message recommends running
   `ALTER ICEBERG TABLE <table_name> OPTIMIZE (REMOVE_POSITION_DELETES)` before retrying. The optimize operation rewrites affected
   partitions and clears active position-delete files for live data files. For supported table types and limitations, see the
@@ -98,4 +141,14 @@ Copy code
 ```
 ALTER ICEBERG TABLE myTable CONVERT TO MANAGED
   BASE_LOCATION = 'my/relative/path/from/external_volume';
+```
+
+The following example converts a table, then removes its entry from the external source catalog:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE my_iceberg_table
+  CONVERT TO MANAGED
+  DROP_FROM_SOURCE_CATALOG = TRUE;
 ```

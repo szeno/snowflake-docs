@@ -1205,7 +1205,7 @@ If a CEL expression fails to evaluate, the result contains the outline and the e
 
 ### Cortex Agent supplementary tools
 
-If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake automatically adds these tools to `tools/list`.
+If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake automatically adds these tools to `tools/list`. Snowflake adds exactly these three tools once per server, regardless of how many agent tools the server has. They don’t appear in `DESCRIBE MCP SERVER` or `GET_DDL` output, and they don’t count toward the [maximum of 50 tools per MCP server](#label-cortex-mcp-limitations).
 
 | Tool | Purpose |
 | --- | --- |

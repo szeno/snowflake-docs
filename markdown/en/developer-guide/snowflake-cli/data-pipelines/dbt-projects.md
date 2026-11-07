@@ -240,7 +240,7 @@ To build a CI/CD workflow with `snow dbt` commands, follow these steps:
         Ensure that credentials are excluded from the profile file. Leave `account` and `user` as placeholder strings and let your CI/CD platform supply the connection through secrets or environment variables.
 2. Set up Snowflake CLI GitHub Action.
 
-   Follow the guidelines for [setting up GitHub Action for Snowflake CLI](/developer-guide/snowflake-cli/cicd/integrate-ci-cd) and [verify your connection](/developer-guide/snowflake-cli/connecting/configure-connections#label-cli-test-connection) to Snowflake.
+   Follow the guidelines for [setting up CI/CD](/developer-guide/cicd/index) and [verify your connection](/developer-guide/snowflake-cli/connecting/configure-connections#label-cli-test-connection) to Snowflake.
 3. Define your workflow.
 
    The following example illustrates a CI workflow that replaces the live version of the dbt project object named `product_pipeline` in a

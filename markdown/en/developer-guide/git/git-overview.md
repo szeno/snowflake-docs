@@ -3,6 +3,10 @@
 You can integrate your remote Git repository with Snowflake so that files from the remote repository are synchronized to a
 Git repository clone in Snowflake. The clone includes all branches, tags, and commits from the remote repository.
 
+Note
+
+A Git repository in Snowflake is not required for CI/CD. In a typical [CI/CD pipeline](/developer-guide/cicd/index), the CI runner checks out the repository and deploys directly to Snowflake. Create a Git repository in Snowflake when Snowflake services such as Workspaces need access to repository files.
+
 To get started, see [Setting up Snowflake to use Git](/developer-guide/git/git-setting-up).
 For a complete list of limitations, see [Git in Snowflake limitations](/developer-guide/git/git-limitations).
 

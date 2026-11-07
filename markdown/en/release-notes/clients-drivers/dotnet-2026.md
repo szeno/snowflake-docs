@@ -10,6 +10,21 @@ Snowflake uses semantic versioning for .NET Driver updates.
 
 See [.NET Driver](/developer-guide/dotnet/dotnet-driver) for documentation.
 
+## Version 6.5.0 (November 6, 2026)
+
+### New features and improvements
+
+- The session heartbeat interval now honors the `CLIENT_SESSION_KEEP_ALIVE_HEARTBEAT_FREQUENCY` session parameter.
+- Improved error messages when key-pair authentication fails to parse a PEM private key.
+- Added the public `SnowflakeDbConnection.SessionId` property, which exposes the Snowflake session ID after you open a connection.
+- Added the `SECONDARY_ROLES` connection string property to activate secondary roles at login. Accepted values are `ALL`, `NONE`, and `DEFAULT`. The driver sends the value in uppercase in the login request.
+
+### Bug fixes
+
+- When a cached access token is missing but a refresh token is available, the OAuth authorization code flow now exchanges the refresh token for a new access token before launching the browser.
+- `CLIENT_APP_VERSION` and `SFEnvironment.DriverVersion` now always report a three-part `Major.Minor.Patch` string so `ACCOUNT_USAGE.SESSIONS` matches `SYSTEM$CLIENT_VERSION_INFO()`.
+- GET file decryption now disposes the intermediate decrypt stream when decryption fails, so any spilled temporary file is deleted immediately.
+
 ## Version 6.4.0 (October 16, 2026)
 
 ### New features and improvements

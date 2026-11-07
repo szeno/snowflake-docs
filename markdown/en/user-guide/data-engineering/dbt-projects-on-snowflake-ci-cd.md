@@ -49,7 +49,7 @@ For more information about using dbt artifacts for state, defer, Slim CI, and fa
 - A separation between dev environment (for CI) and prod environment (for CD) in Snowflake (for example, separate databases or schemas for each
   environment).
 - A way to permit your CI/CD runner (for example, GitHub Actions, GitLab Runner, or Azure DevOps agents) to connect to Snowflake, such as OIDC or PAT. For more information, see
-  [Integrating CI/CD with Snowflake CLI](/developer-guide/snowflake-cli/cicd/integrate-ci-cd).
+  [CI/CD](/developer-guide/cicd/index).
 - In your code repository, a [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file) or `profiles.yml` file configured to point to dev and prod targets (for example, databases/schemas, warehouse).
 - A network policy that allows inbound access from your Git provider into Snowflake.
 

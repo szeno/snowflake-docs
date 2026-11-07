@@ -60,7 +60,9 @@ Snowsight:
     4. Select **Drop Account**.
 
 SQL:
-:   Execute the [DROP ACCOUNT](/sql-reference/sql/drop-account)
+:   Before you drop the account, call [VALIDATE\_ACCOUNT\_DELETION](/sql-reference/functions/system_validate_account_deletion) to list every condition that blocks the drop.
+
+    Execute the [DROP ACCOUNT](/sql-reference/sql/drop-account)
     command.
 
     For example, to drop an account `my_account` and allow a 14-day grace period for recovering the account, enter:

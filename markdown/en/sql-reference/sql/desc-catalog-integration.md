@@ -41,7 +41,7 @@ The `property` column can include the following properties of catalog integratio
 | Property | Description |
 | --- | --- |
 | `enabled` | Specifies whether the catalog integration is available to use for Apache Iceberg™ tables. |
-| `catalog_source` | The type of catalog source; `ICEBERG_REST`, `POLARIS`, `OBJECT_STORE`, or `GLUE` (for non-REST Glue integrations). |
+| `catalog_source` | The type of catalog source; for example, `ICEBERG_REST`, `POLARIS`, `OBJECT_STORE`, or `GLUE` (for non-REST Glue integrations). |
 | `refresh_interval_seconds` | Specifies the number of seconds that Snowflake waits between attempts to poll the external Iceberg catalog for metadata updates for [automated refresh](/user-guide/tables-iceberg-auto-refresh). |
 | `rest_authentication` | Specifies the REST authentication parameters for the catalog integration. |
 | `rest_config` | Specifies the REST configuration parameters for the catalog integration. |
@@ -52,6 +52,8 @@ The `property` column can include the following properties of catalog integratio
 | `glue_region` | (AWS Glue) The AWS Region of your AWS Glue Data Catalog. |
 | `glue_aws_iam_user_arn` | (AWS Glue) The ARN of the AWS IAM user created for your Snowflake account when you created the catalog integration. |
 | `glue_aws_external_id` | (AWS Glue) The external ID that Snowflake uses to establish a trust relationship with AWS Glue. |
+| `workload_identity_federation_issuer` | (Workload identity federation) The issuer URL of Snowflake as the OIDC provider for the catalog integration. Give this value to the remote service so that it can verify the `iss` claim of the ID tokens that Snowflake issues for the catalog integration. For example, see [Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon). |
+| `workload_identity_federation_subject` | (Workload identity federation) The identifier of the catalog integration as an OIDC client. Give this value to the remote service so that it can verify the `sub` claim of the ID tokens that Snowflake issues for the catalog integration. |
 | `comment` | The comment for the catalog integration. |
 
 Expand

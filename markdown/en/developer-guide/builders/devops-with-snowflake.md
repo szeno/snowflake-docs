@@ -227,16 +227,16 @@ long-lived secrets are stored in your CI system.
 
 | Integration | Status | Reference |
 | --- | --- | --- |
-| GitHub Action | Generally available | [Snowflake CLI GitHub Action](/developer-guide/snowflake-cli/cicd/github-action) |
-| GitLab CI/CD Component | Public preview | [Snowflake CI/CD Component for GitLab](/developer-guide/snowflake-cli/cicd/gitlab-component) |
-| Azure DevOps Extension | Public preview | [Snowflake CLI Azure DevOps Extension](/developer-guide/snowflake-cli/cicd/azure-devops-extension) |
+| GitHub Actions | Generally available | [GitHub Actions](/developer-guide/cicd/github-action) |
+| GitLab CI/CD Component | Public preview | [GitLab CI/CD component](/developer-guide/cicd/gitlab-component) |
+| Azure DevOps Extension | Generally available | [Azure DevOps extension](/developer-guide/cicd/azure-devops-extension) |
 
 Expand
 
 Show lessSee more
 
 For any CI platform that can run a shell command, you can also install Snowflake CLI directly. For setup instructions and the
-common Snowflake-side configuration, see [Integrating CI/CD with Snowflake CLI](/developer-guide/snowflake-cli/cicd/integrate-ci-cd).
+common Snowflake-side configuration, see [CI/CD](/developer-guide/cicd/index).
 
 Because these integrations install Snowflake CLI, they cover the `snow` commands that drive DCM Projects. If you manage objects with the
 Terraform provider, run your plan and apply steps with your existing Terraform tooling. The three stages above are the same either

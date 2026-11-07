@@ -22,24 +22,31 @@ After setup, those same CLI commands use the destination database, schema, and
 warehouse you configure here. Quick start uses the `SNOWFLAKE_APPS` database,
 `PUBLIC` schema, and `SNOWFLAKE_APPS_QUERY_WH` warehouse.
 
+[Preview Feature](/release-notes/preview-features) — Open
+
+The App Runtime admin page is in preview. Features and workflows might change before general availability.
+
 ## Prerequisites
 
 - A paid Snowflake account (not a
   [trial account](/user-guide/admin-trial-account)).
 - A role that can change account settings, usually `ACCOUNTADMIN`.
 
-## Open the Apps settings page
+## Open the App Runtime page
 
-In Snowsight, select your name in the lower-left corner, then **Settings**.
+In Snowsight, select **Apps** in the navigation menu, then select **App Runtime admin**.
 
-![User menu in Snowsight with Settings selected from the profile menu in the lower-left corner](/static/images/screens/snowflake-apps-admin-setup-open-settings.png)
+![Snowsight navigation menu with Apps selected and App Runtime admin shown in the submenu](/static/images/screens/snowflake-apps-admin-setup-nav-menu.png)
 
-Under **Account**, select **Apps**.
+On the App Runtime page, select **Settings** in the page header. The **Settings**
+button appears only for users with the `ACCOUNTADMIN` role.
 
-If setup hasn’t run yet, the page shows **App development is not set up** and a
+![App Runtime page header showing the Settings button](/static/images/screens/snowflake-apps-admin-setup-settings-button.png)
+
+If setup hasn’t run yet, the Settings panel shows **App development is not set up** and a
 **Begin Setup** button.
 
-![Snowsight Account Apps settings before setup, showing the Begin Setup button](/static/images/screens/snowflake-apps-admin-setup-entry.png)
+![Settings panel showing App development is not set up and the Begin Setup button](/static/images/screens/snowflake-apps-admin-setup-begin-setup.png)
 
 ## Run App Development Setup
 
@@ -50,7 +57,7 @@ Select **Begin Setup** to open **App Development Setup**.
 Under **What roles will be making apps?**, select every role that should build
 and deploy apps (for example `PRODUCT_MANAGER` and `DATA_ENGINEER`).
 
-![App Development Setup dialog with PRODUCT_MANAGER and DATA_ENGINEER selected under What roles will be making apps](/static/images/screens/snowflake-apps-admin-setup-roles.png)
+![App Development Setup dialog with Selected roles chosen and DATA_ENGINEER and PRODUCT_MANAGER listed under Who will be making apps, with the Resources section collapsed](/static/images/screens/snowflake-apps-admin-setup-choose-roles.png)
 
 Until at least one role is selected, **Preview SQL** stays disabled.
 
@@ -67,13 +74,13 @@ Expand **Resources** and pick **Quick start** or **Custom**.
 Snowsight also sets account defaults so `snow app setup` and deploy resolve to
 these objects.
 
-![App Development Setup with Quick start selected and SNOWFLAKE_APPS, PUBLIC, and SNOWFLAKE_APPS_QUERY_WH filled in](/static/images/screens/snowflake-apps-admin-setup-quick-start.png)
+![App Development Setup dialog with Selected roles set to DATA_ENGINEER and PRODUCT_MANAGER, Quick start selected, and SNOWFLAKE_APPS, PUBLIC, and SNOWFLAKE_APPS_QUERY_WH filled in](/static/images/screens/snowflake-apps-admin-setup-quick-start-filled.png)
 
 **Custom** uses databases, schemas, and warehouses you already have. Pick values
 from the dropdowns for destination database, destination schema, and query
 warehouse.
 
-![App Development Setup with Custom selected, showing Use existing resources from your Snowflake account and destination database, schema, and query warehouse dropdowns](/static/images/screens/snowflake-apps-admin-setup-custom.png)
+![App Development Setup with Custom selected, showing Use existing resources from your Snowflake account and destination database, schema, and query warehouse dropdowns](/static/images/screens/custom-resources.png)
 
 ### Preview and run setup
 
@@ -81,20 +88,20 @@ Select **Preview SQL** to open the statements Snowsight will run. The list
 includes `CREATE` for the database, schema, and warehouse; `ALTER ACCOUNT SET`
 for default destination and query warehouse; and `GRANT` for each role you chose.
 
-![Preview SQL dialog showing CREATE, ALTER ACCOUNT SET, and GRANT statements for App Development Setup](/static/images/screens/snowflake-apps-admin-setup-preview-sql.png)
+![Preview SQL view of App Development Setup showing CREATE, ALTER ACCOUNT SET, and GRANT statements, with Cancel, Back, and Execute Setup buttons](/static/images/screens/snowflake-apps-admin-setup-review-sql.png)
 
 Select **Execute Setup** to apply the configuration. Use **Back** to return and
 change roles or resources.
 
 ## After setup
 
-The **Apps** page shows two sections you can change later with **Update**:
+The **Settings** panel on the App Runtime page shows two sections you can change later with **Update**:
 
 1. **Destination database**, **Destination schema**, and **Query warehouse**
    (defaults for where apps are stored and which warehouse runs in-app queries).
 2. **Roles with access** (roles that can create apps using those defaults).
 
-![Apps settings after setup with destination database SNOWFLAKE_APPS, schema PUBLIC, warehouse SNOWFLAKE_APPS_QUERY_WH, and roles with access](/static/images/screens/snowflake-apps-admin-setup-settings.png)
+![App Runtime Settings panel after setup with destination database SNOWFLAKE_APPS, schema PUBLIC, query warehouse SNOWFLAKE_APPS_QUERY_WH, and roles with access](/static/images/screens/snowflake-apps-admin-setup-complete.png)
 
 When setup finishes, send developers to
 [Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started).

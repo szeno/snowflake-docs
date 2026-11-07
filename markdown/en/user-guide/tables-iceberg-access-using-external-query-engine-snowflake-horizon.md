@@ -20,6 +20,10 @@ You can also access externally managed Iceberg tables through the same Horizon I
 instructions, see
 [Access externally managed Apache Iceberg™ tables with an external engine through Snowflake Horizon Catalog](/user-guide/externally-managed-iceberg-tables-access-horizon-irc).
 
+To access these tables from another Snowflake account, create a catalog integration in that account that connects to Horizon Catalog by
+using workload identity federation. For instructions, see
+[Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon).
+
 ## Query Iceberg tables
 
 By connecting an external query engine to Iceberg tables through Horizon Catalog, you can perform the following tasks:
@@ -92,8 +96,9 @@ The following external catalogs integrate with the Horizon Iceberg REST Catalog 
 | AWS Glue | ✔ | For instructions on how to configure this integration, see [Access Snowflake Horizon Catalog data using catalog federation in the AWS Glue Data Catalog](https://aws.amazon.com/blogs/big-data/access-snowflake-horizon-catalog-data-using-catalog-federation-in-the-aws-glue-data-catalog/) in the AWS Big Data Blog. |
 | Palantir Foundry | ✔ | For instructions on how to configure this integration, see [Iceberg tables (virtual tables only)](https://www.palantir.com/docs/foundry/available-connectors/snowflake#iceberg-tables-virtual-tables-only) in the Palantir documentation. |
 | Databricks Unity Catalog | Not announced |  |
-| Google BigLake Metastore | ✔ | For instructions on how to configure this integration, see [Configure a catalog integration for Google Cloud BigLake Metastore](/user-guide/tables-iceberg-configure-catalog-integration-rest-biglake). |
+| Google BigLake Metastore | ✔ | For instructions on how to configure this integration, see [Configure a catalog integration for Google Cloud Lakehouse](/user-guide/tables-iceberg-configure-catalog-integration-rest-biglake). |
 | Microsoft Fabric / Synapse | In development |  |
+| Snowflake (another Snowflake account) | ✔ | For instructions on how to configure this integration, see [Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon). |
 
 Expand
 
@@ -439,6 +444,12 @@ short-lived OIDC token dynamically at runtime.
 When you connect your external query engine to Iceberg tables through Horizon Catalog, you must pass the fetched OIDC token as a
 credential. The external catalog performs a token exchange with Snowflake to retrieve a valid access token bound to the scope you define.
 You must also specify the workload identity provider using a custom header in your catalog configuration.
+
+Tip
+
+To connect from a catalog integration in another Snowflake account, you don’t need an external identity provider. Snowflake issues the
+workload identity for the catalog integration. For instructions, see
+[Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon).
 
 #### Example: Apache Spark™ configuration for WIF / OIDC
 

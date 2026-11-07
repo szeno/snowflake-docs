@@ -270,9 +270,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 ## Feature updates earlier in 2026
 
 - [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
+- [Nov 5, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-05-dcr)
+- [Nov 05, 2026: Organization users and user groups in Organization Command Center (Preview)](/release-notes/2026/other/2026-11-05-organization-hub-command-center-users-preview)
 - [Nov 4, 2026: HTML reports (Preview)](/release-notes/2026/other/2026-11-04-html-reports-preview)
 - [Nov 4, 2026: Backups for Snowflake Storage for Apache Iceberg™ tables (General availability)](/release-notes/2026/other/2026-11-04-iceberg-backups)
 - [November 4, 2026: Background runs and additional supplementary tools for agents in the Snowflake-managed MCP server](/release-notes/2026/other/2026-11-04-mcp-async-agent-tools)
+- [Nov 3, 2026: On-demand table creation for catalog-linked databases (General availability)](/release-notes/2026/other/2026-11-03-cld-on-demand-table-creation)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
 - [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
@@ -283,6 +286,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [Nov 2, 2026: SECRET object tagging](/release-notes/2026/other/2026-11-02-secret-object-tagging)
 - [Nov 02, 2026: Level of detail (LOD) expressions in semantic views (Preview)](/release-notes/2026/other/2026-11-02-semantic-views-lod-metrics-preview)
+- [Nov 1, 2026: Apache Iceberg™ tables: Read and write across Snowflake accounts with Snowflake Horizon Catalog, now without managing secrets (General availability)](/release-notes/2026/other/2026-11-01-horizon-catalog-integration-wif-ga)
 - [Oct 30, 2026: Cortex Training (Preview)](/release-notes/2026/other/2026-10-30-cortex-training-preview)
 - [Oct 30, 2026: CREATE OR ALTER SECRET, DCM Projects DEFINE SECRET, and environment variables (Preview)](/release-notes/2026/other/2026-10-30-dcm-define-secret-env-vars-preview)
 - [Oct 30, 2026: Hybrid table support for Google Cloud (Preview)](/release-notes/2026/other/2026-10-30-hybrid-tables-gcp-preview)
@@ -355,6 +359,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
 - [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
+- [Oct 8, 2026: Organization Trust Center Configuration in Command Center (Preview)](/release-notes/2026/other/2026-10-08-organization-hub-command-center-trust-center-preview)
 - [Oct 8, 2026: Stable egress IP addresses on Azure (General availability)](/release-notes/2026/other/2026-10-08-stable-egress-ip-azure-ga)
 - [Oct 7, 2026: Snowflake Decision with AI\_COMPLETE (Private Preview)](/release-notes/2026/other/2026-10-07-ai-complete-snowflake-decision-preview)
 - [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)

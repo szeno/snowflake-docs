@@ -56,6 +56,7 @@ The function returns `NULL` if no row has both a predicted and an actual value, 
 - Rows in which either value is `NULL` are ignored.
 - You can’t mix data types. For example, you can’t use the function on a `NUMBER` column of predictions and a `FLOAT` column of
   actual values.
+- You can’t use [WITHIN GROUP](/user-guide/data-quality-group-by) with this function.
 
 ## Examples
 

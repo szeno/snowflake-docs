@@ -116,6 +116,35 @@ For example, Snowflake writes table data to
 
 Snowflake writes metadata for the converted table to `<ext-vol-storage-base-url>/myBaseLocation/metadata/`.
 
+## Drop the source catalog entry
+
+If the table is registered in an external catalog that supports dropping the table, such as an Iceberg REST
+catalog, you can remove the table’s entry from that catalog when you convert the table. Set
+`DROP_FROM_SOURCE_CATALOG = TRUE` in the [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceberg-table-convert-to-managed)
+command:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE my_iceberg_table
+  CONVERT TO MANAGED
+  DROP_FROM_SOURCE_CATALOG = TRUE;
+```
+
+Snowflake converts the table to a Snowflake-managed Iceberg table, then removes the table’s entry from the
+external source catalog. Removing the catalog entry doesn’t delete the underlying data files. If you set
+`DROP_FROM_SOURCE_CATALOG = FALSE` or omit the clause, Snowflake converts the table and leaves the
+source-catalog entry in place.
+
+The catalog integration’s credentials need permission to drop the table in the source catalog, for example
+`TABLE_DROP` or the equivalent privilege on that catalog.
+
+Before converting, Snowflake checks that it can reach the source catalog and manage the table there. If the
+check fails, the statement fails and the table isn’t converted. If the conversion succeeds but the later drop
+fails, the table remains a Snowflake-managed Iceberg table and the statement reports success with a warning.
+A failed drop doesn’t undo the conversion. For the error and warning messages, see the
+[usage notes](/sql-reference/sql/alter-iceberg-table-convert-to-managed#label-alter-iceberg-table-convert-to-managed-usage-notes).
+
 ## Conversion and data types
 
 Note

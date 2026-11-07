@@ -1,6 +1,11 @@
-# Configure a catalog integration for Google Cloud BigLake Metastore
+# Configure a catalog integration for Google Cloud Lakehouse
 
-Use the [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) command to create an Iceberg REST catalog integration that connects Snowflake to Google Cloud BigLake Metastore. For Google Cloud concepts and console tasks, see the [BigQuery documentation](https://cloud.google.com/bigquery/docs).
+Use the [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) command to create an Iceberg REST catalog integration that connects
+Snowflake to the [Iceberg REST catalog endpoint](https://docs.cloud.google.com/lakehouse/docs/about-iceberg-rest-catalog-endpoint)
+of Google Cloud Lakehouse.
+
+[Lakehouse was formerly named BigLake](https://docs.cloud.google.com/lakehouse/docs/introduction), and BigLake metastore is now the
+Lakehouse runtime catalog. API endpoints, API service names, and IAM role names still use BigLake.
 
 This integration uses [Google Cloud workload identity federation](https://cloud.google.com/iam/docs/workload-identity-federation) so Snowflake can authenticate to Google Cloud without long-lived service account keys.
 
@@ -39,7 +44,7 @@ For more information, see [Configure workload identity federation](https://cloud
 
 Use [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest) with OAuth and the `TOKEN_EXCHANGE` grant type so Snowflake can exchange its identity token for a Google Cloud access token.
 
-The following example creates a catalog integration for BigLake:
+The following example creates a catalog integration for Lakehouse:
 
 Copy code
 
@@ -67,13 +72,13 @@ CREATE OR REPLACE CATALOG INTEGRATION biglake_catalog_int
 ### Parameters
 
 `CATALOG_URI`
-:   BigLake Iceberg REST catalog endpoint: `https://biglake.googleapis.com/iceberg/v1/restcatalog`.
+:   Lakehouse Iceberg REST catalog endpoint: `https://biglake.googleapis.com/iceberg/v1/restcatalog`.
 
 `CATALOG_NAME`
-:   Typically the Google Cloud Storage base path for your BigLake tables (for example, `gs://my-bucket/iceberg-data`).
+:   Typically the Google Cloud Storage base path for your Lakehouse tables (for example, `gs://my-bucket/iceberg-data`).
 
 `ADDITIONAL_HEADERS`
-:   Required. Headers Snowflake sends with REST catalog requests. BigLake requires the `x-goog-user-project` header so Google Cloud can attribute usage to the correct billing project. Set the value to your Google Cloud project ID.
+:   Required. Headers Snowflake sends with REST catalog requests. Lakehouse requires the `x-goog-user-project` header so Google Cloud can attribute usage to the correct billing project. Set the value to your Google Cloud project ID.
 
 `OAUTH_GRANT_TYPE = TOKEN_EXCHANGE`
 :   Enables workload identity federation so Snowflake can obtain Google Cloud access tokens through token exchange.
@@ -85,7 +90,7 @@ CREATE OR REPLACE CATALOG INTEGRATION biglake_catalog_int
 :   The full audience resource name of the Google Cloud OIDC provider you recorded in step 1.
 
 `OAUTH_ALLOWED_SCOPES`
-:   OAuth scopes for BigLake and related APIs. The example uses the BigQuery scope `https://www.googleapis.com/auth/bigquery`. Use the scopes your organization requires.
+:   OAuth scopes for Lakehouse and related APIs. The example uses the BigQuery scope `https://www.googleapis.com/auth/bigquery`. Use the scopes your organization requires.
 
 ## Step 3: Grant Google Cloud IAM permissions
 
@@ -123,7 +128,7 @@ For more context, see [Use SYSTEM$VERIFY\_CATALOG\_INTEGRATION to check your cat
 
 ## Adjust the BigLake API rate limit
 
-Google Cloud enforces a default per-minute rate limit on BigLake Iceberg REST catalog read requests. If your Snowflake workload exceeds this limit, increase the quota in the Google Cloud console.
+Google Cloud enforces a default per-minute rate limit on Lakehouse Iceberg REST catalog read requests. If your Snowflake workload exceeds this limit, increase the quota in the Google Cloud console.
 
 1. In the Google Cloud console, open **IAM & Admin** and go to **Quotas & System Limits**.
 2. Filter the list by the **BigLake API** service.
@@ -135,7 +140,7 @@ If the maximum allowed value is still too small for your workload, open a suppor
 
 ## Next steps
 
-After verification succeeds, create a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) so Snowflake can discover and query your BigLake Iceberg tables:
+After verification succeeds, create a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database) so Snowflake can discover and query your Lakehouse Iceberg tables:
 
 Copy code
 

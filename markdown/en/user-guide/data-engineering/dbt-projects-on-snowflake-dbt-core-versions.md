@@ -4,6 +4,13 @@ Snowflake provides managed runtimes for dbt Projects to ensure a secure and pred
 introduce breaking changes or security vulnerabilities, Snowflake follows a structured lifecycle for each version. This policy allows users
 to pin specific versions for governance and reproducibility while providing a clear timeline for required migrations.
 
+Important
+
+**dbt Labs end-of-life dates don’t affect your dbt project objects on Snowflake.** Any dbt project object pinned to a dbt version will
+continue to run on Snowflake, even after dbt Labs deprecates that version or ends support for it. Snowflake decommissions a version only through its own
+lifecycle, and announces any decommission at least three months in advance through the behavior change release process. For more
+information, see [How Snowflake handles older dbt versions](#label-dbt-version-lifecycle).
+
 **Supported versions for dbt Projects**
 
 | dbt Version Supported | Snowflake Support Level | dbt Labs Support |
@@ -20,6 +27,9 @@ to pin specific versions for governance and reproducibility while providing a cl
 Expand
 
 Show lessSee more
+
+The **dbt Labs Support** column is for reference only. It shows each version’s support status from dbt Labs and doesn’t affect whether
+the version runs on Snowflake.
 
 The DBT\_VERSION parameter implicitly defines the execution engine based on the version, as shown in the table below.
 
@@ -108,14 +118,22 @@ To migrate from dbt Core to dbt Fusion, use the following resources:
 - **Official upgrade guide:** The [Upgrading to the dbt Fusion engine](https://docs.getdbt.com/docs/dbt-versions/core-upgrade/upgrading-to-fusion?version=1.11) guide on the dbt Developer Hub covers the full migration process.
 - **AI-assisted migration:** The publicly available [dbt Core to Fusion migration skill](https://github.com/dbt-labs/dbt-agent-skills/blob/main/skills/dbt-migration/skills/migrating-dbt-core-to-v2/SKILL.md) can be used by AI coding agents such as Cortex Code to guide migration work.
 
-## How deprecation and decommissioning work
+## How Snowflake handles older dbt versions
 
-- Snowflake supported versions: These versions are available for all new and existing projects. Snowflake provides full technical support,
-  including security patches.
-- Snowflake deprecated versions: These versions have reached the end of their active development cycle. While they remain fully functional for
-  existing projects, users are discouraged from starting new projects on a deprecated version.
-- Snowflake decommissioned versions: These versions are officially removed from the Snowflake environment. At this stage, any project pinned to
-  a decommissioned version will fail to execute until it’s updated to a currently supported version.
-- dbt Core and dbt Fusion support levels: Even if a version reaches *Critical Support*, *Deprecated*, or *End of Life* status according to
-  [dbt Labs](https://docs.getdbt.com/docs/dbt-versions/core#latest-releases), it remains supported on Snowflake. This means that you aren’t
-  forced into immediate upgrades and can maintain your existing environment for as long as you choose.
+Snowflake manages dbt versions independently of dbt Labs. You can leave existing dbt project objects on their pinned version or upgrade them on your
+own schedule. When your team is ready, you can create new dbt project objects on newer versions.
+
+On Snowflake, each version is in one of the following states:
+
+- **Supported:** The version is available for new and existing dbt project objects. Snowflake provides full technical support, including security
+  patches.
+- **Deprecated:** The version has reached the end of its active development cycle. dbt project objects pinned to a deprecated version keep running,
+  but Snowflake recommends that you don’t create new dbt project objects on it.
+- **Decommissioned:** Snowflake has removed the version. dbt project objects pinned to a decommissioned version fail to execute until you update them
+  to a supported version. If Snowflake decides to decommission a dbt version, we will provide at least three months of lead time before
+  the decommission takes effect. We will announce any decommissions through the standard [behavior change release process](/release-notes/behavior-change-policy).
+
+When dbt Labs changes the support status of a dbt version, the version’s support status on Snowflake doesn’t change. Even if a version
+reaches *Critical Support*, *Deprecated*, or *End of Life* status according to
+[dbt Labs](https://docs.getdbt.com/docs/dbt-versions/core#latest-releases), it remains supported on Snowflake. You don’t need to upgrade
+because of a dbt Labs date.

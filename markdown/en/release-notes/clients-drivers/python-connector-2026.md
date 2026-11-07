@@ -10,6 +10,32 @@ Snowflake uses semantic versioning for Snowflake Connector for Python updates.
 
 See [Snowflake Connector for Python](/developer-guide/python-connector/python-connector) for documentation.
 
+## Version 5.2.0 (Nov 4, 2026)
+
+### New features and updates
+
+- Added support for Python 3.15 and free-threaded Python 3.15t. Wheels are published for Python 3.15 on Linux, macOS, and Windows x64. PyPI does not include 3.15t wheels. Windows on ARM wheels are published for 3.11 and 3.12 only. The pandas extra installs pandas 3 on Python 3.15. See [Installing the Python Connector](/developer-guide/python-connector/python-connector-install) and [Using Pandas with the Python Connector](/developer-guide/python-connector/python-connector-pandas).
+- Added the connection parameter `force_microsecond_precision`. `fetch_arrow_*` and `fetch_pandas_*` use it when the call omits the argument. A per-call argument overrides it. See .
+- Added support for an `EllipticCurvePrivateKey` object as `private_key`, in addition to an `RSAPrivateKey`, PEM or base64 text, and DER bytes. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation).
+- Added support for a leading `~` in `token_file_path`. A path such as `~/.snowflake/pat.token` is read from the home directory when loading a PAT, OAuth, or OIDC bearer token. See [Authenticating with a programmatic access token (PAT)](/developer-guide/python-connector/python-connector-connect#label-python-authenticate-pat).
+- Added the `service_name` connection property. The connector reads the live `SERVICE_NAME` session parameter, so the value tracks cluster reassignments from query responses. Set it on `connect()` or assign `connection.service_name` after login. See [Python Connector API](/developer-guide/python-connector/python-connector-api).
+
+### Bug fixes
+
+- Fixed `cursor.execute()` so an empty or whitespace-only statement is skipped with a warning and the cursor is returned, instead of raising `000006: Invalid Snowflake response`.
+- Fixed `Error.errorhandler_make_exception` so it constructs only PEP 249 `Error` subclasses.
+- Fixed a hang when two threads read their first Arrow result at the same time.
+- Fixed the driver resubmitting a running query when the session token expired during a long-running server-side poll. The driver refreshes the token and retries only the result poll.
+- Fixed type hints so `cursor(DictCursor)` stays a `DictCursor` through `execute` and `executemany`, its fetch results and `next()` are dictionaries, and the default `cursor()` is a tuple cursor, for both the sync and async cursors.
+- Fixed building the connector from source on FreeBSD, where the system headers do not define `ENODATA`.
+- Fixed `write_pandas` so `quote_identifiers=False` rejects column names that are not valid unquoted identifiers.
+- Fixed `validate_default_parameters=True` so login fails when the specified database, schema, or warehouse does not exist.
+
+### Changes
+
+- Removed the pandas upper bound on the `[pandas]` extra, so pandas 3.0.0 and later can be installed. See [Using Pandas with the Python Connector](/developer-guide/python-connector/python-connector-pandas).
+- Changed `split_statements` so one delimiter applies to the whole script. The delimiter is read when the call starts.
+
 ## Version 5.1.0 (Oct 21, 2026)
 
 ### New features and updates

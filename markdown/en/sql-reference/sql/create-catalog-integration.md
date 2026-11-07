@@ -10,6 +10,7 @@ creating catalog integrations for different use cases:
 - [CREATE CATALOG INTEGRATION (AWS Glue)](/sql-reference/sql/create-catalog-integration-glue)
 - [CREATE CATALOG INTEGRATION (Object storage)](/sql-reference/sql/create-catalog-integration-object-storage)
 - [CREATE CATALOG INTEGRATION (Snowflake Open Catalog)](/sql-reference/sql/create-catalog-integration-open-catalog)
+- [CREATE CATALOG INTEGRATION (Snowflake Horizon Catalog)](/sql-reference/sql/create-catalog-integration-horizon)
 - [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest)
 
 See also:

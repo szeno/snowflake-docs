@@ -354,3 +354,30 @@ Expand
 Show lessSee more
 
 See [Security](/user-guide/cortex-code/security) for details.
+
+## Tools in batch mode
+
+In [batch mode](/user-guide/cortex-code/cli-reference#label-coco-cli-batch-mode) (`cortex -p` or
+`cortex exec`), there’s no interactive prompt, so CoCo can’t ask you to approve a tool call. A tool
+call that isn’t pre-approved is denied, and CoCo continues without it. To let a batch run use a
+tool, pre-approve it with `--allowed-tools`. To remove a tool from the run entirely, use
+`--disallowed-tools`.
+
+Pass each tool as its runtime tool ID. For `bash`, you can scope the approval to matching commands
+by adding a pattern in parentheses:
+
+Copy code
+
+```
+# Allow reading and searching files, and running only git commands
+cortex -p "Summarize the changes on this branch" \
+  --allowed-tools "read" "glob" "grep" "bash(git *)"
+
+# Keep the shell out of the run entirely
+cortex -p "Explain what src/main.py does" --allowed-tools "read" --disallowed-tools "bash"
+```
+
+If a tool appears in both lists, `--disallowed-tools` wins and the tool isn’t available.
+
+Pre-approve every tool your task needs, and scope `bash` as narrowly as you can. Approved tools run
+without confirmation, so treat the list as you would any other permission grant.

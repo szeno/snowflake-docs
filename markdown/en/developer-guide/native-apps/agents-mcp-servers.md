@@ -673,7 +673,7 @@ spec:
       public: true
 ';
 
-GRANT SERVICE ROLE services.my_service!ALL_ENDPOINTS
+GRANT SERVICE ROLE services.my_service!ALL_ENDPOINTS_USAGE
   TO APPLICATION ROLE my_app_role;
 ```
 

@@ -38,11 +38,13 @@ Database 'CORTEX_CODE' does not exist or not authorized.
 
 ## Create the settings agent
 
-The settings agent is an AGENT object in the `CORTEX_CODE.CONFIG` schema. Cortex Code reads this object at session startup and applies the configured settings. Currently, `models.orchestration` is the only supported setting key; other keys in the specification are ignored.
+The settings agent is an AGENT object in the `CORTEX_CODE.CONFIG` schema. Cortex Code reads this object at session startup and applies the configured settings. This topic covers the `models.orchestration` key. The `CORTEX_CODE.CONFIG.DEFAULT` agent is also the account’s default profile, so it can set instructions and skills as well. You can also create it on the **Profiles** tab of the CoCo Admin page by selecting **Create default profile**. For more information, see [The default profile](/user-guide/cortex-code/cortex-code-snowsight/profiles#label-cortex-code-agent-profiles-default).
 
 :::note
-The settings agent controls model selection only. Other session behaviors — such as plan mode — can’t be set as account-wide defaults and are controlled per-session. To enable plan mode, use the `/plan` command or press Ctrl-P. For more information, see [Agent mode and Plan mode](/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-plan-mode).
+The settings agent can’t set session behaviors such as plan mode. Those are controlled per session. To enable plan mode, use the `/plan` command or press Ctrl-P. For more information, see [Agent mode and Plan mode](/user-guide/cortex-code/cortex-code-desktop/agent-mode-and-plan-mode).
 :::
+
+If `CORTEX_CODE.CONFIG.DEFAULT` already exists, for example because it was created on the CoCo Admin page, update it with `ALTER AGENT` as described in [Update agent settings](#label-cortex-code-default-model-update) instead. `CREATE OR REPLACE AGENT` replaces the whole object, including its instructions and skills, and removes its grants unless you specify `COPY GRANTS`.
 
 To create the default settings agent, run the following as ACCOUNTADMIN:
 
@@ -102,12 +104,14 @@ Copy code
 
 ```
 ALTER AGENT CORTEX_CODE.CONFIG.DEFAULT
-  FROM SPECIFICATION
+  MODIFY LIVE VERSION SET SPECIFICATION =
   $$
   models:
     orchestration: claude-opus-4-7
   $$;
 ```
+
+This statement replaces the whole specification. If the agent also sets instructions or skills, include them in the new specification.
 
 Note
 

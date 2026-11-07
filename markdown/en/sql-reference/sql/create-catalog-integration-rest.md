@@ -8,6 +8,9 @@ Note
 
 To create an integration for [Snowflake Open Catalog](https://other-docs.snowflake.com/en/opencatalog/overview), see [CREATE CATALOG INTEGRATION (Snowflake Open Catalog)](/sql-reference/sql/create-catalog-integration-open-catalog) instead.
 
+To access Iceberg tables in another Snowflake account through Snowflake Horizon Catalog, see
+[CREATE CATALOG INTEGRATION (Snowflake Horizon Catalog)](/sql-reference/sql/create-catalog-integration-horizon).
+
 See also:
 :   [ALTER CATALOG INTEGRATION](/sql-reference/sql/alter-catalog-integration) , [DROP CATALOG INTEGRATION](/sql-reference/sql/drop-catalog-integration) , [SHOW CATALOG INTEGRATIONS](/sql-reference/sql/show-catalog-integrations), [DESCRIBE CATALOG INTEGRATION](/sql-reference/sql/desc-catalog-integration)
 

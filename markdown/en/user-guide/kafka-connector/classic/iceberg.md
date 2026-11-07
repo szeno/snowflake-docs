@@ -93,7 +93,8 @@ CREATE OR REPLACE ICEBERG TABLE my_iceberg_table (
   BASE_LOCATION = 'my_location/my_iceberg_table';
 ```
 
-The connector automatically creates the columns for message fields and alters the `record_metadata` column schema.
+The connector automatically creates the columns for message fields and adds fields to the `record_metadata` column before it ingests data.
+Until the connector adds those fields, the table can’t accept inserts into any column, because an Iceberg table with an empty `OBJECT()` column rejects all inserts.
 
 If you don’t enable schematization, you can create a table with a column named `record_content` of a type that matches the actual Kafka message content.
 The connector automatically creates the `record_metadata` column.

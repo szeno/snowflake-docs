@@ -76,9 +76,10 @@ connect(parameters…)
         | `schema` |  | Name of the default schema to use for the database. After login, you can use [USE SCHEMA](/sql-reference/sql/use-schema) to change the schema. |
         | `role` |  | Name of the default role to use. After login, you can use [USE ROLE](/sql-reference/sql/use-role) to change the role. |
         | `warehouse` |  | Name of the default warehouse to use. After login, you can use [USE WAREHOUSE](/sql-reference/sql/use-warehouse) to change the warehouse.. |
+        | `service_name` |  | Snowflake service name for the connection. The connector reads the live `SERVICE_NAME` session parameter, so the value tracks cluster reassignments made by query responses. Set it on `connect()` or assign `connection.service_name` after login. |
         | `passcode_in_password` |  | `False` by default. Set this to `True` if the MFA (Multi-Factor Authentication) passcode is embedded in the login password. |
         | `passcode` |  | The passcode provided by Duo when using MFA (Multi-Factor Authentication) for login. |
-        | `private_key` |  | The private key used for authentication. For more information, see [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
+        | `private_key` |  | The private key used for authentication. Pass PEM or base64 text, DER bytes, an `RSAPrivateKey`, or an `EllipticCurvePrivateKey`. For more information, see [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
         | `private_key_file` |  | Specifies the path to the private key file for the specified user. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). |
         | `private_key_password` |  | Specifies the passphrase to decrypt the private key file for the specified user. See [Using key-pair authentication and key-pair rotation](/developer-guide/python-connector/python-connector-connect#label-python-key-pair-authn-rotation). The connector still accepts `private_key_file_pwd` and `private_key_passphrase` and maps them to `private_key_password`, but using them emits a `DeprecationWarning`.  Note  Before version 5.0, this parameter was named `private_key_file_pwd` (and `private_key_passphrase` was also accepted). |
         | `autocommit` |  | `None` by default, which honors the Snowflake parameter [AUTOCOMMIT](/sql-reference/parameters). Set to `True` or `False` to enable or disable autocommit mode in the session, respectively. |
@@ -96,6 +97,8 @@ connect(parameters…)
         | `paramstyle` |  | `pyformat` by default for client side binding. Specify `qmark` or `numeric` to change bind variable formats for server side binding. |
         | `timezone` |  | `None` by default, which honors the Snowflake parameter [TIMEZONE](/sql-reference/parameters). Set to a valid time zone (e.g. `America/Los_Angeles`) to set the session time zone. To use a different time zone for one statement, pass `TIMEZONE` in `_statement_params` on `execute()`. That value is sent on the query request and does not change the session. |
         | `arrow_number_to_decimal` |  | `False` by default, which means that [NUMBER](/sql-reference/data-types-numeric#label-data-type-number) column values are returned as double-precision floating point numbers (`float64`).     Set this to `True` to return DECIMAL column values as decimal numbers (`decimal.Decimal`) when calling the `fetch_pandas_all()` and `fetch_pandas_batches()` methods.     This parameter was introduced in version 2.4.3 of the Snowflake Connector for Python. |
+        | `force_microsecond_precision` |  | `False` by default. When `True`, `fetch_arrow_*` and `fetch_pandas_*` convert timestamp columns to microsecond precision if the call omits `force_microsecond_precision`. A per-call argument overrides this setting. Enabling it truncates sub-microsecond precision (scale 7-9). |
+        | `token_file_path` |  | Path to a file that contains a PAT, OAuth, or OIDC bearer token. A path that starts with `~`, such as `~/.snowflake/pat.token`, is read from the home directory. When both `token` and `token_file_path` are set, the file contents are used. See [Authenticating with a programmatic access token (PAT)](/developer-guide/python-connector/python-connector-connect#label-python-authenticate-pat). |
         | `connect_timeout` |  | Timeout in seconds for establishing a single HTTP connection. There is no default cap. |
         | `retry_timeout` |  | Hard wall-clock cap in seconds on one HTTP attempt, including the response body. There is no default cap. See [Managing connection timeouts](/developer-guide/python-connector/python-connector-connect#label-python-manage-timeouts). |
         | `socket_timeout` |  | Deprecated. Passing it emits a `DeprecationWarning` and copies the value to `connect_timeout` and `retry_timeout` unless you set one of those yourself. `conn.socket_timeout` returns `retry_timeout`. The same number can abort an active chunk download because `retry_timeout` caps the whole attempt.  Note  Before version 5.0, this was a per-attempt read-inactivity timeout that reset when bytes arrived, so an active download did not trip it. |
@@ -592,7 +595,7 @@ fetch\_arrow\_all()
     Parameters:
     :   `force_microsecond_precision`
 
-        > When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False` (default), precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Note that enabling this truncates sub-microsecond precision (scale 7-9).
+        > When the argument is omitted, the connection parameter `force_microsecond_precision` is used (`False` by default). Pass `True` or `False` to override that setting for this call. When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False`, precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Enabling this truncates sub-microsecond precision (scale 7-9).
 
     Returns:
     :   Returns a PyArrow table containing all the rows from the result set.
@@ -609,7 +612,7 @@ fetch\_arrow\_batches()
     Parameters:
     :   `force_microsecond_precision`
 
-        > When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False` (default), precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Note that enabling this truncates sub-microsecond precision (scale 7-9).
+        > When the argument is omitted, the connection parameter `force_microsecond_precision` is used (`False` by default). Pass `True` or `False` to override that setting for this call. When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False`, precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Enabling this truncates sub-microsecond precision (scale 7-9).
 
     Returns:
     :   Returns a PyArrow table containing a subset of the rows from the result set.
@@ -668,7 +671,7 @@ fetch\_pandas\_all()
     Parameters:
     :   `force_microsecond_precision`
 
-        > When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False` (default), precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Note that enabling this truncates sub-microsecond precision (scale 7-9).
+        > When the argument is omitted, the connection parameter `force_microsecond_precision` is used (`False` by default). Pass `True` or `False` to override that setting for this call. When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False`, precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Enabling this truncates sub-microsecond precision (scale 7-9).
 
     Returns:
     :   Returns a DataFrame containing all the rows from the result set.
@@ -708,7 +711,7 @@ fetch\_pandas\_batches()
     Parameters:
     :   `force_microsecond_precision`
 
-        > When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False` (default), precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Note that enabling this truncates sub-microsecond precision (scale 7-9).
+        > When the argument is omitted, the connection parameter `force_microsecond_precision` is used (`False` by default). Pass `True` or `False` to override that setting for this call. When `True`, all timestamp columns are converted to microsecond precision, ensuring consistent schema across all batches. This feature is useful when your data contains timestamps outside the nanosecond range (1677-2262), such as ’9999-12-31’ or ’0001-01-01’. When `False`, precision is determined per-batch based on the data, which might cause pyarrow schema mismatch errors when combining batches. Enabling this truncates sub-microsecond precision (scale 7-9).
 
     Returns:
     :   Returns a DataFrame containing a subset of the rows from the result set.
@@ -1077,7 +1080,7 @@ write\_pandas(parameters…)
         | `compression` |  | The compression algorithm to use for the Parquet files. You can specify either `"gzip"` for better compression or `"snappy"` for faster compression. By default, the function uses `"gzip"`. |
         | `on_error` |  | Specifies how errors should be handled. Set this to one of the string values documented in the `ON_ERROR` [copy option](/sql-reference/sql/copy-into-table#label-copy-into-table-copyoptions). By default, the function uses `"ABORT_STATEMENT"`. |
         | `parallel` |  | Number of threads to use when uploading the Parquet files to the temporary stage. For the default number of threads used and guidelines on choosing the number of threads, see [the parallel parameter of the PUT command](/sql-reference/sql/put#label-put-parameter-parallel). |
-        | `quote_identifiers` |  | If `False`, prevents the connector from [putting double quotes around identifiers](/sql-reference/identifiers-syntax) before sending the identifiers to the server. By default, the connector puts double quotes around identifiers. |
+        | `quote_identifiers` |  | If `False`, prevents the connector from [putting double quotes around identifiers](/sql-reference/identifiers-syntax) before sending the identifiers to the server. By default, the connector puts double quotes around identifiers. When `False`, a column name that is not a valid unquoted identifier is rejected. |
         | `table_type` |  | Table kind to create when the function creates the table: `temp`, `temporary`, `transient`, or an empty string (the default) for a permanent table. The connector does not accept `create_temp_table`. Passing it raises `TypeError`.  Note  Before version 5.0, `create_temp_table=True` was a deprecated alias for `table_type='temp'` and emitted a `DeprecationWarning`. |
 
         Expand

@@ -662,7 +662,7 @@ that is generated if the security scan succeeds.
 Copy code
 
 ```
-CALL samooha_by_snowflake_local_db.provider.enable_external_tables_for_cleanroom(
+CALL samooha_by_snowflake_local_db.consumer.enable_external_tables_for_cleanroom(
   $cleanroom_name);
 ```
 

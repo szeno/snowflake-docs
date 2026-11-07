@@ -11,14 +11,17 @@ Copy code
 
 ```
 ALTER CATALOG INTEGRATION [ IF EXISTS ] <name> SET
-  REST_AUTHENTICATION = (
-    restAuthenticationParams
-  )
+  [ REST_AUTHENTICATION = (
+      restAuthenticationParams
+    ) ]
+  [ DEFAULT_STORAGE_CONFIG = (
+      USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE }
+    ) ]
   [ REFRESH_INTERVAL_SECONDS = <value> ]
   [ COMMENT = '<string_literal>' ]
 ```
 
-The `restAuthenticationParams` are as follows, depending on your authentication method:
+Specify at least one property to change. The `restAuthenticationParams` are as follows, depending on your authentication method:
 
 **OAuth**
 
@@ -51,7 +54,15 @@ restAuthenticationParams (for Bearer token) ::=
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
 `SET ...`
-:   Sets one or more specified properties or parameters to set for the catalog integration:
+:   Sets one or more properties of the catalog integration:
+
+    `DEFAULT_STORAGE_CONFIG = ( USE_PRIVATELINK_ENDPOINT = { TRUE | FALSE } )`
+    :   Specifies whether Snowflake uses private connectivity to access table storage with catalog-vended credentials. Set
+        `USE_PRIVATELINK_ENDPOINT = TRUE` to enable private storage access, or `FALSE` to use public connectivity. The catalog integration must use
+        `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS`.
+
+        This setting is independent of the connection to the catalog API. For cloud requirements and endpoint setup, see
+        [Configure private connectivity to storage for catalog-vended credentials](/user-guide/tables-iceberg-vended-credentials-private-connectivity).
 
     `REFRESH_INTERVAL_SECONDS = value`
     :   Specifies the number of seconds that Snowflake waits between attempts to poll the external Iceberg catalog for metadata updates
@@ -115,4 +126,13 @@ Copy code
 
 ```
 ALTER CATALOG INTEGRATION myCatalogIntegration SET REFRESH_INTERVAL_SECONDS = 30;
+```
+
+The following example enables private connectivity to table storage for a catalog integration that uses vended credentials:
+
+Copy code
+
+```
+ALTER CATALOG INTEGRATION horizon_catalog_int
+  SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
 ```

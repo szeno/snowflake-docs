@@ -11,6 +11,9 @@ for Apache Iceberg™ tables, Snowflake accesses your cloud storage using tempor
 By default, this storage traffic traverses the public internet. For increased security, you can configure private connectivity
 so that Snowflake accesses your storage through a private endpoint instead.
 
+When the catalog is Snowflake Horizon Catalog, the provider account contains the tables and exposes the catalog API. The consumer account
+contains the catalog integration and uses vended credentials to access the provider’s storage.
+
 The following diagram shows how Snowflake reads data from cloud storage using catalog-vended credentials.
 
 ![How Iceberg tables that use a catalog integration work with vended credentials. Snowflake sends metadata requests to the external catalog, receives vended credentials, and reads data files from cloud storage.](/static/images/tables-iceberg-vended-credentials.svg)
@@ -37,20 +40,20 @@ For general information about outbound private connectivity in Snowflake, includ
 ## Considerations and limitations
 
 - Private connectivity to storage with vended credentials is supported on AWS (using AWS PrivateLink)
-  and Azure (using Azure Private Link). Google Cloud Platform (GCP) isn’t supported.
+  and Azure (using Azure Private Link). Google Cloud isn’t supported.
 - With AWS Glue Data Catalog, Snowflake can route its storage traffic over PrivateLink using vended credentials,
   but you can’t fully enforce private-only access at the S3 bucket. For details, see the warning in
   [Step 2](#label-vended-creds-pl-step2).
 - On AWS, your Snowflake account and storage buckets must be in the same region.
 - This feature is supported for catalog integrations with `CATALOG_SOURCE = ICEBERG_REST` or `CATALOG_SOURCE = POLARIS`.
-  `POLARIS` can refer to Snowflake Open Catalog or a self-hosted Polaris catalog.
+  `POLARIS` can refer to Snowflake Open Catalog, Snowflake Horizon Catalog in another account, or a self-hosted Polaris catalog.
 
 ## Step 1: Set up private storage access on the catalog side
 
 Before you block public access to your storage, ensure that your catalog server can access storage through private connectivity.
 This step is your responsibility to configure on the catalog side. The specific steps depend on your catalog vendor.
 
-Generic Iceberg REST CatalogSnowflake Open CatalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST CatalogSnowflake Open CatalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 If your catalog is self-hosted or provided by a vendor that complies with the Apache Iceberg REST catalog specification,
 you’re responsible for configuring private connectivity from your catalog to your storage. The setup depends on
@@ -71,12 +74,40 @@ enable the PrivateLink toggle on the catalog.
 For instructions, see
 [Manage private connectivity endpoints for Snowflake Open Catalog: Azure](https://docs.snowflake.com/en/user-guide/opencatalog/private-connectivity-outbound-manage-endpoints-azure).
 
+In the provider account, configure private storage access for the external volume used by the Iceberg tables. For instructions, see:
+
+- [Private connectivity to external volumes for Amazon Web Services](/user-guide/tables-iceberg-configure-external-volume-s3-private)
+- [Private connectivity to external volumes for Microsoft Azure](/user-guide/tables-iceberg-configure-external-volume-azure-private)
+
+Before restricting public storage access, ensure that the provider can still access the table storage through its private endpoint.
+When updating storage policies, retain the provider’s storage access and allow the consumer endpoint that you provision in
+[Step 5](#label-vended-creds-pl-provision-storage).
+
+Provision the storage endpoint and configure the catalog integration in the consumer account. Apply the storage-side access settings
+in [Step 6](#label-vended-creds-pl-allowlist-snowflake) in the provider’s storage environment.
+The consumer uses vended credentials and configures private storage access on the catalog integration.
+
 AWS Glue Data Catalog uses AWS Lake Formation to vend temporary credentials, and AWS Glue accesses your S3
 storage as an AWS service, not from a VPC or VPC endpoint that you control. There’s no customer-managed private
 connection from Glue to storage for you to configure in this step.
 
 This also means that you can’t block public access to your bucket in [Step 2](#label-vended-creds-pl-step2)
 without breaking Glue. See the warning in that step for details.
+
+Amazon S3 Tables is a fully managed AWS service. AWS handles the network path between
+the S3 Tables service and the underlying storage, so there’s no separate catalog server
+for you to configure.
+
+Action items:
+
+- Confirm your S3 Tables bucket is in the same AWS region as your Snowflake account.
+- Confirm the IAM role used by your catalog integration has the `s3tables:*` permissions
+  listed in the S3 Tables topic.
+
+For the full configuration, including the bucket policy that blocks public access and the
+provisioning of two private connectivity endpoints (`s3tables` and `s3`), see
+[Configure private connectivity (optional)](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables#label-s3tables-private-connectivity)
+in [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 AWSAzure
 
@@ -101,21 +132,6 @@ Databricks Unity Catalog supports two types of compute: **Classic** (VNet-inject
 - **Serverless compute:** Databricks manages the network policies. For details, see
   [Serverless compute plane networking](https://learn.microsoft.com/en-us/azure/databricks/security/network/serverless-network-security/)
   in the Azure Databricks documentation.
-
-Amazon S3 Tables is a fully managed AWS service. AWS handles the network path between
-the S3 Tables service and the underlying storage, so there’s no separate catalog server
-for you to configure.
-
-Action items:
-
-- Confirm your S3 Tables bucket is in the same AWS region as your Snowflake account.
-- Confirm the IAM role used by your catalog integration has the `s3tables:*` permissions
-  listed in the S3 Tables topic.
-
-For the full configuration, including the bucket policy that blocks public access and the
-provisioning of two private connectivity endpoints (`s3tables` and `s3`), see
-[Configure private connectivity (optional)](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables#label-s3tables-private-connectivity)
-in [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 ## Step 2: Block public access to your storage
 
@@ -258,7 +274,7 @@ in [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-ice
 After you block public access, confirm that your catalog can still read and write data. If access is broken, update
 your storage access policy to allowlist the catalog’s network identity.
 
-Generic Iceberg REST CatalogSnowflake Open CatalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST CatalogSnowflake Open CatalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 Verify that your catalog can still read and write data to storage after the firewall changes.
 The verification method depends on your catalog deployment.
@@ -279,8 +295,35 @@ You can verify by selecting a table in the Open Catalog UI. If the schema displa
 If you get a “Failed to get subscoped credentials” error, review the troubleshooting section in
 [Manage private connectivity endpoints for Snowflake Open Catalog: Azure](https://docs.snowflake.com/en/user-guide/opencatalog/private-connectivity-outbound-manage-endpoints-azure).
 
+In the provider account, verify the external volume:
+
+Copy code
+
+```
+SELECT SYSTEM$VERIFY_EXTERNAL_VOLUME('<external_volume_name>');
+```
+
+Also query an existing Iceberg table to confirm that the provider can read its table files:
+
+Copy code
+
+```
+SELECT * FROM <database_name>.<schema_name>.<table_name> LIMIT 1;
+```
+
+If access fails, review the provider’s external-volume private connectivity and the storage policy. The storage must continue to allow
+the provider’s private endpoint as well as the consumer endpoint configured in [Step 6](#label-vended-creds-pl-allowlist-snowflake).
+
 Not applicable. Because you skip [Step 2](#label-vended-creds-pl-step2) when AWS Glue is your catalog (see the
 warning in that step), there’s no public-access block to verify.
+
+No action is required. Amazon S3 Tables is a fully managed AWS service: AWS handles the network path
+between the S3 Tables service and the underlying storage, and the `aws:CalledVia` condition in the
+bucket policy from [Step 2](#label-vended-creds-pl-step2) keeps the service paths working.
+
+For background, see
+[Configure private connectivity (optional)](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables#label-s3tables-private-connectivity)
+in [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
 
 AWSAzure
 
@@ -304,14 +347,6 @@ To find the control plane NAT IPs for each Azure region, see
 [IP addresses and domains](https://learn.microsoft.com/en-us/azure/databricks/resources/ip-domain-region)
 in the Azure Databricks documentation.
 
-No action is required. Amazon S3 Tables is a fully managed AWS service: AWS handles the network path
-between the S3 Tables service and the underlying storage, and the `aws:CalledVia` condition in the
-bucket policy from [Step 2](#label-vended-creds-pl-step2) keeps the service paths working.
-
-For background, see
-[Configure private connectivity (optional)](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables#label-s3tables-private-connectivity)
-in [Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
-
 ## Step 4: Configure private connectivity from Snowflake to the catalog server (Optional, recommended)
 
 For full end-to-end private connectivity, configure the connection from Snowflake to the catalog’s API endpoint
@@ -320,7 +355,13 @@ over PrivateLink. This covers the metadata path from Snowflake to the catalog se
 For complete instructions, see
 [Configure an Apache Iceberg™ REST catalog integration with outbound private connectivity](/user-guide/tables-iceberg-configure-catalog-integration-rest-private).
 
-The key steps are:
+For Snowflake Horizon Catalog, follow [Use private connectivity for the catalog API](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-private). If the provider and consumer accounts
+are in the same region, Snowflake routes catalog traffic internally; no catalog endpoint needs to be provisioned in the consumer account.
+For accounts in different regions, provision a catalog endpoint in the consumer account. AWS connections are approved automatically.
+On Azure, you must authorize the catalog endpoint after provisioning. The catalog endpoint is separate from the storage endpoint in
+[Step 5](#label-vended-creds-pl-provision-storage).
+
+For other catalog sources, the key steps are:
 
 1. Gather private connectivity information for your catalog (endpoint service ID, host name, and similar details).
 2. Provision a private connectivity endpoint for the catalog server in Snowflake using
@@ -503,7 +544,7 @@ You can continue with the next steps while waiting for the endpoint to be ready.
 Configure a catalog integration with `USE_PRIVATELINK_ENDPOINT = TRUE` in the `DEFAULT_STORAGE_CONFIG`
 parameter to enable private connectivity for storage access with vended credentials.
 
-Generic Iceberg REST CatalogSnowflake Open CatalogAWS Glue Data CatalogDatabricks Unity CatalogAmazon S3 Tables
+Generic Iceberg REST CatalogSnowflake Open CatalogSnowflake Horizon CatalogAWS Glue Data CatalogAmazon S3 TablesDatabricks Unity Catalog
 
 This example applies to any catalog that complies with the Apache Iceberg REST catalog specification,
 whether self-hosted or provided by a catalog vendor.
@@ -593,6 +634,66 @@ ALTER CATALOG INTEGRATION <name>
   SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
 ```
 
+In the consumer account, create a `POLARIS` catalog integration with workload identity federation and private storage access.
+This example also uses private connectivity to the provider’s Horizon Catalog API:
+
+Copy code
+
+```
+CREATE CATALOG INTEGRATION horizon_catalog_int
+  CATALOG_SOURCE = POLARIS
+  TABLE_FORMAT = ICEBERG
+  REST_CONFIG = (
+    CATALOG_URI = 'https://<orgname>-<provider_account_name>.privatelink.snowflakecomputing.com/polaris/api/catalog'
+    CATALOG_API_TYPE = PRIVATE
+    CATALOG_NAME = '<database_name>'
+    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+  )
+  REST_AUTHENTICATION = (
+    TYPE = OAUTH
+    OAUTH_GRANT_TYPE = TOKEN_EXCHANGE
+    OAUTH_ALLOWED_SCOPES = ('session:role:<role_name>')
+  )
+  DEFAULT_STORAGE_CONFIG = (
+    USE_PRIVATELINK_ENDPOINT = TRUE
+  )
+  ENABLED = TRUE;
+```
+
+Use a database and role in the provider account. To retrieve the provider’s private catalog URL, see
+[Use private connectivity for the catalog API](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-private).
+
+If you use the regular catalog URL, omit `CATALOG_API_TYPE = PRIVATE`. Private connectivity to storage remains configured through
+`DEFAULT_STORAGE_CONFIG`.
+
+After creating the integration, retrieve its workload identity:
+
+Copy code
+
+```
+DESC CATALOG INTEGRATION horizon_catalog_int;
+```
+
+Use the returned issuer and subject to configure a service user and grant its role in the provider account. For instructions, see
+[Step 3: Retrieve the catalog integration identity (consumer account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-get-identity) and
+[Step 4: Create and authorize a service user (provider account)](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-create-user).
+Then verify the integration in the consumer account:
+
+Copy code
+
+```
+SELECT SYSTEM$VERIFY_CATALOG_INTEGRATION('horizon_catalog_int');
+```
+
+For an existing Horizon catalog integration that uses vended credentials, enable private storage access with:
+
+Copy code
+
+```
+ALTER CATALOG INTEGRATION horizon_catalog_int
+  SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
+```
+
 AWS Glue uses AWS Lake Formation to vend credentials with SigV4 authentication.
 
 Warning
@@ -639,6 +740,46 @@ ALTER CATALOG INTEGRATION <name>
 For more information about configuring a Glue catalog integration, see
 [Configure a catalog integration for AWS Glue Iceberg REST](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue).
 
+For Amazon S3 Tables, use `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES` and set
+`USE_PRIVATELINK_ENDPOINT = TRUE` in the `DEFAULT_STORAGE_CONFIG` parameter.
+
+**Create a new catalog integration:**
+
+Copy code
+
+```
+CREATE OR REPLACE CATALOG INTEGRATION my_s3_tables_catalog_int
+  CATALOG_SOURCE = ICEBERG_REST
+  TABLE_FORMAT = ICEBERG
+  REST_CONFIG = (
+    CATALOG_URI = 'https://s3tables.<region>.amazonaws.com/iceberg'
+    CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES
+    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+    CATALOG_NAME = 'arn:aws:s3tables:<region>:<account_id>:bucket/<table_bucket_name>'
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = 'arn:aws:iam::<account_id>:role/<role_name>'
+    SIGV4_SIGNING_REGION = '<region>'
+  )
+  DEFAULT_STORAGE_CONFIG = (
+    USE_PRIVATELINK_ENDPOINT = TRUE
+  )
+  ENABLED = TRUE;
+```
+
+**Enable private storage access for an existing catalog integration:**
+
+Copy code
+
+```
+ALTER CATALOG INTEGRATION <name>
+  SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
+```
+
+For the full S3 Tables flow including IAM policy, trust policy, and endpoint provisioning, see
+[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
+
 **Create a new catalog integration:**
 
 Copy code
@@ -681,46 +822,6 @@ ALTER CATALOG INTEGRATION <name>
   SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
 ```
 
-For Amazon S3 Tables, use `CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES` and set
-`USE_PRIVATELINK_ENDPOINT = TRUE` in the `DEFAULT_STORAGE_CONFIG` parameter.
-
-**Create a new catalog integration:**
-
-Copy code
-
-```
-CREATE OR REPLACE CATALOG INTEGRATION my_s3_tables_catalog_int
-  CATALOG_SOURCE = ICEBERG_REST
-  TABLE_FORMAT = ICEBERG
-  REST_CONFIG = (
-    CATALOG_URI = 'https://s3tables.<region>.amazonaws.com/iceberg'
-    CATALOG_API_TYPE = AWS_PRIVATE_S3TABLES
-    ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
-    CATALOG_NAME = 'arn:aws:s3tables:<region>:<account_id>:bucket/<table_bucket_name>'
-  )
-  REST_AUTHENTICATION = (
-    TYPE = SIGV4
-    SIGV4_IAM_ROLE = 'arn:aws:iam::<account_id>:role/<role_name>'
-    SIGV4_SIGNING_REGION = '<region>'
-  )
-  DEFAULT_STORAGE_CONFIG = (
-    USE_PRIVATELINK_ENDPOINT = TRUE
-  )
-  ENABLED = TRUE;
-```
-
-**Enable private storage access for an existing catalog integration:**
-
-Copy code
-
-```
-ALTER CATALOG INTEGRATION <name>
-  SET DEFAULT_STORAGE_CONFIG = (USE_PRIVATELINK_ENDPOINT = TRUE);
-```
-
-For the full S3 Tables flow including IAM policy, trust policy, and endpoint provisioning, see
-[Configure a catalog integration for Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables).
-
 ## Step 9: Create Iceberg tables
 
 After you configure the catalog integration, you can create Iceberg tables or a catalog-linked database. Snowflake
@@ -738,6 +839,9 @@ CREATE ICEBERG TABLE my_iceberg_table
   CATALOG_TABLE_NAME = 'my_table'
   AUTO_REFRESH = TRUE;
 ```
+
+For Horizon Catalog, also specify `CATALOG_NAMESPACE = '<schema_name>'`. For an example, see
+[Access an individual table](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon#label-tables-iceberg-catalog-integration-horizon-create-table).
 
 **Create a catalog-linked database:**
 

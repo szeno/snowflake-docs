@@ -2,10 +2,6 @@
 
 This document outlines the known limitations and key considerations for Snowpipe Streaming with high-performance architecture.
 
-## General and service-level limitations
-
-- The service is available in all Amazon Web Services (AWS), Microsoft Azure, and Google Cloud regions except for government-specific regions.
-
 ## Table limits
 
 - Maximum throughput: A table can achieve an aggregate throughput of 20 GB/s uncompressed.

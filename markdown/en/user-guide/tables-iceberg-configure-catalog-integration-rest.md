@@ -16,6 +16,9 @@ Snowflake supports the following authentication methods for Iceberg REST catalog
 - OAuth
 - Bearer token or personal access token (PAT)
 - Signature Version 4 (SigV4)
+- Workload identity federation (WIF), which uses OAuth token exchange. For example, see
+  [Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon) and
+  [Configure a catalog integration for Google Cloud Lakehouse](/user-guide/tables-iceberg-configure-catalog-integration-rest-biglake).
 
 Supported authentication methods vary by [catalog source](#label-tables-iceberg-configure-catalog-integration-sources).
 
@@ -67,13 +70,14 @@ The following topics provide examples for commonly used REST catalogs:
 
 - [Snowflake Open Catalog](/user-guide/tables-iceberg-configure-catalog-integration-open-catalog). These instructions also apply to
   Apache Polaris™.
+- [Snowflake Horizon Catalog](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon) in another Snowflake account
 - [AWS Glue](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue)
 - [Amazon S3 Tables](/user-guide/tables-iceberg-configure-catalog-integration-rest-s3tables)
 - [Amazon API Gateway](/user-guide/tables-iceberg-configure-catalog-integration-rest-api-gateway)
+- [Microsoft OneLake](/user-guide/tables-iceberg-configure-catalog-integration-rest-onelake)
+- [Google Cloud Lakehouse](/user-guide/tables-iceberg-configure-catalog-integration-rest-biglake)
+- [Databricks Unity Catalog](/user-guide/tables-iceberg-configure-catalog-integration-rest-unity)
 - [Tabular](/user-guide/tables-iceberg-configure-catalog-integration-rest-tabular)
-- [Unity Catalog](/user-guide/tables-iceberg-configure-catalog-integration-rest-unity)
-- [OneLake](/user-guide/tables-iceberg-configure-catalog-integration-rest-onelake)
-- [Google Cloud BigLake Metastore](/user-guide/tables-iceberg-configure-catalog-integration-rest-biglake)
 
 ## Browsing a remote catalog
 

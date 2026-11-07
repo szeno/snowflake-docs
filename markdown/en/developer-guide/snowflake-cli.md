@@ -26,6 +26,7 @@ This guide introduces and explains how to install and use Snowflake CLI. It incl
 - [Introducing Snowflake CLI](/developer-guide/snowflake-cli/introduction)
 - [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation)
 - [Configuring Snowflake CLI and connecting to Snowflake](/developer-guide/snowflake-cli/connecting/connect)
+- [CI/CD](/developer-guide/cicd/index)
 - [Bootstrapping a project from a template](/developer-guide/snowflake-cli/bootstrap-project/bootstrap)
 - [About project definition files](/developer-guide/snowflake-cli/project-definitions/about)
 - [Managing Snowflake objects](/developer-guide/snowflake-cli/objects/manage-objects)

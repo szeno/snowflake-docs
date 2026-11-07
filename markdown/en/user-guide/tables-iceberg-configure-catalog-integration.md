@@ -16,6 +16,7 @@ You must specify a catalog integration to create an Apache Iceberg™ table in S
 - Use an external Iceberg catalog.
 - Create a table from files in object storage.
 - Integrate with Snowflake Open Catalog.
+- Access Iceberg tables in another Snowflake account through Snowflake Horizon Catalog.
 - Use an Iceberg REST catalog.
 
   Tip
@@ -41,6 +42,7 @@ For specific instructions, see the following topics:
 - [Configure a catalog integration for files in object storage](/user-guide/tables-iceberg-configure-catalog-integration-object-storage)
 - [Configure a catalog integration for Snowflake Open Catalog](/user-guide/tables-iceberg-configure-catalog-integration-open-catalog)
 - [Configure a catalog integration for Apache Iceberg™ REST catalogs](/user-guide/tables-iceberg-configure-catalog-integration-rest)
+- [Access Apache Iceberg™ tables in another Snowflake account](/user-guide/tables-iceberg-configure-catalog-integration-rest-horizon)
 
 ## Set a default catalog at the account, database, or schema level
 

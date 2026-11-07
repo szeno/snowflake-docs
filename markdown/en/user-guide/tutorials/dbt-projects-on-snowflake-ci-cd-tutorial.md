@@ -74,9 +74,9 @@ Platform-specific reference guides
 
 For detailed configuration options beyond what this tutorial covers, see the dedicated Snowflake CLI CI/CD guides:
 
-- [Snowflake CLI CI/CD integration overview](/developer-guide/snowflake-cli/cicd/integrate-ci-cd)
-- [GitLab CI/CD component](/developer-guide/snowflake-cli/cicd/gitlab-component)
-- [Azure DevOps extension](/developer-guide/snowflake-cli/cicd/azure-devops-extension)
+- [CI/CD](/developer-guide/cicd/index)
+- [GitLab CI/CD component](/developer-guide/cicd/gitlab-component)
+- [Azure DevOps extension](/developer-guide/cicd/azure-devops-extension)
 
 ## Set up your environment
 
@@ -226,7 +226,7 @@ CREATE USER IF NOT EXISTS gitlab_cicd_service_user
   COMMENT = 'Service user for GitLab CI/CD';
 ```
 
-For more information, see [GitLab CI/CD component](/developer-guide/snowflake-cli/cicd/gitlab-component).
+For more information, see [GitLab CI/CD component](/developer-guide/cicd/gitlab-component).
 
 The subject uses an Azure DevOps service connection identifier. Replace `<azure-ad-tenant-id>` with your Microsoft Entra tenant ID.
 
@@ -245,7 +245,7 @@ CREATE USER IF NOT EXISTS ado_cicd_service_user
   COMMENT = 'Service user for Azure DevOps';
 ```
 
-For more information, see [Azure DevOps extension](/developer-guide/snowflake-cli/cicd/azure-devops-extension).
+For more information, see [Azure DevOps extension](/developer-guide/cicd/azure-devops-extension).
 
 After you create your user, explicitly grant the default role for the service user to assume that role. The DEFAULT\_ROLE parameter only sets the
 user’s default role and doesn’t grant it. Then set a default warehouse.
@@ -1142,7 +1142,7 @@ Next steps to improve your workflow:
   For more information, see [Configure error alerts and notifications for tasks](/user-guide/tasks-errors-integrate).
 - Explore the platform-specific Snowflake CLI CI/CD reference guides for advanced configuration:
 
-  - [Snowflake CLI CI/CD integration overview](/developer-guide/snowflake-cli/cicd/integrate-ci-cd)
-  - [GitLab CI/CD component](/developer-guide/snowflake-cli/cicd/gitlab-component)
-  - [Azure DevOps extension](/developer-guide/snowflake-cli/cicd/azure-devops-extension)
+  - [CI/CD](/developer-guide/cicd/index)
+  - [GitLab CI/CD component](/developer-guide/cicd/gitlab-component)
+  - [Azure DevOps extension](/developer-guide/cicd/azure-devops-extension)
 - Explore [Managing dbt Projects on Snowflake using Snowflake CLI](/developer-guide/snowflake-cli/data-pipelines/dbt-projects).

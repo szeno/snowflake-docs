@@ -516,7 +516,7 @@ CALL SAMOOHA_BY_SNOWFLAKE_LOCAL_DB.COLLABORATION.RUN(
     api_version: 2.0.0
     spec_type: analysis
     description: Bob runs the bob_shared_template with both data offerings.
-    template: '<bob_shared_template>'
+    template: '<bob_shared_template_id>'
     template_configuration:
       view_mappings:
         source_tables:

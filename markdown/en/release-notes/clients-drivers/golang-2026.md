@@ -12,10 +12,6 @@ See [Go Snowflake Driver](/developer-guide/golang/go-driver) for documentation.
 
 ## Version 2.4.0 (Nov 04, 2026)
 
-### Behavior changes
-
-- After upgrading, users who authenticate with a cached token, such as browser-based SSO, MFA, or OAuth, sign in once more, and the driver stores a new token. The token cache moved so it can be shared across Snowflake drivers: macOS Keychain and Windows Credential Manager entries now use the service name `snowflake_credential_cache`, and cache keys now use lowercase URLs and identifiers and PascalCase token types (`IdToken`, `MfaToken`, `OauthAccessToken`, and `OauthRefreshToken`) so they match other Snowflake drivers. Tokens saved by earlier versions stay in place but are not reused.
-
 ### New features and updates
 
 - Added query timing fields to `SnowflakeQueryStatus`: `TotalDuration`, `GsCompileDuration`, `GsExecDuration`, `XpExecDuration`, `QueryRetryTime`, and `FaultHandlingTime`. `GetQueryStatus` now returns these values.
@@ -24,6 +20,8 @@ See [Go Snowflake Driver](/developer-guide/golang/go-driver) for documentation.
 
 ### Bug fixes
 
+- Fixed token cache keys to use lowercase URLs and identifiers and PascalCase token types (`IdToken`, `MfaToken`, `OauthAccessToken`, and `OauthRefreshToken`) so the keys match other Snowflake drivers.
+- Changed where cached tokens are stored so they can be shared across Snowflake drivers. macOS Keychain and Windows Credential Manager entries now use the service name `snowflake_credential_cache`, and the Linux cache file is `credential_cache_v2.json`.
 - Fixed the Linux token cache directory lookup to read `XDG_CACHE_HOME` instead of the nonstandard `XDG_CACHE_DIR`. If you previously set only `XDG_CACHE_DIR`, the cache now uses `XDG_CACHE_HOME` or `$HOME/.cache/snowflake` instead. When `SF_TEMPORARY_CREDENTIAL_CACHE_DIR` is set but can’t be used, the driver disables caching and logs a warning instead of falling back to another directory.
 - Fixed the Linux token cache lock to use `flock` on a `.lck` file next to the cache file. A corrupt cache file is now replaced on the next write instead of disabling caching.
 - Fixed a leak of a `gosnowflake-cgo` temporary directory when `loadCore` returned before cleanup was registered, including on an unsupported platform, a statically linked binary, or a failed library write.

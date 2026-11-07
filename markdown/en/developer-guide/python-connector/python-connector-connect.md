@@ -492,7 +492,7 @@ The Python connector supports key pair authentication and key rotation.
 
 For more information on how to configure key pair authentication and key rotation, see [Key-pair authentication and key-pair rotation](/user-guide/key-pair-auth).
 
-1. After completing the key pair authentication configuration, set the `private_key_file` parameter in the `connect` function to the path to the private key file. Also, set the `private_key_password` parameter to the passphrase of the private key file. The connector still accepts `private_key_file_pwd` and maps it to `private_key_password`, but using it emits a `DeprecationWarning`.
+1. After completing the key pair authentication configuration, set the `private_key_file` parameter in the `connect` function to the path to the private key file. Also, set the `private_key_password` parameter to the passphrase of the private key file. The connector still accepts `private_key_file_pwd` and maps it to `private_key_password`, but using it emits a `DeprecationWarning`. You can pass `private_key` instead of a file. `private_key` accepts PEM or base64 text, DER bytes, an `RSAPrivateKey`, or an `EllipticCurvePrivateKey`.
 
    Note
 
@@ -671,13 +671,15 @@ To enable the workload identity federation authenticator, do the following:
 
 1. Set the `authenticator` connection parameter to `WORKLOAD_IDENTITY`.
 2. Set the `workload_identity_provider` connection parameter to `AWS`, `AZURE`, `GCP`, or `OIDC`, based on your platform.
-3. For OpenID Connect (OIDC), specify the `token` connection parameter.
+3. For OpenID Connect (OIDC), specify the `token` connection parameter, or `token_file_path` for a file that contains the token. A path that starts with `~` is read from the home directory. When both are set, the file contents are used.
 
 ## Authenticating with a programmatic access token (PAT)
 
 Programmatic Access Token (PAT) is a Snowflake-specific authentication method. The feature must be enabled for the account before usage (see the [Prerequisites](/user-guide/programmatic-access-tokens#label-pat-prerequisites) for more information). Authentication with PAT doesn’t involve any human interaction.
 
 For more information about PATs, see [Using programmatic access tokens for authentication](/user-guide/programmatic-access-tokens).
+
+Pass the token in `token`, or pass `token_file_path` for a file that contains the token. A path that starts with `~`, such as `~/.snowflake/pat.token`, is read from the home directory. The same path form works for an OAuth or OIDC bearer token file. When both `token` and `token_file_path` are set, the file contents are used.
 
 ## Managing connection timeouts
 

@@ -24,7 +24,7 @@ Snowflake supports the following stored procedures, grouped by feature:
 | [Notifications](/user-guide/notifications/about-notifications) | - [SYSTEM$SEND\_SNOWFLAKE\_NOTIFICATION](/sql-reference/stored-procedures/system_send_snowflake_notification) - [SYSTEM$SEND\_EMAIL](/sql-reference/stored-procedures/system_send_email) |
 | [Semantic views](/user-guide/views-semantic/overview) | - [SYSTEM$CREATE\_SEMANTIC\_VIEW\_FROM\_YAML](/sql-reference/stored-procedures/system_create_semantic_view_from_yaml) |
 | [Synthetic data](/user-guide/synthetic-data) | - [GENERATE\_SYNTHETIC\_DATA](/sql-reference/stored-procedures/generate_synthetic_data) |
-| [Trust Center](/user-guide/trust-center/overview) | - [REGISTER\_EXTENSION](/sql-reference/stored-procedures/register_extension) - [DEREGISTER\_EXTENSION](/sql-reference/stored-procedures/deregister_extension) - [GET\_AUTO\_ENABLEMENT\_STATUS](/sql-reference/stored-procedures/get_auto_enablement_status) - [UPDATE\_AUTO\_ENABLEMENT\_STATUS](/sql-reference/stored-procedures/update_auto_enablement_status) |
+| [Trust Center](/user-guide/trust-center/overview) | - [REGISTER\_EXTENSION](/sql-reference/stored-procedures/register_extension) - [DEREGISTER\_EXTENSION](/sql-reference/stored-procedures/deregister_extension) - [GET\_AUTO\_ENABLEMENT\_STATUS](/sql-reference/stored-procedures/get_auto_enablement_status) - [UPDATE\_AUTO\_ENABLEMENT\_STATUS](/sql-reference/stored-procedures/update_auto_enablement_status) - [Trust Center organization-level configuration procedures](/sql-reference/trust_center/trust-center-org-config) |
 
 Expand
 

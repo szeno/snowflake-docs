@@ -7,8 +7,7 @@ Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and 
 After configuring core Snowflake, create an Openflow deployment. A deployment is the
 data plane container for your runtimes and connectors. Each deployment can host
 multiple runtimes, and each runtime can run multiple connectors, giving you flexibility to
-isolate workloads by project, team, or environment. There is no separate charge for the
-deployment itself; only active runtimes consume Snowflake credits.
+isolate workloads by project, team, or environment.
 
 1. [Create a deployment](#label-openflow-spcs-create-deployment).
 2. [[Optional] Configure an Openflow-specific event table](#label-openflow-spcs-event-table) - configure an Openflow-specific event table to store Openflow logs and metrics.
