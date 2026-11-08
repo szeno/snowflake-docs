@@ -67,6 +67,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
+- [Nov 2, 2026: CoCo automations (General availability)](/release-notes/2026/other/2026-11-02-cortex-code-automations-ga)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [Nov 2, 2026: SECRET object tagging](/release-notes/2026/other/2026-11-02-secret-object-tagging)
 - [Nov 02, 2026: Level of detail (LOD) expressions in semantic views (Preview)](/release-notes/2026/other/2026-11-02-semantic-views-lod-metrics-preview)
@@ -177,9 +178,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 8, 2026: Stable egress IP addresses on Azure (General availability)](/release-notes/2026/other/2026-10-08-stable-egress-ip-azure-ga)
 - [Snowflake CLI (v3.29.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Snowpipe Streaming SDK (v1.9.0)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
-- [Oct 7, 2026: Snowflake Decision with AI\_COMPLETE (Private Preview)](/release-notes/2026/other/2026-10-07-ai-complete-snowflake-decision-preview)
-- [Oct 07, 2026: Claude Haiku 5.5 model in the Cortex REST API (Preview)](/release-notes/2026/other/2026-10-07-claude-haiku-5-5-preview)
-- [Oct 7, 2026: Zero-copy integration for Workday Data Cloud (General availability)](/release-notes/2026/other/2026-10-07-workday-data-cloud-zerocopy-ga)
-- [ServiceNow® V2 (v5.28.3)](/release-notes/connectors/servicenow-v2-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

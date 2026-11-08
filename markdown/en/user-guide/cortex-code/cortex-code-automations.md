@@ -1,9 +1,4 @@
-# CoCo automations in CLI, Snowsight, and Desktop (*Preview*)
-
-[Preview Feature](/release-notes/preview-features)  — Open
-
-Available in all commercial regions on AWS, Azure, and Google Cloud. Not available in government,
-FedRAMP, DoD, VPS, or China deployments.
+# CoCo automations in CLI, Snowsight, and Desktop
 
 ## Overview
 
@@ -64,6 +59,11 @@ workspace stage at `/workspace` by default, so files written there persist acros
 `--workspace <stage_fqn>` to mount a different stage, or `--no-workspace` to skip the mount. If you
 skip the mount, `/workspace` is ephemeral and its contents are discarded after each run.
 
+## Availability
+
+- Generally available in all commercial regions on AWS, Azure, and Google Cloud.
+- Not available in government, FedRAMP, DoD, VPS, or China deployments.
+
 ## Requirements and access control
 
 Before you use automations, the following requirements must be met:
@@ -98,8 +98,8 @@ For background on the default `PUBLIC` grant, see
 
 ## Cost
 
-During public preview, user-created automations incur standard Snowflake task billing in addition to
-CoCo token consumption for each run. System-initiated analysis does not incur charges.
+User-created automations incur standard Snowflake task billing in addition to CoCo token
+consumption for each run. System-initiated analysis does not incur charges.
 
 For details about task costs, see [Monitor task costs](/user-guide/tasks-intro#label-task-monitoring-cost).
 For CoCo pricing details, see the
@@ -111,7 +111,7 @@ You can create an automation from the Automations interface or conversationally 
 
 To create an automation from the interface:
 
-1. Open CoCo in Snowsight, then open **Automations**. The entry point can differ by preview build.
+1. Open CoCo in Snowsight, then open **Automations**.
 2. Select **Create automation**. You can start from an available template or create an automation
    from scratch.
 3. Enter a title and a self-contained instruction that describes what CoCo should do on every run.
@@ -409,18 +409,17 @@ objects.
 The automation sandbox can’t access your local filesystem or locally configured MCP servers. Only
 files mounted from Snowflake and MCP servers explicitly attached to the automation are available.
 
-## Limits and preview behavior
+## Limitations
 
-The following limits and behaviors apply during the public preview:
+The following limits and behaviors apply:
 
 - The supported minimum scheduling frequency is once per hour. The CLI schedule parser can accept
-  shorter intervals, but intervals shorter than one hour are not supported for this preview.
+  shorter intervals, but intervals shorter than one hour are not supported.
 - Automation threads and run history are retained for two months.
 - Automations use fixed time-based schedules. Event-based triggers are not supported.
 - Runs can take additional time to start while Snowflake provisions the managed sandbox.
 - You can’t attach to a run in progress or resume a run interactively. Runs are inspected read-only
   through their task history and thread transcripts.
-- The available templates, schedule controls, and interface labels can change during the preview.
 - Run history can temporarily show task information without a thread link while a run is starting or
   while thread metadata is being recorded.
 

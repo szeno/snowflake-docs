@@ -3,7 +3,7 @@
 Automations let you automate recurring work with CoCo. Each automation is a saved prompt that runs on a schedule. CoCo Desktop has two kinds of automations:
 
 - **Local automations** run on your computer. When one fires, CoCo starts a new chat session, sends your prompt to the agent, and notifies you when it finishes. Local automations are available in all CoCo Desktop builds. They are stored locally per machine and per OS user. They are not synced across devices.
-- **Cloud automations** run in Snowflake on a schedule, even while your computer is off. They are in preview. See [Cloud automations](#label-cortex-code-desktop-automations-cloud).
+- **Cloud automations** run in Snowflake on a schedule, even while your computer is off. See [Cloud automations](#label-cortex-code-desktop-automations-cloud).
 
 Most of this page describes local automations.
 
@@ -146,13 +146,9 @@ To skip approval prompts entirely for an automation, use a bypass [permission mo
 
 ## Cloud automations
 
-[Preview Feature](/release-notes/preview-features)  — Open
-
-Available in accounts where CoCo automations are enabled.
-
 Cloud automations run in Snowflake as agent tasks on a schedule, even while your computer is off or CoCo Desktop is closed. They are the same Snowflake-hosted automations that you can create and manage in CoCo CLI and CoCo in Snowsight.
 
-Cloud automations are listed on the **Cloud** tab of the **Automations** page. The **Cloud** tab and a **Cloud Preview** badge beside the **Automations** title appear only in accounts where CoCo automations are enabled. To turn off Cloud automations, set the `chat.automations.cloud.enabled` setting to `false`.
+Cloud automations are listed on the **Cloud** tab of the **Automations** page. The **Cloud** tab appears only in accounts where CoCo automations are enabled. To turn off Cloud automations, set the `chat.automations.cloud.enabled` setting to `false`.
 
 You can create a cloud automation in the following ways:
 
@@ -162,4 +158,4 @@ You can create a cloud automation in the following ways:
 
 Click a cloud automation to view its instruction, latest output, run history, and details. Use **Edit**, **Run now**, and **Delete** to manage it, and select its status to suspend or resume its schedule.
 
-A cloud automation runs in a Snowflake-managed sandbox, so it can’t use files, MCP servers, or skills from your computer. For requirements, cost, security, and limits, see [CoCo automations in CLI, Snowsight, and Desktop (Preview)](/user-guide/cortex-code/cortex-code-automations).
+A cloud automation runs in a Snowflake-managed sandbox, so it can’t use files, MCP servers, or skills from your computer. For requirements, cost, security, and limits, see [CoCo automations in CLI, Snowsight, and Desktop](/user-guide/cortex-code/cortex-code-automations).

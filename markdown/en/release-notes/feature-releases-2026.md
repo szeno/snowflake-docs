@@ -18,6 +18,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
+- [Nov 2, 2026: CoCo automations (General availability)](/release-notes/2026/other/2026-11-02-cortex-code-automations-ga)
 - [Nov 02, 2026: Open Data Sharing (General availability)](/release-notes/2026/other/2026-11-02-open-data-sharing-ga)
 - [Nov 2, 2026: SECRET object tagging](/release-notes/2026/other/2026-11-02-secret-object-tagging)
 - [Nov 02, 2026: Level of detail (LOD) expressions in semantic views (Preview)](/release-notes/2026/other/2026-11-02-semantic-views-lod-metrics-preview)
