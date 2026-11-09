@@ -19,7 +19,7 @@ Copy code
 CREATE [ OR REPLACE ] NETWORK RULE <name>
    TYPE = { IPV4 | IPV6 | AWSVPCEID | AZURELINKID | GCPPSCID | HOST_PORT | PRIVATE_HOST_PORT | COMPUTE_POOL }
    VALUE_LIST = ( '<value>' [, '<value>', ... ] )
-   MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }
+   [ MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS } ]
    [ COMMENT = '<string_literal>' ]
 ```
 
@@ -157,6 +157,8 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
     >   To allow access to all ports, define the port as 0; for example, `example.com:0`.
     > - When `TYPE = COMPUTE_POOL`, each value must be a valid compute pool name, or `'ALL'` to match all Snowpark Container Services compute pools in the account.
 
+## Optional parameters
+
 `MODE = { INGRESS | INTERNAL_STAGE | SNOWFLAKE_MANAGED_STORAGE_VOLUME | EGRESS }`
 :   Specifies what is restricted by the network rule.
 
@@ -190,8 +192,6 @@ To learn more about DCM Projects, see [Snowflake DCM Projects](/user-guide/dcm-p
     :   Allows Snowflake to send requests to an external destination.
 
     Default: `INGRESS`
-
-## Optional parameters
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment for the network rule.

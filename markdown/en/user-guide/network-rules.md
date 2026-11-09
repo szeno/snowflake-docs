@@ -336,6 +336,24 @@ ALTER NETWORK POLICY example_network_policy ADD ALLOWED_NETWORK_RULE_LIST = (
 );
 ```
 
+To check the IP ranges that a Snowflake-managed network rule contains, query the
+[NETWORK\_RULES view](/sql-reference/account-usage/network_rules) in the ACCOUNT\_USAGE schema.
+The following example returns the IP ranges for the `POWERBI_CANADACENTRAL_AZURE` rule:
+
+Copy code
+
+```
+SELECT name, value_list AS ip_ranges, last_altered
+  FROM SNOWFLAKE.ACCOUNT_USAGE.NETWORK_RULES
+  WHERE database_name = 'SNOWFLAKE'
+    AND schema_name = 'NETWORK_SECURITY'
+    AND name = 'POWERBI_CANADACENTRAL_AZURE'
+    AND deleted IS NULL;
+```
+
+Account Usage views have some latency. For current results, run
+`DESCRIBE NETWORK RULE SNOWFLAKE.NETWORK_SECURITY.POWERBI_CANADACENTRAL_AZURE` instead.
+
 To allow a custom role to use the Snowflake-managed network rules in the `SNOWFLAKE.NETWORK_SECURITY`
 schema, grant the role the `SNOWFLAKE.NETWORK_SECURITY_ADMIN` application role:
 

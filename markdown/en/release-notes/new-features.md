@@ -173,10 +173,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 12, 2026: Share Streamlit in Snowflake apps with individual users (General availability)](/release-notes/2026/other/2026-10-12-sis-share-with-users)
 - [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
 - [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
-- [Oct 8, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-08-dcr)
-- [Oct 8, 2026: Organization Trust Center Configuration in Command Center (Preview)](/release-notes/2026/other/2026-10-08-organization-hub-command-center-trust-center-preview)
-- [Oct 8, 2026: Stable egress IP addresses on Azure (General availability)](/release-notes/2026/other/2026-10-08-stable-egress-ip-azure-ga)
-- [Snowflake CLI (v3.29.0)](/release-notes/clients-drivers/snowflake-cli-2026)
-- [Snowpipe Streaming SDK (v1.9.0)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).
