@@ -145,6 +145,10 @@ Copy code
 Set up incremental sync for ORDERS using ORA_ROWSCN as the watermark column
 ```
 
+### Iceberg targets
+
+You can land Oracle tables in **Apache Iceberg™** tables on Snowflake. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. Use the `regular` or `cloud_direct` extraction strategy with a Snowflake external stage in `extraction.externalStage`. `dbms_cloud` is not supported for Iceberg targets. Spec v2 compatible, spec v3 compatible, and spec v3 native profiles are supported with `loadMode: ADD_FILES_COPY`. On spec v3 native, `DATE` and `TIMESTAMP` columns keep native timestamp types, and `TIMESTAMP(7)` to `TIMESTAMP(9)` keep nanoseconds as `TIMESTAMP_NTZ(9)`. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg).
+
 ## Data type mappings
 
 | Oracle type | Snowflake target type | Supported for migration | Notes |

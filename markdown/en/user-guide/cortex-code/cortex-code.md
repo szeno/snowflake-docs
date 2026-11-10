@@ -88,18 +88,18 @@ For details about the CLI experience, see [CoCo CLI](/user-guide/cortex-code/cor
   with, thanks to features like session persistence, `git` worktree support, a choice of compact and expanded display
   modes, multiple color themes, and support for `vim`-style keyboard navigation.
 
-### CoCo for Excel and Google Sheets
+### CoCo for Microsoft Excel and Google Sheets
 
 Feature — Preview
 
 This feature is in preview.
 
-Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets add CoCo as a chat pane inside your spreadsheet,
+Snowflake CoCo for Microsoft Excel and Snowflake CoCo for Google Sheets add CoCo as a chat pane inside your spreadsheet,
 connected to your live Snowflake data. From the pane, you can query data with natural language or SQL; build pivot
 tables, charts, and formulas; and use the semantic views your role can access. Queries run under your own role, so
 access control, masking, and row access policies apply to the data that reaches your spreadsheet.
 
-For details, see [Snowflake CoCo for Excel](/user-guide/cortex-code/cortex-code-excel-integration) and
+For details, see [Snowflake CoCo for Microsoft Excel](/user-guide/cortex-code/cortex-code-excel-integration) and
 [Snowflake CoCo for Google Sheets](/user-guide/cortex-code/cortex-code-sheets-integration).
 
 ### CoCo Agent SDK
@@ -146,7 +146,7 @@ For detailed setup instructions, release history, troubleshooting, and advanced 
 - [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop)
 - [CoCo Desktop release notes](/user-guide/cortex-code/cortex-code-desktop/release-notes)
 - [CoCo CLI](/user-guide/cortex-code/cortex-code-cli)
-- [Snowflake CoCo for Excel](/user-guide/cortex-code/cortex-code-excel-integration)
+- [Snowflake CoCo for Microsoft Excel](/user-guide/cortex-code/cortex-code-excel-integration)
 - [Snowflake CoCo for Google Sheets](/user-guide/cortex-code/cortex-code-sheets-integration)
 - [CoCo automations in CLI, Snowsight, and Desktop](/user-guide/cortex-code/cortex-code-automations)
 - [CoCo changelog](/user-guide/cortex-code/changelog)
@@ -203,11 +203,11 @@ To manage CoCo spend, see
 CoCo in Snowsight is billed based on token consumption for customers with an existing
 Snowflake account.
 
-### CoCo for Excel and Google Sheets billing
+### CoCo for Microsoft Excel and Google Sheets billing
 
-Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets are billed based on token consumption for customers
-with an existing Snowflake account. For pricing details, see
-[Snowflake CoCo for Excel](/user-guide/cortex-code/cortex-code-excel-integration) and
+Snowflake CoCo for Microsoft Excel and Snowflake CoCo for Google Sheets are billed based on token consumption for
+customers with an existing Snowflake account. For pricing details, see
+[Snowflake CoCo for Microsoft Excel](/user-guide/cortex-code/cortex-code-excel-integration) and
 [Snowflake CoCo for Google Sheets](/user-guide/cortex-code/cortex-code-sheets-integration).
 
 ## Legal notices

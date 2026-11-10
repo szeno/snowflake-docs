@@ -3,10 +3,6 @@ Categories:
 
 # IPADDRESS\_TRUNC
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Returns the network address of an [IPADDRESS](/sql-reference/data-types-ipaddress) value for a given
 prefix length. The function keeps the leading bits of the address that the prefix length specifies and
 sets the remaining host bits to zero. For example, truncating `192.168.129.255` to a prefix length of

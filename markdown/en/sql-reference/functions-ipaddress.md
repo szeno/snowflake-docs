@@ -1,9 +1,5 @@
 # IPADDRESS functions
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Snowflake provides scalar functions for converting values to the
 [IPADDRESS](/sql-reference/data-types-ipaddress) data type and for working with the network that an
 address belongs to.

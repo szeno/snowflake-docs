@@ -4,6 +4,16 @@ This topic lists the release notes for server releases that occurred earlier in 
 
 For more recent releases, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
+
+  - [SQL updates](/release-notes/2026/10_40#sql-updates)
+
+    - [IPADDRESS data type (General availability)](/release-notes/2026/10_40#ipaddress-data-type-general-availability)
+  - [Improved behavior when dropping application package versions in Native Apps](/release-notes/2026/10_40#improved-behavior-when-dropping-application-package-versions-in-native-apps)
+  - [Snowflake Cortex updates](/release-notes/2026/10_40#snowflake-cortex-updates)
+
+    - [CoCo Admin in Snowsight (Preview)](/release-notes/2026/10_40#coco-admin-in-snowsight-preview)
+  - [Release notes change log](/release-notes/2026/10_40#release-notes-change-log)
 - [10.38 Release Notes: Oct 17, 2026 - Oct 22, 2026](/release-notes/2026/10_38)
 
   - [SQL updates](/release-notes/2026/10_38#sql-updates)

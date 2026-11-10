@@ -84,7 +84,7 @@ Tune `columnNamesToPartitionBy` and `targetPartitionSizeMb` or `targetPartitionS
 
 ### Iceberg targets
 
-SQL Server extracts for Apache Iceberg™ targets must explicitly use `cet_as` or `cloud_direct`. Set `target.tableType` to `"iceberg"`, supply `target.icebergConfig`, and configure a Snowflake external stage for the selected extraction path. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
+SQL Server extracts for Apache Iceberg™ targets must explicitly use `cet_as`, `cloud_direct`, or `regular` with `use_bcp = false`. Set `target.tableType` to `"iceberg"`, supply `target.icebergConfig`, and configure a Snowflake external stage for the selected extraction path. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Iceberg configuration](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 ## Windows authentication
 

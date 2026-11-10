@@ -80,6 +80,7 @@ Show lessSee more
 
 ## Platform-specific considerations
 
+- **Data shares**: To validate tables from a Redshift data share, set the Worker’s `database` and the workflow’s `source.databaseName` to the database created from the share, and set `indexColumnList` on each table, because shared tables expose no primary key. See [Migrating from a Redshift data share](./migrate-redshift#migrating-from-a-redshift-data-share).
 - **Starting validation**: Ask the agent to generate a validation workflow with the depth you need (schema validation, metrics validation, and row-level validation, per table).
 
   **Prompt:**

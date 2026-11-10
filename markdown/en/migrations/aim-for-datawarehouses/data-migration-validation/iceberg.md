@@ -22,26 +22,41 @@ If the Parquet files are already on a stage, set `sourceDataStage` and omit `ext
 
 ## Supported extraction strategies
 
-Iceberg spec v2 loads are supported from Amazon Redshift, SQL Server, and Teradata. Azure Synapse can use the same `cet_as` path as SQL Server. `extraction.strategy` decides who writes the Parquet and where it lands.
+Iceberg loads are supported from Amazon Redshift, SQL Server, Teradata, Azure Synapse, Oracle, and Google BigQuery. `extraction.strategy` decides who writes the Parquet and where it lands.
 
 | Strategy | Source | Who writes the Parquet | Destination |
 | --- | --- | --- | --- |
 | `unload` | Amazon Redshift | Redshift `UNLOAD` | Amazon S3 |
 | `write_nos` | Teradata | Teradata `WRITE_NOS` | Amazon S3, Azure Blob, or GCS |
 | `cet_as` | SQL Server, Azure Synapse | `CREATE EXTERNAL TABLE AS SELECT` on the source | Azure Blob |
-| `cloud_direct` | SQL Server, Teradata | The Worker reads rows from the source and writes Parquet | Amazon S3, Azure Blob, or GCS |
+| `export_data` | Google BigQuery | BigQuery `EXPORT DATA` | GCS |
+| `cloud_direct` | SQL Server, Azure Synapse, Teradata, Oracle | The Worker reads rows from the source and writes Parquet | Amazon S3, Azure Blob, or GCS |
+| `regular` | Oracle, SQL Server with `use_bcp = false` | The Worker reads rows from the source and writes Parquet | The external stage |
 
 Expand
 
 Show lessSee more
 
-Prefer the source-engine strategy when the source has one: `unload` for Amazon Redshift, `write_nos` for Teradata, and `cet_as` for SQL Server and Azure Synapse. Use `cloud_direct` when that source-engine path is not available.
+Prefer the source-engine strategy when the source has one: `unload` for Amazon Redshift, `write_nos` for Teradata, `cet_as` for SQL Server and Azure Synapse, and `export_data` for Google BigQuery. Use `cloud_direct` when that source-engine path is not available.
 
-`unload`, `write_nos`, `cet_as`, and `cloud_direct` all require `extraction.externalStage`. SQL Server Iceberg extracts must use `cet_as` or `cloud_direct`.
+Every Iceberg extract requires `extraction.externalStage`, unless the table sets `sourceDataStage`. Each source accepts only these strategies, and configuration validation rejects any other:
+
+| Source | Iceberg extraction strategies |
+| --- | --- |
+| Azure Synapse (dedicated and serverless) | `cet_as` or `cloud_direct` |
+| Google BigQuery | `export_data` |
+| Oracle | `regular` or `cloud_direct`. `dbms_cloud` is not supported for Iceberg. |
+| SQL Server | `cet_as`, `cloud_direct`, or `regular` with `use_bcp = false` |
+
+Expand
+
+Show lessSee more
 
 Important
 
-`regular` is not an Iceberg extract. Iceberg registration reads Parquet from an external stage. `regular` writes to a Snowflake internal stage.
+Except for Oracle, and SQL Server with `use_bcp = false`, `regular` is not an Iceberg extract. Iceberg registration reads Parquet from an external stage, and `regular` writes to a Snowflake internal stage.
+
+For Google BigQuery, set `exportDataGcsBucket`, and `exportDataGcsPrefix` when you use one, on the workflow. The URL of `extraction.externalStage` must be `gcs://<exportDataGcsBucket>/<exportDataGcsPrefix>/`. `scai data doctor` checks that the stage and the export location match. The `EXPORT DATA` format must be Parquet. See [Migrating Data from Google BigQuery](./migrate-bigquery).
 
 The external stage and the external volume are different locations. `extraction.externalStage` is where the Parquet lands and where `ADD_FILES_COPY` reads it. `externalVolume` is where the Iceberg table stores its data and metadata. The stage URL has to match the path the extract writes. If it does not, registration finds no files and the table is created empty.
 
@@ -226,6 +241,27 @@ icebergConfig:
 
 With `ADD_FILES_COPY`, Snowflake does not coerce types. The Iceberg types must match the staged Parquet footer. When the Worker writes native Parquet, as it does for SQL Server `cloud_direct`, `TIME` stays `TIME`, timestamps become `TIMESTAMP_NTZ(6)`, and arrays become `ARRAY(VARCHAR)`. SQL Server `cet_as`, Amazon Redshift `unload`, and Teradata `write_nos` write time and timestamps as text, so those columns stay `VARCHAR`.
 
+Some sources have their own native mappings:
+
+| Source | Source type | Iceberg spec v3 native with `ADD_FILES_COPY` |
+| --- | --- | --- |
+| Oracle | `DATE`, `TIMESTAMP(0)` to `TIMESTAMP(6)` | `TIMESTAMP_NTZ(6)` |
+| Oracle | `TIMESTAMP(7)` to `TIMESTAMP(9)` | `TIMESTAMP_NTZ(9)` |
+| Oracle | `TIMESTAMP WITH TIME ZONE`, `TIMESTAMP WITH LOCAL TIME ZONE` | `VARCHAR` |
+| Google BigQuery | `TIMESTAMP`, `DATETIME` | `TIMESTAMP_NTZ(6)` |
+| Google BigQuery | `TIME` | `TIME` |
+| Azure Synapse | `DATETIME2(n)` with `n` up to 6 | `TIMESTAMP_NTZ(6)` |
+| Azure Synapse | `TIME(n)` with `n` up to 6 | `TIME` |
+| Azure Synapse | `DATE`, `DATETIME`, `SMALLDATETIME`, `DATETIMEOFFSET` | `VARCHAR` |
+
+Expand
+
+Show lessSee more
+
+An Oracle `TIMESTAMP(7)` to `TIMESTAMP(9)` value must fall between 1677-09-21 and 2262-04-11. The Worker stops the extract with an error for a value outside that range.
+
+On Azure Synapse, configuration validation rejects a `columnTypeMappings` entry or a `customColumnTransforms` rule that would store a `DATETIMEOFFSET`, or a `TIME` or `DATETIME2` column with more than six fractional digits, as a time or timestamp type under `storageMode: native`. Those values can’t be stored without losing digits or the offset. Keep them as `VARCHAR`, or use `storageMode: compatible`.
+
 Schemaless `VARIANT`, `OBJECT`, `SUPER`, JSON, and XML values stay `VARCHAR`. Geospatial values and `INTERVAL` also stay `VARCHAR` under `ADD_FILES_COPY`.
 
 Copy code
@@ -276,6 +312,7 @@ Spec v2 with `FULL_INGEST` keeps the spec v2 types, including temporal and geosp
 | Amazon Redshift | `unload` |
 | SQL Server | `cet_as`, `cloud_direct`, or `regular` with `use_bcp = false` |
 | Teradata | `write_nos` |
+| Google BigQuery | `export_data` |
 
 Expand
 

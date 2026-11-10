@@ -6,7 +6,7 @@ Available to all accounts.
 
 ## Overview
 
-Snowflake CoCo for Google Sheets brings CoCo directly into Google Sheets. It adds CoCo as a chat pane inside the
+Snowflake CoCo for Google Sheets™ brings CoCo directly into Google Sheets. It adds CoCo as a chat pane inside the
 spreadsheet you already use, connected to your live Snowflake data. From the pane you can query data, build pivot
 tables and charts, write formulas, and format your sheets using natural language, and then refresh that data later,
 without exporting data out of Snowflake and without learning a separate tool. It also extends Snowflake governance into Google
@@ -49,7 +49,7 @@ The add-on is part of Snowflake CoCo. For an overview of the other CoCo experien
 - **Trace every written cell:** Follow the citation attached to each value back to the query or metric that produced
   it, so any number in the spreadsheet can be verified.
 
-Some features of Snowflake CoCo for Excel aren’t available in Google Sheets. See
+Some features of Snowflake CoCo for Microsoft Excel aren’t available in Google Sheets. See
 [Limitations](#label-cortex-code-sheets-limitations).
 
 ## How it works
@@ -82,11 +82,8 @@ During the current stage of the preview, Snowflake CoCo for Google Sheets is dis
 the add-on. Snowflake plans to make the add-on available on the Google Workspace Marketplace in a later stage of the
 preview.
 
-Note
-
-After the add-on is available on the Google Workspace Marketplace, a Google Workspace administrator can install it for
-the whole organization. The add-on is then available in every spreadsheet for every user, and users don’t need to copy
-the script.
+A Google Workspace administrator can instead install the add-on for everyone in your organization, so users don’t copy
+the script themselves. See [Install the add-on for your organization](#label-cortex-code-sheets-admin-install).
 
 Copying the script only makes the add-on available in the spreadsheet. Before you can sign in from the pane, an account
 administrator creates a security integration for your Snowflake account and gives you the OAuth client ID. See
@@ -109,10 +106,95 @@ To add the add-on to a spreadsheet, follow these steps:
 
 [![The Google Sheets Extensions menu with CoCo for Sheets selected, showing the Open Coco item in its submenu.](/static/images/screens/cortex-code-sheets-open-coco-menu.png)](/static/images/screens/cortex-code-sheets-open-coco-menu.png)
 
+## Install the add-on for your organization
+
+A Google Workspace administrator can install Snowflake CoCo for Google Sheets for everyone in the organization, or for
+specific organizational units and groups, from the Google Admin console. The users you install it for get the add-on in
+every spreadsheet, and they don’t need to copy the script.
+
+During the current stage of the preview, Snowflake CoCo for Google Sheets isn’t listed on the Google Workspace
+Marketplace, so you publish the add-on as a private app in your own Google Workspace organization, and then install it
+from the Google Admin console. Google doesn’t review private apps, so you can install the app as soon as you publish it.
+Only users in your organization can see it.
+
+Before you begin, confirm the following:
+
+- You’re signed in as a Google Workspace super administrator. See
+  [Install Marketplace apps for your organization](https://support.google.com/a/answer/172482).
+- You can create a Google Cloud project that belongs to your organization, and enable APIs in it. The OAuth consent
+  screen offers the **Internal** user type only for a project that belongs to your organization.
+- If you’re installing the add-on for only some users, their accounts are in an organizational unit or an access group.
+
+### Publish the add-on privately
+
+To publish the add-on as a private app, follow these steps:
+
+1. Go to [Apps Script](https://script.google.com) and select **New project**. Don’t create the project from a
+   spreadsheet: an add-on that you publish must be a standalone Apps Script project.
+2. Replace the contents of `Code.gs` with the file at `https://ai.snowflake.com/static/sheets/releases/prod/Code.gs`.
+3. In **Project Settings**, turn on the setting that shows the manifest file, `appsscript.json`, in the editor. Then
+   replace the contents of `appsscript.json` with the file at
+   `https://ai.snowflake.com/static/sheets/releases/prod/appsscript.json`. Save the project.
+4. In the [Google Cloud console](https://console.cloud.google.com), create a Google Cloud project in your organization,
+   and note its project number. You can’t publish from the default project that Apps Script creates. In the new
+   project, do the following:
+
+   - Configure the OAuth consent screen, and set its user type to **Internal**, so only users in your organization can
+     authorize the add-on.
+   - Enable the **Google Sheets API**. The add-on uses the Google Sheets advanced service, and a standard Google Cloud
+     project doesn’t turn on that API for you.
+   - Enable the **Google Workspace Marketplace SDK**.
+5. In the Apps Script project, select **Project Settings**. Under **Google Cloud Project**, select **Change project**,
+   enter the project number of the new project, and select **Set project**. Under **IDs**, copy the **Script ID**.
+6. Select **Deploy** > **New deployment**, select **Add-on** as the type, and then select **Deploy**. Note the version
+   number of the deployment.
+7. In the Google Cloud console, open the **Google Workspace Marketplace SDK**. On the **App Configuration** page, set
+   the following, and then save:
+
+   - **App visibility:** **Private**.
+   - **Installation settings:** **Admin Only Install**.
+   - **App integrations:** the Editor add-on integration for Google Sheets, with the script ID from step 5 and the
+     version number from step 6.
+   - **OAuth scopes:** the two scopes listed in `appsscript.json`:
+     `https://www.googleapis.com/auth/spreadsheets` and `https://www.googleapis.com/auth/script.container.ui`.
+8. On the **Store Listing** page, fill in the required fields. Enter `CoCo for Sheets` as the app name: Google Sheets
+   shows the app name as the add-on’s submenu under **Extensions**, so this name matches the menu paths in this topic.
+   Then select **Publish**.
+
+### Install the add-on from the Google Admin console
+
+After you publish the add-on, follow these steps to install it for your organization:
+
+1. In the Google Admin console, go to **Menu** > **Apps** > **Google Workspace Marketplace apps** > **Apps list**.
+2. Select **Install app**. Find the add-on in the **Internal apps** section of the Google Workspace Marketplace, and
+   select it.
+3. Select **Admin install**, then select **Continue**. Review the data access requirements, developer terms, and
+   developer policies.
+4. Choose who gets the add-on:
+
+   - To install it for everyone, select **Everyone at your organization**.
+   - To install it for specific users, select **Certain groups or organizational units**, then select **Next**. Select
+     the organizational units and groups, then select **Select**.
+5. Select **Finish**.
+
+Note the following about this method:
+
+- Google notes that changes can take up to 24 hours to apply, though they typically apply sooner. After the add-on
+  appears, users open the pane as described in [Get started](#label-cortex-code-sheets-start).
+- Installing the add-on doesn’t connect it to your Snowflake account. An account administrator still creates an OAuth
+  security integration and shares the client ID with users. See
+  [Create a security integration for OAuth](#label-cortex-code-sheets-oauth).
+- Your organization owns the private app, so Snowflake doesn’t update it for you. To pick up a new release, replace
+  `Code.gs` and `appsscript.json` with the latest files, create a new deployment version, enter the new version number
+  on the **App Configuration** page of the Google Workspace Marketplace SDK, and save.
+- To change who has the add-on, or to uninstall it, see
+  [Install Marketplace apps for your organization](https://support.google.com/a/answer/172482).
+
 ## Get started
 
 1. **Add Snowflake CoCo for Google Sheets to your spreadsheet.** See
-   [Install the add-on](#label-cortex-code-sheets-install).
+   [Install the add-on](#label-cortex-code-sheets-install). If your Google Workspace administrator installed the add-on
+   for your organization, skip this step.
 2. **Open the pane.** In your spreadsheet, select **Extensions** > **CoCo for Sheets** > **Open Coco**.
 3. **Sign in.** In the pane, enter your Snowflake [account identifier](/user-guide/admin-account-identifier) and the
    OAuth client ID for your account, then select **Sign in with Snowflake**. Your account administrator provides the
@@ -236,9 +318,9 @@ Before anyone can sign in from the pane with OAuth, an account administrator cre
 integration for a custom client. You create the integration once per Snowflake account, not once per user. Only users
 with the `ACCOUNTADMIN` role, or a role with the global `CREATE INTEGRATION` privilege, can run this command.
 
-Snowflake CoCo for Google Sheets and Snowflake CoCo for Excel use the same OAuth redirect URI. If your account already
-has a security integration for Snowflake CoCo for Excel, Snowflake CoCo for Google Sheets can use the same integration
-and the same client ID, and you don’t need to create another one.
+Snowflake CoCo for Google Sheets and Snowflake CoCo for Microsoft Excel use the same OAuth redirect URI. If your account
+already has a security integration for Snowflake CoCo for Microsoft Excel, Snowflake CoCo for Google Sheets can use the
+same integration and the same client ID, and you don’t need to create another one.
 
 Register the add-on as a public client. The pane runs in your browser, so it can’t store a client secret, and the
 add-on uses Proof Key for Code Exchange (PKCE) instead. The following example creates an integration for Snowflake
@@ -261,9 +343,9 @@ CREATE SECURITY INTEGRATION IF NOT EXISTS coco_sheets_oauth
 
 Important
 
-Set `OAUTH_REDIRECT_URI` to exactly `https://ai.snowflake.com/static/excel/oauth/callback.html`. Snowflake compares
-this value to the one the add-on sends, so any difference, such as a trailing slash or a different host, makes sign-in
-fail. The URL contains `excel` because Snowflake CoCo for Google Sheets and Snowflake CoCo for Excel share the same
+Set `OAUTH_REDIRECT_URI` to exactly `https://ai.snowflake.com/static/excel/oauth/callback.html`. Snowflake compares this
+value to the one the add-on sends, so any difference, such as a trailing slash or a different host, makes sign-in fail.
+The URL contains `excel` because Snowflake CoCo for Google Sheets and Snowflake CoCo for Microsoft Excel share the same
 OAuth callback page.
 
 `OAUTH_ENFORCE_PKCE = TRUE` requires PKCE on every authorization. PKCE is optional by default, and Snowflake
@@ -318,7 +400,7 @@ The following limits come from Google Sheets:
   If the refreshed data fits only without the sheet’s trailing empty columns, CoCo deletes those columns when you
   accept the refresh. If the refreshed data doesn’t fit, CoCo doesn’t write it.
 
-The following Snowflake CoCo for Excel features aren’t available in Google Sheets:
+The following Snowflake CoCo for Microsoft Excel features aren’t available in Google Sheets:
 
 - `CORTEX` functions in cells, such as `=CORTEX.ASK()`.
 - [Refresh when the workbook opens](/user-guide/cortex-code/cortex-code-excel-integration#label-cortex-code-excel-refresh-on-open).
@@ -349,13 +431,6 @@ tokens like any other CoCo request.
 To set daily credit usage limits for CoCo users, see
 [Managing CoCo credit usage limits](/user-guide/cortex-code/credit-usage-limit).
 
-## Monitor usage
-
-During the current stage of the preview, usage from Snowflake CoCo for Google Sheets is recorded in the
-[CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history) view. To query usage
-across all CoCo surfaces in a single view, use
-[SNOWFLAKE\_COCO\_USAGE\_HISTORY](/sql-reference/account-usage/snowflake_coco_usage_history).
-
 ## Legal notices
 
 Where your configuration of Cortex Code uses a model provided on the
@@ -376,3 +451,5 @@ Show lessSee more
 Represents the defined term used in the AI Terms and Acceptable Use Policy.
 
 For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).
+
+*Google Sheets is a trademark of Google LLC.*

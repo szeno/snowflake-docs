@@ -874,13 +874,120 @@ The Worker container image is the exception. Its entrypoint writes `CUSTOM_SNOWF
 
 See [Customizing metadata database and schema names](../data-migration-validation/required-privileges#customizing-metadata-database-and-schema-names) for the privileges these objects need.
 
-### Resolving credentials from an external secret manager
+### Supported vaults
 
-Worker TOML examples show credentials inline for brevity. On a **local or otherwise non-SPCS Worker**, you can instead resolve them at startup from an external secret store, so no plaintext password lives in the file.
+Worker TOML examples show credentials inline for brevity. In production, keep credentials in a vault and let AIM DMV read them when it connects. AIM DMV reads secrets from these vaults:
 
-Note
+| Vault | Where it applies | How you reference a secret |
+| --- | --- | --- |
+| [Snowflake secrets](#snowflake-secrets) | Workers on SPCS | A Snowflake `SECRET` object bound to an environment variable in the service specification. `scai data worker setup` creates and binds it for you. |
+| [AWS Secrets Manager](#aws-secrets-manager) | Workers and the Orchestrator outside SPCS, for example on Amazon EKS, Amazon EC2, or your own host | An `aws-sm:///` reference in a connection field. |
 
-SPCS Workers don’t need this. They read source credentials from Snowflake `SECRET` objects bound into the service specification. See [Manual SPCS worker setup](./manual-spcs-worker-setup#network-access-objects).
+Expand
+
+Show lessSee more
+
+AIM DMV masks resolved values in logs, tracebacks, and error messages.
+
+#### Snowflake secrets
+
+When the Worker runs on SPCS, it reads source credentials from Snowflake `SECRET` objects. You bind each secret in the `secrets` section of the service specification, and SPCS passes its value to the container as an environment variable. The value doesn’t appear in the service specification you submit or in `DESCRIBE SERVICE` output. At startup, the Worker image’s entrypoint writes these variables into the configuration TOML it generates inside the container, so that runtime file holds the credentials.
+
+`scai data worker setup` and the Snowflake AIM Agent for Data Warehouses create the source secret from the connection details you provide and bind it for you. To create the secret yourself, bind the keys of a `PASSWORD` secret to the Worker’s source variables:
+
+Copy code
+
+```
+CREATE OR REPLACE SECRET <database>.<schema>.REDSHIFT_SECRET
+  TYPE = PASSWORD
+  USERNAME = '<username>'
+  PASSWORD = '<password>';
+```
+
+Copy code
+
+```
+secrets:
+- snowflakeSecret: <database>.<schema>.REDSHIFT_SECRET
+  secretKeyRef: username
+  envVarName: DATA_SOURCE_USERNAME
+- snowflakeSecret: <database>.<schema>.REDSHIFT_SECRET
+  secretKeyRef: password
+  envVarName: DATA_SOURCE_PASSWORD
+```
+
+For a single value, such as a Teradata JWT, a `write_nos` access key, or a BigQuery service-account key, use a `GENERIC_STRING` secret and bind its `secret_string` key. Bind every value marked **Secret** in [Environment variables](#environment-variables) this way.
+
+- **Snowflake credentials.** Services on SPCS connect to Snowflake with the OAuth token SPCS issues to the service (`@SPCS_CONNECTION`), so you don’t need a secret for the Snowflake connection.
+- **Privileges.** The role that owns the service needs `USAGE` on each secret it binds. See [Workers on Snowpark Container Services](../data-migration-validation/required-privileges#workers-on-snowpark-container-services).
+- **Rotation.** Snowflake doesn’t update secrets passed as environment variables after the service is created. After you change a secret, re-create the Worker service so it gets the new value. See [Using Snowflake secrets to pass credentials to a container](/developer-guide/snowpark-container-services/working-with-services#label-snowpark-containers-additional-considerations-pass-secrets).
+- **Windows authentication.** SQL Server with Windows authentication uses Kerberos keytab secrets instead of a password secret. See [Windows authentication](../data-migration-validation/migrate-sql-server#windows-authentication).
+
+For the full service specification, see [Network access objects](./manual-spcs-worker-setup#network-access-objects) and [Passing other secrets to the Worker](./manual-spcs-worker-setup#passing-other-secrets-to-the-worker).
+
+#### AWS Secrets Manager
+
+A Worker or Orchestrator that runs outside SPCS can read connection fields from AWS Secrets Manager. Put an `aws-sm:///` reference where the value would go:
+
+```
+aws-sm:///<secret-id-or-arn>
+aws-sm:///<secret-id-or-arn>#<json-field>
+```
+
+`#<json-field>` reads one top-level field from a JSON secret. Fields that come from the same secret share one fetch.
+
+Copy code
+
+```
+[connections.source.redshift]
+host     = "aws-sm:///aim-dmv/prod/source-redshift#host"
+port     = "aws-sm:///aim-dmv/prod/source-redshift#port"
+username = "aws-sm:///aim-dmv/prod/source-redshift#username"
+password = "aws-sm:///aim-dmv/prod/source-redshift#password"
+database = "dev"
+
+[connections.target.snowflake_password]
+account  = "aws-sm:///aim-dmv/prod/snowflake#account"
+user     = "aws-sm:///aim-dmv/prod/snowflake#user"
+password = "aws-sm:///aim-dmv/prod/snowflake#password"
+```
+
+The standard Worker and Orchestrator images include the AWS SDK for Python (`boto3`). You don’t need the AWS CLI or a provider block in TOML.
+
+**Credentials and region.** AIM DMV uses the AWS SDK default credential chain: EKS IAM roles for service accounts (IRSA), an instance profile or ECS task role, environment keys, or a shared AWS config file. On Kubernetes, annotate the pod’s service account with an IAM role rather than setting access keys on the pod. Set `AWS_DEFAULT_REGION` on every Worker and the Orchestrator. The SDK doesn’t read `AWS_REGION`.
+
+**Permissions.** Give the Worker and the Orchestrator separate IAM roles. Grant each role only `secretsmanager:GetSecretValue` on the secrets it references. The Worker needs every secret its TOML references, source and target: in the example above, both `aim-dmv/prod/source-redshift` and `aim-dmv/prod/snowflake`. The Orchestrator needs the Snowflake secret it reads. The pod also needs network access to `secretsmanager.<region>.amazonaws.com`, through public egress or a VPC interface endpoint.
+
+**Orchestrator.** For password authentication, set `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, and `SNOWFLAKE_PASSWORD` to `aws-sm:///` references. A key-pair secret has no password field: at container start, write the private key to a file with mode `0600`, define a named connection that uses it as a top-level `[<connection-name>]` section in `~/.snowflake/connections.toml` (see [Connecting using the connections.toml file](/developer-guide/python-connector/python-connector-connect#label-python-connection-toml)), and set `SNOWFLAKE_CONNECTION_NAME`. Point the Worker at the same connection with `[connections.target.snowflake_connection_name]`. Don’t bake the private key into an image or a ConfigMap.
+
+**Rotation.** A resolved secret is cached for `SECRET_MANAGERS_CACHE_TTL_SECONDS` (default `300`). Restart or redeploy the pod to pick up a rotated secret for connections that are already open.
+
+Limitations:
+
+- AIM DMV always reads the current (`AWSCURRENT`) version. You can’t pin a version ID or staging label.
+- Each process reads from one region, the one in `AWS_DEFAULT_REGION`, even when the reference is an ARN from another region. Replicate the secret into that region.
+- `#<json-field>` must name a top-level string, number, or boolean. Nested objects, arrays, and binary (`SecretBinary`) secrets aren’t supported.
+- Don’t put a region in the URI: `aws-sm://us-east-1/...` is rejected. Use three slashes.
+- Only values that start exactly with `aws-sm://` are references. A misspelling such as `aws-sm:/...` or `AWS-SM:///...` is used as a literal value, so a typo in a password reference shows up as an authentication failure.
+
+Secret names, full ARNs, partial ARNs, and cross-account ARNs all work as the secret ID. Cross-account access requires an ARN.
+
+When a reference doesn’t resolve, the error names a category but never the secret value:
+
+| Error code | Typical cause |
+| --- | --- |
+| `MissingPermission` | The role lacks `secretsmanager:GetSecretValue`, its trust policy is wrong, or the pod has no AWS credentials. |
+| `MissingSecret` | The secret ID or ARN is wrong, or the secret is in another region. |
+| `MalformedJson` | The secret isn’t valid JSON, or the `#<json-field>` value isn’t a top-level scalar. |
+| `UnavailableRegion` | `AWS_DEFAULT_REGION` isn’t set, or the Secrets Manager endpoint isn’t reachable. |
+
+Expand
+
+Show lessSee more
+
+### Other secret stores
+
+AIM DMV also has generic mechanisms for reaching other secret stores from a Worker outside SPCS. Snowflake supports the [vaults listed above](#supported-vaults); with these mechanisms, you own the provider setup.
 
 Register providers in a **separate** TOML file and point the Worker at it with the `SECRET_MANAGERS_CONFIG_FILE` environment variable:
 
@@ -915,7 +1022,7 @@ Show lessSee more
 
 The `[secret_managers]` configuration goes in its own separate TOML file, not in the Worker TOML. Use `SECRET_MANAGERS_CONFIG_FILE` to point the Worker at it.
 
-AIM DMV can also resolve a field by running a shell command, for example `$( aws secretsmanager get-secret-value --secret-id prod/db )#password`.
+AIM DMV can also resolve a field by running a shell command, for example `$( vault kv get -field=password secret/migrator-db )`. For AWS Secrets Manager, use an [`aws-sm:///` reference](#aws-secrets-manager) instead: it needs neither the AWS CLI nor command substitution.
 
 Warning
 

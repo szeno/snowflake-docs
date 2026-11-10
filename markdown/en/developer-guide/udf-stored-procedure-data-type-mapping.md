@@ -43,6 +43,8 @@ pass a SQL value to an incompatible Java data type (or vice versa), Snowflake th
 | FLOAT | `String` | Might result in precision loss (float -> string conversion is lossy). |
 | GEOGRAPHY | `String` | Formats the geography as [GeoJSON](https://tools.ietf.org/html/rfc7946). |
 | GEOGRAPHY | [Geography](https://docs.snowflake.com/en/developer-guide/snowpark/reference/java/com/snowflake/snowpark_java/types/Geography.html) | [[5]](#footnote-5) |
+| IPADDRESS | `java.net.InetAddress` | IPv4 addresses are passed as `Inet4Address`, and IPv6 addresses are passed as `Inet6Address`. A returned `Inet6Address` must not include a scope ID (zone). |
+| IPADDRESS | `String` | Formats the address in its canonical text form. A returned string must contain a valid IPv4 or IPv6 address. |
 | MAP | `Map<String, String>` | The output format is MAP(VARCHAR, VARCHAR). |
 | NUMBER | `short` | Cannot be null. Must fit in the range of short (no fractional part, and integer part cannot exceed the max/min short values). |
 | NUMBER | `Short` | Must fit in the range of short (no fractional part, and integer part cannot exceed the max/min short values). |
@@ -162,6 +164,7 @@ The following table shows the Snowflake SQL data types and the corresponding Jav
 | BOOLEAN | `number` | The values `true` and `false` are represented by `1` and `0` respectively. Note that this behavior may change in future releases, so you should rely on JavaScript truthiness rather than direct value comparisons. |
 | DATE | `date` |  |
 | GEOGRAPHY, GEOMETRY | `JSON` |  |
+| IPADDRESS | `string` | Formats the address in its canonical text form. A returned value is converted to a string, which must contain a valid IPv4 or IPv6 address. |
 | REAL, FLOAT, FLOAT8, FLOAT4, DOUBLE, DOUBLE PRECISION | `number` |  |
 | TIME | `string` |  |
 | TIMESTAMP, TIMESTAMP\_LTZ, TIMESTAMP\_NTZ, TIMESTAMP\_TZ | `date` or `SfDate` | When a timestamp is passed as an argument to a stored procedure, the timestamp is converted to a JavaScript `date` object. In other situations (e.g. when retrieving from `ResultSet`), a timestamp is converted to an `SfDate` object. For more details about the `SfDate` data type, which is not a standard JavaScript data type, see the [JavaScript stored procedures API](/developer-guide/stored-procedure/stored-procedures-api). |
@@ -235,6 +238,7 @@ passed to the Python handler and the values returned from it.
 | DATE | `datetime.date` |  |
 | FLOAT | `float` | Floating point operations can have small rounding errors, which can accumulate, especially when aggregate functions process large numbers of rows. Rounding errors can vary each time a query is executed if the rows are processed in a different order. For more information, see [Numeric Data Types: Float](/sql-reference/data-types-numeric#label-data-types-for-floating-point-numbers). |
 | GEOGRAPHY, GEOMETRY | `dict` | Formats the geography as [GeoJSON](https://tools.ietf.org/html/rfc7946) and then converts it to a Python dict. |
+| IPADDRESS | `ipaddress.IPv6Address` | Every value is passed as an `IPv6Address`. An IPv4 address is passed as its IPv4-mapped form, such as `::ffff:192.0.2.1`. To get the `IPv4Address`, use the `ipv4_mapped` property. A handler can return an `ipaddress.IPv4Address`, an `ipaddress.IPv6Address`, or a `str` that contains a valid IPv4 or IPv6 address. A returned `IPv6Address` must not include a scope ID (zone). |
 | MAP | `dict` | MAP is not supported as a return type. |
 | NUMBER | `int` or `decimal.Decimal` | If the scale of the NUMBER type is 0 then the int Python type is used. Otherwise decimal.Decimal type is used. |
 | OBJECT | `dict` | When a Python data type is converted to OBJECT, if there is any embedded Python decimal data, the embedded Python decimal will be converted to a String in the OBJECT. |

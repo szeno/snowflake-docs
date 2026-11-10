@@ -24,6 +24,29 @@ Snowflake Native Apps have the following known limitations:
   [Top Insights](/user-guide/ml-functions/top-insights) aren’t supported
   in Snowflake Native Apps.
 
+## Application package version and stage size limits
+
+The following size limits apply to application package versions in Snowflake deployments on AWS, Azure, and Google Cloud:
+
+| Limit | AWS and Azure | Google Cloud |
+| --- | --- | --- |
+| Maximum size of a file in a version | 150 GiB | 5 GB |
+| Maximum size of a version stage | 150 GiB | 5 GiB |
+
+Expand
+
+Show lessSee more
+
+The file limit is in GB (decimal). The stage limit is in GiB (binary).
+
+The AWS and Azure limits apply to deployments on these clouds, including government regions and AWS China regions.
+
+Application package versions that exceed the Google Cloud limits aren’t supported in Google Cloud deployments.
+Snowflake doesn’t block you from creating such a version on AWS or Azure, but replicating it to a Google Cloud
+deployment might be slow or fail intermittently.
+If you distribute your app to Google Cloud deployments, keep each file under 5 GB and the version stage under 5 GiB.
+To check sizes before you add a version, run `LIST @<stage>/<path>` and add up the `size` column.
+
 ## Known limitations in Snowflake Native Apps with Snowpark Container Services
 
 Snowflake Native Apps with Snowpark Container Services have the following limitations:

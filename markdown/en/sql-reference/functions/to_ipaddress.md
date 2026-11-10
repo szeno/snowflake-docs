@@ -3,10 +3,6 @@ Categories:
 
 # TO\_IPADDRESS
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Converts the input expression to an [IPADDRESS](/sql-reference/data-types-ipaddress) value.
 
 See also:

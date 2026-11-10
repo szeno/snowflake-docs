@@ -52,20 +52,7 @@ where `account_identifier` is the [account identifier](/user-guide/admin-account
 
 ## Model availability
 
-The following table shows the EMBED function models that you can prompt using the REST API.
-
-**EMBED function models**
-
-| Model | AWS US West 2 (Oregon) | AWS US East 1 (N. Virginia) | AWS Europe Central 1 (Frankfurt) | AWS Europe West 1 (Ireland) | AWS AP Southeast 2 (Sydney) | AWS AP Northeast 1 (Tokyo) | Azure East US 2 (Virginia) | Azure West Europe (Netherlands) |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `snowflake-arctic-embed-m-v1.5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| `snowflake-arctic-embed-m` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-| `e5-base-v2` | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ |
-| `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |
-
-Expand
-
-Show lessSee more
+For the regions where each EMBED function model runs, see [Model availability for Snowflake Cortex AI](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region).
 
 The following table shows the number of dimensions that each model can return.
 

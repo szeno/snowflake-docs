@@ -107,9 +107,13 @@ For more agent configuration recommendations, see [Best Practices for Building C
 
 For guidance on evaluating reliability and behavior, see [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-for-evaluating-cortex-agents/).
 
+For verified patterns you can run in your own account, from scoping an agent through operating it, see the [Cortex AI Cookbook](/developer-guide/cortex-ai-cookbook/overview?topic=cortex-agents).
+
 ## Model selection
 
 When you create an agent, we recommend that you select **auto** for the model. With this option, Cortex automatically selects the highest quality model for your account, and the quality automatically improves as new models become available. For more information about the available models, see [Supported models and regions](/user-guide/snowflake-cortex/snowflake-cowork/reference#label-snowflake-intelligence-models).
+
+For the models CoWork agents support, their release stages, and the regions they run in, see [Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-product).
 
 The following example shows how to specify the model for the agent:
 

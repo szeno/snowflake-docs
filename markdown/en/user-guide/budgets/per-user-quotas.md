@@ -767,6 +767,8 @@ Copy code
 CALL my_quota!ADD_NOTIFICATION_INTEGRATION('my_notification_integration');
 ```
 
+`ADD_NOTIFICATION_INTEGRATION` accepts only webhook and queue notification integrations, including Amazon SNS, Azure Event Grid, and Google Cloud Pub/Sub queue integrations. Email integrations (`TYPE = EMAIL`) aren’t accepted. To send admin summaries by email, use `SET_ADMIN_EMAILS`.
+
 Remove the notification integration:
 
 Copy code

@@ -4,6 +4,7 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 09, 2026: Skill recommendations and suggestions to create and share skills in CoCo](/release-notes/2026/other/2026-11-09-coco-skill-recommendations)
 - [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
 - [Nov 5, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-05-dcr)
 - [Nov 05, 2026: Organization users and user groups in Organization Command Center (Preview)](/release-notes/2026/other/2026-11-05-organization-hub-command-center-users-preview)
@@ -12,7 +13,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [November 4, 2026: Background runs and additional supplementary tools for agents in the Snowflake-managed MCP server](/release-notes/2026/other/2026-11-04-mcp-async-agent-tools)
 - [Nov 3, 2026: On-demand table creation for catalog-linked databases (General availability)](/release-notes/2026/other/2026-11-03-cld-on-demand-table-creation)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
-- [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
+- [Nov 03, 2026: Snowflake CoCo for Microsoft Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
 - [Nov 3, 2026: Delta Direct: Structured type evolution (General availability)](/release-notes/2026/other/2026-11-03-delta-direct-structured-type-evolution)
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)

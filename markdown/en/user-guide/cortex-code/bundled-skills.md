@@ -48,6 +48,22 @@ Ways to use it:
 - Apply Snowflake brand CSS theming and custom colors to beautify an existing app
 - Create a packaged custom component with HTML/JS for reuse across multiple Streamlit apps
 
+### `tableau-to-streamlit-in-snowflake`
+
+Convert a Tableau workbook or data source file (`.twb`, `.twbx`, `.tds`, or `.tdsx`) into a Streamlit in Snowflake app. For a workbook, the app has one page for each Tableau dashboard that you include. The skill translates the workbook’s calculations into Snowflake SQL and maps its filters, parameters, and actions to Streamlit widgets and chart selections. CoCo loads this skill when you ask it to convert or migrate a Tableau dashboard to a Streamlit app, when you give it a Tableau workbook file and ask for a dashboard, or when you ask it to connect a converted app to real Snowflake data.
+
+Before you start, you need a Tableau workbook or data source file, a query warehouse, a compute pool, and a role that can create the app in your target schema. Screenshots and data exports can’t replace the file, because they don’t contain its calculations or structure. In CoCo CLI and CoCo Desktop, you also need Python 3.11 or later and, to deploy the app, either Snowflake CLI version 3.14 or later or [uv](https://docs.astral.sh/uv/). To use real data, the source tables must be in Snowflake, in the same account as the app.
+
+This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) version 1.2.33 or later, [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop) version 1.23.1 or later, and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight). It uses [`sql-author`](#label-bundled-skill-sql-author) for Snowflake SQL. For the app code, it uses `developing-with-streamlit-in-snowflake` in CoCo CLI and CoCo Desktop, or `streamlit-in-workspaces` in CoCo in Snowsight.
+
+Ways to use it:
+
+- Preview a Tableau workbook as a Streamlit app on synthetic data, iterate on the UI, and then switch the same app to your Snowflake tables
+- Build the app code for specific dashboards or worksheets against tables that you name, without accessing Snowflake, and deploy the app yourself
+- Inventory a folder of workbooks to compare their calculations, shared fields, and data source connections before you migrate
+
+CoCo asks for your approval before it queries real tables, deploys the app, or grants roles access to the app. Roles that you give access to the synthetic preview keep that access when the app switches to real data, so share the preview only with roles that are allowed to see the real data. To create semantic views from Tableau files instead, use [`agent-studio`](#label-bundled-skill-agent-studio).
+
 ### `snowflake-notebooks`
 
 Create and edit Workspace notebooks (.ipynb files) in Snowflake: Snowpark Python cells, SQL cells, data analysis, and debugging.
@@ -326,6 +342,18 @@ Ways to use it:
 - Score existing semantic views on a 9-point quality scale and get actionable recommendations for missing signals (primary keys, metrics, verified queries, and so on)
 - Invoke with `/ai-readiness-score` in CoCo CLI or in the CoCo UI in Snowsight; in Snowsight, you must have a Workspace open
 
+### `multi-account-search-and-query`
+
+Answer questions that span several accounts in your Snowflake organization. CoCo finds the relevant tables across your accounts, checks which ones you can query, then queries each account and combines the results. CoCo loads this skill when a question covers more than one account, or asks which accounts you have or can query. This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop).
+
+To query another account, CoCo needs a connection to it in your `~/.snowflake/connections.toml` file. CoCo only works with accounts in the same organization as your current connection. The first time you use the skill, CoCo offers to walk you through choosing which accounts to include.
+
+Ways to use it:
+
+- Compare a metric, such as revenue or order volume, across the accounts in your organization
+- Find which of your accounts hold data on a topic, or list the accounts that you can query
+- Ask a table’s owner for access when you can’t query it, or approve a request for a table in your account, which grants the requester’s role `SELECT` on all tables in its database
+
 ## Snowpark development
 
 ### `snowpark-python`
@@ -586,6 +614,21 @@ Ways to use it:
 - Start Cortex Code with the `--sql-read-only` option, which applies a `SNOWFLAKE$DATA_READ_WITH_AI` scope
 - Start Cortex Code with the `--with-restricted-session-scope=<name>` option to apply an existing scope
 
+### `intent-driven-governance`
+
+Run [Intent-Driven Governance](/user-guide/intent-driven-governance) (preview): describe the governance outcome you want in plain language, and the skill walks you through it in reviewable stages. You see the scope, the proposed governance spec, and the exact SQL before anything changes, and nothing runs until you explicitly approve it.
+
+Cortex Code loads this skill only when you ask for Intent-Driven Governance by name (for example, “intent-driven governance” or “IDG”). It doesn’t load for general governance, classification, or policy questions.
+
+Ways to use it:
+
+- Find and protect sensitive data in a limited scope, such as a single database, schema, or table: for example, “Use intent-driven governance to identify and protect sensitive data in `CUSTOMER_DATA`”
+- Review the governance spec, exact SQL, and prechecks before approving, or stop at review without executing anything
+- Run a read-only drift review against your latest approved baseline
+- Start a restore review from a committed version, which generates new SQL for you to approve
+
+A role with access to the objects in scope can review governance and prepare a change. Applying changes requires the privileges for the requested controls. If the active role lacks them, the skill keeps the review package for an authorized administrator and doesn’t apply a partial change.
+
 ## Data sharing and marketplace
 
 ### `sharing`
@@ -618,6 +661,18 @@ Ways to use it:
 - **Provider (analyze consumption):** Analyze which consumers query which objects, with column-level access statistics
 - **Provider (audit listing status):** Audit listing state, target accounts, resharing, and refresh schedule
 - **Consumer (check and assess freshness):** Check when a consumed listing last refreshed and assess whether shared data is stale
+
+### `internal-marketplace-org-listing`
+
+Create and publish [organizational listings](/user-guide/collaboration/listings/organizational/org-listing-create) to share data products with other accounts in your Snowflake organization through the Internal Marketplace: create the share, generate the listing manifest, and publish the listing. CoCo loads this skill when you ask to share with other accounts or to publish a data product to the Internal Marketplace. For same-account sharing between roles, CoCo uses `GRANT` statements instead. This skill is bundled with [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), CoCo Desktop, and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+To use this skill, your account must belong to a Snowflake organization that has an `ORGADMIN` role. Your role needs the `CREATE SHARE` and `CREATE ORGANIZATION LISTING` privileges on the account, and the `USAGE` privilege with `GRANT OPTION` on the database and schema that you share. If you target accounts in other regions, your role also needs the `MANAGE LISTING AUTO FULFILLMENT` privilege so that CoCo can configure auto-fulfillment.
+
+Ways to use it:
+
+- Share tables, views, semantic views, or Cortex Agents with all accounts or with specific accounts and roles in your organization
+- Generate a listing title, description, data dictionary, and SQL usage examples from the objects you choose, and review the manifest before CoCo creates the listing
+- Set up discovery and access targets, request-and-approve workflows, and cross-region auto-fulfillment for a data product
 
 ### `ai-data-share`
 

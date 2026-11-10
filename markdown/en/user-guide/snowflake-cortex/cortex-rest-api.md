@@ -362,59 +362,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_REST_API_USER TO ROLE api_consumer;
 
 ## Model availability
 
-The following table shows the models the Cortex REST API serves and the release stage of each one.
-
-For the regions and cross-region routing scopes each model runs in, see [Regional availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region).
-
-| Model | Status |
-| --- | --- |
-| `claude-opus-5-5` | Public preview |
-| `claude-opus-5` | GA |
-| `claude-opus-4-8` | GA |
-| `claude-opus-4-7` | GA |
-| `claude-opus-4-6` | GA |
-| `claude-opus-4-5` | GA |
-| `claude-fable-5-1` | Private preview |
-| `claude-fable-5` | Private preview |
-| `claude-sonnet-5` | GA |
-| `claude-sonnet-5-5` | Public preview |
-| `claude-sonnet-4-6` | GA |
-| `claude-sonnet-4-5` | GA |
-| `claude-haiku-5-5` | Public preview |
-| `claude-haiku-4-5` | GA |
-| `openai-gpt-6-astra` | GA |
-| `openai-gpt-6-luna` | Public preview |
-| `openai-gpt-6-sol` | Public preview |
-| `openai-gpt-6.1-sol` | Public preview |
-| `openai-gpt-6.1-terra` | Public preview |
-| `openai-gpt-5.6-luna` | GA |
-| `openai-gpt-5.6-sol` | GA |
-| `openai-gpt-5.6-terra` | GA |
-| `openai-gpt-5.5` | Private preview |
-| `openai-gpt-5.4` | GA |
-| `openai-gpt-5.2` | GA |
-| `openai-gpt-5.1` | GA |
-| `openai-gpt-5` | GA |
-| `openai-gpt-5-mini` | GA |
-| `openai-gpt-5-nano` | GA |
-| `openai-gpt-4.1` | Legacy |
-| `llama4-maverick` | Legacy |
-| `llama3.1-8b` | GA |
-| `llama3.1-70b` | Legacy |
-| `deepseek-v4-flash` | Private preview |
-| `glm-5.3` | Public preview |
-| `kimi-k3` | Public preview |
-| `mistral-7b` | Legacy |
-| `mistral-large2` | Legacy |
-| `grok-4.7` | Public preview |
-| `grok-4.6` | Public preview |
-| `snowflake-decision-fast` | Private preview |
-
-Expand
-
-Show lessSee more
-
-Public preview models aren’t suitable for production workloads. Private preview models are available only to accounts that Snowflake has explicitly enabled. After a model’s legacy date, only accounts that already used the model can continue to call it until end-of-life; accounts that hadn’t used it can’t start.
+For the models the Cortex REST API serves, their release stages, and the regions and cross-region routing scopes each model runs in, see [Model availability for Snowflake Cortex AI](/user-guide/snowflake-cortex/model-availability). In the Product availability tables, the Cortex Inference column shows the REST API.
 
 You can also use any [fine-tuned](/user-guide/snowflake-cortex/cortex-finetuning) model in any supported region.
 

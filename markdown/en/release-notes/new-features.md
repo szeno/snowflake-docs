@@ -13,15 +13,25 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
-- [10.40 Release Notes (Preview)](/release-notes/2026/10_40)
+- [10.41 Release Notes (Preview)](/release-notes/2026/10_41)
+
+  - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
+
+    - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
+  - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
+
+## Recent server releases
+
+- [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 
   - [SQL updates](/release-notes/2026/10_40#sql-updates)
 
     - [IPADDRESS data type (General availability)](/release-notes/2026/10_40#ipaddress-data-type-general-availability)
+  - [Improved behavior when dropping application package versions in Native Apps](/release-notes/2026/10_40#improved-behavior-when-dropping-application-package-versions-in-native-apps)
+  - [Snowflake Cortex updates](/release-notes/2026/10_40#snowflake-cortex-updates)
+
+    - [CoCo Admin in Snowsight (Preview)](/release-notes/2026/10_40#coco-admin-in-snowsight-preview)
   - [Release notes change log](/release-notes/2026/10_40#release-notes-change-log)
-
-## Recent server releases
-
 - [10.38 Release Notes: Oct 17, 2026 - Oct 22, 2026](/release-notes/2026/10_38)
 
   - [SQL updates](/release-notes/2026/10_38#sql-updates)
@@ -37,17 +47,12 @@ If you have questions about any of these features, contact
 
     - [Schema-level data metric functions: exclude transient tables](/release-notes/2026/10_36#schema-level-data-metric-functions-exclude-transient-tables)
   - [Release notes change log](/release-notes/2026/10_36#release-notes-change-log)
-- [10.35 Release Notes: Sep 24, 2026 - Sep 30, 2026](/release-notes/2026/10_35)
-
-  - [Account Usage updates](/release-notes/2026/10_35#account-usage-updates)
-
-    - [New ACCOUNT\_USAGE.STREAMS view](/release-notes/2026/10_35#new-accountusagestreams-view)
-  - [Release notes change log](/release-notes/2026/10_35#release-notes-change-log)
 
 For earlier server releases, see [Server releases earlier in 2026](/release-notes/weekly-releases-2026).
 
 ## Recent feature updates
 
+- [Nov 09, 2026: Skill recommendations and suggestions to create and share skills in CoCo](/release-notes/2026/other/2026-11-09-coco-skill-recommendations)
 - [.NET Driver (v6.5.0)](/release-notes/clients-drivers/dotnet-2026)
 - [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
 - [Nov 5, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-05-dcr)
@@ -61,7 +66,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Snowflake ML Python (v2.8.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 - [Nov 3, 2026: On-demand table creation for catalog-linked databases (General availability)](/release-notes/2026/other/2026-11-03-cld-on-demand-table-creation)
 - [Nov 3, 2026: CoCo Desktop v1.24.0](/release-notes/2026/other/2026-11-03-coco-desktop-v1-24-0)
-- [Nov 03, 2026: Snowflake CoCo for Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
+- [Nov 03, 2026: Snowflake CoCo for Microsoft Excel and Snowflake CoCo for Google Sheets (Preview)](/release-notes/2026/other/2026-11-03-coco-excel-sheets-preview)
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
 - [Nov 3, 2026: Delta Direct: Structured type evolution (General availability)](/release-notes/2026/other/2026-11-03-delta-direct-structured-type-evolution)
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
@@ -171,7 +176,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
 - [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
 - [Oct 12, 2026: Share Streamlit in Snowflake apps with individual users (General availability)](/release-notes/2026/other/2026-10-12-sis-share-with-users)
-- [Oct 9, 2026: Agentic Marketplace Discovery (Public preview)](/release-notes/2026/other/2026-10-09-agentic-marketplace-discovery-preview)
-- [Oct 9, 2026: Snowsight interface for tags and data protection policies (General availability)](/release-notes/2026/other/2026-10-09-snowsight-tags-data-protection-policies-ga)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

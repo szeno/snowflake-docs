@@ -1,9 +1,5 @@
 # IPADDRESS data type
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The IPADDRESS data type stores IPv4 and IPv6 addresses as a native 128-bit value. Use it instead of
 storing addresses as VARCHAR or BINARY when you want Snowflake to validate the address, compare
 values in numeric order, and return a canonical text form.
@@ -23,6 +19,10 @@ The following considerations apply to the IPADDRESS data type:
 - The ANSI literal form `IPADDRESS '<address>'` is supported as input.
 - IPADDRESS is natively supported in [VARIANT](/sql-reference/data-types-semistructured): `TYPEOF`
   reports `IPADDRESS`, and casting the value back to IPADDRESS returns the canonical address.
+- User-defined functions (UDFs), user-defined table functions (UDTFs), and stored procedures can accept
+  and return IPADDRESS values in every handler language: SQL, Java, JavaScript, Python, and Scala. For
+  the handler-language types that IPADDRESS maps to, see
+  [Data Type Mappings Between SQL and Handler Languages](/developer-guide/udf-stored-procedure-data-type-mapping).
 - When you load data with [COPY INTO <table>](/sql-reference/sql/copy-into-table) or Snowpipe, the
   column in the source file holds the address as text. Snowflake validates each value as it’s
   loaded and canonicalizes it. An invalid address fails the load by default. To skip the offending
@@ -141,11 +141,7 @@ canonical address string.
 
 The following limitations apply to the IPADDRESS data type:
 
-- Apache Iceberg™ tables don’t support IPADDRESS as a column type.
-- The semi-structured aggregate functions `ARRAY_AGG`, `ARRAY_UNIQUE_AGG`, and `OBJECT_AGG` don’t
-  accept IPADDRESS values. To aggregate addresses, cast them to VARCHAR first.
-- The IPADDRESS data type isn’t supported in stored procedures or user-defined functions (UDFs) written in a
-  language other than SQL, such as Python, Java, JavaScript, or Scala.
+- Apache Iceberg™ tables and Parquet files don’t support IPADDRESS columns.
 - The IPADDRESS data type isn’t supported in Snowpark.
 - Snowflake doesn’t support CIDR literals or a CIDR data type, and no function returns the last address of a
   range as an IPADDRESS value. [PARSE\_IP](/sql-reference/functions/parse_ip) returns the start and end of a range, but

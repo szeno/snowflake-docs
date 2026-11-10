@@ -5,6 +5,41 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.49.0 (November 6, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Warn that reading local files will be deprecated
+
+#### Bug fixes
+
+- Support unloading INTERVAL columns
+- Keep hours of 24 or more in `HOUR TO MINUTE`/`SECOND` intervals
+- Pin `pyarrow` below 26 for Arrow UDTF packages
+- Honor JSON `maxNumLen`, `maxStringLen`, and `maxNestingDepth` read options
+- Honor CSV `columnPruning` read option
+- Honor Iceberg `bucket` and time partition transforms in Spark SQL DDL
+- Cache Iceberg metadata lookups for non-Iceberg tables
+- Raise Spark’s exception for CSV header/schema mismatches
+- Fix Iceberg metadata table reads in stored procedures
+- Resolve 4-part Iceberg metadata tables without `spark.sql.extensions`
+
+#### New features
+
+- Add opt-in `snowpark.connect.cld.perDatabaseIdentifierResolution` for catalog-linked databases
+
+#### Other updates
+
+- Require `certifi` 2026.10.19 or later
+
+### Snowpark Submit
+
+#### Bug fixes
+
+- Use stage-mount v2 volumes in Snowpark Container Services job specs
+
 ## 1.47.0 (October 23, 2026)
 
 ### Snowpark Connect for Spark

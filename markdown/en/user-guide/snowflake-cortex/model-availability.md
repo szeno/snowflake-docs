@@ -33,9 +33,9 @@ Show lessSee more
 
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo |
 | --- | --- | --- | --- | --- | --- |
-| `claude-opus-5-5` | \* | \* | \* |  | \* |
-| `claude-sonnet-5-5` | \* | \* | \* |  | \* |
-| `claude-haiku-5-5` |  | \* | \* |  | \* |
+| `claude-opus-5-5` | ✔ | ✔ | ✔ |  | ✔ |
+| `claude-sonnet-5-5` | ✔ | ✔ | ✔ |  | ✔ |
+| `claude-haiku-5-5` | \* | \* | \* |  | \* |
 | `claude-fable-5-1` | \*\* | \*\* | \*\* |  | \*\* |
 | `claude-fable-5` | \*\* | \*\* | \*\* |  | \*\* |
 | `claude-opus-5` | ✔ | ✔ | ✔ |  | ✔ |
@@ -146,14 +146,14 @@ Availability of `openai-gpt-5.6-luna`, `openai-gpt-5.6-sol`, `openai-gpt-5.6-ter
 
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo |
 | --- | --- | --- | --- | --- | --- |
-| `openai-gpt-6.1-sol` | \*\* | \* | \* |  | \* |
+| `openai-gpt-6.1-sol` | \*\* | ✔ | ✔ |  | ✔ |
 | `openai-gpt-6.1-terra` | \* | \* |  |  |  |
-| `openai-gpt-6-astra` | \* | ✔ | \*\* |  | \*\* |
-| `openai-gpt-6-sol` | \* | \* | \* |  | \* |
-| `openai-gpt-6-luna` | \* | \* | \* |  | \* |
-| `openai-gpt-5.6-sol` | \* | ✔ | \* |  | \* |
-| `openai-gpt-5.6-terra` | \* | ✔ | \* |  | \* |
-| `openai-gpt-5.6-luna` | \* | ✔ | \* |  | \* |
+| `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  | ✔ |
+| `openai-gpt-6-sol` | ✔ | ✔ | ✔ |  | ✔ |
+| `openai-gpt-6-luna` | ✔ | ✔ | ✔ |  | ✔ |
+| `openai-gpt-5.6-sol` | ✔ | ✔ | ✔ |  | ✔ |
+| `openai-gpt-5.6-terra` | ✔ | ✔ | ✔ |  | ✔ |
+| `openai-gpt-5.6-luna` | ✔ | ✔ | ✔ |  | ✔ |
 | `openai-gpt-5.5` | \*\* | \*\* | \*\* |  | \*\* |
 | `openai-gpt-5.4` | ✔ | ✔ | ✔ | ✔ | ✔ |
 | `openai-gpt-5.4-mini` | ✔ |  |  |  |  |
@@ -239,8 +239,8 @@ Cross-regionEurope
 
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `claude-opus-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | \* | ✔ | ✔ |  |  |  |  |  |
-| `claude-sonnet-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |  |
+| `claude-opus-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| `claude-sonnet-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |  |
 | `claude-haiku-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |  |
 | `claude-fable-5-1` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |

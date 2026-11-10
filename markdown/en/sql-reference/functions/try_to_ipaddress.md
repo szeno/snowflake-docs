@@ -3,10 +3,6 @@ Categories:
 
 # TRY\_TO\_IPADDRESS
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 A special version of [TO\_IPADDRESS](/sql-reference/functions/to_ipaddress) that performs the same operation
 (converts an input expression to an [IPADDRESS](/sql-reference/data-types-ipaddress) value)
 but with error-handling support. If the conversion can’t be performed, it returns a NULL value

@@ -190,7 +190,8 @@ CoCo supports account administration by providing contextual information about g
 CoCo can use the Cortex large language models your role has access to, including Claude,
 OpenAI GPT, Gemini, and Grok models. New models are added as they’re released, so instead of a
 fixed list, CoCo shows you the models that are currently available to you. That in-product list is
-authoritative.
+authoritative. For the release stage of each model in CoCo and the regions the models run in, see
+[Model availability](/user-guide/snowflake-cortex/model-availability).
 
 You can pick a specific model, or one of these Auto options that choose a model for you:
 

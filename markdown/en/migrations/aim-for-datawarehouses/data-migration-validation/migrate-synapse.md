@@ -91,9 +91,30 @@ tables:
 
 Tune `columnNamesToPartitionBy` and `targetPartitionSizeMb` or `targetPartitionSizeRows` for large tables. See [Partition size](../manual-migration/data-migration-configuration-reference#partition-size). For a serverless SQL pool, set `source_platform: azure_synapse_serverless`.
 
+### Strict encryption (TDS 8.0)
+
+To require TDS 8.0 strict encryption, set `encrypt = "strict"` in the Worker connection. Strict encryption needs ODBC Driver 18 for SQL Server or later, and always validates the server certificate, so don’t set `trust_server_certificate = true` with it. To set a minimum TLS version for the whole Worker, add `min_tls_version` with `"1.2"` or `"1.3"`. `min_tls_version` requires `encrypt = "strict"` and isn’t supported on Windows Worker hosts.
+
+Copy code
+
+```
+[connections.source.azure_synapse]
+host = "your-workspace.sql.azuresynapse.net"
+port = 1433
+database = "YourDedicatedPoolDb"
+username = "sqladminuser"
+password = "YOUR_PASSWORD"
+mode = "sql_auth"
+pool_type = "dedicated"
+encrypt = "strict"
+min_tls_version = "1.3"
+```
+
+`encrypt` also accepts `true` and `false`. When it’s unset, the connection is encrypted.
+
 ### Iceberg targets
 
-Synapse as a source doesn’t prevent **Apache Iceberg™** tables on Snowflake as targets. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. See [Data migration configuration reference](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
+Synapse as a source doesn’t prevent **Apache Iceberg™** tables on Snowflake as targets. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. Use the `cet_as` or `cloud_direct` extraction strategy with a Snowflake external stage; `regular` is not supported for Iceberg targets. Spec v2 compatible, spec v3 compatible, and spec v3 native profiles are supported with `loadMode: ADD_FILES_COPY`. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg) and [Data migration configuration reference](../manual-migration/data-migration-configuration-reference#iceberg-configuration-targeticebergconfig).
 
 ## Using CETAS extraction
 

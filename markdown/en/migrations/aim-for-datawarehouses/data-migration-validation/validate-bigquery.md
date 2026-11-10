@@ -104,6 +104,7 @@ Show lessSee more
 - Prefer `export_data` for row validation when a GCS bucket and a matching external stage exist. Otherwise use `regular`.
 - Tables, table clones, and table snapshots validate as tables. Views and materialized views validate as views, so supply their keys as described in [Keys for source views](../manual-migration/data-validation-configuration-reference#keys-for-source-views). Temporary tables aren’t in the dataset, so they’re treated as missing, and external tables aren’t supported. See [How catalog kinds are classified](../manual-migration/data-validation-configuration-reference#how-catalog-kinds-are-classified).
 - Validation queries run and are billed in `project_id`.
+- **Apache Iceberg™ targets**: Schema, metrics, and row validation run on tables migrated to Iceberg. Declare the same `tableType` and `icebergConfig` profile the migration used. Row validation compares timestamps and other values as `EXPORT DATA` wrote them, so a `VARCHAR` timestamp column compares as ISO text with six fractional digits. See [Validating spec v2 and spec v3 tables](./iceberg#validating-spec-v2-and-spec-v3-tables).
 - **Anti-locking**: BigQuery reads don’t take locks, so no hint is added.
 
 **Prompt:**

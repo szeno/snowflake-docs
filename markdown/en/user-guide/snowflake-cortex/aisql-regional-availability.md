@@ -23,26 +23,26 @@ input and output limits, see [Model restrictions](#label-cortex-llm-model-restri
 If you’re not sure where to start, try a large model first to establish a quality baseline, then evaluate smaller models
 against it.
 
-- **Anthropic Claude Opus** (`claude-opus-5-5`, Public Preview; `claude-opus-5`): Anthropic’s most capable models,
+- **Anthropic Claude Opus** (`claude-opus-5-5`; `claude-opus-5`): Anthropic’s most capable models,
   suited for complex reasoning, coding, long-horizon agentic work, and analysis of large document collections. Both
   models have a 1,000,000-token context window and up to 128,000 output tokens.
 - **Google Gemini** (`gemini-4-argon`, Public Preview): Google’s most capable Gemini model in Snowflake Cortex,
   suited for advanced reasoning and multimodal tasks, with a 1,000,000-token context window.
-- **OpenAI GPT Astra** (`openai-gpt-6-astra`, Public Preview): OpenAI’s most capable model, suited for complex,
+- **OpenAI GPT Astra** (`openai-gpt-6-astra`): OpenAI’s most capable model, suited for complex,
   demanding reasoning work.
-- **OpenAI GPT Sol** (`openai-gpt-6-sol`, `openai-gpt-5.6-sol`, Public Preview): OpenAI’s frontier models for
+- **OpenAI GPT Sol** (`openai-gpt-6-sol`, `openai-gpt-5.6-sol`): OpenAI’s frontier models for
   agentic coding and long-horizon tasks.
 
 ### Medium models
 
 Medium models balance quality with lower latency and cost, and suit most production workloads.
 
-- **Anthropic Claude Sonnet** (`claude-sonnet-5-5`, Public Preview; `claude-sonnet-5`): strong performance on coding,
+- **Anthropic Claude Sonnet** (`claude-sonnet-5-5`; `claude-sonnet-5`): strong performance on coding,
   tool use, and agentic tasks at lower latency and cost than Claude Opus. `claude-sonnet-5` has a 1,000,000-token
   context window and up to 64,000 output tokens.
 - **xAI Grok** (`grok-4.7`, Public Preview): a general-purpose model for reasoning and agentic tasks, with a
   500,000-token context window.
-- **OpenAI GPT Terra** (`openai-gpt-6.1-terra`, `openai-gpt-5.6-terra`, Public Preview): balanced models for
+- **OpenAI GPT Terra** (`openai-gpt-6.1-terra`, Public Preview; `openai-gpt-5.6-terra`): balanced models for
   everyday production work, including code generation, content workflows, and structured data extraction.
   `openai-gpt-5.6-terra` has a 1,050,000-token context window and up to 128,000 output tokens.
 
@@ -54,7 +54,7 @@ Small models are fast and cost-efficient, and suit high-volume tasks like classi
   200,000-token context window and up to 64,000 output tokens.
 - **Google Gemini Flash** (`gemini-3.8-flash`): a fast, low-cost Gemini model for high-volume tasks, with a
   1,000,000-token context window.
-- **OpenAI GPT Luna** (`openai-gpt-6-luna`, `openai-gpt-5.6-luna`, Public Preview): fast, low-cost models for
+- **OpenAI GPT Luna** (`openai-gpt-6-luna`, `openai-gpt-5.6-luna`): fast, low-cost models for
   repeatable work at scale, such as summarizing documents, extracting information, and answering focused questions.
   Both have a 1,050,000-token context window and up to 128,000 output tokens.
 - **OpenAI GPT mini and nano** (`openai-gpt-5.4-mini`, `openai-gpt-5.4-nano`): small, fast GPT models, each with a

@@ -1069,7 +1069,7 @@ Set these rules at the workflow root or on an individual table entry. Per-table 
 
 ## Worker configuration
 
-Workers reuse the same TOML format as Data Migration. See [Data migration configuration reference](./data-migration-configuration-reference#worker-configuration) for the full property list, including custom extraction plugin setup, [external secret managers](./data-migration-configuration-reference#external-secret-manager), and [environment variables](./data-migration-configuration-reference#environment-variables).
+Workers reuse the same TOML format as Data Migration. See [Data migration configuration reference](./data-migration-configuration-reference#worker-configuration) for the full property list, including custom extraction plugin setup, [supported vaults](./data-migration-configuration-reference#supported-vaults), and [environment variables](./data-migration-configuration-reference#environment-variables).
 
 Validation objects such as the results stage and file format live in the validation metadata schema. When you override its name, the Worker’s `[application].snowflake_schema_for_data_validation_metadata` key must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA`. See [Matching metadata locations between the Orchestrator and Workers](./data-migration-configuration-reference#matching-metadata-locations).
 

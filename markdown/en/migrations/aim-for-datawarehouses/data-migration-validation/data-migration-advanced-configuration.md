@@ -236,6 +236,29 @@ Rate limits are rows in the `RATE_LIMIT` metadata table, not properties in the w
 
 See [Rate limiting](../manual-migration/data-migration-configuration-reference#rate-limiting).
 
+## Running loads on a separate warehouse
+
+While it runs, the Orchestrator polls its task queue every few seconds, which keeps its warehouse from suspending. To keep that warehouse small, run the load statements on a separate ingest warehouse. The loads that move there are `COPY INTO` of staged partitions, the `MERGE` for `trackModifications`, and Apache Iceberg™ `ADD_FILES_COPY` loads with their post-load `OPTIMIZE`. Polling, metadata, DDL, and validation stay on the session warehouse. Snowpipe loads aren’t affected.
+
+1. Create the ingest warehouse, for example:
+
+   Copy code
+
+   ```
+   CREATE WAREHOUSE dmv_ingest_wh WAREHOUSE_SIZE = LARGE AUTO_SUSPEND = 60 MAX_CLUSTER_COUNT = 4;
+   ```
+2. Grant the Orchestrator role `USAGE` on it:
+
+   Copy code
+
+   ```
+   GRANT USAGE ON WAREHOUSE dmv_ingest_wh TO ROLE <orchestrator_role>;
+   ```
+3. Add `snowflake_ingest_warehouse: DMV_INGEST_WH` to the project’s `.scai/config/project.local.yml`, or to `project.yml` to share it with the project. Without the CLI, set the `SNOWFLAKE_INGEST_WAREHOUSE` environment variable for the Orchestrator.
+4. Restart the Orchestrator. On Snowpark Container Services, the service reads the setting only when it’s created: run `scai data orchestrator stop --drop`, then `scai data orchestrator setup`.
+
+When the setting is unset, every statement runs on the session warehouse. The name is read as an unquoted Snowflake identifier, so `load_wh` becomes `LOAD_WH`. Quote the name to keep its case.
+
 ## Keeping or discarding staged files
 
 Migration stages intermediate files while it runs and deletes them when the workflow succeeds. When you’re debugging a failing workflow, keep them instead.

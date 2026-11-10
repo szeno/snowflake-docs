@@ -32,7 +32,7 @@ Whichever option you choose, every Worker needs the same three things: a path to
 Worker configuration examples show source credentials inline for readability. How you avoid that in practice depends on where the Worker runs:
 
 - **On SPCS**, source credentials come from Snowflake `SECRET` objects bound into the service specification. The agent or CLI creates them for you. See [Network access objects](../manual-migration/manual-spcs-worker-setup#network-access-objects).
-- **On your own hosts or in Kubernetes**, the Worker can resolve credentials at startup from an external secret store, referencing them in the connection fields instead of storing a password. See [Resolving credentials from an external secret manager](../manual-migration/data-migration-configuration-reference#external-secret-manager).
+- **On your own hosts or in Kubernetes**, the Worker can read credentials from AWS Secrets Manager, with `aws-sm:///` references in the connection fields instead of a stored password. See [Supported vaults](../manual-migration/data-migration-configuration-reference#supported-vaults).
 
 ## Snowpark Container Services
 

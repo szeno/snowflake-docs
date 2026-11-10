@@ -71,10 +71,9 @@ Snowflake recommends that you test your application by privately sharing it with
 1. Create a Snowflake Native App package.
 
    For more information, see [Tutorial 1: Create a basic Snowflake Native App](/developer-guide/native-apps/tutorials/getting-started-tutorial).
-2. To initiate an automated security scan, [set the DISTRIBUTION property for the application package](/developer-guide/native-apps/security-run-scan#label-native-apps-distribution-property-set) to `EXTERNAL`.
+2. If the Snowflake Native App uses Snowpark Container Services (SPCS), first complete and pass the [security questionnaire](/developer-guide/native-apps/security-na-spcs#label-native-apps-spcs-questionnaire-snowsight). After approval, [set the DISTRIBUTION property for the application package](/developer-guide/native-apps/security-run-scan#label-native-apps-distribution-property-set) to `EXTERNAL` to initiate an automated security scan. For apps without containers, set `DISTRIBUTION` to `EXTERNAL` to initiate the scan.
 
    - If the automated security scan fails, Snowflake will perform a manual security review that can take approximately 3 business days.
-   - If the Snowflake Native App uses Snowpark Container Services (SPCS), then you must complete a [security questionnaire](https://docs.google.com/forms/d/1XLjbcSrp689kXEvVELa6KbEUOPfsJIirSTG5pGQDMZE/viewform?ts=65fb4866&edit_requested=true). After the questionnaire is approved, the automated security scan starts.
 3. Create a listing and submit it for approval.
 
    For more information, see [Publish an app to consumers](/developer-guide/native-apps/ui-provider-publishing-app-package).

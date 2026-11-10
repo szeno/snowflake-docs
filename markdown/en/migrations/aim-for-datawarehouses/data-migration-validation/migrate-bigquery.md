@@ -155,6 +155,10 @@ Google BigQuery supports [incremental sync](../manual-migration/data-migration-c
 
 The default checksum fingerprints each row with `FARM_FINGERPRINT` and combines the fingerprints with `BIT_XOR`. Two identical rows cancel each other out, so adding or removing a pair of duplicate rows isn’t detected. For tables that can hold duplicate rows, use a watermark column or a custom `checksumExpression`. See [Changes a checksum may not detect](../manual-migration/data-migration-configuration-reference#changes-a-checksum-may-not-detect).
 
+### Iceberg targets
+
+You can land BigQuery tables in **Apache Iceberg™** tables on Snowflake. Set `target.tableType` to `"iceberg"` and supply `target.icebergConfig`. Iceberg targets require the `export_data` extraction strategy with Parquet output. Set `exportDataGcsBucket` (and `exportDataGcsPrefix` when you use one) on the workflow, and point `extraction.externalStage` at `gcs://<exportDataGcsBucket>/<exportDataGcsPrefix>/`. Spec v2 compatible, spec v3 compatible, and spec v3 native profiles are supported, with `loadMode: ADD_FILES_COPY` or `FULL_INGEST`. On spec v3 native, `TIMESTAMP` and `DATETIME` become `TIMESTAMP_NTZ(6)`. See [Apache Iceberg™ tables (spec v2 and v3)](./iceberg).
+
 ## Data type mappings
 
 When `NUMERIC` or `DECIMAL` has a precision, the target is `NUMBER` with that precision and scale. When `STRING(n)` or `BYTES(n)` has a length, the target keeps that length.

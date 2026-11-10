@@ -9,8 +9,11 @@ roles, or your entire account can find and use them.
 Key capabilities:
 
 - **Sharing:** Publish a skill or plugin and receive a link you can send to colleagues.
-- **Discovery:** Search for shared skills and plugins from CoCo Desktop, CoCo in Snowsight, and
-  the CoCo CLI.
+- **[Discovery](#label-cortex-code-skill-sharing-discover):** Search for shared skills and plugins from CoCo Desktop, CoCo in Snowsight, and
+  the CoCo CLI. CoCo can also [recommend relevant shared skills](#label-cortex-code-skill-sharing-recommendations)
+  while you work.
+- **Suggestions to create and share:** CoCo can suggest
+  [creating a skill from work you repeat and sharing a skill you use often](#label-cortex-code-skill-sharing-create-share-suggestions).
 - **Security scanning:** Every shared skill and plugin is scanned for security issues before anyone else can
   install it.
 - **Governance:** Certify skills, control access by role, organize the catalog into categories, and track
@@ -163,6 +166,35 @@ unshared automatically.
 
 Imported skills and plugins behave like any other shared skill or plugin. Security scanning, categories, certification,
 and access control all apply in the same way.
+
+## Suggestions to create and share skills
+
+CoCo can notice work you repeat and suggest turning it into a skill, then suggest sharing that skill with others in
+your account. These suggestions are rolling out gradually, so you might not see them in your sessions yet. Each
+suggestion appears in the CoCo chat, and CoCo doesn’t create or share anything until you accept the suggestion.
+
+CoCo can also recommend shared skills while you work. For details, see
+[Skill recommendations in your sessions](#label-cortex-code-skill-sharing-recommendations).
+
+### Create a skill from a session
+
+After a session in which you work through a multi-step procedure, CoCo might suggest creating a skill from it so that you
+can run the same procedure faster next time. If you accept, CoCo helps you build a reusable skill from the work in the
+session.
+
+CoCo offers this at most once per session. The new skill is local to your machine until you share it. For more
+information about writing skills, see [CoCo CLI extensibility](/user-guide/cortex-code/extensibility).
+
+### Share a skill you use often
+
+When you keep using a skill you wrote yourself across several sessions on different days, CoCo might suggest sharing it
+to the catalog. This suggestion is rolling out across CoCo surfaces, so you might not see it everywhere yet. If you
+accept, CoCo shares the skill to the catalog. You can also dismiss the suggestion.
+
+CoCo suggests sharing only skills that you created locally. It doesn’t suggest bundled skills, skills you installed from
+the catalog, skills you’ve already shared, or skills that appear to contain sensitive content. A skill shared from a
+suggestion goes through [security scanning](#label-cortex-code-skill-sharing-security-scanning) like any other shared
+skill.
 
 ## Security scanning
 
@@ -337,11 +369,37 @@ In the CoCo CLI, update installed skills and plugins to their latest shared vers
 
 ## Discover skills and plugins
 
-### Automatic discovery
+### Skill recommendations in your sessions
 
-CoCo can automatically find relevant skills and plugins while you work, searching the catalog for items related to
-the current task and suggesting them in context. In the CoCo CLI and CoCo Desktop, use the `/find-skill-and-plugin`
-skill. In CoCo in Snowsight, use `/find-skill`, which finds skills only (plugins aren’t supported there).
+CoCo can recommend shared skills while you work, without you having to search for them. This capability is rolling out
+gradually, so you might not see recommendations in your sessions yet.
+
+When you send CoCo a request, it searches the catalog in the background for skills related to your task. If it finds a
+good match, CoCo recommends the skill in the chat. Your request runs as usual while CoCo searches. If you accept the
+recommendation, CoCo installs the skill and uses it for your task.
+
+Nothing is installed unless you accept a recommendation. CoCo recommends at most one skill at a time, doesn’t
+recommend the same skill twice in a session, and doesn’t search for recommendations when your prompt is very short or
+starts with `/` or `!`.
+
+Recommendations respect catalog access. CoCo recommends only skills that are discoverable and that your role has access
+to. It doesn’t recommend the following:
+
+- Plugins. To find a plugin, use [manual search](#label-cortex-code-skill-sharing-manual-search) or `/find-skill-and-plugin`.
+- Skills that failed or couldn’t complete a [security scan](#label-cortex-code-skill-sharing-security-scanning).
+- Skills that you already have installed.
+- Skills with very little usage. A newly shared skill might not be recommended until people have used it.
+
+Recommendations can’t be turned off, either by users or at the account level. Instead, the catalog’s sharing settings
+control what CoCo can recommend. To keep a skill you share out of recommendations, share it as private (not
+discoverable), or limit access to the roles that should see it. For details, see
+[Sharing options](#label-cortex-code-skill-sharing-options).
+
+### Find skills and plugins on request
+
+To ask CoCo to search the catalog for skills and plugins related to your current task, use the
+`/find-skill-and-plugin` skill in the CoCo CLI and CoCo Desktop. In CoCo in Snowsight, use `/find-skill`, which finds
+skills only (plugins aren’t supported there).
 
 ### Manual search
 
@@ -664,6 +722,8 @@ To delegate governance actions to a role other than ACCOUNTADMIN, see
   [Use a shared skill in Snowflake CoWork](#label-cortex-code-skill-sharing-cowork).
 - Usage telemetry stops for an installed skill or plugin that someone edits locally. For details, see
   [Telemetry](#label-cortex-code-skill-sharing-telemetry).
+- In-session recommendations include skills only, not plugins. For details, see
+  [Skill recommendations in your sessions](#label-cortex-code-skill-sharing-recommendations).
 
 ## Legal notices
 

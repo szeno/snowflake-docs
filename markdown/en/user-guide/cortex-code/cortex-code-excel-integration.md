@@ -1,4 +1,4 @@
-# Snowflake CoCo for Excel
+# Snowflake CoCo for Microsoft Excel
 
 [Preview Feature](/release-notes/preview-features) — Open
 
@@ -6,19 +6,19 @@ Available to all accounts.
 
 ## Overview
 
-Snowflake CoCo for Excel brings CoCo directly into Microsoft Excel. It adds CoCo as a chat pane inside the workbook you
-already use, connected to your live Snowflake data. From the pane you can query data, build PivotTables and charts, and
-write formulas using natural language, without exporting data out of Snowflake and without learning a separate tool. In
-cells, `CORTEX` functions call Snowflake Cortex directly. The add-in also extends Snowflake governance into Excel:
-queries run under your own role, so access control, masking, and row access policies continue to apply to the data that
-reaches your workbook.
+Snowflake CoCo for Microsoft Excel brings CoCo directly into Microsoft Excel. It adds CoCo as a chat pane inside the
+workbook you already use, connected to your live Snowflake data. From the pane you can query data, build PivotTables and
+charts, and write formulas using natural language, without exporting data out of Snowflake and without learning a
+separate tool. In cells, `CORTEX` functions call Snowflake Cortex directly. The add-in also extends Snowflake governance
+into Microsoft Excel: queries run under your own role, so access control, masking, and row access policies continue to
+apply to the data that reaches your workbook.
 
 The add-in is part of Snowflake CoCo. For an overview of the other CoCo experiences, see
 [CoCo](/user-guide/cortex-code/cortex-code).
 
 ## Requirements
 
-- Microsoft 365 Excel (Excel for Windows, Mac, or the web).
+- Microsoft Excel for Microsoft 365 on Windows, Mac, or the web.
 - A Snowflake account with Snowflake Cortex and [CoCo](/user-guide/cortex-code/cortex-code) enabled.
   [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) is required only when the model you
   select isn’t available in your region.
@@ -31,7 +31,7 @@ The add-in is part of Snowflake CoCo. For an overview of the other CoCo experien
   [semantic views](/user-guide/views-semantic/overview) your role can access, or describe what you are looking for,
   and CoCo finds the matching objects and pulls the data into your worksheet.
 - **Build pivots, charts, and formulas:** Ask CoCo to pivot a result set, add a chart, or construct a formula, and
-  CoCo creates the corresponding Excel objects so you can keep working in familiar spreadsheet tools.
+  CoCo creates the corresponding Microsoft Excel objects so you can keep working in familiar spreadsheet tools.
 - **Use governed objects and semantic views:** Query the tables, views, and semantic views you are permissioned for.
   Metric definitions come from Snowflake semantic views rather than being recreated per workbook, so results stay
   consistent across users and reports.
@@ -39,7 +39,7 @@ The add-in is part of Snowflake CoCo. For an overview of the other CoCo experien
   opens, and review the new results before they’re applied. See
   [Intelligent refresh](#label-cortex-code-excel-refresh).
 - **Call CORTEX functions in cells:** Use the seven functions in the `CORTEX` namespace, such as `=CORTEX.ASK()`,
-  `=CORTEX.SUMMARIZE()`, and `=CORTEX.SENTIMENT()`, as Excel formulas to enrich your data alongside your other
+  `=CORTEX.SUMMARIZE()`, and `=CORTEX.SENTIMENT()`, as Microsoft Excel formulas to enrich your data alongside your other
   formulas. See [Use CORTEX functions in cells](#label-cortex-code-excel-functions).
 - **Run CoCo skills:** Use skills such as report generation, analysis, and summaries from inside the workbook.
   Enter `/` in the pane to see and select the available skills.
@@ -50,32 +50,35 @@ The add-in is part of Snowflake CoCo. For an overview of the other CoCo experien
 
 ## How it works
 
-Snowflake CoCo for Excel installs as an Excel add-in that opens a CoCo pane next to your worksheet. When you make a
-request, CoCo interprets it, runs the corresponding query or action against your Snowflake account using your
-privileges, and writes the results into the sheet. Data is read from Snowflake at query time, so the workbook reflects
-live data rather than a static export.
+Snowflake CoCo for Microsoft Excel installs as a Microsoft Excel add-in that opens a CoCo pane next to your worksheet.
+When you make a request, CoCo interprets it, runs the corresponding query or action against your Snowflake account using
+your privileges, and writes the results into the sheet. Data is read from Snowflake at query time, so the workbook
+reflects live data rather than a static export.
 
 Before CoCo writes anything to your workbook, it shows a preview of the change and annotates each written value with
 a citation to its source. For more information about these behaviors, see
 [Review changes and track sources](#label-cortex-code-excel-review).
 
-The add-in brings the same capabilities as other CoCo experiences into Excel. For background on how CoCo works, see
-[CoCo](/user-guide/cortex-code/cortex-code).
+The add-in brings the same capabilities as other CoCo experiences into Microsoft Excel. For background on how CoCo
+works, see [CoCo](/user-guide/cortex-code/cortex-code).
 
 ## Install the add-in
 
-During the current stage of the preview, Snowflake CoCo for Excel is distributed as an add-in manifest that you
-sideload into Excel. You sideload the manifest once for your own user account on each machine where you use the add-in.
-The add-in is available for Excel on Mac and Windows, and the steps differ by platform.
+During the current stage of the preview, Snowflake CoCo for Microsoft Excel is distributed as an add-in manifest that
+you sideload into Microsoft Excel. You sideload the manifest once for your own user account on each machine where you
+use the add-in. The add-in is available for Microsoft Excel on Mac and Windows, and the steps differ by platform.
 
-Sideloading the manifest only makes the add-in available in Excel. Before you can sign in from the pane, an account
-administrator creates an OAuth security integration and gives you the resulting client ID. See
+A Microsoft 365 administrator can instead install the add-in for everyone in your organization, so users don’t sideload
+the manifest themselves. See [Install the add-in for your organization](#label-cortex-code-excel-admin-install).
+
+Sideloading the manifest only makes the add-in available in Microsoft Excel. Before you can sign in from the pane, an
+account administrator creates an OAuth security integration and gives you the resulting client ID. See
 [Create a security integration for OAuth](#label-cortex-code-excel-oauth).
 
 ### macOS
 
-1. Quit Excel.
-2. Create the Excel add-in folder, if it doesn’t already exist:
+1. Quit Microsoft Excel.
+2. Create the Microsoft Excel add-in folder, if it doesn’t already exist:
 
    Copy code
 
@@ -90,8 +93,9 @@ administrator creates an OAuth security integration and gives you the resulting 
    curl -sS https://ai.snowflake.com/static/excel/releases/prod/manifest.xml \
      -o "$HOME/Library/Containers/com.microsoft.Excel/Data/Documents/wef/snowflake-coco-excel.xml"
    ```
-4. Open Excel and create a new blank workbook.
-5. On the **Home** tab, select **Add-ins**, then select **Snowflake CoCo**. If the add-in isn’t listed, restart Excel.
+4. Open Microsoft Excel and create a new blank workbook.
+5. On the **Home** tab, select **Add-ins**, then select **Snowflake CoCo**. If the add-in isn’t listed, restart
+   Microsoft Excel.
 
 ### Windows
 
@@ -99,15 +103,15 @@ Important
 
 Use only one of the sideload methods described in this section on a given machine. Both methods register the same
 manifest, and the manifest carries a fixed add-in ID, so registering it twice makes **Snowflake CoCo** appear in two
-places in the **Add-ins** dialog and leaves it ambiguous which copy of the manifest Excel loads. That ambiguity matters
-when the two copies differ, because the add-in can silently load an older manifest. If you already tried one method,
-remove its registration before you use the other. See
+places in the **Add-ins** dialog and leaves it ambiguous which copy of the manifest Microsoft Excel loads. That
+ambiguity matters when the two copies differ, because the add-in can silently load an older manifest. If you already
+tried one method, remove its registration before you use the other. See
 [Remove the add-in from Windows](#label-cortex-code-excel-windows-remove).
 
-Excel on Windows can load a sideloaded add-in in two ways:
+Microsoft Excel on Windows can load a sideloaded add-in in two ways:
 
-- [Use a trusted add-in catalog](#label-cortex-code-excel-windows-catalog): Point Excel at a folder that holds the
-  manifest. The folder has to be on a network file share.
+- [Use a trusted add-in catalog](#label-cortex-code-excel-windows-catalog): Point Microsoft Excel at a folder that holds
+  the manifest. The folder has to be on a network file share.
 - [Register the manifest with PowerShell](#label-cortex-code-excel-windows-registry): Add the manifest to a registry
   key for your Windows user account on one machine. This method needs no network share.
 
@@ -115,28 +119,28 @@ Excel on Windows can load a sideloaded add-in in two ways:
 
 Important
 
-Excel accepts only a network file share as an add-in catalog. A local folder path such as `C:\CoCoExcel` doesn’t work
-with this method, and entering one is a common reason the add-in never appears in the **Add-ins** dialog. If you don’t
-have a share you can use,
+Microsoft Excel accepts only a network file share as an add-in catalog. A local folder path such as `C:\CoCoExcel`
+doesn’t work with this method, and entering one is a common reason the add-in never appears in the **Add-ins** dialog.
+If you don’t have a share you can use,
 [register the manifest with PowerShell](#label-cortex-code-excel-windows-registry) instead.
 
 1. Download the manifest from `https://ai.snowflake.com/static/excel/releases/prod/manifest.xml` and save it to a
    folder on a network file share. Don’t save it to a local folder.
-2. In Excel, select **File** > **Options** > **Trust Center** > **Trust Center Settings** >
+2. In Microsoft Excel, select **File** > **Options** > **Trust Center** > **Trust Center Settings** >
    **Trusted Add-in Catalogs**.
 3. Enter the full network path to the shared folder, such as `\\server\share\coco`. Select **Show in Menu**, then
    select **OK**.
-4. Restart Excel.
+4. Restart Microsoft Excel.
 5. On the **Home** or **Insert** tab, select **Add-ins** > **My Add-ins** > **Shared Folder**, then select
    **Snowflake CoCo**.
 
 #### Register the manifest with PowerShell
 
-Excel loads sideloaded add-ins listed under the `WEF\Developer` registry key for the current Windows user. The
+Microsoft Excel loads sideloaded add-ins listed under the `WEF\Developer` registry key for the current Windows user. The
 following steps download the manifest to a per-user folder and add it to that key.
 
-1. Quit Excel. Confirm that no Excel process is still running in the background, because Excel reads the registry key
-   only at startup.
+1. Quit Microsoft Excel. Confirm that no Microsoft Excel process is still running in the background, because
+   Microsoft Excel reads the registry key only at startup.
 2. In Windows PowerShell, run the following commands to download the manifest and register it:
 
    Copy code
@@ -159,7 +163,7 @@ following steps download the manifest to a per-user folder and add it to that ke
    ```
    Get-ItemProperty -Path "HKCU:\Software\Microsoft\Office\16.0\WEF\Developer"
    ```
-4. Open Excel and create a new blank workbook.
+4. Open Microsoft Excel and create a new blank workbook.
 5. On the **Home** tab, select **Add-ins**, then select **Snowflake CoCo** under **Developer Add-ins**.
 
 Note the following about this method:
@@ -174,13 +178,14 @@ Note the following about this method:
 - The `Developer` key can hold an entry for each sideloaded add-in, so the example adds a single value rather than
   re-creating the key. Re-creating the key would unregister any other add-ins already listed there. The value name must
   be unique among sideloaded add-ins, because reusing a name replaces the earlier entry.
-- Excel reads the manifest from the registered path every time it starts, so keep the file at that path. If you move or
-  delete the file, or if you save it to a folder that gets cleaned up, such as your Downloads folder, the add-in stops
-  loading.
+- Microsoft Excel reads the manifest from the registered path every time it starts, so keep the file at that path. If
+  you move or delete the file, or if you save it to a folder that gets cleaned up, such as your Downloads folder, the
+  add-in stops loading.
 - A permissions error from `Set-ItemProperty` indicates that your organization might restrict registry changes.
   [Use a trusted add-in catalog](#label-cortex-code-excel-windows-catalog) instead, or ask your IT administrators to
   make the change.
-- This method applies only to Excel for Windows on the desktop. It has no effect on Excel for Mac or Excel on the web.
+- This method applies only to Microsoft Excel for Windows on the desktop. It has no effect on Microsoft Excel for Mac
+  or Microsoft Excel on the web.
 
 #### Remove the add-in from Windows
 
@@ -188,7 +193,8 @@ To remove a trusted add-in catalog, select **File** > **Options** > **Trust Cent
 **Trusted Add-in Catalogs**, select the catalog, then select **Remove**.
 
 To remove a registry entry created by
-[Register the manifest with PowerShell](#label-cortex-code-excel-windows-registry), quit Excel and run the following:
+[Register the manifest with PowerShell](#label-cortex-code-excel-windows-registry), quit Microsoft Excel and run the
+following:
 
 Copy code
 
@@ -196,12 +202,65 @@ Copy code
 Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Office\16.0\WEF\Developer" -Name "SnowflakeCoCoExcel"
 ```
 
-Restart Excel after either change.
+Restart Microsoft Excel after either change.
+
+## Install the add-in for your organization
+
+A Microsoft 365 administrator can install Snowflake CoCo for Microsoft Excel for everyone in the organization, or for
+specific users and groups, from the Microsoft 365 admin center. This method uses the Microsoft 365 centralized
+deployment feature. Assigned users get the add-in in Microsoft Excel for Windows, Mac, and the web, and they don’t need
+to sideload the manifest.
+
+During the current stage of the preview, Snowflake CoCo for Microsoft Excel isn’t listed on Microsoft Marketplace, so
+you deploy it as a custom add-in from its manifest. Snowflake plans to make the add-in available on Microsoft
+Marketplace in a later stage of the preview.
+
+Before you begin, confirm the following:
+
+- Your organization meets the Microsoft requirements for centralized deployment. For example, users need Exchange
+  Online mailboxes. See
+  [Determine if centralized deployment of Office Add-ins works for your organization](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/centralized-deployment-of-add-ins).
+- You have a Microsoft 365 administrator role that can deploy add-ins. The same Microsoft article lists the required
+  roles.
+
+To install the add-in for your organization, follow these steps:
+
+1. Sign in to the [Microsoft 365 admin center](https://admin.microsoft.com).
+2. In the left navigation, select **Show all**, then select **Settings** > **Integrated apps**.
+3. Near the top of the **Integrated apps** page, select **Add-ins**.
+4. Select **Deploy Add-in**, then select **Next**.
+5. Select the option to upload a custom add-in. If the wizard asks for an app type, select **Office Add-in**.
+6. Provide the manifest in one of the following ways, then select **Upload**:
+
+   - Select the option to provide a URL for the manifest, and enter
+     `https://ai.snowflake.com/static/excel/releases/prod/manifest.xml`.
+   - Download the manifest from `https://ai.snowflake.com/static/excel/releases/prod/manifest.xml`, select the option
+     to upload the manifest file, and then select the file you downloaded.
+7. Choose who gets the add-in: **Everyone**, **Specific users/groups**, or **Just me**. To test the add-in before a
+   wider rollout, select **Just me** first.
+8. Select **Deploy**.
+
+Note the following about this method:
+
+- Microsoft notes that a deployed add-in can take up to 72 hours to appear for every user. Users might need to restart
+  Microsoft Excel. After the add-in appears, users open the pane as described in
+  [Getting started](#label-cortex-code-excel-start).
+- Deploying the add-in doesn’t connect it to your Snowflake account. An account administrator still creates an OAuth
+  security integration and shares the client ID with users. See
+  [Create a security integration for OAuth](#label-cortex-code-excel-oauth).
+- If users already sideloaded the manifest, have them remove the sideloaded copy, because both copies register the same
+  add-in ID. On Windows, see [Remove the add-in from Windows](#label-cortex-code-excel-windows-remove). On macOS, delete
+  `snowflake-coco-excel.xml` from the `wef` folder and restart Microsoft Excel.
+- Microsoft treats an add-in that you deploy from your own manifest as a line-of-business add-in. If the manifest
+  changes, deploy the update yourself: select the add-in on the **Add-ins** page, then select **Update**.
+- To change who has the add-in, or to remove it, see
+  [Manage add-ins in the Microsoft 365 admin center](https://learn.microsoft.com/en-us/microsoft-365/admin/manage/manage-addins-in-the-admin-center).
 
 ## Getting started
 
-1. **Install Snowflake CoCo for Excel.** See [Install the add-in](#label-cortex-code-excel-install).
-2. **Open the pane.** On the Excel **Home** tab, select **Add-ins**, then select **Snowflake CoCo**.
+1. **Install Snowflake CoCo for Microsoft Excel.** See [Install the add-in](#label-cortex-code-excel-install). If your
+   Microsoft 365 administrator installed the add-in for your organization, skip this step.
+2. **Open the pane.** On the Microsoft Excel **Home** tab, select **Add-ins**, then select **Snowflake CoCo**.
 3. **Sign in.** In the pane, enter your Snowflake [account identifier](/user-guide/admin-account-identifier) and the
    OAuth client ID for your account, then select **Sign in with Snowflake**. Your account administrator provides the
    client ID. See [Sign in from the pane](#label-cortex-code-excel-sign-in).
@@ -248,21 +307,21 @@ precedents. For values, CoCo describes what the data represents and flags anythi
 gaps, or outliers. CoCo reads and explains the selection, and any change it proposes is still previewed before it’s
 applied.
 
-[![The Excel cell context menu for a selected range of totals, with Explain with CoCo near the bottom of the menu.](/static/images/screens/cortex-code-excel-explain-with-coco.png)](/static/images/screens/cortex-code-excel-explain-with-coco.png)
+[![The Microsoft Excel cell context menu for a selected range of totals, with Explain with CoCo near the bottom of the menu.](/static/images/screens/cortex-code-excel-explain-with-coco.png)](/static/images/screens/cortex-code-excel-explain-with-coco.png)
 
 ## Review changes and track sources
 
 CoCo previews every change before it is written to your workbook. When CoCo proposes a write, it shows a
 before-and-after of the affected cells so you can accept or reject the change. Accepted changes are applied together.
 
-[![A CoCo preview in the Excel pane that stages a margin formula and a percent format for column E, with Reject and Accept buttons.](/static/images/screens/cortex-code-excel-preview.png)](/static/images/screens/cortex-code-excel-preview.png)
+[![A CoCo preview in the Microsoft Excel pane that stages a margin formula and a percent format for column E, with Reject and Accept buttons.](/static/images/screens/cortex-code-excel-preview.png)](/static/images/screens/cortex-code-excel-preview.png)
 
 You can undo an accepted change, but one change often takes more than one undo step, and the first undo might not
 change anything visible. Undo again until the change is reversed. The following changes can’t be fully reversed:
 
-- **Copying or deleting a sheet:** Excel can’t undo these changes, and they clear the earlier undo history, so changes
-  made before them can’t be undone either. In Excel for Windows and Mac, renaming, moving, hiding, or unhiding a sheet
-  has the same effect.
+- **Copying or deleting a sheet:** Microsoft Excel can’t undo these changes, and they clear the earlier undo history, so
+  changes made before them can’t be undone either. In Microsoft Excel for Windows and Mac, renaming, moving, hiding, or
+  unhiding a sheet has the same effect.
 - **[Refreshing a table](#label-cortex-code-excel-refresh):** Undo doesn’t restore the table’s data from before the
   refresh. If PivotTables were refreshed along with the table, undo can revert the PivotTables without reverting the
   table, which leaves the PivotTables out of step with the table’s data.
@@ -277,9 +336,9 @@ asking for the data again.
 
 ### Refresh tables from the pane
 
-When CoCo loads the results of a Snowflake query into your worksheet, it creates an Excel table and saves the query
-with the workbook. CoCo finds the table later by its Excel table, not by a cell address, so moving the table, inserting
-rows above it, or renaming the sheet doesn’t break refresh.
+When CoCo loads the results of a Snowflake query into your worksheet, it creates a Microsoft Excel table and saves the
+query with the workbook. CoCo finds the data later through the Microsoft Excel table, not through a cell address, so
+moving the table, inserting rows above it, or renaming the sheet doesn’t break refresh.
 
 To start a refresh, use any of the following. All three run the same refresh:
 
@@ -288,7 +347,7 @@ To start a refresh, use any of the following. All three run the same refresh:
 - In the pane, enter `/refresh`. The `/` menu describes the command as “Re-run the Snowflake queries behind data on
   this sheet.”
 
-[![The CoCo pane header in Excel, with the Refresh data button highlighted between the All chats and More buttons.](/static/images/screens/cortex-code-excel-refresh-data.png)](/static/images/screens/cortex-code-excel-refresh-data.png)
+[![The CoCo pane header in Microsoft Excel, with the Refresh data button highlighted between the All chats and More buttons.](/static/images/screens/cortex-code-excel-refresh-data.png)](/static/images/screens/cortex-code-excel-refresh-data.png)
 
 By default, a refresh covers the CoCo tables on the active sheet. To refresh specific tables, select cells that overlap
 them before you start the refresh. CoCo refreshes each table that the selection touches, always in full. Selecting a
@@ -352,8 +411,9 @@ opens it, because the request is stored in the workbook.
 
 ## Use CORTEX functions in cells
 
-Snowflake CoCo for Excel adds seven custom functions to Excel in the `CORTEX` namespace. Enter them in a cell like any
-other Excel formula, with text or cell references as arguments. The following table lists the functions:
+Snowflake CoCo for Microsoft Excel adds seven custom functions to Microsoft Excel in the `CORTEX` namespace. Enter them
+in a cell like any other Microsoft Excel formula, with text or cell references as arguments. The following table lists
+the functions:
 
 | Function | Description |
 | --- | --- |
@@ -391,9 +451,9 @@ Before anyone can sign in from the pane with OAuth, an account administrator cre
 integration for a custom client. You create the integration once per Snowflake account, not once per user. Only users
 with the `ACCOUNTADMIN` role, or a role with the global `CREATE INTEGRATION` privilege, can run this command.
 
-Register the add-in as a public client. The pane runs in the Excel browser runtime, so it can’t store a client secret,
-and the add-in uses Proof Key for Code Exchange (PKCE) instead. The following example creates an integration for
-Snowflake CoCo for Excel:
+Register the add-in as a public client. The pane runs in the Microsoft Excel browser runtime, so it can’t store a client
+secret, and the add-in uses Proof Key for Code Exchange (PKCE) instead. The following example creates an integration for
+Snowflake CoCo for Microsoft Excel:
 
 Copy code
 
@@ -407,7 +467,7 @@ CREATE OR REPLACE SECURITY INTEGRATION coco_excel_oauth
   OAUTH_ISSUE_REFRESH_TOKENS = TRUE
   OAUTH_REFRESH_TOKEN_VALIDITY = 86400
   ENABLED = TRUE
-  COMMENT = 'Snowflake CoCo for Excel add-in';
+  COMMENT = 'Snowflake CoCo for Microsoft Excel add-in';
 ```
 
 Important
@@ -420,7 +480,7 @@ makes sign-in fail. That URL is the OAuth callback page for the add-in manifest 
 
 `OAUTH_ENFORCE_PKCE = TRUE` requires PKCE on every authorization. PKCE is optional by default, and Snowflake
 recommends requiring it to make the OAuth flow more secure. The refresh token settings keep users signed in across
-Excel sessions: `OAUTH_REFRESH_TOKEN_VALIDITY` is in seconds, so `86400` is one day.
+Microsoft Excel sessions: `OAUTH_REFRESH_TOKEN_VALIDITY` is in seconds, so `86400` is one day.
 
 To get the client ID that the add-in uses, call
 [SYSTEM$SHOW\_OAUTH\_CLIENT\_SECRETS](/sql-reference/functions/system_show_oauth_client_secrets). The integration name is
@@ -452,8 +512,8 @@ are written into your workbook, but the underlying data remains governed by Snow
 
 ## Cost
 
-Snowflake CoCo for Excel is billed based on token consumption, consistent with other CoCo experiences, and doesn’t
-require a separate per-seat license. Pricing details are provided in the
+Snowflake CoCo for Microsoft Excel is billed based on token consumption, consistent with other CoCo experiences, and
+doesn’t require a separate per-seat license. Pricing details are provided in the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 Any Snowflake compute or storage consumed separately from CoCo usage is billed at standard Snowflake on-demand rates,

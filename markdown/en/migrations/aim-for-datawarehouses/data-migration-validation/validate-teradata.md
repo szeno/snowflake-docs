@@ -37,8 +37,8 @@ When the Worker connects, Teradata uses the **`database`** value in Worker TOML 
 
 Installation is a **one-time DBA task** on your Teradata system:
 
-1. Obtain the canonical **`HASH_MD5`** install script from your **Snowflake migration support** or **SnowConvert deployment** channel. The public documentation repository does not ship the UDF DDL.
-2. Run the script as a Teradata user with privileges to **`CREATE FUNCTION`** (or **`REPLACE FUNCTION`**) in each database listed in your Worker TOML **`database`** field.
+1. Download the [MD5 message digest UDF](https://downloads.teradata.com/download/extensibility/md5-message-digest-udf) from Teradata Downloads.
+2. Following the instructions in the download, install the UDF as **`HASH_MD5`**. Run the install as a Teradata user with privileges to **`CREATE FUNCTION`** (or **`REPLACE FUNCTION`**) in each database listed in your Worker TOML **`database`** field.
 3. Grant **`EXECUTE FUNCTION`** on **`HASH_MD5`** to the Teradata user account the validation Worker uses to connect.
 
 If you validate tables in more than one Teradata database, repeat installation in every database the Workers connect to.
@@ -191,8 +191,9 @@ During validation comparisons, these Teradata source types map automatically to 
 | TIMESTAMP WITH TIME ZONE | TIMESTAMP\_TZ | Yes |  |
 | CHAR, VARCHAR | VARCHAR | Yes |  |
 | BOOLEAN |  | No |  |
-| CLOB |  | No |  |
-| BYTE, VARBYTE, BLOB |  | No |  |
+| CLOB | VARCHAR | Yes | L2 compares minimum, maximum, and average character length, and counts of empty and `NULL` values. It doesn’t compare content. L3 compares content only when `includeLobColumnsInRowValidation` is `true`. See [LOB columns in L3](../manual-migration/data-validation-configuration-reference#lob-columns-in-l3) |
+| BLOB | BINARY | Yes | L2 compares minimum, maximum, and average length in bytes, and counts of empty and `NULL` values. It doesn’t compare content. L3 compares content as hexadecimal text only when `includeLobColumnsInRowValidation` is `true`. |
+| BYTE, VARBYTE |  | No |  |
 | JSON, XML |  | No |  |
 | ST\_GEOMETRY |  | No |  |
 | INTERVAL types | INTERVAL | Yes | Native `INTERVAL` comparison by default. See [INTERVAL data type handling](../manual-migration/data-validation-configuration-reference#interval-data-type-handling). |

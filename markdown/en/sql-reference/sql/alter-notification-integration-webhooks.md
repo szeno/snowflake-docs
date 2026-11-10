@@ -74,8 +74,18 @@ ALTER [ NOTIFICATION ] INTEGRATION [ IF EXISTS ] <name> UNSET {
             Copy code
 
             ```
-            https://default<hostname>.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/<secret>/triggers/manual/paths/invoke
+            https://<host>.environment.api.powerplatform.com/powerautomate/automations/direct/workflows/<secret>/triggers/manual/paths/invoke
             ```
+
+            `<host>` can be the host of a default environment (for example, `default<id>.<n>`) or of a managed or production environment (without the `default` prefix). Some trigger URLs include an additional `/cu/<digits>/` path segment, in the following format:
+
+            Copy code
+
+            ```
+            https://<host>.environment.api.powerplatform.com/powerautomate/automations/direct/cu/<digits>/workflows/<secret>/triggers/manual/paths/invoke
+            ```
+
+            The trigger URL can also include a query string (for example, `api-version`, `sp`, `sv`, and `sig`). Use the full trigger URL, exactly as Power Automate issues it, as the value of the secret.
 
           Note
 

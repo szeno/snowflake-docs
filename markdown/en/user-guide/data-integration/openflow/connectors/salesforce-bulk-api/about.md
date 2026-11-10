@@ -75,7 +75,7 @@ The connector replicates data in two stages: initial replication and incremental
 
 ### Initial replication
 
-The connector calls the Salesforce Bulk API 2.0 to discover standard and custom objects specified in the connector configuration. The connector respects Bulk API 2.0 API limits.
+The connector calls the Salesforce Bulk API 2.0 to discover standard and custom objects specified in the connector configuration. The connector respects Bulk API 2.0 limits.
 
 - The connector creates one table per custom or standard object with one column for each field.
 - The connector uses Snowpipe Streaming v2 for the initial load to insert rows in the table based on the values of the fields from the Salesforce object.

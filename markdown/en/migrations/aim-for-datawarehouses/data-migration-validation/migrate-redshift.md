@@ -144,6 +144,19 @@ tables:
       externalStage: TARGET_DB.PUBLIC.MY_REDSHIFT_STAGE
 ```
 
+## Migrating from a Redshift data share
+
+You can migrate and validate tables that a producer shares with your Redshift consumer cluster through a data share. Create a database from the data share on the consumer, then point AIM DMV at that database:
+
+1. In the Worker TOML, set `database` in `[connections.source.redshift]` to the database created from the data share. Redshift fixes the database when the connection opens, so the Worker can read only that database.
+2. In the workflow, set `source.databaseName` to the same database, and name each table as `<shared_database>.<schema>.<table>`.
+3. Set the table keys yourself. Shared tables expose no primary key, so set `primaryKeyColumns` for migration and `indexColumnList` for validation on each table that needs them.
+4. Use the `regular` extraction strategy.
+
+Before each task, the Worker checks that it’s connected to the database the task targets. When the names differ, the task fails with a `Database mismatch` error that names both databases. Set `database` in the Worker TOML or `source.databaseName` in the workflow so they match.
+
+Table sizes for shared tables are estimated, so partition sizing can differ from the actual data volume. Redshift Spectrum and Apache Iceberg™ external tables in a data share are reported as missing.
+
 ## Data type mappings
 
 | Redshift type | Snowflake target type | Supported for migration | Notes |
