@@ -12,6 +12,17 @@ For release note information for versions released prior to January 2022, see th
 
 See [SnowSQL (CLI client)](/user-guide/snowsql) for documentation.
 
+## Version 1.5.5 (Nov 9, 2026)
+
+### New features and updates
+
+- Upgraded the bundled `certifi` package to 2026.10.23.
+- Upgraded the bundled `botocore` library to 1.43.117.
+
+### Bug fixes
+
+- Restored the `boto3` and `botocore` libraries in the SnowSQL installation bundle. This fixes workload identity federation authentication on AWS, which failed with `module 'boto3' has no attribute 'session'` or `module 'botocore' has no attribute 'session'`.
+
 ## Version 1.5.4 (Oct 22, 2026)
 
 ### New features and updates
@@ -64,6 +75,17 @@ See [SnowSQL (CLI client)](/user-guide/snowsql) for documentation.
 ### Bug fixes
 
 - None.
+
+## Version 1.4.7 (Nov 6, 2026)
+
+### New features and updates
+
+- Upgraded the bundled `certifi` package to 2026.10.23.
+- Upgraded the bundled `botocore` library to 1.43.117.
+
+### Bug fixes
+
+- Restored the `boto3` and `botocore` libraries in the SnowSQL installation bundle. This fixes workload identity federation authentication on AWS, which failed with `module 'boto3' has no attribute 'session'` or `module 'botocore' has no attribute 'session'`.
 
 ## Version 1.4.6 (Oct 29, 2026)
 

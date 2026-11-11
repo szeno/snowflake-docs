@@ -3,7 +3,7 @@
 Creates a new [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents) object with the specified attributes and specification.
 
 See also:
-:   [ALTER AGENT](/sql-reference/sql/alter-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
+:   [ALTER AGENT](/sql-reference/sql/alter-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [UNDROP AGENT](/sql-reference/sql/undrop-agent), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
 
 ## Syntax
 

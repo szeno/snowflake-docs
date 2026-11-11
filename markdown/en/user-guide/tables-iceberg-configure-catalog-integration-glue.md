@@ -3,7 +3,7 @@
 Important
 
 To integrate with AWS Glue, we recommend that you instead configure a catalog integration for the AWS Glue Iceberg REST endpoint, which supports
-additional Iceberg table features such as catalog-vended credentials.
+additional Iceberg table features.
 
 For instructions, see [Configure a catalog integration for AWS Glue Iceberg REST](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue).
 
@@ -71,20 +71,31 @@ Note
 Create a catalog integration for the AWS Glue Data Catalog using the [CREATE CATALOG INTEGRATION (AWS Glue)](/sql-reference/sql/create-catalog-integration-glue) command.
 
 The following example creates a catalog integration that uses an AWS Glue Data Catalog source.
-The example specifies a value for the optional `GLUE_REGION` parameter.
+The example specifies a value for the optional `SIGV4_SIGNING_REGION` parameter.
 
 Copy code
 
 ```
 CREATE CATALOG INTEGRATION glueCatalogInt
   CATALOG_SOURCE = GLUE
-  CATALOG_NAMESPACE = 'my.catalogdb'
   TABLE_FORMAT = ICEBERG
-  GLUE_AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/myGlueRole'
-  GLUE_CATALOG_ID = '123456789012'
-  GLUE_REGION = 'us-east-2'
+  CATALOG_NAMESPACE = 'my.catalogdb'
+  REST_CONFIG = (
+    CATALOG_API_TYPE = AWS_GLUE
+    CATALOG_NAME = '123456789012'
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = 'arn:aws:iam::123456789012:role/myGlueRole'
+    SIGV4_SIGNING_REGION = 'us-east-2'
+  )
   ENABLED = TRUE;
 ```
+
+To use catalog-vended credentials instead of an external volume, add `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` to `REST_CONFIG`.
+You can’t combine `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` with `CATALOG_API_TYPE = AWS_PRIVATE_GLUE`.
+For more information, see [CREATE CATALOG INTEGRATION (AWS Glue)](/sql-reference/sql/create-catalog-integration-glue) and
+[Use catalog-vended credentials for Apache Iceberg™ tables](/user-guide/tables-iceberg-configure-catalog-integration-vended-credentials).
 
 ## Step 3: Retrieve the AWS IAM user and external ID for your Snowflake account
 
@@ -105,7 +116,7 @@ Record the following values:
 > | Value | Description |
 > | --- | --- |
 > | `GLUE_AWS_IAM_USER_ARN` | The AWS IAM user created for your Snowflake account, for example, `arn:aws:iam::123456789001:user/abc1-b-self1234`. Snowflake provisions a single IAM user for your entire Snowflake account. All Glue catalog integrations in your account use that IAM user. |
-> | `GLUE_AWS_EXTERNAL_ID` | The external ID that is needed to establish a trust relationship. |
+> | `SIGV4_EXTERNAL_ID` | The external ID that is needed to establish a trust relationship. This value appears in the `REST_AUTHENTICATION` property map, not as a top-level field. |
 >
 > Expand
 >
@@ -116,12 +127,12 @@ You will provide these values in the next section.
 ## Step 4: Grant the IAM user permissions to access the AWS Glue Data Catalog
 
 Update the trust policy for the same IAM role that you specified with the ARN when you created the
-catalog integration (`GLUE_AWS_ROLE_ARN`). Add the values that you recorded in
+catalog integration (`SIGV4_IAM_ROLE`). Add the values that you recorded in
 [Step 3: Retrieve the AWS IAM user and external ID for your Snowflake account](#label-tables-iceberg-configure-catalog-integration-glue-retrieve-user) to the trust policy.
 
 For instructions, see [Modifying a trust policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/roles-managingrole-editing-console.html#roles-managingrole_edit-trust-policy).
 
-The following example trust policy demonstrates where to specify the `GLUE_AWS_IAM_USER_ARN` and `GLUE_AWS_EXTERNAL_ID` values:
+The following example trust policy demonstrates where to specify the `GLUE_AWS_IAM_USER_ARN` and `SIGV4_EXTERNAL_ID` values:
 
 Copy code
 
@@ -148,8 +159,8 @@ Copy code
 
 Where:
 
-> - `glue_iam_user_arn` is the `GLUE_IAM_USER_ARN` value that you recorded.
-> - `glue_aws_external_id` is the `GLUE_AWS_EXTERNAL_ID` value that you recorded.
+> - `glue_iam_user_arn` is the `GLUE_AWS_IAM_USER_ARN` value that you recorded.
+> - `glue_aws_external_id` is the `SIGV4_EXTERNAL_ID` value that you recorded from `REST_AUTHENTICATION`.
 
 Note
 

@@ -28,6 +28,8 @@ AI_PARSE_DOCUMENT( <file_object> [, <options> ] [, <return_error_details> ] )
 :   A [FILE](/sql-reference/data-types-unstructured#label-data-types-file) object that specifies the document to parse, stored in a Snowflake stage. For
     information about creating file objects, see [TO\_FILE](/sql-reference/functions/to_file).
 
+    To parse selected pages of a paginated document, pass [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) as the `file_object` argument. `AI_PARSE_DOCUMENT` processes only the selected pages. For page-range syntax and restrictions, see [FL\_FILTER\_PAGES](/sql-reference/functions/fl_filter_pages).
+
 **Optional:**
 
 `options`
@@ -51,6 +53,8 @@ AI_PARSE_DOCUMENT( <file_object> [, <options> ] [, <return_error_details> ] )
       the range. Page indexes start at 0. For example, `{'start': 0, 'end': 1}` specifies the first page of the
       document.
 
+      Alternatively, specify the page selection by passing [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) as the `file_object` argument. Do not combine `FL_FILTER_PAGES` and `page_filter` in the same call; the selections are not merged and neither takes precedence.
+
       Note
 
       Specifying `page_filter` implies `page_split`. If you specify page ranges, it is not necessary to also set
@@ -69,7 +73,7 @@ By default the function returns the JSON as a string, so use
 [PARSE\_JSON](/sql-reference/functions/parse_json) to read the fields in SQL. If parsing fails, the function returns NULL. Every
 successful result includes `metadata.pageCount`.
 
-Page splitting is on when `'page_split'` is TRUE or `'page_filter'` is specified.
+To explicitly request page-level output, set `page_split` to TRUE. The `page_filter` option also enables page splitting automatically.
 
 **Page splitting off.** The document is one `content` string: plain text in OCR mode, or Markdown in LAYOUT mode.
 
@@ -84,9 +88,9 @@ Copy code
 }
 ```
 
-**Page splitting on.** `pages` is an array of page objects, including for a one-page file. With `'page_filter'`, the
-array contains only the selected pages. `index` is the zero-based position in the original file. Printed page numbers
-are ignored. `dimensions` has `height` and `width`.
+**Page splitting on.** When page splitting is enabled, `pages` contains one object for each processed page, including for a one-page file. If you select pages with `FL_FILTER_PAGES` or `page_filter`, only the selected pages are included. Each page’s `index` is its zero-based position in the original document, not its position in the filtered result. For example, selecting indexes 7 and 9 returns indexes 7 and 9, not 0 and 1. Printed page numbers are ignored. `dimensions` has `height` and `width`.
+
+When using `FL_FILTER_PAGES`, `metadata.pageCount` reports the number of pages processed. It does not identify the selected pages or report the source document’s total page count. Use the page index values in page-level output to identify the selected pages.
 
 Copy code
 
@@ -338,6 +342,8 @@ Show lessSee more
 
 ## Usage notes
 
+- Use `FL_FILTER_PAGES` directly as the `file_object` argument. The page selection applies only to the enclosing `AI_PARSE_DOCUMENT` call. It does not modify the stored document or persist on the `FILE` value.
+- Page filtering requires a paginated document. Non-paginated inputs, such as plain-text files, return an error when filtered by page.
 - AGENTIC mode supports up to 2,000 images per document. This limit applies to the document, not to each page.
 - AGENTIC mode doesn’t support the `'extract_images'` option. If you set `'extract_images'` to TRUE in AGENTIC mode,
   the function returns an error. To extract embedded images as base64-encoded data, use LAYOUT mode with `'extract_images'` set to TRUE.
@@ -346,6 +352,8 @@ Show lessSee more
 
 By default, if AI\_PARSE\_DOCUMENT can’t process the input, the function returns NULL. If the query processes multiple
 rows, rows with errors return NULL and don’t prevent the query from completing.
+
+An invalid `FL_FILTER_PAGES` selection, or a valid selection that resolves to no pages, produces a row-level error. By default, `AI_PARSE_DOCUMENT` returns NULL for the affected row. Set `return_error_details` to TRUE to return the error information. For range validation rules, see [Error conditions](/sql-reference/functions/fl_filter_pages#label-fl-filter-pages-error-conditions).
 
 The following table shows the return value based on the `return_error_details` argument:
 

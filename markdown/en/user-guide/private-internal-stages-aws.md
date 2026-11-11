@@ -60,6 +60,12 @@ Implementing VPC interface endpoints to access Snowflake internal stages provide
 
 ### Limitations
 
+Note
+
+When `ENFORCE_NETWORK_RULES_FOR_INTERNAL_STAGES = TRUE`, internal stage access enforcement uses network rules rather than legacy IP-based lists.
+Make sure that you define the required IP ranges or VPC endpoints as network rules and associate them with the active network policy.
+For more information, see .
+
 AWS doesn’t support cross-region VPC interface endpoints for the Amazon S3 service. Therefore, your VPC interface endpoint must be located in the same region as your Snowflake account to provide inbound connectivity to your Snowflake account’s internal stage.
 
 Cross-region support for AWS PrivateLink isn’t available in government regions or in the People’s Republic of China.

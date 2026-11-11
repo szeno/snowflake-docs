@@ -5,18 +5,16 @@ Modifies the metadata of an account-level or database object, or the parameters 
 See also:
 :   [CREATE <object>](/sql-reference/sql/create) , [DESCRIBE <object>](/sql-reference/sql/desc) , [SHOW <objects>](/sql-reference/sql/show)
 
-## ALTER commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Account and Session Operations:**
+## Account and Session Operations
 
 > - [ALTER ACCOUNT](/sql-reference/sql/alter-account) (account administrators only)
 > - [ALTER ACCOUNT SET INGRESS POLICY](/sql-reference/sql/alter-account-set-ingress-policy)
 > - [ALTER ORGANIZATION](/sql-reference/sql/alter-organization) (organization administrators only)
 > - [ALTER SESSION](/sql-reference/sql/alter-session) (all users)
 
-**Account Objects:**
+## Account Objects
 
 > - [ALTER APPLICATION](/sql-reference/sql/alter-application)
 > - [ALTER APPLICATION PACKAGE](/sql-reference/sql/alter-application-package)
@@ -49,7 +47,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER USER SET INGRESS POLICY](/sql-reference/sql/alter-user-set-ingress-policy)
 > - [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse)
 
-**Database Objects:**
+## Database Objects
 
 > - [ALTER AGENT](/sql-reference/sql/alter-agent)
 > - [ALTER AGGREGATION POLICY](/sql-reference/sql/alter-aggregation-policy)
@@ -118,7 +116,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER TYPE](/sql-reference/sql/alter-type)
 > - [ALTER VIEW](/sql-reference/sql/alter-view)
 
-**Classes**:
+## Classes
 
 > - [ALTER BUDGET](/sql-reference/classes/budget/commands/alter-budget)
 > - [ALTER SNOWFLAKE.ML.CLASSIFICATION](/sql-reference/classes/classification/commands/alter-classification)

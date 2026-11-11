@@ -311,6 +311,11 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Examples
 
+Note
+
+To create a catalog integration for AWS Glue that uses the AWS Glue Iceberg REST endpoint, see
+[CREATE CATALOG INTEGRATION (AWS Glue)](/sql-reference/sql/create-catalog-integration-glue).
+
 The following example creates a REST catalog integration that uses OAuth to connect
 to Tabular. It sets a default namespace using the `CATALOG_NAMESPACE` parameter.
 
@@ -335,28 +340,6 @@ CREATE OR REPLACE CATALOG INTEGRATION tabular_catalog_int
     OAUTH_CLIENT_ID = '<oauth_client_id>'
     OAUTH_CLIENT_SECRET = '<oauth_client_secret>'
     OAUTH_ALLOWED_SCOPES = ('catalog')
-  )
-  ENABLED = TRUE;
-```
-
-Create a catalog integration for AWS Glue REST with SigV4 authentication:
-
-Copy code
-
-```
-CREATE CATALOG INTEGRATION glue_rest_catalog_int
-  CATALOG_SOURCE = ICEBERG_REST
-  TABLE_FORMAT = ICEBERG
-  CATALOG_NAMESPACE = 'rest_catalog_integration'
-  REST_CONFIG = (
-    CATALOG_URI = 'https://glue.us-west-2.amazonaws.com/iceberg'
-    CATALOG_API_TYPE = AWS_GLUE
-    CATALOG_NAME = '123456789012'
-  )
-  REST_AUTHENTICATION = (
-    TYPE = SIGV4
-    SIGV4_IAM_ROLE = 'arn:aws:iam::123456789012:role/my-role'
-    SIGV4_SIGNING_REGION = 'us-west-2'
   )
   ENABLED = TRUE;
 ```

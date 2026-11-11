@@ -99,6 +99,9 @@ The connector immediately enters `CONNECTING` state while the connection is
 established asynchronously. Use `DESC ZEROCOPY CONNECTOR` to check the
 current state.
 
+If your SAP® Business Data Cloud tenant requires private connectivity, the connector connects over AWS PrivateLink. For the
+requirements and how to check the status, see [SAP® BDC Connect for Snowflake Zerocopy Connector: Private connectivity](/user-guide/data-integration/zero-copy/sap-sql/private-connectivity).
+
 ### Verify connector state
 
 Use `DESCRIBE` to check the current state of a connector:
@@ -115,7 +118,7 @@ DESC ZEROCOPY CONNECTOR my_db.my_schema.my_sap_connector;
 | --- | --- |
 | `name` | Name of the Zerocopy Connector. |
 | `partner` | The data partner (for example, `SAP_BDC`). |
-| `config` | The configuration of the data partner. For SAP® BDC, this contains the SAP® BDC Connector Endpoint. |
+| `config` | The configuration of the data partner. For SAP® BDC, this contains the SAP® BDC Connector Endpoint and, when the connector uses private connectivity, a `private_connectivity` object. See [Check private connectivity status](/user-guide/data-integration/zero-copy/sap-sql/private-connectivity#label-sap-bdc-private-connectivity-verify). |
 | `status` | Current connector state. See . |
 | `connection_error` | Error message if the connector is in `CONNECT_ERROR` or `DISCONNECT_ERROR` state; otherwise empty. |
 | `catalog_linked_databases` | Mounted catalog-linked databases that are visible to the current role. |

@@ -3,7 +3,7 @@
 Lists the [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents) for which you have access privileges.
 
 See also:
-:   [ALTER AGENT](/sql-reference/sql/alter-agent), [CREATE AGENT](/sql-reference/sql/create-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
+:   [ALTER AGENT](/sql-reference/sql/alter-agent), [CREATE AGENT](/sql-reference/sql/create-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [UNDROP AGENT](/sql-reference/sql/undrop-agent), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
 
 ## Syntax
 

@@ -8,7 +8,7 @@ Getting up and running with Snowflake SnowConvert AI is quick and easy.
 
 Before you start, make sure that your system meets the minimum requirements listed here:
 
-- MacOS
+- macOS
   - Catalina 10.15.6 or higher
   - Java JDK 8 or higher
   - 4 GB of RAM or higher

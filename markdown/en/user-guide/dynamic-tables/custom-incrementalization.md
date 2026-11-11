@@ -311,7 +311,7 @@ If delete-then-insert of the same row should be invisible to your merge logic (f
 - No dbt integration. Use `CREATE OR ALTER` or [DCM Projects](/user-guide/dcm-projects/dcm-projects-supported-entities#label-dcm-projects-object-type-dynamic-table) to update custom incremental dynamic table definitions.
 - Only `CREATE OR ALTER` can modify the `REFRESH USING` definition and properties (such as [`TARGET_LAG`](/user-guide/dynamic-tables/target-lag)).
 - Upstream schema changes cause the next refresh to fail with a compile error. If the upstream object was altered (not replaced or dropped), use `CREATE OR ALTER` with an updated `REFRESH USING` definition to recover. The next refresh continues from the last successful refresh. If the upstream used `CREATE OR REPLACE`, change tracking is broken and you must recreate the downstream with `CREATE OR REPLACE`.
-- [Frozen regions (`FROZEN WHERE`)](/user-guide/dynamic-tables/frozen-regions) and `INSERT ONLY INPUTS` can’t be combined with `REFRESH USING`.
+- [Frozen regions (`FROZEN WHERE`)](/user-guide/dynamic-tables/frozen-regions) can’t be combined with `REFRESH USING`.
 - Cloning: if a custom incremental dynamic table’s base tables are swapped after it has refreshed, the cloned table doesn’t refresh. Refresh the clone source first (manually if needed), then clone.
 - After failover, custom incremental dynamic tables always continue incrementally refreshing. Replication has the following limitations:
   - Custom incremental dynamic tables and their base tables in different failover groups aren’t supported.

@@ -27,6 +27,7 @@ To view a list of release note announcements, filtered by date and release type,
 | [Ingest Java SDK](/release-notes/clients-drivers/ingest-java-sdk) | TBD | TBD |  |
 | [JDBC Driver](/release-notes/clients-drivers/jdbc) | 4.4.1 | 02-Nov-2026 |  |
 | 5.0.0-RC1 | 02-Nov-2026 |  |
+| 5.0.0-RC2 | 10-Nov-2026 |  |
 | [Node.js Driver](/release-notes/clients-drivers/nodejs) | TBD | TBD |  |
 | [ODBC Driver](/release-notes/clients-drivers/odbc) | TBD | TBD |  |
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | TBD | TBD |  |
@@ -40,7 +41,8 @@ To view a list of release note announcements, filtered by date and release type,
 | [Snowpark Library for Scala and Java](/release-notes/clients-drivers/snowpark-scala-java) | TBD | TBD |  |
 | [Snowpark Connect for Spark](/release-notes/clients-drivers/snowpark-connect) | TBD | TBD |  |
 | [Snowpark ML](/release-notes/clients-drivers/snowpark-ml) | TBD | TBD |  |
-| [SnowSQL](/release-notes/clients-drivers/snowsql) | TBD | TBD |  |
+| [SnowSQL](/release-notes/clients-drivers/snowsql) | 1.5.5 | 09-Nov-2026 |  |
+| 1.4.7 | 06-Nov-2026 |  |
 | [SQLAlchemy](/release-notes/clients-drivers/sqlalchemy) | TBD | TBD |  |
 
 Expand

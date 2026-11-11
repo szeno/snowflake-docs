@@ -5,11 +5,9 @@ Creates a new object of the specified type.
 See also:
 :   [ALTER <object>](/sql-reference/sql/alter) , [DESCRIBE <object>](/sql-reference/sql/desc) , [SHOW <objects>](/sql-reference/sql/show)
 
-## CREATE commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Account Objects:**
+## Account Objects
 
 > - [CREATE API INTEGRATION](/sql-reference/sql/create-api-integration)
 > - [CREATE APPLICATION](/sql-reference/sql/create-application)
@@ -39,7 +37,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE WAREHOUSE](/sql-reference/sql/create-warehouse)
 > - [CREATE INTERACTIVE WAREHOUSE](/sql-reference/sql/create-interactive-warehouse)
 
-**Database Objects:**
+## Database Objects
 
 > - [CREATE AGENT](/sql-reference/sql/create-agent)
 > - [CREATE AGGREGATION POLICY](/sql-reference/sql/create-aggregation-policy)
@@ -112,7 +110,7 @@ For specific syntax, usage notes, and examples, see:
 > - [CREATE TYPE](/sql-reference/sql/create-type)
 > - [CREATE VIEW](/sql-reference/sql/create-view)
 
-**Classes:**
+## Classes
 
 > - [CREATE SNOWFLAKE.ML.ANOMALY\_DETECTION](/sql-reference/classes/anomaly-detection/commands/create-anomaly-detection#label-class-anomaly-detection-create)
 > - [CREATE BUDGET](/sql-reference/classes/budget/commands/create-budget)

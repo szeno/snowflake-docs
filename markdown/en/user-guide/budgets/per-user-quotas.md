@@ -197,7 +197,7 @@ CALL my_quota!ADD_SHARED_RESOURCE('AI GATEWAY');
 - By default, a new quota monitors all users in the account. You can narrow the scope with tags,
   or exclude specific users.
 - No enforcement occurs until a per-user spending limit is set.
-- You cannot set different limits for different users within the same quota. All users share
+- You can’t set different limits for different users within the same quota. All users share
   the same per-user limits.
 - Collective spending limits across all users in a quota are not supported. Each user’s limit
   is evaluated independently.
@@ -224,7 +224,7 @@ The following limitations apply to [block enforcement](#label-per-user-quota-enf
 - Daily and monthly cycles reset at UTC midnight, and the weekly cycle resets Monday at 00:00 UTC. A user
   who starts spending near a cycle boundary can consume up to one full limit before the reset and a fresh
   limit after it.
-- Limit and scope changes aren’t immediate. Quota configuration can take up to approximately 5-10 minutes to
+- Limit and scope changes aren’t immediate. Quota configuration can take approximately 5 to 10 minutes to
   propagate before enforcement acts on them, including changes to limits and scope.
 
 ## Create a per-user quota
@@ -300,6 +300,14 @@ within minutes. To avoid this, configure the scope and wait 10 minutes before en
 By default, a new quota monitors all users in the account, so no scope configuration is required.
 You can narrow the scope to a subset of users with tags, add or remove individual users by name, or
 combine both.
+
+A quota that covers all users includes service users, both those you create (`TYPE = SERVICE`) and
+Snowflake-managed ones (`TYPE = SNOWFLAKE_SERVICE`), such as Snowpark Container Services identities. You
+can tag, include, and exclude `SERVICE` users like any other user, but you can’t tag or name
+`SNOWFLAKE_SERVICE` users.
+
+Quotas don’t cover the system user, which runs tasks and dynamic table refreshes by default. To count
+that usage toward a quota, run them with `EXECUTE AS USER`.
 
 ### Scope users with tags
 
@@ -492,6 +500,9 @@ Copy code
 ```
 CALL my_quota!SET_PER_USER_LIMIT(120);
 ```
+
+The limit must be a whole number of credits from 1 to 1,000,000,000. Zero, negative, NULL, and
+decimal values aren’t accepted and return an error. The same rule applies to every cycle.
 
 Retrieve the current configuration, including the per-user limits:
 
@@ -1179,7 +1190,7 @@ Show lessSee more
 
 | Method | Description |
 | --- | --- |
-| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The optional cycle argument accepts `'WEEKLY'` or `'DAILY'`; the default is monthly. See [Set per-user spending limits](#label-per-user-quota-spending-limit). |
+| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The value must be a whole number from 1 to 1,000,000,000; zero, negative, NULL, and decimal values return an error. The optional cycle argument accepts `'WEEKLY'` or `'DAILY'`; the default is monthly. See [Set per-user spending limits](#label-per-user-quota-spending-limit). |
 | `UNSET_PER_USER_LIMIT('<cycle>')` | Remove the per-user limit for a cycle (`'WEEKLY'`, `'DAILY'`, or monthly). |
 | `GET_CONFIG()` | Return the quota configuration, including `PER_USER_LIMIT`, `PER_USER_LIMIT_WEEKLY`, `PER_USER_LIMIT_DAILY`, `BLOCK_ENFORCEMENT_ENABLED`. |
 

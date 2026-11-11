@@ -4,14 +4,6 @@ Creates a new [catalog integration](/user-guide/tables-iceberg#label-tables-iceb
 in the account or replaces an existing catalog integration for [Apache Iceberg™ tables](/user-guide/tables-iceberg)
 that use AWS Glue as the catalog.
 
-Important
-
-To integrate with AWS Glue, we recommend that you instead create a catalog integration for the
-[AWS Glue Iceberg REST endpoint](https://docs.aws.amazon.com/glue/latest/dg/connect-glu-iceberg-rest.html),
-which supports additional Iceberg table features such as catalog-vended credentials.
-
-For instructions, see [CREATE CATALOG INTEGRATION (Apache Iceberg™ REST)](/sql-reference/sql/create-catalog-integration-rest).
-
 Note
 
 When you create a catalog integration for AWS Glue, you must complete additional steps to establish a
@@ -25,14 +17,21 @@ See also:
 Copy code
 
 ```
-CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
+CREATE [ OR REPLACE ] CATALOG INTEGRATION [ IF NOT EXISTS ]
   <name>
   CATALOG_SOURCE = GLUE
   TABLE_FORMAT = ICEBERG
-  GLUE_AWS_ROLE_ARN = '<arn-for-AWS-role-to-assume>'
-  GLUE_CATALOG_ID = '<glue-catalog-id>'
-  [ GLUE_REGION = '<AWS-region-of-the-glue-catalog>' ]
   [ CATALOG_NAMESPACE = '<catalog-namespace>' ]
+  REST_CONFIG = (
+    CATALOG_API_TYPE = { AWS_GLUE | AWS_PRIVATE_GLUE }
+    CATALOG_NAME = '<glue_catalog_id>'
+    [ ACCESS_DELEGATION_MODE = { VENDED_CREDENTIALS | EXTERNAL_VOLUME_CREDENTIALS } ]
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = '<arn-for-AWS-role-to-assume>'
+    [ SIGV4_SIGNING_REGION = '<AWS-region-of-the-glue-catalog>' ]
+  )
   ENABLED = { TRUE | FALSE }
   [ REFRESH_INTERVAL_SECONDS = <value> ]
   [ COMMENT = '<string_literal>' ]
@@ -43,9 +42,9 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
 `name`
 :   String that specifies the identifier (name) for the catalog integration; must be unique in your account.
 
-    In addition, the identifier must start with an alphabetic character and cannot contain spaces or special characters unless the entire
-    identifier string is enclosed in double quotes (for example, `"My object"`). Identifiers enclosed in double quotes are also
-    case sensitive.
+    In addition, the identifier must start with an alphabetic character and cannot contain spaces or special characters unless the
+    entire identifier string is enclosed in double quotes (for example, `"My object"`). Identifiers enclosed in double quotes are also
+    case-sensitive.
 
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
 
@@ -55,29 +54,19 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
 `TABLE_FORMAT = ICEBERG`
 :   Specifies Glue Iceberg tables.
 
-`GLUE_AWS_ROLE_ARN = 'arn-for-AWS-role-to-assume'`
-:   Specifies the Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role to assume.
-
-`GLUE_CATALOG_ID = 'glue-catalog-id'`
-:   Specifies the ID of your AWS account.
-
 `ENABLED = { TRUE | FALSE }`
 :   Specifies whether the catalog integration is available to use for Iceberg tables.
 
     > - `TRUE` lets users create new Iceberg tables that reference this integration. Existing Iceberg tables that reference
     >   this integration function normally.
     > - `FALSE` prevents users from creating new Iceberg tables that reference this integration. Existing Iceberg tables that
-    >   reference this integration cannot access the catalog in the table definition.
+    >   reference this integration can’t access the catalog in the table definition.
 
     The value is case-insensitive.
 
     The default is `TRUE`.
 
 ## Optional parameters
-
-`[ GLUE_REGION = 'AWS-region-of-the-glue-catalog' ]`
-:   Specifies the AWS Region of your AWS Glue Data Catalog. You must specify a value for this parameter if
-    your Snowflake account is not hosted on AWS. Otherwise, the default region is the Snowflake deployment region for the account.
 
 `CATALOG_NAMESPACE = 'catalog-namespace'`
 :   Specifies your AWS Glue Data Catalog namespace (for example, `my_glue_database`). This is the default namespace for all Iceberg tables
@@ -102,6 +91,42 @@ CREATE [ OR REPLACE ] CATALOG INTEGRATION [IF NOT EXISTS]
 
     Default: No value
 
+### REST configuration parameters (`REST_CONFIG`)
+
+`CATALOG_API_TYPE = { AWS_GLUE | AWS_PRIVATE_GLUE }`
+:   Specifies the connection type for the Glue catalog API.
+
+    - `AWS_GLUE` specifies that the AWS Glue catalog is publicly accessible.
+    - `AWS_PRIVATE_GLUE` specifies that the AWS Glue catalog is accessible through a private endpoint. For more information, see
+      [Configure an Apache Iceberg™ REST catalog integration with outbound private connectivity](/user-guide/tables-iceberg-configure-catalog-integration-rest-private).
+
+    Don’t specify `CATALOG_URI`, `PREFIX`, or `WAREHOUSE` in `REST_CONFIG` for `CATALOG_SOURCE = GLUE`. Snowflake derives the Glue
+    endpoint from `CATALOG_API_TYPE` and `SIGV4_SIGNING_REGION`.
+
+`CATALOG_NAME = 'glue_catalog_id'`
+:   Specifies the ID of your AWS account.
+
+`ACCESS_DELEGATION_MODE = { VENDED_CREDENTIALS | EXTERNAL_VOLUME_CREDENTIALS }`
+:   Specifies the access delegation mode to use for accessing Iceberg table files in your external cloud storage.
+
+    - `VENDED_CREDENTIALS` specifies that Snowflake should use vended credentials.
+    - `EXTERNAL_VOLUME_CREDENTIALS` specifies that Snowflake should use an external volume.
+
+    Default: `EXTERNAL_VOLUME_CREDENTIALS`
+
+### REST authentication parameters (`REST_AUTHENTICATION`)
+
+`TYPE = SIGV4`
+:   Specifies Signature Version 4 as the authentication type for Snowflake to use to connect to AWS Glue.
+    `SIGV4` is the only supported authentication type for `CATALOG_SOURCE = GLUE`.
+
+`SIGV4_IAM_ROLE = 'arn-for-AWS-role-to-assume'`
+:   Specifies the Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role to assume.
+
+`SIGV4_SIGNING_REGION = 'AWS-region-of-the-glue-catalog'`
+:   Optionally specifies the AWS Region of your AWS Glue Data Catalog. You must specify a value for this parameter if
+    your Snowflake account isn’t hosted on AWS. Otherwise, the default region is the Snowflake deployment region for the account.
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -122,7 +147,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- You cannot modify an existing catalog integration; use a CREATE OR REPLACE CATALOG INTEGRATION statement instead.
+- You can’t modify an existing catalog integration; use a CREATE OR REPLACE CATALOG INTEGRATION statement instead.
+- `ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS` isn’t supported with `CATALOG_API_TYPE = AWS_PRIVATE_GLUE`.
+  Use `CATALOG_API_TYPE = AWS_GLUE` instead.
 - You can’t drop or replace a catalog integration if one or more Apache Iceberg™ tables
   are associated with the catalog integration.
 
@@ -164,12 +191,40 @@ trust relationship between Snowflake and the Glue Data Catalog. For information,
 > Copy code
 >
 > ```
-> CREATE CATALOG INTEGRATION glueCatalogInt
+> CREATE OR REPLACE CATALOG INTEGRATION glueCatalogInt
 >   CATALOG_SOURCE = GLUE
->   CATALOG_NAMESPACE = 'myNamespace'
 >   TABLE_FORMAT = ICEBERG
->   GLUE_AWS_ROLE_ARN = 'arn:aws:iam::123456789012:role/myGlueRole'
->   GLUE_CATALOG_ID = '123456789012'
->   GLUE_REGION = 'us-east-2'
+>   CATALOG_NAMESPACE = 'myNamespace'
+>   REST_CONFIG = (
+>     CATALOG_API_TYPE = AWS_GLUE
+>     CATALOG_NAME = '123456789012'
+>   )
+>   REST_AUTHENTICATION = (
+>     TYPE = SIGV4
+>     SIGV4_IAM_ROLE = 'arn:aws:iam::123456789012:role/myGlueRole'
+>     SIGV4_SIGNING_REGION = 'us-east-2'
+>   )
+>   ENABLED = TRUE;
+> ```
+
+The following example creates a Glue catalog integration that uses catalog-vended credentials:
+
+> Copy code
+>
+> ```
+> CREATE OR REPLACE CATALOG INTEGRATION glueCatalogIntVended
+>   CATALOG_SOURCE = GLUE
+>   TABLE_FORMAT = ICEBERG
+>   CATALOG_NAMESPACE = 'myNamespace'
+>   REST_CONFIG = (
+>     CATALOG_API_TYPE = AWS_GLUE
+>     CATALOG_NAME = '123456789012'
+>     ACCESS_DELEGATION_MODE = VENDED_CREDENTIALS
+>   )
+>   REST_AUTHENTICATION = (
+>     TYPE = SIGV4
+>     SIGV4_IAM_ROLE = 'arn:aws:iam::123456789012:role/myGlueRole'
+>     SIGV4_SIGNING_REGION = 'us-east-2'
+>   )
 >   ENABLED = TRUE;
 > ```

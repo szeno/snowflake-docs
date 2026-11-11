@@ -46,10 +46,16 @@ Copy code
 ```
 CREATE CATALOG INTEGRATION auto_refresh_catalog_integration
   CATALOG_SOURCE = GLUE
-  CATALOG_NAMESPACE = 'my_catalog_namespace'
   TABLE_FORMAT = ICEBERG
-  GLUE_AWS_ROLE_ARN = 'arn:aws:iam::123456789123:role/my-catalog-role'
-  GLUE_CATALOG_ID = '123456789123'
+  CATALOG_NAMESPACE = 'my_catalog_namespace'
+  REST_CONFIG = (
+    CATALOG_API_TYPE = AWS_GLUE
+    CATALOG_NAME = '123456789123'
+  )
+  REST_AUTHENTICATION = (
+    TYPE = SIGV4
+    SIGV4_IAM_ROLE = 'arn:aws:iam::123456789123:role/my-catalog-role'
+  )
   ENABLED = TRUE
   REFRESH_INTERVAL_SECONDS = 60;
 ```

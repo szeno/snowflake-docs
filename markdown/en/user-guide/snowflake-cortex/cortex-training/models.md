@@ -342,22 +342,6 @@ LoRA 256K max · Full 256K max
 
 View recommended configurations
 
-### Qwen3.8-Flash-Next
-
-`Qwen/Qwen3.8-Flash-Next`Copy ID
-
-License: [Apache 2.0](https://huggingface.co/Qwen/Qwen3.8-Flash-Next/blob/main/LICENSE)
-
-InferenceSupported
-
-256K max · 8 GPUs
-
-TrainingSupported
-
-LoRA 64K max · Full 256K max
-
-View recommended configurations
-
 ## Inference only
 
 These models support inference (sampling) but not fine-tuning.

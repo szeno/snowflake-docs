@@ -20,7 +20,7 @@ operations. The web interface and other features use warehouses, such as [Cross-
 [Snowflake credits](#label-what-are-credits) are used to pay for the processing time used by each virtual warehouse.
 Snowflake credits are charged based on the number of virtual warehouses you use, how long they run, and their size.
 
-Warehouses come in many sizes. In this table, the size specifies the compute resources per cluster available to the warehouse.
+Warehouses come in many sizes. The size specifies the compute resources per cluster available to the warehouse.
 Each increase in size to the next larger warehouse approximately doubles the computing power and the number of credits billed per
 full hour that the warehouse runs.
 
@@ -31,14 +31,14 @@ Important
 
 Warehouses are only billed for credit usage while running. When a warehouse is suspended, it does not use any credits.
 
-The credit numbers shown above are for a full hour of usage; however, credits are billed per-second, with a 60-second (i.e. 1-minute)
+The credit numbers in the Snowflake Service Consumption Table are for a full hour of usage; however, credits are billed per-second, with a 60-second (1-minute)
 minimum:
 
 - Each time a warehouse is started or resumed, the warehouse is billed for 1 minute’s worth of usage based on the hourly
-  rate shown above.
+  rate in the Snowflake Service Consumption Table.
 - Each time a warehouse is resized to a larger size, the warehouse is billed for 1 minute’s worth of usage; however, the number
-  of credits billed are only for the additional compute resources that are provisioned. For example, resizing from Small
-  (2 credits/hour) to Medium (4 credits/hour) results in billing charges for 1 minute’s worth of 2 additional credits.
+  of credits billed are only for the additional compute resources that are provisioned. For example, if Small uses 2 credits/hour and Medium uses 4 credits/hour, resizing from Small
+  to Medium results in billing charges for 1 minute’s worth of 2 additional credits.
 - After 1 minute, all subsequent billing is per-second as long as the warehouse runs continuously.
 - Suspending and then resuming a warehouse within the first minute results in multiple charges because the 1-minute minimum starts
   over each time a warehouse is resumed.

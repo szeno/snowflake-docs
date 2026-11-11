@@ -199,7 +199,7 @@ snow object create
 
 ## Usage notes
 
-Create a supported Snowflake object (for example `database`, `warehouse`, `table`, or `compute-pool`). Provide properties as `key=value` arguments, or pass a full definition with `--json`. For attribute names and valid values, see the [SQL command reference](/sql-reference/sql-commands-all).
+Create a supported Snowflake object (for example `database`, `warehouse`, `table`, or `compute-pool`). Provide properties as `key=value` arguments, or pass a full definition with `--json`. For attribute names and valid values, see the [SQL command reference](/sql-reference/sql-all).
 
 Note
 

@@ -55,10 +55,6 @@ target defined in the profile file. When both profile files are present,
 [`dbt_projects_profiles.yml`](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-projects-profiles-file) takes
 precedence over `profiles.yml`.
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 ### Optionally separate deployment from execution
 
 For stronger separation of duties, use a deploy-only role in your CI/CD pipeline. To create a dbt project object, grant this role

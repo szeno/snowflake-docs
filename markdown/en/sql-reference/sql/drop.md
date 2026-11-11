@@ -5,15 +5,13 @@ Removes the specified object from the system.
 See also:
 :   [CREATE <object>](/sql-reference/sql/create) , [SHOW <objects>](/sql-reference/sql/show) , [UNDROP <object>](/sql-reference/sql/undrop)
 
-## DROP commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Organization Objects:**
+## Organization Objects
 
 - [DROP ACCOUNT](/sql-reference/sql/drop-account)
 
-**Account Objects:**
+## Account Objects
 
 - [DROP APPLICATION](/sql-reference/sql/drop-application)
 - [DROP APPLICATION PACKAGE](/sql-reference/sql/drop-application-package)
@@ -37,7 +35,7 @@ For specific syntax, usage notes, and examples, see:
 - [DROP USER](/sql-reference/sql/drop-user)
 - [DROP WAREHOUSE](/sql-reference/sql/drop-warehouse)
 
-**Database Objects:**
+## Database Objects
 
 - [DROP AGENT](/sql-reference/sql/drop-agent)
 - [DROP AGGREGATION POLICY](/sql-reference/sql/drop-aggregation-policy)
@@ -102,7 +100,7 @@ For specific syntax, usage notes, and examples, see:
 - [DROP TYPE](/sql-reference/sql/drop-type)
 - [DROP VIEW](/sql-reference/sql/drop-view)
 
-**Classes:**
+## Classes
 
 - [DROP SNOWFLAKE.ML.ANOMALY\_DETECTION](/sql-reference/classes/anomaly-detection/commands/drop-anomaly-detection#label-class-anomaly-detection-drop)
 - [DROP BUDGET](/sql-reference/classes/budget/commands/drop-budget)

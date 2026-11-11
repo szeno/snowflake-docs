@@ -26,9 +26,11 @@ Before you delete a deployment, delete or recreate a runtime, or manually remove
 
 **Routine upgrades** through the supported Openflow UI ([Upgrade a deployment](#label-update-a-deployment) and [Upgrade a runtime](#label-openflow-upgrading-a-runtime)) are different from destructive removal. You should still export flows regularly as a best practice.
 
-Note
+Warning
 
-Do not run [DROP ROLE](/sql-reference/sql/drop-role) for a role that provisions or owns Openflow objects until you transfer ownership and privileges to another role you intend to keep (for example with `GRANT OWNERSHIP`). Dropping a role revokes grants and can leave deployments in a broken state.
+Never run [DROP ROLE](/sql-reference/sql/drop-role) for a role that provisions or owns Openflow objects until you transfer ownership to a role you intend to keep. Dropping the provisioning role removes the compute cluster’s authorization context. The Snowpark Container Services (SPCS) control plane then marks the cluster as orphaned, and orphan cleanup later removes it permanently along with its container volumes. Those volumes hold your flow definitions, processor state (such as CDC offsets), and FlowFile content. This state isn’t stored in Snowflake tables or stages, and you can’t recover it.
+
+Before you drop or recreate the role, transfer ownership of the objects it owns by using [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) with the `COPY CURRENT GRANTS` clause. For example: `GRANT OWNERSHIP ON ALL SERVICES IN SCHEMA <db>.<schema> TO ROLE <new_role> COPY CURRENT GRANTS;`
 
 ## Effect of Snowflake account suspension on Openflow Snowflake Deployments
 

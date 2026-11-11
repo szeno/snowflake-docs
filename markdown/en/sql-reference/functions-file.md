@@ -28,6 +28,7 @@ The following functions are for use with the FILE data type. For more informatio
 | --- | --- |
 | Constructor | [TO\_FILE](/sql-reference/functions/to_file) |
 |  | [TRY\_TO\_FILE](/sql-reference/functions/try_to_file) |
+| Transformations | [FL\_FILTER\_PAGES](/sql-reference/functions/fl_filter_pages) |
 | Accessors | [FL\_GET\_CONTENT\_TYPE](/sql-reference/functions/fl_get_content_type) |
 |  | [FL\_GET\_ETAG](/sql-reference/functions/fl_get_etag) |
 |  | [FL\_GET\_FILE\_TYPE](/sql-reference/functions/fl_get_file_type) |

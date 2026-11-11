@@ -3,7 +3,7 @@
 Modifies the properties or specification for an existing [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents).
 
 See also:
-:   [CREATE AGENT](/sql-reference/sql/create-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [SHOW AGENTS](/sql-reference/sql/show-agents)
+:   [CREATE AGENT](/sql-reference/sql/create-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [UNDROP AGENT](/sql-reference/sql/undrop-agent)
 
 ## Syntax
 

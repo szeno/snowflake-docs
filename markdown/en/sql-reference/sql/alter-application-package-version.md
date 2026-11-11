@@ -18,7 +18,7 @@ Copy code
 ALTER APPLICATION PACKAGE <name> ADD VERSION [ <version_identifier> ]
   USING <path_to_version_directory> [ LABEL = '<display_label>' ]
 
-ALTER APPLICATION PACKAGE <name> DROP VERSION <version_identifier>
+ALTER APPLICATION PACKAGE <name> DROP VERSION <version_identifier> [ ASYNC ]
 
 ALTER APPLICATION PACKAGE <name> ADD PATCH [<patch_number>] FOR VERSION [<version_identifier>]
   USING <path_to_version_directory> [ LABEL = '<display_label>' ]
@@ -46,14 +46,22 @@ ALTER APPLICATION PACKAGE <name> ADD PATCH [<patch_number>] FOR VERSION [<versio
     to the consumer. If you omit the LABEL clause, the label specified in the `manifest.yml`
     file is used.
 
-`DROP VERSION version_identifier`
+`DROP VERSION version_identifier [ ASYNC ]`
 :   Drops a version with the specified version identifier. A version may only be dropped when there are no release directives referring to it and no application is using that version.
 
     An application is considered to be using a version if it is the application’s current version, or if it was the application’s previous version and the upgrade has not yet finalized (jobs are still running on the previous version). Disabled applications do not block a version drop.
 
+    DROP VERSION is a synchronous command. The command waits until Snowflake removes the version, and then returns. If
+    Snowflake does not remove the version within 2 hours, the command returns and Snowflake continues to remove the
+    version in the background.
+
     Use the [APPLICATION\_STATE view](/sql-reference/data-sharing-usage/application-state-view) view to monitor
     the state of the application instances. Use the [SHOW VERSIONS IN APPLICATION PACKAGE](/sql-reference/sql/show-versions) command to monitor the
     status of the dropped version.
+
+    The optional `ASYNC` keyword requests an asynchronous drop. The command returns immediately, and the version is
+    removed in the background after the conditions above are met. Specify `ASYNC` in scripts and tools that depend on
+    The optional `ASYNC` keyword requests an asynchronous drop. The command returns immediately, and Snowflake removes the version in the background after no release directive refers to it and no application uses it. Specify `ASYNC` in scripts and tools that depend on non-blocking behavior. `ASYNC` applies only to application packages that don’t use release channels.
 
 `ADD PATCH patch_number` `FOR VERSION version_identifier` `USING path_to_version_directory [ LABEL = 'display_label' ]`
 :   Adds a patch for the specified version (`version_identifier`) using the application files located in the specified path to a

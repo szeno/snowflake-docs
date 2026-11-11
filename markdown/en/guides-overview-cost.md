@@ -27,7 +27,7 @@ usage data in views.
     Learn how to identify and investigate cost anomalies at the account and organization level.
 
 [Optimizing cost](/user-guide/cost-optimize)
-:   Learn how to optimize Snowflake in order to reduce costs and maximize your spend.
+:   Learn how to optimize Snowflake in order to reduce costs and maximize the value of your spend.
 
 [Attributing cost](/user-guide/cost-attributing)
 :   Gain insight into Snowflake cost by attributing those costs to logical units within the organization such as departments, environments or

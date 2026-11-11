@@ -1,9 +1,5 @@
 # EXECUTE DBT PROJECT
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 Executes the specified [dbt project object](/user-guide/data-engineering/dbt-projects-on-snowflake) or the dbt project in a Snowflake workspace using the dbt command and command-line options specified.
 
 See also:
@@ -208,6 +204,8 @@ The dbt command specified in EXECUTE DBT PROJECT runs with the privileges of the
 - [Run changed models by importing state from a stage](#label-execute-dbt-project-stage-import-example)
 - [Run changed models by importing state from a production project](#label-execute-dbt-project-state-import-example)
 - [Run changed models by importing state from a specific query](#label-execute-dbt-project-query-state-import-example)
+- [Rerun failed models from a specific execution](#label-execute-dbt-project-rerun-failed-query-example)
+- [Rerun failed models from the most recent failed execution](#label-execute-dbt-project-rerun-last-failed-example)
 - [Run a dbt project object concurrently](#label-execute-dbt-project-concurrent-no-writeback-example)
 - [Execute and test dbt project objects using production tasks](#label-execute-dbt-project-tasks-example)
 
@@ -303,6 +301,44 @@ EXECUTE DBT PROJECT ci_database.dbt_projects.pr_test_project
 
 For requirements and query ID lookup examples, see
 [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts).
+
+### Rerun failed models from a specific execution
+
+Use [`SYSTEM$LOCATE_DBT_ARTIFACTS`](/sql-reference/functions/system_locate_dbt_artifacts) with the query ID of a failed execution. The `state` alias mounts the results directory at
+`./imports/state`, and the dbt artifacts are in its `target` subdirectory. The `result:error+` selector reruns the resources that errored
+and their downstream dependencies:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT prod_database.dbt_projects.production_project
+  ARGS = 'run --state ./imports/state/target --select result:error+'
+  IMPORTS = (
+    SYSTEM$LOCATE_DBT_ARTIFACTS(
+      '01c6a772-001e-db19-0000-5349650b6cfe'
+    ) AS 'state'
+  );
+```
+
+To look up the query ID of a failed execution, see
+[Rerun failed models from a specific execution](/sql-reference/functions/system_locate_dbt_artifacts#label-functions-locate-dbt-artifacts-rerun-failed-example).
+
+### Rerun failed models from the most recent failed execution
+
+Import dbt artifacts from the most recent failed execution of the dbt project object. The `state` alias mounts the returned artifacts at
+`./imports/state`:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT prod_database.dbt_projects.production_project
+  ARGS = 'run --state ./imports/state --select result:error+'
+  IMPORTS = (
+    SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET(
+      'prod_database.dbt_projects.production_project'
+    ) AS 'state'
+  );
+```
 
 ### Import and extract a ZIP archive from a results stage
 

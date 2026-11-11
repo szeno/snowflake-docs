@@ -72,7 +72,7 @@ For more information, see [Access control for dbt projects on Snowflake](/user-g
 
    The **Query Details** page opens for the EXECUTE DBT PROJECT query that ran. This page includes the following tabs:
 
-   - **Query Details** - Displays the execution status, start time, end time, duration, warehouse size, query ID, and the SQL text of the EXECUTE DBT PROJECT command. Also shows per-model results for the dbt command that ran (for example, `build`), including each model name, time taken, and status.
+   - **Query Details** - Displays the execution status, start time, end time, duration, warehouse size, query ID, and the SQL text of the EXECUTE DBT PROJECT command. Also shows per-model results for the dbt command that ran (for example, `build`), including each model name, time taken, and status. For a failed execution, select **Re-run** in the **dbt Output** section and select **From query ID** to execute a statement that reruns the models that errored and their downstream dependencies. For more information, see [Recover from a failed execution](/user-guide/data-engineering/dbt-projects-on-snowflake-slim-ci-defer-to-prod#label-dbt-project-failed-execution-recovery).
    - **Query Profile** - Shows the query execution plan and performance statistics.
    - **Query Telemetry** - Shows telemetry data for the execution.
    - **DAG** - Visualizes the models that ran during the execution and their results. For more information, see [View the query history DAG](#label-dbt-query-history-dag).
@@ -124,10 +124,6 @@ metadata.
 ## Access dbt artifacts and logs programmatically
 
 Use the [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/functions/dbt_project_execution_history) table function and the following system functions to access dbt artifacts and logs programmatically.
-
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
 
 The system functions in this section retrieve artifacts and logs from `EXECUTE DBT PROJECT` executions. Automatic compilation during
 deployment doesn’t create a per-query execution result, so you can’t use these functions to retrieve its artifacts. Snowflake stores

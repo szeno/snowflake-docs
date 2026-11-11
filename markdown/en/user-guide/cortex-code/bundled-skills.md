@@ -74,6 +74,25 @@ Ways to use it:
 - Upload and deploy an existing Jupyter notebook to the Snowflake Workspace
 - Debug a failing notebook cell and fix Snowpark session initialization issues
 
+### `snowflake-workspace`
+
+Administer Snowflake Workspaces and move files in and out of them: create, alter, drop, and rename workspaces; upload, download, list, remove, and copy files with `cortex ws`; grant and revoke access to share a workspace; publish changes to a shared workspace with `ALTER WORKSPACE ... COMMIT`; recover content from dropped users; set up replication; and audit workspaces across an account.
+
+CoCo loads this skill when your prompt mentions workspaces, references `snow://workspace/...` URIs, or references `USER$` schemas, `DEFAULT$` (My Workspace), or `ALTER WORKSPACE`. To work with notebooks inside a workspace, CoCo uses [`snowflake-notebooks`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-snowflake-notebooks).
+
+Before you use it, keep these points in mind:
+
+- File operations run through the `cortex ws` CLI and use `DB.SCHEMA.WS:/path` syntax. Paths must start with `/`.
+- For shared (non-`USER$`) workspaces, run `ALTER WORKSPACE ... COMMIT` after an upload so that others can see the files.
+- Running `cortex ws rm` on a shared workspace is irreversible.
+- You can create Git-backed workspaces only in Snowsight (**Projects** » **Workspaces** » **From Git repository**). You can’t share them, and neither SQL nor the CLI can report whether a workspace is Git-backed.
+
+Ways to use it:
+
+- Upload and download files between your local machine and a workspace with `cortex ws`
+- Grant a role access to a shared workspace
+- Recover files from a dropped user’s workspace
+
 ### `snowflake-apps`
 
 Scaffold, build, test, and deploy [Snowflake App Runtime](/developer-guide/snowflake-app-runtime/about-snowflake-app-runtime) apps: Next.js projects with Snowflake data access, local testing, and `snow app deploy`. This skill is bundled with [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and CoCo Desktop.
@@ -601,6 +620,21 @@ Ways to use it:
 - Restrict authentication methods or client types: for example, enforce MFA, configure PAT expiry, require a minimum driver version, or limit workload identity federation
 - Get a recommended starting-point set of policies, tailored to your account’s recent login history
 
+### `ingress-policy`
+
+Create, attach, and inspect Snowflake ingress policies: account-level and user-level controls that admit or block requests based on combined context such as network, client or application, authentication method, geolocation, PrivateLink ID, and endpoint path.
+
+Ways to use it:
+
+- Create an allowlist, blocklist, or combined policy by answering guided questions: for example, allow only SSO logins from approved countries, or block requests from a specific client application
+- Block requests to Snowflake-hosted or custom MCP server endpoints unless they come from an approved network
+- Attach a policy to a user or to the whole account, and check which ingress policy currently applies to the account or to a specific user
+- Understand how an ingress policy differs from a network or authentication policy, and how Snowflake decides whether to admit a request
+
+This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli), [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop), and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight).
+
+For required privileges and more information, see [Ingress policies](/user-guide/ingress-policies).
+
 ### `guardrails-guide`
 
 Guide you through the `/guardrails` panel and Restricted Session Scope (RSS), which limits the SQL and roles that the agent can use in a session. Cortex Code loads this skill when you ask to create, apply, or remove an RSS scope, or to restrict the agent’s SQL or roles. It also loads when a SQL error contains “Restricted session scope”.
@@ -789,6 +823,27 @@ Ways to use it:
 - Analyze cross-account credit and storage spending trends for a quarterly business review
 
 ## Migration and assessment
+
+### `migration-guide`
+
+Migrate databases, SQL, stored procedures, DDL, and ETL or integration workloads to Snowflake. After you approve, the skill installs the managed Snowflake migrations plugin (Snowflake AIM for Data Warehouses, with SnowConvert-based conversion) by using `cortex plugin install`, and then hands off to the `snowflake-migration:migration` skill.
+
+Cortex Code loads this skill when you:
+
+- Ask for the Snowflake equivalent of non-Snowflake SQL, such as T-SQL, Oracle PL/SQL, or MySQL
+- Want to decommission, replatform, or modernize a legacy warehouse or ETL stack
+- Ask to convert source code to Snowflake, or mention keywords such as migrate, SnowConvert, SSIS, Informatica, or Redshift
+
+Prerequisites:
+
+- `git` is installed and available on your `PATH`, because the plugin is cloned during installation.
+- You approve the plugin installation when prompted.
+
+Ways to use it:
+
+- Install the Snowflake migrations plugin, run `/plugin reload`, and then say “migrate” to start a migration
+- Convert SQL Server, Oracle, or MySQL code and stored procedures to Snowflake SQL
+- Plan the move of a legacy ETL stack, such as SSIS or Informatica workloads, to Snowflake
 
 ### `snowconvert-assessment`
 

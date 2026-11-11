@@ -161,6 +161,13 @@ SHOW VERSIONS
   IN APPLICATION PACKAGE HelloSnowflake;
 ```
 
+## Check enabled telemetry event definitions in the consumer account
+
+To check which [event definitions](/developer-guide/native-apps/event-definition) a consumer has
+enabled for an installed app, query the ENABLED\_TELEMETRY\_EVENT\_DEFINITIONS column of the
+[APPLICATION\_STATE view](/sql-reference/data-sharing-usage/application-state-view) in the DATA\_SHARING\_USAGE schema. This view
+displays information about apps installed from a listing for all application packages in the current account.
+
 ## View the logs and events in the event table
 
 To view the logs and events stored in the event table, use the [SELECT](/sql-reference/sql/select) command as shown

@@ -13,7 +13,7 @@ Note
 For most application integrations, Snowflake recommends calling the **streaming REST API** directly.
 
 See also:
-:   [CREATE AGENT](/sql-reference/sql/create-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent)
+:   [CREATE AGENT](/sql-reference/sql/create-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [DROP AGENT](/sql-reference/sql/drop-agent), [UNDROP AGENT](/sql-reference/sql/undrop-agent)
 
 ## Syntax
 

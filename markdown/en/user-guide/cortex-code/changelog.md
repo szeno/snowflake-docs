@@ -2,6 +2,129 @@
 
 This page documents notable changes to Cortex Code.
 
+## 1.2.35 (Nov 2, 2026)
+
+### Added
+
+- Validate semantic views: Added `cortex agent-studio sv-validate` so you can check a semantic view YAML against Snowflake without creating the object.
+- Session forking over ACP: `cortex acp serve` now supports forking a session, so editor integrations can branch a side conversation from an existing one.
+
+### Changed
+
+- Faster skill search: `cortex skill find` and `cortex search object --types=skill` now use the Snowflake object search service by default, instead of listing every extension in the account, so searches in large accounts no longer appear to hang.
+- Catalog download scan: Skills you install from the catalog are now checked against their security scan status.
+- Clearer stage storage errors: When skill sharing or installation hits an unreadable response from stage storage, CoCo CLI now shows a message that tells you to retry instead of raw driver output.
+
+### Fixed
+
+- Welcome banner printed twice: Fixed the welcome banner appearing twice on startup.
+- Plan approval over ACP: Approving a plan from an ACP client now leaves plan mode as expected. Previously the session stayed read-only and kept refusing tool calls.
+- Connection protocol in Agent API URLs: Agent API requests now respect the protocol set on your connection, which fixes setups that route through an HTTP egress proxy.
+
+## 1.2.24 (Oct 27, 2026)
+
+### Added
+
+- Tool restrictions for ACP: `cortex acp serve` now accepts `--allowed-tools` and `--disallowed-tools`, matching the main CLI.
+- `/compact` for ACP clients: `/compact` is now a built-in command over ACP, so editor integrations can compact a conversation.
+- `--connection` for memory: Every `cortex memory` subcommand accepts `-c` or `--connection` to use a specific Snowflake connection instead of the agent connection.
+- Application services in object search: `cortex search object --types=app-service` now finds application services.
+
+### Changed
+
+- New share link format: `cortex conversations share` now prints links in the `#/coco/shared/<id>` form. `cortex --fork` accepts both the new and old forms.
+- Memory scope in confirmations: `cortex memory remember` and `cortex memory edit` now print the project and Git remote a memory is saved under.
+
+### Fixed
+
+- `--sql-read-only` enforcement: `--sql-read-only` is now enforced in headless mode, in sessions that use `--allowed-tools`, and in read-only child sessions.
+- Plugin permission rules: Plugin policy is now enforced during discovery, install, enable, and update, and plugin deny rules no longer affect unrelated tool permission rules.
+- Percent signs in Windows arguments: Fixed the Windows launcher expanding `%` sequences inside command-line arguments.
+- Hyphenated stage names: `cortex skill add` now accepts double-quoted stage identifiers such as `@DB.SCHEMA."MY-STAGE"` instead of failing with “Invalid stage path format”.
+- Failed skill publishes: `cortex skill publish --to-stage` now reports failed uploads and exits with a non-zero code instead of printing a success message.
+- Catalog install safety: A catalog skill install now stops with an error instead of silently dropping the ownership records of other installed skills when `skills.json` can’t be read.
+- Claude MCP OAuth client IDs: MCP servers imported from `~/.claude.json` now keep their `oauth.clientId` setting.
+- Scheduled prompts during a turn: A scheduled prompt that fires while a turn is running now runs after the turn finishes instead of being dropped.
+- Read-only after plan mode: Fixed a session staying read-only after you exit plan mode when its restricted child session had expired.
+
+## 1.2.18 (Oct 19, 2026)
+
+### Added
+
+- `cortex automation update`: Added `cortex automation update <name>` to edit an automation’s prompt or schedule in place without recreating it.
+- Automation outcomes in the terminal: The `/automation` view now shows each run’s outcome (succeeded, partially done, or failed) in the list, history, and thread views.
+- `cortex automation execute --wait` results: `cortex automation execute --wait` now returns the run’s thread ID and its outcome.
+- `snowpipe` and `copy-load` skills: The bundled `snowpipe` and `copy-load` skills now load for every account.
+
+### Changed
+
+- Automations use your saved GitHub integration: Automations now use your saved GitHub selection even when you create them without `--github`.
+- Compact todo tray: The todo tray above the input now starts collapsed to one line. Press `Ctrl+\` to expand it.
+- Summaries for large SQL results: When a SQL result is too large to send to the model, the agent now gets a summary of the result instead of only a file path.
+- Clearer network errors: Network failures that happen before the server responds are now reported as connection failures, and the CLI retries agent requests that fail before connecting.
+
+### Fixed
+
+- Comma-separated `--disallowed-tools`: `--disallowed-tools web_search,write` now denies both tools. Previously the value was read as one pattern that matched nothing.
+- Bash permission rules with quoted substitutions: Deny and ask rules now match commands inside command substitutions that appear behind quotes.
+- Symlink checks in file permissions: File permission checks now resolve relative symlink targets correctly.
+- MCP sign-in recovery: CoCo CLI now recovers from stale MCP OAuth client registrations, and starts re-authentication when a refresh token is rejected during an MCP tool call.
+- Image paste on WSL: Pasting images now works on Windows Subsystem for Linux.
+- Hang on parallel indexing prompts: Fixed a hang when the agent ran two code searches at once on folders that both needed indexing consent.
+- Hang after a timed-out question: Fixed the session getting stuck after a question asked from Python REPL code timed out.
+- Deleted working directory: CoCo CLI now tells you when the directory it was started in has been deleted, for example after `git worktree remove`.
+- Broken skill symlinks: A broken symlink in a skills directory no longer stops other skills in that directory from loading.
+- Automation suspend and resume: `cortex automation suspend` and `cortex automation resume` now report the resulting state instead of the previous one.
+
+## 1.2.14 (Oct 12, 2026)
+
+### Added
+
+- `xhigh` effort level: `--effort` and `/effort` now accept `xhigh` for models that support it.
+- `--worktree-base`: Choose the revision a new worktree branch is created from.
+- Transcript summary: `cortex conversations transcript <id> --print` now shows the run’s status, each failed tool call, and the final message, plus the outcome for cloud runs.
+- `automation` skill for everyone: The bundled `automation` skill is now available to all accounts, and `/automation` uses it.
+
+### Changed
+
+- One dock for background work: Background agents, shells, and monitors now appear in a single tabbed dock in the footer instead of several separate hints.
+- Daily usage hint: The footer’s 24-hour usage hint now appears only once you reach 90% of a daily credit limit. `/status` always shows it.
+- Commit attribution: Commits that CoCo CLI writes now credit `Snowflake CoCo` as the co-author.
+- ACP sessions kept open: `cortex acp serve` no longer closes older sessions once more than 10 are open. Sessions stay until the client closes them.
+
+### Fixed
+
+- Clean copy from the input box: Selecting part of your prompt no longer copies the input box’s side borders.
+- `cortex exec --mode`: Fixed `cortex exec` treating the value of `--mode` as part of the prompt.
+- Model list after idle: `/model` now recovers expired authentication and shows the server’s model list instead of a fallback list.
+- Disabled MCP servers: CoCo CLI no longer connects to MCP servers you’ve disabled when it starts.
+- Large ACP tool results: Large results from ACP client tools are now saved to a file the agent can read, instead of being truncated.
+
+## 1.1.104 (Oct 5, 2026)
+
+### Added
+
+- MCP authorization status: Added `cortex mcp list --cloud` to list the MCP servers registered in your Snowflake account and whether you’ve authorized each one.
+- Publish to a specific location: Added `--push-to-fqn` to `cortex skill catalog publish` and `cortex plugin publish` to publish to a specific Cortex Extension, overriding the stored target.
+- Clickable links in tmux: Links in the CLI are now clickable inside tmux and in more terminals.
+- Managed settings on macOS and Windows: Administrators can now deliver managed settings as a macOS configuration profile or through the Windows registry.
+- Office files in the read tool: The read tool now reads Excel, PowerPoint, and Word files locally instead of rejecting them as binary files.
+
+### Changed
+
+- API error details: API error messages now include the request ID, and timeouts (HTTP 408) are described in plain language.
+- Breaking: Automation `--async` removed: Removed the `--async` option from `cortex automation create`. There is no replacement; remove the flag from any scripts that pass it.
+
+### Fixed
+
+- MCP credentials in `cortex mcp list`: `cortex mcp list` now masks all credential values stored in MCP server configuration.
+- `cortex skill add` behind a proxy: Fixed intermittent failures when downloading skills through an HTTPS proxy.
+- `cortex skill add` on Windows: Fixed installing skills to paths that contain `~` on Windows.
+- New catalog skills in autocomplete: Skills you install from the catalog now appear in `/` autocomplete right away.
+- MCP sign-in after a rejected token: An MCP server whose refresh token is rejected while connecting now asks you to sign in again instead of retrying forever.
+- Claude command hooks: Command hooks imported from Claude Code now receive their arguments.
+- Plan confirmation: The plan confirmation prompt no longer appears when there is no plan.
+
 ## 1.1.87 (Sep 14, 2026)
 
 ### Added

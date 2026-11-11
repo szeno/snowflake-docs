@@ -138,7 +138,7 @@ The Python connector looks for the `connections.toml` file in the following loca
 - If a `~/.snowflake` directory exists on your machine, the Python Connector uses the
   `~/.snowflake/connections.toml` file. You can override the default `~/.snowflake` directory by setting the
   location in the `SNOWFLAKE_HOME` environment variable.
-- Otherwise, the Python Connector uses the `connections.toml` file in the one of the following locations, based on your operating system:
+- Otherwise, the Python Connector uses the `connections.toml` file in one of the following locations, based on your operating system:
   - Linux: `~/.config/snowflake/connections.toml`, but you can update it with XDG vars
   - Windows: `%USERPROFILE%\AppData\Local\snowflake\connections.toml`
   - Mac: `~/Library/Application Support/snowflake/connections.toml`
@@ -576,7 +576,7 @@ conn = snowflake.connector.connect(
 
 Tip
 
-Snowflake’s security model does not allow Secure Sockets Layer (SSL) proxies (using an HTTPS certificate). Your proxy server must use a publicly-available Certificate Authority (CA), reducing potential security risks such as a MITM (Man In The Middle) attack through a compromised proxy.
+Snowflake’s security model does not allow Secure Sockets Layer (SSL) proxies (using an HTTPS certificate). Your proxy server must use a publicly available Certificate Authority (CA), reducing potential security risks such as a MITM (Man In The Middle) attack through a compromised proxy.
 
 If you must use your SSL proxy, we strongly recommend that you update the server policy to pass through the Snowflake certificate such that no certificate is altered in the middle of
 communications.
@@ -642,13 +642,13 @@ To enable the OAuth 2.0 Authorization Code flow:
     Before version 5.0, an `http://` token URL logged a warning and the request continued.
   - `oauth_scope`: Scope requested in the Identity Provider authorization request. By default, it is derived from the role. When multiple scopes are required, the value should be a space-separated list of multiple scopes.
   - `oauth_redirect_uri`: URI to use for authorization code redirection (Snowflake security integration metadata). Default: `http://127.0.0.1:{randomAvailablePort}`.
-  - `oauth_disable_pkce:` Disables Proof Key for Code Exchange (PKCE), a security enhancement that ensures that even if malicious attackers intercept an Authorization Code, they won’t be able to change it to a valid access token.
+  - `oauth_disable_pkce`: Disables Proof Key for Code Exchange (PKCE), a security enhancement that ensures that even if malicious attackers intercept an Authorization Code, they won’t be able to change it to a valid access token.
   - `oauth_enable_refresh_tokens`: Accepted for compatibility and ignored. The connector always uses a refresh token when the identity provider returns one, and emits a `DeprecationWarning` if you pass this parameter. Use `client_store_temporary_credential` to control whether that token is cached.
 
     Note
 
     Before version 5.0, the parameter defaulted to `True` and, when `False`, the connector did not use the refresh token to renew an expired access token.
-  - `oauth_enable_single_use_refresh_tokens:` Whether to opt-in to single-use refresh token semantics.
+  - `oauth_enable_single_use_refresh_tokens`: Whether to opt in to single-use refresh token semantics.
 
 ### Enable the OAuth 2.0 Client Credentials flow
 
@@ -659,7 +659,7 @@ To enable the OAuth 2.0 Client Credentials flow:
 - Set the `authenticator` connection parameter to `OAUTH_CLIENT_CREDENTIALS`.
 - Set the following OAuth connection parameters:
   - `oauth_client_id`: Value of `client id` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata).
-  - `oauth_client_secret`: Value of the `client secret` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata)
+  - `oauth_client_secret`: Value of the `client secret` provided by the Identity Provider for Snowflake integration (Snowflake security integration metadata).
   - `oauth_token_request_url`: Identity Provider endpoint supplying the access tokens to the driver. When using Snowflake as an Identity Provider, this value is derived from the `server` or `account` parameters.
   - `oauth_scope`: Scope requested in the Identity Provider authorization request. By default, it is derived from the role. When multiple scopes are required, the value should be a space-separated list of multiple scopes.
 

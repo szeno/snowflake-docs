@@ -134,8 +134,8 @@ Show lessSee more
 
       1. Provides the Jira API token and email address.
       2. Specifies the Jira instance URL.
-      3. For the core flow, optionally filters ingestion to specific projects using `Project Keys Filter`
-         and configures the issue fields to ingest.
+      3. For the core flow, optionally limits projects with `Project Keys Filter`, optionally
+         limits issues with `Created After`, and configures the issue fields to ingest.
       4. Sets the database and schema names in the Snowflake account.
    3. Runs the flow in the Openflow canvas. Upon execution:
 
@@ -184,9 +184,15 @@ Show lessSee more
   in the resolved field set aren’t loaded, and there is no raw JSON fallback. Issue type, priority,
   resolution, and status are stored as Jira IDs. Enable the `ISSUE_TYPE`, `PRIORITY`, `RESOLUTION`, and
   `STATUS` lookup tables (they’re in the default `Enabled Tables` value) and join them to resolve names.
-- Narrowing `Project Keys Filter` to remove a project doesn’t delete that project’s rows from the
-  destination tables. Rows that were previously ingested remain in place and are no longer updated.
-  To remove orphaned rows after a filter change, manually delete them from the destination tables.
+- Project and creation-date filters apply to later fetches and don’t remove previously ingested
+  rows. For retained rows and changed project keys, see
+  [project filtering behavior](/user-guide/data-integration/openflow/connectors/jira-cloud/setup-core#label-jira-core-filter-behavior).
+  For changing filters and backfilling data, see
+  [Resetting the connector state](/user-guide/data-integration/openflow/connectors/jira-cloud/setup-core#label-jira-core-reset-state).
+- `WORKLOG` and audit deletion records (`DELETED_ISSUE`) aren’t limited by `Project Keys Filter` or
+  `Created After`. For information about disabling their ingestion when excluding sensitive
+  project data, see
+  [data fetched outside the filters](/user-guide/data-integration/openflow/connectors/jira-cloud/setup-core#label-jira-core-unfiltered-data).
 - Agile data (boards, sprints, board mappings) is fully re-fetched on every scheduled run of the agile flow.
   For Jira instances with many boards, this may result in increased API usage.
 - Each connector instance can be associated with only one Jira Cloud site.

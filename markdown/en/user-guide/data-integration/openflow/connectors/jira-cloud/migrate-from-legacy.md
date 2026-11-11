@@ -62,16 +62,16 @@ auto-generated `_VIEW` must be rewritten to use the new column names directly (f
 
 ### Parameter changes
 
-The following parameters from the legacy connector are not available in the new connector:
+The following parameters from the legacy connector changed in the core flow:
 
 | Legacy parameter | Current equivalent |
 | --- | --- |
 | Search Type | Removed. The new connector always fetches all issues from discovered projects. Use `Project Keys Filter` to limit ingestion to specific projects. |
-| JQL Query | Removed. The new connector doesn’t support arbitrary JQL for issue filtering. Use `Project Keys Filter` instead. |
-| Project Names | Replaced by `Project Keys Filter`, which accepts project keys (not names or IDs). |
+| JQL Query | Removed. The new connector doesn’t support arbitrary JQL for issue filtering. Use `Project Keys Filter` to limit projects, and `Created After` to limit issues by creation date. |
+| Project Names | Replaced by `Project Keys Filter`, which accepts project keys (not names or IDs). Prefix a key with `-` to exclude that project and ingest every other project. |
 | Status Category | Removed. The new connector fetches all issues regardless of status. |
 | Updated After | Removed. The new connector manages incremental state automatically. |
-| Created After | Removed. The new connector manages incremental state automatically. |
+| Created After | Available in core flow version 0.14.0 and later as an inclusive `yyyy-MM-dd` date. The legacy parameter applied only when Search Type was `SIMPLE`. For more information, see [Jira Cloud (Core) Ingestion Parameters](/user-guide/data-integration/openflow/connectors/jira-cloud/setup-core#label-jira-core-ingestion-parameters). |
 | Destination Table | Removed. The new connector creates fixed table names per entity (`ISSUE`, `PROJECT`, `COMMENT`, and others) in the configured destination schema. |
 | Fetch All Worklogs | Removed. The new connector fetches all worklogs into a separate `WORKLOG` table by default when `WORKLOG` is listed in `Enabled Tables`. |
 | Connection Method | Not exposed as a parameter. The new connector uses the `DIRECT` connection method. |
@@ -119,11 +119,16 @@ decommissioned.
    - Copy the `Jira Email`, `Jira API Token`, and `Environment URL` values from the legacy connector
      to the new core flow. If using the agile flow, configure these values separately for that flow as well.
    - If the legacy connector uses `Project Names`, convert them to project keys for the
-     `Project Keys Filter` parameter.
-   - If the legacy connector uses a `JQL Query`, evaluate whether `Project Keys Filter` covers your
-     use case. If your JQL filters by criteria other than project (for example, status or custom fields),
-     those filters aren’t available in the new connector. All matching issues from the configured
-     projects are ingested.
+     `Project Keys Filter` parameter. To ingest every project except a few, prefix those keys with `-`.
+   - If the legacy connector uses a `JQL Query`, evaluate whether `Project Keys Filter` and
+     `Created After` cover your use case. If your JQL filters by criteria other than project or
+     creation date (for example, status or custom fields), those filters aren’t available in the new
+     connector. All matching issues from the configured projects are ingested.
+   - If the legacy connector uses Search Type `SIMPLE` and sets `Created After`, copy that date to
+     the core flow parameter of the same name. The date is inclusive (`created >=` that calendar date).
+     When Search Type is `JQL`, the legacy connector ignores `Created After`. Take the creation date
+     from the JQL query instead, and leave the core flow parameter empty when that query doesn’t
+     restrict the creation date.
    - Set `Issue Fields` to match your previous configuration. The default changed from `*all` (legacy)
      to `*standard`.
    - Configure the Snowflake destination parameters (database, schema, warehouse, credentials) for each flow.

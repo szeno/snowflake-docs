@@ -29,8 +29,8 @@ For more details about data storage in tables, see [Data storage considerations]
 | TABLE\_CATALOG | VARCHAR | Database that the table belongs to. |
 | CLONE\_GROUP\_ID | NUMBER | Unique identifier for the oldest clone ancestor of this table. Same as ID if the table is not a clone. |
 | IS\_TRANSIENT | VARCHAR | ‘YES’ if table is transient or temporary, otherwise ‘NO’. Transient and temporary tables have no Fail-safe period. |
-| ACTIVE\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are in the active state for the table. For Iceberg table storage, active bytes aren’t billed to *Iceberg* tables. For more information, see [Iceberg table billing](/user-guide/tables-iceberg#label-tables-iceberg-billing). |
-| TIME\_TRAVEL\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are in the Time Travel state for the table. |
+| ACTIVE\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are in the active state for the table. For Iceberg tables that use an external volume you manage, these bytes aren’t billed. For Iceberg tables that use Snowflake Storage, they are billed. For more information, see [Iceberg table billing](/user-guide/tables-iceberg#label-tables-iceberg-billing). |
+| TIME\_TRAVEL\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are in the Time Travel state for the table. For Iceberg tables that use an external volume you manage, these bytes aren’t billed. For Iceberg tables that use Snowflake Storage, they are billed. For more information, see [Iceberg table billing](/user-guide/tables-iceberg#label-tables-iceberg-billing). |
 | FAILSAFE\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are in the Fail-safe state for the table. |
 | RETAINED\_FOR\_CLONE\_BYTES | NUMBER | Bytes owned by (and billed to) this table that are retained after deletion because they are referenced by one or more clones of this table, or by [WORM backups](/user-guide/backups) that contain the table. |
 | DELETED | BOOLEAN | TRUE if table has been dropped or recreated. |

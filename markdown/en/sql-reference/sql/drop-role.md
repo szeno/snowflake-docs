@@ -22,6 +22,11 @@ DROP ROLE [ IF EXISTS ] <name>
 ## Usage notes
 
 - Dropped roles cannot be recovered; they must be recreated.
+- Dropping a role that owns Snowpark Container Services (SPCS) services or Openflow deployments can orphan the underlying
+  compute cluster. The orphaned cluster is later removed permanently along with its stateful data, and Time Travel and
+  Fail-safe don’t cover that data. Before you drop the role, transfer ownership with [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership)
+  and the `COPY CURRENT GRANTS` clause. For Openflow, also export your flows first. For details, see
+  [Manage Openflow](/user-guide/data-integration/openflow/manage).
 - The current primary role cannot be dropped. An attempt to drop this role returns an error. For example:
 
   Copy code

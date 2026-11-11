@@ -6,6 +6,13 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 9, 2026
+
+### AWS Data Plane Agent 1.77.3
+
+- Fixed an issue that prevented runtime and platform logs from reaching event tables after upgrading to 1.77.0.
+- Security patches and dependency upgrades.
+
 ## November 5, 2026
 
 ### Runtime Server 2026.11.5.2

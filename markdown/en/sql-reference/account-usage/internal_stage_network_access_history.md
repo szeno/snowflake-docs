@@ -21,7 +21,7 @@ This Account Usage view can be used to query any network access attempts to an i
 | CLOUD\_PROVIDER | VARCHAR | Cloud service provider. |
 | USER\_NAME | VARCHAR | User associated with this event. |
 | CLIENT\_IP | VARCHAR | Client IP accessing the internal stage. |
-| CLIENT\_PRIVATELINK\_ID | VARCHAR | Client private link ID accessing the internal stage: for example, a VPCE ID. |
+| CLIENT\_PRIVATE\_LINK\_ID | VARCHAR | Client private link ID accessing the internal stage: for example, a VPCE ID. |
 | BYTES\_IN | NUMBER | Bytes transferred into the stage. |
 | BYTES\_OUT | NUMBER | Bytes transferred out of the stage. |
 | IS\_SUCCESS | BOOLEAN | Whether the user’s request was successful or not. |

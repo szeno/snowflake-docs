@@ -303,7 +303,7 @@ object is returned in the body of the response for a [cancellation request](/dev
 
 | Field | Description |
 | --- | --- |
-| `code` | Type: string |
+| `code` | Snowflake status code for the cancellation request. Read this value with the `message` field to determine the outcome of the cancellation request.  Type: string |
 | `sqlState` | Type: string |
 | `message`  Example: `successfully cancelled` | Type: string |
 | `statementHandle` | Unique identifier for the statement being executed.  Type: string (a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))  Example: `536fad38-b564-4dc5-9892-a4543504df6c` |
@@ -336,9 +336,9 @@ the body of the 422 response for a [request to execute the statement](#label-sql
 
 | Field | Description |
 | --- | --- |
-| `code` | Type: string  Example: `0` |
+| `code` | Snowflake error code for the statement that failed. The `message` field describes the error.  Type: string  Example: `002139` |
 | `sqlState` | Type: string |
-| `message` | Type: string  Example: `successfully executed` |
+| `message` | Type: string  Example: `SQL compilation error: Unknown function` |
 | `statementHandle` | Unique identifier for the statement being executed.  Type: string (a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))  Example: `536fad38-b564-4dc5-9892-a4543504df6c` |
 | `createdOn` | Timestamp that specifies when the statement execution started. The timestamp is expressed in milliseconds since the epoch.  Type: 64-bit signed integer  Example: `1597090533987` |
 | `statementStatusUrl` | URL to get the statement status and result set.  Type: string (a URL)  Example: `/api/v2/statements/536fad38-b564-4dc5-9892-a4543504df6c` |
@@ -374,9 +374,9 @@ returned in the following:
 
 | Field | Description |
 | --- | --- |
-| `code` | Type: string  Example: `0` |
+| `code` | Snowflake status code for the statement. For example, `333334` indicates that asynchronous execution is still in progress. Read this value with the `message` field.  Type: string  Example: `333334` |
 | `sqlState` | Type: string |
-| `message` | Type: string  Example: `successfully executed` |
+| `message` | Type: string  Example: `Asynchronous execution in progress. Use provided query id to perform query monitoring and management.` |
 | `statementHandle` | Unique identifier for the statement being executed.  Type: string (a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))  Example: `536fad38-b564-4dc5-9892-a4543504df6c` |
 | `createdOn` | Timestamp that specifies when the statement execution started. The timestamp is expressed in milliseconds since the epoch.  Type: 64-bit signed integer  Example: `1597090533987` |
 | `statementStatusUrl` | URL to get the statement status and result set.  Type: string (a URL)  Example: `/api/v2/statements/536fad38-b564-4dc5-9892-a4543504df6c` |
@@ -391,9 +391,9 @@ Copy code
 
 ```
 {
-  "code" : "0",
-  "sqlState" : "",
-  "message" : "successfully executed",
+  "code" : "333334",
+  "sqlState" : "00000",
+  "message" : "Asynchronous execution in progress. Use provided query id to perform query monitoring and management.",
   "statementHandle" : "e4ce975e-f7ff-4b5e-b15e-bf25f59371ae",
   "statementStatusUrl" : "/api/v2/statements/e4ce975e-f7ff-4b5e-b15e-bf25f59371ae"
 }
@@ -409,7 +409,7 @@ of the 200 response for a [request to execute the statement](#label-sql-api-refe
 
 | Field | Description |
 | --- | --- |
-| `code` | Type: string  Example: `0` |
+| `code` | Snowflake status code for the completed statement. For example, `090001` indicates successful execution.  Type: string  Example: `090001` |
 | `sqlState` | Type: string |
 | `message` | Type: string  Example: `successfully executed` |
 | `statementHandle` | Unique identifier for the statement being executed.  If multiple statements were specified in the request, this handle corresponds to the set of those statements. For the handles of the individual statements in the request, see the `statementHandles` field.  Type: string (a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier))  Example: `536fad38-b564-4dc5-9892-a4543504df6c` |

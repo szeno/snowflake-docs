@@ -6,7 +6,7 @@ Client connectivity error messages can signal various underlying causes located 
 
 |  |  |
 | --- | --- |
-| JDBC error 1 | **Error(s)**  ``` Cannot connect: connection refused: Java::NetSnowflakeClientJdbc::SnowflakeSQLException: JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Connection reset. ```  **Root cause**: This error has various underlying causes, located in the network path between the host you’re trying to connect from, and the Snowflake endpoint, including any possible proxies, security appliances, load balancers and such.  **Resolution scenario**: label-client\_connectivity\_ssl\_issues. |
+| JDBC error 1 | **Error(s)**  ``` Cannot connect: connection refused: Java::NetSnowflakeClientJdbc::SnowflakeSQLException: JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Connection reset. ```  **Root cause**: This error has various underlying causes, located in the network path between the host you’re trying to connect from, and the Snowflake endpoint, including any possible proxies, security appliances, load balancers and such.  **Resolution scenario**: [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -14,7 +14,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 2 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request:  sun.security.validator.ValidatorException: No trusted certificate found.  OR  javax.net.ssl.SSLHandshakeException: No trusted certificate found  OR  'SSL peer certificate or SSH remote key was not OK' ```  **Root cause**: The issue is likely caused by a proxy or security appliance performing an SSL inspection.  On rare occasions, usually with older installations of Java, the same symptom can also occur when there’s no SSL inspection but the cloud provider changed one of the intermediary certificate authorities to another (well-known) authority, which is not yet present in the truststore.  **Resolution scenario**: label-client\_connectivity\_ssl\_issues. |
+| JDBC error 2 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request:  sun.security.validator.ValidatorException: No trusted certificate found.  OR  javax.net.ssl.SSLHandshakeException: No trusted certificate found  OR  'SSL peer certificate or SSH remote key was not OK' ```  **Root cause**: The issue is likely caused by a proxy or security appliance performing an SSL inspection.  On rare occasions, usually with older installations of Java, the same symptom can also occur when there’s no SSL inspection but the cloud provider changed one of the intermediary certificate authorities to another (well-known) authority, which is not yet present in the truststore.  **Resolution scenario**: [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -22,7 +22,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 3 | **Error(s)**  ``` JDBC driver encountered a communication error. Message: Exception encountered for an HTTP request: Network is unreachable (Connect Failed) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: label-client\_connectivity\_ssl\_issues. |
+| JDBC error 3 | **Error(s)**  ``` JDBC driver encountered a communication error. Message: Exception encountered for an HTTP request: Network is unreachable (Connect Failed) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -30,7 +30,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 4 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: <SERVICE_ENDPOINT>: nodename nor servname provided, or not known. ```  **Root cause**: See label-client\_connectivity\_dns\_issues.  **Resolution scenario**: label-client\_connectivity\_dns\_issues. |
+| JDBC error 4 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: <SERVICE_ENDPOINT>: nodename nor servname provided, or not known. ```  **Root cause**: See [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues).  **Resolution scenario**: [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues). |
 
 Expand
 
@@ -38,7 +38,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 5 | **Error(s)**  ``` WARNING!!! Using fail-open to connect. Driver is connecting to an HTTPS endpoint without OCSP based Certificate Revocation checking as it could not obtain a valid OCSP Response to use from the CA OCSP responder. Details: {"cacheEnabled":true,"ocspReqBase64":null,"ocspMode":"FAIL_OPEN","sfcPeerHost":"<SERVICE_ENDPOINT>","ocspResponderURL":null,"cacheHit":true,"eventType":"OCSPValidationError","certId":"<OBFUSCATED>"} ```  **Root cause**: See label-client\_connectivity\_ocsp\_issues.  **Resolution scenario**: label-client\_connectivity\_ocsp\_issues. |
+| JDBC error 5 | **Error(s)**  ``` WARNING!!! Using fail-open to connect. Driver is connecting to an HTTPS endpoint without OCSP based Certificate Revocation checking as it could not obtain a valid OCSP Response to use from the CA OCSP responder. Details: {"cacheEnabled":true,"ocspReqBase64":null,"ocspMode":"FAIL_OPEN","sfcPeerHost":"<SERVICE_ENDPOINT>","ocspResponderURL":null,"cacheHit":true,"eventType":"OCSPValidationError","certId":"<OBFUSCATED>"} ```  **Root cause**: See [OCSP and port 80 issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ocsp-issues).  **Resolution scenario**: [OCSP and port 80 issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ocsp-issues). |
 
 Expand
 
@@ -46,7 +46,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 6 | **Error(s)**  ``` JDBC driver internal error: Max retry reached for the download of #chunk0 (Total chunks:<x>) retry=<y>, error=net.snowflake.client.jdbc.SnowflakeSQLException: JDBC driver encountered communication error. Message: Error encountered when downloading a result chunk: ```  **Root cause**: See label-client\_connectivity\_large\_result\_issues.  **Resolution scenario**: label-client\_connectivity\_large\_result\_issues. |
+| JDBC error 6 | **Error(s)**  ``` JDBC driver internal error: Max retry reached for the download of #chunk0 (Total chunks:<x>) retry=<y>, error=net.snowflake.client.jdbc.SnowflakeSQLException: JDBC driver encountered communication error. Message: Error encountered when downloading a result chunk: ```  **Root cause**: See [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues).  **Resolution scenario**: [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues). |
 
 Expand
 
@@ -54,7 +54,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 7 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Failed to find the root CA ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: label-client\_connectivity\_ssl\_issues. |
+| JDBC error 7 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Failed to find the root CA ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -70,7 +70,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 9 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Remote host terminated the handshake ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: label-client\_connectivity\_ssl\_issues. |
+| JDBC error 9 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Remote host terminated the handshake ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -78,7 +78,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 10 | **Error(s)**  ``` net.snowflake.client.jdbc.SnowflakeSQLLoggedException: JDBC driver encountered IO error. Message: Encountered exception during upload: null. ```  **Root cause**: The client driver has issues accessing the cloud storage associated with your Snowflake account, during an upload operation. This is caused by a misconfiguration on a proxy / security appliance sitting on the network path between the client driver and the cloud storage.  **Resolution scenario**: Although the direction of the traffic is the opposite, see label-client\_connectivity\_large\_result\_issues. |
+| JDBC error 10 | **Error(s)**  ``` net.snowflake.client.jdbc.SnowflakeSQLLoggedException: JDBC driver encountered IO error. Message: Encountered exception during upload: null. ```  **Root cause**: The client driver has issues accessing the cloud storage associated with your Snowflake account, during an upload operation. This is caused by a misconfiguration on a proxy / security appliance sitting on the network path between the client driver and the cloud storage.  **Resolution scenario**: Although the direction of the traffic is the opposite, see [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues). |
 
 Expand
 
@@ -86,7 +86,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| JDBC error 11 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Certificate for [<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>] doesn't match any of the subject alternative names: [*.us-west-2.snowflakecomputing.com, *.us-west-2.aws.snowflakecomputing.com, *.global.snowflakecomputing.com, *.snowflakecomputing.com, *.prod1.us-west-2.aws.snowflakecomputing.com, *.prod2.us-west-2.aws.snowflakecomputing.com]. ```  **Root cause**: What this error message means: The client driver is trying to connect to a Snowflake account (or cloud storage) located in AWS US WEST, which is also the default cloud region. The connection is not successful, because the certificate seen by the client driver is not a match for the hostname in the request.  Most likely causes include:   - If your Snowflake account is not in AWS US WEST: most common issue is a misconfiguration in the account part in the JDBC driver connection string. - If your Snowflake account is indeed in AWS US WEST: likely cause could be a proxy / security appliance performing SSL inspection.   **Resolution scenario**:   - For the first cause, please either use the regionless notation in the account field of the configuration, such as myorg-test, myorg-prod, etc. Alternatively, if you want to use the locator notation, make sure to use the correct one as indicated in the [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config) documentation. For example, an account in AWS EU Frankfurt would be `xy12345.eu-central-1`. - For the second cause, see label-client\_connectivity\_large\_result\_issues. |
+| JDBC error 11 | **Error(s)**  ``` JDBC driver encountered communication error. Message: Exception encountered for HTTP request: Certificate for [<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>] doesn't match any of the subject alternative names: [*.us-west-2.snowflakecomputing.com, *.us-west-2.aws.snowflakecomputing.com, *.global.snowflakecomputing.com, *.snowflakecomputing.com, *.prod1.us-west-2.aws.snowflakecomputing.com, *.prod2.us-west-2.aws.snowflakecomputing.com]. ```  **Root cause**: What this error message means: The client driver is trying to connect to a Snowflake account (or cloud storage) located in AWS US WEST, which is also the default cloud region. The connection is not successful, because the certificate seen by the client driver is not a match for the hostname in the request.  Most likely causes include:   - If your Snowflake account is not in AWS US WEST: most common issue is a misconfiguration in the account part in the JDBC driver connection string. - If your Snowflake account is indeed in AWS US WEST: likely cause could be a proxy / security appliance performing SSL inspection.   **Resolution scenario**:   - For the first cause, please either use the regionless notation in the account field of the configuration, such as myorg-test, myorg-prod, etc. Alternatively, if you want to use the locator notation, make sure to use the correct one as indicated in the [Configuring a client, driver, library, or third-party application to connect to Snowflake](/user-guide/gen-conn-config) documentation. For example, an account in AWS EU Frankfurt would be `xy12345.eu-central-1`. - For the second cause, see [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues). |
 
 Expand
 
@@ -104,7 +104,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 1 | **Error(s)**  ``` 'OLE DB or ODBC error: [DataSource.Error] ERROR [HY000] [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL <>.... :  CURLerror (curl_easy_perform() failed) - code=60 msg='SSL peer certificate or SSH remote key was not OK' osCode=9 osMsg='Bad file descriptor'. . '.* ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 1 | **Error(s)**  ``` 'OLE DB or ODBC error: [DataSource.Error] ERROR [HY000] [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL <>.... :  CURLerror (curl_easy_perform() failed) - code=60 msg='SSL peer certificate or SSH remote key was not OK' osCode=9 osMsg='Bad file descriptor'. . '.* ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -112,7 +112,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 2 | **Error(s)**  ``` Error: nanodbc/nanodbc.cpp:1135: 01S00: [Snowflake][Snowflake] (4) REST request for URL *** failed: CURLerror (curl_easy_perform() failed) - code=60 msg='SSL peer certificate or SSH remote key was not OK'. ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 2 | **Error(s)**  ``` Error: nanodbc/nanodbc.cpp:1135: 01S00: [Snowflake][Snowflake] (4) REST request for URL *** failed: CURLerror (curl_easy_perform() failed) - code=60 msg='SSL peer certificate or SSH remote key was not OK'. ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -120,7 +120,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 3 | **Error(s)**  ``` 'SSL peer certificate or SSH remote key was not OK' ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 3 | **Error(s)**  ``` 'SSL peer certificate or SSH remote key was not OK' ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -128,7 +128,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 4 | **Error(s)**  ``` SSL certificate problem: self signed certificate in certificate chain. Please check for SSL interception proxy in your network. ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 4 | **Error(s)**  ``` SSL certificate problem: self signed certificate in certificate chain. Please check for SSL interception proxy in your network. ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -136,7 +136,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 5 | **Error(s)**  ``` CURLerror (curl _easy_perform failed) - code=35 msg='SSL connect error' osCode=10054 osMsg='Unknown error'. ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 5 | **Error(s)**  ``` CURLerror (curl _easy_perform failed) - code=35 msg='SSL connect error' osCode=10054 osMsg='Unknown error'. ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -144,7 +144,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 6 | **Error(s)**  ``` 'Empty reply from server' (CURLerror (curl_easy_perform() failed) - code=52 msg='Server returned nothing (no header..) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 6 | **Error(s)**  ``` 'Empty reply from server' (CURLerror (curl_easy_perform() failed) - code=52 msg='Server returned nothing (no header..) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -152,7 +152,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 7 | **Error(s)**  ``` ERROR 5052 Simba::ODBC::Connection::SQLDriverConnectW: [Snowflake][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED>&databaseName=<OBFUSCATED>&schemaName=<OBFUSCATED>&warehouse=<OBFUSCATED>failed: CURLerror (curl_easy_perform() failed) - code=35 msg='SSL connect error'. ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 7 | **Error(s)**  ``` ERROR 5052 Simba::ODBC::Connection::SQLDriverConnectW: [Snowflake][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED>&databaseName=<OBFUSCATED>&schemaName=<OBFUSCATED>&warehouse=<OBFUSCATED>failed: CURLerror (curl_easy_perform() failed) - code=35 msg='SSL connect error'. ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -160,7 +160,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 8 | **Error(s)**  ``` ERROR 710 Simba::ODBC::Statement::SQLFetchScroll: [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL https://<STAGE>/<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&AWSAccessKeyId=<OBFUSCATED>&Expires=<OBFUSCATED>&Signature=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=52 msg='Server returned nothing (no headers, no data)'. ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| ODBC error 8 | **Error(s)**  ``` ERROR 710 Simba::ODBC::Statement::SQLFetchScroll: [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL https://<STAGE>/<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&AWSAccessKeyId=<OBFUSCATED>&Expires=<OBFUSCATED>&Signature=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=52 msg='Server returned nothing (no headers, no data)'. ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -184,7 +184,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 11 | **Error(s)**  ``` ERROR [HY000] [Microsoft][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=6 msg='Couldn't resolve host name'. ```  **Root cause**: See label-client\_connectivity\_dns\_issues.  **Resolution scenario**: See label-client\_connectivity\_dns\_issues. |
+| ODBC error 11 | **Error(s)**  ``` ERROR [HY000] [Microsoft][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=6 msg='Couldn't resolve host name'. ```  **Root cause**: See [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues).  **Resolution scenario**: See [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues). |
 
 Expand
 
@@ -192,7 +192,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 12 | **Error(s)**  ``` ERROR [HY000] [Snowflake][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=5 msg='Couldn't resolve proxy name' osCode=9 osMsg='Bad file descriptor'. ```  **Root cause**: See label-client\_connectivity\_dns\_issues.  **Resolution scenario**: See label-client\_connectivity\_dns\_issues. |
+| ODBC error 12 | **Error(s)**  ``` ERROR [HY000] [Snowflake][Snowflake] (4) REST request for URL https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/v1/login-request?requestId=<OBFUSCATED>&request_guid=<OBFUSCATED> failed: CURLerror (curl_easy_perform() failed) - code=5 msg='Couldn't resolve proxy name' osCode=9 osMsg='Bad file descriptor'. ```  **Root cause**: See [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues).  **Resolution scenario**: See [DNS configuration issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-dns-issues). |
 
 Expand
 
@@ -200,7 +200,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| ODBC error 13 | **Error(s)**  ``` [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL https://<STAGE>/results/<OBFUSCATED>_02Fmain2Fdata_0_0_8?sv=<OBFUSCATED>&spr=https&se=<OBFUSCATED>&sr=b&sp=r&sig=<OBFUSCATED>&rsce=gzip failed: CURLerror (curl_easy_perform() failed) - code=42 msg='Operation was aborted by an application callback'. ```  **Root cause**: See label-client\_connectivity\_large\_result\_issues.  **Resolution scenario**: See label-client\_connectivity\_large\_result\_issues. |
+| ODBC error 13 | **Error(s)**  ``` [Snowflake][Snowflake] (25) Result download worker error: Worker error: [Snowflake][Snowflake] (4) REST request for URL https://<STAGE>/results/<OBFUSCATED>_02Fmain2Fdata_0_0_8?sv=<OBFUSCATED>&spr=https&se=<OBFUSCATED>&sr=b&sp=r&sig=<OBFUSCATED>&rsce=gzip failed: CURLerror (curl_easy_perform() failed) - code=42 msg='Operation was aborted by an application callback'. ```  **Root cause**: See [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues).  **Resolution scenario**: See [Fetching large query result sets failures](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-large-result-issues). |
 
 Expand
 
@@ -210,7 +210,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 1 | **Error(s)**  ``` SSL validation failed for https://<STAGE>/?accelerate [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:852) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 1 | **Error(s)**  ``` SSL validation failed for https://<STAGE>/?accelerate [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed (_ssl.c:852) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -218,7 +218,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 2 | **Error(s)**  ``` SSLError: HTTPSConnectionPool(host='<STAGE>', port=443): Max retries exceeded with url: /<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&AWSAccessKeyId=<OBFUSCATED>&Expires=<OBFUSCATED>&Signature=<OBFUSCATED> (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')])"))) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 2 | **Error(s)**  ``` SSLError: HTTPSConnectionPool(host='<STAGE>', port=443): Max retries exceeded with url: /<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&AWSAccessKeyId=<OBFUSCATED>&Expires=<OBFUSCATED>&Signature=<OBFUSCATED> (Caused by SSLError(SSLError("bad handshake: Error([('SSL routines', 'tls_process_server_certificate', 'certificate verify failed')])"))) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -226,7 +226,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 3 | **Error(s)**  ``` (Caused by ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 407 Request rejected by proxy'))) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 3 | **Error(s)**  ``` (Caused by ProxyError('Cannot connect to proxy.', OSError('Tunnel connection failed: 407 Request rejected by proxy'))) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -234,7 +234,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 4 | **Error(s)**  ``` 250001 (n/a): Could not connect to Snowflake backend after 0 attempt(s).Aborting ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 4 | **Error(s)**  ``` 250001 (n/a): Could not connect to Snowflake backend after 0 attempt(s).Aborting ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -242,7 +242,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 5 | **Error(s)**  ``` snowflake.connector.network.RetryRequest: HTTP 403: Forbidden ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 5 | **Error(s)**  ``` snowflake.connector.network.RetryRequest: HTTP 403: Forbidden ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -250,7 +250,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 6 | **Error(s)**  ``` 250003 (n/a): Failed to get the response. Hanging? method: post, url: https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/authenticator-request?request_guid=<OBFUSCATED> ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 6 | **Error(s)**  ``` 250003 (n/a): Failed to get the response. Hanging? method: post, url: https://[<SNOWFLAKE_DEPLOYMENT>|<SNOWFLAKE_DEPLOYMENT_REGIONLESS>|<CLIENT_FAILOVER>]:443/session/authenticator-request?request_guid=<OBFUSCATED> ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 
@@ -266,7 +266,7 @@ Show lessSee more
 
 |  |  |
 | --- | --- |
-| Python error 8 | **Error(s)**  ``` HTTPSConnectionPool(host='<STAGE>', port=443): Max retries exceeded with url: /<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&X-Amz-Algorithm=<OBFUSCATED>&X-Amz-Date=<OBFUSCATED>&X-Amz-SignedHeaders=<OBFUSCATED>&X-Amz-Expires=<OBFUSCATED>&X-Amz-Credential=<OBFUSCATED>&X-Amz-Signature=<OBFUSCATED> (Caused by SSLError(SSLError("bad handshake: SysCallError(-1, 'Unexpected EOF')"))) ```  **Root cause**: See label-client\_connectivity\_ssl\_issues.  **Resolution scenario**: See label-client\_connectivity\_ssl\_issues. |
+| Python error 8 | **Error(s)**  ``` HTTPSConnectionPool(host='<STAGE>', port=443): Max retries exceeded with url: /<OBFUSCATED>/results/<OBFUSCATED>_0/main/data_0_0_1?x-amz-server-side-encryption-customer-algorithm=<OBFUSCATED>&response-content-encoding=gzip&X-Amz-Algorithm=<OBFUSCATED>&X-Amz-Date=<OBFUSCATED>&X-Amz-SignedHeaders=<OBFUSCATED>&X-Amz-Expires=<OBFUSCATED>&X-Amz-Credential=<OBFUSCATED>&X-Amz-Signature=<OBFUSCATED> (Caused by SSLError(SSLError("bad handshake: SysCallError(-1, 'Unexpected EOF')"))) ```  **Root cause**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues).  **Resolution scenario**: See [Firewall or proxy SSL inspection issues](/user-guide/client-connectivity-troubleshooting/common-issues#label-client-connectivity-ssl-issues). |
 
 Expand
 

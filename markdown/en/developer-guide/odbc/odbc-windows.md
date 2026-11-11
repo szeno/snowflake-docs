@@ -80,7 +80,7 @@ To configure the ODBC driver in a Windows environment, create a DSN for the driv
       - The ODBC driver supports additional parameters that are not displayed in the dialog. These parameters can only be set in the Windows registry using **regedit**.
 
         For descriptions of all the parameters, see [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
-      - Specifying a value in the **Authenticator** field is only required if you are using federated authentication. For more information, see the `authenticator` parameter description in [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters).
+      - Set **Authenticator** to the value for your authentication method. To authenticate with a password and multi-factor authentication (MFA) with MFA token caching, set **Authenticator** to `username_password_mfa`. For other methods, such as federated authentication or OAuth, see the `authenticator` parameter description in [ODBC configuration and connection parameters](/developer-guide/odbc/odbc-parameters). For MFA configuration and token-caching requirements, see [Using multi-factor authentication](/developer-guide/odbc/odbc-parameters#using-multi-factor-authentication).
    4. Click **OK** to create the DSN.
 
 You can now reference this DSN in ODBC-based client applications for connecting to Snowflake.

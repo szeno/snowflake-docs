@@ -225,17 +225,52 @@ Show lessSee more
 
 #### Jira Cloud (Core) Ingestion Parameters
 
+`Created After` and project-key exclusions are available in core flow version 0.14.0 and later.
+
 | Parameter | Description |
 | --- | --- |
 | Enabled Tables | Comma-separated list of optional tables to populate. See [Enabled tables configuration](#label-jira-core-enabled-tables) for the full list of values and guidance on which tables to enable. Default value: `CHANGELOG, COMMENT, ISSUE_TYPE, PRIORITY, RESOLUTION, STATUS, WORKLOG`. |
 | Issue Fields | A list of fields to return for each issue, used to retrieve a subset of fields. See [Issue fields configuration](#label-jira-core-issue-fields) for available values and custom field handling. Default value: `*standard`. |
-| Project Keys Filter | Optional comma-separated list of Jira project keys to limit ingestion to specific projects. If empty, all projects accessible by the API token owner are fetched. For example, `PROJ1, PROJ2`. |
+| Project Keys Filter | Optional comma-separated Jira project keys. Leave it empty to ingest every project the API token owner can access, including projects created later. List keys to ingest only those projects, for example `PROJ1, PROJ2`. Prefix a key with `-` to exclude it, for example `-HR, -LEGAL`. For more information, see [project filtering behavior](#label-jira-core-filter-behavior). |
+| Created After | Optional inclusive date in `yyyy-MM-dd` format, interpreted in the time zone of the Jira account that owns the API token. Only issues created on or after this date are ingested, along with their changelogs, comments, votes, watchers, and remote links. Leave it empty to ingest issues regardless of creation date. For information about changing the date, see [Resetting the connector state](#label-jira-core-reset-state). |
 | Deletes Fetch Strategy | Strategy for fetching deleted issues. Set to `NONE` to skip delete tracking, or `AUDIT` to fetch deleted issues from the Jira audit log endpoint. The `AUDIT` strategy requires the API token owner to have the **Administer Jira** global permission and the `manage:jira-configuration` scope. Default value: `NONE`. |
 | Merge Interval | Time interval between journal-to-destination merge operations. When a merge runs, the Snowflake warehouse resumes. The merge is skipped if no new data has been loaded since the previous merge. Default value: `1 min`. |
 
 Expand
 
 Show lessSee more
+
+Warning
+
+`Project Keys Filter` and `Created After` don’t apply to worklogs or audit deletion records.
+
+`WORKLOG` is included in `Enabled Tables` by default. Worklog rows are still ingested for an
+excluded project, and for an issue created before `Created After`. Those rows can include comment
+text and user account IDs. To keep that data out of the destination schema, remove `WORKLOG` from
+`Enabled Tables`.
+
+When `Deletes Fetch Strategy` is `AUDIT`, deletion records for those same issues are still
+ingested. A record includes the issue key and the account of the user who deleted the issue. To
+skip that metadata, set `Deletes Fetch Strategy` to `NONE`.
+
+The following rules apply when you set `Project Keys Filter`:
+
+Note
+
+Prefix a key with `-` to exclude it. `-HR, -LEGAL` ingests every other project the API token
+owner can access, including projects created later. If you also list keys to include, only those
+projects are ingested. An exclusion wins when the same key is listed both ways. For example,
+`PROJ1, PROJ2, -PROJ2` ingests only `PROJ1`.
+
+Each key must be uppercase, start with a letter, and contain only letters, digits, or
+underscores. An invalid entry prevents the connector from starting. After a project key changes,
+a filter entry that uses the previous key no longer matches it.
+
+Changing the filter doesn’t delete rows already ingested. Delete those rows yourself if they
+should leave the destination tables. A project with no saved state starts from the beginning
+without a reset. To re-fetch a previously ingested project from the beginning or backfill older
+issues after moving `Created After` earlier, see
+[Resetting the connector state](#label-jira-core-reset-state).
 
 ## Run the flow
 
@@ -248,8 +283,21 @@ that control which optional tables are populated.
 
 ## Resetting the connector state
 
-If you need to change the project filter or want to restart the ingestion from scratch, you must
-clear the ingestion state. The core flow uses a centralized state service rather than per-processor state.
+Changing `Project Keys Filter` or `Created After` applies to later fetches. You don’t have to
+clear the ingestion state to make that change, and the change doesn’t remove rows already
+ingested. A newly included project starts from the beginning. A project that was already ingested
+resumes from its saved position.
+
+Note
+
+Setting an earlier `Created After` date doesn’t backfill older issues until those issues are
+updated in Jira. Moving the date later leaves previously ingested issues in place. Issues created
+before the new date are no longer refreshed by issue searches. Audit deletion processing still
+applies.
+
+Clear the ingestion state when you want the connector to re-fetch from the beginning, for example
+to backfill older issues after moving `Created After` earlier. The core flow uses a centralized
+state service rather than per-processor state.
 
 To reset the state, perform the following steps:
 
@@ -262,9 +310,10 @@ To reset the state, perform the following steps:
 
 Note
 
-Clearing the ingestion state causes the connector to re-fetch all data from the beginning. The
-destination tables are not truncated. Existing rows are updated in place, and rows that no
-longer exist in Jira are flagged with `_SNOWFLAKE_DELETED = TRUE`.
+Clearing the ingestion state causes the connector to re-fetch from the beginning, still honoring
+`Project Keys Filter` and `Created After`. The destination tables are not truncated. Existing rows
+are updated in place, and rows that no longer exist in Jira are flagged with
+`_SNOWFLAKE_DELETED = TRUE`.
 
 ## Accessing the data
 
@@ -347,9 +396,11 @@ Available values for `Enabled Tables`:
 - `WORKLOG` (time tracking entries on issues)
 
 The per-issue tables (`CHANGELOG`, `COMMENT`, `ISSUE_REMOTE_LINK`,
-`ISSUE_VOTE`, `ISSUE_WATCHER`, `WORKLOG`) and per-project tables
+`ISSUE_VOTE`, `ISSUE_WATCHER`) and per-project tables
 (`PROJECT_COMPONENT`, `PROJECT_VERSION`) only ingest data for issues and projects
-that are also covered by `Project Keys Filter`.
+that are also covered by `Project Keys Filter`. Those per-issue tables also follow
+`Created After`. `WORKLOG` and `DELETED_ISSUE` don’t. For more information, see
+[data fetched outside the filters](/user-guide/data-integration/openflow/connectors/jira-cloud/setup-core#label-jira-core-unfiltered-data).
 
 Some tables are populated by calling the Jira API once per parent entity (for example, once per
 user or once per issue). On large Jira instances, enabling these tables can significantly increase

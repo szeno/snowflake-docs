@@ -33,8 +33,9 @@ The AI\_PARSE\_DOCUMENT function offers three modes for processing documents:
 - **AGENTIC** mode manages the orchestration required to process complex documents, including identifying and classifying visual elements, such as charts, diagrams, screenshots, forms, and images, selecting the appropriate processing actions. and generating semantic summaries, extracting structured data, or both. For more information, see [Agentic mode](#label-parse-document-agentic-mode).
 
 For each mode, use the `page_split` option to split multi-page documents into separate pages in the response.
-You can also use the `page_filter` option to process only specified pages. If using `page_filter`,
-`page_split` is implied, and you do not need to set it explicitly.
+To process selected pages, use [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) as the file argument to `AI_PARSE_DOCUMENT`. To explicitly request a separate result for each page, set `page_split` to TRUE.
+
+The `page_filter` option also supports page selection and automatically enables page splitting. Specify page selection with either `FL_FILTER_PAGES` or `page_filter`, not both in the same call.
 
 AI\_PARSE\_DOCUMENT is horizontally scalable, enabling efficient batch processing of multiple documents simultaneously.
 Documents can be processed directly from object storage to avoid unnecessary data movement.
@@ -495,70 +496,55 @@ Output:
 
 ### Process only certain pages of a document
 
-This example demonstrates using the `page_filter` option to extract specific pages from a document, specifically
-the first page of a 55-page research paper. Keep in mind that page indexes start at 0 and ranges are inclusive of
-the start value but exclusive of the end value. For example, `start: 0, end: 1` returns only the first page (index 0).
+Use [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) to parse only the pages relevant to your task. You can select a continuous range, multiple ranges, or pages relative to the end of the document without creating a separate file.
+
+The following example assumes `report.pdf` contains 10 pages. It selects the first and last pages and explicitly requests page-level output:
 
 Copy code
 
 ```
-SELECT AI_PARSE_DOCUMENT(
-  TO_FILE('@my_documents', 'ResearchArticle.pdf'),
-  {'mode': 'LAYOUT', 'page_filter': [{'start': 0, 'end': 1}]} );
+SELECT PARSE_JSON(
+  AI_PARSE_DOCUMENT(
+    FL_FILTER_PAGES(
+      TO_FILE('@document_stage', 'report.pdf'),
+      [{'end': 1}, {'start': -1}]
+    ),
+    {'mode': 'LAYOUT', 'page_split': TRUE}
+  )
+) AS parsed_document;
 ```
 
-Result:
+Illustrative result, with page content abbreviated:
+
+Copy code
 
 ```
 {
   "metadata": {
-    "pageCount": 55
+    "pageCount": 2
   },
   "pages": [
     {
-      "content": "# The Critical Role of Strength Training in Lifelong Health: Evidence-Based
-      Benefits and Implementation Strategies \n\n\n#### Abstract\n\nBackground: Strength training
-      has emerged as one of the most powerful interventions for promoting health across the
-      lifespan. This comprehensive review examines the extensive evidence supporting strength
-      training's role in preventing chronic disease, maintaining functional independence, and
-      enhancing quality of life.\n\nMethods: We conducted a systematic review of peer-reviewed
-      literature published between 2018-2024, analyzing 127 studies involving over 45,000
-      participants across various populations.\n\nResults: Regular resistance exercise provides
-      cardiovascular benefits ( $15-20 \\%$ reduction in heart disease risk), metabolic improvements
-      ( $12-18 \\%$ better insulin sensitivity), cognitive enhancements ( $25 \\%$ slower
-      cognitive decline), and psychological well-being improvements. Strength training increases
-      bone mineral density by $1-3 \\%$ annually and reduces fall risk by up to $40 \\%$ in older
-      adults.\n\nConclusions: Current guidelines recommend at least two sessions per week targeting
-      all major muscle groups. Implementation of strength training programs should be considered a
-      public health priority given the substantial evidence for disease prevention and health
-      promotion.\n\n\nKeywords: resistance training, muscle strength, bone density, chronic
-      disease prevention, healthy aging, exercise prescription\n\n## Introduction\n\nThe human
-      musculoskeletal system is designed for regular mechanical loading and progressive challenge.
-      Throughout evolutionary history, our ancestors engaged in strength-demanding activities
-      essential for survival, maintaining robust muscle mass and bone density well into advanced age.
-      However, the modern sedentary lifestyle has created an unprecedented mismatch between our
-      biological needs and daily activities, contributing to rising rates of sarcopenia,
-      osteoporosis, and metabolic dysfunction.\n\nStrength training, also known as resistance
-      training or weight training, represents a targeted intervention that can address many
-      contemporary health challenges. Unlike aerobic exercise alone, resistance training provides
-      unique physiological adaptations that are essential for long-term health and functional
-      independence. The World Health Organization now recognizes strength training as a fundamental
-      component of physical activity guidelines for all adults.\n\nKey Statistics: Only 31\\% of
-      adults meet strength training recommendations, despite evidence showing $20-30 \\%$ reductions
-      in all-cause mortality among regular participants.\n\n## Physiological Mechanisms and
-      Adaptations\n\n## Musculoskeletal Benefits\n\nStrength training stimulates muscle protein
-      synthesis through mechanistic target of rapamycin (mTOR) pathway activation, leading to
-      increased muscle fiber size and improved neuromuscular coordination. Research demonstrates
-      that adults can increase muscle mass by $2-4 \\%$ per month during initial training phases,
-      with continued improvements possible throughout life.\n\nBone tissue responds to mechanical
-      loading through osteoblast activation and increased bone formation. Weight-bearing resistance
-      exercises create piezoelectric effects that stimulate osteocyte networks, resulting in
-      improved bone mineral density and reduced fracture risk. Studies show 1-3\\% annual",
-      "index": 0
+      "index": 0,
+      "content": "First-page content."
+    },
+    {
+      "index": 9,
+      "content": "Last-page content."
     }
   ]
 }
 ```
+
+The `index` values identify positions in the original document, starting at 0. Filtering does not renumber pages or remove gaps between their indexes. When using `FL_FILTER_PAGES`, `metadata.pageCount` reports the number of pages processed, not the total page count of the source document.
+
+Range boundaries use an inclusive `start` and an exclusive `end`. For example, `{'start': 0, 'end': 3}` selects the first three pages. A negative value counts backward from the end of the document; `{'start': -3}` selects the last three pages. Overlapping ranges are combined, and each selected page is processed once in document order.
+
+Page selection requires a paginated input. A file without pages, such as a plain-text file, returns an error when filtered by page. For complete syntax, limits, and error conditions, see [FL\_FILTER\_PAGES](/sql-reference/functions/fl_filter_pages).
+
+Note
+
+The existing `page_filter` option remains another way to select pages. Do not specify `page_filter` in a call that uses [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages).
 
 ### Classify multiple documents
 
@@ -582,8 +568,10 @@ Copy code
 ```
 WITH single_page_extraction as (
   SELECT
-  TO_VARCHAR (AI_PARSE_DOCUMENT(docs, {'mode': 'LAYOUT',
-    'page_filter': [{'start': 0, 'end': 1}]} )) AS first_page FROM documents_table)
+  TO_VARCHAR (AI_PARSE_DOCUMENT(
+    FL_FILTER_PAGES(docs, [{'end': 1}]),
+    {'mode': 'LAYOUT', 'page_split': TRUE}
+  )) AS first_page FROM documents_table)
 SELECT AI_CLASSIFY(
   first_page,
   ['health', 'fitness','economics', 'science', 'psychology' ,'sociology','statistics', 'finance', 'Artificial Intelligence', 'Analytics'],
@@ -799,19 +787,21 @@ SELECT PARSE_JSON(
 ) AS parsed_document;
 ```
 
-AGENTIC mode also supports `page_filter` for processing selected page ranges. The following example processes only the
-first three pages of the document (page indexes 0, 1, and 2). Because `page_filter` implies page splitting, you don’t
-need to set `page_split`.
+AGENTIC mode also supports page selection. The following example processes only the
+first three pages of the document (page indexes 0, 1, and 2).
 
 Copy code
 
 ```
 SELECT PARSE_JSON(
   AI_PARSE_DOCUMENT(
-    TO_FILE('@document_stage', 'report.pdf'),
+    FL_FILTER_PAGES(
+      TO_FILE('@document_stage', 'report.pdf'),
+      [{'end': 3}]
+    ),
     {
       'mode': 'AGENTIC',
-      'page_filter': [{'start': 0, 'end': 3}]
+      'page_split': TRUE
     }
   )
 ) AS parsed_document;
@@ -1106,7 +1096,7 @@ Show lessSee more
 | --- | --- |
 | Page orientation | AI\_PARSE\_DOCUMENT automatically detects page orientation. |
 | Page splitting | AI\_PARSE\_DOCUMENT can split multi-page documents into individual pages and parse each separately. The output is split per page. |
-| Page filtering | AI\_PARSE\_DOCUMENT can process some of the pages in a document, instead of all of them, by specifying page ranges. This is useful when you know what pages the information you’re looking for is on. |
+| Page filtering | Select pages of a paginated document with [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) or the `page_filter` option. Specify the selection in only one place per call. For examples, see [Process only certain pages of a document](#label-parse-document-process-certain-pages). |
 | Characters | AI\_PARSE\_DOCUMENT detects the following characters:   - a-z - A-Z - 0-9 - À Á Â Ã Ä Å Æ Ç È É Ê Ë Ì Í Î Ï Ð Ñ Ò Ó Ô   Õ Ö Ø Ù Ú Û Ü Ý Þ ß à á â ã ä å æ ç è é ê   ë ì í î ï ð ñ ò ó ô õ ö ÷ ø ù ú û ü ý þ ÿ   Ą ą Ć ć Č č Đ đ Ę ę ı Ł ł Ń ń ō Œ œ Ś ś Š   š Ÿ Ź ź Ż ż Ž ž ʒ β δ ε з Ṡ - ! “ # $ % & ‘ ( ) \* + , - . / : ; < = > ?   @ [ ] ^ \_ ` { | } ~ ¡ ¢ £ ¥ § © ª « ­ ® ¯   ° ± ² ³ ´ µ ¶ · º » ¿ ‘ † ‡ • ‣ ⁋ ₣ ₤ ₦   ₩ € ₭ ₹ ™ ← ↑ → ↓ ↔ ↕ ↖ ↗ ↘ ↙ ↰ ↱ ↲ ↳ ↴   ↵ |
 | Images | AI\_PARSE\_DOCUMENT can extract embedded images from documents (up to 50 images per document) in addition to generating markup for them. See [Extract and describe images](#label-parse-document-extract-images) for details.  In AGENTIC mode, AI\_PARSE\_DOCUMENT supports up to 2,000 images per document. See [Agentic mode](#label-parse-document-agentic-mode) for details. |
 | Structured elements | AI\_PARSE\_DOCUMENT automatically detects and extracts tables and forms. |

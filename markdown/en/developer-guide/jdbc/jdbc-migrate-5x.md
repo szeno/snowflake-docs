@@ -24,7 +24,7 @@ The driver runs only when all of the following are true:
 
 - A 64-bit JVM, Java 8 or later.
 - Linux x86\_64 or aarch64, macOS x86\_64 or aarch64, or Windows x86\_64. On Linux the driver selects the glibc or musl library. When it cannot detect the C library, it selects glibc. Set `-Djdbc.libc=musl` on a musl host in that case.
-- `net.snowflake:snowflake-jdbc-native:5.0.0-RC1` with a platform classifier, or `net.snowflake:snowflake-jdbc-native-all:5.0.0-RC1`.
+- `net.snowflake:snowflake-jdbc-native:5.0.0-RC2` with a platform classifier, or `net.snowflake:snowflake-jdbc-native-all:5.0.0-RC2`.
 - A writable `java.io.tmpdir`. The driver copies the native library from the jar there and loads it with JNI.
 - No `snowflake-jdbc`, `snowflake-jdbc-fips`, or `snowflake-jdbc-thin` jar on the classpath.
 
@@ -32,7 +32,7 @@ Choose one package. `snowflake-jdbc-native` is the smaller one: the native libra
 
 A FIPS-compliant 5.x package is not available yet. JNA is not required.
 
-After connecting, `DatabaseMetaData.getDriverVersion()` returns `5.0.0-RC1`.
+After connecting, `DatabaseMetaData.getDriverVersion()` returns `5.0.0-RC2`.
 
 ### `snowflake-jdbc-native`
 
@@ -46,7 +46,7 @@ Copy code
 <dependency>
   <groupId>net.snowflake</groupId>
   <artifactId>snowflake-jdbc-native</artifactId>
-  <version>5.0.0-RC1</version>
+  <version>5.0.0-RC2</version>
   <classifier>linux-x86_64</classifier>
 </dependency>
 ```
@@ -56,7 +56,7 @@ Gradle:
 Copy code
 
 ```
-implementation "net.snowflake:snowflake-jdbc-native:5.0.0-RC1:linux-x86_64"
+implementation "net.snowflake:snowflake-jdbc-native:5.0.0-RC2:linux-x86_64"
 ```
 
 ### `snowflake-jdbc-native-all`
@@ -71,7 +71,7 @@ Copy code
 <dependency>
   <groupId>net.snowflake</groupId>
   <artifactId>snowflake-jdbc-native-all</artifactId>
-  <version>5.0.0-RC1</version>
+  <version>5.0.0-RC2</version>
 </dependency>
 ```
 
@@ -80,7 +80,7 @@ Gradle:
 Copy code
 
 ```
-implementation "net.snowflake:snowflake-jdbc-native-all:5.0.0-RC1"
+implementation "net.snowflake:snowflake-jdbc-native-all:5.0.0-RC2"
 ```
 
 ### Set the classifier from the build machine
@@ -127,7 +127,7 @@ Snowflake traffic does not use JSSE or the Apache HTTP client. These settings do
 - `net.snowflake.jdbc.ocspFailOpen`, `net.snowflake.jdbc.ocspResponseCacheDir`. *(BD#46)*
 - `net.snowflake.jdbc.enableBouncyCastle`, `net.snowflake.jdbc.useBundledBouncyCastleForPrivateKeyDecryption`. `privateKey`, `private_key_file`, and `private_key_base64` still work.
 - `net.snowflake.jdbc.max_connections`, `net.snowflake.jdbc.max_connections_per_route`.
-- `net.snowflake.jdbc.http_client_connection_timeout_in_ms`, `net.snowflake.jdbc.http_client_socket_timeout_in_ms`. The connection properties `HTTP_CLIENT_CONNECTION_TIMEOUT`, `HTTP_CLIENT_SOCKET_TIMEOUT`, and `networkTimeout` take milliseconds and apply in whole seconds, rounded up. Each HTTP attempt uses a 300-second wall-clock timeout, measured from the start of the attempt to the end of the response body, so arriving bytes do not extend it and a response that takes longer than five minutes fails. Result-chunk downloads are outside that limit and have no read timeout of their own. `networkTimeout` does not bound retries of query requests. *(BD#77, BD#78)*
+- `net.snowflake.jdbc.http_client_connection_timeout_in_ms`, `net.snowflake.jdbc.http_client_socket_timeout_in_ms`. The connection properties `HTTP_CLIENT_CONNECTION_TIMEOUT`, `HTTP_CLIENT_SOCKET_TIMEOUT`, and `networkTimeout` take milliseconds and apply in whole seconds, rounded up. Each HTTP attempt uses a 300-second wall-clock timeout, measured from the start of the attempt to the end of the response body, so arriving bytes do not extend it and a response that takes longer than five minutes fails. Result-chunk downloads are outside that limit. A chunk download that receives no data for 30 seconds times out and is retried with backoff. Set the timeout in seconds with `chunkDownloadReadTimeout`; setting `HTTP_CLIENT_SOCKET_TIMEOUT` explicitly also sets it, and `0` or a negative value disables the timer and retries of a body that fails mid-download. `networkTimeout` does not bound retries of query requests. *(BD#77, BD#78)*
 
 ## Proxy
 
@@ -263,6 +263,9 @@ The sections above summarize the entries most likely to affect an existing appli
 
 Earlier preview builds differed from JDBC Driver 4.x on these items. Those behavior differences have been removed:
 
+- `Statement.executeLargeUpdate(String)`, `Statement.executeLargeUpdate` with generated-keys flags, column indexes, or column names, `PreparedStatement.executeLargeUpdate()`, and `Statement.getLargeUpdateCount()` threw `UnsupportedOperationException`. They now return the affected-row count as a `long`, and the generated-keys overloads match `executeUpdate`.
+- `Statement.getGeneratedKeys()` threw `SQLFeatureNotSupportedException`. It now returns an empty result set whose getters return type defaults, as in JDBC 4.x.
+- `Connection.prepareStatement` with generated-keys flags, column indexes, or column names reported SQLState `0A000` and vendor code `200035`. It now reports no SQLState and vendor code `0`, as in JDBC 4.x.
 - A programmatic-access-token login with a token and no password connects. *(BD#1)*
 - Binding a `DATE` when `DATE_OUTPUT_FORMAT` contains `MON` succeeds. *(BD#7)*
 - `getTransactionIsolation()` returns the value last set. The default is `TRANSACTION_NONE`. *(BD#18)*

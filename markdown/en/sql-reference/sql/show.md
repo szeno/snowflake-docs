@@ -8,11 +8,9 @@ Lists the existing objects for the specified object type. The output includes me
 See also:
 :   [CREATE <object>](/sql-reference/sql/create) , [DESCRIBE <object>](/sql-reference/sql/desc)
 
-## SHOW commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Account Operations**
+## Account Operations
 
 > - [SHOW ACCOUNTS](/sql-reference/sql/show-accounts)
 > - [SHOW CONNECTIONS](/sql-reference/sql/show-connections)
@@ -24,14 +22,14 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW REPLICATION ACCOUNTS](/sql-reference/sql/show-replication-accounts)
 > - [SHOW VERSIONS IN APPLICATION PACKAGE](/sql-reference/sql/show-versions)
 
-**Session / User Operations:**
+## Session / User Operations
 
 > - [SHOW LOCKS](/sql-reference/sql/show-locks)
 > - [SHOW PARAMETERS](/sql-reference/sql/show-parameters)
 > - [SHOW TRANSACTIONS](/sql-reference/sql/show-transactions)
 > - [SHOW VARIABLES](/sql-reference/sql/show-variables)
 
-**Account Objects:**
+## Account Objects
 
 > - [SHOW APPLICATIONS](/sql-reference/sql/show-applications)
 > - [SHOW APPLICATION PACKAGES](/sql-reference/sql/show-application-packages)
@@ -63,7 +61,7 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW USERS](/sql-reference/sql/show-users)
 > - [SHOW WAREHOUSES](/sql-reference/sql/show-warehouses)
 
-**Database Objects:**
+## Database Objects
 
 > - [SHOW AGENTS](/sql-reference/sql/show-agents)
 > - [SHOW AGGREGATION POLICIES](/sql-reference/sql/show-aggregation-policies)
@@ -165,7 +163,7 @@ For specific syntax, usage notes, and examples, see:
 > - [SHOW VIEWS](/sql-reference/sql/show-views)
 > - [SHOW WORKSPACES](/sql-reference/sql/show-workspaces)
 
-**Classes:**
+## Classes
 
 > - [SHOW SNOWFLAKE.ML.ANOMALY\_DETECTION](/sql-reference/classes/anomaly-detection/commands/show-anomaly-detection#label-class-anomaly-detection-show)
 > - [SHOW BUDGET](/sql-reference/classes/budget/commands/show-budget)

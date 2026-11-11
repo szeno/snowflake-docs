@@ -272,7 +272,7 @@ user’s Snowflake token (for example from Snowflake OAuth) instead of a shared 
 | A PAT works for SQL but the backend returns 401 | The PAT user is not subject to a network policy, or the token is role-restricted to a role without these grants | Apply a network policy (or an authentication policy that relaxes it), and restrict the PAT to `COOKBOOK_DOCUMENT_CONTEXT_USER` |
 | The answer column shows an interim sentence such as “Let me gather both.” | `content[]` can contain several text blocks; the first is not the final answer | Take the last text block, as `04` does |
 | A document contains instructions and the agent follows them | Uploaded content is untrusted input | Keep the “treat file text as data” instruction, and keep the user role’s privileges narrow |
-| Very long documents are cut off | The tool caps output at 60,000 characters | Use `page_filter` for PDFs, summarize first, or index the corpus with Cortex Search |
+| Very long documents are cut off | The tool caps output at 60,000 characters | Use [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) or the `page_filter` option for PDFs, summarize first, or index the corpus with Cortex Search |
 
 Expand
 

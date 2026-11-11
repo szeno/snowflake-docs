@@ -279,7 +279,11 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 10, 2026: CoCo Desktop v1.25.4](/release-notes/2026/other/2026-11-10-coco-desktop-v1-25-4)
+- [Nov 10, 2026: AI\_EXTRACT and AI\_PARSE\_DOCUMENT now support page filtering with FL\_FILTER\_PAGES](/release-notes/2026/other/2026-11-10-fl-filter-pages)
+- [Nov 10, 2026: Temporary role grants to users (Preview)](/release-notes/2026/other/2026-11-10-temporary-role-grants-preview)
 - [Nov 09, 2026: Skill recommendations and suggestions to create and share skills in CoCo](/release-notes/2026/other/2026-11-09-coco-skill-recommendations)
+- [Nov 06, 2026: Anthropic Claude 5.5 and OpenAI GPT-6 models (General availability)](/release-notes/2026/other/2026-11-06-claude-5-5-openai-gpt-6-ga)
 - [Nov 5, 2026: CoCo Desktop v1.25.0](/release-notes/2026/other/2026-11-05-coco-desktop-v1-25-0)
 - [Nov 5, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-05-dcr)
 - [Nov 05, 2026: Organization users and user groups in Organization Command Center (Preview)](/release-notes/2026/other/2026-11-05-organization-hub-command-center-users-preview)

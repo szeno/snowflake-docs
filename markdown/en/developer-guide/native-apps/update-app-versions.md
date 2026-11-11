@@ -141,6 +141,15 @@ SHOW VERSIONS IN APPLICATION PACKAGE hello_snowflake_package;
 
 The `dropped_on` column lists the timestamp when the drop was initiated.
 
+To return immediately and complete the drop in the background, add the `ASYNC` keyword:
+
+Copy code
+
+```
+ALTER APPLICATION PACKAGE hello_snowflake_package
+  DROP VERSION v1_0 ASYNC;
+```
+
 Note
 
 The dropped version only appears in the output of this command while the state is `DROPPING`.

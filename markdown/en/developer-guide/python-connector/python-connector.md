@@ -25,6 +25,7 @@ warehouses, without using SQL. For more information, see [Snowflake Python APIs:
 **Next Topics:**
 
 - [Installing the Python Connector](/developer-guide/python-connector/python-connector-install)
+- [Connecting to Snowflake with the Python Connector](/developer-guide/python-connector/python-connector-connect)
 - [Upgrading to the Snowflake Connector for Python 5.x](/developer-guide/python-connector/python-connector-upgrade)
 - [Using the Python Connector](/developer-guide/python-connector/python-connector-example)
 - [Using asynchronous I/O with the Python Connector](/developer-guide/python-connector/python-connector-asyncio)

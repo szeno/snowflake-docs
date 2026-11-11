@@ -365,26 +365,24 @@ Don’t set a large `MIN_NODES` for a heavy wave. Raise `MAX_NODES` and the Work
 
 ### Idle shutdown
 
-The Orchestrator and every Worker shut themselves down after a period without work. The period is `DM_IDLE_SHUTDOWN_MINUTES`, `60` minutes by default, and each process reads its own value. You can’t turn idle shutdown off. For the settings, see [Idle shutdown settings](../manual-migration/data-migration-configuration-reference#idle-shutdown-settings).
+The Orchestrator and every Worker shut themselves down after 60 minutes without work. Idle shutdown is always on. To change the period, set `DM_IDLE_SHUTDOWN_MINUTES`. On SPCS, add it to the service specification. See [Idle shutdown settings](../manual-migration/data-migration-configuration-reference#idle-shutdown-settings).
 
-- **The Orchestrator** shuts down when it has had no active, pending, or upcoming work for the whole period. On SPCS, it first suspends the one Worker service named in `DM_SPCS_SUSPEND_AGENT_SERVICE`, and then suspends its own service. `scai data orchestrator setup` sets that variable to `DATA_EXCHANGE_WORKER_SERVICE`, or to the name that you pass with `--worker-service-name`.
-- **Each Worker** shuts down when it has pulled no tasks and held none for the whole period. On SPCS, it suspends its own service. On your own hosts or in Kubernetes, the Worker process exits, and your process manager decides whether to restart it.
+- **The Orchestrator** shuts down when it has no active, pending, or upcoming work. On SPCS, it suspends one Worker service and then its own service. That Worker is `DATA_EXCHANGE_WORKER_SERVICE`, or the name that you pass to `scai data orchestrator setup` with `--worker-service-name`.
+- **Each Worker** shuts down when it has no tasks. On SPCS, it suspends its own service.
+- **On your own hosts or in Kubernetes**, the process exits, and your process manager decides whether to restart it.
 
-A Worker takes its period from `DM_IDLE_SHUTDOWN_MINUTES`, or from `[idle_shutdown]` `minutes` in its TOML when the variable is unset. `scai` sets neither, so every service it creates uses 60 minutes. To change the period of an SPCS service, add the variable to its service specification.
+If a service can’t suspend itself, it stays running and tries again later. While it runs, the compute pool can’t suspend.
 
-The compute pool’s `AUTO_SUSPEND_SECS` is a separate, later step. The pool suspends only when no service is running in it, so `AUTO_SUSPEND_SECS` starts counting after idle shutdown has suspended every service in the pool. Idle shutdown stops the services; `AUTO_SUSPEND_SECS` then stops the pool’s nodes from billing. See [Compute pool sizing](../manual-migration/manual-spcs-worker-setup#compute-pool-sizing).
+Idle shutdown suspends the services, but the compute pool’s nodes keep billing until the pool suspends too. The pool suspends only after every service in it has suspended, and its `AUTO_SUSPEND_SECS` starts counting then. See [Compute pool sizing](../manual-migration/manual-spcs-worker-setup#compute-pool-sizing).
 
 ### Idle shutdown with several Workers
 
-`DM_SPCS_SUSPEND_AGENT_SERVICE` holds one service name. When you run several Worker services, the Orchestrator suspends only the one whose name you passed to `--worker-service-name`. Every other Worker service is suspended only by its own idle shutdown.
+The Orchestrator suspends only one Worker service. When you run several, every other Worker service suspends only through its own idle shutdown. This applies to Workers that you create by hand too. As a result:
 
-With several Workers, keep these points in mind:
+- A Worker with a longer `DM_IDLE_SHUTDOWN_MINUTES` keeps running after the Orchestrator suspends, and keeps the compute pool from suspending.
+- If one of those Workers can’t suspend itself, nothing else suspends it.
 
-- **The other Workers depend on their own period.** A Worker whose `DM_IDLE_SHUTDOWN_MINUTES` is longer keeps running after the Orchestrator has suspended, and keeps the pool from suspending.
-- **A failed self-suspend has no fallback for most Workers.** If a Worker can’t suspend its own service, it stays up and retries after 1, 2, 4, 8, and 16 minutes, then waits for another full idle period. The Orchestrator still suspends the Worker named in `--worker-service-name`, but no other.
-- **A Worker that you create by hand follows the same rule.** The Orchestrator suspends it only when it’s `DATA_EXCHANGE_WORKER_SERVICE` in the migration metadata schema (`SNOWCONVERT_AI.DATA_MIGRATION` by default), or the service whose name you passed to `--worker-service-name`.
-
-After a wave, run `scai data worker list` and check that every Worker is `SUSPENDED`. Suspend any that isn’t with `scai data worker stop --service-name <name>`.
+After each wave, run `scai data worker list` and check that every Worker is `SUSPENDED`. Suspend any that isn’t with `scai data worker stop --service-name <name>`. If the Orchestrator is still running, suspend it with `scai data orchestrator stop`.
 
 ### Resuming services before the next wave
 

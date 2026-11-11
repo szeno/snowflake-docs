@@ -88,6 +88,9 @@ where:
 - `myApplicationName` is an example of an identifier for your application.
 - `account_identifier` is your [account identifier](/user-guide/admin-account-identifier).
 
+To send this request over private connectivity instead of the public internet, substitute your private connectivity URL
+for the account URL. For details, see [Using the SQL API over private connectivity](/developer-guide/sql-api/about-endpoints#label-sql-api-private-connectivity).
+
 In this example, `request-body.json` contains the
 [body of the request](/developer-guide/sql-api/reference#label-sql-api-reference-post-statements-request-body):
 

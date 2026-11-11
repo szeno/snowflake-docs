@@ -26,10 +26,10 @@ Snowflake AIM for the Virtualization of Teradata is a gateway situated between t
 
 ### 2.1. System Requirements
 
-- 32 - 64 core VM (the product scales both horizontally and vertically)
+- 32–64 core VM (the product scales both horizontally and vertically)
 - 2 VMs for production workloads, behind a standard load balancer designed for failover
 - Red Hat Linux 8.x or 9.x compatible
-- 500GB of SSD data disk
+- 500 GB of SSD data disk
 - Inbound port 1025 for existing client tools
 - Inbound port 22 for operators of the virtual machine to install, test, and run the software.
 

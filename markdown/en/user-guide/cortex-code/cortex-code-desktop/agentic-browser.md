@@ -52,6 +52,26 @@ When the agent uses the browser, it can:
 The agent understands pages structurally, not as raw pixels. This makes interactions precise
 and reliable — it knows exactly which button to click or which field to fill.
 
+## Browsers in multiple chats
+
+In Agent view, each chat has its own browser panel, and the agent’s browser tools act on the
+panel of the chat that called them. A subagent uses its parent chat’s browser panel.
+
+The agent can click, press keys, drag, and take screenshots only in a browser panel that’s on
+screen. When a chat’s browser panel isn’t shown, for example because you switched to another
+chat or closed the panel, those actions fail and the agent asks you to switch to that chat and
+open its browser panel. The agent can still read the page, navigate, go back and forward, and
+run scripts on the page.
+
+Because of this, only the chat that you’re viewing can interact with its browser page. If you
+run several sessions that use the browser at the same time, the sessions that you aren’t viewing
+stop at their next click, key press, drag, or screenshot and wait for you to switch to them. For
+browser tasks such as testing an app, stay on that chat until the agent finishes, or run them
+one chat at a time.
+
+If the agent opens a page in a chat whose browser panel hasn’t opened yet, the page opens when
+you return to that chat. Until then, the agent can’t read the page.
+
 ## Sharing context with the agent
 
 ### Select Element

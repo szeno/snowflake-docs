@@ -1113,7 +1113,7 @@ Show lessSee more
 
 - `scai` sets neither `DM_IDLE_SHUTDOWN_MINUTES` nor `[idle_shutdown]` `minutes`, so the services it creates use 60 minutes.
 - `DM_SPCS_SUSPEND_AGENT_SERVICE` names one Worker service. Every other Worker service is suspended only by its own idle shutdown.
-- If a Worker can’t suspend its own service, it stays up and retries after 1, 2, 4, 8, and 16 minutes, then waits for another full idle period.
+- If a service can’t suspend itself, it stays running and tries again later. While it runs, the compute pool can’t suspend, and the pool’s nodes keep billing. After each wave, check that the Orchestrator and every Worker are suspended.
 - A suspended service stays suspended until you resume it with `scai data orchestrator start` or `scai data worker start`.
 
 For what this means when you run several Workers, and how to resume them before the next wave, see [Idle shutdown with several Workers](../data-migration-validation/deploy-workers#idle-shutdown-with-several-workers).

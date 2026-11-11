@@ -3,10 +3,6 @@ Categories:
 
 # SYSTEM$DBT\_GET\_LAST\_FAILED\_RUN\_TARGET
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 Returns the location of dbt artifacts from the most recent failed execution of a dbt project object within the previous 14 days. You can import these artifacts into another dbt project execution and use them with `--state`.
 
 ## Syntax
@@ -109,3 +105,10 @@ EXECUTE DBT PROJECT prod_database.dbt_projects.production_project
     ) AS 'state'
   );
 ```
+
+In Snowsight, open the failed query in **Query History**, then select **Re-run** in the **dbt Output** section and select **From last failed run target** to execute a
+statement that reruns the models that errored and their downstream dependencies.
+
+To rerun failed resources from a specific execution instead of the most recent one, look up its query ID and use
+[SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts). For an example, see
+[Rerun failed models from a specific execution](/sql-reference/functions/system_locate_dbt_artifacts#label-functions-locate-dbt-artifacts-rerun-failed-example).

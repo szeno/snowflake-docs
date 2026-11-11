@@ -95,8 +95,8 @@ you are working in.
 
 The header above the conversation gives you two ways to move around and hand off your work:
 
-- **Universal Navigator.** **Back** and **Forward** buttons in the Agent Manager header (each
-  with a keyboard shortcut) move across everything in Agent view — conversations, the inbox,
+- **Universal Navigator.** **Back** and **Forward** buttons in the Agent Manager header (**⌘[** and
+  **⌘]**, or **Ctrl+[** and **Ctrl+]** on Windows) move across everything in Agent view — conversations, the inbox,
   scheduled tasks, SnowBoard, the agents roster, the cron dashboard, and side panels —
   restoring the full view you were on, much like a browser’s history.
 - **“Open in” split button.** Open the current conversation’s folder in the **Editor**, **Finder**,

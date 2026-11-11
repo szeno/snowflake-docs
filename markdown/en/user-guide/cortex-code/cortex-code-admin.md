@@ -1,5 +1,9 @@
 # Enable and manage Cortex Code for your account
 
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 The CoCo Admin page in Snowsight is the console for enabling and managing Cortex
 Code (CoCo) for your Snowflake account. From one place, an account administrator
 can turn CoCo on, control who can use it and which models they can use, publish

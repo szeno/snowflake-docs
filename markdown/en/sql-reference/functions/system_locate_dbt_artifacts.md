@@ -103,3 +103,56 @@ ls 'snow://dbt/TESTDBT.PUBLIC.MY_DBT_PROJECT/results/query_id_01bf3f5a-010b-4d87
 ```
 
 You can also create an internal stage and copy the located artifacts into it for retrieval. For the full example, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
+
+### Rerun failed models from a specific execution
+
+To rerun only the resources that failed in a specific execution, first look up the query ID of the failed execution. Filter
+[`DBT_PROJECT_EXECUTION_HISTORY`](/sql-reference/functions/dbt_project_execution_history) by the dbt project object and by `state = 'HANDLED_ERROR'`. Executions with an `UNHANDLED_ERROR` state might not
+have uploaded artifacts.
+
+Copy code
+
+```
+SELECT query_id, command, args, query_end_time
+  FROM TABLE(SNOWFLAKE.INFORMATION_SCHEMA.DBT_PROJECT_EXECUTION_HISTORY(
+    DATABASE => 'ANALYTICS_DB',
+    SCHEMA => 'DBT_PROD',
+    OBJECT_NAME => 'FINANCE_ANALYTICS'
+  ))
+  WHERE state = 'HANDLED_ERROR'
+  ORDER BY query_end_time DESC
+  LIMIT 5;
+```
+
+```
++--------------------------------------+---------+--------------------+----------------------------------+
+| QUERY_ID                             | COMMAND | ARGS               | QUERY_END_TIME                   |
+|--------------------------------------+---------+--------------------+----------------------------------|
+| 01c6a772-001e-db19-0000-5349650b6cfe | run     | --select tag:daily | 2026-11-09 19:16:10.212000+00:00 |
++--------------------------------------+---------+--------------------+----------------------------------+
+```
+
+Then pass the query ID to `SYSTEM$LOCATE_DBT_ARTIFACTS` in the `IMPORTS` parameter of [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
+
+Importing this location mounts the execution’s entire results directory, and the dbt artifacts are in its `target` subdirectory. When you
+import the results `AS 'state'`, set `--state ./imports/state/target`.
+
+The `SYSTEM$DBT_GET_LAST_*_RUN_TARGET` functions work differently. They import `target` directly, so `./imports/state` contains the artifacts you need.
+
+The `result:error+` selector reruns the resources that errored and their downstream dependencies:
+
+Copy code
+
+```
+EXECUTE DBT PROJECT analytics_db.dbt_prod.finance_analytics
+  ARGS = 'run --state ./imports/state/target --select result:error+'
+  IMPORTS = (
+    SYSTEM$LOCATE_DBT_ARTIFACTS('01c6a772-001e-db19-0000-5349650b6cfe') AS 'state'
+  );
+```
+
+In Snowsight, open the failed query in **Query History**, then select **Re-run** in the **dbt Output** section and select **From query ID** to execute a
+statement that reruns the models that errored and their downstream dependencies.
+
+To rerun failed resources from the most recent failed execution without looking up a query ID, use
+[SYSTEM$DBT\_GET\_LAST\_FAILED\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_failed_run_target).

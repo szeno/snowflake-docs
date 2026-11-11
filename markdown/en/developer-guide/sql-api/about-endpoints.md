@@ -3,6 +3,21 @@
 The SQL API is available at `https://account_identifier.snowflakecomputing.com/api`, where `account_identifier` is
 your [account identifier](/user-guide/admin-account-identifier).
 
+## Using the SQL API over private connectivity
+
+You can call the SQL API over AWS PrivateLink, Azure Private Link, or Google Cloud Private Service Connect instead of the
+public internet. To do so, substitute your account’s private connectivity URL for the standard account URL in all SQL
+API requests, including the base URL and the `statementHandle` URLs.
+
+To determine the private connectivity URL for your account, run [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config)
+as the `ACCOUNTADMIN` role and use the returned `privatelink-account-url` value.
+
+Before you can use private connectivity, you must configure it for your account. For instructions, see:
+
+- [AWS PrivateLink and Snowflake](/user-guide/admin-security-privatelink) (AWS)
+- [Azure Private Link and Snowflake](/user-guide/privatelink-azure) (Azure)
+- [Google Cloud Private Service Connect and Snowflake](/user-guide/private-service-connect-google) (Google Cloud)
+
 Beginning with Snowflake version 6.3, the API consists of the `/api/v2/statements/` resource and provides the following endpoints:
 
 | Endpoint | Description |

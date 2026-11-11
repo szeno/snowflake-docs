@@ -2,10 +2,6 @@
 
 A DBT PROJECT is a schema-level object that contains the source files and artifacts for a deployed dbt project in Snowflake. Its project directory contains a `dbt_project.yml` file at the root and the model files that define your data pipeline.
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 A dbt project object has one mutable version named `live`. The files are available at a path in the following form:
 
 ```

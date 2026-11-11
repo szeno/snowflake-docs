@@ -37,6 +37,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ AUTO_REFRESH = { TRUE | FALSE } ]
   [ TARGET_FILE_SIZE = { AUTO | 16MB | 32MB | 64MB | 128MB } ]
   [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ]
+  [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]
   [ CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
   [ LOG_EVENT_LEVEL = { ERROR | WARN | INFO | DEBUG } ]
   [ ERROR_LOGGING = { TRUE | FALSE } ]
@@ -281,6 +282,14 @@ Where:
     :   Specifies the path layout that Snowflake uses when writing Parquet data files to the table. You can set this parameter for an existing table. To reset the parameter to the default (`FLAT`), use `UNSET PATH_LAYOUT`.
 
         For more information about this parameter, see [PATH\_LAYOUT](/sql-reference/parameters#label-path-layout).
+
+    `STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED }`
+    :   Specifies the storage serialization policy that Snowflake uses to encode and compress the data files it writes to the table. You can set
+        this parameter only for externally managed Iceberg tables, including tables in a catalog-linked database. For Snowflake-managed tables,
+        you can’t change the storage serialization policy after you create the table.
+
+        - `COMPATIBLE`: Snowflake performs encoding and compression of data files that ensures interoperability with third-party compute engines.
+        - `OPTIMIZED`: Snowflake performs encoding and compression of data files that ensures the best table performance within Snowflake.
 
     `CONTACT purpose = contact [ , purpose = contact ... ]`
     :   Associate the existing object with one or more [contacts](/user-guide/contacts-using). For a list of valid purposes, see [Associate a contact with an object](/user-guide/contacts-using#label-contacts-associate).

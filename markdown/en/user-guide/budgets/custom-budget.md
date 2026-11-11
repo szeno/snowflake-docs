@@ -46,7 +46,7 @@ For more information, including how tag values are overridden, see [Tag inherita
 
 ### Tracking an object with multiple budgets
 
-Multiple budgets can add the same tag/value pair, which means more than budget can track credit usage of the same object. For
+Multiple budgets can add the same tag/value pair, which means more than one budget can track credit usage of the same object. For
 example, suppose you add the tag `cost_center = 'eng'` to both `budget_1` and `budget_2`. As a warehouse with tag
 `cost_center = 'eng'` consumes credits, it will count toward the credit limit of both `budget_1` and `budget_2`.
 
@@ -103,7 +103,7 @@ You can create a custom budget using Snowsight or by executing SQL statements.
 You can use a custom role to create budgets in your account. For a full list of privileges and roles that must be granted to a
 role to create a custom budget, see [Budgets roles and privileges](/user-guide/budgets#label-budgets-roles-and-privileges).
 
-The following example creates a role named `budget_owner` role and grants the required role and privileges to create custom
+The following example creates a role named `budget_owner` and grants the required role and privileges to create custom
 budgets in the schema `budgets_db.budgets_schema`. The example must be executed using the ACCOUNTADMIN role:
 
 Copy code
@@ -155,7 +155,7 @@ can [create custom budgets using SQL](#label-create-custom-budget-sql).
    7. Select **Next**.
 6. On the **Budget scope** page, add the objects that you want to add to the custom budget.
 
-   - If you are [using tags](#label-custom-budget-about-tags) to track consumption by objects, compete the following steps:
+   - If you are [using tags](#label-custom-budget-about-tags) to track consumption by objects, complete the following steps:
 
      1. Select the **Tags on resources** drop-down list.
      2. Find the appropriate tag, then expand it and select one or more values.
@@ -306,7 +306,7 @@ When adding tags to the budget in Snowsight, keep the following in mind:
 
 ### Use SQL commands to add or remove tags from a custom budget
 
-The role used to add or remove an tag from a budget must have the APPLYBUDGET privilege on the tag. For more information, see the examples
+The role used to add or remove a tag from a budget must have the APPLYBUDGET privilege on the tag. For more information, see the examples
 in the [Create a custom role to manage a custom budget](#label-custom-budgets-admin-role) section.
 
 To review the list of tags already in the custom budget, call the budget’s
@@ -346,7 +346,7 @@ Tags must be added to or removed from a budget by [reference](/sql-reference/ref
 
       The [SYSTEM$REFERENCE](/sql-reference/functions/system_reference) function creates a reference for the tag `cost_center`, with the
       APPLYBUDGET privilege granted on the tag. This enables the budget to monitor the objects in your account that have the specified
-      tag/value pair in your account. The third parameter to the function specifies the scope for the reference; in this
+      tag/value pair. The third parameter to the function specifies the scope for the reference; in this
       case, ‘SESSION’ creates a reference with session scope. References passed to the ADD\_RESOURCE\_TAG method for a budget can be created
       with any transient reference scope (that is, the third parameter can be either ‘SESSION’ or ‘CALL’).
 2. You can remove the tag *cost\_center* from the budget `my_budget` by using the following steps:

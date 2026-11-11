@@ -7,16 +7,14 @@ DESCRIBE can be abbreviated to DESC.
 See also:
 :   [CREATE <object>](/sql-reference/sql/create) , [SHOW <objects>](/sql-reference/sql/show)
 
-## DESCRIBE commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Session/Query Operations:**
+## Session/Query Operations
 
 > - [DESCRIBE RESULT](/sql-reference/sql/desc-result)
 > - [DESCRIBE TRANSACTION](/sql-reference/sql/desc-transaction)
 
-**Account Objects:**
+## Account Objects
 
 > - [DESCRIBE APPLICATION](/sql-reference/sql/desc-application)
 > - [DESCRIBE APPLICATION PACKAGE](/sql-reference/sql/desc-application-package)
@@ -35,7 +33,7 @@ For specific syntax, usage notes, and examples, see:
 > - [DESCRIBE USER](/sql-reference/sql/desc-user)
 > - [DESCRIBE WAREHOUSE](/sql-reference/sql/desc-warehouse)
 
-**Database Objects:**
+## Database Objects
 
 > - [DESCRIBE AGENT](/sql-reference/sql/desc-agent)
 > - [DESCRIBE AGGREGATION POLICY](/sql-reference/sql/desc-aggregation-policy)

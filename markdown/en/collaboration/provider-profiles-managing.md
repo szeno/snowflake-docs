@@ -1,6 +1,6 @@
 # Manage your provider profile
 
-This page explains the roles and privileges you need to manage a provider profile, and how to create, edit, and delete the profile that controls the company name, logo, and contact details shown on your listings.
+This page explains the roles and privileges you need to manage a provider profile, and how to create, edit, and delete the profile that controls the company name, logo, and contact details shown on your listings. If you need to publish from a different Snowflake account, see how to replace the profile in [Move your provider profile to another account](#label-move-provider-profile-to-another-account).
 
 **On this page**
 
@@ -8,6 +8,7 @@ This page explains the roles and privileges you need to manage a provider profil
 2. [Create a profile](#label-create-provider-profile)
 3. [Edit your provider profile](#label-edit-provider-profile)
 4. [Delete your provider profile](#label-delete-provider-profile)
+5. [Move your provider profile to another account](#label-move-provider-profile-to-another-account)
 
 Tip: Common reasons provider profiles are rejected
 
@@ -109,3 +110,20 @@ You can delete your provider profile as long as your profile is not associated w
 
    If the **Delete Profile** option is inactive, make sure that no listings are associated with the profile.
 6. Select **Delete**.
+
+## 5. Move your provider profile to another account
+
+A provider profile is tied to the Snowflake account where it was first created. You can’t transfer a profile or its approval status to another account, and Snowflake can’t migrate or delete a profile on your behalf.
+
+To publish a new profile from a different account, delete the existing profile and create a new one in the target account.
+
+1. **Confirm the target account.** Before you change anything, confirm that the target account is the one you intend to publish from.
+2. **Decide how to handle your listings.** You can delete a profile only when no listings are associated with it, either published or unpublished. Choose one of the following:
+
+   - **Option A: Remove your listings.** For public listings, unpublish and remove each listing. For more information, see [Remove listings as a provider](/collaboration/provider-listings-removing).
+   - **Option B: Disassociate your listings.** For private listings, select the listing, go to the **Profile** associated with the listing, and deselect the profile you want to delete.
+3. **Delete the existing profile.** Follow the steps in [4. Delete your provider profile](#label-delete-provider-profile). If the **Delete Profile** option is inactive, a listing is still associated with the profile. Move or remove that listing, and then try again.
+4. **Create a new profile in the target account.** To create the new profile, you must use the `ACCOUNTADMIN` role or a role that has the global `CREATE LISTING` privilege. Follow the steps in [Set up a provider profile](/collaboration/provider-becoming#label-creating-provider-profile-marketplace). For a description of the fields, see [Provider profile fields](#label-configuring-metadata-for-provider-profile).
+
+   The new profile must represent the same legal entity as the profile you deleted.
+5. **Wait for approval.** Snowflake must review and approve the new profile before it appears on the Snowflake Marketplace. Approval status doesn’t carry over from the old profile.

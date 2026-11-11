@@ -5,20 +5,19 @@ Restores the specified object to the system. This command is part of the [Time T
 See also:
 :   [CREATE <object>](/sql-reference/sql/create) , [DROP <object>](/sql-reference/sql/drop) , [SHOW <objects>](/sql-reference/sql/show)
 
-## UNDROP commands
-
 For specific syntax, usage notes, and examples, see:
 
-**Organization Objects:**
+## Organization Objects
 
 - [UNDROP ACCOUNT](/sql-reference/sql/undrop-account)
 
-**Account Objects:**
+## Account Objects
 
 > - [UNDROP DATABASE](/sql-reference/sql/undrop-database)
 
-**Database Objects:**
+## Database Objects
 
+> - [UNDROP AGENT](/sql-reference/sql/undrop-agent)
 > - [UNDROP DYNAMIC TABLE](/sql-reference/sql/undrop-dynamic-table)
 > - [UNDROP EXTERNAL VOLUME](/sql-reference/sql/undrop-external-volume)
 > - [UNDROP ICEBERG TABLE](/sql-reference/sql/undrop-iceberg-table)

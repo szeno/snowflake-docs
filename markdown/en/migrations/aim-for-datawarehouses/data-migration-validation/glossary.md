@@ -4,7 +4,7 @@ Terms used across AIM DMV documentation, listed alphabetically.
 
 ## Accepted transformation
 
-A declarative rule in a validation workflow that whitelists a specific source-to-target value pair on a column (or columns matching a regex pattern). AIM DMV does not report matching diffs as mismatches. Requires L3 row validation. See [Accepted transformations](./data-validation#accepted-transformations).
+A declarative rule in a validation workflow that allowlists a specific source-to-target value pair on a column (or columns matching a regex pattern). AIM DMV does not report matching diffs as mismatches. Requires L3 row validation. See [Accepted transformations](./data-validation#accepted-transformations).
 
 ## AIM DMV
 

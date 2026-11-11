@@ -5,10 +5,6 @@ the same live version.
 
 Note
 
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
-Note
-
 The `live` object version is distinct from the dbt runtime version used for execution. For information about dbt Core and dbt Fusion runtime versions, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
 
 Snowflake stores the live version in the dbt project stage at a path in the following form:

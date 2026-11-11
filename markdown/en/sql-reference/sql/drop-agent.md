@@ -3,7 +3,7 @@
 Removes the specified [Cortex Agent](/user-guide/snowflake-cortex/cortex-agents) with the specified name from the current or specified database and schema.
 
 See also:
-:   [ALTER AGENT](/sql-reference/sql/alter-agent), [CREATE AGENT](/sql-reference/sql/create-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
+:   [ALTER AGENT](/sql-reference/sql/alter-agent), [CREATE AGENT](/sql-reference/sql/create-agent), [DESCRIBE AGENT](/sql-reference/sql/desc-agent), [SHOW AGENTS](/sql-reference/sql/show-agents), [UNDROP AGENT](/sql-reference/sql/undrop-agent), [DATA\_AGENT\_RUN (SNOWFLAKE.CORTEX)](/sql-reference/functions/data_agent_run-snowflake-cortex)
 
 ## Syntax
 
@@ -47,6 +47,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 - When the IF EXISTS clause is specified and the target object doesn’t exist, the command completes successfully
   without returning an error.
+
+- You can restore a dropped agent with [UNDROP AGENT](/sql-reference/sql/undrop-agent) within the
+  [Time Travel](/user-guide/data-time-travel) retention period.
 
 ## Examples
 

@@ -175,6 +175,14 @@ SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name>
   - The `granted_to` column specifies `APPLICATION PACKAGE SHARE`.
 - The `granted_by_role_type` column specifies the type of grantor role that performed the grant: `ROLE`, `DATABASE_ROLE`, or
   `APPLICATION_ROLE`. This column only appears in the output when using the SHOW GRANTS ON syntax.
+- The output of SHOW GRANTS TO USER and SHOW GRANTS OF ROLE includes an `expires_on` column as the last column. For a
+  [temporary grant of a role to a user](/sql-reference/sql/grant-role#label-grant-role-temporary-grants), the column contains the time when the grant expires. In
+  all other rows, including permanent grants, the column is `NULL`. Grants that have expired aren’t listed. The output of
+  SHOW GRANTS OF DATABASE ROLE and SHOW GRANTS OF APPLICATION ROLE doesn’t include the column.
+
+  [Preview Feature](/release-notes/preview-features) — Open
+
+  Temporary role grants to users are in preview, and are available to all accounts.
 - A data sharing consumer can only view the privileges on objects that are [granted to the share](/sql-reference/sql/grant-privilege-share), such as
   SELECT on a table. Depending on how the grants are set up, the output of a SHOW GRANTS command that is run by the consumer might show
   empty values for shared objects in the following columns: `granted_to`, `grantee_name`, `granted_by_role_type`, and

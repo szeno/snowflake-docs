@@ -9,11 +9,6 @@ and the **Current Project** channel for other operations. Compiled SQL is separa
 artifacts exist, **View Compiled SQL** in the editor title bar opens the compiled file beside your
 model.
 
-Note
-
-The Project Action Bar is the dbt layout you get by default. To go back to the previous dbt view,
-open **User Settings**, set `dbt.redesign` to `false`, and reload the window.
-
 ## Getting started
 
 For guided, in-context help while you work, use the
@@ -316,14 +311,7 @@ Snowflake-managed mode, see [Execution mode](#execution-mode).
 | `dbt.allowListFolders` | Restricts project discovery to the listed folders under each workspace root, for example `analytics` or `analytics/core`. An empty list scans everything. Matching is case-sensitive and by path segment: `analytics` includes `analytics/core`, not `analytics-old/core`. `.` or `/` means the workspace folder root and matches everything, the same as an empty list. |
 | `dbt.executionMode` | The execution mode for dbt commands, either `local` or `snowflake-managed`. **Switch to Snowflake-managed** writes to it: to **Workspace Settings** when the workspace already sets it, and to **User Settings** otherwise. |
 | `dbt.snowflakeManaged.executionTimeout` | How long to wait, in seconds, for a Snowflake-managed `EXECUTE DBT PROJECT` before cancelling. The default is 14400 (4 hours) and the minimum is 60. When the wait expires, CoCo Desktop cancels the statement and reports the run as failed. |
-| `dbt.redesign` | Whether CoCo Desktop uses the Project Action Bar layout. It’s on by default. |
 
 Expand
 
 Show lessSee more
-
-To go back to the previous dbt view:
-
-1. Open **User Settings**.
-2. Set `dbt.redesign` to `false`.
-3. Reload the window.

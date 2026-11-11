@@ -18,10 +18,6 @@ If no new rows exist since the last run, dbt still runs the filter query to chec
 
 For small tables that update infrequently, a full `table` materialization is simpler and often just as fast. Use incremental models where the scan reduction provides a measurable benefit.
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 ### Use defer to production during development
 
 When you run only part of your DAG during development, dbt still needs relations for any unbuilt upstream models. Use `--defer` with production state so that dbt resolves these upstream references to existing production relations instead of rebuilding the upstream models in the development target.
@@ -167,20 +163,19 @@ For a comprehensive overview of orchestration options including Apache Airflow i
 
 When a `run` or `build` fails partway through, rerunning the complete command repeats work that already succeeded. `dbt retry` can avoid a complete rerun, but it replays the previous invocation with its original arguments and selection, so you can’t review or change which resources dbt reruns.
 
-For more control, import the failed execution’s state with [SYSTEM$DBT\_GET\_LAST\_FAILED\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_failed_run_target), then use an explicit result selector:
+We recommend rerunning failed resources by the failed execution’s query ID with [SYSTEM$LOCATE\_DBT\_ARTIFACTS](/sql-reference/functions/system_locate_dbt_artifacts). In Snowsight, open the failed query in **Query History**, then select **Re-run** in the **dbt Output** section and select **From query ID** to execute a statement that reruns the models that errored and their downstream dependencies:
 
 Copy code
 
 ```
 EXECUTE DBT PROJECT prod_database.dbt_projects.production_project
-  ARGS = 'run --state ./imports/state --select result:error+'
+  ARGS = 'run --state ./imports/state/target --select result:error+'
   IMPORTS = (
-    SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET(
-      'prod_database.dbt_projects.production_project',
-      'run,build'
-    ) AS 'state'
+    SYSTEM$LOCATE_DBT_ARTIFACTS('01c6a772-001e-db19-0000-5349650b6cfe') AS 'state'
   );
 ```
+
+To rerun failed resources from the most recent failed execution, use [SYSTEM$DBT\_GET\_LAST\_FAILED\_RUN\_TARGET](/sql-reference/functions/system_dbt_get_last_failed_run_target).
 
 The `result:error+` selector reruns resources that errored and their downstream dependencies. For failed tests, use `1+result:fail+` to rerun the failed tests, their parent models, and downstream resources.
 

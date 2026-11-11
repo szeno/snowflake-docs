@@ -10,10 +10,6 @@ This guide explains how to:
 - Run a dbt project object concurrently.
 - Retrieve dbt artifacts for a specific query.
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 ## Concepts
 
 ### Slim CI and defer to production
@@ -167,7 +163,10 @@ For an end-to-end Slim CI example that uses `--env` and `--env-vars` with an iso
 
 When a `run` or `build` fails partway through, rerunning the complete command repeats work that already succeeded. `dbt retry` can avoid a complete rerun, but it replays the previous invocation with inherited arguments and selected resources, giving you less control over what dbt reruns.
 
-If you know the failed execution’s query ID, import its results with
+In Snowsight, open the failed query in **Query History**, then select **Re-run** in the **dbt Output** section and select **From query ID** to execute a statement
+that reruns the models that errored and their downstream dependencies.
+
+For the most control, import the failed execution’s results by its query ID with
 [`SYSTEM$LOCATE_DBT_ARTIFACTS`](/sql-reference/functions/system_locate_dbt_artifacts), then use an explicit result selector:
 
 Copy code
@@ -180,7 +179,9 @@ EXECUTE DBT PROJECT my_dbt_project
   );
 ```
 
-If you don’t know the query ID, import the most recent failed execution’s state with
+If you don’t know the query ID, either
+[look it up first](/sql-reference/functions/system_locate_dbt_artifacts#label-functions-locate-dbt-artifacts-rerun-failed-example)
+or import the most recent failed execution’s state with
 [`SYSTEM$DBT_GET_LAST_FAILED_RUN_TARGET`](/sql-reference/functions/system_dbt_get_last_failed_run_target), then use an explicit result selector:
 
 Copy code

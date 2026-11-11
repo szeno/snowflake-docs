@@ -2,10 +2,6 @@
 
 In dbt Projects on Snowflake, deploying a dbt project object means copying your dbt project code into Snowflake to create the object or replace its live version in a single operation. You can deploy with the `snow dbt deploy` command in Snowflake CLI, Snowsight, or the `CREATE DBT PROJECT` and `ALTER DBT PROJECT ... DEPLOY` SQL commands.
 
-Note
-
-Some features described on this page require a dbt project object that uses the mutable `live` version. To get a live-version object, opt in to the 2026\_06 behavior change bundle or ask your Snowflake account representative to enable the separate single live version feature. Then create or replace the object, or migrate an existing versioned object with `SYSTEM$MIGRATE_DBT_PROJECT`. For details, see [dbt Projects on Snowflake: dbt project objects migrate to a single mutable live version](/release-notes/bcr-bundles/2026_06/bcr-2362).
-
 ## Deploy a dbt project object using Snowflake CLI
 
 This is the recommended approach for deploying dbt project objects. Use Snowflake CLI in a CI/CD pipeline. For a full walkthrough from setup to deployment,

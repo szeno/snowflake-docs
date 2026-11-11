@@ -776,6 +776,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | **U** |  |
 | [UNDROP <object>](/sql-reference/sql/undrop) | Restores the specified object to the system. |
 | [UNDROP ACCOUNT](/sql-reference/sql/undrop-account) | Restores a [dropped account](/user-guide/organizations-manage-accounts-delete) that has not yet been permanently deleted (a dropped account that is within its grace period). |
+| [UNDROP AGENT](/sql-reference/sql/undrop-agent) | Restores the most recent version of a dropped Cortex Agent. |
 | [UNDROP DATABASE](/sql-reference/sql/undrop-database) | Restores the most recent version of a dropped database. |
 | [UNDROP DYNAMIC TABLE](/sql-reference/sql/undrop-dynamic-table) | Restores the most recent version of a dropped [dynamic table](/user-guide/dynamic-tables/overview). |
 | [UNDROP EXTERNAL VOLUME](/sql-reference/sql/undrop-external-volume) | Restores the most recent version of a dropped [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def). |

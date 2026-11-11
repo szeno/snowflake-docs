@@ -118,7 +118,10 @@ Note the following:
 
 ## Step 3: Test the ODBC Driver
 
-You can use the `iodbctest` command-line utility provided with iODBC to test the DSNs you create.
+You can use the `iodbctest` command-line utility provided with iODBC to test the DSNs you create. If the utility isn’t installed,
+install the iODBC SDK package (`iODBC-SDK.pkg`) described in the iODBC section of this topic. That package installs the utility
+in `/Library/Application Support/iODBC/bin`, which is the path used in the example below. If you installed iODBC another way,
+use the `iodbctest` executable from that installation instead.
 
 When prompted for the ODBC connect string, enter the required connection parameters (DSN name, server, user login name, and password), as well as any other parameters that you would like to enter as part of the connect string. The
 connect string takes parameters in the form of `<parameter_name>=<value>`, e.g. `dsn=testodbc2`, with each parameter separated by a semi-colon (`;`) and no blank spaces. For the list of supported parameters, see

@@ -63,6 +63,8 @@ AI_EXTRACT( file => <file>,
 
     The files must be less than 100 MB in size.
 
+    To extract information from selected pages of a paginated document, pass [`FL_FILTER_PAGES`](/sql-reference/functions/fl_filter_pages) as the `file` argument. `AI_EXTRACT` processes only the selected pages. For page-range syntax and restrictions, see [FL\_FILTER\_PAGES](/sql-reference/functions/fl_filter_pages).
+
 `responseFormat`
 :   Information to be extracted. The format depends on the type of extraction.
 
@@ -474,6 +476,10 @@ For information about granting this privilege, see [Cortex LLM privileges](/user
 
 - AI\_EXTRACT is optimized for both digital-born and scanned documents.
 - You can’t use both `text` and `file` parameters simultaneously in the same function call.
+- Page selection with `FL_FILTER_PAGES` applies to the `file` argument, not the `text` argument. Files without pages, such as plain-text files, cannot be filtered by page.
+- Use `FL_FILTER_PAGES` directly inside the `AI_EXTRACT` call. The selection applies only to that call; it is not stored on the `FILE` value and does not create a new document.
+- Multiple ranges select pages from the original document. Overlapping ranges do not cause the same page to be processed more than once, and selected pages are processed in document order.
+- A valid selection that resolves to no pages returns an empty result. For invalid selections and other page-selection errors, see [Error conditions](/sql-reference/functions/fl_filter_pages#label-fl-filter-pages-error-conditions).
 - With [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) enabled:
 
   - File extraction supports documents of up to 1,000 pages. A document that exceeds the limit returns an error for that document.
@@ -717,6 +723,27 @@ SELECT AI_EXTRACT(
   }
 );
 ```
+
+### Extract information from the first and last pages
+
+The following example selects the first and last pages of a contract:
+
+Copy code
+
+```
+SELECT AI_EXTRACT(
+  file => FL_FILTER_PAGES(
+    TO_FILE('@document_stage', 'contract.pdf'),
+    [{'end': 1}, {'start': -1}]
+  ),
+  responseFormat => {
+    'agreement_title': 'What is the title of this agreement?',
+    'signed_by': 'Who signed this agreement?'
+  }
+) AS extracted_data;
+```
+
+On a 10-page document, this selects pages with indexes 0 and 9. It does not process the intervening pages.
 
 ### Combined extraction
 

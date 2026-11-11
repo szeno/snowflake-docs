@@ -254,6 +254,17 @@ USE ROLE ACCOUNTADMIN;
 ALTER ACCOUNT SET ENFORCE_NETWORK_RULES_FOR_INTERNAL_STAGES = true;
 ```
 
+Important
+
+When `ENFORCE_NETWORK_RULES_FOR_INTERNAL_STAGES = TRUE`, Snowflake evaluates internal stage access using network rules only.
+In this mode:
+
+- `ALLOWED_NETWORK_RULE_LIST` and `BLOCKED_NETWORK_RULE_LIST` are enforced.
+- `ALLOWED_IP_LIST` and `BLOCKED_IP_LIST` aren’t used for internal stage access.
+
+If you previously allowed IP ranges by using `ALLOWED_IP_LIST`, recreate them as IPv4 network rules and add them to `ALLOWED_NETWORK_RULE_LIST`.
+Otherwise, internal stage requests, such as JDBC chunk downloads, can fail with 403 errors.
+
 #### Guidelines for internal stages
 
 We recommend that you follow these guidelines when creating network policies and network rules to restrict access to internal stages.
