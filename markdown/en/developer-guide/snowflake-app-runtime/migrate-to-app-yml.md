@@ -187,7 +187,7 @@ left properties you set in SQL in place.
 With `app.yml`, every deploy applies the full manifest. A field you omit
 goes back to its default. A leftover `profile:` block is why label,
 description, and icon are cleared. A change you make with
-`ALTER APPLICATION SERVICE` (auto-suspend, query warehouse, integrations,
+`ALTER APPLICATION SERVICE` (query warehouse, integrations,
 and similar) is reverted the next time anyone deploys.
 
 `--promote-only` still skips upload and build. It now reapplies the

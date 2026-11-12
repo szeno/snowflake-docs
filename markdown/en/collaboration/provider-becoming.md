@@ -14,7 +14,7 @@ When you share data as a provider, you can do the following:
 
 To offer listings to consumers privately or on the Snowflake Marketplace, you must meet the following requirements:
 
-- You must use a full Snowflake account. Trial accounts can share data with specified consumers, but not on the Snowflake Marketplace.
+- You must use a full Snowflake account, either Capacity or On Demand. Trial and Partner Access accounts are not eligible for Snowflake Marketplace listings. Trial accounts can share data with specified consumers, but not on the Snowflake Marketplace.
 - You must not be using a Reader Account.
 - You must have the ACCOUNTADMIN role or be assigned a role with provider privileges.
   See [Privileges required for working with listings](#label-permissions-required-for-working-with-listings-and-shares).

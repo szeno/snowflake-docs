@@ -292,8 +292,10 @@ can’t change it after the app is created. See
 ### auto\_suspend\_secs
 
 Idle seconds before suspend. Defaults to `0`, which means never
-auto-suspend. The minimum non-zero value is `300`. See
-[Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+auto-suspend. The minimum non-zero value is `300`. Setting a nonzero value
+isn’t recommended: when a suspended app resumes, requests return errors until
+it’s ready. See
+[Auto-suspend](/developer-guide/snowflake-app-runtime/scale-and-suspend#label-snowflake-app-runtime-scale-auto-suspend).
 
 ### min\_instances and max\_instances
 

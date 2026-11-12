@@ -302,8 +302,10 @@ You focus on application code; Snowflake handles packaging and service lifecycle
 ## Query Snowflake from your app
 
 After you have a live URL, your app can query Snowflake with no credentials
-to manage. The `snowflake-apps` skill adds `lib/snowflake.ts`, which wraps
-the driver; call `querySnowflake` from that module to run SQL.
+to manage. The `snowflake-apps` skill adds `lib/snowflake.ts`, which creates a
+client from the
+[Snowflake App Runtime SDK for Node.js](/developer-guide/snowflake-app-runtime/nodejs-sdk).
+To run SQL, import `snowflake` from that module and call `snowflake.query()`.
 
 For owner’s rights versus caller’s rights and caller grants, see
 [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake). For what Snowflake

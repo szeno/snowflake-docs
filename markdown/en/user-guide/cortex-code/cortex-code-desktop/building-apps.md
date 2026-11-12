@@ -130,7 +130,7 @@ Snowflake App Runtime produces a full-stack web application with a custom UI, de
 ### What you get
 
 - A complete project with pages, API routes, and a Snowflake data layer
-- A `lib/snowflake.ts` module providing `querySnowflake` and `querySnowflakeLongRunning` helpers with built-in SPCS OAuth
+- A `lib/snowflake.ts` module that creates a Snowflake client from the [Snowflake App Runtime SDK for Node.js](/developer-guide/snowflake-app-runtime/nodejs-sdk)
 - An `app.yml` for deployment and build configuration
 - Support for both Owner’s Rights and Caller’s Rights authentication
 
@@ -150,7 +150,7 @@ Show lessSee more
 
 Note
 
-Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, pass `{ callersRights: true }` to your query helper. You don’t configure anything in `app.yml` for Caller’s Rights.
+Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, call `asCaller()` from `lib/snowflake.ts` and query through the caller view it returns. You don’t configure anything in `app.yml` for Caller’s Rights. For more information, see [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
 
 ### Developing locally
 

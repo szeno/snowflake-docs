@@ -173,7 +173,7 @@ Snowflake allows SaaS providers to list their Connected Applications on Snowflak
 - **Partner network tier:** Providers must be active members of the [Snowflake Partner Network (SPN)](https://www.snowflake.com/en/why-snowflake/partners/), be enrolled in the AI Data Cloud Products Partner Program, and hold a **Connected Application Select** tier designation or higher.
 - **CSID requirement:** Each Connected Application must use a Connection String Identifier (CSID) to enable full telemetry and usage tracking. Providers are encouraged to consolidate to a single CSID per application; however, multiple CSIDs are also supported where necessary. The CSID(s) must be initially submitted through SPN and will subsequently be required in your listing submission and verified during the review process.
 - **Security transparency:** Providers must complete a short **Security & Data Handling Attestation** as part of the listing process.
-- **Listing type:** All Connected Application listings must leverage a public, paid listing and fulfill deals using standard or private offers.
+- **Listing type and account type:** All Connected Application listings must leverage a public, paid listing and fulfill deals using standard or private offers. You must use a full Snowflake account, either Capacity or On Demand. Trial and Partner Access accounts are not eligible for Marketplace listings.
 
 ### Ongoing standards for Connected Applications on Snowflake Marketplace
 
@@ -189,15 +189,15 @@ Complete the following steps to verify eligibility against the [requirements to 
 1. **Be an active SPN partner.** Enroll at the **Connected Application Select** tier designation or higher within the AI Data Cloud Products Partner Program.
 
    - Enroll through the [Snowflake Partner Network (SPN) portal](https://spn.snowflake.com/s/welcome).
-   - For tiering requirements, see the [Snowflake Partner Program guide, slide 23](https://docs.google.com/presentation/d/1Mx4M1yUqxsn2Nh-7kAH6Pt-SCwbqWhV4gLY5x-cBHoU/edit?slide=id.g3f137633438_70_1253#slide=id.g3f137633438_70_1253).
+   - For tiering requirements, see the [Snowflake Partner Program guide, slide 15](https://docs.google.com/presentation/d/1Mx4M1yUqxsn2Nh-7kAH6Pt-SCwbqWhV4gLY5x-cBHoU/edit?slide=id.h23d130bb7332773c_12_1595#slide=id.h23d130bb7332773c_12_1595).
 2. **Register a valid Connection String Identifier (CSID).** Register a valid CSID for your application.
 
    - Register your CSID in the [SPN portal](https://spn.snowflake.com/s/welcome).
-   - For instructions, see the [Snowflake Partner Program guide, slides 48–49](https://docs.google.com/presentation/d/1Mx4M1yUqxsn2Nh-7kAH6Pt-SCwbqWhV4gLY5x-cBHoU/edit?slide=id.g3129d98d42c_1077_15225#slide=id.g3129d98d42c_1077_15225).
+   - For instructions, see [CSID registration instructions](https://snowflake.seismic.com/Link/Content/DChDM4jJ3qTp3GTHXg2mcX74hmM8).
    - For connector best practices, see the [Snowflake Native Connector Best Practices guide](https://drive.google.com/file/d/1brffBv7QXPFzv5lsEtUU9fjD5U8KxcXq/view).
 3. **Complete Connected Application technical validation.** Apply for Connected Application technical validation through the SPN portal.
 
-   - For details, see the [Snowflake Partner Program guide, slides 98–101](https://docs.google.com/presentation/d/1Mx4M1yUqxsn2Nh-7kAH6Pt-SCwbqWhV4gLY5x-cBHoU/edit?slide=id.g3ccba5b4430_20_4115#slide=id.g3ccba5b4430_20_4115).
+   - For details, see [Connected Application technical validation instructions](https://snowflake.seismic.com/Link/Content/DCCJjM7QPm9V9GqG2c4c8hfJqW3V).
 4. **Create a provider profile.** Create a Snowflake Marketplace provider profile if your organization does not already have one.
 
    - See [Manage your provider profile](/collaboration/provider-profiles-managing) and the [Snowflake Marketplace Provider Playbook, page 46](https://www.snowflake.com/wp-content/uploads/2023/08/sm-provider-playbook-extended-ver.pdf#page=46).

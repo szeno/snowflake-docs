@@ -196,7 +196,7 @@ Either way, see
 ## Evaluate a profile
 
 A profile is a Cortex Agent configured with the
-[`agent_router`](/LIMITEDACCESS/snowflake-cortex/cortex-agents-router) tool, which inspects each
+[`agent_router`](/user-guide/snowflake-cortex/cortex-agents-router) tool, which inspects each
 user question and routes it to the appropriate subagent in the profile (or answers directly using
 the profile’s own [capabilities](#label-cowork-profiles-capabilities)). Because routing questions to
 the right subagent is a profile’s primary responsibility, evaluating `agent_router` is central to
@@ -219,5 +219,5 @@ with details on how TSA and TEA are graded, see
 and
 [Tool selection and execution metrics ground truth](/user-guide/snowflake-cortex/cortex-agents-evaluations#label-cortex-agent-evaluation-tool-metrics).
 For details on the `agent_router` tool specification and inputs, see
-[Route questions between agents with the agent router](/LIMITEDACCESS/snowflake-cortex/cortex-agents-router) and
+[Route questions between agents with the agent router](/user-guide/snowflake-cortex/cortex-agents-router) and
 [Cortex Agents tools](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-tools).

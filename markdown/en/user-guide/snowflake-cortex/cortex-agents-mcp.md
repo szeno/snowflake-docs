@@ -117,6 +117,8 @@ tools:
 
 The full agent tool response is available to MCP clients. See [`content_cel_filter`](#label-cortex-mcp-content-cel-filter) to learn how clients can control which parts they retrieve.
 
+To route questions across several agents from one tool, set `identifier` to a router agent or a Snowflake CoWork profile. A profile is a router agent, so both work the same way. See [Route questions between agents with the agent router](/user-guide/snowflake-cortex/cortex-agents-router) and [Call the profile from an MCP client](/user-guide/snowflake-cortex/snowflake-cowork/call-cowork-profile-from-api#label-call-cowork-profile-from-mcp).
+
 A coding agent tool runs a Cortex coding agent without a stored agent object. Add a tool with type `CODING_AGENT` to the MCP server specification. Snowflake adds the `code_toolset_all` tool on every run. That tool gives the agent a managed sandbox where it can write and run code. The sandbox stays attached to the conversation thread. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
 
 Omit `identifier`. There is no stored agent to point at.

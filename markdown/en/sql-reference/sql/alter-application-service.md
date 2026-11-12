@@ -160,13 +160,12 @@ Copy code
 ALTER APPLICATION SERVICE my_app UPGRADE TO VERSION VERSION$5;
 ```
 
-Change auto-suspend and external access:
+Change external access:
 
 Copy code
 
 ```
 ALTER APPLICATION SERVICE my_app SET
-  AUTO_SUSPEND_SECS = 900
   EXTERNAL_ACCESS_INTEGRATIONS = ( my_eai, analytics_eai );
 ```
 

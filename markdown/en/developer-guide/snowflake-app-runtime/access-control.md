@@ -107,10 +107,9 @@ Copy code
 ALTER APPLICATION SERVICE my_db.my_schema.my_app SUSPEND;
 ALTER APPLICATION SERVICE my_db.my_schema.my_app RESUME;
 ALTER APPLICATION SERVICE my_db.my_schema.my_app UPGRADE TO VERSION LATEST;
-ALTER APPLICATION SERVICE my_db.my_schema.my_app SET AUTO_SUSPEND_SECS = 900;
 ```
 
-For what those lifecycle settings do, see
+For what these commands do, see
 [Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
 ## Delegate monitoring

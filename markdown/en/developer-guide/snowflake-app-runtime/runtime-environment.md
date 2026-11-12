@@ -153,7 +153,9 @@ import { readFileSync } from "node:fs";
 const serviceToken = readFileSync("/snowflake/session/token", "utf8").trim();
 ```
 
-[`lib/snowflake.ts`](/developer-guide/snowflake-app-runtime/query-snowflake)
+[`lib/snowflake.ts`](/developer-guide/snowflake-app-runtime/query-snowflake),
+through the
+[Snowflake App Runtime SDK for Node.js](/developer-guide/snowflake-app-runtime/nodejs-sdk),
 reads these for you. For which identity a query runs as and how to grant it
 access, see
 [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).

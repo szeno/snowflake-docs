@@ -122,7 +122,9 @@ CREATE OR ALTER APPLICATION SERVICE <name>
 `AUTO_SUSPEND_SECS = num`
 :   Specifies the number of seconds of inactivity after which Snowflake
     automatically suspends the Application Service. The minimum non-zero value
-    is `300`. A value of `0` disables auto-suspend.
+    is `300`. A value of `0` disables auto-suspend. Setting a nonzero value isn’t
+    recommended: when a suspended app resumes, requests return errors until it’s
+    ready.
 
     **DEFAULT:** `0` (disabled)
 
@@ -313,8 +315,6 @@ CREATE APPLICATION SERVICE my_app
   VERSION VERSION$3
   EXTERNAL_ACCESS_INTEGRATIONS = ( my_eai )
   QUERY_WAREHOUSE = my_warehouse
-  AUTO_RESUME = TRUE
-  AUTO_SUSPEND_SECS = 600
   COMMENT = 'Customer portal';
 ```
 
@@ -365,8 +365,6 @@ icon: public/icon.svg
 query_warehouse: my_warehouse
 min_instances: 1
 max_instances: 3
-auto_resume: true
-auto_suspend_secs: 600
 external_access_integrations:
   - stripe_eai
   - logging_eai
@@ -381,8 +379,8 @@ $$;
 
 Because the specification is the full intended state, this next statement changes the
 warehouse and drops everything else the previous statement set. The integrations and
-the secret are removed, the label and description are cleared, and `max_instances` and
-`auto_suspend_secs` return to their defaults:
+the secret are removed, the label and description are cleared, and `max_instances`
+returns to its default:
 
 Copy code
 
@@ -413,8 +411,6 @@ icon: public/icon.svg
 query_warehouse: my_warehouse
 min_instances: 1
 max_instances: 3
-auto_resume: true
-auto_suspend_secs: 600
 external_access_integrations:
   - stripe_eai
   - logging_eai

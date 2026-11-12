@@ -35,20 +35,19 @@ restricted data sources. In those cases, scope the execution role carefully (see
 and enforce application-level checks where needed (see
 [Enforce application-level access control](#label-snowflake-app-runtime-secure-development-app-acl)).
 
-With `querySnowflake` from `lib/snowflake.ts` (see
-[Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake)), switching between
-modes is one parameter:
+With `snowflake` and `asCaller()` from `lib/snowflake.ts` (see
+[Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake)), you choose the mode
+for each query:
 
 Copy code
 
 ```
-// Owner's rights (default): queries run as the execution role
-const rows = await querySnowflake("SELECT * FROM sales.summary");
+// Owner's rights: queries run as the execution role
+const { rows: summary } = await snowflake.query("SELECT * FROM sales.summary");
 
 // Caller's rights: queries run as the signed-in user
-const rows = await querySnowflake("SELECT * FROM sales.detail", {
-  callersRights: true,
-});
+const caller = await asCaller();
+const { rows: detail } = await caller.query("SELECT * FROM sales.detail");
 ```
 
 Caller’s rights requires that the execution role hold caller grants authorizing the
@@ -92,11 +91,11 @@ Copy code
 
 ```
 // Check the caller's identity (runs as the signed-in user)
-const [identity] = await querySnowflake(
+const caller = await asCaller();
+const { rows: [identity] } = await caller.query(
   `SELECT CURRENT_USER()                         AS username,
           CURRENT_ROLE()                         AS primary_role,
           IS_ROLE_IN_SESSION('DATA_ANALYST')      AS is_analyst`,
-  { callersRights: true },
 );
 
 if (!identity.IS_ANALYST) {
@@ -104,7 +103,7 @@ if (!identity.IS_ANALYST) {
 }
 
 // Proceed with the owner's rights data query
-const data = await querySnowflake('SELECT * FROM sensitive_reports');
+const { rows: data } = await snowflake.query('SELECT * FROM sensitive_reports');
 ```
 
 `CURRENT_USER()` returns the signed-in user’s username. `CURRENT_ROLE()` returns
@@ -135,12 +134,12 @@ Copy code
 
 ```
 // Don't do this: the user-supplied value appears as plain text in query history
-const result = await querySnowflake(
+const result = await snowflake.query(
   `SELECT * FROM orders WHERE customer_id = '${customerId}'`,
 );
 
 // Do this: the bind value is passed separately and isn't recorded in query text
-const result = await querySnowflake(
+const result = await snowflake.query(
   'SELECT * FROM orders WHERE customer_id = ?',
   { binds: [customerId] },
 );
@@ -180,8 +179,8 @@ Copy code
 ```
 export async function GET(request: Request) {
   try {
-    const data = await querySnowflake('SELECT ...');
-    return Response.json(data);
+    const { rows } = await snowflake.query('SELECT ...');
+    return Response.json(rows);
   } catch (err) {
     // Log full error server-side for debugging
     console.error('Query failed:', err);

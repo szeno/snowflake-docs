@@ -114,6 +114,8 @@ For more about scaling apps and suspending them, see
   [app.yml manifest for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/app-yml).
 - Query your data from the running app:
   [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
+- Stream results, run transactions and long-running queries, and read secrets
+  with the SDK: [Snowflake App Runtime SDK for Node.js](/developer-guide/snowflake-app-runtime/nodejs-sdk).
 - Check current limits:
   [Snowflake App Runtime limitations](/developer-guide/snowflake-app-runtime/limitations).
 

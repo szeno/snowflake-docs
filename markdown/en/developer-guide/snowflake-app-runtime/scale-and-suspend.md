@@ -49,24 +49,30 @@ If `RESUME` fails because the runtime image is blocked, upgrade to a new
 package version first. See
 [Snowflake App Runtime limitations](/developer-guide/snowflake-app-runtime/limitations).
 
-You can also set an idle window in `app.yml`:
+### Auto-suspend
+
+`auto_suspend_secs` in `app.yml` sets how many idle seconds pass before
+Snowflake suspends the app. It defaults to `0`, which turns auto-suspend off.
+`auto_resume`, which defaults to `true`, resumes a suspended app on its next
+request.
+
+Setting a nonzero value isn’t recommended: when a suspended app resumes,
+requests return errors until it’s ready. The same happens after you run
+`SUSPEND`, so after `RESUME`, wait until the app is `RUNNING` before you send
+traffic to it.
+
+If you set a value earlier, remove it from `app.yml` and redeploy. For an app
+you don’t deploy from `app.yml`, run:
 
 Copy code
 
 ```
-auto_suspend_secs: 900
-auto_resume: true
+ALTER APPLICATION SERVICE my_db.my_schema.my_app UNSET AUTO_SUSPEND_SECS;
 ```
-
-- `auto_suspend_secs`: idle seconds before Snowflake can auto-suspend the
-  app. `0` (the default) disables it. The minimum non-zero value is `300`.
-- `auto_resume`: resume on the next request. Default is `true`.
-
-To stop the app yourself, run `SUSPEND`.
 
 ## Changes from ALTER don’t survive deploy
 
-You can set instance counts and auto-suspend with
+You can set instance counts and other properties with
 [`ALTER APPLICATION SERVICE`](/sql-reference/sql/alter-application-service)
 as well. That change isn’t permanent: the next `snow app deploy` puts the
 values back to what’s in `app.yml`, or to the defaults if those keys aren’t

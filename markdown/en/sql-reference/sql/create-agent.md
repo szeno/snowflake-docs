@@ -19,6 +19,11 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] AGENT [ IF NOT EXISTS 
   $$
     <specification_object>
   $$;
+
+CREATE [ OR REPLACE ] [ SECURE ] AGENT [ IF NOT EXISTS ] <name>
+  [ COPY GRANTS ]
+  [ COMMENT = '<comment>' ]
+  FROM @<stage_path>;
 ```
 
 ## Required parameters
@@ -149,10 +154,14 @@ CREATE [ OR REPLACE ] [ { TEMP | TEMPORARY } ] [ SECURE ] AGENT [ IF NOT EXISTS 
     | `instructions` | [AgentInstructions](/user-guide/snowflake-cortex/cortex-agents-rest-api#label-snowflake-agent-object-agentinstructions) | Optional instructions for the agent’s behavior, including response, orchestration, and sample questions. |
     | `tools` | array of [Tool](/user-guide/snowflake-cortex/cortex-agents-rest-api#label-snowflake-agent-object-tool) | An optional list of tools available for the agent to use. Each tool includes a `tool_spec` with type, name, description, and input schema. Tools may have a corresponding configuration in `tool_resources`. |
     | `tool_resources` | map of [ToolResource](/user-guide/snowflake-cortex/cortex-agents-rest-api#label-snowflake-agent-object-toolresource) | An optional configuration for each tool referenced in the tools array. Keys must match the name of the respective tool. |
+    | `mcp_servers` | array of objects | An optional list of MCP servers whose tools the agent can use. Each entry has a `server_spec` with the fully qualified `name` of an MCP server object. For details, see [MCP Connectors](/user-guide/snowflake-cortex/cortex-agents-mcp-connectors). |
 
     Expand
 
     Show lessSee more
+
+`FROM @stage_path`
+:   Creates the agent from files on a stage instead of an inline specification. The stage directory must contain an `agent_spec.yaml` file at its root; otherwise, the statement fails. For more information, see [Cortex Agent versioning](/user-guide/snowflake-cortex/cortex-agents-versioning).
 
 ## Access control requirements
 
@@ -373,4 +382,35 @@ CREATE OR REPLACE AGENT my_agent COPY GRANTS
     orchestration: auto
   $$;
 -- analyst_role can still invoke the agent
+```
+
+### Create an agent from a stage
+
+The following example creates an agent from an `agent_spec.yaml` file that was uploaded to the `agents/my_agent` directory of the `my_stage` stage:
+
+Copy code
+
+```
+CREATE AGENT my_agent
+  FROM @my_stage/agents/my_agent;
+```
+
+### Create an agent that uses MCP servers
+
+The following example creates an agent that can use the tools of two MCP server objects:
+
+Copy code
+
+```
+CREATE AGENT my_mcp_agent
+  FROM SPECIFICATION
+  $$
+  models:
+    orchestration: auto
+  mcp_servers:
+    - server_spec:
+        name: "my_db.my_schema.mcp_server1"
+    - server_spec:
+        name: "my_db.my_schema.mcp_server2"
+  $$;
 ```
