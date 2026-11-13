@@ -18,7 +18,8 @@ Copy code
 api_version: 2.0.0              # Required: Must be "2.0.0"
 spec_type: analysis             # Required: Must be "analysis"
 template: <template_id>         # Required: ID of the template to use
-name: <analysis_name>           # Optional: Unique name (max 75 chars)
+name: <analysis_name>           # Optional: Unique name (max 75 chars). Required when save_mode is set.
+save_mode: create | insert | replace  # Optional: Save the run's results to a durable table
 version: <version_string>       # Optional: Version identifier (max 20 chars)
 description: <analysis_description>  # Optional: Description (max 1,000 chars)
 
@@ -51,6 +52,21 @@ template_configuration:         # Optional: Values used when running the templat
 `name` (*Optional*)
 :   A unique, user-friendly name for this analysis. Must follow [Snowflake identifier rules](/sql-reference/identifiers-syntax) with a
     maximum of 75 characters and be unique within your Snowflake data clean room account.
+
+    When `save_mode` is set, `name` is required and becomes the saved result table name. Use up to 75 letters, digits, or underscores, and
+    don’t start with a digit. Names aren’t case-sensitive and must be unique within the collaboration’s saved results.
+
+`save_mode` (*Optional*)
+:   Saves the results of a SQL analysis template run to a durable table named `name` in the clean room’s `SAVED_RESULTS` schema. If omitted,
+    results aren’t saved. Supported values:
+
+    - `create`: Creates the saved result table and saves the current run’s results. Fails if a saved result with this name already exists.
+      Use `create` for the first run.
+    - `insert`: Appends the current run’s results to an existing saved result. Fails if the saved result doesn’t exist or if the
+      specification doesn’t match the one that created it. Use `insert` for later runs.
+    - `replace`: Replaces the saved result, discarding all previously saved rows for this name, including rows from earlier `insert` runs.
+
+    You can’t drop a saved result table or delete its rows; only a `replace` run removes previously saved rows. For details, see [Save analysis results in collaborations](/user-guide/cleanrooms/saved-results).
 
 `version` (*Optional*)
 :   A version identifier for this analysis specification (maximum 20 characters). Must follow

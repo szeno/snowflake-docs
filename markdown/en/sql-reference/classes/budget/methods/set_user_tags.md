@@ -10,7 +10,7 @@ Note
 
 This method applies to budgets. [Per-user quotas](/user-guide/budgets/per-user-quotas) have their own
 `SET_USER_TAGS` method, which also accepts the `ALL_USERS` operator. For details, see
-[Specify users in scope](/user-guide/budgets/per-user-quotas#label-per-user-quota-user-scope).
+[Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-scope).
 
 ## Syntax
 

@@ -118,6 +118,22 @@ Full 256K max
 
 View recommended configurations
 
+### Inkling-2-Small-MXFP8
+
+`thinkingmachines/Inkling-2-Small-MXFP8`Copy ID
+
+License: [Apache 2.0](https://www.apache.org/licenses/LICENSE-2.0)
+
+InferenceSupported
+
+256K max · 8 GPUs
+
+TrainingSupported
+
+LoRA 256K max
+
+View recommended configurations
+
 ### medgemma-1.5-4b-it
 
 `google/medgemma-1.5-4b-it`Copy ID

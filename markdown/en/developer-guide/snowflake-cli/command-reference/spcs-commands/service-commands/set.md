@@ -213,7 +213,7 @@ snow spcs service set
 
 ## Usage notes
 
-The current role must have OPERATE privilege on the service to set properties.
+The current role must have OWNERSHIP privilege on the service to set properties.
 
 ## Examples
 

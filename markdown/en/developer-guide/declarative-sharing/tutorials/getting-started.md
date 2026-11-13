@@ -1,9 +1,5 @@
 # Tutorial: Getting started with Declarative Shares
 
-[Preview Feature — Open](/release-notes/preview-features)
-
-Workspace sharing in Declarative Shares is available to all accounts.
-
 Feature — Generally Available
 
 Support for Snowflake Declarative Shares is available to all accounts.

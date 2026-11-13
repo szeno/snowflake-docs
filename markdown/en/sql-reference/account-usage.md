@@ -177,6 +177,7 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [INDEX\_COLUMNS](/sql-reference/account-usage/index_columns) | Object | 3 hours |  |  |
 | [INDEXES](/sql-reference/account-usage/indexes) | Object | 3 hours |  |  |
 | [INGRESS\_NETWORK\_ACCESS\_HISTORY](/sql-reference/account-usage/ingress_network_access_history) | Historical | 4 hours |  | Data retained for 1 year. |
+| [INTEGRATIONS](/sql-reference/account-usage/integrations) | Object | 4 hours |  |  |
 | [INTERNAL\_DATA\_TRANSFER\_HISTORY](/sql-reference/account-usage/internal_data_transfer_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [INTERNAL\_STAGE\_NETWORK\_ACCESS\_HISTORY](/sql-reference/account-usage/internal_stage_network_access_history) | Historical | 6 hours |  | Data retained for 1 year. |
 | [JOIN\_POLICIES](/sql-reference/account-usage/join_policies) | Object | 2 hours |  |  |
@@ -214,6 +215,7 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [QUERY\_HISTORY](/sql-reference/account-usage/query_history) | Historical | 45 minutes |  | Data retained for 1 year. |
 | [QUERY\_INSIGHTS](/sql-reference/account-usage/query_insights) | Historical |  |  | Data retained for 1 year. |
 | [QUERY\_METERING\_HISTORY](/sql-reference/account-usage/query_metering_history) | Historical | 1 hour |  | Data retained for 1 year. |
+| [QUOTA\_ACCESS\_BLOCK\_HISTORY](/sql-reference/account-usage/quota_access_block_history) | Historical | None |  | Data retained for 1 year. |
 | [REFERENTIAL\_CONSTRAINTS](/sql-reference/account-usage/referential_constraints) | Object | 2 hours |  |  |
 | [REPLICATION\_GROUP\_REFRESH\_HISTORY](/sql-reference/account-usage/replication_group_refresh_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [REPLICATION\_GROUP\_USAGE\_HISTORY](/sql-reference/account-usage/replication_group_usage_history) | Historical | 3 hours |  | Data retained for 1 year. |
@@ -451,6 +453,7 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [INDEX\_COLUMNS view](/sql-reference/account-usage/index_columns) | OBJECT\_VIEWER |
 | [INDEXES view](/sql-reference/account-usage/indexes) | OBJECT\_VIEWER |
 | [INGRESS\_NETWORK\_ACCESS\_HISTORY view](/sql-reference/account-usage/ingress_network_access_history) | SECURITY\_VIEWER |
+| [INTEGRATIONS view](/sql-reference/account-usage/integrations) | SECURITY\_VIEWER |
 | [INTERNAL\_DATA\_TRANSFER\_HISTORY view](/sql-reference/account-usage/internal_data_transfer_history) | USAGE\_VIEWER |
 | [INTERNAL\_STAGE\_NETWORK\_ACCESS\_HISTORY view](/sql-reference/account-usage/internal_stage_network_access_history) | SECURITY\_VIEWER |
 | [JOIN\_POLICIES view](/sql-reference/account-usage/join_policies) | GOVERNANCE\_VIEWER |
@@ -486,6 +489,7 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [QUERY\_HISTORY view](/sql-reference/account-usage/query_history) | GOVERNANCE\_VIEWER |
 | [QUERY\_INSIGHTS view](/sql-reference/account-usage/query_insights) | GOVERNANCE\_VIEWER |
 | [QUERY\_METERING\_HISTORY view](/sql-reference/account-usage/query_metering_history) | USAGE\_VIEWER, GOVERNANCE\_VIEWER |
+| [QUOTA\_ACCESS\_BLOCK\_HISTORY view](/sql-reference/account-usage/quota_access_block_history) | USAGE\_VIEWER |
 | [REFERENTIAL\_CONSTRAINTS view](/sql-reference/account-usage/referential_constraints) | OBJECT\_VIEWER |
 | [REPLICATION\_GROUP\_REFRESH\_HISTORY view](/sql-reference/account-usage/replication_group_refresh_history) | USAGE\_VIEWER |
 | [REPLICATION\_GROUP\_USAGE\_HISTORY view](/sql-reference/account-usage/replication_group_usage_history) | USAGE\_VIEWER |

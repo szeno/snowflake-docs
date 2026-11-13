@@ -1,14 +1,13 @@
 # Materializing dimensions and metrics in semantic views
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 To improve the query performance of a semantic view, you can materialize selected dimensions and metrics in the view,
 similar to how you materialize data in a [materialized view](/user-guide/views-materialized).
 
 When you query the semantic view, Snowflake reads from the materialized dimensions and metrics, rather than scanning the base table and
 computing the information.
+
+To get recommendations for which dimensions and metrics to materialize, you can use CoCo. For details, see
+[Getting materialization recommendations with CoCo](#label-semantic-views-materializing-coco).
 
 Note
 
@@ -167,8 +166,10 @@ Note
 You can’t use the following metric types in materializations:
 
 - [Window function metrics](/user-guide/views-semantic/querying#label-semantic-views-querying-window)
-- [Semi-additive metrics](/user-guide/views-semantic/sql#label-semantic-views-metrics-semi-additive)
 - [Metrics that specify which relationships to use](/user-guide/views-semantic/sql#label-semantic-views-create-logical-tables-relations)
+
+You can use [semi-additive metrics](/user-guide/views-semantic/sql#label-semantic-views-metrics-semi-additive) in
+materializations.
 
 For example:
 
@@ -199,7 +200,8 @@ You can add multiple materializations to a semantic view. Each materialization s
 
 You can also use this command to update the definition of an existing materialization. If you run ADD MATERIALIZATION with the same name:
 
-- **Same definition**: The operation is a no-op.
+- **Same definition**: The operation is a no-op. However, if the semantic view definition that the materialization depends
+  on has changed, running the identical ADD MATERIALIZATION statement recreates the materialization (full reinitialization).
 - **Different definition**: The existing materialization is dropped and replaced with the new definition.
 
 Snowflake automatically refreshes the materialization regularly to fulfill the desired `MAX_STALENESS`. If the refreshes take
@@ -212,6 +214,43 @@ Copy code
 ALTER SEMANTIC VIEW revenue_analysis SET MAX_STALENESS = '2 hours';
 ```
 
+## Getting materialization recommendations with CoCo
+
+The [CoCo](/user-guide/cortex-code/cortex-code) `suggest-sv-materializations` skill recommends materializations that
+speed up your semantic view queries. The skill is [bundled with CoCo](/user-guide/cortex-code/bundled-skills), so you
+don’t need to install it.
+
+To use the skill, describe what you want in a prompt (for example, “Suggest materializations for my semantic view
+`sales_db.analytics.revenue_analysis`”) or invoke it by name with `/suggest-sv-materializations`.
+
+The skill supports two workflows:
+
+- **Workload analysis:** CoCo analyzes the query history for slow queries on your semantic views. You choose the scope
+  (a semantic view, warehouse, user, role, or your whole account) and how many days of history to analyze. CoCo then
+  checks which metrics can be materialized, groups similar queries, and recommends up to three materializations per
+  semantic view.
+- **Dashboard acceleration:** CoCo speeds up the tiles in a [Snowflake dashboard](/user-guide/snowflake-dashboards)
+  without analyzing query history. CoCo rewrites tiles to query a semantic view in standard SQL, plans narrow
+  materializations that tiles can share, and can propose dashboard edits, such as day or hour buckets for date filters.
+
+For each recommended materialization, CoCo provides the following:
+
+- An ADD MATERIALIZATION statement that you can review.
+- An estimate of the materialization’s size compared to the base table, so that you can judge whether it will speed up
+  queries.
+- A proposed [IMMUTABLE WHERE](#label-semantic-views-materializing-limit-refresh) condition. You must confirm that rows
+  matching the condition never change before you use it.
+- Pre-flight checks, such as whether `MAX_STALENESS` is set, whether masking policies block the materialization, and
+  whether the semantic view is managed with CREATE OR REPLACE, which drops all materializations.
+
+CoCo doesn’t create materializations or change your semantic views without your approval. After you add a
+materialization, CoCo can verify that your queries use it by
+[checking the rewrite](#label-semantic-views-materializing-check-rewrite).
+
+To run the workload analysis, you must use a role that can access the
+[ACCOUNT\_USAGE](/sql-reference/account-usage) schema of the SNOWFLAKE database, such as a role that has been granted
+the IMPORTED PRIVILEGES privilege on the SNOWFLAKE database.
+
 ## How materializations are used when processing a query
 
 When you query a semantic view, Snowflake uses the materializations to fulfill the query. The planner selects the lowest-cost
@@ -220,7 +259,7 @@ processes a query.
 
 - [Reaggregation of additive metrics](#label-semantic-views-materializing-reaggregation)
 - [How dimensions in a WHERE clause are handled](#label-semantic-views-materializing-where)
-- [When materializations are not used](/user-guide/views-semantic/materializations#label-semantic-views-materializing-fallback)
+- [When materializations are not used](#label-semantic-views-materializing-fallback)
 
 ### Reaggregation of additive metrics
 
@@ -269,6 +308,10 @@ Expressions on dimensions in the WHERE clause (for example, `MOD(orders.order_ye
 as the underlying dimension is covered by the materialization. The same applies to expressions on top of additive metrics
 and dimensions.
 
+### When materializations are not used
+
+Snowflake doesn’t use a materialization to process a query in the following cases:
+
 - No materialization covers the requested dimensions or metrics.
 - The materialization exceeds the value of the MAX\_STALENESS property.
 - A masking policy or row access policy exists on a column that is referenced by the materialization.
@@ -276,6 +319,118 @@ and dimensions.
 - The materialization is in SUSPENDED state.
 - The query’s WHERE clause is less restrictive than the materialization’s WHERE filter, or the query filters on
   a column that isn’t a materialized dimension. See [Materializing a filtered subset of data](#label-semantic-views-materializing-filter).
+
+To find out why a specific query doesn’t use a materialization, see
+[Checking whether a query can use a materialization](#label-semantic-views-materializing-check-rewrite).
+
+## Checking whether a query can use a materialization
+
+Two system functions report whether a query on a semantic view would be rewritten to read from a materialization, and if
+not, why. Neither function runs the query or creates anything.
+
+- [SYSTEM$CHECK\_SEMANTIC\_VIEW\_MATERIALIZATION\_REWRITE](#label-semantic-views-materializing-check-existing) checks an
+  existing materialization.
+- [SYSTEM$CHECK\_HYPOTHETICAL\_SEMANTIC\_VIEW\_MATERIALIZATION\_REWRITE](#label-semantic-views-materializing-check-hypothetical)
+  checks a materialization that you haven’t created yet.
+
+Both functions use the same logic that rewrites queries at run time. For an existing materialization, the result matches
+what happens when you run the query. For a hypothetical materialization, the check doesn’t consider state or staleness.
+Each function checks only the one materialization that you specify and ignores any other materializations on the
+semantic view.
+
+### Checking an existing materialization
+
+To check whether a query can use an existing materialization, call SYSTEM$CHECK\_SEMANTIC\_VIEW\_MATERIALIZATION\_REWRITE:
+
+Copy code
+
+```
+SYSTEM$CHECK_SEMANTIC_VIEW_MATERIALIZATION_REWRITE(
+  '<query>',
+  '<semantic_view_name>',
+  '<materialization_name>'
+)
+```
+
+where:
+
+- `'query'`: Specifies the query to check. You can use the
+  [SEMANTIC\_VIEW](/sql-reference/constructs/semantic_view) clause or standard SQL against the semantic view.
+- `'semantic_view_name'`: Specifies the semantic view that contains the
+  materialization. The name can be qualified.
+- `'materialization_name'`: Specifies the name of an existing materialization on the
+  semantic view.
+
+The check covers everything that happens at query time, including the state of the materialization (for example,
+`SUSPENDED`) and whether its data is within `MAX_STALENESS`.
+
+For example:
+
+Copy code
+
+```
+SELECT SYSTEM$CHECK_SEMANTIC_VIEW_MATERIALIZATION_REWRITE(
+  $$SELECT * FROM SEMANTIC_VIEW(
+      revenue_analysis
+      DIMENSIONS customers.customer_name
+      METRICS orders.total_revenue)$$,
+  'revenue_analysis',
+  'revenue_by_customer_year');
+```
+
+```
+{"materialization":"REVENUE_BY_CUSTOMER_YEAR","canRewrite":true,"reason":"ELIGIBLE"}
+```
+
+### Checking a materialization before you create it
+
+To check whether a query could use a materialization that you haven’t created yet, call
+SYSTEM$CHECK\_HYPOTHETICAL\_SEMANTIC\_VIEW\_MATERIALIZATION\_REWRITE:
+
+Copy code
+
+```
+SYSTEM$CHECK_HYPOTHETICAL_SEMANTIC_VIEW_MATERIALIZATION_REWRITE(
+  '<query>',
+  '<add_materialization_statement>'
+)
+```
+
+where:
+
+- `'query'`: Specifies the query to check. You can use the
+  [SEMANTIC\_VIEW](/sql-reference/constructs/semantic_view) clause or standard SQL against the semantic view.
+- `'add_materialization_statement'`: Specifies an
+  [ALTER SEMANTIC VIEW … ADD MATERIALIZATION](#label-semantic-views-materializing-adding) statement.
+
+  The statement is validated in the same way as ADD MATERIALIZATION, but it isn’t executed. Validation errors (for
+  example, for an unsupported metric type) are returned as errors. The materialization name must not already exist on
+  the semantic view.
+
+Because the materialization has never been refreshed, the check doesn’t consider its state or staleness.
+
+For example:
+
+Copy code
+
+```
+SELECT SYSTEM$CHECK_HYPOTHETICAL_SEMANTIC_VIEW_MATERIALIZATION_REWRITE(
+  $$SELECT * FROM SEMANTIC_VIEW(
+      revenue_analysis
+      DIMENSIONS customers.customer_name, orders.order_year
+      METRICS orders.total_revenue)$$,
+  $$ALTER SEMANTIC VIEW revenue_analysis ADD MATERIALIZATION revenue_by_customer_only
+      WAREHOUSE = my_wh
+      AS DIMENSIONS customers.customer_name
+         METRICS orders.total_revenue$$);
+```
+
+In this example, the query can’t use the materialization because the materialization doesn’t include the `order_year`
+dimension:
+
+```
+{"materialization":"REVENUE_BY_CUSTOMER_ONLY","canRewrite":false,"reason":"MISSING_DIMENSION","dimension":"ORDER_YEAR"}
+```
 
 ## Materializing a filtered subset of data
 
@@ -360,7 +515,8 @@ To resume it later, use the RESUME command.
 
 Materializations are also automatically suspended when:
 
-- The semantic view is altered in a way that breaks the materialization definition (see
+- The semantic view is altered in a way that breaks the materialization definition. Queries stop using the
+  materialization right away, and the next refresh suspends it (see
   [How DDL changes affect materializations](#label-semantic-views-materializing-coa)).
 - A refresh fails or takes too long to complete within the `MAX_STALENESS` window. Check the
   [refresh history](#label-semantic-views-materializing-observability) to investigate.
@@ -383,12 +539,6 @@ ALTER SEMANTIC VIEW revenue_analysis SUSPEND MATERIALIZATION revenue_by_customer
 ALTER SEMANTIC VIEW revenue_analysis RESUME MATERIALIZATION revenue_by_customer;
 ```
 
-Note
-
-Materializations are also automatically suspended when the semantic view is altered in a way that
-breaks the materialization definition. For more information, see
-[Preserving materializations when altering a semantic view](#label-semantic-views-materializing-coa).
-
 ## How DDL changes affect materializations
 
 The sections below explain how changes to the semantic view, its underlying objects, or the materialization
@@ -406,14 +556,15 @@ on what you change:
 | --- | --- | --- | --- |
 | Add a metric, dimension, logical table, or relationship | None | ✅ | — |
 | Change or delete a dimension, metric, logical table, or relationship **not used** by the materialization | None | ✅ | — |
-| Change or delete a dimension, metric, logical table, or relationship **used** by the materialization | Suspended immediately | ❌ | Revert the SV definition and `RESUME`, or `DROP AND ADD MATERIALIZATION` |
+| Change or delete a dimension, metric, logical table, or relationship **used** by the materialization | The materialization stays `ACTIVE`, but queries stop using it right away. The next refresh suspends it. | ❌ | Revert the SV definition and `RESUME`, or `DROP AND ADD MATERIALIZATION` |
 
 Expand
 
 Show lessSee more
 
-For example, changing a metric’s aggregation function from `SUM` to `COUNT` suspends any materialization that
-depends on that metric. Suspended materializations aren’t removed. If you revert the SV definition to the
+For example, changing a metric’s aggregation function from `SUM` to `COUNT` stops queries from using any
+materialization that depends on that metric, and the next refresh suspends the materialization. Suspended
+materializations aren’t removed. If you revert the SV definition to the
 previous state, you can resume the materialization:
 
 Copy code
@@ -446,8 +597,8 @@ Expand
 
 Show lessSee more
 
-Unlike semantic view changes, Snowflake does not immediately suspend the materialization when an underlying object
-changes — it waits for the next scheduled refresh to detect and react to the change.
+Unlike semantic view changes, changes to underlying objects don’t stop queries from using the materialization right
+away. Snowflake detects and reacts to the change during the next scheduled refresh.
 
 ### Changes to the materialization definition
 
@@ -455,7 +606,7 @@ When you run `ADD MATERIALIZATION` for a materialization that already exists, th
 
 | Change | Effect on materialization | Still used for rewrite |
 | --- | --- | --- |
-| Same definition as the existing materialization | No-op | ✅ |
+| Same definition as the existing materialization | No-op (see the following note) | ✅ |
 | Different definition (e.g., added or dropped metric or dimension, changed `WHERE` clause) | Full refresh (reinitialize) with new definition | ✅ |
 | `IMMUTABLE WHERE` condition made **stricter** (e.g., `year > 2020` → `year > 2021`) | None | ✅ |
 | `IMMUTABLE WHERE` condition made **looser** (e.g., `year > 2021` → `year > 2020`) | Full refresh | ✅ |
@@ -463,6 +614,20 @@ When you run `ADD MATERIALIZATION` for a materialization that already exists, th
 Expand
 
 Show lessSee more
+
+Note
+
+If the semantic view definition that the materialization depends on has changed, running the identical ADD
+MATERIALIZATION statement recreates the materialization (full reinitialization) rather than being a no-op.
+
+### Cloning and replicating semantic views with materializations
+
+- **Cloning:** When you clone a schema or database that contains a semantic view with materializations, the
+  materializations in the clone start in the `SUSPENDED` state and aren’t used for query rewrites. To use them, resume
+  them with [RESUME MATERIALIZATION](#label-semantic-views-materializing-suspend-resume).
+- **Replication:** When you replicate a database that contains a semantic view with materializations, queries in the
+  target account don’t use the replicated materializations until they’ve been refreshed in the target account. The
+  first refresh in the target account recomputes the entire materialization from the base tables (a full refresh).
 
 ## Refreshing a materialization manually
 
@@ -637,22 +802,3 @@ ALTER SEMANTIC VIEW <name> ALTER MATERIALIZATION <materialization_name>
 Materialization refresh events appear in the event table with `snow.executable.type = 'SEMANTIC_VIEW_MATERIALIZATION'`.
 You can query the event table and set up alerts based on refresh status, similar to
 [dynamic table alerting](/user-guide/dynamic-tables/monitoring).
-
-### How dimensions in a WHERE clause are handled
-
-Dimensions used in a WHERE clause count as covered dimensions. For example, a materialization on
-`(customer_name, order_year)` can be used when the following query is processed:
-
-Copy code
-
-```
-SELECT * FROM SEMANTIC_VIEW(
-    revenue_analysis
-    DIMENSIONS customers.customer_name
-    METRICS orders.total_revenue
-    WHERE orders.order_year = 2024
-);
-```
-
-Expressions on dimensions in the WHERE clause (for example, `MOD(orders.order_year, 2) = 0`) are also supported, as long
-as the underlying dimension is covered by the materialization.

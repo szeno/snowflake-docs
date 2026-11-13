@@ -30,7 +30,7 @@ When you create a schedule from within a workspace, Snowflake creates a user-man
 
    Snowflake creates a task that runs an EXECUTE DBT PROJECT command using the parameters you specify.
 
-## Viewing a task from within a workspace
+## View a task from within a workspace
 
 From within a workspace, you can view all tasks in the database and schema that execute the connected dbt project object. You can choose a task to view its details in the object explorer, including the task definition, the run history of the task, and the task graph.
 

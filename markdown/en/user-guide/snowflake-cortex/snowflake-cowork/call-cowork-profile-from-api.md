@@ -11,11 +11,12 @@ attached to the Snowflake CoWork object.
 
 ## Before you begin
 
-- Each `agent_router` tool needs a `tool_resources` entry keyed by its tool name. Without that
-  entry, the API returns error `399518`. Set `subagents: []` in the entry for direct answers without
-  routing, or list the agents to route to, as shown in step 3 of
+- Each `agent_router` tool needs a `tool_resources` entry keyed by its tool name, or calls fail
+  with error `399518`. CoWork Admin adds the entry when it creates or saves a profile. If you
+  created the profile with SQL, or calls fail with `399518`, add it yourself: `subagents: []` is
+  enough, or list agents to route to, as in step 3 of
   [Migrate manually](/user-guide/snowflake-cortex/snowflake-cowork/set-up-cowork-profile-routing#label-cowork-profiles-migrate-manual).
-  The same list controls routing in Snowflake CoWork. For how the list affects access, see
+  The list also controls routing in Snowflake CoWork. For how the list affects access, see
   [Choose which agents a profile routes to](/user-guide/snowflake-cortex/snowflake-cowork/set-up-cowork-profile-routing#label-cowork-profiles-routing-scope).
 - The calling role needs one of the
   [API access roles](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-access-control)

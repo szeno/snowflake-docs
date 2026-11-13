@@ -345,19 +345,20 @@ For more information about setting parameters at the account level, see [Paramet
 :   Specifies the [authentication policy](/user-guide/authentication-policies) or
     [session policy](/user-guide/session-policies) for the account.
 
-    The `FOR ALL PERSON USERS` clause applies the policy to users with their TYPE property set to NULL or PERSON.
+    For a session policy, the `FOR ALL PERSON USERS` and `FOR ALL SERVICE USERS` clauses, precedence, and `FORCE` are described in
+    [Applying a session policy](/user-guide/session-policies-managing#label-session-policy-applying).
 
-    The `FOR ALL SERVICE USERS` clause applies the policy to users with their TYPE property set to SERVICE or
-    LEGACY\_SERVICE.
+    For an authentication policy, the `FOR ALL PERSON USERS` clause applies the policy to users with their TYPE property set to NULL or
+    PERSON. The `FOR ALL SERVICE USERS` clause applies the policy to users with their TYPE property set to SERVICE or LEGACY\_SERVICE. If you
+    don’t specify either clause, then the policy applies to all users in the account.
 
-    If you don’t specify `FOR ALL SERVICE USERS` or `FOR ALL PERSON USERS`, then the policy applies to all users in the account.
+    If you explicitly set an authentication policy on a specific user or a specific user type, then that policy takes precedence over a
+    policy applied to `FOR ALL SERVICE USERS` or `FOR ALL PERSON USERS`.
 
-    If you explicitly set a policy on a specific user or a specific user type, then that policy takes precedence over a policy applied to `FOR ALL SERVICE USERS` or `FOR ALL PERSON USERS`.
-
-    If you specify FORCE, then policies you set on specific users or specific user types are overridden. You can use
+    If you specify FORCE, then authentication policies you set on specific users or specific user types are overridden. You can use
     this if you don’t want to unset policies.
 
-    If a policy is already set on the current account, you can use FORCE to set the policy without having to unset the
+    If an authentication policy is already set on the current account, you can use FORCE to set the policy without having to unset the
     existing policy first.
 
 `SET FEATURE POLICY policy_name FOR ALL APPLICATIONS [ FORCE ]`

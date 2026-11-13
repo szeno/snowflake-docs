@@ -40,7 +40,7 @@ To configure the connector, perform the following steps:
 | Enable Merge Metrics | If set to `true`, the connector runs an additional query to count records that are added, updated, deleted, or restored during replication. The additional query uses the **Snowflake Warehouse** and applies only to objects that include the `IsDeleted` field. The connector writes the counts to logs in the event table. Default: `false`. See [Monitor the Openflow Connector for Salesforce Bulk API](/user-guide/data-integration/openflow/connectors/salesforce-bulk-api/monitor). |
 | Enable Views Creation | If set to `true`, a view named `<Object Type>_FORMULA_VW` is created for each synced object that contains formula fields. The view translates supported Salesforce formula expressions into Snowflake SQL, allowing you to query formula results directly without replicating formula field values from Salesforce. See  for details. Default: `false`. |
 | Filter | Comma-separated list of objects to replicate from Salesforce, or regular expression to apply against all existing objects. The filter is case-insensitive, meaning that a filter set to `account` would match the object type `Account`. Example: `Account, Opportunity, Contact`.  Note  If left empty, all objects will be replicated. This is not recommended as there are usually thousands of objects in a Salesforce instance. |
-| Incremental Offload | Whether the processor should perform incremental offload. If `true`, the processor will only fetch the records that have been modified since the last query job submission by using a `WHERE` clause on the appropriate timestamp field. If `false`, all records will be fetched at every execution of the connector. |
+| Incremental Offload | Whether the processor should perform incremental offload. If `true`, the processor will only fetch the records that have been modified since the last query job submission by using a `WHERE` clause on the appropriate timestamp field. If `false`, all records will be fetched at every execution of the connector. For objects that are fetched in full and that have no `SystemModstamp` or `LastModifiedDate` field to merge on (for example an object in **Special Objects Filter** without a timestamp field, or a History object that uses `CreatedDate` while this parameter is `false`), each execution after the initial load replaces the content of the destination table instead of appending a full copy of the records. |
 | Initial Load Chunking | If set to a value other than `NONE`, the initial data load will be split into multiple jobs based on this interval. On the first run for an object, the connector will query Salesforce to find the oldest record and use that as the starting point. Each subsequent job will query the next time chunk until caught up to the current time. Set to one of: `NONE`, `MONTHLY`, `QUARTERLY`, `YEARLY`.  This is useful for large datasets where loading all historical data in a single query may time out, exceed API limits, or exceed the storage size of the content repository of the runtime. After catching up, the processor continues with normal incremental offload behavior. |
 | Iceberg Version | Only applicable when **Table Storage Format** is set to `ICEBERG` (preview). Specifies the Iceberg version for the destination Iceberg table. Supported values are `2` and `3`. Default: `3`. Don’t change this value after ingestion begins. For setup instructions, see [Openflow Connector for Salesforce Bulk API: Iceberg table destinations](/user-guide/data-integration/openflow/connectors/salesforce-bulk-api/iceberg). |
 | OAuth2 Audience | Audience to set in the JWT token. Set to `https://login.salesforce.com` for production environments or `https://test.salesforce.com` for sandboxes and test environments. |
@@ -60,7 +60,7 @@ To configure the connector, perform the following steps:
 | Snowflake Role | Name of the execute-as role used during query execution. When using `SNOWFLAKE_MANAGED`, this is the execute-as role for Openflow runtimes. When using `KEY_PAIR` (Openflow BYOC only), this is the role assigned to the specified Snowflake username. |
 | Snowflake Authentication Strategy | Authentication strategy for the connector to connect to Snowflake.  Using `SNOWFLAKE_MANAGED` (default) uses the Snowflake managed token associated with the runtime’s execute-as role. If using Openflow BYOC, you can also use `KEY_PAIR` to specify a specific user and role via a custom Key Pair. |
 | Snowflake Warehouse | The Snowflake warehouse used to run queries. |
-| Special Objects Filter | Comma-separated list of objects to offload from Salesforce (using direct API access), or regular expression to apply against all existing objects. The filter is case-insensitive, meaning that a filter set to `account` would match the object type `Account`.  This filter should only be used for objects that are **not** supported by the Salesforce Bulk API, such as knowledge data. This parameter should not overlap with the parameter **Filter**.  Example: `Knowledge.*` |
+| Special Objects Filter | Comma-separated list of objects to offload from Salesforce (using direct API access), or regular expression to apply against all existing objects. The filter is case-insensitive, meaning that a filter set to `account` would match the object type `Account`.  This filter should only be used for objects that are **not** supported by the Salesforce Bulk API, such as knowledge data. This parameter should not overlap with the parameter **Filter**. Knowledge objects (`*__ka` and `*__kav`) must be listed in this parameter, not in **Filter**. See .  Example: `Knowledge.*` |
 | Table Storage Format | The storage format of the destination Snowflake table. Use `STANDARD` for standard Snowflake tables. The `ICEBERG` option, which writes to Apache Iceberg tables, is a preview feature. Default: `STANDARD`. Don’t change this value after ingestion begins. For setup instructions, see [Openflow Connector for Salesforce Bulk API: Iceberg table destinations](/user-guide/data-integration/openflow/connectors/salesforce-bulk-api/iceberg). |
 
 Expand
@@ -124,6 +124,30 @@ Removing an object from replication requires stopping the connector and cleaning
    ```
    DROP TABLE <database_name>.<schema_name>.<object_name>;
    ```
+
+## Replicate Knowledge articles
+
+Knowledge objects are not supported by the Salesforce Bulk API. List them in the **Special Objects Filter** parameter, not in **Filter**. For example, for an org whose article type is `Knowledge`, set **Special Objects Filter** to `Knowledge__ka, Knowledge__kav`, or to `Knowledge.*`.
+
+### Article versions
+
+The connector replicates every version of each article from the `*__kav` object, including archived versions (`IsLatestVersion = false`), translations, and the content of their file fields. When a new version of an article is published, the row of the previous version is updated on the next run so that its `PublishStatus` is `Archived` and its `IsLatestVersion` is `false`.
+
+Archived versions are replicated starting with Runtime Extensions 2026.11.12.17. To retrieve archived versions that were not replicated before you upgraded, perform a full reload of the Knowledge object.
+
+### Deleted articles
+
+When an article is deleted, Salesforce removes all of its versions and no longer returns them through the API. The rows already replicated in the `*__kav` table are kept and their `IsDeleted` column remains `false`.
+
+To identify deleted articles, also replicate the parent `*__ka` object. The connector captures its `IsDeleted` column. Join the two tables on `KnowledgeArticleId`:
+
+Copy code
+
+```
+SELECT v.*, COALESCE(a."IsDeleted", FALSE) AS "ArticleIsDeleted"
+FROM "KNOWLEDGE__KAV" v
+LEFT JOIN "KNOWLEDGE__KA" a ON a."Id" = v."KnowledgeArticleId";
+```
 
 ## Configure blob field ingestion
 

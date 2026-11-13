@@ -35,3 +35,12 @@ Show lessSee more
 ## Usage notes
 
 Latency for the view may be up to 180 minutes (3 hours).
+
+Snowflake can evaluate anomaly detection checks for multiple tables in a schema as a batch. This view attributes the batch’s compute
+cost to the participating tables in proportion to the number of data metric function (DMF) associations for each table in the batch.
+For example, if a batch contains two DMF associations for one table and one for another, approximately two-thirds of the batch’s compute
+cost is attributed to the first table and one-third to the second. These proportions describe cost allocation within a batch. They don’t
+imply that the batch costs the same as evaluating each DMF separately.
+
+This allocation applies to [schema-level anomaly detection](/user-guide/data-quality-schema-level). It doesn’t change how costs are
+attributed for individual table evaluations.

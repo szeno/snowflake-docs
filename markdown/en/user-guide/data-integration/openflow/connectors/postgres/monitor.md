@@ -38,6 +38,27 @@ Show lessSee more
 Table-level metrics support up to 75,000 tables in a
 single runtime. Above that limit, metrics might be lost.
 
+### How the latency metrics relate
+
+A change passes through three consecutive stages: the connector captures it from the source database, writes it
+to the journal table, and then merges it into the destination table. Two of the latency metrics each cover one
+stage, and the third covers the whole path:
+
+- Capture latency (`db.commit.to.capture.latency`) covers the time until the connector reads the change.
+- Flow processing time (`db.capture.to.journal.latency`) covers the time from when the connector reads the change event until it’s written to the journal table.
+- End-to-end latency (`db.commit.to.merge.latency`) covers all three stages, until the change is merged into the destination table.
+
+The merge stage doesn’t have its own metric. It includes the wait for the next scheduled merge and the execution
+of the merge query.
+
+![A change is committed in the source database, captured by the connector, written to the journal table, and merged into the destination table. Capture latency spans commit to capture, flow processing time spans capture to journal write, and merge time spans the wait for the scheduled merge and the merge query. End-to-end latency spans all three and is approximately their sum.](/static/images/openflow/openflow-db-connector-latency-metrics.svg)
+
+Each latency metric reports the highest value in each 1-minute reporting interval. Because these are maximums, and
+the end-to-end latency is reported per table while the other two are reported per connector, the
+values don’t add up exactly. If the end-to-end latency is much higher than the sum of the capture latency and flow
+processing time, most of the delay is in the merge stage. In that case, check the **Merge Task Schedule CRON**
+connector parameter and the warehouse that runs the merge queries.
+
 ### Source object attributes
 
 Table-level metrics identify the source table with the

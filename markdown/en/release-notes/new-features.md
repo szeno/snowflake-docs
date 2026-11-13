@@ -52,11 +52,18 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
+- [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
+- [Node.js Driver (v4.0.0-beta.0)](/release-notes/clients-drivers/nodejs-2026)
+- [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
+- [Nov 10, 2026: INTEGRATIONS view in ACCOUNT\_USAGE (Preview)](/release-notes/2026/other/2026-11-10-account-usage-integrations-view-preview)
 - [Nov 10, 2026: CoCo Desktop v1.25.4](/release-notes/2026/other/2026-11-10-coco-desktop-v1-25-4)
+- [November 10, 2026: Geospatial maps in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-11-10-cowork-maps-preview)
 - [Nov 10, 2026: AI\_EXTRACT and AI\_PARSE\_DOCUMENT now support page filtering with FL\_FILTER\_PAGES](/release-notes/2026/other/2026-11-10-fl-filter-pages)
 - [Nov 10, 2026: Temporary role grants to users (Preview)](/release-notes/2026/other/2026-11-10-temporary-role-grants-preview)
 - [JDBC Driver (v5.0.0-RC2)](/release-notes/clients-drivers/jdbc-2026)
 - [Nov 09, 2026: Skill recommendations and suggestions to create and share skills in CoCo](/release-notes/2026/other/2026-11-09-coco-skill-recommendations)
+- [Snowflake CLI (v3.33.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [SnowSQL (v1.5.5)](/release-notes/clients-drivers/snowsql-2026)
 - [Nov 06, 2026: Anthropic Claude 5.5 and OpenAI GPT-6 models (General availability)](/release-notes/2026/other/2026-11-06-claude-5-5-openai-gpt-6-ga)
 - [.NET Driver (v6.5.0)](/release-notes/clients-drivers/dotnet-2026)
@@ -102,6 +109,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [SnowSQL (v1.4.6)](/release-notes/clients-drivers/snowsql-2026)
 - [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
+- [Oct 28, 2026: Workspace sharing in Declarative Shares (General availability)](/release-notes/2026/other/2026-10-28-declarative-sharing-workspace-sharing-ga)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
@@ -179,9 +187,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 13, 2026: Gemini 4 Argon model in AI Functions (Preview)](/release-notes/2026/other/2026-10-13-gemini-4-argon-preview)
 - [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
 - [Snowpark Python (v1.55.2)](/release-notes/clients-drivers/snowpark-python-2026)
-- [Oct 12, 2026: Horizon Context (Preview)](/release-notes/2026/other/2026-10-12-horizon-context-preview)
-- [Oct 12, 2026: LISTING\_ACCESS\_HISTORY improvements (General availability)](/release-notes/2026/other/2026-10-12-listing-access-history-improvements-ga)
-- [Oct 12, 2026: Named workload identity management for users](/release-notes/2026/other/2026-10-12-named-workload-identity-management)
-- [Oct 12, 2026: Share Streamlit in Snowflake apps with individual users (General availability)](/release-notes/2026/other/2026-10-12-sis-share-with-users)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

@@ -16,7 +16,7 @@ The following commands demonstrate commonly granted privileges for dbt project o
   ```
   GRANT OWNERSHIP ON DBT PROJECT my_dbt_project_object TO ROLE my_role;
   ```
-- **To grant privileges to execute a dbt project object and to list or get files:**
+- **To grant privileges to execute a dbt project object and to list, get, or modify its files:**
 
   Copy code
 

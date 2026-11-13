@@ -165,6 +165,8 @@ The Snowflake tap installs the official binary.
    brew upgrade --cask snowflake-cli
    ```
 
+A Homebrew cask install works for every account on this Mac. It registers `/etc/paths.d/snowflake-cli` and doesn’t edit shell startup files.
+
 ### Install the macOS package
 
 1. Check which package matches this Mac:
@@ -191,13 +193,39 @@ The Snowflake tap installs the official binary.
    snow --version
    ```
 
-If the shell can’t find `snow` after you installed for your account, add this line to your shell configuration and open a new terminal:
+The installer copies the application to `~/Applications` or `/Applications`. Open a new terminal after you install.
+
+A machine-wide install in `/Applications` registers `/etc/paths.d/snowflake-cli`. It doesn’t edit shell startup files.
+
+An install for your account adds a `PATH` entry to `~/.zprofile` for zsh, or to the first existing login profile for Bash: `~/.bash_profile`, `~/.bash_login`, or `~/.profile`. If none of those files exists, or if you use another shell, add this line to your shell configuration and open a new terminal:
 
 Copy code
 
 ```
 export PATH="$HOME/Applications/SnowflakeCLI.app/Contents/MacOS:$PATH"
 ```
+
+#### Remove PATH entries from older installers
+
+Older macOS package installers, including older Homebrew cask installs, appended `export PATH=` lines to shell startup files. Those lines can keep an outdated `snow` ahead of the current one.
+
+1. Preview the lines the command would remove:
+
+   Copy code
+
+   ```
+   snow helpers clean-installer-path
+   ```
+2. Remove them:
+
+   Copy code
+
+   ```
+   snow helpers clean-installer-path --apply
+   ```
+3. Open a new terminal.
+
+The command copies each file it changes before editing it. For details, see [snow helpers clean-installer-path](/developer-guide/snowflake-cli/command-reference/helpers-commands/clean-installer-path).
 
 1. Check the architecture:
 

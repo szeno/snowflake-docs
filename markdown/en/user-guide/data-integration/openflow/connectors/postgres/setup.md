@@ -33,9 +33,10 @@ For information about restarting replication for failed tables, see [Restart tab
 As a database administrator, perform the following tasks:
 
 1. [Configure wal\_level](#configure-wal-level)
-2. [Review other server settings](#label-postgres-review-server-settings)
-3. [Create a publication](#create-a-publication)
-4. Provision enough disk space on your PostgreSQL server for at least 72 hours of WAL at your peak
+2. [Verify synchronous\_commit](#label-postgres-verify-synchronous-commit)
+3. [Review other server settings](#label-postgres-review-server-settings)
+4. [Create a publication](#create-a-publication)
+5. Provision enough disk space on your PostgreSQL server for at least 72 hours of WAL at your peak
    change rate.
    Snowflake recommends this window so you can detect and recover from an interruption, such as a
    paused connector, a network outage, or a failed replication cycle, without a full reload.
@@ -44,11 +45,11 @@ As a database administrator, perform the following tasks:
    If `max_slot_wal_keep_size` is set, size it for this same window. See [Review server settings](#label-postgres-review-server-settings).
    If you use [scheduled replication](#label-of-postgres-ingestion-parameters), the retained WAL must
    cover a window longer than the configured schedule.
-5. Ensure that every table enabled for replication has one of the following identity key configurations:
+6. Ensure that every table enabled for replication has one of the following identity key configurations:
    - **Primary key**: The connector uses primary key columns as the identity key and requires the table’s REPLICA IDENTITY to be set to `DEFAULT`.
    - **Unique index (for tables without a primary key)**: Use a unique index that meets the requirements in [Configure replica identity for tables without a primary key](#label-postgres-configure-replica-identity-using-index) as the identity key. You must run `ALTER TABLE <table_name> REPLICA IDENTITY USING INDEX <index_name>` before enabling replication.
-6. For tables without a primary key, see [Configure replica identity for tables without a primary key](#label-postgres-configure-replica-identity-using-index).
-7. Create a user for the connector. The connector requires a user with the `REPLICATION` attribute and permissions
+7. For tables without a primary key, see [Configure replica identity for tables without a primary key](#label-postgres-configure-replica-identity-using-index).
+8. Create a user for the connector. The connector requires a user with the `REPLICATION` attribute and permissions
    to SELECT from every replicated table. Create that user with a password to enter into the connector’s configuration.
    For more information on replication security, see [Security](https://www.postgresql.org/docs/current/logical-replication-security.html).
 
@@ -70,9 +71,22 @@ Expand
 
 Show lessSee more
 
+#### Verify synchronous\_commit
+
+Openflow Connector for PostgreSQL requires synchronous\_commit to be `on`.
+This is the PostgreSQL default, verify that it hasn’t been changed:
+
+Copy code
+
+```
+SHOW synchronous_commit;
+```
+
+If the result isn’t `on`, set it back to `on`. When it’s `off`, changes can stall or go missing in logical decoding.
+
 #### Review server settings
 
-Aside from `wal_level`, review and adjust the following PostgreSQL server settings as required. Set each high enough to cover all Openflow Connector for PostgreSQL instances on the server, plus any other replication traffic on the instance.
+Aside from `wal_level` and `synchronous_commit`, review and adjust the following PostgreSQL server settings as required. Set each high enough to cover all Openflow Connector for PostgreSQL instances on the server, plus any other replication traffic on the instance.
 
 |  |  |
 | --- | --- |

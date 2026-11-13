@@ -14,15 +14,11 @@ Complete these steps before creating a Snowflake Notebook. See [About Workday Li
 
 ## Step 1: Download the Python connector
 
-The Workday LDQ connector ships as a `.whl` (wheel) file. Download it from the Workday Community portal before starting the Snowflake setup so it’s available to upload in a later step.
+The Workday LDQ connector ships as a `.whl` (wheel) file. Download it from the [ldq-python-client releases](https://github.com/Workday/ldq-python-client/releases) page before starting the Snowflake setup so it’s available to upload in a later step.
 
-1. Sign in to [Workday Community](https://community.workday.com) with your Workday credentials.
-2. Download the latest `.whl` file (for example, `ldq_python_client-1.0.3-py3-none-any.whl`) to your local computer. The download may be packaged as a zip file named `Datacloud-LiveDataQueryPython.zip`.
-3. If you downloaded a zip file, extract it to get the `.whl` file.
-
-Note
-
-You must have a valid Workday customer or partner account to access the download. If you can’t find the file, contact your Workday account representative.
+1. Open the [latest release](https://github.com/Workday/ldq-python-client/releases/latest) of `ldq-python-client`.
+2. Download the `.whl.zip` file for the latest version (for example, `ldq_python_client-1.1.2-py3-none-any.whl.zip`) to your local computer.
+3. Extract the zip file to get the `.whl` file (for example, `ldq_python_client-1.1.2-py3-none-any.whl`).
 
 ## Step 2: Create a role and user
 

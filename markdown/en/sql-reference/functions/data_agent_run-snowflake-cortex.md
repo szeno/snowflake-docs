@@ -63,6 +63,7 @@ SNOWFLAKE.CORTEX.DATA_AGENT_RUN( '<agent_name>[!<version>]', <request_body> [, <
     | `background` | boolean | Whether to run the agent asynchronously. If `true`, the agent runs asynchronously in the background with a 6 hour timeout, even if the client disconnects. For a background run with `stream` set to `false`, the API returns immediately with `status: in_progress` and a `run_id`; retrieve the response after the run completes by streaming from the Stream Agent Run endpoint with the `run_id` (REST API) or by polling the THREAD\_MESSAGES SQL function with the thread ID. If `stream` is `true`, the response is streamed as Server-Sent Events. If `background` is `false`, the agent runs synchronously with a 15 minute timeout. Only available when using threads to manage conversation history. |
     | `stream` | boolean | Whether to return a streaming response (`text/event-stream`) or a non-streaming JSON response (`application/json`). If true, the response will be streamed as Server-Sent Events. If false, the response will be returned as JSON. |
     | `tool_choice` | [ToolChoice](#label-snowflake-agent-run-toolchoice) | Configures how the agent should select and use tools during the interaction. Controls whether tool use is automatic, required, or whether specific tools should be used. |
+    | `client_metadata` | object | Free-form JSON object your application attaches to the request, for example to record which end user or client made it. Snowflake does not interpret it. It is not sent to the model. The serialized object must be at most 4096 bytes (UTF-8); larger requests are rejected, not truncated. It is recorded on the `CORTEX_AGENT_REQUEST` event in the agent’s AI Observability event table, under the attribute `snow.ai.observability.client_metadata`, as a JSON string. It is not a column in `CORTEX_AGENT_USAGE_HISTORY`; to attribute usage, join the event to that view on the request ID. Do not put secrets or personal data in it. Prefer opaque identifiers over emails. |
 
     Expand
 
@@ -100,6 +101,10 @@ SNOWFLAKE.CORTEX.DATA_AGENT_RUN( '<agent_name>[!<version>]', <request_body> [, <
           "analyst_tool",
           "search_tool"
         ]
+      },
+      "client_metadata": {
+        "user_id": "u-1234",
+        "client": "CLIENT_A"
       }
     }
     ```

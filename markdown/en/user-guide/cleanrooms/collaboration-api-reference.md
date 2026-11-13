@@ -2332,6 +2332,10 @@ Runs an analysis in the data clean room. You can pass in run details either as i
 
 Read the [consumer.run\_analysis](/user-guide/cleanrooms/consumer#dcr-consumer-run-analysis) reference for background about running a template in a data clean room.
 
+To save the results of a SQL analysis template run to a durable table, set `save_mode` and `name` in the analysis specification. Saving
+results is available only with the YAML argument syntax. For details, see
+[Save analysis results in collaborations](/user-guide/cleanrooms/saved-results).
+
 There are two versions of this procedure: one that takes the run arguments as a single YAML-formatted string, and one that takes the arguments as individual parameters.
 
 #### Syntax

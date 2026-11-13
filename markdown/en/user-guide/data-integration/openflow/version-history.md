@@ -6,6 +6,69 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 12, 2026
+
+### Runtime Server 2026.11.12.16
+
+- Applied security patches and dependency upgrades.
+- Upgraded the Runtime UI to version `0.96.0`.
+
+### Runtime Extensions 2026.11.12.17
+
+- Flow Versioning: Fixed the GitLab Flow Registry Client following renames when listing flow versions.
+- Flow Versioning: Added a rebase handler for connection backpressure, FlowFile expiration, and prioritizer changes.
+- Salesforce (GA): Changed formula views to translate formula fields that reference fields across several relationships (for example `Case.Contact.LastName` or `CreatedBy.Profile.Name`) and through polymorphic relationships such as `Owner:User.Email`, instead of exposing them as NULL, when all referenced objects are replicated.
+- Salesforce (GA): Added ingestion of archived versions of Knowledge articles (`IsLatestVersion = false`) to the Bulk API connector, including translations and the content of their file fields, for Knowledge objects listed in the Special Objects Filter. When a new version of an article is published, the previous version is updated to Archived on the next run. To retrieve archived versions missed before this release, perform a full reload of the Knowledge object. Deleted articles are visible on the parent `__ka` object (`IsDeleted = true`) rather than on the `__kav` rows.
+- Salesforce (GA): Added a Query Submission Time Offset setting (30 seconds to 1 hour, default 30 seconds) that controls how far behind the query submission time each incremental query ends. Increasing it captures records that become visible in Salesforce some time after they were modified, at the cost of delaying retrieval of the most recent changes by the same amount.
+- CDC Databases - Adaptive Merge Strategy (Preview): Renamed the Adaptive option of Placeholder Merge Strategy in Merge Snowflake Journal Table to Adaptive (preview). It now always uses the improved merge queries: a single journal read for tables with up to 10 columns, and the adaptive merge with `MAX_BY` deduplication for wider tables. Flows already set to Adaptive keep that setting and switch to the new behavior. The Snowflake managed option of both merge strategy properties is now labelled Snowflake managed (experimental); its behavior is unchanged.
+- CDC SQL Server CT (GA): Fixed tables using Change Tracking being failed when the database reports an older change tracking version during an Always On failover. The processor keeps replicating the table, retries with backoff, and logs a warning. If the warning keeps appearing, the connection may point at a secondary replica or the database may have been restored from an older backup; in that case remove the table from replication and add it back.
+- CDC SQL Server CT (GA): Fixed tables with composite primary keys re-reading the same rows on every run when one change tracking version contains more changes than Max Batch Size. Previously replication of such a table could stall and write duplicate rows to the journal.
+
+#### Gen 2 Connectors
+
+- CDC PostgreSQL (Public Preview): Added Merge Strategy to the Tuning step, with Base merge (the default) and Adaptive (preview). The choice applies to merges that run after the change.
+- CDC PostgreSQL, CDC MySQL (Public Preview): Changed table selection so that tables that are not in the configured publication are shown as disabled, with the reason. Saved table selections that can no longer be replicated are removed with a banner that explains why, and column filters for removed tables are flagged before you save. The Regex Preview button and several small visual issues are also fixed.
+- CDC SQL Server (Private Preview): Fixed the setup wizard so that changing Capture Mode between CDC and Change Tracking updates which steps are shown immediately, without first saving the table step.
+- SharePoint (Private Preview): Updated the connector UI to `0.7.0`. Checkbox focus outlines are no longer clipped in list rows, the property editor resize handle keeps the resize cursor, and connector Controller Service handling is more robust for unreadable services and Advanced UI navigation.
+
+#### Gen 1 Connectors
+
+- Salesforce Bulk API 1.18.0 (GA): Fixed full loads of objects whose timestamp field cannot drive a merge (for example objects in the Special Objects Filter without a timestamp field, or Bulk API objects using `CreatedDate` with Incremental Offload disabled) appending a full copy on every run, which duplicated rows. These full loads now replace the destination table content.
+- Google Ads 0.16.0 (Public Preview): Fixed a failed chunk dropping the run’s shared temporary table while other chunks were still writing to it, so one transient error no longer fails the whole run and leaves it waiting 6 hours before being discarded. A failed run now fails once and drops its temporary table once.
+- Google Ads 0.16.0 (Public Preview): Changed the destination table name to be controlled by a single attribute, `google.ads.destination.table`, set in the Save Temporary Table Name As Attribute processor of the Fill Temporary Table group. The default name is unchanged (`<resource>_<account id>`); override only that attribute to ingest into a differently named table. Change a custom destination table name only when no Google Ads data is queued in the flow.
+- Microsoft Dataverse 0.33.0 (GA): Fixed the connector stopping replication of all tables when one table fails with a permanent error such as an HTTP 400 response. The affected table is now suspended while the other tables keep replicating, and a suspended table can be resumed from its saved position without re-ingesting it. See the connector documentation for the resume procedure.
+- Jira Cloud (Core) 0.15.0 (GA): Added the `FIELD_OPTION` table to the connector flow. The table maps custom field select option IDs to their names and is enabled by default.
+- Oracle (embedded license) 0.54.0, Oracle (embedded license, public sector) 0.54.0, Oracle (independent license) 0.53.0 (GA): Changed journal handling so that journal FlowFiles for tables that are no longer replicating (for example a table that failed or was removed from replication) are discarded instead of staying queued in front of the journal merge.
+
+## November 10, 2026
+
+### Runtime Server 2026.11.10.22
+
+- Applied security patches and dependency upgrades.
+- Snowflake Stage Transfers: Uploads and downloads to S3-backed Snowflake stages now use the stage endpoint returned by Snowflake, supporting FIPS and sovereign cloud S3 endpoints instead of always targeting the public AWS S3 hostname.
+
+### Runtime Extensions 2026.11.10.8
+
+- Snowflake: Fixed `UpdateSnowflakeDatabase` and `UpdateSnowflakeTable` with Alter Table failing when the Snowflake `QUOTED_IDENTIFIERS_IGNORE_CASE` parameter is enabled.
+- CDC Databases (GA): Changed how the database CDC connectors handle an unavailable Snowflake warehouse (for example a resource monitor quota was reached, the connector role has no `USAGE` on the warehouse, or the warehouse is suspended with auto-resume off). The connectors now hold new merges for all tables and retry one merge every 2 minutes, instead of retrying every table every few seconds. This greatly reduces cloud-services credit usage during warehouse outages. Merges resume automatically once the warehouse is available, and tables are marked as failed only after Merge Query Retry Count retries (10,000 by default, about 14 days). Other merge errors are retried as before.
+- CDC MySQL (GA): Fixed MySQL and MariaDB snapshots skipping or repeating rows when a `BIGINT` or `BIGINT UNSIGNED` replication key is larger than `2^53`, including a snapshot that was already in progress.
+- CDC PostgreSQL (GA): Changed `ListTableNames` and `FetchSourceTableSchema` to check the connecting user’s privileges and return a table only when the user has `USAGE` on its schema and can `SELECT` at least one of its columns.
+- CDC SQL Server CT (GA): Fixed Change Tracking capture so that a cycle is committed only when it completes. Previously, a failed or rolled-back cycle could lose a schema change event, so later changes were emitted without the corresponding DDL. The schema change is now re-emitted on the next cycle.
+- CDC Oracle (GA): Added a Read Timeout property (default 5 minutes) to “Read Oracle CDC Stream” that bounds how long the processor waits for data on an open Oracle connection before failing and reconnecting, instead of waiting indefinitely. Existing flows pick up the 5-minute default automatically; set it to 0 to restore the previous unbounded behavior. Easy Connect XStream Out Server URLs are now converted to a full TNS connect descriptor, so the provenance transit URI for change events shows the descriptor form (for example `oracle:oci:@(DESCRIPTION=...)`).
+- Jira Cloud (Core) (GA): Added the `FIELD_OPTION` table, which maps custom field select option IDs to their names so `ISSUE` columns can be decoded with a join. It contains only options that appear on ingested issues.
+- Jira Cloud (legacy): Added a deprecation warning, shown when the Atlassian Jira Cloud connector starts, that points to the Atlassian Jira Cloud (Core) connector and its migration guide.
+
+#### Gen 2 Connectors
+
+- CDC MySQL (Public Preview): Exposed JDBC connect and read timeouts. The defaults match the MariaDB driver, so existing connections keep their current behavior.
+- CDC SQL Server (Private Preview): Changed the default `Error Handling Strategy` to `Log Errors and Continue`. Existing gen 2 connectors that never saved an explicit value switch to `Log Errors and Continue` on upgrade; connectors that explicitly selected `Fail Table` keep `Fail Table`. Rows that Snowflake rejects during ingest are recorded in the table error records instead of failing the table, unless `Fail Table` is selected.
+- CDC SQL Server (Private Preview): Updated the setup wizard to link to the SQL Server gen 2 Change Tracking and CDC prerequisite documentation.
+
+#### Gen 1 Connectors
+
+- MySQL 0.62.0, PostgreSQL 0.71.0, SQL Server CT 0.62.0, SQL Server CDC 0.56.0 (GA): Changed journal handling so that journal FlowFiles for tables that are no longer replicating (for example a table that failed or was removed from replication) are discarded instead of staying queued in front of the journal merge.
+- Jira Cloud (legacy) 0.24.0 (GA): Marked the connector as deprecated. The canvas shows a label pointing to the Jira Cloud (Core) connector.
+
 ## November 9, 2026
 
 ### AWS Data Plane Agent 1.77.3

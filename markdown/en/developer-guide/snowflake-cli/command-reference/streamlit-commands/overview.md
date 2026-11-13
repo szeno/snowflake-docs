@@ -10,5 +10,6 @@ Snowflake CLI supports the following commands for managing Streamlit apps:
 - [snow streamlit list](/developer-guide/snowflake-cli/command-reference/streamlit-commands/list)
 - [snow streamlit logs](/developer-guide/snowflake-cli/command-reference/streamlit-commands/logs)
 - [snow streamlit share](/developer-guide/snowflake-cli/command-reference/streamlit-commands/share)
+- [snow streamlit status](/developer-guide/snowflake-cli/command-reference/streamlit-commands/status)
 
 For more information about Streamlit apps, refer to [About Streamlit in Snowflake](/developer-guide/streamlit/about-streamlit) and [Add a Streamlit app](/developer-guide/native-apps/adding-streamlit).

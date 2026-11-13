@@ -1367,6 +1367,7 @@ Show lessSee more
 | Privilege | Usage |
 | --- | --- |
 | OWNERSHIP | Enables full control over the Cortex Search service. The role with this privilege can also remove a service from a schema. |
+| MONITOR | Enables viewing the refresh history and request logs of a Cortex Search service. |
 | OPERATE | Enables inspecting, suspending or resuming a Cortex Search service and modifying service properties. |
 | USAGE | Enables invoking the service. |
 | ALL [ PRIVILEGES ] | Grants all privileges, except OWNERSHIP, on the service. |

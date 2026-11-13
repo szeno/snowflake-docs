@@ -330,6 +330,10 @@ These parameters are part of the [syntax for relationships](/sql-reference/sql/c
     :   Specifies a column identified with the PRIMARY KEY or UNIQUE constraint in the
         [logical table definition](#label-create-semantic-view-tables).
 
+        If the columns aren’t identified with the PRIMARY KEY or UNIQUE constraint, the relationship is a
+        [direct many-to-many relationship](/user-guide/views-semantic/sql#label-semantic-views-many-to-many-direct)
+        (Public Preview).
+
     `ASOF ref_column_name [ , ... ]`
     :   For an [ASOF join](/user-guide/views-semantic/sql#label-semantic-views-create-relationships-asof), specifies a column of one of
         [the supported types](/sql-reference/constructs/asof-join#label-asof-join-data-types).

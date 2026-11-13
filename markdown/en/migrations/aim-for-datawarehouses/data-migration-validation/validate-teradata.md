@@ -157,7 +157,7 @@ Some byte sequences in a non-Latin column have no Unicode equivalent. The **`onU
 
 | `onUntranslatable` | Behavior |
 | --- | --- |
-| `"substitute"` (default) | Each untranslatable character is replaced with the substitution character **U+001A** (the Unicode SUB control character), via Teradata’s `TRANSLATE(... WITH ERROR)`, so translation — and therefore row hashing and comparison — proceeds. The same substitution is applied on both sides, so validation still reports a meaningful result. |
+| `"substitute"` (default) | Each untranslatable character is replaced with the Unicode replacement character **U+FFFD**, via Teradata’s `TRANSLATE(... WITH ERROR)`, so translation — and therefore row hashing and comparison — proceeds. The same substitution is applied on both sides, so validation still reports a meaningful result. |
 | `"fail"` | The affected validation task fails instead of substituting, surfacing that the column holds characters that can’t be represented in Unicode. Use it when you’d rather stop and inspect than compare substituted values. |
 
 Expand

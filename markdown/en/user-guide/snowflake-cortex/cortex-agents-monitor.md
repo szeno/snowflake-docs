@@ -88,7 +88,7 @@ Version information appears in the following places:
 
 When you query the page, the UI pairs recorded turns with the agent’s current version metadata:
 
-- After you commit the live version as `VERSION$4`, turns recorded as `LIVE` (displayed as `DRAFT` in the UI) display `VERSION$4` once new traces labeled `VERSION$4` start arriving. Snowflake pairs those traces with the earlier draft-labeled data. Because every version starts as the live version, this prevents versions from appearing permanently as `LIVE`.
+- After you commit the live version as `VERSION$4`, turns recorded as `LIVE` (displayed as `DRAFT` in the UI) display `VERSION$4` once new traces labeled `VERSION$4` start arriving. Snowflake pairs those traces with the earlier draft-labeled data. Because every version starts as the live version, this prevents versions from appearing permanently as `LIVE`. Requests that don’t specify a version are served by `LIVE` until a version later than `VERSION$1` is committed, so they appear as `DRAFT` in Observability. For details, see [Requests that don’t specify a version](/user-guide/snowflake-cortex/cortex-agents-versioning#requests-that-dont-specify-a-version).
 - The UI shows aliases currently assigned to the recorded version, regardless of which alias was used at invocation time. Reassigning an alias updates how existing traces for those versions are labeled.
 - If the recorded version was deleted, or if the turn predates agent version tracking, the UI displays `—`.
 

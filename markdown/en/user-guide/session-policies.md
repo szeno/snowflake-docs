@@ -75,8 +75,8 @@ sessions. For Snowsight sessions, the default is `1080` minutes (18 hours).
 When the session expires, the user must authenticate to Snowflake again. However, Snowflake does not enforce any setting defined by the
 [Custom logout endpoint](/user-guide/admin-security-fed-auth-security-integration#label-sso-custom-logout-endpoint).
 
-The session policy can be set for an account or user with configurable idle timeout and maximum session lifespan values to address compliance requirements. If a user
-is associated with both an account and user-level session policy, the user-level session policy takes precedence. After the session policy
+The session policy can be set for an account or user with configurable idle timeout and maximum session lifespan values to address compliance requirements. If more than
+one session policy applies to a user, see [Applying a session policy](/user-guide/session-policies-managing#label-session-policy-applying) for which one takes precedence. After the session policy
 is set on the account or user, Snowflake enforces the session policy.
 
 There are two properties that govern the idle timeout behavior:
@@ -93,6 +93,9 @@ There are two properties that govern the maximum lifespan behavior:
 
 - `SESSION_MAX_LIFESPAN_MINS` for programmatic and Snowflake clients.
 - `SESSION_UI_MAX_LIFESPAN_MINS` for Snowsight.
+
+The `SESSION_UI_IDLE_TIMEOUT_MINS` and `SESSION_UI_MAX_LIFESPAN_MINS` properties have no effect for service users, because service users cannot start a
+Snowsight session.
 
 For more information, see [Managing session policies](/sql-reference/ddl-user-security#label-session-policy-ddl).
 
@@ -113,6 +116,9 @@ Note
 
 When you set the `ALLOWED_SECONDARY_ROLES` property in a session policy, the enforcement of the secondary roles begins immediately,
 including existing sessions.
+
+Changes made to an existing Snowflake session policy go into effect when the next SQL query that uses the session policy runs, rather than
+immediately forcing a disconnect on active sessions.
 
 Prior to updating the session policy to limit secondary roles, consider your workload schedule and the access control for each
 workload to avoid unnecessary workload disruption.

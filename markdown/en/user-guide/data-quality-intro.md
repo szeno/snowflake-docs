@@ -78,6 +78,11 @@ The credits consumed by the serverless compute resources are listed under the â€
 These credits include compute consumed by all system or user-defined data quality metrics that you use. You are not billed for creating a
 DMF.
 
+For schema-level anomaly detection, Snowflake can evaluate checks for multiple tables as a batch. The
+[DATA\_QUALITY\_MONITORING\_USAGE\_HISTORY view](/sql-reference/account-usage/data_quality_monitoring_usage_history) attributes the batchâ€™s
+compute cost to the participating tables based on the number of DMF associations for each table in the batch. For more information about
+schema-level checks, see [Monitor the data quality of a schema](/user-guide/data-quality-schema-level).
+
 - Billing occurs only when a scheduled DMF is computed on an object. You are not billed for unscheduled data metric
   function usage, such as calling a DMF with a SELECT statement.
 - The logging infrastructure consolidates metric outputs in the event table. Consumption incurred by the logging service shows up on

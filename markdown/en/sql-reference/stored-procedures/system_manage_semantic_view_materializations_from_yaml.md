@@ -1,9 +1,5 @@
 # SYSTEM$MANAGE\_SEMANTIC\_VIEW\_MATERIALIZATIONS\_FROM\_YAML
 
-Preview Feature — Open
-
-Available to all accounts.
-
 Synchronizes the materializations on a semantic view with a YAML specification.
 This stored procedure applies the desired state declaratively:
 

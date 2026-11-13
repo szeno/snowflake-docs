@@ -328,6 +328,22 @@ Ways to use it:
 
 For more information, see [About Snowflake and SAP® Zero-Copy Integration](/user-guide/data-integration/zero-copy/about-sap-snowflake).
 
+### `manage-zerocopy-salesforce`
+
+Manage the zero-copy connector for no-copy data sharing from Salesforce Data Cloud to Snowflake: Salesforce Data Cloud data lake objects (DLOs), data model objects (DMOs), and calculated insight objects (CIOs) become queryable in Snowflake as catalog-linked databases. The skill provides five workflows from a single menu: create a connector, consume, analyze, migrate from v1 to v2, and troubleshoot.
+
+Ways to use it:
+
+- Set up a Salesforce zero-copy connector and enroll it with Salesforce Data Cloud
+- Consume Data Cloud shares by mounting them as catalog-linked databases
+- Explore, query, and analyze DLO, DMO, and CIO data
+- Migrate an existing v1 connector to v2
+- Troubleshoot connector and catalog-linked database issues
+
+Prerequisites: the `CREATE DATABASE` privilege on the account, the `CREATE ZEROCOPY CONNECTOR` privilege on the schema, and a Salesforce Data Cloud administrator to complete the enrollment handshake.
+
+For more information, see [About Salesforce Data Cloud and Snowflake](/user-guide/data-integration/zero-copy/about-salesforce-datacloud).
+
 ## Analytics and dashboards
 
 ### `dashboard`
@@ -360,6 +376,18 @@ Ways to use it:
 - Check semantic view coverage across your CR tables and identify the highest-read tables that are missing semantic views
 - Score existing semantic views on a 9-point quality scale and get actionable recommendations for missing signals (primary keys, metrics, verified queries, and so on)
 - Invoke with `/ai-readiness-score` in CoCo CLI or in the CoCo UI in Snowsight; in Snowsight, you must have a Workspace open
+
+### `suggest-sv-materializations`
+
+Recommend [semantic view materializations](/user-guide/views-semantic/materializations) that speed up slow semantic view queries. CoCo analyzes your query history or a Snowflake dashboard, checks which metrics can be materialized, and proposes ADD MATERIALIZATION statements for you to review. CoCo doesn’t create materializations or change your semantic views without your approval.
+
+Ways to use it:
+
+- Find the semantic views with the slowest queries in a warehouse, for a user or role, or across your account, and get up to three ranked materialization candidates for each one
+- Speed up the tiles in a Snowflake dashboard with narrow materializations that the tiles share
+- Find out why a query doesn’t use an existing materialization
+
+For more information, see [Getting materialization recommendations with CoCo](/user-guide/views-semantic/materializations#label-semantic-views-materializing-coco).
 
 ### `multi-account-search-and-query`
 
@@ -662,6 +690,29 @@ Ways to use it:
 - Start a restore review from a committed version, which generates new SQL for you to approve
 
 A role with access to the objects in scope can review governance and prepare a change. Applying changes requires the privileges for the requested controls. If the active role lacks them, the skill keeps the review package for an authorized administrator and doesn’t apply a partial change.
+
+### `business-ontology`
+
+Preview Feature  — Private
+
+This skill is available only to accounts where Snowflake has enabled Business Ontology. To request access, contact your Snowflake account team.
+
+Create and manage Business Ontology nodes, domains, relationships, and Snowflake object representations, individually or by bulk import with AI extraction. The skill also registers stage files as ontology sources and builds Cortex Agents that use the ontology.
+
+CoCo loads this skill when you ask to create a glossary term or ontology node, add a domain, define a relationship, associate a table with a term, import an ontology from a file, dbt manifest, or semantic views, promote a Cortex Sense context to the ontology, find drift between the ontology and semantic views, register an ontology source, list drafts or terms pending review, or build an agent that uses the ontology or add the ontology to an existing agent.
+
+Before the skill runs, it checks that Business Ontology is enabled on your account. If the check fails, contact your account administrator. You also need privileges on the ontology domain (OWNERSHIP, MODIFY, SUGGEST, or READ, depending on the operation). Creating a domain requires the CREATE ONTOLOGY DOMAIN privilege.
+
+The skill can also change Snowflake objects and existing ontology content. It asks before each change:
+
+- After you bind a node to columns or semantic views, it offers to copy the node’s description into their comments. It doesn’t replace an existing comment without asking. This requires APPLY COMMENT, MODIFY, or OWNERSHIP on each object.
+- It can delete or rename domains, nodes, relationships, and representations. Deleting a domain also deletes its nodes and requires OWNERSHIP of the domain. Renaming a domain recreates it under the new name, so its nodes get new IDs.
+
+Ways to use it:
+
+- Create a glossary term or ontology node and define its relationships to other nodes
+- Associate a table or column with an ontology term, or import an ontology from a file, dbt manifest, or semantic views
+- Build a Cortex Agent that uses the ontology, or review drafts and terms that are pending review
 
 ## Data sharing and marketplace
 

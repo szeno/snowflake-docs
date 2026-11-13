@@ -409,6 +409,11 @@ You can apply a masking policy to a column in a CTAS statement. Specify the mask
     If you don’t set this parameter, the Iceberg table inherits the setting from the schema, database, or account. The schema takes
     precedence over the database, and the database takes precedence over the account.
 
+    A value set on the table can be published as `write.delete.mode`, `write.update.mode`, and `write.merge.mode`. On a
+    Snowflake-managed table, writes from an external engine through Snowflake Horizon Catalog can update this parameter by setting
+    those properties. On an externally managed table, a refresh can adopt those properties into this parameter. For details, see
+    [Write-mode property synchronization](/user-guide/tables-iceberg-manage#label-iceberg-merge-on-read-property-sync).
+
     The parameter values are case-insensitive.
 
     Values:

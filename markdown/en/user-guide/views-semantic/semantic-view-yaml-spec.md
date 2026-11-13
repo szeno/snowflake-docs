@@ -555,6 +555,10 @@ In this example, each order is matched to the customer address whose validity pe
 
 #### Many-to-many relationships via bridge tables
 
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
 Many-to-many relationships are expressed by defining two relationships from a bridge (junction) table to two
 entity tables. The system infers the many-to-many path from the relationship graph:
 
@@ -586,6 +590,40 @@ relationships:
       - left_column: book_id
         right_column: book_id
 ```
+
+#### Direct many-to-many relationships
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+A direct many-to-many relationship doesn’t need a bridge table. Define a relationship whose `right_column`
+values aren’t the `primary_key` or a `unique_keys` entry of the `right_table`. You don’t need to set any
+additional field: the system identifies the relationship as many-to-many because the referenced columns
+aren’t unique.
+
+In the following example, `promotions` doesn’t define a primary key, and the same `promo_code` can appear
+in several rows:
+
+Copy code
+
+```
+tables:
+  - name: orders
+    primary_key:
+      columns: [order_id]
+  - name: promotions
+
+relationships:
+  - name: orders_to_promotions
+    left_table: orders
+    right_table: promotions
+    relationship_columns:
+      - left_column: promo_code
+        right_column: promo_code
+```
+
+For more information, see [Direct many-to-many relationships](/user-guide/views-semantic/sql#label-semantic-views-many-to-many-direct).
 
 #### Role-playing tables
 

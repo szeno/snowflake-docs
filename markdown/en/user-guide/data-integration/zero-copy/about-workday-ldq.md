@@ -57,7 +57,7 @@ Show lessSee more
 You also need:
 
 - `ACCOUNTADMIN` (or equivalent) role in Snowflake to complete the initial setup.
-- The `ldq_python_client-*.whl` wheel file, available from the Workday Community portal.
+- The `ldq_python_client-*.whl` wheel file, available from the [ldq-python-client releases](https://github.com/Workday/ldq-python-client/releases) page.
 
 Note
 

@@ -330,6 +330,8 @@ Cortex Search Services return all columns specified in the `columns` field in yo
   as well as on the database and schema in which the service resides. See [Cortex Search Access Control Requirements](/user-guide/snowflake-cortex/cortex-search/query-cortex-search-service#label-cortex-search-query-syntax-access-controls).
 - To suspend or resume a Cortex Search Service using the ALTER command, the role of the querying user must have the OPERATE privilege on
   the service. See [ALTER CORTEX SEARCH SERVICE](/sql-reference/sql/alter-cortex-search).
+- To view refresh history for a Cortex Search Service, the role must have the MONITOR, OPERATE, or OWNERSHIP privilege on
+  the service. See [CORTEX\_SEARCH\_REFRESH\_HISTORY](/sql-reference/functions/cortex_search_refresh_history).
 
 Important
 

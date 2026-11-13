@@ -1,19 +1,10 @@
 # Node.js Driver
 
-Node.js 4.0 Alpha 1 Private Preview - Universal Core
+[Preview Feature](/release-notes/preview-features) — Snowflake Node.js Driver 4.x
 
-A version of the Snowflake Node.js Driver built on the Universal Core is available in private preview.
-Preview participants can obtain the `snowflake-sdk` alpha release from
-[npm](https://www.npmjs.com/package/snowflake-sdk/v/4.0.0-alpha.1).
-This release requires Node.js 22 or later.
+Snowflake Node.js Driver 4.x, built on the Universal Core, is in public preview. It is published as `snowflake-sdk` with the npm `beta` tag and requires Node.js 22 or later. This page documents 3.x, which remains the default and the version Snowflake recommends for production. Use of this preview is subject to [Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
 
-Use this driver only if you are participating in the private preview, subject to
-[Snowflake’s Preview Terms](https://www.snowflake.com/en/legal/optional-offerings/offering-specific-terms/preview-terms-of-service/).
-It may be unstable and is not ready for use with production data. Use it only for internal evaluation;
-do not use it to process personal data or other data subject to compliance or legal requirements.
-
-The documentation below describes the existing Node.js driver. Its requirements and supported
-functionality might differ from the preview.
+See [Version 4.0.0-beta.0 (November 12, 2026)](/release-notes/clients-drivers/nodejs-2026#label-nodejs-rn-4-0-0-beta-0).
 
 Note
 

@@ -30,8 +30,8 @@ See also:
 | ERROR\_CODE | TEXT | Error code for the execution, if applicable. |
 | ERROR\_MESSAGE | TEXT | Error message describing why the execution failed, if applicable. |
 | STATE | TEXT | State of the execution. Possible values include: - SUCCESS - HANDLED\_ERROR |
-| DBT\_VERSION | TEXT | The dbt version used for the execution. For example, `1.10.15`. |
-| DBT\_SNOWFLAKE\_VERSION | TEXT | The version of the dbt-snowflake adapter used for the execution. For example, `1.10.3`. |
+| DBT\_VERSION | TEXT | The version of dbt Core used to run the project, such as `1.10.15`. This is the version of the dbt engine, not a version of your dbt project. |
+| DBT\_SNOWFLAKE\_VERSION | TEXT | The version of the dbt-snowflake adapter package used for the execution, such as `1.10.3`. This is not a version of your dbt project. |
 | ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
 
 Expand

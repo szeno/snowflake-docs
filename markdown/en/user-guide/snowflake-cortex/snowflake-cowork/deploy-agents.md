@@ -339,7 +339,7 @@ The agent can answer questions such as these:
 - What product sold the most units last month?
 - Can you show me the sales trend for the last year?
 
-It can also provide visualizations using most [Vega-Lite](https://vega.github.io/vega-lite/examples/) chart types. Geographic map charts are not supported. Notable examples include:
+It can also provide visualizations using most [Vega-Lite](https://vega.github.io/vega-lite/examples/) chart types, and interactive maps (preview) for geographic results. Notable examples include:
 
 - Bar, line, pie, and scatter charts
 - Area charts
@@ -349,11 +349,12 @@ It can also provide visualizations using most [Vega-Lite](https://vega.github.io
 - Faceted charts and small multiples
 - Error bars and error bands
 - Text annotations
+- Maps (preview) of latitude and longitude points, H3 hexagons, and `GEOGRAPHY` or `GEOMETRY` shapes. For more information, see [Geospatial maps in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/maps).
 
 Note
 
-Bar, line, pie, and scatter charts include a chart editor for manual adjustments. For all
-other chart types, ask Snowflake CoWork to make changes to the chart.
+Bar, line, pie, and scatter charts include a chart editor for manual adjustments. For maps and
+all other chart types, ask Snowflake CoWork to make changes to the visualization.
 
 To use the agent, follow these steps:
 

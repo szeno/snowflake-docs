@@ -171,7 +171,7 @@ schemaObjectPrivileges ::=
   -- For CORTEX EXTENSION
      { READ | WRITE } [ , ... ]
   -- For CORTEX SEARCH SERVICE
-     { OPERATE | USAGE } [ , ... ]
+     { MONITOR | OPERATE | USAGE } [ , ... ]
   -- For DATA METRIC FUNCTION
      USAGE [ , ... ]
   -- For DATASET, FILE FORMAT, FUNCTION (UDF or external function), MODEL, PROCEDURE, SECRET, SEQUENCE, SNAPSHOT, or TYPE

@@ -170,6 +170,7 @@ Defines the settings for migrating a single table.
 | `loadSegmentation` | `LoadSegmentation` |  | Splits a single `COPY INTO` into multiple parallel statements, each targeting a subset of staged files. Useful when many files are staged for one partition (common with Redshift UNLOAD). See [Load segmentation](#load-segmentation). |
 | `queryModifiers` | `QueryModifiers` |  | Optional SQL hints appended to source queries to reduce locking on busy source tables. Default is unset (no hints). See [Anti-locking and query modifiers](#anti-locking-and-query-modifiers). |
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
+| `onUntranslatable` | `String` (`"substitute"`, `"fail"`) |  | Teradata only. How untranslatable characters in non-Latin Teradata character sets (`KANJISJIS`, `KANJI1`, `GRAPHIC`) are handled during extraction. `"substitute"` (default) replaces each one with U+FFFD; `"fail"` fails the table’s extraction. See [Character set handling](../data-migration-validation/migrate-teradata#character-set-handling). |
 | `continueIdentityColumns` | `Boolean` |  | When `true`, continues each target identity and sequence-default column past the migrated keys after the final load. Native targets only. Defaults to `false`. See [Identity columns and sequences](#identity-columns-and-sequences). |
 
 Expand

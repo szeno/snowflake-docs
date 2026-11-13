@@ -521,6 +521,11 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
     If you don’t set this parameter, the Iceberg table inherits the setting from the schema, database, or account. The schema takes
     precedence over the database, and the database takes precedence over the account.
 
+    A value set on the table can be published as `write.delete.mode`, `write.update.mode`, and `write.merge.mode`. On a
+    Snowflake-managed table, writes from an external engine through Snowflake Horizon Catalog can update this parameter by setting
+    those properties. On an externally managed table, a refresh can adopt those properties into this parameter. For details, see
+    [Write-mode property synchronization](/user-guide/tables-iceberg-manage#label-iceberg-merge-on-read-property-sync).
+
     The parameter values are case-insensitive.
 
     Values:
@@ -578,8 +583,11 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
     Default: `OPTIMIZED`
 
 `DATA_RETENTION_TIME_IN_DAYS = integer`
-:   Specifies the retention period for a Snowflake-managed table so that Time Travel actions (SELECT, CLONE, UNDROP) can be performed on historical
+:   Specifies the retention period for a Snowflake-managed table or an externally managed table so that Time Travel actions (SELECT, CLONE, UNDROP) can be performed on historical
     data in the table. For more information, see [Understanding & using Time Travel](/user-guide/data-time-travel).
+
+    If you set this parameter at the table level for Apache Iceberg tables, Snowflake writes the value to the `history.expire.max-snapshot-age-ms`
+    table property in the Iceberg metadata.
 
     For a detailed description of this object-level parameter, as well as more information about object parameters, see
     [Parameters](/sql-reference/parameters).
@@ -762,6 +770,12 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
 `ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' }`
 :   Specifies how Snowflake performs row-level updates (UPDATE, DELETE, MERGE) on Apache Iceberg™ tables. Selects between merge-on-read
     (which writes Iceberg delete files alongside the data) and copy-on-write (which rewrites entire data files).
+
+    Snowflake can publish a table-level value of this parameter as `write.delete.mode`, `write.update.mode`, and `write.merge.mode`
+    on Snowflake-managed and externally managed tables. On a Snowflake-managed table, writes from an external engine through
+    Snowflake Horizon Catalog can update this parameter by setting those properties. On an externally managed table, a refresh can
+    adopt those properties into this parameter. For details, see
+    [Write-mode property synchronization](/user-guide/tables-iceberg-manage#label-iceberg-merge-on-read-property-sync).
 
     The parameter values are case-insensitive.
 

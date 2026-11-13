@@ -54,7 +54,7 @@ Show lessSee more
 
 ### Search the DAG
 
-Use the search bar in the DAG to find a model by name. Selecting a model will anchor that model as the focal point of the graph. To change the anchor
+Use the search bar in the DAG to find a model by name. Selecting a model anchors that model as the focal point of the graph. To change the anchor
 node, use the search bar to search for a different model.
 
 ### Control DAG depth
@@ -205,5 +205,5 @@ If you want the classic single-file `dbt docs` site, run `dbt docs generate --st
 
 Note
 
-dbt Projects on Snowflake don’t support `dbt docs serve`. Use the project details page in Snowsight for an interactive experience, or generate
+dbt Projects on Snowflake doesn’t support `dbt docs serve`. Use the project details page in Snowsight for an interactive experience, or generate
 `target/static_index.html` with `dbt docs generate --static`.

@@ -3,10 +3,6 @@ Categories:
 
 # SEMANTIC\_VIEW\_MATERIALIZATION\_REFRESH\_HISTORY
 
-Preview Feature — Open
-
-Available to all accounts.
-
 Returns the refresh history for a [semantic view materialization](/user-guide/views-semantic/materializations),
 including the state, timing, and action taken for each refresh.
 

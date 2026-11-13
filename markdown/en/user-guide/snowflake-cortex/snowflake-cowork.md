@@ -32,11 +32,13 @@ and waiting on data teams for answers. Snowflake CoWork solves this with the fol
   render as visualizations, while detailed lookups return tables. Snowflake CoWork supports
   most [Vega-Lite](https://vega.github.io/vega-lite/examples/) chart types, including
   area charts, heatmaps, box plots, dual-axis and layered charts, faceted small-multiple charts,
-  error bars, and text annotations, in addition to bar, line, pie, and scatter charts. Geographic
-  map charts are not supported. Users can customize chart preferences through agent instructions,
-  including default chart types, colors, and formatting rules. For more information, see
-  [Customize charts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/chart-customization).
-- **Artifacts**: Save charts and tables to revisit an analysis, or share a conversation as a snapshot. For these workflows, see [Chart and Thread artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts). For the common artifact types, ownership, and sharing model, see [Snowflake Artifacts](/user-guide/snowflake-artifacts).
+  error bars, and text annotations, in addition to bar, line, pie, and scatter charts. For
+  geographic results, it can also draw interactive maps (preview) of latitude and longitude points, H3
+  hexagons, and `GEOGRAPHY` or `GEOMETRY` shapes. Users can customize Vega-Lite chart preferences
+  through agent instructions, including default chart types, colors, and formatting rules. For
+  more information, see [Customize charts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/chart-customization)
+  and [Geospatial maps in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/maps).
+- **Artifacts**: Save charts, tables, and maps to revisit an analysis, or share a conversation as a snapshot. For these workflows, see [Chart and Thread artifacts in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/artifacts). For the common artifact types, ownership, and sharing model, see [Snowflake Artifacts](/user-guide/snowflake-artifacts).
 - **Automations**: Turn a one-time report into a recurring one that re-runs your question with fresh data and emails you the results. Set up and manage automations conversationally or from the **Automations** tab. For more information, see [Automations in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/automations).
 - **User skills**: Codify a repeatable workflow once, then reuse it explicitly with `/` or from the Skills menus, or implicitly when your conversation matches the skill. Create skills conversationally, from the **+** menu (**Create new**), or by uploading a skill folder. For more information, see [User skills in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/user-skills).
 - **Document generation**: Turn analysis into PDF documents, Word documents, PowerPoint presentations, and HTML reports you can view inline. Upload a PowerPoint template to match your organization’s style, or customize behavior with a user or agent skill. Requires the [code execution tool](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) on the associated agent. For more information, see [Document generation in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/document-generation).

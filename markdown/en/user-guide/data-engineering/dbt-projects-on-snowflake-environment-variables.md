@@ -233,7 +233,7 @@ Copy code
 --   VALUE_LIST = ('hub.getdbt.com', 'codeload.github.com', 'github.com/my-repo');
 ```
 
-For the full rules on valid values, see [CREATE NETWORK RULE](https://docs.snowflake.com/en/sql-reference/sql/create-network-rule).
+For the full rules on valid values, see [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule).
 
 ### Update the external access integration
 
@@ -254,8 +254,8 @@ Copy code
 ```
 CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION dbt_ext_access
   ALLOWED_NETWORK_RULES = (dbt_network_rule)
-  ALLOWED_AUTHENTICATION_SECRETS = all   -- Recommended if you expect your repos or access tokens changes over time, or you enable many personal access tokens.
-  -- ALLOWED_AUTHENTICATION_SECRETS = (tasty_bytes_dbt_db.integrations.tb_dbt_git_secret) -- Use this if your org has a single admin secret for repo access or want to list out each secret for your team.
+  ALLOWED_AUTHENTICATION_SECRETS = all   -- Recommended if you expect your repos or access tokens to change over time, or you enable many personal access tokens.
+  -- ALLOWED_AUTHENTICATION_SECRETS = (tasty_bytes_dbt_db.integrations.tb_dbt_git_secret) -- Use this if your org has a single admin secret for repo access or you want to list out each secret for your team.
   ENABLED = TRUE;
 ```
 

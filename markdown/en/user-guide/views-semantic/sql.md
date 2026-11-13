@@ -194,6 +194,9 @@ view. For each relationship, you specify:
   You can also specify a date, time, timestamp, or numeric column, if you want to
   [join the columns on a range](#label-semantic-views-create-relationships-asof).
 
+  If the referenced columns aren’t a primary key or unique key, the relationship is a
+  [direct many-to-many relationship](#label-semantic-views-many-to-many-direct).
+
 In the [example presented earlier](/user-guide/views-semantic/sql#label-semantic-views-create-example), the RELATIONSHIPS clause specifies two
 relationships:
 
@@ -2447,11 +2450,26 @@ DIMENSIONS (
 
 Each alias creates an independent logical table that can have its own dimensions, facts, and relationships.
 
-### Modeling many-to-many relationships with bridge tables
+### Modeling many-to-many relationships
 
-Many-to-many relationships are expressed by defining two relationships from a bridge (junction) table
-to two entity tables. The system infers the many-to-many path from the relationship graph and automatically
-handles deduplication to prevent fanout double-counting:
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+You can model a many-to-many relationship between two logical tables in either of the following ways:
+
+- [Through a bridge table](#label-semantic-views-many-to-many-bridge): A bridge (junction) table
+  holds one row for each pair of related rows, and has a many-to-one relationship to each of the two tables.
+- [Directly](#label-semantic-views-many-to-many-direct): One table references columns in the other
+  table that aren’t a primary key or unique key, so each row can match many rows on both sides.
+
+In both cases, the system infers the many-to-many path from the relationship graph and automatically
+handles deduplication to prevent fanout double-counting. For details on how query results are
+calculated, see [Many-to-many relationship queries](/user-guide/views-semantic/querying#label-semantic-views-querying-many-to-many).
+
+#### Many-to-many relationships through a bridge table
+
+Define two relationships from the bridge table to the two entity tables:
 
 Copy code
 
@@ -2478,6 +2496,68 @@ METRICS (
   authors.total_revenue AS SUM(author_revenue)
 )
 ```
+
+#### Direct many-to-many relationships
+
+A direct many-to-many relationship doesn’t need a bridge table. In the RELATIONSHIPS clause, reference
+columns that aren’t defined as the PRIMARY KEY or as UNIQUE in the referenced logical table. You don’t
+need a special keyword: the system identifies the relationship as many-to-many because the referenced
+columns aren’t unique.
+
+In the following example, each order has a promotion code, and the `promotions` table can have several
+rows for the same promotion code (one for each channel the promotion ran on). The `promotions` logical
+table doesn’t define a primary key, so `orders(promo_code) REFERENCES promotions(promo_code)` is a direct
+many-to-many relationship:
+
+Copy code
+
+```
+CREATE SEMANTIC VIEW orders_promotions_sv
+TABLES (
+  orders AS my_db.my_schema.orders
+    PRIMARY KEY (order_id),
+  promotions AS my_db.my_schema.promotions,
+  customers AS my_db.my_schema.customers
+    PRIMARY KEY (customer_id)
+)
+RELATIONSHIPS (
+  orders_to_promotions AS orders(promo_code) REFERENCES promotions(promo_code),
+  orders_to_customers AS orders(customer_id) REFERENCES customers
+)
+FACTS (
+  orders.order_amount AS amount
+)
+DIMENSIONS (
+  orders.promo_code AS promo_code,
+  promotions.channel AS channel,
+  promotions.region AS region,
+  customers.segment AS segment
+)
+METRICS (
+  orders.total_amount AS SUM(amount),
+  orders.order_count AS COUNT(order_id)
+)
+```
+
+In this example, `orders_to_customers` is an ordinary many-to-one relationship. You can combine direct
+many-to-many relationships and many-to-one relationships in the same semantic view and in the same query.
+
+Direct many-to-many relationships support the following:
+
+- Relationships on a single column or on multiple columns.
+- Metrics on either side of the relationship. For example, you can define a metric on `promotions` and
+  group it by a dimension on `orders`.
+- Paths that continue past the many-to-many relationship through many-to-one relationships. For example,
+  if `promotions(region_id) REFERENCES regions`, you can group `orders.total_amount` by a dimension on
+  `regions`.
+
+Limitations
+
+Queries that traverse many-to-many relationships, whether through a bridge table or directly, can’t be
+combined with the following features:
+
+- Level of Detail (LOD) metrics
+- Multi-path metrics that use the `USING relationship` clause
 
 ### Defining cross-table dimension references
 

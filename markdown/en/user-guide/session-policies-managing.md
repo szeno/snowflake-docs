@@ -19,6 +19,38 @@ Expand
 
 Show lessSee more
 
+## Applying a session policy
+
+You apply a session policy at one of three levels. Each level can have one session policy at a time.
+
+- **User:** `ALTER USER <name> SET SESSION POLICY <policy_name>` sets the policy for that user only.
+- **User type:** `ALTER ACCOUNT SET SESSION POLICY <policy_name> FOR ALL PERSON USERS` or `FOR ALL SERVICE USERS` sets the policy for
+  all users of that type in the account.
+- **Account:** `ALTER ACCOUNT SET SESSION POLICY <policy_name>`, with no `FOR ALL` clause, sets the policy for all users in the account.
+
+The `FOR ALL PERSON USERS` clause applies the policy to users with their TYPE property set to NULL or PERSON.
+
+The `FOR ALL SERVICE USERS` clause applies the policy to users with their TYPE property set to SERVICE, SERVICE\_AGENT, or LEGACY\_SERVICE.
+
+### Precedence
+
+If more than one session policy applies to a user, Snowflake uses the policy from the first of these levels that has one:
+
+1. The policy set on the user.
+2. The policy set on the account for the user’s type (`FOR ALL PERSON USERS` or `FOR ALL SERVICE USERS`).
+3. The policy set on the account for all users.
+
+### Replacing an applied policy
+
+To replace a session policy that is already set at a level, specify `FORCE` to set the new policy without unsetting the existing one.
+The existing policy stays in place until the new one replaces it, so the level is never without a policy during the transition. `FORCE`
+replaces only the policy at the same level as the statement. It doesn’t override session policies set on individual users.
+
+Alternatively, unset the existing policy first and then set the new one. Between the two statements, no policy is set at that level, so
+sessions fall back to the next level in the precedence order, or to the defaults.
+
+For the full syntax, see [ALTER ACCOUNT](/sql-reference/sql/alter-account) and [ALTER USER](/sql-reference/sql/alter-user).
+
 ## Summary of commands, operations, and privileges
 
 The following table summarizes the relationship between the session policy DDL operations and their necessary privileges.
@@ -130,7 +162,7 @@ To set or unset a user-level session policy, execute the [ALTER USER](/sql-refer
   | Cannot execute a describe statement. | SQL compilation error: Schema ‘<schema\_name>’ does not exist or not authorized. | Verify that the role executing the DESC SESSION POLICY statement has the OWNERSHIP privilege on the session policy or the APPLY privilege on the session policy. |
   | Cannot drop a session policy. | SQL compilation error: Session policy ‘<policy\_name>’ does not exist or not authorized. | Verify that the role executing the DROP SESSION POLICY statement has the OWNERSHIP privilege on the session policy. |
   | Cannot drop a session policy. | Session policy <policy\_name> cannot be dropped because it is attached to an account. | Unset the session policy from the account with an [ALTER ACCOUNT](/sql-reference/sql/alter-account) statement and try the drop statement again. |
-  | Cannot set a session policy on an account. | Session policy ‘<policy\_name> is already attached to account <account\_name>. | An account can only have one active session policy. Determine which session policy should be set for the account.   If necessary, unset the current session policy from the account with a [ALTER ACCOUNT](/sql-reference/sql/alter-account) command; then set the other session policy on the account with another ALTER ACCOUNT command. |
+  | Cannot set a session policy on an account. | Session policy ‘<policy\_name> is already attached to account <account\_name>. | An account can only have one active session policy. Determine which session policy should be set for the account.   To replace the current session policy without a gap, set the other session policy with an ALTER ACCOUNT command that specifies `FORCE`. Alternatively, if necessary, unset the current session policy from the account with a [ALTER ACCOUNT](/sql-reference/sql/alter-account) command; then set the other session policy on the account with another ALTER ACCOUNT command. |
   | Cannot set a timeout value. | SQL compilation error: invalid value ‘<integer>’ for property ‘session\_idle\_timeout\_mins’ | The session timeout value, in minutes, must be an integer between `5` and `240`, inclusive.   Choose a valid integer for the session timeout and execute the CREATE or ALTER SESSION POLICY statement again. |
   | Cannot update an existing session policy. | SQL compilation error: Session policy ‘<policy\_name>’ does not exist or not authorized. | Verify the name of the session policy, the syntax of the ALTER SESSION POLICY command, and the privileges to operate on the session policy, database, and schema. |
 

@@ -92,8 +92,8 @@ To view these columns, you must use a role with the MONITOR privilege.
 | ERROR\_MESSAGE | TEXT | If applicable, error message stating why the run failed. |
 | WAREHOUSE | TEXT | Warehouse used for the object. |
 | STATE | TEXT | State of run, such as HANDLED\_ERROR or SUCCESS. |
-| DBT\_VERSION | TEXT | The dbt Core version used for the run, such as `1.9.4`. |
-| DBT\_SNOWFLAKE\_VERSION | TEXT | The dbt-snowflake adapter version used for the run, such as `1.9.2`. |
+| DBT\_VERSION | TEXT | The version of dbt Core used to run the project, such as `1.9.4`. This is the version of the dbt engine, not a version of your dbt project. |
+| DBT\_SNOWFLAKE\_VERSION | TEXT | The version of the dbt-snowflake adapter package used for the run, such as `1.9.2`. This is not a version of your dbt project. |
 | ENVIRONMENT | TEXT | The environment (defined in the `env.yml` file) used for this run. `NULL` if the run didn’t use an environment. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |
 
 Expand

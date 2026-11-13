@@ -209,7 +209,7 @@ snow spcs service unset
 
 ## Usage notes
 
-The current role must have OPERATE privilege on the service to reset properties.
+The current role must have OWNERSHIP privilege on the service to reset properties.
 
 ## Examples
 

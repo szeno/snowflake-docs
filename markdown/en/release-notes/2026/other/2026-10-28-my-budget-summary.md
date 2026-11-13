@@ -15,4 +15,4 @@ your usage, the limit, the percentage consumed, and when the cycle resets. Any u
 function. It returns only the calling user’s information, so administrators don’t need to grant
 additional privileges.
 
-For more information, see [Check your quota usage](/user-guide/budgets/per-user-quotas#label-per-user-quota-check-quota-usage).
+For more information, see [Check your quota usage](/user-guide/budgets/per-user-quotas-monitor#label-per-user-quota-check-quota-usage).

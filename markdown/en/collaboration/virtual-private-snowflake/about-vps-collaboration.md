@@ -83,7 +83,7 @@ called *Private Sharing*.
 
 This separate interface is designed to uphold the strict isolation requirements of VPS environments,
 ensuring that all data interactions comply with VPS compliance and security standards. View and install
-listings that are shared with you by visiting <https://app.snowflake.com/pm/pm_aws_us_west_2/#/data/shared>.
+listings that are shared with you by visiting <https://app.snowflake.com/org_name/account_name/#/data/shared>.
 Or, if you are already signed in, in the navigation menu, select **Data sharing** » **Internal sharing**.
 
 VPS environments have tightly controlled interactions with any external connection,

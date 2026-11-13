@@ -86,8 +86,8 @@ If you do not provide a value using the `-D` option that does not have a corresp
   ```
   snow init new_snowpark_project --template example_snowpark
 
-    Project identifier (used to determine artifacts stage path) [my_snowpark_project]:
-    What stage should the procedures and functions be deployed to? [dev_deployment]: snowpark
+    From template: Project identifier (used to determine artifacts stage path) [my_snowpark_project]:
+    From template: What stage should the procedures and functions be deployed to? [dev_deployment]: snowpark
   ```
 
   ```
@@ -100,7 +100,7 @@ If you do not provide a value using the `-D` option that does not have a corresp
   ```
   snow init new_streamlit_project --template-source ../local_templates/example_streamlit -D query_warehouse=dev_wareshouse -D stage=testing
 
-    Name of the streamlit app [streamlit_app]: My streamlit
+    From template: Name of the streamlit app [streamlit_app]: My streamlit
   ```
 
   ```

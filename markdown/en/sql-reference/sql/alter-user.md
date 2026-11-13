@@ -221,6 +221,8 @@ parameters, with their descriptions, as well as account and object parameters, s
     If you already set a policy on the user, then you can specify FORCE to set the new policy without needing to
     unset the existing policy first.
 
+    For session policies, including precedence, see [Applying a session policy](/user-guide/session-policies-managing#label-session-policy-applying).
+
 `TAG tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ]`
 :   Specifies the [tag](/user-guide/object-tagging/introduction) name and the tag string value.
 

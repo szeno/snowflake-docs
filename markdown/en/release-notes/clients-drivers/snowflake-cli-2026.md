@@ -8,6 +8,43 @@ This article contains the release notes for the Snowflake CLI, including the fol
 
 See [Snowflake CLI](/developer-guide/snowflake-cli/index) for documentation.
 
+## Version 3.33.0 (Nov 09, 2026)
+
+### Backward incompatibility
+
+- Unquoted `snowflake.yml` values for role, warehouse, schema, database, and v1 package name must be a single identifier. A name that contains a dot, space, or hyphen must be quoted. Application package `stage` and v1 `source_stage` must be `schema.name`. A scratch stage may be a single name or `schema.name`.
+
+### New additions
+
+- `snow streamlit status` reports the SPCS service behind a Streamlit app. `service_status` is the service (`NOT_APPLICABLE`, `NOT_STARTED`, `RUNNING`, `SUSPENDED`). `container_status` is one status for the containers inside that service: `READY` means every container is ready, and a mix such as `READY` and `PENDING` rolls up to the non-ready status. The command does not start the app.
+- `snow sql` accepts `!set timing=<true|false>` and `!set timing_in_output_file=<true|false>`. With `timing_in_output_file=true`, the `Time Elapsed` line is also written to an open `!spool` file, even when `quiet=true`. `timing=false` hides it everywhere. By default `timing` is on and `timing_in_output_file` is off. Empty values are rejected and leave the setting unchanged. JSON, JSON\_EXT and CSV output never include the line.
+- `app.yml` (version 2) accepts two new top-level keys, `runtime` (`python` or `node`, case-insensitive, default `node`) and `streamlit` (`true` or `false`, default `false`). `streamlit: true` requires `runtime: python`. Both keys apply to the whole file; a `runtime` or `streamlit` key inside a target is ignored. Earlier CLI versions ignore these keys.
+- `snow --structure` prints a JSON catalog of every command, argument, and option (including help text), so agents and scripts can discover the CLI without scraping `--help`. Hidden commands and flags are omitted, matching `--help`.
+- `snow sql` REPL accepts `!set echo=true` and `!set echo=false`. The default is false. With echo on, each SQL statement is printed before its result. An open `!spool` receives that statement too. JSON, JSON\_EXT, and CSV omit the statement so the result stays parseable. `!set echo=` is rejected and leaves the previous value in place.
+
+### Fixes and improvements
+
+- `snow app events` for Snowflake App Runtime projects now prints historical logs (`--since` or `--until`) oldest first, and `--last` keeps the newest lines. Previously the lines came out newest first and `--last` kept the oldest ones.
+- The CLI recognizes more AI coding agents, including Kimi, Grok Build, Cline, Antigravity, Augment, Goose, Junie, Pi, Claude Cowork, Replit, Kiro, OpenClaw, and Devin, and more Codex, Copilot CLI, Claude Code, and OpenCode sessions. Any other tool that sets the `AI_AGENT` environment variable is also recognized. When `snow feedback` runs under one of these agents, `--message` is required, as it already was for the agents detected before.
+- The help text for `snow spcs service set` and `snow spcs service unset` now says the current role needs the OWNERSHIP privilege on the service. It previously said OPERATE, which isn’t enough to set or unset service properties.
+- The CLI log file (`snowflake-cli.log`) is now always written as UTF-8, regardless of the system locale or code page. On systems where the default encoding isn’t UTF-8, such as Windows with cp932, tools that read the log with the system default encoding need to read it as UTF-8 to show non-ASCII characters correctly. Log files written by earlier versions keep their previous encoding.
+- `snow upgrade` unpacks the new direct-install binary before it returns. The next `snow` command is that version and does not show `Unpacking distribution`.
+- Improved path handling in `snow stage execute` and `snow git execute`.
+- Improved validation of identifier fields in `snowflake.yml`.
+- Improved validation of object names.
+- Improved sanitization of user-supplied values in Native App setup-script validation.
+- Improved handling of template prompts in `snow init`.
+- Improved handling of project templates in `snow init`.
+- Improved handling of object names in `snow logs`.
+- Improved sanitization of `--format CSV` output. Numeric values are unchanged.
+- Improved sanitization of string values in JSON output.
+- Improved handling of `!source` and `!load` in `snow sql`.
+- Improved handling of input values in `snow app events`.
+- Improved handling of paths in stage and git copy operations.
+- Improved validation of fields in `snow spcs service create` and `snow spcs service deploy`.
+- Improved validation of the API integration name in `snow git setup`.
+- Improved handling of SQL string literals.
+
 ## Version 3.32.1 (Nov 02, 2026)
 
 ### New additions

@@ -183,6 +183,42 @@ Expand
 
 Show lessSee more
 
+## Character set handling
+
+Columns in **Latin** and **Unicode** character sets migrate as they are. Columns in **non-Latin character sets** (`KANJISJIS`, `KANJI1`, and `GRAPHIC`) are translated to Unicode during extraction, with every extraction strategy.
+
+Some byte sequences in a non-Latin column have no Unicode equivalent. The **`onUntranslatable`** setting controls what happens then:
+
+| `onUntranslatable` | Behavior |
+| --- | --- |
+| `"substitute"` (default) | Each untranslatable character is replaced with the Unicode replacement character **U+FFFD**, and the table loads. The affected values in Snowflake differ from the source. |
+| `"fail"` | The table’s extraction fails with Teradata error 6706 (untranslatable character). Use it when you’d rather stop and inspect the data than load substituted values. |
+
+Expand
+
+Show lessSee more
+
+Set it under `defaultTableConfiguration` for every table, or on a table entry to override the default for that table:
+
+Copy code
+
+```
+{
+  "defaultTableConfiguration": {
+    "onUntranslatable": "substitute"
+  },
+  "tables": [
+    {
+      "source": { "databaseName": "ecommerce", "tableName": "audit_log" },
+      "target": { "databaseName": "TARGET_DB", "schemaName": "ECOMMERCE", "tableName": "AUDIT_LOG" },
+      "onUntranslatable": "fail"
+    }
+  ]
+}
+```
+
+The values are case-sensitive. `onUntranslatable` doesn’t apply to `CLOB` or `LONG VARCHAR` columns. To control the same behavior during validation, see [Character set handling](./validate-teradata#character-set-handling) in the Teradata validation guide.
+
 ## Platform-specific considerations
 
 - **Server-side export (`write_nos`)**: Prefer **`write_nos`** for all tables when Teradata NOS and a Snowflake external stage aligned with the target bucket or container are in place. Use **`regular`** or **`tpt`** when volume is genuinely small, or when WRITE\_NOS prerequisites aren’t set up yet.

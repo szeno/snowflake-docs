@@ -170,16 +170,16 @@ Create an OIDC-based service user for your platform. Replace `DBT_CI_ROLE`, the 
 
 GitHub ActionsGitLab CI/CDAzure DevOps
 
-The GitHub environment in the subject must match the `environment` value in both workflow files:
+The subject uses GitHub’s immutable subject format, which includes the numeric IDs that GitHub assigns to the repository owner and
+the repository, for example `repo:<org>@<owner_id>/<repo>@<repo_id>:environment:<environment_name>`. To find the IDs with the GitHub
+CLI, run `gh api repos/<org>/<repo> --jq '.owner.id, .id'`, which prints the owner ID and then the repository ID. The GitHub
+environment in the subject must match the `environment` value in both workflow files.
 
 Note
 
-GitHub uses an immutable subject format for repositories created after July 15, 2026 (and for older repositories whose
-administrators opt in). In that format, the owner and repository names are followed by their numeric IDs, for example
-`repo:<org>@<owner_id>/<repo>@<repo_id>:environment:<environment_name>`. If your repository uses this format, set
-`SUBJECT` to match it exactly; otherwise the GitHub Actions token doesn’t match the service user and authentication fails.
-For more information, see the GitHub documentation on
-[OpenID Connect reference](https://docs.github.com/en/actions/reference/security/oidc).
+Repositories created before July 15, 2026 might still use GitHub’s
+[older subject format](https://docs.github.com/en/actions/reference/security/oidc), `repo:<org>/<repo>:environment:<environment_name>`.
+If authentication fails with error `394729`, see [Troubleshooting](#label-dbt-advanced-cicd-troubleshooting).
 
 Copy code
 
@@ -189,7 +189,7 @@ CREATE USER IF NOT EXISTS github_actions_service_user
   WORKLOAD_IDENTITY = (
     TYPE = OIDC
     ISSUER = 'https://token.actions.githubusercontent.com',
-    SUBJECT = 'repo:your_repo_org/your_dbt_repo:environment:prod'
+    SUBJECT = 'repo:your_repo_org@your_owner_id/your_dbt_repo@your_repo_id:environment:prod'
   )
   DEFAULT_ROLE = DBT_CI_ROLE
   COMMENT = 'Service user for GitHub Actions';
@@ -1198,6 +1198,33 @@ Copy code
 ```
 DROP DBT PROJECT IF EXISTS <database>.<schema>.<tester_project>;
 DROP DATABASE IF EXISTS <per_pull_request_database>;
+```
+
+## Troubleshooting
+
+This section describes issues that you might encounter while setting up your CI/CD pipeline and how to resolve them.
+
+### Error 394729 when a GitHub Actions workflow authenticates
+
+The workflow fails to connect with error `394729` and a message that says
+`Either the subject or issuer claims were not recognized, or the JWTs signature could not be verified`.
+
+The service user’s `SUBJECT` doesn’t match the subject in the GitHub Actions token. This can happen when a repository created before
+July 15, 2026 uses GitHub’s [older subject format](https://docs.github.com/en/actions/reference/security/oidc),
+`repo:<org>/<repo>:environment:<environment_name>`, or when an administrator opts a repository in to immutable subjects after you create
+the service user.
+
+The error message includes the subject from the token. Use that value as `SUBJECT` and update the service user with
+[ALTER USER](/sql-reference/sql/alter-user):
+
+Copy code
+
+```
+ALTER USER github_actions_service_user SET WORKLOAD_IDENTITY = (
+  TYPE = OIDC
+  ISSUER = 'https://token.actions.githubusercontent.com'
+  SUBJECT = '<subject_from_error_message>'
+);
 ```
 
 ## Next steps

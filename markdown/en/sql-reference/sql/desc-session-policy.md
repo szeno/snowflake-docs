@@ -68,21 +68,36 @@ For additional details on session policy DDL and privileges, see [Managing sessi
 
 The output of the command includes the following columns, which describe the properties and metadata of the object:
 
+The command returns one row per property of the session policy, with the following columns:
+
 | Column | Description |
 | --- | --- |
-| `created_on` | The timestamp when the session policy was created. |
-| `name` | Identifier for the session policy. |
-| `session_idle_timeout_mins` | For Snowflake Clients and programmatic clients, the number of minutes in which a session can be idle before users must authenticate to Snowflake again. |
-| `session_ui_idle_timeout_mins` | For Snowsight, the number of minutes in which a session can be idle before users must authenticate to Snowflake again. |
-| `session_max_lifespan_mins` | For Snowflake clients and programmatic clients, the maximum number of minutes a session can remain active before users must authenticate to Snowflake again, regardless of activity. A value of `0` means no maximum lifespan is enforced. |
-| `session_ui_max_lifespan_mins` | For Snowsight, the maximum number of minutes a session can remain active before users must authenticate to Snowflake again, regardless of activity. A value of `0` means no maximum lifespan is enforced. |
-| `allowed_secondary_roles` | The secondary roles for a session policy, if any. |
-| `agent_restricted_session_scope` | Privilege ceiling applied when an agent is active. Can be a predefined scope name, the fully qualified name of a restricted session scope object, inline YAML, or a dropped-object placeholder. For details, see [Restricted Session Scope for agents](/user-guide/restricted-session-scope). |
-| `comment` | Comment for the session policy. |
+| `property` | The name of the property. |
+| `value` | The value of the property for this session policy. |
+| `default` | The default value of the property. |
+| `description` | A description of the property. |
 
 Expand
 
 Show lessSee more
+
+The `property` column contains the following values:
+
+- `CREATED_ON`
+- `NAME`
+- `OWNER`
+- `OWNER_ROLE_TYPE`
+- `COMMENT`
+- `SESSION_IDLE_TIMEOUT_MINS`
+- `SESSION_UI_IDLE_TIMEOUT_MINS`
+- `SESSION_MAX_LIFESPAN_MINS`
+- `SESSION_UI_MAX_LIFESPAN_MINS`
+- `ALLOWED_SECONDARY_ROLES`
+- `BLOCKED_SECONDARY_ROLES`
+- `AGENT_RESTRICTED_SESSION_SCOPE`
+
+For the meaning and valid values of each setting, see [CREATE SESSION POLICY](/sql-reference/sql/create-session-policy). For details about
+`AGENT_RESTRICTED_SESSION_SCOPE`, see [Restricted Session Scope for agents](/user-guide/restricted-session-scope).
 
 ## Example
 
@@ -93,9 +108,20 @@ DESC SESSION POLICY session_policy_prod_1;
 ```
 
 ```
-+---------------------------------+-----------------------+---------------------------+------------------------------+---------------------------+------------------------------+-------------------------+--------------------------------------------------+
-| created_on                       | name                 | session_idle_timeout_mins | session_ui_idle_timeout_mins | session_max_lifespan_mins | session_ui_max_lifespan_mins | allowed_secondary_roles |  comment                                         |
-+---------------------------------+-----------------------+---------------------------+------------------------------+---------------------------+------------------------------+-------------------------+--------------------------------------------------+
-| Mon, 11 Jan 2021 00:00:00 -0700 | session_policy_prod_1 | 60                        | 30                           | 0                         | 0                            |           []            | session policy for use in the prod_1 environment |
-+---------------------------------+-----------------------+---------------------------+------------------------------+---------------------------+------------------------------+-------------------------+--------------------------------------------------+
++--------------------------------+--------------------------------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+| property                       | value                                            | default | description                                                                                                                                          |
+|--------------------------------+--------------------------------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CREATED_ON                     | 2026-01-19 15:30:06.006 Z                        | null    | Timestamp when the session policy was created.                                                                                                       |
+| NAME                           | session_policy_prod_1                            | null    | Name of the session policy.                                                                                                                          |
+| OWNER                          | PUBLIC                                           | null    | Owner role of the session policy.                                                                                                                    |
+| OWNER_ROLE_TYPE                | ROLE                                             | null    | Owner role type of the session policy.                                                                                                               |
+| COMMENT                        | session policy for use in the prod_1 environment | null    | user comment associated to an object in the dictionary                                                                                               |
+| SESSION_IDLE_TIMEOUT_MINS      | 60                                               | 240     | Number of minutes of idle time in a non-UI session (e.g. driver session) before the user must reauthenticate.                                        |
+| SESSION_UI_IDLE_TIMEOUT_MINS   | 30                                               | 1080    | Number of minutes of idle time in a UI session before the user must reauthenticate.                                                                  |
+| SESSION_MAX_LIFESPAN_MINS      | 0                                                | 0       | Maximum lifespan in minutes for a non-UI session (e.g. driver session) before the user must reauthenticate. 0 means no maximum lifespan enforcement. |
+| SESSION_UI_MAX_LIFESPAN_MINS   | 0                                                | 0       | Maximum lifespan in minutes for a UI session before the user must reauthenticate. 0 means no maximum lifespan enforcement.                           |
+| ALLOWED_SECONDARY_ROLES        | []                                               | null    | List of secondary roles allowed to be activated in a user session.                                                                                   |
+| BLOCKED_SECONDARY_ROLES        | null                                             | null    | List of secondary roles blocked from activation in a user session.                                                                                   |
+| AGENT_RESTRICTED_SESSION_SCOPE | null                                             | null    | Name of a Restricted Session Scope applied to sessions attributed to an agent identity.                                                              |
++--------------------------------+--------------------------------------------------+---------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 ```

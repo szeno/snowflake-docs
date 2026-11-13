@@ -1285,3 +1285,211 @@ Note
 
 Cortex Analyst does not generate semantic SQL queries that use subqueries. Subqueries are
 available only in manually authored queries.
+
+## Many-to-many relationship queries
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+When a semantic view includes [many-to-many relationships](/user-guide/views-semantic/sql#label-semantic-views-many-to-many),
+queries can traverse those relationships. Queries behave the same way whether the many-to-many relationship
+goes through a bridge table or is a direct relationship.
+
+The examples in this section use the `orders_promotions_sv` semantic view from
+[Direct many-to-many relationships](/user-guide/views-semantic/sql#label-semantic-views-many-to-many-direct)
+with the following data. Promotion `P` has three rows in `promotions`, two of which are for the same channel.
+Order 4 has a promotion code that doesn’t exist in `promotions`, and order 5 has a customer ID that doesn’t
+exist in `customers`.
+
+```
+orders
++----------+-------------+------------+--------+
+| ORDER_ID | CUSTOMER_ID | PROMO_CODE | AMOUNT |
+|----------+-------------+------------+--------|
+|        1 |           1 | P          |    100 |
+|        2 |           2 | P          |    200 |
+|        3 |           1 | Q          |     50 |
+|        4 |           2 | NONE       |    999 |
+|        5 |          99 | Q          |     75 |
++----------+-------------+------------+--------+
+
+promotions
++------------+---------+--------+
+| PROMO_CODE | CHANNEL | REGION |
+|------------+---------+--------|
+| P          | Web     | East   |
+| P          | Web     | East   |
+| P          | Email   | East   |
+| Q          | Web     | West   |
++------------+---------+--------+
+
+customers
++-------------+------------+
+| CUSTOMER_ID | SEGMENT    |
+|-------------+------------|
+|           1 | Enterprise |
+|           2 | SMB        |
++-------------+------------+
+```
+
+### How metrics are calculated across a many-to-many relationship
+
+When you group a metric by a dimension on the other side of a many-to-many relationship, each row of the
+metric’s table is counted once for each distinct dimension value it’s associated with. The system deduplicates
+the joined rows, so a row isn’t counted more than once for the same dimension value:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  orders_promotions_sv
+  DIMENSIONS promotions.channel
+  METRICS orders.total_amount, orders.order_count
+);
+```
+
+```
++---------+--------------+-------------+
+| CHANNEL | TOTAL_AMOUNT | ORDER_COUNT |
+|---------+--------------+-------------|
+| Email   |       300.00 |           2 |
+| Web     |       425.00 |           4 |
+| NULL    |       999.00 |           1 |
++---------+--------------+-------------+
+```
+
+Note the following about these results:
+
+- Orders 1 and 2 each match two `Web` rows in `promotions`, but each order is counted once for `Web`.
+  Without deduplication, the total for `Web` would be 725.
+- Deduplication applies to all aggregate functions, including COUNT, AVG, MEDIAN, and COUNT(DISTINCT).
+- Orders 1 and 2 are counted for both `Web` and `Email`. As a result, the totals across all channels add up
+  to 1,724, which is more than the total of all orders (1,424). To get the overall total, query the metric
+  without the many-to-many dimension instead of adding up the values for each dimension value.
+- Order 4 doesn’t match any promotion, so it’s returned with a NULL channel. Rows that have a NULL value in
+  the relationship columns don’t match rows that have NULL values in the referenced columns.
+
+### Filtering across a many-to-many relationship
+
+You can filter on dimensions from either side of a many-to-many relationship, including dimensions that you
+don’t include in the DIMENSIONS clause. Filtered results are also deduplicated. In the following example,
+order 1 matches three `East` rows in `promotions`, but it’s counted once:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  orders_promotions_sv
+  DIMENSIONS customers.segment
+  METRICS orders.total_amount, orders.order_count
+  WHERE promotions.region = 'East'
+);
+```
+
+```
++------------+--------------+-------------+
+| SEGMENT    | TOTAL_AMOUNT | ORDER_COUNT |
+|------------+--------------+-------------|
+| Enterprise |       100.00 |           1 |
+| SMB        |       200.00 |           1 |
++------------+--------------+-------------+
+```
+
+### Combining many-to-many and many-to-one dimensions
+
+You can combine dimensions from both kinds of relationships in the same query. In queries that include
+metrics, rows that don’t have a match are kept with NULL values. In the following example, order 5 has no
+matching customer, and it’s returned with a NULL segment:
+
+Copy code
+
+```
+SELECT * FROM SEMANTIC_VIEW(
+  orders_promotions_sv
+  DIMENSIONS promotions.channel, customers.segment
+  METRICS orders.total_amount, orders.order_count
+);
+```
+
+```
++---------+------------+--------------+-------------+
+| CHANNEL | SEGMENT    | TOTAL_AMOUNT | ORDER_COUNT |
+|---------+------------+--------------+-------------|
+| Email   | Enterprise |       100.00 |           1 |
+| Email   | SMB        |       200.00 |           1 |
+| Web     | Enterprise |       150.00 |           2 |
+| Web     | SMB        |       200.00 |           1 |
+| Web     | NULL       |        75.00 |           1 |
+| NULL    | SMB        |       999.00 |           1 |
++---------+------------+--------------+-------------+
+```
+
+### Queries without metrics
+
+Queries that specify only dimensions or only facts behave differently from queries that include metrics:
+
+- **Dimensions only**: The query returns the distinct combinations of values that occur together across the
+  relationship:
+
+  Copy code
+
+  ```
+  SELECT * FROM SEMANTIC_VIEW(
+    orders_promotions_sv
+    DIMENSIONS orders.promo_code, promotions.channel
+  );
+  ```
+
+  ```
+  +------------+---------+
+  | PROMO_CODE | CHANNEL |
+  |------------+---------|
+  | P          | Email   |
+  | P          | Web     |
+  | Q          | Web     |
+  +------------+---------+
+  ```
+- **Facts only**: The query returns one row for each combination of matching rows, without deduplication.
+  If you add up the values of a fact in these results, rows that match more than one row on the other side
+  of the relationship are counted more than once. To calculate totals, use a metric instead.
+
+  If a table on the other side of a many-to-many relationship appears only in the WHERE clause, the
+  results are deduplicated, and the query returns one row for each row of the fact’s table that passes
+  the filter.
+- **Unmatched rows are dropped**: In queries without metrics, every join in the query is an inner join,
+  including joins for many-to-one relationships. Rows that don’t have a match for every relationship in the
+  query aren’t returned. In the following example, order 4 (no matching promotion) and order 5 (no matching
+  customer) aren’t returned, and the rows for orders 1 and 2 are repeated for each matching promotion:
+
+  Copy code
+
+  ```
+  SELECT * FROM SEMANTIC_VIEW(
+    orders_promotions_sv
+    FACTS orders.order_amount, promotions.channel, customers.segment
+  );
+  ```
+
+  ```
+  +--------------+---------+------------+
+  | ORDER_AMOUNT | CHANNEL | SEGMENT    |
+  |--------------+---------+------------|
+  |        50.00 | Web     | Enterprise |
+  |       100.00 | Email   | Enterprise |
+  |       100.00 | Web     | Enterprise |
+  |       100.00 | Web     | Enterprise |
+  |       200.00 | Email   | SMB        |
+  |       200.00 | Web     | SMB        |
+  |       200.00 | Web     | SMB        |
+  +--------------+---------+------------+
+  ```
+
+### Limitations
+
+Queries that traverse many-to-many relationships can’t be combined with the following features:
+
+- **Level of Detail (LOD) metrics**: You can’t use LOD metrics in a query that also traverses a
+  many-to-many relationship path.
+- **Multi-path metrics (`USING relationship`)**: You can’t use the `USING relationship` clause to
+  disambiguate metric paths when the query traverses a many-to-many relationship.

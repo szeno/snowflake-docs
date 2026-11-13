@@ -4,7 +4,12 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
+- [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
+- [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
+- [Nov 10, 2026: INTEGRATIONS view in ACCOUNT\_USAGE (Preview)](/release-notes/2026/other/2026-11-10-account-usage-integrations-view-preview)
 - [Nov 10, 2026: CoCo Desktop v1.25.4](/release-notes/2026/other/2026-11-10-coco-desktop-v1-25-4)
+- [November 10, 2026: Geospatial maps in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-11-10-cowork-maps-preview)
 - [Nov 10, 2026: AI\_EXTRACT and AI\_PARSE\_DOCUMENT now support page filtering with FL\_FILTER\_PAGES](/release-notes/2026/other/2026-11-10-fl-filter-pages)
 - [Nov 10, 2026: Temporary role grants to users (Preview)](/release-notes/2026/other/2026-11-10-temporary-role-grants-preview)
 - [Nov 09, 2026: Skill recommendations and suggestions to create and share skills in CoCo](/release-notes/2026/other/2026-11-09-coco-skill-recommendations)
@@ -41,6 +46,7 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Oct 29, 2026: Horizon Iceberg REST Catalog telemetry (General availability)](/release-notes/2026/other/2026-10-29-horizon-irc-telemetry-ga)
 - [Oct 28, 2026: AI\_PARSE\_DOCUMENT introduces AGENTIC mode for intelligent document processing (Public Preview)](/release-notes/2026/other/2026-10-28-ai-parse-document-agentic-mode-preview)
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
+- [Oct 28, 2026: Workspace sharing in Declarative Shares (General availability)](/release-notes/2026/other/2026-10-28-declarative-sharing-workspace-sharing-ga)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)

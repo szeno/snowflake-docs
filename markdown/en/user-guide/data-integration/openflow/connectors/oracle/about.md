@@ -126,7 +126,7 @@ Use the following table to determine the appropriate model for your organization
 | Who is it for? | Customers who need to license Oracle XStream technology directly through their Snowflake agreement and prefer a monthly payment schedule over 36 months. | Customers who need to license Oracle XStream technology through their Snowflake agreement but can’t agree to a multi-year commitment or prefer an upfront payment option instead of monthly payments. | Customers who already have an Oracle GoldenGate license or another Oracle agreement that provides entitlement for XStream. |
 | Billing | Billed monthly through Snowflake based on the number of processor cores on your source Oracle DB. Involves a non-cancelable 36-month commitment. Also billed monthly for support and maintenance services.  Additionally, standard storage and compute costs (for example, Openflow Compute) will apply. | Billed upfront through Snowflake based on the number of processor cores on your source Oracle DB. Involves a non-cancelable 12-month commitment where all license fees are paid upfront in full. Also billed upfront for support and maintenance services annually.  Additionally, standard storage and compute costs (for example, Openflow Compute) will apply. | No additional licensing or support and maintenance fees for Oracle XStream services from Snowflake. You are responsible for all licensing and compliance directly with Oracle.  Standard storage and compute costs (for example, Openflow Compute) will apply. |
 | Configuration | Requires you to input your Oracle DB’s CPU core count and Oracle’s licensing factor for its processors in the connector parameters. | Requires you to input your Oracle DB’s CPU core count and Oracle’s licensing factor for its processors in the connector parameters. | Does not require you to provide CPU core information to Snowflake. |
-| Trial period | Includes a 60-day free trial for up to 16 licensed cores. Billing commences automatically on the 61st day. | Includes a 60-day free trial for up to 16 licensed cores. Billing commences automatically on the 61st day. | No trial period is offered through Snowflake. Your use is subject to your existing Oracle agreement. |
+| Trial period | Includes a 60-day free trial. Billing commences automatically on the 61st day. | Includes a 60-day free trial. Billing commences automatically on the 61st day. | No trial period is offered through Snowflake. Your use is subject to your existing Oracle agreement. |
 
 Expand
 
@@ -146,8 +146,8 @@ in your source Oracle database, multiplied by the Oracle Processor Licensing Fac
 
 ### Commitment
 
-The first 60 days are free for up to 16 licensed cores. However, activating the
-connector beyond the 60-day trial initiates a non-cancelable 36-month billing term.
+The first 60 days are free. However, activating the connector beyond the 60-day
+trial initiates a non-cancelable 36-month billing term.
 
 - **Automatic conversion**: Billing commences automatically on Day 61. To avoid
   charges, you must cancel the trial in the
@@ -202,8 +202,8 @@ in your source Oracle database, multiplied by the Oracle Processor Licensing Fac
 
 ### Commitment
 
-The first 60 days are free for up to 16 licensed cores. However, activating the
-connector beyond the 60-day trial initiates a non-cancelable 12-month billing term.
+The first 60 days are free. However, activating the connector beyond the 60-day
+trial initiates a non-cancelable 12-month billing term.
 
 - **Automatic conversion**: Billing commences automatically on Day 61. To avoid
   charges, you must cancel the trial in the

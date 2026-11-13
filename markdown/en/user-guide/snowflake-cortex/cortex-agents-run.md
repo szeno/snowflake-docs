@@ -62,6 +62,7 @@ Show lessSee more
 | `background` | boolean | Whether to run the agent asynchronously. If `true`, the agent runs asynchronously in the background with a 6 hour timeout, even if the client disconnects. For a background run with `stream` set to `false`, the API returns immediately with `status: in_progress` and a `run_id`; retrieve the response after the run completes by streaming from the Stream Agent Run endpoint with the `run_id` (REST API) or by polling the THREAD\_MESSAGES SQL function with the thread ID. If `stream` is `true`, the response is streamed as Server-Sent Events. If `background` is `false`, the agent runs synchronously with a 15 minute timeout. Only available when using threads to manage conversation history. |
 | `stream` | boolean | Whether to return a streaming response (`text/event-stream`) or a non-streaming JSON response (`application/json`). If true, the response will be streamed as Server-Sent Events. If false, the response will be returned as JSON. |
 | `tool_choice` | [ToolChoice](#label-snowflake-agent-run-toolchoice) | Configures how the agent should select and use tools during the interaction. Controls whether tool use is automatic, required, or whether specific tools should be used. |
+| `client_metadata` | object | Free-form JSON object your application attaches to the request, for example to record which end user or client made it. Snowflake does not interpret it. It is not sent to the model. The serialized object must be at most 4096 bytes (UTF-8); larger requests are rejected, not truncated. It is recorded on the `CORTEX_AGENT_REQUEST` event in the agent’s AI Observability event table, under the attribute `snow.ai.observability.client_metadata`, as a JSON string. It is not a column in `CORTEX_AGENT_USAGE_HISTORY`; to attribute usage, join the event to that view on the request ID. Do not put secrets or personal data in it. Prefer opaque identifiers over emails. |
 
 Expand
 
@@ -99,6 +100,10 @@ Copy code
       "analyst_tool",
       "search_tool"
     ]
+  },
+  "client_metadata": {
+    "user_id": "u-1234",
+    "client": "CLIENT_A"
   }
 }
 ```
@@ -168,6 +173,7 @@ Show lessSee more
 | `background` | boolean | Whether to run the agent asynchronously. If `true`, the agent runs asynchronously in the background with a 6 hour timeout, even if the client disconnects. For a background run with `stream` set to `false`, the API returns immediately with `status: in_progress` and a `run_id`; retrieve the response after the run completes by streaming from the Stream Agent Run endpoint with the `run_id` (REST API) or by polling the THREAD\_MESSAGES SQL function with the thread ID. If `stream` is `true`, the response is streamed as Server-Sent Events. If `background` is `false`, the agent runs synchronously with a 15 minute timeout. Only available when using threads to manage conversation history. |
 | `stream` | boolean | Whether to return a streaming response (`text/event-stream`) or a non-streaming JSON response (`application/json`). If true, the response will be streamed as Server-Sent Events. If false, the response will be returned as JSON. |
 | `tool_choice` | [ToolChoice](#label-snowflake-agent-run-toolchoice) | Configures how the agent should select and use tools during the interaction. Controls whether tool use is automatic, required, or whether specific tools should be used. |
+| `client_metadata` | object | Free-form JSON object your application attaches to the request, for example to record which end user or client made it. Snowflake does not interpret it. It is not sent to the model. The serialized object must be at most 4096 bytes (UTF-8); larger requests are rejected, not truncated. It is recorded on the `CORTEX_AGENT_REQUEST` event in the agent’s AI Observability event table, under the attribute `snow.ai.observability.client_metadata`, as a JSON string. It is not a column in `CORTEX_AGENT_USAGE_HISTORY`; to attribute usage, join the event to that view on the request ID. Do not put secrets or personal data in it. Prefer opaque identifiers over emails. |
 | `models` | [ModelConfig](#label-snowflake-agent-run-modelconfig) | Model configuration for the agent. Includes the orchestration model (e.g., claude-4-sonnet). If not provided, a model is automatically selected. Currently only available for the `orchestration` step. |
 | `instructions` | [AgentInstructions](#label-snowflake-agent-run-agentinstructions) | Instructions for the agent’s behavior, including response, orchestration, and sample questions. |
 | `orchestration` | [OrchestrationConfig](#label-snowflake-agent-run-orchestrationconfig) | Orchestration configuration, including budget constraints (e.g., seconds, tokens). |
@@ -211,6 +217,10 @@ Copy code
       "analyst_tool",
       "search_tool"
     ]
+  },
+  "client_metadata": {
+    "user_id": "u-1234",
+    "client": "CLIENT_A"
   },
   "models": {
     "orchestration": "claude-4-sonnet"
@@ -352,6 +362,20 @@ data: {"message":"Reviewing the results","status":"reasoning_agent_stop"}
 event: response.status
 data: {"message":"Forming the answer","status":"proceeding_to_answer"}
 ```
+
+### Maps (`response.map`)
+
+When the agent plots geospatial results, the stream emits a `response.map` event and the final
+`response` includes a `map` content item. The model cites maps with a `<map>` tag, and the payload
+uses `map_spec` rather than a Vega-Lite `chart_spec`.
+
+Query-backed maps keep a reference to their source query and refresh under the current viewer’s
+credentials, the same as chart artifacts. Snapshot-only maps (for example, MCP row sets with no
+query ID) carry inline rows and don’t refresh.
+
+The generated event catalog later on this page documents `response.map` and
+[MapContent](#label-snowflake-agent-run-mapcontent). For the Snowflake CoWork experience, see
+[Geospatial maps in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/maps).
 
 # `response`
 
@@ -2465,7 +2489,7 @@ Usage information for this request.
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `tokens_consumed` | array of [TokensConsumed](#label-snowflake-agent-run-tokensconsumed) | Token consumption details per model used in this request. |
+| `tokens_consumed` | array of [TokensConsumed](#label-snowflake-agent-run-tokensconsumed) | Token consumption details per model used in this request. Does not include tokens consumed by subagent runs this request dispatched; each subagent run is a separate request billed on its own. |
 
 Expand
 

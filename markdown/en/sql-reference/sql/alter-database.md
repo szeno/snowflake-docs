@@ -201,6 +201,12 @@ ALTER DATABASE <name> PRIMARY
     :   Specifies how Snowflake performs row-level updates (UPDATE, DELETE, MERGE) on Apache Iceberg™ tables. Selects between merge-on-read
         (which writes Iceberg delete files alongside the data) and copy-on-write (which rewrites entire data files).
 
+        Snowflake can publish a table-level value of this parameter as `write.delete.mode`, `write.update.mode`, and `write.merge.mode`
+        on Snowflake-managed and externally managed tables. On a Snowflake-managed table, writes from an external engine through
+        Snowflake Horizon Catalog can update this parameter by setting those properties. On an externally managed table, a refresh can
+        adopt those properties into this parameter. For details, see
+        [Write-mode property synchronization](/user-guide/tables-iceberg-manage#label-iceberg-merge-on-read-property-sync).
+
         The parameter values are case-insensitive.
 
         Values:

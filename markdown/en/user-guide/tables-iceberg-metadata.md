@@ -88,16 +88,35 @@ For tables that use an external catalog, Snowflake uses the value of the [DATA\_
 parameter to set a retention period for Snowflake Time Travel and undropping the table. When the retention period expires,
 Snowflake does not delete the Iceberg metadata or snapshots from your external cloud storage.
 
-Snowflake sets DATA\_RETENTION\_TIME\_IN\_DAYS at the table level to the smaller of
-the following values:
+If you haven’t set `DATA_RETENTION_TIME_IN_DAYS` explicitly at the table level, or at its parent schema or database
+level, Snowflake sets `DATA_RETENTION_TIME_IN_DAYS` at the table level to the smaller of the following values:
 
-- The `history.expire.max-snapshot-age-ms` value in the current metadata file. Snowflake converts the value to days (rounding down).
+- The `history.expire.max-snapshot-age-ms` value in the current metadata file. Snowflake converts the value to days (rounding up).
 - The following value, depending on your [Snowflake account edition](/user-guide/intro-editions):
   - Standard Edition: 1 day.
   - Enterprise Edition or higher: 5 days.
 
-You can’t manually change the value of DATA\_RETENTION\_TIME\_IN\_DAYS in Snowflake. To change the value, you must update
-`history.expire.max-snapshot-age-ms` in your metadata file and then [refresh the table](/user-guide/tables-iceberg-manage#label-tables-iceberg-refresh-metadata).
+A [table refresh](/sql-reference/sql/alter-iceberg-table-refresh) replaces the table’s `DATA_RETENTION_TIME_IN_DAYS`
+from `history.expire.max-snapshot-age-ms` in the current metadata file. The refresh does this even when that parameter
+is already set on the table, schema, or database. Snowflake converts the property to days by rounding up, then applies
+the same account-edition limit.
+
+You can set `DATA_RETENTION_TIME_IN_DAYS` when you create the table, or change it later with `ALTER ICEBERG TABLE ... SET`.
+The following examples show only that parameter. For the rest of the statement syntax, see
+[CREATE ICEBERG TABLE](/sql-reference/sql/create-iceberg-table) and [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table).
+
+Copy code
+
+```
+CREATE ICEBERG TABLE my_iceberg_table
+  DATA_RETENTION_TIME_IN_DAYS = 5;
+
+ALTER ICEBERG TABLE my_iceberg_table SET DATA_RETENTION_TIME_IN_DAYS = 10;
+```
+
+When you set the parameter at the table level, in either statement, Snowflake writes the value to the
+`history.expire.max-snapshot-age-ms` table property in the Iceberg metadata. A value set only on the parent schema
+or database is not written to that property.
 
 You can use the following table functions to retrieve information about the files registered to an externally managed Iceberg table or
 the most recent snapshot refresh history:

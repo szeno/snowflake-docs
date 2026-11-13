@@ -8,6 +8,12 @@ Snowflake CoWork generates charts automatically from your data. You can customiz
 controlling colors, fonts, chart types, and more, by adding configuration to your agent or
 semantic view.
 
+These customization mechanisms apply to Vega-Lite charts only. They don’t apply to
+geospatial [maps](/user-guide/snowflake-cortex/snowflake-cowork/maps). Maps use a separate
+MapSpec renderer, so `<chart_customization>` and `vega_template` don’t change map colors,
+fonts, or basemap styling. To restyle a map, ask Snowflake CoWork in chat or use the map
+settings in Explore.
+
 ## Overview
 
 Customization works at two levels:
@@ -29,6 +35,16 @@ Note
 When both agent and semantic view define a `vega_template`, the agent template is applied
 first and the semantic view template is applied second. On conflicting keys, the semantic view
 wins.
+
+## Maps
+
+`<chart_customization>` and `vega_template` don’t apply to maps. Maps use a dedicated map
+specification rather than Vega-Lite, so agent-level and semantic-view Vega templates never merge
+into a map.
+
+To change map styling, layer type, or color encoding, ask Snowflake CoWork in chat or use the map
+settings in Explore on a query-backed map. For layer types, save and share behavior, and the agent
+API, see [Geospatial maps in Snowflake CoWork](/user-guide/snowflake-cortex/snowflake-cowork/maps).
 
 ## Agent-level customization
 

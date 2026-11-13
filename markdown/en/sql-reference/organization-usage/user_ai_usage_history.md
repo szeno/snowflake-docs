@@ -74,10 +74,11 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 24 hours.
+- The row for the current hour is updated as usage data arrives, so its credits can change between queries.
 - The view provides credit usage within the last 365 days (1 year).
 - Usage that Snowflake can’t attribute to a user is returned with `USER_ID` set to `0` and `USER_NAME` empty. A [task](/user-guide/tasks-intro#label-user-based-security-for-tasks) or a [dynamic table](/user-guide/dynamic-tables/privileges#refresh-with-specific-user-privileges-execute-as-user) runs as the system user unless you set `EXECUTE AS USER`. To attribute that usage to a user, run the task or dynamic table with `EXECUTE AS USER`.
 - Rows can report `0` credits.
-- The credits in this view reconcile with the `CREDITS_BILLED` column of the [METERING\_DAILY\_HISTORY](/sql-reference/organization-usage/metering_daily_history) view for the service types that the view covers, except `AI_INFERENCE`. The `AI_INFERENCE` service type includes AI Gateway usage only, so its credits are lower than the `AI_INFERENCE` total in `METERING_DAILY_HISTORY`.
+- The credits in this view reconcile with the `CREDITS_BILLED` column of the [METERING\_DAILY\_HISTORY](/sql-reference/organization-usage/metering_daily_history) view for the service types that the view covers, except `AI_INFERENCE`. The `AI_INFERENCE` service type includes AI Gateway usage only, so its credits can be lower than the `AI_INFERENCE` total in `METERING_DAILY_HISTORY`.
 - Credit rates are listed in the [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
 ## Examples

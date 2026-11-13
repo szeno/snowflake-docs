@@ -191,11 +191,12 @@ To enable deletion vectors, complete the following steps:
     copy-on-write for all Snowflake writes.
 - **Parameter precedence**
 
-  - Snowflake only checks the `ICEBERG_MERGE_ON_READ_BEHAVIOR` parameter (and the deprecated `ENABLE_ICEBERG_MERGE_ON_READ` as a fallback)
-    to determine the write method. It doesn’t recognize the following Iceberg table properties:
-    - write.delete.mode
-    - write.update.mode
-    - write.merge.mode
+  - Snowflake uses `ICEBERG_MERGE_ON_READ_BEHAVIOR` to choose the write method for Snowflake DML. When that parameter is `'AUTO'`,
+    Snowflake can still fall back to the deprecated `ENABLE_ICEBERG_MERGE_ON_READ` parameter. Snowflake doesn’t read
+    `write.delete.mode`, `write.update.mode`, or `write.merge.mode` directly from the table metadata when it plans DML.
+    External writes through Snowflake Horizon Catalog can update `ICEBERG_MERGE_ON_READ_BEHAVIOR` by setting those properties.
+    For Snowflake DML, `ICEBERG_MERGE_ON_READ_BEHAVIOR` is always the source of truth. For details, see
+    [Write-mode property synchronization](#label-iceberg-merge-on-read-property-sync).
 
 #### ICEBERG\_MERGE\_ON\_READ\_BEHAVIOR parameter
 
@@ -220,20 +221,81 @@ Show lessSee more
 
 ##### Scope: Snowflake writes only
 
-`ICEBERG_MERGE_ON_READ_BEHAVIOR` controls merge-on-read versus copy-on-write behavior *only for row-level DML issued by Snowflake*
-(UPDATE, DELETE, MERGE executed inside Snowflake). It has no effect on writes performed by external engines against the same Iceberg
-table.
+`ICEBERG_MERGE_ON_READ_BEHAVIOR` determines how Snowflake executes row-level DML (UPDATE, DELETE, and MERGE) that Snowflake issues.
+It doesn’t change how an external engine executes its own writes.
 
-To control merge-on-read versus copy-on-write for external engine writes, configure the standard Iceberg write-mode table properties from that
-engine:
+External engines use these standard Iceberg write-mode properties for their own writes:
 
 - `write.delete.mode`
 - `write.update.mode`
 - `write.merge.mode`
 
-Each accepts `copy-on-write` or `merge-on-read`. For details, see
+Each property accepts `copy-on-write` or `merge-on-read`. For details, see
 [Write properties](https://iceberg.apache.org/docs/latest/configuration/#write-properties) in the Apache Iceberg documentation.
-Snowflake and the external engine each honor their own setting independently for the writes they issue.
+
+Snowflake also publishes a table-level setting to those properties. On a Snowflake-managed table, writes from an external engine
+through Snowflake Horizon Catalog can update `ICEBERG_MERGE_ON_READ_BEHAVIOR` by setting those properties. On an externally
+managed table, a refresh can adopt properties that an external engine committed. Publishing these properties, or updating the
+parameter from them, doesn’t override the format version or catalog-specific limits that still govern Snowflake
+DML. For the mapping, see
+[Write-mode property synchronization](#label-iceberg-merge-on-read-property-sync).
+
+##### Write-mode property synchronization
+
+Snowflake maps a table-level `ICEBERG_MERGE_ON_READ_BEHAVIOR` value to `write.delete.mode`, `write.update.mode`, and
+`write.merge.mode` on both Snowflake-managed and externally managed tables. A value inherited from the account, database, or schema
+isn’t published. Snowflake also doesn’t publish the deprecated `ENABLE_ICEBERG_MERGE_ON_READ` parameter to these properties.
+
+**Externally managed tables**
+
+For an externally managed table that supports catalog writes:
+
+- Creating the table, or running `ALTER ICEBERG TABLE ... SET ICEBERG_MERGE_ON_READ_BEHAVIOR`, with an explicit `'ENABLED'` writes
+  `merge-on-read` to all three properties. An explicit `'DISABLED'` writes `copy-on-write` to all three properties.
+- `ALTER ICEBERG TABLE ... SET ICEBERG_MERGE_ON_READ_BEHAVIOR = 'AUTO'`, or `UNSET ICEBERG_MERGE_ON_READ_BEHAVIOR`, removes all
+  three properties from the external catalog.
+- If `CREATE ICEBERG TABLE` omits the parameter, Snowflake inherits the value for its own DML and doesn’t write that inherited
+  value to the catalog.
+- When Snowflake can’t write the external catalog, including on a read-only catalog-linked database, setting the parameter updates
+  Snowflake only. Refresh can still read the external properties.
+
+On `ALTER ICEBERG TABLE ... REFRESH`, Snowflake derives the table-level parameter from the external properties:
+
+- If any of the three properties is `merge-on-read`, Snowflake sets the parameter to `'ENABLED'`.
+- If every present property is `copy-on-write`, Snowflake sets the parameter to `'DISABLED'`.
+- If none of the properties are present, Snowflake removes a table-level value other than `'AUTO'`, and the table inherits the
+  parameter again. A table-level `'AUTO'` remains.
+- If an external value isn’t `merge-on-read` or `copy-on-write`, refresh succeeds and leaves the Snowflake parameter unchanged.
+
+A later `SET` to `'ENABLED'` or `'DISABLED'` replaces a mixed external configuration with the same value on all three properties.
+
+Important
+
+Snowflake must publish these properties to the catalog before refresh adopts them. If refresh adoption starts while the catalog
+has no write-mode properties, refresh can clear a table-level `'ENABLED'` or `'DISABLED'` value.
+
+**Snowflake-managed tables**
+
+When Snowflake generates metadata for a Snowflake-managed table, it writes the three properties from the table-level parameter:
+
+- `'ENABLED'` publishes `merge-on-read` on all three properties.
+- `'DISABLED'` publishes `copy-on-write` on all three properties.
+- `'AUTO'`, or no table-level value, omits the properties on the first metadata generation and removes them on a later generation.
+
+`ALTER ICEBERG TABLE ... SET ICEBERG_MERGE_ON_READ_BEHAVIOR` or `UNSET ICEBERG_MERGE_ON_READ_BEHAVIOR` schedules that metadata
+generation.
+
+Writes from an external engine through Snowflake Horizon Catalog can update the table-level parameter by setting those properties:
+
+- If any of the three properties is `merge-on-read`, Snowflake sets the table-level parameter to `'ENABLED'`.
+- If every present property is `copy-on-write`, Snowflake sets the table-level parameter to `'DISABLED'`.
+- If none of the properties are present, Snowflake removes a table-level value other than `'AUTO'`.
+
+The next metadata generation rewrites all three properties from the updated parameter value, so a mixed external configuration
+becomes uniform.
+
+For a Snowflake-managed table that generates Delta metadata, those writes don’t set the parameter to `'ENABLED'` and don’t clear an
+existing table-level value while merge-on-read is blocked for that table.
 
 ##### Auto behavior
 

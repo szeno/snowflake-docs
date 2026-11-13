@@ -64,7 +64,8 @@ YAML and DDL conventions.
 | One-to-one relationships | Yes | Yes | Inferred automatically when both sides have the join column as a primary key. |
 | ASOF relationships | Yes (`type: asof`) | Yes (`ASOF <column>`) | Both support point-in-time lookups for slowly changing dimensions. |
 | Range relationships | Yes (`type: range`, `right_range`) | Yes (`BETWEEN <start> AND <end> EXCLUSIVE`) | Both support range-based joins with `CONSTRAINT DISTINCT RANGE` on the target table. |
-| Many-to-many (through bridge table) | Yes | Yes | Expressed through two relationships from a bridge table. The system infers the M2M path. |
+| Many-to-many (through bridge table) (Public Preview) | Yes | Yes | Expressed through two relationships from a bridge table. The system infers the M2M path. |
+| Many-to-many (direct) (Public Preview) | Yes | Yes | Expressed through a relationship whose referenced columns aren’t a primary key or unique key. The system infers the M2M path. |
 | Role-playing tables | Yes (multiple `name` entries with same `base_table`) | Yes (multiple aliases: `alias1 AS table`, `alias2 AS table`) | Both support aliasing a single physical table for different roles. |
 | Cross-table dimension references | No | Yes (`<table>.<dim> AS <other_table>.<dim>`) | **DDL only.** A dimension on one table can reference a dimension from a related table. |
 | Metrics using specific relationship | Yes (`using_relationships`) | Yes (`USING (<relationship>)`) | Both support specifying which relationship path a metric should use. |

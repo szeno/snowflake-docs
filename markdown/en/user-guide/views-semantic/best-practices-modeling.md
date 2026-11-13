@@ -125,8 +125,11 @@ define all relationships your questions require. For relationship syntax, see th
 [YAML specification](/user-guide/views-semantic/semantic-view-yaml-spec) or
 [Using SQL commands to create and manage semantic views](/user-guide/views-semantic/sql).
 
-**Many-to-many relationships** are not directly supported. As a workaround, introduce a shared dimension (bridge) table so
-that two many-to-one relationships simulate the many-to-many behavior.
+**Many-to-many relationships** are supported in Public Preview, either through a bridge (junction) table or
+directly. With a bridge table, define two many-to-one relationships from the bridge table to each entity table.
+For a direct relationship, reference columns that aren’t a primary key or unique key in the other table. In both
+cases, the system infers the many-to-many path automatically. For details, see
+[Modeling many-to-many relationships](/user-guide/views-semantic/sql#label-semantic-views-many-to-many).
 
 ## Define metrics and filters
 

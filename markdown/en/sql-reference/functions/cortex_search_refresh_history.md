@@ -88,6 +88,7 @@ Show lessSee more
 
 ## Usage notes
 
+- Requires a role with the MONITOR, OPERATE, or OWNERSHIP privilege on the Cortex Search Service.
 - When calling an Information Schema table function, the session must have an INFORMATION\_SCHEMA schema in use or the function name must be fully-qualified. For more details, see
   [Snowflake Information Schema](/sql-reference/info-schema).
 

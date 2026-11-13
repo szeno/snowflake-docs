@@ -25,12 +25,8 @@ For information about configuring clients, driver, libraries, and third-party ap
 
 ## Infrastructure as code
 
-Note
-
-The following content is not supported by Snowflake. All code is provided “AS IS” and without warranty.
-
 [Snowflake Terraform provider](/user-guide/terraform)
-:   Documentation and resources for the Snowflake Terraform provider.
+:   Use the Snowflake Terraform provider to manage Snowflake objects with infrastructure as code.
 
 ## Drivers and libraries
 

@@ -15,7 +15,8 @@ alias. If you need to roll back, you point the alias to a previous named version
 An agent’s version lifecycle follows a commit-based model:
 
 1. When you create an agent, it automatically creates a committed `VERSION$1` and a `LIVE` version with the
-   same spec.
+   same spec. Requests that don’t specify a version are served by `LIVE` until you commit a version later than
+   `VERSION$1`. For details, see [Default version](#default-version).
 2. You create or modify the agent’s live version during development.
 3. When the agent is ready for deployment, you commit the live version. Snowflake creates a named version with a
    system-assigned identifier in the format `VERSION$N` (for example, `VERSION$2`, `VERSION$3`).
@@ -176,8 +177,7 @@ version that the agent owner designated as the default.
 ## Default version
 
 Unless you set it explicitly, the `DEFAULT` version is the latest committed version. You can also designate
-one version as the default for the agent. The default version is the version that the agent uses when no version
-is specified in an API call:
+one version as the default for the agent:
 
 Copy code
 
@@ -199,6 +199,44 @@ ALTER AGENT my_agent
 Setting a default version allows you to control which version serves traffic without requiring callers to
 specify a version in every request. When you promote a new version, update the default to redirect all
 unversioned API calls.
+
+### Requests that don’t specify a version
+
+When a request doesn’t specify a version, Snowflake uses the following rule:
+
+- If a committed version later than `VERSION$1` exists, the request is served by the `DEFAULT` version.
+- Otherwise, the request is served by the `LIVE` version.
+
+This rule applies to the following surfaces:
+
+- The `agent:run` REST endpoint and `DATA_AGENT_RUN` without a version suffix.
+- Snowflake CoWork and Snowflake Intelligence.
+- The Preview tab in Snowsight.
+
+While `VERSION$1` is the only committed version, the `!DEFAULT` shortcut resolves to `VERSION$1`, but a request
+with no version specified is served by `LIVE`. As a result, uncommitted edits to the live version are
+immediately visible to users of these surfaces. You can still run `VERSION$1` by targeting it explicitly with
+`!VERSION$1`.
+
+### Deploying agents with SQL
+
+`CREATE AGENT` and `CREATE OR REPLACE AGENT` leave the agent with only `VERSION$1` and `LIVE`. Creating an
+agent in Snowsight without publishing it leaves the agent in the same state. `CREATE OR REPLACE AGENT`
+resets the agent to `VERSION$1` every time it runs.
+
+To make CoWork, Snowflake Intelligence, and Preview serve a committed version, run the following statements
+after you create the agent:
+
+Copy code
+
+```
+ALTER AGENT my_agent COMMIT;
+
+ALTER AGENT my_agent
+  SET DEFAULT_VERSION = 'LAST';
+```
+
+Publishing an agent in Snowsight performs these steps for you.
 
 ## Versioning and CI/CD
 
@@ -315,7 +353,7 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
   $${"messages": [{"role": "user", "content": [{"type": "text", "text": "Hello"}]}]}$$
 );
 
--- Run the DEFAULT version (same as omitting the suffix)
+-- Run the DEFAULT version
 SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
   'MY_DB.MY_SCHEMA.MY_AGENT!DEFAULT',
   $${"messages": [{"role": "user", "content": [{"type": "text", "text": "Hello"}]}]}$$
@@ -324,7 +362,8 @@ SELECT SNOWFLAKE.CORTEX.DATA_AGENT_RUN(
 
 The version suffix supports the same identifiers as the REST API: system version names (`VERSION$N`),
 aliases, and shortcuts (`LIVE`, `DEFAULT`, `LAST`, `FIRST`). If no version suffix is specified, the
-agent’s DEFAULT version is used.
+request is served by the DEFAULT version once a version later than `VERSION$1` is committed, and by `LIVE`
+otherwise. See [Requests that don’t specify a version](#requests-that-dont-specify-a-version).
 
 If the agent name contains a `!` character, enclose that part of the name in double quotes so it is not
 treated as a version separator. For example, `'db.schema."my!agent"!LIVE'` targets the LIVE version of

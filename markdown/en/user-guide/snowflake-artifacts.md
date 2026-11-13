@@ -71,15 +71,27 @@ For chart refresh and cached-snapshot behavior, see [Find and refresh saved arti
 
 Owners can manage access to artifacts and transfer ownership. For dashboard and report creation, publication, and sharing procedures, see [Create and share a dashboard or HTML report](/user-guide/snowflake-artifacts-create-share).
 
+### Grant and revoke access with SQL
+
+Use `GRANT` and `REVOKE` to give a role or user `READ` or `WRITE` access to an artifact. Reference the artifact by its unique identifier, not its title:
+
+Copy code
+
+```
+GRANT READ, WRITE
+  ON ARTIFACT "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  TO ROLE analytics_team;
+
+REVOKE READ
+  ON ARTIFACT "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee"
+  FROM ROLE analytics_team;
+```
+
 ### Ownership transfer
 
 Ownership can be transferred to another role or to a user’s personal role through the artifact’s **Share** dialog. When you transfer ownership through the dialog, all current grants remain active.
 
-Coming soon: SQL ownership transfer
-
-SQL ownership transfer with `GRANT OWNERSHIP ON ARTIFACT` isn’t yet available. The following example describes the upcoming syntax; don’t run it before this capability is available in your account.
-
-Replace the example UUID and role name with your artifact identifier and receiving role:
+You can also transfer ownership with SQL:
 
 Copy code
 
