@@ -43,21 +43,6 @@ CREATE DATA CONNECTIVITY PROXY my_dcp_client
 You can also attach or change the policy later with `ALTER DATA CONNECTIVITY PROXY ... SET NETWORK_POLICY`. For more information, see
 [Controlling network traffic with network policies](/user-guide/network-policies).
 
-Note
-
-After you create the DCP object, issue account-level TLS certificates:
-
-Copy code
-
-```
-SELECT SYSTEM$ISSUE_PER_ACCOUNT_CERTIFICATES();
-```
-
-A successful call returns `Certificates will be issued.` Issuance is asynchronous. Wait at least 30 minutes after the first call in the
-account before you start the agent. Calling the function again has no additional effect.
-
-For more information, see [SYSTEM$ISSUE\_PER\_ACCOUNT\_CERTIFICATES](/sql-reference/functions/system_issue_per_account_certificates).
-
 ## Step 2: Generate a bootstrap token
 
 Generate a one-time bootstrap JWT that the agent uses to authenticate with Snowflake and receive its mTLS certificates. The second argument
@@ -171,7 +156,8 @@ If the agent host pulls the image from Docker Hub, allow outbound HTTPS to `*.do
 private registry and pull from there.
 
 The agent starts, authenticates with the control plane using the bootstrap JWT, receives its mTLS certificate pair, and connects to the
-relay. After this point the JWT isn’t used again until the next certificate rotation.
+relay. It uses a short-lived token for subsequent control plane requests. The bootstrap JWT is used again for certificate rotation or
+if the agent bootstraps again after a control plane reconnect.
 
 ## Step 5: Verify the agent is connected
 
@@ -244,18 +230,18 @@ reference on the connector. For the UI steps, see
 
 The agent requires only outbound access on port 443. You don’t need to open inbound ports.
 
-Allow every hostname in the following table. The agent connects over either relay hostname automatically, based on what your
-network allows. Both are fully supported — you don’t need to prefer one. If you allowlist only the fallback hostname, the agent
-still works, and all relay traffic uses that hostname.
+Allow the control plane and fallback relay hostnames in the table below. In the default `DCP_CONNECTION_MODE=auto` mode, the agent
+also tries relay public IP addresses and uses the fallback hostname only if the direct attempt fails with a retryable connection
+error. If your network can’t allow the relay public IPs, set `DCP_CONNECTION_MODE=fallback-only` to skip the direct path.
 
 Important
 
-The agent requires end-to-end TLS connectivity to these hostnames. Configure firewalls, proxies, and other network security
-devices to pass this traffic without TLS inspection or decryption, certificate substitution, or TLS termination. An outbound
-allow rule isn’t sufficient if a security device still intercepts or modifies the TLS connection.
+By default, the agent requires unintercepted end-to-end TLS connectivity to these destinations. An outbound allow rule isn’t
+sufficient if a firewall or proxy intercepts or modifies the TLS connection without being configured for DCP inspection.
 
-If your network applies TLS inspection by default, create a narrowly scoped no-decrypt exception for traffic from the agent host
-to these hostnames on port 443.
+If your network applies TLS inspection by default, exempt the required destinations from inspection (including relay public IPs in
+`auto` mode), or follow [Inspect agent traffic](#label-dcp-setup-tls-inspection) and use `fallback-only`. An intercepted direct
+relay connection might not fall back automatically.
 
 In these patterns, `<cloud>` is the cloud provider that hosts your Snowflake account: `aws`, `azure`, or `gcp`. The segment reflects the
 hostname format only. It doesn’t mean the agent’s traffic transits that provider’s network.
@@ -263,8 +249,8 @@ hostname format only. It doesn’t mean the agent’s traffic transits that prov
 | Destination | Port | Protocol | Purpose |
 | --- | --- | --- | --- |
 | `dcp.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | DCP control plane |
-| `dcp-proxy.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (data path) |
-| `dcp-proxy-fallback.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (data path), used when the agent doesn’t connect over the `dcp-proxy` hostname |
+| `dcp-proxy.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (direct path; the agent dials its public IP address) |
+| `dcp-proxy-fallback.<org>-<account>.<region>.<cloud>.snowflake.com` | 443 | TLS | Relay (fallback path), used in `fallback-only` mode or after a retryable direct failure in `auto` mode |
 
 Expand
 
@@ -283,8 +269,90 @@ FROM TABLE(FLATTEN(input => PARSE_JSON(SYSTEM$ALLOWLIST()))) f
 WHERE f.VALUE:type::STRING LIKE 'DCP%';
 ```
 
-For more information about forward proxy and TLS inspection restrictions, see
+For more information about TLS inspection, see
 [Corporate proxy support](/user-guide/data-connectivity-proxy-security#label-dcp-corporate-proxy).
+
+### Route the agent through a corporate proxy
+
+If the agent host can’t reach the Snowflake hostnames directly, send the agent’s traffic through an HTTP proxy server that
+supports `CONNECT`. Set `HTTPS_PROXY` on the agent container. The following command is the command from
+[Step 4](#label-dcp-setup-deploy-agent) with the `HTTPS_PROXY` variable added:
+
+Copy code
+
+```
+docker run -d \
+  --name dcp-agent \
+  --restart unless-stopped \
+  -v /etc/dcp-agent/secrets/dcp-bootstrap-token:/etc/dcp-agent/secrets/dcp-bootstrap-token:ro \
+  -e HTTPS_PROXY=http://proxy.example.com:3128 \
+  -e DCP_METRICS_PORT=9092 \
+  -p 9092:9092 \
+  snowflakedb/dcp-client:latest
+```
+
+The agent sends control plane and relay traffic through the proxy. Connections from the agent to your data sources don’t use the
+proxy. For the related variables, see [Agent environment variables](/user-guide/data-connectivity-proxy-reference#label-dcp-env).
+
+The proxy must allow `CONNECT` to the control plane and relay destinations on port 443. In `auto` mode, these include relay
+public IP addresses and the `dcp-proxy-fallback` hostname. If your policy can’t allow relay public IPs, use `fallback-only`.
+Also note:
+
+- If your proxy only allows `CONNECT` to hostnames, set `DCP_CONNECTION_MODE=fallback-only`. In the default `auto` mode, the
+  agent first sends `CONNECT` to the relay’s public IP address. A rejected `CONNECT` or TLS verification failure doesn’t cause
+  an automatic fallback to `dcp-proxy-fallback`.
+- If your proxy URL starts with `https://`, change it to `http://`. The agent can’t use the `dcp-proxy-fallback` hostname through
+  an `https://` proxy URL. To keep an `https://` proxy URL, set `DCP_CONNECTION_MODE=direct-only` and allow `CONNECT` to the
+  relay’s public IP addresses.
+- If a network policy applies to the account or the DCP object, allow the proxy’s egress IP address. Snowflake sees
+  connections from the proxy, not the agent host.
+- By default, telemetry doesn’t use the proxy. To route it through the proxy, set `AGENT_OTLP_ALLOW_PROXY=true` and configure
+  `HTTPS_PROXY` or `ALL_PROXY`. Allow `CONNECT` to the [telemetry hostname](#label-dcp-telemetry-endpoints) on port 443 too.
+  Telemetry doesn’t use `HTTP_PROXY`; `NO_PROXY` applies to it.
+
+### Inspect agent traffic
+
+A proxy can inspect control plane and telemetry traffic, and the outer TLS connection to the fallback relay, but not the direct
+relay path to public IP addresses. For details about what an inspecting proxy can see, see
+[TLS inspection](/user-guide/data-connectivity-proxy-security#label-dcp-tls-inspection).
+
+To allow inspection:
+
+1. Create a CA bundle from the agent image’s trust store and your proxy’s CA. On the agent host, use the same image tag you deploy in
+   [Step 4](#label-dcp-setup-deploy-agent):
+
+   Copy code
+
+   ```
+   cid=$(docker create snowflakedb/dcp-client:latest)
+   docker cp -L "$cid:/etc/ssl/certs/ca-certificates.crt" /etc/dcp-agent/ca-bundle.pem
+   docker rm "$cid"
+   cat proxy-ca.pem >> /etc/dcp-agent/ca-bundle.pem
+   ```
+
+   `SSL_CERT_FILE` replaces the container’s trust store. Starting with its bundle preserves the CAs needed for connections you
+   exempt from inspection. Make sure the container can read the resulting file, and rebuild the bundle if you update the agent
+   image.
+2. Start the agent with the bundle mounted, `SSL_CERT_FILE` pointing to it, and `DCP_CONNECTION_MODE=fallback-only` so the agent
+   doesn’t use relay public IP addresses. Compared with the command in [Step 4](#label-dcp-setup-deploy-agent), this adds the CA
+   bundle mount and the `SSL_CERT_FILE`, `HTTPS_PROXY`, and `DCP_CONNECTION_MODE` variables:
+
+   Copy code
+
+   ```
+   docker run -d \
+     --name dcp-agent \
+     --restart unless-stopped \
+     -v /etc/dcp-agent/secrets/dcp-bootstrap-token:/etc/dcp-agent/secrets/dcp-bootstrap-token:ro \
+     -v /etc/dcp-agent/ca-bundle.pem:/etc/dcp-agent/ca-bundle.pem:ro \
+     -e SSL_CERT_FILE=/etc/dcp-agent/ca-bundle.pem \
+     -e HTTPS_PROXY=http://proxy.example.com:3128 \
+     -e DCP_CONNECTION_MODE=fallback-only \
+     -e DCP_METRICS_PORT=9092 \
+     -p 9092:9092 \
+     snowflakedb/dcp-client:latest
+   ```
+3. Confirm the agent is connected, as described in [Step 5](#label-dcp-setup-verify).
 
 ### DNS
 

@@ -8,7 +8,7 @@ complex AI functions over a large dataset.
 With per-user quotas, you can:
 
 - Define monthly, weekly, and daily per-user credit limits that apply uniformly to all users in scope.
-- Apply the quota to all users in your account, or select specific users using tags or user names to represent teams, cost centers, or business units.
+- Apply the quota to all users in your account, or select groups of users by user tags or roles to represent teams, cost centers, or business units, and include or exclude individual users by name.
 - Block users automatically when they reach a per-user limit. Blocks are released automatically when the cycle resets or you raise the limit.
 - Notify users when they approach or exceed their limits, based on actual or projected spend.
 - Automate custom enforcement actions with stored procedures triggered at configurable thresholds, and reset affected states at the start of each month.
@@ -74,19 +74,21 @@ When a user reaches a limit, the quota can take an enforcement action:
 
 ### User selection
 
-A quota’s user scope works in one of two modes:
+A quota’s user scope has three parts:
 
-- **All users** (default): Every new quota starts in this mode. The quota includes every user in the
-  account, including users added later, with no reconfiguration.
-- **Users selected by tag**: The quota includes only users who carry the tags you specify. Each tag
-  key supports a single value per user. When you specify more than one tag, choose how the tags
-  combine:
-  - `UNION`: Users who match at least one of the tags are in scope.
-  - `INTERSECTION`: Users who match every tag are in scope.
+- **Include**: All users in the account (the default), or a group of users selected by user tags,
+  roles, or both. One operator combines the tags and roles in a group: `UNION` includes users who
+  match at least one, and `INTERSECTION` includes users who match all of them.
+- **Exclude**: Groups of users to remove from the scope, selected by user tags or roles.
+- **Named users**: Individual users who are always in scope or always out of scope.
 
-In either mode, you can exclude users by tag and include or exclude individual users by name.
-Snowflake resolves users at evaluation time, so changes to tag assignments are reflected in the
-quota without any reconfiguration. For more information, see
+Roles select which users the quota monitors, not which usage counts toward the limit. Only direct
+role grants count; inherited roles don’t. For each user in scope, all usage of the quota’s monitored
+domains and resources counts toward that user’s limit, regardless of the active primary or secondary
+roles.
+
+Snowflake resolves users at evaluation time, so changes to tag assignments and role grants are
+reflected in the quota without any reconfiguration. For more information, see
 [Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-scope).
 
 ### Threshold types

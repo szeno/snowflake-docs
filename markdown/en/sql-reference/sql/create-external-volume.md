@@ -361,6 +361,7 @@ account in [Configure an external volume for Amazon S3](/user-guide/tables-icebe
   ```
 - If you use a regional endpoint for a Microsoft Fabric OneLake storage location,
   use the same region as your Microsoft Fabric capacity. This must also be the same region that hosts your Snowflake account.
+- Private connectivity endpoints aren’t supported for Microsoft Fabric OneLake storage locations.
 - For S3 external volumes that use an S3 access point:
 
   - You must configure the IAM policy for the external volume

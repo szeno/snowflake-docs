@@ -165,13 +165,14 @@ Copy code
 
 ```
 -- Default quota: cost_center = analytics AND usage_tier = standard.
-CALL my_quota!SET_USER_TAGS(
-  [
-    [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.cost_center', 'SESSION', 'APPLYBUDGET')), 'analytics'],
-    [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.usage_tier', 'SESSION', 'APPLYBUDGET')), 'standard']
-  ],
-  'INTERSECTION'
-);
+CALL my_quota!SET_QUOTA_USER_SCOPE(OBJECT_CONSTRUCT(
+  'applies_to', OBJECT_CONSTRUCT(
+    'type', 'GROUP_OF_USERS',
+    'operator', 'INTERSECTION',
+    'user_tags', [
+      [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.cost_center', 'SESSION', 'APPLYBUDGET')), 'analytics'],
+      [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.usage_tier', 'SESSION', 'APPLYBUDGET')), 'standard']
+    ])));
 CALL my_quota!SET_PER_USER_LIMIT(1000);
 CALL my_quota!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE, TRUE);
 
@@ -179,16 +180,21 @@ CALL my_quota!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE, TRUE);
 ALTER USER alice SET TAG cost_mgmt_db.tags.usage_tier = 'high';
 
 -- Higher-limit quota scoped to the intersection of both tags.
-CALL high_tier_quota!SET_USER_TAGS(
-  [
-    [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.cost_center', 'SESSION', 'APPLYBUDGET')), 'analytics'],
-    [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.usage_tier', 'SESSION', 'APPLYBUDGET')), 'high']
-  ],
-  'INTERSECTION'
-);
+CALL high_tier_quota!SET_QUOTA_USER_SCOPE(OBJECT_CONSTRUCT(
+  'applies_to', OBJECT_CONSTRUCT(
+    'type', 'GROUP_OF_USERS',
+    'operator', 'INTERSECTION',
+    'user_tags', [
+      [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.cost_center', 'SESSION', 'APPLYBUDGET')), 'analytics'],
+      [(SELECT SYSTEM$REFERENCE('TAG', 'cost_mgmt_db.tags.usage_tier', 'SESSION', 'APPLYBUDGET')), 'high']
+    ])));
 CALL high_tier_quota!SET_PER_USER_LIMIT(5000);
 CALL high_tier_quota!SET_BLOCK_ENFORCEMENT_ENABLED(TRUE, TRUE);
 ```
+
+You can also define tiers with roles instead of tags. In that case, granting or revoking the tier
+role moves the user between quotas. For more information, see
+[How role-based selection works](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-role-selection).
 
 Note
 

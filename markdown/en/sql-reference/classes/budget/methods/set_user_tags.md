@@ -9,7 +9,8 @@ Calling the method replaces any existing user tags that were added to the budget
 Note
 
 This method applies to budgets. [Per-user quotas](/user-guide/budgets/per-user-quotas) have their own
-`SET_USER_TAGS` method, which also accepts the `ALL_USERS` operator. For details, see
+`SET_USER_TAGS` method, which also accepts the `ALL_USERS` operator. For quotas, Snowflake recommends
+`SET_QUOTA_USER_SCOPE`, which can also select users by role. For details, see
 [Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-scope).
 
 ## Syntax

@@ -791,7 +791,7 @@ The Worker configuration file uses [TOML](https://toml.io/) format. For cloud da
 | `[application]` | `snowflake_database_for_metadata` | `String` | Optional. Database holding the migration and validation metadata procedures (default `SNOWCONVERT_AI`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_DATABASE_FOR_METADATA`. |
 | `[application]` | `snowflake_schema_for_data_migration_metadata` | `String` | Optional. Schema holding the migration task-queue procedures (default `DATA_MIGRATION`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_MIGRATION_METADATA`. |
 | `[application]` | `snowflake_schema_for_data_validation_metadata` | `String` | Optional. Schema holding validation-specific objects such as the results stage and file format (default `DATA_VALIDATION`). Must match the Orchestrator’s `CUSTOM_SNOWFLAKE_SCHEMA_FOR_DATA_VALIDATION_METADATA`. |
-| `[application]` | `local_results_directory` | `String` | Optional. Base directory for exported Parquet/CSV before upload. |
+| `[application]` | `local_results_directory` | `String` | Optional. Base directory where the Worker writes each task’s exported Parquet or CSV files before it uploads them. Defaults to `~/.data_exchange_agent/result_data`. Paths that start with `~` and relative paths are expanded to absolute paths when the Worker loads its configuration. See [Local results directory](#local-results-directory). |
 | `[idle_shutdown]` | `minutes` | `Integer` | Optional. Minutes without work after which the Worker shuts itself down (default `60`). `DM_IDLE_SHUTDOWN_MINUTES` overrides it. See [Idle shutdown settings](#idle-shutdown-settings). |
 | `[connections.source.*]` | (per engine) | `Object` | Source database connection. Typically one active source section. |
 | `[connections.source.*]` | `plugin_class` | `String` | Optional. Fully qualified class name of a custom extraction plugin that replaces the built-in extractor for this source connection. See [Preparing a custom extraction plugin](../data-migration-validation/data-migration-advanced-configuration#preparing-a-custom-extraction-plugin). |
@@ -834,6 +834,23 @@ connection_name = "my-snowflake"
 ```
 
 Platform-specific `[connections.source.*]` and cloud target examples live on each [Migrating Data from …](../data-migration-validation/data-migration) page.
+
+### Local results directory
+
+Before the Worker uploads a task’s data, it extracts that data to Parquet or CSV files on local disk. To put these files on a disk with room for your largest tables, set `local_results_directory` in the `[application]` section:
+
+Copy code
+
+```
+[application]
+local_results_directory = "/data/dmv-exports"
+```
+
+- Each task writes to `task_<id>/<timestamp>/` under this directory.
+- The Worker deletes the task’s folder when the task finishes.
+- The disk-space check that runs before a local Worker starts measures the disk that holds this directory.
+
+To set the directory without editing the file, pass `--local-results-directory <PATH>` to `scai data worker generate-config`. To override it for one run, pass the same option to `scai data worker start --local`.
 
 ### Using a custom extraction plugin
 

@@ -2696,7 +2696,7 @@ Generate a TOML configuration template for the local Data Exchange Worker.
 Copy code
 
 ```
-scai data worker generate-config [PATH] [-c <CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--affinity <AFFINITY>]
+scai data worker generate-config [PATH] [-c <CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--affinity <AFFINITY>] [--local-results-directory <PATH>]
 ```
 
 **Prerequisites:**
@@ -2716,6 +2716,7 @@ scai data worker generate-config [PATH] [-c <CONNECTION>] [--role <ROLE>] [--war
 | `[PATH]` | Output path for the generated configuration file (file or directory). Defaults to ~/.snowflake/scai/dew\_configuration.toml. | No |
 | `-y, --yes` | Skip the confirmation prompt. | No |
 | `--affinity` | Affinity tag written to the Worker TOML (`[application].affinity`). Can include `*` wildcards (for example `team-*`). Defaults to the [project default affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#project-default-affinity). See [Affinity](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#affinity). | No |
+| `--local-results-directory <PATH>` | Directory where the local Worker writes result data, written to the Worker TOML as `[application].local_results_directory`. Defaults to ~/.data\_exchange\_agent/result\_data. See [Local results directory](/migrations/aim-for-datawarehouses/manual-migration/data-migration-configuration-reference#local-results-directory). | No |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |
 | `--role <ROLE>` | Role to use. Overrides the value specified for the Snowflake connection. | No |

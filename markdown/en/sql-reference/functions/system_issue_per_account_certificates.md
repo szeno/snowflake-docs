@@ -11,16 +11,11 @@ This function covers a superset of
 [SYSTEM$ISSUE\_PER\_ACCOUNT\_APP\_SERVICE\_CERTIFICATE](/sql-reference/functions/system_issue_per_account_app_service_certificate), which covers app service
 hostnames only.
 
-Certificate issuance is asynchronous. Wait at least 30 minutes after calling this function before
-changing account parameters that depend on the certificates being in place. If you change those parameters
-before the certificates are ready, you might encounter errors when accessing Snowflake under
-account-specific hostnames.
-
 Calling this function when the certificates are already being maintained has no additional effect, so
 it’s safe to call more than once.
 
-Data Connectivity Proxy (DCP) setup uses this function. See the
-[note in the DCP setup topic](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-issue-certificates).
+You no longer need to run this function. Snowflake maintains these certificates on behalf of the
+account. For more information, see [Streamlit and Snowpark Container Services: public endpoints use per-account hostnames (Disabled by default)](/release-notes/bcr-bundles/2026_08/bcr-2451).
 
 Caution
 

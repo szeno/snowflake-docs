@@ -9,6 +9,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Server releases earlier in 2026
 
+- [10.41 Release Notes: Nov 08, 2026 - Nov 12, 2026](/release-notes/2026/10_41)
+
+  - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
+
+    - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
+  - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
 - [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 
   - [SQL updates](/release-notes/2026/10_40#sql-updates)
@@ -279,9 +285,14 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)
 - [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
+- [Nov 12, 2026: DCM Projects PLAN privilege (Preview)](/release-notes/2026/other/2026-11-12-dcm-plan-privilege-preview)
 - [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
+- [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
+- [Nov 11, 2026: Select per-user quota users by role (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-role-scope)
 - [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
+- [Nov 11, 2026: Programmatic notifications for Trust Center findings (General availability)](/release-notes/2026/other/2026-11-11-trust-center-programmatic-notifications-ga)
 - [Nov 10, 2026: INTEGRATIONS view in ACCOUNT\_USAGE (Preview)](/release-notes/2026/other/2026-11-10-account-usage-integrations-view-preview)
 - [Nov 10, 2026: CoCo Desktop v1.25.4](/release-notes/2026/other/2026-11-10-coco-desktop-v1-25-4)
 - [November 10, 2026: Geospatial maps in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-11-10-cowork-maps-preview)
@@ -301,6 +312,7 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
 - [Nov 3, 2026: Delta Direct: Structured type evolution (General availability)](/release-notes/2026/other/2026-11-03-delta-direct-structured-type-evolution)
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
+- [Nov 3, 2026: Access roles for Snowflake Postgres token authentication (Preview)](/release-notes/2026/other/2026-11-03-postgres-token-access-roles-preview)
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 2, 2026: CoCo automations (General availability)](/release-notes/2026/other/2026-11-02-cortex-code-automations-ga)

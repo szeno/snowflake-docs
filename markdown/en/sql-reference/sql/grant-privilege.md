@@ -181,7 +181,7 @@ schemaObjectPrivileges ::=
   -- For DBT PROJECT
      USAGE, MONITOR [ , ... ]
   -- For DCM PROJECT
-     READ, MONITOR [ , ... ]
+     READ, MONITOR, PLAN [ , ... ]
   -- For DYNAMIC TABLE
      MONITOR, OPERATE, SELECT [ , ... ]
   -- For EXPERIMENT

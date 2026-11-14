@@ -87,6 +87,13 @@ With `orchestration.tool_not_accessible: accept`, subagents the caller can’t u
 warning `399569`. With `reject`, they fail the request. For more information, see
 [Inaccessible tool handling](/user-guide/snowflake-cortex/cortex-agents-inaccessible-tool-handling).
 
+## Routing depth
+
+Routing goes one level. A subagent reached through a router runs without its own `agent_router`
+tool, so it can’t route further. To reach an agent more than one level down, list it in the
+top-level router’s `subagents`, or give the intermediate agent that agent’s tools with an
+[agent toolset](/user-guide/snowflake-cortex/cortex-agents-toolsets).
+
 ## Route between agents in Snowflake CoWork
 
 A router agent that you attach to the Snowflake CoWork object is a Snowflake CoWork profile, and it

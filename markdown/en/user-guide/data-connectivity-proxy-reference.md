@@ -74,9 +74,6 @@ SHOW DATA CONNECTIVITY PROXIES [ LIKE '<pattern>' ]
 
 ## SQL functions
 
-Setup also requires [SYSTEM$ISSUE\_PER\_ACCOUNT\_CERTIFICATES](/sql-reference/functions/system_issue_per_account_certificates). See the
-[note in the setup topic](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-issue-certificates).
-
 ### SYSTEM$GENERATE\_DATA\_CONNECTIVITY\_PROXY\_BOOTSTRAP\_TOKEN
 
 Generates a bootstrap JWT for an agent to authenticate with the DCP control plane.
@@ -183,7 +180,7 @@ Show lessSee more
 
 ## Agent environment variables
 
-Each variable below is an alternative to the equivalent flag. Where both are supplied, the flag wins.
+Where a variable has a CLI flag equivalent and both are supplied, the flag takes precedence.
 
 | Variable | Flag equivalent | Description |
 | --- | --- | --- |
@@ -192,6 +189,10 @@ Each variable below is an alternative to the equivalent flag. Where both are sup
 | `DCP_METRICS_PORT` | None | Bare port that binds `0.0.0.0:<port>` — the usual way to expose metrics from a container. Ignored when `DCP_METRICS_ADDRESS` or `--metrics-addr` is set. |
 | `DCP_LOG_LEVEL` | `--log-level` | Log verbosity: `error`, `warn`, `info`, `debug`, `trace`. Default `info`. |
 | `DCP_CONNECTION_MODE` | `--proxy-dial-mode` | Relay connection mode: `auto`, `direct-only`, or `fallback-only`. Default `auto`. Use `fallback-only` with an FQDN-only firewall to connect through the `dcp-proxy-fallback` hostname without attempting direct connections to relay public IPs. |
+| `HTTPS_PROXY`, `HTTP_PROXY`, `ALL_PROXY` | None | URL of an HTTP proxy server that supports `CONNECT`, for example `http://proxy.example.com:3128`. For control plane and relay connections, which use TLS, the agent uses `HTTPS_PROXY` if it is set, then `HTTP_PROXY`, then `ALL_PROXY`. If an uppercase name isn’t set, the agent reads the lowercase name (`https_proxy`, `http_proxy`, or `all_proxy`). When both are set, the uppercase name wins. To authenticate to the proxy, include credentials in the URL (`http://user:password@proxy.example.com:3128`). Credentials in the URL are visible to anyone who can inspect the container configuration, for example with `docker inspect`. See [Route the agent through a corporate proxy](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-corporate-proxy). |
+| `NO_PROXY` | None | Comma-separated hostnames or domain suffixes that bypass the proxy, including telemetry when telemetry uses the proxy. `*` bypasses the proxy for all hosts. If `NO_PROXY` isn’t set, the agent reads `no_proxy`. |
+| `AGENT_OTLP_ALLOW_PROXY` | None | Set to `true` to send telemetry through `HTTPS_PROXY` or `ALL_PROXY`. `NO_PROXY` applies to that traffic. By default, telemetry doesn’t use the proxy. Telemetry doesn’t use `HTTP_PROXY`. If `HTTP_PROXY` is the only proxy variable set, telemetry connects directly even when this variable is `true`. Telemetry reads `https_proxy` and `all_proxy` when the uppercase names aren’t set. |
+| `SSL_CERT_FILE` | None | Path to a PEM CA bundle that replaces the container’s trust store. Use it to trust a TLS-inspecting proxy’s CA. See [Inspect agent traffic](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-tls-inspection). |
 
 Expand
 
@@ -202,7 +203,8 @@ Show lessSee more
 - DCP is available for all Snowpark Container Services, including Snowflake Openflow, AIM Data Exchange Workers, Notebooks in Workspaces, Streamlit apps, and Code Bundles. To attach a Worker, see [Deploying workers](/migrations/aim-for-datawarehouses/data-migration-validation/deploy-workers#reach-a-private-source-with-data-connectivity-proxy).
 - A single DCP object corresponds to one network scope. For data sources in isolated networks, deploy a separate agent and DCP object per
   network.
-- Corporate HTTP proxy support (routing the agent’s outbound traffic through an enterprise-managed forward proxy) isn’t supported.
+- The direct relay path to public IP addresses can’t be used through a TLS-inspecting proxy, and the `dcp-proxy-fallback` hostname
+  can’t be used through an `https://` proxy URL.
 - Active-active load-balancing across agent instances for the same destination isn’t supported.
 - Hitless agent-process upgrade (live TCP session handoff on agent restart) isn’t supported.
 - Agent telemetry shipping to a Snowflake event table is available on AWS. Azure support follows in a subsequent release.

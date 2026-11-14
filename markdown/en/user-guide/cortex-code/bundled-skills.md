@@ -54,7 +54,7 @@ Convert a Tableau workbook or data source file (`.twb`, `.twbx`, `.tds`, or `.td
 
 Before you start, you need a Tableau workbook or data source file, a query warehouse, a compute pool, and a role that can create the app in your target schema. Screenshots and data exports can’t replace the file, because they don’t contain its calculations or structure. In CoCo CLI and CoCo Desktop, you also need Python 3.11 or later and, to deploy the app, either Snowflake CLI version 3.14 or later or [uv](https://docs.astral.sh/uv/). To use real data, the source tables must be in Snowflake, in the same account as the app.
 
-This skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) version 1.2.33 or later, [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop) version 1.23.1 or later, and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight). It uses [`sql-author`](#label-bundled-skill-sql-author) for Snowflake SQL. For the app code, it uses `developing-with-streamlit-in-snowflake` in CoCo CLI and CoCo Desktop, or `streamlit-in-workspaces` in CoCo in Snowsight.
+This preview skill is available in [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) version 1.2.33 or later, [CoCo Desktop](/user-guide/cortex-code/cortex-code-desktop) version 1.23.1 or later, and [CoCo in Snowsight](/user-guide/cortex-code/cortex-code-snowsight). It uses [`sql-author`](#label-bundled-skill-sql-author) for Snowflake SQL. For the app code, it uses `developing-with-streamlit-in-snowflake` in CoCo CLI and CoCo Desktop, or `streamlit-in-workspaces` in CoCo in Snowsight.
 
 Ways to use it:
 
@@ -63,6 +63,8 @@ Ways to use it:
 - Inventory a folder of workbooks to compare their calculations, shared fields, and data source connections before you migrate
 
 CoCo asks for your approval before it queries real tables, deploys the app, or grants roles access to the app. Roles that you give access to the synthetic preview keep that access when the app switches to real data, so share the preview only with roles that are allowed to see the real data. To create semantic views from Tableau files instead, use [`agent-studio`](#label-bundled-skill-agent-studio).
+
+For more information, see [Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo](/developer-guide/streamlit/migrations-and-upgrades/tableau-to-streamlit).
 
 ### `snowflake-notebooks`
 

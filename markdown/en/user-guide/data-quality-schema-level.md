@@ -9,7 +9,7 @@ insights into data quality.
 
 You can now use a single SQL statement to configure a schema so that supported objects in the schema are associated with the same DMF.
 Session temporary tables are not associated after the behavior change described in
-[Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064). You can associate the following system DMFs at the schema level:
+[Schema-level data metric functions skip session temporary tables](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064). You can associate the following system DMFs at the schema level:
 
 - [ROW\_COUNT](/sql-reference/functions/dmf_row_count) — Use to return information about the volume of data in objects within the
   schema.
@@ -103,7 +103,7 @@ ALTER SCHEMA <name>
 
     Snowflake never associates a schema-level DMF with session temporary tables (`CREATE TEMPORARY TABLE`). You don’t need to list
     `'TEMPORARY'` in `EXCLUDE_TABLE_TYPES`. For the behavior change that introduced this skip, see
-    [Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).
+    [Schema-level data metric functions skip session temporary tables](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).
 
     `'TABLE'` excludes all tables of domain TABLE, including transient tables. To skip only transient tables and keep monitoring
     permanent tables, specify `'TRANSIENT'`, not `'TABLE'`.
@@ -274,4 +274,4 @@ with the object. For a list of these privileges, see [Access control requirement
   Snowflake skips views and external tables when associating the DMF with objects in the schema.
 - You can’t set a trigger-based schedule at the schema level.
 - Snowflake does not associate schema-level DMFs with session temporary tables. For details, see
-  [Schema-level data metric functions skip session temporary tables (Pending)](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).
+  [Schema-level data metric functions skip session temporary tables](/release-notes/bcr-bundles/un-bundled/bcr-snow-4184064).

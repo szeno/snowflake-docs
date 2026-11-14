@@ -452,4 +452,8 @@ Represents the defined term used in the AI Terms and Acceptable Use Policy.
 
 For additional information, refer to [Snowflake AI and ML](/guides-overview-ai-features).
 
+Snowflake’s use of raw or derived user data received from the Sheets API will adhere to the
+[Google User Data Policy](https://developers.google.com/terms/api-services-user-data-policy), including the Limited Use
+requirements.
+
 *Google Sheets is a trademark of Google LLC.*

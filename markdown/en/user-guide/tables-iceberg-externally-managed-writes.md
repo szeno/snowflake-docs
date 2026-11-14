@@ -35,9 +35,9 @@ Use the workflow in this section to get started with this feature:
 
    Note
 
-   If your remote Iceberg catalog doesn’t support credential vending, you must configure an
-   [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def) and a
-   [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def).
+   If your remote Iceberg catalog doesn’t support credential vending, you must configure a
+   [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) and an
+   [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def).
 
    First,
    [configure an external volume for your cloud storage provider](/user-guide/tables-iceberg-configure-external-volume).

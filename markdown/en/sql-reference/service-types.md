@@ -4,11 +4,13 @@ This topic contains the types of usage that can incur costs in Snowflake.
 
 | Service type | Usage statement name | Description | Category | Unit |
 | --- | --- | --- | --- | --- |
+| AGENT\_CODE\_EXECUTION | AGENT CODE EXECUTION | Active code execution session time used by agents to run code in a sandboxed environment. | Compute | Hours |
 | AI\_FUNCTIONS | AI FUNCTIONS | Cortex AI functions invoked from SQL, including COMPLETE and other LLM-backed functions. | AI and Machine Learning | AI Credits |
 | AI\_INFERENCE | AI INFERENCE | Credit-based usage for running AI models via the Cortex REST API. | AI and Machine Learning | AI Credits |
 | AI\_INFERENCE\_TOOLS | AI INFERENCE TOOLS | Credit-based usage for inference AI tool calls invoked by AI workloads. | AI and Machine Learning | AI Credits |
 | AI\_SENSITIVE\_DATA\_CLASSIFICATION | AI SENSITIVE DATA CLASSIFICATION | AI token credits for AI-enriched sensitive data classification. | Management and Governance | AI Credits |
 | AI\_SERVICES | AI SERVICES | Usage of Snowflake AI and ML services including Cortex functions. | AI and Machine Learning | Credits |
+| AI\_TRAINING | AI TRAINING | Compute used by AI Training jobs | AI and Machine Learning | AI Credits |
 | ARCHIVE\_STORAGE\_COLD | ARCHIVE STORAGE COLD | Long-term cold archive storage for infrequently accessed data. | Storage | TiB-Months |
 | ARCHIVE\_STORAGE\_COOL | ARCHIVE STORAGE COOL | Mid-tier archive storage for occasionally accessed data. | Storage | TiB-Months |
 | ARCHIVE\_STORAGE\_DATA\_RETRIEVAL | ARCHIVE STORAGE DATA RETRIEVAL | Charges for retrieving data from archive storage tiers. | Databases | TiB |
@@ -27,6 +29,7 @@ This topic contains the types of usage that can incur costs in Snowflake.
 | CORTEX\_AI\_GUARDRAILS | CORTEX AI GUARDRAILS | AI-powered guardrails for content safety and policy enforcement for Cortex Agents. | AI and Machine Learning | AI Credits |
 | CORTEX\_CODE\_CLI\_SUBSCRIPTION | CORTEX CODE: CLI (SUBSCRIPTION) | Self-service Cortex Code command-line interface subscription. | AI and Machine Learning | N/A |
 | CORTEX\_SEARCH | CORTEX SEARCH | Managed retrieval service for semantic and hybrid search over Snowflake data. | AI and Machine Learning | AI Credits |
+| CORTEX\_SENSE | CORTEX SENSE | AI processing that builds and refreshes Cortex Contexts using inference and embedding. | AI and Machine Learning | AI Credits |
 | DATA\_QUALITY\_MONITORING | DATA QUALITY MONITORING | Serverless compute for data quality monitoring and metrics. | Management and Governance | Credits |
 | DATA\_TRANSFER | DATA TRANSFER | Network egress charges for data transferred out of Snowflake. | Networking | TiB |
 | EGRESS\_COST\_OPTIMIZER | EGRESS COST OPTIMIZER | Service that optimizes and reduces data egress costs. | Management and Governance | TiB-Months |

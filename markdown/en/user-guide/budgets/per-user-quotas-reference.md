@@ -35,13 +35,29 @@ Use the following methods to define and inspect which users the quota covers:
 
 | Method | Description |
 | --- | --- |
-| `SET_USER_TAGS([[<tag_ref>, '<value>'], ...], '<operator>')` | Scope the quota to users selected by tag. The operator (`UNION` or `INTERSECTION`) is required. See [Scope users with tags](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-tag-scope). |
-| `SET_USER_TAGS([], 'ALL_USERS')` | Return the quota to all users. Pass an empty tag array. Also clears tag exclusions. See [Scope users with tags](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-tag-scope). |
-| `EXCLUDE_USERS('TAG', [[<tag_ref>, '<value>'], ...])` | Replace the tag exclusions. Users matching any of the given tags are removed from the scope. See [Exclude users by tag](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-exclude-by-tag). |
-| `INCLUDE_USERS(['<user>', ...])` | Add specific users to the quota by name, or reverse an earlier exclusion. See [Include or exclude individual users](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-membership). |
-| `EXCLUDE_USERS('USER', ['<user>', ...])` | Exclude specific users from the quota by name. See [Include or exclude individual users](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-membership). |
-| `GET_QUOTA_SCOPE()` | Return the attached monitored domains, the users included and excluded by name, and the configured user tags and operator. |
+| `SET_QUOTA_USER_SCOPE(<scope>)` | Replace the lists in the `applies_to`, `excluded_by`, and `usernames` sections that you pass. Lists you omit are unchanged. Returns the resulting user scope as a JSON string. See [Set the user scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-set-scope). |
+| `ADD_QUOTA_USER_SCOPE(<scope>)` | Add user tags, roles, or user names to the lists that you pass. Doesn’t accept `type` or `operator`. Returns the resulting user scope as a JSON string. See [Add to or remove from the user scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-add-remove-scope). |
+| `REMOVE_QUOTA_USER_SCOPE(<scope>)` | Remove user tags, roles, or user names from the lists that you pass. Doesn’t accept `type` or `operator`. Returns the resulting user scope as a JSON string. See [Add to or remove from the user scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-add-remove-scope). |
+| `GET_QUOTA_SCOPE_V2()` | Return the full user scope (include, exclude, and named users) and the monitored domains as a JSON string. See [Verify the user scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-verify-scope). |
 | `GET_USERS()` | Return the users currently resolved into the quota’s scope. |
+
+Expand
+
+Show lessSee more
+
+## Legacy user scope methods
+
+The following methods still work but can’t select or exclude users by role. For replacements, see
+[Migrate to the new scope methods](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-scope-migration).
+
+| Method | Description |
+| --- | --- |
+| `SET_USER_TAGS([[<tag_ref>, '<value>'], ...], '<operator>')` | Replace the include tags and set the operator (`UNION` or `INTERSECTION`, required). Roles don’t change. See [SET\_USER\_TAGS](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-tag-scope). |
+| `SET_USER_TAGS([], 'ALL_USERS')` | Return the quota to all users. Pass an empty tag array. Also clears the tag exclusions and, when changing from a group scope, the username lists. Roles don’t change. See [SET\_USER\_TAGS](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-tag-scope). |
+| `EXCLUDE_USERS('TAG', [[<tag_ref>, '<value>'], ...])` | Replace the tag exclusions. See [EXCLUDE\_USERS with tags](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-exclude-by-tag). |
+| `INCLUDE_USERS(['<user>', ...])` | Add users to the include list by name. See [INCLUDE\_USERS and EXCLUDE\_USERS with user names](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-membership). |
+| `EXCLUDE_USERS('USER', ['<user>', ...])` | Add users to the exclude list by name. See [INCLUDE\_USERS and EXCLUDE\_USERS with user names](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-membership). |
+| `GET_QUOTA_SCOPE()` | Return the monitored domains, the users included and excluded by name, and the include and exclude tags and the operator. Doesn’t return roles. |
 
 Expand
 

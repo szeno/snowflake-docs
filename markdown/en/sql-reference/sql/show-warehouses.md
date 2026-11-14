@@ -44,7 +44,7 @@ The columns in the output provide the following information. For accounts that h
 > | --- | --- |
 > | `name` | Name of the warehouse. |
 > | `state` | Whether the warehouse is:  active/running (`STARTED`), inactive (`SUSPENDED`), or resizing (`RESIZING`). |
-> | `type` | Warehouse type. STANDARD and SNOWPARK-OPTIMIZED are the only currently supported types. |
+> | `type` | Warehouse type. One of `STANDARD`, `SNOWPARK-OPTIMIZED`, `ADAPTIVE`, or `INTERACTIVE`. |
 > | `size` | Size of the warehouse (X-Small, Small, Medium, Large, X-Large, etc.) |
 > | `min_cluster_count` | Minimum number of clusters for the (multi-cluster) warehouse (always 1 for single-cluster warehouses). |
 > | `max_cluster_count` | Maximum number of clusters for the (multi-cluster) warehouse (always 1 for single-cluster warehouses). |
@@ -53,7 +53,6 @@ The columns in the output provide the following information. For accounts that h
 > | `queued` | Number of SQL statements that are queued for the warehouse. |
 > | `is_default` | Whether the warehouse is the default for the current user. |
 > | `is_current` | Whether the warehouse is in use for the session.  Only one warehouse can be in use at a time for a session. To specify or change the warehouse for a session, use the [USE WAREHOUSE](/sql-reference/sql/use-warehouse) command. |
-> | `is_interactive` | Whether the warehouse is an [interactive warehouse](/user-guide/interactive) (`Y`) or not (`N`). Currently, the interactive warehouse feature is only available on Amazon Web Services (AWS). |
 > | `auto_suspend` | Period of inactivity, in seconds, after which a running warehouse will automatically suspend and stop using credits.  A value of `null` indicates the warehouse never automatically suspends. |
 > | `auto_resume` | Whether the warehouse, if suspended, automatically resumes when a query is submitted to the warehouse. |
 > | `available` | Percentage of the warehouse compute resources that are provisioned and available. |
@@ -73,6 +72,7 @@ The columns in the output provide the following information. For accounts that h
 > | `owner_role_type` | The type of role that owns the object, for example `ROLE`.   If a Snowflake Native App owns the object, the value is `APPLICATION`.   Snowflake returns NULL if you delete the object because a deleted object does not have an owner role. |
 > | `resource_constraint` | If type is `SNOWPARK-OPTIMIZED`, one of:   - `MEMORY_1X`, `MEMORY_1X_x86`, `MEMORY_16X`, `MEMORY_16X_x86`, `MEMORY_64X`, `MEMORY_64X_x86`.   Otherwise `NULL`. |
 > | `generation` | The [generation](/user-guide/warehouses-gen2) type of the warehouse. |
+> | `tables` | For an [interactive warehouse](/user-guide/interactive), a comma-separated list of the fully qualified names of the tables associated with the warehouse. `NULL` if no tables are associated or the warehouse isn’t an interactive warehouse. |
 >
 > Expand
 >
@@ -188,4 +188,13 @@ CALL started_and_suspended_warehouses();
 | SYSTEM$STREAMLIT_NOTEBOOK_WH | SUSPENDED | STANDARD           | X-Small |
 | XSMALL                       | SUSPENDED | STANDARD           | Medium  |
 +------------------------------+-----------+--------------------+---------+
+```
+
+Show only interactive warehouses and the tables associated with them:
+
+Copy code
+
+```
+SHOW WAREHOUSES
+  ->> SELECT "name", "type", "tables" FROM $1 WHERE "type" = 'INTERACTIVE';
 ```

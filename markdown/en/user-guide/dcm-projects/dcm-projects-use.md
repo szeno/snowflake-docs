@@ -204,7 +204,10 @@ snow dcm create --target DEV # uses the named target from the manifest
 
 ## Access control and role privileges
 
-You can set role-based access control (RBAC) of the schema-level DCM project object to READ, MONITOR, or OWNERSHIP privileges.
+You can set role-based access control (RBAC) of the schema-level DCM project object to READ, MONITOR, PLAN, or OWNERSHIP privileges.
+
+The privileges form a hierarchy in the order READ, MONITOR, PLAN, OWNERSHIP. Each privilege includes all operations of the privileges before
+it.
 
 These privileges are independent of the access control for definition files stored in a workspace, stage, or repository.
 
@@ -212,11 +215,51 @@ These privileges are independent of the access control for definition files stor
 | --- | --- | --- |
 | READ | - Shows if the DCM project object exists. - Lists the objects and grants deployed by the DCM project, which are visible to the user’s role.   This means you need both `READ` on the DCM project and the appropriate privilege to see each managed object. The underlying privilege varies by object type. | - SHOW DCM PROJECTS LIKE ‘%project’ - DESCRIBE DCM PROJECT <project> - SHOW ENTITIES IN DCM PROJECT <project> |
 | MONITOR | - Gives access to the complete deployment history, including all artifacts. - Gives the role the ability to analyze, debug, or audit production deployments without the ability to deploy changes directly. | - All READ privileges - DESCRIBE DCM PROJECT <project> (with source and deployment path of latest deployment) - INFORMATION\_SCHEMA.DCM\_DEPLOYMENT\_HISTORY (project\_name => ‘db.schema.project’) - SHOW DEPLOYMENTS IN DCM PROJECT <project> - LIST all files in the deployment - GET any access to files inside the DCM project |
-| OWNERSHIP | - The role that is used to create the DCM project object is the owner of that project. - Gives the role the ability to deploy changes. - Gives the role the ability to transfer ownership of the project to another role when the project has not yet been deployed. | - All MONITOR privileges - EXECUTE DCM PROJECT <project> PLAN - EXECUTE DCM PROJECT <project> DEPLOY - EXECUTE DCM PROJECT <project> PREVIEW - EXECUTE DCM PROJECT <project> TEST - DROP DCM PROJECT <project> - ALTER DCM PROJECT <project> - GRANT READ on DCM PROJECT <project> TO ROLE <role2> - GRANT MONITOR on DCM PROJECT <project> TO ROLE <role2> |
+| PLAN | - Gives the role the ability to validate definition changes with a dry run without the ability to deploy them. - PLAN runs with the privileges of the DCM project owner role. See [PLAN privilege](#label-dcm-projects-plan-privilege). | - All MONITOR privileges - EXECUTE DCM PROJECT <project> PLAN - EXECUTE DCM PROJECT <project> PLAN DELTA |
+| OWNERSHIP | - The role that is used to create the DCM project object is the owner of that project. - Gives the role the ability to deploy changes. - Gives the role the ability to transfer ownership of the project to another role when the project has not yet been deployed. | - All PLAN privileges - EXECUTE DCM PROJECT <project> DEPLOY - EXECUTE DCM PROJECT <project> PREVIEW - EXECUTE DCM PROJECT <project> TEST - DROP DCM PROJECT <project> - ALTER DCM PROJECT <project> - GRANT READ on DCM PROJECT <project> TO ROLE <role2> - GRANT MONITOR on DCM PROJECT <project> TO ROLE <role2> - GRANT PLAN on DCM PROJECT <project> TO ROLE <role2> |
 
 Expand
 
 Show lessSee more
+
+### PLAN privilege
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+The PLAN privilege lets a role run `EXECUTE DCM PROJECT ... PLAN` and `EXECUTE DCM PROJECT ... PLAN DELTA` without holding OWNERSHIP of the
+DCM project. PLAN includes all MONITOR and READ operations. This is useful for CI/CD pipelines and developer roles that need to validate
+definition changes before deployment but shouldn’t be able to apply those changes to the account.
+
+To grant the PLAN privilege, run the following command with the DCM project owner role:
+
+Copy code
+
+```
+GRANT PLAN ON DCM PROJECT <project_name> TO ROLE <role_name>;
+```
+
+Note
+
+Snowsight Workspaces doesn’t support the PLAN privilege yet. In Workspaces, DCM Projects operations always attempt to run with the DCM project
+owner role, regardless of the user’s current or default role. To run PLAN with a role that holds only the PLAN privilege, use SQL or
+Snowflake CLI.
+
+Warning
+
+PLAN runs with the privileges of the DCM project owner role, not with the privileges of the role that holds PLAN. All privileges needed to
+simulate the creation or modification of objects come from the owner role. As a result, a role with PLAN can validate changes that it
+couldn’t make with its own privileges.
+
+The plan output contains a changeset for every entity defined in the project files supplied to the PLAN command. For every existing object
+in the changeset, the output includes the object’s current metadata, such as view queries, stored procedure and function bodies, and policy
+expressions. A role with PLAN can supply project files that include `DEFINE` statements for any object the owner role can read, and then
+retrieve that object’s DDL from the plan output, even if the role can’t access the object with its own privileges.
+
+The plan output contains object metadata (DDL). It doesn’t contain the data stored in these objects.
+
+Grant PLAN only to roles that you trust with the metadata of every object that the DCM project owner role can read.
 
 ### Ownership on DCM-managed objects
 
@@ -272,9 +315,10 @@ Use planning to review and validate changes before deploying a DCM project.
 You can specify options such as a [configuration](/user-guide/dcm-projects/dcm-projects-files#label-dcm-projects-files-configurations)
 or an output path for plan results.
 
-The PLAN mimics the DEPLOY command as much as possible, except it doesn’t actually execute any DDL statements. Because PLAN closely
-mirrors DEPLOY, it requires the same OWNERSHIP privilege on the DCM project as DEPLOY, even though no changes are applied. This way,
-a dry run surfaces privilege errors before deployment.
+The PLAN mimics the DEPLOY command as much as possible, except it doesn’t actually execute any DDL statements. To run PLAN, a role needs
+the PLAN or OWNERSHIP privilege on the DCM project. In both cases, PLAN runs with the privileges of the DCM project owner role, the same
+role that DEPLOY uses. This way, a dry run surfaces privilege errors before deployment. For more information, see
+[PLAN privilege](#label-dcm-projects-plan-privilege).
 
 Important
 

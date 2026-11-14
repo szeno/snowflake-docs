@@ -976,7 +976,7 @@ Then users can access the public endpoint using a browser or programmatically.
 
 #### User-specific headers in ingress requests
 
-When a request for a public endpoint arrives, Snowflake automatically passes the following header along with the HTTP request to the container.
+After authenticating a request to a public endpoint, Snowflake includes the following header in the HTTP request that it forwards to the container:
 
 > Copy code
 >
@@ -984,7 +984,23 @@ When a request for a public endpoint arrives, Snowflake automatically passes the
 > Sf-Context-Current-User: <user_name>
 > ```
 
-Your container code can optionally read the header, know who the caller is, and apply context-specific customization for different users. In addition, Snowflake can optionally include the `Sf-Context-Current-User-Email` header. To include this header, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+Your container code can use this header to identify the authenticated Snowflake user and apply user-specific authorization or customization. This doesn’t require enabling caller’s rights (`executeAsCaller`).
+
+Snowflake provides the following user-specific headers:
+
+| Header | Snowflake-provided value |
+| --- | --- |
+| `Sf-Context-Current-User` | The authenticated Snowflake username. |
+| `Sf-Context-Current-User-Email` | The user’s email address, when email sharing is enabled and the user has an email address. To enable email sharing, contact [Snowflake Support](/user-guide/contacting-support). |
+| `Sf-Context-Current-User-Token` | A user token for [caller’s rights](/developer-guide/snowpark-container-services/spcs-execute-sql#label-spcs-additional-considerations-configuring-callers-rights), when `executeAsCaller` is enabled. |
+
+Expand
+
+Show lessSee more
+
+Before forwarding a request through authenticated public ingress, Snowflake replaces any client-supplied values for these headers with its own values. It doesn’t append the client-supplied values or forward duplicate values. If the Snowflake-provided value is empty or unavailable, Snowflake removes the header. For example, it removes `Sf-Context-Current-User-Email` when email sharing is disabled and `Sf-Context-Current-User-Token` when caller’s rights is disabled.
+
+This identity assurance applies to requests received through authenticated public ingress. The `Sf-Context-Current-User` header isn’t a signed credential. The headers alone don’t authenticate requests sent directly between services. If your application forwards a request to another internal service, preserve the Snowflake-provided identity headers and restrict which callers can connect directly to that service. For more information, see [Service-to-service communications](#label-snowpark-containers-service-communicating-service-to-service).
 
 ### Service-to-service communications
 

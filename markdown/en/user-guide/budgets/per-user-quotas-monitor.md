@@ -100,8 +100,8 @@ This view includes the following elements:
   - **Per-user limit**: The limit configured for each cycle (for example,
     `10,000 credits / month` and `5,000 credits / day`).
   - **Monthly avg user spend** and **Monthly highest user spend** across in-scope users.
-  - **Quota scope**: The users in scope (all users in the account, or the tag-based filters
-    applied) and the monitored domains, such as AI functions, Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway.
+  - **Quota scope**: The users in scope (all users in the account, or the tag, role, and username
+    filters applied) and the monitored domains, such as AI functions, Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway.
   - **Notifications**: The configured notification thresholds.
 - **User table**: A searchable, filterable list of every user in scope. For each user, the table
   shows **Enforcement**, utilization and spend for each configured cycle (**Monthly utilization**

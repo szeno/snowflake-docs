@@ -1,7 +1,6 @@
 # BILLING schema
 
-In the SNOWFLAKE database, the BILLING schema contains views that display billing information for customers of Snowflake resellers and
-distributors, as well as FOCUS-compliant cost and usage data for org-enabled accounts.
+In the SNOWFLAKE database, the BILLING schema contains views that display billing information for customers of Snowflake resellers and distributors, FOCUS-compliant cost and usage data for org-enabled accounts, and subscription information for features billed as subscriptions.
 
 ## BILLING views
 
@@ -9,6 +8,7 @@ The BILLING schema contains the following views:
 
 | View | Latency | Notes |
 | --- | --- | --- |
+| [BILLING\_SUBSCRIPTIONS\_HISTORY](/sql-reference/billing/billing_subscriptions_history) | 4 hours |  |
 | [COLLABORATION\_REBATE\_CONTRIBUTION](/sql-reference/billing/collaboration_rebate_contribution) | 24 hours |  |
 | [FOCUS\_COST\_USAGE\_V1\_3](/sql-reference/billing/focus_cost_usage_v1_3) | 72 hours |  |
 | [PARTNER\_CONTRACT\_ITEMS](/sql-reference/billing/partner_contract_items) | 24 hours |  |

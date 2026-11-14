@@ -296,10 +296,10 @@ Copy code
 ALTER WAREHOUSE interactive_demo UNSET FALLBACK_WAREHOUSE;
 ```
 
-View the fallback warehouse for an interactive warehouse, then inspect the `FALLBACK_WAREHOUSE` column:
+View the fallback warehouse for an interactive warehouse. The `value` column shows the fallback warehouse. An empty value means none is set:
 
 Copy code
 
 ```
-SHOW WAREHOUSES LIKE '%interactive_demo%';
+SHOW PARAMETERS LIKE 'FALLBACK_WAREHOUSE' FOR WAREHOUSE interactive_demo;
 ```

@@ -71,8 +71,9 @@ days to complete after the retention period has passed.
 
 Note
 
-For [converted tables](/user-guide/tables-iceberg-conversion),
-Snowflake deletes only metadata that was generated *after* table conversion.
+For [converted tables](/user-guide/tables-iceberg-conversion#label-tables-iceberg-conversion-file-lifecycle),
+Snowflake also deletes data files and metadata files that were written before conversion.
+That includes files deleted when a snapshot expires and files deleted when you drop the table.
 
 #### After snapshots expire
 

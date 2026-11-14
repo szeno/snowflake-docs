@@ -13,15 +13,14 @@ If you have questions about any of these features, contact
 
 ## Upcoming (or in progress) server releases
 
-- [10.41 Release Notes (Preview)](/release-notes/2026/10_41)
+## Recent server releases
+
+- [10.41 Release Notes: Nov 08, 2026 - Nov 12, 2026](/release-notes/2026/10_41)
 
   - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
 
     - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
   - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
-
-## Recent server releases
-
 - [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 
   - [SQL updates](/release-notes/2026/10_40#sql-updates)
@@ -38,24 +37,21 @@ If you have questions about any of these features, contact
 
     - [IPADDRESS data type (Preview)](/release-notes/2026/10_38#ipaddress-data-type-preview)
   - [Release notes change log](/release-notes/2026/10_38#release-notes-change-log)
-- [10.36 Release Notes: Oct 3, 2026 - Oct 7, 2026](/release-notes/2026/10_36)
-
-  - [Native App Framework updates](/release-notes/2026/10_36#native-app-framework-updates)
-
-    - [Give users a direct link to an installed Snowflake Native App](/release-notes/2026/10_36#give-users-a-direct-link-to-an-installed-snowflake-native-app)
-  - [Data governance updates](/release-notes/2026/10_36#data-governance-updates)
-
-    - [Schema-level data metric functions: exclude transient tables](/release-notes/2026/10_36#schema-level-data-metric-functions-exclude-transient-tables)
-  - [Release notes change log](/release-notes/2026/10_36#release-notes-change-log)
 
 For earlier server releases, see [Server releases earlier in 2026](/release-notes/weekly-releases-2026).
 
 ## Recent feature updates
 
+- [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)
 - [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
+- [Nov 12, 2026: DCM Projects PLAN privilege (Preview)](/release-notes/2026/other/2026-11-12-dcm-plan-privilege-preview)
 - [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
+- [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
 - [Node.js Driver (v4.0.0-beta.0)](/release-notes/clients-drivers/nodejs-2026)
+- [Snowpark Python (v1.57.0)](/release-notes/clients-drivers/snowpark-python-2026)
+- [Nov 11, 2026: Select per-user quota users by role (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-role-scope)
 - [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
+- [Nov 11, 2026: Programmatic notifications for Trust Center findings (General availability)](/release-notes/2026/other/2026-11-11-trust-center-programmatic-notifications-ga)
 - [Nov 10, 2026: INTEGRATIONS view in ACCOUNT\_USAGE (Preview)](/release-notes/2026/other/2026-11-10-account-usage-integrations-view-preview)
 - [Nov 10, 2026: CoCo Desktop v1.25.4](/release-notes/2026/other/2026-11-10-coco-desktop-v1-25-4)
 - [November 10, 2026: Geospatial maps in Snowflake CoWork (Preview)](/release-notes/2026/other/2026-11-10-cowork-maps-preview)
@@ -84,6 +80,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Nov 3, 2026: Cortex AI Gateway inference, observability, and cost management (General availability)](/release-notes/2026/other/2026-11-03-cortex-ai-gateway-ga)
 - [Nov 3, 2026: Delta Direct: Structured type evolution (General availability)](/release-notes/2026/other/2026-11-03-delta-direct-structured-type-evolution)
 - [Nov 03, 2026: Google Gemini 4 Argon model (General availability)](/release-notes/2026/other/2026-11-03-gemini-4-argon-ga)
+- [Nov 3, 2026: Access roles for Snowflake Postgres token authentication (Preview)](/release-notes/2026/other/2026-11-03-postgres-token-access-roles-preview)
 - [Nov 3, 2026: Streamlit in Snowflake container runtime in AWS government regions (General availability)](/release-notes/2026/other/2026-11-03-sis-container-runtime-gov-ga)
 - [Nov 02, 2026: AI\_EXTRACT updates](/release-notes/2026/other/2026-11-02-ai-extract)
 - [Nov 2, 2026: CoCo automations (General availability)](/release-notes/2026/other/2026-11-02-cortex-code-automations-ga)
@@ -182,10 +179,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Python Connector (v5.0.0)](/release-notes/clients-drivers/python-connector-2026)
 - [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
 - [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
-- [Oct 13, 2026: CoCo Desktop v1.21.7](/release-notes/2026/other/2026-10-13-coco-desktop-v1-21-7)
-- [Oct 13, 2026: Cortex Agent SDK (Public Preview)](/release-notes/2026/other/2026-10-13-cortex-agent-sdk-preview)
-- [Oct 13, 2026: Gemini 4 Argon model in AI Functions (Preview)](/release-notes/2026/other/2026-10-13-gemini-4-argon-preview)
-- [Oct 13, 2026: Sensitive data classification error and retry updates](/release-notes/2026/other/2026-10-13-sensitive-data-classification-errors-retry)
-- [Snowpark Python (v1.55.2)](/release-notes/clients-drivers/snowpark-python-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).

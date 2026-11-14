@@ -84,7 +84,7 @@ To configure email notifications for a scanner package, complete the following s
 4. Select the **Manage scanners** tab.
 5. Select a scanner package from the list.
 6. Select the **Settings** tab.
-7. Under **Notifications**, select one of the following:
+7. Under **Email notifications**, select one of the following:
 
    - If notifications are turned off for the scanner package, select **Set up notification**.
    - If notification are turned on for the scanner package, select the edit icon.
@@ -112,7 +112,7 @@ To turn off email notifications for a scanner package, complete the following st
 4. Select the **Manage scanners** tab.
 5. Select a scanner package from the list.
 6. Select the **Settings** tab.
-7. Under **Notifications**, select the edit icon.
+7. Under **Email notifications**, select the edit icon.
 8. Select **Turn off notification**, and then select **Turn off** in the confirmation window.
 
    If email notifications aren’t turned on for the scanner package, the **Turn off notification**
@@ -143,7 +143,7 @@ To configure email notifications for a scanner, complete the following steps:
 3. In the navigation menu, select **Governance & security** » **Trust Center**.
 4. Select the **Manage scanners** tab.
 5. Select a scanner package from the list.
-6. Select [![trust center vertical more image](/static/images/ui-trust-center-vertical-more.png)](/static/images/ui-trust-center-vertical-more.png) **More** for the scanner, and then select **Edit notification**.
+6. Select [![trust center vertical more image](/static/images/ui-trust-center-vertical-more.png)](/static/images/ui-trust-center-vertical-more.png) **More** for the scanner, and then select **Edit email notification**.
 7. Specify whether to inherit the email notification from the scanner package:
 
    - To inherit the email notification configuration from the scanner package, select
@@ -171,7 +171,7 @@ To turn off email notifications for a scanner, complete the following steps:
 3. In the navigation menu, select **Governance & security** » **Trust Center**.
 4. Select the **Manage scanners** tab.
 5. Select a scanner package from the list.
-6. Select [![trust center vertical more image](/static/images/ui-trust-center-vertical-more.png)](/static/images/ui-trust-center-vertical-more.png) **More** for the scanner, and then select **Edit notification**.
+6. Select [![trust center vertical more image](/static/images/ui-trust-center-vertical-more.png)](/static/images/ui-trust-center-vertical-more.png) **More** for the scanner, and then select **Edit email notification**.
 7. Select **Turn off notification**, and then select **Turn off** in the confirmation window.
 
    If email notifications aren’t turned on for the scanner, the **Turn off notification**

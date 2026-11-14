@@ -131,10 +131,11 @@ When a request arrives, the proxy does the following before forwarding the reque
 
   - `TRACE`
   - `CONNECT`
-- **Incoming requests header scrubbing:** Snowflake proxy removes the following request headers if present:
+- **Incoming requests header scrubbing:** Snowflake proxy removes or replaces the following request headers if present:
 
-  - `X-SF-SPCS-Authorization`
+  - `X-SF-SPCS-Authorization`: Always removed.
   - `Authorization`: Only removed if it contains a Snowflake token; otherwise, it is passed through to your service.
+  - `Sf-Context-Current-User`, `Sf-Context-Current-User-Email`, and `Sf-Context-Current-User-Token`: For requests through authenticated public ingress, Snowflake replaces client-supplied values with Snowflake-provided values, without appending duplicates. If a Snowflake-provided value is empty or unavailable, Snowflake removes the corresponding header. For example, it removes the email header when email sharing is disabled and the token header when caller’s rights is disabled. For more information, see [User-specific headers in ingress requests](/developer-guide/snowpark-container-services/working-with-services#label-spcs-user-specific-headers-in-ingress-requests).
 
 #### Responses outgoing to the clients
 

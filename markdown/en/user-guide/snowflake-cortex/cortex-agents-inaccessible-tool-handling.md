@@ -106,6 +106,8 @@ Snowflake checks whether the caller can access the semantic model or semantic vi
 
 This check doesn’t cover the objects inside the model, such as `SELECT` on the tables it references or `USAGE` on an embedded Cortex Search service. A missing privilege on one of those objects surfaces later, when Analyst runs.
 
+Snowflake also checks whether the caller’s active roles include the `SNOWFLAKE.CORTEX_ANALYST_USER` or `SNOWFLAKE.CORTEX_USER` database role. If they don’t, every Analyst tool is inaccessible.
+
 ### Skills
 
 Each skill is its own tool entry. An inaccessible skill doesn’t block other skills in the same spec.

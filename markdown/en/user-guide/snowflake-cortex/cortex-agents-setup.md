@@ -90,6 +90,8 @@ Copy code
 REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE analyst_role;
 ```
 
+If the agent uses Cortex Analyst tools, also grant the `SNOWFLAKE.CORTEX_ANALYST_USER` database role. `CORTEX_AGENT_USER` doesn’t include access to Cortex Analyst.
+
 ## Agent privileges
 
 The following privileges control who can create, manage, and use an agent:

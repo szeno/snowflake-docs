@@ -40,6 +40,34 @@ For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snow
 
 - Use stage-mount v2 volumes in Snowpark Container Services job specs
 
+## 1.48.0 (November 02, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Serve Iceberg metadata tables from Snowflake table functions by default; set `snowpark.connect.iceberg.metadata_tables.use_gs_functions` to `false` to restore the previous SQL
+- Return `timestamp` instead of `timestamp_ntz` for `history.made_current_at` and `metadata_log_entries.timestamp`
+- Include `key_metadata` on `all_manifests` and support the `.position_deletes` metadata table
+- Map Iceberg `int` and `long` columns to Spark `IntegerType` and `LongType`
+
+#### Bug fixes
+
+- Apply `spark.wap.branch` per session to SQL, `spark.table`, and DML
+- Return the session value of `spark.sql.extensions` from `spark.conf.get`
+- Keep column comments on `CREATE TABLE` and return `""` for a blank comment
+- Reject duplicate column names in a JSON schema and in XML schema inference
+- Raise `UNSUPPORTED_CHAR_OR_VARCHAR_AS_STRING` for `CHAR` or `VARCHAR` reader schemas
+- Translate Iceberg `REPLACE TAG` and `RETAIN` in hours or minutes
+- Treat a stage path with no trailing slash as a folder on next-generation file reads
+- Match Spark’s error for a FAILFAST read of malformed JSON
+
+#### New features
+
+- Support Iceberg `ADD`, `DROP`, and `REPLACE PARTITION FIELD`
+- Support top-level interval columns on next-generation file reads
+- Write JSON, CSV, and Parquet with Spark’s writers when `snowflake.file.nextGenWriter.enabled` is set
+
 ## 1.47.0 (October 23, 2026)
 
 ### Snowpark Connect for Spark

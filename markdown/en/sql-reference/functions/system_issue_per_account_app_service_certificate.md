@@ -3,19 +3,11 @@ Categories:
 
 # SYSTEM$ISSUE\_PER\_ACCOUNT\_APP\_SERVICE\_CERTIFICATE
 
-Causes Snowflake to maintain a public TLS certificate on behalf of the account. This certificate is used
-for terminating TLS connections to Snowflake-hosted app services (Streamlit in Snowflake, Snowflake Notebooks, and Snowpark Container Services) when
-accessing them under account-specific hostnames.
+Formerly caused Snowflake to maintain the public TLS certificate used for terminating TLS connections
+to Snowflake-hosted app services (Streamlit in Snowflake, Snowflake Notebooks, and Snowpark Container Services) under account-specific hostnames.
 
-The initial certificate issuance is asynchronous. Wait at least 30 minutes after calling this function before
-changing account parameters that depend on the certificate being in place. If you change those parameters
-before the certificate is ready, you may encounter errors when accessing Snowflake-hosted app services
-under account-specific hostnames.
-
-You currently must run this function in order to change
-[ENABLE\_PER\_ACCOUNT\_APP\_SERVICE\_URL](/sql-reference/parameters#label-enable-per-account-app-service-url) or
-[ENABLE\_PER\_ACCOUNT\_APP\_SERVICE\_PRIVATELINK\_URL](/sql-reference/parameters#label-enable-per-account-app-service-privatelink-url)
-to true.
+You no longer need to run this function. Snowflake maintains the certificate on behalf of the
+account. For more information, see [Streamlit and Snowpark Container Services: public endpoints use per-account hostnames (Disabled by default)](/release-notes/bcr-bundles/2026_08/bcr-2451).
 
 Caution
 

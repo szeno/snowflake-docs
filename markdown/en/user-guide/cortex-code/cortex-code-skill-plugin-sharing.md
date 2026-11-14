@@ -261,14 +261,14 @@ finding is a false positive, ask an administrator to override the scan status. F
 Administrators can review the scan status and the detailed findings for any shared skill or plugin from the
 **Skills and plugins** page in Snowsight.
 
-`SHOW` and `DESCRIBE` also report which version is actually being served, and why, in three columns that any
-authorized user can read:
+`SHOW` and `DESCRIBE` also report which version is actually being served, and `DESCRIBE` reports why. Any authorized
+user can read these columns:
 
 | Column | Meaning |
 | --- | --- |
 | `effective_version` | The committed version Snowflake selects for use, preferring the newest certified version with an eligible scan status. |
 | `action_required` | `TRUE` when `effective_version` is behind the latest committed version. |
-| `action_required_reason` | Why the latest version wasn’t selected: `NONE`, `LATEST_VERSION_SCAN_NOT_PASSED`, or `LATEST_VERSION_NOT_CERTIFIED`. |
+| `action_required_reason` | Why the latest version wasn’t selected: `NONE`, `LATEST_VERSION_SCAN_NOT_PASSED`, or `LATEST_VERSION_NOT_CERTIFIED`. Returned by `DESCRIBE` only, not by `SHOW`. |
 
 Expand
 
@@ -474,7 +474,7 @@ How a `snow://` URI resolves to a version depends on whether the URI includes a 
 
 Because selection accounts for scan status, publishing a version that doesn’t clear its scan doesn’t take the skill
 out of service: people keep getting the last eligible version. To see which version is being served and why, check the
-`effective_version`, `action_required`, and `action_required_reason` columns described in
+`effective_version`, `action_required`, and `action_required_reason` (`DESCRIBE` only) columns described in
 [Review scan status](#label-cortex-code-skill-sharing-review-scan-status).
 
 ## Governance

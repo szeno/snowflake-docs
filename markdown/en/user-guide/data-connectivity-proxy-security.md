@@ -12,14 +12,25 @@ Phase 1: Bootstrap
     presents this JWT to the control plane and receives an mTLS certificate pair scoped to its DCP client identity.
 
 Phase 2: Ongoing operation
-:   All subsequent communication (data tunnels, control plane heartbeats, routing table updates) uses mutual TLS (mTLS). Both the agent and
-    the relay authenticate each other’s certificates on every connection. The bootstrap JWT isn’t used again until the next certificate
-    rotation cycle.
+:   The agent’s control sessions with the relay use mutual TLS (mTLS): the agent presents its client certificate and verifies the relay’s
+    certificate. Data tunnels authenticate with a key established during the control session instead of exchanging certificates. Each
+    data tunnel also performs its own key exchange.
+
+    Control plane traffic (heartbeats, routing table and policy updates, and certificate rotation) goes to the `dcp.` hostname over TLS that
+    authenticates the server only. The agent doesn’t present a client certificate on this connection. After bootstrap, the agent authenticates
+    each control plane request with a short-lived JWT. The agent signs that JWT with the private key that matches the leaf certificate the
+    control plane issued at bootstrap. The agent sends the bootstrap JWT again when it rotates that certificate, and if it bootstraps again
+    after a control plane reconnect.
+
+    By default, the outer TLS connection to the `dcp-proxy-fallback` relay hostname doesn’t use a client certificate. The relay control
+    session still uses mTLS inside that connection, and data tunnels remain encrypted end to end (see
+    [Data path security](#label-dcp-data-path-security)).
 
 ## Certificate hierarchy
 
-The agent validates all peer certificates against a Snowflake-managed CA bundle delivered during bootstrap, not the operating system trust
-store. The bundle implements a four-tier PKI hierarchy:
+The agent validates relay mTLS certificates against a Snowflake-managed CA bundle delivered during bootstrap, not the operating system
+trust store. Connections to the control plane, the `dcp-proxy-fallback` hostname, and the telemetry endpoint use publicly trusted
+certificates and are verified against the container’s trust store. The Snowflake-managed bundle implements a four-tier PKI hierarchy:
 
 ```
 Deployment root CA
@@ -52,8 +63,8 @@ Copy code
 DROP DATA CONNECTIVITY PROXY my_dcp_client;
 ```
 
-The control plane validates mTLS certificates against registered key pairs on every connection attempt. After the DCP object is disabled or
-dropped, the agent’s certificate is unusable regardless of its cryptographic validity.
+After the DCP object is disabled or dropped, the control plane rejects the agent, and the relay no longer accepts the agent’s client
+certificate for its control session, regardless of the certificate’s cryptographic validity.
 
 If the bootstrap JWT is compromised before bootstrap completes, regenerate the token:
 
@@ -82,22 +93,39 @@ For more information about creating network policies, see [Controlling network t
 
 ## Data path security
 
-All traffic between the agent and the Snowflake relay is encrypted using AES-256-GCM. Each TCP connection uses an independent P-256 ECDH
-key exchange. There is no shared key material across connections; a compromise of one connection’s key material doesn’t affect others.
+All traffic between the agent and the Snowflake relay is encrypted using AES-256-GCM. Each data tunnel uses a separate P-256 ECDH
+key exchange, authenticated with a key from its relay control session.
 
 The agent is a TCP-level pass-through. It doesn’t inspect, parse, buffer, or store the data passing through its tunnels. Source credentials
 remain in Snowflake and are never transmitted to the agent.
 
 ## Corporate proxy support
 
-Routing the agent’s own outbound traffic through an enterprise-managed forward proxy (HTTPS\_PROXY / CONNECT-based forwarding) isn’t
-supported. The agent host must have direct outbound access to the required Snowflake hostnames on port 443.
+The agent can send its outbound traffic through an HTTP proxy server that supports the `CONNECT` method. For setup steps, see
+[Route the agent through a corporate proxy](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-corporate-proxy).
 
-Every connection path requires end-to-end TLS without interception.
+By default, the proxy only relays TCP. The agent establishes TLS end to end with Snowflake through the proxy, so the proxy can’t
+read DCP traffic.
 
-The TLS connection between the agent and Snowflake must remain end-to-end and unmodified. Don’t use TLS inspection or decryption,
-certificate substitution, or TLS termination for DCP traffic. These controls can prevent the agent from authenticating with its
-client certificate and from establishing stable relay connections, even when a firewall allows outbound traffic on port 443.
+### TLS inspection
 
-Configure firewalls, proxies, and other network security devices to bypass TLS inspection for traffic from the agent host to every
-DCP hostname listed under [DCP networking requirements](/user-guide/data-connectivity-proxy-setup#label-dcp-networking).
+If your security policy requires it, the proxy can decrypt and inspect some DCP traffic. Whether a connection can be inspected
+depends on the path the agent uses:
+
+| Destination | Can be inspected | What an inspecting proxy can see |
+| --- | --- | --- |
+| `dcp.<org>-<account>.<region>.<cloud>.snowflake.com` (control plane) | Yes | Control plane messages. This includes the bootstrap token whenever the agent bootstraps, including certificate rotation, a short-lived token on later requests, and routing and policy updates. |
+| `dcp-proxy-fallback.<org>-<account>.<region>.<cloud>.snowflake.com` (relay) | Yes | The `Host` and `x-snowflake-session` relay-routing headers of each `CONNECT` request. The private destination and tunnel contents stay encrypted (see [Data path security](#label-dcp-data-path-security)). |
+| Relay public IP addresses (direct path) | No | The corporate proxy sees the relay public IP address in the `CONNECT` request, but can’t decrypt the relay control session or data tunnels. The control session uses mTLS, which a TLS-inspecting proxy can’t forward. Use `fallback-only` on networks that inspect this path. |
+| `<org>-<account>.telemetry.<locator>.snowflakecomputing.com` (telemetry) | Yes | Agent metrics, logs, and traces, and the bearer token that authenticates them. |
+
+Expand
+
+Show lessSee more
+
+The agent accepts the proxy’s certificate only if the proxy’s CA is in the container’s trust store. The agent never skips
+certificate verification.
+
+Because an inspecting proxy can read the bootstrap token, the short-lived control plane token, and the telemetry bearer token when
+telemetry uses the proxy, restrict access to the proxy’s decrypted traffic and logs as you would any credential. If your policy allows
+it, exempt the control plane hostname from inspection.

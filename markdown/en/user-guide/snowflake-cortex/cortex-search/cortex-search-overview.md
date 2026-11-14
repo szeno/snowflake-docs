@@ -680,7 +680,9 @@ To use Cortex Search with cross-region inference, use the [cross-region inferenc
 - AWS Asia Pacific (Osaka)
 - Azure Canada Central (Toronto)
 - Azure Central US (Iowa)
+- Azure Mexico Central (Querétaro)
 - Azure UAE North (Dubai)
+- GCP Australia Southeast 2 (Melbourne)
 
 Note
 

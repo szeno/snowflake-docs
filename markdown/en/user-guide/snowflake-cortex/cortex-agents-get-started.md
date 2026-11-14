@@ -136,6 +136,8 @@ CREATE SCHEMA agent_quickstart.demo;
 
 -- Access to Cortex Agents.
 GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE <default_role>;
+-- Access to Cortex Analyst, which the agent's Cortex Analyst tool requires.
+GRANT DATABASE ROLE SNOWFLAKE.CORTEX_ANALYST_USER TO ROLE <default_role>;
 
 -- Privileges to create and run the semantic view and the agent.
 GRANT USAGE ON DATABASE agent_quickstart TO ROLE <default_role>;
@@ -167,9 +169,10 @@ Note
 
 The `SNOWFLAKE.CORTEX_USER` database role is granted to `PUBLIC` by default, so your role might
 already have access to Cortex Agents. To check, run `SHOW GRANTS TO ROLE <default_role>;` and look for
-`CORTEX_USER` or `CORTEX_AGENT_USER`. Granting `SNOWFLAKE.CORTEX_AGENT_USER` explicitly makes this
-walkthrough work even in accounts where that default grant was revoked. For the difference between
-the two roles, see [Access control and authentication](/user-guide/snowflake-cortex/cortex-agents-setup).
+`CORTEX_USER`, or for both `CORTEX_AGENT_USER` and `CORTEX_ANALYST_USER`. Granting
+`SNOWFLAKE.CORTEX_AGENT_USER` and `SNOWFLAKE.CORTEX_ANALYST_USER` explicitly makes this walkthrough
+work even in accounts where that default grant was revoked. For the difference between these roles,
+see [Access control and authentication](/user-guide/snowflake-cortex/cortex-agents-setup).
 
 ## Step 2: Create the agent
 

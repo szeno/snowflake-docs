@@ -145,6 +145,9 @@ You must also grant data permissions to the IAM role. The method that you use to
 For example, you might use the named resources method to grant permissions to AWS Glue objects, or you might use tag-based access control. For more information
 and instructions, see the [AWS Lake Formation documentation](https://docs.aws.amazon.com/lake-formation/latest/dg/granting-catalog-permissions.html).
 
+For a complete walkthrough of the Lake Formation setup, see
+[Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/#configure-aws-lake-formation).
+
 ## Step 2: Create a catalog integration in Snowflake
 
 Create a catalog integration for the

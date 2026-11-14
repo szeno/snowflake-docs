@@ -2039,12 +2039,13 @@ Data Type:
 :   Boolean
 
 Description:
-:   Specifies whether public URLs for Snowflake-hosted app services (Streamlit in Snowflake, Snowflake Notebooks, and Snowpark Container Services) use a
+:   This parameter is being removed by a behavior change in the 2026\_08 bundle. When that bundle is
+    enabled, all accounts use the per-account URL format and this parameter has no effect. For more
+    information, see [Streamlit and Snowpark Container Services: public endpoints use per-account hostnames (Disabled by default)](/release-notes/bcr-bundles/2026_08/bcr-2451).
+
+    Specifies whether public URLs for Snowflake-hosted app services (Streamlit in Snowflake, Snowflake Notebooks, and Snowpark Container Services) use a
     per-account URL format. When enabled, the unique subdomains used by these services will have a different
     hostname format with a suffix unique to the account that enabled the parameter.
-
-    You may need to run [SYSTEM$ISSUE\_PER\_ACCOUNT\_APP\_SERVICE\_CERTIFICATE](/sql-reference/functions/system_issue_per_account_app_service_certificate) to enable this
-    parameter.
 
     The per-account URL format uses `app-id.orgname-account-name.region.cloud.snowflake.app`
     instead of a format like `app-id.region.snowflake.app` or `app-id-orgname-account_name.snowflakecomputing.app`.
@@ -2085,11 +2086,8 @@ Description:
     a per-account URL format. When enabled, the unique subdomains used by these services will have a different
     hostname format with a suffix unique to the account that enabled the parameter.
 
-    You may need to run [SYSTEM$ISSUE\_PER\_ACCOUNT\_APP\_SERVICE\_CERTIFICATE](/sql-reference/functions/system_issue_per_account_app_service_certificate) to enable this
-    parameter.
-
     The per-account private link URL format uses
-    `app-id.sis.orgname-account-name.region.cloud.privatelink.snowflake.app` instead of the legacy
+    `app-id-sis.orgname-account-name.region.cloud.privatelink.snowflake.app` instead of the legacy
     non-account-scoped format. This lets you create a single CNAME record scoped to your account for all app
     services, reducing DNS configuration and addressing data exfiltration concerns. After enabling, the format is visible
     in [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config) in `app-service-privatelink-url` and will appear as a wildcard record

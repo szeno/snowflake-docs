@@ -16,23 +16,11 @@ the credentials file.
 **Symptom:** DNS for `dcp.<org>-<account>.<region>.<cloud>.snowflake.com` resolves and TCP to port 443 succeeds, but the TLS handshake
 fails. The server presents a certificate whose common name doesn’t match the DCP hostname, often `*.privatelink.snowflakecomputing.com`.
 
-**Cause:** The account doesn’t yet have TLS certificates for nested `snowflake.com` hostnames, or the agent is reaching a PrivateLink
-endpoint instead of the public DCP control plane.
+**Cause:** The agent is reaching a PrivateLink endpoint instead of the public DCP control plane.
 
-**Resolution:**
-
-1. Confirm the agent uses the public DCP hostname from [SYSTEM$ALLOWLIST](/sql-reference/functions/system_allowlist), not a PrivateLink
-   hostname or a PrivateLink DNS override. Connecting the DCP agent through a PrivateLink endpoint isn’t supported.
-2. Issue account-level certificates, then wait at least 30 minutes before retrying the agent:
-
-   Copy code
-
-   ```
-   SELECT SYSTEM$ISSUE_PER_ACCOUNT_CERTIFICATES();
-   ```
-
-   For more information, see [SYSTEM$ISSUE\_PER\_ACCOUNT\_CERTIFICATES](/sql-reference/functions/system_issue_per_account_certificates) and the
-   [note in the setup topic](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-issue-certificates).
+**Resolution:** Confirm the agent uses the public DCP hostname from
+[SYSTEM$ALLOWLIST](/sql-reference/functions/system_allowlist), not a PrivateLink hostname or a PrivateLink DNS override. Connecting the
+DCP agent through a PrivateLink endpoint isn’t supported.
 
 ## Agent shows disconnected or down health
 
@@ -47,6 +35,37 @@ endpoint instead of the public DCP control plane.
    step is failing
 5. Check `DCP_CLIENT_EVENT_HISTORY` for `EVENT_TYPE = 'BOOTSTRAP'` or `'CONTROL_PLANE'` rows with `STATUS = 'FAILURE'`. Check DESCRIBE
    for `LAST_AUTH_FAILURE_REASON` if authentication is failing.
+
+## Agent can’t connect through a corporate proxy
+
+**Symptom:** The agent is configured with a proxy but can’t bootstrap or connect to the relay. Agent logs show `CONNECT`
+errors, TLS handshake failures, or a network policy rejection.
+
+**Steps:**
+
+1. On the agent host, list the names of proxy variables set in the container. The command doesn’t print their values or require tools
+   inside the agent container:
+
+   Copy code
+
+   ```
+   docker inspect dcp-agent --format '{{range .Config.Env}}{{println .}}{{end}}' \
+     | cut -d= -f1 | grep -iE '^(https?_proxy|all_proxy|no_proxy|agent_otlp_allow_proxy|dcp_connection_mode|ssl_cert_file)$'
+   ```
+
+   If the proxy variable you expect isn’t listed, it isn’t set in the container. To check its value, inspect the container
+   configuration privately. Proxy URLs can contain credentials; don’t share their values in tickets or screenshots.
+2. Confirm the proxy allows `CONNECT` to the control plane and relay destinations on port 443. See
+   [Route the agent through a corporate proxy](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-corporate-proxy).
+3. If the proxy URL starts with `https://`, change it to `http://`, or set `DCP_CONNECTION_MODE=direct-only` and allow `CONNECT`
+   to the relay’s public IP addresses. If the proxy only allows `CONNECT` to hostnames, set `DCP_CONNECTION_MODE=fallback-only`.
+   In `auto` mode, a rejected direct `CONNECT` or TLS verification failure doesn’t trigger fallback.
+4. If the proxy inspects TLS, confirm that `SSL_CERT_FILE` points to a bundle containing the proxy’s CA and that
+   `DCP_CONNECTION_MODE=fallback-only` is set. A hostname-based exemption for `dcp-proxy` doesn’t cover the direct relay path,
+   which uses public IP addresses. See
+   [Inspect agent traffic](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-tls-inspection).
+5. If `DCP_CLIENT_EVENT_HISTORY` shows a failed `BOOTSTRAP` event caused by a network policy, allow the proxy’s egress IP
+   address in the network policy.
 
 ## Connector can’t reach a private source
 

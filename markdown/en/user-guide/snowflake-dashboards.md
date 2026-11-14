@@ -701,6 +701,12 @@ Export the dashboard from the source tool to one of the following formats:
 
 Then either attach the file to the CoCo conversation or upload it to your workspace.
 
+Note
+
+CoCo uploads the exported file to a stage, which is the only way it can process the file.
+This happens even when you have already attached the file to the conversation or uploaded it
+to your workspace, so CoCo might ask your permission to create a stage first.
+
 Tip
 
 Attach screenshots of the source dashboard along with the exported file. CoCo uses them to

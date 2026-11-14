@@ -4,6 +4,12 @@ This topic lists the release notes for server releases that occurred earlier in 
 
 For more recent releases, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [10.41 Release Notes: Nov 08, 2026 - Nov 12, 2026](/release-notes/2026/10_41)
+
+  - [Native App Framework updates](/release-notes/2026/10_41#native-app-framework-updates)
+
+    - [Larger application package versions on AWS and Azure](/release-notes/2026/10_41#larger-application-package-versions-on-aws-and-azure)
+  - [Release notes change log](/release-notes/2026/10_41#release-notes-change-log)
 - [10.40 Release Notes: Oct 31, 2026 - Nov 08, 2026](/release-notes/2026/10_40)
 
   - [SQL updates](/release-notes/2026/10_40#sql-updates)

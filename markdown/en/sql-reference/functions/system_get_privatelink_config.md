@@ -224,7 +224,7 @@ Where:
 > `app-service-privatelink-url-next`
 > :   The per-account PrivateLink endpoint URL used to route traffic to Snowflake-hosted app services, such as
 >     Streamlit, Notebooks, and Snowpark Container Services. This key is returned when account-scoped private link URLs
->     are not enabled for your account.
+>     are not enabled for your account, but newer products may use it before you enable them.
 >
 >     You can enable account-scoped private link URLs by setting the
 >     [ENABLE\_PER\_ACCOUNT\_APP\_SERVICE\_PRIVATELINK\_URL](/sql-reference/parameters#label-enable-per-account-app-service-privatelink-url)

@@ -13,7 +13,7 @@ objects (tables, schemas, and databases) in the account into Fail-safe, until th
 
 Attention
 
-Fail-safe is a data recovery service that is provided on a best effort basis and is intended only for use when all other recovery options have been attempted.
+Fail-safe is a data recovery service that is provided on a best-effort basis and is intended only for use when all other recovery options have been attempted.
 
 Fail-safe is not provided as a means for accessing historical data after the Time Travel retention period has ended. It is for use only by
 Snowflake to recover data that may have been lost or damaged due to extreme operational failures.
@@ -21,6 +21,14 @@ Snowflake to recover data that may have been lost or damaged due to extreme oper
 Data recovery through Fail-safe may take from several hours to several days to complete.
 
 To recover data from Fail-safe, open a case with Snowflake Support.
+
+Tip
+
+**Protect your data with Snowflake Backups instead of relying on Fail-safe**
+
+Fail-safe should be treated like a last resort. Instead, consider setting up Snowflake Backups on your critical tables, schemas, or databases. Unlike Fail-safe, Backups aren’t a best-effort service: they’re point-in-time snapshots that you control, so you can recover from accidental deletions or modifications yourself without opening a support case. Backups are zero-copy, so they store only the data that changes and keep storage costs low.
+
+For setup details, see [Backups for disaster recovery and immutable storage](/user-guide/backups).
 
 ## View Fail-safe storage for your account
 

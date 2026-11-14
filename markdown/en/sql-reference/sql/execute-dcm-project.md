@@ -221,6 +221,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 | Privilege | Object | Notes |
 | --- | --- | --- |
 | OWNERSHIP | DCM project | OWNERSHIP is a special privilege on an object that is automatically granted to the role that created the object, but can also be transferred using the [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) command to a different role by the owning role (or any role with the MANAGE GRANTS privilege). |
+| PLAN | DCM project | Sufficient instead of OWNERSHIP for the PLAN variant, including PLAN DELTA. PLAN runs with the privileges of the DCM project owner role. For more information, see [PLAN privilege](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-plan-privilege). |
 
 Expand
 
@@ -515,8 +516,9 @@ changes are applied to the account. `PLAN` lets you verify whether the rendered 
 account state would produce, and whether the project owner role has the required privileges. `DEPLOY` doesn’t execute a saved `PLAN` result.
 For more information, see [Deploy a DCM project](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-deploy).
 
-Because PLAN closely mirrors DEPLOY, it requires the same OWNERSHIP privilege on the DCM project as DEPLOY, even though no changes
-are applied. This way, a dry run surfaces privilege errors before deployment.
+To run PLAN, a role needs the PLAN or OWNERSHIP privilege on the DCM project. In both cases, PLAN runs with the privileges of the
+DCM project owner role, the same role that DEPLOY uses. This way, a dry run surfaces privilege errors before deployment. For more
+information, see [PLAN privilege](/user-guide/dcm-projects/dcm-projects-use#label-dcm-projects-plan-privilege).
 
 To avoid unintended changes and catch errors, always run EXECUTE DCM PROJECT PLAN before you deploy a DCM project.
 

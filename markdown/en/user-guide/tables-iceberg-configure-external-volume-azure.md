@@ -245,6 +245,10 @@ STS is not activated in this region for account:<external volume id>. Your accou
 4. Select the **External volumes** tab.
 5. Select **+ Create**.
 6. Select **Microsoft Azure & OneLake** and then select **Next**.
+
+   Note
+
+   Private connectivity endpoints aren’t supported for Microsoft Fabric OneLake storage locations.
 7. From the **Prerequisites** page, for **Azure tenant ID**, specify your Azure tenant ID.
 
    To find your Azure tenant ID, see [How to find your Microsoft Entra tenant ID](https://learn.microsoft.com/en-us/entra/fundamentals/how-to-find-tenant)

@@ -1,14 +1,10 @@
 # Programmatic notifications for Trust Center findings
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Trust Center [scanners](/user-guide/trust-center/overview#label-trust-center-scanners) run in customer accounts to surface security violations or detect potential threats as findings.
 The findings appear automatically in Snowsight. A Trust Center administrator can also [configure notifications](/user-guide/trust-center/notifications-trust-center) so that users
 with verified email addresses receive notifications about findings as email messages.
 
-This preview introduces support for additional notifications such as webhooks (PagerDuty, Slack, Microsoft Teams) and queues (Amazon SNS, Azure Event Grid, Google Pub/Sub) for Trust Center findings. The notifications are triggered by a
+You can also send notifications through webhooks (PagerDuty, Slack, Microsoft Teams, Jira, ServiceNow) and queues (Amazon SNS, Azure Event Grid, Google Pub/Sub) for Trust Center findings. The notifications are triggered by a
 specific event, such as generation of a finding. Using notification integrations with
 the Trust Center provides the option to receive notifications independent from Snowsight, through a customer-configured
 PagerDuty service, SNS topic, or other endpoint.
@@ -21,7 +17,7 @@ To configure notification integrations for the Trust Center, perform the followi
 
 1. [Create a notification integration](#label-trust-center-webhook-create)
 2. [Grant access to the notification integration](#label-trust-center-webhook-grant-access)
-3. [Configure notification settings for scanners](#label-trust-center-webhook-configure-scanner)
+3. [Configure notification settings for scanner packages and scanners](#label-trust-center-webhook-configure-scanner)
 4. [Send a test notification](#label-trust-center-webhook-test)
 5. [Run the scanner](#label-trust-center-webhook-run-scanner)
 6. [Interpret the notification output](#label-trust-center-webhook-notification-payload)
@@ -53,13 +49,13 @@ CREATE NOTIFICATION INTEGRATION test_aws_int
   AWS_SNS_ROLE_ARN = 'arn:aws:iam::1234567890:role/sns-access-role';
 ```
 
+Note
+
+For webhook notification integrations, Trust Center populates `SNOWFLAKE_WEBHOOK_MESSAGE` with the notification output in JSON format. Configure your notification integration to handle this appropriately.
+
 **PagerDuty webhook**
 
 The following example creates a webhook that relies on a secret.
-
-Note
-
-Trust Center populates `SNOWFLAKE_WEBHOOK_MESSAGE` with the notification output in JSON format. Configure your notification integration to handle this appropriately.
 
 Copy code
 
@@ -86,6 +82,73 @@ CREATE OR REPLACE NOTIFICATION INTEGRATION test_pagerduty_int
   WEBHOOK_HEADERS = ('Content-Type'='application/json');
 ```
 
+**Jira webhook**
+
+The following example creates a webhook for a Jira automation rule with an incoming webhook trigger.
+Jira generates an automation webhook token when you create the rule. The secret stores this token, and the
+`X-Automation-Webhook-Token` header passes it to Jira. For more information, see
+[Creating a secret for a Jira webhook](/user-guide/notifications/webhook-notifications#label-notifications-webhook-secret-jira) and
+[Creating a notification integration for a Jira webhook](/user-guide/notifications/webhook-notifications#label-notifications-webhook-integration-jira).
+
+Copy code
+
+```
+CREATE OR REPLACE SECRET test_db.test_schema.jira_webhook_token
+  TYPE = GENERIC_STRING
+  SECRET_STRING = 'xxxxxxxx';
+
+CREATE OR REPLACE NOTIFICATION INTEGRATION test_jira_int
+  TYPE = WEBHOOK
+  ENABLED = TRUE
+  WEBHOOK_URL = 'https://api-private.atlassian.com/automation/webhooks/jira/a/xxxxxxxx/yyyyyyyy'
+  WEBHOOK_SECRET = test_db.test_schema.jira_webhook_token
+  WEBHOOK_BODY_TEMPLATE = '{
+    "summary": "Snowflake Trust Center Scanner Finding",
+    "trust_center_finding": SNOWFLAKE_WEBHOOK_MESSAGE
+  }'
+  WEBHOOK_HEADERS = (
+    'Content-Type'='application/json',
+    'X-Automation-Webhook-Token'='SNOWFLAKE_WEBHOOK_SECRET'
+  );
+```
+
+**ServiceNow webhook**
+
+The following example creates a webhook for a ServiceNow endpoint that requires HTTP basic authentication. The secret stores
+the entire `Authorization` header value, `Basic <base64(username:password)>`, where `<base64(username:password)>` is the
+Base64 encoding of your ServiceNow `username:password`. For more information, see
+[Creating a secret for a ServiceNow webhook](/user-guide/notifications/webhook-notifications#label-notifications-webhook-secret-servicenow) and
+[Creating a notification integration for a ServiceNow webhook](/user-guide/notifications/webhook-notifications#label-notifications-webhook-integration-servicenow).
+
+Copy code
+
+```
+CREATE OR REPLACE SECRET test_db.test_schema.servicenow_credentials
+  TYPE = GENERIC_STRING
+  SECRET_STRING = 'Basic xxxxxxxx';
+
+CREATE OR REPLACE NOTIFICATION INTEGRATION test_servicenow_int
+  TYPE = WEBHOOK
+  ENABLED = TRUE
+  WEBHOOK_URL = 'https://myinstance.service-now.com/api/snmpi/webhook_workflow'
+  WEBHOOK_SECRET = test_db.test_schema.servicenow_credentials
+  WEBHOOK_BODY_TEMPLATE = '{
+    "short_description": "Snowflake Trust Center Scanner Finding",
+    "trust_center_finding": SNOWFLAKE_WEBHOOK_MESSAGE
+  }'
+  WEBHOOK_HEADERS = (
+    'Content-Type'='application/json',
+    'Authorization'='SNOWFLAKE_WEBHOOK_SECRET'
+  );
+```
+
+In `WEBHOOK_BODY_TEMPLATE`, use the field names that your ServiceNow endpoint expects.
+
+Note
+
+If you prefer to store only the Base64-encoded credentials in the secret, omit the `Basic` prefix from `SECRET_STRING` and
+include it in the header instead: `'Authorization'='Basic SNOWFLAKE_WEBHOOK_SECRET'`.
+
 ### Grant access to the integration
 
 To enable the Trust Center to use an integration to send notifications, grant the USAGE privilege on the notification integration to the SNOWFLAKE application. For example:
@@ -96,7 +159,8 @@ Copy code
 GRANT USAGE ON INTEGRATION test_pagerduty_int TO APPLICATION snowflake;
 ```
 
-If the integration relies on a secret, such as a PagerDuty webhook integration key, grant the following
+If the integration relies on a secret, such as a PagerDuty webhook integration key, a Jira automation webhook token, or
+ServiceNow credentials, grant the following
 additional privileges to the SNOWFLAKE application:
 
 - READ privilege on the secret
@@ -113,10 +177,51 @@ GRANT USAGE ON DATABASE test_db TO APPLICATION snowflake;
 GRANT USAGE ON SCHEMA test_db.test_schema TO APPLICATION snowflake;
 ```
 
-### Configure notification settings for a scanner
+If you configure notification settings by using Snowsight, you can grant the required privileges from the
+**Edit notification integrations** dialog instead. For more information, see
+[Configure notification settings by using Snowsight](#label-trust-center-webhook-configure-snowsight).
 
-You must define for each scanner or scanner package the findings that trigger a webhook notification. A `NOTIFICATION_INTEGRATION` configuration contains
-this definition. To set a `NOTIFICATION_INTEGRATION` configuration for a scanner or a scanner package, use the SET\_CONFIGURATION() stored procedure.
+### Configure notification settings for scanner packages and scanners
+
+For each scanner package or scanner, define which findings trigger a notification. You can configure notification
+settings by using Snowsight or SQL.
+
+#### Configure notification settings by using Snowsight
+
+Before you begin, [create the notification integration](#label-trust-center-webhook-create) that you want to use.
+
+To configure notification settings for a scanner package or a scanner, complete the following steps:
+
+1. [Sign in to Snowsight](/user-guide/connecting#label-sign-in-using-snowsight).
+2. Switch to a role with the `SNOWFLAKE.TRUST_CENTER_ADMIN` application role granted to it.
+
+   For more information about granting this role, see [Required roles](/user-guide/trust-center/overview#label-trust-center-requirements).
+3. In the navigation menu, select **Governance & security** » **Trust Center**.
+4. Select the **Manage scanners** tab.
+5. Select a scanner package from the list.
+6. Open the **Edit notification integrations** dialog:
+
+   - To configure notification settings for all scanners in the package, select the **Settings** tab, and then under
+     **Notification integrations**, select **Set up**. If notification integrations are already set up for the package,
+     select the edit icon.
+   - To configure notification settings for a single scanner, select [![trust center vertical more image](/static/images/ui-trust-center-vertical-more.png)](/static/images/ui-trust-center-vertical-more.png) **More** for the
+     scanner, and then select **Edit notification integration**.
+7. Select **Add**.
+8. For **Notification integration**, select the notification integration to use.
+9. If the dialog lists permissions that the Trust Center needs to use the integration, select **Grant access**.
+10. Set the **Minimum severity level trigger**.
+
+    The Trust Center sends notifications for findings at the specified level or higher.
+11. Optional: To include entity details, such as user names and IP addresses, in the notification, turn on
+    **Include at-risk entities and finding metadata**. Turn on this option only if you accept sending sensitive account
+    information outside your Snowflake account.
+12. Select **Save**.
+13. To add another notification integration, repeat steps 7 through 12.
+14. Select **Done**.
+
+#### Configure notification settings by using SQL
+
+A `NOTIFICATION_INTEGRATION` configuration defines the findings that trigger a notification. To set a `NOTIFICATION_INTEGRATION` configuration for a scanner or a scanner package, use the `SET_CONFIGURATION` stored procedure.
 The configuration value is a string that contains an array of JSON objects. Each object specifies the following:
 
 | Key | Description |
@@ -194,7 +299,7 @@ CALL SNOWFLAKE.TRUST_CENTER.SET_CONFIGURATION(
 );
 ```
 
-To remove the notification configuration for a scanner, call the UNSET\_CONFIGURATION stored procedure:
+To remove the notification configuration for a scanner, call the `UNSET_CONFIGURATION` stored procedure:
 
 Copy code
 

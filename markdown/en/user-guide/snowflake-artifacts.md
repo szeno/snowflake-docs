@@ -24,7 +24,9 @@ The following privileges control access to an individual artifact:
 
 - `OWNERSHIP` grants control of the artifact, including deletion and the ability to transfer ownership. Each artifact has one owner role. By default, the owner is the personal role of the user who created it.
 - `READ` allows viewing the artifact’s content.
-- `WRITE` allows viewing and modifying the artifact. It also permits inspecting the artifact with `DESCRIBE ARTIFACT` and `SHOW ARTIFACTS` when those SQL commands are available.
+- `WRITE` allows viewing and publishing updates to the artifact. It doesn’t grant access to the workspace source file. It also permits inspecting the artifact with `DESCRIBE ARTIFACT` and `SHOW ARTIFACTS` when those SQL commands are available.
+
+In the sharing dialog, **Can view** grants `READ`. **Can publish** for HTML reports and **Can edit** for dashboards grant `WRITE` on the artifact; neither grants access to a Workspaces source file.
 
 ### Sharing privileges
 
@@ -137,7 +139,7 @@ Administrators can use the following SQL interfaces when they become available:
 
 The grant output lists role grants, not every user with effective access, and doesn’t include source-data permissions or link-sharing settings. Artifact grants aren’t included in [SHOW GRANTS](/sql-reference/sql/show-grants) output.
 
-These interfaces return metadata, not content. Reference artifacts by their unique identifier, not their display title. The identifier is the UUID after `/artifacts/` in the artifact URL; it is also available through `SHOW ARTIFACTS` when that command is available.
+These interfaces return metadata, not content. Reference artifacts by their unique identifier, not their display title. An artifact link contains its identifier, but the URL path differs between Snowsight and Snowflake CoWork. The identifier is also available through `SHOW ARTIFACTS` when that command is available.
 
 ## Limitations and considerations
 

@@ -21,7 +21,7 @@ The following table compares Iceberg tables before and after conversion:
 | Snowflake read operations | ✔ | ✔ |
 | Snowflake write operations | ❌ | ✔ |
 | Storage location for table data and metadata | External volume (external cloud storage). | External volume (external cloud storage) under a base location that you specify. |
-| Data and metadata cleanup | Managed by you or your external catalog. | Managed by Snowflake. Snowflake never deletes any metadata, manifest lists, or manifests created before conversion from your external storage. Snowflake doesn’t rewrite any Parquet data files during conversion. *After* you convert a table, Snowflake might rewrite some of the data files as part of regular table maintenance. |
+| Data and metadata cleanup | Managed by you or your external catalog. | Managed by Snowflake. Snowflake manages every file that belongs to the table, including files written before conversion. The same snapshot expiration, retention, and cleanup rules apply to all of them. For more information, see [File lifecycle after conversion](#label-tables-iceberg-conversion-file-lifecycle).  Snowflake doesn’t rewrite any Parquet data files during conversion. *After* you convert a table, Snowflake might rewrite some of the data files as part of regular table maintenance. |
 | Accessible from the Snowflake Catalog SDK | ❌ | ✔ |
 
 Expand
@@ -37,6 +37,24 @@ To prevent table corruption, ensure that you monitor or stop any non-Snowflake w
 Note
 
 Iceberg partitioning is removed when you convert a table.
+
+## File lifecycle after conversion
+
+After you convert a table, Snowflake is the catalog for that table. Snowflake manages every file that belongs to the table:
+data files and metadata files written before conversion, and files that Snowflake writes after conversion.
+The same snapshot expiration, retention, and cleanup rules apply to all of them.
+
+- When a snapshot expires, Snowflake deletes the expired metadata files, including table metadata, manifest lists, and manifests,
+  even if an external engine wrote them before conversion.
+- Snowflake also deletes data files that are no longer referenced and are outside the retention period, including data files
+  written before conversion.
+- Dropping the converted table deletes those files that were written before conversion too. Snowflake doesn’t leave them behind.
+
+Warning
+
+If you need any file that existed before conversion for another purpose, such as another engine, the original catalog, or a copy
+kept outside Snowflake, copy those files before you convert the table, or before the files age out of the table’s retention period.
+After conversion, Snowflake can expire and delete them.
 
 ## Requirements
 

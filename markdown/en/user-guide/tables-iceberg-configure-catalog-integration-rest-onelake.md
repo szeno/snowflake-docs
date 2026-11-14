@@ -9,6 +9,18 @@ With this catalog integration, you can use Snowflake to read OneLake tables that
 
 ## Prerequisites
 
+- Your Fabric tenant administrator must enable the following Fabric tenant-level settings so that your Snowflake account’s identity in
+  Microsoft Entra ID can communicate with Fabric:
+
+  - **Service principals can use Fabric APIs**, found in the Developer settings of the Fabric admin portal. For more information, see
+    [Service principal tenant setting](https://learn.microsoft.com/en-us/rest/api/fabric/articles/identity-support#service-principal-tenant-setting)
+    in the Microsoft Fabric documentation.
+  - **Users can access data stored in OneLake with apps external to Fabric**, found in the OneLake settings of the Fabric admin portal. For more
+    information, see
+    [Allow apps running outside of Fabric to access data](https://learn.microsoft.com/en-us/fabric/onelake/security/get-started-security#allow-apps-running-outside-of-fabric-to-access-data)
+    in the Microsoft Fabric documentation.
+
+  If you don’t have the Fabric administrator role, ask your Fabric tenant administrator to enable these settings for you.
 - Before you begin, you must find your workspace ID for your workspace in Fabric and the data item ID for your lakehouse in Fabric.
   You specify your workspace ID and data item ID later when you create a catalog integration for OneLake REST.
 

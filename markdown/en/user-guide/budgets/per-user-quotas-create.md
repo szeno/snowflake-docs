@@ -47,12 +47,11 @@ Configure a new quota in the following order:
 2. Add the monitored domains with `ADD_SHARED_RESOURCE`. See
    [Supported domains](/user-guide/budgets/per-user-quotas#label-per-user-quota-supported-resources).
 3. If you want to scope the quota to specific users instead of the default `ALL_USERS` scope, set the
-   user scope with `SET_USER_TAGS`, `INCLUDE_USERS`, or `EXCLUDE_USERS`. See
+   user scope with `SET_QUOTA_USER_SCOPE`. See
    [Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-scope).
-4. Verify the scope with `GET_QUOTA_SCOPE` immediately. If you scoped by tags that changed recently,
-   wait about 10 minutes, then verify with `GET_USERS`, which can take up to about 2 hours to reflect
-   the change. Also check that per-user spending matches your expectations with
-   `GET_SPENDING_DETAILS_BY_USERS`.
+4. Verify the scope with `GET_QUOTA_SCOPE_V2` immediately. Then verify the resolved users with
+   `GET_USERS`, which can take approximately 10 to 15 minutes to reflect tag and role changes. Also
+   check that per-user spending matches your expectations with `GET_SPENDING_DETAILS_BY_USERS`.
 5. Set the per-user limits and notifications. See
    [Set per-user spending limits](#label-per-user-quota-spending-limit) and
    [Configure notifications](/user-guide/budgets/per-user-quotas-notifications#label-per-user-quota-notifications).
@@ -63,7 +62,8 @@ Note
 
 If block enforcement is enabled while the scope is taking effect, users you excluded can be briefly
 blocked and receive block emails before the change takes effect. These blocks clear automatically
-within minutes. To avoid this, configure the scope and wait 10 minutes before enabling enforcement.
+within minutes. To avoid this, configure the scope and wait approximately 15 minutes before enabling
+enforcement.
 
 ## Set per-user spending limits
 
@@ -130,8 +130,8 @@ In Snowsight, you can create per-user quotas without writing SQL. Quotas are man
 budgets on the **Budgets** tab.
 
 Before you begin, make sure you’re using a role with privileges to create quota objects in your
-target database and schema. If you plan to scope the quota by tag, make sure the relevant users
-are tagged.
+target database and schema. If you plan to scope the quota by tag or role, make sure the relevant
+users are tagged or directly granted the role.
 
 1. Sign in to Snowsight.
 2. In the navigation menu, select **Admin** » **Cost management**, then select the **Budgets** tab.
@@ -144,9 +144,18 @@ each step.
 
 The **Quota scope** page determines which users and resources the quota monitors.
 
-- **Specify which users to monitor**: Choose **All users in the account**, or **A group of users
-  (through tags)** to scope by user tag. When you monitor all users, you can optionally exclude
-  users that carry specific tags.
+- **Users**: Define the user scope in up to three optional steps, in the same order that Snowflake
+  resolves them:
+
+  1. Include all users in the account, or a group of users selected by user tags, roles, or both.
+  2. Exclude groups of users by user tags or roles.
+  3. Expand the usernames section to always include or always exclude specific users.
+
+  For how these steps combine, see
+  [How user scope works](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-user-scope).
+  Selecting roles chooses users, not the roles they must use when running requests. Only direct
+  role grants count; inherited roles don’t. For details and examples, see
+  [How role-based selection works](/user-guide/budgets/per-user-quotas-user-scope#label-per-user-quota-role-selection).
 - **Specify which resources to track**: Choose **AI-related features** to monitor AI functions,
   Snowflake CoCo, Cortex Agents, Snowflake CoWork, and the AI Gateway (select all of them or specific
   resources within each), or **Warehouses** to monitor warehouse compute.

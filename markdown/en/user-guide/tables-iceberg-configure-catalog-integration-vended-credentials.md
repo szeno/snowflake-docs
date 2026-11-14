@@ -38,7 +38,8 @@ Consider the following when you use catalog-vended credentials for Iceberg table
   However, you can spread your tables across multiple buckets if each table is stored in one bucket.
 - The service principal configured with your REST catalog must have permission to read from *all* of the locations that contain your
   table files in your bucket. If you use AWS Lake Formation with AWS Glue, you might need to take extra steps to enable this access. For more information,
-  see [(Optional) Configure Lake Formation access control](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue#label-tables-iceberg-glue-rest-lf-config).
+  see [(Optional) Configure Lake Formation access control](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue#label-tables-iceberg-glue-rest-lf-config) and the
+  [Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/#configure-aws-lake-formation) guide.
 - Snowflake expects your catalog to provide one of the following tokens, based on your cloud storage provider:
 
   - AWS: An expiration time for the AWS session token. Snowflake searches for a key-value pair where the key is
@@ -105,7 +106,8 @@ Important
 
 If you use AWS Lake Formation for access control, you must ensure that Snowflake can access your
 AWS Glue catalog or Amazon S3 table. For more information, see
-[(Optional) Configure Lake Formation access control](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue#label-tables-iceberg-glue-rest-lf-config).
+[(Optional) Configure Lake Formation access control](/user-guide/tables-iceberg-configure-catalog-integration-rest-glue#label-tables-iceberg-glue-rest-lf-config). For a complete setup walkthrough, see
+[Build Data Lakes using Apache Iceberg with Snowflake and AWS Glue](https://www.snowflake.com/en/developers/guides/data-lake-using-apache-iceberg-with-snowflake-and-aws-glue/#configure-aws-lake-formation).
 
 ### Example: AWS Glue
 

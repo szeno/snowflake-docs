@@ -35,6 +35,7 @@ For example, you can query the [USAGE\_IN\_CURRENCY\_DAILY](/sql-reference/organ
   in object storage.
 - You can configure outbound public connectivity and outbound private connectivity for the same cloud storage service. If you want to do
   this, create a dedicated external volume for outbound public connectivity and specify `USE_PRIVATELINK_ENDPOINT = FALSE`.
+- Private connectivity endpoints aren’t supported for Microsoft Fabric OneLake storage locations.
 
 ## Set up outbound private connectivity to an external volume
 

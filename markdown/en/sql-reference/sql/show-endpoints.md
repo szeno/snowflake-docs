@@ -107,6 +107,6 @@ SHOW ENDPOINTS IN SERVICE echo_service;
 +--------------+------+------------+----------+-----------+------------------------------------------------------------------------------+-----------------------------------------------+
 | name         | port | port_range | protocol | is_public | ingress_url                                                                  | privatelink_ingress_url                       |
 |--------------+------+------------+----------+-----------+------------------------------------------------------------------------------|-----------------------------------------------*
-| echoendpoint | 8080 |            | HTTP     | true      | d7qoajz-orgname-acctname.pp-snowflakecomputing.app                           | d7qoajz.spcs.pdxaac.privatelink.snowflake.app |
+| echoendpoint | 8080 |            | HTTP     | true      | d7qoajz-orgname-acctname.pp-snowflakecomputing.app                           | d7qoajz-spcs.pdxaac.privatelink.snowflake.app |
 +--------------+------+------------+----------+-----------+------------------------------------------------------------------------------+-----------------------------------------------*
 ```

@@ -265,9 +265,17 @@ In this step, you connect a standard Snowflake database to Microsoft Fabric.
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Ingestion** » **Add Data**.
 3. On the **Add Data** page, select **Microsoft OneLake**.
-4. Enter your Fabric tenant ID and select **Continue**.
+4. Enter your Fabric tenant ID and your Fabric workspace UUID, and then select **Continue**.
 
-   To find your Fabric tenant ID, see [Step 1: Find your Microsoft Fabric Tenant ID, Snowflake organization name, and Snowflake account name](#label-tables-iceberg-query-using-microsoft-fabric-before-begin).
+   - To find your Fabric tenant ID, see [Step 1: Find your Microsoft Fabric Tenant ID, Snowflake organization name, and Snowflake account name](#label-tables-iceberg-query-using-microsoft-fabric-before-begin).
+   - To find your Fabric workspace UUID, open your workspace in the Fabric UI, and then copy the UUID that follows `/groups/`
+     in your browser’s URL. For example, if the URL is
+     `https://app.fabric.microsoft.com/groups/a111a1a1-1111-111a-a11a-1a11a11111a1/list`, the workspace UUID is
+     `a111a1a1-1111-111a-a11a-1a11a11111a1`.
+
+     For more information, see
+     [Identify your workspace ID](https://learn.microsoft.com/en-us/fabric/admin/portal-workspace#identify-your-workspace-id)
+     in the Microsoft Fabric documentation, which refers to this value as the workspace ID.
 5. To provide consent to the use of your Snowflake account’s multi-tenant application in your Entra tenant, select **Provide consent**.
 
    - If you haven’t performed this step before, you should see a prompt to consent. Review the permissions, provide your consent, and then proceed to the next step.

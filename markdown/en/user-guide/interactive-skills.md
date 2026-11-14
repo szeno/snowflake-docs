@@ -137,6 +137,17 @@ A benchmark can take a significant amount of time. Each load test runs for 3 min
 6. Collects server-side metrics and checks the results against your latency goal. If the goal isn’t met, the skill scales the warehouse up or out, within the limits you set, and runs the test again.
 7. Generates an HTML report and offers to tear down the benchmark resources or keep them.
 
+### Snowflake services used
+
+The skill creates and uses the following Snowflake features and objects during a benchmark:
+
+- [Interactive warehouses](/user-guide/interactive): run the query that you’re benchmarking.
+- Standard warehouses: serve as the fallback warehouse and run the baseline measurement. The skill creates dedicated warehouses unless you specify existing ones.
+- Snowpark Container Services (SPCS): runs the benchmark API and Locust load generator on compute pools, and exposes them through public service endpoints.
+- A benchmark database, schema, and stage: store the benchmark resources and files.
+
+SPCS compute pools and warehouses consume credits while they run. For more information, see [Results and cleanup](#results-and-cleanup).
+
 ### Benchmark inputs
 
 The skill asks for these values in a single prompt, with defaults where possible:
@@ -190,11 +201,17 @@ Don't scale beyond a Large warehouse and limit scale-out to 8 clusters.
 
 In this example, the skill helps the AI agent treat the limits that you give as the ceiling for scale-up and scale-out. The agent escalates the warehouse size or cluster count only up to those limits, and the report shows whether the 500 ms goal was met at 200 users.
 
+### Getting started
+
+For step-by-step instructions on installing the `interactive-benchmark` skill and running your first benchmark, see the [Getting started guide](https://github.com/Snowflake-Labs/analytics/blob/main/interactive-benchmark/GETTING-STARTED.md).
+
 ### Results and cleanup
 
-The skill writes the HTML report, which includes the results of each iteration, to `~/.snowflake/interactive-benchmark/reports/<benchmark_name>/` and opens it in your browser. If your role can write benchmark reports, the skill also records the results in the `SNOWFLAKE.INTERACTIVE_ANALYTICS` schema so that you can view them in Snowsight.
+The skill writes the HTML report, which includes the results of each iteration, to `~/.snowflake/interactive-benchmark/reports/<benchmark_name>/` and opens it in your browser. To see what the report looks like, view the [sample report](https://snowflake-labs.github.io/analytics/interactive-benchmark/sample-report/benchmark-report.html). If your role can write benchmark reports, the skill also records the results in the `SNOWFLAKE.INTERACTIVE_ANALYTICS` schema so that you can view them in Snowsight.
 
 At the end of the run, the skill lists the resources that it created and asks whether to remove them or keep them. The SPCS compute pools and warehouses consume credits while they run, so remove the resources when you finish testing.
+
+If you plan to run more than one benchmark within the same hour, consider keeping the interactive warehouse instead of removing it after each run. The minimum billable period for an interactive warehouse is one hour, and each time that you create or resume one, a new minimum billable period starts. Removing and re-creating the warehouse between benchmarks can therefore increase your costs. For more information, see [Cost and billing considerations](/user-guide/interactive#label-interactive-cost).
 
 ## Related topics
 

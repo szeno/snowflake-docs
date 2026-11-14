@@ -53,10 +53,10 @@ For instructions, see [Use catalog-vended credentials for Apache Iceberg™ tabl
 
 Note
 
-If your remote Iceberg catalog doesn’t support credential vending, you must configure an [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def) and a
-[catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) to configure access to your external catalog and table storage.
-First,
-[configure an external volume for your cloud storage provider](/user-guide/tables-iceberg-configure-external-volume). Then,
+If your remote Iceberg catalog doesn’t support credential vending, you must also configure an [external volume](/user-guide/tables-iceberg#label-tables-iceberg-external-volume-def) to configure access to table storage.
+For instructions, see
+[configure an external volume for your cloud storage provider](/user-guide/tables-iceberg-configure-external-volume).
+You still need a catalog integration for your external catalog. If you don’t use vended credentials, see
 [configure an Apache Iceberg™ REST catalog integration for your remote Iceberg catalog](/user-guide/tables-iceberg-configure-catalog-integration-rest).
 
 ## Create a catalog-linked database
