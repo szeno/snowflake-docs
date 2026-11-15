@@ -58,8 +58,9 @@ When enforcement is enabled, Snowflake runs a continuous loop for each user in s
 5. **Cycle reset**: Blocks expire automatically at the cycle boundary (UTC midnight for a daily
    limit, Monday at 00:00 UTC for a weekly limit, the first of the month for a monthly limit). No
    separate clearing step is required, and the user can spend again once the cycle rolls over.
-   Blocks are also released when you raise the per-user limit above the user’s current spend or
-   remove the quota.
+   Blocks are also released when you raise the per-user limit or set a
+   [per-user limit override](/user-guide/budgets/per-user-quotas-overrides) above the user’s current
+   spend, or when you remove the quota.
 
 ## Limitations of block enforcement
 
@@ -142,8 +143,26 @@ Note
 
 ## Respond to escalations
 
-A quota is a policy: one limit applies to all users in the quota, and there’s no per-user override
-within a single quota. When a blocked user needs more headroom, you have two options.
+When a blocked user needs more headroom, you can override the limit for that user, raise the
+quota’s default limit for everyone, or move the user to a higher-tier quota.
+
+**Set a per-user limit override for the user.** To give one or more users a higher limit on a
+specific cycle without changing the quota default for everyone else, call
+`SET_USER_QUOTA_OVERRIDE`. You can optionally pass an expiration date so the override reverts
+automatically. Once the new limit propagates (approximately 5 to 10 minutes), the pipeline clears
+that quota’s block for the user with no separate unblock call. For more information, see
+[Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides).
+
+Copy code
+
+```
+CALL my_quota!SET_USER_QUOTA_OVERRIDE(
+  ['ALICE'],
+  2500,
+  'MONTHLY',
+  '2026-12-01'
+);
+```
 
 **Raise the limit for everyone in the quota.** No separate unblock call is needed. After you raise
 the limit and the change propagates (approximately 5 to 10 minutes), the pipeline automatically clears

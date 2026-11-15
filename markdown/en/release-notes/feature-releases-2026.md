@@ -9,6 +9,8 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [Nov 12, 2026: DCM Projects PLAN privilege (Preview)](/release-notes/2026/other/2026-11-12-dcm-plan-privilege-preview)
 - [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
 - [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
+- [Nov 11, 2026: Openflow Snowflake Deployments in AWS government regions (General availability)](/release-notes/2026/other/2026-11-11-openflow-snowflake-deployments-aws-gov-ga)
+- [Nov 11, 2026: Override per-user quota limits for specific users (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-limit-overrides)
 - [Nov 11, 2026: Select per-user quota users by role (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-role-scope)
 - [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
 - [Nov 11, 2026: Programmatic notifications for Trust Center findings (General availability)](/release-notes/2026/other/2026-11-11-trust-center-programmatic-notifications-ga)

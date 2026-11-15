@@ -7,7 +7,7 @@ complex AI functions over a large dataset.
 
 With per-user quotas, you can:
 
-- Define monthly, weekly, and daily per-user credit limits that apply uniformly to all users in scope.
+- Define monthly, weekly, and daily per-user credit limits that apply uniformly to all users in scope, and override those limits for specific users with optional expiration dates.
 - Apply the quota to all users in your account, or select groups of users by user tags or roles to represent teams, cost centers, or business units, and include or exclude individual users by name.
 - Block users automatically when they reach a per-user limit. Blocks are released automatically when the cycle resets or you raise the limit.
 - Notify users when they approach or exceed their limits, based on actual or projected spend.
@@ -22,6 +22,8 @@ The following topics cover each part of working with per-user quotas:
   quota with SQL or Snowsight, follow the recommended setup order, and set per-user limits.
 - [Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope): Choose which users a
   quota covers.
+- [Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides): Set per-user,
+  per-cycle limit overrides with optional expiration dates.
 - [Block users at the limit](/user-guide/budgets/per-user-quotas-enforcement): Enable built-in
   block enforcement and handle requests for more headroom.
 - [Notifications and actions](/user-guide/budgets/per-user-quotas-notifications): Notify users and
@@ -233,9 +235,10 @@ For more information about the Cost Intelligence skill, see
   apply to weekly or daily limits.
 - Snowsight offers custom actions and cycle-start actions only for quotas scoped to warehouses. To use
   them with an AI-related scope, configure them with SQL.
-- No enforcement occurs until a per-user spending limit is set.
-- You can’t set different limits for different users within the same quota. All users share
-  the same per-user limits.
+- No enforcement occurs until a per-user spending limit or per-user limit override is set.
+- Each quota supports up to 200 per-user limit overrides across users and cycles. To assign different
+  limits to larger groups of users, create separate quotas. For details, see
+  [Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides).
 - Collective spending limits across all users in a quota aren’t supported. Each user’s limit
   is evaluated independently.
 - Quota evaluation doesn’t happen in real time. Snowflake counts AI usage against a quota within minutes.

@@ -77,6 +77,23 @@ Expand
 
 Show lessSee more
 
+## Limit overrides
+
+Use the following methods to set, list, and remove per-user limit overrides:
+
+| Method | Description |
+| --- | --- |
+| `SET_USER_QUOTA_OVERRIDE(['<user>', ...], <credits>, '<cycle>' [ , <expires_on> ])` | Create or update a per-user credit limit override for one or more users on a cycle (`'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`), with an optional expiration date (`DATE` or `NULL`). See [Set or update a limit override](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-set-override). |
+| `LIST_USER_QUOTA_OVERRIDES()` | Return all overrides stored on the quota, including `USER_ID`, `USER_NAME`, `CYCLE`, `OVERRIDE_VALUE`, and `EXPIRY_DATE`. See [View configured overrides](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-list-overrides). |
+| `REMOVE_USER_QUOTA_OVERRIDE('<user>', '<cycle>')` | Remove the override for one user and one cycle. See [Remove limit overrides](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-remove-overrides). |
+| `REMOVE_USER_QUOTA_OVERRIDES_BY_USER('<user>')` | Remove all overrides for one user across every cycle on this quota. See [Remove limit overrides](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-remove-overrides). |
+| `REMOVE_USER_QUOTA_OVERRIDES_BY_CYCLE('<cycle>')` | Remove all overrides for the specified cycle across every user on this quota. See [Remove limit overrides](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-remove-overrides). |
+| `REMOVE_ALL_USER_QUOTA_OVERRIDES()` | Remove every override on this quota. See [Remove limit overrides](/user-guide/budgets/per-user-quotas-overrides#label-per-user-quota-remove-overrides). |
+
+Expand
+
+Show lessSee more
+
 ## Enforcement
 
 Use the following methods to manage and review block enforcement:
@@ -156,6 +173,7 @@ Show lessSee more
 - [Per-user quotas](/user-guide/budgets/per-user-quotas)
 - [Create and configure a per-user quota](/user-guide/budgets/per-user-quotas-create)
 - [Specify users in scope for a per-user quota](/user-guide/budgets/per-user-quotas-user-scope)
+- [Override limits for specific users in a per-user quota](/user-guide/budgets/per-user-quotas-overrides)
 - [Block users at a per-user quota limit](/user-guide/budgets/per-user-quotas-enforcement)
 - [Notifications and actions for per-user quotas](/user-guide/budgets/per-user-quotas-notifications)
 - [Monitor per-user quota spending](/user-guide/budgets/per-user-quotas-monitor)

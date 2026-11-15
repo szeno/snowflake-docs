@@ -68,8 +68,10 @@ enforcement.
 ## Set per-user spending limits
 
 The quota admin sets one or more per-user credit limits: monthly, weekly, daily, or any
-combination. Each user in scope is assigned the same per-user limits, and limits are enforced
-independently per user. There is no aggregation or collective cap across users.
+combination. By default, each user in scope is assigned the same per-user limits, and limits are
+enforced independently per user. There is no aggregation or collective cap across users. To set a
+different limit for specific users within the quota, see
+[Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides).
 
 The limit must be a whole number of credits from 1 to 1,000,000,000. Zero, negative, `NULL`, and
 decimal values aren’t accepted and return an error. The same rule applies to every cycle.

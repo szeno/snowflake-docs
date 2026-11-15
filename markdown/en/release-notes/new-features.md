@@ -49,6 +49,8 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
 - [Node.js Driver (v4.0.0-beta.0)](/release-notes/clients-drivers/nodejs-2026)
 - [Snowpark Python (v1.57.0)](/release-notes/clients-drivers/snowpark-python-2026)
+- [Nov 11, 2026: Openflow Snowflake Deployments in AWS government regions (General availability)](/release-notes/2026/other/2026-11-11-openflow-snowflake-deployments-aws-gov-ga)
+- [Nov 11, 2026: Override per-user quota limits for specific users (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-limit-overrides)
 - [Nov 11, 2026: Select per-user quota users by role (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-role-scope)
 - [Nov 11, 2026: Semantic view materializations (General availability)](/release-notes/2026/other/2026-11-11-semantic-view-materializations-ga)
 - [Nov 11, 2026: Programmatic notifications for Trust Center findings (General availability)](/release-notes/2026/other/2026-11-11-trust-center-programmatic-notifications-ga)

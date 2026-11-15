@@ -106,7 +106,9 @@ This view includes the following elements:
 - **User table**: A searchable, filterable list of every user in scope. For each user, the table
   shows **Enforcement**, utilization and spend for each configured cycle (**Monthly utilization**
   and **Monthly spend**, **Weekly utilization** and **Weekly spend**, **Today’s utilization** and
-  **Today’s spend**), and **Matched tags**.
+  **Today’s spend**), and **Matched tags**. Users with a per-user limit override display an
+  **Override** badge, and you can filter the table by **Has override** or **Expiring soon**. You can
+  also select **Set override** on the quota deep-dive page to configure per-user overrides.
 
 Select a user in the table to open the user deep-dive view.
 
@@ -119,8 +121,9 @@ This view includes the following elements:
 - **Weekly utilization**: The user’s spend against their weekly limit.
 - **Today’s utilization**: The user’s spend so far today against their daily limit.
 - **Spend by type**: A breakdown of the user’s spend by monitored domain, such as AI functions.
-- **User details**: The **Per-user limit** for each cycle, the user’s **Current spend**, and their
-  **Avg weekly spend** and **Avg daily spend**.
+- **User details**: The **Per-user limit** for each cycle (showing any active override alongside the
+  quota default, with options to **Set override** or **Reset to default**), the user’s **Current
+  spend**, and their **Avg weekly spend** and **Avg daily spend**.
 - **Matched tags**: The tags on the user that matched the quota’s tag scope.
 - **Spend by day**: A graph and table of the user’s spend across the cycle. Switch between **Daily
   spend**, **Weekly spend**, and **Aggregated spend** to change how the graph is plotted. The table
@@ -133,8 +136,9 @@ When users approach or reach their limits, you can respond in the following ways
 
 - To warn users before they reach a limit, add projected spend thresholds. See
   [Configure notifications](/user-guide/budgets/per-user-quotas-notifications#label-per-user-quota-notifications).
-- To give blocked users more headroom, raise the limit or move users to a quota with a higher limit.
-  See [Respond to escalations](/user-guide/budgets/per-user-quotas-enforcement#label-per-user-quota-escalations).
+- To give blocked users more headroom, set a per-user limit override, raise the quota’s default
+  limit, or move users to a quota with a higher limit. See
+  [Respond to escalations](/user-guide/budgets/per-user-quotas-enforcement#label-per-user-quota-escalations).
 - To stop spend at the limit, enable block enforcement. See
   [Block users at the limit](/user-guide/budgets/per-user-quotas-enforcement#label-per-user-quota-enforcement).
 
