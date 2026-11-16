@@ -175,11 +175,5 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Oct 16, 2026: Openflow Endpoints (General availability)](/release-notes/2026/other/2026-10-16-openflow-endpoints-ga)
 - [Oct 16, 2026: Parquet Direct (Preview)](/release-notes/2026/other/2026-10-16-parquet-direct-preview)
 - [.NET Driver (v6.4.0)](/release-notes/clients-drivers/dotnet-2026)
-- [Oct 15, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-10-15-dcr)
-- [Oct 15, 2026: Data mirroring for Snowflake Postgres (General availability)](/release-notes/2026/other/2026-10-15-postgres-data-mirroring-ga)
-- [ODBC Driver (v4.1.0)](/release-notes/clients-drivers/odbc-2026)
-- [Python Connector (v5.0.0)](/release-notes/clients-drivers/python-connector-2026)
-- [Oct 14, 2026: Document generation in Snowflake CoWork (General availability)](/release-notes/2026/other/2026-10-14-cowork-document-generation-ga)
-- [Snowflake ML Python (v2.5.0)](/release-notes/clients-drivers/snowpark-ml-2026)
 
 For earlier feature updates, see [Feature updates earlier in 2026](/release-notes/feature-releases-2026).
