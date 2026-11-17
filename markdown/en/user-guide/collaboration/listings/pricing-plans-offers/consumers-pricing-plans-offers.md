@@ -10,6 +10,7 @@ When you receive an offer from your listing provider, you can review the terms a
 - View invoices on Stripe.
 - Review the subscription renewal date.
 - Add a PO number.
+- Track your orders, private offers, and installment payment schedules in [Consumer Hub](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-consumer-hub).
 
 ## Prerequisites for consumers to accept offers
 

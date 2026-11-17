@@ -10,7 +10,7 @@ Copy code
 SHOW CALLER GRANTS
 {
 { ON <object_type> <object_name> | ON ACCOUNT }
-| TO { ROLE | DATABASE ROLE }  <owner_name>
+| TO { ROLE | DATABASE ROLE } <owner_name> [ INCLUDE HIERARCHY ]
 }
 ```
 
@@ -23,6 +23,12 @@ SHOW CALLER GRANTS
 
 `TO ROLE <owner_name>` or `TO DATABASE ROLE <owner_name>`
 :   Specifies an executable owner, which lists all caller grants that have been granted to that owner.
+
+    Specify `INCLUDE HIERARCHY` to also list caller grants held by every account role, database role, and application role in the
+    specified role’s
+    [hierarchy](/user-guide/security-access-control-overview#label-role-hierarchy-and-privilege-inheritance), including the
+    account-level PUBLIC role. Each row’s `grantee_name` is the role that holds the caller grant, even when that role is granted
+    directly or indirectly to the role you specified. Caller grants held by instance roles, service roles, or class roles are omitted.
 
 ## Output
 
@@ -66,6 +72,10 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- `INCLUDE HIERARCHY` is valid only with `SHOW CALLER GRANTS TO ROLE` and `SHOW CALLER GRANTS TO DATABASE ROLE`. The grants listed
+  for each account role or database role in the hierarchy match the output of `SHOW CALLER GRANTS TO ROLE` (or
+  `SHOW CALLER GRANTS TO DATABASE ROLE`) for that role. `INCLUDE HIERARCHY` does not list caller grants held by instance
+  roles, service roles, or class roles.
 - When executing a SHOW CALLER GRANTS ON … statement, different rows of the output can indicate different things. For example, one row
   could indicate a caller grant was granted directly on an object while another row indicates that the object was specified with an IN clause
   in the GRANT statement. For more information, see [List caller grants](/developer-guide/restricted-callers-rights#label-restricted-callers-rights-list).
@@ -118,3 +128,11 @@ List all of the caller grants that have been granted to the database role `db.ow
 > ```
 > SHOW CALLER GRANTS TO DATABASE ROLE db.owner_role;
 > ```
+
+List caller grants held by `finance_analyst` and by every role in its hierarchy:
+
+Copy code
+
+```
+SHOW CALLER GRANTS TO ROLE finance_analyst INCLUDE HIERARCHY;
+```

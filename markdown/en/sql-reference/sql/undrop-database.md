@@ -19,6 +19,24 @@ UNDROP DATABASE <name>
 :   Specifies the identifier for the database to restore. If the identifier contains spaces or special characters, the entire string must be
     enclosed in double quotes. Identifiers enclosed in double quotes are also case-sensitive.
 
+## Access control requirements
+
+A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
+[privileges](/user-guide/security-access-control-overview#label-access-control-overview-privileges) at a minimum:
+
+| Privilege | Object | Notes |
+| --- | --- | --- |
+| CREATE DATABASE | Account |  |
+
+Expand
+
+Show lessSee more
+
+For instructions on creating a custom role with a specified set of privileges, see [Creating custom roles](/user-guide/security-access-control-configure#label-security-custom-role).
+
+For general information about roles and privilege grants for performing SQL actions on
+[securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
+
 ## Usage notes
 
 - If a database with the same name already exists, an error is returned.

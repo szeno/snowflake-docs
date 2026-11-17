@@ -187,7 +187,7 @@ When you add a tool, you also specify the resources it uses:
 > - **Cortex Search:** Provide the Cortex Search services, along with the filters, the columns and column descriptions for filterable and searchable columns, and the maximum number of results to return. If the service indexes files on a Snowflake stage, you can also provide the source stage and relative path column so that users can open source documents from citations in Snowflake CoWork.
 > - **Analytical search:** Enables the agent to run extensive analytics over large document collections, producing lists, counts, aggregates, and trends. Analytical search extends Cortex Search by orchestrating multi-index queries with configurable limits and using AISQL on the full result set. Analytical search is disabled by default. Enable it on the agent after you add a Cortex Search tool. For more information, see [Analytical search](/user-guide/snowflake-cortex/cortex-agents-analytical-search#label-enable-analytical-search).
 > - **[Code execution](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool):** Enable the built-in tool so the agent can run Python in a secure, isolated sandbox. No additional resources are required.
-> - **Data to Chart:** Enable the tool so the agent can generate visualizations from data returned by other tools. No additional resources are required.
+> - **Data to Chart:** Lets the agent generate visualizations from data returned by other tools. Data to Chart is available to agents by default, so you don’t need to add it to `tools`. Leaving it out of `tools` doesn’t disable it. No additional resources are required.
 > - **Custom tools:** Provide the stored procedure or user-defined function (UDF) that implements your logic, along with the warehouse used to run it.
 > - **Agent skills:** Add a packaged agent skill to give the agent repeatable, task-specific capabilities.
 > - **MCP connectors:** Provide the connection to a remote MCP server so the agent can use the tools that server hosts, such as those from Atlassian Jira or Salesforce.
@@ -209,7 +209,7 @@ the right instructions for the tool you want to add:
 | Analytical search (Public Preview) | The tabs that follow, in all three methods. See [Set up analytical search](/user-guide/snowflake-cortex/cortex-agents-analytical-search#label-enable-analytical-search). |
 | Custom tools | The Snowsight and REST API tabs that follow. |
 | Web search | The Snowsight and REST API tabs that follow, after an account admin enables it. See [Enable web search](#label-cortex-agents-enable-web-search). |
-| Data to Chart | The REST API and SQL tabs that follow. |
+| Data to Chart | Available by default. Optionally list it in `tools` with the REST API and SQL tabs that follow. |
 | [Code execution](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) | The agent specification. |
 | Agent skills | The **Skills** tab in Snowsight, or the agent specification. See [Agent skills](/user-guide/snowflake-cortex/cortex-agents-skills). |
 | MCP connectors | The **MCP Connectors** tab in Snowsight, after an account admin adds the connector. See [MCP Connectors](/user-guide/snowflake-cortex/cortex-agents-mcp-connectors). |
@@ -226,7 +226,7 @@ Show lessSee more
 > 1. In the navigation menu, select **AI & ML** » **Agents**.
 > 2. From the list of agents, select the agent that you want to modify.
 >    :   The configuration details for the agent are displayed.
-> 3. Select **Edit**.
+> 3. Select the **Configuration** tab.
 > 4. For **Description**, describe the agent and how users can interact with it.
 > 5. To add sample questions that users can ask the agent, enter a sample question and select **Add a question**.
 > 6. Select **Tools**. Add one or more of the following tools.
@@ -405,7 +405,7 @@ Show lessSee more
 > >    }
 > >   }'
 > >   ```
-> > - **Add data\_to\_chart tool**: The following example shows how to add the data to chart tool to an existing agent object.
+> > - **Add data\_to\_chart tool**: The following example shows how to add the data to chart tool to an existing agent object. Data to Chart is available to agents by default, so listing it explicitly is optional.
 > >
 > >   1. Add the data\_to\_chart tool
 > >

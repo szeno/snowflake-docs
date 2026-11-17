@@ -25,6 +25,7 @@ failover group name, credits consumed, and bytes transferred for replication. Us
 | REPLICATION\_GROUP\_ID | NUMBER | Internal/system-generated identifier for the replication or failover group. |
 | CREDITS\_USED | NUMBER | Total number of credits used for replication during the START\_TIME and END\_TIME window. |
 | BYTES\_TRANSFERRED | NUMBER | Number of bytes transferred for replication during the START\_TIME and END\_TIME window. |
+| CHANGED\_OBJECT\_COUNT | NUMBER | Number of object changes in the source account that were replicated to the target account by replication refresh operations during the START\_TIME and END\_TIME window. The value is 0 if no changed-object count was recorded for the usage. |
 
 Expand
 

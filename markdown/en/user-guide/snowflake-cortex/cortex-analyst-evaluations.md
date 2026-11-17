@@ -15,6 +15,7 @@ The ability to run a Cortex Analyst evaluation requires a role with the followin
 - The DATABASE ROLE SNOWFLAKE.CORTEX\_USER
 - The USE AI FUNCTIONS account-level privilege (or the per-function `USE AI FUNCTION AI_COMPLETE` privilege). Evaluation judges use Cortex LLM inference, which is gated by this privilege. The USE AI FUNCTIONS privilege is granted to the PUBLIC role by default. If your account has revoked it from PUBLIC, grant it explicitly. For more information, see [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges).
 - The EXECUTE TASK ON ACCOUNT global privilege
+- Access to the judge models, if your account enforces model-level access control (the CORTEX\_MODELS\_ALLOWLIST parameter isn’t set to `'All'`, or ENABLE\_CORTEX\_MODEL\_ROLE\_ALL\_GRANT\_TO\_PUBLIC is FALSE). The role needs access to the judge model of each system metric version you select and to any model named in a custom metric. If the role lacks access, the judge call is denied before the judge model runs, and the evaluation returns scores of 0 with no actionable error, even when direct `AI_COMPLETE` calls to the model succeed. To grant model access, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac).
 - The CREATE TASK privilege on the schema containing your semantic view
 - The CREATE DATASET ON SCHEMA privilege on the schema containing your semantic view
 - The SELECT privilege on the semantic view and the tables referenced in the semantic view

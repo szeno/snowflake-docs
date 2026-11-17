@@ -6,13 +6,18 @@ This feature requires Business Critical (or higher).
 
 To inquire about upgrading, please contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-When a SAP® Business Data Cloud tenant requires it, a Zerocopy Connector reaches the tenant over AWS PrivateLink instead of the
+When a SAP® Business Data Cloud tenant requires it, a Zero-Copy Connector reaches the tenant over AWS PrivateLink instead of the
 tenant’s public endpoints. This topic describes when private connectivity is used, what it requires, and how to check its status.
 
 Private connectivity applies to the connections that Snowflake makes to SAP® Business Data Cloud: reading data products, and
 publishing Snowflake data to SAP® Business Data Cloud. Snowflake connects to private endpoints that SAP® provides for your
-tenant. It’s available for Snowflake accounts on AWS, when the Snowflake account and
-the SAP® Business Data Cloud tenant are in the same AWS region.
+tenant.
+
+Note
+
+Private connectivity is supported only for connections that Snowflake initiates to SAP® Business Data Cloud to share and query
+SAP® Business Data Cloud data products in Snowflake, when the Snowflake account and the SAP® Business Data Cloud tenant are both
+in the same AWS region.
 
 ## How private connectivity works
 

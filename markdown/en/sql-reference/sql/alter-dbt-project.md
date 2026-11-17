@@ -114,7 +114,7 @@ ALTER DBT PROJECT [ IF EXISTS ] <name> UNSET
         Snowflake stores the per-query result artifacts and archive regardless of this setting.
         For retrieval instructions, see [Access dbt artifacts and logs programmatically](/user-guide/data-engineering/dbt-projects-on-snowflake-monitoring-observability#label-dbt-projects-artifacts-and-logs).
 
-    `DEFAULT_TARGET = default_target`
+    `DEFAULT_TARGET = 'default_target'`
     :   Specifies the profile used for compilation and subsequent executions (for example, `prod`) of the dbt project object. This parameter can be overridden by using the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project)
         command with `ARGS = '--target <other_target>'`.
 
@@ -227,7 +227,7 @@ ALTER DBT PROJECT sales_db.dbt_projects_schema.sales_model SET
 
 ### Revert to the system default version
 
-The following example reverts the dbt project object to the system default version, which is currently 1.9.4. Account administrators can change the default for all future dbt project objects in the account using the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter.
+The following example reverts the dbt project object to the system default version. Account administrators can change the default for all future dbt project objects in the account using the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter.
 
 For more information, see [Set the account-level default version](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions#label-dbt-projects-set-account-level-default).
 

@@ -140,6 +140,7 @@ For details, see [API access roles](/user-guide/snowflake-cortex/cortex-agents-s
 
 - The function returns a JSON string. Pass this string to [TRY\_PARSE\_JSON](/sql-reference/functions/try_parse_json) to convert the response to a VARIANT value.
 - Inspect the top-level `warnings` array in the parsed response and surface relevant warnings to users. For inaccessible-tool warning behavior, see .
+- To continue a conversation in a [thread](/user-guide/snowflake-cortex/cortex-agents-threads), pass `thread_id` and set `parent_message_id` to the `assistant_message_id` from the `metadata` object of the previous response. Use `0` for the first message in a thread.
 - When `create_thread_if_not_present` is set to `TRUE`, a new thread is automatically created if the request body does not contain a `thread_id`. The response includes the `thread_id` of the newly created thread, which you can use in subsequent requests to continue the conversation.
 - To run the agent asynchronously, set `"background": true` in the request body and include a `thread_id`. The function returns immediately with an in-progress status and a `run_id`. Use [THREAD\_MESSAGES (SNOWFLAKE.CORTEX)](/sql-reference/functions/thread_messages-snowflake-cortex) to poll for the completed response.
 

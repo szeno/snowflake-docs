@@ -38,6 +38,31 @@ DESC[RIBE] SCHEMA <schema_name>
   The double quotes ensure that the column names in the SELECT list or WHERE clause match the column names
   in the SHOW command output that was scanned.
 
+## Output
+
+The command output provides the `created_on`, `name`, and `kind` columns for each object in the schema. The `kind` column
+identifies the object’s type and can contain any of the following values:
+
+| Kind | Description |
+| --- | --- |
+| TABLE | A permanent or [transient](/user-guide/tables-temp-transient) table, including [hybrid tables](/user-guide/tables-hybrid) and [Apache Iceberg™ tables](/user-guide/tables-iceberg). Hybrid tables and Iceberg tables don’t have a distinct `kind` value. |
+| TEMPORARY | A [temporary table](/user-guide/tables-temp-transient) created in the current session. |
+| VIEW | A non-materialized view, including secure views. |
+| TEMP VIEW | A temporary view created in the current session. |
+| MATERIALIZED\_VIEW | A [materialized view](/user-guide/views-materialized). |
+| DYNAMIC\_TABLE | A [dynamic table](/user-guide/dynamic-tables/overview). |
+| EXTERNAL\_TABLE | An [external table](/user-guide/tables-external-intro). |
+| EVENT\_TABLE | An [event table](/developer-guide/logging-tracing/event-table-setting-up). |
+| ONLINE\_FEATURE\_TABLE | An [online feature table](/developer-guide/snowflake-ml/feature-store/overview) used by the Snowflake Feature Store. |
+| INTERACTIVE\_TABLE | An [interactive table](/user-guide/interactive). |
+
+Expand
+
+Show lessSee more
+
+[Semantic views](/user-guide/views-semantic/overview) don’t appear in `DESCRIBE SCHEMA` output. This differs from
+[SHOW OBJECTS](/sql-reference/sql/show-objects#usage-notes), which lists semantic views with `kind` set to `VIEW`.
+
 ## Examples
 
 This demonstrates the DESCRIBE SCHEMA command:

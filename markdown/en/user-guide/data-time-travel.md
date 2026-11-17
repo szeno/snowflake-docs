@@ -62,12 +62,19 @@ Time Travel operations (SELECT, CREATE … CLONE, UNDROP) can be performed on th
 
 The standard retention period is 1 day (24 hours) and is automatically enabled for all Snowflake accounts:
 
-- For Snowflake Standard Edition, the retention period can be set to 0 (or unset back to the default of 1 day) at the account and object
-  level (that is, databases, schemas, and tables).
-- For Snowflake Enterprise Edition (and higher):
-  - For transient databases, schemas, and tables, the retention period can be set to 0 (or unset back to the default of 1 day). The same
-    is also true for temporary tables.
-  - For permanent databases, schemas, and tables, the retention period can be set to any value from 0 up to 90 days.
+| Edition | Permanent objects | Transient/Temporary objects | Max retention |
+| --- | --- | --- | --- |
+| Standard | 0 or 1 day (default) | 0 or 1 day (default) | 1 day |
+| Enterprise (and higher) | 0 to 90 days | 0 or 1 day (default) | 90 days (permanent); 1 day (transient/temporary) |
+
+Expand
+
+Show lessSee more
+
+For Snowflake Standard Edition, the retention period can be set to 0 (or unset back to the default of 1 day) at the account and object
+level (that is, databases, schemas, and tables). For Snowflake Enterprise Edition (and higher), transient databases, schemas, and tables
+(and temporary tables) can also be set to 0 (or unset back to the default of 1 day), while permanent databases, schemas, and tables can
+be set to any value from 0 up to 90 days.
 
 Note
 
@@ -86,7 +93,7 @@ To specify the data retention period for Time Travel:
 - The same parameter can be used to explicitly override the default when creating a database, schema, and individual table.
 - The data retention period for a database, schema, or table can be changed at any time.
 - The [MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-min-data-retention-time-in-days) account parameter can be set by users with the ACCOUNTADMIN role to set a minimum
-  retention period for the account. This parameter does not alter or replace the DATA\_RETENTION\_TIME\_IN\_DAYS parameter value. However it
+  retention period for the account. This parameter doesn’t alter or replace the DATA\_RETENTION\_TIME\_IN\_DAYS parameter value. However it
   may change the effective data retention time. When this parameter is set at the account level, the effective minimum data retention
   period for an object is determined by MAX(DATA\_RETENTION\_TIME\_IN\_DAYS, MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS).
 
@@ -111,7 +118,7 @@ When using Time Travel, the following object types are not cloned:
 > - External tables
 > - Internal (Snowflake) stages
 > - Hybrid tables can be cloned for databases but not for schemas.
-> - User tasks in a database or schema are not cloned when using CREATE SCHEMA … TIMESTAMP. In the following example, tasks in the source schema (S1) are not cloned to the schema with a timestamp (S2) but are cloned to the schema without a timestamp (S3).
+> - User tasks in a database or schema are not cloned when using CREATE SCHEMA … TIMESTAMP. In the following example, tasks in the source schema (S1) aren’t cloned to the schema with a timestamp (S2) but are cloned to the schema without a timestamp (S3).
 >
 >   Copy code
 >
@@ -127,18 +134,18 @@ When using Time Travel, the following object types are not cloned:
 
 ## Enabling and deactivating Time Travel
 
-No tasks are required to enable Time Travel. It is automatically enabled with the standard, 1-day retention period.
+No tasks are required to enable Time Travel. It’s automatically enabled with the standard, 1-day retention period.
 
 However, you may want to upgrade to Snowflake Enterprise Edition to enable configuring longer data retention periods of up to 90 days
 for databases, schemas, and tables. Note that extended data retention requires additional storage which will be reflected in your monthly
 storage charges. For more information about storage charges, see [Storage costs for Time Travel and Fail-safe](/user-guide/data-cdp-storage-costs).
 
-Time Travel cannot be deactivated for an account. A user with the ACCOUNTADMIN role can set [DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-data-retention-time-in-days) to 0 at
+Time Travel can’t be deactivated for an account. A user with the ACCOUNTADMIN role can set [DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-data-retention-time-in-days) to 0 at
 the account level, which means that all databases (and subsequently all schemas and tables) created in the account have no retention period
 by default; however, this default can be overridden at any time for any database, schema, or table.
 
 A user with the ACCOUNTADMIN role can also set the [MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-min-data-retention-time-in-days) at the account level. This parameter
-setting enforces a minimum data retention period for databases, schemas, and tables. Setting MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS does not
+setting enforces a minimum data retention period for databases, schemas, and tables. Setting MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS doesn’t
 alter or replace the DATA\_RETENTION\_TIME\_IN\_DAYS parameter value. It may, however, change the effective data retention period for objects.
 When MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS is set at the account level, the data retention period for an object is determined by
 MAX(DATA\_RETENTION\_TIME\_IN\_DAYS, MIN\_DATA\_RETENTION\_TIME\_IN\_DAYS).
@@ -150,7 +157,7 @@ at the account level and is greater than 0, the higher value setting takes prece
 Attention
 
 Before setting [DATA\_RETENTION\_TIME\_IN\_DAYS](/sql-reference/parameters#label-data-retention-time-in-days) to 0 for any object, consider whether you want to deactivate Time Travel for the object,
-particularly as it pertains to recovering the object if it is dropped. When an object with no retention period is dropped, you will not
+particularly as it pertains to recovering the object if it’s dropped. When an object with no retention period is dropped, you won’t
 be able to restore the object.
 
 As a general rule, we recommend maintaining a value of (at least) 1 day for any given object.
@@ -254,8 +261,8 @@ Decreasing Retention:
     For example, if you have a table with a 10-day retention period and you decrease the period to 1-day, data from days 2 to 10 will be moved
     into Fail-safe, leaving only the data from day 1 accessible through Time Travel.
 
-    However, the process of moving the data from Time Travel into Fail-safe is performed by a background process, so the change is not immediately
-    visible. Snowflake guarantees that the data will be moved, but does not specify when the process will complete; until the background process
+    However, the process of moving the data from Time Travel into Fail-safe is performed by a background process, so the change isn’t immediately
+    visible. Snowflake guarantees that the data will be moved, but doesn’t specify when the process will complete; until the background process
     completes, the data is still accessible through Time Travel.
 
 Note
@@ -283,16 +290,16 @@ ALTER TABLE mytable SET DATA_RETENTION_TIME_IN_DAYS=30;
 
 Attention
 
-Changing the retention period for your account or individual objects changes the value for all lower-level objects that do not have a
+Changing the retention period for your account or individual objects changes the value for all lower-level objects that don’t have a
 retention period explicitly set. For example:
 
-- If you change the retention period at the account level, all databases, schemas, and tables that do not have an explicit retention period
+- If you change the retention period at the account level, all databases, schemas, and tables that don’t have an explicit retention period
   automatically inherit the new retention period.
-- If you change the retention period at the schema level, all tables in the schema that do not have an explicit retention period inherit the
+- If you change the retention period at the schema level, all tables in the schema that don’t have an explicit retention period inherit the
   new retention period.
 
 Keep this in mind when changing the retention period for your account or any objects in your account because the change might have
-Time Travel consequences that you did not anticipate or intend. In particular, we do not recommend changing the retention period to 0
+Time Travel consequences that you didn’t anticipate or intend. In particular, we do not recommend changing the retention period to 0
 at the account level.
 
 ### Dropped containers and object retention inheritance
@@ -300,10 +307,10 @@ at the account level.
 Warning
 
 Currently, when a database is dropped, the data retention period for child schemas or tables, if explicitly set to be different from the
-retention of the database, is not honored. The child schemas or tables are retained for the same period of time as the database.
+retention of the database, isn’t honored. The child schemas or tables are retained for the same period of time as the database.
 
 Similarly, when a schema is dropped, the data retention period for child tables, if explicitly set to be different from the retention of
-the schema, is not honored. The child tables are retained for the same period of time as the schema.
+the schema, isn’t honored. The child tables are retained for the same period of time as the schema.
 
 To honor the data retention period for these child objects (schemas or tables), drop them explicitly before you drop the database
 or schema.
@@ -411,9 +418,9 @@ The following sections explain the Time Travel considerations for the DROP, SHOW
 
 ### Dropping objects
 
-When a table, schema, or database is dropped, it is not immediately overwritten or removed from the system. Instead, it is retained for the
+When a table, schema, or database is dropped, it isn’t immediately overwritten or removed from the system. Instead, it’s retained for the
 data retention period for the object, during which time the object can be restored. Once dropped objects are moved to
-[Fail-safe](/user-guide/data-failsafe), you cannot restore them.
+[Fail-safe](/user-guide/data-failsafe), you can’t restore them.
 
 To drop a notebook, table, schema, or database, use the following commands:
 
@@ -424,10 +431,10 @@ To drop a notebook, table, schema, or database, use the following commands:
 
 Note
 
-After dropping an object, creating an object with the same name does not restore the object. Instead, it creates a new version of the
+After dropping an object, creating an object with the same name doesn’t restore the object. Instead, it creates a new version of the
 object. The original, dropped version is still available and can be restored.
 
-Restoring a dropped object restores the object in place (that is, it does not create a new object).
+Restoring a dropped object restores the object in place (that is, it doesn’t create a new object).
 
 ### Listing dropped objects
 
@@ -455,12 +462,12 @@ If an object has been dropped more than once, each version of the object is incl
 
 Note
 
-After the retention period for an object has passed and the object has been purged, it is no longer displayed in the
+After the retention period for an object has passed and the object has been purged, it’s no longer displayed in the
 SHOW *<object\_type>* HISTORY output.
 
 ### Restoring objects
 
-A dropped object that has not been purged from the system (that is, the object is displayed in the SHOW *<object\_type>* HISTORY output) can be
+A dropped object that hasn’t been purged from the system (that is, the object is displayed in the SHOW *<object\_type>* HISTORY output) can be
 restored using the following commands:
 
 - [UNDROP NOTEBOOK](/sql-reference/sql/undrop-notebook)
@@ -496,8 +503,10 @@ the previous version of the object.
 
 ### Access control requirements and name resolution
 
-Similar to dropping an object, a user must have OWNERSHIP privileges for an object to restore it. In addition, the user must have CREATE
-privileges on the object type for the database or schema where the dropped object will be restored.
+To restore a dropped object, a role typically must have the CREATE privilege for that object type on the schema or database where the
+object will be restored. For example, restoring a table requires the CREATE TABLE privilege on the schema, restoring a schema requires the
+CREATE SCHEMA privilege on the database, and restoring a database requires the CREATE DATABASE privilege on the account. Some object types
+have additional requirements. For details, see the UNDROP command for the object type.
 
 Restoring tables and schemas is only supported in the current schema or current database, even if a fully-qualified object name is specified.
 

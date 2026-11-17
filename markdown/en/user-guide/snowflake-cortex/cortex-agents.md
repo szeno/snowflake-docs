@@ -99,7 +99,7 @@ Cortex Agents supports the following tools:
 | Cortex Search | Retrieves information from your unstructured data. Agents can dynamically adjust filters, retrieved columns, result counts, per-index queries, and time-decay settings based on the user’s query. |
 | Analytical search (Public Preview) | Answers analytical questions, such as counts, aggregates, and trends, over large document collections by combining Cortex Search with AI functions and SQL. See [Analytical search](/user-guide/snowflake-cortex/cortex-agents-analytical-search). |
 | [Code execution](/user-guide/snowflake-cortex/cortex-agents-code-execution-tool) | Runs Python in a secure, isolated sandbox to process data and perform calculations. |
-| Data to Chart | Generates visualizations from data returned by other tools. |
+| Data to Chart | Generates visualizations from data returned by other tools. Available to agents by default. You don’t need to add it to the agent’s tools. |
 | Custom tools | Stored procedures and user-defined functions (UDFs) that implement your own business logic or call backend systems. |
 | Agent skills | Packaged, modular bundles of instructions and scripts that give an agent repeatable, task-specific capabilities. |
 | MCP connectors | Tools hosted on remote Model Context Protocol (MCP) servers, such as those from Atlassian Jira, Salesforce, or your own applications. |
@@ -117,6 +117,20 @@ For how to add and configure each tool, see [Create and manage agents](/user-gui
 Calling an agent requires the `SNOWFLAKE.CORTEX_USER` or `SNOWFLAKE.CORTEX_AGENT_USER` database role, privileges on the agent object, and privileges on the objects used by the agent’s tools. Cortex Agents determines permissions from the Snowflake context of the request, and tools use the warehouses configured in the agent specification.
 
 For the full requirements, including role setup, privilege tables, and authentication methods, see [Access control and authentication](/user-guide/snowflake-cortex/cortex-agents-setup).
+
+## Rate limits
+
+Requests to the Cortex Agents REST API, including the `agent:run` and threads endpoints,
+have a default limit of **1,000 requests per minute** for each account, with a
+**500-request burst**. All agents in the account share this limit. Each `agent:run`
+request, including agent invocations through the Snowflake-managed MCP server, counts
+once regardless of the number of tool calls within the run.
+
+Agent requests from Snowflake CoWork are limited separately and don’t count toward
+this limit.
+
+Requests that exceed these limits might return HTTP 429. Retry with exponential
+backoff. To request higher limits, contact your Snowflake account team.
 
 ## Limitations
 

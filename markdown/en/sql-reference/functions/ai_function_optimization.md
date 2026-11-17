@@ -3,10 +3,6 @@ Categories:
 
 # Optimize an AI function (AI\_FUNCTION\_OPTIMIZATION)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 AI\_FUNCTION\_OPTIMIZATION searches for improved implementations of an AI function using a labeled dataset and a
 scoring metric. You specify the AI function to optimize, the dataset used to evaluate candidate outputs, the
 metric to optimize, and the models available to the optimizer. Snowflake generates candidate implementations by
@@ -315,7 +311,6 @@ CREATE OR REPLACE AI FUNCTION my_db.my_schema.redact_tuned(text VARCHAR)
 
 ## Limitations
 
-- **Public preview.** Optimization is in public preview and is rolling out to accounts.
 - **Target must be an AI function or an inline body.** `function_name` must reference a
   [CREATE AI FUNCTION](/sql-reference/sql/create-ai-function) object; a plain UDF is rejected.
 - **Exactly one AI\_COMPLETE call.** Optimization tunes a single `AI_COMPLETE` call: the function (or

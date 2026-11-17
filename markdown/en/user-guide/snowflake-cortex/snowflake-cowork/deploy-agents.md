@@ -54,7 +54,7 @@ Show lessSee more
 
 The CORTEX\_USER role gives users access to all Cortex features, including agents. By default, this role is granted to the PUBLIC role, which is automatically granted to all users and roles. If you don’t want all users to have this privilege, you can revoke it from the PUBLIC role and grant access to specific roles only. For more information, see [Cortex LLM privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges).
 
-After the CORTEX\_USER role is revoked from the PUBLIC role, you can grant the CORTEX\_AGENT\_USER role. This role gives users access to only the Cortex Agents API, which allows them to use Snowflake CoWork, but not the other Cortex features.
+After the CORTEX\_USER role is revoked from the PUBLIC role, you can grant the CORTEX\_AGENT\_USER role. This role gives users access to the Cortex Agents API, which allows them to use Snowflake CoWork and Cortex Code (CoCo) on all surfaces (CLI, Snowsight, and Desktop), but not the other Cortex features.
 
 - To provide selective access to Cortex Agents so that only a subset of users have access to the feature, first revoke access to the PUBLIC role, and then grant the CORTEX\_AGENT\_USER role to specific users:
 

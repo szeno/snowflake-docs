@@ -35,6 +35,7 @@ Before your organization purchases a paid Snowflake Marketplace listing, review 
 - Any organization can pay for listings by using any of the [accepted payment methods](#label-marketplace-payment-methods).
 - All purchases are billed in US dollars.
 - Taxes are calculated based on your organization’s shipping and billing addresses. This applies even if your organization has multiple locations or is international.
+- If your organization has a sales tax exemption on file with Snowflake, the estimated taxes shown at checkout reflect the exemption.
 - Snowflake Marketplace invoices are separate from invoices for other Snowflake services, storage, or usage.
 
 ### Confirm your billing location is supported
@@ -153,6 +154,8 @@ Marketplace Capacity Drawdown lets eligible organizations use a reserved portion
 
 If Marketplace Capacity Drawdown is available for a listing, it appears on the purchase page. If it isn’t available, or you don’t want to use it for that purchase, choose another supported payment method.
 
+When you check out, the **Payment methods** section shows your available MCD balance. For flat-fee offers, you can apply all available MCD funds to the purchase or limit the amount of MCD funds applied, and you can change this choice later from **Manage Purchase**. For usage-based offers, MCD funds are applied to your monthly usage invoices. For the steps, see [View and accept a private offer](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-private-flat-fee-checkout) and [Update MCD allocation for a purchase](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-update-mcd-limit).
+
 For more information, see [Marketplace Capacity Drawdown](/collaboration/marketplace-capacity-drawdown).
 
 ### Pay by bank transfer or ACH
@@ -208,6 +211,13 @@ To view, download, and pay Snowflake Marketplace invoices, you need the [require
 
 All invoices appear in the **Marketplace invoices** section. You can sort invoices by status, amount, invoice date, and due date.
 
+### Choose who receives Snowflake Marketplace invoices
+
+Snowflake sends Snowflake Marketplace invoices to the following recipients:
+
+- **Marketplace consumer billing contacts**: These contacts receive all Snowflake Marketplace invoices for your organization. A user with the `ORGADMIN` role manages these contacts. For more information, see [Update billing contact information](/user-guide/billing-contacts).
+- **Additional recipients for a purchase**: For purchases of flat-fee offers, you can add up to 10 email addresses that receive the invoices for that purchase only. Add these recipients when you check out, or later from **Manage Purchase**. For more information, see [Update invoice email recipients for a purchase](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-update-invoice-recipients).
+
 ### View Snowflake Marketplace invoice information
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
@@ -240,6 +250,10 @@ To monitor usage for paid listings, use the MONETIZED\_USAGE\_DAILY views:
   [DATA\_SHARING\_USAGE](/sql-reference/data-sharing-usage) schema (account-level usage)
 - [MONETIZED\_USAGE\_DAILY (ORGANIZATION\_USAGE) View](/collaboration/views/monetized-usage-daily-org) in the
   [ORGANIZATION\_USAGE](/sql-reference/organization-usage) schema (organization-level usage)
+
+### Track purchases and installment payments
+
+To see your active and past Snowflake Marketplace orders in one place, use Consumer Hub. For more information, see [Track orders and private offers in Consumer Hub](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-consumer-hub).
 
 ### Cancel a purchase
 

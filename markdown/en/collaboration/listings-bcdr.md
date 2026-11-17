@@ -102,6 +102,25 @@ Ensure that you understand the following constraints before configuring BCDR for
 - When adding an object to a failover group, if any object is referenced by a listing that has auto-fulfillment enabled, all objects referenced by that same listing must be included in the same failover group.
 - When removing an object from a failover group, if any object is referenced by a listing that has auto-fulfillment enabled, all objects referenced by that same listing must be removed together.
 
+The scope of “that same listing” depends on how Snowflake groups the listing for auto-fulfillment, either by database or at the account
+level. For more information about how listings are grouped, see the limitations in
+[Set up auto-fulfillment for a listing that spans databases](/collaboration/provider-listings-auto-fulfillment-setup-steps#label-laf-listing-spans-databases).
+
+- For listings that are grouped by database, the complete subset requirement applies to the listing’s share, the databases that the
+  share uses, including databases granted to the share with the [REFERENCE\_USAGE](/sql-reference/sql/grant-privilege-share) privilege,
+  and other auto-fulfilled listings that use the same databases.
+- For listings in the account-level group, the complete subset requirement applies across all listings in the account-level group, not
+  only the listing that you’re creating, publishing, or adding to the failover group. The account-level group includes listings with
+  application package data products, and listings that Snowflake moves there when a REFERENCE\_USAGE grant causes a database to be used
+  by more than one auto-fulfilled listing. The shares, databases, and application packages of every listing in the account-level group
+  must reside in the same failover group. If any are missing, the command fails with an error,
+  and the error can list objects that belong to unrelated listings.
+
+Note
+
+Because of account-level grouping, you can’t use independent failover groups for separate tenants if the tenants’ listings are in
+the account-level group. All listings in the account-level group must share one failover group.
+
 #### Failover group object type requirements
 
 When a failover group contains databases or shares that are referenced by listings that have auto-fulfillment enabled, the failover group must include `LISTINGS` in its `OBJECT_TYPES` parameter. For example:
@@ -118,8 +137,9 @@ CREATE FAILOVER GROUP provider_dr_fg
 
 - Before enabling auto-fulfillment on a listing or publishing a listing that has auto-fulfillment enabled, all listing dependencies — including shares and databases — must be configured in a failover group that includes the `LISTINGS` object type.
 - Auto-fulfillment must be enabled on the secondary account manually (if it’s not already enabled). For more information, see [SYSTEM$ENABLE\_GLOBAL\_DATA\_SHARING\_FOR\_ACCOUNT](/sql-reference/functions/system_enable_global_data_sharing_for_account).
-- When the [REFERENCE\_USAGE](/sql-reference/sql/grant-privilege-share) privilege is used by listings, there can be objects that aren’t
-  directly related to the listing but that also counted as part of the subset in the complete subset constraint.
+- When listings are in the account-level auto-fulfillment group, such as application package listings or listings that use the
+  REFERENCE\_USAGE privilege on a database that other listings also use, objects that aren’t directly related to the listing can also
+  count as part of the subset. For details, see [Complete subset constraints (all-or-nothing rule)](#label-listings-bcdr-complete-subset-constraints).
 
 #### Internal Marketplace listings constraints
 

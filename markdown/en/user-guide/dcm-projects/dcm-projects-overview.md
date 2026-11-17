@@ -138,7 +138,7 @@ As a reference point, PLAN or DEPLOY for projects with 1,000+ entities can take 
 dependencies can take longer than a larger project with mostly independent entities. Consolidating definitions into fewer files generally
 shows faster execution times for PLAN and DEPLOY commands.
 
-Currently, DCM Projects supports up to 10,000 defined entities, grants, or attachments per project, with a maximum total size of 30 MB. This 30 MB limit applies to both the sum of all source files and the rendered definition files. In some cases, exceeding these limits can cause executions to fail due to timeouts.
+Currently, DCM Projects supports up to 10,000 defined entities, grants, or attachments per project, with a maximum total size of 50 MB. This 50 MB limit applies to both the sum of all source files and the rendered definition files. In some cases, exceeding these limits can cause executions to fail due to timeouts.
 
 DCM Projects also supports up to 10,000 files under `/sources` in a project.
 

@@ -99,13 +99,13 @@ Snowsight UISQL
 ### Git repositories
 
 The following example shows how to reference skills located in a Snowflake Git repository. You can point to a
-specific commit hash for stability or a tag for automatic updates:
+specific commit hash for stability, or to a branch or tag for automatic updates:
 
 Snowsight UISQL
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. Navigate to the Git repository integration where your skills are stored.
-3. Reference the skill at a specific commit hash for stability, or use a tag for automatic updates after a FETCH.
+3. Reference the skill at a specific commit hash for stability, or use a branch or tag for automatic updates after a FETCH.
 
 Copy code
 
@@ -113,14 +113,17 @@ Copy code
 -- Reference a skill at a specific commit
 @my_db.my_schema.skills_repo/commits/abc123def/skills/forecaster
 
+-- Reference a skill on a branch (updates automatically on fetch)
+@my_db.my_schema.skills_repo/branches/main/skills/forecaster
+
 -- Reference a skill at a tag (updates automatically on fetch)
 @my_db.my_schema.skills_repo/tags/latest/skills/forecaster
 ```
 
 Note
 
-When you reference a Git tag, the skill updates automatically after the account admin runs a FETCH on the
-repository. Commit hash references are immutable.
+When you reference a Git branch or tag, the skill updates automatically after the account admin runs a FETCH on
+the repository. Commit hash references are immutable.
 
 ### Cortex Extensions
 
@@ -166,7 +169,7 @@ When a skill name appears in more than one place, the following order applies:
 
 ### List available skills
 
-List all skills available in a named stage or git repository:
+List all skills available in a named stage or Git repository:
 
 Copy code
 

@@ -3,10 +3,6 @@ Categories:
 
 # Evaluate an AI function (AI\_FUNCTION\_EVALUATION)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 AI\_FUNCTION\_EVALUATION measures the output quality of an AI function or Cortex AI call against a labeled
 dataset. You specify the expression to evaluate, a dataset containing expected outputs, and a scoring metric.
 Snowflake executes the expression for each row, compares the generated output with the expected output, and

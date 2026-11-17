@@ -399,8 +399,8 @@ Now that you have a working agent, extend it:
 For longer, application-oriented builds and best practices, use the following tutorials:
 
 - [Getting Started with Cortex Agents](https://www.snowflake.com/en/developers/guides/getting-started-with-cortex-agents/)
-- [Getting Started with Snowflake Cortex Agents API and React](https://quickstarts.snowflake.com/guide/getting_started_with_snowflake_agents_api_and_react/index.html?index=../..index#0)
-- [Getting Started with Cortex Agents and Slack](https://quickstarts.snowflake.com/guide/integrate_snowflake_cortex_agents_with_slack/index.html#0)
-- [Getting Started with Cortex Agents for Microsoft Teams and Microsoft 365 Copilot](https://quickstarts.snowflake.com/guide/getting_started_with_the_microsoft_teams_and_365_copilot_cortex_app)
+- [Getting Started with Snowflake Cortex Agents API and React](https://www.snowflake.com/en/developers/guides/getting-started-with-snowflake-agents-api-and-react/)
+- [Getting Started with Cortex Agents and Slack](https://www.snowflake.com/en/developers/guides/integrate-snowflake-cortex-agents-with-slack/)
+- [Getting Started with Cortex Agents for Microsoft Teams and Microsoft 365 Copilot](https://www.snowflake.com/en/developers/guides/getting-started-with-the-microsoft-teams-and-365-copilot-cortex-app/)
 - [Best Practices to Building Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-to-building-cortex-agents/)
 - [Best Practices for Evaluating Cortex Agents](https://www.snowflake.com/en/developers/guides/best-practices-for-evaluating-cortex-agents/)

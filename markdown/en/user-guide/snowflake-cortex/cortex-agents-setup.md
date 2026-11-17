@@ -7,7 +7,7 @@ Access to Cortex Agents is governed by Snowflake’s role-based access control. 
 To call the Cortex Agents `agent:run` API, use a role that has been granted one of the following database roles:
 
 - **SNOWFLAKE.CORTEX\_USER**: Grants access to all Covered AI Features, including Cortex Agents.
-- **SNOWFLAKE.CORTEX\_AGENT\_USER**: Grants access to Cortex Agents only.
+- **SNOWFLAKE.CORTEX\_AGENT\_USER**: Grants access to Cortex Agents, Snowflake CoWork, and Cortex Code (CoCo) on all surfaces (CLI, Snowsight, and Desktop), without granting access to other Covered AI Features.
 
 By default, the CORTEX\_USER database role is granted to the PUBLIC role, which is automatically granted to all users and roles. If you don’t want all users to have this access, use the `ACCOUNTADMIN` role to run the following command:
 
@@ -82,7 +82,7 @@ GRANT DATABASE ROLE SNOWFLAKE.CORTEX_AGENT_USER TO ROLE analyst_role;
 
 Important
 
-A role that also has the CORTEX\_USER database role retains access to all Covered AI Features. To restrict such a role to Cortex Agents only, revoke CORTEX\_USER from it using the `ACCOUNTADMIN` role:
+A role that also has the CORTEX\_USER database role retains access to all Covered AI Features. To restrict such a role to the scope of `CORTEX_AGENT_USER`, revoke CORTEX\_USER from it using the `ACCOUNTADMIN` role:
 
 Copy code
 

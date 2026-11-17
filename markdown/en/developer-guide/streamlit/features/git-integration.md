@@ -36,7 +36,7 @@ To connect a Streamlit app to a Git repository, you must use a role with the fol
 5. Select **Select Folder**.
 6. When the prompt to commit your app to the Git repository appears, complete the commit steps outlined in [Push changes to a branch in a Git repository](#label-snowsight-streamlit-git-push-changes).
 
-After connecting your Streamlit app with a Git repository, you can select the branch name and open the repository details in Snowflake or Github.
+After connecting your Streamlit app with a Git repository, you can select the branch name and open the repository details in Snowflake or GitHub.
 
 ## Push changes to a branch in a Git repository
 
@@ -60,7 +60,7 @@ You must use a role with the OWNERSHIP or WRITE privilege on the Git repository 
 
    - This token is required to authenticate to the Git repository.
    - The token must have read and write access to the content of the repository for the commit to work.
-   - Once entered, the token will be saved for future commits. You can update it during any future commits.
+   - Once entered, the token is saved for future commits. You can update it during any future commits.
 8. Select **Push**.
 
 A confirmation message states that your changes were pushed successfully to your branch.

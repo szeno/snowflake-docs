@@ -1,16 +1,23 @@
 Categories:
 :   [String & binary functions](/sql-reference/functions-string) (AI Functions)
 
-# AI\_COMPLETE (Single image)
+# AI\_COMPLETE (Single file)
 
-Generates a response (completion) for a text prompt using a supported language model. This variant of the function enhances AI\_COMPLETE with document understanding capabilities. The prompt can reference information or images found in a file containing a document. The function supports a single document input.
+Generates a response (completion) for a text prompt and a single file using a supported model. Depending on the model,
+the file can be an image, a document, an audio file, or a video file. This overload accepts exactly one file per call.
+To pass multiple files, or to combine files of different types, use
+[AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object).
+
+For limits by model and input type, see
+[Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations) and
+[document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations).
 
 ## Syntax
 
 The function has three required arguments and one optional argument.
 The function can be used with either positional or named argument syntax.
 
-Using AI\_COMPLETE with a single image input:
+Using AI\_COMPLETE with a single file input:
 
 Copy code
 
@@ -22,25 +29,52 @@ AI_COMPLETE(
 ## Arguments
 
 `model`
-:   A string specifying the model to be used. Specify one of the following models:
+:   A string specifying the model to be used. The models you can use depend on the type of file.
 
-    > - `claude-haiku-4-5`
-    > - `claude-opus-4-5`
-    > - `claude-opus-4-6`
-    > - `claude-opus-4-7`
-    > - `claude-opus-4-8`
-    > - `claude-opus-5`
-    > - `claude-opus-5-5`
-    > - `claude-sonnet-4-5`
-    > - `claude-sonnet-4-6`
-    > - `claude-sonnet-5`
-    > - `gemini-3.1-pro`
-    > - `openai-gpt-5`
-    > - `openai-gpt-5-mini`
-    > - `openai-gpt-5-nano`
-    > - `openai-gpt-5.1`
-    > - `openai-gpt-5.2`
-    > - `openai-gpt-5.4`
+    For image files, you can use one of the following models:
+
+    - `claude-haiku-4-5`
+    - `claude-opus-4-5`
+    - `claude-opus-4-6`
+    - `claude-opus-4-7`
+    - `claude-opus-4-8`
+    - `claude-opus-5`
+    - `claude-sonnet-4-5`
+    - `claude-sonnet-4-6`
+    - `claude-sonnet-5`
+    - `gemini-3.1-pro`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
+    - `openai-gpt-5`
+    - `openai-gpt-5-mini`
+    - `openai-gpt-5-nano`
+    - `openai-gpt-5.1`
+    - `openai-gpt-5.2`
+    - `openai-gpt-5.4`
+
+    For document files, you can use one of the following models:
+
+    - `claude-haiku-4-5`
+    - `claude-opus-4-5`
+    - `claude-opus-4-6`
+    - `claude-opus-4-7`
+    - `claude-opus-4-8`
+    - `claude-opus-5`
+    - `claude-sonnet-4-5`
+    - `claude-sonnet-4-6`
+    - `claude-sonnet-5`
+    - `gemini-3.1-pro`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
+
+    For audio and video files, you can use one of the following models:
+
+    - `gemini-3.1-pro`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -52,7 +86,8 @@ AI_COMPLETE(
 :   A string prompt.
 
 `file`
-:   A FILE type object representing an image.
+:   A [FILE](/sql-reference/functions/to_file) object representing a single image, document, audio, or video file. The
+    file type must be supported by the model that you specify; see the model lists for the *model* argument.
 
 `model_parameters`
 :   An [object](/sql-reference/data-types-semistructured#label-data-type-object) containing zero or more of the following options that affect the model’s
@@ -80,7 +115,8 @@ Returns the string response from the language model.
 
 ## Examples
 
-The following examples demonstrate the basic capabilities of the AI\_COMPLETE function with images.
+The following examples demonstrate the basic capabilities of the AI\_COMPLETE function with images. For audio and video
+examples, see [Cortex AI Functions: Multimodal](/user-guide/snowflake-cortex/ai-multimodal).
 
 ### Visual question answering
 
@@ -129,11 +165,20 @@ Response:
 }
 ```
 
-## Usage notes for processing images
+## Usage notes
 
 The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing images](/developer-guide/snowflake-ml/inference/spcs-ai-complete#supported-file-types).
 
-- Only text and images are supported. Video and audio files are not supported.
+- This overload accepts exactly one file per call. To process multiple files in one call, use
+  [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object).
+- The supported file types depend on the model. See the model lists for the *model* argument under
+  [Arguments](#arguments).
+- The stage containing the file must have server-side encryption enabled. Client-side encrypted stages are not supported.
+- The function does not support custom network policies.
+- Stage names are case-insensitive; paths are case-sensitive.
+
+### Images
+
 - Supported image formats:
 
   - `.jpg`
@@ -143,9 +188,23 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
   - `.webp`
   - `pixtral` and `llama4` models also support `.bmp`.
 - The maximum image size is 10 MB for most models, and 3.75 MB for `claude` models. `claude` models do not support images with resolutions above 8000x8000.
-- The stage containing the images must have server-side encryption enabled. Client-side encrypted stages are not supported.
-- The function does not support custom network policies.
-- Stage names are case-insensitive; paths are case-sensitive.
+
+### Documents
+
+- All models listed for document files support these formats: `.txt`, `.md`, and `.pdf`. Claude models also support
+  `.doc`, `.docx`, `.xls`, `.xlsx`, `.csv`, and `.xhtml`.
+- Claude models have a maximum document size of 22 MB. Gemini models have a maximum document size of 37.5 MB.
+- For context windows and page limits, see
+  [Supported models and limitations](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations)
+  in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-document-intelligence).
+
+### Audio and video
+
+- Only the Gemini models listed for audio and video files accept audio and video.
+- Supported audio formats: `.wav`, `.mp3`, `.aiff`, `.aac`, `.ogg`, `.flac`, `.m4a`, `.mp4`, `.pcm`, and `.webm`.
+- Supported video formats: `.mp4`, `.mpeg`, `.mov`, `.avi`, `.flv`, `.mpg`, `.webm`, `.wmv`, and `.3gpp`.
+- The maximum file size is 100 MB. For context windows, see
+  [Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations).
 
 Note
 

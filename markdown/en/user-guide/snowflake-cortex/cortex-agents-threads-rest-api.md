@@ -244,13 +244,7 @@ Copy code
 
 ### Response
 
-Returns the status of the thread update.
-
-Copy code
-
-```
-{"status": "Thread xxxx successfully updated."}
-```
+On success, returns `200 OK` with an empty response body.
 
 ## List threads
 

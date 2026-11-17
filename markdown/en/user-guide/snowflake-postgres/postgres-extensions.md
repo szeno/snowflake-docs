@@ -83,6 +83,7 @@ We currently support PL/PgSQL.
 | Row Locking | Functions | Show row-level locking information | `CREATE EXTENSION pgrowlocks;` |
 | Partman | Functions | Create and manage both time-based and serial-based table partition sets | `CREATE EXTENSION pg_partman;` |
 | pg\_lake | Iceberg and data lake storage | Support for tables backed by object storage formats like Iceberg, Parquet, and ORC | See [pg\_lake](/user-guide/snowflake-postgres/postgres-pg_lake) |
+| pg\_textsearch | Functions | Full-text search with BM25 ranking | `CREATE EXTENSION pg_textsearch;` |
 | PostGIS | Geospatial utilities | PostGIS geometry, geography, and raster spatial types and functions | [See PostGIS](https://docs.crunchybridge.com/extensions-and-languages/postgis) |
 | PostGIS Raster | Geospatial utilities | PostGIS raster types and functions | `CREATE EXTENSION postgis_raster;` |
 | PostGIS SFCGAL | Geospatial utilities | PostGIS SFCGAL functions | `CREATE EXTENSION postgis_sfcgal;` |

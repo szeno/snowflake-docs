@@ -71,7 +71,7 @@ AI_PARSE_DOCUMENT( <file_object> [, <options> ] [, <return_error_details> ] )
 
 By default the function returns the JSON as a string, so use
 [PARSE\_JSON](/sql-reference/functions/parse_json) to read the fields in SQL. If parsing fails, the function returns NULL. Every
-successful result includes `metadata.pageCount`.
+successful result includes `metadata.pageCount`, which is the total number of pages in the source document.
 
 To explicitly request page-level output, set `page_split` to TRUE. The `page_filter` option also enables page splitting automatically.
 
@@ -90,7 +90,7 @@ Copy code
 
 **Page splitting on.** When page splitting is enabled, `pages` contains one object for each processed page, including for a one-page file. If you select pages with `FL_FILTER_PAGES` or `page_filter`, only the selected pages are included. Each page’s `index` is its zero-based position in the original document, not its position in the filtered result. For example, selecting indexes 7 and 9 returns indexes 7 and 9, not 0 and 1. Printed page numbers are ignored. `dimensions` has `height` and `width`.
 
-When using `FL_FILTER_PAGES`, `metadata.pageCount` reports the number of pages processed. It does not identify the selected pages or report the source document’s total page count. Use the page index values in page-level output to identify the selected pages.
+When you select pages with `FL_FILTER_PAGES` or `page_filter`, `metadata.pageCount` still reports the source document’s total page count. The number of pages processed and billed is in `metadata.processedPageCount`. Neither field identifies the selected pages. Use the page index values in page-level output to identify the selected pages.
 
 Copy code
 

@@ -382,7 +382,7 @@ Before you start, make sure you have:
 - A warehouse you can use to run the project. This warehouse runs the `env.yml` file at the start of the run.
 - A role with the `READ` privilege or `OWNERSHIP` on any Snowflake secret you reference in `env.yml`.
 - A dbt project (this guide uses a `tasty_bytes` dbt project and imports a private `jaffle_shop` package as a dependency).
-- [Snowflake CLI](/developer-guide/snowflake-cli/index) version 3.21 or later, if you’re using the CLI for CI/CD workflows.
+- [Snowflake CLI](/developer-guide/snowflake-cli/index) 3.28.0 or later, if you’re using the CLI for CI/CD workflows.
 
 ### If your project already uses environment variables
 
@@ -657,7 +657,7 @@ Both approaches produce the same result. The stored procedure is useful when the
 
 ## Use the Snowflake CLI
 
-The Snowflake CLI is how you wire environment variables into CI/CD and external orchestrators. The flags in this section require Snowflake CLI 3.21 or later.
+The Snowflake CLI is how you wire environment variables into CI/CD and external orchestrators. The flags in this section require Snowflake CLI 3.28.0 or later.
 
 ### Deploy flags
 
@@ -725,11 +725,12 @@ snow sql -q "DROP DATABASE IF EXISTS tasty_bytes_staging_pr_${{ github.event.pul
 
 You can see environment information through several Snowflake surfaces:
 
-- `SHOW DBT PROJECTS` and `GET_DDL` reflect the dbt project object’s `DEFAULT_ENVIRONMENT` attribute. This is an attribute the user must set on the object via CREATE or via ALTER commands. This isn’t derived from the `default_environment:` section in the `env.yml` file.
+- `SHOW DBT PROJECTS` and `GET_DDL` reflect the dbt project object’s `DEFAULT_ENVIRONMENT` attribute. This is an attribute the user must set on the object with `CREATE DBT PROJECT` or `ALTER DBT PROJECT`. This isn’t derived from the `default_environment:` section in the `env.yml` file.
 - The `ENVIRONMENT` column in the ACCOUNT\_USAGE [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/account-usage/dbt_project_execution_history) view shows which environment was used for each execution.
 - `TABLE(INFORMATION_SCHEMA.DBT_PROJECT_EXECUTION_HISTORY(...))` includes the environment used for a run in its `ENVIRONMENT` column. For more information, see [DBT\_PROJECT\_EXECUTION\_HISTORY](/sql-reference/functions/dbt_project_execution_history).
 - Query History shows the `ENVIRONMENT` override for a specific `EXECUTE DBT PROJECT` statement.
 - Query History also shows the `ENV_VARS` overrides (the overridden environment variables) for a specific `EXECUTE DBT PROJECT` statement.
+- `DESCRIBE DBT PROJECT` shows the `DEFAULT_ENVIRONMENT` attribute in its `default_environment` column. For more information, see [DESCRIBE DBT PROJECT](/sql-reference/sql/desc-dbt-project).
 
 ## Reference
 

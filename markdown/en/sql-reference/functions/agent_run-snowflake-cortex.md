@@ -198,6 +198,8 @@ SELECT
   ) AS resp;
 ```
 
+The example uses [TRY\_PARSE\_JSON](/sql-reference/functions/try_parse_json) because it returns NULL instead of an error if the response string isn’t valid JSON.
+
 Sample return value:
 
 Copy code

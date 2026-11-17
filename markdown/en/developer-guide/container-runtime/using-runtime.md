@@ -72,6 +72,18 @@ $$;
 A compute pool is required for Container Runtime. The warehouse runs SQL and Snowpark pushdown compute. Python runs
 on the compute pool.
 
+Existing SQL that uses `EXECUTE NOTEBOOK PROJECT` still works. Set `RUNTIME` to the same version labels:
+
+Copy code
+
+```
+EXECUTE NOTEBOOK PROJECT my_db.my_schema.my_project
+  MAIN_FILE = 'notebook.ipynb'
+  COMPUTE_POOL = 'system_compute_pool_cpu'
+  QUERY_WAREHOUSE = 'my_wh'
+  RUNTIME = 'V3-CPU-PY3.12';
+```
+
 ### Map UI labels to SQL labels
 
 | UI label | `RUNTIME` or `compute_options.runtime_version` |
@@ -109,12 +121,110 @@ def train():
 ML Jobs use the full Container Runtime release number, not the SQL version label. Confirm the exact release number in
 [Snowflake Container Runtime release notes](/developer-guide/container-runtime/release-notes).
 
+## Change the runtime for a scheduled notebook
+
+A scheduled notebook runs as a Snowflake task against a Code Bundle. That run uses the runtime stored on
+the schedule (the task definition or the Code Bundle specification), not the runtime of the interactive
+notebook service.
+
+Changing the runtime on **Edit service** updates only the interactive service. To move a scheduled notebook
+to Latest or Stable, update the schedule.
+
+### From Workspaces
+
+1. In the navigation menu, select **Projects** » **Workspaces**.
+2. Open the notebook that has the schedule.
+3. At the top of the notebook editor, select **Scheduled runs**.
+4. Next to the schedule, select the ellipsis [![sf options button](/static/images/snowsight/icons/horizontal-options.png)](/static/images/snowsight/icons/horizontal-options.png), then **Delete**.
+5. Select **Scheduled runs** again, then **Create Schedule**.
+6. Keep the existing **Task name**, **Owner role**, **Location**, and **Frequency** unless you intend to
+   change them.
+7. Under **Advanced settings**, for **Runtime version**, select the runtime to use (for example,
+   **Latest (3.0)** or **Stable (2.10)**). Match **Runtime variant** (CPU or GPU) and **Python version**
+   to the new image.
+8. Review the other advanced settings (compute pool, query warehouse, external access integrations), then
+   select **Create**.
+
+The new schedule uses the selected runtime on the next run. For the fields on this dialog, see
+[Scheduling workflows by scenario](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-workflow-scenarios).
+
+### From the Tasks UI
+
+Use this path to change `runtime_version` without deleting the schedule.
+
+Find the task:
+
+1. In the navigation menu, select **Catalog** » **Explorer**.
+2. Open the database and schema where the schedule was created (the **Location** on the original
+   schedule).
+3. Select **Tasks**, then select the task. Scheduled notebooks often use a name like
+   `{notebook-name}_task_#`.
+
+You can also open the notebook in Workspaces, select **Scheduled runs**, then **Open run history**, and
+use the **Tasks** list for that Code Bundle.
+
+Edit the runtime:
+
+1. On the task, select the **…** actions button, then **Edit**.
+2. In the **Task Definition**, find `compute_options.runtime_version` in the `EXECUTE CODE BUNDLE`
+   `WITH SPECIFICATION` clause.
+3. Set the label for the runtime you want. For example, use `V3-CPU-PY3.12` for Latest on CPU with
+   Python 3.12, or `V2-CPU-PY3.12` for Stable 2.10. See
+   [Map UI labels to SQL labels](#label-container-runtime-map-ui-sql).
+4. Save the task.
+
+Snowsight suspends the task while you edit it and resumes it when you finish. The next scheduled run uses
+the updated runtime. You need the `OWNERSHIP` privilege on the task. For the Edit control, see
+[View tasks and task graphs in Snowsight](/user-guide/ui-snowsight-tasks).
+
+To change the same definition in SQL, replace the task and keep the existing `SCHEDULE`. For the
+specification shape, see [Specify a runtime in SQL](#label-container-runtime-specify-sql).
+
+Copy code
+
+```
+CREATE OR REPLACE TASK my_db.my_schema.my_notebook_task
+  WAREHOUSE = my_wh
+  SCHEDULE = 'USING CRON 0 9 * * * America/Los_Angeles'
+AS
+  EXECUTE CODE BUNDLE my_db.my_schema.my_bundle
+    ENTRYPOINT = 'notebook.ipynb'
+    WITH SPECIFICATION
+    $$
+    bundle:
+      type: custom
+      compute_type: compute_pool
+      language: python
+      compute_options:
+        compute_pool: system_compute_pool_cpu
+        query_warehouse: my_wh
+        runtime_version: 'V3-CPU-PY3.12'
+    $$;
+```
+
+If the schedule uses `EXECUTE NOTEBOOK PROJECT`, set `RUNTIME` to the same label:
+
+Copy code
+
+```
+CREATE OR REPLACE TASK my_db.my_schema.my_notebook_task
+  WAREHOUSE = my_wh
+  SCHEDULE = 'USING CRON 0 9 * * * America/Los_Angeles'
+AS
+  EXECUTE NOTEBOOK PROJECT my_db.my_schema.my_project
+    MAIN_FILE = 'notebook.ipynb'
+    COMPUTE_POOL = 'system_compute_pool_cpu'
+    QUERY_WAREHOUSE = 'my_wh'
+    RUNTIME = 'V3-CPU-PY3.12';
+```
+
 ## After End of Support and End of Life
 
 When a version reaches End of Support, existing notebooks and jobs on that runtime continue to start, but you can’t
 select the version for new notebooks or jobs. Plan to move to Latest or a remaining Stable version.
 
 When a version reaches End of Life, its image is removed and services that use it don’t start. Before the End of Life
-date, update `RUNTIME` for a Notebook Project, `compute_options.runtime_version` for a Code Bundle, or the runtime in
-Notebook settings. For End of Support and End of Life dates, see
+date, update `RUNTIME` for a Notebook Project, `compute_options.runtime_version` for a Code Bundle, the runtime in
+Notebook settings, or the runtime stored on a scheduled notebook task. For scheduled notebooks, see
+[Change the runtime for a scheduled notebook](#label-container-runtime-upgrade-scheduled). For End of Support and End of Life dates, see
 [Snowflake Container Runtime release notes](/developer-guide/container-runtime/release-notes).

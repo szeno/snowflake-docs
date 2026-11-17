@@ -1,8 +1,9 @@
 # Cortex AI Function Evaluation and Optimization
 
-[Preview Feature — Regional](/release-notes/preview-features)
+Regional Availability
 
-Available to accounts in [select regions](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+Available natively to accounts in [select regions](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
+Available through [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) to accounts in all regions.
 
 Snowflake provides creation, evaluation, and optimization capabilities for building production-ready Cortex
 AI Functions for unstructured data workflows. These capabilities help you measure quality and cost, search

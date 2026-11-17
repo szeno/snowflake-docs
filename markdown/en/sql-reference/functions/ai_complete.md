@@ -4,11 +4,17 @@ Categories:
 
 # AI\_COMPLETE
 
-Generates a response (completion) from text or an image using a supported language model. You can provide:
+Generates a response (completion) from text, images, documents, audio, or video using a supported language model. The
+input types you can use depend on the model and on the interface. You can provide:
 
 - A text prompt, to generate a response from the model. For more information, see [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string).
-- A single image and a text prompt, to generate a response based on the image and prompt. For more information, see [AI\_COMPLETE (Single image)](/sql-reference/functions/ai_complete-single-file).
-- A prompt object that can support multiple images and text. For more information, see [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object).
+- A single file with a text prompt, to generate a response based on the file and prompt. For more information, see [AI\_COMPLETE (Single file)](/sql-reference/functions/ai_complete-single-file).
+- A prompt object with text and one or more supported files. For more information, see [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object).
+
+For the file formats, size limits, and file counts that each model supports, see
+[Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations) for images, audio, and video, and
+[Supported models and limitations](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations)
+for documents.
 
 Bring-your-own model: Open preview
 
@@ -19,7 +25,7 @@ You can also use your own text generation or vision-language model deployed as a
 The syntax for the function depends on the type of input that you provide. For information about the syntax, see the following sections:
 
 - [Single string arguments](/sql-reference/functions/ai_complete-single-string)
-- [Single image arguments](/sql-reference/functions/ai_complete-single-file)
+- [Single file arguments](/sql-reference/functions/ai_complete-single-file)
 - [Prompt object arguments](/sql-reference/functions/ai_complete-prompt-object)
 
 All syntax variations accept an optional `return_error_details` BOOLEAN argument as the final parameter.

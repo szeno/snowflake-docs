@@ -92,3 +92,10 @@ ACCOUNTADMIN role, including access to the ACCOUNT\_USAGE, READER\_ACCOUNT\_USAG
 
 Privileges to perform other actions on these views can be granted to other roles in your account. For more information, see
 [Enabling other roles to use schemas in the SNOWFLAKE database](/sql-reference/account-usage#label-enabling-usage-for-other-roles).
+
+Important
+
+Several SNOWFLAKE database roles are granted to the PUBLIC role by default, which gives all users in your account access to the
+associated features. These include AI-related roles such as SNOWFLAKE.CORTEX\_USER and SNOWFLAKE.COPILOT\_USER. If your organization
+restricts the use of AI features, you can revoke these roles from the PUBLIC role. For the full list and an example, see
+[Database roles granted to PUBLIC by default](/sql-reference/snowflake-db-roles#label-snowflake-db-roles-public-defaults).

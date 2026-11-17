@@ -94,8 +94,18 @@ Follow these steps to implement a session policy.
 
    Important
 
-   To replace a session policy that is already set for an account or user, unset the session policy first and then set the new session
-   policy for the account or user. For example:
+   To replace a session policy that is already set for an account or user, specify `FORCE` in the statement that sets the new session
+   policy. The existing policy stays in place until the new one replaces it, so the account or user is never without a policy during the
+   transition. For example:
+
+   Copy code
+
+   ```
+   ALTER ACCOUNT SET SESSION POLICY mydb.policies.session_policy_prod_2 FORCE;
+   ```
+
+   Alternatively, unset the session policy first and then set the new session policy for the account or user. No policy is set between
+   the two statements. For example:
 
    Copy code
 
@@ -264,3 +274,257 @@ target account using database replication and account replication. For details, 
 
 For details about replicating a session policy that specifies secondary roles, see
 [replicate session policies with secondary roles](/user-guide/account-replication-considerations#label-account-replication-session-policy-secondary-roles).
+
+## Example journeys
+
+The following journeys show how common goals combine the facts documented elsewhere. They are examples, not the only supported paths. You
+can combine the same settings in other ways, using the linked pages for the details. The SQL uses placeholders such as `<minutes>` for
+values, so look up the valid range and defaults in the linked pages before you choose one.
+
+### Log human users out of Snowsight after a period of inactivity
+
+**Goal:** Require human users to authenticate again to Snowsight after they have been idle for a different period of time than the default.
+
+**Check first:**
+
+- Confirm that your role has the privileges to create and apply a session policy. See [Session policy privileges](/user-guide/session-policies-managing#session-policy-privileges).
+- Find out whether a session policy is already applied at the level you plan to use, and which policy takes precedence for a user. See
+  [Precedence](/user-guide/session-policies-managing#precedence) and [Auditing session policies](/user-guide/session-policies-managing#auditing-session-policies).
+- Choose the idle timeout. The setting for Snowsight is described in [Session policies](/user-guide/session-policies#label-session-policy-policies).
+
+**Steps:**
+
+1. Create a policy that sets only the Snowsight idle timeout:
+
+   Copy code
+
+   ```
+   CREATE SESSION POLICY mydb.policies.snowsight_idle_policy
+     SESSION_UI_IDLE_TIMEOUT_MINS = <minutes>
+     COMMENT = 'Snowsight idle timeout for human users';
+   ```
+2. Apply it to all human users. For which users this covers, see [Applying a session policy](/user-guide/session-policies-managing#label-session-policy-applying).
+
+   Copy code
+
+   ```
+   ALTER ACCOUNT SET SESSION POLICY mydb.policies.snowsight_idle_policy FOR ALL PERSON USERS;
+   ```
+
+   If a policy is already set at this level, see [Replacing an applied policy](/user-guide/session-policies-managing#replacing-an-applied-policy).
+
+**Verify:**
+
+Copy code
+
+```
+DESC SESSION POLICY mydb.policies.snowsight_idle_policy;
+
+SELECT *
+FROM TABLE(
+  mydb.INFORMATION_SCHEMA.POLICY_REFERENCES(
+    POLICY_NAME => 'mydb.policies.snowsight_idle_policy'
+  ));
+```
+
+For when a change takes effect for open sessions, see [Secondary roles in a session policy](/user-guide/session-policies#label-session-policy-secondary-roles-concepts). For
+what happens when a Snowsight session expires, see
+[Snowsight session expiration and logout behavior](/user-guide/session-policies#snowsight-session-expiration-and-logout-behavior).
+
+**Undo:**
+
+Copy code
+
+```
+ALTER ACCOUNT UNSET SESSION POLICY FOR ALL PERSON USERS;
+```
+
+### Set session limits for drivers, the CLI, and service users
+
+**Goal:** Limit the idle time and total lifespan of sessions opened through drivers, the CLI, and service users.
+
+**Check first:**
+
+- Which interfaces the session timeouts cover. See [Snowflake sessions](/user-guide/session-policies#snowflake-sessions).
+- Which settings apply to service users. See [Session policies](/user-guide/session-policies#label-session-policy-policies).
+- Whether a service user already has a policy of its own, which takes precedence over the account-level policy for its type. See
+  [Precedence](/user-guide/session-policies-managing#precedence).
+
+**Steps:**
+
+1. Create a policy with the programmatic idle timeout and maximum lifespan:
+
+   Copy code
+
+   ```
+   CREATE SESSION POLICY mydb.policies.programmatic_limits_policy
+     SESSION_IDLE_TIMEOUT_MINS = <minutes>
+     SESSION_MAX_LIFESPAN_MINS = <minutes>
+     COMMENT = 'Session limits for programmatic clients';
+   ```
+2. Apply it to all service users, or use `FOR ALL PERSON USERS` for human users who connect through drivers and the CLI:
+
+   Copy code
+
+   ```
+   ALTER ACCOUNT SET SESSION POLICY mydb.policies.programmatic_limits_policy FOR ALL SERVICE USERS;
+   ```
+
+Warning
+
+A maximum lifespan ends the session when it is reached, regardless of activity, even when a client keeps the session alive. When a
+session closes, its running queries and jobs are terminated. Before you set `SESSION_MAX_LIFESPAN_MINS`, check that your longest
+running jobs finish within it. See [Session policy considerations](/user-guide/session-policies#considerations) and
+[Snowsight session expiration and logout behavior](/user-guide/session-policies#snowsight-session-expiration-and-logout-behavior).
+
+**Verify:**
+
+Copy code
+
+```
+DESC SESSION POLICY mydb.policies.programmatic_limits_policy;
+```
+
+**Undo:**
+
+Copy code
+
+```
+ALTER ACCOUNT UNSET SESSION POLICY FOR ALL SERVICE USERS;
+```
+
+### Limit what an AI agent can do with a restricted session scope
+
+**Goal:** Set a ceiling on what an agent can do in a session. Choose a predefined scope, or an RSS object.
+
+**Check first:**
+
+- What the predefined scopes allow and don’t allow. See [Predefined scopes](/user-guide/restricted-session-scope#predefined-scopes).
+- If you need a custom scope, the privileges required to create an RSS object and its structure. See
+  [RSS YAML structure](/user-guide/restricted-session-scope#label-agent-rss-yaml-structure) and
+  [Create an RSS object and reference it](/user-guide/restricted-session-scope#label-agent-rss-create-object).
+
+**Steps:**
+
+1. Create a session policy that references the scope.
+
+   Use a predefined scope:
+
+   Copy code
+
+   ```
+   CREATE SESSION POLICY mydb.governance.agent_policy
+     AGENT_RESTRICTED_SESSION_SCOPE = '<predefined_scope>';
+   ```
+
+   Or create an RSS object as described in [Create an RSS object and reference it](/user-guide/restricted-session-scope#label-agent-rss-create-object), and reference it by
+   fully qualified name:
+
+   Copy code
+
+   ```
+   CREATE SESSION POLICY mydb.governance.agent_policy
+     AGENT_RESTRICTED_SESSION_SCOPE = '<rss_object_name>';
+   ```
+2. Apply the policy to the account or to a user. See [Attach the session policy to the account or a user](/user-guide/restricted-session-scope#attach-the-session-policy-to-the-account-or-a-user).
+
+**Verify:** From a session where an agent is active, check the active scope:
+
+Copy code
+
+```
+SELECT SYS_CONTEXT('SNOWFLAKE$SESSION', 'ACTIVE_RESTRICTED_SESSION_SCOPES');
+```
+
+For when the scope applies, see [Restricted Session Scope for agents](/user-guide/session-policies#restricted-session-scope-for-agents). For when a change to an RSS object takes
+effect, see [RSS YAML structure](/user-guide/restricted-session-scope#label-agent-rss-yaml-structure).
+
+**Undo:**
+
+Copy code
+
+```
+ALTER ACCOUNT UNSET SESSION POLICY;
+```
+
+### Change a policy that is already applied
+
+**Goal:** Change settings on a session policy that users already have.
+
+**Check first:**
+
+- Who the policy reaches. See [Auditing session policies](/user-guide/session-policies-managing#auditing-session-policies).
+- That your role owns the policy. See [Session policy privileges](/user-guide/session-policies-managing#session-policy-privileges).
+- When a change takes effect for sessions that are already open. See [Secondary roles in a session policy](/user-guide/session-policies#label-session-policy-secondary-roles-concepts).
+
+**Steps:**
+
+1. Find out who the policy reaches:
+
+   Copy code
+
+   ```
+   SELECT *
+   FROM TABLE(
+     mydb.INFORMATION_SCHEMA.POLICY_REFERENCES(
+       POLICY_NAME => 'mydb.policies.session_policy_prod_1'
+     ));
+   ```
+2. Alter only the settings you mean to change. For the settings you can set, see [ALTER SESSION POLICY](/sql-reference/sql/alter-session-policy):
+
+   Copy code
+
+   ```
+   ALTER SESSION POLICY mydb.policies.session_policy_prod_1
+     SET SESSION_IDLE_TIMEOUT_MINS = <minutes>;
+   ```
+
+**Verify:** Describe the policy and compare it with what you recorded before the change:
+
+Copy code
+
+```
+DESC SESSION POLICY mydb.policies.session_policy_prod_1;
+```
+
+**Undo:** Set the changed setting back to the value you recorded before the change.
+
+### Apply a policy to a policy scope, or replace the policy already there
+
+**Goal:** Apply a policy to the account, to all users of one type, or to one user. If a policy is already set at that level, replace it.
+
+**Check first:**
+
+- The three levels, and which clause selects each. See [Applying a session policy](/user-guide/session-policies-managing#label-session-policy-applying).
+- Which policy takes precedence when more than one applies. See [Precedence](/user-guide/session-policies-managing#precedence).
+- Which policy is already set. See [Auditing session policies](/user-guide/session-policies-managing#auditing-session-policies).
+
+**Steps:**
+
+1. Apply the policy at the level you chose, here to all service users:
+
+   Copy code
+
+   ```
+   ALTER ACCOUNT SET SESSION POLICY mydb.policies.programmatic_limits_policy FOR ALL SERVICE USERS;
+   ```
+2. If a policy is already set at that level, use `FORCE` to replace it. The existing policy stays in place until the new one replaces it, so
+   the level is never without a policy. What `FORCE` replaces is described in
+   [Replacing an applied policy](/user-guide/session-policies-managing#replacing-an-applied-policy). Alternatively, unset the existing policy
+   at that level first and then set the new one. No policy is set at that level between the two statements.
+
+   Copy code
+
+   ```
+   ALTER ACCOUNT SET SESSION POLICY mydb.policies.programmatic_limits_policy FOR ALL SERVICE USERS FORCE;
+   ```
+
+**Verify:** List the users the policy reaches, as in [Auditing session policies](/user-guide/session-policies-managing#auditing-session-policies).
+
+**Undo:** Unset the policy at that level, and set the previous policy again if you replaced one:
+
+Copy code
+
+```
+ALTER ACCOUNT UNSET SESSION POLICY FOR ALL SERVICE USERS;
+```

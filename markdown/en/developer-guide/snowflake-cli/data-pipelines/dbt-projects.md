@@ -91,7 +91,7 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
     --default-env prod
   ```
 
-  The `--env-file-dir` flag points the CLI at an `env.yml` file elsewhere in your repo (similar to `--profiles-dir`) and pulls it into the deployed object, overwriting the object’s root `env.yml` if one already exists. The `--default-env` flag sets the environment used for compilation and subsequent executions. These flags require Snowflake CLI 3.21 or later. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
+  The `--env-file-dir` flag points the CLI at an `env.yml` file elsewhere in your repo (similar to `--profiles-dir`) and pulls it into the deployed object, overwriting the object’s root `env.yml` if one already exists. The `--default-env` flag sets the environment used for compilation and subsequent executions. These flags require Snowflake CLI 3.28.0 or later. For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 ## Listing all available dbt project objects
 
@@ -167,7 +167,7 @@ The following examples illustrate how to use the `snow dbt execute` command:
     --env-vars '{"DBT_DATABASE": "tasty_bytes_staging_db"}' jaffle_shop run
   ```
 
-  The `--env` flag selects the environment defined in the project’s `env.yml` file, and `--env-vars` applies inline key/value overrides for this execution. Use `--use-shell-env-vars` to pull `DBT_`-prefixed shell variables (excluding `DBT_ENV_SECRET_*` variables) into the run. These flags require Snowflake CLI 3.21 or later. For more information, see [Use the Snowflake CLI](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables#label-dbt-env-vars-cli).
+  The `--env` flag selects the environment defined in the project’s `env.yml` file, and `--env-vars` applies inline key/value overrides for this execution. Use `--use-shell-env-vars` to pull `DBT_`-prefixed shell variables (excluding `DBT_ENV_SECRET_*` variables) into the run. These flags require Snowflake CLI 3.28.0 or later. For more information, see [Use the Snowflake CLI](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables#label-dbt-env-vars-cli).
 
   Keep the following rules in mind when you pass environment variables:
 
@@ -178,7 +178,6 @@ The following examples illustrate how to use the `snow dbt execute` command:
     `--env-vars`, the `--env-vars` value is used.
   - Variables passed with either flag appear in the query text and query history. Keep credentials in the `secrets:` block
     of `env.yml` instead.
-  - In Snowflake CLI versions earlier than 3.28.0, these flags work but don’t appear in `snow dbt execute --help`.
 
 ## Describing a dbt project object
 

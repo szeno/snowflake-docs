@@ -48,7 +48,7 @@ migration that uses read-only mode:
 3. On the target account, the DR admin runs `ALTER FAILOVER GROUP <name> REFRESH` to perform a
    final refresh from the read-only primary.
 4. On the target account, the DR admin promotes the target. The source becomes a standard
-   read-only secondary; the `read_only` flag on the original primary is cleared because the
+   read-only secondary; the read-only flag on the original primary is cleared because the
    failover group is no longer the primary.
 5. Application traffic is redirected to the new primary (using Client Redirect or DNS or
    application configuration).
@@ -150,7 +150,7 @@ following options based on the type of drill:
   ```
 
 After the failover group is promoted on the target, the source becomes a standard secondary
-and the `read_only` flag on the original primary is cleared. You don’t need to run
+and the read-only flag on the original primary is cleared. You don’t need to run
 `ALTER FAILOVER GROUP ... UNSET READ_ONLY` on the source.
 
 ## Behavior
@@ -193,7 +193,7 @@ is in read-only mode:
 
 - The target becomes the new primary and is read-write.
 - The source transitions from read-only primary to a standard secondary replica. The
-  `read_only` flag is cleared because the failover group is no longer primary.
+  read-only flag is cleared because the failover group is no longer primary.
 
 No special handling is needed beyond the existing failover steps, because the source was
 already blocking writes before the failover.
@@ -207,12 +207,12 @@ unaffected.
 ## Observability
 
 [SHOW FAILOVER GROUPS](/sql-reference/sql/show-failover-groups) and
-[SHOW REPLICATION GROUPS](/sql-reference/sql/show-replication-groups) include a `read_only`
-column. You can set read-only mode only on a primary failover group.
+[SHOW REPLICATION GROUPS](/sql-reference/sql/show-replication-groups) include an
+`is_primary_read_only` column. You can set read-only mode only on a primary failover group.
 
 | Column | Type | Description |
 | --- | --- | --- |
-| `read_only` | BOOLEAN | `TRUE` for a primary failover group in read-only mode. `FALSE` for a primary failover group that isn’t in read-only mode. NULL for a secondary failover group. NULL for a replication group, whether primary or secondary. |
+| `is_primary_read_only` | BOOLEAN | `TRUE` for a primary failover group in read-only mode. `FALSE` for a primary failover group that isn’t in read-only mode. NULL for a secondary failover group. NULL for a replication group, whether primary or secondary. |
 
 Expand
 

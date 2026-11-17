@@ -340,6 +340,28 @@ client with tracing set up, the API span appears under the SDK span in the same 
 information about destination settings, delivery, and limits, see
 [Set up OpenTelemetry with the Claude API](https://platform.claude.com/docs/en/manage-claude/opentelemetry/api).
 
+### Attribute requests with baggage
+
+To tag requests with the agent or conversation that made them, send a W3C `baggage` header on the
+inference request. The gateway records each baggage entry on its span:
+
+```
+baggage: gen_ai.agent.id=claims-agent,gen_ai.agent.name=Claims%20Agent,gen_ai.agent.version=2026-09-24,team=claims
+```
+
+- `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`, `gen_ai.agent.description`, and
+  `gen_ai.conversation.id` are recorded under the same names in `record_attributes`. Keys are
+  case-sensitive.
+- Any other key is recorded as `http.request.header.baggage.<key>`, for example
+  `http.request.header.baggage.team`.
+- Values are percent-decoded. The `baggage` header itself isn’t recorded.
+- A value the gateway already sets takes precedence. For example, an
+  `x-snowflake-ai-gateway-conversation-id` header wins over a `gen_ai.conversation.id` baggage key.
+- If the header isn’t valid W3C baggage, no baggage entries are recorded for that request.
+
+Baggage values are stored in the event table as sent, and should be treated with similar care as taken with any
+PII or personal data.
+
 ## What the gateway records
 
 Traces are stored in a Snowflake [event table](/developer-guide/logging-tracing/event-table-setting-up),
@@ -375,9 +397,10 @@ the individual request.
 
 | Attribute | Description |
 | --- | --- |
-| `resource_attributes:"ai_gateway_id"` | The identifier of the gateway that served the request. |
-| `resource_attributes:"gateway_name"` | The name of the gateway that served the request. |
-| `resource_attributes:"user"` | The user who sent the request. |
+| `resource_attributes:"snow.ai_gateway.id"` | The identifier of the gateway that served the request. |
+| `resource_attributes:"snow.ai_gateway.name"` | The name of the gateway that served the request. |
+| `resource_attributes:"snow.user.name"` | The user who sent the request. |
+| `resource_attributes:"snow.ai_gateway.payload_capture"` | Whether prompt and response content was captured for the request: `CAPTURED`; `NOT_REQUESTED` when the specification doesn’t turn on capture; `SUPPRESSED_BY_POLICY` when the user is excluded through [`exclude_tags`](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-exclude-from-capture); or `SUPPRESSED_ON_ERROR` when the exclusion check couldn’t run, so capture was turned off. |
 
 Expand
 
@@ -391,7 +414,8 @@ Show lessSee more
 | `record_attributes:"gen_ai.provider.name"` | The provider that served the request, `anthropic` or `openai`. |
 | `record_attributes:"gen_ai.request.model"` | The model requested. `unknown` when the model couldn’t be resolved. |
 | `record_attributes:"gen_ai.response.model"` | The model that served the response. Set on responses only. |
-| `record_attributes:"gen_ai.conversation.id"` | The conversation thread the turn belongs to, taken from the `x-snowflake-ai-gateway-conversation-id` header, or `x-claude-code-session-id` when that isn’t present. |
+| `record_attributes:"gen_ai.conversation.id"` | The conversation thread the turn belongs to, taken from the `x-snowflake-ai-gateway-conversation-id` header, or `x-claude-code-session-id` when that isn’t present. If neither header is sent, the `gen_ai.conversation.id` [baggage](#label-cortex-ai-gateway-baggage) key is used. |
+| `record_attributes:"gen_ai.agent.id"`, `record_attributes:"gen_ai.agent.name"`, `record_attributes:"gen_ai.agent.version"`, `record_attributes:"gen_ai.agent.description"` | The agent that sent the request, taken from the matching [baggage](#label-cortex-ai-gateway-baggage) keys. Set only when the caller sends them. |
 | `record_attributes:"gen_ai.usage.input_tokens"`, `record_attributes:"gen_ai.usage.output_tokens"` | Total input tokens, including cached input tokens, and total output tokens for the span. |
 | `record_attributes:"gen_ai.usage.cache_creation.input_tokens"`, `record_attributes:"gen_ai.usage.cache_read.input_tokens"` | Prompt cache write and read tokens. These counts are subsets of `gen_ai.usage.input_tokens`, not additional tokens. Populated intermittently. |
 | `record_attributes:"gen_ai.request.max_tokens"` | The `max_tokens` value sent with the request. |
@@ -416,7 +440,7 @@ For credits consumed, see [AI\_GATEWAY\_USAGE\_HISTORY view](/sql-reference/acco
 | --- | --- |
 | `record_attributes:"http.request_id"` | The request identifier. Set on every span. |
 | `record_attributes:"http.status_code"` | The HTTP status code of the response. A value of 400 or greater marks a failed span. |
-| `record_attributes:"http.request.header.*"` | Selected request headers, including `:method`, `user-agent`, `content-length`, `anthropic-beta`, and `x-claude-code-session-id`. Snowflake-internal headers are excluded. |
+| `record_attributes:"http.request.header.*"` | Selected request headers, including `:method`, `user-agent`, `content-length`, `anthropic-beta`, and `x-claude-code-session-id`. Snowflake-internal headers are excluded. Baggage keys other than the agent and conversation keys are recorded as `http.request.header.baggage.<key>`. |
 
 Expand
 
@@ -443,7 +467,7 @@ WITH ev AS (
          record_attributes:"gen_ai.request.model"::string               AS model,
          record_attributes:"gen_ai.input.messages"::string              AS llm_input,
          record_attributes:"gen_ai.conversation.id"::string             AS conversation_id,
-         resource_attributes:"user"::string                             AS user_name,
+         resource_attributes:"snow.user.name"::string                   AS user_name,
          TRY_TO_NUMBER(record_attributes:"http.status_code"::string)     AS http_status,
          start_timestamp,
          timestamp

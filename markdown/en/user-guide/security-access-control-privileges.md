@@ -154,7 +154,6 @@ The remaining sections in this topic describe the specific privileges available 
 | AUDIT | Grants the ability to set the [ENABLE\_UNREDACTED\_QUERY\_SYNTAX\_ERROR](/sql-reference/parameters#label-enable-unredacted-query-syntax-error) and [ENABLE\_UNREDACTED\_SECURE\_OBJECT\_ERROR](/sql-reference/parameters#label-enable-unredacted-secure-object-error) user parameters. |  |
 | BIND SERVICE ENDPOINT | Enables the ability to create a service that supports public endpoints. For more information about public endpoints, see [Ingress: Using a service from outside Snowflake](/developer-guide/snowpark-container-services/working-with-services#label-snowpark-containers-service-communicating-ingress) | Must be granted by the ACCOUNTADMIN role. |
 | CANCEL QUERY | Grants the ability to cancel queries executed by any user in the account. |  |
-| CREATE AGENT | Enables creating a new Cortex Agent. |  |
 | CREATE ACCOUNT | Enables a data provider to create a new managed account (i.e. reader account). For more details, see [Manage reader accounts](/user-guide/data-sharing-reader-create). | Must be granted by the ACCOUNTADMIN role. |
 | CREATE APPLICATION | Enables creating a new [Snowflake Native App](/developer-guide/native-apps/native-apps-about) from an application package or listing. | Must be granted by the ACCOUNTADMIN role. |
 | CREATE APPLICATION PACKAGE | Enables creating a new [application package](/developer-guide/native-apps/creating-app-package) to develop a Snowflake Native App. | Must be granted by the ACCOUNTADMIN role. |
@@ -1577,7 +1576,7 @@ Show lessSee more
 | OWNERSHIP | Enables full control over the Cortex Agent. The role with this privilege can also remove an agent from a schema. |
 | MODIFY | Enables the ability to modify a Cortex Agent. |
 | MONITOR | Enables the ability to view threads, logs, and traces of the Cortex Agent. |
-| USAGE | Enables querying the Cortex Agent to generate responses. |
+| USAGE | Enables querying the Cortex Agent to generate responses. This privilege is also supported `ON FUTURE AGENTS`. |
 
 Expand
 

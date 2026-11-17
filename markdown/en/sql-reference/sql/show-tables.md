@@ -209,6 +209,9 @@ For more detailed information about table size in bytes as it relates to cloning
   must execute the SHOW TABLES command for a single schema. You can use the IN SCHEMA `schema_name` parameter to
   the SHOW TABLES command. Alternatively, you can use the schema in the current context by executing a USE SCHEMA command
   before executing a SHOW TABLES command.
+- The output does not include [online feature tables](/sql-reference/sql/create-online-feature-table), including dropped online
+  feature tables listed with the HISTORY keyword. To list online feature tables, use
+  [SHOW ONLINE FEATURE TABLES](/sql-reference/sql/show-online-feature-tables).
 
 - The command doesn’t require a running warehouse to execute.
 - The command only returns objects for which the current user’s current role has been granted at least one access privilege.

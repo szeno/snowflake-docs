@@ -361,10 +361,12 @@ Private Service Connect:
    +--------------------+-------------------------------+---------------------+-------------------+-----------------+---------------+-------------------------------+-------------------------------------+-------------------------------------------+-------------------+-------------------+
    ```
 
-   Note that the output of this command in the CONNECTION\_URL column should match the `privatelink-connection-urls` list when calling
-   the [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config) function in either `myaccount1` or `myaccount2`. This list already
-   contains the connection URL formatted with the `privatelink` segment (as shown in the next step). You can optionally run the command
-   in this step or call the function. If calling the function, use the URLs as is without any further modification.
+   Note that the CONNECTION\_URL column doesn’t include the `privatelink` segment. The next step shows how to add the `privatelink`
+   segment and the `ocsp` segment to the CONNECTION\_URL value. Alternatively, call the
+   [SYSTEM$GET\_PRIVATELINK\_CONFIG](/sql-reference/functions/system_get_privatelink_config) function in either `myaccount1` or `myaccount2`. In the function output,
+   the `privatelink-connection-urls` list contains the connection URLs with the `privatelink` segment already added, and the
+   `privatelink-connection-ocsp-urls` list contains the corresponding OCSP URLs. These lists also include the Snowsight variant of each
+   URL, which begins with `app-`. If you call the function, use these URLs as is without any further modification.
 2. Record the CONNECTION\_URL column value, and create two URLs to support private connectivity and [OCSP](/user-guide/ocsp).
 
    1. Add a `privatelink` segment to the URL just before `snowflakecomputing.com`

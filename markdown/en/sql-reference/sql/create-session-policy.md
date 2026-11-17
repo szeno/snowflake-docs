@@ -123,6 +123,8 @@ CREATE [OR REPLACE] SESSION POLICY [IF NOT EXISTS] <name>
 
     For predefined scopes, YAML structure, and examples, see [Restricted Session Scope for agents](/user-guide/restricted-session-scope).
 
+    Default: `null`. If you do not set the property, no agent scope is applied.
+
 `COMMENT = 'string_literal'`
 :   Adds a comment or overwrites an existing comment for the session policy.
 

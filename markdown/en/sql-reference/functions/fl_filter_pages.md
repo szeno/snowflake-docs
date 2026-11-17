@@ -64,8 +64,10 @@ AI\_PARSE\_DOCUMENT functions, which then process only the selected pages.
   operations on that value don’t honor it.
 - Page indexes in the result are indexes in the original document. Selecting pages 7, 8, and 9 doesn’t
   renumber them to 0, 1, and 2, and a selection with a gap in it doesn’t close that gap.
-- Page counts in a response tell you how many pages were processed, not which ones. They aren’t a reliable
-  way to confirm how a relative range resolved.
+- In AI\_PARSE\_DOCUMENT output, `metadata.pageCount` is the total number of pages in the source document, not
+  the number of pages you selected. The number of pages processed and billed is in
+  `metadata.processedPageCount`. Neither count tells you which pages were processed, so they aren’t a
+  reliable way to confirm how a relative range resolved. Use the page indexes in the result instead.
 - An input that isn’t paginated, such as plain text, can’t be filtered by page and returns an error.
 
 ## Error conditions

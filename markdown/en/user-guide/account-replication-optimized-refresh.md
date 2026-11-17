@@ -145,7 +145,6 @@ usual.
   For details, see [What to expect the first time you enable Optimized Refresh](#label-optimized-refresh-first-refresh).
 - After you change failover group membership, for example by running [ALTER FAILOVER GROUP](/sql-reference/sql/alter-failover-group) to
   add or remove databases, shares, or other objects.
-- When the failover group contains Native App application packages. Those refreshes currently fall back to a full refresh.
 - Under certain rare conditions, for example a new Snowflake release that introduces replication support for a new feature.
 
 ## RPO Assurance

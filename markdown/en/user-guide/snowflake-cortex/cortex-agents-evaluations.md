@@ -21,6 +21,7 @@ The ability to run a Cortex Agent evaluation requires the role that runs the eva
 
 - The SNOWFLAKE.CORTEX\_USER, SNOWFLAKE.CORTEX\_AGENT\_USER, SNOWFLAKE.CORTEX\_ANALYST\_USER, or SNOWFLAKE.CORTEX\_REST\_API\_USER database role
 - The EXECUTE TASK ON ACCOUNT permission
+- Access to the judge models, if your account enforces model-level access control (the CORTEX\_MODELS\_ALLOWLIST parameter isn’t set to `'All'`, or ENABLE\_CORTEX\_MODEL\_ROLE\_ALL\_GRANT\_TO\_PUBLIC is FALSE). The role needs access to the judge model of each system metric version you select (selecting a [metric version](#label-agent-evaluation-metric-versions) pins its judge model) and to any model named in a custom metric. If the role lacks access, the judge call is denied before the judge model runs, and the evaluation returns scores of 0 with no actionable error, even when direct `AI_COMPLETE` calls to the model succeed. To grant model access, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac).
 - The USAGE permission on the database and schema containing your agent
 - The USAGE permission on the database and schema containing your evaluation data
   - If creating the input table that holds your evaluation inputs, CREATE TABLE ON SCHEMA
@@ -1065,7 +1066,9 @@ WITH eval_requests AS (
       PARSE_JSON(record_attributes:"ai.observability.eval.full_metadata"::VARCHAR)
         :"ai.observability.eval.inference_request_ids"::VARCHAR, ',')) AS ids
   WHERE record_attributes:"ai.observability.span_type"::VARCHAR = 'eval'
-    AND record_attributes:"snow.ai.observability.run.name"::VARCHAR = 'run-1'
+    -- '<run_name>' is the run name shown on the agent's Evaluations tab, or the
+    -- run_name you passed to EXECUTE_AI_EVALUATION('START', ...).
+    AND record_attributes:"snow.ai.observability.run.name"::VARCHAR = '<run_name>'
 )
 SELECT
   eval_requests.run_name,
@@ -1077,3 +1080,38 @@ FROM eval_requests
 INNER JOIN SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_USAGE_HISTORY AS rest_usage
   ON rest_usage.request_id = eval_requests.request_id;
 ```
+
+To total judge token usage across all runs instead of one, drop the run-name filter and aggregate by run and metric:
+
+Copy code
+
+```
+WITH eval_requests AS (
+  SELECT
+    record_attributes:"snow.ai.observability.run.name"::VARCHAR AS run_name,
+    record_attributes:"ai.observability.eval.metric_name"::VARCHAR AS metric_name,
+    ids.value::VARCHAR AS request_id
+  FROM SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS,
+    LATERAL FLATTEN(input => STRTOK_TO_ARRAY(
+      PARSE_JSON(record_attributes:"ai.observability.eval.full_metadata"::VARCHAR)
+        :"ai.observability.eval.inference_request_ids"::VARCHAR, ',')) AS ids
+  WHERE record_attributes:"ai.observability.span_type"::VARCHAR = 'eval'
+)
+SELECT
+  eval_requests.run_name,
+  eval_requests.metric_name,
+  SUM(rest_usage.tokens) AS total_tokens
+FROM eval_requests
+INNER JOIN SNOWFLAKE.ACCOUNT_USAGE.CORTEX_REST_API_USAGE_HISTORY AS rest_usage
+  ON rest_usage.request_id = eval_requests.request_id
+GROUP BY eval_requests.run_name, eval_requests.metric_name
+ORDER BY eval_requests.run_name, eval_requests.metric_name;
+```
+
+Note
+
+A query like these can legitimately return no rows:
+
+- `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` is per account, so you must run the query in the same account where the evaluation ran.
+- Only metrics scored by an LLM judge produce inference request IDs. `tool_selection_accuracy` never does, since its scoring is deterministic and uses no judge. An empty result means there was no judge inference to attribute, not that the run had no cost.
+- The agent-invocation portion of a run is billed and tracked separately, in [CORTEX\_AGENT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_agent_usage_history), and isn’t covered by this join. See **Cost considerations** above for the full breakdown of evaluation charges.

@@ -19,8 +19,8 @@ Copy code
 ```
 CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
   FROM '<source_location>'
-  [ DBT_VERSION = <version_number> ]
-  [ DEFAULT_TARGET = <default_target> ]
+  [ DBT_VERSION = '<version_number>' ]
+  [ DEFAULT_TARGET = '<default_target>' ]
   [ DEFAULT_ENVIRONMENT = '<environment_name>' ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
   [ AUTO_COMPILE = { TRUE | FALSE } ]
@@ -74,7 +74,7 @@ CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
 
     Default: No value
 
-`DBT_VERSION = version_number`
+`DBT_VERSION = 'version_number'`
 :   Specifies a version for the dbt project object.
 
     If no value is specified, the system defaults to the version set by the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter. For more information, see [Set the account-level default version](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions#label-dbt-projects-set-account-level-default).
@@ -100,7 +100,7 @@ CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
 
     Default: `TRUE`
 
-`DEFAULT_TARGET = default_target`
+`DEFAULT_TARGET = 'default_target'`
 :   Specifies the profile used for compilation and subsequent executions (for example, `prod`) of the dbt project object. You can override this parameter by using the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project)
     command with `ARGS = '--target <other_target>'`.
 

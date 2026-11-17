@@ -168,6 +168,7 @@ We expect Providers to deliver the Products they advertise in their Listing Info
 
 - **Publishing requirements.** We require that applications meet the [Enforced standards](/collaboration/guidelines-reqs-for-listing-apps#label-guidelines-reqs-enforced-standards).
 - **Security requirements.** Providers must comply with our [Native Apps Framework security requirements](/developer-guide/native-apps/security-overview).
+- **Publishing limit.** Providers may publish up to 10 public Native Applications on Snowflake Marketplace. Providers may exceed this limit only where they demonstrate clear consumer usage and adoption across their Native Application portfolio, as described in [Publishing limits for Native Apps](/collaboration/guidelines-reqs-for-listing-apps#label-guidelines-reqs-publishing-limits).
 
 ### AI product requirements
 

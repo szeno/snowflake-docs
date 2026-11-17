@@ -26,10 +26,14 @@ SHOW GRANTS TO {
   | APPLICATION ROLE [ <app_name>. ]<app_role_name>
   | SERVICE ROLE <service_name>!<service_role_name>
   | <class_name> ROLE <instance_name>!<instance_role_name>
-  | ROLE <role_name>
   | SHARE <share_name> [ IN APPLICATION PACKAGE <app_package_name> ]
-  | USER <user_name>
 } [ LIMIT <rows> ]
+
+SHOW GRANTS TO {
+  DATABASE ROLE <database_role_name>
+  | ROLE <role_name>
+  | USER <user_name>
+} [ INCLUDE HIERARCHY ] [ LIMIT <rows> ]
 
 SHOW GRANTS OF {
   APPLICATION ROLE <app_role_name>
@@ -43,9 +47,9 @@ SHOW FUTURE GRANTS IN SCHEMA { <schema_name> } [ LIMIT <rows> ]
 
 SHOW FUTURE GRANTS IN DATABASE { <database_name> } [ LIMIT <rows> ]
 
-SHOW FUTURE GRANTS TO ROLE <role_name> [ LIMIT <rows> ]
+SHOW FUTURE GRANTS TO ROLE <role_name> [ INCLUDE HIERARCHY ] [ LIMIT <rows> ]
 
-SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name>
+SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name> [ INCLUDE HIERARCHY ] [ LIMIT <rows> ]
 ```
 
 ## Variants
@@ -92,6 +96,9 @@ SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name>
 
         For details, see the [instance role example](#show-grants-instance-role).
 
+    `DATABASE ROLE database_role_name`
+    :   Lists all privileges and roles granted to the database role.
+
     `ROLE role_name`
     :   Lists all privileges and roles granted to the role. If the role has a grant on a temporary object, then the grant only exists in the
         session that the temporary object was created.
@@ -116,6 +123,30 @@ SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name>
 
     `USER user_name`
     :   Lists all the roles granted to the user. Note that the PUBLIC role, which is automatically available to every user, is not listed.
+
+    `INCLUDE HIERARCHY`
+    :   Expands the [role hierarchy](/user-guide/security-access-control-overview#label-role-hierarchy-and-privilege-inheritance) for the
+        specified grantee and lists the grants held by every role in that hierarchy. For grants held by a role, `grantee_name` identifies
+        that role, including when the role is granted directly or indirectly to the role or user you specified.
+
+        You can specify `INCLUDE HIERARCHY` only with `DATABASE ROLE`, `ROLE`, or `USER`. See the usage notes for the grantees that fail
+        and for grants that the expansion omits.
+
+        The expanded hierarchy includes the following:
+
+        - The specified role, or the roles granted to the specified user.
+        - Account roles, database roles, and application roles granted to those roles, recursively.
+        - The account-level PUBLIC role.
+
+        The expansion does not list grants held by instance roles, service roles, or class roles. Role-membership grants of those roles
+        to an account role still appear.
+
+        For `SHOW GRANTS TO USER`, the output includes the user’s role-membership rows and the privileges granted directly to the user,
+        with or without this clause. With this clause, it also includes the grants held by each role in the user’s hierarchy. For the
+        user’s own rows, `grantee_name` identifies the user.
+
+        The grants listed for each account role or database role in the hierarchy match the output of `SHOW GRANTS TO ROLE` (or
+        `SHOW GRANTS TO DATABASE ROLE`) for that role.
 
 `SHOW GRANTS OF...`
 :   `APPLICATION ROLE [ app_name. ]app_role`
@@ -144,13 +175,31 @@ SHOW FUTURE GRANTS TO DATABASE ROLE <database_role_name>
 `SHOW FUTURE GRANTS TO ROLE role_name`
 :   Lists all privileges on new (i.e. future) objects of a specified type in a database or schema granted to the role.
 
+    Specify `INCLUDE HIERARCHY` to also list future grants held by every account role, database role, and application role in the
+    specified role’s hierarchy, including the account-level PUBLIC role. Each row’s `grantee_name` is the role that holds the
+    future grant. Future grants held by instance roles, service roles, or class roles are omitted. See the usage notes.
+
 `SHOW FUTURE GRANTS TO DATABASE ROLE database_role_name`
 :   Lists all privileges on new (i.e. future) objects of a specified type in a database or schema granted to the database role.
+
+    Specify `INCLUDE HIERARCHY` to also list future grants held by every account role, database role, and application role in the
+    specified database role’s hierarchy, including the account-level PUBLIC role. Each row’s `grantee_name` is the role that holds
+    the future grant. Future grants held by instance roles, service roles, or class roles are omitted. See the usage notes.
 
     A shared database role does not support future grants. For details, see the usage notes in the [GRANT DATABASE ROLE … TO SHARE](/sql-reference/sql/grant-database-role-share) command.
 
 ## Usage notes
 
+- `INCLUDE HIERARCHY` applies only to `SHOW GRANTS TO ROLE`, `SHOW GRANTS TO DATABASE ROLE`, `SHOW GRANTS TO USER`,
+  `SHOW FUTURE GRANTS TO ROLE`, and `SHOW FUTURE GRANTS TO DATABASE ROLE`. Place it immediately after the grantee name
+  and before `LIMIT`. For caller grants, specify it on [SHOW CALLER GRANTS](/sql-reference/sql/show-caller-grants).
+- The command fails if you specify `INCLUDE HIERARCHY` with `APPLICATION`, `APPLICATION ROLE`, `SHARE`, `DATABASE`,
+  `SERVICE ROLE`, or an instance role.
+- When you specify `INCLUDE HIERARCHY`, the `grantee_name` column identifies the role that holds each grant, which can be a role
+  granted directly or indirectly to the role or user in the `SHOW` statement. For grants held by a user, `grantee_name` is the user.
+- `INCLUDE HIERARCHY` does not list grants held by instance roles, service roles, or class roles, even if those roles are
+  granted to a role in the hierarchy. A role-membership grant of an instance role or service role to an account role still
+  appears, with `granted_on` set to `INSTANCE_ROLE` or `SERVICE ROLE`.
 - The `granted_by` column indicates the role that authorized a privilege grant to the grantee. The authorization role is known as the
   *grantor*.
 
@@ -263,6 +312,30 @@ SHOW GRANTS TO ROLE analyst;
 | Wed, 17 Dec 2014 18:19:37 -0800 | CREATE WAREHOUSE | ACCOUNT    | DEMOENV    | ROLE       |  ANALYST     | false        | SYSADMIN   |
 +---------------------------------+------------------+------------+------------+------------+--------------+--------------+------------+
 ```
+
+List grants held by `HIER_PARENT` and by every role in its hierarchy. In this example, `HIER_CHILD` is granted to `HIER_PARENT`,
+and `HIER_GRANDCHILD` is granted to `HIER_CHILD`:
+
+Copy code
+
+```
+SHOW GRANTS TO ROLE HIER_PARENT INCLUDE HIERARCHY;
+```
+
+```
++---------------------------------+-----------+------------+------------------+------------+------------------+--------------+------------+
+| created_on                      | privilege | granted_on | name             | granted_to | grantee_name     | grant_option | granted_by |
+|---------------------------------+-----------+------------+------------------+------------+------------------+--------------+------------|
+| Wed, 19 Aug 2026 10:00:00 -0700 | USAGE     | ROLE       | HIER_CHILD       | ROLE       | HIER_PARENT      | false        | SYSADMIN   |
+| Wed, 19 Aug 2026 10:00:00 -0700 | USAGE     | ROLE       | HIER_GRANDCHILD  | ROLE       | HIER_CHILD       | false        | SYSADMIN   |
+| Wed, 19 Aug 2026 10:00:00 -0700 | USAGE     | DATABASE   | HIER_DB          | ROLE       | HIER_CHILD       | false        | SYSADMIN   |
+| Wed, 19 Aug 2026 10:00:00 -0700 | MONITOR   | DATABASE   | HIER_DB          | ROLE       | HIER_GRANDCHILD  | false        | SYSADMIN   |
++---------------------------------+-----------+------------+------------------+------------+------------------+--------------+------------+
+```
+
+Without `INCLUDE HIERARCHY`, `SHOW GRANTS TO ROLE HIER_PARENT` returns only the role-membership grant of `HIER_CHILD` to
+`HIER_PARENT`. Database privileges granted to `HIER_CHILD` and `HIER_GRANDCHILD` appear only when you expand the hierarchy.
+The output can also include grants to the PUBLIC role, which every account role hierarchy includes.
 
 List all privileges granted to the `public` role:
 

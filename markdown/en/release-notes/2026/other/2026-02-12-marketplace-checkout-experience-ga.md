@@ -8,4 +8,4 @@ Note
 
 Sales tax information is only available for consumers in the U.S. and Canada.
 
-For more information, see [View and accept a private offer with flat-fee pricing](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-private-flat-fee-checkout).
+For more information, see [View and accept a private offer](/user-guide/collaboration/listings/pricing-plans-offers/consumers-manage-offers#label-consumers-manage-offers-private-flat-fee-checkout).

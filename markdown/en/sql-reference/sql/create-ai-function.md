@@ -1,9 +1,5 @@
 # CREATE AI FUNCTION
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 CREATE AI FUNCTION lets you turn custom AI logic into a reusable, governed Snowflake function that can be used
 across applications, workflows, and SQL queries. Use CREATE AI FUNCTION when you want to package AI-powered
 logic behind a stable SQL interface and manage it consistently with the rest of your Snowflake environment.

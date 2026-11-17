@@ -430,6 +430,15 @@ For more details about the privileges supported for each object type, see [Acces
   [personal database](/user-guide/personal-databases). For a full list of privileges, see
   [Application Service privileges](/user-guide/security-access-control-privileges#label-application-service-privileges). For grant patterns, see
   [Access control for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/access-control).
+- For Cortex Agents, the `USAGE` privilege can be granted on all or future agents in a schema. For example:
+
+  Copy code
+
+  ```
+  GRANT USAGE ON FUTURE AGENTS IN SCHEMA mydb.myschema TO ROLE myrole;
+  ```
+
+  For a full list of privileges, see [Cortex Agent privileges](/user-guide/security-access-control-privileges#label-cortex-agent-privileges).
 
 ## Access control requirements
 

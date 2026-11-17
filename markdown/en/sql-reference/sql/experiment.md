@@ -1,9 +1,5 @@
 # EXPERIMENT (CREATE / EXECUTE / SHOW / DROP)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 An experiment is a schema-level Snowflake object that packages an AI workload — either an evaluation or an
 optimization — and records its results as a set of runs. You create an experiment with a specification, execute
 it (asynchronously, on serverless compute), then read its runs, metrics, and parameters with `SHOW` commands.
@@ -275,8 +271,6 @@ DROP EXPERIMENT IF EXISTS my_db.my_schema.redact_opt_exp;
 
 ## Limitations
 
-- **Public preview.** The AI-function evaluation and optimization capabilities (`FROM SPECIFICATION`,
-  `EXECUTE EXPERIMENT`, `DESCRIBE EXPERIMENT`) are in public preview and rolling out to accounts.
 - **Executable types only.** Only `AI_FUNCTION_EVALUATION` and `AI_FUNCTION_OPTIMIZATION` experiments can be
   executed.
 - **Single execution.** An experiment executes once; re-running requires a new (or replaced) experiment.

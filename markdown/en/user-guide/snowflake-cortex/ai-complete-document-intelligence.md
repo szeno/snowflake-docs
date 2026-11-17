@@ -203,6 +203,9 @@ model’s context window.
 | `gemini-3.1-pro` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 3,000 | 20 |
 | `gemini-3.1-flash-lite` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `gemini-3.5-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-3.7-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-3.8-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-4-argon` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `claude-haiku-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-sonnet-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-opus-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
@@ -216,6 +219,13 @@ model’s context window.
 Expand
 
 Show lessSee more
+
+File size is the maximum size of each document. Max pages is the maximum number of pages in each document, not the
+total across all documents in a request. All documents in a request, together with the prompt, must also fit within the
+model’s context window.
+
+For image, audio, and video limits, see [Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations)
+in [Cortex AI Functions: Multimodal](/user-guide/snowflake-cortex/ai-multimodal).
 
 ### Access control requirements
 

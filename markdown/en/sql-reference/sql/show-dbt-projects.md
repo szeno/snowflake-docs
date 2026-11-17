@@ -138,7 +138,7 @@ The output of the command includes the following columns, which describe the pro
 | `updated_on` | Date and time when the dbt project object was last updated. |
 | `owner` | The name of the role that owns the dbt project object. |
 | `comment` | The comment associated with the dbt project object. |
-| `dbt_version` | The version for the dbt project object. If no value is specified, the system uses version 1.9.4 by default. |
+| `dbt_version` | The version for the dbt project object. If no value is specified, the system defaults to the version set by the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter. |
 | `dbt_snowflake_version` | The Snowflake version the dbt project object is on. |
 | `default_target` | The default execution target (for example, `prod` or `dev`) used by dbt commands executed through Snowflake. |
 | `default_environment` | The `DEFAULT_ENVIRONMENT` attribute set on the dbt project object. Returns `NULL` if the attribute isn’t set. This column doesn’t show the `default_environment:` value from `env.yml`. Set the attribute with [CREATE DBT PROJECT](/sql-reference/sql/create-dbt-project) or [ALTER DBT PROJECT](/sql-reference/sql/alter-dbt-project). For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables). |

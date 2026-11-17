@@ -145,7 +145,7 @@ After editing the override JSON, re-enable the `StandardShopifyObjectRegistrySer
 
 ## Schema changed in Shopify
 
-Schema evolution isn’t supported. If a Shopify object’s fields change (fields added or removed), [reset the connector state for the affected object](/user-guide/data-integration/openflow/connectors/shopify/maintain#label-reload-a-specific-object) and drop the corresponding Snowflake table to re-snapshot with the updated schema.
+Schema evolution isn’t supported. If a Shopify object’s fields change (fields added or removed), [reset the connector state for the affected object](/user-guide/data-integration/openflow/connectors/shopify/maintain#label-reload-a-specific-object) to re-snapshot with the updated schema. The next bulk load replaces the destination table with the updated schema. The exception is an object or child table that returns no records in the new snapshot: the connector marks the load complete without replacing the table, so the old schema remains. In that case, drop the affected Snowflake table manually so that the updated schema takes effect when records next arrive.
 
 ## Deletes aren’t appearing in Snowflake
 

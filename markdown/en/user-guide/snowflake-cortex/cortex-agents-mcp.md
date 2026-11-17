@@ -164,7 +164,7 @@ tools:
     title: "Semantic view for revenue"
 ```
 
-Using the Search tool requests, your client can perform unstructured search on their data.
+Using the Search tool, your client can perform unstructured search on its data.
 
 Copy code
 
@@ -384,7 +384,7 @@ CREATE MCP SERVER my_mcp_server
         identifier: "EXAMPLE_DATABASE.AGENTS.MULTIPLY_BY_TEN"
         name: "multiply_by_ten"
         type: "GENERIC"
-        description: "Multiplied input value by ten and returns the result."
+        description: "Multiplies input value by ten and returns the result."
         config:
           type: "function"
           warehouse: "COMPUTE_SERVICE_WAREHOUSE"
@@ -432,7 +432,7 @@ CREATE MCP SERVER my_mcp_server
         identifier: "EXAMPLE_DATABASE.AGENTS.MULTIPLY_BY_TEN_SP"
         name: "multiply_by_ten_sp"
         type: "GENERIC"
-        description: "Multiplied input value by ten and returns the result."
+        description: "Multiplies input value by ten and returns the result."
         config:
           type: "procedure"
           warehouse: "COMPUTE_SERVICE_WAREHOUSE"
@@ -675,7 +675,7 @@ can reach it. For details, see
      OAUTH_USE_SECONDARY_ROLES = NONE
      ALLOWED_ROLES_LIST = ('<mcp_access_role>')
    ```
-2. Then, call the system function to retrieve your client id and keys for client configuration. The integration name is case sensitive and must be in uppercase.
+2. Then, call the system function to retrieve your client ID and keys for client configuration. The integration name is case sensitive and must be in uppercase.
 
    Copy code
 
@@ -1276,8 +1276,9 @@ To stop a run, call `ASYNC_AGENT_RUN_CANCEL` with the same `run_id`.
 
 - Snowflake supports Model Context Protocol revision `2025-11-25`.
 - The Snowflake-managed MCP server is available in government regions, except Azure US Gov Virginia (non-FedRAMP High), and hasn’t yet completed formal FedRAMP assessment. For authorization status, contact your Snowflake account team.
+- Agent invocations through the Snowflake-managed MCP server are subject to [Cortex Agents rate limits](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-rate-limits).
 
-Snowflake-managed MCP server does not support the following constructs in the MCP protocol: resources, prompts, roots, notifications, version negotiations, life cycle phases, and sampling.
+Snowflake-managed MCP server does not support the following constructs in the MCP protocol: resources, prompts, roots, notifications, version negotiations, lifecycle phases, and sampling.
 
 Each MCP server supports a maximum of 50 tools. This limit includes all tool types: Cortex Search, Cortex Analyst, Cortex Agents, coding agents, SQL execution, and custom (generic) tools. If you need more tools, create additional MCP servers. Higher tool counts can degrade tool-selection accuracy.
 

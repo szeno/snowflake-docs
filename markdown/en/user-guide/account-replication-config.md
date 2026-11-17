@@ -75,7 +75,7 @@ and refresh objects.
 
 #### Executed on source account
 
-1. Create a role and grant it the CREATE FAILOVER GROUP privilege. This step is *optional*:
+1. Create a role and grant it the CREATE FAILOVER GROUP privilege. This step is *optional*. Use it to delegate group creation to a custom role. If you skip it, use ACCOUNTADMIN (or any role that already has the privilege) in place of `myrole` in later steps:
 
    Copy code
 
@@ -111,7 +111,7 @@ and refresh objects.
 
 #### Executed on target account
 
-1. Create a role in the target account and grant it the CREATE FAILOVER GROUP privilege. This step is *optional*:
+1. Create a role in the target account and grant it the CREATE FAILOVER GROUP privilege. This step is *optional*. Use it to delegate group creation to a custom role. If you skip it, use ACCOUNTADMIN (or any role that already has the privilege) in place of `myrole` in later steps:
 
    Copy code
 
@@ -208,7 +208,7 @@ it causes unexpected results when an organization has multiple accounts that sha
 
 ### Step 1: Create a role with the CREATE FAILOVER GROUP privilege in the source account — *Optional*
 
-Create a role and grant it the CREATE FAILOVER GROUP privilege. This step is optional. If you have already created this role, skip to
+Create a role and grant it the CREATE FAILOVER GROUP privilege. This step is optional. Use it to delegate group creation to a custom role. If you skip it, use ACCOUNTADMIN (or any role that already has the privilege) in place of `myrole` in later steps. If you have already created this role, skip to
 [Step 3: Create a primary failover group in a source account](#label-create-primary-failover-group).
 
 Copy code
@@ -393,7 +393,7 @@ CREATE FAILOVER GROUP myfg
 
 ### Step 4: Create a role with the CREATE FAILOVER GROUP privilege in the target account — *Optional*
 
-Create a role in the target account and grant it the CREATE FAILOVER GROUP privilege. This step is optional. If you have already created
+Create a role in the target account and grant it the CREATE FAILOVER GROUP privilege. This step is optional. Use it to delegate group creation to a custom role. If you skip it, use ACCOUNTADMIN (or any role that already has the privilege) in place of `myrole` in later steps. If you have already created
 this role, skip to [Step 5: Create a secondary failover group in the target account](#label-create-secondary-failover-group).
 
 Copy code

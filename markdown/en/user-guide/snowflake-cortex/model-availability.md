@@ -36,6 +36,7 @@ Show lessSee more
 | `claude-opus-5-5` | ✔ | ✔ | ✔ |  | ✔ |
 | `claude-sonnet-5-5` | ✔ | ✔ | ✔ |  | ✔ |
 | `claude-haiku-5-5` | \* | \* | \* |  | \* |
+| `claude-fable-5-2` | \*\* | \*\* | \*\* |  | \*\* |
 | `claude-fable-5-1` | \*\* | \*\* | \*\* |  | \*\* |
 | `claude-fable-5` | \*\* | \*\* | \*\* |  | \*\* |
 | `claude-opus-5` | ✔ | ✔ | ✔ |  | ✔ |
@@ -66,6 +67,8 @@ Show lessSee more
 
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo |
 | --- | --- | --- | --- | --- | --- |
+| `gemini-4-hydrogen` | \* |  | \* |  | \* |
+| `gemini-4-carbon` | \* |  | \* |  | \* |
 | `gemini-4-argon` | ✔ |  | ✔ |  | ✔ |
 | `gemini-3.1-pro` | \* |  | \* |  |  |
 | `gemini-3.8-flash` | ✔ |  | ✔ |  | ✔ |
@@ -242,6 +245,7 @@ Cross-regionEurope
 | `claude-opus-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `claude-sonnet-5-5` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |  |
 | `claude-haiku-5-5` | \* | \* | \* |  |  |  | \* | \* | \* | \* |  |  |  |  |  |
+| `claude-fable-5-2` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5-1` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-fable-5` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `claude-opus-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |  |
@@ -249,7 +253,7 @@ Cross-regionEurope
 | `claude-opus-4-8` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  | ✔ |  |  |  |  |  |
 | `claude-opus-4-7` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |  |
 | `claude-opus-4-6` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ |  | ✔ |  |  |  |  |  |
-| `claude-sonnet-4-6` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
+| `claude-sonnet-4-6` | ✔ | ✔ | ✔ |  |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
 | `claude-opus-4-5` | ✔ | ✔ | ✔ |  |  |  | ✔ |  |  |  |  |  |  |  |  |
 | `claude-sonnet-4-5` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  | ✔ |  |  |
 | `claude-haiku-4-5` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |
@@ -283,6 +287,8 @@ Show lessSee more
 
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `gemini-4-hydrogen` | \* |  |  |  |  |  |  |  |  |  |  |  |  |  | \* |
+| `gemini-4-carbon` | \* |  |  |  |  |  |  |  |  |  |  |  |  |  | \* |
 | `gemini-4-argon` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
 | `gemini-3.1-pro` | \* |  |  |  |  |  |  |  |  |  |  |  |  |  | \* |
 | `gemini-3.8-flash` | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |  | ✔ |
@@ -498,8 +504,8 @@ Cross-regionNorth America
 | `openai-gpt-6.1-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6.1-terra` | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-6-astra` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-sol` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
-| `openai-gpt-6-luna` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-sol` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
+| `openai-gpt-6-luna` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-sol` | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-terra` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |
 | `openai-gpt-5.6-luna` | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  |  |  |  |  |  |  |  |  |

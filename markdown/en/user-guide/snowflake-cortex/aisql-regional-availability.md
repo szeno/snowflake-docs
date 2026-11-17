@@ -26,8 +26,9 @@ against it.
 - **Anthropic Claude Opus** (`claude-opus-5-5`; `claude-opus-5`): Anthropic’s most capable models,
   suited for complex reasoning, coding, long-horizon agentic work, and analysis of large document collections. Both
   models have a 1,000,000-token context window and up to 128,000 output tokens.
-- **Google Gemini** (`gemini-4-argon`, Public Preview): Google’s most capable Gemini model in Snowflake Cortex,
-  suited for advanced reasoning and multimodal tasks, with a 1,000,000-token context window.
+- **Google Gemini** (`gemini-4-carbon`, Public Preview; `gemini-4-argon`): Google’s most capable Gemini models in Snowflake Cortex,
+  suited for advanced reasoning and multimodal tasks. `gemini-4-carbon` has a 1,048,576-token context window and up to
+  32,768 output tokens. `gemini-4-argon` has a 1,000,000-token context window.
 - **OpenAI GPT Astra** (`openai-gpt-6-astra`): OpenAI’s most capable model, suited for complex,
   demanding reasoning work.
 - **OpenAI GPT Sol** (`openai-gpt-6-sol`, `openai-gpt-5.6-sol`): OpenAI’s frontier models for
@@ -52,6 +53,8 @@ Small models are fast and cost-efficient, and suit high-volume tasks like classi
 
 - **Anthropic Claude Haiku** (`claude-haiku-4-5`): optimized for low-latency, high-throughput workloads, with a
   200,000-token context window and up to 64,000 output tokens.
+- **Google Gemini Hydrogen** (`gemini-4-hydrogen`, Public Preview): Google’s fast, low-cost Gemini 4 model for everyday
+  coding and agentic workflows, with a 1,048,576-token context window and up to 32,768 output tokens.
 - **Google Gemini Flash** (`gemini-3.8-flash`): a fast, low-cost Gemini model for high-volume tasks, with a
   1,000,000-token context window.
 - **OpenAI GPT Luna** (`openai-gpt-6-luna`, `openai-gpt-5.6-luna`): fast, low-cost models for
@@ -258,6 +261,8 @@ In the AWS Europe West 1 (Ireland) region:
 |  | `openai-gpt-5-mini` | 272,000 | 8,192 |
 |  | `openai-gpt-5-nano` | 272,000 | 8,192 |
 |  | `openai-gpt-4.1` | 128,000 | 32,000 |
+|  | `gemini-4-hydrogen` | 1,048,576 | 32,768 |
+|  | `gemini-4-carbon` | 1,048,576 | 32,768 |
 |  | `gemini-4-argon` | 1,000,000 | 32,768 |
 |  | `gemini-3.8-flash` | 1,000,000 | 64,000 |
 |  | `gemini-3.7-flash` | 1,000,000 | 64,000 |

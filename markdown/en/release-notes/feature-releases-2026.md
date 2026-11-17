@@ -4,10 +4,16 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
+- [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)
+- [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)
+- [Nov 16, 2026: SCIM provisioning for organization users and organization user groups (Private preview)](/release-notes/2026/other/2026-11-16-organization-scim-private-preview)
+- [Nov 16, 2026: SHOW GRANTS TO … INCLUDE HIERARCHY (General availability)](/release-notes/2026/other/2026-11-16-show-grants-include-hierarchy)
 - [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)
 - [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
 - [Nov 12, 2026: DCM Projects PLAN privilege (Preview)](/release-notes/2026/other/2026-11-12-dcm-plan-privilege-preview)
 - [Nov 12, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-12-dcr)
+- [Nov 12, 2026: Google Gemini 4 Carbon and Hydrogen models (Preview)](/release-notes/2026/other/2026-11-12-gemini-4-carbon-hydrogen-preview)
 - [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
 - [Nov 11, 2026: Openflow Snowflake Deployments in AWS government regions (General availability)](/release-notes/2026/other/2026-11-11-openflow-snowflake-deployments-aws-gov-ga)
 - [Nov 11, 2026: Override per-user quota limits for specific users (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-limit-overrides)
@@ -56,6 +62,8 @@ For more recent feature updates, see [Snowflake server release notes and feature
 - [October 28, 2026: Cortex Agents Coding Agent thinking effort, system instructions, and stage mounts](/release-notes/2026/other/2026-10-28-cortex-agents-coding-agent-thinking-effort-stage-mounts)
 - [Oct 28, 2026: Workspace sharing in Declarative Shares (General availability)](/release-notes/2026/other/2026-10-28-declarative-sharing-workspace-sharing-ga)
 - [Oct 28, 2026: Time Travel for Apache Iceberg™ tables (Preview)](/release-notes/2026/other/2026-10-28-iceberg-time-travel-version-tags)
+- [Oct 28, 2026: Snowflake Marketplace checkout improvements (General availability)](/release-notes/2026/other/2026-10-28-marketplace-checkout-improvements-ga)
+- [Oct 28, 2026: Installment payment schedules in Consumer Hub (General availability)](/release-notes/2026/other/2026-10-28-marketplace-consumer-hub-installment-schedules-ga)
 - [Oct 28, 2026: Check the quotas that apply to you with MY\_BUDGET\_SUMMARY (General availability)](/release-notes/2026/other/2026-10-28-my-budget-summary)
 - [Oct 28, 2026: Cortex AI usage in Native App usage history](/release-notes/2026/other/2026-10-28-native-app-ai-usage-history)
 - [Oct 28, 2026: OpenAI GPT-5.6 Luna, GPT-5.6 Terra, and GPT-6 Luna in AI Functions (Preview)](/release-notes/2026/other/2026-10-28-openai-models-ai-functions-preview)

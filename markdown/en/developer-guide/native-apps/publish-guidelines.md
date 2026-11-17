@@ -69,6 +69,14 @@ Apps should be based on data-centric use cases that leverage data stored in Snow
 
 Apps must use Snowflake features to disclose the app’s resource and access requirements and simplify the configuration process for the consumer.
 
+### Publishing limits for Snowflake Native Apps
+
+A provider may have no more than 10 public Native Application listings on Snowflake Marketplace. A provider may exceed this limit if it demonstrates clear consumer usage and adoption across its Native Application portfolio.
+
+Snowflake evaluates this at submission and may re-evaluate it periodically. Snowflake measures adoption from its own consumption data and has the final say, at its discretion.
+
+Limiting the number of public Native Applications helps consumers find focused, well-maintained products and lets providers keep each application current and supported.
+
 ### Enforced standards
 
 Snowflake uses the following requirements to determine if a Snowflake Native App meets the standards for publication on Snowflake Marketplace. These requirements are verified when you submit a listing with an attached application package to Snowflake Marketplace.

@@ -8,6 +8,18 @@ This article contains the release notes for the Snowflake Python APIs, including
 
 See [Snowflake Python APIs: Managing Snowflake objects with Python](/developer-guide/snowflake-python-api/snowflake-python-overview) for documentation.
 
+## Version 1.15.0 (Nov 10, 2026)
+
+### New features and updates
+
+- **Code Bundle API:**
+  - `CodeBundleResource.execute`, `CodeBundleExecutionCollection.execute`, and their `execute_async` counterparts now return an `ExecuteCodeBundleResponse` when the execution completes synchronously. The response’s `return_value` holds the run’s `RETURN_VALUE` column as a string. Non-string values are encoded as JSON text. `return_value` is `None` when the run returns no `RETURN_VALUE` column, or when that column is `NULL`. `status` holds the run’s status message when the run returns a status column, and is `None` otherwise. These methods previously returned a `SuccessResponse`. Code that checks `isinstance(result, SuccessResponse)` must check for `ExecuteCodeBundleResponse` instead.
+  - Added the `runtime_version`, `runtime_status_details`, `sql_error_code`, `error_message`, and `task_name` fields to `CodeBundleExecution`.
+
+### Bug fixes
+
+- None.
+
 ## Version 1.14.0 (Oct 22, 2026)
 
 ### New features and updates

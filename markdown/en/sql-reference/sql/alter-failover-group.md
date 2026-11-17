@@ -426,7 +426,7 @@ ALTER FAILOVER GROUP [ IF EXISTS ] <name> RESUME
         - Read operations (`SELECT`, `SHOW`, and `DESCRIBE`) continue to work.
 
         To restore read-write mode without failing over, unset `READ_ONLY`. After you promote the failover group on
-        the target account, the source becomes a secondary and `read_only` is cleared.
+        the target account, the source becomes a secondary and `READ_ONLY` is cleared.
 
         Default:
         :   `FALSE`

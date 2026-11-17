@@ -34,10 +34,11 @@ This topic provides details about provisioning users and groups from Microsoft E
   Azure IP addresses as shown in the [Prerequisites](#label-scim-azure-prereq) section. Otherwise, you cannot use this integration.
 - Transferring ownership of existing users and roles. Microsoft Entra ID is the authoritative source for its users and groups. Group membership
   can be updated in Microsoft Entra ID. However, existing users and groups in Snowflake cannot be transferred to Microsoft Entra ID.
-- Microsoft Entra ID does not currently support reading or provisioning
-  [nested groups](https://docs.microsoft.com/en-us/azure/active-directory/app-provisioning/how-provisioning-works#scoping). Therefore, you
-  cannot use the Snowflake Microsoft Entra ID SCIM integration to provision or manage nested groups in Snowflake. Please contact Microsoft to
-  request the support of nested groups.
+- Nested groups beyond the first level. Microsoft Entra ID provisions the members of each group in scope for the Snowflake application, and a
+  member can itself be a group. Microsoft Entra ID doesn’t support provisioning [nested groups](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/how-provisioning-works#scoping)
+  beyond that first level, and doesn’t guarantee that a member group is ignored. See Microsoft’s
+  [Known issues for provisioning](https://learn.microsoft.com/en-us/entra/identity/app-provisioning/known-issues).
+  For how Snowflake applies a member group, see [Nested groups and role grants](#label-scim-azure-nested-groups).
 - Enabling or disabling password synchronization from Microsoft Entra ID to Snowflake.
 
   Setting the `SYNC_PASSWORD` property in the Snowflake security integration will not synchronize user passwords from Microsoft Entra ID
@@ -199,6 +200,31 @@ Snowflake supports setting the [user](/sql-reference/sql/create-user) property `
 SCIM to allow users to use [secondary roles](/user-guide/security-access-control-overview#label-access-control-role-enforcement) in a Snowflake session.
 
 For a representative example, see [Update a user](/user-guide/scim-user-api-reference#label-scim-put-users).
+
+### Nested groups and role grants
+
+When Microsoft Entra ID sends a group as a member of another group, Snowflake creates a role for the member group if one doesn’t exist, then
+grants the other group’s role to it. For example, if the group `ANALYSTS` is a member of the group `ETL_ADMIN`, Snowflake grants the role
+`ETL_ADMIN` to the role `ANALYSTS`. In Snowflake terms, `ANALYSTS` becomes a parent role of `ETL_ADMIN`. Every user and role that has
+`ANALYSTS` inherits the privileges of `ETL_ADMIN`. Inheritance is transitive, so groups that are members of `ANALYSTS` inherit those
+privileges too.
+
+Snowflake applies group memberships as Microsoft Entra ID sends them. You can’t configure the SCIM integration to ignore group members. To avoid
+unintended privilege inheritance, assign only groups whose members are users to the Snowflake application, and don’t add other groups to them.
+
+To review role-to-role grants made by the SCIM integration:
+
+Copy code
+
+```
+SELECT created_on, name AS inherited_role, grantee_name AS member_role
+  FROM SNOWFLAKE.ACCOUNT_USAGE.GRANTS_TO_ROLES
+  WHERE granted_on = 'ROLE'
+    AND privilege = 'USAGE'
+    AND granted_by = 'AAD_PROVISIONER'
+    AND deleted_on IS NULL
+  ORDER BY created_on DESC;
+```
 
 ## Populating Snowflake tags with SCIM integrations
 

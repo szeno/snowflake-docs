@@ -3,7 +3,11 @@ Categories:
 
 # AI\_COMPLETE (Prompt object)
 
-Generates a response (completion) for a prompt object. The prompt can contain [FILE objects](/sql-reference/functions/to_file), which may contain images or documents.
+Generates a response (completion) for a prompt object. The prompt combines text with one or more
+[FILE objects](/sql-reference/functions/to_file), which can contain images, documents, audio, or video. The input types
+you can use depend on the model. For limits by model and input type, see
+[Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations) and
+[document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations).
 
 ## Syntax
 
@@ -37,6 +41,8 @@ AI_COMPLETE(
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
     - `glm-5.3`
     - `grok-4.7`
     - `llama3.1-8b`
@@ -69,13 +75,15 @@ AI_COMPLETE(
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
-    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
     - `openai-gpt-5`
     - `openai-gpt-5-mini`
     - `openai-gpt-5-nano`
@@ -91,13 +99,24 @@ AI_COMPLETE(
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
-    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
+
+    For audio and video inputs, you can use one of the following models:
+
+    - `gemini-3.1-flash-lite`
+    - `gemini-3.1-pro`
+    - `gemini-3.5-flash`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -106,7 +125,9 @@ AI_COMPLETE(
     Alternatively, specify the name of a Snowpark Container Services model inference service that hosts your own text generation or vision-language model. Image inputs require a vision-language model. For supported file types, availability, prerequisites, and access requirements, see [Bring-your-own model for AI\_COMPLETE](/developer-guide/snowflake-ml/inference/spcs-ai-complete).
 
 `prompt`
-:   A [prompt](/sql-reference/functions/prompt) object containing text and, optionally, images or documents.
+:   A [prompt](/sql-reference/functions/prompt) object containing text and, optionally, one or more files. Depending on the
+    model, the files can be images, documents, audio, or video. You can combine input types in a single prompt if the model
+    supports each of them.
 
 `model_parameters`
 :   An [object](/sql-reference/data-types-semistructured#label-data-type-object) containing zero or more of the following options that affect the model’s
@@ -238,7 +259,10 @@ FROM image_table;
 The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing images](/developer-guide/snowflake-ml/inference/spcs-ai-complete#supported-file-types).
 
 - To process multiple images, specify a prompt object in the function call that defines a prompt template and the associated image files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the images in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
-- Only text and images are supported. Video and audio files are not supported.
+- Image support depends on the model. See the image model list under [Arguments](#arguments). Gemini models listed
+  for audio and video inputs also accept audio and video files in the same prompt; see
+  [Usage notes for processing audio and video](#usage-notes-for-processing-audio-and-video). Other models accept only
+  text and images.
 - Supported image formats:
 
   - `.jpg`
@@ -258,10 +282,30 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
 The following notes apply to Snowflake-hosted Cortex models. For models deployed on Snowpark Container Services, see [Usage notes for processing documents](/developer-guide/snowflake-ml/inference/spcs-ai-complete#pdf-files).
 
 - To process multiple documents, specify a prompt object in the function call that defines a prompt template and the associated document files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the documents in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
-- Only text and documents are supported. Video and audio files are not supported.
+- Document support depends on the model. See the document model list under [Arguments](#arguments). Gemini models
+  listed for audio and video inputs also accept audio and video files in the same prompt; see
+  [Usage notes for processing audio and video](#usage-notes-for-processing-audio-and-video). Claude models accept only
+  text, images, and documents.
 - All models support these formats: `.txt`, `.md`, and `.pdf`. Claude models also support `.txt`, `.md`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.csv`, and `.xhtml`.
 - Claude models have a maximum document size of 22 MB. Gemini models have a maximum document size of 37.5 MB.
-- Claude models accept up to 5 documents per prompt. Gemini models accept up to 20 documents per prompt. For context windows and page limits, see .
+- Claude models accept up to 5 documents per prompt. Gemini models accept up to 20 documents per prompt. For context
+  windows and page limits, see
+  [Supported models and limitations](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations)
+  in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-document-intelligence).
+- The function does not support custom network policies.
+- Stage names are case-insensitive; paths are case-sensitive.
+
+## Usage notes for processing audio and video
+
+The following notes apply to Snowflake-hosted Cortex models.
+
+- Only the Gemini models listed for audio and video inputs under [Arguments](#arguments) accept audio and video files.
+- Supported audio formats: `.wav`, `.mp3`, `.aiff`, `.aac`, `.ogg`, `.flac`, `.m4a`, `.mp4`, `.pcm`, and `.webm`.
+- Supported video formats: `.mp4`, `.mpeg`, `.mov`, `.avi`, `.flv`, `.mpg`, `.webm`, `.wmv`, and `.3gpp`.
+- A single prompt can include up to 20 image files, 10 audio files, and 10 video files, with a combined size of up to
+  100 MB. For context windows and other limits, see
+  [Model limitations](/user-guide/snowflake-cortex/ai-multimodal#model-limitations).
+- The stage containing the files must have server-side encryption enabled. Client-side encrypted stages are not supported.
 - The function does not support custom network policies.
 - Stage names are case-insensitive; paths are case-sensitive.
 

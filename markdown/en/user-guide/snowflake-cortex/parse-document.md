@@ -521,7 +521,8 @@ Copy code
 ```
 {
   "metadata": {
-    "pageCount": 2
+    "pageCount": 10,
+    "processedPageCount": 2
   },
   "pages": [
     {
@@ -536,7 +537,7 @@ Copy code
 }
 ```
 
-The `index` values identify positions in the original document, starting at 0. Filtering does not renumber pages or remove gaps between their indexes. When using `FL_FILTER_PAGES`, `metadata.pageCount` reports the number of pages processed, not the total page count of the source document.
+The `index` values identify positions in the original document, starting at 0. Filtering does not renumber pages or remove gaps between their indexes. `metadata.pageCount` is the total page count of the source document, including when you select pages with `FL_FILTER_PAGES` or `page_filter`. The number of pages processed and billed is in `metadata.processedPageCount`.
 
 Range boundaries use an inclusive `start` and an exclusive `end`. For example, `{'start': 0, 'end': 3}` selects the first three pages. A negative value counts backward from the end of the document; `{'start': -3}` selects the last three pages. Overlapping ranges are combined, and each selected page is processed once in document order.
 

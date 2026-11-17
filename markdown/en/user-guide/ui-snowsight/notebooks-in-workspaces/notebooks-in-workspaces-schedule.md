@@ -129,6 +129,9 @@ From the **Scheduled runs** popover, you can manage your scheduled tasks by sele
 - **Delete:** Removes the scheduled task permanently. You can create a new schedule with different settings (such as a different role or database
   location) after deleting the existing schedule.
 
+The popover does not include a runtime selector. To move a scheduled notebook to a different Container Runtime version,
+see [Change the runtime for a scheduled notebook](/developer-guide/container-runtime/using-runtime#label-container-runtime-upgrade-scheduled).
+
 ## Deploy updates to scheduled notebook tasks
 
 After editing a notebook, you must deploy your changes before scheduled runs use the updated version. Deployment ensures reproducibility and prevents

@@ -875,6 +875,26 @@ Ways to use it:
 - Review the org-wide security posture: MFA adoption, login failures, and auth settings
 - Analyze cross-account credit and storage spending trends for a quarterly business review
 
+### `automation`
+
+Schedule recurring Cortex Code runs as Snowflake AGENT TASKs through the `cortex automation` command. Runs are unattended, execute in a Snowflake-managed sandbox as the user who created them, and don’t need a warehouse. Cortex Code loads this skill when you ask for daily, hourly, weekday, or weekly scheduled runs, recurring reports, unattended or cron-style jobs, run history for an automation, or restricted SQL permissions for an automation.
+
+To invoke this skill, type `/automation` in Cortex Code, then describe the schedule and the task.
+
+Prerequisites:
+
+- Your role must have the EXECUTE AGENT TASK account privilege. This privilege is granted to the PUBLIC role by default, unless an administrator has revoked it. For more information, see [Snowflake CoWork Automations: EXECUTE AGENT TASK privilege granted to PUBLIC by default](/release-notes/bcr-bundles/un-bundled/bcr-2349).
+- Runs have no local filesystem and no local MCP servers. Access to services such as Jira, Slack, Gmail, and Google Drive comes from attached Snowflake-managed MCP connectors.
+
+Ways to use it:
+
+- Schedule a daily report that runs every weekday morning
+- Attach an MCP connector, such as Slack or Jira, so a run can post results or read tickets
+- Check the run history of an existing automation
+- Restrict the SQL permissions of a run (read-only by default)
+
+For more information, see [CoCo automations in CLI, Snowsight, and Desktop](/user-guide/cortex-code/cortex-code-automations).
+
 ## Migration and assessment
 
 ### `migration-guide`

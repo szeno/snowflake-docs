@@ -119,10 +119,6 @@ users who are granted those roles can still modify or drop the production object
 
 ## GitHub Actions
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 A set of reusable composite GitHub Actions that automate DCM Projects pipelines is available in the
 [`snowflakedb/snowflake-actions`](https://github.com/snowflakedb/snowflake-actions) repository on the
 [GitHub Marketplace](https://github.com/marketplace/actions/snowflake-actions#github-actions-for-dcm-projects).

@@ -14,7 +14,7 @@ Copy code
 ```
 EXECUTE DBT PROJECT [ IF EXISTS ] <name>
   [ ARGS = '[ <dbt_command> ] [ --<dbt_cli_option> <option_value_1> [ ... ] ] [ ... ]' ]
-  [ DBT_VERSION = 'version_number' ]
+  [ DBT_VERSION = '<version_number>' ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
   [ ENVIRONMENT = '<environment_name>' ]
   [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]
@@ -31,10 +31,11 @@ Copy code
 ```
 EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
   [ ARGS = '[ <dbt_command> ] [ --<dbt_cli_option> <option_value_1> [ ... ] [ ... ] ]' ]
-  [ DBT_VERSION = 'version_number' ]
+  [ DBT_VERSION = '<version_number>' ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
   [ ENVIRONMENT = '<environment_name>' ]
   [ ENV_VARS = ( '<key>' = '<value>' [ , ... ] ) ]
+  [ IMPORTS = ( { '<source_location>' | <system_function> } [ AS '<alias>' ] [ , ... ] ) ]
   [ PROJECT_ROOT = '<subdirectory_path>' ]
 ```
 
@@ -63,7 +64,7 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 `DBT_VERSION = 'version_number'`
 :   Specifies a version for the dbt project object.
 
-    Default: When you execute a dbt project object, the system uses the default version you specified when creating the dbt project object. If none was specified, the system uses `1.9.4` by default.
+    Default: When you execute a dbt project object, the system uses the default version you specified when creating the dbt project object. If no value is specified, the system defaults to the version set by the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter.
 
     For more information, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions).
 
@@ -102,7 +103,7 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
     For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `IMPORTS = ( { 'source_location' | system_function } [ AS 'alias' ] [ , ... ] )`
-:   When executing a deployed dbt project object, makes files from one or more source locations
+:   When executing a deployed dbt project object or a dbt project in a workspace, makes files from one or more source locations
     available under the project’s `./imports` directory. You can import from a stage, a deployed dbt
     project object, a workspace, or one of these system functions:
 

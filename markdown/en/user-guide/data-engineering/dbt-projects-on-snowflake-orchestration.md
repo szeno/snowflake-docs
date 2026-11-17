@@ -499,7 +499,7 @@ When the run starts, Snowflake CLI resolves values highest priority first: `--en
 
 Note
 
-This example requires Snowflake CLI 3.21 or later for the `--use-shell-env-vars` flag. The CLI reads only shell variables prefixed with `DBT_` (excluding `DBT_ENV_SECRET_*`). Set `append_env=True` on the operator so the task inherits the worker’s environment: without it, `BashOperator` passes only the `env` dict to the subprocess, and `snow` (along with your `SNOWFLAKE_CONNECTIONS_*` credentials) would be missing from `PATH`.
+This example requires Snowflake CLI 3.28.0 or later for the `--use-shell-env-vars` flag. The CLI reads only shell variables prefixed with `DBT_` (excluding `DBT_ENV_SECRET_*`). Set `append_env=True` on the operator so the task inherits the worker’s environment: without it, `BashOperator` passes only the `env` dict to the subprocess, and `snow` (along with your `SNOWFLAKE_CONNECTIONS_*` credentials) would be missing from `PATH`.
 
 ## Considerations
 

@@ -6,6 +6,36 @@ The database is an example of Snowflake using [Secure Data Sharing](/user-guide/
 Access to schema objects in the SNOWFLAKE database is controlled by different [database roles](/user-guide/security-access-control-considerations#label-access-control-considerations-database-roles).
 The following sections describe each SNOWFLAKE database role, its associated privileges, and the associated schema objects the role is granted access to.
 
+## Database roles granted to PUBLIC by default
+
+The PUBLIC role is automatically granted to all users and roles in your account. Snowflake grants the following SNOWFLAKE
+database roles to the PUBLIC role by default, so every user in your account has the associated access unless an administrator
+revokes it:
+
+| Database role | Access it provides |
+| --- | --- |
+| SNOWFLAKE.CORTEX\_USER | [Snowflake Cortex features](#label-snowflake-db-roles-cortex-user), including Cortex LLM functions |
+| SNOWFLAKE.COPILOT\_USER | [Cortex Code in Snowsight, until BCR-2445 reaches your account](#label-snowflake-db-roles-copilot) |
+| SNOWFLAKE.ML\_USER | [ML functions](#label-snowflake-db-roles-ml-schema) |
+| SNOWFLAKE.CORE\_VIEWER | Views in the [CORE schema](#label-snowflake-db-roles-core-public) |
+| SNOWFLAKE.MONITORING\_VIEWER | Views in the [MONITORING schema](#label-snowflake-db-roles-monitoring-schema) |
+
+Expand
+
+Show lessSee more
+
+If your organization restricts the use of AI features, revoke the AI-related roles from the PUBLIC role and grant them only to
+the roles that need them. For example:
+
+Copy code
+
+```
+REVOKE DATABASE ROLE SNOWFLAKE.CORTEX_USER FROM ROLE PUBLIC;
+```
+
+For the full set of AI access controls, see [Cortex LLM Functions required privileges](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-privileges) and
+[Privileges and model access for Cortex AI Functions](/user-guide/snowflake-cortex/aisql-privileges-and-access).
+
 ## ACCOUNT\_USAGE schema
 
 [ACCOUNT\_USAGE](/sql-reference/account-usage) schemas have four defined SNOWFLAKE database roles, each granted the SELECT privilege on specific views.
@@ -314,7 +344,7 @@ A classification profile is used to implement [sensitive data classification](/u
 
 ## SNOWFLAKE.CORTEX\_AGENT\_USER database role
 
-You can use the SNOWFLAKE.CORTEX\_AGENT\_USER database role to grant your users access to Snowflake Cortex Agents API without granting access to other Cortex
+You can use the SNOWFLAKE.CORTEX\_AGENT\_USER database role to grant your users access to Snowflake Cortex Agents, Snowflake CoWork, and Cortex Code (CoCo) on all surfaces (CLI, Snowsight, and Desktop), without granting access to other Cortex
 features. Using the Cortex Agents API requires *either* the SNOWFLAKE.CORTEX\_USER database role *or* the
 SNOWFLAKE.CORTEX\_AGENT\_USER database role.
 

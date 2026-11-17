@@ -24,7 +24,7 @@ CREATE OR REPLACE STAGE my_files
 
 ## Syntax
 
-The function accepts the same arguments as [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string), [AI\_COMPLETE (Single image)](/sql-reference/functions/ai_complete-single-file), and [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object). The only change is that the `model` argument is the name of an SPCS service instead of the name of a Cortex model.
+The function accepts the same arguments as [AI\_COMPLETE (Single string)](/sql-reference/functions/ai_complete-single-string), [AI\_COMPLETE (Single file)](/sql-reference/functions/ai_complete-single-file), and [AI\_COMPLETE (Prompt object)](/sql-reference/functions/ai_complete-prompt-object). The only change is that the `model` argument is the name of an SPCS service instead of the name of a Cortex model.
 
 The function can be used with either positional or named argument syntax.
 

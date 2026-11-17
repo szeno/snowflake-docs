@@ -10,7 +10,7 @@ The following table shows the dbt commands that are supported in dbt Projects on
 > | [clean](https://docs.getdbt.com/reference/commands/clean) [3] | ✔ | ✔ | ✔ |
 > | [compile](https://docs.getdbt.com/reference/commands/compile) | ✔ | ✔ | ✔ |
 > | [deps](https://docs.getdbt.com/reference/commands/deps) [1] | ✔ | ✔ | ✔ |
-> | [docs generate](https://docs.getdbt.com/reference/commands/cmd-docs#dbt-docs-generate)  [2] | ✔ | ✔ | ❌ |
+> | [docs generate](https://docs.getdbt.com/reference/commands/cmd-docs#dbt-docs-generate)  [2] | ✔ | ✔ | ✔ |
 > | [list](https://docs.getdbt.com/reference/commands/list) | ✔ | ✔ | ✔ |
 > | [parse](https://docs.getdbt.com/reference/commands/parse) | ❌ | ✔ | ✔ |
 > | [run](https://docs.getdbt.com/reference/commands/run) | ✔ | ✔ | ✔ |

@@ -166,6 +166,8 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- Online feature tables are not listed in the output of [SHOW TABLES](/sql-reference/sql/show-tables). Use this command to list them.
+
 - The command doesn’t require a running warehouse to execute.
 - The command only returns objects for which the current user’s current role has been granted at least one access privilege.
 - The MANAGE GRANTS access privilege implicitly allows its holder to see every object in the account. By default, only the account

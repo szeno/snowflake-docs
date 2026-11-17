@@ -654,6 +654,11 @@ to a limit is less than the token count.
 For multimodal models, the token count per image and video depends on the model’s architecture. Tokens within a
 prompt (for example, “what animal is this?”) also contribute to the model’s context window.
 
+The following table covers image, audio, and video inputs. For document formats, file sizes, page limits, and
+documents per prompt, see
+[Supported models and limitations](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations)
+in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-document-intelligence).
+
 | Model | Context window (tokens) | File types | File size | Files per prompt |
 | --- | --- | --- | --- | --- |
 | `openai-gpt-4.1` | 1,047,576 | .jpg, .jpeg, .png, .webp, .gif | 10MB | 5 |
@@ -664,6 +669,10 @@ prompt (for example, “what animal is this?”) also contribute to the model’
 | `gemini-3.1-pro` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `gemini-3.1-flash-lite` | 1,048,576 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `gemini-3.5-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-3.7-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-3.8-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-4-argon` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `twelvelabs-pegasus-1-5` | 261,120 | **Video:** .mp4, .mov, .avi, .mkv, .webm | 2 GB, up to 2 hours of video | 1 video |
 | `twelvelabs-marengo-embed-3-0` [[M1]](#citation-M1) | 4 hours (duration) [[M2]](#citation-M2) | **Video:** .mp4, .mov, .avi, .mkv, .wmv, .webm | 6 GB (video or audio) [[M3]](#citation-M3) | N/A (embedding model) |
 
 Expand
@@ -675,6 +684,7 @@ Images must be smaller than 8000x8000 pixels. Limits apply to each individual im
 
 [p1]
 A single request can include up to 20 image files, 10 audio files, and 10 video files, with a combined payload size of up to 100 MB.
+These counts apply to the prompt object overload of AI\_COMPLETE. The single file overload accepts one file per call.
 
 [m1]
 Available in US East (N. Virginia) only; cross-region inference is supported.

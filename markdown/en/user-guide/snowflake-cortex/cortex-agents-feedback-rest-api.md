@@ -43,7 +43,7 @@ The request body contains the feedback details for the agent response.
 | `positive` | boolean | Whether the response was good (`true`) or bad (`false`). |
 | `feedback_message` | string | The text for the detailed feedback message. |
 | `categories` | array of strings | List of categories for the feedback. Each category is a string that represents a specific category of feedback. |
-| `thread_id` | integer | The id of the thread. |
+| `thread_id` | integer | The ID of the thread. |
 
 Expand
 

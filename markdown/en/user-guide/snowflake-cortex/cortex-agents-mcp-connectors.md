@@ -12,7 +12,7 @@ Snowflake’s governed environment.
 
 Admins create an external MCP server object that references an [API integration](/sql-reference/sql/create-api-integration), which contains OAuth credentials.
 Snowflake supports Standard OAuth with credentials (client ID, client secret), as well as Dynamic Client
-Registration (DCR). You can select from a set of available MCP connectors or build your custom connector.
+Registration (DCR). You can select from a set of available MCP connectors or build your own custom connector.
 After the MCP connector is added to the agent, users can authenticate with the third-party service and use the
 tools directly with Cortex Agents and in Snowflake CoWork.
 
@@ -79,7 +79,7 @@ server, and is not responsible for any errors, data loss, or security incidents 
 
 ## Set up supported MCP connectors
 
-You can connect with the following MCP servers with minimal configuration:
+You can connect to the following MCP servers with minimal configuration:
 
 - Atlassian
 - GitHub
@@ -263,7 +263,7 @@ This parameter does not apply to `TYPE = OAUTH_DYNAMIC_CLIENT`.
 Copy code
 
 ```
- -- Create the API integration with full OAuth configuration
+-- Create the API integration with full OAuth configuration
 CREATE API INTEGRATION custom_mcp_api_integration
 API_PROVIDER = external_mcp
 API_ALLOWED_PREFIXES = ('https://internal.mycompany.com/mcp')

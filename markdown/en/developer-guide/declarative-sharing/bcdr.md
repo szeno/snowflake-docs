@@ -29,6 +29,8 @@ Before configuring BCDR, review these constraints carefully.
 Superset rule
 :   A failover group must be a complete superset of any associated listing auto-fulfillment replication group. You must explicitly include the app package, every reference database, and the listing in the same failover group.
 
+    Listings with application package data products are always in the account-level auto-fulfillment group, so this rule applies to every listing in that group, including listings for other app packages or shares in the account. For more information, see [Complete subset constraints (all-or-nothing rule)](/collaboration/listings-bcdr#label-listings-bcdr-complete-subset-constraints).
+
 Dependency management
 :   If an app uses a view in `DB_A` that references data in `DB_B`, both databases must be in the same failover group.
 

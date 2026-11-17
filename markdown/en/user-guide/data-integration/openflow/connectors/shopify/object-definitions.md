@@ -58,11 +58,32 @@ Each promoted column has the following fields:
 | --- | --- |
 | `name` | The Snowflake column name (uppercase recommended). |
 | `path` | A JSONPath expression pointing to the value in the raw record (for example, `$.email`, `$.totalPriceSet.shopMoney.amount`). |
-| `type` | The Snowflake column type. The following values are supported:   | Value | Snowflake type | Notes | | --- | --- | --- | | `string` | `VARCHAR` | None | | `integer` | `NUMBER(38,0)` | None | | `boolean` | `BOOLEAN` | None | | `float` | `FLOAT` | None | | `money` | `NUMBER(38,4)` | Converts Shopify amount strings to numeric. | | `timestamp` | `TIMESTAMP_TZ` | ISO-8601 strings. | | `date` | `DATE` | None | | `id` | `NUMBER(38,0)` | Strips the `gid://shopify/*/` prefix and returns the numeric ID. | | `gid` | `VARCHAR` | Stores the full GID string. | | `json` | `VARIANT` | Stores sub-objects as VARIANT. | |
+| `type` | The Snowflake column type. The following values are supported:   | Value | Snowflake type | Notes | | --- | --- | --- | | `string` | `VARCHAR` | None | | `integer` | `NUMBER(38,0)` | None | | `boolean` | `BOOLEAN` | None | | `float` | `FLOAT` | None | | `money` | `NUMBER(18,4)` | Converts Shopify amount strings to numeric. | | `timestamp` | `TIMESTAMP_TZ` | ISO-8601 strings. | | `date` | `DATE` | None | | `id` | `NUMBER(38,0)` | Strips the `gid://shopify/*/` prefix and returns the numeric ID. | | `gid` | `VARCHAR` | Stores the full GID string. | | `json` | `VARIANT` | Stores sub-objects as VARIANT. | |
 
 Expand
 
 Show lessSee more
+
+## How columns are derived from graphqlFields
+
+Each top-level `graphqlFields` entry becomes a column, even without a promoted column. The connector chooses the type from the shape and name of the entry, in this order:
+
+- `field { id }` becomes `FIELD_ID` of type `id`. When the field is aliased or has arguments, the connector keeps the column it would otherwise derive (for example, `cust: customer { id }` gives a `VARIANT` column `CUST`, and `metafield(key: "custom.ref") { id }` gives `METAFIELD`) and also adds an `_ID` column of type `id` (`CUST_ID`, `METAFIELD_ID`), because the response can be a list rather than a single object.
+- Any other aliased entry (`alias: field { ... }`) becomes a `VARIANT` column named after the alias. Whitespace or commas around the colon don’t matter: `alias : field` and `alias:field` are also aliases.
+- An entry with arguments (for example, `lineItems(first: 250) { ... }`) skips the remaining shape rules and is typed by its name, like a scalar.
+- A selection with `shopMoney` directly inside it (`fieldSet { shopMoney { amount currencyCode } }`), or `field { amount currencyCode }`, becomes a `money` column `FIELD` (without a `Set` suffix) plus a `FIELD_CURRENCY` column.
+- `field { count }` becomes an `integer` column.
+- Any other `field { ... }` becomes a `VARIANT` column. This includes lists and objects that contain money values deeper down, such as `taxLines { title priceSet { shopMoney { amount currencyCode } } }`.
+- A scalar becomes one of the following types, based on its name:
+  - `timestamp` if the name ends in `At` or `On`.
+  - `date` if the name ends in `Date`.
+  - `id` if the name is `id` or ends in `Id`.
+  - `money` if the name contains `price`, `cost`, or `amount`.
+  - `string` otherwise.
+
+If two entries normalize to the same column name, a column of type `id` (such as a plain `field { id }`) wins, and an added `_ID` column never replaces an existing column. Otherwise, a scalar entry wins over an aliased or nested entry, regardless of their order in `graphqlFields`; between aliased and nested entries, the later one wins. For example, with `["name", "NAME: email"]` in either order, `NAME` is a `VARCHAR` column from `name`. This applies only when the entries have different response keys: when a scalar has the same response key as an aliased or nested entry (for example, `["name", "name: name"]`), the scalar is skipped, so `NAME` is a `VARIANT` column in either order. To make a particular source win, add a promoted column with that name.
+
+Fields that have a child definition with `connectionType` set to `array` aren’t added to the parent table. Because types come from field names, fields such as `quantity` or `test` become `VARCHAR`, even though Shopify defines them as numeric or Boolean. To set a different type, add a [promoted column](#label-promoted-columns) with the same name. This doesn’t change the type of the system columns (`ID`, `GID`, `SHOP_URL`, `__PARENT_ID`, `__SNOWFLAKE_INGESTED_AT`, `RAW_DATA`, `__SNOWFLAKE_IS_DELETED`, `__SNOWFLAKE_DELETED_AT`) or of the `TIMESTAMP_TZ` columns the connector adds for `updatedAt`, `createdAt`, `processedAt`, `startedAt`, `initiatedAt` and `publishedAt`. To get another representation of these fields, use a promoted column with a different name.
 
 ## Child fields
 
@@ -89,6 +110,19 @@ Show lessSee more
 Note
 
 Shopify rejects `pageSize` values above 250 with a `first cannot exceed 250` error. This limit doesn’t apply to bulk loads: the Shopify Bulk Operations API ignores the `first:` argument and returns all child records. For more information, see [Limitations](/user-guide/data-integration/openflow/connectors/shopify/about#label-shopify-connector-limitations).
+
+The connector routes child records by the GID type of their `id`. Note the following:
+
+- Don’t define a child field for a list whose elements have no `id`, such as tax lines. Wherever the connector splits the list out of the parent record (incremental syncs, and bulk loads when `connectionType` is `array`), it can’t route elements without an `id` to a table, so they’re dropped and the data isn’t loaded. Instead, keep the list as a `VARIANT` column on the parent and expand it with `LATERAL FLATTEN`.
+- If a built-in object already uses the child’s `gidTypeName` (for example, `transactions` uses `OrderTransaction`), the connector derives the table schema from the built-in object, not from the child field. Records are routed by GID type to the table of whichever definition was registered last for that type. The connector loads the bundled catalog first and then your override array in order, so when you override only the parent, the child field’s `tableName` wins and records land there. The table still gets the built-in object’s columns instead of the ones you define in the child field’s `promotedColumns` and `graphqlFields`, and it has no `__PARENT_ID` column. To change this behavior, use one of the following overrides:
+  - **Keep `gidTypeName`:** Also override the built-in object in the same array, with the child field’s `tableName` and the `graphqlFields` and `promotedColumns` you want. Keep the built-in object’s `gidTypeName` in that override (for example, `OrderTransaction`); otherwise the override doesn’t own the GID type and its columns aren’t used. To link each record to its parent, add a [promoted column](#label-promoted-columns) with the path `$.__PARENT_ID`, for example `{"name": "ORDER_GID", "path": "$.__PARENT_ID", "type": "gid"}`, and join it to the parent table’s `GID` column.
+  - **Omit `gidTypeName`:** Override the built-in object without `gidTypeName` and place that override before the parent in the array. The built-in object then no longer owns the GID type, so the table is derived from the child field: it uses the child field’s `graphqlFields` and `promotedColumns`, includes a `__PARENT_ID` column, and ignores the columns in the built-in object’s override. If you place this override after the parent, the registry drops the child’s GID route and records go to a fallback table. Use this only when the built-in object isn’t synced on its own: remove it from **Objects to Sync** and **Objects to Track for Deletes** first. Otherwise its own records, which have no parent link, are written to the child table and set `__PARENT_ID` to NULL. The built-in object also loses its own delete detection, because the connector can’t look up deletes for an object without `gidTypeName`. For `products` and `productVariants`, which the connector syncs and tracks for deletes by default, keep the built-in `productVariants` object instead and join its `PRODUCT_ID` and `SHOP_URL` columns to `PRODUCTS.ID` and `PRODUCTS.SHOP_URL`.
+
+Important
+
+The **Keep `gidTypeName`** override in the previous list produces a child table without a `__PARENT_ID` column. If the parent object supports delete detection, the connector still generates a cascading delete for each child field defined on that parent that filters on `__PARENT_ID`, and it emits that statement as a pre-statement to the parent update. The missing column makes the child delete fail, which can also block the parent’s delete. Renaming the parent-link promoted column (for example, to `ORDER_GID`) doesn’t prevent this.
+
+Don’t use the **Keep `gidTypeName`** override for a child whose parent supports delete detection. For example, don’t add a `variants` child field to `products` with this override: its GID type, `ProductVariant`, is already used by the built-in `productVariants` object. For more information, see [How deletes are handled](/user-guide/data-integration/openflow/connectors/shopify/about#label-shopify-how-deletes-are-handled).
 
 ## Union types and GID routing
 

@@ -202,6 +202,8 @@ Copy code
 }
 ```
 
+The `agent_spec` field is a string that contains the agent specification as serialized JSON. The specification uses the same structure as the `FROM SPECIFICATION` clause of [CREATE AGENT](/sql-reference/sql/create-agent).
+
 ## Update Cortex Agent
 
 `PUT /api/v2/databases/{database}/schemas/{schema}/agents/{name}`

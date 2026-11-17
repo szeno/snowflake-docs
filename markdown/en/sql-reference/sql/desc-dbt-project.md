@@ -34,10 +34,11 @@ The output of the command includes the following columns, which describe the pro
 | `name` | The identifier (name) of the dbt project object. |
 | `owner` | The role that was used to create the dbt project object. |
 | `comment` | The comment associated with the dbt project object. |
-| `dbt_version` | The version for the dbt project object. If no value is specified, the system uses version 1.9.4 by default. For more information on supported versions, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions). |
+| `dbt_version` | The version for the dbt project object. If no value is specified, the system defaults to the version set by the [DEFAULT\_DBT\_VERSION](/sql-reference/parameters#label-default-dbt-version) account parameter. For more information on supported versions, see [Supported dbt versions for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dbt-core-versions). |
 | `dbt_snowflake_version` | The Snowflake version the dbt project object is on. |
 | `default_target` | The default execution target (for example, `prod` or `dev`) used by dbt commands executed through Snowflake. |
 | `external_access_integrations` | The name of the external access integrations the dbt project object is permitted to use to pull remote dependencies from dbt package hub or GitHub. |
+| `default_environment` | The `DEFAULT_ENVIRONMENT` attribute set on the dbt project object. Returns `NULL` if the attribute isn’t set. This column doesn’t show the `default_environment:` value from `env.yml`. |
 | `default_writeback` | Whether executions write generated target and log files back to the live version by default. |
 | `auto_compile` | Whether Snowflake compiles the project after deployment. |
 | `last_deployed_from` | An OBJECT that describes the source of the most recent deployment. Depending on the source, it can contain `git_url` or `stage_url`, `git_commit`, `git_branch`, `user`, and `timestamp` fields. Returns `NULL` when no deployment metadata was recorded. |
