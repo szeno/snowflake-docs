@@ -42,11 +42,15 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 18, 2026: Spark Monitoring UI (General availability)](/release-notes/2026/other/2026-11-18-spark-monitoring-ui-ga)
+- [Nov 17, 2026: CoCo Desktop v2.0.0](/release-notes/2026/other/2026-11-17-coco-desktop-v2-0-0)
 - [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
 - [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)
 - [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)
+- [Nov 16, 2026: Openflow Snowflake Deployments in Azure government regions (General availability)](/release-notes/2026/other/2026-11-16-openflow-snowflake-deployments-azure-gov-ga)
 - [Nov 16, 2026: SCIM provisioning for organization users and organization user groups (Private preview)](/release-notes/2026/other/2026-11-16-organization-scim-private-preview)
 - [Nov 16, 2026: SHOW GRANTS TO … INCLUDE HIERARCHY (General availability)](/release-notes/2026/other/2026-11-16-show-grants-include-hierarchy)
+- [Snowflake CLI (v3.34.0)](/release-notes/clients-drivers/snowflake-cli-2026)
 - [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)
 - [Nov 13, 2026: Many-to-many relationships in semantic views (Preview)](/release-notes/2026/other/2026-11-13-semantic-views-many-to-many-preview)
 - [Nov 12, 2026: DCM Projects PLAN privilege (Preview)](/release-notes/2026/other/2026-11-12-dcm-plan-privilege-preview)
@@ -55,6 +59,7 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 - [Nov 12, 2026: Convert Tableau workbooks to Streamlit in Snowflake apps with CoCo (Preview)](/release-notes/2026/other/2026-11-12-tableau-to-streamlit-preview)
 - [Node.js Driver (v4.0.0-beta.0)](/release-notes/clients-drivers/nodejs-2026)
 - [Snowpark Python (v1.57.0)](/release-notes/clients-drivers/snowpark-python-2026)
+- [Snowpipe Streaming SDK (v1.9.3)](/release-notes/clients-drivers/snowpipe-streaming-sdk-2026)
 - [Nov 11, 2026: Openflow Snowflake Deployments in AWS government regions (General availability)](/release-notes/2026/other/2026-11-11-openflow-snowflake-deployments-aws-gov-ga)
 - [Nov 11, 2026: Override per-user quota limits for specific users (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-limit-overrides)
 - [Nov 11, 2026: Select per-user quota users by role (General availability)](/release-notes/2026/other/2026-11-11-per-user-quota-role-scope)

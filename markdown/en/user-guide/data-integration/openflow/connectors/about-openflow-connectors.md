@@ -2,7 +2,9 @@
 
 Feature — Generally Available
 
-Openflow is available to all accounts in AWS [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+Openflow BYOC deployments are available to all accounts in AWS [Commercial regions](/user-guide/intro-regions#label-na-general-regions).
+
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. They’re also available in select [AWS government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-aws-government-regions) and select [Azure government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-azure-government-regions). For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 Openflow connectors are curated, versioned Apache NiFi flow definitions built using open-source and proprietary NiFi components.
 These connectors follow a strict set of design patterns to ensure performance, fault-tolerance, and ease of configuration.

@@ -96,7 +96,13 @@ You can pick a specific model, or one of these Auto options that choose a model 
 
 - **Auto**: Snowflake selects the model.
 - **Auto Intelligent**: Favors the most capable models. Highest quality, highest cost.
-- **Auto Efficient**: Optimizes for cost. Lowest cost, and might reduce quality on hard tasks.
+- **Auto Efficient**: Routes each step of a task to a model based on how complex it is. Routine
+  steps use lower-cost models, and harder steps can use more capable models. The router chooses from
+  most of the models in the model picker, limited to the models that you can use. For the models that
+  CoCo supports, see
+  [Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-product).
+  Requests are billed at the selected model’s rate plus a routing fee. See
+  [Auto Efficient billing](/user-guide/cortex-code/cortex-code#label-cortex-code-auto-efficient-billing).
 
 Two things determine which models you can choose:
 
@@ -104,11 +110,11 @@ Two things determine which models you can choose:
   with role-based access control (RBAC). A user with the `ACCOUNTADMIN` role grants a per-model
   application role, or `CORTEX-MODEL-ROLE-ALL` for all current and future models, to each role that
   needs it. By default, users inherit access to all models through the
-  [`SNOWFLAKE.PUBLIC` bootstrap grant](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-model-role-all-bootstrap).
+  [`SNOWFLAKE.PUBLIC` bootstrap grant](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-model-role-all-bootstrap).
   To list the models your active role can use, run
   `SHOW CORTEX BASE MODELS IN SCHEMA SNOWFLAKE.MODELS`. For more information, see
   [SHOW CORTEX BASE MODELS](/sql-reference/sql/show-cortex-base-models). For how to restrict model access, see
-  [Control model access](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-access-control).
+  [Model access control](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-access-control).
 - **Regional availability:** whether the model runs in your account’s region, or is reachable
   through cross-region inference. For per-model regions, see
   [Function availability by region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability). If a

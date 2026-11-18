@@ -91,7 +91,7 @@ The following sections provide additional information about Cortex Data Quality.
 
 Cortex Data Quality won’t work unless the [CORTEX\_MODELS\_ALLOWLIST](/sql-reference/parameters#label-cortex-models-allowlist) account parameter allows the `mistral-7b` and
 `llama3.1-8b` models within the account. By default, both models are allowed. For more information about setting this parameter, see
-[Account-level allowlist parameter](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-allowlist).
+[Account-level allowlist parameter](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-allowlist).
 
 ### Access control requirements
 

@@ -42,11 +42,11 @@ When not to use this:
 
 Three questions settle most cases, in the order the diagram asks them.
 
-**1. Does every end user exist as a Snowflake user?** If not, managed MCP does not fit. The MCP agent tool takes the user’s message; the MCP docs describe no way to pass per-request `variables`, which is how the REST API carries an end user’s identity when that person has no Snowflake account. Serving those users requires the REST API’s `variables` block with immutable session attributes.
+**1. Does every end user exist as a Snowflake user?** If not, managed MCP does not fit. The MCP agent tool takes the user’s message as its `text` argument; the MCP docs describe no way to pass per-request `variables`, which is how the REST API carries an end user’s identity when that person has no Snowflake account. Serving those users requires the REST API’s `variables` block with immutable session attributes.
 
 **2. Is the chat interface a client you do not control?** If the answer is ChatGPT, Claude, Cursor, or Copilot, MCP is how those clients reach tools, through their connector settings. If you own the front end, go to the third question.
 
-**3. Does your front end need what only the REST API provides?** Streaming events, server-side threads, background runs, `tool_choice`, or per-request `variables` mean calling `agent:run` directly. If it needs none of them and people only need to ask questions of governed data, Snowflake CoWork needs no front door at all.
+**3. Does your front end need what only the REST API provides?** Typed streaming events, `tool_choice`, or per-request `variables` mean calling `agent:run` directly. Server-side threads and background runs are available in both lanes: the MCP agent tool accepts `thread_id`, `parent_message_id`, and `background`. If it needs none of the REST-only features and people only need to ask questions of governed data, Snowflake CoWork needs no front door at all.
 
 Key concepts:
 
@@ -64,8 +64,8 @@ Key concepts:
 | Effective role | The user’s `DEFAULT_ROLE` | The service user’s default role, or another role selected with `X-Snowflake-Role` |
 | What policies key on | `CURRENT_USER()`, `CURRENT_ROLE()` | `SYS_CONTEXT('SNOWFLAKE$SESSION_ATTRIBUTES', ...)` set by the application |
 | Response transport | `tools/call` returns a Server-Sent Events stream, on by default for every account since 2026-08-20 ([BCR-2405](/release-notes/bcr-bundles/un-bundled/bcr-2405)); see [operational limits](#operational-limits) and [Check the stream](#check-the-stream) | Streams typed agent events by default (text deltas, thinking, tool use and results, then a final `response` event); `stream: false` returns one JSON object |
-| Conversation memory | Held by the client; the tool receives a message | Server-side threads with `thread_id` and `parent_message_id` |
-| Long-running work | The agent runs for the duration of one tool call, so any per-call limit in the client applies; see [long-running agents over MCP](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp) | Synchronous runs time out at 15 minutes; `background: true` runs up to 6 hours, and you reconnect with the Stream Agent Run endpoint |
+| Conversation memory | Server-side threads: the agent tool takes the user’s `text`, and the client passes `thread_id` and `parent_message_id` from the previous result to continue; see [Call an agent tool](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-agent-tools) | Server-side threads with `thread_id` and `parent_message_id` |
+| Long-running work | A synchronous call runs for the duration of one tool call, so any per-call limit in the client applies. With `"background": true`, the call returns a run handle to poll with the supplementary status and result tools; see [Run an agent tool in the background](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-background-agent-run) and [long-running agents over MCP](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp) | Synchronous runs time out at 15 minutes; `background: true` runs up to 6 hours, and you reconnect with the Stream Agent Run endpoint |
 | Forcing or restricting tools | Not exposed; the client routes by tool name and description | `tool_choice` |
 | Changing the front door | `CREATE OR REPLACE MCP SERVER` drops all grants on the server; reapply them in the same script | Your application’s own release process |
 | Engineering cost | One MCP server and one OAuth integration | An application you build, run, and maintain |
@@ -126,7 +126,7 @@ Expand
 
 Show lessSee more
 
-CoWork and MCP are configurations; a custom front end is a product. Choose a custom front end when the agent must live inside a workflow people already use, when end users have no Snowflake account, or when you need streaming events, threads, or `tool_choice`. Between CoWork and MCP, adoption usually decides, because MCP puts the answer where people already work.
+CoWork and MCP are configurations; a custom front end is a product. Choose a custom front end when the agent must live inside a workflow people already use, when end users have no Snowflake account, or when you need typed streaming events or `tool_choice`. Between CoWork and MCP, adoption usually decides, because MCP puts the answer where people already work.
 
 ### Who builds agents, and who uses them
 
@@ -217,7 +217,7 @@ SELECT SYSTEM$SHOW_OAUTH_CLIENT_SECRETS('COOKBOOK_MCP_OR_AGENT_REST_API_OAUTH');
 Start with one server that exposes one `CORTEX_AGENT_RUN` tool per domain agent. Server count follows access boundaries and audiences, not agent count. Split into more servers when:
 
 - two populations need different data access and the client does not let them pick a role;
-- one audience needs `SYSTEM_EXECUTE_SQL`, which should never sit on the same server as an agent tool, because it lets the client go around the agent’s semantic view and verified queries;
+- one audience needs `SYSTEM_EXECUTE_SQL`. Snowflake generally recommends against putting it on the same server as an agent tool, because it lets the client go around the agent’s semantic view and verified queries;
 - tool-selection accuracy drops as you add tools, which happens before the limit of 50 tools per server;
 - a separate identity provider or change-control process applies.
 
@@ -270,12 +270,12 @@ The full pattern, with runnable code, is in [multi-tenant agents](/developer-gui
 `POST /api/v2/databases/{db}/schemas/{schema}/agents/{name}:run`, or `DATA_AGENT_RUN` in SQL:
 
 - `variables` with immutable session attributes, for users without Snowflake accounts.
-- Server-side threads: create one with `POST /api/v2/cortex/threads`, then pass `thread_id` and the previous assistant message as `parent_message_id`, so the client does not resend history.
-- `background: true`, for runs up to 6 hours instead of 15 minutes.
 - Streaming of typed events for token-by-token display.
 - `tool_choice`, to require or restrict tools.
 - `X-Snowflake-Role`, to run a request under a role other than the service user’s default.
 - The `:feedback` endpoint, to record end-user feedback against a request.
+
+Server-side threads and background runs are available in both lanes. On the REST API, create a thread with `POST /api/v2/cortex/threads`, then pass `thread_id` and the previous assistant message as `parent_message_id`, so the client does not resend history; `background: true` runs up to 6 hours instead of 15 minutes. For the MCP lane, see [Call an agent tool](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-agent-tools) and [Run an agent tool in the background](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-background-agent-run).
 
 ### Carry the end user as an immutable session attribute
 

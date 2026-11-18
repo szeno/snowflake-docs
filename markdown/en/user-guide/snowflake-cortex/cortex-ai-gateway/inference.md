@@ -87,7 +87,9 @@ Before you begin, you need:
    whatever access the underlying model requires, such as the `SNOWFLAKE.CORTEX_USER` database role or
    the controls described in [Privileges and model access for Cortex AI Functions](/user-guide/snowflake-cortex/aisql-privileges-and-access). USAGE on the
    gateway doesn’t widen the set of models a user is entitled to, so sending traffic through it doesn’t
-   expand your security perimeter.
+   expand your security perimeter. After you grant or revoke model access, gateway requests can take up
+   to 5 minutes to reflect the change. See
+   [Access control](/user-guide/snowflake-cortex/cortex-ai-gateway#label-cortex-ai-gateway-access-control).
 
 ## Setting up authentication
 

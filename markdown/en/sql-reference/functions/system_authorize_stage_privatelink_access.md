@@ -73,6 +73,8 @@ Authorize Snowflake to access a Google Private Service Connect endpoint:
 >
 > ```
 > USE ROLE ACCOUNTADMIN;
+> ALTER ACCOUNT SET ENABLE_INTERNAL_STAGES_PRIVATELINK = TRUE;
+>
 >
 > SELECT SYSTEM$AUTHORIZE_STAGE_PRIVATELINK_ACCESS('projects/vpc_network_name/global/networks/network_name');
 > ```

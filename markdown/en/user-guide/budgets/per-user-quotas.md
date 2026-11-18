@@ -18,14 +18,16 @@ With per-user quotas, you can:
 
 The following topics cover each part of working with per-user quotas:
 
+- [Get started with per-user quotas](/user-guide/budgets/per-user-quotas-get-started): Set up a
+  quota in minutes and apply common team, role, tier, and override patterns.
 - [Create and configure a per-user quota](/user-guide/budgets/per-user-quotas-create): Create a
   quota with SQL or Snowsight, follow the recommended setup order, and set per-user limits.
 - [Specify users in scope](/user-guide/budgets/per-user-quotas-user-scope): Choose which users a
   quota covers.
-- [Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides): Set per-user,
-  per-cycle limit overrides with optional expiration dates.
 - [Block users at the limit](/user-guide/budgets/per-user-quotas-enforcement): Enable built-in
   block enforcement and handle requests for more headroom.
+- [Override limits for specific users](/user-guide/budgets/per-user-quotas-overrides): Set per-user,
+  per-cycle limit overrides with optional expiration dates.
 - [Notifications and actions](/user-guide/budgets/per-user-quotas-notifications): Notify users and
   admins, and run stored procedures at thresholds.
 - [Monitor spending](/user-guide/budgets/per-user-quotas-monitor): Review per-user spending in SQL
@@ -136,9 +138,9 @@ The following table lists each domain and the costs it monitors:
 | --- | --- |
 | `WAREHOUSE` | Compute resources for query execution in warehouses, including warehouse metering and query acceleration costs. |
 | `AI FUNCTION` | Credit usage for AI function operations attributed to the user. |
-| `SNOWFLAKE INTELLIGENCE` | Credit usage for Snowflake CoWork (formerly Snowflake Intelligence) operations attributed to the user. |
+| `SNOWFLAKE COWORK` | Credit usage for Snowflake CoWork (formerly Snowflake Intelligence) operations attributed to the user. |
 | `CORTEX AGENT` | Credit usage for Cortex Agents operations attributed to the user. |
-| `CORTEX CODE` | Credit usage for Snowflake CoCo (formerly Cortex Code) operations attributed to the user. Includes spend from Snowflake CoCo CLI, Snowflake CoCo in Snowsight, and Snowflake CoCo Desktop. |
+| `SNOWFLAKE COCO` | Credit usage for Snowflake CoCo (formerly Cortex Code) operations attributed to the user. Includes spend from Snowflake CoCo CLI, Snowflake CoCo in Snowsight, and Snowflake CoCo Desktop. |
 | `AI GATEWAY` | Credit usage for AI Gateway operations attributed to the user. |
 
 Expand
@@ -189,7 +191,7 @@ Example: Add the Snowflake CoWork domain to the quota:
 Copy code
 
 ```
-CALL my_quota!ADD_SHARED_RESOURCE('SNOWFLAKE INTELLIGENCE');
+CALL my_quota!ADD_SHARED_RESOURCE('SNOWFLAKE COWORK');
 ```
 
 Example: Add a specific warehouse to the quota:

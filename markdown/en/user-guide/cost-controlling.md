@@ -4,6 +4,8 @@ You can use budgets to control credit usage for compute costs, including those i
 with controlling the costs of warehouses, you can also use resource monitors to monitor and suspend warehouses. In addition, Snowflake
 provides cost controls you can configure to help avoid unexpected costs.
 
+To limit how many credits individual users can consume, use per-user quotas.
+
 ## Use budgets to control credit usage
 
 A *budget* allows you to set a monthly spending limit and monitor the credit usage of all
@@ -15,6 +17,14 @@ list of email addresses, a queue provided by a cloud service (Amazon SNS, Azure 
 for a third-party system (for example, Slack, Microsoft Teams, or PagerDuty).
 
 For information about budgets, see [Monitor credit usage with budgets](/user-guide/budgets).
+
+## Use per-user quotas to limit spending by individual users
+
+A *per-user quota* sets monthly, weekly, or daily credit limits that apply to each user in scope.
+A quota can notify users as they approach their limit and block them from issuing new AI requests
+when they reach it.
+
+For information about per-user quotas, see [Per-user quotas](/user-guide/budgets/per-user-quotas).
 
 ## Use resource monitors to control credit usage
 

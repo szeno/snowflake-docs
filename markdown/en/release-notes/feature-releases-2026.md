@@ -4,9 +4,12 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 18, 2026: Spark Monitoring UI (General availability)](/release-notes/2026/other/2026-11-18-spark-monitoring-ui-ga)
+- [Nov 17, 2026: CoCo Desktop v2.0.0](/release-notes/2026/other/2026-11-17-coco-desktop-v2-0-0)
 - [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
 - [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)
 - [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)
+- [Nov 16, 2026: Openflow Snowflake Deployments in Azure government regions (General availability)](/release-notes/2026/other/2026-11-16-openflow-snowflake-deployments-azure-gov-ga)
 - [Nov 16, 2026: SCIM provisioning for organization users and organization user groups (Private preview)](/release-notes/2026/other/2026-11-16-organization-scim-private-preview)
 - [Nov 16, 2026: SHOW GRANTS TO … INCLUDE HIERARCHY (General availability)](/release-notes/2026/other/2026-11-16-show-grants-include-hierarchy)
 - [Nov 13, 2026: AI\_TRANSCRIBE delivers improved transcription accuracy](/release-notes/2026/other/2026-11-13-ai-transcribe-accuracy-improvements)

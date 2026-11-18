@@ -90,9 +90,9 @@ Use the [ADD\_SHARED\_RESOURCE](/sql-reference/classes/budget/methods/add_shared
 Supported AI feature domains include:
 
 - `AI FUNCTION` — Model inference functions
-- `CORTEX CODE` — Cortex Code workloads (CLI, Snowsight)
+- `SNOWFLAKE COCO` — Cortex Code workloads (CLI, Snowsight)
 - `CORTEX AGENT` — Cortex agent-based workflows
-- `SNOWFLAKE INTELLIGENCE` — Snowflake CoWork workloads
+- `SNOWFLAKE COWORK` — Snowflake CoWork workloads
 - `AI GATEWAY` — Cortex AI Gateway
 
 Tip
@@ -135,14 +135,14 @@ Copy code
 
 ```
 CALL finance_budget!ADD_SHARED_RESOURCE(
-     'SNOWFLAKE INTELLIGENCE',
+     'SNOWFLAKE COWORK',
      (SELECT SYSTEM$REFERENCE('SNOWFLAKE INTELLIGENCE', 'my_si'))
 );
 ```
 
 Note
 
-For the SNOWFLAKE INTELLIGENCE domain, specifying an explicit object reference in ADD\_SHARED\_RESOURCE is optional as there is only one Snowflake CoWork object per account.
+For the `SNOWFLAKE COWORK` domain, specifying an explicit object reference in ADD\_SHARED\_RESOURCE is optional as there is only one Snowflake CoWork object per account.
 
 ### Add the AI Gateway
 

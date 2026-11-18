@@ -232,6 +232,16 @@ Your own copy isn’t affected. A failed scan stops other people from installing
 you from using it locally. However, it is best practice to not run a skill or plugin that has failed a scan and
 Snowflake advises against doing so.
 
+### What happens when you install
+
+A skill or plugin can connect to remote locations through MCP servers. When the scan finds
+MCP servers, it records them with the shared version. Before you install or update that skill or plugin, you see a
+notice that lists each MCP server, and you’re asked to confirm. Review the listed servers before you answer. If you
+don’t confirm, nothing is installed.
+
+To install or update a plugin like this from a script, add the `--allow-mcp-servers` option to `cortex plugin add` or
+`cortex plugin update` to approve the listed MCP servers without a prompt. Use this option only for plugins you trust.
+
 ### Scan limits
 
 The scanner accepts a skill or plugin up to the following limits:

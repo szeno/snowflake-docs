@@ -267,10 +267,18 @@ Show lessSee more
 >    >   >    Note
 >    >   >
 >    >   >    Snowflake Cortex does not support stored procedures and custom tools with a parameter of type `object`.
+>    >   >
+>    >   >    Note
+>    >   >
+>    >   >    Stored procedures and scalar functions used as custom tools must return a single value (one row and one column), such as VARCHAR or VARIANT. A stored procedure that returns a tabular result (`RETURNS TABLE`) fails at agent runtime with error 370001. To return multiple rows, serialize them into a single VARIANT or JSON value (for example, `TO_JSON(ARRAY_AGG(OBJECT_CONSTRUCT(...)))`), or use a table function.
 >    >   > 6. For **Warehouse**, select the warehouse that the agent uses to run the custom tool. You must manually select a warehouse.
 >    >   > 7. For **Description**, describe the custom tool and how to use it.
 >    >   > 8. Select **Add**.
 >    >   > 9. After creating the custom tool, make sure users are granted USAGE privileges to the function or procedure that you added as a custom tool. When using stored procedures, agents maintain whether the procedure runs with owner’s or caller’s rights. For information about owner’s and caller’s rights, see [Understanding caller’s rights and owner’s rights stored procedures](/developer-guide/stored-procedure/stored-procedures-rights).
+>    >
+>    >   Note
+>    >
+>    >   When you invoke an agent directly, such as from Snowsight, the REST API, or SQL, results that custom tools return are limited to 32 KB (32,768 bytes of UTF-8 text). Results that exceed this limit are truncated, and the tool result includes `"truncated": true`. The limit can’t be changed. To return more data, paginate within the procedure or function (for example, accept an offset or chunk parameter and return a continuation indicator), or return a filtered or summarized result.
 >    > - **To add the web search tool to the agent**: This section assumes that you’ve already enabled web search at the account level. For information about enabling web search at the account level, see [Web search](#label-cortex-agents-web-search).
 >    >
 >    >   1. Find **Web search** and select the respective toggle to enable the feature.
@@ -578,7 +586,7 @@ Method 1: Snowsight UIMethod 2: REST APIMethod 3: SQL
 2. For the **Orchestration model**, select the model that the agent uses to handle orchestration.
 3. For **Planning instructions**, provide instructions that influence tool selection by the agent based on user-provided input. These can include specific instructions about when to use each tool, or even to always use a tool at the beginning or end of a response.
 4. For **Response instruction**, provide instructions that the model uses for response generation. For example, specify if you want the agent to prioritize chart creation, or to keep a certain tone with users.
-5. For **Budget configuration**, you can specify time limit and token limit for the agent. The budget is the maximum amount of time or tokens that the agent can use to generate a response. After either one of the limits is reached, the agent will stop generating a response. Token limits are used only for orchestration and don’t include tokens used by Cortex Analyst, Cortex Search, and other tools invoked.
+5. For **Budget configuration**, you can specify a time limit and a token limit for the agent. After either limit is reached, the agent stops generating a response. For details, see [How the orchestration budget works](#label-cortex-agents-orchestration-budget).
 6. Select **Save**.
 
 > To update an agent using the REST API, add the following payloads as part of a request to [Update Cortex Agent](/user-guide/snowflake-cortex/cortex-agents-rest-api#label-snowflake-agents-rest-api-update). You can also specify these fields when creating the agent object. The following procedure shows how to update the agent with planning and response instructions, and specify the LLM model used for orchestration.
@@ -688,6 +696,21 @@ To enable analytical search, set `orchestration.capabilities.analytical_search` 
 Analytical search is disabled by default. The new specification completely replaces the existing one, so include the
 complete LIVE specification from `DESCRIBE AGENT`. For more information, see
 [Analytical search](/user-guide/snowflake-cortex/cortex-agents-analytical-search#label-enable-analytical-search).
+
+### How the orchestration budget works
+
+The `orchestration.budget` settings limit how long and how much the agent plans before it stops:
+
+- `tokens`: The total number of output tokens that the orchestration model generates while planning, across all orchestration steps. The count doesn’t include input tokens or tokens used by tools, such as Cortex Analyst, Cortex Search, and custom tools. To track total token usage per request, see [CORTEX\_AGENT\_USAGE\_HISTORY view](/sql-reference/account-usage/cortex_agent_usage_history).
+- `seconds`: The time elapsed since the agent started its first orchestration step.
+
+The agent checks both limits between orchestration steps, so a step that’s already running can finish after a limit is exceeded. When a limit is exceeded, the agent stops and sends a `budget_tokens_exceeded` or `budget_timeout_exceeded` status update with the response.
+
+If you don’t set a budget, Snowflake applies high default limits, which can change.
+
+Note
+
+Budget settings don’t apply when users interact with the agent in Snowflake CoWork. Requests from Snowflake CoWork always use the default limits.
 
 ## Review the agent
 

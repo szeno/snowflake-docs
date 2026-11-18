@@ -14,7 +14,7 @@ Compared to [virtual warehouses](/user-guide/warehouses), Container Runtime prov
 compute environment where you can install packages from multiple sources and select compute resources, including GPU
 machine types, while still running SQL queries on warehouses for optimal performance.
 
-This document describes some considerations for using notebooks on [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+This document describes some considerations for using notebooks on [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 You can also try the
 [Getting Started with Snowflake Notebook Container Runtime](https://quickstarts.snowflake.com/guide/notebook-container-runtime/)
 quickstart to learn more about using the Container Runtime in your development.
@@ -244,7 +244,7 @@ For an optimal experience, use OSS libraries to develop model or to import noteb
 - Distributed training APIs for scalable model fitting
 - Distributed hyperparameter tuning APIs to efficiently utilize all available resources.
 
-For more information, see [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+For more information, see [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 
 Note
 

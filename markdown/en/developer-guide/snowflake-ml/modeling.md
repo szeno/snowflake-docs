@@ -10,7 +10,7 @@ You can access all Snowflake ML features from a notebook environment with an ML 
 
 ### Build with Notebooks on Container Runtime
 
-[Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml) provides a pre-built ML environment with popular packages included. You can securely add libraries from public or private PyPI repositories to customize your environment.
+[Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml) provides a pre-built ML environment with popular packages included. You can securely add libraries from public or private PyPI repositories to customize your environment.
 Its distributed APIs enable you to transform data and run AI/ML workflows at scale.
 
 In addition to using Snowflake’s distributed APIs to scale your workflows, you can also use Ray. Ray is an open-source framework that provides a simple and flexible way to scale Python applications. It allows you to run your code in parallel across multiple nodes. For more information about using Ray with Snowflake ML, see the [Ray Getting Started Guide](https://docs.ray.io/en/latest/ray-overview/getting-started.html).
@@ -51,7 +51,7 @@ Training ML models on large datasets can exceed the resources of a single node. 
 With the distributed APIs, you can do the following:
 
 - Leverage distributed preprocessing functions in [snowflake.ml.modeling.preprocessing](https://docs.snowflake.com/en/developer-guide/snowpark-ml/reference/latest/modeling#snowflake-ml-modeling-preprocessing).
-- Scale your model training out across one or more nodes using optimized training APIs in [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+- Scale your model training out across one or more nodes using optimized training APIs in [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 
 ### Tune hyperparameters with distributed HPO
 

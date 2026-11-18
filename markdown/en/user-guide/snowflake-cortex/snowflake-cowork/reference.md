@@ -57,7 +57,7 @@ For detailed SQL syntax, parameters, and examples, see [Cortex Agent commands](/
 
 ## Supported models and regions
 
-Snowflake CoWork supports models listed in [Models](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models). You can use these models as long as the account has access to them. For more information, see [Control model access](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-access-control).
+Snowflake CoWork supports models listed in [Models](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models). You can use these models as long as the account has access to them. For more information, see [Model access control](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-access-control).
 
 When creating an agent, we recommend selecting **Auto** for the model. This lets Snowflake CoWork automatically select the highest-quality model for your account and automatically improve as new models become available.
 

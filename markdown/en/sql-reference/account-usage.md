@@ -368,12 +368,13 @@ For additional examples, see [Querying the Account Usage views](#label-account-u
 In addition, you can grant finer control to accounts using SNOWFLAKE database roles.
 For more information on database roles, see [database roles](/user-guide/security-access-control-considerations#label-access-control-considerations-database-roles).
 
-[ACCOUNT\_USAGE](/sql-reference/account-usage) schemas have four defined SNOWFLAKE database roles, each granted the SELECT privilege on specific views.
+[ACCOUNT\_USAGE](/sql-reference/account-usage) schemas have five defined SNOWFLAKE database roles, each granted the SELECT privilege on specific views.
 
 | Role | Purpose and Description |
 | --- | --- |
 | OBJECT\_VIEWER | The OBJECT\_VIEWER role provides visibility into object metadata. |
 | USAGE\_VIEWER | The USAGE\_VIEWER role provides visibility into historical usage information. |
+| USAGE\_ADMIN | The USAGE\_ADMIN role is the database role for administrators of cost management features. Grant it together with the APP\_USAGE\_ADMIN application role. For details, see [Access control for cost management](/user-guide/cost-access-control). |
 | GOVERNANCE\_VIEWER | The GOVERNANCE\_VIEWER role provides visibility into data-governance-related information. |
 | SECURITY\_VIEWER | The SECURITY\_VIEWER role provides visibility into security-based information. |
 

@@ -106,7 +106,7 @@ For general information about roles and privilege grants for performing SQL acti
 - A notebook project points to the specified workspace version indicated in the FROM clause. Using `versions/last` always references the latest
   workspace version; using a fixed path references a static version.
 - If you create the notebook project from a stage, you can update it by adding versions from the stage. For details,
-  see [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
+  see [Schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
 - Use descriptive project names to simplify workflow orchestration.
 - Replacing a project updates the stored workspace path and metadata.
 - To run the `CREATE NOTEBOOK PROJECT` command, you must execute it from a SQL file or SQL worksheet in Workspaces, not from within a notebook cell.

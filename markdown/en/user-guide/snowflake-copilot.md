@@ -126,7 +126,7 @@ Snowflake Copilot uses the following logic to select a model to use when model l
 
 Complete the following steps to enable model level RBAC and configure the models that Snowflake Copilot can use.
 
-1. Grant model-specific application roles to user roles. The user only then has access to these models when using Snowflake Copilot. Each supported LLM has a corresponding application role. For information about granting these application roles to implement model level RBAC, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac).
+1. Grant model-specific application roles to user roles. The user only then has access to these models when using Snowflake Copilot. Each supported LLM has a corresponding application role. For information about granting these application roles to implement model level RBAC, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-rbac).
 2. Snowflake Copilot automatically selects the best available model based on access privileges and regional availability.
 
 #### Risks and limitations

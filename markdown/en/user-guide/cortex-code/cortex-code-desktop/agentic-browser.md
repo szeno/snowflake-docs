@@ -6,6 +6,20 @@ its own browser tab — it can read pages, click buttons, fill out forms, and re
 
 [![Agentic Browser panel showing navigation controls and a rendered web page](/static/images/user-guide/cortex-code/cortex-code-desktop/agentic-browser/browser-panel.png)](/static/images/user-guide/cortex-code/cortex-code-desktop/agentic-browser/browser-panel.png)
 
+## What’s new in v2.0.0
+
+CoCo Desktop v2.0.0 includes an updated Agentic Browser as part of the redesigned interface. It adds the following features to the browser in v1.25.4 and earlier:
+
+- **Agent activity indicators**: While CoCo works in the browser, the browser shows what it’s doing, such as “CoCo is clicking”, “CoCo is reading the page”, or “CoCo is filling in a form”. Select **Stop** to end the agent’s turn.
+- **Comments on the page**: Use **Comment on Page** to click an element or drag across an area, type what should change, and select **Save**. Each comment appears as a numbered pin on the page. Press **Enter** on a pin to edit it, or **Delete** to remove it. Ask CoCo to address your comments, and it reads them from the browser, including the page and element that each comment refers to, and marks the ones it has addressed as resolved.
+- **Multiple tabs**: Press **⌘T** (**Ctrl+T** on Windows) to open a new browser tab. You can have up to 10 browser tabs open at once. The editor area and the Agent view browser panel each have their own limit. When the limit is reached, close a tab to open another. CoCo can also open and close tabs.
+- **A home page on new tabs**: In the Agent Window, a new browser tab opens a CoCo home page with example prompts that you can run to watch the agent use the browser. To open Google on new tabs instead, disable the `agentBrowser.homePage.enabled` setting.
+- **Find in page**: Press **⌘F** (**Ctrl+F** on Windows) while the browser has focus to search the page.
+- **More browser commands**: The Command Palette includes **New Browser Tab**, **Find in Page**, **Zoom In**, **Zoom Out**, **Reset Zoom**, **Clear Cookies and Cache**, **Open Browser in New Window**, and **Open Browser Settings**.
+- **A switch to turn the browser off**: To turn off the Agentic Browser, disable the `agentBrowser.enabled` setting. When it’s off, browser tabs and the browser panel don’t load pages, links in chat open in your external browser, and the agent’s browser tools are unavailable. To turn it back on, select **Open Browser Settings**.
+
+These features are part of the redesigned interface. If you disable the `snowflake.consumerGradeUI.enabled` setting to return to the previous interface, the Agentic Browser has the features that it had in v1.25.4.
+
 ## Agent view vs Editor view
 
 The browser panel is available in both IDE views:

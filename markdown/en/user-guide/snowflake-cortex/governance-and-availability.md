@@ -23,5 +23,5 @@ Snowflake provides usage views and budget features to help monitor AI consumptio
 ## Access controls
 
 Across Snowflake AI & ML, most features already include access controls.
-The [Cortex User role](/user-guide/snowflake-cortex/aisql), [role based access control for models](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac), [Agent user role](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-access-control), and [Snowflake CoWork user](/user-guide/snowflake-cortex/snowflake-cowork) span part of the current feature set and show how access is managed in different product areas.
+The [Cortex User role](/user-guide/snowflake-cortex/aisql), [role-based access control for models](/user-guide/snowflake-cortex/governance-and-availability/model-access-control), [Agent user role](/user-guide/snowflake-cortex/cortex-agents-setup#label-cortex-agents-access-control), and [Snowflake CoWork user](/user-guide/snowflake-cortex/snowflake-cowork) span part of the current feature set and show how access is managed in different product areas.
 Together, these capabilities support how access is granted, managed, and restricted across features.

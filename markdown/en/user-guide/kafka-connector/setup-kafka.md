@@ -364,6 +364,8 @@ authentication methods, see [Authentication](#label-kafkahp-authentication).
 `snowflake.role.name`
 :   The name of the role that the connector will use to insert data into the table.
 
+    Not required when `snowflake.authenticator` is `spcs` (version 4.3.0 and later). For more information, see [SPCS authentication (workload-identity)](#label-kafkahp-spcs-authentication).
+
 `snowflake.database.name`
 :   The name of the database that contains the table to insert rows into.
 
@@ -487,7 +489,7 @@ Copy code
 }
 ```
 
-`snowflake.role.name` is accepted but overridden under SPCS authentication. The connector uses the role of the user who created the SPCS service. Assign the intended role when you run `CREATE SERVICE`. If that role cannot access the target table, ingestion reports that the table does not exist rather than that access was denied.
+`snowflake.role.name` is optional under SPCS authentication in the Kafka connector version 4.3.0 and later; earlier versions fail at startup without it. If you set it, the value is accepted but overridden. The connector uses the role of the user who created the SPCS service. Assign the intended role when you run `CREATE SERVICE`. If that role cannot access the target table, ingestion reports that the table does not exist rather than that access was denied.
 
 If `snowflake.private.key` or OAuth properties are present with `snowflake.authenticator=spcs`, the connector starts and logs a warning that the credential is ignored. This supports migration from key-pair or OAuth configuration without requiring the old credential to be removed first.
 

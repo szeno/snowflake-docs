@@ -68,12 +68,16 @@ To configure and implement secure access to Snowflake internal stages through Go
       You will provide this value as the *‘google\_cloud\_vpc\_network\_name’* argument for the system function in the next step.
 2. In Snowflake, use the ACCOUNTADMIN role to authorize access to the internal stage by calling the
    [SYSTEM$AUTHORIZE\_STAGE\_PRIVATELINK\_ACCESS](/sql-reference/functions/system_authorize_stage_privatelink_access) function.
+   Before you call the function, set the
+   [ENABLE\_INTERNAL\_STAGES\_PRIVATELINK](/sql-reference/parameters#label-enable-internal-stages-privatelink) account parameter to TRUE. If the parameter isn’t set,
+   the function returns the error `Feature not implemented for Cloud Provider, or is disabled`.
    For example:
 
    Copy code
 
    ```
    USE ROLE ACCOUNTADMIN;
+   ALTER ACCOUNT SET ENABLE_INTERNAL_STAGES_PRIVATELINK = TRUE;
    SELECT SYSTEM$AUTHORIZE_STAGE_PRIVATELINK_ACCESS('<google_cloud_vpc_network_name>');
    ```
 

@@ -24,7 +24,7 @@ Expand
 
 Show lessSee more
 
-On SPCS Workers, **`use_bcp = true`** is the default and **`bcp`** is installed at container start. On custom Worker hosts, install **`bcp`** yourself and opt in with **`use_bcp = true`**. When **`bcp`** is unavailable, the Worker uses the configured database driver.
+On SPCS Workers, **`use_bcp = true`** is the default and **`bcp`** is installed at container start. On custom Worker hosts, install **`bcp`** yourself and opt in with **`use_bcp = true`**. With the `regular` strategy, if `use_bcp = true` and **`bcp`** isn’t installed on the Worker host, the extract fails; the Worker doesn’t fall back to the database driver. Set `use_bcp = false` on hosts without **`bcp`** that use `regular` extraction. The `cet_as` and `cloud_direct` strategies don’t use **`bcp`**, whatever `use_bcp` is set to.
 
 ### SQL authentication
 
@@ -347,7 +347,7 @@ defaultTableConfiguration:
 | FLOAT, REAL | FLOAT | Yes |  |
 | DATE | DATE | Yes |  |
 | TIME(n) | TIME | Yes |  |
-| DATETIME, DATETIME2(n), SMALLDATETIME | TIMESTAMP\_NTZ | Yes | NULL `DATETIME` values may appear as `1970-01-01 00:00:00` on the target when BCP extraction is used |
+| DATETIME, DATETIME2(n), SMALLDATETIME | TIMESTAMP\_NTZ | Yes |  |
 | DATETIMEOFFSET(n) | TIMESTAMP\_TZ | Yes |  |
 | CHAR(n), VARCHAR(n), NCHAR(n), NVARCHAR(n) | VARCHAR | Yes |  |
 | BINARY(n), VARBINARY(n) | BINARY | Yes |  |
@@ -368,7 +368,7 @@ Show lessSee more
 
 ## Platform-specific considerations
 
-- **BCP for throughput**: On SPCS Workers, BCP is enabled by default. On custom Worker hosts, set `use_bcp = true` when **`bcp`** is installed. BCP applies to **migration only**; validation reads the source through `mssql-python` by default and falls back to ODBC when necessary.
+- **BCP for throughput**: On SPCS Workers, BCP is enabled by default. On custom Worker hosts, set `use_bcp = true` when **`bcp`** is installed. BCP applies to **migration only**; validation reads the source through `mssql-python` by default and falls back to ODBC when necessary. See [BCP and validation](./validate-sql-server#bcp-and-validation).
 
   **Prompt:**
 

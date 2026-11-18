@@ -158,8 +158,8 @@ Copy code
 ```
 CALL my_quota!SET_USER_QUOTA_OVERRIDE(
   ['ALICE'],
-  2500,
   'MONTHLY',
+  2500,
   '2026-12-01'
 );
 ```

@@ -6,6 +6,85 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 17, 2026
+
+### Runtime Server 2026.11.17.2
+
+- Applied security patches and dependency upgrades.
+- Upgraded the Runtime UI to version `0.97.0`:
+  - Parameter providers: Fixed long context names in the Fetch parameters dialog squeezing the sensitivity table to an unreadable width.
+
+### Runtime Extensions 2026.11.17.2
+
+- Salesforce (GA): Fixed the Bulk API connector initial load for objects for which Salesforce rejects the oldest-record lookup with `OPERATION_TOO_LARGE`. The connector now determines the starting point of the load with smaller bounded queries instead.
+- Shopify (Public Preview): Fixed fields whose sub-selection contains `shopMoney` below the first level (for example `transactions { amountSet { shopMoney { ... } } }` or `taxLines { priceSet { shopMoney { ... } } }`) being created as `NUMBER` columns, which caused these records to be rejected during ingestion. They are now created as `VARIANT` columns. Aliased or parameterized `{ id }` fields in object definition overrides also get a `<KEY>_ID` column holding the numeric ID. Existing tables created with the old `NUMBER` type must be recreated to pick up the change. An alias written with whitespace before the colon (`alias : field`) is now recognized as an alias, so its column is typed `VARIANT` instead of being inferred from the name. Existing tables keep their current column type.
+- CDC SQL Server (GA): Fixed a table that keeps failing stopping the other tables from replicating. The table is now retried with a growing delay while the other tables continue. With CDC, a table that has two capture instances with the same start LSN no longer blocks replication of every table. If the table has not started replicating, it is marked as failed with a message explaining that this is not supported and how to resolve it. If it is already replicating, an error is reported and the table resumes on its own once the extra capture instance is dropped.
+- CDC MySQL (GA): Changed `CaptureChangeMySQL` to continue logging binary log positions after switching to GTID mode, while using the GTID for tracking and removing duplicates. Both position checkpoints are visible in the processor’s state. Failing over to a different node while in GTID mode resets the binary log positions.
+- CDC Databases: Changed Multi-Database Fetch Rows By Row Id to skip the source query and route the task to `invalid` when Table State Service is set and the table is no longer replicating.
+- CDC Databases: Added a Prune Row option to Oversized Value Strategy. A non-key value that exceeds the Snowflake limit for its type, or that is large enough to push the row over the new Max Serialized Row Size limit (default 128 MB, range 1 KB to 1 GB), is pruned and the rest of the row continues. Replication keys are never pruned.
+- Jira Cloud (GA for Core, Public Preview for Agile): Changed Jira processors to retry transient network errors when looking up the Jira site on start.
+- Jira Cloud Core (GA): Changed `FetchJiraFields` to write the `jira.fields.fetchedAt` attribute, so the connector no longer misses values of newly created custom fields on issues edited shortly after the field list was cached. The field list is now written once per fetch instead of once per project, which reduces the volume of rows written to the `FIELD` journal table.
+- Snowpipe Streaming: Added a Source Timestamp property to `PublishSnowpipeStreaming` and `PublishChangeDataSnowpipeStreaming`. Each insert request now carries the earliest source timestamp among its FlowFiles, defaulting to the FlowFile lineage start date, so end-to-end ingestion latency can be measured.
+
+#### Gen 2 Connectors
+
+- CDC MySQL, CDC PostgreSQL (Public Preview), CDC SQL Server (Private Preview): Added the Prune Row option for oversized values to the Destination details step. A non-key value that would make Snowpipe Streaming ingestion fail is pruned and the rest of the row is published.
+
+#### Gen 1 Connectors
+
+- Jira Cloud Core 0.16.0 (GA): Fixed values of newly created custom fields being missed. The field list is now written to the `FIELD` table once per fetch instead of once per project, and the search window now ends at the field list fetch time.
+- MongoDB 0.30.0 (Public Preview): Changed Merge Journal to Destination to drop journal FlowFiles for collections that are no longer replicating instead of trying to merge them.
+
+## November 16, 2026
+
+### Control Plane Core 0.141.0
+
+- Fixed an issue where the Installed connectors page’s “View gen 2 connectors” showed no connectors.
+- Fixed an issue where runtimes could be left out of the runtime list for accounts with many BYOC runtimes.
+- Fixed an issue where uninstalling a BYOC deployment failed if the uninstall began while the deployment was creating, provisioning or upgrading.
+- Fixed sign-in redirects for Snowflake deployments after an organization or account rename.
+- Scaling a runtime without changing its node tier no longer restarts its pods.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.141.0
+
+- Runtime creates retry instead of failing when an async workflow task dispatch is lost.
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.100.0
+
+- The Create Deployment wizard defaults to Snowflake (SPCS) when available.
+- Selecting a connector on the Installed connectors page keeps the runtime filter.
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.29.0
+
+- Security patches and dependency upgrades.
+
+### Runtime Operator 0.87.0
+
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.11.12-18
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.58.0
+
+- Fixed an issue where a Deployment upgrade can get stuck due to a bootstrapping failure that does not return the proper exit code on failure.
+- Security patches and dependency upgrades.
+
+### Openflow Token Refresher 1.24.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.79.0
+
+- Deferred AMI upgrades on EKS worker nodes until you trigger a deployment upgrade, minimizing disruptions to a running deployment.
+- `update-account.sh` updates the Control Plane and telemetry URLs after an organization or account rename, including for PrivateLink.
+- Reduced overall background CPU utilization on the agent host during periods when no resource drift has occurred.
+- Security patches and dependency upgrades.
+
 ## November 12, 2026
 
 ### Runtime Server 2026.11.12.16
@@ -20,7 +99,7 @@ Show entries for:DeploymentRuntime / ConnectorControl Plane
 - Salesforce (GA): Changed formula views to translate formula fields that reference fields across several relationships (for example `Case.Contact.LastName` or `CreatedBy.Profile.Name`) and through polymorphic relationships such as `Owner:User.Email`, instead of exposing them as NULL, when all referenced objects are replicated.
 - Salesforce (GA): Added ingestion of archived versions of Knowledge articles (`IsLatestVersion = false`) to the Bulk API connector, including translations and the content of their file fields, for Knowledge objects listed in the Special Objects Filter. When a new version of an article is published, the previous version is updated to Archived on the next run. To retrieve archived versions missed before this release, perform a full reload of the Knowledge object. Deleted articles are visible on the parent `__ka` object (`IsDeleted = true`) rather than on the `__kav` rows.
 - Salesforce (GA): Added a Query Submission Time Offset setting (30 seconds to 1 hour, default 30 seconds) that controls how far behind the query submission time each incremental query ends. Increasing it captures records that become visible in Salesforce some time after they were modified, at the cost of delaying retrieval of the most recent changes by the same amount.
-- CDC Databases - Adaptive Merge Strategy (Preview): Renamed the Adaptive option of Placeholder Merge Strategy in Merge Snowflake Journal Table to Adaptive (preview). It now always uses the improved merge queries: a single journal read for tables with up to 10 columns, and the adaptive merge with `MAX_BY` deduplication for wider tables. Flows already set to Adaptive keep that setting and switch to the new behavior. The Snowflake managed option of both merge strategy properties is now labelled Snowflake managed (experimental); its behavior is unchanged.
+- CDC PostgreSQL - Adaptive Merge Strategy (Preview): Renamed the Adaptive option of Placeholder Merge Strategy in Merge Snowflake Journal Table to Adaptive (preview). It now always uses the improved merge queries: a single journal read for tables with up to 10 columns, and the adaptive merge with `MAX_BY` deduplication for wider tables. Flows already set to Adaptive keep that setting and switch to the new behavior. The Snowflake managed option of both merge strategy properties is now labelled Snowflake managed (experimental); its behavior is unchanged.
 - CDC SQL Server CT (GA): Fixed tables using Change Tracking being failed when the database reports an older change tracking version during an Always On failover. The processor keeps replicating the table, retries with backoff, and logs a warning. If the warning keeps appearing, the connection may point at a secondary replica or the database may have been restored from an older backup; in that case remove the table from replication and add it back.
 - CDC SQL Server CT (GA): Fixed tables with composite primary keys re-reading the same rows on every run when one change tracking version contains more changes than Max Batch Size. Previously replication of such a table could stall and write duplicate rows to the journal.
 

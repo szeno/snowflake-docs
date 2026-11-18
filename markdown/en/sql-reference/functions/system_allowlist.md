@@ -85,6 +85,11 @@ key/value pairs:
     `SNOWSIGHT_DEPLOYMENT`
     :   Host name and port number to access [Snowsight](/user-guide/ui-snowsight) for your Snowflake account.
 
+    Depending on your account and the features it uses, the function can also return types that aren’t described above, such as
+    `ACCOUNT_PUBLIC`, `APP_SERVICE_PUBLIC_WILDCARD`, `DCP_CONTROL_PLANE`, `DCP_PROXY`, `DCP_PROXY_FALLBACK`, `EXTERNAL_TELEMETRY`,
+    `OPENFLOW`, `SNOWCONVERT`, `SNOWPARK_CONNECT`, and `SPCS_REGISTRY_REGIONLESS`. Snowflake can add types over time, so don’t
+    limit your allowed list to the types on this page; add the hosts that the function returns.
+
 `host`
 :   Specifies the full host name for `type`, for example: `"xy12345.east-us-2.azure.snowflakecomputing.com"`, `"ocsp.snowflakecomputing.com"`.
 

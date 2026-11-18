@@ -2,6 +2,7 @@
 
 The following table details the parameters that can be set for the Postgres server and PgBouncer components of Snowflake Postgres instances,
 including settings for supported extensions. Each setting’s name is hyperlinked to its Postgres, PgBouncer, or extension documentation.
+Snowflake-specific settings link to Snowflake Postgres documentation.
 
 Where “Postgres default” appears in the Default column, Snowflake Postgres instances use the default value from Postgres, or from the
 extension for extension settings. This can vary by major version.
@@ -104,7 +105,8 @@ becomes this to visit its Postgres 17 documentation:
 | postgres | [random\_page\_cost](https://www.postgresql.org/docs/current/runtime-config-query.html) | FALSE | Sets the planner’s estimate of the cost of a non-sequentially-fetched disk page. | 1.1 |
 | postgres | [session\_preload\_libraries](https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-SESSION-PRELOAD-LIBRARIES) | FALSE | Specifies one or more shared libraries that are to be preloaded at connection start. | Postgres default |
 | postgres | [statement\_timeout](https://www.postgresql.org/docs/current/runtime-config-client.html#GUC-STATEMENT-TIMEOUT) | FALSE | Abort any statement that takes more than the specified amount of time. | Postgres default |
-| postgres | [synchronous\_commit](https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT) | FALSE | Specifies how much WAL processing must complete before the database server returns a “success” indication to the client. | local |
+| postgres | [strict.synchronous\_commit](#label-snowflake-postgres-strict-synchronous-commit) | FALSE | When HA is enabled and `synchronous_commit` is set to a remote mode (`on`, `remote_write`, or `remote_apply`), keeps synchronous commit armed across failover and HA replacement, so commits do not return success from the primary alone while no standby can acknowledge them. | off |
+| postgres | [synchronous\_commit](https://www.postgresql.org/docs/current/runtime-config-wal.html#GUC-SYNCHRONOUS-COMMIT) | FALSE | Specifies how much WAL processing must complete before the database server returns a “success” indication to the client. See also [Synchronous commit and durability](/user-guide/snowflake-postgres/high-availability#label-snowflake-postgres-synchronous-commit). | local |
 | postgres | [syslog\_split\_messages](https://www.postgresql.org/docs/current/runtime-config-logging.html#GUC-SYSLOG-SPLIT-MESSAGES) | FALSE | Split messages sent to syslog by lines and to fit into 1024 bytes | Postgres default |
 | postgres | [tcp\_keepalives\_count](https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-TCP-KEEPALIVES-COUNT) | FALSE | Specifies the number of TCP keepalive messages that can be lost before the server’s connection to the client is considered dead. | 4 |
 | postgres | [tcp\_keepalives\_idle](https://www.postgresql.org/docs/current/runtime-config-connection.html#GUC-TCP-KEEPALIVES-IDLE) | FALSE | Specifies the amount of time with no network activity after which the operating system should send a TCP keepalive message to the client. | 2 |
@@ -120,3 +122,62 @@ becomes this to visit its Postgres 17 documentation:
 Expand
 
 Show lessSee more
+
+## Snowflake-specific settings
+
+These settings aren’t part of upstream Postgres. Snowflake Postgres adds them to control platform behavior.
+
+### Strict synchronous commit
+
+When you use a remote [`synchronous_commit`](/user-guide/snowflake-postgres/high-availability#label-snowflake-postgres-synchronous-commit)
+mode (`on`, `remote_write`, or `remote_apply`), each commit waits until the HA standby has received, flushed, or applied it, depending on
+the mode. Sometimes no standby is available, for example right after an HA failover or while Snowflake replaces the standby during
+maintenance such as a resize. By default, Snowflake Postgres prioritizes availability during those windows: commits succeed from
+the primary alone, and those commits are durable only on the primary until a standby is available again. Most workloads should keep this default.
+
+Turn on `strict.synchronous_commit` when you want commits to succeed only after a standby meets the condition your `synchronous_commit`
+mode requires. If no standby is available, commits block until a standby is available and meets that condition. Strict mode also changes
+how Snowflake handles planned maintenance that replaces the HA standby, such as a compute or storage resize. With strict mode on, Snowflake
+keeps the old standby in place until the new one has caught up to ensure that no transactions are lost should a failover occur during or
+shortly after the HA switchover.
+
+The setting takes effect only when all of the following are true:
+
+- High availability is enabled (`HIGH_AVAILABILITY = TRUE`).
+- `synchronous_commit` is `on`, `remote_write`, or `remote_apply`. With the default of `local`, the setting has no effect.
+- `strict.synchronous_commit` is `on`.
+
+Warning
+
+This setting prioritizes durability over write availability and can lead to prolonged periods in which the instance is
+read-only. After a failover, commits block until a replacement standby is streaming. Catching up a replacement standby on a
+large database can take a long time. If the cloud provider can’t provision the replacement standby, commits remain blocked
+until capacity becomes available.
+
+The following example turns on remote synchronous commit with strict handling. Neither setting requires a restart:
+
+Copy code
+
+```
+ALTER POSTGRES INSTANCE production_instance
+  SET POSTGRES_SETTINGS = '{
+    "postgres:synchronous_commit": "on",
+    "postgres:strict.synchronous_commit": "on"
+  }';
+```
+
+`synchronous_commit` can also be changed for a single session with `SET` or a single transaction with `SET LOCAL`. Commits
+that run with `local` or `off` don’t wait for a standby, even when `strict.synchronous_commit` is on. You can use this to keep
+less critical writes durable on the primary only, while important commits still wait:
+
+Copy code
+
+```
+BEGIN;
+SET LOCAL synchronous_commit = local;
+-- writes that don't need standby acknowledgment
+COMMIT;
+```
+
+To turn it off, set `"postgres:strict.synchronous_commit": "off"`. For more about changing settings, see
+[Custom configuration parameters](/user-guide/snowflake-postgres/managing-instances#custom-configuration-parameters).

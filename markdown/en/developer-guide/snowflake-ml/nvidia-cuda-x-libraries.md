@@ -230,4 +230,4 @@ classifier.fit(X_train, y_train)
 ## See Also
 
 - [Snowflake ML: End-to-End Agentic Machine Learning](/developer-guide/snowflake-ml/overview)
-- [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml)
+- [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml)

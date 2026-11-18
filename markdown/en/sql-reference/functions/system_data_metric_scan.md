@@ -72,7 +72,25 @@ SYSTEM$DATA_METRIC_SCAN(
     with the object.
 
 `AT_TIMESTAMP => 'timestamp'`
-:   Timestamp that is being passed as an argument to check the results of a DMF evaluation on the table or view in the past.
+:   Timestamp string specifying the historical snapshot to scan. The function uses [Time Travel](/user-guide/data-time-travel) to
+    evaluate the specified DMF against the table or view data at that time. It does not retrieve stored evaluation results.
+
+    The requested time must be within the Time Travel retention period of the queried tables and must not precede their creation.
+
+    The string is converted using [TO\_TIMESTAMP](/sql-reference/functions/to_timestamp). Its format must match the
+    [TIMESTAMP\_INPUT\_FORMAT](/sql-reference/parameters#label-timestamp-input-format) session parameter, which defaults to `AUTO`.
+    The resulting timestamp type depends on the
+    [TIMESTAMP\_TYPE\_MAPPING](/sql-reference/parameters#label-timestamp-type-mapping) session parameter:
+
+    - With the default `TIMESTAMP_NTZ` mapping, any timezone offset in the string is discarded. Time Travel interprets the resulting
+      clock time as UTC. Supply a UTC timestamp string. For example, use the format `YYYY-MM-DD HH24:MI:SS.FF3` when
+      `TIMESTAMP_INPUT_FORMAT` is `AUTO`.
+    - With `TIMESTAMP_LTZ` or `TIMESTAMP_TZ` mapping, an explicit timezone offset is honored. If the string has no offset, the
+      [TIMEZONE](/sql-reference/parameters#label-timezone) session parameter determines the timezone.
+
+    To scan data from a past DMF measurement, use `MEASUREMENT_TIME` from
+    [DATA\_QUALITY\_MONITORING\_RESULTS](/sql-reference/local/data_quality_monitoring_results). For an example, see
+    [Calling the SYSTEM$DATA\_METRIC\_SCAN function](/user-guide/data-quality-fixing#label-data-quality-scan-historical-data).
 
 `WITHIN_GROUP_VALUES => 'json_object'`
 :   For an association created with a WITHIN GROUP clause, a JSON object that maps grouping column names to the specific group values to

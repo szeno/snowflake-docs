@@ -124,7 +124,9 @@ Set `orchestration` to a supported Cortex model identifier. Use `auto` (recommen
 Auto options depend on your account configuration. If one of the following options appears in your account’s model picker, you can set `orchestration` to its corresponding value:
 
 - `auto-intelligent` (**Auto Intelligent**): Favors the most capable models.
-- `auto-efficient` (**Auto Efficient**): Optimizes for cost.
+- `auto-efficient` (**Auto Efficient**): Routes each step of a task to a model based on how complex
+  it is, and adds a routing fee. See
+  [Auto Efficient billing](/user-guide/cortex-code/cortex-code#label-cortex-code-auto-efficient-billing).
 
 For available model identifiers, context windows, and per-region availability, see [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
 

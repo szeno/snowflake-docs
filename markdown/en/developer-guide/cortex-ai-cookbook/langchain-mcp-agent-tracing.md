@@ -111,6 +111,8 @@ A service user cannot generate or use a PAT unless it is subject to a network po
 
 ### MCP server and grants (`sql/02`)
 
+`execute_sql` lets the model run SQL that Cortex Analyst wrote. It is read-only, and it runs with the agent role, which can SELECT only the two recipe tables. The Snowflake docs recommend exposing a Cortex Agent as the only tool on a server for governed business questions, and putting raw SQL on a separate server with a least-privileged role if you need it. This recipe keeps the three tools together to show tool chaining in LangChain, and relies on the narrow role.
+
 Copy code
 
 ```
@@ -133,8 +135,6 @@ GRANT SELECT ON TABLE CAMPAIGN_SPEND                  TO ROLE COOKBOOK_LANGCHAIN
 ```
 
 `USAGE` on the MCP server lets a client list tools. Each tool still needs its own privilege on the object behind it. `CREATE OR REPLACE` drops the grants on the replaced objects, so the script grants them again on every run. The semantic view uses `CREATE OR ALTER`, which keeps its grants.
-
-`execute_sql` lets the model run SQL that Cortex Analyst wrote. It is read-only, and it runs with the agent role, which can SELECT only the two recipe tables. The Snowflake docs recommend exposing a Cortex Agent as the only tool on a server for governed business questions, and putting raw SQL on a separate server with a least-privileged role if you need it. This recipe keeps the three tools together to show tool chaining in LangChain, and relies on the narrow role.
 
 ### The agent (`client/agent.py`)
 

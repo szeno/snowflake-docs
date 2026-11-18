@@ -1,3 +1,8 @@
+Feature — Generally Available
+
+Support for this feature is available only to Business Critical Edition (or higher) accounts hosted on AWS.
+This feature is not available in Government Regions or in the People’s Republic of China.
+
 Categories:
 :   [System functions](/sql-reference/functions-system) (System Control)
 

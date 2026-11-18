@@ -2,7 +2,7 @@
 
 Feature — Generally Available
 
-Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. They’re also available in select [AWS government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-aws-government-regions). For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
+Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. They’re also available in select [AWS government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-aws-government-regions) and select [Azure government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-azure-government-regions). For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
 Openflow - Snowflake Deployment runs on [Snowpark Container Services (SPCS)](/developer-guide/snowpark-container-services/overview) and
 provides a streamlined and integrated solution for data integration and connectivity across interoperable storage like Iceberg and Snowflake native storage.
@@ -88,6 +88,17 @@ Openflow - Snowflake Deployments are available in the following AWS government r
 - US West (Commercial Gov - Oregon)
 - US Gov East 1 (FedRAMP High Plus)
 - US Gov West 1 (FedRAMP High Plus)
+
+Openflow isn’t yet FedRAMP-authorized. For account availability and authorization status, contact your
+Snowflake account team.
+
+For more information about government regions, see [U.S. regions supporting public sector workloads](/user-guide/intro-regions#label-us-gov-regions).
+
+### Azure government regions
+
+Openflow - Snowflake Deployments are available in the following Azure government region:
+
+- US Gov Virginia (FedRAMP High Plus)
 
 Openflow isn’t yet FedRAMP-authorized. For account availability and authorization status, contact your
 Snowflake account team.

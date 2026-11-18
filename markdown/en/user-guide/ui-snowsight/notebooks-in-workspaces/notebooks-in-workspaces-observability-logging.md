@@ -105,7 +105,7 @@ fall into two categories:
 The categorized reason appears in the run’s error details. To investigate further, review the run’s logs and run history:
 
 - For the run history and result visibility of scheduled runs, see
-  [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
+  [Schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
 - To query logs for the same time window, use your event table as described in [Query logs using Snowflake Trail](#query-logs-using-snowflake-trail).
 
 ## Troubleshooting

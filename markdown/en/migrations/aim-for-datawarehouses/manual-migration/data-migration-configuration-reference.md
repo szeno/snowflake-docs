@@ -28,6 +28,7 @@ Names that require quoting (or brackets) must be manually quoted. For example: `
 | `preflight` | `Boolean` |  | When `true`, caps each table to a single partition and loads it into a transient copy of the target table in a `PREFLIGHT_<workflowId>` schema, instead of the configured target. The real target tables must already exist. Defaults to `false`. See [Preflight: a bounded dry run](#preflight-bounded-dry-run). |
 | `preflightKeepSchema` | `Boolean` |  | When `preflight` is `true`, skips cleanup so the transient schema survives for inspection. You then drop it yourself. Defaults to `false`. See [Keeping the preflight schema](#keeping-the-preflight-schema). |
 | `cleanUpTransientResources` | `String` (`"never"`, `"on-success"`, `"always"`) |  | When to delete this workflow’s intermediate stage files. Defaults to `"on-success"`. See [Cleaning up transient resources](#cleaning-up-transient-resources). |
+| `comparisonConfiguration` | `Object` |  | Tolerances of the metrics check that [`synchronization.adoption`](#adopting-an-existing-target) runs on `checksum` tables. Both keys are optional: `tolerance` (an absolute difference) and `relativeTolerance` (a fraction of the target value). Same rules and defaults as [Comparison configuration](./data-validation-configuration-reference#comparison-configuration) in data validation: with neither set, the absolute tolerance is `0.001`; with only `relativeTolerance` set, no absolute tolerance applies; with both set, a value passes if either check passes. No other keys are accepted. |
 
 Expand
 
@@ -172,6 +173,7 @@ Defines the settings for migrating a single table.
 | `intervalHandling` | `String` (`"interval"`, `"varchar"`) |  | Per-table override of the workflow-level `intervalHandling` setting. See [INTERVAL data type handling](#interval-data-type-handling). |
 | `onUntranslatable` | `String` (`"substitute"`, `"fail"`) |  | Teradata only. How untranslatable characters in non-Latin Teradata character sets (`KANJISJIS`, `KANJI1`, `GRAPHIC`) are handled during extraction. `"substitute"` (default) replaces each one with U+FFFD; `"fail"` fails the table’s extraction. See [Character set handling](../data-migration-validation/migrate-teradata#character-set-handling). |
 | `continueIdentityColumns` | `Boolean` |  | When `true`, continues each target identity and sequence-default column past the migrated keys after the final load. Native targets only. Defaults to `false`. See [Identity columns and sequences](#identity-columns-and-sequences). |
+| `resetPartitions` | `String` (`"disabled"`, `"enabled"`, `"enabledWithDedup"`) |  | Discards the partitions a previous workflow created for the table and repartitions it. Defaults to `"disabled"`. `true` and `false` work as aliases for `"enabled"` and `"disabled"`. Neither enabled value empties the target. Set it for one run, then remove it. See [Resetting partitions](#resetting-partitions). |
 
 Expand
 
@@ -414,9 +416,11 @@ See [Extraction strategies](#extraction-strategies) for YAML examples and platfo
 | --- | --- | --- | --- |
 | `strategy` | `String` (`"none"`, `"full-replace"`, `"checksum"`, `"watermark"`) |  | Synchronization method. `"none"` (default) re-extracts fully on every run and appends the rows. `"full-replace"` re-extracts fully and deletes each partition’s target rows before loading. Rejected for Iceberg targets. |
 | `checksumExpression` | `String` |  | `checksum` only. Any other strategy is rejected at configuration validation. Custom SQL aggregate expression that returns a single value per partition (for example a row-version column or `MAX(last_modified)`). Only partitions whose value changed since the last run are cleared and re-extracted. When omitted, the default per-column hash is used. May reference pseudo-columns or system columns (for example `MAX(ORA_ROWSCN)` on Oracle). |
+| `checksumColumns` | List of strings |  | `checksum` only. The source columns hashed into the default partition checksum. When omitted, every column is hashed. Can’t be combined with `checksumExpression`. See [Choosing the checksum columns](#choosing-the-checksum-columns). |
 | `watermarkColumn` | `String` | `watermark` only | Monotonically increasing column name. May be a **pseudo-column or system column** not present in the migrated schema (for example Oracle `ORA_ROWSCN`). AIM DMV projects it into the extract for change detection but does not migrate it to the target. |
 | `trackModifications` | `Boolean` |  | `watermark` only. If `true`, merges modified rows into the target by primary key after `COPY INTO` (warehouse loading only). Requires `primaryKeyColumns`, configured or inferred. Without a key, the merge doesn’t run and updated rows are appended. With `watermark`, it’s rejected with `loading.strategy: snowpipe`. Other strategies accept the flag but never act on it. |
 | `trackDeletions` | `Boolean` |  | `watermark` only. Any other strategy is rejected at configuration validation. If `true`, extracts a full primary-key snapshot of each source partition on every incremental run and deletes target rows absent from the snapshot before loading new rows. Requires `primaryKeyColumns`. Independent of `trackModifications`; the two can be combined. Supported with Snowpipe loading. |
+| `adoption` | `Object` |  | `checksum` and `watermark` only. Keeps the rows already in each target partition instead of reloading them or appending a second copy. With `checksum`, each partition is compared with the source and kept when it matches. With `watermark`, the target’s highest watermark value is taken as the stored maximum without a comparison. Fields: `mode`, `check`, `onMismatch`. Set it on `defaultTableConfiguration.synchronization` to apply it to every table. Omit it to turn adoption off. See [Adopting an existing target](#adopting-an-existing-target). |
 
 Expand
 
@@ -465,7 +469,7 @@ Show lessSee more
 
 #### checksum
 
-- **Compares:** One checksum per partition, computed on the source on every run and compared with the value stored by the last successful run. The default checksum hashes a normalized set of columns. `checksumExpression` replaces the hash with a SQL aggregate over the partition.
+- **Compares:** One checksum per partition, computed on the source on every run and compared with the value stored by the last successful run. The default checksum hashes a normalized set of columns. `checksumColumns` limits the hash to the columns you list. `checksumExpression` replaces the hash with a SQL aggregate over the partition.
 - **Reloads:** The checksum of every partition, on every run. A partition whose checksum changed is cleared and reloaded in full. Unchanged partitions aren’t extracted.
 - **Inserts, updates, and deletes:** A change that moves a partition’s checksum is reflected for that whole partition, so updated and deleted rows in a changed partition are reflected too. A change the checksum can’t see isn’t reflected. See [Changes a checksum may not detect](#changes-a-checksum-may-not-detect).
 - **Required keys or columns:** None. The partition columns set how much data a changed row reloads. `checksumExpression` must not contain `;`.
@@ -474,6 +478,27 @@ Show lessSee more
 - **Native and Iceberg:** Supported on native targets. Supported on a Snowflake-managed Iceberg table this migration creates from a relational extract (`catalog: SNOWFLAKE`, with no `sourceDataStage`). A later run reuses that table when an earlier run of the same table completed, and it clears and reloads a partition whose checksum changed. `scai data migrate create-workflow` rejects `checksum` for an Iceberg target before the workflow starts.
 - **Choose it when:** The table has no reliable monotonic column, such as a dimension table, and you need any change detected at partition granularity.
 - **Avoid it when:** Reloading one changed partition is too costly for the table, or the checksum misses the columns that change and no expression fixes that.
+
+#### Choosing the checksum columns
+
+By default, the checksum hashes every column of the partition. To hash only some of them, list them in `checksumColumns`. For example, hash the key and an update-date column instead of every wide text column:
+
+Copy code
+
+```
+synchronization:
+  strategy: checksum
+  checksumColumns:
+    - ORDER_ID
+    - UPDATE_DATE
+```
+
+- **What it detects:** Only changes to the listed columns. A change to a column outside the list doesn’t change the checksum, so its partition isn’t reloaded. List every column whose changes you need to sync.
+- **Where to set it:** On a table, or under `defaultTableConfiguration` for every table. Column names follow the source’s identifier rules, as in `columnNamesToPartitionBy`. The order of the list doesn’t matter.
+- **Rejected at configuration validation:** An empty list, a column listed twice, a column in `excludeSourceColumns`, a strategy other than `checksum`, and a table that also sets `checksumExpression`.
+- **Rejected at run time:** A column the source table doesn’t have fails that partition’s checksum task.
+- **PostgreSQL:** The PostgreSQL checksum reads each row’s `xmin`, not column values, so a PostgreSQL source rejects `checksumColumns`.
+- **Changing the list:** The stored checksum is tied to the list it was computed from. When you add, change, or remove `checksumColumns`, the next run reloads every partition once and stores the new checksums. Reordering the list doesn’t trigger a reload.
 
 #### watermark
 
@@ -491,7 +516,7 @@ Show lessSee more
   - Deletes aren’t seen without `trackDeletions`.
   - An empty partition has no candidate, so the stored maximum doesn’t change and the next run starts from the same point.
   - If `COPY INTO` succeeds but the partition doesn’t reach completion, the stored maximum doesn’t advance. The next run extracts those rows again and appends them, unless `trackModifications` merges them by primary key.
-- **Native and Iceberg:** Supported on native targets. Supported on the same Snowflake-managed Iceberg tables as `checksum`. The first load registers the extracted Parquet with `ADD_FILES_COPY`. A later run with `trackModifications: true` and a primary key merges changed rows into the table. `resetPartitions: enabledWithDedup` is rejected for an Iceberg target. `trackModifications` is rejected with `loading.strategy: snowpipe`. `trackDeletions` works with Snowpipe. `scai data migrate create-workflow` rejects `watermark` for an Iceberg target before the workflow starts.
+- **Native and Iceberg:** Supported on native targets. Supported on the same Snowflake-managed Iceberg tables as `checksum`. The first load registers the extracted Parquet with `ADD_FILES_COPY`. A later run with `trackModifications: true` and a primary key merges changed rows into the table. [`resetPartitions: enabledWithDedup`](#resetting-partitions) is rejected for an Iceberg target. `trackModifications` is rejected with `loading.strategy: snowpipe`. `trackDeletions` works with Snowpipe. `scai data migrate create-workflow` rejects `watermark` for an Iceberg target before the workflow starts.
 - **Choose it when:** The table has a reliable column that increases on every change you need to migrate, such as `UPDATED_AT`, and a full reload is too costly. Add `trackModifications` and `trackDeletions` when the source updates or deletes rows.
 - **Avoid it when:** No column increases on every change, updates don’t change the column, or the source backfills rows with older values.
 
@@ -500,6 +525,124 @@ Show lessSee more
 - A run stores its state per partition in `PARTITION_METADATA.SYNCHRONIZATION_DATA`. `none` and `full-replace` store only their strategy name. `checksum` stores the checksum. `watermark` stores the column and the stored maximum.
 - A table with no stored state is extracted in full, whichever strategy you choose. A table that’s empty on the first run has no stored maximum, so the first run after rows appear extracts all of them.
 - A preflight records partition metadata like any other run. Don’t run one between a full load and later `checksum` or `watermark` runs of the same tables. See [When to run a preflight](#when-to-run-a-preflight).
+
+#### Resetting partitions
+
+An incremental run (`checksum` or `watermark`) reuses the partitions from the table’s previous workflow, with their stored checksums and watermarks. If those partitions are wrong, for example after you change the partition column or the data outgrows them, set `resetPartitions` on the table or under `defaultTableConfiguration` for one run.
+
+| Value | What the run does |
+| --- | --- |
+| `disabled` (default, or `false`) | Reuses the previous partitions. |
+| `enabled` (or `true`) | Ignores the previous partitions, analyzes the partition boundaries again, creates new partitions, and extracts every one of them. The target isn’t emptied. |
+| `enabledWithDedup` | Does the same as `enabled`. In addition, a `watermark` table loads every partition through a staging table and a `MERGE` on the primary key, so rows already in the target are updated instead of duplicated. |
+
+Expand
+
+Show lessSee more
+
+What a reset run does to rows already in the target depends on the synchronization strategy:
+
+- **`checksum`:** Each new partition deletes its range from the target before it loads, so both enabled values replace the existing rows in those ranges. Target rows that no new partition covers stay. For example, with `partitionByDate`, a period that no longer has source rows gets no partition. Likewise, when the source no longer has rows with a `NULL` partition key, no `NULL` partition is created. The old target rows for that period or for `NULL` keys stay, so a `checksum` reset isn’t a full replacement. To remove them, delete them from the target yourself.
+- **`watermark` with `enabled`:** Without `trackModifications`, the reload is appended, so rows already in the target are duplicated, and the table’s preprocessing task reports a warning. Empty the target first, or use `enabledWithDedup`. A native table with `trackModifications: true` and a primary key already merges the reload on that key, so its rows aren’t duplicated.
+- **`watermark` with `enabledWithDedup`:** The primary key comes from `primaryKeyColumns`, or from stored or inferred keys. If the table has no primary key, partition planning fails instead of loading duplicates. This value isn’t supported with Snowpipe loading or on an Iceberg target.
+- **`none` and `full-replace`:** These strategies never reuse partitions, so the option has no effect.
+- **Iceberg targets:** A reset run follows the path of a fresh migration, so it fails when the Iceberg table already exists, as a fresh migration does.
+
+The next run without the option reuses the new partitions and the checksums or watermarks that the reset run stored. Remove the option after the reset run. While it’s set, every run re-extracts the whole table.
+
+### Adopting an existing target
+
+Use `synchronization.adoption` when another tool or a manual `COPY INTO` already loaded rows into the Snowflake target. Without it, the first run treats every partition as new: `checksum` clears and reloads each partition, and `watermark` extracts every row and appends it, so the rows already in the target are loaded a second time. With `adoption`, AIM DMV keeps the rows already in each partition:
+
+- With `checksum`, AIM DMV compares each partition that already holds rows with the source. A partition that matches is kept, and no data moves for it.
+- With `watermark`, AIM DMV doesn’t compare the source and the target. It takes the highest watermark value in each target partition as the stored maximum and loads only the source rows above it. Use adoption with `watermark` only when you trust that the target holds every source row up to that value.
+
+Copy code
+
+```
+tables:
+  - source:
+      databaseName: MY_DB
+      schemaName: sales
+      tableName: orders
+    target:
+      databaseName: TARGET_DB
+      schemaName: sales
+      tableName: orders
+    synchronization:
+      strategy: checksum
+      adoption:
+        onMismatch: reload
+```
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `mode` | `String` (`"verify"`) | How a partition that already holds rows is handled. Defaults to `"verify"`, the only value. |
+| `check` | `String` (`"metrics"`, `"row"`) | `checksum` only. The comparison that adoption runs. `metrics` (default) compares the L2 column metrics of the partition on the source and the target, at the workflow’s `comparisonConfiguration` tolerances. `row` hashes each row with the same normalization as row validation and compares the row count and the sums of the hashes, which must match exactly. `row` isn’t available for IBM DB2 sources: the check can’t run, so `onMismatch` decides what happens to each partition. With `watermark`, `check` is ignored and a warning is logged, but an invalid value is still rejected. |
+| `onMismatch` | `String` (`"reload"`, `"report"`) | What happens to a partition that can’t be kept: with `checksum`, one that fails the check; with `watermark`, one whose target rows all have a `NULL` watermark. `reload` (default) clears the partition from the target and loads it in full. `report` leaves the partition as it is and records it. See [Reviewing reported partitions](#reviewing-reported-partitions). |
+
+Expand
+
+Show lessSee more
+
+Values aren’t case-sensitive.
+
+To adopt every table, set `adoption` under `defaultTableConfiguration.synchronization`. A table that sets its own `adoption` is merged with that block field by field: fields the table sets win, and fields it leaves out take the values from `defaultTableConfiguration`. A field that neither sets takes the default in the table above, so `adoption: {}` uses every default only when `defaultTableConfiguration` sets no `adoption` fields. A table can’t turn off an `adoption` it inherits: `adoption: null` or `{}` leaves the inherited block in place.
+
+#### Which partitions are checked
+
+- Only a partition with no stored state is checked: no stored checksum, or no stored watermark maximum. On the table’s first run, that’s every partition. A partition that has stored state runs as usual, so you can rerun the workflow safely with `adoption` in place.
+- If the target table doesn’t exist or holds no rows, nothing is checked and every partition loads as usual.
+- A partition whose range holds no rows in the target loads as usual.
+
+#### What happens to a checked partition
+
+- **`checksum`:** When the partition matches, its source checksum is stored and the partition is marked complete without extracting, clearing, or loading it. Later runs compare against that checksum like any other `checksum` partition.
+- **`watermark`:** AIM DMV reads the highest `watermarkColumn` value in the target within the partition’s range. That value becomes the stored maximum, and the run extracts and appends only the source rows above it. Source and target rows at or below that value aren’t compared, so rows missing from the target or holding different values there stay as they are, as after any `watermark` run. If the target partition holds rows but every watermark value is `NULL`, the partition gets no stored maximum and `onMismatch` decides what happens to it, with the reason `check_unavailable`.
+- **A partition that can’t be kept:** With `checksum`, a partition that doesn’t match, whose check couldn’t run, or whose check returned no metrics is handled by `onMismatch`. Only a confirmed match is kept.
+  - `reload`: the partition’s target rows are deleted, and the partition is extracted and loaded in full.
+  - `report`: nothing is cleared or loaded and no state is stored. The partition is marked complete with a warning so the workflow finishes, and a row is written to `ADOPTION_REPORT`. Under `report`, a table never loads a mismatched partition on its own.
+
+#### Choosing the check and the tolerances
+
+These apply to `checksum` tables only.
+
+- `metrics` compares aggregates: counts of `NULL`, zero, and empty values, minimum and maximum, string lengths, sums, averages, and standard deviations. A partition whose data differs can still pass, for example after a small price change, a one-day date shift, swapped values, or changes that offset each other. Use `check: row` when you need the rows to match exactly. It costs more on Snowflake.
+- On IBM DB2 sources, `metrics` measures `CLOB`, `BLOB`, `GRAPHIC`, and `VARGRAPHIC` columns by their lengths only, `DECFLOAT` columns without a sum, and `XML` columns only by their count of `NULL` values. A changed XML document or LOB value can pass, and the partition is kept. To review DB2 tables with these columns yourself, set `check: row` with `onMismatch: report`: the check can’t run on DB2, so each partition is left as it is and reported instead of kept.
+- Without `comparisonConfiguration`, `metrics` uses an absolute tolerance of `0.001`. On floating-point and decimal columns, rounding in a `SUM` can exceed it, so matching partitions fail and reload. When the table has such columns, set the optional `relativeTolerance` key, for example `0.000001`. You don’t need `relativeTolerance` otherwise.
+
+#### Reviewing reported partitions
+
+Under `onMismatch: report`, each reported partition gets one row in the `ADOPTION_REPORT` table, in the same metadata schema as `PARTITION_METADATA`. Review the rows before you switch a table to `reload` or fix its target.
+
+| Column | Content |
+| --- | --- |
+| `ID` | Row identifier. |
+| `WORKFLOW_ID` | The workflow that reported the partition. |
+| `TABLE_METADATA_ID`, `PARTITION_METADATA_ID`, `PARTITION_NUMBER` | The table and partition in the migration metadata. |
+| `SOURCE_DATABASE`, `SOURCE_SCHEMA`, `SOURCE_TABLE` | The source table. |
+| `PARTITION_COLUMNS` | The table’s `columnNamesToPartitionBy`, in order, as a JSON array. Empty when the table has no partition columns. |
+| `PARTITION_BY_DATE` | `year`, `month`, or `day` when the table is partitioned by a date part, and the bounds are periods of that grain. `NULL` otherwise. |
+| `MIN_VALUE`, `MAX_VALUE`, `UPPER_INCLUSIVE` | The partition bounds as text, and whether the upper bound is inclusive. |
+| `REASON` | `mismatch`, `no_metrics`, or `check_unavailable`. |
+| `TARGET_ROW_COUNT` | Rows found in the target partition, or `NULL` when the count isn’t known. |
+| `REPORTED_AT` | When the row was written, in UTC. |
+
+Expand
+
+Show lessSee more
+
+A reported partition has no stored state, so the next run checks it again and adds a new row under its own `WORKFLOW_ID`. Rows aren’t deleted automatically. If a row can’t be written, the task warning says so and the partition is still marked complete.
+
+#### Requirements and limits
+
+- `adoption` is rejected with `none` and `full-replace`, and for Iceberg targets (`target.tableType: iceberg`).
+- The partition key columns must exist in the target. A source-only partition key, such as BigQuery `_PARTITIONTIME`, fails the table.
+- With `watermark`, `watermarkColumn` must be a migrated column. A pseudo-column such as Oracle `ORA_ROWSCN`, or an excluded column, fails the table before any task runs. Remove `adoption`, or use a watermark column that’s migrated.
+- The other tool must have loaded the partition key columns with the same values as the source. Rows whose keys differ fall outside every partition’s range, so they aren’t compared or cleared, and a reload can duplicate them.
+- Don’t let another process write to the target while the workflow runs. A partition checked during another load can be judged against rows that are still arriving.
+- With `watermark`, a reported partition is read again on every run while `adoption` is set. If you remove `adoption`, the next run takes the target’s highest watermark as the stored maximum.
+- With `resetPartitions`, the new partitions have no stored state, so a reset run with `adoption` still set adopts them instead of reloading them: with `checksum`, each one is checked against the source; with `watermark`, each one takes the target’s highest watermark as its stored maximum. To force a full reload, remove `adoption` from that run’s configuration.
 
 ### Changes a checksum may not detect
 
@@ -511,6 +654,7 @@ This applies to `synchronization.strategy: checksum` during migration and to [in
 | --- | --- | --- |
 | Skipped legacy large objects | SQL Server `TEXT`, `NTEXT`, `IMAGE`; Oracle LOBs, `LONG`, `XMLTYPE`, `VECTOR` | The column is excluded from the checksum input, so changes confined to it are invisible |
 | Spatial values as text | SQL Server, Redshift, and Oracle `SDO_GEOMETRY` | Compared as Well-Known Text with spacing normalized, so binary geometry detail is lost |
+| Columns outside `checksumColumns` | Any platform except PostgreSQL (migration only) | Only the listed columns are hashed, so changes confined to other columns are invisible. See [Choosing the checksum columns](#choosing-the-checksum-columns). |
 | A custom `checksumExpression` | Any platform | Only that expression drives detection — whether a change is detected depends entirely on what the expression evaluates |
 | Fully frozen partitions | PostgreSQL (`checksum` strategy) | The default PostgreSQL checksum fingerprints a partition from each row’s MVCC `xmin`. `VACUUM FREEZE` rewrites every row’s `xmin` to the same frozen value, so a fully frozen partition’s fingerprint depends only on its row count. An update that is frozen again between two consecutive sync runs may go undetected. Use a value-derived `checksumExpression` (for example `MAX(updated_at)`) or the `watermark` strategy. See [Migrating Data from PostgreSQL](../data-migration-validation/migrate-postgresql#incremental-sync-and-vacuum-freeze). |
 | Skipped large objects | IBM DB2 `BLOB`, `CLOB`, `DBCLOB`, and `XML` | Checksum skips these types. If every column is one of them, the checksum is the partition row count, so a change that doesn’t change the row count isn’t detected. Use a watermark column. See [Migrating Data from IBM DB2](../data-migration-validation/migrate-db2#incremental-sync). |
@@ -900,6 +1044,7 @@ Worker TOML examples show credentials inline for brevity. In production, keep cr
 | --- | --- | --- |
 | [Snowflake secrets](#snowflake-secrets) | Workers on SPCS | A Snowflake `SECRET` object bound to an environment variable in the service specification. `scai data worker setup` creates and binds it for you. |
 | [AWS Secrets Manager](#aws-secrets-manager) | Workers and the Orchestrator outside SPCS, for example on Amazon EKS, Amazon EC2, or your own host | An `aws-sm:///` reference in a connection field. |
+| [Azure Key Vault](#azure-key-vault) | Workers and the Orchestrator outside SPCS that have the Azure CLI, for example on an Azure VM, AKS, or your own host | An `$( az keyvault secret show … )` command in a connection field. |
 
 Expand
 
@@ -976,7 +1121,7 @@ The standard Worker and Orchestrator images include the AWS SDK for Python (`bot
 
 **Permissions.** Give the Worker and the Orchestrator separate IAM roles. Grant each role only `secretsmanager:GetSecretValue` on the secrets it references. The Worker needs every secret its TOML references, source and target: in the example above, both `aim-dmv/prod/source-redshift` and `aim-dmv/prod/snowflake`. The Orchestrator needs the Snowflake secret it reads. The pod also needs network access to `secretsmanager.<region>.amazonaws.com`, through public egress or a VPC interface endpoint.
 
-**Orchestrator.** For password authentication, set `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, and `SNOWFLAKE_PASSWORD` to `aws-sm:///` references. A key-pair secret has no password field: at container start, write the private key to a file with mode `0600`, define a named connection that uses it as a top-level `[<connection-name>]` section in `~/.snowflake/connections.toml` (see [Connecting using the connections.toml file](/developer-guide/python-connector/python-connector-connect#label-python-connection-toml)), and set `SNOWFLAKE_CONNECTION_NAME`. Point the Worker at the same connection with `[connections.target.snowflake_connection_name]`. Don’t bake the private key into an image or a ConfigMap.
+**Orchestrator.** For password authentication, set `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, and `SNOWFLAKE_PASSWORD` to `aws-sm:///` references. A key-pair secret has no password field: set `SNOWFLAKE_PRIVATE_KEY` to an `aws-sm:///` reference instead of `SNOWFLAKE_PASSWORD`. The image writes the PEM with mode `0600` and a named connection in `~/.snowflake/connections.toml` (see [Connecting using the connections.toml file](/developer-guide/python-connector/python-connector-connect#label-python-connection-toml)). Don’t set `SNOWFLAKE_PASSWORD` in the same process. Don’t bake the private key into an image or a ConfigMap. For the EKS environment variables, see [Deploying on Amazon EKS](../data-migration-validation/deploy-workers-eks#use-key-pair-authentication-for-snowflake). For the ECS task definitions, see [Deploying on Amazon ECS](../data-migration-validation/deploy-workers-ecs#4-register-the-task-definitions-and-start-the-services).
 
 **Rotation.** A resolved secret is cached for `SECRET_MANAGERS_CACHE_TTL_SECONDS` (default `300`). Restart or redeploy the pod to pick up a rotated secret for connections that are already open.
 
@@ -998,6 +1143,106 @@ When a reference doesn’t resolve, the error names a category but never the sec
 | `MissingSecret` | The secret ID or ARN is wrong, or the secret is in another region. |
 | `MalformedJson` | The secret isn’t valid JSON, or the `#<json-field>` value isn’t a top-level scalar. |
 | `UnavailableRegion` | `AWS_DEFAULT_REGION` isn’t set, or the Secrets Manager endpoint isn’t reachable. |
+
+Expand
+
+Show lessSee more
+
+#### Azure Key Vault
+
+A Worker or Orchestrator that runs outside SPCS can read connection fields from Azure Key Vault. Put an `az keyvault secret show` command where the value would go, and AIM DMV runs it with the Azure CLI when it connects:
+
+```
+$( az keyvault secret show --vault-name <vault> --name <secret-name> --query value -o tsv )
+$( az keyvault secret show --vault-name <vault> --name <secret-name> --query value -o tsv )#<json-field>
+```
+
+`--query value -o tsv` prints the raw secret value. `#<json-field>` reads one top-level field from a secret whose value is a JSON object. Fields that come from the same secret share one `az` call.
+
+Every string field in the Worker TOML connection sections can be a reference. On the Orchestrator, `SNOWFLAKE_ACCOUNT`, `SNOWFLAKE_USER`, `SNOWFLAKE_PASSWORD`, `SNOWFLAKE_WAREHOUSE`, `SNOWFLAKE_DATABASE`, `SNOWFLAKE_SCHEMA`, and `SNOWFLAKE_ROLE` can be references.
+
+Copy code
+
+```
+[connections.source.sqlserver]
+host     = "sqlserver.internal.example.com"
+database = "sales"
+username = "$( az keyvault secret show --vault-name aim-dmv-prod --name sqlserver-migrator --query value -o tsv )#username"
+password = "$( az keyvault secret show --vault-name aim-dmv-prod --name sqlserver-migrator --query value -o tsv )#password"
+
+[connections.target.snowflake_password]
+account   = "myorg-myaccount"
+user      = "AIM_DMV_WORKER"
+role      = "AIM_DMV_WORKER_ROLE"
+warehouse = "AIM_DMV_WH"
+database  = "MIGRATION_DB"
+schema    = "PUBLIC"
+password  = "$( az keyvault secret show --vault-name aim-dmv-prod --name snowflake-worker-password --query value -o tsv )"
+```
+
+**Turn it on.** Azure Key Vault references use command substitution, which is off by default. Set `SECRET_MANAGERS_ALLOW_CMD_SUBSTITUTION=true` in the environment of every Worker and the Orchestrator that reads them. Read the [command substitution warning](#external-secret-manager) first.
+
+**Azure CLI.** The standard Worker and Orchestrator images don’t include the Azure CLI. Install it on the host or in your own image layer, so that `az` is on the `PATH` of the process. SPCS Workers can’t use Azure Key Vault: use [Snowflake secrets](#snowflake-secrets) there.
+
+**Credentials.** AIM DMV runs `az` as the user that runs the Worker or Orchestrator, so sign that user in to the Azure CLI before the process starts:
+
+Copy code
+
+```
+# Managed identity (Azure VM, VM scale set, AKS with a pod identity)
+az login --identity --allow-no-subscriptions
+
+# Service principal
+az login --service-principal \
+  --username "$AZURE_CLIENT_ID" \
+  --password "$AZURE_CLIENT_SECRET" \
+  --tenant "$AZURE_TENANT_ID" \
+  --allow-no-subscriptions
+```
+
+Keep `--allow-no-subscriptions`: an identity that holds only a Key Vault role has no subscription, and without the flag `az login` fails with `No subscriptions found`. Prefer a managed identity, because it needs no stored secret. The Azure CLI doesn’t sign in from `AZURE_TENANT_ID`, `AZURE_CLIENT_ID`, or `AZURE_CLIENT_SECRET` by itself; pass them to `az login`, and keep the client secret in the host’s own secret store, not in the Worker TOML.
+
+**Permissions.** Give the Worker and the Orchestrator separate identities. Grant each the **Key Vault Secrets User** role, scoped to the vault or to the secrets it references. The Worker needs every secret its TOML references, source and target. The Orchestrator needs the Snowflake secret it reads. On a vault that uses access policies instead of Azure RBAC, grant only the `Get` secret permission.
+
+**Orchestrator.** For password authentication, set the Snowflake variables to references. Use single quotes, so that your shell passes the command to the Orchestrator instead of running it:
+
+Copy code
+
+```
+export SECRET_MANAGERS_ALLOW_CMD_SUBSTITUTION=true
+export SNOWFLAKE_ACCOUNT=myorg-myaccount
+export SNOWFLAKE_USER=AIM_DMV_ORCHESTRATOR
+export SNOWFLAKE_PASSWORD='$( az keyvault secret show --vault-name aim-dmv-prod --name snowflake-orchestrator-password --query value -o tsv )'
+```
+
+For key-pair authentication, write the private key to a file with mode `0600` at start-up and use a named connection, as described for [AWS Secrets Manager](#aws-secrets-manager).
+
+**Rotation.** A resolved secret is cached for `SECRET_MANAGERS_CACHE_TTL_SECONDS` (default `300`). The Worker and the Orchestrator read connection credentials when they start, so restart them to pick up a rotated secret.
+
+Limitations:
+
+- Key Vault secret names allow only letters, digits, and hyphens: `sqlserver-migrator`, not `sqlserver_migrator` or `prod/sqlserver`.
+- `#<json-field>` must name a top-level string, number, or boolean.
+- Don’t use a `type = "rest"` provider with a bearer token for Key Vault on a long-running Worker or Orchestrator. The token is read once at start-up and expires after about an hour, after which every resolution fails until you restart.
+
+**Check before you start.** As the same user and with the same environment as the Worker, resolve every reference without opening a connection. The command never prints a resolved value:
+
+Copy code
+
+```
+python -m shared.secret_managers check --config <worker-config>.toml -v
+```
+
+With `-v`, each failing field shows a one-line summary of the `az` error:
+
+| Output | Typical cause |
+| --- | --- |
+| `(SecretNotFound)` | The secret name is wrong. |
+| `Failed to resolve` for `<vault>.vault.azure.net` | The vault name is wrong, or the host has no DNS route to the vault. |
+| `(Forbidden)` | The identity lacks **Key Vault Secrets User** on the secret. |
+| `Please run 'az login'` | The process’s user has no Azure CLI session, often because `az login` ran without `--allow-no-subscriptions`. |
+| `binary 'az' not found on PATH` | The Azure CLI isn’t installed for the process. |
+| `ProviderNotConfigured` | `SECRET_MANAGERS_ALLOW_CMD_SUBSTITUTION` isn’t `true`. |
 
 Expand
 
@@ -1040,7 +1285,7 @@ Show lessSee more
 
 The `[secret_managers]` configuration goes in its own separate TOML file, not in the Worker TOML. Use `SECRET_MANAGERS_CONFIG_FILE` to point the Worker at it.
 
-AIM DMV can also resolve a field by running a shell command, for example `$( vault kv get -field=password secret/migrator-db )`. For AWS Secrets Manager, use an [`aws-sm:///` reference](#aws-secrets-manager) instead: it needs neither the AWS CLI nor command substitution.
+AIM DMV can also resolve a field by running a shell command, for example `$( vault kv get -field=password secret/migrator-db )`. For AWS Secrets Manager, use an [`aws-sm:///` reference](#aws-secrets-manager) instead: it needs neither the AWS CLI nor command substitution. For Azure Key Vault, see [Azure Key Vault](#azure-key-vault).
 
 Warning
 

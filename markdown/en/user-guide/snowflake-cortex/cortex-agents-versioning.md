@@ -2,7 +2,8 @@
 
 Cortex Agent versioning enables a lifecycle management model that lets you develop, test, and deploy agents
 through distinct versions. Each agent has a **live version** — a mutable working copy you use for development —
-and can have any number of **named versions** — immutable snapshots you use for stable deployments. By committing
+and can have multiple **named versions**, up to a per-agent maximum, that are immutable snapshots you use for
+stable deployments. By committing
 the live version, you create a named version that captures the agent’s configuration at a point in time. You can
 then route API requests to any version by name, alias, or shortcut.
 
@@ -110,7 +111,10 @@ ALTER AGENT my_agent DROP VERSION VERSION$1;
 
 Note
 
-You can only drop named versions. You can’t drop the live version.
+You can only drop named versions. You can’t drop the live version, the agent’s default version, or a version that
+another version is based on. A version committed after `ADD LIVE VERSION ... FROM LAST` is based on the previous
+version, so drop such versions from newest to oldest. Otherwise, the statement fails with
+`Version cannot be dropped if it is a base for another version`.
 
 ## Aliases
 
@@ -276,6 +280,8 @@ CREATE AGENT my_agent
   FROM @my_stage/agents/my_agent;
 ```
 
+The stage path in `FROM @<stage_path>` must contain an `agent_spec.yaml` file at its root, using the same specification format as `FROM SPECIFICATION`. Otherwise, the statement fails with the error `agent_spec.yaml not found in source stage`.
+
 ## Stage operations
 
 Each agent version has an internal versioned stage path that you can access through the `snow://agent/` URI
@@ -379,6 +385,8 @@ The following limitations apply to Cortex Agent versioning:
 - **Named versions are immutable**: You can’t modify the configuration of a named version. You can only update
   metadata (comment, alias) or drop it.
 - **Drop named only**: You can drop named versions but not the live version.
+- **Maximum versions**: Each agent has a maximum number of versions, including the live version. To add more, drop
+  versions you no longer need.
 - **Alias uniqueness**: Each alias must be unique within an agent. Assigning an alias that already exists on
   another version results in an error.
 - **Case sensitivity**: Aliases are case-sensitive when created with double-quoted identifiers; otherwise they

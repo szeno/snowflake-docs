@@ -462,7 +462,7 @@ Show lessSee more
 
 You can use model-level RBAC (role-based access control) to control access to the models used by Cortex Analyst. Each
 model is protected by a designated application role, and administrators can grant or revoke access to specific LLMs via
-these model-specific roles. For more information, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac).
+these model-specific roles. For more information, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-rbac).
 
 Important
 
@@ -475,7 +475,7 @@ models, taking into account the following factors:
 
 - The models [available in your Snowflake region](/user-guide/snowflake-cortex/aisql-regional-availability#label-cortex-llm-availability).
 - The account’s [cross-region inference configuration](/user-guide/snowflake-cortex/cross-region-inference).
-- Any model-level [RBAC restrictions](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac) you have established.
+- Any model-level [RBAC restrictions](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-rbac) you have established.
 
 Tip
 

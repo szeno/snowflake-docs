@@ -57,7 +57,7 @@ This page provides information about common issues that you may run into when wo
     For information about orchestration instructions, see [Specify orchestration](/user-guide/snowflake-cortex/cortex-agents-manage#label-snowflake-agents-orchestration).
 
 **Model selection**
-:   When creating an agent, you can directly specify the model that the agent should use. You can’t directly specify the model for the Cortex Search or Cortex Analyst tools. Instead, you can use role-based access control (RBAC) to limit which models these tools can use. For more information, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-rbac).
+:   When creating an agent, you can directly specify the model that the agent should use. You can’t directly specify the model for the Cortex Search or Cortex Analyst tools. Instead, you can use role-based access control (RBAC) to limit which models these tools can use. For more information, see [Role-based access control (RBAC)](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-rbac).
 
 **Multiple calls to the same tool**
 :   When generated queries are large, they can sometimes trigger size limits, causing a retry. Cortex Analyst has a 2048 token generation limit for queries, which can trigger the size limit. A lot of custom agent response instructions can also trigger the size limit.

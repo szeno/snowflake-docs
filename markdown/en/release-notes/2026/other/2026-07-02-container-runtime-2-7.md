@@ -7,4 +7,4 @@ Snowflake Container Runtime CPU and GPU version 2.7 is now available. This relea
 - `TunerConfig` now defaults `resource_per_trial` to `{"CPU": 1}` when `uses_snowflake_trainer=True`.
 - Fixed an issue where `get_session()` could overwrite the notebook database and schema context.
 
-For the full package lists and details, see [Snowflake Container Runtime release notes](/developer-guide/snowflake-ml/container-runtime/releases).
+For the full package lists and details, see [Snowflake Container Runtime for machine learning release notes](/developer-guide/snowflake-ml/container-runtime/releases).

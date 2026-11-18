@@ -14,7 +14,7 @@ With Snowflake Experiments, you can compare your trained models in an organized 
 ## Train with open source
 
 When you use a Snowflake Notebook or ML Job, you get access to the Container Runtime. The Container Runtime is an environment that has popular packages and frameworks that you can use to train your models.
-The packages include scikit-learn, numpy, and scipy. For more information, see [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+The packages include scikit-learn, numpy, and scipy. For more information, see [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 
 The following example trains a logistic regression model using scikit-learn:
 
@@ -178,7 +178,7 @@ Loading large amounts of data into memory for processing with training packages 
 Training ML models on large datasets can exceed the resources of a single node. With Snowflake’s distributed APIs, you can scale feature engineering and training workflows across multiple nodes for improved performance. With the distributed APIs, you can do the following:
 
 - Leverage distributed preprocessing functions in `snowflake.ml.modeling.preprocessing`.
-- Scale your model training out across one or more nodes using optimized training APIs in [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+- Scale your model training out across one or more nodes using optimized training APIs in [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 - Accelerate hyperparameter tuning with Snowflake ML’s [distributed HPO](/developer-guide/snowflake-ml/container-hpo), optimized for data stored in Snowflake. You can also use open source libraries like `hyperopt` or `optuna`.
 
 In addition to using Snowflake’s distributed APIs to scale your workflows, you can also use Ray. Ray is an open-source framework that provides a simple and flexible way to scale Python applications. It allows you to run your code in parallel across multiple nodes. For more information about using Ray with Snowflake ML, see the [Ray Getting Started Guide](https://docs.ray.io/en/latest/ray-overview/getting-started.html).

@@ -310,6 +310,10 @@ Copy code
 ALTER USER my_user SET DEFAULT_ROLE=my_role
 ```
 
+The REST API also respects [model access control](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-access-control).
+After you grant or revoke access to a model, REST requests can take up to 5 minutes to reflect the change.
+Cortex AI Functions reflect these changes sooner.
+
 ### Limiting access using the Cortex REST API user role
 
 To provide selective access to the Cortex REST API for specific users, use the

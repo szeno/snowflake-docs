@@ -39,11 +39,21 @@ in the following arguments to the SYSTEM$DATA\_METRIC\_SCAN function: the name o
 DMF to help identify problematic records.
 
 For example, given that the SNOWFLAKE.CORE.NULL\_COUNT system metric function returns the total number of NULL values in a particular column,
-the following returns the rows of the `employeesTable` table that have NULL values in the `SSN` column.
+the following returns the rows of the `employeesTable` table that had NULL values in the `SSN` column at the specified timestamp.
+
+To investigate a past DMF measurement, use its `MEASUREMENT_TIME` from
+[DATA\_QUALITY\_MONITORING\_RESULTS](/sql-reference/local/data_quality_monitoring_results) as the `AT_TIMESTAMP` string, including the
+timezone offset. Set [TIMESTAMP\_TYPE\_MAPPING](/sql-reference/parameters#label-timestamp-type-mapping) to `TIMESTAMP_LTZ` so the
+offset is honored. The example uses the default `TIMESTAMP_INPUT_FORMAT` value of `AUTO`.
+
+Replace the example timestamp with a recent measurement. The requested time must be within the queried tables’ Time Travel retention
+period and must not precede their creation.
 
 Copy code
 
 ```
+ALTER SESSION SET TIMESTAMP_TYPE_MAPPING = 'TIMESTAMP_LTZ';
+
 SELECT *
   FROM TABLE(SYSTEM$DATA_METRIC_SCAN(
     REF_ENTITY_NAME  => 'governance.sch.employeesTable'
@@ -53,9 +63,11 @@ SELECT *
   ));
 ```
 
-To check the results of a DMF evaluation on the table or view in the past, you can pass the AT\_TIMESTAMP argument. The AT\_TIMESTAMP
-argument allows you to use [Time Travel](/sql-reference/functions/to_timestamp) to cast the timestamp string to return only those
-records that existed in the table at the ’2024-08-28 02:00:00 -0700’ timestamp.
+`AT_TIMESTAMP` uses [Time Travel](/user-guide/data-time-travel) to scan the historical data. It does not retrieve stored evaluation
+results. Changing the mapping also affects other uses of `TIMESTAMP` and `TO_TIMESTAMP` in the session.
+
+With the default `TIMESTAMP_NTZ` mapping, offsets are discarded and clock times are interpreted as UTC. To keep that mapping, pass
+`'2024-08-28 09:00:00'` for the same instant as the example.
 
 ### ACCEPTED\_VALUES DMF
 

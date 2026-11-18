@@ -21,7 +21,7 @@ When you run `EXECUTE CODE BUNDLE` on a bundle whose specification sets `type: m
 1. Starts a job service on the compute pool named in `compute_options.compute_pool`, using a
    [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml) image. `type: ml` requires Container
    Runtime 2.9.0 or later. For the available versions, see
-   [Snowflake Container Runtime release notes](/developer-guide/snowflake-ml/container-runtime/releases).
+   [Snowflake Container Runtime for machine learning release notes](/developer-guide/snowflake-ml/container-runtime/releases).
 2. Mounts the bundle’s committed version read-only at `/mnt/job_stage`. Your files are under `/mnt/job_stage/app/`.
 3. Mounts the stage named in `properties.result_stage` at `/mnt/job_result`. This is where the ML Job’s return value is
    stored, so the field is required.
@@ -216,7 +216,7 @@ Note
 
 `compute_options.runtime_version` for `type: ml` uses the Container Runtime version format (for example `'2.9.0'`), which
 differs from the image tag format used by `type: custom` bundles on compute pools (for example `'V2.9-CPU-PY3.12'`). For
-available versions, see [Snowflake Container Runtime release notes](/developer-guide/snowflake-ml/container-runtime/releases).
+available versions, see [Snowflake Container Runtime for machine learning release notes](/developer-guide/snowflake-ml/container-runtime/releases).
 
 ### Fields that don’t apply
 

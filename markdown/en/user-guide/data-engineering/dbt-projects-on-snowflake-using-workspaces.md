@@ -96,4 +96,4 @@ Shared workspaces are created within a specific database and schema, which grant
 For requirements, considerations, and limitations that apply when you connect a workspace for dbt Projects on Snowflake to a Git repository, see
 [Git in Snowflake limitations](/developer-guide/git/git-limitations).
 
-Git repositories accessed through PrivateLink must be configured beforehand. For more information, see [Connect to a Git repository over a public network](/developer-guide/git/git-setting-up-public#label-git-setup-public-network).
+Git repositories accessed through PrivateLink must be configured beforehand. For more information, see [Connect to a Git repository over a private network](/developer-guide/git/git-setting-up-private#label-git-setup-private-network).

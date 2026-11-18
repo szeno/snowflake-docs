@@ -79,6 +79,12 @@ underlying model requires, such as the `SNOWFLAKE.CORTEX_USER` database role or 
 controls described in [Privileges and model access for Cortex AI Functions](/user-guide/snowflake-cortex/aisql-privileges-and-access). The gateway governs
 the path traffic takes, not the set of models a user is entitled to.
 
+Note
+
+After you grant or revoke access to a model, requests through the gateway can take up to 5 minutes to
+reflect the change. The same delay applies to [Cortex Inference](/user-guide/snowflake-cortex/cortex-rest-api)
+REST requests. Cortex AI Functions reflect these changes sooner.
+
 ## View the gateway
 
 List the gateway in your account, which also returns the endpoint to send requests to:

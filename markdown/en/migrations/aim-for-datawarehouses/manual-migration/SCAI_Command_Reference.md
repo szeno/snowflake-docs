@@ -2810,7 +2810,7 @@ Drop and re-create the deployed Data Exchange Worker so it picks up the image ve
 Copy code
 
 ```
-scai data worker update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--service-name <SERVICE_NAME>] [--yes]
+scai data worker update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--service-name <SERVICE_NAME>] [--custom-image <IMAGE>] [--force] [--yes]
 ```
 
 **Prerequisites:**
@@ -2828,11 +2828,18 @@ scai data worker update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [-
 - Keeps the source configuration, affinity, external access integrations, and the deployed query warehouse, unless you pass `--warehouse`
 - Runs when requested, even when global auto-update is turned off
 - Resumes the deployed compute pool if it’s suspended
+- If the Worker was set up with `--custom-image`:
+  - An image built `FROM` a pinned Worker image is moved onto the new pinned image: `update` pushes it to your image repository as `<tag>-on-<version>` and deploys it. Your own layers are reused as they were built, not rebuilt, so `update` warns that anything they install against the base image’s system libraries, such as a driver, can break. If it does, rebuild your image `FROM` the new pinned image and deploy it with `--custom-image`.
+  - An image that’s already on the new pinned image is reported as up to date.
+  - Any other custom image is kept, and the update is skipped with a warning.
+  - Pass `--custom-image <IMAGE>` to deploy a different image, or `--force` to replace the custom image with the pinned one.
 
 **Options:**
 
 | Option | Description | Required | Default |
 | --- | --- | --- | --- |
+| `--custom-image <IMAGE>` | Custom container image to deploy instead of the pinned one. Without it, a service set up with `--custom-image` keeps that image. Format: /db/schema/repo/image\_name:tag | No |  |
+| `--force` | Replace a custom image the service was set up with by the pinned image. Ignored with `--custom-image`, which deploys that image instead. | No | False |
 | `--service-name <SERVICE_NAME>` | Name of the Worker SPCS service to update, as passed to `scai data worker setup --service-name`. Sanitized to a safe SQL identifier and uppercased. | No | `DATA_EXCHANGE_WORKER_SERVICE` |
 | `-y, --yes` | Skip the confirmation prompt. | No | False |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
@@ -2858,6 +2865,12 @@ scai data worker update --yes
 
 # Upgrade a named Worker
 scai data worker update --service-name SQL_EAST_WORKER
+
+# Deploy a different custom image
+scai data worker update --custom-image /my_db/my_schema/my_repo/my_worker:v2
+
+# Replace a custom image with the pinned image
+scai data worker update --force
 ```
 
 ---
@@ -3196,7 +3209,7 @@ Drop and re-create the deployed Data Migration Service so it picks up the image 
 Copy code
 
 ```
-scai data orchestrator update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--yes]
+scai data orchestrator update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROLE>] [--warehouse <WAREHOUSE>] [--custom-image <IMAGE>] [--force] [--yes]
 ```
 
 **Prerequisites:**
@@ -3214,11 +3227,14 @@ scai data orchestrator update [--connection <SNOWFLAKE_CONNECTION>] [--role <ROL
 - Keeps the deployed query warehouse unless you pass `--warehouse`
 - Runs when requested, even when global auto-update is turned off
 - Resumes the deployed compute pool if it’s suspended
+- If the service was set up with `--custom-image`, it keeps that image: the update is skipped with a warning. Pass `--custom-image <IMAGE>` to deploy a different image, or `--force` to replace the custom image with the pinned one.
 
 **Options:**
 
 | Option | Description | Required | Default |
 | --- | --- | --- | --- |
+| `--custom-image <IMAGE>` | Custom container image to deploy instead of the pinned one. Without it, a service set up with `--custom-image` keeps that image. Format: /db/schema/repo/image\_name:tag | No |  |
+| `--force` | Replace a custom image the service was set up with by the pinned image. Ignored with `--custom-image`, which deploys that image instead. | No | False |
 | `-y, --yes` | Skip the confirmation prompt. | No | False |
 | `-c, --connection <CONNECTION>` | Name of the Snowflake connection to use (from connections.toml). Uses default if not specified. | No |  |
 | `--warehouse <WAREHOUSE>` | Warehouse to use. Overrides the value specified for the Snowflake connection. | No |  |
@@ -3243,6 +3259,9 @@ scai data orchestrator update --yes
 
 # Upgrade with a specific connection
 scai data orchestrator update --connection my-snowflake
+
+# Replace a custom image with the pinned image
+scai data orchestrator update --force
 ```
 
 ---

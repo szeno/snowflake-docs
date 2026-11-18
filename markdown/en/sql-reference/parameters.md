@@ -1188,7 +1188,7 @@ Default:
 
 Warning
 
-`CORTEX_MODELS_ALLOWLIST` is being deprecated. Starting in August 2026, you can no longer change this parameter to a new value — the only permitted change will be to set it to `'None'`. Later in 2026, the parameter will be removed entirely. Snowflake recommends migrating to [role-based access control (RBAC) for Cortex models](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-migrate-to-rbac), which provides finer-grained, per-role control.
+`CORTEX_MODELS_ALLOWLIST` is being deprecated. Starting in August 2026, you can no longer change this parameter to a new value — the only permitted change will be to set it to `'None'`. Later in 2026, the parameter will be removed entirely. Snowflake recommends migrating to [role-based access control (RBAC) for Cortex models](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-migrate-to-rbac), which provides finer-grained, per-role control.
 
 Type:
 :   Account — Can be set only for Account
@@ -1197,7 +1197,7 @@ Data Type:
 :   String
 
 Description:
-:   Specifies the models that users in the account can access. Use this parameter to allowlist models for all users in the account. If you need to provide specific users with access beyond what you’ve specified in the allowlist, use role-based access control instead. For more information, see [Account-level allowlist parameter](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-allowlist).
+:   Specifies the models that users in the account can access. Use this parameter to allowlist models for all users in the account. If you need to provide specific users with access beyond what you’ve specified in the allowlist, use role-based access control instead. For more information, see [Account-level allowlist parameter](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-allowlist).
 
 When users make a request, Snowflake Cortex evaluates the parameter to determine whether the user can access the model.
 

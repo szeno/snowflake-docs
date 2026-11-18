@@ -6,15 +6,16 @@ sent. You can configure the budget to send this notification to a list of email 
 (Amazon SNS, Azure Event Grid, or Google Cloud PubSub), or a webhook for a third-party system (for example, Slack, Microsoft
 Teams, or PagerDuty).
 
+To set credit limits for individual users, use [per-user quotas](/user-guide/budgets/per-user-quotas).
+Quotas are a separate object from budgets, but you create and manage them on the same **Budgets** tab
+in Snowsight.
+
 ## Account budget and custom budgets
 
 The *account budget* monitors spending for all credit usage in the account.
 
 You can also create a *custom budget* to monitor the spending limits for a specific group of
 [supported objects](/user-guide/budgets/custom-budget#label-budgets-supported-objects).
-
-You can also use [per-user quotas](/user-guide/budgets/per-user-quotas) to enforce per-user
-credit limits for individual users in your account.
 
 For both types of budgets, you must set up the spending limit and specify how you want to receive notifications.
 

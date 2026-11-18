@@ -1,4 +1,4 @@
-# Run and schedule Notebooks in Workspaces
+# Schedule Notebooks in Workspaces
 
 Feature — Generally Available
 

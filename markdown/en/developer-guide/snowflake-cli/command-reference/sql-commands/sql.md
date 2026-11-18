@@ -18,6 +18,7 @@ snow sql
   --local-only
   --no-prompt-exit-repl
   --prompt-format <prompt_format>
+  --option <option>
   --project <project_definition>
   --env <env_overrides>
   --connection <connection>
@@ -96,6 +97,9 @@ None
 
 `--prompt-format TEXT`
 :   Format string for the interactive SQL REPL prompt. Ignored with `-q`, `-f`, or `-i`. Unset keeps the default prompt. Placeholders: `[user]`, `[host]`, `[account]`, `[role]`, `[warehouse]`, `[database]`, `[schema]`, and `[connection]` (the `-c` connection name). They update after USE. Missing values render as `(no user)`, `(no database)`, and so on. A backslash followed by n is a newline; prefix a bracket or backslash with a backslash to make it literal. Use `[#rrggbb]` for foreground colour and `[bg:#rrggbb]` for background colour; each applies to following prompt text only. Unknown tokens are dropped with a warning. Quoted `prompt_format` in the `[cli]` section of `config.toml` sets the default.
+
+`--option, -o KEY=VALUE`
+:   Sets a SnowSQL-style option for this run. Supported options are `output_file`, `quiet`, and `output_format`. `-o output_file=<path>` appends query results to the file and still prints them, like `!spool <path>`. An empty `output_file` turns spooling off, and `output_file=off` writes to a file named `off`. `-o quiet=true` hides query results on the terminal, like `!set quiet=true`; an open spool file still receives them. `-o output_format=<format>` sets the starting output format, like `!set output_format`, and overrides the config key and environment variable. It cannot be combined with `--format`, and `!set output_format` can still change it later. Repeat `-o` to set several options. The last value of an option wins.
 
 `-p, --project TEXT`
 :   Path where the Snowflake project is stored. Defaults to the current working directory.

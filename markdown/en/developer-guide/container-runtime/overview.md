@@ -81,6 +81,19 @@ To learn about vulnerability detection and management, Snowflake response protoc
 responsibilities, see the
 [Snowflake Security Addendum](https://www.snowflake.com/legal/security-addendum/2024-08-08/).
 
+## Archived runtimes
+
+Container Runtime versions 2.2 through 2.9 will continue to receive patches for
+known exploitable critical vulnerabilities until March 1, 2027. After that date,
+they move to full End of Support: Snowflake no longer applies security patches,
+and workloads that use these versions aren’t eligible for technical support.
+Snowflake recommends upgrading workloads from those versions to Stable version
+2.10 or to Latest.
+
+To change the runtime on an existing service, see [Using a runtime](/developer-guide/container-runtime/using-runtime).
+For historical Version 2 release notes (2.2 through 2.9), see
+[Archived Container Runtime releases](/developer-guide/container-runtime/archived-releases).
+
 ## Next steps
 
 Learn how to select a runtime in the interactive Notebooks UI, in SQL for Code Bundles, and in APIs for ML Jobs. See

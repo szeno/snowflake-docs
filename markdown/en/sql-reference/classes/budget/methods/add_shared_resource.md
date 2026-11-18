@@ -20,19 +20,22 @@ Copy code
 :   The type of resource being added to the budget. Valid values:
 
     - `AI FUNCTION`
-    - `CORTEX CODE`
+    - `SNOWFLAKE COCO`
     - `CORTEX AGENT`
-    - `SNOWFLAKE INTELLIGENCE`
+    - `SNOWFLAKE COWORK`
     - `AI GATEWAY`
+
+    `SNOWFLAKE COCO` and `SNOWFLAKE COWORK` replace the earlier domain names `CORTEX CODE` and
+    `SNOWFLAKE INTELLIGENCE`, which are still accepted.
 
     Unless you specify a second argument, the budget tracks consumption for all resources within the specified domain.
 
 `'instance'`
 :   Optional. Specifies a specific resource within the selected `domain` to add to the budget.
 
-    For domains that support instance-level selection (such as `AI FUNCTION` and `CORTEX CODE`), this argument allows you to track a specific function or interface.
+    For domains that support instance-level selection (such as `AI FUNCTION` and `SNOWFLAKE COCO`), this argument allows you to track a specific function or interface.
 
-    For object-backed domains (`CORTEX AGENT`, `SNOWFLAKE INTELLIGENCE`, and `AI GATEWAY`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
+    For object-backed domains (`CORTEX AGENT`, `SNOWFLAKE COWORK`, and `AI GATEWAY`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
 
     If you don’t specify a second argument, the budget tracks all instances within the domain.
 
@@ -90,7 +93,7 @@ Add all Cortex Code workloads to the budget:
 Copy code
 
 ```
-CALL finance_budget!ADD_SHARED_RESOURCE('CORTEX CODE');
+CALL finance_budget!ADD_SHARED_RESOURCE('SNOWFLAKE COCO');
 ```
 
 Add the Cortex Code CLI workload to the budget:
@@ -98,7 +101,7 @@ Add the Cortex Code CLI workload to the budget:
 Copy code
 
 ```
-CALL finance_budget!ADD_SHARED_RESOURCE('CORTEX CODE', 'CORTEX_CODE_CLI');
+CALL finance_budget!ADD_SHARED_RESOURCE('SNOWFLAKE COCO', 'CORTEX_CODE_CLI');
 ```
 
 Add the Cortex Code Snowsight workload to the budget:
@@ -106,7 +109,7 @@ Add the Cortex Code Snowsight workload to the budget:
 Copy code
 
 ```
-CALL finance_budget!ADD_SHARED_RESOURCE('CORTEX CODE', 'CORTEX_CODE_SNOWSIGHT');
+CALL finance_budget!ADD_SHARED_RESOURCE('SNOWFLAKE COCO', 'CORTEX_CODE_SNOWSIGHT');
 ```
 
 Add all Cortex Agent workloads to the budget:
@@ -133,7 +136,7 @@ Add all Snowflake CoWork workloads to the budget:
 Copy code
 
 ```
-CALL finance_budget!ADD_SHARED_RESOURCE('SNOWFLAKE INTELLIGENCE');
+CALL finance_budget!ADD_SHARED_RESOURCE('SNOWFLAKE COWORK');
 ```
 
 Add a specific Snowflake CoWork workload to the budget:
@@ -142,7 +145,7 @@ Copy code
 
 ```
 CALL finance_budget!ADD_SHARED_RESOURCE(
-  'SNOWFLAKE INTELLIGENCE',
+  'SNOWFLAKE COWORK',
   (SELECT SYSTEM$REFERENCE('SNOWFLAKE INTELLIGENCE', 'my_si'))
 );
 ```

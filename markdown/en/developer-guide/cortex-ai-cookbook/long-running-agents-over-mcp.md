@@ -24,6 +24,10 @@ This recipe is a reference implementation: review the code and adapt it to your 
 
 Some MCP clients cap how long a single tool call may take, and some agent questions take longer than that cap. This recipe replaces one long `tools/call` with two short ones: a submit tool that starts a background agent run and returns a `run_id` in seconds, and a fetch tool that waits server-side for up to 60 seconds and returns the answer when it is ready. In the verified run over SQL, 184 seconds of agent work came back in four calls, the longest of which took 65 seconds. Both tools run with caller’s rights, so the agent still queries data as the requesting user.
 
+Note
+
+Since November 4, 2026, `CORTEX_AGENT_RUN` and `CODING_AGENT` tools on a managed MCP server accept a `background` argument, and the server adds `ASYNC_AGENT_RUN_STATUS`, `AGENT_RUN_RESULT`, and `ASYNC_AGENT_RUN_CANCEL` tools to poll, read, and cancel a run. These give the same submit-and-poll shape without custom procedures; consider them before building the procedures in this recipe. See [Run an agent tool in the background](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-background-agent-run). This recipe was written and verified before that feature was released.
+
 ## When to use this
 
 - An MCP client you do not control enforces a per-call time limit, and your agent’s runs can exceed it.
@@ -70,7 +74,7 @@ Show lessSee more
 3. [`sql/03_run_procs.sql`](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp/code#label-cookbook-long-running-agents-over-mcp-sql-03-run-procs-sql): `START_AGENT_RUN`, `FETCH_AGENT_RUN`, and the `SUBMIT_BOOKINGS_QUESTION` wrapper.
 4. [`sql/04_slow_test_agent.sql`](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp/code#label-cookbook-long-running-agents-over-mcp-sql-04-slow-test-agent-sql): test only. An agent that must call a 70-second checkpoint twice, so its runs last over two minutes.
 5. [`sql/05_mcp_server.sql`](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp/code#label-cookbook-long-running-agents-over-mcp-sql-05-mcp-server-sql): the MCP server with the submit and fetch tools, and the USAGE grant.
-6. Run the Verify queries.
+6. Run the Verify queries in one session that stays open until fetch returns, such as a Snowsight worksheet or one `snow sql -f` file. Separate `snow sql -q` calls don’t work.
 7. Optional: point an MCP client or the sample client at the server.
 
 Copy code
@@ -151,6 +155,8 @@ python client/submit_fetch_client.py --slow "What were total new bookings in FY2
 ```
 
 Add a client-side instruction as well, since hosted assistants have no polling setting: “When a Snowflake tool returns a run\_id, the answer is not ready. Call the matching fetch tool with that run\_id until it returns SUCCEEDED or FAILED.”
+
+This is an exception to [keeping business logic server-side](/developer-guide/cortex-ai-cookbook/mcp-or-agent-rest-api#keep-business-logic-server-side), but a narrow one. The instruction carries no business logic: it only tells the client’s model how to use the two tools. The tool descriptions and each response’s `next_step` already say the same thing; the client-side copy is a backstop for clients that stop after the first `RUNNING`.
 
 ## Verify
 

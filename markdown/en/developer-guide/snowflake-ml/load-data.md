@@ -7,13 +7,14 @@ You can load and process data using:
 - **Snowflake Notebooks**: Interactive development environment for exploring data and building ML models. For more information, see [Notebooks on Container Runtime](/developer-guide/snowflake-ml/notebooks-on-spcs).
 - **Snowflake ML Jobs**: Run your ML workloads asynchronously from any development environment. For more information, see [Snowflake ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview).
 
-Both Notebooks and ML Jobs run on the Container Runtime, which provides preconfigured environments optimized for machine learning workloads with distributed processing capabilities. The Container Runtime uses Ray, an open-source framework for distributed computing, to efficiently process data across multiple compute nodes. For more information about the Container Runtime, see [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml).
+Both Notebooks and ML Jobs run on the Container Runtime, which provides preconfigured environments optimized for machine learning workloads with distributed processing capabilities. The Container Runtime uses Ray, an open-source framework for distributed computing, to efficiently process data across multiple compute nodes. For more information about the Container Runtime, see [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml).
 
 Snowflake ML provides different APIs for loading structured and unstructured data:
 
 **Structured data (tables and datasets)**
 
 - **DataConnector**: Load data from Snowflake tables and Snowflake Datasets. For more information, see [Load structured data from Snowflake tables](#label-load-data-from-snowflake-tables).
+- **SFIcebergDataSource**: Recommended for loading a Snowflake-managed Iceberg table. It is faster and more cost effective than `DataConnector`. You can also use `DataConnector`. For the differences and when to use each, see [Load Snowflake-managed Iceberg tables](#label-load-snowflake-managed-iceberg-tables).
 - **DataSink**: Write data back to Snowflake tables. For more information, see [Write structured data back to Snowflake tables](#label-load-data-write-data-back-to-snowflake-tables).
 
 **Files in stages**
@@ -32,6 +33,7 @@ The following table can help you choose the right API for your use case:
 | Data Type | Data Source | API for Loading | API for Writing |
 | --- | --- | --- | --- |
 | Structured | Snowflake Tables | DataConnector | DataSink |
+| Structured | Snowflake-managed Iceberg tables | DataConnector or SFIcebergDataSource | DataSink |
 | Structured | Snowflake Datasets | DataConnector | DataSink |
 | Structured | CSV Files (Stage) | DataSource API | Datasink |
 | Structured | Parquet Files (Stage) | DataSource API | DataSink |
@@ -44,6 +46,8 @@ Show lessSee more
 ## Load structured data from Snowflake tables
 
 Use the Snowflake DataConnector to load structured data from Snowflake tables and Snowflake Datasets into a Snowflake Notebook or Snowflake ML Job. The DataConnector accelerates data loading by parallelizing the reads across multiple compute nodes.
+
+`DataConnector` can also load a Snowflake-managed Iceberg table. For more information, see [Load Snowflake-managed Iceberg tables](#label-load-snowflake-managed-iceberg-tables).
 
 The DataConnector works with either Snowpark DataFrames or Snowflake Datasets:
 
@@ -323,6 +327,63 @@ response = pytorch_trainer.run(
         train=sharded_data_connector,
     )
 )
+```
+
+## Load Snowflake-managed Iceberg tables
+
+Load a [Snowflake-managed Iceberg table](/user-guide/tables-iceberg) with `SFIcebergDataSource` or `DataConnector`.
+
+### Choose an API for an Iceberg table
+
+|  | `SFIcebergDataSource` | `DataConnector` |
+| --- | --- | --- |
+| How it reads | Ray workers read the table files directly from object storage, with no warehouse query. | Runs a query on a warehouse and streams the results. |
+| When to choose it | The job runs on the Container Runtime and you read the table as stored, including a column subset, a row filter, or a pinned snapshot. A good fit for repeated reads, large tables, and multi-node jobs. | You need Snowflake to compute the rows first, such as a join, an aggregation, or a UDF. The job runs outside the Container Runtime, or the source is a standard Snowflake table, a view, or a Snowflake Dataset. |
+| Cost | Compute pool time only. | Warehouse credits plus compute pool time, including time the pool spends idle while the query runs. Adding nodes doesn’t shorten that wait. |
+
+Expand
+
+Show lessSee more
+
+A common pattern is to materialize a feature query into a Snowflake-managed Iceberg table once, then train from that table with `SFIcebergDataSource`.
+
+Later passes over the same table are faster with `SFIcebergDataSource`, because workers decode Parquet directly instead of downloading converted query results. If the job spends most of its time in the model, the time difference is smaller. The warehouse credit savings still apply.
+
+### Read an Iceberg table
+
+Pass a fully qualified table name (`database.schema.table`). The Container Runtime supplies the catalog endpoint and credentials, and refreshes them during the read so a long-running job can keep reading.
+
+Copy code
+
+```
+import ray
+from snowflake.ml.ray.datasource import SFIcebergDataSource
+
+data_source = SFIcebergDataSource(
+    table_identifier="MY_DB.MY_SCHEMA.TRAINING_TABLE",
+)
+
+ray_ds = ray.data.read_datasource(data_source)
+```
+
+### Filter rows and select columns
+
+`row_filter` and `selected_fields` are applied in the Iceberg scan, so workers skip rows and columns they don’t need. `row_filter` takes a PyIceberg expression. Set `snapshot_id` to read a specific table snapshot.
+
+Copy code
+
+```
+import ray
+from pyiceberg.expressions import GreaterThan
+from snowflake.ml.ray.datasource import SFIcebergDataSource
+
+data_source = SFIcebergDataSource(
+    table_identifier="MY_DB.MY_SCHEMA.TRAINING_TABLE",
+    selected_fields=("PRODUCT", "TOTAL"),
+    row_filter=GreaterThan("TOTAL", 1500),
+)
+
+ray_ds = ray.data.read_datasource(data_source)
 ```
 
 ## Load data from Snowflake stages

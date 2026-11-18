@@ -863,6 +863,21 @@ Ways to use it:
 - Set up budget alerts and detect unexpected cost spikes before they escalate
 - Generate a chargeback report breaking down Cortex AI, storage, and compute costs by team
 
+### `storage-lifecycle-policy`
+
+Create, manage, and monitor [storage lifecycle policies](/user-guide/data-lifecycle). Expiration policies delete rows. Archival policies move rows to the COOL tier (minimum 90-day archive period) or the COLD tier (minimum 180-day archive period, AWS and GCP only), and then expire them after `ARCHIVE_FOR_DAYS`. The skill also attaches policies to tables, monitors policy execution, retrieves archived data with `CREATE TABLE ... FROM ARCHIVE OF`, and finds candidate tables to reduce storage costs. For syntax details, see [CREATE STORAGE LIFECYCLE POLICY](/sql-reference/sql/create-storage-lifecycle-policy).
+
+Cortex Code loads this skill when you ask about storage lifecycle, lifecycle policies, archiving or expiring data, the COOL or COLD tier, data retention, or storage cost optimization.
+
+Prerequisites: To find candidate tables, the skill uses the `cost-intelligence` cost insights procedure, which requires the `APP_USAGE_VIEWER` or `APP_USAGE_ADMIN` application role. If you don’t have the role, the skill falls back to creating the policy directly.
+
+Ways to use it:
+
+- Create an expiration policy for rows older than 365 days and attach it to a table
+- Archive data to the COLD tier for 180 days, and then expire it
+- Retrieve archived data with `FROM ARCHIVE OF`
+- Find large tables that are good candidates for a lifecycle policy
+
 ### `organization-management`
 
 Manage a Snowflake organization: accounts, org users, org-wide spending analysis, security posture, MFA readiness, and ORGANIZATION\_USAGE views.

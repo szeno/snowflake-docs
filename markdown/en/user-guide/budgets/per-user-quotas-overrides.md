@@ -59,8 +59,8 @@ Copy code
 ```
 CALL <quota_name>!SET_USER_QUOTA_OVERRIDE(
   <user_names>,
-  <limit>,
   '<cycle>',
+  <limit>
   [ , <expires_on> ]
 );
 ```
@@ -72,10 +72,10 @@ The method accepts the following arguments:
   unquoted user created as `alice`). Resolution is all-or-nothing: if any user name in the array
   doesn’t resolve to an active user in the account, the entire call fails and no overrides in the
   batch are written.
-- `limit` (`FLOAT`): The per-user credit limit for the specified cycle. Must be a whole number from
-  1 to 1,000,000,000. Zero, negative, `NULL`, and decimal values return an error.
 - `cycle` (`VARCHAR`): The cycle to override: `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'` (not
   case-sensitive). Weekly and daily overrides apply to quotas scoped to AI domains.
+- `limit` (`FLOAT`): The per-user credit limit for the specified cycle. Must be a whole number from
+  1 to 1,000,000,000. Zero, negative, `NULL`, and decimal values return an error.
 - `expires_on` (`DATE`, optional): The date when the override stops applying, or `NULL` for an
   override that doesn’t expire. You can omit the argument instead of passing `NULL`. When you pass
   a date, it must be later than the current UTC date. The date is exclusive: the override remains
@@ -111,8 +111,8 @@ Copy code
 ```
 CALL my_quota!SET_USER_QUOTA_OVERRIDE(
   ['ALICE'],
-  2500,
   'MONTHLY',
+  2500,
   '2026-12-01'
 );
 ```
@@ -126,8 +126,8 @@ Copy code
 ```
 CALL my_quota!SET_USER_QUOTA_OVERRIDE(
   ['ALICE', 'BOB'],
-  300,
-  'DAILY'
+  'DAILY',
+  300
 );
 ```
 
@@ -140,8 +140,8 @@ Copy code
 ```
 CALL my_quota!SET_USER_QUOTA_OVERRIDE(
   ['CAROL'],
-  50,
-  'MONTHLY'
+  'MONTHLY',
+  50
 );
 ```
 

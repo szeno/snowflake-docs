@@ -6,6 +6,14 @@ Requests to the Cortex Agent REST API time out after 15 minutes.
 
 You can use the Cortex Agent REST API to create, manage, and interact with Cortex Agent Objects in your Snowflake account.
 
+## Private connectivity (PrivateLink)
+
+If your account uses [private connectivity](/user-guide/private-connectivity-inbound), clients outside Snowflake can send Cortex Agents REST API requests to your account’s private connectivity URL. To get the host names to add to your private DNS, call [SYSTEM$ALLOWLIST\_PRIVATELINK](/sql-reference/functions/system_allowlist_privatelink).
+
+Note
+
+Code that runs inside Snowflake, such as stored procedures, can’t call the REST API through a private connectivity URL; such requests return HTTP 404. Use [DATA\_AGENT\_RUN](/sql-reference/functions/data_agent_run-snowflake-cortex) instead.
+
 ## Create Cortex Agent
 
 `POST /api/v2/databases/{database}/schemas/{schema}/agents`

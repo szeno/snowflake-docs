@@ -417,6 +417,7 @@ table gives the parameter name and its purpose so you can prepare before enterin
 | Iceberg Version | Destination details | When using Iceberg, the table version (2 or 3, default 3). |
 | Merge Task Schedule CRON | Tuning | CRON expression controlling when journal data is merged into destination tables, which is when warehouse cost accrues. |
 | Concurrent Snapshot Queries | Tuning | How many tables to snapshot concurrently (default 2). Each holds a source database connection. |
+| Merge Strategy | Tuning | SQL strategy used to merge journal rows into destination tables. **Base merge** (default) works for all tables. **Adaptive (preview)** runs more efficient merge queries, reducing compilation and execution time and therefore merge costs. Changing this value affects only merges that run after the change and does not rewrite data already merged. |
 | Ingestion Type | Migration | Whether new tables get a full snapshot before switching to CDC (default) or go straight to incremental. |
 | Replication Slot Name | Migration | Optional. If blank, the connector creates its own slot. An active slot retains WAL on the source until the connector advances it; deleting a connector doesn’t drop its slot. |
 

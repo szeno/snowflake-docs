@@ -8,6 +8,13 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.9.3 (November 12, 2026)
+
+### Bug fixes
+
+- Fixed an issue where file-mode uploads to Google Cloud Storage used an object path containing a double slash.
+- Fixed an issue where closing a channel during invalidation could report `ClosedChannelError` instead of the invalidation error.
+
 ## Version 1.9.1 (October 23, 2026)
 
 ### Bug fixes

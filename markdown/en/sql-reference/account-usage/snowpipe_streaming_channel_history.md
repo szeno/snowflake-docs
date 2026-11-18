@@ -3,9 +3,11 @@ Schema:
 
 # SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY view
 
-This Account Usage view provides a historical record of pipeline errors, enabling users to monitor performance trends. This view displays key metrics such as processed data volume, error rates, and latency.
+For the high-performance architecture, this Account Usage view records history only for channels that encounter ingestion errors. Channels that ingest without errors produce no rows, so an empty view doesn’t by itself indicate an ingestion failure.
 
-You can use this Account Usage view to query the error history for a specific pipe or channel.
+You can use this view to query the error history for a specific pipe or channel and to monitor error trends.
+
+To monitor successful ingestion, such as rows inserted, rows parsed, row error counts, and processing latency, use the channel status API in the high-performance SDK. For details, see .
 
 Note
 

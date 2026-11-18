@@ -193,6 +193,10 @@ Expand
 
 Show lessSee more
 
+Note
+
+The v4 connector uses only the high-performance architecture. After you upgrade, the [SNOWPIPE\_STREAMING\_CHANNEL\_HISTORY](/sql-reference/account-usage/snowpipe_streaming_channel_history) view records history only for channels that encounter ingestion errors, so it can be empty while ingestion succeeds. To monitor successful ingestion, use the channel status API. For details, see .
+
 ### Removed configurations
 
 The following configuration properties from v3 aren’t accepted in v4:

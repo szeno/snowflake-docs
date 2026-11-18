@@ -680,6 +680,15 @@ them to new tables. For those new tables, Snowflake runs the policies.
 
 This section describes recommended practices and potential areas of concern when replicating streams in [Replicating databases across multiple accounts](/user-guide/db-replication-config) or [Account Replication and Failover/Failback](/user-guide/account-replication-intro).
 
+# Streams in replication groups and failover groups
+
+Stream replication behavior depends on whether the database that contains the stream is part of a replication group or a failover group.
+
+- **Failover groups:** Streams in a primary failover group are replicated to the secondary failover group on refresh.
+- **Replication groups:** New streams in a primary replication group are not replicated to the secondary replication group on refresh. Streams that were replicated as part of a replication group before January 2026, when the [behavior change](/release-notes/bcr-bundles/2025_06/bcr-2079) took effect, might still be present as replicas in the secondary replication group, but they are in an invalid state.
+
+If you need streams to be available in a target account, for example for disaster recovery, include the database that contains the streams in a failover group.
+
 # Supported Source Objects for Streams
 
 Replicated streams can successfully track the change data for tables and views in the same database.

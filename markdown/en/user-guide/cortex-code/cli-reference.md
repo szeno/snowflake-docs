@@ -160,6 +160,43 @@ Show lessSee more
 
 See [MCP (Model Context Protocol)](extensibility#extensibility-mcp) for details.
 
+### `memory` (*Preview*)
+
+Manage the items that CoCo remembers across sessions. For an overview, see
+[Memory in CoCo](/user-guide/cortex-code/memory).
+
+| Command | Description |
+| --- | --- |
+| `cortex memory remember [content]` | Save a fact, preference, or rule. |
+| `cortex memory recall <query>` | Search memory items. |
+| `cortex memory list` | List memory items. |
+| `cortex memory show [<id> ...]` | Show the full content of items by ID. |
+| `cortex memory edit <id> [content]` | Edit the content, type, title, or tags of an item. |
+| `cortex memory drop <id>` | Delete an item. |
+
+Expand
+
+Show lessSee more
+
+The subcommands accept the following options:
+
+| Option | Subcommands | Description |
+| --- | --- | --- |
+| `-g, --global` | remember, show, edit, drop | Use global memory, which applies to all projects. |
+| `-t, --type <type>` | remember, edit, list | Memory type: `preference`, `lesson`, `context`, `pointer`, `rule`, or `other`. With `list`, shows only items of that type. |
+| `--rule` | remember, list | With `remember`, saves the item as a rule. With `list`, shows only rules. |
+| `--title <title>` | remember, edit | Title of the item. With `edit`, if you change the content and omit this option, CoCo derives a new title. |
+| `--tags <tags>` | remember, recall, edit, list | Tags for the item. With `remember` and `recall`, the default is the value of `CORTEX_MEMORY_TAGS`. With `edit`, replaces all tags. With `list`, shows only items that have every tag. |
+| `--force` | remember | Save the item even if a similar item already exists. |
+| `--query-type <type>` | recall | `FUZZY` (default) or `REGEX`. |
+| `--global-only`, `--project-only` | list | Show only global items or only project items. |
+| `--json` | list | Return structured JSON. |
+| `-c, --connection <name>` | All | Snowflake connection to use. |
+
+Expand
+
+Show lessSee more
+
 ## Interactive mode
 
 Interactive mode is the default when you run `cortex` without `-p` or `exec`. CoCo opens a persistent

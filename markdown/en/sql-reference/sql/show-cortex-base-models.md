@@ -117,7 +117,7 @@ Copy code
 CALL SNOWFLAKE.MODELS.CORTEX_BASE_MODELS_REFRESH();
 ```
 
-For details, see [Refresh model objects and application roles](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-base-models-refresh-task).
+For details, see [Refresh model objects and application roles](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-base-models-refresh-task).
 
 ## Usage notes
 

@@ -162,6 +162,24 @@ For detailed setup instructions, release history, troubleshooting, and advanced 
 CoCo is billed based on token consumption. Pricing details are provided in the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 
+### Auto Efficient billing
+
+When you use the **Auto Efficient** model option in CoCo CLI, CoCo Desktop, or CoCo in
+Snowsight, a model router chooses the model for each step of a task. Each request is billed
+for the following:
+
+- The token rate of the model that served the request, as listed in the
+  [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+- A routing fee of 0.10 AI Credits per million tokens on the work done by the model that the router
+  chose. The fee applies to that model’s input tokens, tokens written to the prompt cache (cache
+  write), and output tokens. Tokens read from the prompt cache (cache read) don’t incur the routing
+  fee. The router’s own model call is billed at that model’s token rate and doesn’t incur the
+  routing fee.
+
+Daily credit usage limits count the routing fee. To avoid the routing fee, select a specific model
+instead of **Auto Efficient**. For how to set a default model for your account, see
+[Configure default model settings](/user-guide/cortex-code/configure-model-settings).
+
 ### CoCo CLI billing
 
 CoCo CLI supports two billing models depending on how you access the product:

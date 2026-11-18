@@ -88,7 +88,7 @@ Copy code
 
 ```
 CALL budgets_db.budgets_schema.my_budget!ADD_SHARED_RESOURCE(
-  'SNOWFLAKE INTELLIGENCE'
+  'SNOWFLAKE COWORK'
 );
 ```
 
@@ -98,14 +98,14 @@ Copy code
 
 ```
 CALL budgets_db.budgets_schema.my_budget!ADD_SHARED_RESOURCE(
-  'SNOWFLAKE INTELLIGENCE',
+  'SNOWFLAKE COWORK',
   (SELECT SYSTEM$REFERENCE('SNOWFLAKE INTELLIGENCE', 'my_si'))
 );
 ```
 
 Note
 
-For the SNOWFLAKE INTELLIGENCE domain, specifying an explicit object reference in ADD\_SHARED\_RESOURCE is optional as there is only one Snowflake CoWork object per account.
+For the `SNOWFLAKE COWORK` domain, specifying an explicit object reference in ADD\_SHARED\_RESOURCE is optional as there is only one Snowflake CoWork object per account.
 
 ### Step 5: Associate the user tag with the budget
 

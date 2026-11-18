@@ -32,7 +32,7 @@ to all users and roles, so this allows all users in your account to use Snowflak
 
 In addition to the COPILOT\_USER requirement, users must have the CORTEX\_USER role. The CORTEX\_USER database role in the SNOWFLAKE database includes the privileges that allow users to call Snowflake AI functions. By default, the CORTEX\_USER role is granted to the PUBLIC role. The PUBLIC role is automatically granted to all users and roles, so this allows all users in your account to use the Snowflake AI functions.
 
-Snowflake Copilot inline requires that the user has access to the `claude-3.5-sonnet` or `openai-gpt-4.1` model. To ensure all users have access to this model, make sure that `claude-3.5-sonnet` or `openai-gpt-4.1` is included in the model allowlist and is not limited by role-based access control (RBAC). For more information about controlling model access, see [Control model access](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-access-control).
+Snowflake Copilot inline requires that the user has access to the `claude-3.5-sonnet` or `openai-gpt-4.1` model. To ensure all users have access to this model, make sure that `claude-3.5-sonnet` or `openai-gpt-4.1` is included in the model allowlist and is not limited by role-based access control (RBAC). For more information about controlling model access, see [Model access control](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-access-control).
 
 If users have the correct permissions, they see the Snowflake Copilot inline sparkle icon in Workspaces. They can use the inline interface to interact with Snowflake Copilot.
 

@@ -44,7 +44,7 @@ When not to use it:
 - You only want to reuse another agent’s tool definitions. Use `agent_toolset`, which copies the tools into one agent at run time.
 - Separate agents per role, with no single entry point, are acceptable. Grants alone then give you the boundary with no profile.
 
-If you split, keep tools that are used together in the same agent.
+If you split, keep tools that are used together in the same agent. For evaluation-based guidance on when to split, how to write instructions, and how cost grows with scale, see [Design guidance](/developer-guide/cortex-ai-cookbook/multi-agent-orchestration/design-guidance).
 
 ## How it works
 

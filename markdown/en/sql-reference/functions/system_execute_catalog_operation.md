@@ -8,8 +8,7 @@ so you can inspect and validate the remote catalog that the integration connects
 
 Use this function to verify connectivity, list namespaces or tables, retrieve the latest table metadata
 file location, and check that scoped credentials can be retrieved. Supported operations depend on the
-catalog type and the capabilities of the catalog integration (for example, Iceberg REST, Glue, Polaris,
-or SAP BDC).
+catalog type and the capabilities of the catalog integration (for example, Iceberg REST, Glue, or Polaris).
 
 Call the function with the `help` operation to list the operations available for your account and the
 positional arguments each operation accepts.

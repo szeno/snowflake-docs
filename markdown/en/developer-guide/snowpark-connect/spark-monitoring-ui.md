@@ -1,9 +1,5 @@
 # Spark Monitoring UI
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Spark Monitoring UI provides a view of Snowpark Connect for Spark usage and history across your Snowflake account. This UI consolidates the relevant information from each Snowpark Connect for Spark job or interactive session to aid in monitoring and troubleshooting.
 
 Batch jobs from `snowpark-submit` and `EXECUTE CODE BUNDLE` appear under the **Batch Jobs** tab. That includes Spark jobs whose specification sets `type: spark`, and scheduled notebooks that initialize a Snowpark Connect session. Each run shows status, duration, name, and owner. Any Snowpark Connect session connection is tracked under the **Spark Sessions** tab with its queries and owner.

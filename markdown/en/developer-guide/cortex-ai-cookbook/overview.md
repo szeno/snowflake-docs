@@ -11,6 +11,8 @@ Every recipe follows the same shape:
 
 Each recipe has a code page that shows every file, and a zip file with all of them to download. Each recipe is a reference implementation: review it and adapt it to your environment before production use.
 
+If you’re connecting MCP clients to Snowflake, start with [Snowflake-managed MCP or the Cortex Agents REST API](/developer-guide/cortex-ai-cookbook/mcp-or-agent-rest-api). Read [Long-running Cortex Agent runs over managed MCP](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp) next if tool calls hit a client’s time limit, and [LangChain agents on Cortex AI Gateway with MCP tools and traces](/developer-guide/cortex-ai-cookbook/langchain-mcp-agent-tracing) if you connect an external agent framework.
+
 ## Recipes
 
 Recipes follow the AI lifecycle, in reading order: start at Scope and work through to Operate. Select stages to filter.

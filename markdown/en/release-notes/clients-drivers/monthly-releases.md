@@ -33,6 +33,7 @@ To view a list of release note announcements, filtered by date and release type,
 | [PHP PDO Driver for Snowflake](/release-notes/clients-drivers/php-pdo) | TBD | TBD |  |
 | [Snowflake CLI](/release-notes/clients-drivers/snowflake-cli) | 3.32.1 | 02-Nov-2026 |  |
 | 3.33.0 | 09-Nov-2026 |  |
+| 3.34.0 | 16-Nov-2026 |  |
 | [Snowflake Connector for Kafka](/release-notes/clients-drivers/kafka-connector) | TBD | TBD |  |
 | [Snowflake Connector for Python](/release-notes/clients-drivers/python-connector) | 5.2.0 | 04-Nov-2026 |  |
 | [Snowflake Connector for Spark](/release-notes/clients-drivers/spark-connector) | TBD | TBD |  |

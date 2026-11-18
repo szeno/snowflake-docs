@@ -98,7 +98,7 @@ Show lessSee more
 
 Because the cost of using different large language models varies, you can limit access to specific LLMs via an
 account-level allowlist, by role-based access control, or by a combination of both. For more information, see
-[Control model access](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-access-control).
+[Model access control](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-access-control).
 
 ## ACCOUNTADMIN and AI features
 

@@ -36,7 +36,7 @@ Show lessSee more
 
 ## Examples
 
-Retrieve the total number of SPCS compute pool hours consumed by each of your consumers.
+Retrieve SPCS compute pool hours and credits consumed by your consumers for each usage interval.
 
 Copy code
 

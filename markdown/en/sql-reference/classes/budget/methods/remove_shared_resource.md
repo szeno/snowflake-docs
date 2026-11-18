@@ -17,19 +17,22 @@ Copy code
 :   The type of resource being removed from the budget. Valid values:
 
     - `AI FUNCTION`
-    - `CORTEX CODE`
+    - `SNOWFLAKE COCO`
     - `CORTEX AGENT`
-    - `SNOWFLAKE INTELLIGENCE`
+    - `SNOWFLAKE COWORK`
     - `AI GATEWAY`
+
+    `SNOWFLAKE COCO` and `SNOWFLAKE COWORK` replace the earlier domain names `CORTEX CODE` and
+    `SNOWFLAKE INTELLIGENCE`, which are still accepted.
 
     Unless you specify a second argument, the budget stops tracking consumption for all resources within the specified domain.
 
 `'instance'`
 :   Optional. Specifies a specific resource within the selected `domain` to remove from the budget.
 
-    For domains that support instance-level selection (such as `AI FUNCTION` and `CORTEX CODE`), this argument identifies a specific function or interface to remove.
+    For domains that support instance-level selection (such as `AI FUNCTION` and `SNOWFLAKE COCO`), this argument identifies a specific function or interface to remove.
 
-    For object-backed domains (`CORTEX AGENT`, `SNOWFLAKE INTELLIGENCE`, and `AI GATEWAY`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
+    For object-backed domains (`CORTEX AGENT`, `SNOWFLAKE COWORK`, and `AI GATEWAY`), pass an [object reference](/sql-reference/references) for the instance value: use the serialized string returned by [SYSTEM$REFERENCE](/sql-reference/functions/system_reference), or a subquery such as `(SELECT SYSTEM$REFERENCE(...))`.
 
     Examples:
 
@@ -83,7 +86,7 @@ Remove all Cortex Code workloads from the budget:
 Copy code
 
 ```
-CALL finance_budget!REMOVE_SHARED_RESOURCE('CORTEX CODE');
+CALL finance_budget!REMOVE_SHARED_RESOURCE('SNOWFLAKE COCO');
 ```
 
 Remove the Cortex Code CLI workload from the budget:
@@ -91,7 +94,7 @@ Remove the Cortex Code CLI workload from the budget:
 Copy code
 
 ```
-CALL finance_budget!REMOVE_SHARED_RESOURCE('CORTEX CODE', 'CORTEX_CODE_CLI');
+CALL finance_budget!REMOVE_SHARED_RESOURCE('SNOWFLAKE COCO', 'CORTEX_CODE_CLI');
 ```
 
 Remove the Cortex Code Snowsight workload from the budget:
@@ -99,7 +102,7 @@ Remove the Cortex Code Snowsight workload from the budget:
 Copy code
 
 ```
-CALL finance_budget!REMOVE_SHARED_RESOURCE('CORTEX CODE', 'CORTEX_CODE_SNOWSIGHT');
+CALL finance_budget!REMOVE_SHARED_RESOURCE('SNOWFLAKE COCO', 'CORTEX_CODE_SNOWSIGHT');
 ```
 
 Remove all Cortex Agent workloads from the budget:
@@ -126,7 +129,7 @@ Remove all Snowflake CoWork workloads from the budget:
 Copy code
 
 ```
-CALL finance_budget!REMOVE_SHARED_RESOURCE('SNOWFLAKE INTELLIGENCE');
+CALL finance_budget!REMOVE_SHARED_RESOURCE('SNOWFLAKE COWORK');
 ```
 
 Remove a specific Snowflake CoWork workload from the budget:
@@ -135,7 +138,7 @@ Copy code
 
 ```
 CALL finance_budget!REMOVE_SHARED_RESOURCE(
-  'SNOWFLAKE INTELLIGENCE',
+  'SNOWFLAKE COWORK',
   (SELECT SYSTEM$REFERENCE('SNOWFLAKE INTELLIGENCE', 'my_si'))
 );
 ```

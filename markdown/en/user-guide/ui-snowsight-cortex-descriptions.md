@@ -30,7 +30,7 @@ To use the Cortex Powered Object Descriptions feature, you must have:
 You must also set the [CORTEX\_MODELS\_ALLOWLIST](/sql-reference/parameters#label-cortex-models-allowlist) parameter to allow access to the `mistral-7b` and
 `llama3.1-8b` models. By default, this parameter is set to `'All'`, which allows access to all models. If the parameter has been
 changed, ensure that these models are included. For more information about controlling model access with this parameter, see
-[Account-level allowlist parameter](/user-guide/snowflake-cortex/aisql-privileges-and-access#label-cortex-llm-allowlist).
+[Account-level allowlist parameter](/user-guide/snowflake-cortex/governance-and-availability/model-access-control#label-cortex-llm-allowlist).
 
 ### LLM regional requirements
 

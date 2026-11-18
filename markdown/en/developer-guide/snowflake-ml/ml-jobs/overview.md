@@ -533,7 +533,7 @@ delete_job(job)
 
 ## Managing dependencies
 
-The Snowflake ML Job API runs payloads inside the [Snowflake Container Runtime](/developer-guide/snowflake-ml/container-runtime-ml) environment. The environment has the most commonly used Python packages for machine learning and data science.
+The Snowflake ML Job API runs payloads inside the [Snowflake Container Runtime for machine learning](/developer-guide/snowflake-ml/container-runtime-ml) environment. The environment has the most commonly used Python packages for machine learning and data science.
 Most use cases should work “out of the box” without additional configuration.
 If you need custom dependencies, you can use `pip_requirements` to install them.
 

@@ -96,6 +96,42 @@ Copy code
 ALTER WAREHOUSE interactive_demo SUSPEND;
 ```
 
+#### Resizing an interactive warehouse
+
+You can change the size of an interactive warehouse only while it’s suspended. If you try to change
+the size of an interactive warehouse that’s running, Snowflake returns error 090094
+(“Unable to perform warehouse operation”).
+
+This restriction exists because the size of the data cache depends on the warehouse size. When the
+size changes, Snowflake must drop and recreate the cache, which can’t happen while the warehouse is
+running. Suspend the warehouse, change the size, and then resume the warehouse. The cache is rebuilt
+and warmed when the warehouse resumes.
+
+The following example resizes the `interactive_demo` warehouse to Small:
+
+Copy code
+
+```
+ALTER WAREHOUSE interactive_demo SUSPEND;
+ALTER WAREHOUSE interactive_demo SET WAREHOUSE_SIZE = 'SMALL';
+ALTER WAREHOUSE interactive_demo RESUME;
+```
+
+#### Changing the cluster count of an interactive warehouse
+
+Unlike the warehouse size, you can change the multi-cluster warehouse (MCW) cluster count while the
+interactive warehouse is active. You don’t need to suspend the warehouse to change `MIN_CLUSTER_COUNT`
+or `MAX_CLUSTER_COUNT`:
+
+Copy code
+
+```
+ALTER WAREHOUSE interactive_demo SET MAX_CLUSTER_COUNT = 5;
+```
+
+For an example that changes the cluster count on a schedule, see
+[Auto-scaling for high-concurrency](#label-interactive-task-based-multi-cluster-sizing).
+
 #### Auto-suspend and auto-resume for interactive warehouses
 
 Interactive warehouses support auto-suspend and auto-resume. You can set the AUTO\_SUSPEND
@@ -286,6 +322,7 @@ any tables. However, you can still use other interactive warehouses to query tho
 - If a query consistently times out, that’s a signal that it might not be suitable for use with interactive warehouses. Commonly, applying some of the performance tuning techniques can help reduce query latency. See [Performance considerations](/user-guide/interactive-performance#label-interactive-performance-considerations) for more details.
 - Interactive warehouses support auto-suspend and auto-resume. The minimum auto-suspend interval is 24 hours (86400 seconds). This is different from auto-scaling, in which clusters will run for a minimum of 1 hour. Manual suspension/resume of interactive warehouse is supported with a minimum 1 hour billing period. Expect significant query latency when you resume an interactive warehouse, because the data cache needs to warm up again. For more information, see
   [Resuming and suspending an interactive warehouse](#label-interactive-resume-and-suspend-a-warehouse).
+- You can resize an interactive warehouse only while it’s suspended. Resizing an active warehouse fails with error 090094.
 - You can attach up to 100 tables to an interactive warehouse for proactive cache warming. You can query any table without attaching it. If you need to attach more than 100 tables, contact Snowflake Support.
 - You can’t run [CALL commands](/sql-reference/sql/call) to call stored procedures in an interactive warehouse.
 - You can’t use the `->>` [pipe operator](/sql-reference/operators-flow). That operator uses stored procedures behind the scenes.

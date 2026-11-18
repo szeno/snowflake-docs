@@ -10,6 +10,36 @@ Snowflake uses semantic versioning for Snowflake Connector for Kafka updates.
 
 See [Snowflake Connector for Kafka](/user-guide/kafka-connector/index) for documentation.
 
+## Version 4.3.1 (Nov 13, 2026)
+
+### New features
+
+- Upgraded the Snowpipe Streaming SDK to version 1.9.3.
+
+### Bug fixes
+
+- Logged server advisories without stopping the connector. A critical advisory no longer fails
+  the connector or its tasks, and the `snowflake.feature.fail_on_critical_advisory` property
+  added in version 4.3.0 is removed.
+
+## Version 4.3.0 (Nov 4, 2026)
+
+Warning
+
+Version 4.3.0 is deprecated. Snowflake strongly recommends upgrading to version 4.3.1 or newer.
+
+### New features
+
+- Logged server advisories and stopped the connector on a critical advisory, configurable with
+  `snowflake.feature.fail_on_critical_advisory`.
+- Made `snowflake.role.name` optional with SPCS authentication.
+
+### Bug fixes
+
+- Retried transient HTTP 404 errors when creating the streaming client.
+- Updated Guava to version 33.7.2 and lz4-java to version 1.11.4 to address CVE-2026-102554
+  and CVE-2026-106451.
+
 ## Version 3.5.6 (Oct 28, 2026)
 
 ### Bug fixes

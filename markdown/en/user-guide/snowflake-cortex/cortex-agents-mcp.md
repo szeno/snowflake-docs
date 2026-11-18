@@ -12,6 +12,12 @@ The Snowflake-managed MCP server lets AI agents securely retrieve data from Snow
 
 For information about the MCP lifecycle, see [Lifecycle](https://modelcontextprotocol.io/specification/2025-11-25/basic/lifecycle). For an example of an MCP implementation, see the [Getting Started with Managed Snowflake MCP Server](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-mcp-server/index.html) Quickstart.
 
+The [Cortex AI Cookbook](/developer-guide/cortex-ai-cookbook/overview) has recipes that build on the managed MCP server:
+
+- [Snowflake-managed MCP or the Cortex Agents REST API](/developer-guide/cortex-ai-cookbook/mcp-or-agent-rest-api): choose between MCP and the REST API, with identity, grant, topology, and rollout practices for MCP servers. Start here.
+- [Long-running Cortex Agent runs over managed MCP](/developer-guide/cortex-ai-cookbook/long-running-agents-over-mcp): keep agent runs inside an MCP client’s per-call time limit.
+- [LangChain agents on Cortex AI Gateway with MCP tools and traces](/developer-guide/cortex-ai-cookbook/langchain-mcp-agent-tracing): connect an external agent framework to an MCP server with a programmatic access token.
+
 For information about sharing MCP servers with other accounts, see [Share Snowflake-managed MCP servers](/LIMITEDACCESS/sharing-mcp-servers).
 
 ## MCP server security recommendations
@@ -27,6 +33,8 @@ We recommend using OAuth as the authentication method. Using hardcoded tokens ca
 When using a Programmatic Access Token (PAT), set it to use the least-privileged role allowed to work with MCP. This will help prevent leaking a secret with access to a highly-privileged role.
 
 Configure proper permissions for the MCP server and tools following the least-privilege principle. Access to the MCP Server does not give access to the tools. Permission needs to be granted for each tool.
+
+Tool results leave Snowflake. The answer, any data it contains, generated SQL, and citations go to the MCP client and, through the client, to its model provider, under that party’s terms. A tool returns only what the calling role can read, so decide what each tool may return before you expose it.
 
 Avoid configurations that can create recursive loops. For example, an external client calling a Cortex Agent tool through MCP, which in turn invokes another MCP server that calls back into a Cortex Agent, can produce expensive, unbounded loops. Snowflake enforces a maximum recursion depth of 10 invocations. Ensure your agent and tool configurations don’t create circular invocation paths.
 
@@ -886,7 +894,7 @@ https://<account_url>/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<
 
 Important
 
-You may need to use hyphens (`-`) instead of underscores (`_`) in your account URL with some clients.
+When you configure the account URL in an MCP client, use hyphens (`-`) instead of underscores (`_`) in the hostname. MCP servers have connection issues with hostnames containing underscores.
 
 The following examples show how to register the Snowflake-hosted MCP server in commonly used clients. Replace the URL with your own MCP server URL.
 
@@ -1027,7 +1035,46 @@ The MCP clients can discover and invoke tools with `tools/list` and `tools/call`
 
 A `tools/list` entry has `name`, `description`, and `inputSchema`. `title` is present when the specification sets it. `annotations` is present by default. The server does not return `outputSchema`.
 
-To discover or invoke tools, issue a POST call as shown in the [tools/list request](https://modelcontextprotocol.io/specification/2025-11-25/server/tools#calling-tools):
+To discover or invoke tools, send a JSON-RPC request in a POST call to the MCP server URL. For the request format, see [Tools](https://modelcontextprotocol.io/specification/2025-11-25/server/tools) in the MCP specification.
+
+The following example lists the tools on the server:
+
+Copy code
+
+```
+POST /api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
+    {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "method": "tools/list",
+        "params": {}
+    }
+```
+
+The following example shows the shape of the response:
+
+Copy code
+
+```
+{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "result": {
+        "tools": [
+            {
+                "name": "<tool_name>",
+                "title": "<tool_title>",
+                "description": "<tool_description>",
+                "inputSchema": {
+                    "type": "object",
+                    "properties": {}
+                },
+                "annotations": {}
+            }
+        ]
+    }
+}
+```
 
 As of August 20, 2026, the server returns `tools/call` responses as a
 [Server-Sent Events (SSE)](https://modelcontextprotocol.io/specification/2025-11-25/basic/transports)
@@ -1277,6 +1324,7 @@ To stop a run, call `ASYNC_AGENT_RUN_CANCEL` with the same `run_id`.
 - Snowflake supports Model Context Protocol revision `2025-11-25`.
 - The Snowflake-managed MCP server is available in government regions, except Azure US Gov Virginia (non-FedRAMP High), and hasn’t yet completed formal FedRAMP assessment. For authorization status, contact your Snowflake account team.
 - Agent invocations through the Snowflake-managed MCP server are subject to [Cortex Agents rate limits](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-rate-limits).
+- Every MCP request runs as an authenticated Snowflake user. The agent tool arguments don’t include the per-request `variables` that the Cortex Agents REST API uses to identify end users who don’t have Snowflake accounts. To serve those users, call the REST API instead; see [Multi-tenancy for Cortex Agents](/user-guide/snowflake-cortex/cortex-agents-multi-tenancy).
 
 Snowflake-managed MCP server does not support the following constructs in the MCP protocol: resources, prompts, roots, notifications, version negotiations, lifecycle phases, and sampling.
 
@@ -1284,7 +1332,7 @@ Each MCP server supports a maximum of 50 tools. This limit includes all tool typ
 
 Tool responses are subject to size limits to prevent LLM context window saturation:
 
-- **Generic tools**: Responses are truncated at 250 KB.
+- **Generic tools**: Responses are truncated at 250 KB. This limit applies only to tools called through the Snowflake-managed MCP server. When an agent is invoked directly, custom tool results are limited to 32 KB. See [Custom tool result limit](/user-guide/snowflake-cortex/cortex-agents-manage#label-cortex-agents-custom-tool-result-limit).
 - **SQL execution tool**: Responses are truncated at 250 KB.
 
 If a query result exceeds the size limit, the response is truncated. To work around this limit, use narrower queries that return fewer columns or rows.
