@@ -321,7 +321,7 @@ Use the following table to determine whether the ACCESS\_HISTORY view contains a
 | ICEBERG TABLE | Partial | ✔ | ✔ | Full support (DML, DQL, DDL) for Snowflake-managed Apache Iceberg™ tables. Support for DQL and DDL only for externally managed Apache Iceberg™ tables. |
 | LISTING | n/a | n/a | ✔ |  |
 | MATERIALIZED VIEW | n/a | ✔ | ✔ |  |
-| MCP SERVER | n/a | n/a | ✔ | DDL for MCP servers (for example CREATE MCP SERVER, ALTER MCP SERVER, and DROP MCP SERVER). |
+| MCP SERVER | n/a | n/a | ✔ | DDL for MCP servers (for example CREATE MCP SERVER, ALTER EXTERNAL MCP SERVER, and DROP MCP SERVER). |
 | POLICY | n/a | ✔ | ✔ | Support for DDL shows when a policy is applied to an object and when policy metadata is queried via SHOW and DESCRIBE commands. Support for DQL shows the policies under enforcement when a query is run. |
 | POSTGRES INSTANCE | n/a | n/a | ✔ | DDL for Postgres instances (for example CREATE POSTGRES INSTANCE, ALTER POSTGRES INSTANCE, and DROP POSTGRES INSTANCE). |
 | PROCEDURE | n/a | ✔ | ✔ | A procedure can have multiple SQL statements with each statement generating a separate record. |

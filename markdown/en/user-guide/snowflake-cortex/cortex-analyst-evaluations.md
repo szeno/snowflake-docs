@@ -221,15 +221,15 @@ Version identifiers use the format `v<major>` or `v<major>_<minor>`:
 - A **major** version marks a new judge model family or a significant prompt restructuring.
 - A **minor** version is written and published by Snowflake for prompt tuning, threshold calibration, or scoring rubric refinements within the same model. Currently, each major version has only minor version `_0`: `v1_0`, `v2_0`, and `v3_0`. Snowflake might publish additional minor versions in the future.
 - Naming only the major version resolves to the latest minor version within it, so `v3` picks up refinements as they ship. Naming both, such as `v3_0`, freezes the metric at that exact configuration.
-- The value `auto`, like omitting `version`, uses the current default version.
+- The value `auto`, like omitting `version`, uses the current default version, `v3`.
 
 The following major versions are available:
 
 | Version | Judge models | Notes |
 | --- | --- | --- |
-| `v1` | `claude-4-sonnet` (200K) | The current default version. |
+| `v1` | `claude-4-sonnet` (200K) | End-of-life. `claude-4-sonnet` reached end-of-life on October 14, 2026, so runs that pin `v1` fail. |
 | `v2` | `claude-sonnet-4-5` (200K, default), `openai-gpt-5.2` (400K) | Adds a GPT judge for accounts that don’t allow Anthropic models. |
-| `v3` | `claude-sonnet-4-6` (1M, default), `openai-gpt-5.4` (1.05M) | The larger context window reduces the odds of context window overload. |
+| `v3` | `claude-sonnet-4-6` (1M, default), `openai-gpt-5.4` (1.05M) | The current default version. The larger context window reduces the odds of context window overload. |
 
 Expand
 
@@ -241,9 +241,9 @@ You select the metric version, not the underlying judge model. Snowflake selects
 
 A metric version depends on its judge model, so metric versions follow Snowflake model deprecations. Snowflake retires models in two stages, **legacy** then **end-of-life**, and a legacy judge model is already restricted:
 
-- **After a judge model’s legacy date**, only accounts that used that model before the legacy date can run a metric version that depends on it. If your account had never used the model, a run that resolves to that version fails. This applies to the `v1` default: `claude-4-sonnet` entered the legacy state on August 12, 2026, so accounts with no prior `claude-4-sonnet` usage must pin `v2` or `v3`. For details, see [Judge model availability](/user-guide/snowflake-cortex/cortex-agents-evaluations#label-agent-evaluation-judge-models).
-- **After a judge model’s end-of-life date**, no account can use a metric version that depends on it.
-- **Unversioned metrics and `auto`** use `v1` today and roll forward to the newest supported version when the current version is deprecated. Evaluations keep running, but scores can shift when the judge model changes.
+- **After a judge model’s legacy date**, only accounts that used that model before the legacy date can run a metric version that depends on it. If your account had never used the model, a run that resolves to that version fails. For details, see [Judge model availability](/user-guide/snowflake-cortex/cortex-agents-evaluations#label-agent-evaluation-judge-models).
+- **After a judge model’s end-of-life date**, no account can use a metric version that depends on it. For example, `claude-4-sonnet`, the `v1` judge, reached end-of-life on October 14, 2026, so runs that pin `v1` fail.
+- **Unversioned metrics and `auto`** use the current default version and roll forward to the newest supported version when the current version is deprecated. On October 13, 2026, they moved from `v1` to `v3`; see [Cortex Agent and Cortex Analyst evaluations: Default metric version and judge model changes](/release-notes/bcr-bundles/un-bundled/bcr-2442). Evaluations keep running, but scores can shift when the judge model changes.
 - **Pinned versions** don’t roll forward. After the deprecation date, a run that pins a deprecated version fails with an error.
 
 Snowflake recommends pinning a version in scheduled and CI/CD evaluations so that alert thresholds stay meaningful, then upgrading deliberately when a model deprecation is announced. Use the latest metric version and keep using that same version across runs because scores from different versions aren’t comparable. Model deprecations are announced as [unbundled behavior changes](/release-notes/bcr-bundles/un-bundled/unbundled-behavior-changes).

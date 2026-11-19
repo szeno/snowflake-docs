@@ -764,15 +764,15 @@ Version identifiers use the format `v<major>` or `v<major>_<minor>`:
 - A **major** version marks a new judge model family or a significant prompt restructuring.
 - A **minor** version is written and published by Snowflake for prompt tuning, threshold calibration, or scoring rubric refinements within the same model. Currently, each major version has only minor version `_0`: `v1_0`, `v2_0`, and `v3_0`. Snowflake might publish additional minor versions in the future.
 - Naming only the major version resolves to the latest minor version within it, so `v3` picks up refinements as they ship. Naming both, such as `v3_0`, freezes the metric at that exact configuration.
-- The value `auto`, like omitting `version`, uses the current default version.
+- The value `auto`, like omitting `version`, uses the current default version, `v3`.
 
 The following major versions are available. Specify only the major version to automatically use future minor refinements. Specify the full major and minor version to keep the same configuration.
 
 | Version | Judge models | Notes |
 | --- | --- | --- |
-| `v1` | `claude-4-sonnet` (200K) | The current default version. |
+| `v1` | `claude-4-sonnet` (200K) | End-of-life. `claude-4-sonnet` reached end-of-life on October 14, 2026, so runs that pin `v1` fail. |
 | `v2` | `claude-sonnet-4-5` (200K, default), `openai-gpt-5.2` (400K) | Adds a GPT judge for accounts that don’t allow Anthropic models. |
-| `v3` | `claude-sonnet-4-6` (1M, default), `openai-gpt-5.4` (1.05M) | The larger context window reduces the odds of context window overload. |
+| `v3` | `claude-sonnet-4-6` (1M, default), `openai-gpt-5.4` (1.05M) | The current default version. The larger context window reduces the odds of context window overload. |
 
 Expand
 
@@ -786,9 +786,9 @@ For system metrics, you select the metric version, not the underlying judge mode
 
 A metric version depends on its judge model, so metric versions follow Snowflake model deprecations. Snowflake retires models in two stages, **legacy** then **end-of-life**, and a legacy judge model is already restricted:
 
-- **After a judge model’s legacy date**, only accounts that used that model before the legacy date can run a metric version that depends on it. If your account had never used the model, a run that resolves to that version fails. This applies to the `v1` default: `claude-4-sonnet` entered the legacy state on August 12, 2026, so accounts with no prior `claude-4-sonnet` usage must pin `v2` or `v3`. For details, see [Cortex Agents models](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models).
-- **After a judge model’s end-of-life date**, no account can use a metric version that depends on it.
-- **Unversioned metrics and `auto`** roll forward to the newest supported version when their current version is deprecated. Your evaluations keep running, but scores can shift when the judge model changes.
+- **After a judge model’s legacy date**, only accounts that used that model before the legacy date can run a metric version that depends on it. If your account had never used the model, a run that resolves to that version fails. For details, see [Cortex Agents models](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models).
+- **After a judge model’s end-of-life date**, no account can use a metric version that depends on it. For example, `claude-4-sonnet`, the `v1` judge, reached end-of-life on October 14, 2026, so runs that pin `v1` fail.
+- **Unversioned metrics and `auto`** roll forward to the newest supported version when their current version is deprecated. On October 13, 2026, they moved from `v1` to `v3`; see [Cortex Agent and Cortex Analyst evaluations: Default metric version and judge model changes](/release-notes/bcr-bundles/un-bundled/bcr-2442). Your evaluations keep running, but scores can shift when the judge model changes.
 - **Pinned versions** don’t roll forward. After the deprecation date, a run that pins a deprecated version fails with an error.
 
 Snowflake recommends pinning a version in scheduled and CI/CD evaluations so that alert thresholds stay meaningful, then upgrading deliberately when a model deprecation is announced. Use the latest metric version and keep using that same version across runs: scores from different versions aren’t comparable, and the Evaluations tab treats each version as a separate chart and column. Model deprecations are announced as [unbundled behavior changes](/release-notes/bcr-bundles/un-bundled/unbundled-behavior-changes).
@@ -798,7 +798,7 @@ Snowflake recommends pinning a version in scheduled and CI/CD evaluations so tha
 You can define your own custom metric by providing an identifier, prompt, and score ranges. The prompt you provide is passed to an LLM judge along with run traces to conduct your custom evaluation. Custom metrics use the following key-value pairs, all required except where noted:
 
 - `name`: The name of the metric.
-- (Optional) `model`: The LLM judge that scores this metric, such as `claude-sonnet-4-6`. Custom metrics accept any of the judge models listed in [Judge model availability](#label-agent-evaluation-judge-models). Omitting this key, or setting it to `auto`, uses the model Snowflake selects for your account, which is `claude-4-sonnet` today and rolls forward when that model is deprecated. Because `claude-4-sonnet` is [legacy](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models), an account that never used it before the legacy date can’t rely on that default: set `model` explicitly to a supported judge. A model that isn’t a supported judge, that your account isn’t allowed to use, or that isn’t available in your region, fails the run at start with an error.
+- (Optional) `model`: The LLM judge that scores this metric, such as `claude-sonnet-4-6`. Custom metrics accept any of the judge models listed in [Judge model availability](#label-agent-evaluation-judge-models). Omitting this key, or setting it to `auto`, uses the model Snowflake selects for your account: `claude-sonnet-4-6`, or `openai-gpt-5.4` if `claude-sonnet-4-6` isn’t allowed or available for your account. The default rolls forward when that model is deprecated. A model that isn’t a supported judge, that your account isn’t allowed to use, or that isn’t available in your region, fails the run at start with an error.
 - `score_ranges`: A mapping that defines low, medium, and high-quality score ranges. This mapping uses the keys:
 
   - `min_score`: The score range used to identify low-quality results, as a two-element sequence of the inclusive lower bound to exclusive upper bound.
@@ -1023,7 +1023,7 @@ Show lessSee more
 
 The GPT judges let accounts that don’t allow Anthropic models, such as Azure-only accounts, still run evaluations. No judge model runs on Google Cloud, so accounts there need `ANY_REGION`. If none of a metric version’s models are available to your account, the run fails with an error instead of falling back to another model; select a metric version whose models your account allows. For metric versions, see [System metric versions](#label-agent-evaluation-metric-versions).
 
-Routing scope isn’t the only gate. `claude-4-sonnet`, the `v1` judge, is a [legacy](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models) model: only accounts that used it before its August 12, 2026 legacy date can use it as a judge, and no account can after its end-of-life date. Accounts without that prior usage must use `v2` or `v3`.
+Routing scope isn’t the only gate. `claude-4-sonnet`, the `v1` judge, reached [end-of-life](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-models) on October 14, 2026, so no account can use it as a judge. Use `v2` or `v3`.
 
 ## Known limitations
 

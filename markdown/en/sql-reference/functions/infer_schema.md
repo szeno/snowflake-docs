@@ -14,6 +14,9 @@ You can execute the [CREATE TABLE](/sql-reference/sql/create-table), [CREATE EXT
 command with the USING TEMPLATE clause to create a new table or external table with the column definitions derived from the
 INFER\_SCHEMA function output.
 
+To return structured types (`OBJECT`, `ARRAY`, or `MAP`) for nested data, set the
+[INFER\_NESTED\_TYPES](/sql-reference/functions/infer_schema#label-infer-schema-infer-nested-types) argument to `TRUE`.
+
 Note
 
 This function supports Apache Parquet, Apache Avro, ORC, JSON, and CSV files.
@@ -31,6 +34,7 @@ INFER_SCHEMA(
   , MAX_FILE_COUNT => <num>
   , MAX_RECORDS_PER_FILE => <num>
   , KIND => '<kind_name>'
+  , INFER_NESTED_TYPES => TRUE | FALSE
 )
 ```
 
@@ -88,6 +92,8 @@ Where:
 `IGNORE_CASE => TRUE | FALSE`
 :   Specifies whether column names detected from stage files are treated as case sensitive. By default, the value is FALSE, which means that Snowflake preserves the case of alphabetic characters when retrieving column names. If you specify the value as TRUE, column names are treated as case-insensitive and all column names are retrieved as uppercase letters.
 
+    This argument applies only to column names. Field names inside structured types keep the case used in the files.
+
 `MAX_FILE_COUNT => num`
 :   Specifies the maximum number of files scanned from stage. This option is recommended for large number of files that have identical schema across files. This option cannot determine which files are scanned. If you want to scan specific files, use the `FILES` option instead.
 
@@ -103,6 +109,26 @@ Where:
 
     If you’re inferring Parquet files to create Iceberg tables, we strongly recommend that you set `KIND => 'ICEBERG'`. Otherwise, the
     column definitions returned by the function might be incorrect.
+
+`INFER_NESTED_TYPES => TRUE | FALSE`
+:   Specifies whether nested data is inferred as structured types, such as `OBJECT(city TEXT, zip NUMBER(10, 0))`, instead of
+    semi-structured types, such as `VARIANT`. By default, the value is `FALSE`.
+
+    This argument affects only the column definitions that the function returns. To have schema evolution add structured columns and
+    fields when you load files, also set the
+    [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`.
+
+    When the argument is `TRUE`, note the following:
+
+    - Parquet files that contain maps whose keys aren’t strings or integers are skipped without a warning. With `KIND => 'ICEBERG'`,
+      the function returns an error instead.
+    - JSON objects are inferred as `OBJECT`, not `MAP`.
+    - ORC `UNION` types, and Avro `UNION` types that have more than one non-null type, are returned as `VARIANT`.
+    - ORC map data can’t be loaded into `MAP` columns, so change `MAP` types inferred from ORC files to `VARIANT`.
+    - When files contain different types for the same field, `NUMBER` types are widened to fit all values. Other conflicting types are
+      returned as `VARIANT`, or as `TEXT` for JSON files.
+    - For JSON files, numeric types are sized from the scanned values, so review these types before you create a table. For more
+      information, see [Choose column types](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-review-types).
 
 ## Output
 
@@ -133,9 +159,13 @@ Show lessSee more
 - The scientific annotations (e.g. 1E2) in JSON files are retrieved as REAL data type.
 - All the variations of timestamp data types are retrieved as TIMESTAMP\_NTZ without any time zone information.
 - For both CSV and JSON files, all columns are identified as NULLABLE.
-- For both `KIND => 'STANDARD'` and `KIND => 'ICEBERG'`, when the specified file in the stage contains nested data types, only the
-  first level of nesting is supported; deeper levels aren’t supported.
-- Apache Iceberg™ version 3 (v3) tables aren’t supported.
+- When the staged files contain nested data, note the following:
+
+  - With `INFER_NESTED_TYPES => FALSE` (the default), only the first level of nesting is supported, and nested columns are
+    returned as semi-structured types. With `KIND => 'ICEBERG'`, the function fails instead.
+  - With `INFER_NESTED_TYPES => TRUE`, multi-level nesting is supported, and nested columns are returned as structured types. With
+    `KIND => 'ICEBERG'`, the function fails if any column would be `VARIANT`. To find these columns, run the function with
+    `KIND => 'STANDARD'`.
 
 ## Examples
 
@@ -361,3 +391,74 @@ Note
 Using `*` for `ARRAY_AGG(OBJECT_CONSTRUCT())` might result in an error if the returned result is larger than 128 MB. We
 recommend avoiding the use of `*` for larger result sets, and only using the required columns, `COLUMN NAME`, `TYPE`, and
 `NULLABLE`, for the query. Optional column `ORDER_ID` can be included when using `WITHIN GROUP (ORDER BY order_id)`.
+
+### Structured type column definitions
+
+The following example infers structured column types from Parquet files that contain nested data:
+
+Copy code
+
+```
+-- Query the INFER_SCHEMA function with INFER_NESTED_TYPES => TRUE.
+SELECT column_name, type
+  FROM TABLE(
+    INFER_SCHEMA(
+      LOCATION => '@mystage/orders/',
+      FILE_FORMAT => 'my_parquet_format',
+      INFER_NESTED_TYPES => TRUE
+      )
+    );
+
++-------------+--------------------------------------+
+| COLUMN_NAME | TYPE                                 |
+|-------------+--------------------------------------|
+| name        | TEXT                                 |
+| address     | OBJECT(city TEXT, zip NUMBER(10, 0)) |
+| tags        | ARRAY(TEXT)                          |
+| metadata    | MAP(TEXT, BOOLEAN)                   |
++-------------+--------------------------------------+
+```
+
+The following example creates a table with structured columns from this output:
+
+Copy code
+
+```
+CREATE TABLE my_orders_table
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+    WITHIN GROUP (ORDER BY order_id)
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@mystage/orders/',
+          FILE_FORMAT => 'my_parquet_format',
+          INFER_NESTED_TYPES => TRUE
+        )
+      ));
+-- The column names keep their case from the files, so enclose them in
+-- double quotes in queries, for example, "address".
+```
+
+To create an Iceberg table from the same files, set `KIND => 'ICEBERG'`. The following example also sets `ICEBERG_VERSION = 3` to
+create an Iceberg v3 table:
+
+Copy code
+
+```
+CREATE ICEBERG TABLE my_orders_iceberg_table
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+    WITHIN GROUP (ORDER BY order_id)
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION => '@mystage/orders/',
+          FILE_FORMAT => 'my_parquet_format',
+          KIND => 'ICEBERG',
+          INFER_NESTED_TYPES => TRUE
+        )
+      ))
+  CATALOG = 'SNOWFLAKE'
+  EXTERNAL_VOLUME = 'my_external_volume'
+  BASE_LOCATION = 'my_orders_iceberg_table'
+  ICEBERG_VERSION = 3;
+```

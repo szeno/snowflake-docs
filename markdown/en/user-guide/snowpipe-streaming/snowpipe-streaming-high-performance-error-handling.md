@@ -19,7 +19,7 @@ The high-performance architecture includes a channel status endpoint to provide 
 In addition to the channel status information for the classic architecture, which is `statusCode`, `persistedOffsetToken`, the high-performance architecture includes the following information:
 
 - `channel_status_code`: Represents the current operational status of the streaming channel. This code provides a high-level indication of the channel’s health and ability to ingest data. For more information about the channel status codes, see [Client-side error handling and required actions](#client-side-error-handling-and-required-actions).
-- `last_commited_offset_token`: Indicates the offset token of the last row set that was successfully committed to the target table by Snowflake. This is crucial for tracking progress and ensuring data delivery.
+- `last_committed_offset_token`: The channel’s latest persisted rowset checkpoint. It can advance even when some or all rows in a rowset are rejected. Use channel status to monitor error counts and error tables to inspect captured rejected rows.
 - `created_on_ms`: The timestamp, in milliseconds, that indicates when the streaming channel was initially created within Snowflake.
 - `database_name`: The name of the database to which the streaming channel is configured to ingest data.
 - `schema_name`: The name of the schema within the specified database where the target table for the streaming channel resides.
@@ -178,10 +178,10 @@ This procedure applies to Named Channels, which support channel lifecycle, conti
    - Read `next_continuation_token` from each successful append response, and use that value for the next append request.
 4. Resume ingestion with the first uncommitted record after `last_committed_offset_token`. For example, if the returned Kafka offset is `20`, resume at offset `21`, not `20`. Snowflake stores source offsets but doesn’t use them to prevent re-ingestion, so replaying the committed record can create a duplicate. For more information, see [Offset tokens and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-offset-tokens).
    - If `last_committed_offset_token` is `null`, resume from the source position retained by your application.
+   - A committed checkpoint doesn’t mean every row was inserted. Check `rows_error_count` in channel status and use [error tables](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables) to inspect and recover captured rejected rows. Error counts and offset bounds don’t identify every rejected record.
 
 ## Row-level error logging
 
-For row-level error debugging, turn on **error logging** on your target table. When turned on, rows that fail
-during server-side processing are automatically captured in a dedicated error table.
+For row-level error debugging and recovery, turn on **error logging** on your target table before ingestion. Supported row-level parsing and transformation errors are captured in a dedicated error table.
 
-For more information, see [Error logging in Snowpipe Streaming with high-performance architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables).
+For setup and recovery, see [Error logging in Snowpipe Streaming with high-performance architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables). For capture and payload-size limits, see [Error table limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables#limitations).

@@ -24,7 +24,7 @@ For information about sharing MCP servers with other accounts, see [Share Snowfl
 
 Important
 
-When you configure hostnames for MCP server connections, use hyphens (`-`) instead of underscores (`_`). MCP servers have connection issues with hostnames containing underscores.
+When you configure hostnames for MCP server connections, use hyphens (`-`) instead of underscores (`_`). MCP servers have connection issues with hostnames containing underscores. For an example, see [MCP server URL](#label-cortex-mcp-server-url).
 
 Using multiple MCP servers without verifying tools and descriptions could lead to vulnerabilities such as tool poisoning or tool shadowing. Snowflake recommends verifying third-party MCP servers before using them. This includes any MCP server from another Snowflake user or account. Verify all tools offered by third-party MCP servers.
 
@@ -187,7 +187,7 @@ tools:
 
 For the SQL execution tool, your client can execute SQL queries on Snowflake. You can optionally configure the following options:
 
-- `read_only`: When set to `true`, only read operations (SELECT queries) are allowed. Defaults to `true`.
+- `read_only`: When set to `true`, only read operations (SELECT queries) are allowed. Defaults to `true`. If the `CORTEX_MCP_SERVER_FORCE_SQL_EXEC_READ_ONLY` account parameter is set to `TRUE`, the SQL execution tool is always read-only, regardless of this setting.
 - `query_timeout`: Maximum time in seconds for query execution.
 - `warehouse`: The warehouse to use for query execution. If not specified, the default warehouse is used.
 
@@ -532,6 +532,8 @@ After you create an MCP server, use the following commands to inspect or remove 
    DROP MCP SERVER <server_name>;
    ```
 
+There’s no ALTER command for a Snowflake-managed MCP server. To change its specification, run `CREATE OR REPLACE MCP SERVER` with the full new specification. Replacing a server drops every grant on it, so put the `GRANT USAGE ON MCP SERVER` statements in the same script as the `CREATE OR REPLACE` statement and run them together.
+
 ## MCP server URL
 
 To connect to the MCP server, use the URL endpoint with the following format:
@@ -544,6 +546,11 @@ https://<account_url>/api/v2/databases/{database}/schemas/{schema}/mcp-servers/{
 
 For information about formatting your account URL, see [Account identifiers](/user-guide/admin-account-identifier).
 
+Use the account URL that combines your organization name and account name. If the account name contains underscores, replace each underscore with a hyphen; Snowflake accepts this form automatically, and MCP clients have connection issues with hostnames that contain underscores. For example, for the organization `acme` and the account `marketing_test_account`:
+
+- Use: `https://acme-marketing-test-account.snowflakecomputing.com/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>`
+- Don’t use: `https://acme-marketing_test_account.snowflakecomputing.com/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>`
+
 ## Access control
 
 ### Required privileges
@@ -554,8 +561,8 @@ You can use the following privileges to manage access to the MCP server and the 
 | --- | --- | --- |
 | CREATE | MCP SERVER | Required to create the MCP server |
 | OWNERSHIP | MCP SERVER | Required to update the object configuration |
-| MODIFY | MCP SERVER | Provides update, drop, describe, show, and use (`tools/list` and `tools/call`) on the object configuration |
-| USAGE | MCP SERVER | Required to connect with the MCP server and discover tools |
+| MODIFY | MCP SERVER | Provides drop and describe on the MCP server. Doesn’t allow `tools/list` or `tools/call`; those require USAGE |
+| USAGE | MCP SERVER | Required to connect with the MCP server, discover tools (`tools/list`), and call tools (`tools/call`) |
 | USAGE | Cortex Search Service | Required to invoke the Cortex Search tool in the MCP server |
 | SELECT | Semantic View | Required to invoke the Cortex Analyst tool in the MCP server |
 | USAGE | Cortex Agent | Required to invoke the Cortex Agent as a tool in the MCP server |
@@ -564,6 +571,14 @@ You can use the following privileges to manage access to the MCP server and the 
 Expand
 
 Show lessSee more
+
+### Access requirements for the SQL execution tool
+
+To invoke the SQL execution tool (`SYSTEM_EXECUTE_SQL`), the role used to connect to the MCP server needs the following, in addition to USAGE on the MCP server:
+
+- The SNOWFLAKE.CORTEX\_USER or SNOWFLAKE.CORTEX\_AGENT\_USER database role. The SQL execution tool runs through the Cortex Agents API, so calls from a role that has neither database role fail with an authorization error.
+- USAGE on the warehouse that runs the queries. The tool uses the `warehouse` set in the tool configuration, or, if no warehouse is set, the default warehouse of the user who connects.
+- Privileges on the objects that the SQL statements reference. Queries run with the caller’s role, so, for example, the role needs SELECT to read a table, and INSERT, UPDATE, or DELETE to modify it when `read_only` is `false` and the `CORTEX_MCP_SERVER_FORCE_SQL_EXEC_READ_ONLY` account parameter isn’t set to `TRUE`.
 
 ### Grant access to a Cortex Agent-based MCP server
 
@@ -894,7 +909,7 @@ https://<account_url>/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<
 
 Important
 
-When you configure the account URL in an MCP client, use hyphens (`-`) instead of underscores (`_`) in the hostname. MCP servers have connection issues with hostnames containing underscores.
+When you configure the account URL in an MCP client, use hyphens (`-`) instead of underscores (`_`) in the hostname. MCP servers have connection issues with hostnames containing underscores. For an example, see [MCP server URL](#label-cortex-mcp-server-url).
 
 The following examples show how to register the Snowflake-hosted MCP server in commonly used clients. Replace the URL with your own MCP server URL.
 
@@ -970,6 +985,36 @@ Copy code
 ```
 https://<account_url>/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>
 ```
+
+If the client accepts custom HTTP headers instead of OAuth, see [Connect with a programmatic access token](#label-cortex-mcp-connect-with-token).
+
+## Connect with a programmatic access token
+
+Snowflake recommends OAuth for MCP clients that people sign in to. For a client that can’t use OAuth but can send custom HTTP headers, such as a script, an agent framework, or a service, you can authenticate with a [programmatic access token](/user-guide/programmatic-access-tokens) (PAT) instead. Send these headers on every request:
+
+- `Authorization: Bearer <token_secret>`
+- `X-Snowflake-Authorization-Token-Type: PROGRAMMATIC_ACCESS_TOKEN` (optional)
+- `Content-Type: application/json`
+- `Accept: application/json, text/event-stream`
+
+The following example lists the tools on a server:
+
+Copy code
+
+```
+curl -X POST "https://<account_url>/api/v2/databases/<database>/schemas/<schema>/mcp-servers/<name>" \
+  -H "Authorization: Bearer $SNOWFLAKE_PAT" \
+  -H "X-Snowflake-Authorization-Token-Type: PROGRAMMATIC_ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc": "2.0", "id": 1, "method": "tools/list", "params": {}}'
+```
+
+Before you use a PAT with an MCP server:
+
+- Make sure the user is subject to a network policy that allows the client’s IP addresses. A service user can’t generate or use a PAT without one, and a person user can generate a PAT without one but can’t authenticate with it. An [authentication policy](/user-guide/authentication-policies) with a programmatic access token policy can change this requirement. For details, see [Network policy requirements](/user-guide/programmatic-access-tokens#label-pat-prerequisites-network).
+- Restrict the token to the least-privileged role that can use the MCP server and its tools. See [Configuring role restrictions for programmatic access tokens](/user-guide/programmatic-access-tokens#label-pat-configure-role-restrictions).
+- Keep the token out of client configuration files that might be shared or committed to source control. Read it from an environment variable or a secret store where the client supports it.
 
 ## Network policies for MCP clients
 
@@ -1085,7 +1130,10 @@ Accept: application/json, text/event-stream
 ```
 
 The response examples in this section show the JSON payload that the server sends in each `data:` event.
-The stream closes with a `data: [DONE]` event. Clients that follow the MCP specification (2025-11-25)
+While the tool runs, the server sends an SSE comment line (`: keep-alive`) about every 5 seconds so that proxies don’t close the idle connection.
+If the request sets `_meta.progressToken`, the server also sends a `notifications/progress` event with each keep-alive.
+The last event in the stream is the complete JSON-RPC response for the request; the server doesn’t send a separate end-of-stream event.
+Clients that follow the MCP specification (2025-11-25)
 handle this automatically. For details, see
 [MCP: Streaming responses for tool calls (August 2026)](/release-notes/bcr-bundles/un-bundled/bcr-2405).
 
@@ -1326,7 +1374,9 @@ To stop a run, call `ASYNC_AGENT_RUN_CANCEL` with the same `run_id`.
 - Agent invocations through the Snowflake-managed MCP server are subject to [Cortex Agents rate limits](/user-guide/snowflake-cortex/cortex-agents#label-cortex-agents-rate-limits).
 - Every MCP request runs as an authenticated Snowflake user. The agent tool arguments don’t include the per-request `variables` that the Cortex Agents REST API uses to identify end users who don’t have Snowflake accounts. To serve those users, call the REST API instead; see [Multi-tenancy for Cortex Agents](/user-guide/snowflake-cortex/cortex-agents-multi-tenancy).
 
-Snowflake-managed MCP server does not support the following constructs in the MCP protocol: resources, prompts, roots, notifications, version negotiations, lifecycle phases, and sampling.
+The Snowflake-managed MCP server supports the MCP lifecycle (`initialize` with protocol version negotiation, and `notifications/initialized`), `ping`, tools, and `notifications/progress` for in-progress `tools/call` requests. It doesn’t support the following constructs in the MCP protocol: resources, prompts, roots, and sampling.
+
+A `tools/call` request times out after 15 minutes. For agent runs that might take longer, call the agent tool with [`background` set to `true`](#label-cortex-mcp-background-agent-run).
 
 Each MCP server supports a maximum of 50 tools. This limit includes all tool types: Cortex Search, Cortex Analyst, Cortex Agents, coding agents, SQL execution, and custom (generic) tools. If you need more tools, create additional MCP servers. Higher tool counts can degrade tool-selection accuracy.
 

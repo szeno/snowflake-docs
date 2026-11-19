@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the percentage of non-NULL column values that have inconsistent casing. A value is considered a violation if it is not
+Returns the percentage of column values that have inconsistent casing. A value is considered a violation if it is not
 entirely uppercase, not entirely lowercase, and not title-case. The percentage is computed over the total row count, including NULL
 values in the denominator.
 

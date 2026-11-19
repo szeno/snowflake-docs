@@ -1454,7 +1454,10 @@ We recommend that you use the default `AUTO` option because it will determine bo
 
     If `USE_VECTORIZED_SCANNER` is set to `FALSE`, the scanner has the following behaviors:
 
-    > - This option does not support Parquet maps. The output of scanning a map type is as follows:
+    > - The scanner doesn’t support Parquet maps whose values are lists. It supports other Parquet maps only when you load the data with
+    >   `COPY INTO <table>` or Snowpipe and set the
+    >   [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. Without
+    >   `INFER_NESTED_TYPES = TRUE`, the output of scanning a map type is as follows:
     >
     > > Copy code
     > >

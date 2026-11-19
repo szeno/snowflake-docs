@@ -37,10 +37,30 @@ The requirements are:
 
 - Use the ingest hostname for your account, the documented HTTP method, and the documented request path and query parameters.
 - Include the [required headers](#request-headers) with valid values, including `Authorization` and the content type the endpoint expects. When you compress a body, set `Content-Encoding` to `gzip` or `zstd`.
-- Send a valid, unexpired authentication token whose role is authorized for the target account, pipe, and table.
+- Send a valid, unexpired authentication token whose role is authorized for the target account, pipe, and table. To use a role other than the default role of the user, see [Use a non-default role](#use-a-non-default-role).
 - Stay within the account, channel, request, and byte-rate limits. For those limits, see [Snowpipe Streaming high-performance limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-limitations).
 
 For retry delays, retryable status codes, and Named Channel recovery, see [REST API error handling](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-api-error-handling).
+
+## Use a non-default role
+
+By default, requests run with the default role of the user. To use a different role that is granted to the user, include the role in the `scp` (scope) claim of the JWT payload before you sign it:
+
+Copy code
+
+```
+{
+  "iss": "<account>.<user>.SHA256:<public_key_fingerprint>",
+  "sub": "<account>.<user>",
+  "iat": <issued_at_timestamp>,
+  "exp": <expiration_timestamp>,
+  "scp": "session:role:<role>"
+}
+```
+
+Use this JWT to request a scoped token with [Exchange Scoped Token](#exchange-scoped-token). Requests that use the returned scoped token run with the role.
+
+The role must have the privileges listed in [Access control](/user-guide/snowpipe-streaming/snowpipe-streaming-access-control). SDK users set the `role` property instead. For more information, see [Configurations for Snowpipe Streaming with high-performance architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-configurations).
 
 ## Get Hostname
 
@@ -233,7 +253,7 @@ Description of response fields:
 | Field | Type | Description |
 | --- | --- | --- |
 | next\_continuation\_token | String | An API-managed token that must be used in the subsequent Append Rows request. The token links a series of calls, ensuring a contiguous, in-order stream of data and maintaining the session state for exactly once delivery. |
-| channel\_status | Object | A nested object with the following detailed information about the channel:   - database\_name (String): The name of the database where the pipe is located. - schema\_name (String): The name of the schema where the pipe is located. - pipe\_name (String): The name of the specific pipe being used. - channel\_name (String): The name of the streaming channel. - channel\_status\_code (String): A code that indicates the current status of the channel; for example, “ACTIVE”. - last\_committed\_offset\_token (String): The token that represents the last successfully committed offset. - created\_on\_ms (Long): The timestamp, in milliseconds, when the channel was created. - rows\_inserted (Int): The total number of rows successfully inserted. - rows\_parsed (Int): The total number of rows parsed. - rows\_error\_count (Int): The total number of rows that encountered an error. - last\_error\_offset\_upper\_bound (String): A token that indicates the upper bound of the offset where the last error occurred. - last\_error\_message (String): The message of the last error that occurred. - last\_error\_timestamp (Long): The timestamp, in milliseconds, of the last error. - snowflake\_avg\_processing\_latency\_ms (Int): The average processing latency of Snowflake in milliseconds. |
+| channel\_status | Object | A nested object with the following detailed information about the channel:   - database\_name (String): The name of the database where the pipe is located. - schema\_name (String): The name of the schema where the pipe is located. - pipe\_name (String): The name of the specific pipe being used. - channel\_name (String): The name of the streaming channel. - channel\_status\_code (String): A code that indicates the current status of the channel; for example, “ACTIVE”. - last\_committed\_offset\_token (String): The channel’s latest persisted rowset checkpoint. It can advance when a rowset checkpoint commits even if some or all rows were rejected. See [Offset checkpoints and rejected rows](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-snowpipe-streaming-checkpoints-rejected-rows). - created\_on\_ms (Long): The timestamp, in milliseconds, when the channel was created. - rows\_inserted (Int): The total number of rows successfully inserted. - rows\_parsed (Int): The total number of rows parsed. - rows\_error\_count (Int): The total number of rows that encountered an error. - last\_error\_offset\_upper\_bound (String): A token that indicates the upper bound of the offset where the last error occurred. - last\_error\_message (String): The message of the last error that occurred. - last\_error\_timestamp (Long): The timestamp, in milliseconds, of the last error. - snowflake\_avg\_processing\_latency\_ms (Int): The average processing latency of Snowflake in milliseconds. |
 
 Expand
 
@@ -380,7 +400,7 @@ Copy code
       "channel_name": "String",
       "rows_inserted": "int",
       "rows_parsed": "int",
-      "rows_errors": "int",
+      "rows_error_count": "int",
       "last_error_offset_upper_bound": "String",
       "last_error_message": "String",
       "last_error_timestamp": "timestamp_utc",
@@ -403,14 +423,14 @@ Description of `channel_statuses` fields for each channel:
 | Field | Type | Description |
 | --- | --- | --- |
 | channel\_status\_code | String | Indicates the status of the channel. |
-| last\_committed\_offset\_token | String | Latest committed offset token. |
+| last\_committed\_offset\_token | String | The channel’s latest persisted rowset checkpoint. It can advance when a rowset checkpoint commits even if some or all rows were rejected. See [Offset checkpoints and rejected rows](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-snowpipe-streaming-checkpoints-rejected-rows). |
 | database\_name | String | The name of the database that the channel belongs to. |
 | schema\_name | String | The name of the schema that the channel belongs to. |
 | pipe\_name | String | The name of the pipe that the channel belongs to. |
 | channel\_name | String | The name of the channel. |
 | rows\_inserted | int | A count of all rows inserted into this channel. |
 | rows\_parsed | int | A count of all rows parsed, but not necessarily inserted into this channel. |
-| rows\_errors | int | A count of all rows that experienced errors when inserted into this channel and were therefore rejected. |
+| rows\_error\_count | int | A count of all rows that experienced errors when inserted into this channel and were therefore rejected. |
 | last\_error\_offset\_upper\_bound | String | The upper bound for an ingestion error. The error will be located at or before this committed offset token. |
 | last\_error\_message | String | A human readable message corresponding to the latest error code for that channel, with sensitive customer data redacted. |
 | last\_error\_timestamp | timestamp\_utc | Timestamp at the time when the last error occurred. |

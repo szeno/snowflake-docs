@@ -1305,6 +1305,8 @@ scai code convert [OPTIONS]
 | `-e, --etl-replatform-sources-path <PATH>` | Path to ETL replatform source files for cross-project code analysis. Must be provided for each conversion run. | No |
 | `--simplify-ssis-dataflows` | If set, simple SSIS data flows will be converted to inline Snowflake SQL instead of dbt projects. The DataFlow needs to have a transformation count of less than or equal to 10 and can only have the following transformation types: Sources, Targets, Derived Column, Row Count, and Conditional Split. | No |
 | `--consolidate-dbt-model-chains` | If set, consolidates dbt model chains when converting Informatica to dbt to reduce the number of generated dbt model files. | No |
+| `--consolidate-dbt-projects` | If set, consolidates SSIS dbt projects into one dbt project per package instead of one per Data Flow, and Informatica PowerCenter dbt projects into one dbt project per folder instead of one per mapping. | No |
+| `--consolidate-as-single-dbt-project` | If set, consolidates the generated dbt output into a single dbt project. Off by default. | No |
 | `-p, --powerbi-repointing <PATH>` | Path to Power BI files for input repointing. Must be provided for each conversion run. | No |
 | `-x, --show-ewis` | Show detailed EWI (Early Warning Issues) table instead of summary | No |
 | `--context-path <PATH>` | Path to read migration context from. Defaults to .scai/conversion-context. Generated context is always written to .scai/conversion-context. | No |
@@ -1520,6 +1522,9 @@ scai code deploy [OPTIONS]
 - Uses Snowflake connection from connections.toml, config.toml, or project default
 - –warehouse, –schema, –role temporarily set missing connection fields (in-memory only, TOML is not modified)
 - If the connection already has a value for an overridden field, an error is returned
+- `--database-bindings` and `-d/--database` can be used together: `-d` sets the database for `AIM_DB`, and each package is created in the database its own binding names
+- `-d` is rejected when an `AIM_DB` binding names a different database; a `-d` value that is a bindings key is compared by the database it binds to
+- With several databases bound, each ETL package is created, with its helpers, in its own database: its `target.database`; else the one database bound to the objects it writes to and names without a database in its SQL; else, when it writes nothing, the one database bound to the objects it reads that way; else the `AIM_DB` database. A package that reads from one database and loads into another is created with what it loads. When the objects it writes to (or, if it writes nothing, the objects it reads) are in several databases, the package fails with `DEP0037` and is not deployed
 
 **Options:**
 
@@ -1527,7 +1532,7 @@ scai code deploy [OPTIONS]
 | --- | --- | --- | --- |
 | `-c, --connection <NAME>` | The name of the Snowflake connection to use. Uses default if not specified. | No |  |
 | `-s, --source-connection <NAME>` | Name of the source database connection to use with -t source. Uses the project default if not specified. | No |  |
-| `-d, --database <NAME>` | Target database name for deployment. Also sets the connection database if not already configured. Uses converted database name if not specified. | No |  |
+| `-d, --database <NAME>` | Target database name for deployment. Also sets the connection database if not already configured. Uses converted database name if not specified. With `--database-bindings`, it only sets the database for `AIM_DB`; each package is created in the database its own binding names. | No |  |
 | `-t, --target <TARGET>` | Deployment target: ‘snowflake’ (default) deploys the converted DDL to Snowflake; ‘source’ deploys the captured Source DDL to a database of the project’s source dialect. | No | snowflake |
 | `--replace` | With -t source, drops each object in the target before recreating it. Useful for re-running an iterative fix loop against the same sandbox database. | No | False |
 | `--warehouse <WAREHOUSE>` | Warehouse to use for the Snowflake connection. Only applied if the connection does not already have a warehouse configured. | No |  |
@@ -1539,6 +1544,7 @@ scai code deploy [OPTIONS]
 | `--continue-on-error` | Continue deploying remaining objects even if some fail. | No | True |
 | `--include-dependencies` | When used with –where, also deploy the dependencies of the filtered code units. Has no effect without –where, since all code units are already included. | No | False |
 | `--driver-path <DRIVER_PATH>` | Path to the source database driver (.dll or .nupkg). Required for Oracle and Teradata if not previously cached. | No |  |
+| `--database-bindings <PATH_OR_NAME>` | A file path, or a name listed under `database_bindings` in `.scai/config/project.local.yml`. The file is a `database-bindings.yaml` file written by a bindable-format conversion. Replaces each canonical database name’s token in the deployed SQL with the real database for this run, reading the `snow:` section for `-t snowflake` or the `source:` section for `-t source`. Can be combined with `-d/--database`, which then only sets the database for `AIM_DB`. | No |  |
 
 Expand
 
@@ -3819,7 +3825,7 @@ Force an immediate self-update on the current channel.
 Copy code
 
 ```
-scai update [VERSION] [--channel <CHANNEL>]
+scai update [VERSION] [--channel <CHANNEL>] [--reinstall-python-env]
 ```
 
 **Behavior:**
@@ -3827,9 +3833,13 @@ scai update [VERSION] [--channel <CHANNEL>]
 - Checks the configured channel for the latest published version
 - Downloads, verifies, and installs the archive for user-local installs
 - Prints the resolved channel before running
+- With `--channel`, updates from that channel and, after a successful update, saves it as the `channel` setting so later auto-updates stay on it. Setting `SCAI_CHANNEL` for the command (for example, `SCAI_CHANNEL=preview scai update`) does the same. Nothing is saved when you have no saved channel and no `SCAI_CHANNEL` set and the requested channel is the one the installed build was released on
+- Later auto-updates still follow `SCAI_CHANNEL` when it is set; scai prints a warning when it would override the channel you just saved
+- With `--reinstall-python-env`, after a successful CLI update, rebuilds the local Python environments that the `scai data` commands use, even when they already match the pinned versions
 
 **Channel resolution (precedence):**
 
+- `--channel` option (this command only)
 - SCAI\_CHANNEL environment variable
 - Channel saved in the scai settings file
 - Built-in channel from the installed binary
@@ -3842,7 +3852,8 @@ scai update [VERSION] [--channel <CHANNEL>]
 | Option | Description | Required |
 | --- | --- | --- |
 | `[VERSION]` | Specific version to install (e.g., 2.5.0 or 2.6.0-rc.3) | No |
-| `--channel <CHANNEL>` | One-shot channel override (stable | preview |
+| `--channel <CHANNEL>` | Channel to update from (stable, preview, or dev). Takes precedence over `SCAI_CHANNEL` for this update and is saved as the `channel` setting after a successful update. | No |
+| `--reinstall-python-env` | Rebuild the local Python environments used by the `scai data` commands after a successful CLI update, even when they already match the pinned versions. | No |
 
 Expand
 
@@ -3856,14 +3867,17 @@ Copy code
 # Update to the latest version on the current channel
 scai update
 
-# Switch channels for this update via env var
+# Switch to a channel via environment variable and stay on it
 SCAI_CHANNEL=preview scai update
 
 # Request a specific published version
 scai update 2.5.0
 
-# One-shot channel override (stable | preview | dev)
+# Switch to the preview channel and stay on it
 scai update --channel preview
+
+# Rebuild the local Python environments after updating
+scai update --reinstall-python-env
 ```
 
 ---

@@ -10,7 +10,7 @@ of [data quality checks](/user-guide/data-quality-intro).
 
 ## About system DMFs
 
-Snowflake provides more than 185 system DMFs in the CORE schema of the shared [SNOWFLAKE database](/sql-reference/snowflake-db). System DMFs are
+Snowflake provides more than 300 system DMFs in the CORE schema of the shared [SNOWFLAKE database](/sql-reference/snowflake-db). System DMFs are
 maintained by Snowflake; you cannot change the name or functionality of any system DMF.
 
 Each system DMF enables you to measure a different data quality attribute. You can assign more than one system DMF to a table or view to
@@ -18,7 +18,7 @@ allow for a more comprehensive data quality measurement to address your governan
 
 The Statistics DMFs return a measurement rather than a pass or fail signal. You define the expectation that determines whether a given
 value indicates a problem. The Outliers DMFs apply a built-in threshold, such as Tukey fences or a Z-score cutoff, and return the number
-or percentage of values that fall outside it.
+or percentage of values that fall outside it. The Outliers DMFs return 0 when the column has fewer than 100 non-NULL, non-NaN values.
 
 The Machine Learning DMFs compare a column of predicted values with a column of actual values, for example, to monitor the output
 of a machine learning model. Specify the predicted column first when you associate one of these DMFs with a table or view.
@@ -29,7 +29,7 @@ scheduled evaluation time; a value of 0 means that no data arrived.
 
 ## System DMFs
 
-Snowflake supports more than 185 system DMFs to measure common metrics without having to define them:
+Snowflake supports more than 300 system DMFs to measure common metrics without having to define them:
 
 | Category | System DMF | Description |
 | --- | --- | --- |
@@ -46,13 +46,13 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [NULL\_KEYWORD\_PERCENT](/sql-reference/functions/dmf_null_keyword_percent) | Determine what percentage of values in a string column are a text placeholder for a missing value. |
 |  | [NULL\_PERCENT](/sql-reference/functions/dmf_null_percent) | Determine what percentage of a column’s values are NULL. |
 | Consistency | [CASE\_FORMAT\_VIOLATION\_COUNT](/sql-reference/functions/dmf_case_format_violation_count) | Determine how many non-NULL values in a string column have inconsistent casing (not all-uppercase, all-lowercase, or title-case). |
-|  | [CASE\_FORMAT\_VIOLATION\_PERCENT](/sql-reference/functions/dmf_case_format_violation_percent) | Determine what percentage of non-NULL values in a string column have inconsistent casing. |
+|  | [CASE\_FORMAT\_VIOLATION\_PERCENT](/sql-reference/functions/dmf_case_format_violation_percent) | Determine what percentage of values in a string column have inconsistent casing. |
 |  | [CONTAINS\_SPACES\_COUNT](/sql-reference/functions/dmf_contains_spaces_count) | Determine how many non-NULL values in a string column contain a space, tab, or no-break space. |
 |  | [CONTAINS\_SPACES\_PERCENT](/sql-reference/functions/dmf_contains_spaces_percent) | Determine what percentage of values in a string column contain a space, tab, or no-break space. |
 |  | [SPECIAL\_CHARACTER\_COUNT](/sql-reference/functions/dmf_special_character_count) | Determine how many non-NULL values in a string column contain characters outside the alphanumeric range. |
-|  | [SPECIAL\_CHARACTER\_PERCENT](/sql-reference/functions/dmf_special_character_percent) | Determine what percentage of non-NULL values in a string column contain characters outside the alphanumeric range. |
-|  | [UNTRIMMED\_STRING\_COUNT](/sql-reference/functions/dmf_untrimmed_string_count) | Determine how many non-NULL values in a string column have leading or trailing whitespace. |
-|  | [UNTRIMMED\_STRING\_PERCENT](/sql-reference/functions/dmf_untrimmed_string_percent) | Determine what percentage of non-NULL values in a string column have leading or trailing whitespace. |
+|  | [SPECIAL\_CHARACTER\_PERCENT](/sql-reference/functions/dmf_special_character_percent) | Determine what percentage of values in a string column contain characters outside the alphanumeric range. |
+|  | [UNTRIMMED\_STRING\_COUNT](/sql-reference/functions/dmf_untrimmed_string_count) | Determine how many non-NULL values in a string column have leading or trailing spaces. |
+|  | [UNTRIMMED\_STRING\_PERCENT](/sql-reference/functions/dmf_untrimmed_string_percent) | Determine what percentage of values in a string column have leading or trailing spaces. |
 | Freshness | [FRESHNESS](/sql-reference/functions/dmf_freshness) | Determine the freshness of a table’s data based on a timestamp column or the most recent [DML operation](/sql-reference/sql-dml). |
 |  | [SECONDS\_SINCE\_ROW\_COUNT\_CHANGE](/sql-reference/functions/dmf_seconds_since_row_count_change) | Determine how many seconds have passed since a DML operation last changed the number of rows in a table. |
 |  | [SOURCE\_TARGET\_LAG](/sql-reference/functions/dmf_source_target_lag) | Determine how far, in seconds, the latest timestamp in a target table trails the latest timestamp in a source table. |
@@ -66,14 +66,14 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [EXTREME\_OUTLIER\_IQR\_COUNT](/sql-reference/functions/dmf_extreme_outlier_iqr_count) | Determine how many non-NULL values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
 |  | [EXTREME\_OUTLIER\_IQR\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_iqr_percent) | Determine what percentage of values in a numeric column fall outside the extreme Tukey fences (3 times the interquartile range). |
 |  | [EXTREME\_OUTLIER\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_percent) | Determine what percentage of values in a numeric column fall outside the extreme asymmetric Tukey fences for the column. |
-|  | [EXTREME\_OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_extreme_outlier_zscore_count) | Determine how many non-NULL values in a numeric column have a Z-score greater than 4.5. |
-|  | [EXTREME\_OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_zscore_percent) | Determine what percentage of values in a numeric column have a Z-score greater than 4.5. |
+|  | [EXTREME\_OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_extreme_outlier_zscore_count) | Determine how many non-NULL values in a numeric column have an absolute Z-score greater than 4.5. |
+|  | [EXTREME\_OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_extreme_outlier_zscore_percent) | Determine what percentage of values in a numeric column have an absolute Z-score greater than 4.5. |
 |  | [OUTLIER\_COUNT](/sql-reference/functions/dmf_outlier_count) | Determine how many non-NULL values in a numeric column fall outside the asymmetric Tukey fences for the column. |
 |  | [OUTLIER\_IQR\_COUNT](/sql-reference/functions/dmf_outlier_iqr_count) | Determine how many non-NULL values in a numeric column fall outside the standard Tukey fences (1.5 times the interquartile range). |
 |  | [OUTLIER\_IQR\_PERCENT](/sql-reference/functions/dmf_outlier_iqr_percent) | Determine what percentage of values in a numeric column fall outside the standard Tukey fences (1.5 times the interquartile range). |
 |  | [OUTLIER\_PERCENT](/sql-reference/functions/dmf_outlier_percent) | Determine what percentage of values in a numeric column fall outside the asymmetric Tukey fences for the column. |
-|  | [OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_outlier_zscore_count) | Determine how many non-NULL values in a numeric column have a Z-score greater than 3. |
-|  | [OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_outlier_zscore_percent) | Determine what percentage of values in a numeric column have a Z-score greater than 3. |
+|  | [OUTLIER\_ZSCORE\_COUNT](/sql-reference/functions/dmf_outlier_zscore_count) | Determine how many non-NULL values in a numeric column have an absolute Z-score greater than 3. |
+|  | [OUTLIER\_ZSCORE\_PERCENT](/sql-reference/functions/dmf_outlier_zscore_percent) | Determine what percentage of values in a numeric column have an absolute Z-score greater than 3. |
 | Schema | [SCHEMA\_CHANGE\_ADD\_COUNT](/sql-reference/functions/dmf_schema_change_add_count) | Count columns added between consecutive evaluations. |
 |  | [SCHEMA\_CHANGE\_COUNT](/sql-reference/functions/dmf_schema_change_count) | Count schema changes (column add, drop, rename, or type change) detected between consecutive evaluations. |
 |  | [SCHEMA\_CHANGE\_DROP\_COUNT](/sql-reference/functions/dmf_schema_change_drop_count) | Count columns dropped between consecutive evaluations. |
@@ -109,11 +109,11 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [VARIANCE](/sql-reference/functions/dmf_variance) | Determine the variance value for a numeric column. |
 |  | [ZERO\_COUNT](/sql-reference/functions/dmf_zero_count) | Determine how many non-NULL values in a numeric column are equal to zero. |
 |  | [ZERO\_PERCENT](/sql-reference/functions/dmf_zero_percent) | Determine what percentage of values in a numeric column are equal to zero. |
-| Uniqueness | [DUPLICATE\_COUNT](/sql-reference/functions/dmf_duplicate_count) | Determine the number of duplicate values in a column, including NULL values. |
+| Uniqueness | [DUPLICATE\_COUNT](/sql-reference/functions/dmf_duplicate_count) | Determine how many distinct values, including NULL, occur more than once in a column. |
 |  | [DUPLICATE\_PERCENT](/sql-reference/functions/dmf_duplicate_percent) | Determine what percentage of non-NULL rows have a value that occurs more than once. |
-|  | [UNIQUE\_COUNT](/sql-reference/functions/dmf_unique_count) | Determine the number of unique, non-NULL values in a column. |
+|  | [UNIQUE\_COUNT](/sql-reference/functions/dmf_unique_count) | Determine the number of distinct non-NULL values in a column. |
 |  | [UNIQUE\_PERCENT](/sql-reference/functions/dmf_unique_percent) | Determine what percentage of non-NULL rows have a value that occurs exactly once. |
-| Validity | [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) | Determine whether values in a column match a Boolean expression. |
+| Validity | [ACCEPTED\_VALUES](/sql-reference/functions/dmf_accepted_values) | Determine how many values in a column don’t match a Boolean expression. |
 |  | [ACCEPTED\_VALUES\_PERCENT](/sql-reference/functions/dmf_accepted_values_percent) | Determine what percentage of values in a column don’t match a Boolean expression. |
 |  | [FUTURE\_TIMESTAMP\_COUNT](/sql-reference/functions/dmf_future_timestamp_count) | Determine how many non-NULL values in a date/timestamp column are in the future relative to the scheduled evaluation time. |
 |  | [FUTURE\_TIMESTAMP\_PERCENT](/sql-reference/functions/dmf_future_timestamp_percent) | Determine what percentage of values in a date/timestamp column are in the future relative to the scheduled evaluation time. |
@@ -148,7 +148,7 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [INVALID\_IT\_FISCAL\_CODE\_COUNT](/sql-reference/functions/dmf_invalid_it_fiscal_code_count) | Determine how many non-NULL values in a string column are not a valid Italian fiscal code. |
 |  | [INVALID\_IT\_FISCAL\_CODE\_PERCENT](/sql-reference/functions/dmf_invalid_it_fiscal_code_percent) | Determine what percentage of values in a string column are not a valid Italian fiscal code. |
 |  | [INVALID\_JSON\_COUNT](/sql-reference/functions/dmf_invalid_json_count) | Determine how many non-NULL values in a string column are not valid JSON. |
-|  | [INVALID\_JSON\_PERCENT](/sql-reference/functions/dmf_invalid_json_percent) | Determine what percentage of non-NULL values in a string column are not valid JSON. |
+|  | [INVALID\_JSON\_PERCENT](/sql-reference/functions/dmf_invalid_json_percent) | Determine what percentage of values in a string column are not valid JSON. |
 |  | [INVALID\_LATITUDE\_COUNT](/sql-reference/functions/dmf_invalid_latitude_count) | Determine how many non-NULL values in a numeric column are outside the valid latitude range (-90 to 90). |
 |  | [INVALID\_LATITUDE\_PERCENT](/sql-reference/functions/dmf_invalid_latitude_percent) | Determine what percentage of values in a numeric column are outside the valid latitude range (-90 to 90). |
 |  | [INVALID\_LEI\_COUNT](/sql-reference/functions/dmf_invalid_lei_count) | Determine how many non-NULL values in a string column are not a valid LEI. |
@@ -158,7 +158,7 @@ Snowflake supports more than 185 system DMFs to measure common metrics without h
 |  | [INVALID\_NL\_BSN\_COUNT](/sql-reference/functions/dmf_invalid_nl_bsn_count) | Determine how many non-NULL values in a string column are not a valid Dutch citizen service number. |
 |  | [INVALID\_NL\_BSN\_PERCENT](/sql-reference/functions/dmf_invalid_nl_bsn_percent) | Determine what percentage of values in a string column are not a valid Dutch citizen service number. |
 |  | [INVALID\_NUMERIC\_TYPE\_CAST\_COUNT](/sql-reference/functions/dmf_invalid_numeric_type_cast_count) | Determine how many non-NULL values in a string column cannot be parsed as numeric. |
-|  | [INVALID\_NUMERIC\_TYPE\_CAST\_PERCENT](/sql-reference/functions/dmf_invalid_numeric_type_cast_percent) | Determine what percentage of non-NULL values in a string column cannot be parsed as numeric. |
+|  | [INVALID\_NUMERIC\_TYPE\_CAST\_PERCENT](/sql-reference/functions/dmf_invalid_numeric_type_cast_percent) | Determine what percentage of values in a string column cannot be parsed as numeric. |
 |  | [INVALID\_PERCENTAGE\_RANGE\_COUNT](/sql-reference/functions/dmf_invalid_percentage_range_count) | Determine how many non-NULL values in a numeric column are outside the range 0 to 100. |
 |  | [INVALID\_PERCENTAGE\_RANGE\_PERCENT](/sql-reference/functions/dmf_invalid_percentage_range_percent) | Determine what percentage of values in a numeric column are outside the range 0 to 100. |
 |  | [INVALID\_PERM\_ID\_COUNT](/sql-reference/functions/dmf_invalid_perm_id_count) | Determine how many non-NULL values in a string column are not a valid PermID. |
@@ -242,10 +242,11 @@ Some system DMFs measure closely related conditions:
 - `ALL_SPACE_COUNT` counts non-empty values that contain only whitespace, including tabs, line breaks, and no-break spaces. Unlike
   `BLANK_COUNT`, it doesn’t count the empty string `''`.
 - `CONTAINS_SPACES_COUNT` counts values that contain a space, tab, or no-break space anywhere, and `UNTRIMMED_STRING_COUNT` counts only
-  values with leading or trailing whitespace.
+  values with a leading or trailing space. Tabs and no-break spaces at the start or end of a value
+  aren’t counted by `UNTRIMMED_STRING_COUNT`.
 - `INVALID_ISO8601_FORMAT_COUNT` checks only the layout of a value, and `INVALID_TIMESTAMP_STRING_COUNT` checks whether the value can be
   parsed as a timestamp. For example, `2026-13-45` has a valid ISO 8601 layout but can’t be parsed.
-- `INVALID_INTEGER_COUNT` counts values that aren’t written as a integer, and `INVALID_NUMERIC_TYPE_CAST_COUNT` counts values that
+- `INVALID_INTEGER_COUNT` counts values that aren’t written as an integer, and `INVALID_NUMERIC_TYPE_CAST_COUNT` counts values that
   can’t be cast to a number. For example, `3.7` is counted by `INVALID_INTEGER_COUNT` but not by `INVALID_NUMERIC_TYPE_CAST_COUNT`.
 - `TRUE_PERCENT`, `FALSE_PERCENT`, and `NULL_PERCENT` add up to 100 for a Boolean column that has at least one row.
 - `SCHEMA_CHANGE_ADD_COUNT`, `SCHEMA_CHANGE_DROP_COUNT`, and `SCHEMA_CHANGE_TYPE_COUNT` each count one kind of change that
@@ -259,6 +260,85 @@ Some system DMFs measure closely related conditions:
   reference table.
 - `ACCEPTED_VALUES` counts the records that don’t match a Boolean expression, and `ACCEPTED_VALUES_PERCENT` returns the percentage of
   records that don’t match it.
+- `AVG` returns the average of a column at one evaluation. `AVG_CHANGE_LAST_PERIOD` computes the average for the last period and for each
+  equally long tile of the baseline, and returns how much the average of the last period differs from the average of the tiles. Most other
+  `_CHANGE` [period-comparison DMFs](#label-dmf-system-period) work the same way for their measurement. `NEW_VALUE_COUNT`, `MISSING_VALUE_COUNT`,
+  `PSI`, `JS_DIVERGENCE`, and `KS_TEST` have no base metric and compare the current window with the whole baseline.
+
+## Period-comparison system DMFs
+
+The period-comparison system DMFs compare the data in the most recent periods of a table’s [data metric schedule](/user-guide/data-quality-working)
+with a baseline of equally long windows before them that covers at least 14 days. Use them to detect changes over time, such as a drop in the number
+of rows loaded (`ROW_COUNT_CHANGE_PERCENT`), a rise in `NULL` values (`NULL_COUNT_CHANGE`), or a shift in the distribution of a column (`PSI`).
+
+Each metric comes in four functions that differ in the length of the window that they compare. The function name ends with the window:
+
+- `_LAST_PERIOD`: the last period.
+- `_LAST_TWO_PERIODS`: the last 2 periods.
+- `_LAST_FOUR_PERIODS`: the last 4 periods.
+- `_LAST_EIGHT_PERIODS`: the last 8 periods.
+
+For example, `NULL_PERCENT_CHANGE_LAST_TWO_PERIODS` returns how much the percentage of `NULL` values in the last 2 periods differs from the baseline.
+A period is one interval of the table’s `DATA_METRIC_SCHEDULE`. All functions except
+`ROW_COUNT_CHANGE` and `ROW_COUNT_CHANGE_PERCENT` take a value column and a time column, for example `ON (order_total, order_ts)`. Those two
+take only the time column. For the rules that all these functions share, such as how the baseline is built, what happens when there isn’t enough
+history, and how to choose a schedule, see the “How the comparison works” section of any of these functions, for example
+[`AVG_CHANGE_LAST_PERIOD`](/sql-reference/functions/dmf_avg_change_last_period).
+
+These functions have restrictions that the other system DMFs don’t have:
+
+- The table’s schedule must be a cron expression or an interval, not `TRIGGER_ON_CHANGES`.
+- The functions that count rows or values or sum values, and `NEW_VALUE_COUNT` and `MISSING_VALUE_COUNT`, need a schedule that fires at
+  evenly spaced times of day.
+- You can’t use them with `FILTER` or `WITHIN GROUP`, evaluate them ad hoc, call them directly, or use them with `SYSTEM$DATA_METRIC_SCAN`.
+
+A `_CHANGE_PERCENT` function returns `NULL` when the baseline is 0, and a scheduled evaluation records `NULL` as 0. To detect a change from 0,
+such as `NULL` values appearing in a column that had none, use the matching `_CHANGE` function.
+
+### Completeness
+
+- `NULL_COUNT_CHANGE`: Determine the change in the number of `NULL` values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_null_count_change_last_period), [2 periods](/sql-reference/functions/dmf_null_count_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_null_count_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_null_count_change_last_eight_periods))
+- `NULL_COUNT_CHANGE_PERCENT`: Determine the percentage change of the number of `NULL` values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_null_count_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_null_count_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_null_count_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_null_count_change_percent_last_eight_periods))
+- `NULL_PERCENT_CHANGE`: Determine the change in the percentage of values in the column that are `NULL` compared with the baseline. ([1 period](/sql-reference/functions/dmf_null_percent_change_last_period), [2 periods](/sql-reference/functions/dmf_null_percent_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_null_percent_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_null_percent_change_last_eight_periods))
+- `NULL_PERCENT_CHANGE_PERCENT`: Determine the percentage change of the percentage of values in the column that are `NULL` compared with the baseline. ([1 period](/sql-reference/functions/dmf_null_percent_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_null_percent_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_null_percent_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_null_percent_change_percent_last_eight_periods))
+
+### Statistics
+
+- `AVG_CHANGE`: Determine the change in the average of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_avg_change_last_period), [2 periods](/sql-reference/functions/dmf_avg_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_avg_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_avg_change_last_eight_periods))
+- `AVG_CHANGE_PERCENT`: Determine the percentage change of the average of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_avg_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_avg_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_avg_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_avg_change_percent_last_eight_periods))
+- `JS_DIVERGENCE`: Determine the Jensen-Shannon divergence of a column’s values against the baseline. ([1 period](/sql-reference/functions/dmf_js_divergence_last_period), [2 periods](/sql-reference/functions/dmf_js_divergence_last_two_periods), [4 periods](/sql-reference/functions/dmf_js_divergence_last_four_periods), [8 periods](/sql-reference/functions/dmf_js_divergence_last_eight_periods))
+- `KS_TEST`: Determine the Kolmogorov-Smirnov D statistic of a column’s values against the baseline. ([1 period](/sql-reference/functions/dmf_ks_test_last_period), [2 periods](/sql-reference/functions/dmf_ks_test_last_two_periods), [4 periods](/sql-reference/functions/dmf_ks_test_last_four_periods), [8 periods](/sql-reference/functions/dmf_ks_test_last_eight_periods))
+- `MAX_CHANGE`: Determine the change in the maximum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_max_change_last_period), [2 periods](/sql-reference/functions/dmf_max_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_max_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_max_change_last_eight_periods))
+- `MAX_CHANGE_PERCENT`: Determine the percentage change of the maximum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_max_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_max_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_max_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_max_change_percent_last_eight_periods))
+- `MEDIAN_CHANGE`: Determine the change in the median of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_median_change_last_period), [2 periods](/sql-reference/functions/dmf_median_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_median_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_median_change_last_eight_periods))
+- `MEDIAN_CHANGE_PERCENT`: Determine the percentage change of the median of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_median_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_median_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_median_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_median_change_percent_last_eight_periods))
+- `MIN_CHANGE`: Determine the change in the minimum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_min_change_last_period), [2 periods](/sql-reference/functions/dmf_min_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_min_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_min_change_last_eight_periods))
+- `MIN_CHANGE_PERCENT`: Determine the percentage change of the minimum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_min_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_min_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_min_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_min_change_percent_last_eight_periods))
+- `MISSING_VALUE_COUNT`: Determine how many distinct non-`NULL` values in the baseline don’t appear in the current window. ([1 period](/sql-reference/functions/dmf_missing_value_count_last_period), [2 periods](/sql-reference/functions/dmf_missing_value_count_last_two_periods), [4 periods](/sql-reference/functions/dmf_missing_value_count_last_four_periods), [8 periods](/sql-reference/functions/dmf_missing_value_count_last_eight_periods))
+- `NEGATIVE_COUNT_CHANGE`: Determine the change in the number of negative values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_negative_count_change_last_period), [2 periods](/sql-reference/functions/dmf_negative_count_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_negative_count_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_negative_count_change_last_eight_periods))
+- `NEGATIVE_COUNT_CHANGE_PERCENT`: Determine the percentage change of the number of negative values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_negative_count_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_negative_count_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_negative_count_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_negative_count_change_percent_last_eight_periods))
+- `NEGATIVE_PERCENT_CHANGE`: Determine the change in the percentage of values in the column that are negative compared with the baseline. ([1 period](/sql-reference/functions/dmf_negative_percent_change_last_period), [2 periods](/sql-reference/functions/dmf_negative_percent_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_negative_percent_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_negative_percent_change_last_eight_periods))
+- `NEGATIVE_PERCENT_CHANGE_PERCENT`: Determine the percentage change of the percentage of values in the column that are negative compared with the baseline. ([1 period](/sql-reference/functions/dmf_negative_percent_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_negative_percent_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_negative_percent_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_negative_percent_change_percent_last_eight_periods))
+- `NEW_VALUE_COUNT`: Determine how many distinct non-`NULL` values in the current window don’t appear in the baseline. ([1 period](/sql-reference/functions/dmf_new_value_count_last_period), [2 periods](/sql-reference/functions/dmf_new_value_count_last_two_periods), [4 periods](/sql-reference/functions/dmf_new_value_count_last_four_periods), [8 periods](/sql-reference/functions/dmf_new_value_count_last_eight_periods))
+- `PSI`: Determine the population stability index (PSI) of a column’s values against the baseline. ([1 period](/sql-reference/functions/dmf_psi_last_period), [2 periods](/sql-reference/functions/dmf_psi_last_two_periods), [4 periods](/sql-reference/functions/dmf_psi_last_four_periods), [8 periods](/sql-reference/functions/dmf_psi_last_eight_periods))
+- `STDDEV_CHANGE`: Determine the change in the sample standard deviation of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_stddev_change_last_period), [2 periods](/sql-reference/functions/dmf_stddev_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_stddev_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_stddev_change_last_eight_periods))
+- `STDDEV_CHANGE_PERCENT`: Determine the percentage change of the sample standard deviation of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_stddev_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_stddev_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_stddev_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_stddev_change_percent_last_eight_periods))
+- `SUM_CHANGE`: Determine the change in the sum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_sum_change_last_period), [2 periods](/sql-reference/functions/dmf_sum_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_sum_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_sum_change_last_eight_periods))
+- `SUM_CHANGE_PERCENT`: Determine the percentage change of the sum of the values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_sum_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_sum_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_sum_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_sum_change_percent_last_eight_periods))
+- `ZERO_COUNT_CHANGE`: Determine the change in the number of zero values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_zero_count_change_last_period), [2 periods](/sql-reference/functions/dmf_zero_count_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_zero_count_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_zero_count_change_last_eight_periods))
+- `ZERO_COUNT_CHANGE_PERCENT`: Determine the percentage change of the number of zero values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_zero_count_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_zero_count_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_zero_count_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_zero_count_change_percent_last_eight_periods))
+- `ZERO_PERCENT_CHANGE`: Determine the change in the percentage of values in the column that are zero compared with the baseline. ([1 period](/sql-reference/functions/dmf_zero_percent_change_last_period), [2 periods](/sql-reference/functions/dmf_zero_percent_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_zero_percent_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_zero_percent_change_last_eight_periods))
+- `ZERO_PERCENT_CHANGE_PERCENT`: Determine the percentage change of the percentage of values in the column that are zero compared with the baseline. ([1 period](/sql-reference/functions/dmf_zero_percent_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_zero_percent_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_zero_percent_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_zero_percent_change_percent_last_eight_periods))
+
+### Uniqueness
+
+- `UNIQUE_COUNT_CHANGE`: Determine the change in the number of distinct non-`NULL` values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_unique_count_change_last_period), [2 periods](/sql-reference/functions/dmf_unique_count_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_unique_count_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_unique_count_change_last_eight_periods))
+- `UNIQUE_COUNT_CHANGE_PERCENT`: Determine the percentage change of the number of distinct non-`NULL` values in the column compared with the baseline. ([1 period](/sql-reference/functions/dmf_unique_count_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_unique_count_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_unique_count_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_unique_count_change_percent_last_eight_periods))
+
+### Volume
+
+- `ROW_COUNT_CHANGE`: Determine the change in the number of rows in the table compared with the baseline. ([1 period](/sql-reference/functions/dmf_row_count_change_last_period), [2 periods](/sql-reference/functions/dmf_row_count_change_last_two_periods), [4 periods](/sql-reference/functions/dmf_row_count_change_last_four_periods), [8 periods](/sql-reference/functions/dmf_row_count_change_last_eight_periods))
+- `ROW_COUNT_CHANGE_PERCENT`: Determine the percentage change of the number of rows in the table compared with the baseline. ([1 period](/sql-reference/functions/dmf_row_count_change_percent_last_period), [2 periods](/sql-reference/functions/dmf_row_count_change_percent_last_two_periods), [4 periods](/sql-reference/functions/dmf_row_count_change_percent_last_four_periods), [8 periods](/sql-reference/functions/dmf_row_count_change_percent_last_eight_periods))
 
 ## Related functions
 

@@ -41,11 +41,12 @@ Horizon Catalog refreshes the metadata from each connected source every 24 hours
 - [Metabase](/user-guide/snowflake-horizon/connectors/metabase)
 - [Microsoft Power BI](/user-guide/snowflake-horizon/connectors/powerbi)
 - [Omni](/user-guide/snowflake-horizon/connectors/omni)
+- [Salesforce Analytics](/user-guide/snowflake-horizon/connectors/salesforce-analytics)
 - [Sigma](/user-guide/snowflake-horizon/connectors/sigma)
 - [Tableau](/user-guide/snowflake-horizon/connectors/tableau)
 - [ThoughtSpot](/user-guide/snowflake-horizon/connectors/thoughtspot)
 
-## Database connectors
+## Source data connectors
 
 - [Amazon Redshift](/user-guide/snowflake-horizon/connectors/amazon-redshift)
 - [BigQuery](/user-guide/snowflake-horizon/connectors/bigquery)
@@ -54,6 +55,7 @@ Horizon Catalog refreshes the metadata from each connected source every 24 hours
 - [MySQL](/user-guide/snowflake-horizon/connectors/mysql)
 - [Oracle](/user-guide/snowflake-horizon/connectors/oracle)
 - [PostgreSQL](/user-guide/snowflake-horizon/connectors/postgres)
+- [Salesforce](/user-guide/snowflake-horizon/connectors/salesforce)
 - [SQL Server](/user-guide/snowflake-horizon/connectors/sqlserver)
 
 ## Data pipeline tools

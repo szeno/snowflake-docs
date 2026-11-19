@@ -450,7 +450,7 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
 
     > - Added columns.
     >
-    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](/user-guide/contacting-support).
     > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
 
     Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
@@ -460,9 +460,15 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
     Loading data from files evolves the table columns when all of the following are true:
 
     - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
-    - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+    - The role used to load the data has the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the table. For Snowpipe, the role that owns
+      the pipe loads the data.
 
     Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
+    If the files contain nested data, also set the
+    [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. Otherwise,
+    loads that add nested columns might fail. For more information, see
+    [Create and evolve Snowflake-managed Iceberg tables](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-iceberg).
 
 `EXTERNAL_VOLUME = 'external_volume_name'`
 :   Specifies where the Iceberg table stores its metadata files and data in Parquet format. Iceberg metadata and manifest files store the table schema, partitions, snapshots, and other metadata.
@@ -889,8 +895,10 @@ For general information about roles and privilege grants for performing SQL acti
     similar type of error).
 
     To view an example, see the [Examples](#examples) (in this topic) section.
-  - To create an [Iceberg table](/user-guide/tables-iceberg) with the USING TEMPLATE clause (and column definitions derived from
-    INFER\_SCHEMA output), you must specify `KIND => 'ICEBERG'` for the [INFER\_SCHEMA](/sql-reference/functions/infer_schema) function.
+  - To create an [Iceberg table](/user-guide/tables-iceberg) with the `USING TEMPLATE` clause (and column definitions derived from
+    `INFER_SCHEMA` output), you must specify `KIND => 'ICEBERG'` for the [INFER\_SCHEMA](/sql-reference/functions/infer_schema) function. If
+    the staged files contain nested data, also specify `INFER_NESTED_TYPES => TRUE`. For more information, see
+    [Create and evolve Snowflake-managed Iceberg tables](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-iceberg).
 - Considerations for creating tables:
 
   > - A schema cannot contain tables and/or views with the same name. When creating a table:

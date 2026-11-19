@@ -186,6 +186,10 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
   - `LOAD_UNCERTAIN_FILES = TRUE | FALSE`
   - `RETURN_FAILED_ONLY = TRUE | FALSE`
   - `VALIDATION_MODE = RETURN_n_ROWS | RETURN_ERRORS | RETURN_ALL_ERRORS`
+- If a pipe uses the [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option,
+  the role that owns the pipe needs the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the target table. `CREATE PIPE` fails if the
+  `copy_statement` combines the option with a `SELECT` transform. To add the option to an existing pipe, see
+  [Add INFER\_NESTED\_TYPES to an existing load](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-existing-load).
 - The `PATTERN = 'regex_pattern'` copy option filters the set of files to load using a regular expression. Pattern matching
   behaves as follows depending on the AUTO\_INGEST parameter value:
 
@@ -275,6 +279,22 @@ CREATE PIPE mypipe3
     MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE
     INCLUDE_METADATA = (c1= METADATA$START_SCAN_TIME, c2=METADATA$FILENAME)
     FILE_FORMAT = (TYPE = 'JSON'));
+```
+
+Create a pipe that adds structured columns and fields to a table as it loads Parquet files:
+
+Copy code
+
+```
+ALTER TABLE my_orders_table SET ENABLE_SCHEMA_EVOLUTION = TRUE;
+
+CREATE PIPE my_nested_pipe
+  AS
+  COPY INTO my_orders_table
+  FROM @mystage
+  FILE_FORMAT = (TYPE = PARQUET)
+  MATCH_BY_COLUMN_NAME = CASE_SENSITIVE
+  INFER_NESTED_TYPES = TRUE;
 ```
 
 Create a pipe in the current schema for automatic loading of data using event notifications received from a messaging service:

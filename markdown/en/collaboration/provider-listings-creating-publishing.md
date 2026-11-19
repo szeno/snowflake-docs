@@ -172,7 +172,7 @@ The following example shows how to create a private listing that includes a pric
     3. Specify a contract duration.
     4. In the **Payment options** dropdown, select whether to charge customers based on the pricing plan or to allow payment in installments.
 
-       - If you select **Accept installments**, specify the number of installments and the frequency of the installments.
+       - If you select **Accept installments**, specify the installment frequency and the amount of each installment. For more information, see [Installment plan pricing models](/collaboration/provider-listings-pricing-model#label-listings-usage-installment-plan-model).
     5. Specify the date of the first invoice or to invoice when the offer is accepted.
     6. (Optional) Specify whether to require consumers to include a credit card on file to purchase the listing.
     7. Select **Next**.

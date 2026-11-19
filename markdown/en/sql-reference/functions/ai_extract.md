@@ -19,8 +19,9 @@ Copy code
 
 ```
 AI_EXTRACT( text => <text>,
-            responseFormat => <responseFormat>,
-            [ scores => TRUE | FALSE ] )
+            responseFormat => <responseFormat>
+            [, scores => TRUE | FALSE ]
+            [, citation => TRUE | FALSE ] )
 ```
 
 **Extract information from a file:**
@@ -35,8 +36,9 @@ Copy code
 
 ```
 AI_EXTRACT( file => <file>,
-            responseFormat => <responseFormat>,
-            [ scores => TRUE | FALSE ] )
+            responseFormat => <responseFormat>
+            [, scores => TRUE | FALSE ]
+            [, citation => TRUE | FALSE ] )
 ```
 
 ## Arguments
@@ -170,9 +172,35 @@ AI_EXTRACT( file => <file>,
     object in addition to `response`. For the output format, SQL examples, and limitations, see
     [Extraction scores](#label-ai-extract-scores).
 
+`citation => { boolean }`
+:   [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    Optional. Specify this argument by using named-argument syntax. A BOOLEAN that controls whether AI\_EXTRACT requests
+    source citations for extracted values. The default is `FALSE`. If you omit the argument, AI\_EXTRACT preserves the
+    default behavior and doesn’t return a `citations` object.
+
+    Set `citation => TRUE` to include a `citations` object in the returned JSON.
+
+    The value must be the constant `TRUE` or `FALSE`. Passing `NULL` returns a SQL compilation error: `AI_EXTRACT citation must be the constant TRUE or FALSE.`
+
+    For document input, citations contain page numbers and bounding boxes. For text input, citations contain offsets into
+    the input text.
+
+    Citations require [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) to be enabled for your account.
+
+    You can request citations together with extraction scores by setting both `citation => TRUE` and `scores => TRUE`.
+
+    For the output format and examples, see [Citations](#label-ai-extract-citations).
+
 ## Returns
 
 A JSON object containing the extracted information. The structure of the response depends on the type of extraction.
+
+When `citation => TRUE`, the returned JSON includes a `citations` object containing source locations associated with
+extracted fields. Extracted values remain in the `response` object. When `scores => TRUE` is also specified, the result
+includes the separate `scoring` object.
 
 When [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) is enabled and AI\_EXTRACT can’t process a file, the `error` field contains the error for that document. The statement continues for
 any other documents. This includes a document that exceeds the 1,000-page limit, a corrupted file, and a file that isn’t in a
@@ -467,6 +495,343 @@ Result:
 }
 ```
 
+## Citations
+
+[Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+When you set `citation => TRUE`, AI\_EXTRACT returns a `citations` object alongside the extracted values in `response`.
+Use citations to identify the source locations that support extracted fields.
+
+The citation format depends on the input:
+
+- Document input returns citations in `citations.bounding_boxes`.
+- Text input returns citations in `citations.text_spans`.
+
+### Document citation output
+
+Document citations are returned in `citations.bounding_boxes`. Each field name maps to an array of bounding-box objects.
+
+Each bounding-box object contains the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `page` | INTEGER | Page containing the cited region. Pages are numbered from 1 in the original document, even when `FL_FILTER_PAGES` selects a subset of pages. |
+| `upper_left` | ARRAY of numbers | Coordinates of the upper-left corner of the cited region. The first value is a percentage of the page width. The second value is a percentage of the page height. |
+| `lower_right` | ARRAY of numbers | Coordinates of the lower-right corner of the cited region. The first value is a percentage of the page width. The second value is a percentage of the page height. |
+
+Expand
+
+Show lessSee more
+
+Bounding-box coordinates are measured from the top-left corner of the page, which is `(0, 0)`. Each pair is
+`[width_percent, height_percent]`. Values are percentages of the page width and page height in the range 0 to 100. The
+x value increases to the right, and the y value increases downward.
+
+Example output for one invoice field:
+
+```
+{
+  "citations": {
+    "bounding_boxes": {
+      "invoice_number": [
+        {
+          "page": 1,
+          "upper_left": [65.0, 8.0],
+          "lower_right": [85.0, 12.0]
+        }
+      ]
+    }
+  },
+  "error": null,
+  "response": {
+    "invoice_number": "INV-1001"
+  }
+}
+```
+
+### List and table citation output
+
+The citation key matches the list or table field name in `response`. How many citations are returned depends on the
+extraction type:
+
+- **Lists:** AI\_EXTRACT returns one citation per list item. The array index matches the extracted item. The bounding box
+  at index `0` is the cited region for the first item, index `1` is the second item, and so on.
+- **Tables:** AI\_EXTRACT returns one citation for the table as a whole. It doesn’t return a citation per table row,
+  column, or cell.
+
+The following example extracts an items table and a list of acceptance steps. The list `acceptance_steps` returns one
+citation per item. The table `items_ordered` returns one citation for the table.
+
+Copy code
+
+```
+SELECT AI_EXTRACT(
+  file => TO_FILE('@documents', 'sample_table_and_list.pdf'),
+  responseFormat => {
+    'schema': {
+      'type': 'object',
+      'properties': {
+        'items_ordered': {
+          'description': 'Items ordered table. Extract item rows only, excluding the Total row.',
+          'type': 'object',
+          'column_ordering': [
+            'sku',
+            'item_description',
+            'quantity',
+            'unit_price_eur',
+            'amount_eur'
+          ],
+          'properties': {
+            'sku': {
+              'description': 'SKU',
+              'type': 'array'
+            },
+            'item_description': {
+              'description': 'Item description',
+              'type': 'array'
+            },
+            'quantity': {
+              'description': 'Qty',
+              'type': 'array'
+            },
+            'unit_price_eur': {
+              'description': 'Unit price (EUR)',
+              'type': 'array'
+            },
+            'amount_eur': {
+              'description': 'Amount (EUR)',
+              'type': 'array'
+            }
+          }
+        },
+        'acceptance_steps': {
+          'description': 'What are the acceptance steps? Extract each numbered step as a separate list item in document order.',
+          'type': 'array'
+        }
+      }
+    }
+  },
+  citation => TRUE
+);
+```
+
+Example output:
+
+```
+{
+  "citations": {
+    "bounding_boxes": {
+      "acceptance_steps": [
+        {
+          "lower_right": [59.47801971435547, 77.93975067138672],
+          "page": 1,
+          "upper_left": [10.714285850524902, 76.28765869140625]
+        },
+        {
+          "lower_right": [59.06593322753906, 80.27210998535156],
+          "page": 1,
+          "upper_left": [10.714285850524902, 78.71720123291016]
+        },
+        {
+          "lower_right": [49.58790969848633, 82.70165252685547],
+          "page": 1,
+          "upper_left": [10.714285850524902, 81.14674377441406]
+        }
+      ],
+      "items_ordered": [
+        {
+          "lower_right": [89.97252655029297, 52.18659210205078],
+          "page": 1,
+          "upper_left": [9.615385055541992, 35.2769660949707]
+        }
+      ]
+    }
+  },
+  "error": null,
+  "response": {
+    "acceptance_steps": [
+      "Count the delivered units and compare them with the items table.",
+      "Check the equipment for visible damage and missing accessories.",
+      "Record any discrepancies before confirming receipt."
+    ],
+    "items_ordered": {
+      "amount_eur": ["498.00", "238.00", "260.00", "116.00", "75.00"],
+      "item_description": [
+        "27-inch office monitor",
+        "USB-C docking station",
+        "Wireless keyboard",
+        "Wireless mouse",
+        "USB-C cable, 2 m"
+      ],
+      "quantity": ["2", "2", "4", "4", "6"],
+      "sku": ["MON-27", "DOCK-USBC", "KEY-WL", "MOUSE-WL", "CABLE-2M"],
+      "unit_price_eur": ["249.00", "119.00", "65.00", "29.00", "12.50"]
+    }
+  }
+}
+```
+
+### Text citation output
+
+Text citations are returned in `citations.text_spans`. Each field name maps to an array of text-span objects.
+
+Each text-span object contains the following properties:
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `span-start` | INTEGER | Start offset of the cited passage, counted as Unicode characters from the start of the input text. Offsets are zero-based. |
+| `span-end` | INTEGER | End offset of the cited passage, counted as Unicode characters from the start of the input text. The end offset is exclusive. |
+
+Expand
+
+Show lessSee more
+
+Example output for one product field:
+
+```
+{
+  "citations": {
+    "text_spans": {
+      "product_code": [
+        {
+          "span-start": 20,
+          "span-end": 27
+        }
+      ]
+    }
+  },
+  "error": null,
+  "response": {
+    "product_code": "SKU-100"
+  }
+}
+```
+
+### Citation usage notes
+
+- The input argument is named `citation` (singular). The returned object is named `citations` (plural).
+- Citations for each field are represented as arrays. Process all returned entries rather than assuming that a field
+  contains one citation.
+- For lists, the citation array contains one citation per list item. For tables, the citation array contains one citation
+  for the table as a whole, not one citation per row, column, or cell.
+- When accessing `span-start` and `span-end` with SQL path notation, enclose the keys in double quotes because they
+  contain hyphens.
+- The `citation` argument is optional. The default is `FALSE`. If you omit the argument, AI\_EXTRACT doesn’t return a
+  `citations` object.
+- Citations require cross-region inference. For information about enabling it, see
+  [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).
+- Requesting citations doesn’t incur additional cost beyond the standard AI\_EXTRACT call.
+
+Citations are optimized to work with the following file formats:
+
+- PDF
+- PNG
+- EML
+- JPEG, JPG
+- TEXT, TXT
+- TIF, TIFF
+- BMP, GIF, WEBP
+- MD
+
+### Example: Retrieve document citations
+
+The following example extracts an invoice number and returns its citation locations as rows. `FLATTEN` produces one row
+for each entry in the field’s citation array.
+
+Copy code
+
+```
+WITH extraction AS (
+  SELECT AI_EXTRACT(
+    file => TO_FILE('@documents', 'invoice.pdf'),
+    responseFormat => {
+      'invoice_number': 'Invoice number'
+    },
+    citation => TRUE
+  ) AS extracted
+)
+SELECT
+  e.extracted:response.invoice_number::VARCHAR
+    AS invoice_number,
+  c.value:page::INTEGER AS page,
+  c.value:upper_left AS upper_left,
+  c.value:lower_right AS lower_right
+FROM extraction AS e,
+  LATERAL FLATTEN(
+    INPUT => e.extracted:citations.bounding_boxes.invoice_number
+  ) AS c;
+```
+
+For the example document citation above:
+
+| INVOICE\_NUMBER | PAGE | UPPER\_LEFT | LOWER\_RIGHT |
+| --- | --- | --- | --- |
+| INV-1001 | 1 | [65.0, 8.0] | [85.0, 12.0] |
+
+Expand
+
+Show lessSee more
+
+This query retrieves the citation metadata. Rendering a highlight in a document viewer is handled by the application.
+
+### Example: Retrieve cited text
+
+The following example extracts a product code and retrieves its cited passage from the original input.
+
+Copy code
+
+```
+WITH input_text AS (
+  SELECT
+    'The product code is SKU-100. Each package contains 24 units. The warranty period is 12 months.'
+      AS content
+),
+extraction AS (
+  SELECT
+    content,
+    AI_EXTRACT(
+      text => content,
+      responseFormat => {
+        'product_code': 'Product code'
+      },
+      citation => TRUE
+    ) AS extracted
+  FROM input_text
+)
+SELECT
+  e.extracted:response.product_code::VARCHAR AS product_code,
+  c.value:"span-start"::INTEGER AS span_start,
+  c.value:"span-end"::INTEGER AS span_end,
+  SUBSTR(
+    e.content,
+    c.value:"span-start"::INTEGER + 1,
+    c.value:"span-end"::INTEGER
+      - c.value:"span-start"::INTEGER
+  ) AS cited_text
+FROM extraction AS e,
+  LATERAL FLATTEN(
+    INPUT => e.extracted:citations.text_spans.product_code
+  ) AS c;
+```
+
+For the example span `[20, 27)`:
+
+| PRODUCT\_CODE | SPAN\_START | SPAN\_END | CITED\_TEXT |
+| --- | --- | --- | --- |
+| SKU-100 | 20 | 27 | SKU-100 |
+
+Expand
+
+Show lessSee more
+
+The expression adds 1 to the zero-based start offset because Snowflake’s `SUBSTR` function uses one-based positions. The
+substring length is the end offset minus the start offset.
+
+Both SQL examples list returned citation entries. To retain an extraction row when the citation array can’t be expanded,
+use `OUTER => TRUE` in `FLATTEN`.
+
 ## Access control requirements
 
 Users must use a role that has been granted the [SNOWFLAKE.CORTEX\_USER database role](/sql-reference/snowflake-db-roles#label-snowflake-db-roles-cortex-user).
@@ -479,6 +844,7 @@ For information about granting this privilege, see [Cortex LLM privileges](/user
 - Page selection with `FL_FILTER_PAGES` applies to the `file` argument, not the `text` argument. Files without pages, such as plain-text files, cannot be filtered by page.
 - Use `FL_FILTER_PAGES` directly inside the `AI_EXTRACT` call. The selection applies only to that call; it is not stored on the `FILE` value and does not create a new document.
 - Multiple ranges select pages from the original document. Overlapping ranges do not cause the same page to be processed more than once, and selected pages are processed in document order.
+- When you use `citation => TRUE` with `FL_FILTER_PAGES`, citation `page` values refer to pages in the original document. They don’t restart at 1 for the selected pages. Citations only reference selected pages.
 - A valid selection that resolves to no pages returns an empty result. For invalid selections and other page-selection errors, see [Error conditions](/sql-reference/functions/fl_filter_pages#label-fl-filter-pages-error-conditions).
 - With [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference) enabled:
 
@@ -535,6 +901,8 @@ For information about granting this privilege, see [Cortex LLM privileges](/user
 - The maximum output length for entity extraction is 512 tokens per question. For table extraction, the model returns answers that are a maximum of 4096 tokens.
 - You can request optional extraction scores by using named arguments and passing `scores => TRUE`.
   For details, see [Extraction scores](#label-ai-extract-scores).
+- You can request optional citations by using named arguments and passing `citation => TRUE`.
+  For details, see [Citations](#label-ai-extract-citations).
 
 AI\_EXTRACT supports documents on stages that use client-side or server-side encryption, including in accounts that use
 PrivateLink or other [network policies](/user-guide/network-policies) that restrict public network access to stages.
@@ -550,6 +918,7 @@ statement) are supported.
   - For image file formats (JPEG, JPG, PNG), each individual image file is billed as a page and counted as 970 tokens.
 - Snowflake recommends executing queries that call the Cortex AI\_EXTRACT function in a smaller warehouse (no larger than
   MEDIUM). Larger warehouses don’t increase performance.
+- Requesting citations (`citation => TRUE`) doesn’t incur additional cost beyond the standard AI\_EXTRACT call.
 
 ## Regional availability
 

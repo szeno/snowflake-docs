@@ -21,6 +21,8 @@ Snowflake provides two versions of the connector:
 - A version for the [Confluent package version of Kafka](https://www.confluent.io/hub/snowflakeinc/snowflake-kafka-connector).
 - A version for the [open source software (OSS) Apache Kafka package](https://central.sonatype.com/artifact/com.snowflake/snowflake-kafka-connector/).
 
+Both download pages default to the latest v4 release. To install the classic connector, select a 3.x version.
+
 The instructions in this topic specify which steps apply only to either version of the connector.
 
 ## Configuring access control for Snowflake objects
@@ -133,7 +135,7 @@ Show lessSee more
 Download the Kafka connector JAR file from either of the following locations:
 
 Confluent Hub:
-:   <https://www.confluent.io/hub/>
+:   <https://www.confluent.io/hub/snowflakeinc/snowflake-kafka-connector>
 
     The package includes all dependencies required to use either an encrypted or unencrypted private key for key pair authentication. For more information, see [Using Key Pair Authentication & Key Rotation](#using-key-pair-authentication-key-rotation) (in this topic).
 

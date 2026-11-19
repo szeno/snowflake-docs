@@ -104,7 +104,7 @@ and can be evaluated using one of two methods:
 - **Actual spend**: Triggers when a user’s accumulated spend within the current cycle exceeds the
   configured percentage of their per-user limit for that cycle. Use actual spend for hard
   enforcement.
-- **Projected spend** (default): Triggers when the user’s current spending rate, extrapolated
+- **Projected spend**: Triggers when the user’s current spending rate, extrapolated
   to the end of the cycle, indicates they’re likely to exceed the threshold. Use projected spend
   for early warning and prevention.
 
@@ -162,7 +162,7 @@ Copy code
 CALL my_quota!ADD_SHARED_RESOURCE('AI FUNCTION');
 ```
 
-Example: Add the `AI_CLASSIFY` function to your quota:
+Example: Add the `AI_CLASSIFY` function to your quota
 
 Copy code
 
@@ -172,8 +172,7 @@ CALL my_quota!ADD_SHARED_RESOURCE('AI FUNCTION', 'AI_CLASSIFY');
 
 Note
 
-If you add the whole `AI FUNCTION` domain, you don’t need to add specific functions such as
-`AI_CLASSIFY` separately.
+If you specify the whole AI Function domain, you do not need to selectively add specific functions like `AI_CLASSIFY` separately.
 
 Example: Add a specific Cortex Agent to the quota:
 

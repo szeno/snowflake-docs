@@ -1,9 +1,5 @@
 # Authenticate Cortex Agent SDK requests
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Cortex Agent SDK authenticates Cortex Agent REST API requests by asking an authenticator for HTTP headers. The SDK
 calls the authenticator before every request attempt, including transport retries and auth-refresh replays, so callable
 authenticators can pick up rotated credentials without recreating the client.
@@ -34,6 +30,15 @@ const client = new CortexAgentClient({
 ```
 
 Set `SNOWFLAKE_BASE_URL` to the trusted Cortex Agent API endpoint for the Snowflake account that owns the credential.
+
+Remote endpoints must use HTTPS. HTTP is accepted only for exact `localhost`, `127.0.0.1`, or `[::1]`
+loopback hosts. Account-derived endpoints reject URI delimiters and malformed account identifiers before
+authentication or network access. Explicit custom endpoints must still belong to a destination you trust.
+
+Built-in authenticators mask their credentials in ordinary logging representations. SDK-generated error
+messages redact recognizable authorization headers and credential fields, but raw error bodies remain
+available for programmatic diagnostics. Avoid logging raw bodies or entire error objects that contain them.
+Custom authenticators are responsible for protecting their own fields.
 
 ## Header formats
 
@@ -88,7 +93,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk import CortexAgentClient, PatAuth
+from snowflake.cortex.agents import CortexAgentClient, PatAuth
 
 client = CortexAgentClient(
     account=os.environ["SNOWFLAKE_ACCOUNT"],
@@ -169,7 +174,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk import CortexAgentClient, KeyPairJwtAuth
+from snowflake.cortex.agents import CortexAgentClient, KeyPairJwtAuth
 
 def mint_jwt() -> str:
     # Sign a short-lived JWT with your protected private key.
@@ -269,7 +274,7 @@ import time
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
-from cortex_agent_sdk import CortexAgentClient, OAuthAuth
+from snowflake.cortex.agents import CortexAgentClient, OAuthAuth
 
 token_endpoint = os.environ["SNOWFLAKE_OAUTH_TOKEN_ENDPOINT"]
 client_id = os.environ["SNOWFLAKE_OAUTH_CLIENT_ID"]
@@ -379,7 +384,7 @@ Copy code
 import os
 
 import snowflake.connector
-from cortex_agent_sdk import CortexAgentClient, SnowflakeSessionTokenAuth
+from snowflake.cortex.agents import CortexAgentClient, SnowflakeSessionTokenAuth
 
 connection = snowflake.connector.connect(
     connection_name=os.getenv("CORTEX_EXAMPLE_CONNECTION", "my_connection")
@@ -443,7 +448,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk import CortexAgentClient
+from snowflake.cortex.agents import CortexAgentClient
 
 class SecretStorePatAuth:
     def get_auth_headers(self) -> dict[str, str]:
@@ -497,7 +502,7 @@ try {
 Copy code
 
 ```
-from cortex_agent_sdk import AuthenticationError
+from snowflake.cortex.agents import AuthenticationError
 
 try:
     conversation.send("Analyze Q1 revenue.")

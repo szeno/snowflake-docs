@@ -34,6 +34,8 @@ Since this is the first time you are using this app, click on “Create a new pr
 If you select “Pick one for me”, a new project folder will be created under ~/.scai/projects
 If you want to decide where you want the project folder to be, click on “Select a directory…” and in the subsequent dialog, create a new folder in the desired location
 
+To come back to a project you created earlier, select the project name in the app header to open the project menu. Recently opened projects are listed there. To open a project folder that isn’t in the list, select **Open existing project…** and choose the project folder.
+
 4. Once the project folder is determined, AIM will guide you through your project
    [![](/static/images/migrations/migration-agent-assets/quick-start-point5.png)](/static/images/migrations/migration-agent-assets/quick-start-point5.png)
 
@@ -44,17 +46,18 @@ At this point, simply follow the AIM agent’s guidance. If you’re not sure wh
 
 ### Providing feedback
 
-In the screenshots above, you may have noticed a “Feedback” button in blue to the left of the app. This provides a way for you to report a bug or to provide any feedback, which we would greatly appreciate. If you click on it, an inline dialog will appear as follows
+In the screenshots above, you may have noticed a **Feedback** tab at the bottom left of the app. Use it to report a bug or to send any other feedback, which we would greatly appreciate. Select **Feedback**, or press ⌘K (macOS) or Ctrl+K (Windows), to open the **Send feedback** form.
 [![](/static/images/migrations/migration-agent-assets/quick-start-point6.png)](/static/images/migrations/migration-agent-assets/quick-start-point6.png)
 
-Simply type your bug report of feedback and click Submit. A zip file will be created in the Downloads folder of your environment. The zip file will include
+1. Describe the issue: what you did, what you expected, and what happened.
+2. Optionally, select a **Severity**: **Low**, **Medium** or **High**.
+3. Select **Submit**.
 
-- Your textual feedback
-- A screenshot of the app
-- Your session history
-- Any files you attach
+The app sends the AIM team your description and severity, along with recent diagnostics: the latest SnowConvert AI log, recent Snowflake CoCo and app errors, the versions of the tools AIM uses, and your machine’s CPU count and memory. Before anything is sent, secrets, email addresses and URLs in that text are masked. Your conversation is not sent, and neither is a screenshot.
 
-Please email the zip file to [aim-feedback@snowflake.com](mailto:aim-feedback@snowflake.com)
+The app doesn’t save a feedback file for you to send. When your feedback is delivered, the form shows **Sent to the AIM team**. If it can’t be delivered right away, the form shows **Queued — it will send the next time the app connects to Snowflake**. The feedback then stays on your computer until the app can deliver it.
+
+Sending feedback needs a Snowflake connection. If the form has no **Submit** button, add a Snowflake connection in **Settings**, then try again.
 
 ### Legal Notices
 

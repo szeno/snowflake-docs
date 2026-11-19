@@ -1,9 +1,5 @@
 # Retrieve Cortex Search
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Retrieve Cortex Search function is a table function that lets you run low-latency Cortex Search queries from a SQL statement. It is intended for real-time use cases, where you query a Cortex Search Service one query at a time, or one query per input row.
 
 Queries submitted to a Cortex Search Service with the `CORTEX_SEARCH_RETRIEVE` function reuse the service’s existing serving resources, the same resources that serve the Python and REST API search query surfaces. This provides low latency for individual queries, with lower overall throughput than batch search.

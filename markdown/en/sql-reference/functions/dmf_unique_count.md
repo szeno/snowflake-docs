@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the total number of unique non-NULL values for the specified columns in a table.
+Returns the number of distinct non-NULL values for the specified columns in a table.
 
 This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it
 runs at regular intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).
@@ -49,7 +49,7 @@ query for the column that you want to measure. Snowflake matches the allowed dat
 
 ## Example
 
-Measure the number of unique non-NULL values for the SSN column (that is, US Social Security number):
+Measure the number of distinct non-NULL values for the SSN column (that is, US Social Security number):
 
 Copy code
 

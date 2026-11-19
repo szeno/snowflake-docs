@@ -2,6 +2,49 @@
 
 This page documents notable changes to Cortex Code.
 
+## 1.2.46 (Nov 16, 2026)
+
+### Added
+
+- Background completion notices: When a background agent or background shell command finishes, CoCo CLI now notifies the session that started it, and the agent continues from there. For a shell command, the notice includes the exit code and an output preview. This also works with `cortex acp serve`.
+- Per-connection token variables: Connections that use a programmatic access token now read `SNOWFLAKE_CONNECTIONS_<NAME>_TOKEN` and `SNOWFLAKE_CONNECTIONS_<NAME>_TOKEN_FILE_PATH`, as Snowflake CLI does.
+
+### Changed
+
+- MCP sign-in on first use: CoCo CLI no longer opens a browser at startup for MCP servers that need sign-in. The agent keeps the tools CoCo CLI last saw from such a server, and sign-in starts the first time the agent calls one. In a headless run, that call fails right away with a hint about how to sign in.
+- New MCP servers start off: MCP servers you add with `cortex mcp add` or `/mcp`, and servers from plugins or a Claude Code import, now start turned off until you turn them on in `/mcp`. Servers you pass for a single run, for example with `--mcp-config`, start on. When you upgrade, servers that were working stay on, and servers that need sign-in start off.
+- Plugin connection consent: Installing or updating a catalog plugin that connects to remote locations through MCP servers or local commands now lists those connections and asks you to confirm first. For non-interactive installs, pass `--allow-mcp-servers` to `cortex plugin install` or `cortex plugin update`.
+- Automation schedules avoid :00 and :30: `cortex automation create` and `cortex automation update --schedule` now move a schedule that lands on minute 0 or 30 to another minute, chosen from the automation’s name. Pass `--no-jitter` to keep the exact minute.
+- Faster typing and submission: Prompts appear sooner after you press Enter, and typing no longer lags in the slash command menu, while a response streams, or in fullscreen views such as `/help`.
+- Faster startup with a large SQL cache: CoCo CLI now cleans up its SQL result cache in the background, so a large cache no longer delays startup.
+- Read-only connections in `--cloud` sessions: In a `--cloud` session, `/connections` and Settings now show connections as read-only, because the session’s connection can’t change.
+- Clearer skill share privilege errors: When sharing a skill to your personal database fails with insufficient privileges, the error now names both possible causes: no secondary roles in the session, or a session policy that doesn’t allow grant management.
+- Clearer FIPS errors on macOS: When CoCo CLI can’t set up FIPS mode on macOS because the system `openssl` has no `fipsinstall` command, the error now tells you to install OpenSSL 3.x or set `OPENSSL_BIN`.
+
+### Fixed
+
+- Missing characters on Enter: Pressing Enter right after typing no longer sends the prompt without its last few characters.
+- Context usage over 100%: The context usage that CoCo CLI reports now reflects the conversation’s actual size. Previously it could exceed 100% and start compaction early, and a running subagent could briefly replace it with its own usage.
+- `-c` for SQL: When you start CoCo CLI with `-c <connection>`, SQL now runs on that connection even when `sqlConnectionName` in `settings.json` names a different one. `/status` now shows where the SQL connection comes from.
+- Stopping during background waits: Stopping a turn now ends any wait on a background command or agent right away, instead of after the wait times out.
+- Private sessions: Follow-up prompts in `--private` sessions no longer hit a server error and resend the whole conversation.
+- Resuming a session whose conversation is gone: Resuming a session whose conversation no longer exists on the server now works, instead of failing every turn with HTTP 500.
+- Switching back to an earlier connection: Switching back to a connection used earlier in the session, such as an SSO connection, no longer makes SQL fail with `Master token not available in the current session`.
+- `--mcp-wait` in stream-json sessions: With `--mcp-wait` or `"mcpWait": true`, a stream-json session now waits for every MCP server before its first turn. Previously, the agent could start with only some servers’ tools.
+- Freezes on macOS with MCP sign-in: Fixed CoCo CLI freezing for up to 30 seconds, ignoring typing and `Ctrl+C`, while it read MCP sign-in tokens from the macOS keychain.
+- Background permission requests: Permission requests from background agents are no longer denied automatically when more than 10 are waiting.
+- Notices in the wrong session: A background agent’s or background command’s completion notice now reaches only the session that started it. Previously, another CoCo CLI session started in a folder with the same name could receive it.
+- Dropping files with special characters: Dragging several files into the input now attaches all of them when a file name contains characters such as parentheses. Previously, none of them were attached.
+- Duplicate final response: Fixed the final response sometimes appearing twice when you pressed `Ctrl+O` as a turn finished.
+- Status line overflow: The status line shown while CoCo CLI works no longer wraps or adds blank lines when it’s wider than the terminal.
+- Local deny rules in `--cloud` sessions: Deny rules in a device’s `managed-settings.json` no longer remove tools from `--cloud` sessions, which run their tools in the Snowflake sandbox. Previously, a rule such as `Bash(rm:*)` removed the `bash` tool entirely. `--disallowed-tools` and `--allowed-tools` still apply.
+- `oauth_redirect_uri` in `connections.toml`: CoCo CLI now reads `oauth_redirect_uri`, the key that Snowflake drivers and Snowflake CLI use. Previously it read only `oauthRedirectUri`.
+- Catalog skills with nested sub-skills: Installing a catalog skill whose bundle contains nested sub-skills now installs the skill at the root of the bundle. Previously, on Windows, CoCo CLI could install one of the nested sub-skills instead.
+- Catalog download retries: Installing a skill or plugin from the catalog now retries a file download that fails with a transient network error, such as `ECONNRESET`.
+- Empty catalog publishes: `cortex skill catalog publish` now fails when a file upload doesn’t succeed, instead of publishing a version with missing files.
+- Slow `cortex plugin find`: `cortex plugin find` again uses the Snowflake object search service instead of listing every extension in the account.
+- Automation run history: `cortex automation doctor` and `cortex automation execute --wait` no longer show runs from an earlier automation that had the same name, and a run whose conversation started a few seconds late now links to that conversation instead of showing as Unknown.
+
 ## 1.2.35 (Nov 2, 2026)
 
 ### Added

@@ -174,6 +174,12 @@ Instead of using CURRENT\_TIME, CURRENT\_TIMESTAMP default column values to capt
 
 You are not allowed to use the MATCH\_BY\_COLUMN\_NAME copy option with a SELECT statement for transforming data during a load in all cases. These two options can still be used separately, but cannot be used together. Any attempt to do so will result in the following error: `SQL compilation error: match_by_column_name is not supported with copy transform`.
 
+### INFER\_NESTED\_TYPES copy option
+
+You can’t combine the [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option
+with a transform, even when the option is set to `FALSE`. The statement fails with the error
+`infer_nested_types is not supported with copy transform`.
+
 ## Transform CSV data
 
 ### Load a subset of table data

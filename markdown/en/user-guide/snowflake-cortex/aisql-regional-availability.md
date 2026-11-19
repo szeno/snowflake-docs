@@ -28,7 +28,7 @@ against it.
   models have a 1,000,000-token context window and up to 128,000 output tokens.
 - **Google Gemini** (`gemini-4-carbon`, Public Preview; `gemini-4-argon`): Google’s most capable Gemini models in Snowflake Cortex,
   suited for advanced reasoning and multimodal tasks. `gemini-4-carbon` has a 1,048,576-token context window and up to
-  32,768 output tokens. `gemini-4-argon` has a 1,000,000-token context window.
+  32,768 output tokens. `gemini-4-argon` has a 1,048,576-token context window.
 - **OpenAI GPT Astra** (`openai-gpt-6-astra`): OpenAI’s most capable model, suited for complex,
   demanding reasoning work.
 - **OpenAI GPT Sol** (`openai-gpt-6-sol`, `openai-gpt-5.6-sol`): OpenAI’s frontier models for
@@ -243,6 +243,8 @@ In the AWS Europe West 1 (Ireland) region:
 | --- | --- | --- | --- |
 | **AI\_COMPLETE** | `claude-opus-5-5` | 1,000,000 | 128,000 |
 |  | `claude-opus-5` | 1,000,000 | 128,000 |
+|  | `claude-sonnet-5-5` | 1,000,000 | 128,000 |
+|  | `claude-haiku-5-5` | 1,000,000 | 128,000 |
 |  | `claude-sonnet-5` | 1,000,000 | 64,000 |
 |  | `claude-opus-4-8` | 1,000,000 | 128,000 |
 |  | `claude-opus-4-7` | 1,000,000 | 128,000 |
@@ -263,7 +265,7 @@ In the AWS Europe West 1 (Ireland) region:
 |  | `openai-gpt-4.1` | 128,000 | 32,000 |
 |  | `gemini-4-hydrogen` | 1,048,576 | 32,768 |
 |  | `gemini-4-carbon` | 1,048,576 | 32,768 |
-|  | `gemini-4-argon` | 1,000,000 | 32,768 |
+|  | `gemini-4-argon` | 1,048,576 | 32,768 |
 |  | `gemini-3.8-flash` | 1,000,000 | 64,000 |
 |  | `gemini-3.7-flash` | 1,000,000 | 64,000 |
 |  | `gemini-3.5-flash` | 1,000,000 | 64,000 |

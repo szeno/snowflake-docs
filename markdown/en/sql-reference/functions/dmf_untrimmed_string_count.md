@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the count of non-NULL column values that have leading or trailing whitespace. Use this function to catch data that could
+Returns the count of non-NULL column values that have leading or trailing spaces. Tabs, line breaks, and no-break spaces at the start or end of a value aren’t counted. Use this function to catch data that could
 break joins or lookups.
 
 This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it

@@ -7,19 +7,19 @@ The following table shows the dbt commands that are supported in dbt Projects on
 > | dbt command | Workspaces | EXECUTE DBT PROJECT | `snow dbt execute` (CLI) |
 > | --- | --- | --- | --- |
 > | [build](https://docs.getdbt.com/reference/commands/build) | ✔ | ✔ | ✔ |
-> | [clean](https://docs.getdbt.com/reference/commands/clean) [3] | ✔ | ✔ | ✔ |
+> | [clean](https://docs.getdbt.com/reference/commands/clean) | ✔ | ✔ | ✔ |
 > | [compile](https://docs.getdbt.com/reference/commands/compile) | ✔ | ✔ | ✔ |
 > | [deps](https://docs.getdbt.com/reference/commands/deps) [1] | ✔ | ✔ | ✔ |
 > | [docs generate](https://docs.getdbt.com/reference/commands/cmd-docs#dbt-docs-generate)  [2] | ✔ | ✔ | ✔ |
 > | [list](https://docs.getdbt.com/reference/commands/list) | ✔ | ✔ | ✔ |
 > | [parse](https://docs.getdbt.com/reference/commands/parse) | ❌ | ✔ | ✔ |
 > | [run](https://docs.getdbt.com/reference/commands/run) | ✔ | ✔ | ✔ |
-> | [retry](https://docs.getdbt.com/reference/commands/retry) [3] | ✔ | ✔ | ✔ |
+> | [retry](https://docs.getdbt.com/reference/commands/retry) | ✔ | ✔ | ✔ |
 > | [run-operation](https://docs.getdbt.com/reference/commands/run-operation) | ✔ | ✔ | ✔ |
 > | [seed](https://docs.getdbt.com/reference/commands/seed) | ✔ | ✔ | ✔ |
 > | [show](../reference/java/com/snowflake/snowpark_java/DataFrame.html#show(int)) | ✔ | ✔ | ✔ |
 > | [snapshot](https://docs.getdbt.com/reference/commands/snapshot) | ✔ | ✔ | ✔ |
-> | [source freshness](https://docs.getdbt.com/reference/commands/source)  [3] | ✔ | ✔ | ✔ |
+> | [source freshness](https://docs.getdbt.com/reference/commands/source) | ✔ | ✔ | ✔ |
 > | [test](https://docs.getdbt.com/reference/commands/test) | ✔ | ✔ | ✔ |
 >
 > Expand
@@ -28,9 +28,7 @@ The following table shows the dbt commands that are supported in dbt Projects on
 
 [1] With `AUTO_COMPILE = TRUE`, Snowflake runs `dbt compile` during deployment. If an external access integration is configured, Snowflake first runs `dbt deps`, then `dbt compile`. Setting `AUTO_COMPILE = FALSE` skips both commands.
 
-[2] dbt Projects on Snowflake don’t support dbt docs serve. To view your project’s documentation, use the dbt project object details page in Snowsight, or generate a static site with `dbt docs generate --static`. For more information, see [Access dbt project documentation and artifacts](/user-guide/data-engineering/dbt-projects-on-snowflake-manage#label-dbt-project-documentation-artifacts).
-
-[3] Requires a dbt project object that uses the mutable `live` version.
+[2] dbt Projects on Snowflake don’t support dbt docs serve. To view your project’s documentation, use the dbt project object details page in Snowsight, or, if you use dbt 1.x, generate a static site with `dbt docs generate --static`. dbt 2.x doesn’t support `--static`. For more information, see [Access dbt project documentation and artifacts](/user-guide/data-engineering/dbt-projects-on-snowflake-manage#label-dbt-project-documentation-artifacts).
 
 ## About flags
 

@@ -69,7 +69,7 @@ Use the following methods to set and read per-user limits:
 
 | Method | Description |
 | --- | --- |
-| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The value must be a whole number from 1 to 1,000,000,000; zero, negative, `NULL`, and decimal values return an error. The optional cycle argument accepts `'WEEKLY'` or `'DAILY'`; the default is monthly. See [Set per-user spending limits](/user-guide/budgets/per-user-quotas-create#label-per-user-quota-spending-limit). |
+| `SET_PER_USER_LIMIT(<credits>[, '<cycle>'])` | Set the per-user credit limit. The value must be a whole number from 1 to 1,000,000,000; zero, negative, `NULL`, and decimal values return an error. The optional cycle argument accepts `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`; the default is monthly. See [Set per-user spending limits](/user-guide/budgets/per-user-quotas-create#label-per-user-quota-spending-limit). |
 | `UNSET_PER_USER_LIMIT('<cycle>')` | Remove the per-user limit for a cycle: `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`. The cycle is required. |
 | `GET_CONFIG()` | Return the quota configuration, including `PER_USER_LIMIT`, `PER_USER_LIMIT_WEEKLY`, `PER_USER_LIMIT_DAILY`, and `BLOCK_ENFORCEMENT_ENABLED`. |
 
@@ -114,9 +114,9 @@ Use the following methods to manage user notifications and admin summaries:
 
 | Method | Description |
 | --- | --- |
-| `ADD_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>', <notify_user>, '<cycle>')` | Add an individual-user notification threshold. The cycle accepts `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`. See [Configure notifications](/user-guide/budgets/per-user-quotas-notifications#label-per-user-quota-notifications). |
-| `REMOVE_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>')` | Remove a notification threshold. |
-| `GET_NOTIFICATION_THRESHOLDS()` | List configured notification thresholds. |
+| `ADD_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>', <notify_user>[, '<cycle>'])` | Add an individual-user notification threshold. The optional cycle accepts `'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`; the default is monthly. See [Configure notifications](/user-guide/budgets/per-user-quotas-notifications#label-per-user-quota-notifications). |
+| `REMOVE_NOTIFICATION_THRESHOLD(<threshold>, '<strategy>'[, '<cycle>'])` | Remove a notification threshold. If you omit the cycle, only the monthly threshold is removed. |
+| `GET_NOTIFICATION_THRESHOLDS()` | List configured notification thresholds and their cycles. |
 | `ADD_NOTIFICATION_INTEGRATION('<name>')` | Add a notification integration for admin summaries. |
 | `REMOVE_NOTIFICATION_INTEGRATION('<name>')` | Remove a notification integration. |
 | `GET_NOTIFICATION_INTEGRATIONS()` | List configured notification integrations. |

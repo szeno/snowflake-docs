@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the percentage of non-NULL column values that contain characters outside the alphanumeric range (not `A`-`Z`,
+Returns the percentage of column values that contain characters outside the alphanumeric range (not `A`-`Z`,
 `a`-`z`, or `0`-`9`). The percentage is computed over the total row count, including NULL values in the denominator.
 Spaces, punctuation, and Unicode characters are all counted as special.
 

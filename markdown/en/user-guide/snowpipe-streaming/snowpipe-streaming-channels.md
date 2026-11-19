@@ -28,11 +28,11 @@ Inactive channels, along with their offset tokens, are deleted automatically aft
 
 Tip
 
-**How exactly-once works in Snowpipe Streaming**: Your application submits rows with an offset token (for example, a Kafka partition offset). Snowflake persists the token when the data is committed. On recovery, retrieve the last committed offset for the reopened channel and replay retained records starting after that offset. Records can be retained in the source or in durable application-managed storage. Preserve their original offsets and order, and retain them until their offsets commit; offset tokens don’t make the producer’s memory persistent.
+**How exactly-once works in Snowpipe Streaming**: Your application submits rows with an offset token (for example, a Kafka partition offset). Snowflake persists the token when the corresponding rowset checkpoint commits. On recovery, retrieve the last committed offset for the reopened channel and replay retained records starting after that offset. Records can be retained in the source or in durable application-managed storage. Preserve their original offsets and order. Retain uncommitted records for replay and rejected records still needed for recovery, even after the checkpoint advances; offset tokens don’t make the producer’s memory persistent.
 
 An *offset token* is a string that a client includes in row-submission requests to track ingestion progress on a per-channel basis. The specific methods used are `appendRow` or `appendRows` for the SDK and the `Append Rows` endpoint for the REST API.
 
-The token is initialized to NULL on channel creation and is updated when the rows with a provided offset token are committed to Snowflake. Clients can periodically call `getLatestCommittedOffsetToken` to get the latest committed offset token for a channel and use that to reason about ingestion progress.
+The token is initialized to NULL on channel creation and is persisted when the corresponding rowset checkpoint commits. Clients can periodically call `getLatestCommittedOffsetToken` to retrieve this checkpoint and track ingestion progress.
 
 When a client re-opens a channel, the latest persisted offset token is returned. The client can reset its position in the data source by using the token to avoid sending the same data twice. When a channel re-open event occurs, any uncommitted data buffered in Snowflake is discarded to avoid committing it.
 
@@ -40,8 +40,18 @@ You can use the latest committed offset token to perform the following:
 
 > - Track ingestion progress
 > - Check whether a specific offset has been committed by comparing it with the latest committed offset token
-> - Advance the source offset and purge the data that has already been committed
+> - Advance the source offset after checking ingestion outcomes and retaining rejected records for recovery
 > - Enable de-duplication and ensure exactly-once delivery of data
+
+#### Offset checkpoints and rejected rows
+
+Snowpipe Streaming with high-performance architecture uses `ON_ERROR=CONTINUE`: valid rows load while rejected rows are skipped. The persisted checkpoint can advance for a rowset containing some or entirely rejected rows. A committed offset is therefore a progress checkpoint, not proof that every row was inserted.
+
+Enable [error logging](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables) before ingestion to retain supported rejected-row payloads for inspection and reprocessing. Monitor channel-status error counts and [row-error rates](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-events-commit) separately from checkpoint progress. Your application can stop submitting new data when its chosen error threshold is exceeded. Retain source data or another durable recovery copy for records outside the error table’s capture and size limits.
+
+**Limitations:** `ON_ERROR` supports only `CONTINUE`, not abort-on-error behavior. Stopping future submissions is a client action; it doesn’t undo already processed rowsets. Error tables capture supported server-side processing errors, not every API or SDK failure. See [Error table limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables#limitations).
+
+#### Crash recovery examples
 
 **Example: Kafka connector crash recovery**
 

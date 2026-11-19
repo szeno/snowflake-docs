@@ -5,7 +5,7 @@ see [Understand orchestration for dbt Projects on Snowflake](/user-guide/data-en
 
 From a workspace, you can quickly create and schedule a user-managed task to execute a connected dbt project object. You can also use SQL commands to create a task directly. If a workspace is connected to a dbt project object, you can view all tasks that run the EXECUTE DBT PROJECT command for that object.
 
-You must create a task that runs the EXECUTE DBT PROJECT command in the same database and schema as the dbt project object.
+As a best practice, create the dbt project object and all tasks that run it in the same database and schema. This lets you view the associated schedules on the dbt project object details page.
 
 Note
 
@@ -47,7 +47,7 @@ From within a workspace, you can view all tasks in the database and schema that 
 
 You can use the [CREATE TASK](/sql-reference/sql/create-task) command to create tasks that run the EXECUTE DBT PROJECT command. Using SQL to create tasks that execute different dbt commands with different dbt CLI options provides a powerful way to orchestrate dbt deployments in Snowflake.
 
-The following SQL example creates a task for a production dbt target that executes a dbt `run` command on a six-hour interval.
+The following SQL example creates a task for a production dbt target that executes a dbt `run` command on a six-hour interval. Both tasks in this section and the dbt project object are in `my_database.my_schema`:
 
 Copy code
 
@@ -68,9 +68,9 @@ Then, the following SQL creates a task that executes the dbt `test` command afte
 Copy code
 
 ```
-CREATE OR ALTER TASK change_this.public.test_dbt_project
-        WAREHOUSE = my_warehouse
-        AFTER run_dbt_project
+CREATE OR ALTER TASK my_database.my_schema.test_dbt_project
+  WAREHOUSE = my_warehouse
+  AFTER my_database.my_schema.run_dbt_project
 AS
   EXECUTE DBT PROJECT my_database.my_schema.my_dbt_project args='test --target prod';
 ```

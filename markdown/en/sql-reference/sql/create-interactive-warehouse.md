@@ -116,8 +116,8 @@ Where:
 `AUTO_SUSPEND = { num | NULL }`
 :   Specifies the number of seconds of inactivity after which the interactive warehouse is automatically suspended.
 
-    The minimum value for interactive warehouses is `86400` (24 hours). If you specify a value less
-    than 86400, Snowflake uses 86400. Setting the value to `NULL` disables auto-suspend.
+    The minimum value for interactive warehouses is `3600` (1 hour). Specifying a lower value
+    returns an error. Setting the value to `NULL` disables auto-suspend.
 
     Default:
     :   `NULL` (auto-suspend is disabled)
@@ -211,7 +211,7 @@ For general information about roles and privilege grants for performing SQL acti
 - Interactive warehouses can query any table type (standard tables, Iceberg tables, dynamic tables, and interactive tables) directly,
   without copying or transforming data. For more information, see .
 - Interactive warehouses support auto-suspend and auto-resume. The minimum AUTO\_SUSPEND value
-  is 86400 seconds (24 hours). For more information, see [Resuming and suspending an interactive warehouse](/user-guide/interactive#label-interactive-resume-and-suspend-a-warehouse).
+  is 3600 seconds (1 hour). For more information, see [Resuming and suspending an interactive warehouse](/user-guide/interactive#label-interactive-resume-and-suspend-a-warehouse).
 - Interactive warehouses support multi-cluster configuration for handling high-concurrency workloads.
 - If you don’t specify the `TABLES` clause during creation, you can associate interactive tables
   later using [ALTER WAREHOUSE](/sql-reference/sql/alter-warehouse) with the ADD TABLES clause.

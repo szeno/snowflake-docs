@@ -162,6 +162,7 @@ Where:
 >      ENFORCE_LENGTH = TRUE | FALSE
 >      FORCE = TRUE | FALSE
 >      INCLUDE_METADATA = ( <column_name> = METADATA$<field> [ , <column_name> = METADATA${field} ... ] )
+>      INFER_NESTED_TYPES = TRUE | FALSE
 >      LOAD_MODE = { FULL_INGEST | ADD_FILES_COPY }
 >      LOAD_UNCERTAIN_FILES = TRUE | FALSE
 >      MATCH_BY_COLUMN_NAME = CASE_SENSITIVE | CASE_INSENSITIVE | NONE
@@ -1222,7 +1223,10 @@ format-specific options (separated by blank spaces, commas, or new lines):
 
     If `USE_VECTORIZED_SCANNER` is set to `FALSE`, the scanner has the following behaviors:
 
-    > - This option does not support Parquet maps. The output of scanning a map type is as follows:
+    > - The scanner doesn’t support Parquet maps whose values are lists. It supports other Parquet maps only when you load the data with
+    >   `COPY INTO <table>` or Snowpipe and set the
+    >   [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. Without
+    >   `INFER_NESTED_TYPES = TRUE`, the output of scanning a map type is as follows:
     >
     > > Copy code
     > >
@@ -1477,6 +1481,23 @@ You can specify one or more of the following copy options (separated by blank sp
     - The `INCLUDE_METADATA` target column name must first exist in the table. The target column name is not automatically added if it doesn’t exist.
     - Use a unique column name for the `INCLUDE_METADATA` columns. If the `INCLUDE_METADATA` target column has a name conflict with a column in the data file, the `METADATA$` value that is defined by `INCLUDE_METADATA` takes precedence.
     - When you load a CSV file with `INCLUDE_METADATA`, set the file format option `ERROR_ON_COLUMN_COUNT_MISMATCH` to `FALSE`.
+
+`INFER_NESTED_TYPES = TRUE | FALSE`
+:   Definition:
+    :   Boolean that specifies whether schema evolution adds new nested columns in Parquet, JSON, Avro, and ORC files as structured
+        `OBJECT`, `ARRAY`, or `MAP` columns, and adds new fields to existing structured columns. Schema evolution also requires
+        `MATCH_BY_COLUMN_NAME`, `ENABLE_SCHEMA_EVOLUTION = TRUE` on the target table, and the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on
+        the table.
+
+        For Parquet files, the option also changes how maps are stored in `VARIANT` columns, unless `USE_VECTORIZED_SCANNER = TRUE`.
+
+        The option can’t be combined with a `SELECT` transform, even if it’s set to `FALSE`.
+
+        For more information, see [Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types). Before you add the
+        option to an existing load, see [Add INFER\_NESTED\_TYPES to an existing load](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-existing-load).
+
+    Default:
+    :   `FALSE`
 
 `LOAD_MODE = { FULL_INGEST | ADD_FILES_COPY }`
 :   Definition:
@@ -1850,6 +1871,26 @@ Load files from a named external stage into the table with the `MATCH_BY_COLUMN_
 >   FROM @my_ext_stage/tutorials/dataloading/sales.json.gz
 >   FILE_FORMAT = (TYPE = 'JSON')
 >   MATCH_BY_COLUMN_NAME='CASE_INSENSITIVE';
+> ```
+
+### Loading files with schema evolution for structured columns
+
+The following example enables schema evolution on a table that has structured columns, and then loads Parquet files with the
+[INFER\_NESTED\_TYPES](#label-copy-option-infer-nested-types) copy option:
+
+> Copy code
+>
+> ```
+> -- Enable schema evolution on the target table.
+> ALTER TABLE my_orders_table SET ENABLE_SCHEMA_EVOLUTION = TRUE;
+>
+> -- Load files and add structured columns and fields. The role that runs this
+> -- statement needs the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+> COPY INTO my_orders_table
+>   FROM @mystage
+>   FILE_FORMAT = (TYPE = PARQUET)
+>   MATCH_BY_COLUMN_NAME = CASE_SENSITIVE
+>   INFER_NESTED_TYPES = TRUE;
 > ```
 
 ### Loading files directly from an external location

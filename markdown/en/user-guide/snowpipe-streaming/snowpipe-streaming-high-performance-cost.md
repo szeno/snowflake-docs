@@ -20,9 +20,9 @@ Snowflake charges only for the data values ingested, not for the structural elem
 
 Let’s consider an example where you are ingesting uncompressed data values at a rate of 1 megabyte per second (MB/s).
 
-- Data Values Ingested per Second: 1 MB
-- Data Values Ingested per Hour: 1 MB/s \* 3600 s/hour = 3600 MB/hour = 3.6 GB/hour (assuming 1 GB = 1000 MB for this billing context).
-- Credits Consumed per Hour: 3.6 GB \* current rate per GB
+- Data values ingested per second: 1 MB
+- Data values ingested per hour: 1 MB/s \* 3600 s/hour = 3600 MB/hour = 3.6 GB/hour (assuming 1 GB = 1000 MB for this billing context).
+- Credits consumed per hour: 3.6 GB \* current rate per GB
 
 For the exact credit calculation, see the current rate provided on the [Snowflake Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
 

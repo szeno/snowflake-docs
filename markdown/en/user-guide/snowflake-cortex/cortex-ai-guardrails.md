@@ -57,6 +57,40 @@ ALTER ACCOUNT SET AI_SETTINGS = $$
 $$;
 ```
 
+### Set the guardrail mode
+
+Use the optional `mode` field to choose what guardrails do when they detect a possible prompt injection:
+
+| Mode | Behavior |
+| --- | --- |
+| `BLOCK` (default) | Guardrails scan tool outputs and act on each detection. The model gets a warning about the flagged content, so it can ignore the injected instructions. |
+| `LOG` | Guardrails scan tool outputs and record each detection, but don’t act on it. Responses from CoCo, Snowflake CoWork, and Cortex Agents don’t change. |
+
+Expand
+
+Show lessSee more
+
+Use `LOG` mode to evaluate guardrails on your AI traffic before you block threats. When you’re ready, change the mode to `BLOCK`.
+
+To enable guardrails in `LOG` mode:
+
+Copy code
+
+```
+ALTER ACCOUNT SET AI_SETTINGS = $$
+  guardrails:
+    advanced_prompt_injection:
+      - enabled: true
+        mode: LOG
+$$;
+```
+
+Note the following:
+
+- The `mode` value must be uppercase: `LOG` or `BLOCK`. Other values cause an error.
+- If you don’t set `mode`, guardrails use `BLOCK` mode.
+- You’re charged for scans in `LOG` mode the same as in `BLOCK` mode. For details, see [Cost](#cost).
+
 ### View guardrail settings
 
 To view the current guardrail configuration for your account:
@@ -83,7 +117,7 @@ The [CORTEX\_AI\_GUARDRAILS\_USAGE\_HISTORY](/sql-reference/account-usage/cortex
 
 Use this view to:
 
-- Review which requests were flagged for possible prompt injection (`GUARDRAILS_SIGNAL = TRUE`)
+- Review which requests were flagged for possible prompt injection (`GUARDRAILS_SIGNAL = TRUE`). This includes detections in `LOG` mode, so you can use it to evaluate guardrails before you set `BLOCK` mode.
 - Monitor credit and token consumption for guardrail scans
 - Audit guardrail activity by user, agentic source, or role
 

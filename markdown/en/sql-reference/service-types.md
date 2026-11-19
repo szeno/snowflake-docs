@@ -4,7 +4,7 @@ This topic contains the types of usage that can incur costs in Snowflake.
 
 | Service type | Usage statement name | Description | Category | Unit |
 | --- | --- | --- | --- | --- |
-| AGENT\_CODE\_EXECUTION | AGENT CODE EXECUTION | Active code execution session time used by agents to run code in a sandboxed environment. | Compute | Hours |
+| AGENT\_CODE\_EXECUTION | AGENT CODE EXECUTION | Active code execution session time used by agents to run code in a sandboxed environment. | Compute | Credits |
 | AI\_FUNCTIONS | AI FUNCTIONS | Cortex AI functions invoked from SQL, including COMPLETE and other LLM-backed functions. | AI and Machine Learning | AI Credits |
 | AI\_INFERENCE | AI INFERENCE | Credit-based usage for running AI models via the Cortex REST API. | AI and Machine Learning | AI Credits |
 | AI\_INFERENCE\_TOOLS | AI INFERENCE TOOLS | Credit-based usage for inference AI tool calls invoked by AI workloads. | AI and Machine Learning | AI Credits |

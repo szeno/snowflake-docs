@@ -34,18 +34,23 @@ AI_COMPLETE(
     For image files, you can use one of the following models:
 
     - `claude-haiku-4-5`
+    - `claude-haiku-5-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
+    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
+    - `claude-sonnet-5-5`
     - `gemini-3.1-pro`
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
     - `openai-gpt-5`
     - `openai-gpt-5-mini`
     - `openai-gpt-5-nano`
@@ -56,18 +61,23 @@ AI_COMPLETE(
     For document files, you can use one of the following models:
 
     - `claude-haiku-4-5`
+    - `claude-haiku-5-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
+    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
+    - `claude-sonnet-5-5`
     - `gemini-3.1-pro`
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
 
     For audio and video files, you can use one of the following models:
 
@@ -75,6 +85,8 @@ AI_COMPLETE(
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -200,7 +212,7 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
 
 ### Audio and video
 
-- Only the Gemini models listed for audio and video files accept audio and video.
+- Only the Gemini models listed for audio files accept audio. Only the Gemini models listed for video files accept video.
 - Supported audio formats: `.wav`, `.mp3`, `.aiff`, `.aac`, `.ogg`, `.flac`, `.m4a`, `.mp4`, `.pcm`, and `.webm`.
 - Supported video formats: `.mp4`, `.mpeg`, `.mov`, `.avi`, `.flv`, `.mpg`, `.webm`, `.wmv`, and `.3gpp`.
 - The maximum file size is 100 MB. For context windows, see

@@ -59,6 +59,10 @@ Copy code
 snow connection generate-jwt --account <ACCOUNT_IDENTIFIER> --user MY_USER --private-key-file rsa_key.p8
 ```
 
+Note
+
+The JWT that `snow connection generate-jwt` creates uses the default role of the user. To use a non-default role, sign your own JWT with the role in its `scp` claim. For details, see [Use a non-default role](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#use-a-non-default-role).
+
 Caution
 
 Store your JWT securely. Avoid exposing it in logs or scripts.

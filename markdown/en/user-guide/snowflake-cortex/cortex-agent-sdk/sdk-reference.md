@@ -1,9 +1,5 @@
 # Cortex Agent SDK reference
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use this reference when you need details about SDK response objects, thread message helpers, transport wrappers, error
 classes, retry behavior, and per-request options. For workflow examples, see
 [Conversations](/user-guide/snowflake-cortex/cortex-agent-sdk/conversations) and
@@ -110,7 +106,7 @@ Important members include:
 
 - `view.role`: `"assistant"`, always
 - `view.metadata`: `ResponseMetadata`, including `run_id`, `thread_id`, message IDs, and usage
-- `view.events`: `ServerSentEvent[] | undefined`, populated when the view was built from a stream
+- `view.events`: `ServerSentEvent[] | undefined`, containing the retained replay window when built from a stream
 - `view.requestId`: Snowflake request ID, when present
 - `view.responseBody`: full parsed response body
 - `view.response`: underlying HTTP response, available for headers and status only
@@ -123,7 +119,7 @@ Important members include:
 
 - `view.role`: `"assistant"`, always
 - `view.metadata`: response metadata, including `run_id`, `thread_id`, message IDs, and usage
-- `view.events`: ordered raw events, populated when the view was built from a stream
+- `view.events`: ordered raw events in the retained replay window when built from a stream
 - `view.request_id`: Snowflake request ID, when present
 - `view.response_body`: full parsed response body
 
@@ -156,7 +152,7 @@ Thread-specific members include `messageId`, `parentId`, `role`, `createdOn`, `r
 Copy code
 
 ```
-from cortex_agent_sdk.api import ThreadMessageView
+from snowflake.cortex.agents.api import ThreadMessageView
 
 detail = api.threads.describe(thread_id)
 for raw in detail.get("messages", []):
@@ -409,7 +405,7 @@ failures.
 Copy code
 
 ```
-from cortex_agent_sdk import (
+from snowflake.cortex.agents import (
     APIConnectionAbortedError,
     APIConnectionError,
     APITimeoutError,
@@ -577,6 +573,56 @@ reconnecting to a run stream.
 
 Mid-stream retry remains a caller concern.
 
+## Streaming replay and read deadlines
+
+REST streams retain the newest 1,000 events within an 8 MiB payload budget by default. Both limits apply;
+older events are evicted when either limit is reached. Live iteration still delivers every event, and completed
+response text remains available independently of the replay window. Result helpers use the same bounded
+snapshot. Persist events during live iteration if your application needs the complete history.
+
+Set the limits per call; increasing only the event count leaves the default byte budget in effect.
+Setting either limit to zero disables replay retention. Python uses `max_replay_events` and
+`max_replay_bytes` in the `options` argument. Replay limits must be non-negative integers no larger than
+`2**53 - 1`.
+
+TypeScriptPython
+
+Copy code
+
+```
+const stream = api.agent.stream(
+  { messages: [{ role: "user", content: [{ type: "text", text: "Explain database indexes." }] }] },
+  { maxReplayEvents: 5000, maxReplayBytes: 32 * 1024 * 1024, streamReadTimeoutMs: 30000 },
+);
+for await (const event of stream) {
+  // Process or persist each live event.
+}
+console.log(await stream.finalText());
+stream.clearReplay();
+```
+
+Copy code
+
+```
+stream = api.agent.stream(
+    {"messages": [{"role": "user", "content": [{"type": "text", "text": "Explain database indexes."}]}]},
+    options={
+        "max_replay_events": 5000,
+        "max_replay_bytes": 32 * 1024 * 1024,
+        "stream_read_timeout": 30,
+    },
+)
+for event in stream:
+    pass  # Process or persist each live event.
+print(stream.final_text())
+stream.clear_replay()
+```
+
+The streaming read deadline covers the wait for response headers and each subsequent gap between chunks.
+It is not a total-duration limit: a healthy stream can continue while chunks arrive within the deadline.
+Python timeout values are seconds; `None` disables its streaming read deadline. A general request timeout
+cannot shorten the streaming read deadline, although Python retains its separate connection/write deadlines.
+
 ## Request options
 
 Raw resource request methods accept per-request options.
@@ -594,7 +640,9 @@ export interface RequestOpts {
   retryPolicy?: RetryPolicy;
   headers?: Record<string, string>;
   query?: Record<string, string | number | boolean | undefined>;
-  streamReadTimeoutMs?: number;
+  streamReadTimeoutMs?: number | null;
+  maxReplayEvents?: number;
+  maxReplayBytes?: number;
 }
 ```
 
@@ -605,7 +653,10 @@ Use these fields for:
 - `retryPolicy`: per-request retry override
 - `headers`: custom headers merged into the request
 - `query`: extra query parameters
-- `streamReadTimeoutMs`: dead-socket timeout for streaming requests
+- `streamReadTimeoutMs`: deadline for streaming response headers and gaps between chunks, in milliseconds;
+  defaults to ten minutes, with `null` disabling the read deadline
+- `maxReplayEvents`: maximum retained replay events; defaults to 1,000
+- `maxReplayBytes`: maximum retained replay payload bytes; defaults to 8 MiB
 
 On methods that also take query parameters, `opts` is the last argument:
 

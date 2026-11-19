@@ -149,8 +149,8 @@ skills available to CoCo, see [CoCo CLI bundled skills](/user-guide/cortex-code/
 
 1. Review what the catalog already knows about your Snowflake objects. Browse them in Snowsight and check the
    [lineage graph](/user-guide/ui-snowsight-lineage) for a table your team depends on.
-2. Fill in the gaps outside Snowflake. Configure [external lineage](/user-guide/external-lineage) for pipelines that emit OpenLineage
-   events, and set up [metadata connectors](/user-guide/snowflake-horizon/connectors) for your external databases and BI tools.
+2. Fill in the gaps outside Snowflake. Configure [external metadata](/user-guide/snowflake-horizon/connectors) to connect other
+   systems, such as Power BI, Tableau, or Postgres, so you get cross-platform lineage and metadata in one Horizon Catalog.
 3. Enrich what you collected. Generate [descriptions](/user-guide/ui-snowsight-cortex-descriptions) for undocumented objects, and
    apply [Snowflake-provided tags](/user-guide/object-tagging/snowflake-provided-tags) to record project, sensitivity, and
    certification status.

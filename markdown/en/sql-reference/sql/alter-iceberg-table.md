@@ -30,6 +30,8 @@ Copy code
 ```
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> { clusteringAction | tableColumnAction }
 
+ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> RENAME TO <new_table_name>
+
 ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ REPLACE_INVALID_CHARACTERS = { TRUE | FALSE } ]
   [ CATALOG_SYNC = '<snowflake_open_catalog_integration_name>']
@@ -205,6 +207,13 @@ Where:
     Identifiers enclosed in double quotes are also case-sensitive.
 
     For more information, see [Identifier requirements](/sql-reference/identifiers-syntax).
+
+`RENAME TO new_table_name`
+:   Renames the specified table with a new identifier that is not currently used by any other tables in the schema.
+
+    For more information about table identifiers, see [Identifier requirements](/sql-reference/identifiers-syntax).
+
+    When an object (table, column, etc.) is renamed, other objects that reference it must be updated with the new name.
 
 `SET ...`
 :   Specifies one or more properties/parameters to set for the external table (separated by blank spaces, commas, or new lines):
@@ -413,7 +422,7 @@ Where:
 
     > - Added columns.
     >
-    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](/user-guide/contacting-support).
     > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
 
     Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
@@ -423,9 +432,15 @@ Where:
     Loading data from files evolves the table columns when all of the following are true:
 
     - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
-    - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+    - The role used to load the data has the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the table. For Snowpipe, the role that owns
+      the pipe loads the data.
 
     Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
+    If the files contain nested data, also set the
+    [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. Otherwise,
+    loads that add nested columns might fail. For more information, see
+    [Create and evolve Snowflake-managed Iceberg tables](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-iceberg).
 
 `MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE }`
 :   For [Parquet Direct](/user-guide/tables-iceberg-parquet-direct) tables (preview), controls how column names in Parquet

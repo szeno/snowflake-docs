@@ -85,6 +85,14 @@ For instructions on creating a custom role with a specified set of privileges, s
 For general information about roles and privilege grants for performing SQL actions on
 [securable objects](/user-guide/security-access-control-overview#label-access-control-securable-objects), see [Overview of Access Control](/user-guide/security-access-control-overview).
 
+## Usage notes
+
+Caution
+
+If the organization user being removed is not a member of any other organization user group that was imported into a regular account, removing the user from the group deletes the corresponding local user in that account. These users can’t be recovered. You’d have to re-add the organization user to the group to recreate the local user in the regular account.
+
+If you only want to remove the user from the group without deleting the local user, first use [SYSTEM$UNLINK\_ORGANIZATION\_USER](/sql-reference/functions/system_unlink_organization_user) to unlink the local user from the organization user before removing them from the group.
+
 ## Examples
 
 Add organization users `joe` and `mary` to an organization user group `marketing`.

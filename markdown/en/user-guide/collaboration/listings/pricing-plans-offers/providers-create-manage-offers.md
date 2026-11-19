@@ -204,9 +204,9 @@ SnowsightSQL
       > 2. Specify payment options for the offer:
       >
       >    - **Require full payment upfront**: The consumer pays the total contract value (TCV) at the start of the contract.
-      >    - **Accept installments**: Allow the consumer to pay in equal monthly installments or specify custom installment amounts.
+      >    - **Accept installments**: Allow the consumer to pay in installments on a monthly, quarterly, or yearly schedule. Custom invoice dates are available only for [one-time pricing offers](#label-create-one-time-pricing-offer) with a **Limited-time** contract.
       >
-      >      If you select the **Accept installments** option, you can specify the number of installments and the installment amount.
+      >      If you select the **Accept installments** option, you can specify the installment frequency and the amount of each installment. For more information, see [Installment plan pricing models](/collaboration/provider-listings-pricing-model#label-listings-usage-installment-plan-model).
       >
       >    Note
       >
@@ -337,9 +337,9 @@ SnowsightSQL
       9. Specify payment options for the offer:
 
          - **Require full payment upfront**: The consumer pays the total contract value (TCV) at the start of the contract.
-         - **Accept installments**: Allow the consumer to pay in equal monthly installments or specify custom installment amounts.
+         - **Accept installments**: Allow the consumer to pay in installments on a monthly, quarterly, or yearly schedule. For a **Limited-time** contract, you can also choose custom invoice dates.
 
-           If you select the **Accept installments** option, you can specify the number of installments and the installment amount.
+           If you select the **Accept installments** option, you can specify the installment frequency and the amount of each installment. For more information, see [Installment plan pricing models](/collaboration/provider-listings-pricing-model#label-listings-usage-installment-plan-model).
       10. Specify the first invoice date.
 
       The first invoice date is the date when the consumer will be billed for the first time.

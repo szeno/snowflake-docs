@@ -16,6 +16,8 @@ You can use structured types in the following ways:
   In an [Apache Iceberg™ table](/user-guide/tables-iceberg), the
   [Apache Iceberg™ data types](/user-guide/tables-iceberg-data-types) `list`, `struct`, and `map` correspond
   to the structured ARRAY, structured OBJECT, and MAP types in Snowflake.
+- You can create structured type columns from staged files, and have schema evolution add columns and fields as you load more
+  files. For more information, see [Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types).
 - You use structured types when accessing data from a structured type column in a table.
 - You can cast a semi-structured [ARRAY](/sql-reference/data-types-semistructured#label-data-type-array), [OBJECT](/sql-reference/data-types-semistructured#label-data-type-object), or [VARIANT](/sql-reference/data-types-semistructured#label-data-type-variant)
   value to a corresponding structured type (for example, an ARRAY value to an ARRAY value of INTEGER elements). You can also cast a

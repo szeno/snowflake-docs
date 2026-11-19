@@ -79,7 +79,9 @@ Policy enforcement mode cannot be changed after a listing is published. To use a
 
 Sharing an object with a consumer does not necessarily mean that the consumer can reshare it. The following table compares objects in an
 incoming share or listing when resharing is enabled. For tables, dynamic tables, and views, the resharer exposes the incoming data through
-a secure view in their own database; they cannot attach an object from the imported database directly to an outgoing share.
+a secure view in their own database; they cannot attach an object from the imported database directly to an outgoing share. For the
+workflows that work, including same-region versus cross-region, see
+[Supported objects and workflows](/collaboration/resharing-as-resharer#label-resharing-supported-workflows).
 
 | Object in the incoming data product | Sharing | Resharing a direct share (`RESHARER`) | Resharing a listing (`RESHARER`) | Resharing a listing (`CALLER`) |
 | --- | --- | --- | --- | --- |

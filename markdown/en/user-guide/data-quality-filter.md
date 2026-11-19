@@ -35,6 +35,8 @@ The following DMFs aren’t supported with FILTER:
   column (`ON ()`) is also columnless and does support FILTER.
 - DMFs with reference tables (multi-table associations), because the filter can only target a single
   table.
+- The [period-comparison DMFs](/user-guide/data-quality-system-dmfs) (the DMFs whose names end in `_LAST_PERIOD`, `_LAST_TWO_PERIODS`,
+  `_LAST_FOUR_PERIODS`, or `_LAST_EIGHT_PERIODS`).
 
 ### Custom DMF compatibility
 

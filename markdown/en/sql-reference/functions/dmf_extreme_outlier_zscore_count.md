@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the count of non-NULL, non-NaN values in a column whose Z-score exceeds 4.5.
+Returns the count of non-NULL, non-NaN values in a column whose absolute Z-score exceeds 4.5.
 
 This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it
 runs at regular intervals, see [Associate a DMF](/user-guide/data-quality-working#label-dmf-associate).

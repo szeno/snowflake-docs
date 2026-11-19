@@ -136,7 +136,7 @@ The command output provides table properties and metadata in the following colum
 | name | Name of the object. |
 | database\_name | Database in which the object is stored. |
 | schema\_name | Schema in which the object is stored. |
-| kind | Object type: TABLE, VIEW. |
+| kind | Object type: `TABLE` or `VIEW`.  This column doesn’t distinguish object sub-types. For example, hybrid, dynamic, Iceberg, and interactive tables all return `TABLE`; use the `is_hybrid`, `is_dynamic`, `is_iceberg`, and `is_interactive` columns to tell them apart. |
 | comment | Comment for the object. |
 | cluster\_by | Column(s) defined as clustering key(s) for the object. |
 | rows | Number of rows in the object. |
@@ -146,6 +146,7 @@ The command output provides table properties and metadata in the following colum
 | is\_hybrid | `Y` if the object is a hybrid table; `N` otherwise. |
 | is\_dynamic | `Y` if the object is a dynamic table; `N` otherwise. |
 | is\_iceberg | `Y` if the object is an [Apache Iceberg™ table](/user-guide/tables-iceberg); `N` otherwise. |
+| is\_interactive | `Y` if the object is an interactive table; `N` otherwise. |
 
 Expand
 

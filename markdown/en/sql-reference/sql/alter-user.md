@@ -454,6 +454,9 @@ Also, see [Usage Notes](#usage-notes) (in this topic) for more general details a
 
   - `PREVENT_UNLOAD_TO_INLINE_URL`
   - `PREVENT_UNLOAD_TO_INTERNAL_STAGES`
+  - `CORTEX_CODE_CLI_DAILY_EST_CREDIT_LIMIT_PER_USER`
+  - `CORTEX_CODE_DESKTOP_DAILY_EST_CREDIT_LIMIT_PER_USER`
+  - `CORTEX_CODE_SNOWSIGHT_DAILY_EST_CREDIT_LIMIT_PER_USER`
 - Individual users can execute the ALTER USER command on themselves (i.e. by specifying their user name/identifier in the command) and change
   the following:
 

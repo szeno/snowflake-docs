@@ -39,6 +39,8 @@ The following system DMFs aren’t supported with WITHIN GROUP:
 - The outlier DMFs (OUTLIER\_COUNT, OUTLIER\_PERCENT, EXTREME\_OUTLIER\_COUNT, EXTREME\_OUTLIER\_PERCENT, and their IQR and ZSCORE
   variants).
 - R\_SQUARED.
+- The [period-comparison DMFs](/user-guide/data-quality-system-dmfs) (the DMFs whose names end in `_LAST_PERIOD`, `_LAST_TWO_PERIODS`,
+  `_LAST_FOUR_PERIODS`, or `_LAST_EIGHT_PERIODS`).
 
 If you use WITHIN GROUP with one of these DMFs, an error is returned when you create the association.
 

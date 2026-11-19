@@ -137,9 +137,9 @@ For an example that changes the cluster count on a schedule, see
 Interactive warehouses support auto-suspend and auto-resume. You can set the AUTO\_SUSPEND
 and AUTO\_RESUME properties when creating or altering an interactive warehouse.
 
-The minimum AUTO\_SUSPEND value for an interactive warehouse is 86400 seconds (24 hours). This minimum ensures that the cache stays warm long enough to provide consistent low-latency performance. You can manually suspend the warehouse at any time; you can also use scheduled scaling to suspend it sooner.
+The minimum AUTO\_SUSPEND value for an interactive warehouse is 3600 seconds (1 hour). This minimum ensures that the cache stays warm long enough to provide consistent low-latency performance. You can manually suspend the warehouse at any time; you can also use scheduled scaling to suspend it sooner.
 
-The following example creates an interactive warehouse with auto-suspend after 24 hours of
+The following example creates an interactive warehouse with auto-suspend after 1 hour of
 inactivity, and auto-resume enabled:
 
 Copy code
@@ -147,7 +147,7 @@ Copy code
 ```
 CREATE INTERACTIVE WAREHOUSE interactive_demo
   WAREHOUSE_SIZE = 'XSMALL'
-  AUTO_SUSPEND = 86400
+  AUTO_SUSPEND = 3600
   AUTO_RESUME = TRUE;
 ```
 
@@ -157,7 +157,7 @@ Copy code
 
 ```
 ALTER WAREHOUSE interactive_demo SET
-  AUTO_SUSPEND = 86400
+  AUTO_SUSPEND = 3600
   AUTO_RESUME = TRUE;
 ```
 
@@ -320,7 +320,7 @@ any tables. However, you can still use other interactive warehouses to query tho
 - Snowflake interactive warehouses are optimized for short-running queries.
   You should configure a fallback warehouse. Queries running more than 5 seconds will be transparently re-run on the fallback warehouse to ensure resources on the interactive warehouse are freed up for low-latency queries. This provides workload isolation.
 - If a query consistently times out, that’s a signal that it might not be suitable for use with interactive warehouses. Commonly, applying some of the performance tuning techniques can help reduce query latency. See [Performance considerations](/user-guide/interactive-performance#label-interactive-performance-considerations) for more details.
-- Interactive warehouses support auto-suspend and auto-resume. The minimum auto-suspend interval is 24 hours (86400 seconds). This is different from auto-scaling, in which clusters will run for a minimum of 1 hour. Manual suspension/resume of interactive warehouse is supported with a minimum 1 hour billing period. Expect significant query latency when you resume an interactive warehouse, because the data cache needs to warm up again. For more information, see
+- Interactive warehouses support auto-suspend and auto-resume. The minimum auto-suspend interval is 1 hour (3600 seconds). Manual suspension/resume of interactive warehouse is supported with a minimum 1 hour billing period. Expect significant query latency when you resume an interactive warehouse, because the data cache needs to warm up again. For more information, see
   [Resuming and suspending an interactive warehouse](#label-interactive-resume-and-suspend-a-warehouse).
 - You can resize an interactive warehouse only while it’s suspended. Resizing an active warehouse fails with error 090094.
 - You can attach up to 100 tables to an interactive warehouse for proactive cache warming. You can query any table without attaching it. If you need to attach more than 100 tables, contact Snowflake Support.
@@ -499,7 +499,7 @@ Interactive warehouses incur compute charges when active. The minimum billable p
 
 Note
 
-If you resume an interactive warehouse that was suspended (whether manually or through auto-resume), that operation results in a new minimum billable period charge. That charge applies even if you were already being billed for that period because of other recent activity in the warehouse. Therefore, avoid suspending and resuming an interactive warehouse multiple times within a short period. The 24-hour minimum auto-suspend interval helps prevent excessive suspend/resume cycles.
+If you resume an interactive warehouse that was suspended (whether manually or through auto-resume), that operation results in a new minimum billable period charge. That charge applies even if you were already being billed for that period because of other recent activity in the warehouse. Therefore, avoid suspending and resuming an interactive warehouse multiple times within a short period. The 1-hour minimum auto-suspend interval helps prevent excessive suspend/resume cycles.
 
 Note that this differs from auto-scaling, where the minimum billing period for each cluster is 1 hour, with per-second billing after 1 hour. Auto-scaled clusters will remain up and running until the 1 hour minimum billing period has elapsed unless explicitly spun down due to a warehouse suspend or changes to MAX\_CLUSTER\_COUNT.
 

@@ -51,6 +51,8 @@ There are two modes:
 For example, a central data team (the provider) might publish a listing within their organization where row-level access depends on the consumer’s org user group. When another team (the resharer) shares that data further within the organization, `CALLER` mode ensures that each downstream consumer sees only their own entitled rows — not what the resharer sees.
 
 For configuration details, including limitations and YAML syntax, see [Using resharing as a provider](/collaboration/resharing-as-provider).
+For the objects and workflows you can reshare, see
+[Supported objects and workflows](/collaboration/resharing-as-resharer#label-resharing-supported-workflows).
 
 ## Resharing listings workflow
 

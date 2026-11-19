@@ -26,6 +26,7 @@ AI_COMPLETE(
 :   A string specifying the model to be used. For text only inputs, you can use one of the following models:
 
     - `claude-haiku-4-5`
+    - `claude-haiku-5-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
     - `claude-opus-4-7`
@@ -35,6 +36,7 @@ AI_COMPLETE(
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
+    - `claude-sonnet-5-5`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
@@ -70,20 +72,25 @@ AI_COMPLETE(
     For image inputs, you can use one of the following models:
 
     - `claude-haiku-4-5`
+    - `claude-haiku-5-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
+    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
+    - `claude-sonnet-5-5`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
     - `openai-gpt-5`
     - `openai-gpt-5-mini`
     - `openai-gpt-5-nano`
@@ -94,22 +101,27 @@ AI_COMPLETE(
     For document inputs, you can use one of the following models:
 
     - `claude-haiku-4-5`
+    - `claude-haiku-5-5`
     - `claude-opus-4-5`
     - `claude-opus-4-6`
     - `claude-opus-4-7`
     - `claude-opus-4-8`
     - `claude-opus-5`
+    - `claude-opus-5-5`
     - `claude-sonnet-4-5`
     - `claude-sonnet-4-6`
     - `claude-sonnet-5`
+    - `claude-sonnet-5-5`
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
     - `gemini-3.5-flash`
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
 
-    For audio and video inputs, you can use one of the following models:
+    For audio inputs, you can use one of the following models:
 
     - `gemini-3.1-flash-lite`
     - `gemini-3.1-pro`
@@ -117,6 +129,19 @@ AI_COMPLETE(
     - `gemini-3.7-flash`
     - `gemini-3.8-flash`
     - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
+
+    For video inputs, you can use one of the following models:
+
+    - `gemini-3.1-flash-lite`
+    - `gemini-3.1-pro`
+    - `gemini-3.5-flash`
+    - `gemini-3.7-flash`
+    - `gemini-3.8-flash`
+    - `gemini-4-argon`
+    - `gemini-4-carbon`
+    - `gemini-4-hydrogen`
 
     Supported models might have different [costs](/user-guide/snowflake-cortex/aisql-cost#label-cortex-llm-cost-considerations).
 
@@ -260,7 +285,7 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
 
 - To process multiple images, specify a prompt object in the function call that defines a prompt template and the associated image files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the images in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
 - Image support depends on the model. See the image model list under [Arguments](#arguments). Gemini models listed
-  for audio and video inputs also accept audio and video files in the same prompt; see
+  for audio or video inputs also accept audio or video files in the same prompt; see
   [Usage notes for processing audio and video](#usage-notes-for-processing-audio-and-video). Other models accept only
   text and images.
 - Supported image formats:
@@ -283,7 +308,7 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
 
 - To process multiple documents, specify a prompt object in the function call that defines a prompt template and the associated document files. You can use the [PROMPT](/sql-reference/functions/prompt) function to create this object. The prompt template can contain numbered placeholders (*{0}*, *{1}*, etc.) that correspond to the documents in the prompt object. Use the [TO\_FILE](/sql-reference/functions/to_file) function to specify the document files in the prompt object.
 - Document support depends on the model. See the document model list under [Arguments](#arguments). Gemini models
-  listed for audio and video inputs also accept audio and video files in the same prompt; see
+  listed for audio or video inputs also accept audio or video files in the same prompt; see
   [Usage notes for processing audio and video](#usage-notes-for-processing-audio-and-video). Claude models accept only
   text, images, and documents.
 - All models support these formats: `.txt`, `.md`, and `.pdf`. Claude models also support `.txt`, `.md`, `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`, `.csv`, and `.xhtml`.
@@ -299,7 +324,7 @@ The following notes apply to Snowflake-hosted Cortex models. For models deployed
 
 The following notes apply to Snowflake-hosted Cortex models.
 
-- Only the Gemini models listed for audio and video inputs under [Arguments](#arguments) accept audio and video files.
+- Only the Gemini models listed for audio inputs under [Arguments](#arguments) accept audio files. Only the Gemini models listed for video inputs accept video files.
 - Supported audio formats: `.wav`, `.mp3`, `.aiff`, `.aac`, `.ogg`, `.flac`, `.m4a`, `.mp4`, `.pcm`, and `.webm`.
 - Supported video formats: `.mp4`, `.mpeg`, `.mov`, `.avi`, `.flv`, `.mpg`, `.webm`, `.wmv`, and `.3gpp`.
 - A single prompt can include up to 20 image files, 10 audio files, and 10 video files, with a combined size of up to

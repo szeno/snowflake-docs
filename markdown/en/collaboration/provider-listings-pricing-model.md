@@ -295,41 +295,38 @@ in one lump sum.
   cost into multiple smaller payments.
 - Allow providers to define installment payments, including the ability to
   specify larger or smaller payment amounts earlier or later in the
-  subscription term. Providers may also define zero value payments, allowing
-  consumers to skip payments.
+  subscription term.
 
-### Configure listings to bill consumers using installments
+### Configure offers to bill consumers using installments
 
-You must have OWNERSHIP or MODIFY privilege on the listing to configure
-installments. For a complete set of privileges for working with listings
-see [Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares).
+Installments are configured on an offer, not on the listing. You must have
+OWNERSHIP or MODIFY privilege on the listing to configure installments. For a
+complete set of privileges for working with listings, see
+[Privileges required for working with listings](/collaboration/provider-becoming#label-permissions-required-for-working-with-listings-and-shares).
 
-To configure listings for installment payments:
+To configure installment payments on an offer:
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. In the navigation menu, select **Marketplace** » **Provider Studio** » **Listings**.
-3. Find and select the listing where you want to configure for installments.
-4. In the **Access & Pricing** section, select the pencil icon
-   next to **Listing Access**.
-5. Select **Subscription-based**.
-6. Select **Consumer must pay in installments**.
-7. Configure the installment for the listing:
-
-   1. Select **Access period**.
-   2. Specify **Total price**.
-   3. Select **Installment Type**, one of:
-      - **Use equal amounts for all installments**.
-      - **Set custom amount per installment**.
-
-        When using a custom amount you can specify multiple payments and amount
-        per payment, including zero payments.
-8. Select **Save** to save the changes.
+3. Select the listing that you want to create the offer for.
+4. On the **Offers** tab, select **+ Create offer**.
+5. On the **Offer details** page, select an offer type, enter the offer details, and then select **Next**.
+   To use custom installment dates, select **Private offer**.
+6. On the **Billing and payments** tab, select a pricing plan or **Apply one-time pricing**, and then select a contract type.
+   To use custom installment dates, select **Apply one-time pricing** and a **Limited-time** contract.
+7. Set **Payment options** to **Accept installments**.
+8. In the **Installments and payment schedule** section, select an **Installment frequency**:
+   - **Monthly**, **Quarterly**, or **Yearly**: Invoice the consumer at a regular interval.
+   - **Custom**: Set the date and amount of each invoice. This option is available only for [private offers that use one-time pricing](/user-guide/collaboration/listings/pricing-plans-offers/providers-create-manage-offers#label-create-one-time-pricing-offer) with a **Limited-time** contract.
+9. Complete the remaining pages to create the offer. For the full procedures, see
+   [Create a private offer based on a pricing plan](/user-guide/collaboration/listings/pricing-plans-offers/providers-create-manage-offers#label-create-private-offer) and
+   [Create a one-time pricing offer](/user-guide/collaboration/listings/pricing-plans-offers/providers-create-manage-offers#label-create-one-time-pricing-offer).
 
 ### Limitations
 
-Price changes to existing subscription pricing, such as by changing
-non-recurring subscriptions to recurring, and/or by adding installments to
-an existing plan, is not supported. Instead, make a new listing.
+You can’t change the pricing of an existing subscription. For example, you
+can’t change a non-recurring subscription to a recurring subscription, or add
+installments to an existing plan. Instead, create a new offer.
 
 ### Grant consumers early access to your listing
 

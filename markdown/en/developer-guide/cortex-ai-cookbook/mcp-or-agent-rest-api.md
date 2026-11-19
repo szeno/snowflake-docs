@@ -9,7 +9,7 @@ Decide how people reach a Cortex Agent, with identity and policies in each lane,
 | Status | GA |
 | Time to complete | 45min |
 | Edition | Enterprise |
-| Regions | Any commercial region with Cortex Agents; managed MCP servers are not available in government regions |
+| Regions | Any region with Cortex Agents, including government regions except Azure US Gov Virginia (non-FedRAMP High); see [Limitations](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-limitations) |
 | Privileges | ACCOUNTADMIN to create the recipe roles, warehouse, database, and the OAuth security integration; the rest runs as COOKBOOK\_MCP\_OR\_AGENT\_REST\_API\_ADMIN |
 | Related skills | `check-agent-access` ([Snowflake-Labs/coco-skills](https://github.com/Snowflake-Labs/coco-skills)), `rbac` ([Snowflake-Labs/coco-skills](https://github.com/Snowflake-Labs/coco-skills)) |
 | Last verified | 2026-10-04 |
@@ -80,7 +80,7 @@ These cover the MCP lane example in `sql/`. The REST lane is implemented in [mul
 
 | Requirement | Notes |
 | --- | --- |
-| Enterprise edition, commercial region | Managed MCP servers are not supported in government regions. |
+| Enterprise edition | Managed MCP servers are available in government regions except Azure US Gov Virginia (non-FedRAMP High), and haven’t completed formal FedRAMP assessment. |
 | Cortex Agents | In your region or through cross-region inference. The example agent uses `orchestration: auto`. |
 | ACCOUNTADMIN | For the roles, warehouse, and database in `01_setup.sql`, and for the OAuth security integration in `03_oauth_integration.sql`. |
 | An MCP client that supports OAuth | Its connector setup shows the redirect URI you need. Snowflake-managed MCP servers do not support dynamic client registration. |
@@ -242,13 +242,13 @@ A Snowflake `GIT REPOSITORY` object clones a remote repository into the account 
 
 ### Operational limits
 
-- The server URL is `https://<account_url>/api/v2/databases/<db>/schemas/<schema>/mcp-servers/<name>`. Use hyphens, not underscores, in the account hostname.
+- The server URL is `https://<account_url>/api/v2/databases/<db>/schemas/<schema>/mcp-servers/<name>`. Use hyphens, not underscores, in the account hostname: `acme-marketing-test-account`, not `acme-marketing_test_account` ([MCP server URL](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-server-url)).
 - `tools/call` responses stream as Server-Sent Events. Streaming is on by default for every account since August 20, 2026, and cannot be turned off, so there is nothing to enable. [MCP: Streaming responses for tool calls](/release-notes/bcr-bundles/un-bundled/bcr-2405) has Python and Node.js client code. Send `Accept: application/json, text/event-stream` on every request; clients that follow MCP revision 2025-11-25 already do. `tools/list` still returns one JSON body.
-- In testing, a `tools/call` stream sent a `: keep-alive` comment every 5 seconds, then one `data:` event with the whole result, and closed without the `data: [DONE]` event the docs show, so end on stream close. When the request carried `_meta.progressToken`, a `notifications/progress` event (a counter and “Tool call in progress”) came with each keep-alive.
+- A `tools/call` stream sends a `: keep-alive` comment about every 5 seconds, then one `data:` event with the whole JSON-RPC result. There is no separate end-of-stream event, so end when that event arrives or the stream closes. When the request carries `_meta.progressToken`, a `notifications/progress` event (a counter and “Tool call in progress”) comes with each keep-alive.
 - Keep-alives stop proxies and load balancers from dropping an idle connection (HTTP 504s). They do not deliver the answer sooner, so a client’s per-request limit still applies unless the client resets it when progress arrives. To measure both on your own network path, see [Check the stream](#check-the-stream).
 - Generic tool and SQL tool responses are truncated at 250 KB. Agent tool responses include reasoning, tool calls, and citations and can exceed 200 KB; set `max_results` on the agent’s search tool to limit them.
 - Snowflake enforces a maximum recursion depth of 10 invocations. Avoid an agent reachable through MCP that calls another MCP server that calls back into an agent.
-- The server supports tools only: not resources, prompts, roots, or sampling. The docs also list notifications as unsupported; the only one observed in testing is `notifications/progress` inside a `tools/call` stream, described above.
+- The server supports tools only: not resources, prompts, roots, or sampling. It answers `initialize`, `notifications/initialized`, and `ping`, and sends `notifications/progress` inside a `tools/call` stream, described above.
 - MCP server objects are not replicated in failover groups; OAuth security integrations are. Recreate servers on the secondary account.
 - A `CORTEX_ANALYST_MESSAGE` tool on the managed MCP server supports semantic views only, not semantic models. If you plan to expose Cortex Analyst directly, migrate semantic models to semantic views first.
 
@@ -362,7 +362,7 @@ Once the OAuth integration exists and a user’s defaults are set, the MCP clien
 Copy code
 
 ```
-export SNOWFLAKE_ACCOUNT_URL=https://<account_identifier>.snowflakecomputing.com
+export SNOWFLAKE_ACCOUNT_URL=https://<orgname>-<account_name>.snowflakecomputing.com
 export SNOWFLAKE_TOKEN=<token>
 python client/mcp_stream_check.py --idle-timeout 60 --client-deadline 120
 python client/mcp_stream_check.py --no-progress-token   # as a client that does not track progress

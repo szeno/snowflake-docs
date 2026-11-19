@@ -1,9 +1,5 @@
 # Cortex Code with the Cortex Agent SDK
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use the Cortex Code interface to add an agentic coding loop to your application. It can stream messages, use tools,
 ask for permission, and preserve sessions.
 
@@ -20,7 +16,7 @@ Install the package:
 Copy code
 
 ```
-npm install "@snowflake/cortex-agent-sdk@>=0.0.2"
+npm install "@snowflake/cortex-agent-sdk@>=1.0.0"
 ```
 
 Import the Cortex Code interface from `@snowflake/cortex-agent-sdk/code`. Cortex Code requires Node.js 22.22 or
@@ -34,10 +30,10 @@ Install the package:
 Copy code
 
 ```
-pip install "snowflake-cortex-agent-sdk>=0.0.2"
+pip install --upgrade "snowflake-cortex-agent-sdk>=1.0.0"
 ```
 
-Import the Cortex Code interface from `cortex_agent_sdk.cortexcode`.
+Import the Cortex Code interface from `snowflake.cortex.agents.cortexcode`.
 
 Cortex Code requires a compatible `cortex` executable on `PATH`. Installing the SDK doesn’t install Cortex Code.
 Set `CortexCodeAgentOptions.cli_path` if the executable is in another location.
@@ -78,7 +74,7 @@ Copy code
 ```
 import asyncio
 
-from cortex_agent_sdk.cortexcode import (
+from snowflake.cortex.agents.cortexcode import (
     AssistantMessage,
     CortexCodeAgentOptions,
     ResultMessage,
@@ -143,7 +139,7 @@ Copy code
 ```
 import asyncio
 
-from cortex_agent_sdk.cortexcode import CortexCodeAgentOptions, CortexCodeSDKClient
+from snowflake.cortex.agents.cortexcode import CortexCodeAgentOptions, CortexCodeSDKClient
 
 async def main() -> None:
     options = CortexCodeAgentOptions(
@@ -219,7 +215,7 @@ Copy code
 ```
 import asyncio
 
-from cortex_agent_sdk.cortexcode import CortexCodeAgentOptions, StreamEvent, query
+from snowflake.cortex.agents.cortexcode import CortexCodeAgentOptions, StreamEvent, query
 
 async def main() -> None:
     options = CortexCodeAgentOptions(
@@ -260,6 +256,42 @@ CLI mode also supports hooks, MCP servers, permission modes, custom agents, plug
 working directories, and CLI resume and continue controls. Don’t populate executable paths, extra CLI arguments, or
 other privileged configuration from untrusted input.
 
+## Select settings sources and repository hooks
+
+CLI sessions accept `settingSources` in TypeScript and `setting_sources` in Python. The supported values
+are `user`, `project`, and `local`. SDK sessions default to user hook sources. An explicitly empty array
+excludes filesystem hook sources. Repository hooks require both persisted project trust and selection of
+the relevant repository source; selecting a source does not grant trust. Repository-plugin hooks require
+the `project` source. Explicit SDK hook callbacks remain available.
+
+TypeScriptPython
+
+Copy code
+
+```
+const session = await createCortexCodeSession({
+  connection: "my_connection",
+  cwd: "/path/to/project",
+  settingSources: [],
+});
+```
+
+Copy code
+
+```
+options = CortexCodeAgentOptions(
+    connection="my_connection",
+    mode="cli",
+    cwd="/path/to/project",
+    setting_sources=[],
+)
+```
+
+The source/trust policy is enforced by the CLI, so use a CLI version containing that policy with either SDK.
+Structured streamed input accepts user messages with supported content blocks; unknown fields, malformed
+content, and non-user protocol frames raise `TypeError`. Accepted output metadata is omitted from outbound
+user frames. Use dedicated SDK methods for session controls.
+
 ## Control tool permissions
 
 Use a callback to make a decision for each tool call. Use the allowed-tools and disallowed-tools settings when a
@@ -292,7 +324,7 @@ Use `can_use_tool` to allow read-only tools and deny other tools:
 Copy code
 
 ```
-from cortex_agent_sdk.cortexcode import (
+from snowflake.cortex.agents.cortexcode import (
     CortexCodeAgentOptions,
     PermissionResultAllow,
     PermissionResultDeny,
@@ -368,7 +400,7 @@ Use `fork_session()` to branch from a session:
 Copy code
 
 ```
-from cortex_agent_sdk.cortexcode import CortexCodeAgentOptions, fork_session
+from snowflake.cortex.agents.cortexcode import CortexCodeAgentOptions, fork_session
 
 new_session_id = await fork_session(
     previous_session_id,

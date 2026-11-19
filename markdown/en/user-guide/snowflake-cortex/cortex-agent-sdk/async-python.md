@@ -1,9 +1,5 @@
 # Use the asynchronous Python client
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use the asynchronous client to run independent conversations concurrently without blocking an event loop.
 
 ## Mapping
@@ -21,7 +17,7 @@ Use the asynchronous client to run independent conversations concurrently withou
 Copy code
 
 ```
-from cortex_agent_sdk import (
+from snowflake.cortex.agents import (
     AgentResponse,
     AsyncConversation,
     AsyncCortexAgentClient,
@@ -56,7 +52,7 @@ answer: AgentResponse = await turn.result()
 Copy code
 
 ```
-from cortex_agent_sdk import ConversationMessage
+from snowflake.cortex.agents import ConversationMessage
 
 await turn.cancel()
 

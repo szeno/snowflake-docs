@@ -94,6 +94,10 @@ AI Credit pricing only applies to the AI features listed above. Non-AI services 
 storage, and data transfer continue to use Platform Credit pricing. Your existing capacity balance
 and contract terms are unchanged, and no contract amendments are required.
 
+To view your organization’s remaining capacity balance, query the
+[REMAINING\_BALANCE\_DAILY view](/sql-reference/organization-usage/remaining_balance_daily) view in the ORGANIZATION\_USAGE schema. For an example, see
+[Reconcile a billing usage statement](/user-guide/billing-reconcile).
+
 No action is required to receive the ACV based discounts. Note that capacity discounts don’t apply to AI Credits.
 
 ## Example

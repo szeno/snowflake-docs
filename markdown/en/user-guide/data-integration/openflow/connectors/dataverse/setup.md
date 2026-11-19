@@ -163,8 +163,8 @@ Show lessSee more
 | --- | --- |
 | Ingestion Schedule Interval | Interval used as the triggering interval for the processor that fetches the list of tables and initializes ingestion. The default is `300 s`. |
 | Source Tables Filter Strategy | Strategy for filtering tables to be ingested. Can be one of REGEXP and LIST. |
-| Source Tables Filter Value | Value of the tables filter. When Source Tables Filter Strategy is set to REGEXP - this is the regular expression to be matching selected tables. When LIST is provided, then it is a comma separated list of table names. |
-| Column Filter JSON | Optional. A JSON array specifying per-table column filters. Columns can be included or excluded by name (`included`, `excluded`) or by regular expression pattern (`includedPattern`, `excludedPattern`). The `table` value must be the **singular logical entity name** (e.g., `annotation`), not the plural entity set name used in `Source Tables Filter Value` (e.g., `annotations`). For example: `[ {"table": "mytable", "excluded": ["binarycolumn", "binarycolumn_binary"]} ]` excludes large binary columns from `mytable`. See [Replicate a subset of columns in a table](#replicate-a-subset-of-columns-in-a-table) for full details. |
+| Source Tables Filter Value | Value of the tables filter. When Source Tables Filter Strategy is set to REGEXP, this is the regular expression that matches entity set names. When LIST is provided, this is a comma-separated list of entity set names. Use the entity set name, not the table name shown in Microsoft Dataverse. For how to find each name, see the note after this table. |
+| Column Filter JSON | Optional. A JSON array specifying per-table column filters. Columns can be included or excluded by name (`included`, `excluded`) or by regular expression pattern (`includedPattern`, `excludedPattern`). The `table` value must be the **singular logical entity name** (for example, `annotation`), not the entity set name used in `Source Tables Filter Value` (for example, `annotations`). For example: `[ {"table": "mytable", "excluded": ["binarycolumn", "binarycolumn_binary"]} ]` excludes large binary columns from `mytable`. See [Replicate a subset of columns in a table](#replicate-a-subset-of-columns-in-a-table) for full details. |
 | Max Page Size | Number of records fetched from a Dataverse table in a single request. It can’t be larger than 5000. A higher value can increase ingestion speed, but it can also cause timeouts. The default is `1000`. |
 | Merge Task Schedule CRON | CRON expression that defines when data is merged from the journal table into the destination table. The default is `* * * * * ?`, which merges continuously. Use a narrower schedule to reduce how long the warehouse runs. For example, `* 0 * * * ?` merges for one minute at the top of every hour. |
 | Include Formatted Values | Optional. Whether the connector also fetches Dataverse formatted values and writes them to the `_DATAVERSE_FORMATTED_VALUES` column of the destination table. The default is `false`. See [Include formatted values](#label-include-formatted-values). |
@@ -175,15 +175,19 @@ Show lessSee more
 
 Note
 
-When configuring `Source Tables Filter Value`, use the **entity set name** (plural form,
-e.g., `annotations`) rather than the table name displayed in the Microsoft Dataverse
-interface. To find the entity set name for a table, go to
-[Power Apps](https://make.powerapps.com), select **Tables**, find your table,
-then select **Advanced** » **Tools** » **Copy set name**.
+Microsoft Dataverse shows tables in the user interface, but the connector filters
+tables by the OData entity set name. The entity set name is often the logical name
+followed by the letter s (for example, `account` becomes `accounts`), but that
+pattern isn’t always true. Copy the entity set name instead of constructing it.
 
-The `Column Filter JSON` parameter uses a different naming convention — it requires the
-**singular logical entity name** (e.g., `annotation`). See
-[Replicate a subset of columns in a table](#replicate-a-subset-of-columns-in-a-table) for details.
+To copy the entity set name, go to [Power Apps](https://make.powerapps.com),
+select **Tables**, find your table, then select **Advanced** » **Tools**
+» **Copy set name**. Use that value in `Source Tables Filter Value`.
+
+`Column Filter JSON` uses a different name: the singular logical entity name
+(for example, `annotation` for the `annotations` entity set). Copy it from the
+same table menu with **Advanced** » **Tools** » **Copy logical name**.
+For more information, see [Replicate a subset of columns in a table](#replicate-a-subset-of-columns-in-a-table).
 
 ## Run the flow
 
@@ -199,8 +203,8 @@ Add an array of configurations, one entry for every table to which you want to a
 
 Important
 
-The `table` field must use the **singular logical entity name** (e.g., `annotation`),
-not the plural entity set name used in `Source Tables Filter Value` (e.g., `annotations`).
+The `table` field must use the **singular logical entity name** (for example, `annotation`),
+not the entity set name used in `Source Tables Filter Value` (for example, `annotations`).
 To find the logical entity name in Power Apps, go to [Power Apps](https://make.powerapps.com),
 select **Tables**, find your table, then select **Advanced** » **Tools**
 » **Copy logical name**.

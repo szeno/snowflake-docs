@@ -5,6 +5,25 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.50.0 (November 13, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- `printSchema` now reports integer and floating-point types that more closely match Spark
+
+#### Bug fixes
+
+- Fix DataFrame writes that create a table silently committing an open user transaction
+- Fix Iceberg reads and writes failing after setting `spark.wap.branch` to `main`
+- Honor the CSV `inputBufferSize` option on the next-generation file reader instead of dropping it
+
+#### New features
+
+- Support `INSERT OVERWRITE [LOCAL] DIRECTORY ... USING <format>` in Spark SQL
+- Support the hidden `_metadata` column, `input_file_name`, `input_file_block_start`, and `input_file_block_length` for CSV, JSON, and XML reads on the next-generation file reader
+
 ## 1.49.0 (November 6, 2026)
 
 ### Snowpark Connect for Spark

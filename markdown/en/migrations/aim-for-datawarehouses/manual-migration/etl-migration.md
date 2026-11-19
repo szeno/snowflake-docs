@@ -42,6 +42,8 @@ A **dbt project** output is a set of `.sql` model files under `models/` — stag
 
 When Informatica is converted to dbt (the default), you can add the `--consolidate-dbt-model-chains` flag (described in [Conversion flags](#conversion-flags)) to reduce the number of generated model files.
 
+When either platform is converted to dbt, the `--consolidate-dbt-projects` and `--consolidate-as-single-dbt-project` flags change how many dbt projects you get. See [Choosing a dbt project layout](#choosing-a-dbt-project-layout).
+
 ## Conversion flags
 
 All flags below are optional and off by default. They appear in `scai code convert --help` for any source dialect but take effect only when the project actually contains the matching ETL source.
@@ -94,6 +96,52 @@ Copy code
 ```
 scai code convert --consolidate-dbt-model-chains
 ```
+
+### Choosing a dbt project layout
+
+By default, each SSIS data flow and each Informatica mapping converts to its own dbt project. Two flags group that output into fewer projects. Use one of them, not both.
+
+| Layout | Flag | SSIS output | Informatica output |
+| --- | --- | --- | --- |
+| One project per data flow or mapping | None (default) | One dbt project per data flow | One dbt project per mapping |
+| One project per package or folder | `--consolidate-dbt-projects` | One dbt project per package | One dbt project per PowerCenter folder |
+| One project for the whole workload | `--consolidate-as-single-dbt-project` | One dbt project for every package | One dbt project for every folder |
+
+Expand
+
+Show lessSee more
+
+These flags change only dbt output. Don’t pass them for a platform that you convert to Snowflake Scripting.
+
+#### `--consolidate-dbt-projects`
+
+**What it does.** Groups SSIS dbt output into one dbt project per package instead of one per data flow, and Informatica PowerCenter dbt output into one dbt project per folder instead of one per mapping.
+
+**Expected result.** Fewer dbt projects. In an Informatica folder project, each mapping’s models stay under `models/<mapping>/` and are tagged with the mapping name.
+
+Copy code
+
+```
+scai code convert --consolidate-dbt-projects
+```
+
+#### `--consolidate-as-single-dbt-project`
+
+**What it does.** Writes one dbt project, named `etl_dbt_project`, for the whole workload. It applies to SSIS packages and Informatica PowerCenter folders.
+
+**Expected result.** A single dbt project. Models stay grouped inside it: SSIS models by package and data flow, and Informatica models by folder and mapping, under `models/<folder>/<mapping>/` and tagged `<folder>__<mapping>`.
+
+**When to use it.** Use it when you want to deploy and run the whole ETL workload as one dbt project.
+
+Copy code
+
+```
+scai code convert --consolidate-as-single-dbt-project
+```
+
+Note
+
+When you convert with the [Snowflake AIM Agent for Data Warehouses](/migrations/aim-for-datawarehouses/overview), it asks which dbt project layout you want before it converts, and passes the matching flag. It offers the single-project layout only when one platform, SSIS or Informatica, converts to dbt. When both platforms convert to dbt, you choose between the per-package-and-folder layout and the per-data-flow-and-mapping layout, and your answer applies to both.
 
 ## Ingesting non-standard Informatica exports
 

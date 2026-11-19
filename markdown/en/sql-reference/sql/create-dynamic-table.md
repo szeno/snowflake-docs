@@ -386,7 +386,7 @@ For more information about usage and limitations, see
 :   Specifies the dynamic table’s content. Provide exactly one of the following:
 
     - `AS <query>`: For SELECT-based dynamic tables. Specifies the query whose results the dynamic table should contain.
-    - `REFRESH USING ( <dml_statement> )`: For [custom incremental dynamic tables](/user-guide/dynamic-tables/custom-incrementalization). Specifies the `MERGE INTO SELF` or `INSERT INTO SELF` statement that Snowflake executes on each refresh. For details, see [REFRESH USING](/sql-reference/sql/create-dynamic-table#label-create-dt-refresh-using).
+    - `REFRESH USING ( <dml_statement> )`: For [custom incremental dynamic tables](/user-guide/dynamic-tables/custom-incrementalization). Specifies a DML statement, such as `MERGE INTO SELF`, `INSERT INTO SELF`, or `INSERT OVERWRITE INTO SELF ... DELETING WHERE`, that Snowflake executes on each refresh. For details, see [REFRESH USING](/sql-reference/sql/create-dynamic-table#label-create-dt-refresh-using).
 
 ## Optional parameters
 
@@ -476,8 +476,8 @@ For more information about usage and limitations, see
     > Default: `AUTO`
 
 `REFRESH USING ( dml_statement )`
-:   Specifies the DML statement that Snowflake executes on each refresh. The statement must be either `MERGE INTO SELF ...` or
-    `INSERT INTO SELF ...`. The `SELF` keyword references the dynamic table being created.
+:   Specifies the DML statement that Snowflake executes on each refresh. Supported forms include `MERGE INTO SELF ...`,
+    `INSERT INTO SELF ...`, and `INSERT OVERWRITE INTO SELF ... DELETING WHERE (...) ...`. The `SELF` keyword references the dynamic table being created.
 
     Requirements:
 
@@ -487,6 +487,7 @@ For more information about usage and limitations, see
     - Requires an explicit column list in the CREATE DYNAMIC TABLE statement.
 
     For syntax details and examples, see [Custom incrementalization](/user-guide/dynamic-tables/custom-incrementalization).
+    For conditional-overwrite syntax and requirements, see [INSERT](/sql-reference/sql/insert).
 
 `INITIALIZE`
 :   Specifies the behavior of the [initial refresh](/user-guide/dynamic-tables/refresh-modes) of the dynamic table. This property can’t be

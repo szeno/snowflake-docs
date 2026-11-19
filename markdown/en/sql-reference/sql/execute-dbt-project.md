@@ -407,12 +407,14 @@ CREATE OR ALTER TASK my_database.my_schema.run_dbt_project
 AS
   EXECUTE DBT PROJECT my_database.my_schema.my_dbt_project args='run --target prod';
 
-CREATE OR ALTER TASK change_this.public.test_dbt_project
-        WAREHOUSE = my_warehouse
-        AFTER run_dbt_project
+CREATE OR ALTER TASK my_database.my_schema.test_dbt_project
+  WAREHOUSE = my_warehouse
+  AFTER my_database.my_schema.run_dbt_project
 AS
   EXECUTE DBT PROJECT my_database.my_schema.my_dbt_project args='test --target prod';
 ```
+
+As a best practice, create dbt project objects and the tasks that execute them in the same database and schema. For more information, see [Create tasks and dbt project objects in the same database and schema](/user-guide/data-engineering/dbt-projects-on-snowflake-best-practices#label-dbt-best-practices-task-schema).
 
 ### Override the project’s pinned version at execution time for testing or temporary needs
 

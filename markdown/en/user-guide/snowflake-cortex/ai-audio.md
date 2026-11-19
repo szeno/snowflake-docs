@@ -1,10 +1,5 @@
 # Cortex AI Functions: Multimodal
 
-Note
-
-Audio and video processing using AI\_COMPLETE is in public preview. All other multimodal capabilities described on this page are
-generally available.
-
 Cortex AI Functions support multimodal analysis across **documents, images, audio, and video**, enabling end-to-end
 media understanding and processing pipelines directly inside Snowflake.
 
@@ -663,6 +658,9 @@ in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-docume
 | --- | --- | --- | --- | --- |
 | `openai-gpt-4.1` | 1,047,576 | .jpg, .jpeg, .png, .webp, .gif | 10MB | 5 |
 | `claude-sonnet-4-6` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-opus-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-sonnet-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
+| `claude-haiku-5-5` | 1,000,000 | .jpg, .jpeg, .png, .webp, .gif | 3.75 MB [[L1]](#citation-L1) | 20 |
 | `llama4-maverick` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 10 |
 | `pixtral-large` | 128,000 | .jpg, .jpeg, .png, .webp, .gif, .bmp | 10 MB | 8 |
 | `voyage-multimodal-3` | 32,768 | .jpg, .png, .pg, .gif, .bmp | 10 MB | 5 |
@@ -671,7 +669,9 @@ in [AI\_COMPLETE with documents](/user-guide/snowflake-cortex/ai-complete-docume
 | `gemini-3.5-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `gemini-3.7-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `gemini-3.8-flash` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
-| `gemini-4-argon` | 1,000,000 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-4-argon` | 1,048,576 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-4-carbon` | 1,048,576 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
+| `gemini-4-hydrogen` | 1,048,576 | **Images:** .jpg, .jpeg, .png, .webp, .gif **Audio:** .wav, .mp3, .aiff, .aac, .ogg, .flac, .m4a, .mp4, .pcm, .webm **Video:** .mp4, .mpeg, .mov, .avi, .flv, .mpg, .webm, .wmv, .3gpp **Documents:** see [document limits](/user-guide/snowflake-cortex/ai-complete-document-intelligence#supported-models-and-limitations) | 100 MB combined [[P1]](#citation-P1) | 20 images + 10 audio + 10 video [[P1]](#citation-P1) |
 | `twelvelabs-pegasus-1-5` | 261,120 | **Video:** .mp4, .mov, .avi, .mkv, .webm | 2 GB, up to 2 hours of video | 1 video |
 | `twelvelabs-marengo-embed-3-0` [[M1]](#citation-M1) | 4 hours (duration) [[M2]](#citation-M2) | **Video:** .mp4, .mov, .avi, .mkv, .wmv, .webm | 6 GB (video or audio) [[M3]](#citation-M3) | N/A (embedding model) |
 

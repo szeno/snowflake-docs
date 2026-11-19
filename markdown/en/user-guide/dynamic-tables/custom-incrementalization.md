@@ -104,7 +104,34 @@ REFRESH USING (
 )
 ```
 
-`INSERT INTO SELF` only appends rows. Use `MERGE` when you need to update or delete existing rows.
+`INSERT INTO SELF` only appends rows. Use `MERGE` for row-by-row updates and deletes, or
+`INSERT OVERWRITE INTO SELF ... DELETING WHERE` to replace all rows that match a predicate.
+
+### INSERT OVERWRITE INTO SELF DELETING WHERE
+
+Use `INSERT OVERWRITE INTO SELF ... DELETING WHERE` to remove matching rows and insert replacement
+rows in one refresh. Rows for which the predicate is `FALSE` or `NULL` remain. The replacement query is
+independent of the predicate: matching rows are removed even when the query returns no rows.
+
+Copy code
+
+```
+REFRESH USING (
+  INSERT OVERWRITE INTO SELF [ AS <target_alias> ]
+  [ USING ( <using_query> ) [ AS ] <source_alias> ]
+  DELETING WHERE ( <predicate> )
+  [ ( <target_col_name> [ , ... ] ) ]
+  { VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( ... ) ] | <query> }
+)
+```
+
+The optional `USING` query defines a relation that both the delete predicate and the replacement
+query can reference. Reference this relation through a subquery in the predicate, such as
+`target.fact_key IN (SELECT fact_key FROM delta)`. For complete syntax and requirements, see
+[INSERT](/sql-reference/sql/insert).
+
+For a join that produces multiple rows per fact, see
+[Replace all dimension combinations for changed facts](#label-dynamic-tables-custom-incremental-multiple-matches).
 
 ### The CHANGES clause
 
@@ -142,7 +169,7 @@ insertion.
 
 `SELF` has two roles inside `REFRESH USING`:
 
-- **Write target:** `MERGE INTO SELF` or `INSERT INTO SELF`.
+- **Write target:** `MERGE INTO SELF`, `INSERT INTO SELF`, or `INSERT OVERWRITE INTO SELF`.
 - **Read source:** `FROM SELF AS cur` in the `USING` subquery reads the current contents of the
   dynamic table.
 
@@ -214,6 +241,101 @@ Only new clicks since the last refresh are processed. The LEFT OUTER JOIN enrich
 with its page title and section without re-scanning historical data. For a full CDC variant
 that handles updates and deletes using MERGE, see
 [Stream-static join with full CDC](/user-guide/dynamic-tables/design-patterns#label-dynamic-tables-patterns-stream-static-join).
+
+### Replace all dimension combinations for changed facts (INSERT OVERWRITE)
+
+Use conditional overwrite for a stream-static join that can produce zero or multiple rows per fact.
+For example, each sales fact belongs to an audience that matches several rows in each of two
+marketing dimensions, so the join doesn’t preserve the number of fact rows.
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE facts (
+  fact_key INT NOT NULL,
+  audience VARCHAR,
+  amount INT
+) CHANGE_TRACKING = TRUE;
+CREATE OR REPLACE TABLE dim1 (dim1_key INT NOT NULL, audience VARCHAR);
+CREATE OR REPLACE TABLE dim2 (dim2_key INT NOT NULL, audience VARCHAR);
+
+INSERT INTO facts VALUES
+  (1, 'broad', 100), (2, 'broad', 200),
+  (3, 'broad', 300), (4, 'broad', 400);
+INSERT INTO dim1 VALUES (10, 'broad'), (11, 'broad'), (12, 'narrow');
+INSERT INTO dim2 VALUES (20, 'broad'), (21, 'broad'), (22, 'narrow');
+```
+
+This example assumes `fact_key` is unique, non-null, and stable for each fact, and `dim1_key` and
+`dim2_key` uniquely identify rows within their respective dimensions. The `audience` join column
+can match multiple dimension rows. The output identity is `(fact_key, dim1_key, dim2_key)`.
+
+The shared `delta` relation keeps both `INSERT` and `DELETE` actions from the fact changes before
+joining either dimension. The delete predicate removes every existing output row for an affected
+`fact_key`. The replacement query joins only the `INSERT` actions to the current dimension rows.
+
+Copy code
+
+```
+CREATE OR ALTER DYNAMIC TABLE dt_fact_audiences (
+  fact_key INT, dim1_key INT, dim2_key INT, amount INT
+)
+  TARGET_LAG = '30 minutes'
+  WAREHOUSE = transform_wh
+  INITIALIZE = ON_SCHEDULE
+  REFRESH USING (
+    INSERT OVERWRITE INTO SELF AS target
+    USING (
+      SELECT fact_key, audience, amount, METADATA$ACTION AS action
+      FROM facts CHANGES(INFORMATION => DEFAULT)
+    ) AS delta
+    DELETING WHERE (target.fact_key IN (SELECT fact_key FROM delta))
+    SELECT f.fact_key, d1.dim1_key, d2.dim2_key, f.amount
+    FROM delta AS f
+    JOIN dim1 AS d1 ON f.audience = d1.audience
+    JOIN dim2 AS d2 ON f.audience = d2.audience
+    WHERE f.action = 'INSERT'
+  );
+
+ALTER DYNAMIC TABLE dt_fact_audiences REFRESH;
+```
+
+Each fact initially produces four combinations: two matches in `dim1` times two matches in `dim2`.
+Change one fact to a narrower audience, change another to an audience with no dimension matches,
+and delete a third fact:
+
+Copy code
+
+```
+UPDATE facts SET audience = 'narrow', amount = 150 WHERE fact_key = 1;
+UPDATE facts SET audience = 'none' WHERE fact_key = 2;
+DELETE FROM facts WHERE fact_key = 3;
+ALTER DYNAMIC TABLE dt_fact_audiences REFRESH;
+
+SELECT * FROM dt_fact_audiences ORDER BY fact_key, dim1_key, dim2_key;
+```
+
+```
+FACT_KEY | DIM1_KEY | DIM2_KEY | AMOUNT
+---------+----------+----------+-------
+       1 |       12 |       22 |    150
+       4 |       10 |       20 |    400
+       4 |       10 |       21 |    400
+       4 |       11 |       20 |    400
+       4 |       11 |       21 |    400
+```
+
+All twelve old combinations for facts `1`, `2`, and `3` are removed. Fact `1` gets one replacement
+combination, and facts `2` and `3` get none. The four combinations for unchanged fact `4` remain.
+Deleting by `fact_key` removes old combinations even when they are absent from the new join result;
+matching only the new composite output identities would leave those old combinations behind.
+
+Keep deletion keys in the unfiltered fact changes. Filtering out `DELETE` actions or deriving
+these keys from the dimension joins would miss deleted facts or facts with no remaining matches.
+
+As with other [stream-static joins](/user-guide/dynamic-tables/design-patterns#label-dynamic-tables-patterns-stream-static-join),
+dimension-only changes don’t refresh the combinations of unchanged facts. This example reads the
+dimensions at the refresh snapshot when processing fact changes.
 
 ### Audit deletes log (INSERT INTO)
 

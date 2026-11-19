@@ -4,7 +4,13 @@ This topic lists the feature updates that occurred earlier in 2026.
 
 For more recent feature updates, see [Snowflake server release notes and feature updates](/release-notes/new-features).
 
+- [Nov 18, 2026: AI\_EXTRACT citations (Preview)](/release-notes/2026/other/2026-11-18-ai-extract-citations)
+- [Nov 18, 2026: Cortex Agent SDK (General availability)](/release-notes/2026/other/2026-11-18-cortex-agent-sdk-ga)
+- [Nov 18, 2026: Prompt caching for Cortex AI Functions](/release-notes/2026/other/2026-11-18-cortex-prompt-caching)
+- [Nov 18, 2026: Retrieve Cortex Search (General availability)](/release-notes/2026/other/2026-11-18-cortex-search-retrieve-ga)
+- [Nov 18, 2026: Log mode for prompt injection guardrails](/release-notes/2026/other/2026-11-18-prompt-injection-guardrails-log-mode)
 - [Nov 18, 2026: Spark Monitoring UI (General availability)](/release-notes/2026/other/2026-11-18-spark-monitoring-ui-ga)
+- [Nov 18, 2026: Schema detection and evolution for structured types (General availability)](/release-notes/2026/other/2026-11-18-structured-type-inference)
 - [Nov 17, 2026: CoCo Desktop v2.0.0](/release-notes/2026/other/2026-11-17-coco-desktop-v2-0-0)
 - [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
 - [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)

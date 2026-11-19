@@ -8,8 +8,8 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the count of column values that have duplicates, including NULL values. If you specify more than one column argument, returns the
-number of rows where the combination of the specified columns is duplicated.
+Returns the number of distinct values that occur more than once in a column, counting NULL as a value. If you specify more than one
+column argument, returns the number of distinct combinations of the specified columns that occur more than once.
 
 If you want to specify more than one column argument, you can’t call the function directly. For an example of associating the function with
 a table so you can specify multiple column arguments, see [Examples](/sql-reference/functions/dmf_duplicate_count#label-dmf-duplicate-count-columns-example).

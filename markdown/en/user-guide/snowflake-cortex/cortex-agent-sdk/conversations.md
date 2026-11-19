@@ -1,9 +1,5 @@
 # Conversations with the Cortex Agent SDK
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use conversations to maintain context across turns, processes, and application sessions. Start here for most
 applications. Use the lower-level thread, run, and agent-object APIs only when you need direct control over stored
 messages, thread metadata, run IDs, or wire-level Agent API requests.
@@ -50,7 +46,7 @@ Each `send()` uses the default agent unless its options specify an inline, data,
 Copy code
 
 ```
-from cortex_agent_sdk import AgentResponse, Conversation, CortexAgentClient, Turn
+from snowflake.cortex.agents import AgentResponse, Conversation, CortexAgentClient, Turn
 
 client: CortexAgentClient = CortexAgentClient(account="my_account", auth="<token>")
 conversation: Conversation = client.conversations.create(
@@ -402,7 +398,7 @@ Copy code
 ```
 from typing import Any
 
-from cortex_agent_sdk import ClientToolUse
+from snowflake.cortex.agents import ClientToolUse
 
 tool_conversation: Conversation = client.conversations.create(
     origin_application="my-app",
@@ -450,7 +446,7 @@ For other structured client content, pass a `ConversationInput` array to `send()
 Copy code
 
 ```
-from cortex_agent_sdk import ConversationInput
+from snowflake.cortex.agents import ConversationInput
 
 document: ConversationInput = [
     {
@@ -508,7 +504,7 @@ const deleted: SuccessResponse = await convo.delete();
 Copy code
 
 ```
-from cortex_agent_sdk import ConversationMessage
+from snowflake.cortex.agents import ConversationMessage
 
 attached: Conversation = client.conversations.attach(conversation.id)
 branch: Conversation = conversation.branch(message_id=123)

@@ -87,6 +87,10 @@ For the full list of supported versions and how to set account-level defaults, s
 
 Snowflake [tasks](/user-guide/tasks-intro) provide native scheduling for dbt project execution without requiring external orchestrators like Airflow. Understanding the permission model is critical to setting up orchestration correctly.
 
+### Create tasks and dbt project objects in the same database and schema
+
+Create the dbt project object and all tasks that run it in the same database and schema. This lets you view the associated schedules on the dbt project object details page. Fully qualify task names and any `AFTER` predecessors. For SQL examples, see .
+
 ### Understand the two-role model of execution
 
 Every `EXECUTE DBT PROJECT` statement involves two roles:

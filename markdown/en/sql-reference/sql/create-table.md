@@ -249,6 +249,10 @@ For more details about COPY GRANTS, see [COPY GRANTS](/sql-reference/sql/create-
 Creates a new table with the column definitions derived from a set of staged files using the [INFER\_SCHEMA](/sql-reference/functions/infer_schema) function.
 This feature supports Apache Parquet, Apache Avro, ORC, JSON, and CSV files.
 
+If the `INFER_SCHEMA` subquery specifies `INFER_NESTED_TYPES => TRUE`, columns that contain nested data are created as structured
+`OBJECT`, `ARRAY`, or `MAP` columns. For more information, see
+[Create a table with structured columns from your files](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-create).
+
 > Copy code
 >
 > ```
@@ -640,7 +644,7 @@ For more information about backups, see [Backups for disaster recovery and immut
 
     > - Added columns.
     >
-    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+    >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](/user-guide/contacting-support).
     > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
 
     Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
@@ -650,9 +654,14 @@ For more information about backups, see [Backups for disaster recovery and immut
     Loading data from files evolves the table columns when all of the following are true:
 
     - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
-    - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+    - The role used to load the data has the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the table. For Snowpipe, the role that owns
+      the pipe loads the data.
 
     Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
+    To add nested columns as structured columns, also set the
+    [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. For more
+    information, see [Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types).
 
 `DATA_RETENTION_TIME_IN_DAYS = integer`
 :   Specifies the retention period for the table so that Time Travel actions (SELECT, CLONE, UNDROP) can be performed on historical

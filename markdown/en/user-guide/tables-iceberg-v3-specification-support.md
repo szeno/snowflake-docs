@@ -191,7 +191,6 @@ Consider the following information when you use Iceberg v3 features:
 The following Snowflake features aren’t supported for Iceberg v3:
 
 - Append-only streams on externally managed Iceberg tables
-- [Schema inference](/sql-reference/functions/infer_schema#label-iceberg-infer-schema-column-definitions)
 - [Snowpipe Streaming classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview)
 - SnowGov Regions
 

@@ -1,5 +1,7 @@
 # Access control
 
+Snowpipe Streaming uses the default role of the user unless you specify another role. SDK users set the `role` property in the [client configuration](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-configurations). REST API users add a role scope to the JWT, as described in [Use a non-default role](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-rest-api#use-a-non-default-role). Whichever role you use must hold the privileges in the following section.
+
 ## Required access privileges
 
 Calling the Snowpipe Streaming API requires a role with the following privileges:

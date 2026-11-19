@@ -388,8 +388,7 @@ With this configuration, `CREATE APPLICATION SERVICE` and `CREATE ARTIFACT REPOS
 succeed only in `my_app_db`. Attempts in any other database fail.
 
 For conditional rules (for example, blocking Application Services only in a specific
-schema), see [Feature policy rules](/LIMITEDACCESS/feature-policy-rules), which is in
-private preview.
+schema), see [Feature policy rules](/user-guide/feature-policies#label-feature-policy-rules).
 
 ### Restricting app creation in personal databases
 

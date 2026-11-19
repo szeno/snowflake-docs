@@ -18,24 +18,29 @@ You can configure notifications that are sent to individual users when they cros
 thresholds of their per-user quota. For each threshold, you specify the following:
 
 - The threshold percentage (for example, `80` for 80% of the quota).
-- The threshold type: `PROJECTED` (default) or `ACTUAL`.
+- The threshold type: `PROJECTED` or `ACTUAL`.
 - Whether to notify the user directly (`TRUE` or `FALSE`).
-- Which limit the notification is based on (`'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`).
+- Which limit the notification is based on (`'MONTHLY'`, `'WEEKLY'`, or `'DAILY'`). Optional;
+  defaults to `'MONTHLY'`.
 
-Add a notification threshold:
-
-Copy code
-
-```
-CALL my_quota!ADD_NOTIFICATION_THRESHOLD(80, 'PROJECTED', TRUE, 'MONTHLY');
-```
-
-Remove a notification threshold:
+Add notification thresholds:
 
 Copy code
 
 ```
-CALL my_quota!REMOVE_NOTIFICATION_THRESHOLD(80, 'PROJECTED');
+-- Monthly limit (default).
+CALL my_quota!ADD_NOTIFICATION_THRESHOLD(80, 'PROJECTED', TRUE);
+
+-- Weekly limit.
+CALL my_quota!ADD_NOTIFICATION_THRESHOLD(80, 'PROJECTED', TRUE, 'WEEKLY');
+```
+
+Remove a notification threshold. If you omit the cycle, only the monthly threshold is removed:
+
+Copy code
+
+```
+CALL my_quota!REMOVE_NOTIFICATION_THRESHOLD(80, 'PROJECTED', 'WEEKLY');
 ```
 
 View all configured notification thresholds:
@@ -53,6 +58,7 @@ The method returns the following columns:
 | `THRESHOLD` | `NUMBER` | Threshold percentage at which the notification is triggered. |
 | `SPEND_STRATEGY` | `VARCHAR` | Type of threshold: `PROJECTED` or `ACTUAL`. |
 | `NOTIFY_USER` | `BOOLEAN` | Indicates whether the user is notified when they cross the threshold. |
+| `CYCLE` | `VARCHAR` | Limit cycle: `MONTHLY`, `WEEKLY`, or `DAILY`. |
 | `ADDED_TIMESTAMP` | `TIMESTAMP_TZ(9)` | Indicates when the notification was added. |
 
 Expand

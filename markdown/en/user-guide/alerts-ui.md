@@ -124,8 +124,41 @@ Openflow is configured to log events. For information, see the following section
 - [[Optional] Configure an Openflow-specific event table](/user-guide/data-integration/openflow/setup-openflow-spcs-deployment#label-openflow-spcs-event-table) (if you are using Openflow Snowflake)
 
 In the **Alert template** menu, Openflow templates appear in two blocks: templates for Openflow connectors, and templates
-that apply only to Gen2 (Openflow Object Model) connectors. Choose the block that matches the connectors you want to
+that apply only to gen 2 connectors. Choose the block that matches the connectors you want to
 monitor. Fill in the fields the template shows, including any runtime, connector, or table filters.
+
+Openflow alerts run with the privileges of the alert owner role (see [EXECUTE ALERT](/sql-reference/sql/execute-alert)). Each time an
+Openflow alert runs, it finds the event table for every Openflow deployment that the owner role can see. In addition to the
+privileges in [Creating a role for accessing alerts in Snowsight](#label-alerts-center-prerequisites-role), the alert owner role needs the following privileges. If one is
+missing, the alert fails with a `CONDITION_FAILED` status, or it finds no event table and the condition evaluates to false.
+
+- **On the Openflow deployment:**
+  - For gen 2 deployments, USAGE on each Openflow deployment that the role can see. MONITOR on the deployment isn’t
+    enough.
+  - For gen 1 deployments, USAGE on the data plane integration of each deployment.
+- **On the event table:**
+  - If the deployment uses the default event table, the `SNOWFLAKE.EVENTS_VIEWER` application role.
+  - If the deployment uses a custom event table, USAGE on the event table’s database and schema, and SELECT on the event
+    table.
+
+For example, for a gen 2 deployment that uses a custom event table:
+
+Copy code
+
+```
+GRANT USAGE ON OPENFLOW DEPLOYMENT <deployment_name> TO ROLE <alert_owner_role>;
+GRANT USAGE ON DATABASE <event_table_database> TO ROLE <alert_owner_role>;
+GRANT USAGE ON SCHEMA <event_table_database>.<event_table_schema> TO ROLE <alert_owner_role>;
+GRANT SELECT ON EVENT TABLE <event_table_database>.<event_table_schema>.<event_table_name> TO ROLE <alert_owner_role>;
+```
+
+For a gen 1 deployment, replace the first statement with:
+
+Copy code
+
+```
+GRANT USAGE ON INTEGRATION <data_plane_integration_name> TO ROLE <alert_owner_role>;
+```
 
 ### Prerequisites for data quality alerts
 

@@ -1,9 +1,5 @@
 # Cortex Agent SDK features
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 This topic covers feature-specific SDK patterns that build on the quickstart, conversations, and direct API topics.
 Use these patterns when your application needs MCP tools, managed coding-agent controls, or detailed streaming-event
 handling.
@@ -83,7 +79,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk.api import CortexAgentClient
+from snowflake.cortex.agents.api import CortexAgentClient
 
 api = CortexAgentClient(
     account=os.environ["SNOWFLAKE_ACCOUNT"],
@@ -196,7 +192,7 @@ Copy code
 ```
 import asyncio
 
-from cortex_agent_sdk.cortexcode import (
+from snowflake.cortex.agents.cortexcode import (
     CortexCodeAgentOptions,
     CortexCodeSDKClient,
     ResultMessage,
@@ -297,7 +293,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk.api import CortexAgentClient, expand_coding_agent_request
+from snowflake.cortex.agents.api import CortexAgentClient, expand_coding_agent_request
 
 api = CortexAgentClient(
     account=os.environ["SNOWFLAKE_ACCOUNT"],
@@ -394,7 +390,7 @@ Copy code
 import os
 from collections import Counter
 
-from cortex_agent_sdk.api import CortexAgentClient, StreamEvent
+from snowflake.cortex.agents.api import CortexAgentClient, StreamEvent
 
 api = CortexAgentClient(
     account=os.environ["SNOWFLAKE_ACCOUNT"],

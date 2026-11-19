@@ -325,6 +325,11 @@ VALUE_LIST = ('ALL')
 ALTER NETWORK POLICY <name> ADD { ALLOWED_NETWORK_RULE_LIST = ( '<network_rule>' ) | BLOCKED_NETWORK_RULE_LIST = ( '<network_rule>' ) }
 ```
 
+Snowpipe Streaming clients running in Snowpark Container Services, including the Snowflake Connector for Kafka, use
+customer-provided credentials, so this rule applies to them. If a network policy is active and it has no `COMPUTE_POOL`
+network rule for the compute pool, these clients fail with error `390422`. See
+[If your account uses a network policy](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-spcs#label-snowpipe-streaming-hp-spcs-network-policy).
+
 #### Configure caller’s rights for your service using customer-provided credentials
 
 In the service specification, set `enableCustomCredentials` to `true`, as shown in the following specification fragment:

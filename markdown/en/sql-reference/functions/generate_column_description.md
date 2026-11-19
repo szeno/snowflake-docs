@@ -50,7 +50,7 @@ CREATE FILE FORMAT my_parquet_format
   TYPE = parquet;
 
 -- Query the GENERATE_COLUMN_DESCRIPTION function.
-SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'table') AS COLUMNS
+SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'table') AS COLUMN_DESCRIPTION
   FROM TABLE (
     INFER_SCHEMA(
       LOCATION=>'@mystage',
@@ -75,7 +75,7 @@ Copy code
 
 ```
 -- Query the GENERATE_COLUMN_DESCRIPTION function.
-SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'external_table') AS COLUMNS
+SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'external_table') AS COLUMN_DESCRIPTION
   FROM TABLE (
     INFER_SCHEMA(
       LOCATION=>'@mystage',
@@ -102,7 +102,7 @@ CREATE OR REPLACE FILE FORMAT my_parquet_format
   USE_VECTORIZED_SCANNER = TRUE;
 
 -- Query the GENERATE_COLUMN_DESCRIPTION function.
-SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'table') AS COLUMNS
+SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'table') AS COLUMN_DESCRIPTION
   FROM TABLE (
     INFER_SCHEMA(
       LOCATION=>'@my_int_stage',
@@ -125,7 +125,7 @@ Copy code
 
 ```
 -- Query the GENERATE_COLUMN_DESCRIPTION function.
-SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'view') AS COLUMNS
+SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'view') AS COLUMN_DESCRIPTION
   FROM TABLE (
     INFER_SCHEMA(
       LOCATION=>'@mystage',
@@ -140,6 +140,35 @@ SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'view') AS CO
 | "continent"        |
 +--------------------+
 ```
+
+The following example sets `INFER_NESTED_TYPES => TRUE` to return structured type definitions for the nested columns in a set of
+staged Parquet files:
+
+Copy code
+
+```
+-- Generate column definitions from INFER_SCHEMA output that uses INFER_NESTED_TYPES => TRUE.
+SELECT GENERATE_COLUMN_DESCRIPTION(ARRAY_AGG(OBJECT_CONSTRUCT(*)), 'table') AS COLUMN_DESCRIPTION
+  FROM TABLE (
+    INFER_SCHEMA(
+      LOCATION=>'@mystage/orders/',
+      FILE_FORMAT=>'my_parquet_format',
+      INFER_NESTED_TYPES=>TRUE
+    )
+  );
+
++----------------------------------------------------------------+
+| COLUMN_DESCRIPTION                                             |
+|----------------------------------------------------------------|
+| "name" TEXT,                                                   |
+| "address" OBJECT(city TEXT, zip NUMBER(10, 0)),                |
+| "tags" ARRAY(TEXT),                                            |
+| "metadata" MAP(TEXT, BOOLEAN)                                  |
++----------------------------------------------------------------+
+```
+
+For more information, see
+[Choose column types](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-review-types).
 
 Note
 

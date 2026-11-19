@@ -29,9 +29,9 @@ Targeting Cookies:
 
 This table details the specific cookies used by Snowflake. Cookies labeled **Necessary** are required for technical reasons, while
 other cookies are used to track users and enhance the product experience. Third parties serve cookies through the web interface for
-analytics, improving user experience, and other purposes.
+analytics, improving user experience, and other purposes:
 
-| Cookie Name | Domain | Type | Purpose |
+| Cookie name | Domain | Type | Purpose |
 | --- | --- | --- | --- |
 | `user-<encoded_string>` | `apps-api.<string>.<string>.<string>.snowflake.com` | Necessary | Used for user authentication in Snowsight. |
 | `csrf-<token>` | `apps-api.<string>.<string>.<string>.snowflake.com` | Necessary | Used to carry the cross-site request forgery (CSRF) security token between the server and the client in Snowsight. |
@@ -39,6 +39,9 @@ analytics, improving user experience, and other purposes.
 | `snowflakeContext` | `app.snowflake.com` | Necessary | Used to determine the active customer account. |
 | `__dd_s` | `app.snowflake.com` | Necessary | Used for support and SLA management. |
 | `S8_SESSION_<username>__<accountUrl>` | `apps-api.<string>.<string>.<string>.snowflake.com` | Necessary | Used for user authentication. |
+| `__Host-Snowflake-PEP-Auth`, `__Host-Snowflake-Auth` (including numbered variants) | Snowsight sign-in hostname (host-only) | Necessary | Used for user authentication in Snowsight. |
+| `__Host-Snowflake-PEP-State`, `__Host-Snowflake-State` | Snowsight sign-in hostname (host-only) | Necessary | Used to complete sign-in and prevent OAuth cross-site request forgery (CSRF) attacks. |
+| `authparams` | Domain shared with Snowsight, such as `app.snowflake.com` | Necessary | Used to pass account and sign-in information to Snowsight after login. |
 | `snowflake_deployment` | `app.snowflake.com` | Necessary | Used for randomized deployment of asset retrieval to support content delivery network (CDN) functionality. |
 | `__stripe_mid` | `app.snowflake.com` | Necessary | Used for Stripe fraud prevention if using payment processing functionality. |
 | `docai_version` | `app.snowflake.com` | Necessary | Used for blue/green deployment of updates to applications. |
@@ -47,6 +50,18 @@ analytics, improving user experience, and other purposes.
 Expand
 
 Show lessSee more
+
+The cookies set depend on the sign-in method and the features enabled for your account. Session cookies can store sign-in
+information for multiple accounts. If a session cookie is split into multiple cookies, each cookie name ends with a numbered
+suffix, such as `-0` or `-1`.
+
+Cookies with the `__Host-` prefix are restricted to the hostname that sets them. They aren’t shared with other hostnames or
+subdomains. The state cookies are temporary cookies used during sign-in. The `authparams` cookie is a temporary cookie that
+Snowsight reads after login; some sign-in flows pass this information without setting a cookie.
+
+During authentication updates, you might also see `__Host-Snowflake-PEP-Shadow-Auth` or numbered variants such as
+`__Host-Snowflake-PEP-Shadow-Auth-0`. Snowflake uses this host-only cookie to validate authentication behavior during rollout.
+The shadow cookie doesn’t authenticate your requests.
 
 ## Manage cookies used by Snowflake
 
@@ -63,8 +78,8 @@ Snowflake does not currently provide functionality for end-user cookie consent m
 third-party solutions that provide this functionality. You can work with your internal IT teams or consult with your Snowflake implementation
 partners to identify the right cookie solution for your organization’s needs.
 
-If you choose to reject cookies, you can still use Snowsight. Your access to some functionality and
-areas of the web interface might be restricted.
+Rejecting cookies required for authentication can prevent you from signing in to Snowsight or interrupt your session.
+Rejecting other cookies might restrict access to some functionality and areas of the web interface.
 
 ## More information about Snowflake, cookies, and tracking technology
 

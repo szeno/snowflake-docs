@@ -28,7 +28,7 @@ GET\_DDL currently supports the following object types:
 - Openflow deployments, runtimes, and connectors (see [CREATE OPENFLOW DEPLOYMENT](/sql-reference/sql/create-openflow-deployment),
   [CREATE OPENFLOW RUNTIME](/sql-reference/sql/create-openflow-runtime), [CREATE OPENFLOW CONNECTOR](/sql-reference/sql/create-openflow-connector))
 - Pipes (see [CREATE PIPE](/sql-reference/sql/create-pipe))
-- Policies (see [CREATE AGGREGATION POLICY](/sql-reference/sql/create-aggregation-policy) , [CREATE AUTHENTICATION POLICY](/sql-reference/sql/create-authentication-policy) , [CREATE DATA MOVEMENT POLICY](/sql-reference/sql/create-data-movement-policy) , [CREATE JOIN POLICY](/sql-reference/sql/create-join-policy) ,
+- Policies (see [CREATE AGGREGATION POLICY](/sql-reference/sql/create-aggregation-policy) , [CREATE AUTHENTICATION POLICY](/sql-reference/sql/create-authentication-policy) , [CREATE DATA MOVEMENT POLICY](/sql-reference/sql/create-data-movement-policy) , [CREATE INGRESS POLICY](/sql-reference/sql/create-ingress-policy) , [CREATE JOIN POLICY](/sql-reference/sql/create-join-policy) ,
   [CREATE MASKING POLICY](/sql-reference/sql/create-masking-policy) , [CREATE PASSWORD POLICY](/sql-reference/sql/create-password-policy) , [CREATE PRIVACY POLICY](/sql-reference/sql/create-privacy-policy) ,
   [CREATE PROJECTION POLICY](/sql-reference/sql/create-projection-policy) , [CREATE ROW ACCESS POLICY](/sql-reference/sql/create-row-access-policy) , [CREATE SESSION POLICY](/sql-reference/sql/create-session-policy),
   [CREATE STORAGE LIFECYCLE POLICY](/sql-reference/sql/create-storage-lifecycle-policy))
@@ -77,7 +77,7 @@ GET_DDL( '<object_type>' , '[<namespace>.]<object_name>' [ , <use_fully_qualifie
     - INTEGRATION (storage)
     - MCP\_SERVER
     - PIPE
-    - POLICY (aggregation, authentication, data movement, join, masking, password, projection, row access, session, and storage lifecycle policies)
+    - POLICY (aggregation, authentication, data movement, ingress, join, masking, password, projection, row access, session, and storage lifecycle policies)
     - PROCEDURE (for stored procedures)
     - REPLICATION\_GROUP
     - SCHEMA

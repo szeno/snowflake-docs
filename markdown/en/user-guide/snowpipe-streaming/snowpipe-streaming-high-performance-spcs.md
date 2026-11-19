@@ -2,7 +2,7 @@
 
 Beginning with SDK version 1.5.0, you can run the Snowpipe Streaming SDK inside [Snowpark Container Services (SPCS)](/developer-guide/snowpark-container-services/overview). The SDK authenticates by using the workload-identity token that the SPCS runtime mounts into your container, so you don’t store private keys, OAuth client secrets, or PATs in the container image.
 
-This support applies to the Java, Python, and Node.js SDKs.
+This support applies to the Java, Python, Node.js, and C++ SDKs.
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ Copy code
 
 Bundle the SDK into your container image alongside your application code. The following examples show minimal Dockerfile snippets for each language. Adapt them to your existing image and base layer.
 
-JavaPythonNode.js
+JavaPythonC++Node.js
 
 Copy code
 
@@ -82,6 +82,39 @@ COPY app.py /app/
 COPY profile.json /app/
 
 ENTRYPOINT ["python", "/app/app.py"]
+```
+
+Copy code
+
+```
+FROM debian:bookworm-slim
+
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl gnupg cmake make g++
+
+# Download, verify, and unpack the C++ SDK package (SPCS runs linux/amd64 images, so use the Linux x86_64 package)
+ARG SDK_VERSION=1.9.4
+ARG SDK_PACKAGE=snowflake-streaming-ingest-cpp-${SDK_VERSION}-Linux-x86_64.tar.gz
+ARG GPG_KEY_ID=3C98F63C9292CE02
+WORKDIR /opt/snowflake-streaming-ingest
+RUN for f in ${SDK_PACKAGE} ${SDK_PACKAGE}.sha256 ${SDK_PACKAGE}.asc; do \
+      curl -fsSLO https://sfc-repo.snowflakecomputing.com/snowpipe-streaming-cpp/${SDK_VERSION}/linux_x86_64/$f || exit 1; \
+    done && \
+    sha256sum -c ${SDK_PACKAGE}.sha256 && \
+    curl -fsSL "https://keyserver.ubuntu.com/pks/lookup?op=get&search=0x${GPG_KEY_ID}" | gpg --import && \
+    gpg --verify ${SDK_PACKAGE}.asc ${SDK_PACKAGE} && \
+    tar -xzf ${SDK_PACKAGE} --strip-components=1 && \
+    rm ${SDK_PACKAGE} ${SDK_PACKAGE}.sha256 ${SDK_PACKAGE}.asc
+
+WORKDIR /app
+
+# Build your application (linked against the Snowpipe Streaming C++ SDK)
+COPY CMakeLists.txt main.cc /app/
+RUN cmake -S . -B build -DCMAKE_PREFIX_PATH=/opt/snowflake-streaming-ingest && cmake --build build
+
+# profile.json with authorization_type=SPCS
+COPY profile.json /app/
+
+ENTRYPOINT ["/app/build/my-streaming-app"]
 ```
 
 Copy code

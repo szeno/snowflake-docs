@@ -18,6 +18,21 @@ INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ]
        }
 ```
 
+To replace selected rows, use `OVERWRITE` with `DELETING WHERE`:
+
+Copy code
+
+```
+INSERT OVERWRITE INTO <target_table> [ AS <target_alias> ]
+       [ USING ( <using_query> ) [ AS ] <delta_alias> ]
+       DELETING WHERE ( <predicate> )
+       [ ( <target_col_name> [ , ... ] ) ]
+       {
+           VALUES ( { <value> | DEFAULT | NULL } [ , ... ] ) [ , ( ... ) ]
+         | <query>
+       }
+```
+
 ## Required parameters
 
 `target_table`
@@ -45,8 +60,9 @@ INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ]
 ## Optional parameters
 
 `OVERWRITE`
-:   Specifies that the target table should be truncated before inserting the values into the table. Note that specifying this option does
-    not affect the access control privileges on the table.
+:   Specifies that existing rows are removed before new rows are inserted. Without `DELETING WHERE`, all existing rows are removed.
+    With `DELETING WHERE`, only rows for which the predicate evaluates to `TRUE` are removed. Specifying this option doesn’t change
+    the access control privileges granted on the table.
 
     INSERT statements with `OVERWRITE` can be processed within the scope of the current transaction, which avoids DDL statements that
     commit a transaction, such as:
@@ -58,7 +74,28 @@ INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ]
     > CREATE TABLE t AS SELECT * FROM ... ;
     > ```
 
-    Default: No value (the target table is not truncated before performing the inserts).
+    Default: No value (existing rows aren’t removed before performing the inserts).
+
+`AS target_alias`
+:   Specifies an alias for the target table in a conditional overwrite statement. Use this alias to qualify target columns in
+    `DELETING WHERE`. The `AS` keyword is required for this alias.
+
+`USING ( using_query ) [ AS ] delta_alias`
+:   Defines a relation that subqueries in `DELETING WHERE` and the insertion query can both reference. The relation must have an
+    alias; `AS` before this alias is optional. The `USING` query can’t reference the target alias.
+
+    The relation isn’t an implicit row source in the deletion predicate. For example, use
+    `t.id IN (SELECT id FROM delta)`, rather than `t.id = delta.id`.
+
+`DELETING WHERE ( predicate )`
+:   Specifies which existing target rows to remove. The predicate must be a Boolean expression enclosed in parentheses.
+    Rows for which the predicate evaluates to `FALSE` or `NULL` remain in the table.
+
+    Deletion and insertion are independent: all rows returned by the insertion query are inserted, even if they don’t satisfy
+    the deletion predicate. Matching target rows are removed even when the insertion query returns no rows. The predicate
+    doesn’t apply to newly inserted rows.
+
+    This clause requires `OVERWRITE`. If you specify a target column list, place it after `DELETING WHERE`.
 
 `( target_col_name [ , ... ] )`
 :   Specifies one or more columns in the target table into which the corresponding values are inserted. The number of target columns specified
@@ -81,8 +118,18 @@ INSERT [ OVERWRITE ] INTO <target_table> [ ( <target_col_name> [ , ... ] ) ]
       ( 1, 2, 3 ) ,
       ( 2, 3, 4 )
   ```
-- To use the OVERWRITE option on INSERT, you must use a role that has DELETE privilege on the table because OVERWRITE will delete the
-  existing records in the table.
+- To use `OVERWRITE` on `INSERT`, you must use a role that has both `INSERT` and `DELETE` privileges on the target table.
+  `DELETING WHERE` doesn’t require the `TRUNCATE` privilege.
+- `DELETING WHERE` is supported only for single-target `INSERT OVERWRITE`. It isn’t supported for plain `INSERT INTO` or
+  [multi-table INSERT](/sql-reference/sql/insert-multi-table).
+- Conditional overwrite supports permanent, temporary, and transient tables, and writable
+  [Iceberg tables](/user-guide/tables-iceberg). It doesn’t support versioned targets, such as an Iceberg branch, or other special
+  table types such as hybrid, interactive, and event tables.
+- To use conditional overwrite in a [custom incremental dynamic table](/user-guide/dynamic-tables/custom-incrementalization),
+  specify `SELF` as the target inside `REFRESH USING`. Conditional overwrite isn’t supported as a direct statement against a
+  dynamic table.
+- Conditional overwrite preserves duplicates in retained rows and inserted rows. It doesn’t deduplicate replacement rows.
+  Deletion and insertion form one transactional operation: if insertion fails, the deletion isn’t committed.
 - Some types of expressions can’t be specified in the VALUES clause, including the following expressions:
 
   - Subqueries
@@ -523,6 +570,60 @@ SELECT * FROM sf_employees;
 | Michael    | Arnett    | 1-650-333-3333 | San Francisco | 94116       |
 +------------+-----------+----------------+---------------+-------------+
 ```
+
+### Replace selected rows using DELETING WHERE
+
+This example removes all existing rows for a selected key and inserts one replacement. Rows with other keys remain.
+
+Copy code
+
+```
+CREATE OR REPLACE TABLE replacement_target (id INT, label VARCHAR);
+INSERT INTO replacement_target VALUES (1, 'old'), (1, 'old'), (2, 'keep');
+
+INSERT OVERWRITE INTO replacement_target AS t
+  USING (SELECT 1 AS id, 'new' AS label) AS delta
+  DELETING WHERE (t.id IN (SELECT id FROM delta))
+  SELECT id, label FROM delta;
+
+SELECT * FROM replacement_target ORDER BY id;
+```
+
+Both old rows with `id = 1` are removed:
+
+```
++----+-------+
+| ID | LABEL |
+|----+-------|
+| 1  | new   |
+| 2  | keep  |
++----+-------+
+```
+
+A replacement query that returns no rows still removes the matching target rows:
+
+Copy code
+
+```
+INSERT OVERWRITE INTO replacement_target
+  DELETING WHERE (id = 1)
+  SELECT 1, 'unused' WHERE FALSE;
+
+SELECT * FROM replacement_target ORDER BY id;
+```
+
+Only the unmatched row remains:
+
+```
++----+-------+
+| ID | LABEL |
+|----+-------|
+| 2  | keep  |
++----+-------+
+```
+
+For a refresh that replaces multiple dimension combinations for each changed fact, see
+[Stream-static join with multiple dimension matches](/user-guide/dynamic-tables/custom-incrementalization#label-dynamic-tables-custom-incremental-multiple-matches).
 
 ### Write to a v3 Apache Iceberg™ table
 

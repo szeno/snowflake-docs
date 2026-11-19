@@ -199,6 +199,7 @@ The following domains are used by the Box connector.
 
 > - `api.box.com`
 > - `box.com`
+> - `dl.boxcloud.com`
 
 ### Confluence
 

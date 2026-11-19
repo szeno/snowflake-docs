@@ -8,15 +8,13 @@ with your own data. This topic describes how to reshare incoming data.
 - The provider’s listing must have `resharing.enabled` set to `true`.
 - You must create secure views in your own database. You can’t modify the imported database directly.
 - The same role must create the share and grant it to the listing.
+- To reshare across regions in `RESHARER` mode, the role that owns the secure view must have both the `EXECUTE TASK` and
+  `EXECUTE MANAGED TASK` privileges on the account. Without them, Snowflake can’t create the hidden dynamic tables, and the listing isn’t
+  fulfilled to remote regions. See [Privileges required for cross-region resharing](#label-resharing-cross-region-privileges).
 
 ## Limitations
 
 - Resharing of apps is not supported.
-- You can’t attach data objects from imported databases or Uniform Listing Locators (ULLs) directly to another share. To reshare data
-  objects from an incoming listing, you must create a secure view in your database.
-- Resharers can reshare tables, dynamic tables, and views from incoming data products allowed for resharing by creating a secure view.
-  UDFs and UDTFs can be reshared only from a `CALLER`-mode listing. For the full comparison, see
-  [Objects supported for sharing and resharing](/collaboration/resharing-as-provider#objects-supported-for-sharing-and-resharing).
 - Reshared listings don’t support disaster recovery.
 - If the provider’s listing uses `reshare_policy_enforcement: CALLER`, the listing must be from the same Snowflake organization. You can
   create secure views that reference provider data either via the listing’s ULL or via a mounted imported database:
@@ -34,11 +32,42 @@ with your own data. This topic describes how to reshare incoming data.
   ```
 - If the provider’s listing uses `reshare_policy_enforcement: CALLER`, your reshared listing must also use
   `reshare_policy_enforcement: CALLER`. You cannot switch to `RESHARER` mode when resharing data from a CALLER-mode provider.
+- In `RESHARER` mode, dynamic tables are supported only when the resharer and the consumers are in the same region.
 
 Note
 
 To reshare UDFs or UDTFs from a provider’s data product, the provider’s listing must have `reshare_policy_enforcement` set to `CALLER`.
 Resharing UDFs and UDTFs is not supported when the provider uses `RESHARER` mode.
+
+## Supported objects and workflows
+
+Grant objects from your own database to the outgoing share. You can’t attach objects from an imported database or a Uniform Listing Locator
+(ULL) directly to another share.
+
+The following table lists the combinations that work. Build your reshared listing from one of these workflows.
+
+| Incoming object from the provider | Objects you add locally | Object you grant to the share | RESHARER | CALLER |
+| --- | --- | --- | --- | --- |
+| Table | None, or one or more local views | Secure view | Supported | Supported |
+| View | None, or one or more local views | Secure view | Supported | Supported |
+| Dynamic table | None, or one or more local views | Secure view | Supported | Supported |
+| UDF or UDTF | None | The function, or a secure view that calls it | Not supported | Supported |
+
+Expand
+
+Show lessSee more
+
+- `CALLER` requires every account in the chain (provider, resharer, and consumers) to belong to the same Snowflake organization.
+- Direct shares always use `RESHARER` mode. You can reshare tables, dynamic tables, and views from a direct share through a secure view.
+  For restrictions, see [Resharing shares](/user-guide/data-share-consumers#resharing-shares).
+- For the object-type comparison with ordinary sharing, see
+  [Objects supported for sharing and resharing](/collaboration/resharing-as-provider#objects-supported-for-sharing-and-resharing).
+
+Note
+
+Context functions in the secure view that you create still resolve in each consumer’s context. You can filter rows per consumer in that
+view. Context functions in the provider’s views and policies follow the listing’s policy enforcement mode. For the supported functions,
+see [Supported context functions](/collaboration/resharing-as-provider#label-resharing-supported-context-functions).
 
 ## Resharing workflow
 
@@ -131,6 +160,21 @@ resharing. To see whether auto-fulfillment has replicated the listing to a targe
 In `RESHARER` mode, Snowflake creates the hidden dynamic tables automatically for each reshared view granted to the share, including views
 that you add to the share later. You don’t need to create them yourself.
 
+### Patterns not supported in cross-region RESHARER mode
+
+These patterns aren’t supported when the provider’s listing uses `RESHARER` mode and you reshare to another region. Use the alternative in
+the table, or ask the provider to use `CALLER` mode if every account is in the same organization.
+
+| Not supported | Do this instead |
+| --- | --- |
+| A SQL UDTF between the provider’s table or view and your outgoing view | Move the logic into the secure view that you grant to the share. |
+| A SQL scalar UDF that reads the imported database | Put the UDF’s query in the secure view. |
+| A SQL UDTF as the object you grant to the share | Grant a secure view that contains the query instead. |
+
+Expand
+
+Show lessSee more
+
 ### Privileges required for cross-region resharing
 
 In `RESHARER` mode, Snowflake creates the hidden dynamic tables by running tasks using the role that owns the secure view in your share.
@@ -193,6 +237,15 @@ provider to resolve the issue. This error can occur when:
 To confirm whether resharing is currently enabled for the imported database, check the `resharing_settings` column in the output of
 SHOW DATABASES, or in Snowsight verify that **Reshare** is **Allowed**. For detailed steps, see
 [Verify that an imported database allows resharing](#verify-that-an-imported-database-allows-resharing).
+
+### Query fails with Object does not exist or not authorized
+
+When a consumer in another region queries a reshared view, the query can fail with `SQL compilation error: Object does not exist or not authorized`
+(error 002003).
+
+This happens when the view depends on an object that isn’t supported in cross-region `RESHARER` mode. See
+[Patterns not supported in cross-region RESHARER mode](#label-resharing-cross-region-unsupported). Update the view to a supported pattern,
+then refresh the listing.
 
 ### Consumers in a remote region can’t query a reshared view
 

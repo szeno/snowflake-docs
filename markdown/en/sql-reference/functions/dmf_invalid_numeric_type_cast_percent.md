@@ -8,7 +8,7 @@ Categories:
 Data Quality Monitoring requires Enterprise Edition. To inquire about upgrading, please contact
 [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
-Returns the percentage of non-NULL column values that cannot be parsed as numeric. The percentage is computed over the total row
+Returns the percentage of column values that cannot be parsed as numeric. The percentage is computed over the total row
 count, including NULL values in the denominator.
 
 This topic provides the syntax for calling the function directly. To learn how to associate the function with a table or view so it

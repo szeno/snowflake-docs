@@ -59,7 +59,7 @@ How to set up Snowflake CoWork profiles and their agents so they stay accurate, 
 
 ## Scale and cost
 
-[![Chart: credits per question for a flat profile and a profile with subagents, from 8 to 2,189 semantic views. The flat profile is cheaper below about 30 views; above that, the profile with subagents is cheaper, and the flat profile fails at about 1,100 views.](/static/images/cortex-ai-cookbook/multi-agent-orchestration/flat-vs-routed-cost.png)](/static/images/cortex-ai-cookbook/multi-agent-orchestration/flat-vs-routed-cost.png)
+[![Chart: credits per question for a flat profile and a profile with subagents, from 8 to 2,189 semantic views. The flat profile is cheaper below about 30 views; above that, the profile with subagents is cheaper, and the flat profile fails at about 1,100 views.](/static/images/cortex-ai-cookbook/multi-agent-orchestration/diagrams/flat-vs-routed-cost.png)](/static/images/cortex-ai-cookbook/multi-agent-orchestration/diagrams/flat-vs-routed-cost.png)
 
 **What one semantic view costs.** On a flat profile, each semantic view is one Cortex Analyst tool definition of about 3,500 characters (about 1,500 tokens), and the agent re-reads every definition on every step. Most of that is the fixed tool definition, so a small semantic view and a large one cost about the same; the view’s custom instructions and verified queries are added on top. In Snowflake’s evaluations, a flat profile with 30 semantic views sent about 88,000 tokens on its first model call and about 360,000 input tokens per question. On a profile with subagents, each subagent adds about 530 tokens, read once per routing decision, and each subagent re-reads only its own few views.
 

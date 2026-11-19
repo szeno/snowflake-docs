@@ -1,9 +1,5 @@
 # Use the direct Cortex Agent API
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Use [conversations](/user-guide/snowflake-cortex/cortex-agent-sdk/conversations) for most application flows. The
 conversation API manages threads, parent messages, durable turns, event replay, cancellation, and final-response
 fallback behavior for you.
@@ -34,7 +30,7 @@ The direct TypeScript client exposes `api.agent`, `api.codingAgent`, `api.thread
 Copy code
 
 ```
-from cortex_agent_sdk.api import CortexAgentClient
+from snowflake.cortex.agents.api import CortexAgentClient
 
 api: CortexAgentClient = CortexAgentClient(account="my_account", auth="<token>")
 ```
@@ -123,7 +119,7 @@ Stream events:
 Copy code
 
 ```
-from cortex_agent_sdk.api import CortexAgentClient
+from snowflake.cortex.agents.api import CortexAgentClient
 
 api: CortexAgentClient = CortexAgentClient(account="my_account", auth="<token>")
 
@@ -141,7 +137,7 @@ Get the completed response:
 Copy code
 
 ```
-from cortex_agent_sdk.api import AgentResponseView
+from snowflake.cortex.agents.api import AgentResponseView
 
 view: AgentResponseView = api.agent.run(
     {
@@ -210,7 +206,7 @@ Start a low-level background run:
 Copy code
 
 ```
-from cortex_agent_sdk.api import BackgroundRun
+from snowflake.cortex.agents.api import BackgroundRun
 
 run: BackgroundRun = api.agent.run(
     {
@@ -611,7 +607,7 @@ Copy code
 ```
 import os
 
-from cortex_agent_sdk.api import AgentEvent, CortexAgentClient
+from snowflake.cortex.agents.api import AgentEvent, CortexAgentClient
 
 api: CortexAgentClient = CortexAgentClient(
     account=os.environ["SNOWFLAKE_ACCOUNT"],

@@ -1,6 +1,6 @@
 # Configurations for Snowpipe Streaming with high-performance architecture
 
-This guide describes the configuration settings for the high-performance Snowpipe Streaming client that are available in the Java, Python, and Node.js SDKs. There are two distinct kinds of configuration:
+This guide describes the configuration settings for the high-performance Snowpipe Streaming client that are available in the Java, Python, Node.js, and C++ SDKs. There are two distinct kinds of configuration:
 
 - Process-wide environment variables: Variables that control logging and metrics for the entire running application and must be set before the client is initialized.
 - Client-side properties: Properties that define the secure connection and ingestion target — such as, `url`, `user`, and `private_key` — and are configured for a specific client object, typically through an inline map or a `profile.json` file.
@@ -80,7 +80,7 @@ The following table shows the high-performance SDK optional properties:
 
 | Property | Description |
 | --- | --- |
-| `role` | Access control role to use for the session after connecting to Snowflake. |
+| `role` | Access control role to use for the session after connecting to Snowflake. The role can be a non-default role. It overrides the default role of the user. If you don’t set this property, the SDK uses the default role of the user. The role must be granted to the user and must have the privileges listed in [Access control](/user-guide/snowpipe-streaming/snowpipe-streaming-access-control). |
 | `authorization_type` | Property that configures the authentication method. Options are: `JWT` (key-pair authentication, default), `OAUTH` (OAuth access token), and `PAT` (personal access token). OAuth and PAT require SDK version 1.4.0 or later. |
 | `application` | Optional string that identifies a partner application. Appended to the `User-Agent` header as `(app=<value>)` on every outgoing request, enabling partner attribution through a [Connection String Identifier (CSID)](/collaboration/provider-listings-reference#label-listings-csids). Must be 1–64 visible ASCII characters (0x21–0x7E), excluding `(`, `)`, and `\`. If not set, falls back to the `SS_APPLICATION` environment variable, which is subject to the same constraints. |
 
@@ -94,7 +94,7 @@ Snowflake strongly recommends that you externalize secrets, such as the `private
 
 ## FIPS 140-3 compliance
 
-Beginning with SDK version 1.5.0, the Snowpipe Streaming SDK uses a FIPS 140-3 validated cryptographic provider for TLS connections and data encryption. The change applies to the Java, Python, and Node.js SDKs and is enabled automatically. You don’t need to update your application or change configuration to use it.
+Beginning with SDK version 1.5.0, the Snowpipe Streaming SDK uses a FIPS 140-3 validated cryptographic provider for TLS connections and data encryption. The change applies to the Java, Python, Node.js, and C++ SDKs and is enabled automatically. You don’t need to update your application or change configuration to use it.
 
 What this means for your application:
 
@@ -134,7 +134,7 @@ Copy code
 
 The following examples show how to define client-side properties directly in code:
 
-JavaPythonNode.js
+JavaPythonNode.jsC++
 
 Copy code
 
@@ -180,6 +180,25 @@ const client = await createClient({
     private_key: "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----",
   },
 });
+```
+
+Copy code
+
+```
+sn::ClientOptions options;
+options.client_name = "my-client";
+options.db_name = "MY_DATABASE";
+options.schema_name = "MY_SCHEMA";
+options.pipe_name = "MY_PIPE";
+options.properties = {
+    {"authorization_type", "JWT"},
+    {"url", "https://<account_identifier>.snowflakecomputing.com"},
+    {"user", "MY_SNOWFLAKE_USER"},
+    {"account", "XY12345"},
+    {"private_key_file", "/path/to/rsa_key.p8"},
+    {"role", "MY_INGEST_ROLE"},
+};
+// ... code to create the client with 'options'
 ```
 
 ### Environment variable configuration

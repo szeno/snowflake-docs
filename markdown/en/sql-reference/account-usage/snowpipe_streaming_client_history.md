@@ -3,7 +3,7 @@ Schema:
 
 # SNOWPIPE\_STREAMING\_CLIENT\_HISTORY view
 
-This Account Usage view can be used to query the amount of time spent loading data into Snowflake tables using [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) within the last 365 days (1 year). The view displays the amount of data loaded and timestamp of the Snowpipe Streaming client calls for your entire Snowflake account.
+This Account Usage view can be used to query the events recorded for [Snowpipe Streaming](/user-guide/snowpipe-streaming/data-load-snowpipe-streaming-overview) clients within the last 365 days (1 year). Each row is a single client event, such as `BLOB_PERSIST`, with the time the event occurred and the size of the blob. The view doesn’t record durations. It covers your entire Snowflake account.
 
 ## Columns
 
@@ -11,7 +11,7 @@ This Account Usage view can be used to query the amount of time spent loading da
 | --- | --- | --- |
 | CLIENT\_NAME | VARCHAR | Name of the Snowpipe Streaming ingest client. |
 | SNOWFLAKE\_PROVIDED\_ID | VARCHAR | Internal/system-generated identifier for the Snowpipe Streaming ingest client used for the data load. |
-| EVENT\_TIMESTAMP | TIMESTAMP\_LTZ | Start of the time (in the local time zone) range in which data loading took place. |
+| EVENT\_TIMESTAMP | TIMESTAMP\_LTZ | Time (in the local time zone) at which the event occurred. |
 | EVENT\_TYPE | VARCHAR | Type of the event. |
 | BLOB\_SIZE\_BYTES | NUMBER | The blob size in bytes. |
 
@@ -22,10 +22,11 @@ Show lessSee more
 ## Usage notes
 
 - Latency for the view may be up to 120 minutes (2 hours).
+- Each row is a single event and has no end time or elapsed duration. For billing, each distinct second that has one or more events counts as one client-second.
 
 ## Examples
 
-Query the amount of time spent loading data into Snowflake tables using Snowpipe Streaming within the last 365 days.
+Query the Snowpipe Streaming client events recorded within the last 365 days.
 
 Copy code
 
@@ -56,4 +57,4 @@ FROM SNOWFLAKE.ACCOUNT_USAGE.SNOWPIPE_STREAMING_CLIENT_HISTORY
 GROUP BY event_hour, client_name, snowflake_provided_id;
 ```
 
-Note that there can be multiple events per second. The credits are consumed only by the actual time spent, and not by the number of events.
+The query uses `COUNT(DISTINCT event_timestamp)` because there can be multiple events per second. Each distinct second counts once, regardless of the number of events in that second.

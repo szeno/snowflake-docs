@@ -16,8 +16,8 @@ Apply the following channel-management strategies for performance and long-term 
 - **Use deterministic channel names**: Apply a consistent, predictable naming convention — for example, `source-env-region-client-id` — to simplify troubleshooting and facilitate automated recovery processes.
 - **Scale out with multiple channels**: To increase throughput, open multiple channels. These channels can point to a single target pipe or to multiple pipes, depending on service limits and your throughput requirements.
 - **Monitor channel status**: Regularly use the `getChannelStatus` method to monitor the health of your ingestion channels.
-  - Track the `last_committed_offset_token` to verify that data is being ingested successfully and that the pipeline is making progress.
-  - Monitor the `row_error_count` to detect bad records or other ingestion issues early.
+  - Track `last_committed_offset_token` for checkpoint progress, and monitor errors separately to verify ingestion outcomes.
+  - Monitor `rows_error_count` to detect rejected records early.
 
 ## Validate the schema consistently
 
@@ -43,7 +43,7 @@ Optionally, add a `PIPE_ID` column if multiple pipes ingest into the same target
 
 Combine channel monitoring with your metadata columns to detect and recover from issues:
 
-- **Monitor status**: Regularly check `getChannelStatus`. An increasing `row_error_count` is a strong indicator of a potential problem.
+- **Monitor status**: Regularly check `getChannelStatus`. An increasing `rows_error_count` is a strong indicator of a potential problem.
 - **Detect missing records**: If errors are detected, use a SQL query to identify missing or out-of-order records by checking for gaps in your `STREAM_OFFSET` sequence.
 
 Copy code
@@ -162,7 +162,7 @@ java -Xmx4g -jar your-app.jar
 
 Don’t assume that an append call always succeeds. Synchronous validation, serialization, closed-client, and immediate backpressure failures are raised directly by the append call. Catch the SDK error (for example, `StreamingIngestError` in Python), and then retry or otherwise handle it. Never ignore or drop the returned error. Interpret the HTTP status codes, specifically 409 for Named Channel invalidations and 429 for throttling.
 
-Some errors surface asynchronously, after rows are buffered rather than at the append call. Monitor Named Channel status (for example, `getChannelStatus` or `row_error_count`) to detect failures that appear later.
+Some errors surface asynchronously, after rows are buffered rather than at the append call. Monitor Named Channel status (for example, `getChannelStatus` or `rows_error_count`) to detect failures that appear later.
 
 ### Implement exponential backoff
 
@@ -172,7 +172,11 @@ For the direct REST delay, retry budget, and retryable status codes, see [REST A
 
 ### Verify progress with offset tokens
 
-Periodically call `getLatestCommittedOffsetToken` to track which data was successfully persisted. If a 409 error occurs, use this token to identify the exact point from which to replay data after reopening the channel.
+Periodically call `getLatestCommittedOffsetToken` to track the channel’s persisted checkpoint. If a 409 error occurs, reopen the channel and resume after the latest committed checkpoint returned for the reopened channel, following the recovery guidance below.
+
+Snowpipe Streaming with high-performance architecture uses `ON_ERROR=CONTINUE`. The checkpoint can advance even when some or all rows in a rowset are rejected. Enable [error logging](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables) before ingestion to capture supported rejected-row payloads for inspection, correction, and reprocessing.
+
+Monitor channel-status error counts and [row-error rates in event tables](/user-guide/snowpipe-streaming/snowpipe-streaming-event-table-telemetry#label-snowpipe-streaming-events-commit). Your application can stop submitting new data when an error count or rate exceeds its chosen threshold, then investigate and recover rejected records. This is a client decision, not a server-side abort-on-error mode. For supported error capture and payload-size limits, see [Error table limitations](/user-guide/snowpipe-streaming/snowpipe-streaming-error-tables#limitations).
 
 For direct REST Named Channel recovery, see [Recover a Named Channel after a REST error](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-error-handling#rest-named-channel-recovery).
 

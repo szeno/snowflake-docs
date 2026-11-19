@@ -12,6 +12,7 @@ Before you run the demo, ensure that you meet the following prerequisites:
 - Network access: Complete the [network connectivity prerequisites](/user-guide/snowpipe-streaming/snowpipe-streaming-network-connectivity) from your producer runtime. Verify the account endpoint, discovered ingest endpoint, and cloud-storage upload destinations. Private connectivity also requires DNS configuration for the ingest hostname.
 - Java Development Environment: Install Java 11 or later, and Maven for dependency management.
 - Python: Install Python version 3.9 or later.
+- C++: Install a C++ compiler that supports C++17 or later.
 - Node.js: Install Node.js version 20 or later.
 - System requirements: The SDK requires glibc version 2.26 or later. You can check your current glibc version with:
 
@@ -72,7 +73,7 @@ GRANT ROLE MY_ROLE TO USER MY_USER;
 -- NOTE: Replace 'YOUR_FORMATTED_PUBLIC_KEY' with the output of the PUBK variable from the key generation step.
 ALTER USER MY_USER SET RSA_PUBLIC_KEY='YOUR_FORMATTED_PUBLIC_KEY';
 
--- 3. Set the default role (Recommended)
+-- 3. Set the default role (Optional: you can instead specify a non-default role in your client configuration)
 ALTER USER MY_USER SET DEFAULT_ROLE=MY_ROLE;
 
 -- 4. Switch to the new role and create objects
@@ -101,7 +102,7 @@ ALTER USER MY_USER SET AUTHENTICATION POLICY testing_auth_policy;
 
 Note
 
-The `data` column in the sample table is a VARIANT type. The high-performance SDK requires that data for this column be passed as a native object; for example, a Java `Map`, Python dictionary, or JavaScript object. Passing a raw JSON string results in the data being stored as a string literal.
+The `data` column in the sample table is a VARIANT, so pass its value as an object, not a JSON-encoded string, which is stored as a plain string. In Java, Python, and Node.js, use a native object (Java `Map`, Python `dict`, or JavaScript object). In C++, where each row is a JSON string, write `data` as a nested JSON object, for example `{"DATA": {"event_id": 1}}`.
 
 ### Step 2: Configure an authentication profile
 
@@ -134,7 +135,7 @@ Replace the placeholders:
 
 ### Step 3: Set up the demo project
 
-JavaPythonNode.js
+JavaPythonC++Node.js
 
 **Download:** [Sample Java code](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/java-example)
 
@@ -177,6 +178,101 @@ pip install snowpipe-streaming
 
 For more information about the package, see [PyPI](https://pypi.org/project/snowpipe-streaming/).
 
+**Download:** [Sample C++ code](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/cpp-example)
+
+**Add the C++ dependency**
+
+The SDK requires C++ version 17 or later.
+
+Download the C++ Snowpipe Streaming SDK from the [Snowflake Client Repository](https://sfc-repo.snowflakecomputing.com/snowpipe-streaming-cpp/index.html).
+
+Each package in the repository has a matching `.sha256` checksum file and `.asc` signature file. The following commands download all three files into the current directory, then validate and unpack the package. Set `SDK_VERSION` to the version you want, `PLATFORM` to your package’s platform, and `PLATFORM_DIR` to the matching repository directory:
+
+| `PLATFORM` | `PLATFORM_DIR` |
+| --- | --- |
+| `Linux-x86_64` | `linux_x86_64` |
+| `Linux-aarch64` | `linux_aarch64` |
+| `Darwin-arm64` | `macos_arm64` |
+
+Expand
+
+Show lessSee more
+
+Set `GPG_KEY_ID` to the ID of the Snowflake public key that signed the package. Beginning with version 1.9.4, packages are signed with the Snowflake public key `3C98F63C9292CE02`.
+
+Copy code
+
+```
+SDK_VERSION=1.9.4
+PLATFORM=Linux-x86_64
+PLATFORM_DIR=linux_x86_64
+GPG_KEY_ID=3C98F63C9292CE02
+PACKAGE=snowflake-streaming-ingest-cpp-${SDK_VERSION}-${PLATFORM}.tar.gz
+BASE_URL=https://sfc-repo.snowflakecomputing.com/snowpipe-streaming-cpp/${SDK_VERSION}/${PLATFORM_DIR}
+
+# Download the package, checksum, and signature into the current directory.
+curl -fLO "${BASE_URL}/${PACKAGE}"
+curl -fLO "${BASE_URL}/${PACKAGE}.sha256"
+curl -fLO "${BASE_URL}/${PACKAGE}.asc"
+
+# Verify the checksum. On macOS, run: shasum -a 256 -c "${PACKAGE}.sha256"
+sha256sum -c "${PACKAGE}.sha256"
+
+# Import the Snowflake public key, then verify the signature.
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys "${GPG_KEY_ID}"
+gpg --verify "${PACKAGE}.asc" "${PACKAGE}"
+
+tar -xzf "${PACKAGE}"
+SDK_DIR="$PWD/snowflake-streaming-ingest-cpp-${SDK_VERSION}-${PLATFORM}"
+```
+
+Do not use the package if either check fails.
+
+Note
+
+Verifying the signature produces a warning similar to the following:
+
+> Copy code
+>
+> ```
+> gpg: Signature made Mon 24 Sep 2018 03:03:45 AM UTC using RSA key ID <gpg_key_id>
+> gpg: Good signature from "Snowflake Computing <snowflake_gpg@snowflake.net>" unknown
+> gpg: WARNING: This key is not certified with a trusted signature!
+> gpg: There is no indication that the signature belongs to the owner.
+> ```
+
+To avoid the warning, you can grant the Snowflake GPG public key implicit trust.
+
+Important
+
+Keep the unpacked package directory intact when you build. The package’s build files (the CMake package configuration file and the Bazel BUILD file) locate the headers and libraries by their paths inside the package, so move or rename the whole directory rather than copying individual files out of it.
+
+Add the SDK to your `CMakeLists.txt`. The following file builds `example.cc` into an `example` executable that links to the SDK. When you build, set `CMAKE_PREFIX_PATH` to the absolute path of the unpacked package directory (`SDK_DIR` from the previous step).
+
+Copy code
+
+```
+cmake_minimum_required(VERSION 3.21)
+project(example LANGUAGES CXX)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(SnowflakeStreamingIngest REQUIRED)
+
+add_executable(example example.cc)
+target_link_libraries(example PRIVATE Snowflake::snowflake_streaming_ingest)
+```
+
+To build your application, configure CMake with the SDK package directory, then build:
+
+Copy code
+
+```
+cmake -S . -B build -DCMAKE_PREFIX_PATH="$SDK_DIR"
+cmake --build build
+```
+
 **Download:** [Sample Node.js code](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/nodejs-example)
 
 **Add the Node.js dependency**
@@ -205,7 +301,7 @@ The examples open `MY_CHANNEL` with an initial offset token, asynchronously appe
 
 Append rows as they arrive; the SDK combines appends internally using time and size thresholds. Submit rows serially in source order within each Named Channel, but don’t wait for every row to commit. Bound outstanding work and checkpoint periodically without collecting rows into another batch before submitting them.
 
-JavaPythonNode.js
+JavaPythonC++Node.js
 
 Copy code
 
@@ -281,6 +377,72 @@ client.close()
 Copy code
 
 ```
+#include <snowflake/ingest/streaming/client.h>
+
+#include <chrono>
+#include <future>
+#include <iostream>
+#include <memory>
+#include <optional>
+#include <string>
+#include <utility>
+
+namespace sn = snowflake::ingest::streaming;
+
+int main() {
+  sn::TableClientOptions options;
+  options.client_name = "demo-client";
+  options.db_name = "MY_DATABASE";
+  options.schema_name = "MY_SCHEMA";
+  options.table_name = "MY_TABLE";
+  options.profile_json = "profile.json";
+
+  sn::Result<std::unique_ptr<sn::StreamingIngestClient>> client_result =
+      sn::StreamingIngestClient::CreateFromTable(options);
+  if (!client_result.has_value()) {
+    std::cerr << "Failed to create client: " << client_result.error().message() << "\n";
+    return 1;
+  }
+  sn::StreamingIngestClient& client = **client_result;
+
+  sn::Result<std::pair<std::unique_ptr<sn::StreamingIngestChannel>, sn::ChannelStatus>>
+      channel_result = client.OpenChannel("MY_CHANNEL", "0");
+  if (!channel_result.has_value()) {
+    std::cerr << "Failed to open channel: " << channel_result.error().message() << "\n";
+    return 1;
+  }
+  sn::StreamingIngestChannel& channel = *channel_result->first;
+
+  channel.AppendRow(R"({"DATA": {"event_id": 1, "status": "active"}, "C1": 1, "C2": "example"})", "1");
+  channel.AppendRow(R"({"DATA": {"event_id": 2, "status": "active"}, "C1": 2, "C2": "example"})", "2");
+  channel.AppendRow(R"({"DATA": {"event_id": 3, "status": "active"}, "C1": 3, "C2": "example"})", "3");
+
+  sn::Result<sn::ChannelStatus> status_result = channel.GetChannelStatus();
+
+  // Wait until offset 3 or a later offset is committed.
+  sn::Result<std::future<sn::Result<void>>> commit_future = channel.WaitForCommit(
+      [](const std::optional<std::string>& token) {
+        return token.has_value() && std::stoll(*token) >= 3;
+      },
+      std::chrono::seconds(60));
+  if (!commit_future.has_value()) {
+    std::cerr << "WaitForCommit failed: " << commit_future.error().message() << "\n";
+    return 1;
+  }
+  sn::Result<void> commit_result = commit_future->get();
+  if (!commit_result.has_value()) {
+    std::cerr << "WaitForCommit failed: " << commit_result.error().message() << "\n";
+    return 1;
+  }
+
+  channel.Close();
+  client.Close();
+}
+```
+
+Copy code
+
+```
 const { createTableClient } = require("snowpipe-streaming");
 
 const client = await createTableClient({
@@ -320,6 +482,6 @@ Important
 
 Don’t call `waitForCommit` after every row or small batch. Waiting on every append serializes ingestion around commit latency and defeats the purpose of asynchronous appends. `waitForCommit` polls channel status until the target offset commits, so reserve it for checkpoints, source handoffs, or graceful shutdown.
 
-See the full [Java](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/java-example), [Python](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/python-example), and [Node.js](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/nodejs-example) samples for complete examples.
+See the full [Java](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/java-example), [Python](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/python-example), [C++](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/cpp-example), and [Node.js](https://github.com/snowflakedb/snowpipe-streaming-sdk-examples/tree/main/nodejs-example) samples for complete examples.
 
 Run the application, then query the target table to verify the rows. In a production application, retrieve the latest committed offset when you open the Named Channel and resume the source from the next record. For more information, see [Offset tokens and exactly-once delivery](/user-guide/snowpipe-streaming/snowpipe-streaming-channels#label-replication-snowpipe-offset-tokens).

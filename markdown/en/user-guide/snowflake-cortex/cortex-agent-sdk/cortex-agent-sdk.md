@@ -1,9 +1,5 @@
 # Cortex Agent SDK
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The Cortex Agent SDK helps you build applications that reason over your governed Snowflake data and take action with
 tools. Use it from Python or TypeScript to stream responses, preserve multi-turn conversations, run long tasks in the
 background, and manage reusable agent objects.
@@ -20,6 +16,7 @@ commands, use tools, and make changes in a workspace.
 | Build a conversational experience | Use conversation helpers and persistent threads to maintain context across turns and application sessions. |
 | Run longer tasks reliably | Start a background run, disconnect safely, and reconnect later by run ID. |
 | Embed an agentic coding workflow | Use the Cortex Code CLI on your application host, or run the managed coding agent through a conversation. |
+| Run agents on a schedule | Create automations that run a saved agent or an unattended Cortex Code (CoCo) session on a schedule. |
 
 Expand
 
@@ -41,7 +38,7 @@ Install the SDK:
 Copy code
 
 ```
-npm install "@snowflake/cortex-agent-sdk@>=0.0.2"
+npm install "@snowflake/cortex-agent-sdk@>=1.0.0"
 ```
 
 Set `SNOWFLAKE_ACCOUNT` and `SNOWFLAKE_PAT` in your environment, and then start a conversation:
@@ -76,18 +73,19 @@ const answer: AgentResponse = await turn.result();
 console.log(answer.text);
 ```
 
-Install the package and use the conversation-first client:
+Install the standalone `snowflake-cortex-agent-sdk` package and use the conversation-first client.
+Import it with `snowflake.cortex.agents`. Existing `cortex_agent_sdk` imports remain available as deprecated aliases:
 
 Copy code
 
 ```
-pip install "snowflake-cortex-agent-sdk>=0.0.2"
+pip install --upgrade "snowflake-cortex-agent-sdk>=1.0.0"
 ```
 
 Copy code
 
 ```
-from cortex_agent_sdk import AgentResponse, Conversation, CortexAgentClient, Turn
+from snowflake.cortex.agents import AgentResponse, Conversation, CortexAgentClient, Turn
 
 client: CortexAgentClient = CortexAgentClient(account="my_account", auth="<token>")
 conversation: Conversation = client.conversations.create(
@@ -100,7 +98,7 @@ print(answer.text)
 ```
 
 The root client exposes `client.conversations` and `client.feedback`. Saved agent objects, streaming, and explicit
-run or thread management are on `cortex_agent_sdk.api`.
+run or thread management are on `snowflake.cortex.agents.api`.
 
 For a complete setup and multi-turn example, see the [quickstart](/user-guide/snowflake-cortex/cortex-agent-sdk/quickstart).
 
@@ -138,6 +136,7 @@ For examples and supported options, see [Cortex Code](/user-guide/snowflake-cort
 - [Direct Agent API](/user-guide/snowflake-cortex/cortex-agent-sdk/running-agents): Use low-level run, thread, and agent-object resources.
 - [Cortex Agent SDK features](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-features): Use MCP servers, coding-agent options, and detailed streaming events.
 - [Use the asynchronous Python client](/user-guide/snowflake-cortex/cortex-agent-sdk/async-python): Run concurrent agent operations from Python.
+- [Schedule automations](/user-guide/snowflake-cortex/cortex-agent-sdk/automations): Run a saved agent or an unattended CoCo session on a schedule.
 - [SDK reference](/user-guide/snowflake-cortex/cortex-agent-sdk/sdk-reference): Configure responses, errors, retries, and request options.
 
 ## Legal notices

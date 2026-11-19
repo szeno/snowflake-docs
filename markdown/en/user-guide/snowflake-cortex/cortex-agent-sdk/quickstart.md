@@ -1,9 +1,5 @@
 # Cortex Agent SDK quickstart
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 In this quickstart, you build a small application that starts an agent turn, reads events and structured results, and continues the conversation on a persistent thread.
 
 ## Prerequisites
@@ -27,7 +23,7 @@ Copy code
 ```
 mkdir agent-quickstart && cd agent-quickstart
 npm init -y
-npm install "@snowflake/cortex-agent-sdk@>=0.0.2"
+npm install "@snowflake/cortex-agent-sdk@>=1.0.0"
 npm install --save-dev typescript tsx @types/node
 ```
 
@@ -54,7 +50,7 @@ Copy code
 ```
 python -m venv .venv
 source .venv/bin/activate
-pip install "snowflake-cortex-agent-sdk>=0.0.2"
+pip install --upgrade "snowflake-cortex-agent-sdk>=1.0.0"
 export SNOWFLAKE_ACCOUNT="<account_identifier>"
 export SNOWFLAKE_PAT="<programmatic_access_token>"
 ```
@@ -90,7 +86,7 @@ Copy code
 
 ```
 import os
-from cortex_agent_sdk import AgentResponse, Conversation, CortexAgentClient, Turn
+from snowflake.cortex.agents import AgentResponse, Conversation, CortexAgentClient, Turn
 
 client: CortexAgentClient = CortexAgentClient(account=os.environ["SNOWFLAKE_ACCOUNT"], auth=os.environ["SNOWFLAKE_PAT"])
 conversation: Conversation = client.conversations.create(
@@ -211,7 +207,7 @@ try {
 Copy code
 
 ```
-from cortex_agent_sdk import AuthenticationError, CortexAgentAPIError, RateLimitError
+from snowflake.cortex.agents import AuthenticationError, CortexAgentAPIError, RateLimitError
 
 try:
     turn: Turn = conversation.send(

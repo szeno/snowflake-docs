@@ -43,7 +43,10 @@ the [ALTER ICEBERG TABLE … CONVERT TO MANAGED](/sql-reference/sql/alter-iceber
   [ALTER ICEBERG TABLE](/sql-reference/sql/alter-iceberg-table). The usage notes in
   [Enable automatic table schema evolution](/user-guide/data-load-schema-evolution) apply to Iceberg tables as well.
 
-  Schema evolution is not supported for [structured type](/sql-reference/data-types-structured) fields in Iceberg tables.
+  If the files contain nested data, also set the
+  [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. Otherwise,
+  loads that add nested columns might fail. For more information, see
+  [Create and evolve Snowflake-managed Iceberg tables](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types-iceberg).
 
 ## Example: Load Iceberg-compatible Parquet files
 

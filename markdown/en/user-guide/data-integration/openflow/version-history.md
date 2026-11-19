@@ -6,6 +6,24 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 18, 2026
+
+### Runtime Server 2026.11.18.16
+
+- Applied security patches and dependency upgrades.
+
+### Control Plane Core 0.141.1
+
+- Fixed an issue that caused medium and large runtimes to fail to start in U.S. government regions.
+
+### Data Plane Service 0.141.1
+
+- Fixed an issue that caused medium and large runtimes to fail to start in U.S. government regions.
+
+### SPCS Data Plane Agent 1.58.1
+
+- Fixed an issue that caused medium and large runtimes to fail to start in U.S. government regions.
+
 ## November 17, 2026
 
 ### Runtime Server 2026.11.17.2

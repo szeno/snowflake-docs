@@ -205,7 +205,9 @@ model’s context window.
 | `gemini-3.5-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `gemini-3.7-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `gemini-3.8-flash` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
-| `gemini-4-argon` | 1,000,000 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-4-argon` | 1,048,576 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-4-carbon` | 1,048,576 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
+| `gemini-4-hydrogen` | 1,048,576 | .pdf, .txt, .md | 37.5MB | 1,000 | 20 |
 | `claude-haiku-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-sonnet-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-opus-4-5` | 200,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
@@ -215,6 +217,9 @@ model’s context window.
 | `claude-opus-4-8` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-sonnet-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 | `claude-opus-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-sonnet-5-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-opus-5-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
+| `claude-haiku-5-5` | 1,000,000 | .txt, .md, .pdf, .doc, .docx, .xls, .xlsx, .csv, .xhtml | 22MB | 100 | 5 |
 
 Expand
 

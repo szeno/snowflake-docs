@@ -171,6 +171,10 @@ Instead of generating and hosting classic `dbt docs`, we recommend using the dbt
 
 If you still need the static docs site, use one of the following options.
 
+Note
+
+The `--static` flag for `dbt docs generate` applies only to dbt 1.x. dbt 2.x doesn’t support `--static`.
+
 ### Option 1: Download artifacts from a deployed dbt project object
 
 Run `dbt docs generate --static` on a deployed dbt project object with `EXECUTE DBT PROJECT` or by choosing the **docs generate** operation

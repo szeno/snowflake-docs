@@ -58,8 +58,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
-- During authentication, and on each subsequent request in the session, the user-level policy overrides
-  the account-level ingress policy for that user. The two ingress policies are not combined.
+- During authentication, and on each subsequent request in the session, the user-level policy is
+  the effective ingress policy for that user. It overrides any account-level or user-type account
+  attachment (`FOR ALL PERSON USERS` or `FOR ALL SERVICE USERS`). The policies are not combined.
 - The user-level binding does not replace the user’s
   [network policy](/user-guide/network-policies). Snowflake still evaluates the network policy
   that applies to the user. A request is admitted only when both the effective network policy and
@@ -70,8 +71,9 @@ For general information about roles and privilege grants for performing SQL acti
 - As a protective guardrail against misconfiguration and accidental lockouts, Snowflake declines
   the statement when the policy would block the current request of the user who runs it, and that
   user is the user you are altering. The check uses the current request only.
-- `UNSET INGRESS POLICY` removes the user-level ingress policy. The user then uses the
-  account-level ingress policy, if one is set. This does not change the user’s network policy.
+- `UNSET INGRESS POLICY` removes the user-level ingress policy. The user then uses the matching
+  user-type account attachment, if one is set; otherwise the account-level ingress policy, if one
+  is set. This does not change the user’s network policy.
 - Attach a policy to a test user before you attach it to the account. See
   [ALTER ACCOUNT SET INGRESS POLICY](/sql-reference/sql/alter-account-set-ingress-policy).
 

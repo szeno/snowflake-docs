@@ -424,7 +424,7 @@ renaming a table requires the CREATE TABLE privilege on the schema for the table
 
         > - Added columns.
         >
-        >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
+        >   By default, schema evolution is limited to a maximum of 100 added columns per load operation. To request more than 100 added columns per load operation, contact [Snowflake Support](/user-guide/contacting-support).
         > - The NOT NULL constraint can be dropped from any number of columns missing in new data files.
 
         Setting it to `TRUE` enables automatic table schema evolution. The default `FALSE` disables automatic table schema evolution.
@@ -434,9 +434,14 @@ renaming a table requires the CREATE TABLE privilege on the schema for the table
         Loading data from files evolves the table columns when all of the following are true:
 
         - The [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement includes the `MATCH_BY_COLUMN_NAME` option.
-        - The role used to load the data has the EVOLVE SCHEMA or OWNERSHIP privilege on the table.
+        - The role used to load the data has the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the table. For Snowpipe, the role that owns
+          the pipe loads the data.
 
         Additionally, for schema evolution with CSV, when used with `MATCH_BY_COLUMN_NAME` and `PARSE_HEADER`, `ERROR_ON_COLUMN_COUNT_MISMATCH` must be set to false.
+
+        To add nested columns as structured columns, also set the
+        [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option to `TRUE`. For more
+        information, see [Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types).
 
     `ERROR_LOGGING = { TRUE | FALSE }`
     :   Specifies whether to turn on DML error logging for the table.

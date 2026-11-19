@@ -1,6 +1,10 @@
 # Account Privilege READ UNREDACTED AI OBSERVABILITY EVENTS TABLE
 
-Starting **April 24, 2026**, Snowflake will introduce and enforce a new **account** privilege, **READ UNREDACTED AI OBSERVABILITY EVENTS TABLE**. The privilege controls which **roles** can read **unredacted** content in Cortex Agent observability data from `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` when they use the system table functions and related paths that read that event table. The new privilege is **off** by default for all roles. This unbundled behavior change does **not** change how data is **written** to the table; it only affects visibility of **which columns or fields** a role can see in query results and traces.
+As of **April 24, 2026**, Snowflake enforces a new **account** privilege, **READ UNREDACTED AI OBSERVABILITY EVENTS TABLE**. The privilege controls which **roles** can read **unredacted** content in Cortex Agent observability data from `SNOWFLAKE.LOCAL.AI_OBSERVABILITY_EVENTS` when they use the system table functions and related paths that read that event table. The new privilege is **off** by default for all roles. This unbundled behavior change does **not** change how data is **written** to the table; it only affects visibility of **which columns or fields** a role can see in query results and traces.
+
+Note
+
+This behavior change was released on April 24, 2026. It isn’t part of a behavior change bundle.
 
 The change applies to **agent owners** and to roles with the **MONITOR** privilege on a Cortex Agent when they use observability queries that return content from the event table. The goal is to reduce exposure of potentially sensitive data to roles that are not explicitly granted the new privilege.
 

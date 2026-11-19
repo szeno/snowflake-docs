@@ -594,6 +594,10 @@ calls the INFER\_SCHEMA SQL function to detect the column definitions in the fil
 
 Schema detection can also be used in conjunction with [table schema evolution](/user-guide/data-load-schema-evolution), where the structure of tables evolves automatically to support the structure of new data received from the data sources.
 
+To create and evolve [structured](/sql-reference/data-types-structured) `OBJECT`, `ARRAY`, and `MAP` columns for nested data, set
+`INFER_NESTED_TYPES` to `TRUE` in the `INFER_SCHEMA` call and in the `COPY INTO` statement. For more information, see
+[Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types).
+
 ## Alternatives to loading data
 
 You can use the following option to query your data in cloud storage without loading it into Snowflake tables.

@@ -9,7 +9,7 @@ Available to all accounts.
 An ingress policy determines whether a request from a user is admitted to your Snowflake
 account. It evaluates request context such as the source network, authentication method, client
 application, geolocation, PrivateLink ID, and endpoint path. You can combine these signals in a
-single policy and apply it to the account or to individual users.
+single policy and apply it to the account, to all person or service users, or to individual users.
 
 Ingress policies are context-aware because they evaluate the request as it is made. The policy can
 use the request’s network origin, authentication method, client or application, geolocation,
@@ -50,9 +50,10 @@ Ingress policies help you:
   paths) by matching on the request’s endpoint path.
 - **Protect authentication and subsequent access.** Apply admission controls when a user
   authenticates and when the user makes authenticated requests.
-- **Scope broadly or narrowly.** Attach at the account level as a baseline, or at the user level
-  for exceptions. A user-level policy overrides the account-level policy for that user instead of
-  supplementing it.
+- **Scope broadly or narrowly.** Attach at the account level as a baseline for all users, for all
+  person users, or for all service users, or attach at the user level for exceptions. Only one
+  ingress policy is in effect for a user; a more specific attachment overrides a broader one
+  instead of combining with it.
 
 ## How ingress policies differ from network and authentication policies
 
@@ -124,17 +125,18 @@ actions:
 
 ### Context keys
 
-Reference a context key with `$KEY`. The following sections describe keys that need more detail.
+Reference a context key with `$KEY`. Context key names are case-insensitive: `$client_ip` and
+`$CLIENT_IP` are the same. The following sections describe keys that need more detail.
 
 | Context key | Description | Supported operators | Example condition |
 | --- | --- | --- | --- |
-| `CLIENT` | Client type or client application that sent the request. A client application takes precedence over the client type. | `=`, `!=`, `IN`, `NOT IN` | `$CLIENT IN ('DRIVERS', 'CORTEX_CODE_CLI')` |
+| `CLIENT` | Client type or client application that sent the request. A client application takes precedence over the client type. Case-insensitive. | `=`, `!=`, `IN`, `NOT IN` | `$CLIENT IN ('DRIVERS', 'CORTEX_CODE_CLI')` |
 | `CLIENT_IP` | Client IP address of the request. | `=`, `!=`, `IN`, `NOT IN`, `LIKE`, `NOT LIKE`, `IS NULL`, `IS NOT NULL` | `$CLIENT_IP IN ('203.0.113.0/24')` |
-| `AUTHENTICATION_METHOD` | Authentication method associated with the request, for example `PASSWORD`, `KEYPAIR`, `OAUTH`, or `SAML`. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$AUTHENTICATION_METHOD = 'SAML'` |
-| `SECURITY_INTEGRATION` | Name of the security integration used to authenticate. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$SECURITY_INTEGRATION = 'CORP_OKTA'` |
-| `PRIVATELINK_ID` | PrivateLink identifier of the connection. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$PRIVATELINK_ID = '<privatelink_id>'` |
-| `GEOLOCATION` | Country from which the request originates. Requires GeoIP. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$GEOLOCATION IN ('US', 'CA')` |
-| `ENDPOINT_PATH` | Request path. Each value must start with `api/`. | `=`, `!=`, `IN`, `NOT IN`, `LIKE`, `NOT LIKE`, `IS NULL`, `IS NOT NULL` | `$ENDPOINT_PATH LIKE 'api/v2/cortex/%'` |
+| `AUTHENTICATION_METHOD` | Authentication method associated with the request, for example `PASSWORD`, `KEYPAIR`, `OAUTH`, or `SAML`. Case-insensitive. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$AUTHENTICATION_METHOD = 'SAML'` |
+| `SECURITY_INTEGRATION` | Name of the security integration used to authenticate. Case-sensitive. Use the name exactly as `SHOW SECURITY INTEGRATIONS` returns it. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$SECURITY_INTEGRATION = 'CORP_OKTA'` |
+| `PRIVATELINK_ID` | PrivateLink identifier of the connection. Case-sensitive. Enter AWS VPC endpoint IDs in lowercase, as AWS shows them. | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$PRIVATELINK_ID = '<privatelink_id>'` |
+| `GEOLOCATION` | Country ISO code for the request origin. Case-sensitive; use uppercase. Requires GeoIP. See [GEOLOCATION](#geolocation). | `=`, `!=`, `IN`, `NOT IN`, `IS NULL`, `IS NOT NULL` | `$GEOLOCATION IN ('US', 'CA')` |
+| `ENDPOINT_PATH` | Request path. Case-sensitive. Each value must start with lowercase `api/`. | `=`, `!=`, `IN`, `NOT IN`, `LIKE`, `NOT LIKE`, `IS NULL`, `IS NOT NULL` | `$ENDPOINT_PATH LIKE 'api/v2/cortex/%'` |
 
 Expand
 
@@ -194,7 +196,9 @@ evaluated as `SNOWSQL`.
 `IN` and `NOT IN` accept literal values or the fully qualified name of a
 [network rule](/user-guide/network-rules) (`<database>.<schema>.<network_rule>`). A network rule
 name is an object reference, not a string literal: Snowflake resolves the rule when you create or
-alter the policy, and the rule must use `MODE = INGRESS`.
+alter the policy, and the rule must use `MODE = INGRESS`. The rule name follows standard
+[identifier rules](/sql-reference/identifiers-syntax#label-identifier-casing): unquoted parts are
+case-insensitive, and double-quoted parts are case-sensitive.
 
 | Context key | Literal values | Network rule types |
 | --- | --- | --- |
@@ -219,11 +223,24 @@ For example:
 - Match the connection against an `AWSVPCEID`, `AZURELINKID`, or `GCPPSCID` network rule:
   `$PRIVATELINK_ID IN ('<db_name>.<schema_name>.corp_privatelink')`
 
+#### GEOLOCATION
+
+`$GEOLOCATION` compares the country from which the request originates. The input is a country ISO
+code: an uppercase two-letter
+[ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2) value, such as `US` or
+`CA`. Do not use country names or three-letter codes. Snowflake rejects a value that is not a valid
+country ISO code when you create or alter the policy. Requires GeoIP.
+
+For example:
+
+- Match the United States or Canada: `$GEOLOCATION IN ('US', 'CA')`
+
 #### ENDPOINT\_PATH
 
-`$ENDPOINT_PATH` is the request path.
+`$ENDPOINT_PATH` is the request path. Comparisons are case-sensitive.
 
-- When you create or alter the policy, each `ENDPOINT_PATH` value must start with `api/`.
+- When you create or alter the policy, each `ENDPOINT_PATH` value must start with lowercase
+  `api/`. Snowflake rejects a prefix such as `API/`.
 - During admission, Snowflake applies an `ENDPOINT_PATH` comparison only when the request path
   starts with `api/`. Login and other requests skip that comparison. An `allow request` action
   treats it as matching, and a `block request` action treats it as not matching.
@@ -235,7 +252,6 @@ For example:
 
 #### Other examples
 
-- Match a country: `$GEOLOCATION IN ('US', 'CA')`
 - Match Cortex Code CLI and desktop requests:
   `$CLIENT IN ('CORTEX_CODE_CLI', 'CORTEX_CODE_DESKTOP')`
 
@@ -302,13 +318,32 @@ might receive an evaluation error instead of that denial error.
 
 ### Attachment and precedence
 
-Attach a policy to your account (a baseline for all users) or to individual users:
+Attach a policy to the account, to all users of a specific
+[type](/user-guide/admin-user-management#label-user-management-types), or to an individual user:
 
-- Account level: `ALTER ACCOUNT SET INGRESS POLICY ...`
-- User level: `ALTER USER <user> SET INGRESS POLICY ...`
+- Account-level: `ALTER ACCOUNT SET INGRESS POLICY ...`
+  (or `... FOR ACCOUNT`). Applies to every user that does not have a more specific attachment.
+- All person users: `ALTER ACCOUNT SET INGRESS POLICY ... FOR ALL PERSON USERS`.
+  Applies to users whose `TYPE` is `PERSON` or unset (`NULL`).
+- All service users: `ALTER ACCOUNT SET INGRESS POLICY ... FOR ALL SERVICE USERS`.
+  Applies to users whose `TYPE` is `SERVICE`, `LEGACY_SERVICE`, or `SERVICE_AGENT`.
+- One user: `ALTER USER <user> SET INGRESS POLICY ...`
 
-When both apply, the **user-level policy overrides the account-level policy** for that user. The
-two policies are not combined, so only one ingress policy is in effect for that user.
+These attachments are independent scopes. You can set a different policy on the account, on all
+person users, on all service users, and on individual users at the same time. Replacing a policy
+in one scope does not change the others. If a scope already has a policy, use `FORCE` to replace
+it without unsetting first.
+
+Snowflake resolves **one** effective ingress policy for each user, in this order:
+
+1. **User-level** attachment, if one is set on that user.
+2. **User-type** attachment that matches the user’s type (`FOR ALL PERSON USERS` or
+   `FOR ALL SERVICE USERS`), if one is set.
+3. **Account-level** attachment, if one is set.
+
+Lower-priority attachments are not combined with a higher-priority one. For example, if `alice` has
+a user-level policy and the account also has `FOR ALL PERSON USERS` and account-level policies,
+only the user-level policy applies to `alice`.
 
 ### Self-lockout protection
 
@@ -316,12 +351,16 @@ As a protective guardrail against misconfiguration and accidental lockouts, Snow
 policy against your current request before it lets you:
 
 - Attach the policy to your own user.
-- Attach the policy to the account when it would govern you.
+- Attach the policy to the account, including `FOR ALL PERSON USERS` or
+  `FOR ALL SERVICE USERS`, when that attachment would become your effective policy.
 - Update a policy that currently governs you.
 
-If the change would block your current request, Snowflake declines the change. This check uses only
-the current request. It does not verify other users, clients, authentication methods, or emergency
-access paths.
+If the change would block your current request, Snowflake declines the change. The check runs only
+when the attachment would govern you. For example, attaching a policy with
+`FOR ALL SERVICE USERS` does not self-check a person user, and attaching an account-level policy
+does not self-check a user who already has a user-level or matching user-type policy. This check
+uses only the current request. It does not verify other users, clients, authentication methods, or
+emergency access paths.
 
 ## Access control
 
@@ -399,8 +438,8 @@ actions:
 $$;
 ```
 
-Block-only policy (implicit allow) — deny requests from a selected country, admit everything
-else. This example uses Antarctica (`AQ`) only to demonstrate the syntax:
+Block-only policy (implicit allow) — deny requests from a selected country ISO code, admit
+everything else. This example uses Antarctica (`AQ`) only to demonstrate the syntax:
 
 Copy code
 
@@ -481,8 +520,8 @@ $$;
 
 Before attaching a policy to the account, attach it to a test user whose access you can recover.
 Exercise each client, authentication method, integration, and endpoint that the policy is
-expected to allow or block. A user-level policy overrides any account-level ingress policy for
-that user during the test.
+expected to allow or block. A user-level policy overrides any account-level or user-type ingress
+policy for that user during the test.
 
 Copy code
 
@@ -496,18 +535,32 @@ ALTER USER etl_runner UNSET INGRESS POLICY;
 
 ### Attach a policy to the account
 
-An account-level policy applies to every user who does not have a user-level ingress policy.
-Before attaching it, verify an emergency administrator path and keep a separate session
-available for rollback. The policy can affect the next authenticated request from an existing
-session, not only new login attempts.
+An account-level policy applies to every user who does not have a user-level or user-type ingress
+policy. You can also attach a policy to all person users or all service users. Before attaching a
+policy, verify an emergency administrator path and keep a separate session available for rollback.
+The policy can affect the next authenticated request from an existing session, not only new login
+attempts.
 
 Copy code
 
 ```
+-- Account-level baseline for users without a more specific attachment:
 ALTER ACCOUNT SET INGRESS POLICY <db_name>.<schema_name>.corp_only;
 -- Replace an existing account-level policy:
 ALTER ACCOUNT SET INGRESS POLICY <db_name>.<schema_name>.corp_except_cortex_code FORCE;
--- Roll back:
+
+-- Separate policies by user type (same scopes as authentication and session policies):
+ALTER ACCOUNT SET INGRESS POLICY <db_name>.<schema_name>.person_policy
+  FOR ALL PERSON USERS;
+ALTER ACCOUNT SET INGRESS POLICY <db_name>.<schema_name>.service_policy
+  FOR ALL SERVICE USERS;
+-- Replace only the person-user attachment:
+ALTER ACCOUNT SET INGRESS POLICY <db_name>.<schema_name>.person_policy_v2
+  FOR ALL PERSON USERS FORCE;
+
+-- Roll back one scope at a time:
+ALTER ACCOUNT UNSET INGRESS POLICY FOR ALL SERVICE USERS;
+ALTER ACCOUNT UNSET INGRESS POLICY FOR ALL PERSON USERS;
 ALTER ACCOUNT UNSET INGRESS POLICY;
 ```
 
@@ -545,11 +598,13 @@ ALTER INGRESS POLICY <db_name>.<schema_name>.corp_only
   SET COMMENT = 'Allow requests from the corporate network';
 ```
 
-Before dropping a policy, detach it from every account or user to which it is attached:
+Before dropping a policy, detach it from every account scope or user to which it is attached:
 
 Copy code
 
 ```
+ALTER ACCOUNT UNSET INGRESS POLICY FOR ALL PERSON USERS;
+ALTER ACCOUNT UNSET INGRESS POLICY FOR ALL SERVICE USERS;
 ALTER ACCOUNT UNSET INGRESS POLICY;
 ALTER USER etl_runner UNSET INGRESS POLICY;
 DROP INGRESS POLICY <db_name>.<schema_name>.corp_only;
@@ -633,9 +688,11 @@ For background on replication groups and failover groups, see
 
 ## Usage notes
 
-- You can attach an ingress policy to an account or a user.
-- Only one ingress policy is in effect for a user. A user-level policy overrides the account-level
-  policy for that user.
+- You can attach an ingress policy to the account (account-level, all person users, or all service
+  users) or to an individual user.
+- Only one ingress policy is in effect for a user. Precedence is user-level, then the matching
+  user-type attachment (`FOR ALL PERSON USERS` or `FOR ALL SERVICE USERS`), then the account-level
+  attachment.
 - You cannot rename an ingress policy. To use a different name, create a new policy and update the
   applicable attachments.
 
@@ -688,7 +745,7 @@ function.
 | `DROP INGRESS POLICY [ IF EXISTS ] <name>` | Remove an ingress policy. |
 | `SHOW INGRESS POLICIES [ LIKE '...' ] [ IN { ACCOUNT | DATABASE | SCHEMA ... } ] [ ON { ACCOUNT | USER <name> } ]` | List ingress policies. |
 | `DESCRIBE INGRESS POLICY <name>` | Show a policy’s definition. |
-| `ALTER ACCOUNT SET INGRESS POLICY <name> [ FORCE ]` / `ALTER ACCOUNT UNSET INGRESS POLICY` | Attach or detach an account-level policy. |
+| `ALTER ACCOUNT SET INGRESS POLICY <name> [ { FOR ACCOUNT | FOR ALL PERSON USERS | FOR ALL SERVICE USERS } ] [ FORCE ]` / `ALTER ACCOUNT UNSET INGRESS POLICY [ { FOR ACCOUNT | FOR ALL PERSON USERS | FOR ALL SERVICE USERS } ]` | Attach or detach an account-level policy, optionally for one user type. |
 | `ALTER USER <user> SET INGRESS POLICY <name> [ FORCE ]` / `ALTER USER <user> UNSET INGRESS POLICY` | Attach or detach a user-level policy. |
 
 Expand
@@ -698,4 +755,6 @@ Show lessSee more
 `DESCRIBE INGRESS POLICY` returns `CREATED_ON`, `NAME`, `OWNER`, `OWNER_ROLE_TYPE`, `COMMENT`, and
 `POLICY_DEFINITION` (the YAML body). `SHOW INGRESS POLICIES` returns `created_on`, `name`,
 `database_name`, `schema_name`, `kind`, `owner`, `comment`, `owner_role_type`, and `options`;
-listing with `ON ACCOUNT` / `ON USER` adds a `set_on` column indicating the attachment level.
+listing with `ON ACCOUNT` / `ON USER` adds a `set_on` column indicating the attachment level. For
+account attachments, `options` identifies the scope (`ACCOUNT`, `PERSON_USERS`, or
+`SERVICE_USERS`). `SHOW INGRESS POLICIES ON USER` returns the effective policy for that user.
