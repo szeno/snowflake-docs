@@ -81,7 +81,7 @@ Code Bundle (formerly a Notebook Project Object) and run or schedule production 
 
 When you create a schedule for a Python file, you can choose **Warehouse** as the runtime, in addition to a compute pool. The warehouse
 runtime option is labeled **Preview** and is available for Python files (`.py`) only. Notebooks (`.ipynb`) run on compute pools
-(Snowpark Container Services). Running Code Bundles on compute pools is generally available; running on warehouses is in Public Preview.
+(Snowpark Container Services).
 
 For permissions, deployment steps, scheduling, and monitoring, see
 [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).

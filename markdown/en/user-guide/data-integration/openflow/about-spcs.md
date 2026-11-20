@@ -13,7 +13,7 @@ Although customers can have both BYOC and Snowflake Deployments, the following a
 
 - Incorporating full-fidelity data in the bronze layer: Landing raw data from various sources directly into Snowflake and using Openflow Snowflake Deployments to extract and load.
 - Enriching data: Running pipelines to enrich tables that already exist inside Snowflake.
-- From ingest to insight in one place: Building applications where the entire data lifecycle (ingest, process and serve) happens within the Snowflake ecosystem.
+- From ingest to insight in one place: Building applications where the entire data lifecycle (ingest, process, and serve) happens within the Snowflake ecosystem.
 - Transforming raw data to insights with AI: Ingesting unstructured data and then, for instance, using Snowflake CoWork to search and understand it better, all in concert with users’ other structured data.
 - Employing reverse ETL: Closing the loop on insight generation by sharing with external operational systems via APIs, messaging infrastructure, and more.
 
@@ -107,8 +107,8 @@ For more information about government regions, see [U.S. regions supporting publ
 
 ## Limitations
 
-- Users with a default role of ACCOUNTADMIN can’t login to Openflow - Snowflake Deployment runtimes and will get an error message when attempting to do so.
-- Snowflake account suspension for payment, billing, trial expiration or any other reason impacting the organization or account-status can affect Openflow - Snowflake Deployments. Once suspended, even if an account is reactivated, existing deployments will show as **Not Reporting** and are not recoverable. For details, see [Effect of Snowflake account suspension on Openflow Snowflake Deployments](/user-guide/data-integration/openflow/manage#label-openflow-recover-after-account-suspension).
+- Users with a default role of ACCOUNTADMIN can’t log in to Openflow - Snowflake Deployment runtimes and will get an error message when attempting to do so.
+- Snowflake account suspension for payment, billing, trial expiration, or any other reason impacting the organization or account status can affect Openflow - Snowflake Deployments. Once suspended, even if an account is reactivated, existing deployments will show as **Not Reporting** and are not recoverable. For details, see [Effect of Snowflake account suspension on Openflow Snowflake Deployments](/user-guide/data-integration/openflow/manage#label-openflow-recover-after-account-suspension).
 - Customers requiring private connectivity will need to configure [outbound PrivateLink](/user-guide/private-connectivity-outbound).
   PrivateLink is available to [Business Critical Edition](/user-guide/intro-editions#label-snowflake-editions-business-critical) only.
 

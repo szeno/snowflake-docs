@@ -38,7 +38,7 @@ Data sync for each property will create two loads:
 If you wish to only sync current data, you can do so via a worksheet.
 
 Enabling a property using Snowsight will cause the connector to attempt ingestion for all possible export types. If you want to
-ingest only specific export types, for example if you only have *events* tables in BigQuery, you can do so by using SQL statements.
+ingest only specific export types, for example, if you only have *events* tables in BigQuery, you can do so by using SQL statements.
 
 Note
 
@@ -93,7 +93,7 @@ To list all the available properties in a given GCP project, call the following 
 > CALL LIST_GA_PROPERTIES();
 > ```
 
-The result displays all the available projects and properties to ingest by an authorized account. If no results are returned please check:
+The result displays all the available projects and properties to ingest by an authorized account. If no results are returned, please check:
 
 - If the data export from Google Analytics to BigQuery is configured.
 - If exported data is visible in BigQuery.
@@ -226,7 +226,7 @@ The initial load runs backwards, starting from the current day until the first d
 
 ## Reloading already ingested data
 
-To reload already ingested data, or to load data that has not been ingested at all (e.g. because you enabled property without initial load, or data was absent in BigQuery and now it’s available) you can call one of the following procedures:
+To reload already ingested data, or to load data that has not been ingested at all (for example, because you enabled property without initial load, or data was absent in BigQuery and now it’s available) you can call one of the following procedures:
 
 > Copy code
 >

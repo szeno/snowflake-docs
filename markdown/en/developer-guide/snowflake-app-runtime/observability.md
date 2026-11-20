@@ -1,7 +1,8 @@
-# Observability for Snowflake App Runtime
+# Monitor an app
 
-This topic describes how to inspect the state of a running Application
-Service and how to read its container logs. In [Cortex Code CLI](/user-guide/cortex-code/cortex-code-cli)
+This topic describes how to check the state of a running Application
+Service, read its logs, metrics, and lifecycle events, and work through common
+problems. In [Cortex Code CLI](/user-guide/cortex-code/cortex-code-cli)
 or [Cortex Code Desktop](/user-guide/cortex-code/cortex-code-desktop/building-apps), you can
 ask the agent to check status, show logs, or diagnose deployment issues. For example:
 `Show me the logs for my warehouse-monitor app`.
@@ -41,6 +42,12 @@ A service can be in one of the following states:
 - `DELETED`: the service has been dropped.
 - `INTERNAL_ERROR`: the service is in an unexpected internal state.
 
+On [serverless compute](/developer-guide/snowflake-app-runtime/serverless)
+(Public Preview), the `compute_resource` column in `SHOW APPLICATION SERVICES`
+output shows `SERVERLESS`. A serverless app that stopped after its idle period
+shows `SUSPENDED` with `current_instances` at `0`. That’s expected: the next
+request starts it again, so you don’t resume it.
+
 ## Read container logs and telemetry
 
 The fastest way to read container logs is with the Snowflake CLI:
@@ -57,12 +64,14 @@ Application Service defined in your `app.yml` (`--type log`). Pass `--target`
 when the manifest defines named targets. Output is
 capped at 100 KB.
 
-Use `--type` to select another observability stream:
+On managed compute, use `--type` to select another stream. Serverless apps
+support only `--type log`; see
+[On serverless compute, live logs come from the running instance, so you can](/developer-guide/snowflake-app-runtime/observability#label-snowflake-app-runtime-observability-serverless-logs).
 
 Copy code
 
 ```
-# Historical logs from the event table (works after suspend; short ingestion lag)
+# Historical logs from the event table (works after the app stops; short ingestion lag)
 snow app events --type log --since 6h
 
 # CPU / memory / network metrics from the event table
@@ -92,6 +101,38 @@ SELECT SYSTEM$GET_APPLICATION_SERVICE_LOGS('my_db.my_schema.my_app', 500, 1);
 ```
 
 The role that reads logs needs the MONITOR privilege on the service.
+
+On serverless compute, live logs come from the running instance, so you can
+read them only while the app runs. While the app isn’t running, live logs fail
+with `Failed to retrieve CNG app logs from the orchestrator.` To see logs from a
+stopped app, open the app to start it, or read historical logs from the event
+table instead:
+
+Copy code
+
+```
+SELECT SYSTEM$GET_APPLICATION_SERVICE_EVENT_TABLE_DATA('<db>.<schema>.<app>', 'LOG');
+```
+
+The function returns the log records as a JSON array.
+
+Serverless apps write logs to the event table, but not metrics or lifecycle
+events: the `METRIC` and `EVENT` types return no rows, and `snow app events`
+doesn’t support `--type metric` or `--type lifecycle` for them. To query the
+event table directly, filter on the `snow.app.name` resource attribute.
+Serverless rows also carry `snow.database.name`, `snow.schema.name`, and
+`snow.service.instance`, but not `snow.application_service.name`. See
+[Snowflake App Runtime limitations](/developer-guide/snowflake-app-runtime/limitations).
+
+### Read preview logs in Workspaces
+
+When you preview an app in a Snowsight workspace (Public Preview), the Preview
+pane shows the dev server’s live logs, refreshed every few seconds.
+Lines tagged `[APP]` come from your app’s standard output and standard error.
+Lines tagged `[PREVIEW]` come from the preview itself: sync, install, and status
+changes. Until the dev server is up, the pane shows `Container not ready`.
+Preview logs don’t go to an event table.
+See [Develop Snowflake App Runtime apps in Snowsight Workspaces](/developer-guide/snowflake-app-runtime/workspaces).
 
 ## Quick troubleshooting runbook
 
@@ -138,7 +179,7 @@ to check whether the URL is resolvable from the current deployment state.
 For persistent, queryable logs, configure an active event table on your
 account and emit structured logs from your application code. The event table
 receives logs, metrics, and traces emitted by your containers and by
-Snowflake. For more information, see
+Snowflake. On serverless compute, the event table receives logs only. For more information, see
 [Logging, tracing, and metrics](/developer-guide/logging-tracing/logging-tracing-overview). Treat event table
 access as sensitive: anyone with `SELECT` on it can read logs from every
 Application Service. Don’t log query results, tokens, or secrets. See
@@ -146,7 +187,7 @@ Application Service. Don’t log query results, tokens, or secrets. See
 and
 [Governing log access](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-observability).
 
-## See also
+## Next steps
 
-- [Cost and credit usage for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/cost): credit usage and cost monitoring for App Runtime.
-- [SNOWFLAKE\_APP\_RUNTIME\_COMPUTE\_HISTORY view](/sql-reference/account-usage/snowflake_app_runtime_compute_history): hourly App Runtime credit usage view.
+- Fix common deploy and runtime errors: [Troubleshoot Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/troubleshooting).
+- See what your apps cost: [Cost and credit usage for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/cost).

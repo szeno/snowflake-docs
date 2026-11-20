@@ -49,8 +49,7 @@ Show lessSee more
 |  | [ConsumeIMAP](/user-guide/data-integration/openflow/processors/consumeimap) | Consumes messages from Email Server using IMAP protocol. |
 |  | [ConsumeJMS](/user-guide/data-integration/openflow/processors/consumejms) | Consumes JMS Message of type BytesMessage, TextMessage, ObjectMessage, MapMessage or StreamMessage transforming its content to a FlowFile and transitioning it to ‘success’ relationship. |
 |  | [ConsumeKafka](/user-guide/data-integration/openflow/processors/consumekafka) | Consumes messages from Apache Kafka Consumer API. |
-| [Snowflake logo in blue (no text)](/static/images/logo-snowflake-sans-text.png) | [ConsumeKafka](/user-guide/data-integration/openflow/processors/consumekafka) | Consumes messages from Apache Kafka Consumer API. |
-|  | [ConsumeKinesisStream](/user-guide/data-integration/openflow/processors/consumekinesisstream) | Reads data from the specified AWS Kinesis stream and outputs a FlowFile for every processed Record (raw) or a FlowFile for a batch of processed records if a Record Reader and Record Writer are configured. |
+|  | [ConsumeKinesis](/user-guide/data-integration/openflow/processors/consumekinesis) | Consumes records from an Amazon Kinesis Data Stream with enhanced fan-out or shared-throughput consumers and DynamoDB-based checkpointing. |
 |  | [ConsumeMQTT](/user-guide/data-integration/openflow/processors/consumemqtt) | Subscribes to a topic and receives messages from an MQTT broker |
 |  | [ConsumePOP3](/user-guide/data-integration/openflow/processors/consumepop3) | Consumes messages from Email Server using POP3 protocol. |
 |  | [ConsumeSlack](/user-guide/data-integration/openflow/processors/consumeslack) | Retrieves messages from one or more configured Slack channels. |

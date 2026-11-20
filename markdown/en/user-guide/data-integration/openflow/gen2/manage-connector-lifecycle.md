@@ -20,7 +20,7 @@ or other supported SQL/API automation.
 After a gen 2 connector is installed on a runtime, start it to begin reading from the source and
 writing to Snowflake. Use **Start** from the connector’s menu on the **Installed Connectors** tab.
 
-Use **Stop** when you need to pause ingestion—for example before maintenance, upgrades described in your
+Use **Stop** when you need to pause ingestion, for example before maintenance, upgrades described in your
 connector’s documentation, or before removal. Stopping leaves the connector installed but idle.
 
 Tip

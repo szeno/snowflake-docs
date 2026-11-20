@@ -9,7 +9,7 @@ For more details, see the [Snowflake Partner Network](https://www.snowflake.com/
 This topic contains information about how to set up and use version 1.x of the Snowflake Connector. It explains how Informatica Cloud organization administrators and business users can use the Snowflake
 Connector to publish data to Snowflake.
 
-The connector implements the Informatica Cloud Connector SDK. It can be deployed on both Informatica Cloud and Informatica PowerCenter 9.6.1. For assistance deploying the connector on PowerCenter, please
+The connector implements the Informatica Cloud Connector SDK. It can be deployed on both Informatica Cloud and Informatica PowerCenter 9.6.1. For assistance deploying the connector on PowerCenter,
 contact [Snowflake Support](https://docs.snowflake.com/user-guide/contacting-support).
 
 Note
@@ -104,11 +104,11 @@ If set, the connector will initiate a transaction before the start of every job,
 Note
 
 Informatica does not support operation rollback or disconnect in the connector API. Terminating a job may leave hanging table locks and an uncommitted transaction
-that may be needed to be released manually from the Snowflake command line.
+that may need to be released manually from the Snowflake command line.
 
 #### Abort on data errors
 
-When this property is selected, every job will stop processing if any data conversion errors are encountered during data import. To rollback partial changes when errors
+When this property is selected, every job will stop processing if any data conversion errors are encountered during data import. To roll back partial changes when errors
 are encountered, also set **Start transaction for jobs**.
 
 Note
@@ -117,7 +117,7 @@ Because data is loaded asynchronously, some data may already be committed if thi
 
 #### Propagate data stream
 
-The connector implements midstream write interface that allows chaining of data processing. If this property is selected, the connector will pass data for further
+The connector implements a midstream write interface that allows chaining of data processing. If this property is selected, the connector will pass data for further
 processing.
 
 For better performance, do not select this property.
@@ -137,7 +137,7 @@ The following table describes the advanced target properties that can be specifi
 | **Truncate table** | Delete all data from the target table prior to execution of the job. This statement is completed after execution of the **Execute before** statement. |
 | **Execute after** | SQL statement that will be executed after completion of a job. |
 | **Process data in one batch** | When this property is checked, the connector will upload all data from the job prior to processing it. |
-| **Preserve stage file on Error** | Preserve staged data file when an error occurs in loading data. This property is valid only if Abort on data error is enabled. |
+| **Preserve stage file on Error** | Preserve staged data file when an error occurs in loading data. This property is valid only if Abort on data errors is enabled. |
 | **Use Local Timezone** | Use agent local timezone to convert TIMESTAMP/datetime data. By default, UTC is used in conversions. |
 | **Success File Directory** | Not currently used. |
 | **Error File Directory** | Not currently used. |
@@ -154,7 +154,7 @@ Show lessSee more
 - Snowflake does not enforce primary or foreign key constraints, and does not preserve metadata for keys. You must specify the **Update key columns**
   property even if corresponding columns are marked as key in the Informatica environment.
 - The **Process data in one batch** property may delay completion of the job, but guarantees that no data will be persisted in case of a failure,
-  and without the overall transaction. Processing maximum amount of data at a time also maximizes utilization of Snowflake warehouse parallelism.
+  and without the overall transaction. Processing the maximum amount of data at a time also maximizes utilization of Snowflake warehouse parallelism.
 - The **Database Override**, **Schema Override**, and **Table Override** attributes are used by PowerCenter to provide values at runtime that
   override the target database, schema, and/or table for the data synchronization task. This enables using the same data synchronization task
   to update tables in multiple databases and schemas. The fields are blank by default and should be left blank because the values for the attributes

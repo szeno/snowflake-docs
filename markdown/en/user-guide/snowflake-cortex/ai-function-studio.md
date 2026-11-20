@@ -285,6 +285,7 @@ You can specify:
 - The dataset and metric used to score candidates.
 - One or more candidate models.
 - A reflection model used to generate candidate improvements.
+- An optimization algorithm: GEPA or CoCoEvolve.
 - An optimization objective.
 - A search budget.
 
@@ -295,6 +296,59 @@ Note
 
 The original AI function is not modified. Optimization produces candidate implementations that you can
 inspect and selectively create as new AI functions.
+
+### Select an optimization algorithm
+
+AI\_FUNCTION\_OPTIMIZATION supports two evolutionary optimization algorithms. Both automate the loop of
+running an evaluation, reviewing failures, and revising the implementation. They differ in how the
+reflection model proposes each new candidate. To select an algorithm, set `algorithm` in the `optimization`
+section of the specification.
+
+| Algorithm | Value | How it proposes candidates |
+| --- | --- | --- |
+| GEPA | `gepa` | Selects a candidate from the set of evaluated candidates, shows the reflection model that candidate’s failures through AI\_COMPLETE, and asks for an improved version in a single call. This is the default. |
+| CoCoEvolve | `cocoevolve` | Runs the same evolutionary loop, but proposes each change through an agent that applies meta-reflection across the whole search, as described below. |
+
+Expand
+
+Show lessSee more
+
+GEPA looks at what went wrong and makes a fix. It works well when a single incorrect output shows exactly
+what to change, for example when the function returns `Positive` instead of `positive` or ignores an
+instruction.
+
+CoCoEvolve works more like an engineer debugging the function. It remembers what it already tried and what
+worked, notices when a fix for one example breaks another, and tests its changes before submitting them.
+This helps when the cause of a problem isn’t clear from one example, fixes keep trading one error for
+another, or generated SQL keeps failing.
+
+Use the following guidance to choose an algorithm:
+
+- **Use GEPA** for straightforward tasks, such as simple classification, formatting, or extraction, where
+  errors are easy to spot and fix. Also use GEPA if your reflection model isn’t supported by Cortex Agents.
+- **Use CoCoEvolve** for harder tasks, such as multi-step reasoning, complex rules, or long and nuanced
+  inputs, or when GEPA stops improving.
+
+CoCoEvolve is an evolutionary optimizer developed by Snowflake. AI\_FUNCTION\_OPTIMIZATION uses a lightweight
+version of CoCoEvolve. Instead of reasoning only about one candidate’s failures, CoCoEvolve applies
+meta-reflection:
+
+- **Strategy ledger:** Reviews recent strategies and their score changes to decide whether to continue the
+  current strategy, try a new one, or revert.
+- **Search history queries:** Retrieves evidence from earlier candidates as needed, such as which candidate
+  first handled an example correctly and whether a later change lost that capability.
+- **Self-testing:** Runs draft SQL against sample rows and fixes errors before a candidate is fully
+  evaluated, so the search budget is spent on candidates that execute.
+
+With either algorithm, the optimizer tunes the prompt and model configuration around exactly one
+AI\_COMPLETE call, and the reflection model that you specify drives the optimizer. Use the most capable
+supported model available.
+
+Note
+
+CoCoEvolve proposes candidates through [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents), so its
+`reflection_model` must be a model that Cortex Agents supports. If you specify an unsupported model, the
+experiment is rejected with an error that lists the supported models.
 
 ### Define an optimization with SQL
 
@@ -321,6 +375,7 @@ optimization:
   models:
     - <candidate_model>
   reflection_model: <reflection_model>
+  algorithm: cocoevolve
   strategy: balanced
   budget: light
 $$;

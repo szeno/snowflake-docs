@@ -35,16 +35,17 @@ the project behaves:
 
 ## Before you start
 
-1. Confirm you’re on the latest Snowflake CLI with
-   [`snow helpers check-version`](/developer-guide/snowflake-cli/command-reference/helpers-commands/check-version):
+1. Upgrade to the latest Snowflake CLI with
+   [`snow upgrade`](/developer-guide/snowflake-cli/command-reference/upgrade-commands/upgrade):
 
    Copy code
 
    ```
-   snow helpers check-version
+   snow upgrade
    ```
 
-   If that command isn’t recognized, upgrade the Snowflake CLI. An older
+   If that command isn’t recognized, reinstall using
+   [Installing Snowflake CLI](/developer-guide/snowflake-cli/installation). An older
    CLI ignores every deployment key in `app.yml` and still expects
    `snowflake.yml`.
 2. Use the same CLI version in CI and any other environment that deploys
@@ -190,6 +191,10 @@ description, and icon are cleared. A change you make with
 `ALTER APPLICATION SERVICE` (query warehouse, integrations,
 and similar) is reverted the next time anyone deploys.
 
+The exception is
+[`compute_resource`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-serverless),
+which keeps its current value when omitted and which only `app.yml` can set.
+
 `--promote-only` still skips upload and build. It now reapplies the
 manifest instead of a `snowflake.yml`-style upgrade.
 
@@ -218,3 +223,8 @@ manifest instead of a `snowflake.yml`-style upgrade.
 Expand
 
 Show lessSee more
+
+## Next steps
+
+- Learn every `app.yml` key: [app.yml reference](/developer-guide/snowflake-app-runtime/app-yml).
+- Deploy the migrated project: [Deploy an app to Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy).

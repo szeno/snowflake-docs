@@ -6,6 +6,62 @@ To apply the latest updates to your deployment, runtimes, or connectors, see [Ma
 
 Show entries for:DeploymentRuntime / ConnectorControl Plane
 
+## November 19, 2026
+
+### Control Plane UI 0.102.0
+
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.31.0
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.60.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.81.0
+
+- Security patches and dependency upgrades.
+
+### Control Plane Core 0.142.0
+
+- Improved reliability of runtime lifecycle operations.
+- Snowflake to Kafka connectors are deprecated and hidden from the connector gallery.
+- Fixed an issue where a Gen 2 connector or runtime operation that stopped responding could stay in progress indefinitely and block other operations on the same deployment.
+- Security patches and dependency upgrades.
+
+### Data Plane Service 0.142.0
+
+- Fixed an issue where resuming a runtime after a failed update did not apply its configured thread count.
+- Security patches and dependency upgrades.
+
+### Control Plane UI 0.101.0
+
+- Security patches and dependency upgrades.
+
+### Data Plane UI 0.30.0
+
+- Security patches and dependency upgrades.
+
+### Runtime Operator 0.88.0
+
+- Fixed an issue where a runtime could lose a node when a scale-down was cancelled and then followed by another scale-down.
+- Security patches and dependency upgrades.
+
+### Ingress Controller 2026.11.18-18
+
+- Security patches and dependency upgrades.
+
+### SPCS Data Plane Agent 1.59.0
+
+- Security patches and dependency upgrades.
+
+### AWS Data Plane Agent 1.80.0
+
+- Openflow now keeps EKS add-ons (vpc-cni, aws-ebs-csi-driver, kube-proxy) current on install and deployment upgrade.
+- Security patches and dependency upgrades.
+
 ## November 18, 2026
 
 ### Runtime Server 2026.11.18.16
@@ -819,7 +875,7 @@ N/A
 - Deployment upgrade is now triggerable from Control Plane for BYOC Deployments
 - Connector configuration parameters now refresh automatically when a connector’s version changes, eliminating the need to reload the page to see updated parameter options after an upgrade
 - Runtime and connector display names containing special characters (e.g. parentheses, quotes) are now handled correctly
-- Fixed a case where creation of multiple Snowflake Deployment at exactly the same time could lead to a failure
+- Fixed a case where creation of multiple Snowflake Deployments at exactly the same time could lead to a failure
 - Security patches and dependency upgrades
 
 ### Control Plane UI `0.92.0`
@@ -863,7 +919,7 @@ N/A
 
 ### SPCS Data Plane Agent 1.47.2
 
-- Fixed issue with Openflow using DCP for a subset of customers who experienced errors with workload identify and egress for newly created runtimes.
+- Fixed issue with Openflow using DCP for a subset of customers who experienced errors with workload identity and egress for newly created runtimes.
 - Security patches and dependency upgrades.
 
 ## September 10, 2026

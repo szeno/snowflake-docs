@@ -191,7 +191,7 @@ see [Optimize queries for incremental refresh](/user-guide/dynamic-tables/refres
 ## AUTO refresh
 
 AUTO is the default refresh mode. When you set `REFRESH_MODE = AUTO` (or omit the parameter entirely), Snowflake
-evaluates the definition once at creation time and resolves it to either INCREMENTAL or FULL. After creation, the resolved
+evaluates the definition once at creation time and resolves it to either ADAPTIVE or FULL. After creation, the resolved
 mode is locked in and does not change. For the full CREATE syntax with all options, see [CREATE DYNAMIC TABLE](/sql-reference/sql/create-dynamic-table).
 
 Important
@@ -205,8 +205,12 @@ CREATE OR REPLACE DYNAMIC TABLE.
 
 Snowflake examines the definition for constructs, operators, functions, and base table properties. If the definition
 supports incremental refresh and Snowflake expects it to be the more cost- and time-effective choice, AUTO resolves to
-INCREMENTAL. If any part of the definition is incompatible, or if the definition complexity makes performance hard to predict,
-Snowflake resolves to FULL. AUTO does not resolve to ADAPTIVE; to use ADAPTIVE refresh, set `REFRESH_MODE = ADAPTIVE` explicitly.
+ADAPTIVE. If any part of the definition is incompatible, or if the definition complexity makes performance hard to predict,
+Snowflake resolves to FULL. If a `REFRESH USING` clause is present, AUTO resolves to CUSTOM\_INCREMENTAL.
+
+Existing dynamic tables that already resolved AUTO to INCREMENTAL keep INCREMENTAL. Newly created dynamic tables with
+AUTO resolve to ADAPTIVE instead of INCREMENTAL. To use INCREMENTAL without adaptive reinitialization, set
+`REFRESH_MODE = INCREMENTAL` explicitly.
 
 When AUTO resolves to FULL, the CREATE statement succeeds and its result message indicates why FULL was chosen. Verify the resolved mode after creation with SHOW DYNAMIC TABLES.
 
@@ -224,11 +228,11 @@ SHOW DYNAMIC TABLES LIKE 'dt_orders' ->> SELECT "name", "refresh_mode", "refresh
 +-------------------+--------------+---------------------+
 | name              | refresh_mode | refresh_mode_reason |
 |-------------------+--------------+---------------------|
-| DT_ORDERS         | INCREMENTAL  | NULL                |
+| DT_ORDERS         | ADAPTIVE     | NULL                |
 +-------------------+--------------+---------------------+
 ```
 
-When `refresh_mode` is INCREMENTAL, `refresh_mode_reason` is NULL. When AUTO resolves to FULL, the
+When `refresh_mode` is ADAPTIVE or INCREMENTAL, `refresh_mode_reason` is NULL. When AUTO resolves to FULL, the
 `refresh_mode_reason` column explains why incremental refresh wasn’t possible:
 
 ```

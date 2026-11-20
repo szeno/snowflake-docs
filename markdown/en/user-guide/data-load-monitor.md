@@ -77,6 +77,11 @@ details for the table in Snowsight or the [COPY\_HISTORY](/sql-reference/functio
 The table-level data loading activity has very low latency and includes bulk data loading performed using COPY INTO statements, continuous data
 loading using pipes, and files loaded through the web interface.
 
+Copy History shows the first error in each file. To keep every row that later loads reject, including rows from files
+with the **Partially loaded** status, turn on error logging for the target table and load the files with
+`ON_ERROR = CONTINUE`. Error logging supports CSV, JSON, and Parquet files. For more information, see
+[Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
+
 ### Prerequisites
 
 You must use a role that has one of the following:

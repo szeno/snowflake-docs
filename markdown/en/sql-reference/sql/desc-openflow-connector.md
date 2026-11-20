@@ -24,7 +24,7 @@ The command output provides connector properties in the following columns. Compa
 `SHOW OPENFLOW CONNECTORS`, the output adds the `last_version_*` columns and
 `default_version_git_commit_hash`, and omits `database_name`, `schema_name`, `created_on`, and
 `updated_on`. For live, default, and draft version behavior, see
-[gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+[Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 | Column | Description |
 | --- | --- |

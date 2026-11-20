@@ -13,7 +13,7 @@ Before building apps, ensure the following requirements are met:
 | **Snowflake connection** | An active Snowflake connection configured in CoCo Desktop. The agent uses your connection to discover tables, views, and schemas referenced by your app. |
 | **Snowflake CLI** | The latest version of the Snowflake CLI (`snow`) installed and configured for deployment commands. See [Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started). |
 | **App Runtime account setup** (App Runtime only) | Recommended: [account administrator setup](/developer-guide/snowflake-app-runtime/account-admin-setup) in Snowsight for shared deploy defaults. Personal-database deploys are possible without it but aren’t recommended for team apps. |
-| **Node.js** (App Runtime only) | Node.js 22 or later installed locally for running the development server. |
+| **Node.js** (App Runtime Node.js apps only) | Node.js 22 or later installed locally for running the development server. |
 | **Python** (Streamlit only) | Python 3.8 or later with the `streamlit` and `snowflake-snowpark-python` packages for local development. |
 
 Expand
@@ -22,10 +22,10 @@ Show lessSee more
 
 ## Supported frameworks
 
-| Framework | Best for | Technology | Deployment target |
+| Platform | Best for | Framework | Deployment target |
 | --- | --- | --- | --- |
-| **Streamlit in Snowflake** | Python dashboards, KPI monitors, data exploration tools, analyst utilities | Python + Streamlit | Snowflake Streamlit Apps |
-| **Snowflake App Runtime** | Full-stack web apps with custom UI, multi-step forms, role-based routing, customer-facing tools | JavaScript / Node.js | Application Service |
+| **Streamlit in Snowflake** | Python dashboards, KPI monitors, data exploration tools, analyst utilities | Streamlit, a Python framework | Snowflake Streamlit Apps |
+| **Snowflake App Runtime** | Full-stack web apps with custom UI, multi-step forms, role-based routing, customer-facing tools | Next.js by default; Python apps are also supported | Application Service |
 
 Expand
 
@@ -150,7 +150,7 @@ Show lessSee more
 
 Note
 
-Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, call `asCaller()` from `lib/snowflake.ts` and query through the caller view it returns. You don’t configure anything in `app.yml` for Caller’s Rights. For more information, see [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
+Caller’s Rights is available automatically for Application Services. To run a query as the signed-in user, call `asCaller()` from `lib/snowflake.ts` and query through the caller view it returns. You don’t configure anything in `app.yml` for Caller’s Rights. For more information, see [Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake).
 
 ### Developing locally
 
@@ -183,8 +183,8 @@ This uploads your source, runs a remote build, deploys an Application Service, a
 
 For Snowflake App Runtime setup, manifests, sharing, observability, and SQL
 reference, see [Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started),
-[Access control](/developer-guide/snowflake-app-runtime/access-control),
-[Observability](/developer-guide/snowflake-app-runtime/observability), and the
+[Share a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/access-control),
+[Monitor a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/observability), and the
 [Snowflake App Runtime](/developer-guide/snowflake-app-runtime/about-snowflake-app-runtime)
 developer guides.
 

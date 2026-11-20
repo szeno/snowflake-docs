@@ -12,6 +12,17 @@ Connector reconfiguration can be customized using SQL or `ResetConfigurationHand
 
 Only users assigned the `ADMIN` application role can call the `PUBLIC.RESET_CONFIGURATION()` procedure.
 
+The procedure isn’t specific to any one connector. It’s expected to be available in most connectors built with the SDK, and it lets users go back in the configuration wizard.
+It’s intended to be called by the connector UI, for example from a Back button once one is available, and usually isn’t called from a worksheet.
+
+For example, a user can go through the wizard as follows:
+
+1. The user calls `PUBLIC.CONFIGURE_CONNECTOR()`.
+2. The user calls `PUBLIC.SET_CONNECTION_CONFIGURATION()`.
+3. The user wants to change values that were provided earlier, so the user calls `PUBLIC.RESET_CONFIGURATION()`.
+4. The user repeats steps 1 and 2 with the updated values.
+5. The user calls `PUBLIC.FINALIZE_CONNECTOR_CONFIGURATION()`. After this step, resetting the configuration is no longer possible. For more information, see [Finalize configuration](/developer-guide/native-apps/connector-sdk/flow/finalize_configuration).
+
 Resetting configuration consists of the following configurable phases, which by default have no effect:
 
 1. Status validation

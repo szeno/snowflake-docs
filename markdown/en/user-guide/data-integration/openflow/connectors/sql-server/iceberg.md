@@ -3,7 +3,9 @@
 The Openflow multi-database connectors for SQL Server support writing to Snowflake-managed Apache
 Apache Iceberg™ tables as an opt-in destination format. Iceberg v2 and v3 are both supported. Setting
 **Table Storage Format** = `ICEBERG` and choosing an **Iceberg Version** are the only connector-level
-changes required. The external volume, catalog, and serialization policy are inherited from the
+changes required. The **Table Storage Format** setting applies to every table the connector creates, so the destination tables, the connector-managed journal tables, and the
+archive tables are all created as Snowflake-managed Iceberg tables.
+The external volume, catalog, and serialization policy are inherited from the
 Snowflake destination database defaults. The Iceberg specification version is set via the
 **Iceberg Version** connector parameter, which defaults to `3`.
 
@@ -117,7 +119,8 @@ This step is not required for Snowflake storage.
 ## Step 2: Set Table Storage Format in the connector’s parameter context
 
 Set the **Table Storage Format** parameter to `ICEBERG` in the connector’s destination parameter context.
-The default is `STANDARD`.
+The default is `STANDARD`. This single parameter controls the format of the destination, journal, and archive
+tables.
 
 For the full connector creation and configuration workflow, see
 [Set up the Openflow Connector for SQL Server](/user-guide/data-integration/openflow/connectors/sql-server/setup)

@@ -8,7 +8,7 @@ This topic explains how to configure access to the Snowflake Openflow Runtime UI
 
 Important
 
-This is an optional task. If you will not be accessing the Openflow Runtime UI using public connectivity,
+This is an optional task. If you will be accessing the Openflow Runtime UI using public connectivity,
 you can skip this task.
 
 There are two tasks to configure access to the Snowflake Openflow Runtime UI using private connectivity:

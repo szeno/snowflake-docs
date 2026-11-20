@@ -57,9 +57,9 @@ Caution
 
 The role you use to install a Snowflake Native App becomes the owner of the APPLICATION object. Do not
 drop this role. If the owner role is dropped, the app becomes non-functional and cannot be
-recovered — you must drop the broken app and reinstall it. If you need to change the owner, use
-[GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) to transfer ownership to a different role before dropping
-the original role.
+recovered — you must drop the broken app and reinstall it.
+You can’t use [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) on an installed application.
+To change the owning role, uninstall and reinstall the app using the intended role.
 
 ## Apps with containers (SPCS)
 

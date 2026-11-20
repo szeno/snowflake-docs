@@ -247,7 +247,7 @@ SELECT query, but it has no effect outside a dynamic table definition.
 
 ## What’s next
 
-- To understand how Snowflake picks INCREMENTAL or FULL refresh, see
+- To understand how Snowflake picks ADAPTIVE or FULL refresh, see
   [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).
 - To set up alerts when staleness exceeds your target lag, see
   [Monitor dynamic tables](/user-guide/dynamic-tables/monitoring).

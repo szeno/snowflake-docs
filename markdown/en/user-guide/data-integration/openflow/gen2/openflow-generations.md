@@ -23,14 +23,14 @@ for each.
 
 ## Overview
 
-Gen 1 and gen 2 resources share the same Openflow platform concepts—BYOC and Openflow - Snowflake Deployment deployment
-types, NiFi-based data movement, and Snowflake as a destination—but they differ in how objects are
+Gen 1 and gen 2 resources share the same Openflow platform concepts (BYOC and Openflow - Snowflake Deployment deployment
+types, NiFi-based data movement, and Snowflake as a destination), but they differ in how objects are
 created, secured, and managed.
 
 Gen 2 is the long-term Openflow management model: SQL-accessible objects, granular
 privileges, and connectors with committed configuration versions. Gen 1 resources
 you already have continue to work unchanged. New gen 2 resources are created separately and follow
-Gen 2 lifecycle rules.
+gen 2 lifecycle rules.
 
 ## Why migrate to gen 2?
 
@@ -110,12 +110,12 @@ Available to all accounts.
 
 |  | gen 1 | gen 2 |
 | --- | --- | --- |
-| **Creation** | Install from connector catalog with **Install** (Openflow UI), or import from the registry on the runtime canvas (see [Coexistence](#label-openflow-generations-coexistence)) | **Openflow UI:** install from connector catalog (**gen 2** entries; setup wizard). **SQL:** `CREATE OPENFLOW CONNECTOR ... FROM DEFINITION` (see [Quickstart: gen 2 Openflow](/user-guide/data-integration/openflow/gen2/quickstart), [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql)). To reuse a validated configuration, see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning). |
+| **Creation** | Install from connector catalog with **Install** (Openflow UI), or import from the registry on the runtime canvas (see [Coexistence](#label-openflow-generations-coexistence)) | **Openflow UI:** install from connector catalog (**gen 2** entries; setup wizard). **SQL:** `CREATE OPENFLOW CONNECTOR ... FROM DEFINITION` (see [Quickstart: gen 2 Openflow](/user-guide/data-integration/openflow/gen2/quickstart), [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql)). To reuse a validated configuration, see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning). |
 | **Object type** | NiFi process group on the runtime canvas (not a separate Snowflake object) | Schema-level `OPENFLOW CONNECTOR` [File Based Entity (FBE)](/user-guide/data-integration/openflow/gen2/connector-versioning) with versioned stage configuration |
-| **Configuration** | Runtime canvas: parameter contexts, controller services, processors | Setup wizard, **Installed Connectors** » **Edit**, or SQL/stage commands (`PUT`/`COMMIT` on the connector’s live version). See [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning). |
+| **Configuration** | Runtime canvas: parameter contexts, controller services, processors | Setup wizard, **Installed Connectors** » **Edit**, or SQL/stage commands (`PUT`/`COMMIT` on the connector’s live version). See [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning). |
 | **Canvas** | Full read/write configuration surface | Read-only for gen 2 connectors; use **Installed Connectors** » **Edit** or SQL/API for configuration changes |
 | **Lifecycle** | Start/stop processors on the canvas; remove via canvas and UI steps documented per connector | **UI:** **Start** / **Stop** from **Installed Connectors**; remove with **Stop** → **Delete** → **Drop** (see [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle)). **SQL:** `ALTER OPENFLOW CONNECTOR ... START|STOP|TERMINATE`; `DROP` after terminate. |
-| **Documentation** | [Openflow connectors](/user-guide/data-integration/openflow/connectors/about-openflow-connectors) and connector-specific setup topics | [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard), [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle), [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) |
+| **Documentation** | [Openflow connectors](/user-guide/data-integration/openflow/connectors/about-openflow-connectors) and connector-specific setup topics | [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard), [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle), [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) |
 
 Expand
 
@@ -236,7 +236,7 @@ For full UI and SQL removal steps, wait functions, and cleanup guidance, see
 Gen 1 connectors are configured on the runtime canvas: parameter contexts, controller services, and
 processors, following that connector’s public setup documentation.
 
-Gen 2 connectors use versioned configuration (see [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning)). A connector in
+Gen 2 connectors use versioned configuration (see [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning)). A connector in
 **Draft** state must be committed before it can start. The UI shows **Edits not applied** when a live
 version exists alongside a committed default version.
 
@@ -352,7 +352,7 @@ Use this decision guide to choose the right topic:
 | Install a **gen 2** connector with the setup wizard | [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard) |
 | Configure a **gen 2** connector with SQL | [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) |
 | Start, stop, or remove a **gen 2** connector | [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle) |
-| Manage gen 2 connector configuration versions (draft, commit, abort) | [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) |
+| Manage gen 2 connector configuration versions (draft, commit, abort) | [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) |
 | SQL reference for gen 2 deployments, runtimes, and connectors | [Second generation Openflow SQL command reference](/sql-reference/commands-openflow-gen2) |
 | Prepare a data source (for example, PostgreSQL CDC) | The connector’s public setup topic; return to gen 2 docs for connector creation |
 

@@ -159,11 +159,11 @@ Expand
 
 Show lessSee more
 
-AUTO resolves to either INCREMENTAL or FULL at creation time (never ADAPTIVE). After resolution, switching between AUTO and the resolved concrete mode does not trigger reinitialization or change behavior.
+AUTO resolves to either ADAPTIVE or FULL at creation time. Existing dynamic tables that already resolved AUTO to INCREMENTAL keep INCREMENTAL. After resolution, switching between AUTO and the resolved concrete mode does not trigger reinitialization or change behavior.
 
 #### Locking in a production mode
 
-If you manage dynamic table definitions in version control and used AUTO during prototyping, you should change the definition to an explicit mode (for example, INCREMENTAL) before promoting to production. Existing dynamic tables deployed from the earlier definition keep their current refresh mode. New dynamic tables created from the updated definition use the explicit mode, making costs predictable. For more guidance, see [Choose a refresh mode](/user-guide/dynamic-tables/refresh-modes#label-dynamic-tables-refresh-mode-decision).
+If you manage dynamic table definitions in version control and used AUTO during prototyping, you should change the definition to an explicit mode (for example, ADAPTIVE) before promoting to production. Existing dynamic tables deployed from the earlier definition keep their current refresh mode. New dynamic tables created from the updated definition use the explicit mode, making costs predictable. For more guidance, see [Choose a refresh mode](/user-guide/dynamic-tables/refresh-modes#label-dynamic-tables-refresh-mode-decision).
 
 ### What doesn’t trigger reinitialization
 

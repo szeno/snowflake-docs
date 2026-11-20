@@ -64,7 +64,7 @@ Show lessSee more
 - **Interaction.** Hover chart elements for tooltips. You can copy a chart as an image from the visualization card when that action is available.
 - **Copy and export.** When you copy an agent response, chart data can be included as markdown tables in addition to the inline chart, so pasted content remains useful in documents or tickets.
 - **Titles and labels.** The agent can add chart titles and axis labels. Ask to rename, rescale, or change chart type if the first result is not what you need.
-- **Billing.** Visualizations are part of normal agent turns and consume tokens like other CoCo Desktop requests. See [CoCo cost](/user-guide/cortex-code/cortex-code#cost) and, for account-level usage, [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/user-guide/cortex-code/cortex-code-desktop/usage-history).
+- **Billing.** Visualizations are part of normal agent turns and consume tokens like other CoCo Desktop requests. See [CoCo cost](/user-guide/cortex-code/cortex-code#cost) and, for account-level usage, [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_desktop_usage_history).
 - **Support reference.** Tool history may show the action as **Visualize Data** (`visualize_data`).
 
 ## Tips for better results

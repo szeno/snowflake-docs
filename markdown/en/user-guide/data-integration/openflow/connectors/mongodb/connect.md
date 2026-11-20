@@ -119,9 +119,9 @@ to create the service user.
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
-   on the number of tables being replicated, and the amount of data transferred. Large table
+   on the number of tables being replicated and the amount of data transferred. Large table
    numbers typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster) rather than the warehouse size.
 
    Copy code
 
@@ -140,7 +140,7 @@ to create the service user.
    The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
    the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
    [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
-   What is specific to this connector is getting its source host into a rule that EAI references.
+   What is specific to this connector is getting its source host into a rule that the EAI references.
 
    The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
    That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the

@@ -53,11 +53,15 @@ COPY_HISTORY(
   [Snowflake Information Schema](/sql-reference/info-schema).
 - This view returns a limit of 14 days of copy history. To avoid this limitation, use the [COPY\_HISTORY view](/sql-reference/account-usage/copy_history) (Account Usage).
 - The function only includes COPY INTO commands that executed to completion, with or without errors.
+- The function returns the first error in each file. To keep every row that a load rejects, with the error and the
+  source data, turn on error logging for the target table and load the files with `ON_ERROR = CONTINUE`. Error logging
+  supports CSV, JSON, and Parquet files. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 - Dropping or recreating a table object removes the historical data for bulk data loads (COPY INTO *<table>* statements) into the table.
 - Dropping or recreating a pipe object removes the historical data for Snowpipe data loads using the pipe.
 
-- The COPY\_HISTORY view shows copy history only after the latest truncate operation on the target table. This applies to the COPY\_HISTORY views before and after
-  [replication](/user-guide/account-replication-intro).
+- The function returns copy history only after the latest truncate operation on the target table. This applies before and after
+  [replication](/user-guide/account-replication-intro). Truncating the table’s error table with `TRUNCATE ERROR_TABLE`
+  doesn’t count as a truncate operation on the table, so it doesn’t affect the copy history that the function returns.
 
 ## Output
 

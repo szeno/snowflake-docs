@@ -47,6 +47,8 @@ This topic provides detailed workflows for scheduling notebooks in two common sc
 
    - **Code Bundle name (formerly Notebook project name):** A unique name for the notebook’s Code Bundle that Snowflake creates for task execution. If not edited, Snowflake provides a
      default name.
+   - **Source folder:** The workspace folder whose files Snowflake packages into the Code Bundle. Choose the folder that contains the
+     notebook and the files it needs, so the Code Bundle doesn’t include unrelated files from the rest of the workspace.
    - **Parameters (optional):** Key-value parameters are passed to the notebook at runtime and appear as command-line arguments (in `sys.argv`). Parameters
      are useful for passing dates, environment flags, thresholds, or model versions. Parameters can be passed in Snowsight as whitespace-separated values
      or in the [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle) command as `ARGUMENTS = ('env', 'prod')`. For more information, see
@@ -66,6 +68,9 @@ This topic provides detailed workflows for scheduling notebooks in two common sc
      your notebook requires external APIs, third-party services, or cloud storage outside of Snowflake’s internal stages. If no EAIs are listed, your
      selected role does not own or have privileges on any integrations.
    - **Secrets (optional):** Selects authentication secrets the scheduled run can read (for example, API keys or OAuth tokens) when used together with EAIs.
+   - **Environment variables (optional):** Name and value pairs that the notebook can read at run time, for example with `os.environ`.
+   - **Stage mounts (optional):** Stages to mount as directories in the run’s file system. For each mount, select the stage and enter a mount
+     path. For details, see [Mounting stages](/developer-guide/code-bundles/code-bundles#mounting-stages).
      For prerequisites, mount paths, and Python examples, see [Using secrets in Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-using-secrets).
    - **Requirements file (optional):** Pre-install Python dependencies for repeatable runs using the `REQUIREMENTS_FILE` parameter. For more
      information, see [Managing packages and runtime](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-packages-runtime).

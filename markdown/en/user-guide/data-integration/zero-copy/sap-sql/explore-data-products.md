@@ -111,7 +111,7 @@ When a catalog-linked database is created, a read-only schema named
 [Semantic Views](/user-guide/views-semantic/overview) generated
 from the SAP® Core Schema Notation (CSN). Semantic Views add business
 meaning to the incoming shared data by defining metrics, entities, and
-relationships — enabling consistent business definitions and powering
+relationships, enabling consistent business definitions and powering
 AI capabilities such as
 [Cortex Analyst](/user-guide/snowflake-cortex/cortex-analyst)
 directly on top of the SAP® data in Snowflake.

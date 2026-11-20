@@ -233,6 +233,9 @@ External engines use these standard Iceberg write-mode properties for their own 
 Each property accepts `copy-on-write` or `merge-on-read`. For details, see
 [Write properties](https://iceberg.apache.org/docs/latest/configuration/#write-properties) in the Apache Iceberg documentation.
 
+You can set the same properties from Snowflake with `TABLE_PROPERTIES`. Snowflake maps them to
+`ICEBERG_MERGE_ON_READ_BEHAVIOR`. For the mapping, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
 Snowflake also publishes a table-level setting to those properties. On a Snowflake-managed table, writes from an external engine
 through Snowflake Horizon Catalog can update `ICEBERG_MERGE_ON_READ_BEHAVIOR` by setting those properties. On an externally
 managed table, a refresh can adopt properties that an external engine committed. Publishing these properties, or updating the
@@ -475,8 +478,9 @@ Snowflake attempts to maintain file sizes close to the target size when writing 
 After you set a target file size, Snowflake immediately starts to create larger files for new Data Manipulation Language (DML) operations.
 Snowflake’s table maintenance operations asynchronously change the existing table files according to the target file size.
 
-For both Snowflake-managed and externally managed Iceberg tables, if you set `TARGET_FILE_SIZE` at the table level,
-Snowflake writes the value to the `write.target-file-size-bytes` table property in the Iceberg metadata.
+For both Snowflake-managed and externally managed Iceberg tables, setting `TARGET_FILE_SIZE` to `16MB`, `32MB`, `64MB`, or `128MB` at the table level writes that size, in bytes, to the `write.target-file-size-bytes` property in the Iceberg metadata.
+Setting `TARGET_FILE_SIZE` to `AUTO` removes `write.target-file-size-bytes` from that metadata.
+For a Snowflake-managed table, Snowflake applies the change in the next `metadata.json` file it generates.
 
 The following example uses TARGET\_FILE\_SIZE to set a target file size of 128 MB for a Snowflake-managed table:
 

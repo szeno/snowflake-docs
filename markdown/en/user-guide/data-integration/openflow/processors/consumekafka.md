@@ -1,4 +1,4 @@
-# ConsumeKafka 2025.10.9.21
+# ConsumeKafka 2026.11.12.16
 
 Feature — Generally Available
 
@@ -8,61 +8,87 @@ Openflow BYOC deployments are available to all accounts in AWS [Commercial regio
 
 ## Bundle
 
-com.snowflake.openflow.runtime | runtime-kafka-nar
+org.apache.nifi | nifi-kafka-nar
 
 ## Description
 
-Consumes messages from Apache Kafka Consumer API. The complementary NiFi processor for sending messages is PublishKafka. The Processor supports consumption of Kafka messages, optionally interpreted as NiFi records. Please note that, at this time (in read record mode), the Processor assumes that all records that are retrieved from a given partition have the same schema. For this mode, if any of the Kafka messages are pulled but cannot be parsed or written with the configured Record Reader or Record Writer, the contents of the message will be written to a separate FlowFile, and that FlowFile will be transferred to the ‘parse.failure’ relationship. Otherwise, each FlowFile is sent to the ‘success’ relationship and may contain many individual messages within the single FlowFile. A ‘record.count’ attribute is added to indicate how many messages are contained in the FlowFile. No two Kafka messages will be placed into the same FlowFile if they have different schemas, or if they have different values for a message header that is included by the <Headers to Add as Attributes> property.
+Reads messages from Apache Kafka topics and writes them to FlowFiles as raw content, delimited batches, or structured records.
+
+The Processing Strategy determines how consumed messages are written:
+
+- `FLOW_FILE` (default) writes each Kafka message value to a separate FlowFile without parsing it.
+- `DEMARCATOR` combines messages from the same topic and partition, placing the UTF-8 Message Demarcator between values. If Separate By Key is `true`, messages with different keys are placed in different FlowFiles.
+- `RECORD` parses message values with the configured Record Reader and serializes them with the configured Record Writer. Records are grouped by topic, partition, and selected header values. Schema Conflict Resolution controls how records with conflicting schemas are grouped.
+
+If a message can’t be parsed or written with the configured Record Reader or Record Writer, its contents are written to a separate FlowFile and transferred to the `parse.failure` relationship. Otherwise, FlowFiles are transferred to `success` and can contain multiple messages. The `record.count` attribute indicates the number of messages in a FlowFile.
+
+Kafka header values selected for output use Header Format. They can be represented as text decoded with Header Encoding or as lowercase hexadecimal strings.
 
 ## Tags
 
-avro, consume, csv, get, ingest, ingress, json, kafka, openflow, pubsub, record, topic
+Consume, Get, Ingest, Ingress, Kafka, PubSub, Record, Topic, avro, csv, json
 
-## Input Requirement
+## Input requirement
 
 FORBIDDEN
 
-## Supports Sensitive Dynamic Properties
+## Supports sensitive dynamic properties
 
 false
 
 ## Properties
 
-| Property | Description |
-| --- | --- |
-| Commit Offsets | Specifies whether this Processor should commit the offsets to Kafka after receiving messages. Typically, this value should be set to true so that messages that are received are not duplicated. However, in certain scenarios, we may want to avoid committing the offsets, that the data can be processed and later acknowledged by PublishKafka in order to provide Exactly Once semantics. |
-| Content Field | Specifies under what field of the record the content will be added. If not set, the content will be at the root of the record |
-| Group ID | Kafka Consumer Group Identifier corresponding to Kafka group.id property |
-| Header Encoding | Character encoding applied when reading Kafka Record Header values and writing FlowFile attributes |
-| Header Name Pattern | Regular Expression Pattern applied to Kafka Record Header Names for selecting Header Values to be written as FlowFile attributes |
-| Headers Field Parent | Specifies under what field of the record the headers field will be added. If not set, the headers field will be at the root of the record |
-| Kafka Connection Service | Provides connections to Kafka Broker for publishing Kafka Records |
-| Key Attribute Encoding | Encoding for value of configured FlowFile attribute containing Kafka Record Key. |
-| Key Field Parent | Specifies under what field of the record the key field will be added. If not set, the key field will be at the root of the record |
-| Key Format | Specifies how to represent the Kafka Record Key in the output FlowFile |
-| Key Record Reader | The Record Reader to use for parsing the Kafka Record Key into a Record |
-| Max Uncommitted Time | Specifies the maximum amount of time that the Processor can consume from Kafka before it must transfer FlowFiles on through the flow and commit the offsets to Kafka (if appropriate). A larger time period can result in longer latency |
-| Message Demarcator | Since KafkaConsumer receives messages in batches, this Processor has an option to output FlowFiles which contains all Kafka messages in a single batch for a given topic and partition and this property allows you to provide a string (interpreted as UTF-8) to use for demarcating apart multiple Kafka messages. This is an optional property and if not provided each Kafka message received will result in a single FlowFile which time it is triggered. To enter special character such as ‘new line’ use CTRL+Enter or Shift+Enter depending on the OS |
-| Metadata Field | Specifies under what field of the record the metadata will be added. If not set, the metadata will be at the root of the record |
-| Metadata Received Timestamp Field | If specified a timestamp will be placed under the specified field in the metadata of record in the output FlowFile |
-| Output Strategy | The format used to output the Kafka Record into a FlowFile Record. |
-| Processing Strategy | Strategy for processing Kafka Records and writing serialized output to FlowFiles |
-| Record Reader | The Record Reader to use for incoming Kafka messages |
-| Record Writer | The Record Writer to use in order to serialize the outgoing FlowFiles |
-| Separate By Key | When this property is enabled, two messages will only be added to the same FlowFile if both of the Kafka Messages have identical keys. |
-| Topic Format | Specifies whether the Topics provided are a comma separated list of names or a single regular expression |
-| Topics | The name or pattern of the Kafka Topics from which the Processor consumes Kafka Records. More than one can be supplied if comma separated. |
-| auto.offset.reset | Automatic offset configuration applied when no previous consumer offset found corresponding to Kafka auto.offset.reset property |
+Configure how the processor connects to Kafka, selects messages, and writes FlowFile content and attributes.
+
+| Property | Description | Configuration |
+| --- | --- | --- |
+| Auto Offset Reset | Sets `auto.offset.reset` when the consumer group has no committed offset. | Required. Values: `earliest`, `latest` (default), `none`. Expression Language isn’t supported. |
+| Commit Offsets | Controls whether the processor commits offsets after receiving messages. | Required. Values: `true` (default), `false`. |
+| Group ID | Sets the Kafka consumer group identifier that corresponds to `group.id`. | Required. Expression Language isn’t supported. |
+| Header Encoding | Character set used to decode Kafka header values. | Required when Header Format is `string`. Default: `UTF-8`. |
+| Header Format | Controls how Kafka header values are represented in attributes or record fields. | Required. Values: `string` (default), `hex`. |
+| Header Name Pattern | Java regular expression that selects Kafka headers for FlowFile attributes. | Optional. |
+| Header Name Prefix | Prefix applied to attribute names created from Kafka headers to avoid reserved-name conflicts. | Optional. Applies when Processing Strategy is `FLOW_FILE`. |
+| Kafka Connection Service | KafkaConnectionService controller service that supplies connections to Kafka brokers. | Required. Expression Language isn’t supported. |
+| Key Attribute Encoding | Controls how the Kafka key is written to the `kafka.key` attribute. | Required. Values: `utf-8` (default), `hex`, `do-not-add`. |
+| Key Format | Controls how wrapper output represents the Kafka record key. | Required when Output Strategy is `USE_WRAPPER` or `INJECT_METADATA`. Values: `string`, `byte-array` (default), `record`. |
+| Key Record Reader | RecordReaderFactory controller service used to parse Kafka record keys. | Required when Key Format is `record`. Expression Language isn’t supported. |
+| Max Uncommitted Size | Maximum combined size of serialized keys and values to consume before transferring FlowFiles. | Optional. Evaluated before Max Uncommitted Time. |
+| Max Uncommitted Time | Maximum time to consume records before transferring FlowFiles. Longer periods can produce larger FlowFiles and increase latency. | Required. Default: `100 millis`. |
+| Message Demarcator | UTF-8 string inserted between Kafka messages combined in one FlowFile. | Required when Processing Strategy is `DEMARCATOR`. |
+| Output Strategy | Controls the representation of Kafka records in record-oriented FlowFiles. | Required when Processing Strategy is `RECORD`. Values: `USE_VALUE` (default), `USE_WRAPPER`, `INJECT_METADATA`, `INJECT_OFFSET`. |
+| Processing Strategy | Controls whether output uses individual FlowFiles, demarcated batches, or records. | Required. Values: `FLOW_FILE` (default), `DEMARCATOR`, `RECORD`. Expression Language isn’t supported. |
+| Record Reader | RecordReaderFactory controller service used to parse Kafka message values. | Required when Processing Strategy is `RECORD`. |
+| Record Writer | RecordSetWriterFactory controller service used to serialize outgoing FlowFiles. | Required when Processing Strategy is `RECORD`. |
+| Schema Conflict Resolution | Controls how records with different schemas are grouped into FlowFiles. | Required when Processing Strategy is `RECORD`. Values: `CREATE_NEW_FLOWFILE` (default), `CONTINUE_WITH_MERGED_SCHEMA`. |
+| Separate By Key | Controls whether a demarcated FlowFile can contain messages with different keys. | Required when Message Demarcator is configured. Values: `true`, `false` (default). |
+| Topic Format | Specifies whether Topics contains names or a Java regular expression. | Required. Values: `names` (default), `pattern`. |
+| Topics | Identifies topics by a name, comma-separated names, or a pattern, depending on Topic Format. | Required. Supports JVM environment variables and system properties. |
 
 Expand
 
 Show lessSee more
 
+The processor doesn’t support dynamic properties.
+
+## Output strategies
+
+The Output Strategy property applies when Processing Strategy is `RECORD`:
+
+- **Use Content as Value** writes only the Kafka record value.
+- **Use Wrapper** writes the key, value, headers, and metadata as separate fields. The metadata contains the topic, partition, offset, and timestamp.
+- **Inject Metadata** writes the record value and adds a `kafkaMetadata` sub-record containing the topic, partition, offset, timestamp, headers, and key.
+- **Inject Offset** writes the record value and adds the Kafka offset.
+
+When Output Strategy is **Use Wrapper** or **Inject Metadata**, Key Format specifies whether the Kafka record key is represented as a byte array, a UTF-8 string, or a record parsed by Key Record Reader. A key that can’t be parsed with the selected format is transferred to `parse.failure`.
+
 ## Relationships
+
+Connect this relationship to route FlowFiles after the processor consumes and serializes Kafka messages.
 
 | Name | Description |
 | --- | --- |
-| success | FlowFiles containing one or more serialized Kafka Records |
+| success | Routes FlowFiles that contain one or more serialized Kafka records. |
 
 Expand
 
@@ -70,17 +96,20 @@ Show lessSee more
 
 ## Writes attributes
 
+The processor writes these attributes to describe the Kafka messages in each output FlowFile.
+
 | Name | Description |
 | --- | --- |
-| record.count | The number of records received |
-| mime.type | The MIME Type that is provided by the configured Record Writer |
-| kafka.count | The number of messages written if more than one |
-| kafka.key | The key of message if present and if single message. How the key is encoded depends on the value of the ‘Key Attribute Encoding’ property. |
-| kafka.offset | The offset of the message in the partition of the topic. |
-| kafka.timestamp | The timestamp of the message in the partition of the topic. |
-| kafka.partition | The partition of the topic the message or message bundle is from |
-| kafka.topic | The topic the message or message bundle is from |
-| kafka.tombstone | Set to true if the consumed message is a tombstone message |
+| record.count | Number of records written to the FlowFile. |
+| mime.type | MIME type supplied by the configured Record Writer. |
+| kafka.count | Number of Kafka messages represented by the FlowFile. |
+| kafka.key | Key of a single Kafka message, when present. Key Attribute Encoding controls its encoding. |
+| kafka.offset | Offset of a single Kafka message, or the lowest offset in a batch. |
+| kafka.timestamp | Timestamp of a single Kafka message, or the earliest timestamp in a batch. The Kafka broker `log.message.timestamp.type` setting determines its meaning. |
+| kafka.partition | Partition that supplied the message or batch. |
+| kafka.topic | Topic that supplied the message or batch. |
+| kafka.max.offset | Highest Kafka offset in a batch. |
+| kafka.tombstone | Set to `true` when the consumed message is a tombstone message. |
 
 Expand
 
@@ -88,4 +117,4 @@ Show lessSee more
 
 ## See also
 
-- [com.snowflake.openflow.runtime.processors.kafka.PublishKafka](/user-guide/data-integration/openflow/processors/publishkafka)
+- [org.apache.nifi.kafka.processors.PublishKafka](/user-guide/data-integration/openflow/processors/publishkafka)

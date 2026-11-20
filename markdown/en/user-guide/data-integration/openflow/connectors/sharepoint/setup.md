@@ -154,10 +154,12 @@ also perform the following tasks:
 
 ## Use case 1: Ingest files only
 
+This use case uses the Microsoft SharePoint (Simple Ingest, document ACLs) and Microsoft SharePoint (Simple Ingest, no document ACLs) variants.
+
 Use a connector to:
 
 - Ingest and continuously update SharePoint files for custom processing within Snowflake
-- Optionally ingest file permissions (ACL connectors) to persist access controls downstream
+- Optionally ingest file permissions (document ACLs variant) to persist access controls downstream
 
 ### Set up the connector
 
@@ -191,7 +193,7 @@ The Openflow canvas appears with the connector process group added to it.
 
 ##### SharePoint Source Parameters
 
-**For all connectors:**
+**For both Simple Ingest variants:**
 
 | Parameter | Description |
 | --- | --- |
@@ -204,7 +206,7 @@ Expand
 
 Show lessSee more
 
-**For ACL connectors only:**
+**For the Microsoft SharePoint (Simple Ingest, document ACLs) variant only:**
 
 | Parameter | Description |
 | --- | --- |
@@ -237,12 +239,12 @@ Show lessSee more
 
 ##### SharePoint Ingestion Parameters
 
-**For all connectors:**
+**For both Simple Ingest variants:**
 
 | Parameter | Description |
 | --- | --- |
-| SharePoint Source Folder | Supported files from this folder and all its subfolders is ingested into Snowflake. The folder path is relative to a Shared Documents library. |
-| File Extensions To Ingest | A comma-separated list that specifies file extensions to ingest. The connector tries to convert the files to PDF format first, if possible. Nonetheless, the extension check is performed on the original file extension. To learn about the formats that can be converted, see [Format options](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format?view=graph-rest-1.0&tabs=http#format-options) If some of the specified file extensions are not supported by Cortex Parse Document, then the connector ignores those files, logs a warning message in an event log, and continues processing other files. |
+| SharePoint Source Folder | Files from this folder and all its subfolders are ingested into Snowflake. The folder path is relative to a Shared Documents library. |
+| File Extensions To Ingest | A comma-separated list that specifies file extensions to ingest. Leave empty to ingest all file types. The connector matches the extension of each file and ingests matching files in their original format, without converting them. |
 | SharePoint Document Library Name | A library in the SharePoint Site to ingest files from. |
 | Snowflake File Hash Table Name | Name of the table to store file hashes to determine if the content has changed. This parameter should generally not be changed. |
 
@@ -250,7 +252,7 @@ Expand
 
 Show lessSee more
 
-**For ACL connectors only:**
+**For the Microsoft SharePoint (Simple Ingest, document ACLs) variant only:**
 
 | Parameter | Description |
 | --- | --- |
@@ -266,6 +268,8 @@ Show lessSee more
    2. Right click on the imported process group and select **Start**.
 
 ## Use case 2: Ingest files and perform processing with Cortex
+
+This use case uses the Microsoft SharePoint (Cortex Search, document ACLs) and Microsoft SharePoint (Cortex Search, no document ACLs) variants.
 
 Use the predefined flow definition to:
 
@@ -302,7 +306,7 @@ The Openflow canvas appears with the connector process group added to it.
 
 ##### SharePoint Cortex Connect Source Parameters
 
-**For all connectors:**
+**For both Cortex Search variants:**
 
 | Parameter | Description |
 | --- | --- |
@@ -315,7 +319,7 @@ Expand
 
 Show lessSee more
 
-**For ACL connectors only:**
+**For the Microsoft SharePoint (Cortex Search, document ACLs) variant only:**
 
 | Parameter | Description |
 | --- | --- |
@@ -348,7 +352,7 @@ Show lessSee more
 
 ##### SharePoint Cortex Connect Ingestion Parameters
 
-**For all connectors:**
+**For both Cortex Search variants:**
 
 | Parameter | Description |
 | --- | --- |
@@ -363,7 +367,7 @@ Expand
 
 Show lessSee more
 
-**For ACL connectors only:**
+**For the Microsoft SharePoint (Cortex Search, document ACLs) variant only:**
 
 | Parameter | Description |
 | --- | --- |
@@ -493,7 +497,7 @@ SELECT PARSE_JSON(
 
 Here’s a complete list of values that you can enter for `columns`:
 
-**For all connectors:**
+**For both Cortex Search variants:**
 
 | Column name | Type | Description |
 | --- | --- | --- |
@@ -506,7 +510,7 @@ Expand
 
 Show lessSee more
 
-**For ACL connectors only:**
+**For the Microsoft SharePoint (Cortex Search, document ACLs) variant only:**
 
 | Column name | Type | Description |
 | --- | --- | --- |
@@ -605,7 +609,7 @@ Files stored in the stage may have unreadable names. To find specific files, use
 tables as your source of truth. These tables contain the mapping between file names and their
 corresponding file IDs in the stage.
 
-For Cortex-enabled setups, use the following query to find files:
+For the Cortex Search variants, use the following query to find files:
 
 Copy code
 
@@ -613,7 +617,7 @@ Copy code
 SELECT DISTINCT METADATA:id FROM DOCS_CHUNKS WHERE METADATA:fullName LIKE '%<file_name>%';
 ```
 
-For non-Cortex setups, use the following query:
+For the Simple Ingest variants, use the following query:
 
 Copy code
 

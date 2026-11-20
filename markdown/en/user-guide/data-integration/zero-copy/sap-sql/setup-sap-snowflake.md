@@ -7,7 +7,7 @@ Note
 The SAP® Snowflake account provisioned is the Business Critical edition.
 
 SAP® BDC Connect for Snowflake is not available for Snowflake trial accounts. To request a SAP®
-Snowflake trial, please contact your SAP account executive, who can submit the request for trial
+Snowflake trial, contact your SAP account executive, who can submit the request for trial
 through SAP’s internal process for enterprise trials.
 
 As an SAP® administrator, perform the following steps:
@@ -36,11 +36,11 @@ As an SAP® administrator, perform the following steps:
    - **Admin First Name**: The first name of the administrator of your SAP Snowflake system.
    - **Admin Last Name**: The last name of the administrator of your SAP Snowflake system.
 
-   Provisioning begins and SAP® notifies you that a provisioning request was sent to the specified owner’s e-mail address.
+   Provisioning begins and SAP® notifies you that a provisioning request was sent to the specified owner’s email address.
 8. Click **View in Resources** to view the tenant within the indicated resource group.
    The **Resources** tab shows the current solution status, which should be `Processing`.
 9. Select the tenant below the new solution and click **Details** to view the details of the tenant.
-10. On top of the **details** view of the tenant, choose the **View Details** link.
+10. At the top of the **Details** view of the tenant, choose the **View Details** link.
 
 A pop-up window opens that provides an activation link to the SAP Snowflake account.
 If you are the SAP Snowflake system owner, select this link and complete the activation flow
@@ -57,7 +57,7 @@ If not, share the activation link with the SAP Snowflake owner and ask them to c
 The SAP® BDC admin may provision as many SAP® Snowflake accounts as they need with unique account names to help distinguish them.
 Every SAP® Snowflake account will need to be activated as described in the note below.
 
-After activation, the SAP® Snowflake is ready for you to share Data Products from SAP® BDC to
+After activation, the SAP® Snowflake is ready for you to share data products from SAP® BDC to
 SAP® Snowflake. As part of the provisioning process, a Zerocopy Connector called
 `DEFAULT_SAP_BDC_CONNECTOR` is automatically created under the `CONNECTORS.ZEROCOPY` schema
 and enrolled with SAP® Business Data Cloud in the SAP® Snowflake account. You are ready to share
@@ -72,4 +72,4 @@ Link can be enrolled only once with SAP® Business Data Cloud.
 Note
 
 Customers can view the status of provisioning in the **Details** view.
-After provisioning is complete, the customer can click the Snowflake activation link available in the Details view to activate their SAP® Snowflake account, login, change their username and reset their password, setup MFA, and perform other operations.
+After provisioning is complete, the customer can click the Snowflake activation link available in the Details view to activate their SAP® Snowflake account, log in, change their username and reset their password, set up MFA, and perform other operations.

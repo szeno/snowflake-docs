@@ -3487,23 +3487,28 @@ Data Type:
 :   Boolean
 
 Description:
-:   Specifies whether DML error logging is allowed.
+:   Specifies whether to opt out of error logging for DML statements, `CREATE TABLE ... AS SELECT` statements, and
+    `COPY INTO` statements. A value that’s set for a user or a session overrides the account value. If the parameter is
+    set to `FALSE` for a user or a session, statements in the affected sessions record errors even when the account value
+    is `TRUE`. For [Snowpipe](/user-guide/data-load-snowpipe-intro), only the value set for the account applies.
 
 Values:
-:   `TRUE`: DML error logging isn’t turned on, regardless of whether it is turned on
-    for specific tables.
+:   `TRUE`: DML statements, `CREATE TABLE ... AS SELECT` statements, and `COPY INTO` statements don’t record errors,
+    regardless of whether error logging is turned on for specific tables. They behave as if error logging were turned
+    off: a DML statement or a `CREATE TABLE ... AS SELECT` statement that encounters an error fails, and a `COPY INTO`
+    statement handles errors according to its `ON_ERROR` copy option without recording them. Error tables and the errors
+    in them aren’t dropped. To stop Snowpipe from recording errors, set the parameter for the account.
 
-    `FALSE`: DML error logging behaves normally:
+    `FALSE`: Error logging behaves normally:
 
-    > - DML error logging is turned on for tables that have the ERROR\_LOGGING table-level parameter set
-    >   to `TRUE`.
-    > - DML error logging is turned off for tables that have the ERROR\_LOGGING table-level parameter set
-    >   to `FALSE`.
+    > - Error logging is turned on for tables that have the `ERROR_LOGGING` property set to `TRUE`.
+    > - Error logging is turned off for tables that have the `ERROR_LOGGING` property set to `FALSE`.
 
 Default:
 :   `FALSE`
 
-For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+For more information, see [Prevent or limit error logging](/user-guide/data-engineering/error-logging#label-error-logging-prevent) and
+[Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 ## PERIODIC\_DATA\_REKEYING
 

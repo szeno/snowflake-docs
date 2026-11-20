@@ -49,6 +49,7 @@ See also:
 | ARCHIVE\_STORAGE\_COOL\_BYTES | NUMBER | The number of bytes accessed by retrieving data from the COOL storage tier. |
 | ARCHIVE\_STORAGE\_COLD\_ROW\_COUNT | NUMBER | The number of rows that are in the COLD storage tier. |
 | ARCHIVE\_STORAGE\_COLD\_BYTES | NUMBER | The number of bytes accessed by retrieving data from the COLD storage tier. |
+| ERROR\_LOGGING | VARCHAR | Indicates whether [error logging](/user-guide/data-engineering/error-logging) is turned on for the table. Valid values are `YES` or `NO`. |
 
 Expand
 

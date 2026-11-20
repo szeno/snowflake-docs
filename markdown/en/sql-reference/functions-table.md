@@ -169,6 +169,7 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 | Alerts | [ALERT\_HISTORY](/sql-reference/functions/alert_history) | For more information, see [Setting up alerts based on data in Snowflake](/user-guide/alerts). |
 |  | [SERVERLESS\_ALERT\_HISTORY](/sql-reference/functions/serverless_alert_history) | TO BE DEPRECATED - Refer to [SERVERLESS\_ALERT\_HISTORY view](/sql-reference/account-usage/serverless_alert_history). |
 | Bind variables | [BIND\_VALUES](/sql-reference/functions/bind_values) | For more information, see [Retrieve bind variable values](/sql-reference/bind-variables#label-bind-variables-retrieving-values). |
+| Code Bundles | [CODE\_BUNDLE\_HISTORY](/sql-reference/functions/code_bundle_history) | For more information, see [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles). |
 | Database Replication | [DATABASE\_REFRESH\_HISTORY](/sql-reference/functions/database_refresh_history) | For more information, see [Replicating databases across multiple accounts](/user-guide/db-replication-config). |
 |  | [DATABASE\_REFRESH\_PROGRESS , DATABASE\_REFRESH\_PROGRESS\_BY\_JOB](/sql-reference/functions/database_refresh_progress) |  |
 |  | [DATABASE\_REPLICATION\_USAGE\_HISTORY](/sql-reference/functions/database_replication_usage_history) | TO BE DEPRECATED - Refer to [DATABASE\_REPLICATION\_USAGE\_HISTORY view](/sql-reference/account-usage/database_replication_usage_history). |

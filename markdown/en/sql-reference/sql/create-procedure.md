@@ -1222,7 +1222,7 @@ CREATE OR ALTER PROCEDURE python_add1(A NUMBER)
   RETURNS NUMBER
   LANGUAGE PYTHON
   HANDLER='main'
-  RUNTIME_VERSION = '3.10'
+  RUNTIME_VERSION = '3.14'
   EXTERNAL_ACCESS_INTEGRATIONS=(example_integration)
   PACKAGES = ('snowflake-snowpark-python')
   EXECUTE AS OWNER
@@ -1242,7 +1242,7 @@ CREATE OR ALTER PROCEDURE python_add1(A NUMBER)
   RETURNS NUMBER
   LANGUAGE PYTHON
   HANDLER='main'
-  RUNTIME_VERSION = '3.10'
+  RUNTIME_VERSION = '3.14'
   EXTERNAL_ACCESS_INTEGRATIONS=(example_integration)
   SECRETS = ('secret_variable_name' = secret_name)
   PACKAGES = ('snowflake-snowpark-python')

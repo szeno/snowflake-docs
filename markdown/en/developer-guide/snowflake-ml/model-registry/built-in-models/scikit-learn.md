@@ -3,6 +3,12 @@
 The registry supports models created using scikit-learn (models derived from `sklearn.base.BaseEstimator` or
 `sklearn.pipeline.Pipeline`).
 
+Note
+
+`tabicl.TabICLClassifier` and `tabicl.TabICLRegressor` subclass `BaseEstimator`, but the registry logs them as
+tabular foundation models, not as scikit-learn models. See
+[TabICL](/developer-guide/snowflake-ml/model-registry/built-in-models/tabicl).
+
 The following additional options can be used in the `options` dictionary
 when you call `log_model`:
 

@@ -10,7 +10,7 @@ control, and can scale from one node up to fifty to handle varying data volumes.
 You can create a runtime from the Openflow UI, which works for both generations, or with SQL. The
 SQL commands in this topic create gen 2 runtimes.
 
-### Using the Openflow UI
+## Using the Openflow UI
 
 To create a runtime in your Snowflake deployment:
 
@@ -18,7 +18,7 @@ To create a runtime in your Snowflake deployment:
 2. In the navigation menu, select **Ingestion** » **Openflow**.
 3. Select **Launch Openflow**. A new tab opens for the Openflow canvas.
 4. In **Openflow Control Plane**, select **Create a runtime**. The **Create Runtime** dialog box appears.
-5. In the **Create Runtime** populate the following fields:
+5. In the **Create Runtime** dialog box, populate the following fields:
 
    | Field | Description |
    | --- | --- |
@@ -37,7 +37,7 @@ To create a runtime in your Snowflake deployment:
 
 Your runtime will appear in the runtime table in the control plane.
 
-### Using SQL (gen 2)
+## Using SQL (gen 2)
 
 Gen 2 runtimes are schema-level objects created with SQL:
 

@@ -68,7 +68,7 @@ ALTER OPENFLOW CONNECTOR [ IF EXISTS ] <name> SET DEFAULT_VERSION = { FIRST | LA
     [DESCRIBE OPENFLOW CONNECTOR](/sql-reference/sql/desc-openflow-connector#label-openflow-gen2-sql-connector-describe) output.
 
 Use [File staging commands](/sql-reference/commands-file) (`LS`, `GET`, `PUT`) on the connector’s live or
-`LAST` stage paths. See [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+`LAST` stage paths. See [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Operational state
 
@@ -137,7 +137,7 @@ ALTER OPENFLOW CONNECTOR <name> PULL
 
 For Git-based promote workflows, see
 [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in
-[gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+[Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Waiting for state transitions
 

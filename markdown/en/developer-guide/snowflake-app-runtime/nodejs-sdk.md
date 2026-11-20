@@ -1,4 +1,4 @@
-# Snowflake App Runtime SDK for Node.js
+# Node.js SDK
 
 The Snowflake App Runtime SDK for Node.js,
 [`@snowflake/sar-sdk`](https://www.npmjs.com/package/@snowflake/sar-sdk), gives
@@ -14,7 +14,7 @@ The Next.js template that the
 [`snowflake-apps`](/user-guide/cortex-code/bundled-skills#label-bundled-skill-snowflake-apps)
 skill scaffolds is built on the SDK: its `lib/snowflake.ts` creates the client
 for you. For how to query from that template, see
-[Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
+[Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake).
 
 The SDK runs in Node.js server code only. Don’t import it from code that runs in
 the browser. Browser code calls your app’s own server endpoints, and those
@@ -95,7 +95,7 @@ const { rows } = await snowflake.query(
 Each query runs in its own session. For session state that spans statements, see
 [Run a transaction](#label-snowflake-app-runtime-sdk-transactions). For owner’s rights and
 caller’s rights, bind variables, and choosing a warehouse, see
-[Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
+[Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake).
 
 ## Run queries with caller’s rights
 
@@ -118,8 +118,10 @@ export async function GET(request: Request) {
 - A caller view created without caller headers throws
   `CALLER_CONTEXT_REQUIRED`. It never falls back to owner’s rights.
 - Caller queries use the user’s default role and warehouse. For users without a
-  default warehouse, pass `warehouse` with each query, or set the
-  `SNOWFLAKE_WAREHOUSE` environment variable for the app.
+  default warehouse, pass `warehouse` with each query, or set
+  `SNOWFLAKE_WAREHOUSE` under
+  [`environment_variables`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-apps-manifest-environment-variables)
+  in `app.yml`.
 - Caller queries need caller grants on the data and the warehouses they use. See
   [Scoping caller’s rights](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-callers-rights-controls).
 
@@ -361,3 +363,7 @@ show complete programs, and the
 [changelog](https://github.com/snowflakedb/sar-sdk/blob/main/nodejs/CHANGELOG.md)
 lists the changes in each release. To report a problem, open an issue in the
 [snowflakedb/sar-sdk](https://github.com/snowflakedb/sar-sdk/issues) repository.
+
+## Next steps
+
+- Run queries as the app or the signed-in user: [Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake).

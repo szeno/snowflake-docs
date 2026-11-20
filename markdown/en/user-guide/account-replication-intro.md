@@ -102,7 +102,7 @@ Objects that are *not* supported for replication are skipped during replication 
 | Schemas |  | ✔ | By default, all schemas in replicated databases are replicated. If you use failover groups, you can choose which schemas within a database are replicated. For more information, see [Schema-level replication for failover groups](/user-guide/account-replication-config#label-schema-level-replication). |
 | Tables | Permanent tables | ✔ |  |
 |  | Transient tables | ✔ |  |
-|  | Error tables | ✔ | For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging). |
+|  | Error tables | ✔ | For more information, see the [usage notes for error tables](/user-guide/data-engineering/error-tables#label-error-logging-usage-notes). |
 |  | Temporary tables |  |  |
 |  | Automatic Clustering of clustered tables | ✔ |  |
 |  | Dynamic tables | ✔ | For more information, see [Replication and dynamic tables](/user-guide/account-replication-considerations#label-replication-and-dynamic-tables). |

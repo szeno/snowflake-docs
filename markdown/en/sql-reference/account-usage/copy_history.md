@@ -54,7 +54,7 @@ Show lessSee more
 - The view only includes COPY INTO commands that executed to completion, with or without errors.
 - Dropping or recreating a table object removes the load history metadata for bulk data load deduplication (COPY INTO *<table>* statements) into the table.
 - Renaming a table object updates the corresponding TABLE\_NAME entries in the copy history.
-- Dropping or recreating a pipe object doesn’t remove the load history metadata for the pipe.
+- Dropping or recreating a pipe object doesn’t remove the pipe’s earlier loads from this view. A recreated pipe doesn’t keep the old pipe’s load metadata, though, so it can load files that the old pipe already loaded. For more information, see [Recreate a pipe safely](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-recreate-steps).
 - The view only displays objects for which the current role for the session has been granted access privileges.
 - After the replication of copy history, the COPY\_HISTORY Account Usage view shows the history only after the latest truncate operation on the target table. This is different from the view without replication, which shows a complete copy history.
 

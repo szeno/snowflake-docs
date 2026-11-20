@@ -28,6 +28,7 @@ Copy code
 CREATE APPLICATION SERVICE [ IF NOT EXISTS ] <name>
   FROM ARTIFACT REPOSITORY <repository_name> PACKAGE <package_name>
   [ VERSION <version_alias> ]
+  [ COMPUTE_RESOURCE = { MANAGED_COMPUTE_POOL | SERVERLESS } ]
   [ EXTERNAL_ACCESS_INTEGRATIONS = ( <integration_name> [ , ... ] ) ]
   [ QUERY_WAREHOUSE = <warehouse_name> ]
   [ EXECUTE_AS_ROLE = <role_name> ]
@@ -61,6 +62,7 @@ Copy code
 CREATE OR ALTER APPLICATION SERVICE <name>
   FROM ARTIFACT REPOSITORY <repository_name> PACKAGE <package_name>
   [ VERSION <version_alias> ]
+  [ COMPUTE_RESOURCE = { MANAGED_COMPUTE_POOL | SERVERLESS } ]
   [ COMMENT = '<string_literal>' ]
   SPECIFICATION = '<yaml>'
 ```
@@ -91,6 +93,22 @@ CREATE OR ALTER APPLICATION SERVICE <name>
     default version; if the package has no default version, the command returns
     an error.
 
+`COMPUTE_RESOURCE = { MANAGED_COMPUTE_POOL | SERVERLESS }`
+:   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    Specifies where the app runs. `MANAGED_COMPUTE_POOL` runs the app on managed
+    compute. `SERVERLESS` runs the app on serverless compute, which starts the app
+    on the first request and stops it after an idle period. See
+    [Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless).
+
+    You can’t change the compute resource of an existing Application Service. To
+    move an app to serverless compute, create a new service. See
+    [Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
+
+    Default: `MANAGED_COMPUTE_POOL`
+
 `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
 :   Specifies the names of the
     [external access integrations](/developer-guide/external-network-access/creating-using-external-network-access)
@@ -119,14 +137,28 @@ CREATE OR ALTER APPLICATION SERVICE <name>
 :   Specifies whether Snowflake automatically resumes the service when it
     receives an inbound request to one of its endpoints.
 
-`AUTO_SUSPEND_SECS = num`
-:   Specifies the number of seconds of inactivity after which Snowflake
-    automatically suspends the Application Service. The minimum non-zero value
-    is `300`. A value of `0` disables auto-suspend. Setting a nonzero value isn’t
-    recommended: when a suspended app resumes, requests return errors until it’s
-    ready.
+    Default: `TRUE`.
 
-    **DEFAULT:** `0` (disabled)
+    A service on serverless compute always starts on request, so you can’t set
+    `AUTO_RESUME = FALSE` for it.
+
+`AUTO_SUSPEND_SECS = num`
+:   Specifies the idle timeout, in seconds, for a service on serverless compute.
+    When no request arrives for this period, Snowflake stops the app. The next
+    request starts it again.
+
+    [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    The value must be a multiple of 60 from `3600` through `86400` (1 hour through
+    24 hours). You can’t turn off the idle stop on serverless compute.
+
+    A service on managed compute runs until you suspend it with
+    [ALTER APPLICATION SERVICE](/sql-reference/sql/alter-application-service). For more information, see
+    [Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+
+    **DEFAULT:** `3600` (1 hour), which is also the minimum
 
 `MIN_INSTANCES = num`
 :   Specifies the minimum number of instances Snowflake keeps running.
@@ -184,6 +216,12 @@ CREATE OR ALTER APPLICATION SERVICE <name>
     `auto_resume`, `auto_suspend_secs`
     :   Equivalent to `AUTO_RESUME` and `AUTO_SUSPEND_SECS`.
 
+    `url_prefix`
+    :   For a serverless app, the name at the start of the app’s URL:
+        `<url_prefix>-apps.<org>-<account>.<region>.<cloud>.snowflake.app`. If you omit
+        it, Snowflake generates a name. See
+        [`url_prefix`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-url-prefix).
+
     `execute_as_role`
     :   Equivalent to `EXECUTE_AS_ROLE`. Applied when the service is created. You can’t change
         it later, including with `CREATE OR ALTER`.
@@ -195,7 +233,7 @@ CREATE OR ALTER APPLICATION SERVICE <name>
     `secrets`
     :   A list of secrets to expose to the app. Each entry has a `name` (the name the app
         reads) and a `secret` (the identifier of the Snowflake secret object). Each secret
-        must exist and be accessible to the owning role.
+        must exist, and the owning role needs the `READ` privilege on it.
 
     `environment_variables`
     :   A list of environment variables to set in the app’s containers. Each entry has a

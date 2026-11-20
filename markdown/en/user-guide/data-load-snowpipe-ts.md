@@ -98,11 +98,13 @@ SELECT *
     START_TIME => DATEADD('hour', -24, CURRENT_TIMESTAMP())));
 ```
 
-`VALIDATE_PIPE_LOAD` returns an error if the pipe’s `COPY INTO` statement transforms semi-structured data, such as JSON, Avro, ORC, Parquet, or XML. It returns results only for the role that owns the pipe, or for a role that has all of the following privileges: `MONITOR` on the pipe (or `MONITOR EXECUTION` on the account), `USAGE` on an external stage (or `READ` on an internal stage), and `SELECT` and `INSERT` on the target table.
+`VALIDATE_PIPE_LOAD` returns an error if the pipe’s `COPY INTO` statement uses `MATCH_BY_COLUMN_NAME` or transforms semi-structured data, such as JSON, Avro, ORC, Parquet, or XML. It doesn’t return rows that violate CHECK constraints. It returns results only for the role that owns the pipe, or for a role that has all of the following privileges: `MONITOR` on the pipe (or `MONITOR EXECUTION` on the account), `USAGE` on an external stage (or `READ` on an internal stage), and `SELECT` and `INSERT` on the target table.
 
-To see every error in a file, you can also run a [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement for the same file with `VALIDATION_MODE = RETURN_ALL_ERRORS`. With this copy option, `COPY INTO` checks the file and returns its errors without loading any data. `VALIDATION_MODE` isn’t supported for Apache Iceberg™ tables, or for `COPY INTO` statements that transform data or use `MATCH_BY_COLUMN_NAME`.
+To see every error in a file, you can also run a [COPY INTO <table>](/sql-reference/sql/copy-into-table) statement for the same file with `VALIDATION_MODE = RETURN_ALL_ERRORS`. With this parameter, `COPY INTO` checks the file and returns its errors without loading any data. `VALIDATION_MODE` doesn’t evaluate CHECK constraints, and it isn’t supported for Apache Iceberg™ tables, or for `COPY INTO` statements that transform data or use `MATCH_BY_COLUMN_NAME`.
 
-If neither option works for your pipe, use the copy history. The `FIRST_ERROR_MESSAGE`, `FIRST_ERROR_LINE_NUMBER`, `FIRST_ERROR_CHARACTER_POS`, and `FIRST_ERROR_COLUMN_NAME` columns show where the first error is, and `ERROR_COUNT` shows how many rows have errors.
+If error logging is turned on for the pipe’s target table, you can also query the table’s error table. Error logging supports CSV, JSON, and Parquet files and pipes that transform data, and it records rows that violate CHECK constraints. With the default `ON_ERROR = SKIP_FILE` setting, the error table contains only one error for each file that the pipe skips. To query the errors, or to find out why errors are missing, see [Query load errors](/user-guide/data-load-error-tables-query).
+
+If none of these options works for your pipe, use the copy history. The `FIRST_ERROR_MESSAGE`, `FIRST_ERROR_LINE_NUMBER`, `FIRST_ERROR_CHARACTER_POS`, and `FIRST_ERROR_COLUMN_NAME` columns show where the first error is, and `ERROR_COUNT` shows how many rows have errors.
 
 ## Pipe execution states
 
@@ -290,6 +292,7 @@ If rows appear in the target table more than once, check for the following cause
 - **A recreated pipe**: Recreating a pipe drops its load metadata, so `ALTER PIPE ... REFRESH` can load files again afterward. For the safe procedure, see [Recreate a pipe safely](/user-guide/data-load-snowpipe-manage#label-snowpipe-manage-recreate-steps).
 - **A cloned pipe**: After you resume a pipe in a cloned database or schema, it receives event notifications for new files in the location that it watches, like the source pipe. If its `COPY INTO` statement names the target table as `db.schema.table`, or as `schema.table` in a cloned schema, it loads the data into the source table, not the clone. For more information, see [Pipe execution states](#label-snowpipe-ts-execution-states).
 - **A partial load followed by a reload**: If a pipe uses `ON_ERROR = CONTINUE`, the rows that loaded from a file with errors stay in the table when you reload the file.
+- **Rows loaded again from an error table**: If you insert rows from the table’s [error table](/user-guide/data-load-error-tables) and also reload the files that they came from, or run the `INSERT` statement more than once before you clear the error table, the rows are loaded more than once. For more information, see [Correct and reload rejected rows](/user-guide/data-load-error-tables-reload).
 
 ## Common error messages
 

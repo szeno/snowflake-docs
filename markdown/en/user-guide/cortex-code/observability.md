@@ -91,7 +91,7 @@ SELECT
   ORDER BY total_credits DESC;
 ```
 
-To scope either query to one surface, filter on `usage.INTERFACE` (`cli`, `desktop`, or `snowsight`). You can also query the per-surface views directly: [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_snowsight_usage_history), [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/user-guide/cortex-code/cortex-code-desktop/cortex-code-desktop-usage-history-view), and [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history).
+To scope either query to one surface, filter on `usage.INTERFACE` (`cli`, `desktop`, or `snowsight`). You can also query the per-surface views directly: [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_snowsight_usage_history), [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_desktop_usage_history), and [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history).
 
 Important
 

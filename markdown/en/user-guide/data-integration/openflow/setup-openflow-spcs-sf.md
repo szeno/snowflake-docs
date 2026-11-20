@@ -9,7 +9,7 @@ Openflow - Snowflake Deployment requires the creation of the following Snowflake
 > 1. [Create the OPENFLOW\_ADMIN role](#create-the-openflow-admin-role)
 > 2. [Configure required privileges](#configure-required-privileges)
 
-To complete these tasks, Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) and open a SQL worksheet.
+To complete these tasks, sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) and open a SQL worksheet.
 
 ## Create the OPENFLOW\_ADMIN role
 
@@ -31,13 +31,11 @@ GRANT ROLE OPENFLOW_ADMIN TO USER <OPENFLOW_USER>;
 
 Caution
 
-Users with a default role of ACCOUNTADMIN can’t login to Openflow - Snowflake Deployment runtimes and will get an error message when attempting to do so.
-Snowflake recommends assigning a different default role to any user that will login to a runtime.
-In addition, Snowflake recommends setting default secondary roles to `ALL` for all Openflow users.
+Users with a default role of ACCOUNTADMIN can’t log in to Openflow - Snowflake Deployment runtimes and will get an error message when attempting to do so.
+Snowflake recommends assigning a different default role to any user that will log in to a runtime.
+In addition, Snowflake recommends setting default secondary roles to `ALL` for all Openflow users. This setting is recommended but not required. In the Openflow application, users who don’t have it set can select a role by using the role picker. The selected role must hold the required Openflow grants, and in gen 2, deployments are visible only through that role.
 
 To change the default role and enable all secondary roles, execute the following:
-
-For example:
 
 Copy code
 

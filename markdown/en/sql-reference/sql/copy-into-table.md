@@ -494,7 +494,10 @@ Where:
 
     - `VALIDATION_MODE` does not support COPY statements that transform data during a load. If the parameter is specified, the COPY statement returns an error.
     - `VALIDATION_MODE` isn’t supported for Iceberg tables.
-    - Use the [VALIDATE](/sql-reference/functions/validate) table function to view all errors encountered during a previous load. Note that this function also does not support COPY statements that transform data during a load.
+    - `VALIDATION_MODE` doesn’t evaluate CHECK constraints, so it doesn’t return rows that violate them. To record these
+      rows, turn on error logging for the target table and use `ON_ERROR = CONTINUE`. For more information, see
+      [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
+    - Use the [VALIDATE](/sql-reference/functions/validate) table function to view the errors encountered during a previous load. Like `VALIDATION_MODE`, this function doesn’t return rows that violate CHECK constraints, and it doesn’t support COPY statements that transform data during a load.
 
 ## Format type options (`formatTypeOptions`)
 
@@ -1609,6 +1612,8 @@ You can specify one or more of the following copy options (separated by blank sp
     Definition:
     :   String (constant) that specifies the error handling for the load operation.
 
+        If error logging is turned on for the target table, the `ON_ERROR` value also determines which errors are recorded in the table’s error table. `CONTINUE` records every rejected row, and `SKIP_FILE` records one error for each skipped file. `ABORT_STATEMENT` records no errors, and error logging doesn’t support `SKIP_FILE_<num>` or `'SKIP_FILE_<num>%'`. For bulk loading, the default value is `ABORT_STATEMENT`, so a `COPY INTO` statement that doesn’t set `ON_ERROR` records no errors. Error logging supports CSV, JSON, and Parquet files. For more information, see [Which errors are recorded](/user-guide/data-load-error-tables#label-data-load-error-tables-supported).
+
         Important
 
         Carefully consider the ON\_ERROR copy option value. The default value is appropriate in common scenarios, but isn’t always the best
@@ -1618,7 +1623,7 @@ You can specify one or more of the following copy options (separated by blank sp
     :   - `CONTINUE`
           Continue to load the file if errors are found. The COPY statement returns an error message for a maximum of one error found per data file.
 
-          The difference between the ROWS\_PARSED and ROWS\_LOADED column values represents the number of rows that include detected errors. However, each of these rows could include multiple errors. To view all the errors in the data files, use the VALIDATION\_MODE parameter or query the [VALIDATE](/sql-reference/functions/validate) function.
+          The difference between the ROWS\_PARSED and ROWS\_LOADED column values represents the number of rows that include detected errors. However, each of these rows could include multiple errors. To view the errors in the data files, use the VALIDATION\_MODE parameter or query the [VALIDATE](/sql-reference/functions/validate) function. Neither reports rows that violate CHECK constraints. To keep every rejected row, with its error and source data, in a table that you can query, turn on error logging for the target table. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
         - `SKIP_FILE`
           Skip a file when an error is found.
 
@@ -1699,6 +1704,23 @@ You can specify one or more of the following copy options (separated by blank sp
 
   - Specifying the DISTINCT keyword in SELECT statements.
   - Using COPY with clustered tables.
+- Rows that violate a CHECK constraint on the target table are rejected and handled according to the `ON_ERROR` copy
+  option, the same way as rows with any other error. For a hybrid table, `COPY INTO` supports only
+  `ON_ERROR = ABORT_STATEMENT`, so a row that violates a CHECK constraint causes the load to fail. For more information,
+  see
+  [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check) and
+  [CHECK constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+- If error logging is turned on for the target table, the `ON_ERROR` copy option determines which errors from CSV,
+  JSON, and Parquet files are recorded in the table’s error table:
+
+  - With `ON_ERROR = CONTINUE`, every rejected row is recorded.
+  - With `ON_ERROR = SKIP_FILE` (the default for Snowpipe), one error is recorded for each skipped file.
+  - With `ON_ERROR = ABORT_STATEMENT` (the default for bulk loading), no errors are recorded.
+  - With `ON_ERROR = SKIP_FILE_<num>` or `ON_ERROR = 'SKIP_FILE_<num>%'`, error logging isn’t supported, and the error
+    table might contain no errors or only some errors from the load.
+
+  For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables). For an example, see
+  [Recording rejected rows in an error table](#label-copy-into-table-examples-error-table).
 - When you load CSV files into a table that has a clustering key, Snowflake validates the clustering key expressions during compilation. If the clustering key uses a function that isn’t supported within a `COPY` command, such as `DATE_TRUNC` or `UPPER`, the command fails with error `002300 (0A000)`. This validation doesn’t apply when the source files are JSON, Parquet, Avro, or ORC. For details and a workaround, see [Important Usage Notes](/user-guide/tables-clustering-keys#label-clustering-key-copy-csv).
 - For [partitioned Iceberg tables](/user-guide/tables-iceberg-metadata#label-tables-iceberg-partitioning):
 
@@ -1738,7 +1760,10 @@ You can specify one or more of the following copy options (separated by blank sp
   Note
 
   The VALIDATE function only returns output for COPY commands used to perform standard data loading; it does not support COPY commands that
-  perform transformations during data loading (e.g. loading a subset of data columns or reordering data columns).
+  perform transformations during data loading (for example, loading a subset of data columns or reordering data
+  columns).
+  The function also doesn’t return rows that violate CHECK constraints. To record these rows and the rows from loads
+  that transform data, use [error logging](/user-guide/data-load-error-tables).
 - Unless you explicitly specify `FORCE = TRUE` as one of the copy options, the command ignores staged data files that were already
   loaded into the table. To reload the data, you must either specify `FORCE = TRUE` or modify the file and stage it again, which
   generates a new checksum.
@@ -2184,6 +2209,43 @@ Validate files in a stage without loading:
     File '@MYTABLE/data3.csv.gz', line 3, character 2
     Row 3, column "MYTABLE"["NAME":1]
   ```
+
+### Recording rejected rows in an error table
+
+Turn on error logging for the target table with a role that owns the table, and then load the files with
+`ON_ERROR = CONTINUE`. Turning on error logging also affects `INSERT`, `UPDATE`, and `MERGE` statements on the table,
+which then record supported errors instead of failing. The `COPY INTO` statement loads the valid rows, records each
+rejected row in the table’s error table, and doesn’t fail when it rejects rows:
+
+Copy code
+
+```
+ALTER TABLE mytable SET ERROR_LOGGING = TRUE;
+
+COPY INTO mytable
+  FROM @mystage/data/
+  FILE_FORMAT = (TYPE = CSV)
+  ON_ERROR = CONTINUE;
+```
+
+Query the errors that the `COPY INTO` statement recorded. The following query returns the file name, record number,
+error message, and source record for each error:
+
+Copy code
+
+```
+SELECT
+    error_metadata:details:file_name::STRING AS file_name,
+    error_metadata:details:row_number::NUMBER AS record_number,
+    error_metadata:error_message::STRING AS error_message,
+    COALESCE(error_data:"$1"::STRING, TO_JSON(error_data)) AS source_record
+  FROM ERROR_TABLE(mytable)
+  WHERE query_id = LAST_QUERY_ID();
+```
+
+Run the query right after the `COPY INTO` statement, because `LAST_QUERY_ID()` returns the query ID of the most recent
+statement in the session. For more information, see [Query load errors](/user-guide/data-load-error-tables-query). To correct the
+rejected rows and load them again, see [Correct and reload rejected rows](/user-guide/data-load-error-tables-reload).
 
 ### Loading Iceberg-compatible Parquet data into an Iceberg table
 

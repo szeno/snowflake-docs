@@ -1,4 +1,4 @@
-# Deploying with Snowflake App Runtime
+# Deploy an app
 
 When you’re ready to deploy your app to Snowflake, run
 [`snow app deploy`](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/deploy).
@@ -16,7 +16,23 @@ defines both the deploy destination (including optional named
 and the install, build, and run commands. If you declare targets, pass
 `--target` to select one.
 
-## Deploy pipeline overview
+## What happens when you deploy
+
+![Animated example of snow app deploy uploading your code, building it in Snowflake, storing a new version in the artifact repository, and pointing the running app at that version.](/static/images/screens/snowflake-app-runtime-deploy-pipeline.gif)
+
+1. Your code (`app.yml`, `package.json`, and your app) uploads to a stage or
+   workspace in your account.
+2. Snowflake builds it there. The build runs your `install` and `build`
+   commands (for example, `npm ci` and `npm run build`) inside Snowflake, not on
+   your machine. The build can reach the npm and PyPI package registries by default, so
+   `npm`, `pip`, and `uv` installs work without extra setup. Other hosts need a
+   [`build_eai`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-apps-manifest-build-eai).
+3. Snowflake stores the build in an artifact repository as a new version. A
+   version never changes.
+4. Deploying points the app at one version, by default the newest. The URL
+   stays the same.
+
+Each deploy runs three phases:
 
 | Phase | What happens | Phase flag |
 | --- | --- | --- |
@@ -29,7 +45,37 @@ Expand
 Show lessSee more
 
 If a run fails partway through, retry just the failed phase instead of rerunning
-the full pipeline. Only one phase flag can be used at a time.
+the full pipeline. You can pass only one phase flag at a time.
+
+On serverless compute, a deploy fails if the new version doesn’t pass its
+[health check](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-health-check)
+within one minute. The app then goes back to the last version that passed, at
+the same URL. Read the logs to find why the new version didn’t start. See
+[Monitor a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/observability).
+
+### Roll back to an earlier version
+
+To roll back, point the app at an older version. Nothing rebuilds, and the URL
+stays the same.
+
+1. List the versions in the repository with
+   [SHOW VERSIONS IN ARTIFACT REPOSITORY](/sql-reference/sql/show-versions-in-artifact-repository):
+
+   Copy code
+
+   ```
+   SHOW VERSIONS IN ARTIFACT REPOSITORY my_app_repo FOR PACKAGE my_app;
+   ```
+2. Upgrade the service to the version you want with
+   [ALTER APPLICATION SERVICE](/sql-reference/sql/alter-application-service):
+
+   Copy code
+
+   ```
+   ALTER APPLICATION SERVICE my_app UPGRADE TO VERSION VERSION$4;
+   ```
+
+The next `snow app deploy` builds a new version and points the app at it.
 
 ## Upload phase
 
@@ -132,8 +178,8 @@ To list the published versions of one package, run
 
 ### Default outbound access during build
 
-By default, remote builds can reach a small set of external hosts so Node.js
-projects can download npm packages and common frontend assets (Google Fonts).
+By default, remote builds can reach a small set of external hosts so projects
+can download npm and Python packages and common frontend assets (Google Fonts).
 
 Snowflake applies an origin-based allowlist for remote build jobs. Allowed
 destinations are scoped to specific host and port pairs, not open internet
@@ -142,6 +188,8 @@ access. Remote builds can reach these hosts by default:
 | Host | Purpose |
 | --- | --- |
 | `registry.npmjs.org` | npm dependency resolution (`npm install` / `npm ci` ) |
+| `pypi.org` | Python package index (`pip install` / `uv pip install`) |
+| `files.pythonhosted.org` | Python package downloads |
 | `fonts.googleapis.com` | Google Fonts CSS, commonly referenced by web frameworks |
 | `fonts.gstatic.com` | Google Fonts font files |
 
@@ -178,8 +226,7 @@ Snowflake merges EAI-derived hosts with the default allowlist when both apply.
 You can also set a default build EAI at the account level with
 `DEFAULT_SNOWFLAKE_APPS_BUILD_EXTERNAL_ACCESS_INTEGRATION`, or pass
 [`--build-eai`](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/setup)
-during `snow app setup`. Set `build_eai` in `app.yml`, or pass `--build-eai`
-to `snow app setup`.
+during `snow app setup`.
 
 ### Disabling default build egress
 
@@ -224,7 +271,7 @@ repository (typically the `LATEST` version) and applies the full specification
 from `app.yml`. On later deploys, the same statement **converges** the service
 to the manifest: fields omitted from `app.yml` go back to their defaults. Your
 app URL doesn’t change. For instance counts and suspend, see
-[Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+[Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
 The artifact repository holds the built packages; the Application Service runs
 where the resolved target points. Those locations are configured
@@ -238,6 +285,12 @@ shared database and schema you can grant to other roles. Without setup, deploy
 may default to your [personal database](/user-guide/personal-databases), which
 you can’t share with teammates.
 
+The `compute_resource` field in `app.yml` chooses where the Application Service
+runs: managed compute by default, or serverless compute (Public Preview). The upload
+and build phases are the same for both. See
+[Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless) and
+[Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
+
 ## How configuration files fit together
 
 These files and settings define the pipeline:
@@ -245,28 +298,14 @@ These files and settings define the pipeline:
 | File or setting | Role in the pipeline |
 | --- | --- |
 | [`app.yml`](/developer-guide/snowflake-app-runtime/app-yml) | Deploy destination, `ignore` list, optional  `artifact_repo`, `build_eai`, and  `build_job_location`, service configuration, and install / build / run commands |
-| [Account administrator setup](/developer-guide/snowflake-app-runtime/account-admin-setup) | Shared deploy destination defaults; doesn’t change where the build job runs or how build egress works |
+| [Account administrator setup for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/account-admin-setup) | Shared deploy destination defaults; doesn’t change where the build job runs or how build egress works |
 
 Expand
 
 Show lessSee more
 
-## See also
+## Next steps
 
-- [Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started):
-  end-to-end walkthrough with Cortex Code or the CLI
-- [`snow app deploy` command reference](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/deploy):
-  syntax, phase flags, and examples
-- [app.yml manifest](/developer-guide/snowflake-app-runtime/app-yml):
-  deploy and build configuration
-- [Migrate from snowflake.yml to app.yml](/developer-guide/snowflake-app-runtime/migrate-to-app-yml):
-  move a `snowflake.yml` project
-- [Scale and suspend](/developer-guide/snowflake-app-runtime/scale-and-suspend):
-  instance counts and stopping a running app
-- [Deploy targets](/developer-guide/snowflake-app-runtime/deploy-targets)
-- [Snowflake App Runtime limitations](/developer-guide/snowflake-app-runtime/limitations):
-  build timeout and other limits
-- [Configure service egress](/developer-guide/snowpark-container-services/service-network-communications#label-working-with-services-jobs-egress):
-  creating network rules and EAIs for SPCS workloads
-- [Governing outbound network access](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-outbound-network):
-  account controls for build egress and runtime integrations
+- Run an app on serverless compute (Public Preview): [Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless).
+- Deploy one project to more than one environment: [Deploy targets for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy-targets).
+- Fix a failed deploy: [Troubleshoot Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/troubleshooting).

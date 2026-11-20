@@ -3,7 +3,7 @@ Categories:
 
 # VALIDATE
 
-Validates the files loaded in a past execution of the [COPY INTO <table>](/sql-reference/sql/copy-into-table) command and returns all the errors encountered during the load, rather than just the first error.
+Validates the files loaded in a past execution of the [COPY INTO <table>](/sql-reference/sql/copy-into-table) command and returns the errors encountered during the load, rather than just the first error.
 
 ## Syntax
 
@@ -38,6 +38,8 @@ VALIDATE( [<namespace>.]<table_name> , JOB_ID => { '<query_id>' | '_last' } )
   - The copy history metadata has expired. For more information, refer to [Load metadata](/user-guide/data-load-considerations-load#label-copy-load-metadata).
 - If new files have been added to the stage used by `query_id` since the load was executed, the new files added are ignored during the validation.
 - If files have been removed from the stage used by `query_id` since the load was executed, the files removed are reported as missing.
+- The function doesn’t return rows that violate CHECK constraints.
+- To keep a record of rejected rows that you can query later, including rows from loads that transform data and rows that violate CHECK constraints, turn on error logging for the target table and load the files with `ON_ERROR = CONTINUE`. Error logging supports CSV, JSON, and Parquet files. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 ## Output
 

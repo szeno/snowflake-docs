@@ -18,7 +18,7 @@ The **Openflow Admin role** is used by a deployment engineer to set up Openflow 
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
 2. Open a SQL worksheet.
-3. Create a role for the Openflow admin, allowing it the required permissions to manage integrations and compute pools required for deployments. In the SQL below, OPENFLOW\_ADMIN is the default name for the Openflow admin, but you can choose any name.
+3. Create a role for the Openflow admin, granting it the permissions to manage integrations and compute pools required for deployments. In the SQL below, OPENFLOW\_ADMIN is the default name for the Openflow admin, but you can choose any name.
 
    Copy code
 
@@ -39,7 +39,9 @@ The **Openflow Admin role** is used by a deployment engineer to set up Openflow 
    ```
 4. Grant the admin role and secondary roles to a user.
 
-   To prevent issues with login, when you create an Openflow user, Snowflake recommends that you also assign and set default secondary roles to that user. This is helpful because Openflow doesn’t allow users with the following roles to log in: ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN. While logged in, Openflow actions can be authorized by any of the authenticated user’s roles, not just the default role.
+   To prevent issues with login, when you create an Openflow user, Snowflake recommends that you also assign and set default secondary roles to that user. This is helpful because Openflow doesn’t allow users with the following roles to log in: ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN. While a user is logged in, Openflow can authorize actions using any of the user’s roles, not just the default role.
+
+   Setting `DEFAULT_SECONDARY_ROLES = ('ALL')` is recommended but not required. Users who don’t have it set can select a role by using the role picker in the Openflow UI. The selected role must hold the required Openflow grants, and in gen 2, deployments are visible only through that role.
 
    Substitute <OPENFLOW\_USER> with the appropriate username:
 
@@ -64,7 +66,7 @@ Log in to Openflow by performing the following steps:
 
 - If you can log into Snowflake but can’t log into Openflow, try the following:
   - Try changing your role to something other than ACCOUNTADMIN, ORGADMIN, GLOBALORGADMIN, or SECURITYADMIN.
-  - Try adding default secondary roles to the account:
+  - If you rely on secondary roles for Openflow privileges, add default secondary roles to the user:
 
     Copy code
 

@@ -60,6 +60,8 @@ To validate data in an uploaded file, execute [COPY INTO <table>](/sql-reference
 
 In addition, [COPY INTO <table>](/sql-reference/sql/copy-into-table) provides the ON\_ERROR copy option to specify an action to perform if errors are encountered in a file during loading.
 
+To keep each rejected row with its error and source data, turn on error logging for the target table and load CSV, JSON, or Parquet files with `ON_ERROR = CONTINUE`. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
+
 Note
 
 While Azure storage accounts support the MD5 File Validation feature, Azure doesn’t calculate MD5 hash values for files larger than 100 MB. For more information, see [MD5 hash calculation for large files](https://learn.microsoft.com/answers/questions/282572/md5-hash-calculation-for-large-files).

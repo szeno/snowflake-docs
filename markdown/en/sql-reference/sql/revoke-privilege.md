@@ -88,6 +88,7 @@ globalPrivileges ::=
       | READ UNREDACTED ERROR TABLE
       | USE AI FUNCTION <name>
       | USE AI FUNCTIONS
+      | USE CORTEX TRAINING
   }
   [ , ... ]
 ```

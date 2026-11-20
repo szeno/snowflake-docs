@@ -47,7 +47,7 @@ Snowflake manages these dynamic tables as a pipeline: `dt_orders` -> `dt_orders_
 
 **Target lag.** Target lag tells Snowflake how fresh the data must be. A target lag of 10 minutes means Snowflake tries to keep the data no more than 10 minutes behind the base tables, but actual lag can exceed the target when refreshes take longer than expected. You can also set `TARGET_LAG = DOWNSTREAM` on intermediate tables so they refresh only when their downstream dependents need fresh data. For details, see [Set the target lag for a dynamic table](/user-guide/dynamic-tables/target-lag).
 
-**Refresh modes.** Dynamic tables support several refresh modes. `INCREMENTAL` processes only the rows that changed since the last refresh. `FULL` refreshes the entire result set. `AUTO` lets Snowflake choose at creation time based on whether the definition supports incremental refresh.
+**Refresh modes.** Dynamic tables support several refresh modes. `INCREMENTAL` processes only the rows that changed since the last refresh. `FULL` refreshes the entire result set. `AUTO` lets Snowflake choose at creation time, resolving to ADAPTIVE when the definition supports incremental refresh, or to FULL otherwise.
 
 `ADAPTIVE` uses incremental refresh by default but automatically reinitializes when large upstream changes are detected. For advanced use cases, `CUSTOM_INCREMENTAL` lets you define your own refresh logic using DML statements. For details, see [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).
 

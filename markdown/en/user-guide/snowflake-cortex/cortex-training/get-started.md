@@ -13,6 +13,8 @@ a short fine-tuning loop end to end, and streaming responses from your fine-tune
   Cortex Training, contact your account team.
 - A [programmatic access token (PAT)](/user-guide/programmatic-access-tokens) for
   authentication.
+- A role with the USE CORTEX TRAINING privilege on the account, and the privileges described in
+  [Cortex Training access control](/user-guide/snowflake-cortex/cortex-training#label-cortex-training-access-control).
 - Python 3.10 or later.
 
 ## Step 1: Install the client

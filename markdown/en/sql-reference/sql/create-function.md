@@ -1020,8 +1020,8 @@ Copy code
 CREATE OR REPLACE FUNCTION py_udf()
   RETURNS VARIANT
   LANGUAGE PYTHON
-  RUNTIME_VERSION = '3.10'
-  PACKAGES = ('numpy','pandas','xgboost==1.5.0')
+  RUNTIME_VERSION = '3.14'
+  PACKAGES = ('numpy','pandas','xgboost==3.4.1')
   HANDLER = 'udf'
 AS $$
 import numpy as np
@@ -1041,7 +1041,7 @@ Copy code
 CREATE OR REPLACE FUNCTION dream(i int)
   RETURNS VARIANT
   LANGUAGE PYTHON
-  RUNTIME_VERSION = '3.10'
+  RUNTIME_VERSION = '3.14'
   HANDLER = 'sleepy.snore'
   IMPORTS = ('@my_stage/sleepy.py')
 ```

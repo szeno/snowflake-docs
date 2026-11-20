@@ -111,7 +111,7 @@ ALTER EXTERNAL ACCESS INTEGRATION <eai_name> SET
   ALLOWED_NETWORK_RULES = (<existing_network_rules>, <new_network_rule>);
 ```
 
-Use  to see which network
+Use [DESCRIBE INTEGRATION](/sql-reference/sql/desc-integration) to see which network
 rules an EAI already references.
 
 ## Next steps

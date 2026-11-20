@@ -29,7 +29,7 @@ This topic describes the steps to set up the Openflow Connector for MySQL.
 
 As a database administrator, perform the following tasks:
 
-1. Enable [binary logs](https://dev.mysql.com/doc/refman/8.4/en/binary-log.html), then save and configure its format as follows:
+1. Enable [binary logs](https://dev.mysql.com/doc/refman/8.4/en/binary-log.html), then save and configure their format as follows:
 
    |  |  |
    | --- | --- |
@@ -70,7 +70,7 @@ As a database administrator, perform the following tasks:
 
    `Out of sort memory, consider increasing server sort buffer size`.
    This indicates that `sort_buffer_size` should be raised.
-3. If you’re using Amazon RDS databases, then increase the retention period relevant to *binlog\_expire\_logs\_seconds* using *rds\_set\_configuration*.
+3. If you’re using Amazon RDS databases, then increase the retention period relevant to `binlog_expire_logs_seconds` using `rds_set_configuration`.
    To store the binary log for 72 hours, call `mysql.rds_set_configuration('binlog retention hours', 72)`.
 4. When using a read replica to connect, enable binary logging on the replica, then configure the
    replica to log the events received from its source into its own binary log.
@@ -155,9 +155,9 @@ to create the service user.
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
-   on the number of tables being replicated, and the amount of data transferred. Large table
+   on the number of tables being replicated and the amount of data transferred. Large table
    numbers typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster) rather than the warehouse size.
 
    Copy code
 
@@ -176,7 +176,7 @@ to create the service user.
    The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
    the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
    [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
-   What is specific to this connector is getting its source host into a rule that EAI references.
+   What is specific to this connector is getting its source host into a rule that the EAI references.
 
    The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
    That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the
@@ -309,11 +309,11 @@ table gives the parameter name and its purpose so you can prepare before enterin
 | Snowflake Warehouse | Destination details | The warehouse used for merge operations. Start with `XSMALL`; for many tables, a multi-cluster warehouse scales better than a larger size. |
 | Destination Schema Strategy | Destination details | How destination schemas are named, to avoid collisions when consolidating more than one source database into a single Snowflake database. Fixed after first apply. |
 | Object Identifier Resolution | Destination details | Whether source object names are stored case-sensitively (default) or uppercased (recommended). Fixed after first apply. |
-| Oversized Value Strategy | Destination details | How values exceeding the 16 MB limit are handled. Defaults to **Set Null**. |
+| Oversized Value Strategy | Destination details | How oversized values are handled: **Fail Table**, **Set Null**, or **Prune Row**. Defaults to **Set Null**. To replicate large values up to the Snowpipe Streaming limits for data types and rows, select **Prune Row**. |
 | Error Handling Strategy | Destination details | How invalid rows are handled. Defaults to **Log Errors and Continue**. |
-| Table Storage Format | Destination details | Standard Snowflake tables or Iceberg tables. Fixed after first apply. |
+| Table Storage Format | Destination details | Standard Snowflake tables or Iceberg tables. Applies to both destination and journal tables. Fixed after first apply. |
 | Iceberg Version | Destination details | When using Iceberg, the table version (2 or 3, default 3). |
-| Merge Task Schedule CRON | Tuning | CRON expression controlling when journal data is merged into destination tables, which is when warehouse cost accrues. |
+| Merge Task Schedule CRON | Tuning | CRON expression controlling when journal data is merged into destination tables, which is when warehouse cost accrues. The schedule uses UTC. |
 | Concurrent Snapshot Queries | Tuning | How many tables to snapshot concurrently (default 2). Each holds a source database connection. |
 | Ingestion Type | Migration | Whether new tables get a full snapshot before switching to CDC (default) or go straight to incremental. |
 | Starting Binlog Position | Migration | Where in the binlog to start reading: Latest (default) or Earliest. |
@@ -337,7 +337,7 @@ To configure the connector on the canvas, do the following as a data engineer:
    - [MySQL Destination Parameters](#label-of-mysql-destination-parameters): Used to establish a connection with Snowflake.
    - [MySQL Ingestion Parameters](#label-of-mysql-ingestion-parameters): Used to specify the tables to replicate.
 
-Start with setting the parameters of the MySQL Source Parameters context, then the MySQL Destination Parameters context.
+Start by setting the parameters of the MySQL Source Parameters context, then the MySQL Destination Parameters context.
 After this is done, you can enable the connector. The connector should connect to both MySQL and Snowflake and start running.
 However, the connector doesn’t replicate any data until any tables to be replicated are explicitly added to its configuration.
 
@@ -350,7 +350,7 @@ To run multiple CDC connector instances on one runtime, see .
 
 | Parameter | Description |
 | --- | --- |
-| MySQL Connection URL | The full JDBC URL to the source database. The connector uses the MariaDB driver, which is compatible with MySQL and requires the `jdbc:mariadb` prefix in the URL. If the SSL is disabled, then the connection URL should have the `allowPublicKeyRetrieval` parameter set to `true`. Examples:   - With SSL enabled: `jdbc:mariadb://example.com:3306` - With SSL disabled: `jdbc:mariadb://example.com:3306?allowPublicKeyRetrieval=true` |
+| MySQL Connection URL | The full JDBC URL to the source database. The connector uses the MariaDB driver, which is compatible with MySQL and requires the `jdbc:mariadb` prefix in the URL. If SSL is disabled, then the connection URL should have the `allowPublicKeyRetrieval` parameter set to `true`. Examples:   - With SSL enabled: `jdbc:mariadb://example.com:3306` - With SSL disabled: `jdbc:mariadb://example.com:3306?allowPublicKeyRetrieval=true` |
 | MySQL JDBC Driver | The absolute path to the [MariaDB JDBC driver jar](https://mariadb.com/downloads/connectors/connectors-data-access/java8-connector/). The connector uses the MariaDB driver, which is compatible with MySQL. Select the **Reference asset** checkbox to upload the MariaDB JDBC driver. Example: `/opt/resources/drivers/mariadb-java-client-3.5.2.jar` |
 | MySQL Username | The username for the connector. |
 | MySQL Password | The password for the connector. |
@@ -373,9 +373,9 @@ Show lessSee more
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake Private Key File. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |
 | Snowflake Username | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the user name used to connect to the Snowflake instance. | Yes |
-| Oversized Value Strategy | Determines how the connector handles values that exceed its internal size limits (16 MB) during replication. Possible values are:  - **Fail Table** (default): The table is marked as permanently failed, and replication stops for that table. - **Set Null**: The value is replaced with `NULL` in the destination table.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. | No |
+| Oversized Value Strategy | Determines how the connector handles values that are too large to replicate. Possible values are:  - **Fail Table** (default for gen 1 connectors): The table is marked as permanently failed, and replication stops for that table. No values are dropped or changed. - **Set Null** (default in the gen 2 **Destination details** step): A value that exceeds the connector’s per-value limit (16 MB by default) is replaced with `NULL` in the destination table. The other columns in the row replicate normally.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. - **Prune Row**: Aligns the connector with the Snowpipe Streaming limits for data types and rows. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned.   Use this if you want to replicate large values. If you raised the connector’s per-value limit and use **Set Null**, switch to **Prune Row** instead.   Requires Runtime Extensions version `2026.11.17.2` or later.  When **Prune Row** is selected, the connector first prunes any non-key value that exceeds the Snowflake limit for its type. Text, semi-structured, and binary values each have their own limit. If the row still exceeds the 128 MB Snowpipe Streaming row limit, the connector prunes other large non-key values, and then any remaining non-key values, until the row fits. If the replication keys and the metadata that the connector must keep still exceed the row limit, the table is marked as permanently failed.  How a pruned row is reported depends on the load phase:   - **Incremental load**: The change is written to the journal table with `snowflake_row_pruned` set to `true` in its `SF_METADATA` column. Journal tables are in the same schema as the destination table and are named `<source_table_name>_JOURNAL_<timestamp>_<schema_generation>`. For example, the journal table for a source table named `ORDERS` might be `ORDERS_JOURNAL_1763478000_1`. - **Initial snapshot load**: The row isn’t marked. Instead, the connector logs an error that names the table and the pruned columns.   To find incremental changes that lost a value, query the journal table. For example:  Copy code  ``` SELECT *   FROM ORDERS_JOURNAL_1763478000_1   WHERE SF_METADATA:snowflake_row_pruned::BOOLEAN = TRUE; ``` | No |
 | Error Handling Strategy | Determines how the connector handles invalid rows that Snowflake rejects during ingestion. Possible values are:  - **Fail Table** (default): The table is marked as failed on the first invalid row, and replication stops for that table. - **Log Errors and Continue**: The connector keeps replicating the valid rows and records each rejected row in the table’s error table. | No |
-| Table Storage Format | Standard Snowflake tables or Iceberg tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
+| Table Storage Format | Standard Snowflake tables or Iceberg tables. Applies to both destination and journal tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
 | Iceberg Version | The Iceberg table version, 2 or 3 (default 3). Ignored unless Table Storage Format is **ICEBERG**. Don’t change this value after ingestion begins. | No |
 | Snowflake Warehouse | Snowflake warehouse used to run queries. | Yes |
 

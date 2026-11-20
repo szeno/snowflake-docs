@@ -218,8 +218,8 @@ Show lessSee more
 
 You can uninstall an app using Snowsight or by running SQL commands.
 
-To uninstall an app, you must use a role that has the OWNERSHIP privilege on the
-app. See [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership).
+To uninstall an app, you must use a role that has the `OWNERSHIP` privilege on the
+app.
 
 To transfer ownership of objects owned by the app that exist outside the app, you
 must use a role that has the MANAGE GRANTS privilege on the objects. See

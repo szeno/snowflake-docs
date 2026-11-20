@@ -8,6 +8,17 @@ This article contains the release notes for the Snowpipe Streaming SDK, includin
 
 Snowflake uses semantic versioning for Snowpipe Streaming SDK updates.
 
+## Version 1.9.4 (November 17, 2026)
+
+### New features and updates
+
+- Added HTTP forward-proxy support through the `https_proxy_url`, `proxy_user`, `proxy_password`, and `no_proxy` configuration parameters. The proxy applies to file-mode uploads to Amazon S3 and Microsoft Azure.
+- Added C++ SDK support for Snowpipe Streaming.
+
+### Behavior changes
+
+- Pod memory throttling no longer counts reclaimable page cache as container memory usage, so long-running containers that do file I/O are no longer throttled as their page cache grows. To restore the previous behavior, set `container_memory_accounting_mode` to `strict`. The default is `relaxed`.
+
 ## Version 1.9.3 (November 12, 2026)
 
 ### Bug fixes

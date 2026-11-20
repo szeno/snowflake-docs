@@ -50,6 +50,7 @@ The command returns one row per service with the following columns:
 | `schema_name` | Schema that contains the service. |
 | `query_warehouse` | Warehouse used by the service when a container connects to Snowflake without specifying a warehouse. |
 | `compute_pool` | Empty when the service uses Snowflake-managed compute. |
+| `compute_resource` | Compute the service runs on. `SERVERLESS` for a service on serverless compute, which is in Public Preview. For more information, see [Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless). A serverless service that has scaled to zero shows `SUSPENDED` in the `status` column. |
 | `url` | Public endpoint URL for the service, if any. |
 | `privatelink_url` | PrivateLink endpoint URL for the service, if any. |
 | `owner` | Role that owns the service. |
@@ -63,7 +64,7 @@ The command returns one row per service with the following columns:
 | `auto_suspend_secs` | Configured auto-suspend timeout in seconds. `0` means auto-suspend is disabled. |
 | `external_access_integrations` | External access integrations attached to the service. |
 | `comment` | Service comment, if any. |
-| `additional_properties` | JSON object of additional presentation metadata from your optional `app.yml` manifest (for example, `label` and `description` from the `profile` section of [app.yml manifest for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/app-yml)). |
+| `additional_properties` | JSON object of additional presentation metadata from your optional `app.yml` manifest (for example, `label` and `description` from the `profile` section of [app.yml reference](/developer-guide/snowflake-app-runtime/app-yml)). |
 | `execute_as_role` | For a service in a personal database, the role that owner’s rights queries run as, set with `EXECUTE_AS_ROLE`. Empty for a service in a standard database. |
 | `min_instances` | Minimum instance count. `1` when not set. |
 | `max_instances` | Maximum instance count. Matches `MIN_INSTANCES` when not set. |

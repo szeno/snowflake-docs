@@ -19,6 +19,7 @@ CREATE [ OR REPLACE ] CORTEX SEARCH SERVICE [ IF NOT EXISTS ] <name>
   [ FULL_INDEX_BUILD_INTERVAL_DAYS = <num> ]
   [ REQUEST_LOGGING = { TRUE | FALSE } ]
   [ AUTO_SUSPEND = <num_seconds> ]
+  [ INHERIT_DATA_GOVERNANCE_POLICIES = { TRUE | FALSE } ]
   [ COMMENT = '<comment>' ]
 AS <query>;
 
@@ -34,6 +35,7 @@ CREATE [ OR REPLACE ] CORTEX SEARCH SERVICE <name>
   [ FULL_INDEX_BUILD_INTERVAL_DAYS = <num> ]
   [ REQUEST_LOGGING = { TRUE | FALSE } ]
   [ AUTO_SUSPEND = <num_seconds> ]
+  [ INHERIT_DATA_GOVERNANCE_POLICIES = { TRUE | FALSE } ]
   [ COMMENT = '<comment>' ]
 AS <query>;
 ```
@@ -174,6 +176,15 @@ AS <query>;
     [Auto-suspend serving on inactivity](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-auto-suspend-serving).
 
     Default: `NULL` (auto-suspend disabled)
+
+`INHERIT_DATA_GOVERNANCE_POLICIES = { TRUE | FALSE }`
+:   Specifies whether the service honors the [row access policies](/user-guide/security-row-intro) and
+    [masking policies](/user-guide/security-column-intro) on its base table, so that query results reflect each caller’s own access
+    instead of the service owner’s. This property requires a [primary key](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-primary-keys), and inherited
+    policies are enforced only for queries that use the `CORTEX_SEARCH_BATCH` and `CORTEX_SEARCH_RETRIEVE` SQL functions.
+    For more information, see [Data governance policy inheritance for Cortex Search](/user-guide/snowflake-cortex/cortex-search/cortex-search-data-governance-inheritance).
+
+    Default: `FALSE`
 
 `COMMENT = 'comment'`
 :   Specifies a comment for the service.

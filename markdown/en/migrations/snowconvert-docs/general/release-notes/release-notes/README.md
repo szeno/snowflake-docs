@@ -1,5 +1,199 @@
 # SnowConvert AI - Recent Release Notes
 
+## Version 2.54.2 (November 19, 2026)
+
+### CLI
+
+#### New Features
+
+- Added `scai update --reinstall-python-env` to rebuild the data migration and data exchange worker environments.
+
+#### Improvements
+
+- Updated `scai --version` to show the installed data migration and data exchange worker versions on every channel.
+- Updated `scai data worker setup --skip-egress` to reuse an existing external access integration and source secret.
+- Added support for checksum and watermark sync strategies in `scai data migrate generate-config` and `scai data validate generate-config`.
+- Linux installations now require glibc 2.34 or later and fail with a clear message on older hosts.
+
+#### Bug Fixes
+
+- Fixed an issue where `scai code convert` reported success when the engine failed to write some output files.
+- Fixed an issue where `scai code convert --database` rejected valid Snowflake database names that contain digits.
+- Fixed an issue where `scai data migrate list` rejected the `--warehouse` option.
+- Fixed an issue where a failed migration run marked same-named tables in other schemas as failed.
+- Fixed a crash in `scai code add` on RHEL 8.
+
+### Desktop App
+
+#### New Features
+
+- Added a display of background tasks, dispatched jobs, and the queue above the chat composer in AIM.
+- Added an EWI heatmap to the SSIS Package Distribution view.
+
+#### Improvements
+
+- Updated the AIM Run assessment options card to show which analyses always run.
+- Updated AIM Send feedback to optionally include the redacted conversation, and removed its character limit.
+- Updated Object Lineage graphs to allow an unlimited number of roots.
+- Removed the Preview tag from Effort Estimates and refined the effort calculator layout and pricing.
+
+#### Bug Fixes
+
+- Fixed an issue where AIM sent multiple MFA requests when it opened or started a migration.
+- Fixed an issue where AIM reported the Snowflake PAT as not configured after it was saved.
+- Fixed an issue where SQL Server setup mistook a database-open failure for invalid credentials.
+- Fixed an issue where rebuilding a connection in AIM discarded the previous source connection profile.
+- Fixed project setup timeouts and browser sign-in failures in AIM.
+- Fixed an issue where pending permission prompts and unread user messages stalled AIM autonomous runs.
+- Fixed an issue where the escalation card skip option did not skip objects, preventing the wave from completing.
+- Fixed an issue where the dashboard Conversion Issues tab showed zero issues, and corrected the “Indexes” tile label.
+
+### Conversion Engine
+
+#### New Features
+
+##### General
+
+- Added conversion of scalar UDFs that perform constant-rows anti-joins to SQL functions.
+
+##### Oracle
+
+- Added conversion of `DBMS_STATS.UNLOCK_TABLE_STATS`, which is now commented out with `SSC-FDM-0037`.
+- Added support for keeping ordered top-row lookups with a `WHEN OTHERS` default in procedures.
+
+##### SQL Server
+
+- Added conversion of `SET ROWCOUNT` regions, variable limits, pick-next-row patterns, and batch DML loops.
+- Added conversion of `MERGE ... OUTPUT` inside Snowflake Scripting procedures.
+- Added support for commenting out `SET XACT_ABORT ON` when its handlers, callees, and transaction scope make it safe.
+- Added conversion of `COLUMNPROPERTY(..., 'IsIdentity')` over `INFORMATION_SCHEMA.COLUMNS` rows.
+- Added conversion of `TYPE_WARNING` cursors without `SSC-EWI-0058`.
+- Added support for rewriting a `MERGE` through an `INNER JOIN` target CTE to its base table.
+- Added conversion of the `@@OPTIONS` `NUMERIC_ROUNDABORT` bit test to `0` with `SSC-FDM-TS0235`.
+- Updated `sys.dm_exec_query_plan` to be marked with `SSC-EWI-TS0221` instead of `SSC-EWI-0031`.
+
+##### Teradata
+
+- Added conversion of `TD_THURSDAY` and `TD_FRIDAY` on `DATE` operands to `PREVIOUS_DAY`.
+- Added conversion of `RESIGNAL SET MESSAGE_TEXT` of the caught message to `RAISE`.
+- Added conversion of `SETBIT` on integer targets to width-aware bit arithmetic.
+
+##### SSIS
+
+- Added support for inlining a Lookup’s reference query into the lookup model.
+
+#### Bug Fixes
+
+##### IBM DB2
+
+- Fixed the conversion of `DEC`/`DECIMAL(expr, precision, scale)` to an exact `NUMBER` cast.
+
+##### Oracle
+
+- Fixed `TO_CHAR(date, 'D')`, date plus number, `DATE` subtraction, and the `RR` century pivot to convert inline inside Snowflake Scripting UDFs.
+- Fixed `DBMS_STATS.GATHER_SCHEMA_STATS` and `DBMS_STATS.LOCK_TABLE_STATS` to be commented out as statistics no-ops.
+- Fixed the capture of demoted-function calls so they run where Oracle evaluates them, including `SELECT INTO FROM dual` and `ELSIF` conditions.
+- Fixed `TO_CHAR` datetime masks with `YYY` to produce the zero-padded last three digits of the year.
+- Fixed the conversion of `DBMS_LOB.CREATETEMPORARY` on `BLOB` variables and parameters.
+- Fixed an issue where calls to a user-defined `DATEDIFF` function were replaced by the built-in.
+- Fixed cursor `FOR` loops that join the first non-blank rows to be lifted into a SQL function.
+- Fixed binding of a `VALUES`-row variable named like a column of the insert target.
+- Fixed `GROUP BY CUBE(...)` being reported as a missing function.
+
+##### SQL Server
+
+- Fixed comparisons over written collations to ignore trailing spaces.
+- Fixed date literals to respect in-script `DATEFORMAT` settings.
+- Fixed temporary tables being emitted with the `PUBLIC` schema.
+- Fixed the conversion of `SCOPE_IDENTITY()` after an `INSERT ... VALUES` into an undefined table.
+- Fixed `STUFF` values to be preserved with a guarded `INSERT`.
+- Fixed procedures without `EXECUTE AS` to emit `EXECUTE AS OWNER` and the database literal.
+- Fixed `OUTER APPLY STRING_SPLIT` to convert to `CROSS JOIN LATERAL FLATTEN(OUTER => TRUE)`.
+- Fixed `RETURNS TABLE` column inference from a star over a `VALUES` alias list.
+- Fixed single-row `CROSS APPLY (VALUES)` and `FROM (VALUES)` rows in SQL function bodies.
+- Fixed chained-lookup scalar UDFs to be emitted as one flat query, and scalar UDF key lookups to read through `ANY_VALUE`.
+- Fixed conversion of several scalar UDF shapes to SQL functions, including `MIN`/`MAX` over a union of parameters, ungrouped aggregate reads, and constant table-variable `REPLACE` folds.
+- Fixed inlining of anchored literal `PATINDEX` patterns in Snowflake Scripting UDFs.
+- Fixed the conversion of XML `exist()`, `value()`, and `query()` calls, including descendant attributes, `nodes()` alias columns, `WITH XMLNAMESPACES`, and `N'...'` literals; unsupported forms are marked with `SSC-EWI-TS0041`.
+- Fixed linked-server calls to unsupported `msdb` built-in procedures to be marked with `SSC-EWI-TS0075`, and bracketed `EXEC AT` statements to be kept with `SSC-EWI-0021`.
+- Fixed `OPENXML` helper rewrites to be marked with `SSC-EWI-TS0225`.
+- Fixed reserved column names bound to built-ins to fold to a lower-case quoted identifier.
+- Fixed table-type local variables to be scoped per procedure.
+- Fixed system catalog probes, including `sys.objects`, `sysobjects`, `sysindexes`, `sys.databases.is_subscribed`, `sys.destination_data_spaces`, and `sys.dm_exec_sessions.is_user_process`.
+- Fixed the conversion of `msdb.dbo.agent_datetime` to an exact `TO_TIMESTAMP_NTZ` form.
+- Fixed no-argument `SCHEMA_NAME()` to convert to `CURRENT_SCHEMA()`.
+- Fixed empty-string equality on uncollated columns to trim the column side.
+- Fixed `SET XACT_ABORT ON` callee detection under `USE` and after `RETURN`.
+- Fixed `JSON_ARRAY` not being recognized as a built-in function.
+- Fixed forced-digit `FORMAT` date and time pictures on exact numerics.
+- Fixed the `$PARTITION` marker being dropped when argument types differ.
+- Fixed integer casts of decimal and float operands to truncate.
+- Fixed the workaround view of a temporary table to be created as a temporary view.
+- Fixed `@@ROWCOUNT` in `EXEC` arguments and after table DDL.
+- Fixed variable-held `IF` dynamic SQL strings, and preserved backslashes in dynamic SQL literals.
+- Fixed `SSC-EWI-TS0130` being dropped when an enclosing query reads a `NULL` storage size.
+- Fixed lexing of a real literal followed by a suffix letter.
+- Fixed the rewind marker on `FETCH FIRST` loops of forward-only cursors.
+
+##### Teradata
+
+- Fixed `INTERVAL MINUTE(4) TO SECOND(0)` procedure variables to be held as whole seconds.
+- Fixed `NULL`-literal `DATE` casts with a `YYYY-MM-DD` picture to convert without `SSC-EWI-0033`.
+
+##### SSIS
+
+- Fixed binding of the first result query of SingleRow Execute SQL batches with `IF`, loop, or nested blocks.
+- Fixed building the source model from a Data Flow `SqlCommand` property expression.
+- Fixed the conversion of `System::SourceID`, `System::SourceName`, and `System::InteractiveMode` in event handlers.
+- Fixed the package-level `OnPreExecute` handler to be called where SSIS raises the event.
+- Fixed Execute SQL Task `?` markers to bind by their ordinal `ParameterName`.
+- Fixed lineage attribution of an expression variable’s SQL to the Execute SQL Task that runs it.
+
+##### General
+
+- Fixed an issue where conversion failed when the local application data folder was not writable; a per-user temp folder is now used.
+
+### Data Validation
+
+#### New Features
+
+- Added support for adopting a partially migrated Snowflake target so data migration continues from existing rows.
+- Added support for choosing the columns included in the partition checksum, and for validating large matching tables with one aggregate query per side.
+- Added Hive as a data migration source.
+- Added support for Azure Key Vault as an external secrets manager.
+- Added support for custom partitions in data migration.
+
+#### Bug Fixes
+
+- Fixed Cortex Search services in metadata migrations being created on a hardcoded warehouse.
+- Fixed data validation hanging for PostgreSQL lowercase partition keys.
+- Fixed detection of target `TIMESTAMP` and `TIME` columns narrower than the source scale, and preserved fractional seconds in watermarks.
+- Fixed Teradata L3 false mismatches on non-ASCII `LATIN` and `KANJI` values.
+
+### Others
+
+#### Testing Framework
+
+##### Improvements
+
+- Updated `scai test validate` to output row and result set comparison counts.
+
+##### Bug Fixes
+
+- Fixed `scai test capture` hanging during a SQL Server delta backup.
+
+#### Migration Plugin
+
+##### New Features
+
+- Added support for pausing and resuming a running data migration or validation workflow.
+
+#### Code Unit Registry
+
+##### Bug Fixes
+
+- Fixed an issue where batches were rejected on duplicate unit IDs caused by package-local parameter types and spec/body overloads.
+
 ## Version 2.52.5 (November 2, 2026)
 
 ### CLI

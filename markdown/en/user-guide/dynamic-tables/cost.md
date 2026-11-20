@@ -199,7 +199,7 @@ Check whether any of these patterns apply to your pipelines.
 
 ### AUTO mode selects full refresh without a warning
 
-AUTO resolves the refresh mode once at creation time. If it resolves to FULL when you expected INCREMENTAL, refresh
+AUTO resolves the refresh mode once at creation time. If it resolves to FULL when you expected ADAPTIVE, refresh
 costs may increase because every refresh reprocesses the entire table instead of only changed rows. For
 details on how AUTO works and how to verify the resolved mode, see
 [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).

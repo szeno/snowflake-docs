@@ -52,7 +52,7 @@ CoCo writes span records to `AI_OBSERVABILITY_EVENTS` for each prompt. All three
 
 Credits, tokens, models, and request IDs for every surface are recorded in [SNOWFLAKE\_COCO\_USAGE\_HISTORY](/sql-reference/account-usage/snowflake_coco_usage_history), whose `INTERFACE` column identifies the originating surface. Per-surface views are also available:
 
-- **Snowsight**: [Observability](/user-guide/cortex-code/cortex-code-snowsight/observability) and [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_snowsight_usage_history)
+- **Snowsight**: [Observability](/user-guide/cortex-code/observability) and [CORTEX\_CODE\_SNOWSIGHT\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_snowsight_usage_history)
 - **Desktop**: [Audit logging and observability](/user-guide/cortex-code/cortex-code-desktop/security#audit-logging-and-observability) and [CORTEX\_CODE\_DESKTOP\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_desktop_usage_history)
 - **CLI**: [CoCo CLI](/user-guide/cortex-code/cortex-code-cli) and [CORTEX\_CODE\_CLI\_USAGE\_HISTORY](/sql-reference/account-usage/cortex_code_cli_usage_history)
 

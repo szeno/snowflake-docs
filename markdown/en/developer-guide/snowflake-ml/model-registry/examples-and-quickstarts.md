@@ -64,6 +64,13 @@ This example shows how to log an MLFlow PyFunc model in the Snowflake Model Regi
 
 [Example](/developer-guide/snowflake-ml/model-registry/built-in-models/mlflow)
 
+## Log a TabICL tabular foundation model
+
+This example shows how to log a TabICL classifier in the model registry and run unbound (in-context-learning)
+inference in a warehouse or as a batch inference job.
+
+[Example](/developer-guide/snowflake-ml/model-registry/built-in-models/tabicl)
+
 ## Log a partitioned forecasting model for training and inference
 
 This example shows how to log a forecasting model for running partitioned training and inference in Snowflake.

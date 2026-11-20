@@ -59,8 +59,11 @@ Snowpark Container Services for EXTERNAL distribution
 ```
 
 If you receive this error, you must submit the security questionnaire to begin the approval process.
-You can [complete the questionnaire in Snowsight](#label-native-apps-spcs-questionnaire-snowsight)
-or [with SQL](#label-native-apps-spcs-questionnaire-sql).
+
+Note
+
+Snowflake recommends [completing the questionnaire in Snowsight](#label-native-apps-spcs-questionnaire-snowsight).
+You can also [complete it with SQL](#label-native-apps-spcs-questionnaire-sql).
 
 The security questionnaire assesses the following:
 

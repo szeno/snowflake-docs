@@ -262,7 +262,7 @@ Show lessSee more
 
 Every behavior difference between the generally available driver and the version built on the Universal Core is catalogued in the driver source repository, as a machine-readable file listing each entry’s previous behavior, new behavior, classification, and whether it is a breaking change. Read it in full before you upgrade an application you cannot easily roll back:
 
-- [Snowflake ODBC Driver 4.x behavior-difference catalog](https://github.com/snowflakedb/drivers/blob/main/odbc_tests/BehaviorDifferences.yaml)
+- [Snowflake ODBC Driver 4.x behavior-difference catalog](https://github.com/snowflakedb/drivers/tree/main/odbc_tests/behavior_differences)
 
 The sections above summarize the entries most likely to affect an existing application. The catalog is the complete list.
 
@@ -270,99 +270,99 @@ The following curated list summarizes accepted breaking behavior differences bet
 
 ### ODBC API compliance
 
-- **Fixed truncation of DECIMAL/`SQL_C_CHAR`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when whole digits do not fit; ODBC 3.x truncated with `SQL_SUCCESS_WITH_INFO`. *(BD#11)*
-- **Improved error handling for undersized `SQL_C_BINARY` buffers for DECIMAL/NUMERIC/DECFLOAT.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when the buffer is smaller than `sizeof(SQL_NUMERIC_STRUCT)`; ODBC 3.x ignored `BufferLength`. *(BD#12)*
-- **Fixed conversion of `NaN` from FLOAT/DOUBLE to integer or `SQL_C_BIT`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003`; ODBC 3.x wrote `0` with `SQL_SUCCESS_WITH_INFO`. *(BD#16)*
-- **Improved single-field interval precision handling.** ODBC 4.x enforces the default precision of two and returns `SQL_ERROR` with SQLSTATE `22015` for values of 100 or greater; ODBC 3.x did not enforce it. *(BD#18)*
-- **Improved handling of a null `RowCountPtr` during `SQLRowCount`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY009`; ODBC 3.x returned `SQL_SUCCESS`. *(BD#25)*
-- **Fixed handling of negative `DecimalDigits` on `SQLBindParameter`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY104`; ODBC 3.x accepted negative scale silently. *(BD#26)*
-- **Fixed extreme exponent conversion from DECFLOAT to `SQL_C_BINARY`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003`; ODBC 3.x could succeed with a clamped value. *(BD#29)*
-- **Fixed scale handling during conversion from `SQL_C_NUMERIC` to `VARCHAR`.** ODBC 4.x applies the scale from `SQL_NUMERIC_STRUCT`; ODBC 3.x ignored scale. *(BD#33)*
-- **Fixed binding of subnormal doubles near `DBL_MIN`.** ODBC 4.x preserves the value; ODBC 3.x could store `0.0`. *(BD#36)*
-- **Improved conversion from TIME to `SQL_C_CHAR` / `SQL_C_WCHAR`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when the buffer is too small for the base time, and `SQL_SUCCESS_WITH_INFO` with SQLSTATE `01004` when only fractional seconds are truncated. *(BD#38)*
-- **Tightened conversion from VARCHAR to `SQL_C_INTERVAL_*` types.** ODBC 4.x follows the ODBC Appendix D conversion rules more strictly. *(BD#55)*
-- **Fixed `SQL_C_INTERVAL_SECOND` with fractional seconds bound to exact-numeric SQL types.** ODBC 4.x truncates the fraction and succeeds; ODBC 3.x rejected the bind with SQLSTATE `22015`. *(BD#60)*
-- **Changed binding of exact-numeric C types to single-field `SQL_INTERVAL_*` parameters.** Approximate-numeric C types bound to any interval target are rejected with SQLSTATE `07006`. *(BD#72)*
-- **Changed `SQL_GUID` parameter binding.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `07006` when `SQL_GUID` is used as the parameter type. Version 3.x returned `HY000`. Neither driver supports binding `SQL_GUID`. *(BD#158)*
-- **Changed non-contiguous `SQLExecDirect` parameter bindings.** ODBC 4.x rejects the call locally with SQLSTATE `HY000` when bound parameters are not contiguous and do not start at 1. Version 3.x submitted the statement and returned the server SQLSTATE `42601`. *(BD#159)*
-- **Changed binding of unbindable Snowflake vendor type codes.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HYC00` from `SQLBindParameter` for `SQL_SF_ARRAY`, `SQL_SF_OBJECT`, `SQL_SF_VARIANT`, and VECTOR (`2006`), which `SQLGetTypeInfo` publishes but neither driver can bind. A vendor code that `SQLGetTypeInfo` doesn’t publish, such as `2007`, still returns `HY004`. ODBC 3.x accepted the bind and failed later during execution with `HY000`. To insert a semi-structured value, bind it as `SQL_VARCHAR` and convert it in the statement with `PARSE_JSON(?)`, `TO_ARRAY(?)`, or `TO_OBJECT(?)`. *(BD#167)*
-- **Fixed data-at-execution cleanup after `SQLCancel`.** ODBC 4.x discards all accumulated `SQLPutData` so a re-entered sequence starts fresh. *(BD#86)*
-- **Disallowed setting `SQL_ATTR_LOGIN_TIMEOUT` after connect.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY011`; ODBC 3.x returned `SQL_SUCCESS` for a no-op. *(BD#94)*
-- **Tightened support of `SQL_ATTR_CURSOR_TYPE` values.** ODBC 4.x substitutes unsupported cursor types with `SQL_CURSOR_FORWARD_ONLY` and returns `SQL_SUCCESS_WITH_INFO` with SQLSTATE `01S02`. *(BD#96)*
-- **Changed the diagnostic vendor prefix.** ODBC 4.x uses `[Snowflake][Snowflake ODBC Driver]`; ODBC 3.x used `[Snowflake][Support]`. *(BD#110)*
-- **Fixed invalid `SQLCancelHandle(SQL_HANDLE_DBC)` during async or data-at-execution.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY010`; ODBC 3.x returned a no-op `SQL_SUCCESS`. *(BD#111)*
+- **Fixed truncation of DECIMAL/`SQL_C_CHAR`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when whole digits do not fit; ODBC 3.x truncated with `SQL_SUCCESS_WITH_INFO`. *(BD#sql-c-char-whole-digits-overflow)*
+- **Improved error handling for undersized `SQL_C_BINARY` buffers for DECIMAL/NUMERIC/DECFLOAT.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when the buffer is smaller than `sizeof(SQL_NUMERIC_STRUCT)`; ODBC 3.x ignored `BufferLength`. *(BD#sql-c-binary-undersized-numeric-struct)*
+- **Fixed conversion of `NaN` from FLOAT/DOUBLE to integer or `SQL_C_BIT`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003`; ODBC 3.x wrote `0` with `SQL_SUCCESS_WITH_INFO`. *(BD#nan-float-to-integer-returns-22003)*
+- **Improved single-field interval precision handling.** ODBC 4.x enforces the default precision of two and returns `SQL_ERROR` with SQLSTATE `22015` for values of 100 or greater; ODBC 3.x did not enforce it. *(BD#interval-leading-precision-enforced)*
+- **Improved handling of a null `RowCountPtr` during `SQLRowCount`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY009`; ODBC 3.x returned `SQL_SUCCESS`. *(BD#sqlrowcount-null-pointer-hy009)*
+- **Fixed handling of negative `DecimalDigits` on `SQLBindParameter`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY104`; ODBC 3.x accepted negative scale silently. *(BD#sqlbindparameter-negative-decimal-digits)*
+- **Fixed extreme exponent conversion from DECFLOAT to `SQL_C_BINARY`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003`; ODBC 3.x could succeed with a clamped value. *(BD#decfloat-extreme-exponent-to-binary)*
+- **Fixed scale handling during conversion from `SQL_C_NUMERIC` to `VARCHAR`.** ODBC 4.x applies the scale from `SQL_NUMERIC_STRUCT`; ODBC 3.x ignored scale. *(BD#sql-c-numeric-to-varchar-applies-scale)*
+- **Fixed binding of subnormal doubles near `DBL_MIN`.** ODBC 4.x preserves the value; ODBC 3.x could store `0.0`. *(BD#subnormal-double-preserved-on-bind)*
+- **Improved conversion from TIME to `SQL_C_CHAR` / `SQL_C_WCHAR`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `22003` when the buffer is too small for the base time, and `SQL_SUCCESS_WITH_INFO` with SQLSTATE `01004` when only fractional seconds are truncated. *(BD#time-to-char-truncation)*
+- **Tightened conversion from VARCHAR to `SQL_C_INTERVAL_*` types.** ODBC 4.x follows the ODBC Appendix D conversion rules more strictly. *(BD#varchar-to-interval-appendix-d)*
+- **Fixed `SQL_C_INTERVAL_SECOND` with fractional seconds bound to exact-numeric SQL types.** ODBC 4.x truncates the fraction and succeeds; ODBC 3.x rejected the bind with SQLSTATE `22015`. *(BD#interval-second-fraction-truncates)*
+- **Changed binding of exact-numeric C types to single-field `SQL_INTERVAL_*` parameters.** Approximate-numeric C types bound to any interval target are rejected with SQLSTATE `07006`. *(BD#numeric-c-to-interval-appendix-d)*
+- **Changed `SQL_GUID` parameter binding.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `07006` when `SQL_GUID` is used as the parameter type. Version 3.x returned `HY000`. Neither driver supports binding `SQL_GUID`. *(BD#sql-guid-bind-reports-07006)*
+- **Changed non-contiguous `SQLExecDirect` parameter bindings.** ODBC 4.x rejects the call locally with SQLSTATE `HY000` when bound parameters are not contiguous and do not start at 1. Version 3.x submitted the statement and returned the server SQLSTATE `42601`. *(BD#noncontiguous-parameter-bindings-hy000)*
+- **Changed binding of unbindable Snowflake vendor type codes.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HYC00` from `SQLBindParameter` for `SQL_SF_ARRAY`, `SQL_SF_OBJECT`, `SQL_SF_VARIANT`, and VECTOR (`2006`), which `SQLGetTypeInfo` publishes but neither driver can bind. A vendor code that `SQLGetTypeInfo` doesn’t publish, such as `2007`, still returns `HY004`. ODBC 3.x accepted the bind and failed later during execution with `HY000`. To insert a semi-structured value, bind it as `SQL_VARCHAR` and convert it in the statement with `PARSE_JSON(?)`, `TO_ARRAY(?)`, or `TO_OBJECT(?)`. *(BD#unbindable-vendor-types-refused-at-bind)*
+- **Fixed data-at-execution cleanup after `SQLCancel`.** ODBC 4.x discards all accumulated `SQLPutData` so a re-entered sequence starts fresh. *(BD#sqlcancel-discards-sqlputdata)*
+- **Disallowed setting `SQL_ATTR_LOGIN_TIMEOUT` after connect.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY011`; ODBC 3.x returned `SQL_SUCCESS` for a no-op. *(BD#login-timeout-after-connect-hy011)*
+- **Tightened support of `SQL_ATTR_CURSOR_TYPE` values.** ODBC 4.x substitutes unsupported cursor types with `SQL_CURSOR_FORWARD_ONLY` and returns `SQL_SUCCESS_WITH_INFO` with SQLSTATE `01S02`. *(BD#cursor-type-forward-only)*
+- **Changed the diagnostic vendor prefix.** ODBC 4.x uses `[Snowflake][Snowflake ODBC Driver]`; ODBC 3.x used `[Snowflake][Support]`. *(BD#diag-message-prepends-vendor-prefix)*
+- **Fixed invalid `SQLCancelHandle(SQL_HANDLE_DBC)` during async or data-at-execution.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY010`; ODBC 3.x returned a no-op `SQL_SUCCESS`. *(BD#cancel-handle-dbc-during-async-hy010)*
 - **Changed when `SQLCancel` returns.** ODBC 4.x returns as soon as the cancel is signaled; the cancelled statement still reports `HY008`.
 - **Changed `SQLSetStmtAttr(SQL_ROWSET_SIZE, 0)`.** ODBC 4.x returns `SQL_ERROR` with SQLSTATE `HY024`.
 - **Implemented `SQLFreeConnect` and `SQLFreeEnv`.** ODBC 4.x exports both as wrappers around `SQLFreeHandle`.
 
 ### Catalog functions
 
-- **Fixed `SQLColumns` / `SQLProcedureColumns` `BUFFER_LENGTH` for `NUMBER`/`DECIMAL`.** ODBC 4.x returns precision + 2; ODBC 3.x returned the Snowflake storage width. *(BD#122)*
-- **Changed catalog `REMARKS` and `COLUMN_DEF`.** ODBC 4.x returns `SQL_NULL_DATA` when absent instead of an empty string. *(BD#121)*
-- **Added native `INTERVAL` result types.** ODBC 4.x reports `INTERVAL YEAR TO MONTH` and `INTERVAL DAY TO SECOND` as native `SQL_INTERVAL_*` types with ANSI literals. *(BD#145)*
-- **Fixed unquoted identifier case-folding in identifier mode.** When `SQL_ATTR_METADATA_ID` is `SQL_TRUE`, ODBC 4.x folds unquoted catalog, schema, table, procedure, and column identifiers to uppercase before the lookup, so a lowercase identifier matches the stored name. ODBC 3.x compared case-sensitively and returned an empty result set. Double-quoted identifiers stay case-sensitive, and the default pattern mode is case-sensitive in both versions. *(BD#87, BD#91, BD#113)*
-- **Changed `SQLForeignKeys` side selection for an empty table name.** ODBC 4.x treats an empty string table name the same as an omitted one, so an empty `PKTableName` with a populated `FKTableName` resolves to `SHOW IMPORTED KEYS` and returns the relationship. ODBC 3.x returned an empty result set. *(BD#90)*
+- **Fixed `SQLColumns` / `SQLProcedureColumns` `BUFFER_LENGTH` for `NUMBER`/`DECIMAL`.** ODBC 4.x returns precision + 2; ODBC 3.x returned the Snowflake storage width. *(BD#columns-number-buffer-length-precision-plus-two)*
+- **Changed catalog `REMARKS` and `COLUMN_DEF`.** ODBC 4.x returns `SQL_NULL_DATA` when absent instead of an empty string. *(BD#catalog-remarks-return-null)*
+- **Added native `INTERVAL` result types.** ODBC 4.x reports `INTERVAL YEAR TO MONTH` and `INTERVAL DAY TO SECOND` as native `SQL_INTERVAL_*` types with ANSI literals. *(BD#interval-results-native-types)*
+- **Fixed unquoted identifier case-folding in identifier mode.** When `SQL_ATTR_METADATA_ID` is `SQL_TRUE`, ODBC 4.x folds unquoted catalog, schema, table, procedure, and column identifiers to uppercase before the lookup, so a lowercase identifier matches the stored name. ODBC 3.x compared case-sensitively and returned an empty result set. Double-quoted identifiers stay case-sensitive, and the default pattern mode is case-sensitive in both versions. *(BD#primary-foreign-keys-case-fold, BD#procedures-case-fold-unquoted, BD#sqltables-case-fold-unquoted)*
+- **Changed `SQLForeignKeys` side selection for an empty table name.** ODBC 4.x treats an empty string table name the same as an omitted one, so an empty `PKTableName` with a populated `FKTableName` resolves to `SHOW IMPORTED KEYS` and returns the relationship. ODBC 3.x returned an empty result set. *(BD#foreign-keys-empty-table-absent)*
 
 ### PUT/GET behavior
 
-- **Fixed stage array binding thresholds.** ODBC 4.x honors `arrayBindSupported` and `CLIENT_STAGE_ARRAY_BINDING_THRESHOLD`. *(BD#78)*
+- **Fixed stage array binding thresholds.** ODBC 4.x honors `arrayBindSupported` and `CLIENT_STAGE_ARRAY_BINDING_THRESHOLD`. *(BD#stage-binding-threshold-uses-gte)*
 - **Changed PUT and GET to transfer several files in parallel**, bounded by the statement `PARALLEL` value.
-- **Mapped `PUT_MAXRETRIES` and `GET_MAXRETRIES`** to a shared `PUT_GET_MAX_ATTEMPTS` count. *(BD#141)*
+- **Mapped `PUT_MAXRETRIES` and `GET_MAXRETRIES`** to a shared `PUT_GET_MAX_ATTEMPTS` count. *(BD#put-get-max-retries-shared-attempt-count)*
 
 ### Authentication and security
 
-- **Changed private-key connection attributes.** ODBC 4.x removed support for `SQL_SF_CONN_ATTR_PRIV_KEY`. Set `SQL_SF_CONN_ATTR_PRIV_KEY_CONTENT` or `SQL_SF_CONN_ATTR_PRIV_KEY_BASE64` with `SQLSetConnectAttr`, or use the `PRIV_KEY_FILE` DSN/connection-string keyword. *(BD#10)*
-- **Tightened OAuth endpoint URL scheme requirements.** ODBC 4.x requires HTTPS for token and authorization endpoints (loopback `http://` allowed). *(BD#81)*
-- **Refined SQLSTATE for OAuth IdP token-exchange rejection.** ODBC 4.x returns SQLSTATE `28000`; ODBC 3.x surfaced generic `HY000`. *(BD#83)*
-- **Hardened workload identity federation parameter validation.** ODBC 4.x rejects WIF-only parameters unless `authenticator` is `WORKLOAD_IDENTITY`. *(BD#108)*
-- **Hardened `workload_identity_impersonation_path` with provider `OIDC`.** ODBC 4.x rejects the combination. *(BD#109)*
-- **Removed OCSP support in favor of CRLs.** *(BD#124)*
-- **Renamed `BROWSER_RESPONSE_TIMEOUT` to `AUTHENTICATION_TIMEOUT`.** *(BD#138)*
+- **Changed private-key connection attributes.** ODBC 4.x removed support for `SQL_SF_CONN_ATTR_PRIV_KEY`. Set `SQL_SF_CONN_ATTR_PRIV_KEY_CONTENT` or `SQL_SF_CONN_ATTR_PRIV_KEY_BASE64` with `SQLSetConnectAttr`, or use the `PRIV_KEY_FILE` DSN/connection-string keyword. *(BD#priv-key-evp-pkey-unsupported)*
+- **Tightened OAuth endpoint URL scheme requirements.** ODBC 4.x requires HTTPS for token and authorization endpoints (loopback `http://` allowed). *(BD#oauth-endpoints-require-https)*
+- **Refined SQLSTATE for OAuth IdP token-exchange rejection.** ODBC 4.x returns SQLSTATE `28000`; ODBC 3.x surfaced generic `HY000`. *(BD#oauth-token-exchange-returns-28000)*
+- **Hardened workload identity federation parameter validation.** ODBC 4.x rejects WIF-only parameters unless `authenticator` is `WORKLOAD_IDENTITY`. *(BD#wif-params-require-workload-identity)*
+- **Hardened `workload_identity_impersonation_path` with provider `OIDC`.** ODBC 4.x rejects the combination. *(BD#oidc-impersonation-path-rejected)*
+- **Removed OCSP support in favor of CRLs.** *(BD#ocsp-replaced-by-crl)*
+- **Renamed `BROWSER_RESPONSE_TIMEOUT` to `AUTHENTICATION_TIMEOUT`.** *(BD#externalbrowser-timeout-param-renamed)*
 
 ### Snowflake extensions and diagnostics
 
-- **Tightened Snowflake statement attributes.** `SQL_SF_STMT_ATTR_LAST_QUERY_ID` is read-only and populated in all cases. `SQL_SF_STMT_ATTR_MULTI_STATEMENT_COUNT` keeps its `-1` default, but ODBC 4.x now validates the range and returns the value through `SQLGetStmtAttr`. *(BD#56)*
-- **Changed diagnostic message text.** ODBC 4.x appends an internal error trace by default (`ErrorTraceEnabled` in `sf.odbc.ini`). *(BD#77)*
-- **Fixed DECFLOAT string formatting.** ODBC 4.x returns normalized scientific notation, for example `1.2e200` instead of `12e199`. *(BD#19)*
+- **Tightened Snowflake statement attributes.** `SQL_SF_STMT_ATTR_LAST_QUERY_ID` is read-only and populated in all cases. `SQL_SF_STMT_ATTR_MULTI_STATEMENT_COUNT` keeps its `-1` default, but ODBC 4.x now validates the range and returns the value through `SQLGetStmtAttr`. *(BD#last-query-id-and-multi-statement-count)*
+- **Changed diagnostic message text.** ODBC 4.x appends an internal error trace by default (`ErrorTraceEnabled` in `sf.odbc.ini`). *(BD#diag-message-appends-error-trace)*
+- **Fixed DECFLOAT string formatting.** ODBC 4.x returns normalized scientific notation, for example `1.2e200` instead of `12e199`. *(BD#decfloat-scientific-notation)*
 
 ### iODBC-specific behavior
 
-- **Fixed success codes and diagnostics under iODBC** to match the ODBC specification. *(BD#61)*
-- **Fixed orphaned statement handle release under iODBC.** *(BD#68)*
-- **Fixed descriptor calls during `SQL_NEED_DATA`** to return `SQL_ERROR` with SQLSTATE `HY010`. *(BD#69)*
-- **Fixed ODBC 3.x SQLSTATEs under iODBC.** *(BD#70)*
-- **Fixed `SQL_C_WCHAR` fetch encoding under iODBC** to use uniform UTF-32 driven by `DriverManagerEncoding`. *(BD#79)*
-- **iODBC might return different codes or SQLSTATEs** because ODBC 4.x and 3.x advertise different capabilities. *(BD#62)*
+- **Fixed success codes and diagnostics under iODBC** to match the ODBC specification. *(BD#iodbc-spec-success-codes)*
+- **Fixed orphaned statement handle release under iODBC.** *(BD#child-handles-invalidated-on-disconnect)*
+- **Fixed descriptor calls during `SQL_NEED_DATA`** to return `SQL_ERROR` with SQLSTATE `HY010`. *(BD#desc-field-during-need-data-iodbc)*
+- **Fixed ODBC 3.x SQLSTATEs under iODBC.** *(BD#iodbc-spec-sqlstates)*
+- **Fixed `SQL_C_WCHAR` fetch encoding under iODBC** to use uniform UTF-32 driven by `DriverManagerEncoding`. *(BD#wchar-fetch-encoding-depends-on-type)*
+- **iODBC might return different codes or SQLSTATEs** because ODBC 4.x and 3.x advertise different capabilities. *(BD#iodbc-driver-manager-dispatch-paths)*
 
 ## Additional reviewed behavior differences
 
-The following entries are reviewed and allowed in `BehaviorDifferences.yaml`. Validate applications that depend on these behaviors when migrating from 3.x.
+The following entries are reviewed and allowed in the [`odbc_tests/behavior_differences`](https://github.com/snowflakedb/drivers/tree/main/odbc_tests/behavior_differences) directory. Validate applications that depend on these behaviors when migrating from 3.x.
 
-- **`SQLColumns` `SQL_DATA_TYPE` for DATE/TIME/TIMESTAMP** returns verbose `SQL_DATETIME` (`9`) with the subtype in `SQL_DATETIME_SUB`. *(BD#125)*
-- **A second `SQLFreeHandle` on an already-freed statement** returns `SQL_INVALID_HANDLE` under iODBC. *(BD#126)*
-- **`SQLColumns` `TIMESTAMP` `COLUMN_SIZE`** is `20` + scale (`19` when scale is `0`), not a fixed `35`. *(BD#128)*
-- **`SQLColumns` `TIMESTAMP` `BUFFER_LENGTH`** is `16`, not `35`. *(BD#129)*
-- **`SQLColumns` `VARIANT`/`OBJECT`/`ARRAY` size** follows `VARCHAR_AND_BINARY_MAX_SIZE_IN_RESULT`. *(BD#130)*
-- **`SQLColumns` `DATE`/`TIME` `BUFFER_LENGTH`** is `6`. *(BD#133)*
-- **`CLIENT_REQUEST_MFA_TOKEN` replaced by `CLIENT_STORE_TEMPORARY_CREDENTIAL` for MFA caching.** If you previously set `CLIENT_REQUEST_MFA_TOKEN=false`, set `CLIENT_STORE_TEMPORARY_CREDENTIAL=false` to keep MFA caching disabled. *(BD#137)*
-- **`SQLColumns` `GEOGRAPHY`/`GEOMETRY` sizes** follow the session VARCHAR maximum. *(BD#146)*
-- **`MaxHttpRetries` maps to `retry_max_attempts`** with different default, floor, and zero semantics. *(BD#148)*
-- **`MAX_CON_RETRY_ATTEMPTS` is not recognized.** *(BD#149)*
-- **`RetryOn403` is not recognized**; 403 retry is opt-in via `retry_extra_status_codes`. *(BD#150)*
-- **`SQLGetTypeInfo` `TIMESTAMP` `COLUMN_SIZE` is `29`**; `ODBC_USE_STANDARD_TIMESTAMP_COLUMNSIZE` is not accepted. *(BD#151)*
-- **`SQLDriverConnect` fails with SQLSTATE `28000` and native error `0`** for an invalid WIF provider, missing OIDC token, or malformed JWT. *(BD#155)*
+- **`SQLColumns` `SQL_DATA_TYPE` for DATE/TIME/TIMESTAMP** returns verbose `SQL_DATETIME` (`9`) with the subtype in `SQL_DATETIME_SUB`. *(BD#columns-datetime-sql-data-type-9)*
+- **A second `SQLFreeHandle` on an already-freed statement** returns `SQL_INVALID_HANDLE` under iODBC. *(BD#second-free-handle-invalid-under-iodbc)*
+- **`SQLColumns` `TIMESTAMP` `COLUMN_SIZE`** is `20` + scale (`19` when scale is `0`), not a fixed `35`. *(BD#columns-timestamp-column-size)*
+- **`SQLColumns` `TIMESTAMP` `BUFFER_LENGTH`** is `16`, not `35`. *(BD#columns-timestamp-buffer-length)*
+- **`SQLColumns` `VARIANT`/`OBJECT`/`ARRAY` size** follows `VARCHAR_AND_BINARY_MAX_SIZE_IN_RESULT`. *(BD#columns-semistructured-size-follows-session)*
+- **`SQLColumns` `DATE`/`TIME` `BUFFER_LENGTH`** is `6`. *(BD#columns-date-time-buffer-length)*
+- **`CLIENT_REQUEST_MFA_TOKEN` replaced by `CLIENT_STORE_TEMPORARY_CREDENTIAL` for MFA caching.** If you previously set `CLIENT_REQUEST_MFA_TOKEN=false`, set `CLIENT_STORE_TEMPORARY_CREDENTIAL=false` to keep MFA caching disabled. *(BD#mfa-token-cache-param-renamed)*
+- **`SQLColumns` `GEOGRAPHY`/`GEOMETRY` sizes** follow the session VARCHAR maximum. *(BD#columns-geography-size-follows-varchar)*
+- **`MaxHttpRetries` maps to `retry_max_attempts`** with different default, floor, and zero semantics. *(BD#max-http-retries-maps-to-retry-max-attempts)*
+- **`MAX_CON_RETRY_ATTEMPTS` is not recognized.** *(BD#max-con-retry-attempts-unrecognized)*
+- **`RetryOn403` is not recognized**; 403 retry is opt-in via `retry_extra_status_codes`. *(BD#retry-on-403-unrecognized)*
+- **`SQLGetTypeInfo` `TIMESTAMP` `COLUMN_SIZE` is `29`**; `ODBC_USE_STANDARD_TIMESTAMP_COLUMNSIZE` is not accepted. *(BD#gettypeinfo-timestamp-column-size-29)*
+- **`SQLDriverConnect` fails with SQLSTATE `28000` and native error `0`** for an invalid WIF provider, missing OIDC token, or malformed JWT. *(BD#invalid-wif-connect-native-error-zero)*
 
 ## Resolved during preview
 
 These items were preview regressions. ODBC 4.x now matches ODBC 3.x, so they are not differences you need to prepare for when migrating from 3.x.
 
-- PUT result compression tokens are lowercase. *(BD#2)*
-- Gzip-compressed PUT uploads omit `FNAME` from the gzip header. *(BD#5)*
-- `SQL_C_BINARY` fetch of `FLOAT`/`DOUBLE`/`REAL` returns the native 8-byte IEEE 754 value. *(BD#14)*
-- `SQL_BIT` parameter binding from integer and `SQL_C_NUMERIC` sources accepts only `0` and `1`. *(BD#37)*
-- Binding of `"Infinity"`, `"-Infinity"`, and `"NaN"` as `SQL_C_CHAR`/`SQL_C_WCHAR` to float SQL types forwards the non-finite value. *(BD#48)*
-- Character hex literals bound to `SQL_BINARY` hex-decode the value. *(BD#49)*
-- `SQLDescribeParam` preserves Snowflake vendor `TIMESTAMP` type codes (`2000` / `2001` / `2002`). *(BD#50)*
-- `SQLBrowseConnect` under iODBC returns `SQL_NEED_DATA` for an incomplete connection string. *(BD#63)*
-- OAuth Authorization Code token caching defaults `CLIENT_STORE_TEMPORARY_CREDENTIAL` to `true`. *(BD#85)*
-- `SQLForeignKeys` with `SQL_ATTR_METADATA_ID=TRUE` returns `SQL_ERROR` (`HY009`) for a `NULL` catalog, schema, or table pointer. *(BD#89)*
+- PUT result compression tokens are lowercase. *(BD#compression-type-returned-uppercase)*
+- Gzip-compressed PUT uploads omit `FNAME` from the gzip header. *(BD#gzip-header-omits-filename)*
+- `SQL_C_BINARY` fetch of `FLOAT`/`DOUBLE`/`REAL` returns the native 8-byte IEEE 754 value. *(BD#sql-c-binary-float-returns-raw-bytes)*
+- `SQL_BIT` parameter binding from integer and `SQL_C_NUMERIC` sources accepts only `0` and `1`. *(BD#sql-c-numeric-to-bit-accepts-one)*
+- Binding of `"Infinity"`, `"-Infinity"`, and `"NaN"` as `SQL_C_CHAR`/`SQL_C_WCHAR` to float SQL types forwards the non-finite value. *(BD#non-finite-char-literals-rejected)*
+- Character hex literals bound to `SQL_BINARY` hex-decode the value. *(BD#char-to-binary-hex-decodes)*
+- `SQLDescribeParam` preserves Snowflake vendor `TIMESTAMP` type codes (`2000` / `2001` / `2002`). *(BD#describeparam-normalizes-timestamp-codes)*
+- `SQLBrowseConnect` under iODBC returns `SQL_NEED_DATA` for an incomplete connection string. *(BD#sqlbrowseconnect-errors-under-iodbc)*
+- OAuth Authorization Code token caching defaults `CLIENT_STORE_TEMPORARY_CREDENTIAL` to `true`. *(BD#oauth-auth-code-token-cache-default)*
+- `SQLForeignKeys` with `SQL_ATTR_METADATA_ID=TRUE` returns `SQL_ERROR` (`HY009`) for a `NULL` catalog, schema, or table pointer. *(BD#foreign-keys-metadata-id-null-identifiers)*

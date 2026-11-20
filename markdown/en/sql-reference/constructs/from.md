@@ -145,8 +145,25 @@ Where:
 ### Error table clause
 
 `ERROR_TABLE( base_table_name )`
-:   Specifies the name of the base table associated with the error table that you want to query. For information, see
-    [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+:   Specifies the name of the base table associated with the error table that you want to query. When error logging is
+    turned on for a table, its error table contains the rows that statements and loads couldn’t write to the table. To
+    query the error table, a role must own the base table, or have both the SELECT privilege and the SELECT ERROR TABLE
+    privilege on it. If a masking policy, a row access policy, or a projection policy is set directly on the base table or
+    on its columns, the role also needs the READ UNREDACTED ERROR TABLE privilege. Masking policies that are assigned
+    through tags don’t require this privilege, so any role that can query the error table sees the original values of
+    the columns that these policies mask. For more information, see
+    [Access control requirements for error tables](/user-guide/data-engineering/error-tables#label-dml-error-logging-access-control-error-tables).
+
+    The following statement queries the error table of the `my_table` table:
+
+    Copy code
+
+    ```
+    SELECT * FROM ERROR_TABLE(my_table);
+    ```
+
+    For more information about error tables, see [Error tables](/user-guide/data-engineering/error-tables). For the errors that
+    `COPY INTO` and Snowpipe record, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 ### Dynamic table refresh boundary clause
 

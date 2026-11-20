@@ -58,6 +58,7 @@ The ORGANIZATION\_USAGE schema contains the following views:
 | [INDEX\_COLUMNS](/sql-reference/organization-usage/index_columns) | Object | 5 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [INDEXES](/sql-reference/organization-usage/indexes) | Object | 5 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [JOIN\_POLICIES](/sql-reference/organization-usage/join_policies) | Object | 4 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
+| [LISTING\_AUTO\_FULFILLMENT\_REFRESH\_DAILY](/sql-reference/organization-usage/listing_auto_fulfillment_refresh_daily) | Historical | 48 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year |
 | [LISTING\_AUTO\_FULFILLMENT\_USAGE\_HISTORY](/sql-reference/organization-usage/listing_auto_fulfillment_usage_history) | Historical | 72 hours | No | 1 year |
 | [LISTINGS](/sql-reference/organization-usage/listings) | Object | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | All |
 | [LOAD\_HISTORY](/sql-reference/organization-usage/load_history) | Historical | 24 hours | [Yes](/user-guide/organization-accounts-premium-views) | 1 year. |
@@ -238,6 +239,7 @@ SNOWFLAKE.ORGANIZATION\_USAGE\_VIEWER).
 | [INDEX\_COLUMNS view](/sql-reference/organization-usage/index_columns) | ORGANIZATION\_OBJECT\_VIEWER |
 | [INDEXES view](/sql-reference/organization-usage/indexes) | ORGANIZATION\_OBJECT\_VIEWER |
 | [JOIN\_POLICIES view](/sql-reference/organization-usage/join_policies) | ORGANIZATION\_GOVERNANCE\_VIEWER |
+| [LISTING\_AUTO\_FULFILLMENT\_REFRESH\_DAILY view](/sql-reference/organization-usage/listing_auto_fulfillment_refresh_daily) | ORGANIZATION\_SECURITY\_VIEWER |
 | [LISTING\_AUTO\_FULFILLMENT\_USAGE\_HISTORY view](/sql-reference/organization-usage/listing_auto_fulfillment_usage_history) | ORGANIZATION\_BILLING\_VIEWER |
 | [LISTINGS view](/sql-reference/organization-usage/listings) | ORGANIZATION\_SECURITY\_VIEWER |
 | [LOAD\_HISTORY view](/sql-reference/organization-usage/load_history) | ORGANIZATION\_USAGE\_VIEWER |

@@ -49,7 +49,7 @@ For how gen 2 differs from gen 1 in supported operations and lifecycle, see
 
 - **BYOC deployments:** At most 20 per account (enforced by Openflow and Snowflake).
 - **Snowflake deployments:** At most three per account.
-- **Runtimes:** At most 100 per deployment. You can hit other limits before that maximum—for
+- **Runtimes:** At most 100 per deployment. You can hit other limits before that maximum: for
   example, 50 EC2 nodes per node type on a BYOC deployment, or block storage quota on a Snowflake
   deployment when other applications consume storage.
 - A runtime can have at most 50 nodes. This applies to both generations (BYOC node groups and Snowflake
@@ -109,7 +109,7 @@ For how gen 2 differs from gen 1 in supported operations and lifecycle, see
 | --- | --- |
 | [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations) | Compare gen 1 and gen 2 deployments, runtimes, and connectors; authorization and lifecycle differences; how to identify resources and which documentation to follow. |
 | [Quickstart: gen 2 Openflow](/user-guide/data-integration/openflow/gen2/quickstart) | Prerequisites, privilege grants, and example commands to create gen 2 resources. |
-| [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) (Public Preview) | Versioned configuration for SQL, Git, and automation (optional background if you use the UI only). Stage access and Git workflow for reusing validated configs. |
+| [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) (Public Preview) | Versioned configuration for SQL, Git, and automation (optional background if you use the UI only). Stage access and Git workflow for reusing validated configs. |
 | [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard) (Public Preview) | Step-by-step setup wizard for gen 2 connectors. |
 | [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) (Public Preview) | Create and configure gen 2 connectors with SQL and stage commands (programmatic setup). |
 | [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle) (Public Preview) | Start, stop, and remove gen 2 connectors after installation. |

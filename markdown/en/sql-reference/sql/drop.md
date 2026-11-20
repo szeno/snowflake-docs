@@ -71,6 +71,7 @@ For specific syntax, usage notes, and examples, see:
 - [DROP MODEL MONITOR](/sql-reference/sql/drop-model-monitor)
 - [DROP NETWORK RULE](/sql-reference/sql/drop-network-rule)
 - [DROP NOTEBOOK](/sql-reference/sql/drop-notebook)
+- [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle)
 - [DROP ONLINE FEATURE TABLE](/sql-reference/sql/drop-online-feature-table)
 - [DROP PACKAGES POLICY](/sql-reference/sql/drop-packages-policy)
 - [DROP PASSWORD POLICY](/sql-reference/sql/drop-password-policy)

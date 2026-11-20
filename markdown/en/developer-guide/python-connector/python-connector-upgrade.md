@@ -121,18 +121,18 @@ These current names are what the connector docs describe. The previous name stil
 
 | Previous name (before 5.0) | Current name | How it worked before 5.0 |
 | --- | --- | --- |
-| `private_key_file_pwd`, `private_key_passphrase` | `private_key_password` | Passphrase for an encrypted private key file. The old names are accepted and mapped to `private_key_password`, with a `DeprecationWarning`. *(BD#5)* |
-| `client_request_mfa_token` | `client_store_temporary_credential` | `client_request_mfa_token=True` enabled MFA token caching. The old name is accepted as an alias and warns. The current parameter also covers ID and OAuth token caching, and it defaults to `True`. *(BD#16, BD#97)* |
-| `client_fetch_threads` | `client_prefetch_threads` | Set the chunk-fetch pool size. It defaulted to `client_prefetch_threads`. The old name is a deprecated alias. *(BD#25)* |
-| `enable_stage_s3_privatelink_for_us_east_1` | `use_s3_regional_url` | Forced PUT and GET to use the S3 regional endpoint. The `_for_us_east_1` suffix was historical: it applied to every S3 region. The old connection argument is a deprecated alias. The server session parameter `ENABLE_STAGE_S3_PRIVATELINK_FOR_US_EAST_1` is still honored. *(BD#30)* |
-| `network_timeout` | `query_timeout` and `request_timeout` | One wall-clock budget for non-login HTTP operations. It defaulted to no cap, and `conn.network_timeout` returned `None` when unset. The value is copied to both new parameters unless you set one of them yourself. `conn.network_timeout` returns `request_timeout` (default 120). Using the old name emits a `DeprecationWarning`. *(BD#52)* |
-| `socket_timeout` | `connect_timeout` and `retry_timeout` | Per-attempt read-inactivity timeout. It reset on every received byte, so a slow but active download did not trip it. The value is copied to both new parameters. `retry_timeout` is a hard cap on the whole HTTP attempt, including the body download, so `socket_timeout=30` can abort an active chunk download at 30 seconds. `conn.socket_timeout` returns `retry_timeout` (default `None`). *(BD#52)* |
+| `private_key_file_pwd`, `private_key_passphrase` | `private_key_password` | Passphrase for an encrypted private key file. The old names are accepted and mapped to `private_key_password`, with a `DeprecationWarning`. *(BD#private-key-password-renamed)* |
+| `client_request_mfa_token` | `client_store_temporary_credential` | `client_request_mfa_token=True` enabled MFA token caching. The old name is accepted as an alias and warns. The current parameter also covers ID and OAuth token caching, and it defaults to `True`. *(BD#mfa-token-cache-param-renamed, BD#client-store-temporary-credential-default)* |
+| `client_fetch_threads` | `client_prefetch_threads` | Set the chunk-fetch pool size. It defaulted to `client_prefetch_threads`. The old name is a deprecated alias. *(BD#client-fetch-threads-deprecated)* |
+| `enable_stage_s3_privatelink_for_us_east_1` | `use_s3_regional_url` | Forced PUT and GET to use the S3 regional endpoint. The `_for_us_east_1` suffix was historical: it applied to every S3 region. The old connection argument is a deprecated alias. The server session parameter `ENABLE_STAGE_S3_PRIVATELINK_FOR_US_EAST_1` is still honored. *(BD#use-s3-regional-url-rename)* |
+| `network_timeout` | `query_timeout` and `request_timeout` | One wall-clock budget for non-login HTTP operations. It defaulted to no cap, and `conn.network_timeout` returned `None` when unset. The value is copied to both new parameters unless you set one of them yourself. `conn.network_timeout` returns `request_timeout` (default 120). Using the old name emits a `DeprecationWarning`. *(BD#timeout-getters-implemented)* |
+| `socket_timeout` | `connect_timeout` and `retry_timeout` | Per-attempt read-inactivity timeout. It reset on every received byte, so a slow but active download did not trip it. The value is copied to both new parameters. `retry_timeout` is a hard cap on the whole HTTP attempt, including the body download, so `socket_timeout=30` can abort an active chunk download at 30 seconds. `conn.socket_timeout` returns `retry_timeout` (default `None`). *(BD#timeout-getters-implemented)* |
 | `external_browser_timeout` | `authentication_timeout` | Seconds to wait for an external-browser authentication response. The old name is a deprecated alias of `authentication_timeout` (default 120). That budget also covers Okta and OAuth authentication, so setting the old name changes those flows too. |
 | `oauth_socket_uri` | `oauth_redirect_uri` | Loopback URI for the OAuth redirect. Before version 5.0, the listener could bind a different host or port from the URI sent to the IdP. The listener binds `oauth_redirect_uri`. The old name is a deprecated alias. |
 | `skip_file_permissions_check` | `unsafe_skip_config_file_permissions_check` and `crl_unsafe_skip_file_permissions_check` | One flag skipped permission checks on both configuration files and the CRL cache. The value is copied to both parameters unless you set one of them. |
 | `cert_revocation_check_mode` | `crl_check_mode` | Enum (`DISABLED`, `ADVISORY`, `ENABLED`). The old name is a silent alias. `crl_check_mode` is a string with the same values and defaults to `DISABLED`. |
-| `enable_crl_memory_cache` | `crl_enable_memory_caching` | In-memory CRL cache switch. The old name is a silent alias. Default is `True`. *(BD#42)* |
-| `enable_crl_file_cache` | `crl_enable_disk_caching` | On-disk CRL cache switch. Before version 5.0, it applied only when `enable_crl_cache` was `True`. The old name is a silent alias. Default is `True`. *(BD#42)* |
+| `enable_crl_memory_cache` | `crl_enable_memory_caching` | In-memory CRL cache switch. The old name is a silent alias. Default is `True`. *(BD#crl-cache-independent-toggles)* |
+| `enable_crl_file_cache` | `crl_enable_disk_caching` | On-disk CRL cache switch. Before version 5.0, it applied only when `enable_crl_cache` was `True`. The old name is a silent alias. Default is `True`. *(BD#crl-cache-independent-toggles)* |
 | `allow_certificates_without_crl_url` | `crl_allow_certificates_without_crl_url` | Allow certificates that have no CRL distribution point. The old name is a silent alias. |
 | `crl_connection_timeout_ms` | `crl_connection_timeout` | Connection timeout in milliseconds (default 3000). The current parameter is seconds (default 10). The old name is accepted and converted. |
 | `crl_read_timeout_ms` | `crl_http_timeout` | Read timeout in milliseconds (default 3000). The current parameter is seconds (default 10). The old name is accepted and converted. |
@@ -144,7 +144,7 @@ Expand
 
 Show lessSee more
 
-`login_timeout` keeps its name. The default is 120, and the property returns 120 when unset. *(BD#52)*
+`login_timeout` keeps its name. The default is 120, and the property returns 120 when unset. *(BD#timeout-getters-implemented)*
 
 Note
 
@@ -154,23 +154,23 @@ Before version 5.0, the connector applied a 120-second budget internally, but `c
 
 | Previous name or call | What to do | How it worked before 5.0 |
 | --- | --- | --- |
-| `client_fetch_use_mp` | Remove it. Chunk fetch always uses a thread pool. Passing it warns and has no effect. | `True` switched the chunk-fetch pool from threads to processes. *(BD#25)* |
-| `oauth_enable_refresh_tokens` | Remove it. The connector always uses a refresh token when the IdP returns one. Use `client_store_temporary_credential` to control caching. Passing it warns and has no effect. | Default `True`. When `False`, the connector did not use the refresh token to renew an expired access token. *(BD#28)* |
-| `disable_console_login`, `oauth_disable_console_login` | Remove them. Passing either warns and has no effect. External browser login always requests the SSO URL from Snowflake. | `disable_console_login` defaulted to `True`, so external-browser login asked for the SSO URL instead of opening `/console/login`. Setting it to `False` opened `/console/login`. *(BD#99)* |
-| `enable_crl_cache` | Set `crl_enable_memory_caching` and `crl_enable_disk_caching`. Passing it warns and has no effect. | Master switch for both CRL caches (default `True`). `False` disabled memory and disk caches regardless of `enable_crl_file_cache`. *(BD#42)* |
-| `backoff_policy` | Set `retry_backoff_base_ms` (default 250), `retry_backoff_cap_ms` (default 16000), `retry_backoff_factor` (default 2), and `retry_backoff_jitter` (`none`, `full`, or `decorrelated`; default `decorrelated`). Passing `backoff_policy` warns and has no effect. | A generator, such as `exponential_backoff()` or a custom function, computed the delay before each retry. Defaults were a 1-second initial delay and full jitter. The 16-second cap and 2x factor are unchanged. *(BD#58)* |
-| `create_temp_table` on `write_pandas` | Pass `table_type='temp'`. Passing `create_temp_table` raises `TypeError`. | `create_temp_table=True` was a deprecated alias for `table_type='temp'` and emitted a `DeprecationWarning`. *(BD#19)* |
-| `region` | Pass a fully qualified `account` or set `host`. Passing `region` warns and forwards the value as a login session parameter named `REGION`. It is not used to build the hostname, and `Connection` has no `region` property. | Built the Snowflake hostname. `Connection.region` returned the value and emitted a `PendingDeprecationWarning`. *(BD#24)* |
-| `Connection.connect()` | Construct a new `Connection`. There is no public `connect()` method. | Public method called at the end of construction. It was not a usable reconnect, because credentials were cleared after login. *(BD#23)* |
-| `converter_class` | Remove it. Passing a class raises `ProgrammingError`. `DefaultConverterClass` does not exist. | Selected a converter, including `SnowflakeNoConverterToPython` to skip native type conversion. *(BD#103)* |
-| `password_callback` | Change the expired password outside the connector. Passing it raises `ProgrammingError`. | Called when login returned `PWD_CHANGE`. The return value was sent as `CHOSEN_NEW_PASSWORD`. *(BD#100)* |
-| `disable_request_pooling` | Remove it. Passing it warns and has no effect. Reading `Connection.disable_request_pooling` raises `AttributeError`. | `True` stopped reusing HTTP sessions across REST calls. *(BD#88)* |
-| `iobound_tpe_limit` | Remove it. Passing it warns and has no effect. `Connection.iobound_tpe_limit` does not exist. | Capped the number of I/O worker threads for PUT and GET. *(BD#101)* |
-| `client_session_keep_alive` and `client_session_keep_alive_heartbeat_frequency` setters | Read the properties. Assignment raises `AttributeError`. | Setters existed, but they wrote a private attribute and did not change the live heartbeat thread. *(BD#26)* |
-| OCSP parameters (`ocsp_fail_open`, `ocsp_response_cache_filename`, `insecure_mode`, and related settings) | Configure CRL parameters. Passing these names warns and forwards them as login session parameters. They have no effect on revocation checking. | Certificate revocation used OCSP. *(BD#104)* |
-| Logging `[log]` configuration (`save_logs`, `path`, `level`) | Set `SNOWFLAKE_TROUBLESHOOTING_ENABLED=true` to capture driver troubleshooting logs. There is no configurable log path or rotation schema. | A logging configuration file configured a rotating file handler. *(BD#80)* |
-| `dsn`, `session_id` as a connect argument, `support_negative_year`, `json_result_force_utf8_decoding`, `inject_client_pause`, `probe_connection`, `debug_arrow_chunk`, `snowflake_server_dop_cap_for_file_transfer`, `reraise_error_in_file_transfer_work_function` | Remove them. Each one warns and has no effect. `connection.session_id` after login still returns the server-assigned id. | Accepted connect arguments. *(BD#98)* |
-| `log_imported_packages`, `log_imported_packages_in_telemetry` | Remove them. They are ignored with no warning. | Accepted connect arguments. *(BD#98)* |
+| `client_fetch_use_mp` | Remove it. Chunk fetch always uses a thread pool. Passing it warns and has no effect. | `True` switched the chunk-fetch pool from threads to processes. *(BD#client-fetch-threads-deprecated)* |
+| `oauth_enable_refresh_tokens` | Remove it. The connector always uses a refresh token when the IdP returns one. Use `client_store_temporary_credential` to control caching. Passing it warns and has no effect. | Default `True`. When `False`, the connector did not use the refresh token to renew an expired access token. *(BD#oauth-refresh-tokens-ignored)* |
+| `disable_console_login`, `oauth_disable_console_login` | Remove them. Passing either warns and has no effect. External browser login always requests the SSO URL from Snowflake. | `disable_console_login` defaulted to `True`, so external-browser login asked for the SSO URL instead of opening `/console/login`. Setting it to `False` opened `/console/login`. *(BD#disable-console-login-not-a-parameter)* |
+| `enable_crl_cache` | Set `crl_enable_memory_caching` and `crl_enable_disk_caching`. Passing it warns and has no effect. | Master switch for both CRL caches (default `True`). `False` disabled memory and disk caches regardless of `enable_crl_file_cache`. *(BD#crl-cache-independent-toggles)* |
+| `backoff_policy` | Set `retry_backoff_base_ms` (default 250), `retry_backoff_cap_ms` (default 16000), `retry_backoff_factor` (default 2), and `retry_backoff_jitter` (`none`, `full`, or `decorrelated`; default `decorrelated`). Passing `backoff_policy` warns and has no effect. | A generator, such as `exponential_backoff()` or a custom function, computed the delay before each retry. Defaults were a 1-second initial delay and full jitter. The 16-second cap and 2x factor are unchanged. *(BD#backoff-policy-callable-removed)* |
+| `create_temp_table` on `write_pandas` | Pass `table_type='temp'`. Passing `create_temp_table` raises `TypeError`. | `create_temp_table=True` was a deprecated alias for `table_type='temp'` and emitted a `DeprecationWarning`. *(BD#write-pandas-create-temp-table-removed)* |
+| `region` | Pass a fully qualified `account` or set `host`. Passing `region` warns and forwards the value as a login session parameter named `REGION`. It is not used to build the hostname, and `Connection` has no `region` property. | Built the Snowflake hostname. `Connection.region` returned the value and emitted a `PendingDeprecationWarning`. *(BD#connection-region-parameter-removed)* |
+| `Connection.connect()` | Construct a new `Connection`. There is no public `connect()` method. | Public method called at the end of construction. It was not a usable reconnect, because credentials were cleared after login. *(BD#connection-connect-method-removed)* |
+| `converter_class` | Remove it. Passing a class raises `ProgrammingError`. `DefaultConverterClass` does not exist. | Selected a converter, including `SnowflakeNoConverterToPython` to skip native type conversion. *(BD#converter-class-removed)* |
+| `password_callback` | Change the expired password outside the connector. Passing it raises `ProgrammingError`. | Called when login returned `PWD_CHANGE`. The return value was sent as `CHOSEN_NEW_PASSWORD`. *(BD#password-callback-removed)* |
+| `disable_request_pooling` | Remove it. Passing it warns and has no effect. Reading `Connection.disable_request_pooling` raises `AttributeError`. | `True` stopped reusing HTTP sessions across REST calls. *(BD#disable-request-pooling-removed)* |
+| `iobound_tpe_limit` | Remove it. Passing it warns and has no effect. `Connection.iobound_tpe_limit` does not exist. | Capped the number of I/O worker threads for PUT and GET. *(BD#iobound-tpe-limit-removed)* |
+| `client_session_keep_alive` and `client_session_keep_alive_heartbeat_frequency` setters | Read the properties. Assignment raises `AttributeError`. | Setters existed, but they wrote a private attribute and did not change the live heartbeat thread. *(BD#session-keep-alive-setters-removed)* |
+| OCSP parameters (`ocsp_fail_open`, `ocsp_response_cache_filename`, `insecure_mode`, and related settings) | Configure CRL parameters. Passing these names warns and forwards them as login session parameters. They have no effect on revocation checking. | Certificate revocation used OCSP. *(BD#ocsp-replaced-by-crl)* |
+| Logging `[log]` configuration (`save_logs`, `path`, `level`) | Set `SNOWFLAKE_TROUBLESHOOTING_ENABLED=true` to capture driver troubleshooting logs. There is no configurable log path or rotation schema. | A logging configuration file configured a rotating file handler. *(BD#easy-logging-config-removed)* |
+| `dsn`, `session_id` as a connect argument, `support_negative_year`, `json_result_force_utf8_decoding`, `inject_client_pause`, `probe_connection`, `debug_arrow_chunk`, `snowflake_server_dop_cap_for_file_transfer`, `reraise_error_in_file_transfer_work_function` | Remove them. Each one warns and has no effect. `connection.session_id` after login still returns the server-assigned id. | Accepted connect arguments. *(BD#unused-connect-kwargs-dropped)* |
+| `log_imported_packages`, `log_imported_packages_in_telemetry` | Remove them. They are ignored with no warning. | Accepted connect arguments. *(BD#unused-connect-kwargs-dropped)* |
 
 Expand
 
@@ -188,40 +188,40 @@ The following list summarizes breaking differences between versions before 5.0 a
 
 ### Authentication, proxy, and sessions
 
-- **Proxy environment variables are read unless you opt out.** `use_proxy_env` defaults to `True`. Pass `False` to ignore `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY`. Explicit `proxy_host`, `proxy_port`, `proxy_user`, `proxy_password`, and `no_proxy` still work, and they win over the environment. The legacy `proxy` URL form is also accepted. *(BD#31)*
-- **OAuth token and authorization URLs must use HTTPS.** A non-loopback `http://` value is rejected at connect time. `http://` is still accepted for loopback hosts (`127.0.0.0/8`, `::1`, and `localhost`). *(BD#38)*
-- **`oauth_credentials_in_body=True` sends the client secret in the body only.** The default remains HTTP Basic. *(BD#29)*
+- **Proxy environment variables are read unless you opt out.** `use_proxy_env` defaults to `True`. Pass `False` to ignore `HTTP_PROXY`, `HTTPS_PROXY`, and `NO_PROXY`. Explicit `proxy_host`, `proxy_port`, `proxy_user`, `proxy_password`, and `no_proxy` still work, and they win over the environment. The legacy `proxy` URL form is also accepted. *(BD#env-proxy-overrides-explicit-proxy)*
+- **OAuth token and authorization URLs must use HTTPS.** A non-loopback `http://` value is rejected at connect time. `http://` is still accepted for loopback hosts (`127.0.0.0/8`, `::1`, and `localhost`). *(BD#oauth-endpoints-require-https)*
+- **`oauth_credentials_in_body=True` sends the client secret in the body only.** The default remains HTTP Basic. *(BD#oauth-client-secret-post-body-only)*
 
   Note
 
   Before version 5.0, the connector sent the secret in both the HTTP Basic header and the body.
-- **A bad OAuth client secret includes the IdP error slug** in the login failure, for example `invalid_client`. *(BD#35)*
+- **A bad OAuth client secret includes the IdP error slug** in the login failure, for example `invalid_client`. *(BD#oauth-idp-error-slug-surfaced)*
 
   Note
 
   Before version 5.0, the message was a generic browser-login error.
-- **Session-token login requires `master_token`, and invalid tokens fail in `connect()`.** An invalid token raises `DatabaseError` from `connect()`. Omitting `master_token` raises `ProgrammingError`. *(BD#37)*
+- **Session-token login requires `master_token`, and invalid tokens fail in `connect()`.** An invalid token raises `DatabaseError` from `connect()`. Omitting `master_token` raises `ProgrammingError`. *(BD#session-token-requires-master-token)*
 
   Note
 
   Before version 5.0, the session token was used as a bearer with no upfront check, and a bad token failed later as `HttpError` (errno 290401).
-- **External-browser login always requests the SSO URL from Snowflake.** `disable_console_login` and `oauth_disable_console_login` are not connection parameters. Passing either warns and has no effect. *(BD#99)*
+- **External-browser login always requests the SSO URL from Snowflake.** `disable_console_login` and `oauth_disable_console_login` are not connection parameters. Passing either warns and has no effect. *(BD#disable-console-login-not-a-parameter)*
 
   Note
 
   Before version 5.0, `disable_console_login` defaulted to `True`, which asked for the SSO URL. Setting it to `False` opened `/console/login` directly.
-- **External-browser login does not silently re-authenticate** when the master token expires mid-session. The connector raises `ReauthenticationRequest` instead of opening the browser again and retrying the query. Open a new connection to run the browser flow again. *(BD#82)*
+- **External-browser login does not silently re-authenticate** when the master token expires mid-session. The connector raises `ReauthenticationRequest` instead of opening the browser again and retrying the query. Open a new connection to run the browser flow again. *(BD#externalbrowser-no-mid-session-reauth)*
 
   Note
 
   Before version 5.0, the connector reran the browser flow and retried the query.
-- **`ReauthenticationRequest` is raised for master-token expiry** and is importable from `snowflake.connector.errors` and `snowflake.connector.network`. It subclasses `ProgrammingError` and warns that the base class moves to `OperationalError` in a future major release. *(BD#44)*
-- **Interactive prompts for the same user and host are serialized** when `client_store_temporary_credential=True` and `disable_parallel_user_prompt=True` (the default). Set `disable_parallel_user_prompt=False` to show one prompt per concurrent connection. *(BD#33)*
+- **`ReauthenticationRequest` is raised for master-token expiry** and is importable from `snowflake.connector.errors` and `snowflake.connector.network`. It subclasses `ProgrammingError` and warns that the base class moves to `OperationalError` in a future major release. *(BD#master-token-expiry-no-reauth-request)*
+- **Interactive prompts for the same user and host are serialized** when `client_store_temporary_credential=True` and `disable_parallel_user_prompt=True` (the default). Set `disable_parallel_user_prompt=False` to show one prompt per concurrent connection. *(BD#interactive-auth-prompts-serialized)*
 
   Note
 
   Before version 5.0, each connection prompted.
-- **A bare `connect()` keeps the auto-detected `application` name** when a default connection profile is also loaded. An explicit `application=` still wins. *(BD#59)*
+- **A bare `connect()` keeps the auto-detected `application` name** when a default connection profile is also loaded. An explicit `application=` still wins. *(BD#app-name-overrides-default-profile)*
 
   Note
 
@@ -229,55 +229,55 @@ The following list summarizes breaking differences between versions before 5.0 a
 
 ### Cursors, binding, and results
 
-- **Closed cursors raise `InterfaceError` (errno 252006)** from cursor methods. See [Upgrade steps](#label-python-upgrade-steps). *(BD#21)*
-- **Fetching before `execute()` raises `ProgrammingError` (errno 252009).** *(BD#22)*
+- **Closed cursors raise `InterfaceError` (errno 252006)** from cursor methods. See [Upgrade steps](#label-python-upgrade-steps). *(BD#closed-cursor-raises-interface-error)*
+- **Fetching before `execute()` raises `ProgrammingError` (errno 252009).** *(BD#fetch-before-execute-raises)*
 - **Exceptions that are not PEP 249 `Error` subclasses are re-raised and skip `errorhandler`.** They are not recorded in `messages`. *(BD#generic-exceptions-not-routed-to-errorhandler)*
 
   Note
 
   Before version 5.0, `Error.errorhandler_wrapper_from_ready_exception` passed every exception to the handler. For a class that is not `Error`, the handler value was `exception.args`, and the default handler raised `error_class(error_value)`.
-- **`file_stream` on a statement that is not PUT raises `ProgrammingError`.** *(BD#49)*
+- **`file_stream` on a statement that is not PUT raises `ProgrammingError`.** *(BD#file-stream-requires-put)*
 
   Note
 
   Before version 5.0, the argument was ignored and the statement ran.
-- **`executemany()` asks the server whether array binding is supported.** For current Snowflake SQL the outcome is unchanged. Non-`VALUES` `INSERT` rewrite failures raise `ProgrammingError`. *(BD#34, BD#93)*
+- **`executemany()` asks the server whether array binding is supported.** For current Snowflake SQL the outcome is unchanged. Non-`VALUES` `INSERT` rewrite failures raise `ProgrammingError`. *(BD#executemany-uses-array-bind-supported, BD#executemany-rewrite-raises-programming-error)*
 
   Note
 
   Before version 5.0, the connector matched `INSERT` with a client-side regular expression, and those rewrite failures raised `InterfaceError`.
-- **Session parameters set by one cursor are visible to other cursors** on the same connection without another query. *(BD#15)*
+- **Session parameters set by one cursor are visible to other cursors** on the same connection without another query. *(BD#session-params-shared-across-cursors)*
 
   Note
 
   Before version 5.0, a cursor that had not executed a query kept its own copy.
-- **`fetch_pandas_all`, `fetch_pandas_batches`, and `fetch_arrow_*` accept JSON result sets** such as `SHOW`, `DESCRIBE`, and PUT or GET. *(BD#92)*
+- **`fetch_pandas_all`, `fetch_pandas_batches`, and `fetch_arrow_*` accept JSON result sets** such as `SHOW`, `DESCRIBE`, and PUT or GET. *(BD#fetch-pandas-accepts-json)*
 
   Note
 
   Before version 5.0, those methods raised `NotSupportedError` unless the server returned Arrow.
-- **`JSONResultBatch` and `ArrowResultBatch` are aliases of `ResultBatch`.** `to_arrow()` and `to_pandas()` work on every batch. *(BD#18)*
+- **`JSONResultBatch` and `ArrowResultBatch` are aliases of `ResultBatch`.** `to_arrow()` and `to_pandas()` work on every batch. *(BD#json-result-batch-arrow-pandas)*
 
   Note
 
   Before version 5.0, calling them on a JSON batch raised `NotSupportedError`.
-- **`ResultBatch` has no `session_manager` or `http_config`.** Chunk download is handled inside the core. After unpickling a batch, you can pass a live `Connection`, but you don’t have to. *(BD#20)*
-- **`pandas.concat` keyword arguments are not accepted by `fetch_pandas_all` or `fetch_pandas_batches`.** Arguments of `Table.to_pandas` (`split_blocks`, `types_mapper`, and similar) are forwarded. `sort`, `keys`, and `copy` raise `TypeError`. *(BD#51)*
+- **`ResultBatch` has no `session_manager` or `http_config`.** Chunk download is handled inside the core. After unpickling a batch, you can pass a live `Connection`, but you don’t have to. *(BD#result-batch-no-session-manager)*
+- **`pandas.concat` keyword arguments are not accepted by `fetch_pandas_all` or `fetch_pandas_batches`.** Arguments of `Table.to_pandas` (`split_blocks`, `types_mapper`, and similar) are forwarded. `sort`, `keys`, and `copy` raise `TypeError`. *(BD#fetch-pandas-no-concat-kwargs)*
 
   Note
 
   Before version 5.0, those arguments were forwarded to `pandas.concat`.
-- **An unsupported bind value raises `ProgrammingError` with errno 255001.** `except ProgrammingError` still matches. *(BD#89)*
+- **An unsupported bind value raises `ProgrammingError` with errno 255001.** `except ProgrammingError` still matches. *(BD#unrecognized-bind-error-shape)*
 
   Note
 
   Before version 5.0, the same class was raised with errno 252011 and a different message.
-- **`display_size` is set for text columns** to the character length. *(BD#90)*
+- **`display_size` is set for text columns** to the character length. *(BD#display-size-populated-for-text)*
 
   Note
 
   Before version 5.0, it was always `None`.
-- **Non-string `session_parameters` values are sent as JSON strings.** `True` is sent as `"true"` and `5` as `"5"`. *(BD#57)*
+- **Non-string `session_parameters` values are sent as JSON strings.** `True` is sent as `"true"` and `5` as `"5"`. *(BD#session-parameters-coerced-to-str)*
 
   Note
 
@@ -285,61 +285,61 @@ The following list summarizes breaking differences between versions before 5.0 a
 
 ### Files, configuration, and errors
 
-- **A `ConfigManager` created without `file_path` raises `MissingConfigOptionError` when you read an option.** *(BD#14)*
+- **A `ConfigManager` created without `file_path` raises `MissingConfigOptionError` when you read an option.** *(BD#config-manager-missing-file-path)*
 
   Note
 
   Before version 5.0, the same call raised `ConfigManagerError` about the missing path.
-- **An empty `connections.toml` no longer hides connections from `config.toml`.** *(BD#13)*
+- **An empty `connections.toml` no longer hides connections from `config.toml`.** *(BD#empty-connections-toml-preserves-config)*
 
   Note
 
   Before version 5.0, an empty `connections.toml` replaced those connections with an empty set.
-- **A failed GET removes its `.part` staging file.** *(BD#39)*
+- **A failed GET removes its `.part` staging file.** *(BD#get-failure-removes-part-file)*
 
   Note
 
   Before version 5.0, an interrupted download could leave `<destination>.part` behind.
-- **PUT of a symlinked source uses the target file’s base name** on the stage. A relative path that contains a symlink directory and `..` can also select a different file, because the connector resolves the path on the filesystem. *(BD#81)*
+- **PUT of a symlinked source uses the target file’s base name** on the stage. A relative path that contains a symlink directory and `..` can also select a different file, because the connector resolves the path on the filesystem. *(BD#put-canonicalizes-relative-paths)*
 
   Note
 
   Before version 5.0, a relative path was normalized lexically, and a symlinked file was uploaded under the symlink’s own name.
-- **The `file` column of a GET result is the local file’s base name**, including when the stage key has more than one directory level. *(BD#102)*
+- **The `file` column of a GET result is the local file’s base name**, including when the stage key has more than one directory level. *(BD#get-file-keeps-stage-subdirectory)*
 
   Note
 
   Before version 5.0, only the first path segment was removed, so `prefix/subdir/file.csv` was reported as `subdir/file.csv`.
-- **An `AUTO_COMPRESS` gzip upload omits the original file name from the gzip header.** The compressed file is smaller than the file produced before version 5.0, and a byte-for-byte comparison with those uploads does not match. *(BD#1)*
-- **`SOURCE_COMPRESSION=AUTO_DETECT` recognizes DEFLATE files.** The upload keeps the DEFLATE payload and the original file name. *(BD#2)*
+- **An `AUTO_COMPRESS` gzip upload omits the original file name from the gzip header.** The compressed file is smaller than the file produced before version 5.0, and a byte-for-byte comparison with those uploads does not match. *(BD#gzip-header-omits-filename)*
+- **`SOURCE_COMPRESSION=AUTO_DETECT` recognizes DEFLATE files.** The upload keeps the DEFLATE payload and the original file name. *(BD#deflate-compression-autodetected)*
 
   Note
 
   Before version 5.0, a DEFLATE file was treated as uncompressed and uploaded again as gzip (`filename.gz`).
-- **`SOURCE_COMPRESSION=BROTLI` is supported.** *(BD#3)*
+- **`SOURCE_COMPRESSION=BROTLI` is supported.** *(BD#brotli-compression-supported)*
 
   Note
 
   Before version 5.0, that option raised error 253007 (`Feature is not supported`).
-- **`put_get_max_attempts` is not clamped to an upper bound.** Values of 0 or less fall back to 6. *(BD#95)*
+- **`put_get_max_attempts` is not clamped to an upper bound.** Values of 0 or less fall back to 6. *(BD#put-get-max-attempts-unclamped)*
 
   Note
 
   Before version 5.0, a large retry count was clamped.
-- **Azure Blob PUT does not set `Content-Encoding` or `x-ms-blob-content-encoding`.** Reading those blobs still works. *(BD#32)*
+- **Azure Blob PUT does not set `Content-Encoding` or `x-ms-blob-content-encoding`.** Reading those blobs still works. *(BD#azure-put-omits-content-encoding)*
 
   Note
 
   Before version 5.0, the connector set `Content-Encoding: utf-8`, which Azure stored on the blob.
-- **Azure client-side encryption metadata reports `EncryptionAgent.EncryptionAlgorithm` as `AES_CBC_256`.** `KeyWrappingMetadata.EncryptionLibrary` is `Rust(OpenSSL)`. *(BD#46)*
-- **Any Azure HTTP 403 during PUT or GET refreshes the SAS token and retries.** A failed refresh raises a terminal error instead of retrying without a limit. *(BD#40, BD#41)*
-- **`Connection.is_valid()` returns true for a live `PAT_WITH_EXTERNAL_SESSION` connection.** *(BD#109)*
-- **S3 endpoints in `cn-*` regions are chosen by the AWS SDK** when no regional-URL flag or explicit endpoint is set. This path is not yet verified against a live China-region stage. *(BD#27)*
-- **`snowflake.connector.options` is not a module.** Import optional-dependency helpers from `snowflake.connector._common.extras`. *(BD#91)*
-- **`snowflake.connector.dbapi` is not a module. Authenticator classes such as `AuthByOkta` are not exported from `snowflake.connector.auth`.** Configure authentication with connection parameters. *(BD#105)*
-- **File-transfer constants and type helpers are not exported from `snowflake.connector.constants`.** `QueryStatus` remains. `DownloadMetrics`, `RemoteChunkInfo`, and the SSE-C constants are not exported from `result_batch`. *(BD#107, BD#108)*
-- **Legacy HTTP exception classes stay importable from `snowflake.connector.errors` and are not raised.** The first access emits a `DeprecationWarning`. Failures use PEP 249 exception types, so `except HttpError` does not catch them. *(BD#106)*
-- **Connection-config validation errors set `Error.parameter` and `Error.validation_code`.** Both are `None` for other errors. *(BD#48)*
+- **Azure client-side encryption metadata reports `EncryptionAgent.EncryptionAlgorithm` as `AES_CBC_256`.** `KeyWrappingMetadata.EncryptionLibrary` is `Rust(OpenSSL)`. *(BD#azure-encryption-algorithm-256)*
+- **Any Azure HTTP 403 during PUT or GET refreshes the SAS token and retries.** A failed refresh raises a terminal error instead of retrying without a limit. *(BD#azure-sas-refresh-on-any-403, BD#azure-terminal-403-log-severity)*
+- **`Connection.is_valid()` returns true for a live `PAT_WITH_EXTERNAL_SESSION` connection.** *(BD#pat-external-session-is-valid)*
+- **S3 endpoints in `cn-*` regions are chosen by the AWS SDK** when no regional-URL flag or explicit endpoint is set. This path is not yet verified against a live China-region stage. *(BD#s3-cn-region-endpoint)*
+- **`snowflake.connector.options` is not a module.** Import optional-dependency helpers from `snowflake.connector._common.extras`. *(BD#connector-options-module-removed)*
+- **`snowflake.connector.dbapi` is not a module. Authenticator classes such as `AuthByOkta` are not exported from `snowflake.connector.auth`.** Configure authentication with connection parameters. *(BD#dbapi-and-auth-modules-removed)*
+- **File-transfer constants and type helpers are not exported from `snowflake.connector.constants`.** `QueryStatus` remains. `DownloadMetrics`, `RemoteChunkInfo`, and the SSE-C constants are not exported from `result_batch`. *(BD#connector-constants-symbols-removed, BD#result-batch-download-symbols-removed)*
+- **Legacy HTTP exception classes stay importable from `snowflake.connector.errors` and are not raised.** The first access emits a `DeprecationWarning`. Failures use PEP 249 exception types, so `except HttpError` does not catch them. *(BD#http-error-classes-deprecated)*
+- **Connection-config validation errors set `Error.parameter` and `Error.validation_code`.** Both are `None` for other errors. *(BD#error-exposes-validation-attributes)*
 
   Note
 
@@ -349,12 +349,12 @@ The following list summarizes breaking differences between versions before 5.0 a
 
 These items were preview regressions. The connector now matches the previous connector, so they are not differences you need to prepare for.
 
-- `ResultMetadataV2.fields` is populated for VECTOR and structured types, and `vector_dimension` is set. *(BD#54)*
-- `internal_size` is the character count. *(BD#55)*
+- `ResultMetadataV2.fields` is populated for VECTOR and structured types, and `vector_dimension` is set. *(BD#result-metadata-v2-fields-always-none)*
+- `internal_size` is the character count. *(BD#internal-size-is-byte-count)*
 
   Note
 
   Before version 5.0, `internal_size` was also the character count.
-- `workload_identity_aws_use_outbound_token` is accepted again. *(BD#94)*
-- A native Okta authenticator rejection includes the Snowflake message. *(BD#96)*
-- `ReauthenticationRequest` is raised for the master-token codes listed in BD#44. The remaining gap is external-browser auto-reauthentication, covered by BD#82.
+- `workload_identity_aws_use_outbound_token` is accepted again. *(BD#workload-identity-outbound-token-removed)*
+- A native Okta authenticator rejection includes the Snowflake message. *(BD#okta-failure-drops-snowflake-message)*
+- `ReauthenticationRequest` is raised for the master-token codes listed in BD#master-token-expiry-no-reauth-request. The remaining gap is external-browser auto-reauthentication, covered by BD#externalbrowser-no-mid-session-reauth.

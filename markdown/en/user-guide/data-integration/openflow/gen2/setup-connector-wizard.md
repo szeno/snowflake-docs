@@ -67,7 +67,7 @@ Before you start the setup wizard, make sure the following requirements are met:
 3. Navigate to the **Connector library** tab.
 4. Find a **gen 2** connector in the catalog.
 5. Select a runtime to install the connector to. The list is filtered based on the
-   runtime size requirements needed to run the connector.
+   runtime size required to run the connector.
 6. Select **Install**.
 7. Complete the wizard steps. The specific steps vary depending on the connector you selected.
    Documentation for every step is present within the wizard.
@@ -118,7 +118,7 @@ After you **Start** the connector, confirm that data is flowing:
 - In **Snowflake**, query the **destination database** (the tables or schemas the connector writes to) to
   verify that new rows or changes are arriving as you expect.
 - Open the **runtime canvas** to inspect processors, queues, FlowFiles, and bulletins for your connector’s
-  process group—a **read-only** operational view. From the dashboard, select **Go to canvas** for that
+  process group: a **read-only** operational view. From the dashboard, select **Go to canvas** for that
   connector; or open the canvas from **Runtimes** in Openflow. You **cannot** configure the connector on
   the canvas for setup wizard connector types; use **Installed Connectors** » **Edit** or the
   connector API for any configuration changes.

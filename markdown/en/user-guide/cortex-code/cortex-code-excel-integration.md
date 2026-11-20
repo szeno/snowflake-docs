@@ -29,9 +29,12 @@ The add-in is part of Snowflake CoCo. For an overview of the other CoCo experien
   the query, loading live results into your worksheet. Power users can provide SQL and CoCo runs it as written.
 - **Explore your data without SQL:** Browse the databases, schemas, tables, and
   [semantic views](/user-guide/views-semantic/overview) your role can access, or describe what you are looking for,
-  and CoCo finds the matching objects and pulls the data into your worksheet.
+  and CoCo finds the matching objects and pulls the data into your worksheet. Enter `/catalog` in the pane to browse the
+  catalog and pick columns. See [Browse the catalog](#label-cortex-code-excel-catalog).
 - **Build pivots, charts, and formulas:** Ask CoCo to pivot a result set, add a chart, or construct a formula, and
-  CoCo creates the corresponding Microsoft Excel objects so you can keep working in familiar spreadsheet tools.
+  CoCo creates the corresponding Microsoft Excel objects so you can keep working in familiar spreadsheet tools. To pivot
+  a Snowflake table, view, or semantic view without loading its rows into the workbook, use a
+  [live pivot](#label-cortex-code-excel-live-pivot): Snowflake computes the pivot, and CoCo draws the result in the sheet.
 - **Use governed objects and semantic views:** Query the tables, views, and semantic views you are permissioned for.
   Metric definitions come from Snowflake semantic views rather than being recreated per workbook, so results stay
   consistent across users and reports.
@@ -41,8 +44,13 @@ The add-in is part of Snowflake CoCo. For an overview of the other CoCo experien
 - **Call CORTEX functions in cells:** Use the seven functions in the `CORTEX` namespace, such as `=CORTEX.ASK()`,
   `=CORTEX.SUMMARIZE()`, and `=CORTEX.SENTIMENT()`, as Microsoft Excel formulas to enrich your data alongside your other
   formulas. See [Use CORTEX functions in cells](#label-cortex-code-excel-functions).
-- **Run CoCo skills:** Use skills such as report generation, analysis, and summaries from inside the workbook.
-  Enter `/` in the pane to see and select the available skills.
+- **Run commands and CoCo skills:** Use skills such as report generation, analysis, and summaries from inside the
+  workbook. Enter `/` in the pane to see the built-in commands `/catalog`, `/feedback`, `/pivot`, and `/refresh`,
+  followed by the available skills. See [Commands and skills in the `/` menu](#label-cortex-code-excel-slash-menu).
+- **Use MCP connectors:** Let CoCo use the tools of the external MCP servers you’ve connected, and choose which ones it
+  uses. See [Use MCP connectors](#label-cortex-code-excel-mcp).
+- **Attach files:** Add images, PDFs, SQL scripts, spreadsheets, and other files to a message for CoCo to read. See
+  [Attach files](#label-cortex-code-excel-attachments).
 - **Preview before every change:** See a clear before-and-after of every write and accept or reject it before it is
   applied. See [Review changes and track sources](#label-cortex-code-excel-review).
 - **Trace every written cell:** Follow the citation attached to each value back to the query or metric that produced
@@ -54,6 +62,13 @@ Snowflake CoCo for Microsoft Excel installs as a Microsoft Excel add-in that ope
 When you make a request, CoCo interprets it, runs the corresponding query or action against your Snowflake account using
 your privileges, and writes the results into the sheet. Data is read from Snowflake at query time, so the workbook
 reflects live data rather than a static export.
+
+A single import or refresh writes up to 1,048,575 data rows, which is the most a Microsoft Excel sheet holds below a
+header row. If a query returns more rows, CoCo writes the first 1,048,575 rows and says so on the preview: “The query
+has N rows. Only the first M are imported.” The full limit fits only when the data starts in row 1. Lower on the
+sheet, a refresh or a [`/catalog` pull](#label-cortex-code-excel-catalog) writes only the rows that fit, and an import
+that CoCo proposes in chat is refused before CoCo writes anything. Rows arrive in batches after you accept, so undoing a
+large import can take several undo steps.
 
 Before CoCo writes anything to your workbook, it shows a preview of the change and annotates each written value with
 a citation to its source. For more information about these behaviors, see
@@ -299,7 +314,7 @@ Show lessSee more
 
 ### Explain cells with CoCo
 
-You can also start a conversation from the worksheet. Select cells, right-click the selection, and select
+You can also start a conversation from the worksheet. Select cells, right-click the selection, and select **CoCo** >
 **Explain with CoCo**. The menu item’s tooltip reads “Ask CoCo to explain the selected cells — what they contain, how
 any formulas compute, and where the data came from.” CoCo opens the pane and starts a conversation that reads the
 selection and explains what it contains and what it’s for. For formulas, CoCo walks the formula chain and names the
@@ -307,7 +322,61 @@ precedents. For values, CoCo describes what the data represents and flags anythi
 gaps, or outliers. CoCo reads and explains the selection, and any change it proposes is still previewed before it’s
 applied.
 
-[![The Microsoft Excel cell context menu for a selected range of totals, with Explain with CoCo near the bottom of the menu.](/static/images/screens/cortex-code-excel-explain-with-coco.png)](/static/images/screens/cortex-code-excel-explain-with-coco.png)
+[![The Microsoft Excel cell context menu for a selected range of totals, with the CoCo submenu open and Explain with CoCo in the submenu.](/static/images/screens/cortex-code-excel-explain-with-coco.png)](/static/images/screens/cortex-code-excel-explain-with-coco.png)
+
+### Commands and skills in the `/` menu
+
+Enter `/` in the pane to open a menu of commands and skills. The built-in commands come first, and each runs as soon as
+you select it:
+
+- `/catalog`: “Browse the Snowflake catalog to pick columns.” See
+  [Browse the catalog](#label-cortex-code-excel-catalog).
+- `/feedback`: “Send feedback to the Snowflake team.” See [Feedback](#label-cortex-code-excel-feedback).
+- `/pivot`: “Pivot a Snowflake table or semantic view live in the sheet.” See
+  [Live pivots](#label-cortex-code-excel-live-pivot).
+- `/refresh`: “Re-run the Snowflake queries behind data on this sheet.” See
+  [Intelligent refresh](#label-cortex-code-excel-refresh).
+
+Your own skills follow the commands, then the skills available in your account, in alphabetical order within each
+group.
+
+[![The / menu in the CoCo pane listing the built-in commands Catalog, Feedback, Pivot, and Refresh with their descriptions.](/static/images/screens/cortex-code-excel-slash-menu.png)](/static/images/screens/cortex-code-excel-slash-menu.png)
+
+### Attach files
+
+To add files to a message, in the composer select **Add context** (+) > **Upload files**. You can also paste files into
+the composer or drag them onto it.
+
+You can attach images to any message. A message can hold up to 20 images, each up to 5 MB.
+
+You can also attach documents when you’re signed in with Snowflake OAuth and a workspace is selected. In that case, the
+**Upload files** item reads “Attach images, PDFs, SQL, text and other files.” Otherwise it reads “Attach images to your
+message,” and only images can be attached. Each document can be up to 10 MB, and the following types are accepted:
+
+- PDF (`.pdf`), PowerPoint (`.pptx`), and Microsoft Excel (`.xlsx`) files.
+- CSV (`.csv`), JSON (`.json`), YAML (`.yaml` and `.yml`), SQL (`.sql`), and text (`.txt`) files.
+- Tableau (`.twb`, `.twbx`, `.tds`, and `.tdsx`) and Power BI (`.pbix` and `.pbit`) files.
+
+Other types, such as `.docx` and `.md`, can’t be attached. A message with documents also needs typed text.
+
+CoCo uploads each document to your personal workspace and reads it from there while it works on your request. If you
+reopen the chat later, the message text is shown, but the attached document isn’t.
+
+[![The CoCo message box in Microsoft Excel with an attached top_customers.sql file above the prompt, and the Add context button and model picker below it.](/static/images/screens/cortex-code-excel-attachments.png)](/static/images/screens/cortex-code-excel-attachments.png)
+
+### Follow-up suggestions
+
+After CoCo answers, it can suggest up to three likely next requests under its latest answer. The first suggestion is
+shown, and **See more** shows the others. Select a suggestion to send it as your next message.
+
+### Send a message while CoCo works
+
+You can keep typing while CoCo works on a request. When you send a message during a request, CoCo queues it and runs it
+as the next request. The pane holds up to five queued messages, which you can edit, remove, or drag to reorder.
+
+To steer the request that’s running instead of waiting, select **Send now** on a queued message. CoCo reads the message
+between steps of the running request, and nothing is stopped. If CoCo doesn’t read the message in time, it runs as the
+next request instead.
 
 ## Review changes and track sources
 
@@ -329,10 +398,176 @@ change anything visible. Undo again until the change is reversed. The following 
 Every value CoCo writes back carries a citation to the query or metric that produced it. Citations let you trace any
 number in the workbook back to its source in Snowflake, so results can be verified rather than taken on trust.
 
+## Browse the catalog
+
+To pick data without writing SQL or a prompt, enter `/catalog` in the pane. The **Pull data** dialog opens. To close it
+without pulling data, select **Cancel**, select the close button, or press Esc.
+
+To pull data with `/catalog`, follow these steps:
+
+1. Under **Database**, select a database. Under **Schema**, select a schema.
+2. Under **Table / View**, select a table, a view, or a semantic view.
+3. Choose the data to pull:
+
+   - For a table or view, select columns under **Columns**. Use the search box to find columns, or use the select-all
+     toggle to pick every column.
+   - For a semantic view, select **Add** under **Dimensions**, **Metrics**, or **Facts**. In the dialog that opens,
+     search for fields and select the ones you want. **Select all** picks every field that the search shows, and it
+     changes to **Clear all** when they’re all picked. Fields you already added are tagged **added** and can’t be
+     selected again.
+4. Optionally, choose **Unique values** to return only distinct rows, or **All rows** to return every row.
+5. Optionally, filter a field. The filter follows the column’s type:
+
+   - Text and `BOOLEAN` columns: pick values from a list. To match text beyond the loaded values, search and select the
+     option to match rows that contain your text in Snowflake.
+   - Date and timestamp columns: enter a range of dates.
+   - Time columns: enter a range of times.
+   - Number columns: enter a minimum, a maximum, or both.
+   - Semantic view metrics: enter a range for the metric’s total.
+   - `VARIANT`, `OBJECT`, `ARRAY`, `BINARY`, `GEOGRAPHY`, `GEOMETRY`, and `VECTOR` columns can’t be filtered.
+6. Select **Pull data**. The dialog closes, and the query runs in the chat. The result appears as a preview that you
+   accept or reject.
+
+The dialog remembers the last database and schema you picked while you’re signed in. It doesn’t remember the fields.
+
+Pulled data goes into a Microsoft Excel table, and CoCo saves the query so that you can
+[refresh](#label-cortex-code-excel-refresh) it later. Where the data lands depends on the cell you select before you pull:
+
+- If the selected cell is below the sheet’s data, or to the right of it past a blank column, and the area the data needs
+  is clear of tables, merged cells, and live pivots, the data lands at that cell.
+- Otherwise, the data lands below the sheet’s existing data.
+
+If the result has more rows than fit where it lands, CoCo asks before it writes anything: “The query has N rows, which
+is more than can fit. Click Accept to import the first M, or Reject to import nothing.”
+
+[![The Pull data dialog opened from /catalog in Microsoft Excel, with a database, schema, and table selected and two of the table's four columns checked.](/static/images/screens/cortex-code-excel-catalog.png)](/static/images/screens/cortex-code-excel-catalog.png)
+
+## Live pivots
+
+A live pivot is a pivot of a Snowflake table, view, or semantic view that Snowflake computes and CoCo draws as cells in
+your sheet. The source rows stay in Snowflake, and only the pivot’s cells are written to the workbook. Each time you
+change the layout, CoCo queries Snowflake again and redraws the pivot, so every total, including each subtotal, comes
+from Snowflake.
+
+A live pivot isn’t a Microsoft Excel PivotTable. It’s a block of ordinary cells that CoCo manages, so the Microsoft
+Excel **PivotTable Fields** pane and PivotTable commands don’t apply to it. CoCo can also build a native PivotTable,
+either from data that’s already in the workbook or by loading Snowflake data into the sheet first.
+
+A live pivot also differs from a PivotTable in the following ways:
+
+- Every layout change and every refresh is a Snowflake query that uses warehouse compute.
+- A collapsed group isn’t fetched from Snowflake. Expanding it runs a query.
+- **Expand all** and **Collapse all** open or close every level at once.
+
+### Create a live pivot
+
+1. Select the cell where you want the pivot to go.
+2. Enter `/pivot` in the pane. The **Pull data** dialog opens, the same dialog that `/catalog` uses, without the
+   **Pull data** button.
+3. Select a database and a schema, then select a table, a view, or a semantic view. The pivot panel opens in the pane.
+4. Add fields to the **Rows**, **Columns**, **Values**, and **Filters** zones. Until you pull the pivot, changes only
+   edit the layout, and no query runs.
+5. Select **Pull**. CoCo runs the query once. In **Manual** mode, the default permission mode, CoCo then asks you to
+   confirm the range where the pivot will go: select **Accept** to draw the pivot, or **Cancel** to go back to the
+   layout. In **Bypass** mode, CoCo draws the pivot without asking.
+
+After the pivot is placed, each change to the layout re-queries Snowflake and redraws the pivot. While a query runs, the
+panel shows its progress. Select **Stop** to cancel it: if you stop the first pull, nothing is placed and the layout is
+kept; if you stop a change to a placed pivot, the last layout that was drawn is put back.
+
+You can also ask CoCo in chat to create or change a live pivot. In **Manual** mode, CoCo shows a preview first, and the
+pivot is drawn only when you accept it.
+
+To reopen the panel for a placed pivot, select a cell in the pivot. The panel closes when you move to a sheet that
+doesn’t hold that pivot.
+
+### The pivot panel
+
+The pivot panel has the following parts:
+
+- **Header:** **Back to chat** returns to the conversation. The header also shows the source’s name and fully qualified
+  name, and **Refresh from Snowflake** re-runs the pivot’s query.
+- **Focus card:** After the pivot is placed, shows where the selected row or column heading sits in the pivot, with a
+  plus or minus sign to expand or collapse each level.
+- **Field list:** For a semantic view, lists the fields under **Dimensions** and **Metrics**. For a table or view,
+  lists the columns under **Fields**. Select a field to add it to the layout or remove it, or drag it to a zone. Use the
+  search box to find a field; press Enter to add the first match.
+- **Zones:** **Filters**, **Columns**, **Rows**, and **Values**. A semantic view’s metrics go only in **Values**, and
+  its dimensions never go in **Values**. A table or view column can go in any zone.
+
+Select a field in a zone to open its menu. From the menu, you can move the field to another zone, remove it, change a
+value’s aggregation, or sort. For a field in **Rows**, **Columns**, or **Filters**, select **Filter** to choose which
+members to show. In the filter, select **Only these** or **Exclude these**, then pick the members. The list shows the
+first 500 members, and you can search to find the others. A live pivot filters by the members you pick; it doesn’t
+filter by ranges or text matches.
+
+[![A live pivot in a Microsoft Excel sheet showing a sum of order totals by order priority and order status, next to the pivot panel with its field list and the Filters, Columns, Rows, and Values zones.](/static/images/screens/cortex-code-excel-pivot-panel.png)](/static/images/screens/cortex-code-excel-pivot-panel.png)
+
+### Values and aggregations
+
+A field in **Values** shows its aggregation, such as “Sum of AMOUNT”. A number column can use **Sum**, **Count**,
+**Average**, **Min**, **Max**, or **Distinct count**. A text column or another non-numeric column can use **Count**,
+**Distinct count**, **Min**, or **Max**. A semantic view’s metric is already defined in the semantic view, so it has no
+aggregation to choose.
+
+The same column can appear in **Values** more than once with different aggregations, such as “Sum of AMOUNT” and
+“Max of AMOUNT”. To add a second value for a column, ask CoCo in chat. In the panel, each value’s menu changes only
+that value, and it can’t change a value to an aggregation that the column already has.
+
+### Expand and collapse rows and columns
+
+A new live pivot opens collapsed at the outermost row field and the first column field. When you add a field to a
+placed pivot, the new field arrives collapsed under the groups you already opened. A collapsed group still shows its
+subtotal.
+
+To expand or collapse a row or column heading, select a cell in it and use any of the following:
+
+- The plus and minus signs on the focus card.
+- The cell’s context menu: right-click the cell, then select **CoCo** > **Expand** or **CoCo** > **Collapse**.
+- The keyboard: Ctrl+Alt+Shift+Right arrow to expand and Ctrl+Alt+Shift+Left arrow to collapse on Windows, or
+  Control+Option+Shift+Right arrow and Control+Option+Shift+Left arrow on Mac.
+
+To open or close every level at once, select **Expand all** or **Collapse all** in the header of the **Rows** or
+**Columns** zone. These links appear when the zone holds two or more fields. **Collapse all** returns to the outermost
+field. When you reopen a group, it shows what was open under it before.
+
+### Where a live pivot goes
+
+A live pivot goes at the selected cell, but never on top of a Microsoft Excel table or another live pivot. If the
+selected cell is on one of them, the pivot goes one blank column to its right, level with its top, or below it if
+there’s no room to the right. If no spot fits, CoCo asks you to select an empty area and pull again.
+
+If the area holds other data, the confirmation says how many cells will be replaced. When a layout change makes a placed
+pivot grow over other data, CoCo asks you to select **Undo the change** or **Overwrite**. A change that would make the
+pivot run into a table or another live pivot is refused, and the earlier layout is put back.
+
+To remove a live pivot, clear or delete its cells.
+
+### What the workbook stores
+
+The workbook stores each live pivot’s layout: its source and its fields. Unlike a
+[CoCo table](#label-cortex-code-excel-refresh-pane), whose saved query is stored with the workbook, a live pivot
+doesn’t store its SQL. The workbook doesn’t store data credentials. CoCo rebuilds the query from the layout each time,
+using the fields that the source still has, and the query runs with the Snowflake access of whoever opens or
+refreshes the pivot.
+
+### Live pivot limits
+
+- **Warehouse:** A live pivot runs on your current warehouse. If none is selected, CoCo shows “No warehouse is currently
+  selected. Please select a warehouse with /warehouse and try again.” To select a warehouse, in the pane header select
+  **More** (…) > **Settings**, and then choose one under **Warehouse**.
+- **Too many rows:** A sheet ends at row 1,048,576. If a pivot with nothing expanded by hand needs more rows than that,
+  for example after **Expand all** or after its source grows, CoCo collapses it at the deepest level that fits and says
+  so. If you expanded groups yourself, CoCo refuses the change and suggests filtering the pivot, moving a field to
+  **Columns**, or adding a field above it so that it can fold.
+- **Too many columns:** If a pivot needs more columns than a sheet has, CoCo refuses the change before it downloads any
+  data, and suggests filtering the pivot or moving a field from **Columns** to **Rows**.
+
 ## Intelligent refresh
 
-CoCo can re-run the Snowflake queries behind the tables it loaded, so you can bring a workbook up to date without
-asking for the data again.
+CoCo can re-run the Snowflake queries behind the tables it loaded and the
+[live pivots](#label-cortex-code-excel-live-pivot) it drew, so you can bring a workbook up to date without asking for
+the data again.
 
 ### Refresh tables from the pane
 
@@ -349,9 +584,14 @@ To start a refresh, use any of the following. All three run the same refresh:
 
 [![The CoCo pane header in Microsoft Excel, with the Refresh data button highlighted between the All chats and More buttons.](/static/images/screens/cortex-code-excel-refresh-data.png)](/static/images/screens/cortex-code-excel-refresh-data.png)
 
-By default, a refresh covers the CoCo tables on the active sheet. To refresh specific tables, select cells that overlap
-them before you start the refresh. CoCo refreshes each table that the selection touches, always in full. Selecting a
-single cell doesn’t narrow the refresh. If the selected cells don’t touch a CoCo table, nothing is refreshed.
+By default, a refresh covers the CoCo tables and live pivots on the active sheet. To refresh specific tables or live
+pivots, select cells that overlap them before you start the refresh. CoCo refreshes each table and live pivot that the
+selection touches, always in full. Selecting a single cell doesn’t narrow the refresh. If the selected cells don’t
+touch a CoCo table or a live pivot, nothing is refreshed.
+
+A refresh also redraws each live pivot in its scope by re-running the pivot’s query. CoCo rewrites the pivot’s own cells
+without a preview, the way Microsoft Excel refreshes a PivotTable. A live pivot uses warehouse compute on every
+refresh.
 
 CoCo re-runs each saved query directly, without a request to the model, under your current role and warehouse. It
 then shows the new results as a preview that you accept or reject. When a refresh covers more than one table, you
@@ -362,11 +602,14 @@ Refresh has the following limits:
 
 - If a table has a total row and the refresh would change the table’s row count, CoCo doesn’t refresh that table, and
   it still refreshes the other tables. To refresh the table, turn off **Total Row** on the **Table Design** tab.
+- A refresh writes up to 1,048,575 data rows per table. If a table starts below row 1, the refresh writes only the
+  rows that fit below the table’s header. Above the limit, CoCo writes the first rows and tells you: “The query has N
+  rows. Only the first M are imported.”
 - If a refresh stops partway, for example because you stop it or the connection to Snowflake is lost, the table can
   hold a mix of old and new rows. CoCo reports how many rows it wrote and doesn’t retry. Run the refresh again to
   finish it.
 
-### PivotTables over a refreshed table
+### PivotTables and live pivots over a refreshed table
 
 When you accept a refresh, CoCo also refreshes each PivotTable whose source is the refreshed table. This applies when
 the PivotTable was built over the whole table, which is how CoCo creates PivotTables. A PivotTable built over a fixed
@@ -375,6 +618,9 @@ table.
 
 If a refreshed PivotTable needs more room than it has, it shows `#SPILL!` instead of the new numbers, and CoCo names
 the PivotTable and its sheet. Clear or move what’s below or beside the PivotTable, and it redraws.
+
+When a refreshed table grows, CoCo moves a PivotTable or a live pivot below the table down as a whole, so the table
+doesn’t run into it.
 
 ### Refresh when the workbook opens
 
@@ -434,6 +680,30 @@ The functions send each prompt to a model through the [Cortex REST API](/user-gu
 The functions work only after you sign in from the pane. If you aren’t signed in when a function runs, for example
 just after you open a workbook, the cell waits up to 30 seconds for you to sign in, then shows an error that asks you to
 open the CoCo pane and sign in to Snowflake.
+
+## Use MCP connectors
+
+When your account has external MCP servers that your role can use, and you’ve connected them, CoCo can use their tools
+from the pane. The pane can’t connect a server itself. For how administrators set up MCP servers and how users connect
+them, see [MCP Connectors](/user-guide/cortex-code/cortex-code-snowsight/mcp-connectors).
+
+To see your connectors and choose which ones CoCo uses, follow these steps:
+
+1. In the pane header, select **More** (…) > **Capabilities**.
+2. Select **MCP Connectors**. The page lists each connected server by its name and fully qualified name.
+3. Turn the switch for a server off to leave it out of your chats, or on to use it. A server is on by default, including
+   one you connect later.
+
+A server whose sign-in expired shows **Needs reconnecting**, and CoCo can’t use it until you reconnect it. Servers that
+you haven’t connected aren’t listed. If you have no connected servers, the page shows “No connectors available.”
+
+The list can take a couple of minutes to load the first time you open the pane. CoCo then keeps the list for your
+account and role, so your chats don’t wait for it. To check for changes, such as a server you just connected, select
+**Refresh**.
+
+To use a server, your active role needs the `USAGE` privilege on it, and you need to have signed in to the server.
+
+[![The Capabilities page in the CoCo pane showing MCP Connectors, with a Refresh button and an on switch for each connected server.](/static/images/screens/cortex-code-capabilities-mcp-connectors.png)](/static/images/screens/cortex-code-capabilities-mcp-connectors.png)
 
 ## Authentication and access control
 
@@ -510,6 +780,11 @@ Because queries run under your role, CoCo can read only the databases, schemas, 
 that your active role is authorized to access, and masking and row access policies apply automatically. Query results
 are written into your workbook, but the underlying data remains governed by Snowflake.
 
+## Feedback
+
+To report a bug or send feedback to Snowflake, enter `/feedback` in the pane. In the **Send feedback** dialog, choose a
+type of feedback, describe it, optionally attach images, and select **Send**.
+
 ## Cost
 
 Snowflake CoCo for Microsoft Excel is billed based on token consumption, consistent with other CoCo experiences, and
@@ -519,7 +794,9 @@ doesn’t require a separate per-seat license. Pricing details are provided in t
 Any Snowflake compute or storage consumed separately from CoCo usage is billed at standard Snowflake on-demand rates,
 as described in the
 [Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf). Examples
-include virtual warehouse compute used to run your queries and storage costs.
+include virtual warehouse compute used to run your queries and storage costs. A
+[live pivot](#label-cortex-code-excel-live-pivot) runs a query on your warehouse each time you pull it, change its
+layout, expand or collapse it, or refresh it.
 
 [Refreshing data](#label-cortex-code-excel-refresh) from the pane doesn’t consume CoCo tokens. The workbook stores the
 SQL behind each CoCo table, and a refresh runs that saved SQL directly, without a request to the model. This applies

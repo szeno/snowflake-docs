@@ -13,6 +13,7 @@ The following database objects are created using the `configuration/reset_config
 ### PUBLIC.RESET\_CONFIGURATION()
 
 Entry point procedure available to the `ADMIN` role. This procedure invokes the Java `ResetConfigurationHandler.resetConfiguration` handler.
+It’s intended for UI-driven back navigation in the configuration wizard rather than manual calls from a worksheet.
 
 ### PUBLIC.RESET\_CONFIGURATION\_VALIDATE()
 

@@ -1,8 +1,8 @@
-# Access control for Snowflake App Runtime
+# Share an app
 
-This topic describes common access control patterns for delegating operations
-and viewing access on Snowflake App Runtime. For the full list of privileges, see
-[Snowflake App Runtime privileges](/developer-guide/snowflake-app-runtime/privileges). For how the running app
+This topic describes how to share a Snowflake App Runtime app with other users
+and delegate operate and view access to it. For the full list of privileges, see
+[Privileges](/developer-guide/snowflake-app-runtime/privileges). For how the running app
 queries Snowflake (owner’s rights, caller’s rights, and caller grants), see
 [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
 
@@ -51,7 +51,7 @@ Where the execution role comes from depends on where the app is deployed:
 
 Important
 
-Once the app is created, its execution role can’t be changed. To use a
+After you create the app, you can’t change its execution role. To use a
 different role, drop and recreate the app with the new role.
 
 To set the execution role for a PDB app, grant the execution role to the owning
@@ -80,6 +80,21 @@ or [Cortex Code Desktop](/user-guide/cortex-code/cortex-code-desktop/building-ap
 ask the agent to grant access for other roles, or use the Apps view in Desktop
 to manage sharing.
 
+To share from Snowsight:
+
+1. In Snowsight, select **Apps** » **App Runtime admin**.
+2. On the app’s card, select **Share**. You can also open the app and select
+   the **Sharing** tab.
+3. Under **Account roles**, select **Add role**, choose the role, and select
+   **Save**.
+
+The **Sharing** tab lists the roles with access to the app.
+
+Note
+
+Users who open the app hold the granted role. Caller’s rights queries run with
+that user’s default role, not the role you granted `USAGE` to.
+
 Copy code
 
 ```
@@ -90,7 +105,7 @@ GRANT USAGE ON APPLICATION SERVICE my_db.my_schema.my_app TO ROLE app_viewer;
 
 ## Delegate lifecycle control
 
-Grant `OPERATE` to let a role suspend, resume, alter, and configure the
+Grant `OPERATE` to let a role suspend, resume, disable, enable, alter, and configure the
 service without transferring ownership:
 
 Copy code
@@ -109,8 +124,19 @@ ALTER APPLICATION SERVICE my_db.my_schema.my_app RESUME;
 ALTER APPLICATION SERVICE my_db.my_schema.my_app UPGRADE TO VERSION LATEST;
 ```
 
+Apps on [serverless compute](/developer-guide/snowflake-app-runtime/serverless)
+(Public Preview) don’t support `SUSPEND` and `RESUME`. On those apps, an
+`OPERATE` role runs `DISABLE` and `ENABLE` instead:
+
+Copy code
+
+```
+ALTER APPLICATION SERVICE my_db.my_schema.my_app DISABLE;
+ALTER APPLICATION SERVICE my_db.my_schema.my_app ENABLE;
+```
+
 For what these commands do, see
-[Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+[Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
 
 ## Delegate monitoring
 
@@ -122,7 +148,7 @@ Copy code
 GRANT MONITOR ON APPLICATION SERVICE my_db.my_schema.my_app TO ROLE app_monitor;
 ```
 
-## Grant access to multiple Application Services
+## Grant access to many apps
 
 You can grant `USAGE`, `MONITOR`, or `OPERATE` across the Application Services in a schema
 instead of one service at a time. The services must be in a standard database, and the
@@ -188,3 +214,7 @@ For general RBAC concepts, see
 managing the risks that applications introduce (including caller grant
 restrictions, feature policies, and external access controls), see
 [Securing Snowflake App Runtime applications](/developer-guide/snowflake-app-runtime/security).
+
+## Next steps
+
+- Review the risk surface and the controls administrators use to govern apps: [Securing Snowflake App Runtime applications](/developer-guide/snowflake-app-runtime/security).

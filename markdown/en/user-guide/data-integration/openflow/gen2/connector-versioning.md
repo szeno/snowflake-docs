@@ -6,18 +6,18 @@ Available to all accounts.
 
 Tip
 
-**Using the setup wizard or** **Installed Connectors** **only?** You do not need this topic for
+**Using the setup wizard or Installed Connectors only?** You do not need this topic for
 day-to-day work. The Openflow UI creates and manages configuration versions automatically as you
 install, edit, and save connector settings. Labels such as **Draft** and **Edits not applied**
-reflect the same version states described below—you can follow the wizard and UI prompts without
+reflect the same version states described below. You can follow the wizard and UI prompts without
 reading about stages or `COMMIT`.
 
 Read this topic if you configure connectors with SQL, `GET`/`PUT` on stages, Git, or other
-automation—or if you want to understand what the UI is doing under the hood.
+automation, or if you want to understand what the UI is doing under the hood.
 
 Gen 2 Openflow connectors are **File Based Entities (FBEs)**: Snowflake objects whose
 configuration is stored as files on an internal **versioned stage** that Snowflake creates and
-manages on the connector object. You do not create this stage with `CREATE STAGE`—it is attached
+manages on the connector object. You do not create this stage with `CREATE STAGE`. It is attached
 automatically when the connector is created. Configuration files (for example, `config.json`)
 and assets (for example, JDBC driver JARs) live under versioned paths on that stage.
 
@@ -98,7 +98,7 @@ Show lessSee more
 New connectors created with `CREATE OPENFLOW CONNECTOR ... FROM DEFINITION` or the setup wizard
 start with a live version and no default (**Draft**).
 
-1. Upload or edit files in the live version (skip `ADD LIVE VERSION` on a new connector—it already
+1. Upload or edit files in the live version (skip `ADD LIVE VERSION` on a new connector; it already
    has a live version).
 2. Commit to promote live to default:
 
@@ -175,7 +175,7 @@ SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_CONNECTORS(600, 'my_db.my_schema.my_conne
 ## Create from a known configuration
 
 Use this workflow when you already have a **validated** connector configuration and want to create
-another connector with the same settings—for example, standing up a matching connector in a second
+another connector with the same settings, for example, standing up a matching connector in a second
 runtime, or automating repeat deployments with CI/CD.
 
 This is **not** the path for your first connector. Create and configure a connector once with the
@@ -188,14 +188,14 @@ A catalog **definition** (for example, `OPENFLOW_POSTGRES_CDC`) and instance **c
 
 - `FROM DEFINITION` in `CREATE OPENFLOW CONNECTOR` selects the catalog connector type. You then
   edit `config.json` on the connector’s versioned stage and **COMMIT**.
-- `FROM` a stage path supplies a complete configuration bundle from any stage reference—a Git
+- `FROM` a stage path supplies a complete configuration bundle from any stage reference: a Git
   repository stage (`@my_git_repo/...`), another connector’s stage in the same account
   (`snow://openflow_connector/...`), or another internal stage. The catalog definition is named
-  inside `config.json` as `connectorDefinitionId`—there is no `FROM DEFINITION` clause in the
+  inside `config.json` as `connectorDefinitionId`. There is no `FROM DEFINITION` clause in the
   `CREATE` command.
 
 When you use `FROM` with a stage path, Openflow reads `connectorDefinitionId` from `config.json`
-to determine the connector type—you do not use `FROM DEFINITION` in `CREATE`. The stage holds only
+to determine the connector type. You do not use `FROM DEFINITION` in `CREATE`. The stage holds only
 instance configuration: `config.json`, asset files (such as JDBC drivers), and metadata. Snowflake
 supplies the catalog connector package at create time; you do not copy it onto the stage.
 
@@ -246,7 +246,7 @@ Show lessSee more
    ```
 
    You can also use a `snow://openflow_connector/.../versions/LAST/` URI to clone a connector in
-   the same account without Git—for example,
+   the same account without Git, for example,
    `'snow://openflow_connector/my_db.my_schema.my_connector/versions/LAST/'`.
 
 For `CREATE`, `ADD VERSION FROM`, `PUSH`, and `PULL` syntax, see [CREATE OPENFLOW CONNECTOR](/sql-reference/sql/create-openflow-connector) and [ALTER OPENFLOW CONNECTOR](/sql-reference/sql/alter-openflow-connector).

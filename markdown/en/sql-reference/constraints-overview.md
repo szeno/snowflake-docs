@@ -143,17 +143,20 @@ in the following SQL commands:
 You can show information about existing CHECK constraints by querying the
 [CHECK\_CONSTRAINTS view](/sql-reference/info-schema/check_constraints).
 
-Check constraints are enforced during the following DML operations:
+CHECK constraints are enforced during the following SQL operations:
 
 - [INSERT](/sql-reference/sql/insert)
 - [UPDATE](/sql-reference/sql/update)
 - [MERGE](/sql-reference/sql/merge)
 - [CREATE TABLE … AS SELECT (CTAS)](/sql-reference/sql/create-table#label-ctas-syntax)
+- [COPY INTO <table>](/sql-reference/sql/copy-into-table), including the loads that [Snowpipe](/user-guide/data-load-snowpipe-intro) runs
 
-If the condition evaluates to TRUE or NULL, the DML operation proceeds. If the condition
-evaluates to FALSE, the CHECK constraint fails.
+If the condition evaluates to `TRUE` or `NULL`, the row is written. If the condition
+evaluates to `FALSE`, the CHECK constraint fails.
 
-For examples of CHECK constraints, see [Examples of constraints with standard tables](/sql-reference/sql/create-table-constraint#label-create-constraint-examples).
+For examples of CHECK constraints, see [Examples of constraints with standard tables](/sql-reference/sql/create-table-constraint#label-create-constraint-examples). For an example that creates a table
+with a CHECK constraint and loads files into it, see
+[Turn on error logging and add CHECK constraints](/user-guide/data-load-error-tables#label-data-load-error-tables-turn-on).
 
 ### Usage notes
 
@@ -162,17 +165,18 @@ For examples of CHECK constraints, see [Examples of constraints with standard ta
   with CHECK constraints:
 
   - ALTER TABLE … RENAME CONSTRAINT
-  - ALTER TABLE … ADD [ CONSTRAINT <constraint\_name> ] CHECK ( <expr> ) ENABLE [ VALIDATE | NOVALIDATE ]
+  - ALTER TABLE … ADD [ CONSTRAINT <constraint\_name> ] CHECK ( <expr> ) ENABLE NOVALIDATE
 
-    - ENABLE VALIDATE, the default for CHECK constraints, enforces the constraint for all existing rows and for
-      all rows that are inserted or updated after you run the command. ENABLE VALIDATE is only supported for
-      new tables, not for existing tables.
-    - ENABLE NOVALIDATE enforces the constraint for all rows that are inserted or updated after you run the
-      command, but doesn’t enforce the constraint for existing rows.
-  - ALTER TABLE … ALTER CONSTRAINT <constraint\_name> ENABLE [ VALIDATE | NOVALIDATE ]
+    - ENABLE VALIDATE is the default for CHECK constraints, but this command doesn’t support it. To add a CHECK
+      constraint to an existing table with this command, specify ENABLE NOVALIDATE. Otherwise, the statement fails
+      with the error `ALTER TABLE ADD CHECK is not supported with ENABLE VALIDATE`.
+    - ENABLE NOVALIDATE enforces the constraint for all rows that are inserted, updated, or loaded after you run
+      the command, but doesn’t enforce the constraint for existing rows.
+  - ALTER TABLE … ALTER CONSTRAINT <constraint\_name> ENABLE NOVALIDATE
 
-    If you change a CHECK constraint from NOVALIDATE to VALIDATE, the constraint is enforced on all existing
-    rows before it is changed to VALIDATE.
+    You can’t use ALTER CONSTRAINT to change a CHECK constraint to ENABLE VALIDATE, so a constraint that you added
+    with ENABLE NOVALIDATE can’t be changed later to check existing rows. To find existing rows that violate the
+    constraint, query the table for rows where `NOT (<expr>)` is `TRUE`.
   - ALTER TABLE … DROP CONSTRAINT
 - The following [ALTER TABLE](/sql-reference/sql/alter-table) commands and Iceberg equivalents can operate on
   a column with a CHECK constraint defined on it:
@@ -188,12 +192,31 @@ For examples of CHECK constraints, see [Examples of constraints with standard ta
 
     The operation fails if the column being dropped is used by an existing CHECK constraint that
     also references another column. In this case, delete the constraint before deleting the column.
-- If records violate a CHECK constraint during ingestion, the entire batch operation fails the first time
-  it encounters a record that isn’t valid.
+- When a row violates a CHECK constraint, what happens next depends on the operation:
+
+  - An `INSERT`, `UPDATE`, `MERGE`, or CTAS statement fails the first time it encounters a row that violates the
+    constraint. If error logging is turned on for the table, the statement records the row in the table’s error table
+    instead of failing. For a CTAS statement, error logging is turned on if the statement sets
+    `ERROR_LOGGING = TRUE`. For more information, see
+    [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
+  - A `COPY INTO` statement, including one that Snowpipe runs, rejects the row and handles it according to the
+    `ON_ERROR` copy option, the same way it handles other errors in a file. For example, with
+    `ON_ERROR = CONTINUE`, the other rows in the file are loaded. With `ON_ERROR = SKIP_FILE`, which is the default
+    for Snowpipe, the file isn’t loaded. With `ON_ERROR = ABORT_STATEMENT`, which is the default when you run
+    `COPY INTO` directly and isn’t supported for pipes, the statement fails.
+    To record every rejected row in a table that you can query, turn on error logging for the target table and use
+    `ON_ERROR = CONTINUE`. Error logging supports CSV, JSON, and Parquet files. For more information, see
+    [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables). To find the rows that violate CHECK constraints in the error table, see
+    [Find rows that violate CHECK constraints](/user-guide/data-load-error-tables-query#label-data-load-error-tables-check-violations). The
+    [VALIDATE](/sql-reference/functions/validate) and [VALIDATE\_PIPE\_LOAD](/sql-reference/functions/validate_pipe_load) functions and the
+    `VALIDATION_MODE` parameter of `COPY INTO` don’t return rows that violate CHECK constraints.
 - For [hybrid tables](/user-guide/tables-hybrid), you can define a CHECK constraint only when you create the table.
   ALTER TABLE … ADD CONSTRAINT … CHECK and ALTER TABLE … ALTER CONSTRAINT aren’t supported on a hybrid table.
-  You can rename or drop an existing CHECK constraint on a hybrid table, but you can’t add it back afterward. For
-  more information, see [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+  You can rename or drop an existing CHECK constraint on a hybrid table, but you can’t add it back afterward. When you
+  load a hybrid table with `COPY INTO`, a row that violates a CHECK constraint causes the load to fail, because
+  `COPY INTO` supports only `ON_ERROR = ABORT_STATEMENT` for hybrid tables. Hybrid tables don’t support error
+  logging, so an `INSERT`, `UPDATE`, or `MERGE` statement that writes such a row also fails. For more information,
+  see [CHECK constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
 
 ### Limitations
 
@@ -203,8 +226,16 @@ For examples of CHECK constraints, see [Examples of constraints with standard ta
   To modify the expression, drop and re-create the CHECK constraint. On a hybrid table, you can’t re-create the
   constraint on the existing table, so you must re-create the table.
 - CHECK constraints can’t be specified in CREATE OR ALTER TABLE commands.
+- You can’t add a CHECK constraint to a table that any pipe loads, including a pipe for Snowpipe Streaming with
+  high-performance architecture, even if the pipe is paused. If you try, the statement fails with the error
+  `Cannot add CHECK constraint to table ... because it has active pipes`. To add the constraint, you must drop the
+  pipes and create them again. To do this without skipping any file or loading any file twice, follow the steps in
+  [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
+- You can’t drop a CHECK constraint or change it with ALTER TABLE … ALTER CONSTRAINT on a table that a Snowpipe pipe
+  loads, even if the pipe is paused. If you try, the statement fails with the error
+  `Cannot drop or alter CHECK constraint on table ... because it has active pipes`. Pipes for Snowpipe Streaming with
+  high-performance architecture don’t block these changes. To drop or change the constraint, follow the same steps in
+  [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 - The following operations don’t support CHECK constraints:
-  - If you attempt to COPY INTO a table with CHECK constraints, the operation fails.
-  - If you attempt to create a pipe with a target table that has CHECK constraints, the operation fails.
   - [Snowpipe Streaming with the classic architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-classic-overview) doesn’t support tables with CHECK constraints. If you attempt to open a channel on such a table, the operation fails. [Snowpipe Streaming with high-performance architecture](/user-guide/snowpipe-streaming/snowpipe-streaming-high-performance-overview) supports CHECK constraints and enforces them during ingestion.
   - If you attempt external writes on Iceberg tables that have CHECK constraints, the operation fails.

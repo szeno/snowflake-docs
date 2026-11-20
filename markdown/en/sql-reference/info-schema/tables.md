@@ -38,6 +38,7 @@ See also:
 | IS\_DYNAMIC | VARCHAR | Indicates whether the table is a [dynamic table](/user-guide/dynamic-tables/overview). Valid values are `YES` or `NO`. |
 | IS\_IMMUTABLE | VARCHAR | Indicates whether the table was created with the [READ ONLY](/sql-reference/sql/create-table#label-create-table-read-only) property. Valid values are `YES` or `NO`. |
 | IS\_HYBRID | VARCHAR | Indicates whether the table is a [hybrid table](/user-guide/tables-hybrid). Valid values are `YES` or `NO`. |
+| ERROR\_LOGGING | VARCHAR | Indicates whether [error logging](/user-guide/data-engineering/error-logging) is turned on for the table. Valid values are `YES` or `NO`. |
 
 Expand
 

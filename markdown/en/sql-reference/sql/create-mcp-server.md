@@ -28,7 +28,7 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
 `FROM SPECIFICATION $$specification_yaml$$`
 :   Specifies the YAML specification defining the tools and configuration for the MCP server.
 
-    The specification must include a `tools` array with one or more tool definitions. Each tool must specify:
+    The specification must include a `tools` array with one or more tool definitions, a `tool_config` entry, or both. Each tool in `tools` must specify:
 
     - `name`: Unique identifier for the tool
     - `type`: Tool type (see supported tool types)
@@ -77,6 +77,15 @@ CREATE [ OR REPLACE ] MCP SERVER [ IF NOT EXISTS ] <name>
     - `config`: Optional agent configuration. It can include any field of the [Cortex Agents run request](/user-guide/snowflake-cortex/cortex-agents-run), such as `model`, `instructions`, `tools`, `tool_resources`, and `skills`. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent).
     - Snowflake appends `code_toolset_all` after any tools in `config`. A run can include `code_toolset_all` or `code_execution`, but not both. The appended tool defaults to `always_ask`, so a state-modifying tool pauses and the call ends before it runs. Set `tool_resources.code_toolset_all.permission_policy.type` to `always_allow` for a trusted automation that should run those tools in one call. See [Coding Agent](/user-guide/snowflake-cortex/cortex-agents-coding-agent#label-coding-agent-permission-policy).
 
+    **Generated agent tools:**
+
+    To serve every Cortex Agent that the caller’s role can use, add a top-level `tool_config` list with one entry:
+
+    - `type`: `CORTEX_AGENT_RUN`
+    - `selection`: `all`
+
+    The entry accepts no other keys, and the list accepts only one entry. Snowflake doesn’t store the generated tools in the specification. It generates them on each `tools/list` request, for the role that makes the request. See [Serve every agent the caller can use](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-agent-selection-all).
+
 ## Access control requirements
 
 A [role](/user-guide/security-access-control-overview#label-access-control-overview-roles) used to execute this operation must have the following
@@ -123,6 +132,8 @@ For general information about roles and privilege grants for performing SQL acti
 - The MCP server specification is stored as metadata and can be viewed using [DESCRIBE MCP SERVER](/sql-reference/sql/desc-mcp-server).
 - Multiple tools can be defined in a single MCP server specification.
 - Tool names must be unique within a single MCP server.
+- If the specification has a `tool_config` entry, tool names in `tools` can’t start with `sf_`. Snowflake reserves this prefix for generated agent tools.
+- `DESCRIBE MCP SERVER` and `GET_DDL` show the `tool_config` entry, but not the tools that Snowflake generates from it.
 - Regarding metadata:
 
   Attention
@@ -266,5 +277,26 @@ CREATE MCP SERVER coding_agent_server
             code_toolset_all:
               permission_policy:
                 type: always_allow
+  $$;
+```
+
+**Example 7: Create MCP server that serves every agent the caller can use**
+
+After the explicit `revenue_agent` tool, the server lists a generated tool for each Cortex Agent that the caller’s role has the USAGE privilege on, within the [generated tool limits](/user-guide/snowflake-cortex/cortex-agents-mcp#label-cortex-mcp-agent-selection-all). Snowflake doesn’t generate a second tool for `revenue_agent`.
+
+Copy code
+
+```
+CREATE MCP SERVER all_agents_server
+  FROM SPECIFICATION $$
+    tools:
+      - title: "Revenue Agent"
+        name: "revenue_agent"
+        type: "CORTEX_AGENT_RUN"
+        identifier: "sales_db.agents.revenue_agent"
+        description: "Answers revenue questions"
+    tool_config:
+      - type: "CORTEX_AGENT_RUN"
+        selection: "all"
   $$;
 ```

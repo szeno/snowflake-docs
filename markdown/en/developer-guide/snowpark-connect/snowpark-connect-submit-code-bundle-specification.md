@@ -1,9 +1,5 @@
 # Spark job specification reference
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 The job specification defines how your Spark job runs. In SQL it’s the YAML in the `WITH SPECIFICATION` clause; in the
 REST API it’s the `bundle` object in the request body. The following fields apply to Spark jobs. For the full set of
 generic configuration fields, see the [`code_bundle.yml` reference](/developer-guide/code-bundles/code-bundle-yml-reference).

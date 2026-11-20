@@ -297,7 +297,11 @@ CHECK ( <expr> )
     For [hybrid tables](/user-guide/tables-hybrid), you can specify a CHECK constraint only in a
     [CREATE HYBRID TABLE](/sql-reference/sql/create-hybrid-table) statement, not in an ALTER TABLE … ADD CONSTRAINT statement.
 
-    For more information, see [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check) and [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+    You can’t add a CHECK constraint to a table that a pipe loads, even if the pipe is paused.
+
+    For more information, see [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check),
+    [CHECK constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints), and
+    [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 
 ### Non-default values for ENABLE and VALIDATE properties
 
@@ -308,7 +312,8 @@ for these properties) when creating a new constraint, *the constraint isn’t cr
 RELY does result in the creation of the new constraint.
 
 For CHECK constraints, ENABLE is the default and is required. If you specify DISABLE, then *the CHECK constraint isn’t created*.
-Both NOVALIDATE and VALIDATE are supported for new tables. VALIDATE isn’t supported on existing tables.
+Both NOVALIDATE and VALIDATE are supported for new tables. To add a CHECK constraint to an existing table with
+ALTER TABLE … ADD CONSTRAINT, specify ENABLE NOVALIDATE, because VALIDATE isn’t supported for that statement.
 
 Snowflake provides a session parameter, [UNSUPPORTED\_DDL\_ACTION](/sql-reference/parameters#label-unsupported-ddl-action), which determines whether specifying non-default
 values during constraint creation generates an error.
@@ -381,7 +386,7 @@ Note the following limitations:
 
 ## Access control requirements
 
-For creating PRIMARY KEY or UNIQUE constraints:
+For creating PRIMARY KEY, UNIQUE, or CHECK constraints:
 
 - When altering an existing table to add the constraint, you must use a role that has the OWNERSHIP privilege on the table.
 - When creating a new table, you must use a role that has the CREATE TABLE privilege on the schema where the table will be created.

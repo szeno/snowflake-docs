@@ -187,6 +187,13 @@ If the count exceeds the number of distinct tables, contact [Snowflake Support](
 
 ## Migration issues
 
+### Connector already exists when you deploy v4
+
+If creating the v4 connector returns `409 Conflict` with the message
+`Connector <connector_name> already exists`, the v3 connector is still registered under that name.
+Stopping a connector doesn’t remove it. To replace it, see [Keep the v3 connector name](/user-guide/kafka-connector/migrate-v3-to-v4#label-kafkahp-keep-connector-name).
+Other `409 Conflict` errors, such as during a rebalance, are temporary. Retry the request.
+
 ### SSv1 channel not found during offset migration
 
 If the connector fails with a channel-not-found error when using

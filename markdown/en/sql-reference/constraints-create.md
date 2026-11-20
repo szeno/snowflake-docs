@@ -42,6 +42,12 @@ operation that also validates the rows already in the table. For more informatio
 ALTER TABLE can’t add a CHECK constraint to a hybrid table. Define CHECK constraints on a hybrid table when you create
 the table. For more information, see [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
 
+To add a CHECK constraint to an existing table with ALTER TABLE … ADD CONSTRAINT, specify ENABLE NOVALIDATE. You
+can’t add a CHECK constraint to a table that a pipe loads, even if the pipe is paused, whether you use
+ALTER TABLE … ADD CONSTRAINT or ALTER TABLE … ADD COLUMN with an inline constraint. For more information, see
+[CHECK constraints](/sql-reference/constraints-overview#label-constraints-check) and
+[Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
+
 ## Constraints in CREATE TABLE … LIKE and CLONE
 
 Snowflake supports creating copies of tables using [CREATE TABLE](/sql-reference/sql/create-table):

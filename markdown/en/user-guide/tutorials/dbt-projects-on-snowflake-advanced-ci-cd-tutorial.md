@@ -156,6 +156,7 @@ The CI role also needs the following access:
   [Access control requirements](/sql-reference/sql/create-clone#label-create-clone-access-control-reqs).
 - Access to the warehouse and production relations that deferred references resolve to.
 - The privileges required to create, execute, and drop the tester dbt project object.
+- `USAGE` on the `dbt_ext_access` external access integration, which the `deps` step uses to download packages.
 
 For dbt project object privileges, see [Access control for dbt projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-access-control).
 
@@ -543,10 +544,10 @@ Don’t use `--force` unless you intentionally want to recreate the dbt project 
 The workflows in this tutorial deploy the dbt project from the `tasty_bytes_dbt_demo` folder of the repository that you forked in the
 getting-started tutorial.
 
-The `--no-auto-compile` flag skips both `dbt deps` and `dbt compile` during deployment. If `packages.yml` lists packages, for example
-because you uncommented them during the getting-started tutorial, executions fail because the packages aren’t installed. In that case,
-replace `--no-auto-compile` with `--external-access-integration dbt_ext_access` in each `snow dbt deploy` command, as the workflow comments
-note. Snowflake then runs `dbt deps` and `dbt compile` during deployment, so the `snow dbt execute` commands don’t need the integration.
+The repository ignores `dbt_packages/` in `.gitignore`, a common practice, so each pipeline deploys from a clean
+repository. The workflows deploy with `--no-auto-compile`, so Snowflake doesn’t run `dbt deps` or compile the project during
+deployment. Instead, a `deps` step runs [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project) with `WRITEBACK = TRUE` to install the packages
+before the build. If you don’t use `packages.yml`, remove that step.
 
 GitHub ActionsGitLab CI/CDAzure DevOps
 
@@ -603,7 +604,6 @@ GitHub ActionsGitLab CI/CDAzure DevOps
            run: snow sql -x -q "CREATE OR REPLACE DATABASE tasty_bytes_dbt_db_staging_pr_${{ github.event.number }} CLONE tasty_bytes_dbt_db"
 
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
-         # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
          - name: Create a new tester dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
            run: |
              snow dbt deploy tester_tasty_bytes_dbt_project_object_gh_action_pr_${{ github.event.number }} \
@@ -611,6 +611,10 @@ GitHub ActionsGitLab CI/CDAzure DevOps
                --no-auto-compile \
                --dbt-version 1.12.3 \
                -x
+
+         # Remove this step if you don't use packages.yml
+         - name: Install dbt packages on the tester dbt project object
+           run: snow sql -x -q "EXECUTE DBT PROJECT tester_tasty_bytes_dbt_project_object_gh_action_pr_${{ github.event.number }} ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
 
          - name: List all of the snowflake dbt project objects in your account
            run: snow dbt list --format JSON -x
@@ -666,7 +670,6 @@ ci-test-dbt-slim-ci:
     - snow connection test -x
     - snow sql -x -q "CREATE OR REPLACE DATABASE tasty_bytes_dbt_db_staging_mr_${CI_MERGE_REQUEST_IID} CLONE tasty_bytes_dbt_db"
     # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
-    # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
     - >-
       snow dbt deploy tester_tasty_bytes_dbt_project_object_gitlab_mr_${CI_MERGE_REQUEST_IID}
       --source ./tasty_bytes_dbt_demo
@@ -676,6 +679,8 @@ ci-test-dbt-slim-ci:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}"
       -x
+    # Remove this step if you don't use packages.yml
+    - snow sql -x -q "EXECUTE DBT PROJECT tester_tasty_bytes_dbt_project_object_gitlab_mr_${CI_MERGE_REQUEST_IID} ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
     - snow dbt list --format JSON -x
     # Builds changed models and runs their tests in DAG order, failing early if any upstream test breaks
     - >-
@@ -755,7 +760,6 @@ steps:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
   # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
-  # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
   - script: |
       snow dbt deploy tester_tasty_bytes_dbt_project_object_ado_pr_$(System.PullRequest.PullRequestId) \
         --source ./tasty_bytes_dbt_demo \
@@ -766,6 +770,12 @@ steps:
         --git-branch "$(System.PullRequest.SourceBranch)" \
         -x
     displayName: 'Create tester dbt project object'
+    env:
+      SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
+
+  # Remove this step if you don't use packages.yml
+  - script: snow sql -x -q "EXECUTE DBT PROJECT tester_tasty_bytes_dbt_project_object_ado_pr_$(System.PullRequest.PullRequestId) ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
+    displayName: 'Install dbt packages'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
@@ -838,7 +848,7 @@ Regardless of which platform you chose, the pipeline follows the same pattern:
   3. Check the Snowflake CLI version and verify the connection with `snow connection test -x`.
   4. Create a zero-copy clone whose name includes the pull-request or merge-request number.
   5. Deploy a tester dbt project object using `snow dbt deploy ... --no-auto-compile -x` (with `--source` if the dbt project is in a
-     subfolder).
+     subfolder), and then install packages with the `deps` step.
   6. List the dbt project objects with `snow dbt list --format JSON -x`.
   7. Build and test the changed portion of the dbt project in DAG order with production state, defer, and `state:modified+`.
   8. Remove the tester object and clone when the platform’s cleanup workflow runs.
@@ -934,7 +944,6 @@ GitHub ActionsGitLab CI/CDAzure DevOps
 
          # You can remove the "--source" flag if your dbt_project.yml is at root of your repo
          # The --default-target flag ensures the dbt project object executes with your prod target
-         # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
          - name: Create a new dbt project object in ${{ vars.SNOWFLAKE_DATABASE }}.${{ vars.SNOWFLAKE_SCHEMA }}
            run: |
              snow dbt deploy tasty_bytes_dbt_object_gh_action \
@@ -943,6 +952,10 @@ GitHub ActionsGitLab CI/CDAzure DevOps
                --no-auto-compile \
                --dbt-version 1.12.3 \
                -x
+
+         # Remove this step if you don't use packages.yml
+         - name: Install dbt packages on the production dbt project object
+           run: snow sql -x -q "EXECUTE DBT PROJECT tasty_bytes_dbt_object_gh_action ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
 
          - name: List all of the snowflake dbt project objects in your account
            run: snow dbt list --format JSON -x
@@ -1017,7 +1030,6 @@ cd-deploy-dbt-slim-ci:
     - snow connection test -x
     # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
     # The --default-target flag ensures the dbt project object executes with your prod target
-    # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
     - >-
       snow dbt deploy tasty_bytes_dbt_object_gitlab
       --source ./tasty_bytes_dbt_demo
@@ -1028,6 +1040,8 @@ cd-deploy-dbt-slim-ci:
       --git-commit "${CI_COMMIT_SHA}"
       --git-branch "${CI_COMMIT_REF_NAME}"
       -x
+    # Remove this step if you don't use packages.yml
+    - snow sql -x -q "EXECUTE DBT PROJECT tasty_bytes_dbt_object_gitlab ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
     - snow dbt list --format JSON -x
     # (optional) Uncomment to manage Task orchestration via source control
     # - snow sql -f ./tasty_bytes_dbt_demo/schedules.sql -x
@@ -1075,7 +1089,6 @@ steps:
 
   # You can remove the "--source" flag if your dbt_project.yml is at the root of your repo
   # The --default-target flag ensures the dbt project object executes with your prod target
-  # If packages.yml lists packages, replace --no-auto-compile with --external-access-integration dbt_ext_access
   - script: |
       snow dbt deploy tasty_bytes_dbt_object_ado \
         --source ./tasty_bytes_dbt_demo \
@@ -1087,6 +1100,12 @@ steps:
         --git-branch "$(Build.SourceBranchName)" \
         -x
     displayName: 'Deploy production dbt project object'
+    env:
+      SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
+
+  # Remove this step if you don't use packages.yml
+  - script: snow sql -x -q "EXECUTE DBT PROJECT tasty_bytes_dbt_object_ado ARGS = 'deps' EXTERNAL_ACCESS_INTEGRATIONS = (dbt_ext_access) WRITEBACK = TRUE"
+    displayName: 'Install dbt packages'
     env:
       SNOWFLAKE_TOKEN: $(SNOWFLAKE_TOKEN)
 
@@ -1112,7 +1131,8 @@ Create a second pipeline named `PR Accepted Deployment - Slim CI` in Azure DevOp
   1. Check out the repository code.
   2. Install Snowflake CLI with OIDC.
   3. Check the Snowflake CLI version and verify the connection with `snow connection test -x`.
-  4. Deploy or update the production dbt project object with `snow dbt deploy ... --default-target prod --no-auto-compile -x`.
+  4. Deploy or update the production dbt project object with `snow dbt deploy ... --default-target prod --no-auto-compile -x`, and then
+     install packages with the `deps` step.
   5. List the dbt project objects with `snow dbt list --format JSON -x`.
   6. Optionally run a `schedules.sql` file to manage tasks.
 - **Cleanup**: GitHub cleans up resources when the pull request closes. GitLab and Azure clean up at the end of their CI pipelines.

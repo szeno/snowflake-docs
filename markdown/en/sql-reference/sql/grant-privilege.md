@@ -88,6 +88,7 @@ globalPrivileges ::=
       | READ UNREDACTED ERROR TABLE
       | USE AI FUNCTION <name>
       | USE AI FUNCTIONS
+      | USE CORTEX TRAINING
   }
   [ , ... ]
 ```
@@ -429,7 +430,7 @@ For more details about the privileges supported for each object type, see [Acces
   `OWNERSHIP` cannot be transferred on an Application Service, and privileges cannot be granted on an Application Service in a
   [personal database](/user-guide/personal-databases). For a full list of privileges, see
   [Application Service privileges](/user-guide/security-access-control-privileges#label-application-service-privileges). For grant patterns, see
-  [Access control for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/access-control).
+  [Share a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/access-control).
 - For Cortex Agents, the `USAGE` privilege can be granted on all or future agents in a schema. For example:
 
   Copy code

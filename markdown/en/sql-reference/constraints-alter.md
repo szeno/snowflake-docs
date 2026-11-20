@@ -44,10 +44,15 @@ ALTER TABLE <table_name>
 
 For CHECK constraints, the `constraint_name` is required. Also, you can’t modify the `expr` associated
 with a CHECK constraint. To modify the `expr`, the CHECK constraint must be dropped and re-created.
+For more information, see [Dropping constraints](/sql-reference/constraints-drop) and [Creating constraints](/sql-reference/constraints-create).
 
 For [hybrid tables](/user-guide/tables-hybrid), ALTER TABLE … ALTER CONSTRAINT isn’t supported for CHECK
 constraints, and a dropped CHECK constraint can’t be re-created on the existing table. For more information, see
 [CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
+
+You can’t change a CHECK constraint with ALTER TABLE … ALTER CONSTRAINT on a table that a Snowpipe pipe loads, even
+if the pipe is paused. For more information, see
+[Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 
 Currently, Snowflake only supports setting the following constraint properties:
 
@@ -55,7 +60,8 @@ Currently, Snowflake only supports setting the following constraint properties:
 - NOVALIDATE and VALIDATE
 - RELY and NORELY
 
-Snowflake doesn’t support setting ENFORCED. Snowflake only supports setting NOVALIDATE for CHECK constraints.
+Snowflake doesn’t support setting ENFORCED. For CHECK constraints, Snowflake only supports ENABLE NOVALIDATE, which
+doesn’t check the rows in the table or change how the constraint is enforced. ENABLE VALIDATE returns an error.
 See also [Non-default values for ENABLE and VALIDATE properties](/sql-reference/sql/create-table-constraint#label-non-default-enable-validate).
 
 For descriptions of the constraint properties, see [Constraint properties](/sql-reference/sql/create-table-constraint#label-extended-constraint-properties).

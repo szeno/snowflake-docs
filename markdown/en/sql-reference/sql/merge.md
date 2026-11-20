@@ -112,6 +112,10 @@ Where:
 - Any matching or not-matching clause that omits the `AND` subclause (default behavior) must be the last of its clause
   type in the statement (for example, a `WHEN MATCHED ...` clause can’t be followed by a `WHEN MATCHED AND ...` clause). Doing
   so results in an unreachable case, which returns an error.
+- If error logging is turned on for the target table, a supported error, such as a NOT NULL or CHECK constraint
+  violation, doesn’t cause the statement to fail. Instead, the statement records the error in the table’s error table,
+  doesn’t apply the update or the insert for the row that caused the error, and continues with the other rows. For
+  more information, see [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
 
 ## Duplicate join behavior
 

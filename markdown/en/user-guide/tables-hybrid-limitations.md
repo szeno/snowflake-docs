@@ -63,18 +63,23 @@ Consistency
 
 Constraints
 :   PRIMARY KEY, UNIQUE, FOREIGN KEY, and CHECK constraints are enforced for hybrid tables, but some limitations apply.
-    In particular, you can define a CHECK constraint only when you create the table, and you can’t use
-    [COPY INTO <table>](/sql-reference/sql/copy-into-table) to load a hybrid table that has a CHECK constraint.
-    For information, see [Constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-notes-on-constraints).
+    In particular, you can define a CHECK constraint only when you create the table. For more information, see
+    [Constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-notes-on-constraints).
 
 COPY
 :   When you load a hybrid table with the COPY INTO command, `ABORT_STATEMENT` is the only option that is
     supported for `ON_ERROR`. Setting `ON_ERROR=SKIP_FILE` returns an error. For
     more information, see [Loading data](/user-guide/tables-hybrid-create#label-create-loading-data).
 
-    You can’t use COPY INTO to load a hybrid table that has a CHECK constraint. The operation fails. To load data into
-    such a table, use [INSERT](/sql-reference/sql/insert) or
-    [CREATE HYBRID TABLE … AS SELECT](/sql-reference/sql/create-hybrid-table#label-create-hybrid-table-as).
+    If a hybrid table has a CHECK constraint, `COPY INTO` enforces the constraint, so a row that violates the constraint
+    causes the load to fail.
+
+    Hybrid tables don’t support error logging. To load the valid rows and keep the rows that are rejected, load the files
+    with `ON_ERROR = CONTINUE` into a standard table that has the same columns and CHECK constraints and has error logging
+    turned on. The rejected rows are recorded in the error table of the standard table. Then insert the rows
+    from the standard table into the hybrid table with `INSERT INTO ... SELECT`. Standard tables don’t enforce PRIMARY
+    KEY, UNIQUE, or FOREIGN KEY constraints, so the `INSERT` statement can still fail on rows that violate them. For more
+    information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 Data size
 :   You are limited to storing 2 TB of data in hybrid tables per Snowflake database.

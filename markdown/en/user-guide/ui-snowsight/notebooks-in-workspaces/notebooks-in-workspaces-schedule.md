@@ -90,7 +90,7 @@ For detailed workflows for each scenario, see [Scheduling workflows by scenario]
 
 ## View scheduled notebook runs
 
-You can view scheduled tasks in three places:
+You can view scheduled tasks in four places:
 
 **From the notebook**
 
@@ -109,6 +109,15 @@ To view or interact with scheduled runs, you must use a role with access to the 
 - **Open Run History:** Opens the notebook’s Code Bundle showing all past runs, including status, duration, results, source file, logs, and metrics.
   Selecting a run’s result opens the executed notebook with its output. For more information, see [Observability and logging for Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-observability-logging).
 
+**From the Code Bundles page**
+
+To view all Code Bundles and their runs across the account, including runs on warehouses and compute pools, Spark and ML runs, and
+anonymous runs:
+
+1. In the navigation menu, select **Transformation** » **Code Bundles**.
+2. To see every run in the account, open the run history. To see one Code Bundle’s details, files, run history, and schedules, select the
+   Code Bundle.
+
 **From the Horizon Catalog Explorer**
 
 To view run history for any scheduled notebook (including those deployed via CI/CD):
@@ -126,8 +135,9 @@ From the **Scheduled runs** popover, you can manage your scheduled tasks by sele
 
 - **Run now:** Triggers an immediate execution of the scheduled task.
 - **Pause schedule:** Temporarily stops the schedule from running automatically. The task remains configured but won’t execute until resumed.
-- **Delete:** Removes the scheduled task permanently. You can create a new schedule with different settings (such as a different role or database
-  location) after deleting the existing schedule.
+- **Open run history:** Opens the run history of the schedule’s Code Bundle.
+- **Modify:** Opens the existing schedule’s settings so you can change them, without deleting and re-creating the schedule.
+- **Delete:** Removes the scheduled task permanently.
 
 The popover does not include a runtime selector. To move a scheduled notebook to a different Container Runtime version,
 see [Change the runtime for a scheduled notebook](/developer-guide/container-runtime/using-runtime#label-container-runtime-upgrade-scheduled).
@@ -153,6 +163,9 @@ To locate a Code Bundle in Snowsight, follow these steps:
 
 1. In the navigation menu, select **Catalog** » **Explorer**.
 2. Navigate to **Database** » **Schema** » **Code Bundles** to view all Code Bundles in that schema.
+
+To see the Code Bundles in every database and schema of the account, select **Transformation** » **Code Bundles** in the
+navigation menu.
 
 Alternatively, you can:
 
@@ -246,7 +259,7 @@ To run on a cadence, execute the Code Bundle from a Snowflake task. Create or ma
 >     ARGUMENTS = ( '<arg>' [ , '<arg>' ... ] );  -- Optional: one quoted string per argument
 > ```
 >
-> The compute pool, runtime, query warehouse, dependencies, external access integrations, and secrets are defined in the Code Bundle’s `code_bundle.yml` specification. Alternatively, you can pass the configuration inline in the `EXECUTE CODE BUNDLE` statement with a `WITH SPECIFICATION` clause, which is closer to how the earlier `EXECUTE NOTEBOOK PROJECT` command passed everything inline:
+> The compute pool, runtime, query warehouse, dependencies, external access integrations, and secrets are defined in the Code Bundle’s `code_bundle.yml` specification. To change the configuration for a run, add a `WITH SPECIFICATION` clause to the `EXECUTE CODE BUNDLE` statement. The inline specification is merged over the stored `code_bundle.yml`, so you can name only the fields you want to change; the following example restates the full specification. For the merge rules, see [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-spec-merge):
 >
 > > Copy code
 > >

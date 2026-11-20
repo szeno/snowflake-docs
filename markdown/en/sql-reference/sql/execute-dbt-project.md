@@ -151,8 +151,12 @@ EXECUTE DBT PROJECT [ IF EXISTS ] [ FROM WORKSPACE <name> ]
 :   When executing a deployed dbt project object, overrides its `DEFAULT_WRITEBACK` property for this
     execution:
 
-    - `TRUE`: Writes generated target and log files back to the mutable live version.
-    - `FALSE`: Doesn’t write generated target and log files back to the live version.
+    - `TRUE`: Writes generated target and log files back to the mutable live version. For a `deps` execution, also writes the installed
+      `dbt_packages` folder and `package-lock.yml` back to the live version.
+    - `FALSE`: Doesn’t write generated target and log files back to the live version. For a `deps` execution, the installed packages are
+      not persisted in the dbt project object, so later executions can’t use them.
+
+    To install packages that later executions can use, run `deps` with `WRITEBACK = TRUE`.
 
     For concurrent executions that don’t need to update the live version, Snowflake recommends `WRITEBACK = FALSE`. If writeback is required, use
     distinct, non-overlapping target and log directories for each execution. Snowflake stores the per-query result artifacts and archive

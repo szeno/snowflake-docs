@@ -186,8 +186,16 @@ CREATE NETWORK RULE my_private_network_rule
   VALUE_LIST = ('my-private-db.internal:5432');
 ```
 
-If the destination has no DNS name, add a hosts entry on the agent host (`/etc/hosts`, or `--add-host` for Docker) so the hostname in
-`VALUE_LIST` resolves there.
+If the destination has no DNS name, add a host entry that’s visible inside the agent container so the hostname in
+`VALUE_LIST` resolves there. Pass `--add-host <hostname>:<ip>` to the `docker run` command in
+[Step 4](#label-dcp-setup-deploy-agent). The agent container has its own `/etc/hosts` and doesn’t read the Docker
+host’s `/etc/hosts`, so editing the host’s file has no effect. If the name doesn’t resolve, the agent can still
+report `AGENT_HEALTH = HEALTHY` and list the name in `REACHABLE_DESTINATIONS`, but connections fail.
+
+If you don’t deploy with `docker run`, use the equivalent setting:
+
+- Docker Compose: `extra_hosts`
+- Kubernetes: `hostAliases`
 
 For more information, see [CREATE NETWORK RULE](/sql-reference/sql/create-network-rule).
 

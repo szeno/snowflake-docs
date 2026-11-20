@@ -61,6 +61,9 @@ can then modify the data in the file to ensure it loads without error.
 In addition, [COPY INTO <table>](/sql-reference/sql/copy-into-table) provides the ON\_ERROR copy option to specify an action
 to perform if errors are encountered in a file during loading.
 
+To keep each rejected row with its error and source data, turn on error logging for the target table and load CSV, JSON,
+or Parquet files with `ON_ERROR = CONTINUE`. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
+
 ## Monitor data loads
 
 Snowflake retains historical data for COPY INTO commands executed within the previous 14 days. The metadata can be used to monitor and

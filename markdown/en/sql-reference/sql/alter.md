@@ -85,6 +85,7 @@ For specific syntax, usage notes, and examples, see:
 > - [ALTER MODEL MONITOR](/sql-reference/sql/alter-model-monitor)
 > - [ALTER NETWORK RULE](/sql-reference/sql/alter-network-rule)
 > - [ALTER NOTEBOOK](/sql-reference/sql/alter-notebook)
+> - [ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle)
 > - [ALTER OPENFLOW DATA PLANE](/sql-reference/sql/alter-oflow-data-plane)
 > - [ALTER ONLINE FEATURE TABLE](/sql-reference/sql/alter-online-feature-table)
 > - [ALTER PACKAGES POLICY](/sql-reference/sql/alter-packages-policy)

@@ -282,6 +282,7 @@ WAREHOUSE = <warehouse_name>
 [ PARTITION BY ( partitionExpression [, partitionExpression , ...] ) ]
 [ PATH_LAYOUT = { FLAT | HIERARCHICAL } ]
 [ ICEBERG_VERSION = <integer> ]
+[ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 [ REFRESH_MODE = { AUTO | FULL | INCREMENTAL | ADAPTIVE | CUSTOM_INCREMENTAL } ]
 [ FROZEN WHERE ( <expr> ) ]
 [ INITIALIZE = { ON_CREATE | ON_SCHEDULE } ]
@@ -436,8 +437,9 @@ For more information about usage and limitations, see
     This property can’t be changed with ALTER DYNAMIC TABLE. To change it, use CREATE OR REPLACE DYNAMIC TABLE or CREATE OR ALTER DYNAMIC TABLE. Some transitions trigger reinitialization (see [Refresh mode transitions](/user-guide/dynamic-tables/modify#label-dynamic-tables-refresh-mode-transitions)).
 
     > `AUTO`
-    > :   When refresh mode is `AUTO`, the system attempts to apply an incremental refresh by default. However, when incremental refresh isn’t
-    >     supported or expected to perform well, the dynamic table automatically selects full refresh instead. If a `REFRESH USING` clause is
+    > :   When refresh mode is `AUTO`, Snowflake evaluates the definition at creation time. If the definition supports incremental
+    >     refresh and Snowflake expects it to perform well, `AUTO` resolves to `ADAPTIVE`. When incremental refresh isn’t
+    >     supported or expected to perform well, `AUTO` resolves to `FULL`. If a `REFRESH USING` clause is
     >     present, `AUTO` resolves to `CUSTOM_INCREMENTAL`. For more information, see
     >     [ADAPTIVE refresh](/user-guide/dynamic-tables/refresh-modes#label-dynamic-tables-intro-refresh-modes) and [Run your query standalone first](/user-guide/dynamic-tables/refresh-optimization#label-dt-optimize-refresh).
     >
@@ -604,7 +606,18 @@ For more information about usage and limitations, see
 
     For more information, see [Set a target file size](/user-guide/tables-iceberg-manage#label-tables-iceberg-target-file-size).
 
+    This value corresponds to the Iceberg property `write.target-file-size-bytes`. For how Snowflake
+    converts between the two, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
     Default: AUTO
+
+`TABLE_PROPERTIES = ( 'key' = 'value' [ , 'key' = 'value' , ... ] )`
+:   Specifies [Iceberg table properties](https://iceberg.apache.org/docs/latest/configuration/#table-properties)
+    as case-sensitive `'key' = 'value'` pairs. Some keys map to Snowflake parameters, and Snowflake stores
+    other keys as Iceberg properties.
+
+    For the mapping, the keys Snowflake rejects, and examples, see
+    [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 `PARTITION BY ( partitionExpression [ , partitionExpression , ... ] )`
 :   Specifies one or more [partition expressions](/sql-reference/sql/create-iceberg-table-snowflake#label-create-iceberg-table-snowflake-partitionexpressions)

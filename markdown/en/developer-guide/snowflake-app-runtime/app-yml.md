@@ -1,4 +1,4 @@
-# app.yml manifest for Snowflake App Runtime
+# app.yml reference
 
 The **`app.yml`** manifest in your project root tells Snowflake CLI and the
 remote builder **where to deploy** your app and **how to install, build, run,
@@ -89,13 +89,16 @@ Show lessSee more
 | [`build_job_location`](#label-snowflake-apps-manifest-build-job-location) | Database and schema where the remote builder runs the build job |
 | [`label`](#label-snowflake-apps-manifest-profile), [`description`](#label-snowflake-apps-manifest-profile), [`icon`](#label-snowflake-apps-manifest-profile) | Presentation metadata on the deployed service |
 | [`execute_as_role`](#label-snowflake-apps-manifest-execute-as-role) | Execution role for a personal-database app |
-| [`auto_resume`](#label-snowflake-apps-manifest-auto-resume) | Resume the service when a request arrives |
-| [`auto_suspend_secs`](#label-snowflake-apps-manifest-auto-suspend-secs) | Idle seconds before suspend |
-| [`min_instances`](#label-snowflake-apps-manifest-min-instances), [`max_instances`](#label-snowflake-apps-manifest-max-instances) | Fewest and most instances while the app is up |
+| [`auto_resume`](#label-snowflake-apps-manifest-auto-resume) | Resume the service when a request arrives. Managed compute only |
+| [`auto_suspend_secs`](#label-snowflake-apps-manifest-auto-suspend-secs) | Idle seconds before a serverless app stops. Serverless only |
+| [`min_instances`](#label-snowflake-apps-manifest-min-instances), [`max_instances`](#label-snowflake-apps-manifest-max-instances) | Fewest and most instances while the app is up. Managed compute only |
 | [`environment_variables`](#label-snowflake-apps-manifest-environment-variables) | Non-sensitive container environment variables |
 | [`secrets`](#label-snowflake-apps-manifest-secrets) | Snowflake secrets mounted under `/secrets/<name>/` |
 | [`external_access_integrations`](#label-snowflake-apps-manifest-external-access-integrations) | External access integrations for the running service |
+| [`compute_resource`](#label-snowflake-app-runtime-app-yml-serverless) | Compute the service runs on. Default `MANAGED_COMPUTE_POOL`. `SERVERLESS` is in preview |
+| [`url_prefix`](#label-snowflake-app-runtime-app-yml-serverless-url), [`health_check`](#label-snowflake-app-runtime-app-yml-serverless-health-check) | Endpoint prefix and readiness path. Serverless only |
 | [`install`](#label-snowflake-apps-manifest-install) | Commands run before the build. Top-level only |
+| `runtime` | `python` or `node` (case-insensitive). Default `node`. Top-level only; ignored inside a target. Python runs on serverless compute (Public Preview) |
 | [`build`](#label-snowflake-apps-manifest-build) | Build commands. Top-level only |
 | [`run`](#label-snowflake-apps-manifest-run) | Container entry point. Top-level only |
 
@@ -132,7 +135,7 @@ apps deployed to a personal database.
 
 Set `database: USER$` for the caller’s
 [personal database](/user-guide/personal-databases). See
-[Deploy targets](/developer-guide/snowflake-app-runtime/deploy-targets).
+[Deploy targets for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy-targets).
 
 ### schema
 
@@ -165,6 +168,7 @@ targets:
   prod:
     name: MY_APP_PROD
     min_instances: 2
+    max_instances: 5
 ```
 
 Give each target its own Application Service `name` when two targets would
@@ -172,7 +176,7 @@ otherwise land in the same database and schema. Two targets that resolve
 to the same fully qualified name operate on the same service.
 
 For how the CLI selects and merges a target, see
-[Deploy targets](/developer-guide/snowflake-app-runtime/deploy-targets).
+[Deploy targets for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy-targets).
 
 ### ignore
 
@@ -287,20 +291,36 @@ can’t change it after the app is created. See
 
 ### auto\_resume
 
-`true` or `false`. Defaults to `true`.
+`true` or `false`. Defaults to `true`. Applies to managed compute. A serverless
+app always starts on request, so you can’t set `auto_resume: false` when
+`compute_resource` is `SERVERLESS`.
 
 ### auto\_suspend\_secs
 
-Idle seconds before suspend. Defaults to `0`, which means never
-auto-suspend. The minimum non-zero value is `300`. Setting a nonzero value
-isn’t recommended: when a suspended app resumes, requests return errors until
-it’s ready. See
-[Auto-suspend](/developer-guide/snowflake-app-runtime/scale-and-suspend#label-snowflake-app-runtime-scale-auto-suspend).
+Serverless only. The idle period, in seconds, after which Snowflake stops a
+serverless app. The next request starts it again. Defaults to `3600` (1 hour),
+which is also the minimum.
+
+Copy code
+
+```
+auto_suspend_secs: 7200
+```
+
+The value must be a multiple of 60 from `3600` through `86400` (1 hour through
+24 hours). For example, `3600`, `7200`, and `86400` are valid. Snowflake rejects `0`,
+`1800`, and `3601`. You can’t turn off the idle stop on serverless compute.
+
+An app on managed compute runs until you suspend it. See
+[Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+
+A stopped serverless app isn’t the same as a disabled app: a request can’t
+start an app that you explicitly disabled.
 
 ### min\_instances and max\_instances
 
-The fewest and most instances Snowflake runs while the app is up.
-Equivalent to setting
+Managed compute only. The fewest and most instances Snowflake runs while the
+app is up. Equivalent to setting
 `MIN_INSTANCES` and `MAX_INSTANCES` in
 [CREATE APPLICATION SERVICE](/sql-reference/sql/create-application-service).
 
@@ -316,7 +336,10 @@ max_instances: 5
 ```
 
 For what these do to a running service, see
-[Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+[Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+
+A serverless app runs as one instance. See
+[limitations](/developer-guide/snowflake-app-runtime/limitations#label-snowflake-app-runtime-limitations-serverless).
 
 ### environment\_variables
 
@@ -369,8 +392,8 @@ rather than as an environment variable. For the files each secret type
 produces and how to read them, see
 [Secret files](/developer-guide/snowflake-app-runtime/runtime-environment#label-runtime-environment-secret-files).
 
-Generic string, password, and OAuth2 secrets are supported. Symmetric key and
-cloud provider secret types aren’t.
+You can use generic string, password, and OAuth2 secrets, but not symmetric key
+or cloud provider secrets.
 
 OAuth2 secrets require an
 [external access integration](/developer-guide/external-network-access/creating-using-external-network-access)
@@ -397,6 +420,77 @@ external_access_integrations:
 
 For administrator controls on which integrations a role can use, see
 [Governing outbound network access](/developer-guide/snowflake-app-runtime/security#label-snowflake-app-runtime-security-outbound-network).
+
+### compute\_resource
+
+The compute the Application Service runs on:
+
+- `MANAGED_COMPUTE_POOL` (default): compute Snowflake runs for your account.
+  The app runs until you suspend it.
+- `SERVERLESS` (Public Preview): the app starts on the first request and stops after
+  the idle period in [`auto_suspend_secs`](#label-snowflake-apps-manifest-auto-suspend-secs).
+
+[![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+Available to all accounts.
+
+Copy code
+
+```
+compute_resource: SERVERLESS
+```
+
+The value is case-insensitive. A project that still uses `snowflake.yml` can’t
+set it. You can’t convert an existing service to another compute resource, so
+a deploy that changes this field fails, and a deploy that omits it leaves the
+service unchanged. To run a serverless copy next to an existing app, add a
+[named target](/developer-guide/snowflake-app-runtime/deploy-targets) with a
+different `name`. For how the two options differ, see
+[Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless). To move an app, see
+[Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
+
+### url\_prefix
+
+Serverless only. The app-specific part of the endpoint:
+
+Copy code
+
+```
+url_prefix: sales-dashboard
+```
+
+The endpoint identifies the app, organization, account, region, and cloud:
+
+```
+<url_prefix>-apps.<org>-<account>.<region>.<cloud>.snowflake.app
+```
+
+If you don’t set `url_prefix`, Snowflake generates the value. Either way, use
+`DESCRIBE APPLICATION SERVICE` or `snow app open` to retrieve the complete URL.
+
+The prefix must be unique for the account and region. A deploy fails if another
+Application Service there already uses it.
+
+Adding or changing `url_prefix` on an existing app changes its URL on the next
+deploy. Update links and bookmarks when you do.
+
+### health\_check
+
+Serverless only. An HTTP path that Snowflake uses to determine whether the app
+is ready:
+
+Copy code
+
+```
+health_check: /healthz
+```
+
+If you omit it, Snowflake checks `/`. Make sure the route responds without
+depending on a user interaction.
+
+A deploy waits up to one minute for the new version to pass this check. If it
+doesn’t, the deploy fails and the app goes back to the last version that
+passed.
 
 ### install
 
@@ -467,8 +561,9 @@ fails that step, not the build phase.
 Deploy uses `CREATE OR ALTER APPLICATION SERVICE ... SPECIFICATION`, so
 the manifest is the full intended state. A field you leave out goes back
 to its default, including a value set with `ALTER APPLICATION SERVICE`.
-The exception is `execute_as_role`, which you can’t change after the app
-is created.
+The exceptions are `execute_as_role`, which you can’t change after the app
+is created, and `compute_resource`, which keeps its current value when
+omitted.
 
 The CLI sends only the service-level keys in that specification, such as
 `query_warehouse`, the instance counts, `label`, `secrets`, and
@@ -492,7 +587,7 @@ can’t pass a whole `app.yml` as a specification.
 | `Set only one of 'code_stage' or 'code_workspace'` | Both configured | Keep one, or omit both |
 | `Application service specification must not contain '$$'` | A `label`, `description`, or environment-variable value contains `$$` | Remove that sequence |
 | Label, description, or icon disappeared after deploy | A leftover `profile:` block in `app.yml` | Move `label`, `description`, and  `icon` to the top level. See  [Migrate from snowflake.yml to app.yml](/developer-guide/snowflake-app-runtime/migrate-to-app-yml)  . |
-| Missing-project-definition error on an `app.yml`-only project | CLI doesn’t support this `app.yml` layout | Run `snow helpers check-version` and upgrade the Snowflake CLI. |
+| Missing-project-definition error on an `app.yml`-only project | CLI doesn’t support this `app.yml` layout | Run `snow upgrade`, or reinstall the Snowflake CLI if that command isn’t recognized. |
 
 Expand
 
@@ -561,3 +656,8 @@ targets:
     min_instances: 2
     max_instances: 5
 ```
+
+## Next steps
+
+- Deploy the app: [Deploy an app to Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy).
+- Deploy one project to more than one environment: [Deploy targets for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy-targets).

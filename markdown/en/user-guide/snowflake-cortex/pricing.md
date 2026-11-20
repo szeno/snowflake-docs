@@ -68,9 +68,13 @@ Snowflake recommends invoking Cortex Analyst through Cortex Agents, in which cas
 
 Cortex Search is billed based on two components: serving compute and embedding compute. Serving compute is charged Credits per GB per month of indexed data (including vector embeddings) and runs continuously while the service is resumed. Embedding compute is charged per token when data is inserted or updated. For more details, see [Understanding cost for Cortex Search Services](/user-guide/snowflake-cortex/cortex-search/cortex-search-costs).
 
+Cortex Search is currently billed only at the regional routing AI Credit price, regardless of the `CORTEX_ENABLED_CROSS_REGION` setting. Cortex Search indexes are always created and served in your account’s region, and index serving is the dominant cost of a Cortex Search Service.
+
 ### Cortex Batch Search
 
 Cortex Batch Search is billed Credits per GB per hour of indexed data for the duration of the batch job. Unlike interactive Cortex Search, serving compute only runs while the batch job is active rather than continuously. Additional costs include query embedding tokens and virtual warehouse compute for orchestration.
+
+Like Cortex Search, Cortex Batch Search is currently billed only at the regional routing AI Credit price, regardless of the `CORTEX_ENABLED_CROSS_REGION` setting, because indexes are always served in your account’s region.
 
 ### AI Functions
 

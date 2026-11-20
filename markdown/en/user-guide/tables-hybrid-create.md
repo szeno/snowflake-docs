@@ -86,10 +86,10 @@ use COPY or INSERT INTO … SELECT to load the table. You can also use CTAS to c
 without the foreign key, then add the foreign key afterward with [ALTER TABLE](/sql-reference/sql/alter-table). See
 [Add and drop constraints on an existing hybrid table](/sql-reference/sql/create-hybrid-table#label-hybrid-table-online-constraints).
 
-COPY INTO can’t load a hybrid table that has a CHECK constraint. The operation fails. Use CTAS or
-INSERT INTO … SELECT instead. See
-[CHECK constraints](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints). A table that has both a
-FOREIGN KEY constraint and a CHECK constraint must be loaded with INSERT INTO … SELECT.
+When you use `COPY INTO` to load a hybrid table that has a CHECK constraint, a row that violates the constraint causes
+the load to fail, because `COPY INTO` supports only `ON_ERROR = ABORT_STATEMENT` for hybrid tables. For more
+information, see
+[CHECK constraints for hybrid tables](/sql-reference/sql/create-hybrid-table#label-hybrid-table-check-constraints).
 
 Note
 

@@ -66,6 +66,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] AGGREGATION POLICY <policy_name> ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -146,6 +147,7 @@ Creates a new table populated with the data returned by a query. Place the AS SE
 >   [ ICEBERG_VERSION = <integer> ]
 >   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
 >   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ ... ]
 >   AS SELECT <query>
 > ```
@@ -163,6 +165,7 @@ row access policy can be applied to the table. For example:
 >   [ ICEBERG_VERSION = <integer> ]
 >   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
 >   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col1> [ , ... ] )
 >   [ ... ]
 >   AS SELECT <query>
@@ -192,6 +195,7 @@ names, types, defaults, and constraints are copied to the new table:
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
 >   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ ... ]
 > ```
 
@@ -218,8 +222,12 @@ copying the data. You can also use this variant to clone a table at a specific t
 >     [COPY GRANTS]
 >     [COPY TAGS]
 >     [COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] )]
+>     [TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] )]
 >     ...
 > ```
+
+The `TABLE_PROPERTIES` clause sets Iceberg table properties on the cloned table. For the mapping to Snowflake parameters,
+the keys Snowflake rejects, and examples, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 Note
 
@@ -376,7 +384,18 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
 
     For more information, see [Set a target file size](/user-guide/tables-iceberg-manage#label-tables-iceberg-target-file-size).
 
+    This value corresponds to the Iceberg property `write.target-file-size-bytes`. For how Snowflake
+    converts between the two, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
     Default: AUTO
+
+`TABLE_PROPERTIES = ( 'key' = 'value' [ , 'key' = 'value' , ... ] )`
+:   Specifies [Iceberg table properties](https://iceberg.apache.org/docs/latest/configuration/#table-properties)
+    as case-sensitive `'key' = 'value'` pairs. Some keys map to Snowflake parameters, and Snowflake stores
+    other keys as Iceberg properties.
+
+    For the mapping, the keys Snowflake rejects, and examples, see
+    [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 `CONSTRAINT ...`
 :   Defines an inline or out-of-line constraint for the specified column(s) in the table.
@@ -707,17 +726,30 @@ If the schema uses `DEFAULT_METADATA_WRITE_FORMAT = ICEBERG`, Snowflake can prom
     Specifying the same kind both ways has no additional effect.
 
 `ERROR_LOGGING = { TRUE | FALSE }`
-:   Specifies whether to turn on DML error logging for the table.
+:   Specifies whether to turn on error logging for the table. When error logging is turned on, DML statements and supported
+    data loading methods record errors in the table’s error table.
 
-    - `TRUE` turns on DML error logging for the table.
-    - `FALSE` turns off DML error logging for the table.
+    - `TRUE` turns on error logging for the table. An `INSERT`, `UPDATE`, or `MERGE` statement on the table that
+      encounters a supported error no longer fails. Instead, it writes the other rows and records the error. For
+      `COPY INTO` and Snowpipe, the `ON_ERROR` copy option still determines how a load handles errors and which errors are
+      recorded. To set this property for an existing table, use a role that owns the table.
+    - `FALSE` turns off error logging for the table. If the table has an error table, turning off error logging drops the
+      error table and the errors in it.
 
-    For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+    The error table stores the source data of each error. Before you turn on error logging for a table that stores
+    sensitive data, review which roles can query the error table, as described in
+    [Access control requirements for error tables](/user-guide/data-engineering/error-tables#label-dml-error-logging-access-control-error-tables).
+
+    For more information, see [Introduction to error logging](/user-guide/data-engineering/error-logging). For DML statements, see
+    [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml). For the errors that error logging records when you load files
+    with `COPY INTO` or Snowpipe, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
     Note
 
-    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session,
-    DML error logging isn’t turned on, regardless of whether it is turned on for specific tables.
+    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session, DML statements,
+    `CREATE TABLE ... AS SELECT` statements, and `COPY INTO` statements in the session don’t record errors, regardless of
+    whether error logging is turned on for specific tables. For Snowpipe, only the value that’s set for the account
+    applies. For more information, see [Prevent or limit error logging](/user-guide/data-engineering/error-logging#label-error-logging-prevent).
 
 `COMMENT = 'string_literal'`
 :   Specifies a comment. You can specify a comment at the column level or the table level.

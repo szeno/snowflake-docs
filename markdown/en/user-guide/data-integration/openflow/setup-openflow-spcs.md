@@ -4,7 +4,7 @@ Feature — Generally Available
 
 Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions), with some exceptions. They’re also available in select [AWS government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-aws-government-regions) and select [Azure government regions](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-azure-government-regions). For more information, see [Available regions and considerations](/user-guide/data-integration/openflow/about-spcs#label-openflow-spcs-available-regions).
 
-To setup an Openflow - Snowflake Deployment, perform the following tasks:
+To set up an Openflow - Snowflake Deployment, perform the following tasks:
 
 Note
 
@@ -16,7 +16,7 @@ for a streamlined SQL-first walkthrough.
 
 | Order | Task | Description | Persona |
 | --- | --- | --- | --- |
-| 1 | [Setup core Snowflake](/user-guide/data-integration/openflow/setup-openflow-spcs-sf) | Before creating a deployment, you must configure core Snowflake which include an Openflow admin role, required privileges, and network configuration. | Snowflake administrator |
+| 1 | [Set up core Snowflake](/user-guide/data-integration/openflow/setup-openflow-spcs-sf) | Before creating a deployment, you must configure core Snowflake, which includes an Openflow admin role, required privileges, and network configuration. | Snowflake administrator |
 | 2 | Optionally [Set up PrivateLink UI access](/user-guide/data-integration/openflow/setup-openflow-spcs-configure-pr-ui) | Configure PrivateLink to access the Snowflake Openflow Runtime UI using private connectivity. | Snowflake administrator |
 | 3 | [Create deployment](/user-guide/data-integration/openflow/setup-openflow-spcs-deployment) | After configuring core Snowflake, you then create an Openflow deployment. Deployments are created with `CREATE OPENFLOW DEPLOYMENT` (SQL) or the Openflow UI.  Optionally, configure an Openflow-specific event table to store Openflow logs and metrics. | Deployment engineer, Snowflake administrator for event table configuration |
 | 4 | [Create the execute-as role and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr) | Create the role that connectors use to access Snowflake resources. This is called the execute-as role. Both require external access integrations for Snowflake deployments. | Data engineer |

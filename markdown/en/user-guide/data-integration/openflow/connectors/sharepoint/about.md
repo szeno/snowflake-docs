@@ -44,15 +44,19 @@ connector, choose the variant that meets your requirements.
 
 ## Limitations
 
-- [Cortex Parse Document limitations and requirements](/user-guide/snowflake-cortex/parse-document#label-parse-document-requirements)
-- [Cortex Search limitations](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-limitations)
 - Changes caused by moving or renaming folders aren’t captured during
   incremental ingestion.
-- The connector ingests only the supported file types and ignores
-  others.
-- When using a Cortex Search variant, .doc, .xls, .xlsx, and .ppt files larger than 2 MB are not ingested. This is due to a
-  [Microsoft Graph API limitation](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format)
-  on converting Office files to PDF. .docx and .pptx files are not affected by this limitation.
+- The connector doesn’t ingest empty (0-byte) files. It writes an info-level message for each skipped
+  file to the event table. For more information, see [Logs](/user-guide/data-integration/openflow/monitor#label-openflow-logs).
+- The following limitations apply only to the Cortex Search variants, not to the Simple Ingest
+  variants:
+  - [Cortex Parse Document limitations and requirements](/user-guide/snowflake-cortex/parse-document#label-parse-document-requirements)
+  - [Cortex Search limitations](/user-guide/snowflake-cortex/cortex-search/cortex-search-overview#label-cortex-search-overview-limitations)
+  - The connector ingests only the file types that Cortex Parse Document supports and ignores
+    others.
+  - `.doc`, `.xls`, `.xlsx`, and `.ppt` files larger than 2 MB aren’t ingested. This is due to a
+    [Microsoft Graph API limitation](https://learn.microsoft.com/en-us/graph/api/driveitem-get-content-format)
+    on converting Office files to PDF. `.docx` and `.pptx` files aren’t affected by this limitation.
 
 ### Next steps
 

@@ -549,7 +549,7 @@ Tests are part of `dbt build`, so no separate step is needed.
 
 dbt Projects on Snowflake has full `dbt deps` support, so you can install and use any package from the [dbt package hub](https://hub.getdbt.com/). This includes popular packages like `dbt_utils`, `dbt_expectations`, and `dbt_project_evaluator`.
 
-If you run `dbt deps` inside a Snowflake workspace or during dbt project object execution, Snowflake needs network access to download packages from the internet. Configure an external access integration on your dbt project object to allow this. Alternatively, run `dbt deps` locally or in your CI/CD pipeline and deploy the project with `dbt_packages/` already included.
+If you run `dbt deps` inside a Snowflake workspace or during dbt project object execution, Snowflake needs network access to download packages from the internet. Specify an external access integration on that run to allow this. To install packages during deployment instead, set an external access integration on your dbt project object and leave automatic compilation enabled (the default). Alternatively, run `dbt deps` locally or in your CI/CD pipeline and deploy the project with `dbt_packages/` already included.
 
 For details on installing and managing packages, see [Understand dependencies for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dependencies).
 

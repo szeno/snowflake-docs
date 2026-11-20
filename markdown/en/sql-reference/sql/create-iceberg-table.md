@@ -73,6 +73,7 @@ CREATE [ OR REPLACE ] [ TRANSIENT ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] ROW ACCESS POLICY <policy_name> ON ( <col_name> [ , <col_name> ... ] ) ]
   [ [ WITH ] AGGREGATION POLICY <policy_name> ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
@@ -151,6 +152,7 @@ For more information, see [CREATE ICEBERG TABLE (Snowflake as the Iceberg catalo
 >   [ ICEBERG_VERSION = <integer> ]
 >   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
 >   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ ... ]
 >   AS SELECT <query>
 > ```
@@ -167,6 +169,7 @@ For more information, see [CREATE ICEBERG TABLE … AS SELECT](/sql-reference/sq
 >   [ COPY GRANTS ]
 >   [ COPY TAGS ]
 >   [ COPY = ( { COMMENTS | TAGS | GRANTS } [ , ... ] ) ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ ... ]
 > ```
 
@@ -198,6 +201,7 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
 ```
@@ -245,6 +249,7 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ ICEBERG_VERSION = <integer> ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ BASE_LOCATION = '<path_to_directory_for_table_files>' ]
   [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]

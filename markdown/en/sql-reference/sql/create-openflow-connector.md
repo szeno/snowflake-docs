@@ -50,7 +50,7 @@ Exactly one of the following source parameters is required:
     the stage is optional. Mutually exclusive with `FROM DEFINITION`. Creates a **default** version;
     the connector can start immediately without committing. See
     [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in
-    [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+    [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Optional parameters
 

@@ -14,7 +14,7 @@ Note that if a set of files has multiple issues, the `FIRST_ERROR_MESSAGE` colum
 
 The VALIDATION\_MODE copy option instructs a COPY statement to validate the data to be loaded and return results based on the validation option specified. No data is loaded when this copy option is specified. For more information about the copy option, see [COPY INTO <table>](/sql-reference/sql/copy-into-table).
 
-Execute a COPY statement with the VALIDATION\_MODE copy option set to `RETURN_ALL_ERRORS`. In the statement, reference the set of files you had attempted to load.
+Run a `COPY INTO` statement with the `VALIDATION_MODE` copy option set to `RETURN_ALL_ERRORS`. In the statement, reference the set of files you had attempted to load. This copy option doesn’t evaluate CHECK constraints, so the `COPY INTO` statement doesn’t return rows that violate them.
 
 The following example validates a set of files that contain errors. To facilitate analysis of the errors, a [COPY INTO <location>](/sql-reference/sql/copy-into-location) statement then unloads the problematic records into a text file so they could be analyzed and fixed in the original data files. The statement queries the [RESULT\_SCAN](/sql-reference/functions/result_scan) table function to retrieve the records. Note that the statements in this section must be run in succession in order to retrieve the applicable records using the [LAST\_QUERY\_ID](/sql-reference/functions/last_query_id) function.
 
@@ -29,6 +29,11 @@ SET qid=last_query_id();
 
 COPY INTO @mystage/errors/load_errors.txt FROM (SELECT rejected_record FROM TABLE(result_scan($qid)));
 ```
+
+To keep the rows that later loads of CSV, JSON, or Parquet files reject, including rows that violate CHECK constraints
+and rows from loads that transform data, turn on error logging for the target table and use `ON_ERROR = CONTINUE`. You
+can then query the rejected rows and load them again without unloading them to a file. For more information, see
+[Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 ## Other issues
 

@@ -5,7 +5,7 @@
 Available to all accounts.
 
 This topic describes how to **create and configure** a gen 2 connector using SQL and stage
-commands—the programmatic alternative to the [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard).
+commands: the programmatic alternative to the [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard).
 Use this workflow when you want to automate connector setup, manage configuration as code, or
 integrate with CI/CD.
 
@@ -50,7 +50,7 @@ Connectors and runtimes are schema-level objects; the examples below use simple 
 URI paths use the connector’s fully qualified name.
 
 Create a connector in a gen 2 runtime from a catalog **definition ID**. Each gen 2 catalog entry
-maps to a definition ID—the value you pass to `FROM DEFINITION`.
+maps to a definition ID: the value you pass to `FROM DEFINITION`.
 
 To find definition IDs available in your account:
 
@@ -72,7 +72,7 @@ CREATE OPENFLOW CONNECTOR my_connector
 
 The connector is created in **STOPPED** state with a **Draft** status: a **live** configuration
 version exists, but no committed **default** version yet. You must configure and commit before
-starting. See [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+starting. See [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Upload and commit configuration
 
@@ -131,7 +131,7 @@ standard workflow is download → edit → upload → commit.
    SELECT SYSTEM$WAIT_FOR_STABLE_OPENFLOW_CONNECTORS(600, 'my_connector');
    ```
 
-For full details on live, default, and `LAST` versions, see [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+For full details on live, default, and `LAST` versions, see [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Start the connector
 
@@ -244,8 +244,8 @@ For setup and prerequisites, see
 ## Create from a known configuration (optional)
 
 For your first connector, use `FROM DEFINITION` (above) or the setup wizard. When you already
-have a validated `config.json` and want to stand up another connector with the same settings—for
-example in a different runtime or environment—see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+have a validated `config.json` and want to stand up another connector with the same settings (for
+example in a different runtime or environment), see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ## Wizard vs SQL
 
@@ -263,5 +263,5 @@ Both approaches create the same gen 2 connector object and `config.json` format.
 ## Next steps
 
 - [CREATE OPENFLOW CONNECTOR](/sql-reference/sql/create-openflow-connector), [ALTER OPENFLOW CONNECTOR](/sql-reference/sql/alter-openflow-connector) — Full `CREATE` and `ALTER` syntax for connectors.
-- [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) — Version states, UI labels, and [create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create).
+- [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) — Version states, UI labels, and [create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create).
 - [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration/openflow/gen2/manage-connector-lifecycle) — Start, stop, and remove gen 2 connectors.

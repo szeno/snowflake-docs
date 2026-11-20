@@ -238,6 +238,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) |  |
 | [SYSTEM$PREDECESSORS\_STATE](/sql-reference/functions/system_predecessors_state) |  |
 | [SYSTEM$QUERY\_REFERENCE](/sql-reference/functions/system_query_reference) |  |
+| [SYSTEM$READ\_ICEBERG\_TABLE\_PROPERTY](/sql-reference/functions/system_read_iceberg_table_property) |  |
 | [SYSTEM$READ\_YAML\_FROM\_SEMANTIC\_VIEW](/sql-reference/functions/system_read_yaml_from_semantic_view) |  |
 | [SYSTEM$READ\_OSI\_YAML\_FROM\_SEMANTIC\_VIEW](/sql-reference/functions/system_read_osi_yaml_from_semantic_view) |  |
 | [SYSTEM$REFERENCE](/sql-reference/functions/system_reference) |  |
@@ -283,6 +284,7 @@ SELECT SYSTEM$TYPEOF('a');
 | [SYSTEM$EXPLAIN\_PLAN\_JSON](/sql-reference/functions/system_explain_plan_json) |  |
 | [SYSTEM$EXPLAIN\_JSON\_TO\_TEXT](/sql-reference/functions/system_explain_json_to_text) |  |
 | [SYSTEM$GET\_RESULTSET\_STATUS](/sql-reference/functions/system_get_resultset_status) |  |
+| [SYSTEM$VALIDATE\_CONSUMER\_ACCOUNT](/sql-reference/functions/system_validate_consumer_account) |  |
 
 Expand
 

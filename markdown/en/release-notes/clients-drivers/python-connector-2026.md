@@ -356,7 +356,7 @@ Initial public preview release of the connector built on the Universal Core. Thi
 - Only one version of the package can be installed in a given environment, so install this version into a separate virtual environment rather than upgrading in place.
 - Certificate revocation checking uses CRLs rather than OCSP, and is off by default. OCSP-specific connection parameters are not accepted. See [Certificate revocation checking](/developer-guide/python-connector/python-connector-connect#label-python-crl).
 - Snowflake’s Python libraries currently declare a dependency on a connector version below 5.0.0 and cannot be installed alongside this version. See [Upgrade steps](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-steps).
-- This release contains breaking behavior changes relative to the 4.x connector. The most significant are summarized in [Behavior differences](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-behavior), and the complete catalog is published as [`BehaviorDifferences.yaml`](https://github.com/snowflakedb/drivers/blob/main/python/BehaviorDifferences.yaml).
+- This release contains breaking behavior changes relative to the 4.x connector. The most significant are summarized in [Behavior differences](/developer-guide/python-connector/python-connector-upgrade#label-python-upgrade-behavior), and the complete catalog is published in the [`python/behavior_differences`](https://github.com/snowflakedb/drivers/tree/main/python/behavior_differences) directory.
 
 ## Version 4.7.2 (Aug 7, 2026)
 

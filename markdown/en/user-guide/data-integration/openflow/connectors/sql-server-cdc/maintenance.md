@@ -80,6 +80,12 @@ If the failure was caused by an issue in the source table such as a missing prim
 
 By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. You can raise the per-value limit from 16 MB to **128 MB**.
 
+Tip
+
+To replicate large values, set **Oversized Value Strategy** to **Prune Row** instead of raising the per-value limit. **Prune Row** follows the Snowpipe Streaming limits for data types and rows and doesn’t use the per-value limit. If you raised the per-value limit and use **Set Null**, switch to **Prune Row**. For details, see [Oversized values](/user-guide/data-integration/openflow/connectors/sql-server-cdc/about#label-sql-server-cdc-oversized-values).
+
+The rest of this section applies to the **Fail Table** and **Set Null** strategies.
+
 Note
 
 If replicated tables contain LOB values larger than 64 KB, SQL Server CDC requires the `max text repl size` setting to be raised on the source instance. This applies on every platform and even at the connector’s default 16 MB per-value limit. For configuration steps by platform, see [Raise max text repl size for large LOB columns](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sql-server-cdc-max-text-repl-size).
@@ -137,7 +143,7 @@ To migrate a table:
 
 Raising the per-value limit increases the amount of data that the connector loads into memory and moves through the flow, which raises the load on both the runtime and the warehouse. Size the runtime and warehouse accordingly.
 
-When **Oversized Value Strategy** is set to **Set Null**, the connector still loads each oversized value into memory before it can replace it with `NULL`. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
+When **Oversized Value Strategy** is set to **Set Null** or **Prune Row**, the connector still loads each oversized value into memory before it can replace it with `NULL` or prune it. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
 
 During both snapshot and incremental replication, the queue in front of the **Upload Rows via Snowpipe Streaming 2** processor can fill with FlowFiles and trigger back pressure, which consumes a large amount of runtime disk space. For larger tables, use a Large runtime to provide additional storage. For guidance on choosing a size, see [Runtime sizing](/user-guide/data-integration/openflow/connectors/sql-server-cdc/setup#label-sql-server-cdc-runtime-sizing).
 
@@ -298,7 +304,7 @@ If the new instance is located in a different runtime, you must re-enter all par
    6. Select the connector.
    7. Stop the topmost processor **Set Tables for Replication** in the **Snapshot Load** group.
    8. Stop the **MultiDatabaseCaptureChangeCdcSqlServer** processor in the **Incremental Load** group.
-   9. If you changed the value of the **Merge Task Schedule CRON** parameter, return it to `* * * * * ?`, otherwise queues won’t be emptied until the next scheduled run.
+   9. If you changed the value of the **Merge Task Schedule CRON** parameter, return it to `* * * * * ?`; otherwise queues won’t be emptied until the next scheduled run.
 
       Wait until all FlowFiles in the connector have been processed, and all queues are empty.
       When all FlowFiles have been processed, the **Queued** value on the connector’s processor group becomes zero.

@@ -10,14 +10,15 @@ execution on Snowflake compute. When the Code Bundle is created, all files from 
 schema. The Code Bundle can then be executed using [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).
 
 You can create a Code Bundle from an internal or temporary stage, a private workspace, or a shared workspace.
-External stages aren’t supported.
+External stages aren’t supported. To run source files once without creating a Code Bundle, use
+[EXECUTE CODE BUNDLE FROM](/sql-reference/sql/execute-code-bundle) instead.
 
 This command supports the following variant:
 
 - [DEFINE CODE BUNDLE](#label-define-code-bundle-syntax): Declarative definition of a Code Bundle’s target state inside a DCM project. (Public Preview)
 
 See also:
-:   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [CREATE NOTEBOOK](/sql-reference/sql/create-notebook), [EXECUTE NOTEBOOK](/sql-reference/sql/execute-notebook), [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles)
+:   [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle), [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle), [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles), [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle), [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles)
 
 ## Syntax
 
@@ -141,8 +142,10 @@ For general information about roles and privilege grants for performing SQL acti
 
 - A Code Bundle points to the specified workspace version indicated in the FROM clause. Using `versions/last` always references the latest
   workspace version; using a fixed path references a static version.
-- If you create the Code Bundle from a stage, you can update it by adding versions from the stage. For details,
-  see [Schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
+- To update a Code Bundle, add a version with [ALTER CODE BUNDLE … ADD VERSION](/sql-reference/sql/alter-code-bundle). Runs use the
+  default version, which is the last version added.
+- Include a `code_bundle.yml` file in the root of the source. For its fields, see the
+  [`code_bundle.yml` reference](/developer-guide/code-bundles/code-bundle-yml-reference).
 - Use descriptive bundle names to simplify workflow orchestration.
 - Replacing a Code Bundle updates the stored source path and metadata.
 - To run the `CREATE CODE BUNDLE` command, you must execute it from a SQL file or SQL worksheet in Workspaces, not from within a notebook cell.

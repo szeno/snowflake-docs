@@ -10,7 +10,7 @@ multiple runtimes, and each runtime can run multiple connectors, giving you flex
 isolate workloads by project, team, or environment.
 
 1. [Create a deployment](#label-openflow-spcs-create-deployment).
-2. [[Optional] Configure an Openflow-specific event table](#label-openflow-spcs-event-table) - configure an Openflow-specific event table to store Openflow logs and metrics.
+2. [[Optional] Configure an Openflow-specific event table](#label-openflow-spcs-event-table) - configure it to store Openflow logs and metrics.
 
 ## Create a deployment
 
@@ -27,7 +27,7 @@ For other ways to tell gen 1 and gen 2 resources apart, see
 
 Note
 
-To access the Openflow Runtime UI using PrivateLink as described in [Setup PrivateLink UI access](/user-guide/data-integration/openflow/setup-openflow-spcs-configure-pr-ui),
+To access the Openflow Runtime UI using PrivateLink as described in [Set up PrivateLink UI access](/user-guide/data-integration/openflow/setup-openflow-spcs-configure-pr-ui),
 ensure the **PrivateLink** option is enabled when creating a new Openflow - Snowflake Deployment.
 
 1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in) with a role defined in [Configure core Snowflake requirements](/user-guide/data-integration/openflow/setup-openflow-spcs-sf).

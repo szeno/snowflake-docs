@@ -159,7 +159,9 @@ Show lessSee more
 
 Use error notifications if you need to know only about files that fail to load, and you already consume messages from Amazon SNS, Google Cloud Pub/Sub, or Azure Event Grid. Use an alert on Snowpipe events in any of the following cases: you also want to know when a pipe stops or a notification channel fails, you want email notifications, or you want one alert to cover every pipe instead of setting an error notification integration on each pipe.
 
-If a pipe uses `ON_ERROR = CONTINUE`, neither option reports the rows that Snowpipe skips: Snowpipe sends an error notification for a file only if no rows from it load, and a partially loaded file records an `INGESTED` event. To find partially loaded files, query the copy history for the `Partially loaded` status. To run the query on a schedule, use a [scheduled alert](/user-guide/alerts#label-alerts-type-scheduled).
+If a pipe uses `ON_ERROR = CONTINUE`, neither option reports the rows that Snowpipe rejects: Snowpipe sends an error notification for a file only if no rows from it load, and it doesn’t record a `FAILED` event for a partially loaded file. With `LOG_EVENT_LEVEL` set to `DEBUG` or `TRACE`, it records an `INGESTED` event for the file instead. To find partially loaded files, query the copy history for the `Partially loaded` status. To run the query on a schedule, use a [scheduled alert](/user-guide/alerts#label-alerts-type-scheduled).
+
+To record each rejected row with its error and source data, turn on [error logging](/user-guide/data-load-error-tables) for the pipe’s target table, and get notified of new errors with an [alert on the error table](/user-guide/data-load-error-tables-query#label-data-load-error-tables-alert).
 
 Neither option tells you when event notifications stop arriving. For an alert that catches that problem, see [Get alerted when a pipe stops loading files](#label-snowpipe-events-alerts-idle).
 

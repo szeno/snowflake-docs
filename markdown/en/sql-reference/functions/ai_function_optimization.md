@@ -56,6 +56,7 @@ optimization:
   models:
     - <candidate_model>          # one or more
   reflection_model: <model>
+  algorithm: <gepa|cocoevolve>                    # optional
   strategy: <quality_first|balanced|cost_first>   # optional
   budget: <auto|ultra-light|light|medium|heavy>   # optional
 ```
@@ -118,6 +119,22 @@ The specification is validated at CREATE EXPERIMENT time. Unknown or misspelled 
     - `argument_mapping` — a mapping of `<function_argument>: <dataset_column>` (keys are the AI function’s
       parameter names, or positional markers `$1`, `$2`, …; values are dataset column names).
     - `ground_truth` — the label column candidates are scored against.
+
+`optimization.algorithm`
+:   The evolutionary optimization algorithm (default `gepa`). Values are case-insensitive.
+
+    | Algorithm | Proposes candidates by |
+    | --- | --- |
+    | `gepa` | Showing the reflection model one candidate’s failures through AI\_COMPLETE and asking for an improved version. |
+    | `cocoevolve` | Running an agent that applies meta-reflection across the search history, and self-tests drafts before evaluation. |
+
+    Expand
+
+    Show lessSee more
+
+    With `cocoevolve`, `reflection_model` must be a model supported by
+    [Cortex Agents](/user-guide/snowflake-cortex/cortex-agents); otherwise CREATE EXPERIMENT fails. For details,
+    see [Select an optimization algorithm](/user-guide/snowflake-cortex/ai-function-studio#label-ai-function-optimization-algorithm).
 
 `optimization.strategy`
 :   The optimization objective (default `quality_first`):

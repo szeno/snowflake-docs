@@ -444,17 +444,30 @@ renaming a table requires the CREATE TABLE privilege on the schema for the table
         information, see [Detect and evolve structured columns](/user-guide/data-load-schema-evolution#label-schema-evolution-structured-types).
 
     `ERROR_LOGGING = { TRUE | FALSE }`
-    :   Specifies whether to turn on DML error logging for the table.
+    :   Specifies whether to turn on error logging for the table. When error logging is turned on, DML statements and supported
+        data loading methods record errors in the table’s error table.
 
-        - `TRUE` turns on DML error logging for the table.
-        - `FALSE` turns off DML error logging for the table.
+        - `TRUE` turns on error logging for the table. An `INSERT`, `UPDATE`, or `MERGE` statement on the table that
+          encounters a supported error no longer fails. Instead, it writes the other rows and records the error. For
+          `COPY INTO` and Snowpipe, the `ON_ERROR` copy option still determines how a load handles errors and which errors are
+          recorded. To set this property for an existing table, use a role that owns the table.
+        - `FALSE` turns off error logging for the table. If the table has an error table, turning off error logging drops the
+          error table and the errors in it.
 
-        For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+        The error table stores the source data of each error. Before you turn on error logging for a table that stores
+        sensitive data, review which roles can query the error table, as described in
+        [Access control requirements for error tables](/user-guide/data-engineering/error-tables#label-dml-error-logging-access-control-error-tables).
+
+        For more information, see [Introduction to error logging](/user-guide/data-engineering/error-logging). For DML statements, see
+        [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml). For the errors that error logging records when you load files
+        with `COPY INTO` or Snowpipe, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
         Note
 
-        If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session,
-        DML error logging isn’t turned on, regardless of whether it is turned on for specific tables.
+        If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session, DML statements,
+        `CREATE TABLE ... AS SELECT` statements, and `COPY INTO` statements in the session don’t record errors, regardless of
+        whether error logging is turned on for specific tables. For Snowpipe, only the value that’s set for the account
+        applies. For more information, see [Prevent or limit error logging](/user-guide/data-engineering/error-logging#label-error-logging-prevent).
 
     `CONTACT purpose = contact [ , purpose = contact ... ]`
     :   Associate the existing object with one or more [contacts](/user-guide/contacts-using). For a list of valid purposes, see [Associate a contact with an object](/user-guide/contacts-using#label-contacts-associate).
@@ -532,6 +545,9 @@ For more information about clustering keys and reclustering, see [Understanding 
 `ADD [ COLUMN ] [ IF NOT EXISTS ] col_name col_data_type [ AS ( expr ) ]` `[ DEFAULT default_value | AUTOINCREMENT ... ]` `[ inlineConstraint ]` `[ COLLATE 'collation_specification' ]` `[ [ WITH ] MASKING POLICY policy_name ]` `[ [ WITH ] PROJECTION POLICY policy_name ]` `[ [ WITH ] TAG ( tag_name = 'tag_value' [ , tag_name = 'tag_value' , ... ] ) ] [ , ...]`
 :   Adds a new column. You can specify a default value, an inline constraint, a [collation specification](/sql-reference/collation#label-collate-clause),
     a masking policy, and/or one or more tags.
+
+    You can’t add a column with an inline CHECK constraint to a table that a pipe loads, even if the pipe is paused. For
+    more information, see [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 
     To add a virtual column whose values are computed from an expression, include `AS ( <expr> )`. For ANSI SQL compatibility, you can also use the equivalent `[ GENERATED ALWAYS ] AS ( <expr> ) [ VIRTUAL ]` form. When you specify `AS`, the `DEFAULT` clause and the `NOT NULL` and `CHECK` constraints can’t be applied to the same column. For the full list of allowed expressions, data type rules, and restrictions, see [Virtual Columns](/sql-reference/virtual-columns).
 
@@ -900,18 +916,30 @@ For all other external table modifications, see [ALTER EXTERNAL TABLE](/sql-refe
 :   Adds an out-of-line integrity constraint to one or more columns in the table. To add an inline constraint (for a column), see
     [Column Actions](#label-alter-table-columnaction) (in this topic).
 
+    To add a CHECK constraint with this clause, specify `ENABLE NOVALIDATE`. The default, `ENABLE VALIDATE`, isn’t
+    supported for CHECK constraints in this clause, so a statement without `ENABLE NOVALIDATE` fails. The constraint
+    applies to rows that are inserted, updated, or loaded afterward, but not to the rows that the table already contains.
+
+    You can’t add a CHECK constraint to a table that a pipe loads, even if the pipe is paused. For more information, see
+    [CHECK constraints](/sql-reference/constraints-overview#label-constraints-check) and
+    [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
+
 `RENAME CONSTRAINT constraint_name TO new_constraint_name`
 :   Renames the specified constraint.
 
 `{ ALTER | MODIFY } CONSTRAINT ...`
 :   Alters the properties for the specified constraint.
 
-    For CHECK constraints, the `constraint_name` is required.
+    For CHECK constraints, the `constraint_name` is required. You can’t change a
+    CHECK constraint on a table that a Snowpipe pipe loads, even if the pipe is paused. For more information, see
+    [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 
 `DROP CONSTRAINT constraint_name | PRIMARY KEY | UNIQUE | FOREIGN KEY ( col_name [ , ... ] ) [ CASCADE | RESTRICT ]`
 :   Drops the specified constraint for the specified column or set of columns.
 
-    For CHECK constraints, the `constraint_name` is required.
+    For CHECK constraints, the `constraint_name` is required. You can’t drop a CHECK
+    constraint on a table that a Snowpipe pipe loads, even if the pipe is paused. For more information, see
+    [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 
 For detailed syntax and examples for adding or altering constraints, see [CREATE | ALTER TABLE … CONSTRAINT](/sql-reference/sql/create-table-constraint).
 

@@ -1,5 +1,9 @@
 # ConsumeKinesisStream 2025.10.9.21
 
+Warning
+
+The ConsumeKinesisStream processor is deprecated. For new flows, use the [ConsumeKinesis](/user-guide/data-integration/openflow/processors/consumekinesis) processor instead.
+
 Feature — Generally Available
 
 Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and GCP [Commercial regions](/user-guide/intro-regions#label-na-general-regions).

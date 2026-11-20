@@ -1,9 +1,5 @@
 # Submit Spark jobs on Snowflake (via Code Bundles)
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
 Run your Spark applications as batch jobs on Snowflake. You submit a job, Snowflake runs it on Snowflake compute, and
 you get back an ID that you use to track, monitor, and cancel the run.
 
@@ -187,7 +183,8 @@ new run.
 
 Note
 
-A retry with an already-used `requestId` returns `200 OK` with a body of `{"status": null}` and no `job_id` or
+A retry with an already-used `requestId` doesn’t start the run again. It returns `200 OK` with a body of
+`{"status": null, "return_value": <value>}`, where `return_value` is the first run’s return value, and no `job_id` or
 `Location` header. It doesn’t re-return the original run’s job ID, so capture the `job_id` from the first successful
 submission if you need it later.
 
@@ -378,7 +375,7 @@ so you can use it to [monitor and manage the run](#monitor-and-manage).
 If you would like to reuse a stored job definition, you can register it once and then submit it by name (for example,
 `EXECUTE CODE BUNDLE my_spark_job ENTRYPOINT = 'com.example.MySparkApp'`). The submission parameters are the same as for
 inline submission. For details, see
-[Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles#execute-code-bundle).
+[EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle).
 
 For a Scala or Java job, running a persisted bundle by name does not automatically add the JARs inside the bundle to the
 classpath. Declare the JAR that contains your main class (and any dependency JARs) under
@@ -824,48 +821,15 @@ CREATE [ OR REPLACE ] CODE BUNDLE [ IF NOT EXISTS ] <name>
 `FROM` must reference a stage **directory** (the bundle is created from the files under that path), not an individual
 file. This differs from `EXECUTE CODE BUNDLE FROM '<stage_path>'`, which accepts a single `.jar` file (Scala or Java) or a directory (Python).
 
-### ALTER CODE BUNDLE
+### Other Code Bundle commands
 
-Adds a new version to a persisted Spark job definition.
+Spark job definitions are Code Bundles, so you manage them with the same commands as other Code Bundles:
 
-Copy code
-
-```
-ALTER CODE BUNDLE <name> ADD VERSION FROM '<stage_path>';
-```
-
-### DESCRIBE CODE BUNDLE
-
-Returns metadata about a persisted Code Bundle.
-
-Copy code
-
-```
-DESCRIBE CODE BUNDLE <name>;
-```
-
-### SHOW CODE BUNDLES
-
-Lists the Code Bundles in the current schema.
-
-Copy code
-
-```
-SHOW CODE BUNDLES;
-```
-
-### DROP CODE BUNDLE
-
-Removes a persisted Code Bundle.
-
-Copy code
-
-```
-DROP CODE BUNDLE [ IF EXISTS ] <name>;
-```
-
-You must have `OWNERSHIP` of the Code Bundle to drop it. A role without ownership (even `ACCOUNTADMIN`) can’t drop a
-bundle owned by another role; drop it as the owning role, or transfer ownership first.
+- [ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle): add a new version of a persisted job definition.
+- [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle): describe a persisted job definition.
+- [SHOW CODE BUNDLES](/sql-reference/sql/show-code-bundles): list Code Bundles.
+- [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle): remove a persisted job definition. You must have `OWNERSHIP` of the Code Bundle to drop it; a
+  role without ownership (even `ACCOUNTADMIN`) can’t drop a bundle owned by another role.
 
 ### CODE\_BUNDLE\_HISTORY (table function)
 
@@ -884,7 +848,7 @@ SELECT * FROM TABLE(INFORMATION_SCHEMA.CODE_BUNDLE_HISTORY(
 ));
 ```
 
-For the full parameter list, see [`CODE_BUNDLE_HISTORY`](/developer-guide/code-bundles/code-bundles#code_bundle_history).
+For the full parameter list, see [CODE\_BUNDLE\_HISTORY](/sql-reference/functions/code_bundle_history).
 
 ### SYSTEM$CANCEL\_QUERY
 

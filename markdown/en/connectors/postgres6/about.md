@@ -46,7 +46,7 @@ The Snowflake Connector for PostgreSQL supports private links. For more informat
 
 ## Agent and connector application compatibilities
 
-The Snowflake Connector for PostgreSQL is being released against a specific version, described as **x.y.z version** where x is major, y is minor and z is patch. Agents on Docker Hub are also
+The Snowflake Connector for PostgreSQL is being released against a specific version, described as **x.y.z version** where x is major, y is minor, and z is patch. Agents on Docker Hub are also
 released with the X.Y.Z version. Each x.y.z version of Snowflake Connector for PostgreSQL supports all agents with the same major version X=x and a minor version no greater than y of the agent. Moreover, each x.0.0 version of the Snowflake Connector for PostgreSQL supports all (x-1).Y.Z versions of the agent for all Y and Z.
 
 ## Known limitations
@@ -137,4 +137,4 @@ Private key authorization to the source database is not supported. Only authoriz
 
 ### Replica identity
 
-The replica identity of a given table must be the same as the primary key, otherwise the replication will fail.
+The replica identity of a given table must be the same as the primary key; otherwise, the replication will fail.

@@ -152,11 +152,43 @@ purpose and typical usage.
 
     For setup, UI scheduling, and Python examples, see [Using secrets in Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-using-secrets).
 
+## Output
+
+Note
+
+Before the [RETURN\_VALUE behavior change](/release-notes/bcr-bundles/un-bundled/bcr-code-bundles-return-value), a successful run returned
+a single column named `status` or `result` that contained a success message, such as `Statement executed successfully.` If your code or
+tools read that column, update them.
+
+A successful run returns one row with one column:
+
+| Column | Data type | Description |
+| --- | --- | --- |
+| `RETURN_VALUE` | VARCHAR | The value that the notebook passed to `notebook.exit(value)`, or NULL if it didn’t pass one. A Python `str` is returned as is; any other value is returned as JSON text. |
+
+Expand
+
+Show lessSee more
+
+`RETURN_VALUE` is also NULL in the following cases:
+
+- The statement returns before the run finishes, for example when the run is executed asynchronously.
+- The stages that Snowflake uses to cache notebook results in your account aren’t encrypted with `SNOWFLAKE_FULL` encryption.
+
+Returning a value with `notebook.exit(value)` requires [Container Runtime 3.0](/developer-guide/container-runtime/version-3) or later. Set `RUNTIME` to a version 3 label, such as
+`'V3-CPU-PY3.12'`. Container Runtime 2.x versions don’t support return values.
+
+If the run fails, the command raises an error and returns no row. Decide whether a run succeeded from whether the statement raises an error,
+not from `RETURN_VALUE`. To review past runs, use the [CODE\_BUNDLE\_HISTORY](/sql-reference/functions/code_bundle_history) table function.
+
+For the complete output reference, including Python method entrypoints, see
+[EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-output).
+
 ## Access control requirements
 
 The role executing `EXECUTE NOTEBOOK PROJECT` must have either OWNERSHIP or USAGE privileges on the notebook project object (NPO).
 
-In addition, the executing role must have USAGE and MONITOR on the query warehouse, and USAGE or OWNERSHIP on:
+In addition, the executing role must have USAGE on the query warehouse, and USAGE or OWNERSHIP on:
 
 - The compute pool.
 - The database and schema containing the notebook project.
@@ -188,7 +220,7 @@ The following table shows where you can run the command:
 | Task body | Yes | Supported both as a single-statement body and inside a `BEGIN ... END` [Snowflake Scripting](/developer-guide/snowflake-scripting/index) block. |
 | Stored procedure with `EXECUTE AS CALLER` | Yes | The procedure runs with the caller’s privileges. |
 | Stored procedure with `EXECUTE AS OWNER` | No | Owner’s rights procedures can’t run the command. Use `EXECUTE AS CALLER` instead. |
-| Stored procedure with `EXECUTE AS RESTRICTED CALLER` | No | Notebook projects don’t support [restricted caller’s rights](/developer-guide/restricted-callers-rights) yet. |
+| Stored procedure with `EXECUTE AS RESTRICTED CALLER` | Only with FULL MANAGEMENT | The caller must grant the FULL MANAGEMENT [high-level caller privilege](/developer-guide/restricted-callers-rights/high-level-caller-privileges). The run doesn’t apply [restricted caller’s rights](/developer-guide/restricted-callers-rights) semantics. |
 | Streamlit app | No | Streamlit in Snowflake apps run with [owner’s rights](/developer-guide/streamlit/object-management/owners-rights) by default, and the [restricted caller’s rights](/developer-guide/streamlit/features/restricted-callers-rights) option isn’t supported by this command. |
 | Notebook cell | No | Nested execution isn’t supported. |
 

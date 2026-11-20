@@ -159,6 +159,8 @@ Recreating a pipe drops its load metadata, which is the record of the files that
 You must recreate a pipe in the following cases:
 
 - You want to change the pipe’s `COPY INTO` statement, for example, to load a new column that the statement doesn’t select.
+- You want to change the pipe’s `ON_ERROR` copy option, for example, to record every rejected row in an error table. For the changes to the following steps, see [Record errors from an existing pipe](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-existing-pipes).
+- You want to add, drop, or change a CHECK constraint on the target table. For the changes to the following steps, see [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 - You want to change the `AUTO_INGEST`, `AWS_SNS_TOPIC`, or `INTEGRATION` property.
 - You changed the `URL` of the external stage that the pipe references. Changing the URL stops every pipe that references the stage, and `SYSTEM$PIPE_STATUS` reports `STOPPED_STAGE_ALTERED` until you recreate the pipes.
 - The stage that the pipe references was renamed, dropped, or replaced. Pipe definitions aren’t updated when the stage changes.
@@ -202,7 +204,9 @@ Complete the following steps:
    ```
 
    [GET\_DDL](/sql-reference/functions/get_ddl) returns the statement that creates the pipe, including its `AUTO_INGEST`, `ERROR_INTEGRATION`, and `COMMENT` properties and its tags. You need to set `LOG_EVENT_LEVEL` again only if the `level` column of the `SHOW PARAMETERS` output is `PIPE`.
-4. Recreate the pipe with `CREATE OR REPLACE PIPE`, or drop it with [DROP PIPE](/sql-reference/sql/drop-pipe) and create it with [CREATE PIPE](/sql-reference/sql/create-pipe). Start from the statement that `GET_DDL` returned in step 3, and change only what you need to, so that the new pipe keeps the same properties. If you leave out `AUTO_INGEST = TRUE`, the new pipe doesn’t load files from event notifications.
+
+   Also save anything that you need from the pipe’s load history now. After step 4, the [COPY\_HISTORY](/sql-reference/functions/copy_history) and [VALIDATE\_PIPE\_LOAD](/sql-reference/functions/validate_pipe_load) table functions don’t return results for the old pipe’s loads. For example, if error logging is turned on for the target table, list the files that the pipe skipped, as described in [List the skipped files](/user-guide/data-load-error-tables-reload#label-data-load-error-tables-list-skipped-files).
+4. Recreate the pipe with `CREATE OR REPLACE PIPE`, or drop it with [DROP PIPE](/sql-reference/sql/drop-pipe) and create it with [CREATE PIPE](/sql-reference/sql/create-pipe). Start from the statement that `GET_DDL` returned in step 3, and change only what you need to, so that the new pipe keeps the same properties. If you leave out `AUTO_INGEST = TRUE`, the new pipe doesn’t load files from event notifications. To record the rows that the new pipe rejects, turn on error logging for the target table before this step. To change the CHECK constraints on the target table, drop every pipe that loads the table instead of replacing it, as described in [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
 5. Pause the new pipe so that it doesn’t load files before you check its configuration. A new pipe starts running as soon as you create it, unless `PIPE_EXECUTION_PAUSED` is `TRUE` for its schema or account.
 
    Copy code
@@ -237,7 +241,9 @@ Complete the following steps:
    LIST @mydb.myschema.orders_stage/2026/10/02/;
    ```
 
-   To load a file that’s missing from the view, or to reload a file with the `Load failed` or `Partially loaded` status, follow [Reload a file that Snowpipe already processed](#label-snowpipe-manage-reload-files).
+   To load a file that’s missing from the view, or to reload a file with the `Load failed` or `Partially loaded` status, follow [Reload a file that Snowpipe already processed](#label-snowpipe-manage-reload-files). Load each file only once: if a file is in the list of skipped files that you saved in step 3, load it as described in [Load files skipped with ON\_ERROR = SKIP\_FILE](/user-guide/data-load-error-tables-reload#label-data-load-error-tables-reload-skip-file) instead.
+
+   If the old pipe used `ON_ERROR = CONTINUE` and error logging was turned on for the target table, load the rejected rows from the files with the `Load failed` or `Partially loaded` status from the error table instead of reloading the files, as described in [Insert rows rejected with ON\_ERROR = CONTINUE](/user-guide/data-load-error-tables-reload#label-data-load-error-tables-reload-continue). Reload such a file only if the `FIRST_ERROR_MESSAGE` column shows that Snowflake couldn’t read the file, such as an access denied error, and fix the problem first.
 
 ## Load historical or missed files
 
@@ -280,14 +286,16 @@ Complete the following steps. If event notifications are already configured for 
 
 ## Reload a file that Snowpipe already processed
 
-Snowpipe ignores any file whose path and name match a file in the pipe’s [load metadata](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-load-metadata), including files that failed to load. If you fix a file and stage it again with the same name within 14 days after Snowpipe processed the original file, Snowpipe ignores it.
+Snowpipe ignores any file whose path and name match a file in the pipe’s [load metadata](/user-guide/data-load-snowpipe-intro#label-snowpipe-intro-load-metadata), including files that failed to load. If you fix a file and stage it again with the same name within 14 days after Snowpipe processed the original file, Snowpipe ignores it. A recreated pipe has no load metadata for the files that the old pipe processed, so it loads a file that you stage again with the same name.
 
 Before you reload a file, check whether Snowpipe loaded any rows from the original file, either completely or partially (for example, because the pipe uses `ON_ERROR = CONTINUE`). If it did, delete those rows from the target table first, or the reload duplicates them. You can find the rows that came from a file only if the pipe loads `METADATA$FILENAME` into a column. For a pipe that uses `MATCH_BY_COLUMN_NAME`, such as `orders_pipe`, load the file name with the `INCLUDE_METADATA` copy option. Adding this column requires you to recreate the pipe, and it applies only to files that load afterward. For more information, see [Query metadata for staged files](/user-guide/querying-metadata).
 
-Then, to load the corrected or modified file, use one of the following options:
+If error logging is turned on for the target table and the pipe uses `ON_ERROR = CONTINUE`, the error table already contains the rows that the pipe rejected from the original file after error logging started recording errors. Load the corrected rows either from the error table or from the corrected file, not both, or they’re loaded twice. For more information, see [Insert rows rejected with ON\_ERROR = CONTINUE](/user-guide/data-load-error-tables-reload#label-data-load-error-tables-reload-continue).
+
+To load the corrected or modified file, use one of the following options:
 
 - **Stage the file under a new name.** Snowpipe treats a file with a new path or name as a new file and loads it. For example, add a version suffix such as `_v2` to the file name. This option doesn’t require a warehouse.
-- **Load the file with `COPY INTO`.** Bulk loads use separate load metadata, so `COPY INTO` loads the file even though the pipe already processed it. Use the same file format and copy options as the pipe’s `COPY INTO` statement, which you can see with `DESCRIBE PIPE`, and list only the files to load with the `FILES` parameter. The following example reloads one file into the target table of the `orders_pipe` pipe from the [overview](/user-guide/data-load-snowpipe-intro):
+- **Load the file with `COPY INTO`.** Bulk loads use separate load metadata, so `COPY INTO` loads the file even though the pipe already processed it. Use the same column list, transformations, file format options, and copy options as the pipe’s `COPY INTO` statement, which you can see with `DESCRIBE PIPE`, and list only the files to load with the `FILES` parameter. If you recreated the pipe, or if the pipe processed the original file more than 14 days ago, stage the corrected file in a path that no pipe loads from, and load it from there. If you stage it in the pipe’s path instead, the pipe has no load metadata for the file, so it also loads the file from its event notification, and the rows are loaded twice. The following example reloads one file into the target table of the `orders_pipe` pipe from the [overview](/user-guide/data-load-snowpipe-intro). The pipe processed the original file less than 14 days ago and wasn’t recreated, so the example loads the corrected file from the pipe’s path:
 
   Copy code
 
@@ -296,8 +304,11 @@ Then, to load the corrected or modified file, use one of the following options:
     FROM @mydb.myschema.orders_stage
     FILES = ('2026/10/02/orders_0001.json')
     FILE_FORMAT = (TYPE = 'JSON')
-    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE;
+    MATCH_BY_COLUMN_NAME = CASE_INSENSITIVE
+    ON_ERROR = SKIP_FILE;
   ```
+
+  The `orders_pipe` pipe uses the Snowpipe default, `SKIP_FILE`, so the example sets `ON_ERROR = SKIP_FILE` to match it. Without this option, `COPY INTO` uses `ABORT_STATEMENT`. If error logging is turned on for the target table, you can use `ON_ERROR = CONTINUE` instead to load the valid rows and record every rejected row, as described in [Load files skipped with ON\_ERROR = SKIP\_FILE](/user-guide/data-load-error-tables-reload#label-data-load-error-tables-reload-skip-file).
 
   `COPY INTO` runs on a warehouse, so it uses warehouse credits.
 - **Recreate the pipe.** Recreating a pipe drops the load metadata for every file, not just the file that you want to reload. Use this option only when you also need to change the pipe. For more information, see [Recreate a pipe safely](#label-snowpipe-manage-recreate-steps).

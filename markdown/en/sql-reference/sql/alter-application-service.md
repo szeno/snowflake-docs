@@ -2,7 +2,7 @@
 
 Modifies the configuration or lifecycle state of an existing
 [Application Service](/sql-reference/sql/create-application-service).
-You can suspend, resume, or upgrade the service, and you can set or unset
+You can suspend, resume, disable, enable, or upgrade the service, and you can set or unset
 properties.
 
 See also:
@@ -17,6 +17,8 @@ Copy code
 
 ```
 ALTER APPLICATION SERVICE [ IF EXISTS ] <name> { SUSPEND | RESUME }
+
+ALTER APPLICATION SERVICE [ IF EXISTS ] <name> { DISABLE | ENABLE }
 
 ALTER APPLICATION SERVICE [ IF EXISTS ] <name>
   UPGRADE [ TO VERSION <version_alias> ]
@@ -59,6 +61,25 @@ ALTER APPLICATION SERVICE [ IF EXISTS ] <name> UNSET
     service, Snowflake starts containers using the currently deployed package
     version.
 
+    `SUSPEND` and `RESUME` apply to a service on managed compute. A service on
+    managed compute runs until you suspend it.
+
+`{ DISABLE | ENABLE }`
+:   Disables or enables a service on serverless compute. No request can start a
+    disabled service. While disabled, the service keeps its Application Service
+    object, deployed package, configuration, privilege grants, and endpoint URL.
+    Enabling recreates the serverless runtime with the same endpoint.
+
+    [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
+
+    Available to all accounts.
+
+    You can’t upgrade, redeploy, or change the configuration of a disabled
+    service. Enable it first.
+
+    A serverless service that stopped after its `AUTO_SUSPEND_SECS` idle period
+    isn’t disabled: the next request starts it again.
+
 `UPGRADE [ TO VERSION version_alias ]`
 :   Upgrades the service to a different version of its package.
 
@@ -89,7 +110,7 @@ A [role](/user-guide/security-access-control-overview#label-access-control-overv
 
 | Privilege | Object | Notes |
 | --- | --- | --- |
-| OPERATE | Application Service | Required for `SUSPEND`, `RESUME`, `UPGRADE`, `SET`, and `UNSET`. |
+| OPERATE | Application Service | Required for `SUSPEND`, `RESUME`, `DISABLE`, `ENABLE`, `UPGRADE`, `SET`, and `UNSET`. |
 | READ | Artifact repository | Required for `UPGRADE` to resolve the target package version. |
 
 Expand
@@ -107,6 +128,8 @@ For general information about roles and privilege grants for performing SQL acti
 
 - An upgrade applies the new package version to the running service. Snowflake
   performs a rolling restart of the service containers using the new build.
+- Use `SUSPEND` and `RESUME` for a service on managed compute, and `DISABLE`
+  and `ENABLE` for a service on serverless compute.
 - Suspending a service doesn’t change the deployed package version. The
   service resumes on the same version.
 - If `RESUME` fails because the service’s runtime image is no longer allowed,
@@ -141,6 +164,15 @@ Copy code
 
 ```
 ALTER APPLICATION SERVICE my_app RESUME;
+```
+
+Disable a serverless service, then enable it again:
+
+Copy code
+
+```
+ALTER APPLICATION SERVICE my_app DISABLE;
+ALTER APPLICATION SERVICE my_app ENABLE;
 ```
 
 Upgrade a service that was created with an alias to the alias’s current target

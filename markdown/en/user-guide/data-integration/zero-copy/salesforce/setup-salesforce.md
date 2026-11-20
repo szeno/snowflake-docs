@@ -9,7 +9,6 @@ Complete these steps after the Snowflake administrator has created the Zerocopy 
 Before starting, ensure:
 
 - You have the **Data Cloud Architect** permission set in Salesforce.
-- Your Salesforce org is enabled for the Snowflake V2 pilot.
 - You have the **Enrollment ID** from your Snowflake administrator. This value is generated when the Zerocopy Connector is created in Snowflake and is available in Snowsight or via `SYSTEM$GET_ZEROCOPY_CONNECTOR_CONFIG`.
 
 Note

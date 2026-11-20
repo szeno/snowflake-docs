@@ -4,4 +4,4 @@ Snowflake Multi-Node ML Jobs are now available in preview. This feature enables 
 
 For more information, see:
 
-- [Snowflake Multi-Node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs)
+- [Snowflake multi-node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs)

@@ -131,6 +131,11 @@ Where:
   corresponding `target_col_name`. This rule applies even to rows that would be filtered out by the `condition` in the
   `WHEN` clause. The order of operations does not guarantee that the filter in the `WHEN` clause is applied before the value in
   `source_col_name` is evaluated for data type compatibility.
+- If error logging is turned on for a target table, a supported error in a row for that table, such as a NOT NULL or
+  CHECK constraint violation, doesn’t cause the statement to fail. Instead, the statement records the error in that
+  table’s error table and continues with the other rows. An error in a row for a target table that doesn’t have error
+  logging turned on fails the whole statement. For more information, see
+  [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
 
 ## Examples
 

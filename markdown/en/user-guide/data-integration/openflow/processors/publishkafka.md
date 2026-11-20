@@ -79,4 +79,4 @@ Show lessSee more
 
 ## See also
 
-- [com.snowflake.openflow.runtime.processors.kafka.ConsumeKafka](/user-guide/data-integration/openflow/processors/consumekafka)
+- [org.apache.nifi.kafka.processors.ConsumeKafka](/user-guide/data-integration/openflow/processors/consumekafka)

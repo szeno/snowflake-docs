@@ -102,7 +102,7 @@ You must specify an email address that is associated with the Snowflake account.
 1. In the **Email Frequency** field, select how often you would like to receive alerts:
 
 - **Immediately** - you will receive notifications according to the values set in table synchronization.
-- **Once per day** - you will receive notifications once a day at 12PM UTC.
+- **Once per day** - you will receive notifications once a day at 12 PM UTC.
 
 Note
 
@@ -154,7 +154,7 @@ CALL UPDATE_WAREHOUSE('<new_warehouse_name>');
 
 ## Re-authentication of the connector
 
-In order to change the secret, external access integration or the security integration used by the connector without re-installation,
+To change the secret, external access integration or the security integration used by the connector without re-installation,
 you need to execute the `UPDATE_CONNECTION` procedure defined in the `PUBLIC` schema.
 Ensure that all of the new objects are defined as described in [Configuring the Snowflake Connector for Google Analytics Raw Data using SQL](/connectors/google/gard/gard-connector-configuring-sql) and that the connector has all of the required grants.
 
@@ -180,7 +180,7 @@ After the installation it will synchronize itself with the replicated sink datab
 
 Note
 
-In order to prevent data corruption, you can’t have two connector instances, one on a primary account and one on a replica account
+To prevent data corruption, you can’t have two connector instances, one on a primary account and one on a replica account
 ingesting data to the sink database at the same time.
 
 When a deployment outage occurs and your sink database fails over to a replica account, perform the following steps:

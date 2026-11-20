@@ -4,6 +4,7 @@ The Snowflake Model Registry supports the following built-in model types:
 
 - [Snowpark ML Modeling](/developer-guide/snowflake-ml/model-registry/built-in-models/snowpark-ml)
 - [scikit-learn](/developer-guide/snowflake-ml/model-registry/built-in-models/scikit-learn)
+- [TabICL](/developer-guide/snowflake-ml/model-registry/built-in-models/tabicl)
 - [XGBoost](/developer-guide/snowflake-ml/model-registry/built-in-models/xgboost)
 - [LightGBM](/developer-guide/snowflake-ml/model-registry/built-in-models/lightgbm)
 - [Prophet](/developer-guide/snowflake-ml/model-registry/built-in-models/prophet)

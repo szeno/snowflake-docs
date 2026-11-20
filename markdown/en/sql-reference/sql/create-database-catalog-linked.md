@@ -219,9 +219,7 @@ For general information about roles and privilege grants for performing SQL acti
 - For Iceberg tables in a catalog-linked database:
 
   - Snowflake bidirectionally syncs table and column descriptions between the remote catalog and Snowflake. Sync can
-    update a description to a new value, but never replaces a non-empty description with an empty one. Other remote catalog
-    table properties, such as retention policies or buffers, aren’t copied, and altering table properties isn’t currently
-    supported.
+    update a description to a new value, but never replaces a non-empty description with an empty one.
   - [Automated refresh](/user-guide/tables-iceberg-auto-refresh) is enabled by default. If the `table-uuid` of an external table
     and the catalog-linked database table don’t match, refresh fails and Snowflake drops the table from the catalog-linked database; Snowflake doesn’t change the remote table.
   - If you drop a table from the remote catalog, Snowflake drops the table from the catalog-linked database.

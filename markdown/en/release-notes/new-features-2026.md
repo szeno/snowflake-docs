@@ -285,6 +285,12 @@ For more recent releases and feature updates, see [Snowflake server release note
 
 ## Feature updates earlier in 2026
 
+- [Nov 20, 2026: AUTO refresh mode for dynamic tables resolves to ADAPTIVE](/release-notes/2026/other/2026-11-20-dynamic-tables-auto-resolves-to-adaptive)
+- [Nov 19, 2026: AI Governance (Preview)](/release-notes/2026/other/2026-11-19-ai-governance-preview)
+- [Nov 19, 2026: Code Bundles (General availability)](/release-notes/2026/other/2026-11-19-code-bundles-ga)
+- [Nov 19, 2026: Error logging and CHECK constraint enforcement for COPY INTO and Snowpipe (General availability)](/release-notes/2026/other/2026-11-19-copy-snowpipe-error-logging-check-constraints-ga)
+- [Nov 19, 2026: Snowflake Data Clean Rooms updates](/release-notes/2026/other/2026-11-19-dcr)
+- [Nov 19, 2026: Snowflake App Runtime serverless compute and Workspaces development (Preview)](/release-notes/2026/other/2026-11-19-snowflake-app-runtime-serverless-workspaces-preview)
 - [Nov 18, 2026: AI\_EXTRACT citations (Preview)](/release-notes/2026/other/2026-11-18-ai-extract-citations)
 - [Nov 18, 2026: Cortex Agent SDK (General availability)](/release-notes/2026/other/2026-11-18-cortex-agent-sdk-ga)
 - [Nov 18, 2026: Prompt caching for Cortex AI Functions](/release-notes/2026/other/2026-11-18-cortex-prompt-caching)
@@ -293,9 +299,11 @@ For more recent releases and feature updates, see [Snowflake server release note
 - [Nov 18, 2026: Spark Monitoring UI (General availability)](/release-notes/2026/other/2026-11-18-spark-monitoring-ui-ga)
 - [Nov 18, 2026: Schema detection and evolution for structured types (General availability)](/release-notes/2026/other/2026-11-18-structured-type-inference)
 - [Nov 17, 2026: CoCo Desktop v2.0.0](/release-notes/2026/other/2026-11-17-coco-desktop-v2-0-0)
+- [Nov 17, 2026: Data governance policy inheritance for Cortex Search (Public Preview)](/release-notes/2026/other/2026-11-17-cortex-search-data-governance-inheritance-preview)
 - [Nov 16, 2026: AI\_COMPLETE adds support for Twelve Labs Pegasus 1.5 (General availability)](/release-notes/2026/other/2026-11-16-ai-complete-pegasus-1-5-preview)
 - [Nov 16, 2026: Cortex AI Function Optimization for more efficient AI implementations (General availability)](/release-notes/2026/other/2026-11-16-ai-function-optimization-ga)
 - [Nov 16, 2026: Create, evaluate, and optimize Cortex AI Functions with Cortex AI Function Studio (General availability)](/release-notes/2026/other/2026-11-16-cortex-ai-function-studio-ga)
+- [Nov 16, 2026: Iceberg table properties in SQL (General availability)](/release-notes/2026/other/2026-11-16-iceberg-table-properties-ga)
 - [Nov 16, 2026: Openflow Snowflake Deployments in Azure government regions (General availability)](/release-notes/2026/other/2026-11-16-openflow-snowflake-deployments-azure-gov-ga)
 - [Nov 16, 2026: SCIM provisioning for organization users and organization user groups (Private preview)](/release-notes/2026/other/2026-11-16-organization-scim-private-preview)
 - [Nov 16, 2026: SHOW GRANTS TO … INCLUDE HIERARCHY (General availability)](/release-notes/2026/other/2026-11-16-show-grants-include-hierarchy)

@@ -101,7 +101,7 @@ AS
 
 Note
 
-If you omit REFRESH\_MODE, it defaults to AUTO and Snowflake selects incremental or full refresh
+If you omit REFRESH\_MODE, it defaults to AUTO and Snowflake selects ADAPTIVE or full refresh
 at creation time. This tutorial sets REFRESH\_MODE = INCREMENTAL explicitly so the refresh mode is
 deterministic across recreations. For details on how each mode works, see
 [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).

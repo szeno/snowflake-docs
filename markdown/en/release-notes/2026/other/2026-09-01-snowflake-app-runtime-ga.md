@@ -17,11 +17,11 @@ This release includes the following capabilities:
   [targets](/developer-guide/snowflake-app-runtime/deploy-targets) and
   [personal databases](/user-guide/personal-databases).
 - Querying Snowflake as the service or as the signed-in user. See
-  [Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake).
+  [Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake).
 - SQL commands for Application Services and artifact repositories. See
-  [Snowflake Apps SQL commands](/sql-reference/commands-snowflake-apps).
+  [Snowflake App Runtime SQL commands](/sql-reference/commands-snowflake-apps).
 - Sharing, privileges, and account administrator setup. See
-  [Access control for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/access-control) and
+  [Share a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/access-control) and
   [Account administrator setup for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/account-admin-setup).
 
 Snowflake App Runtime is available in Amazon Web Services (AWS), Microsoft Azure,

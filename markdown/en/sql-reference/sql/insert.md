@@ -193,6 +193,9 @@ INSERT OVERWRITE INTO <target_table> [ AS <target_alias> ]
   [COPY INTO <table>](/sql-reference/sql/copy-into-table) command to perform a bulk data load. For more information
   about using the VALUES clause in a SELECT statement, see [VALUES](/sql-reference/constructs/values).
 - For information about inserting data into hybrid tables, see [Loading data](/user-guide/tables-hybrid-create#label-create-loading-data).
+- If error logging is turned on for the target table, a supported error, such as a NOT NULL or CHECK constraint
+  violation, doesn’t cause the statement to fail. Instead, the statement records the error in the table’s error table
+  and continues with the other rows. For more information, see [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
 
 ## Examples
 

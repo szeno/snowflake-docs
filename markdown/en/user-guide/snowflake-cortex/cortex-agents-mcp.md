@@ -487,6 +487,64 @@ CREATE MCP SERVER my_mcp_server
   $$;
 ```
 
+### Serve every agent the caller can use
+
+Use `selection: "all"` to let the MCP client choose from every agent the user can access, up to 50 per user. New agents appear as soon as you grant USAGE on them, with no change to the server. Because grants alone decide which agents each user sees, grant USAGE on an agent only to the roles that should use it from MCP clients. To choose which agents are offered, or to write their tool names and descriptions, list them in `tools` instead.
+
+To serve every Cortex Agent that the caller’s role can use, without listing each agent in `tools`, add a `tool_config` entry to the specification:
+
+Copy code
+
+```
+CREATE OR REPLACE MCP SERVER <database_name>.<schema_name>.<server_name>
+  FROM SPECIFICATION $$
+  tool_config:
+    - type: "CORTEX_AGENT_RUN"
+      selection: "all"
+  $$;
+```
+
+On each `tools/list` request, Snowflake generates one `CORTEX_AGENT_RUN` tool for each active Cortex Agent in the account that the caller’s role has the USAGE privilege on. Temporary agents aren’t included. Snowflake checks privileges again on every request, so a granted or revoked agent shows up on the client’s next `tools/list` request.
+
+Each generated tool is built from the agent:
+
+- **Name:** `sf_` followed by the lowercase database, schema, and agent names, separated by hyphens. For example, the agent `PROD_DB.AGENTS.SALES_AGENT` becomes `sf_prod_db-agents-sales_agent`.
+- **Title:** The display name from the agent’s profile, followed by the database and schema, for example `Sales Bot (PROD_DB.AGENTS)`. If the agent has no display name, the title is the agent name.
+- **Description:** The agent’s comment, followed by a line with the agent’s fully qualified name.
+- **Arguments:** The same arguments as an explicit agent tool. See [Call an agent tool](#label-cortex-mcp-agent-tools).
+
+Snowflake skips an agent in these cases:
+
+- The database, schema, or agent name must be enclosed in double quotes, or contains `$`.
+- The generated name would be longer than 64 characters.
+- An explicit tool in `tools` already runs the agent, or already uses the generated name.
+
+To serve a skipped agent, add it to `tools` as an explicit `CORTEX_AGENT_RUN` tool. Explicit tools are listed before generated tools. If the specification has a `tool_config` entry, explicit tool names can’t start with `sf_`.
+
+A server lists at most 50 generated tools for a caller, and explicit tools don’t count toward this limit. To find agents, Snowflake examines at most 1,000 agents per request. A client can still call a generated tool by name when the agent didn’t fit in the list. The `instructions` that the server returns from `initialize` and `server/discover` tell the client about the limit and the skipped agents.
+
+If the caller’s role can’t use the agent, or the agent doesn’t exist, a call to a generated tool name returns `Unknown tool: <name>`.
+
+**Help the client pick the right agent.** The client chooses an agent based on each tool’s name and description. If a user can access several agents that cover similar topics, the client might not always pick the best one. To help it choose, give each agent a clear comment, or list a smaller set as explicit `CORTEX_AGENT_RUN` tools with your own names and descriptions.
+
+**Set a comment on each agent.** The generated description is the agent’s comment, followed by the line `Snowflake Cortex Agent: <fully qualified name>`. An agent without a comment has only that line, which doesn’t tell the client what the agent is for. In the comment, say what the agent answers, what data it covers, and when not to use it. Snowflake truncates a comment that is too long, so put the most important information first. The display name in the agent’s profile sets the title, not the description, so it doesn’t replace the comment.
+
+For example, the agent `SALES_DB.AGENTS.REVENUE_AGENT` has this comment:
+
+```
+Answers questions about quarterly revenue, bookings, and pipeline by region. Don't use it for support tickets or product usage.
+```
+
+The client receives this description:
+
+```
+Answers questions about quarterly revenue, bookings, and pipeline by region. Don't use it for support tickets or product usage.
+
+Snowflake Cortex Agent: SALES_DB.AGENTS.REVENUE_AGENT
+```
+
+For an MCP server in a Snowflake Native App, Snowflake generates tools only for agents that have the same owner as the MCP server. See [Use Cortex Agents and MCP servers in an app](/developer-guide/native-apps/agents-mcp-servers).
+
 ### Manage MCP server objects
 
 After you create an MCP server, use the following commands to inspect or remove it:
@@ -1302,7 +1360,7 @@ If a CEL expression fails to evaluate, the result contains the outline and the e
 
 ### Cortex Agent supplementary tools
 
-If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, Snowflake automatically adds these tools to `tools/list`. Snowflake adds exactly these three tools once per server, regardless of how many agent tools the server has. They don’t appear in `DESCRIBE MCP SERVER` or `GET_DDL` output, and they don’t count toward the [maximum of 50 tools per MCP server](#label-cortex-mcp-limitations).
+If the server specification includes at least one `CORTEX_AGENT_RUN` or `CODING_AGENT` tool, or `tools/list` returns at least one [generated agent tool](#label-cortex-mcp-agent-selection-all), Snowflake automatically adds these tools to `tools/list`. Snowflake adds exactly these three tools once per server, regardless of how many agent tools the server has. They don’t appear in `DESCRIBE MCP SERVER` or `GET_DDL` output, and they don’t count toward the [maximum of 50 tools per MCP server](#label-cortex-mcp-limitations).
 
 | Tool | Purpose |
 | --- | --- |
@@ -1378,7 +1436,7 @@ The Snowflake-managed MCP server supports the MCP lifecycle (`initialize` with p
 
 A `tools/call` request times out after 15 minutes. For agent runs that might take longer, call the agent tool with [`background` set to `true`](#label-cortex-mcp-background-agent-run).
 
-Each MCP server supports a maximum of 50 tools. This limit includes all tool types: Cortex Search, Cortex Analyst, Cortex Agents, coding agents, SQL execution, and custom (generic) tools. If you need more tools, create additional MCP servers. Higher tool counts can degrade tool-selection accuracy.
+Each MCP server supports a maximum of 50 tools. This limit includes all tool types: Cortex Search, Cortex Analyst, Cortex Agents, coding agents, SQL execution, and custom (generic) tools. If you need more tools, create additional MCP servers. Higher tool counts can degrade tool-selection accuracy. Tools generated from `tool_config` don’t count toward this limit. They have their own limit of 50 per caller. See [Serve every agent the caller can use](#label-cortex-mcp-agent-selection-all).
 
 Tool responses are subject to size limits to prevent LLM context window saturation:
 

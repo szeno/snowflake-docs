@@ -249,7 +249,9 @@ The following considerations and limitations apply to Iceberg tables, and are su
 >     [DELETE](/sql-reference/sql/delete) statements.
 >   - Using the `history.expire.min-snapshots-to-keep`
 >     [table property](https://iceberg.apache.org/docs/1.2.1/configuration/#table-behavior-properties)
->     to specify the default minimum number of snapshots to keep. For more information, see [Metadata and snapshots](#label-tables-iceberg-snapshots).
+>     to specify the default minimum number of snapshots Snowflake keeps. You can store the property
+>     with [Iceberg table properties](/user-guide/tables-iceberg-table-properties). Snowflake doesn’t use it when expiring
+>     snapshots. For more information, see [Metadata and snapshots](#label-tables-iceberg-snapshots).
 > - Iceberg partitioning with the `bucket` transform function impacts performance for queries that use conditional clauses
 >   to filter results.
 > - For Iceberg tables that aren’t managed by Snowflake, be aware of the following:
@@ -386,9 +388,7 @@ The following considerations and limitations apply to Iceberg tables, and are su
 > - For Iceberg tables in a catalog-linked database:
 >
 >   - Snowflake bidirectionally syncs table and column descriptions between the remote catalog and Snowflake. Sync can
->     update a description to a new value, but never replaces a non-empty description with an empty one. Other remote catalog
->     table properties, such as retention policies or buffers, aren’t copied, and altering table properties isn’t currently
->     supported.
+>     update a description to a new value, but never replaces a non-empty description with an empty one.
 >   - [Automated refresh](/user-guide/tables-iceberg-auto-refresh) is enabled by default. If the `table-uuid` of an external table
 >     and the catalog-linked database table don’t match, refresh fails and Snowflake drops the table from the catalog-linked database; Snowflake doesn’t change the remote table.
 >   - If you drop a table from the remote catalog, Snowflake drops the table from the catalog-linked database.

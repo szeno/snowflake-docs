@@ -178,6 +178,7 @@ The command output provides table properties and metadata in the following colum
 | `is_iceberg` | `Y` if the table is an [Apache Iceberg™ table](/user-guide/tables-iceberg); `N` otherwise. |
 | `is_immutable` | `Y` if the table was created with the [READ ONLY](/sql-reference/sql/create-table#label-create-table-read-only) property; `N` otherwise. |
 | `is_interactive` | `Y` if the table is an [interactive table](/user-guide/interactive); `N` otherwise. |
+| `error_logging` | `ON` if [error logging](/user-guide/data-engineering/error-logging) is turned on for the table; `OFF` otherwise. |
 
 Expand
 

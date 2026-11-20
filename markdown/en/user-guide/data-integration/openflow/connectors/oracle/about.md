@@ -564,11 +564,17 @@ For supplemental logging requirements for logical keys, see
 
 ### Oversized values
 
-By default, the connector replicates individual values up to **16 MB**. When the connector encounters a larger value, it marks the associated table as permanently failed and stops replicating it. To change how the connector handles oversized values (for example, to replace them with `NULL` instead), modify the **Oversized Value Strategy** destination parameter.
+By default, the connector replicates individual values up to **16 MB**. The **Oversized Value Strategy** destination parameter determines how the connector handles larger values:
 
-If your Snowflake account has the `ENABLE_OPENFLOW_CDC_ORACLE_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
+- **Fail Table**: The connector marks the table as permanently failed and stops replicating it. This is the default for gen 1 connectors.
+- **Set Null**: The connector replaces the oversized value with `NULL` and continues replicating the rest of the row. This is the default in the gen 2 **Destination details** step.
+- **Prune Row**: The connector follows the Snowpipe Streaming limits for data types and rows instead of its own per-value limit. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned. Requires Runtime Extensions version `2026.11.17.2` or later.
 
-For details and instructions on enabling the 128 MB per-value limit, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-increase-oversized-value-limit).
+If you want to replicate large values, select **Prune Row**. If you raised the per-value limit and use **Set Null** so that large values keep replicating, switch to **Prune Row** instead.
+
+For details about how values are pruned, see the **Oversized Value Strategy** parameter in [Snowflake Destination Parameters](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-snowflake-destination-parameters).
+
+With **Fail Table** and **Set Null**, if your Snowflake account has the `ENABLE_OPENFLOW_CDC_ORACLE_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**. For details, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/oracle/maintenance#label-of-oracle-increase-oversized-value-limit).
 
 ### Error handling for invalid rows
 

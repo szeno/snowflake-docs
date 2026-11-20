@@ -24,7 +24,7 @@ Use this connector if you’re looking to do the following:
 - Ingest real-time events from Amazon Kinesis into Snowflake for near real-time analytics
 - Ingest real-time events from Amazon Kinesis into Snowflake-managed Iceberg™ tables
 - Accelerate your ingestion even more by combining Openflow speed with the Interactive Tables feature
-- Use Single Message Transforms to enrich or filter data before it lands in Snowflake.
+- Use Single Message Transforms to enrich or filter data before it lands in Snowflake
 
 ## Limitations
 

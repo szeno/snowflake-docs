@@ -30,10 +30,10 @@ The add-on is part of Snowflake CoCo. For an overview of the other CoCo experien
 - **Explore your data without SQL:** Browse the databases, schemas, tables, and
   [semantic views](/user-guide/views-semantic/overview) your role can access, or describe what you are looking for,
   and CoCo finds the matching objects and pulls the data into your sheet. Enter `/catalog` in the pane to browse the
-  catalog and pick columns.
-- **Build pivots, charts, and formulas:** Ask CoCo to pivot a result set, add or change a chart, or construct a
-  formula, and CoCo creates the corresponding Google Sheets objects so you can keep working in familiar spreadsheet
-  tools.
+  catalog and pick columns. See [Browse the catalog](#label-cortex-code-sheets-catalog).
+- **Build pivots, charts, and formulas:** Ask CoCo in chat to pivot a result set, add or change a chart, or construct a
+  formula, and CoCo creates the corresponding native Google Sheets pivot tables, charts, and formulas so you can keep
+  working in familiar spreadsheet tools.
 - **Format and organize your sheets:** Ask CoCo to format cells, add conditional formatting or data validation rules,
   sort a range, find and replace text, fill a series, create named ranges, insert or delete rows and columns, and add
   or manage sheets.
@@ -42,8 +42,13 @@ The add-on is part of Snowflake CoCo. For an overview of the other CoCo experien
   consistent across users and reports.
 - **Intelligently refresh data:** Re-run the queries to get the latest data on demand, and review the new results
   before they’re applied. See [Intelligent refresh](#label-cortex-code-sheets-refresh).
-- **Run CoCo skills:** Use skills such as report generation, analysis, and summaries from inside the spreadsheet.
-  Enter `/` in the pane to see and select the available skills.
+- **Run commands and CoCo skills:** Enter `/` in the pane to see the built-in commands `/catalog`, `/feedback`, and
+  `/refresh`, followed by the available skills. Use skills such as report generation, analysis, and summaries from
+  inside the spreadsheet.
+- **Use MCP connectors:** Let CoCo use the external MCP servers you’ve connected to Snowflake, and choose which ones
+  it uses in your chats. See [Use MCP connectors](#label-cortex-code-sheets-mcp).
+- **Attach files:** Add images, PDFs, SQL scripts, and other files to a message so CoCo can read them. See
+  [Attach files](#label-cortex-code-sheets-attachments).
 - **Preview before every change:** See a clear before-and-after of every write and accept or reject it before it is
   applied. See [Review changes and track sources](#label-cortex-code-sheets-review).
 - **Trace every written cell:** Follow the citation attached to each value back to the query or metric that produced
@@ -187,6 +192,17 @@ Show lessSee more
 5. Return to the pane, paste the code in **Paste your sign-in code** or select **Paste**, and then select
    **Finish sign-in**.
 
+### Suggestions and queued messages
+
+After CoCo answers, it can suggest up to three follow-up requests under the latest answer. One suggestion shows at a
+time; select **See more** to show the rest. Select a suggestion to send it.
+
+You can keep typing while CoCo works on a request. When you press Enter during a running request, CoCo queues your
+message and runs it after the current request finishes. You can queue up to five messages. For each queued message,
+you can edit it, remove it, or drag it to change the order. To give CoCo your message during the current request
+instead, select **Send now** on the queued message. CoCo reads the message between steps without stopping its work.
+If CoCo doesn’t read the message in time, it runs the message as the next request.
+
 ## Review changes and track sources
 
 CoCo previews every change before it is written to your spreadsheet. When CoCo proposes a write, it shows a
@@ -250,6 +266,89 @@ Refresh has the following limits:
 - If a refresh stops partway, for example because you stop it or the connection to Snowflake is lost, the data can
   hold a mix of old and new rows. CoCo reports how many rows it wrote and doesn’t retry. Run the refresh again to
   finish it.
+
+## Browse the catalog
+
+Use `/catalog` to pick the data you want from the Snowflake catalog without writing SQL or describing it in chat. Enter
+`/catalog` in the pane, and the **Pull data** dialog opens over the pane. To close it without pulling data, select
+**Cancel** or the close button, or press Esc.
+
+[![The Pull data dialog opened from /catalog in the Google Sheets pane, with Database, Schema, and Table / View lists and Pull data and Cancel buttons.](/static/images/screens/cortex-code-sheets-catalog.png)](/static/images/screens/cortex-code-sheets-catalog.png)
+
+To pull data with `/catalog`, follow these steps:
+
+1. In the **Pull data** dialog, select a database, a schema, and a table, view, or semantic view. The list shows only
+   the objects your role can access.
+2. Choose the fields to pull:
+
+   - For a table or view, select columns under **Columns**. Use the search box to find columns, or use the select-all
+     toggle to select every column.
+   - For a semantic view, select **Add** under **Dimensions**, **Metrics**, or **Facts**. In the dialog that opens,
+     search for fields and select the ones you want. To select every field that the search shows, select
+     **Select all**. Fields that you already added are tagged **added** and can’t be selected again. When every field
+     is selected, the toggle changes to **Clear all**.
+3. Optionally, choose **Unique values** to return only distinct rows, or **All rows** to return every row.
+4. Optionally, add filters. The filter for a field depends on its type:
+
+   - Text and `BOOLEAN` fields: pick values from a list. If the list doesn’t show the value you want, search for it and
+     select the option to match rows that contain your text in Snowflake.
+   - `DATE` and `TIMESTAMP` fields: enter a **From** date and a **To** date.
+   - `TIME` fields: enter a **From** time and a **To** time.
+   - Numeric fields: enter a **Min** value and a **Max** value.
+   - Semantic view metrics: enter a **Min** value and a **Max** value for the metric’s total.
+   - `VARIANT`, `OBJECT`, `ARRAY`, `BINARY`, `GEOGRAPHY`, `GEOMETRY`, and `VECTOR` fields can’t be filtered.
+5. Select **Pull data**. The dialog closes, and CoCo runs the query in the chat and shows the results as a preview
+   that you accept or reject.
+
+In Google Sheets, CoCo writes the pulled data below the existing data on the active sheet. If the result has more rows
+than fit there, CoCo asks before it writes: “The query has N rows, which is more than can fit. Click Accept to import
+the first M, or Reject to import nothing.” Like other query results, pulled data goes into a named range whose name
+starts with `CocoTable_`, and CoCo saves its query so you can [refresh](#label-cortex-code-sheets-refresh) it later.
+
+The dialog remembers the database and schema you used last, so the next `/catalog` starts there. It forgets them when
+you sign out. It doesn’t remember the fields you picked.
+
+## Use MCP connectors
+
+CoCo can use the external MCP servers that you’ve connected to Snowflake, so it can work with tools and data outside
+Snowflake from the pane. To set up MCP servers and connect to them, see
+[MCP Connectors](/user-guide/cortex-code/cortex-code-snowsight/mcp-connectors). You can’t connect a server from the
+pane.
+
+To choose which connectors CoCo uses, in the pane header select **More** (…) > **Capabilities**, and then select
+**MCP Connectors**. The page lists each MCP server that you’re connected to, with its name and fully qualified name:
+
+- Each connected server has a switch that controls whether CoCo uses it in your chats. Servers are on by default, so a
+  server that you connect later starts on. Turn off a server to leave it out of your chats.
+- A server whose sign-in expired shows a **Needs reconnecting** badge. CoCo can’t use it until you reconnect it.
+
+[![The Capabilities page in the Google Sheets pane showing MCP Connectors, with a Refresh button and an on switch for each connected server.](/static/images/screens/cortex-code-capabilities-mcp-connectors.png)](/static/images/screens/cortex-code-capabilities-mcp-connectors.png)
+
+CoCo checks for your connectors when you open the pane, and loading them the first time can take a couple of minutes.
+To check again, select **Refresh**. If you have no connected MCP servers, the page shows “No connectors available”.
+
+To use a server, your active role needs the `USAGE` privilege on it, and you need to have signed in to the server.
+
+## Attach files
+
+You can attach files to a message so that CoCo can read them while it works on your request. To attach a file, in the
+message box select **Add context** (+) > **Upload files**. You can also paste a file or drag it into the message box.
+
+[![The CoCo message box in Google Sheets with an attached top_customers.sql file above the prompt, and the Add context button and model picker below it.](/static/images/screens/cortex-code-sheets-attachments.png)](/static/images/screens/cortex-code-sheets-attachments.png)
+
+You can attach the following kinds of files:
+
+- **Images:** Up to 20 images per message, each up to 5 MB.
+- **Documents:** CSV, JSON, text (`.txt`), SQL (`.sql`), YAML (`.yaml` or `.yml`), PDF, PowerPoint (`.pptx`), Excel
+  (`.xlsx`), Tableau (`.twb`, `.twbx`, `.tds`, or `.tdsx`), and Power BI (`.pbix` or `.pbit`) files, each up to 10 MB.
+  Word documents (`.docx`) and Markdown (`.md`) files aren’t supported.
+
+To attach documents, you must sign in with Snowflake OAuth and have a workspace selected. If you don’t have a workspace
+selected, you can attach only images, and the **Upload files** item reads “Attach images to your message”. CoCo
+uploads each document to your personal workspace so it can read the file. A message with a document attached must
+also include text.
+
+When you reopen a chat, its messages show your text but not the attached documents.
 
 ## Authentication and access control
 
@@ -350,16 +449,25 @@ The following limits come from Google Sheets:
   If the refreshed data fits only without the sheet’s trailing empty columns, CoCo deletes those columns when you
   accept the refresh. If the refreshed data doesn’t fit, CoCo doesn’t write it.
 
+CoCo also limits how many rows a query result can bring in. A single import or refresh writes at most 1,048,575 data
+rows. If a query returns more rows, CoCo writes only the first 1,048,575, and the preview says so: “The query has N
+rows. Only the first M are imported.” CoCo then applies the Google Sheets cell limit check to the rows it imports.
+
 The following Snowflake CoCo for Microsoft Excel features aren’t available in Google Sheets:
 
 - `CORTEX` functions in cells, such as `=CORTEX.ASK()`.
+- [Live pivots](/user-guide/cortex-code/cortex-code-excel-integration#label-cortex-code-excel-live-pivot) and the
+  `/pivot` command. CoCo computes live pivots in Snowflake and redraws them when you change the layout. In Google
+  Sheets, `/pivot` doesn’t appear in the `/` menu. To pivot data in Google Sheets, ask CoCo in chat to create a Google
+  Sheets pivot table.
 - [Refresh when the workbook opens](/user-guide/cortex-code/cortex-code-excel-integration#label-cortex-code-excel-refresh-on-open).
   In Google Sheets, CoCo refreshes data only when you start a refresh. See
   [Intelligent refresh](#label-cortex-code-sheets-refresh).
 
 ## Feedback
 
-To report a bug or send feedback to Snowflake, enter `/feedback` in the pane.
+To report a bug or send feedback to Snowflake, enter `/feedback` in the pane. The **Send feedback** dialog opens,
+where you choose the type of feedback, describe it, and optionally attach images. Then select **Send**.
 
 ## Cost
 

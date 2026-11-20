@@ -67,6 +67,7 @@ For specific syntax, usage notes, and examples, see:
 > - [DESCRIBE MODEL MONITOR](/sql-reference/sql/desc-model-monitor)
 > - [DESCRIBE NETWORK RULE](/sql-reference/sql/desc-network-rule)
 > - [DESCRIBE NOTEBOOK](/sql-reference/sql/desc-notebook)
+> - [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle)
 > - [DESCRIBE ONLINE FEATURE TABLE](/sql-reference/sql/desc-online-feature-table)
 > - [DESCRIBE PACKAGES POLICY](/sql-reference/sql/desc-packages-policy)
 > - [DESCRIBE PASSWORD POLICY](/sql-reference/sql/desc-password-policy)

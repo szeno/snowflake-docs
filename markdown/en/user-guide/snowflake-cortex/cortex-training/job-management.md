@@ -96,18 +96,22 @@ Copy code
 | Field | Meaning |
 | --- | --- |
 | `has_reservation` | Whether the account has a configured GPU reservation. |
-| `max_total_gpus` | The account’s GPU limit. `-1` means no limit. |
+| `max_total_gpus` | The account’s GPU limit. |
 | `reserved_gpus` | Total GPUs reserved for the account. Deprecated: use `max_total_gpus` with `has_reservation` instead. |
 | `in_use_gpus` | GPUs held by the account’s jobs that are placing, initializing, or running. |
 | `pending_gpus` | GPUs requested by jobs that are still waiting for capacity. These count against the limit and reduce `available_gpus`. |
-| `available_gpus` | GPUs a new job could start with now. |
+| `available_gpus` | GPUs a new job could start with now: `max_total_gpus` minus `in_use_gpus` and `pending_gpus`. With a reservation, also limited by the reserved GPUs that are available now. |
 
 Expand
 
 Show lessSee more
 
-When `available_gpus` is `0`, you can still submit a job within the limit. The job is queued
-until capacity frees up. If a job stays in `PENDING`, check capacity together with the job details.
+Without a reservation, `available_gpus` is the part of your limit that’s not in use or pending. When
+it’s `0`, a new job that needs GPUs would exceed the limit, so it’s rejected.
+
+With a reservation, `available_gpus` can be lower than that when some of your reserved GPUs aren’t
+available. You can still submit a job within the limit. The job is queued until capacity frees up.
+If a job stays in `PENDING`, check capacity together with the job details.
 
 ## List jobs
 

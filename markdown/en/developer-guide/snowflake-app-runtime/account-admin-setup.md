@@ -1,4 +1,4 @@
-# Account administrator setup for Snowflake App Runtime
+# Account administrator setup
 
 We recommend that an account administrator complete Snowsight **App Development
 Setup** once per account. Setup sets account-level defaults for where apps deploy
@@ -9,7 +9,7 @@ warehouse, so your team’s apps land in a shared database from the start.
 Setup configures **deploy destination** defaults. It does not change where the
 build job runs, how artifact repositories are provisioned, or default build
 egress. See
-[Deploying with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy).
+[Deploy an app](/developer-guide/snowflake-app-runtime/deploy).
 
 Until an administrator completes setup,
 [`snow app setup`](/developer-guide/snowflake-cli/command-reference/snowflake-app-runtime-commands/setup)
@@ -144,9 +144,7 @@ For details about feature policy syntax and lifecycle, see
 [ALTER FEATURE POLICY](/sql-reference/sql/alter-feature-policy), and
 [ALTER ACCOUNT](/sql-reference/sql/alter-account).
 
-## See also
+## Next steps
 
-- [Snowflake App Runtime privileges](/developer-guide/snowflake-app-runtime/privileges): privileges for deploy, sharing, and operations
-- [Access control for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/access-control): grant `USAGE`, `OPERATE`, and `MONITOR` on deployed apps
-- [Securing Snowflake App Runtime applications](/developer-guide/snowflake-app-runtime/security): caller grant restrictions, feature policies, and external access controls
-- [Snowflake App Runtime limitations](/developer-guide/snowflake-app-runtime/limitations): known limits
+- Share deployed apps with other roles: [Share an app](/developer-guide/snowflake-app-runtime/access-control).
+- Review caller grant restrictions, feature policies, and external access controls: [Securing Snowflake App Runtime applications](/developer-guide/snowflake-app-runtime/security).

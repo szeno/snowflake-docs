@@ -86,6 +86,12 @@ If the failure was caused by an issue in the source table such as a missing prim
 
 By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. If your Snowflake account has the `ENABLE_OPENFLOW_CDC_ORACLE_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
 
+Tip
+
+To replicate large values, set **Oversized Value Strategy** to **Prune Row** instead of raising the per-value limit. **Prune Row** follows the Snowpipe Streaming limits for data types and rows and doesn’t use the per-value limit. If you raised the per-value limit and use **Set Null**, switch to **Prune Row**. For details, see [Oversized values](/user-guide/data-integration/openflow/connectors/oracle/about#label-oracle-oversized-values).
+
+The rest of this section applies to the **Fail Table** and **Set Null** strategies.
+
 Important
 
 The 128 MB limit applies in two ways: it’s both the maximum size of a single value and the maximum total size of a row. The connector adds metadata columns to every replicated row (`_SNOWFLAKE_UPDATED_AT`, `_SNOWFLAKE_INSERTED_AT`, `_SNOWFLAKE_DELETED`) that count toward the per-row limit, along with all other columns in the row. As a result, a single value can’t reach the full 128 MB in practice when the row includes other data.
@@ -94,7 +100,7 @@ The increased limit doesn’t apply equally to all column types.
 
 Note
 
-In Snowflake, the maximum size for `BINARY` is **64 MB** (`BINARY(67108864)`), even when the increased size limits are enabled. Only `VARCHAR`, `VARIANT`, `ARRAY` and `OBJECT` columns can hold up to 128 MB.
+In Snowflake, the maximum size for `BINARY` is **64 MB** (`BINARY(67108864)`), even when the increased size limits are enabled. Only `VARCHAR`, `VARIANT`, `ARRAY`, and `OBJECT` columns can hold up to 128 MB.
 
 ### Check whether the 128 MB limit is available
 
@@ -143,7 +149,7 @@ To migrate a table:
 
 Raising the per-value limit increases the amount of data that the connector loads into memory and moves through the flow, which raises the load on both the runtime and the warehouse. Size the runtime and warehouse accordingly.
 
-When **Oversized Value Strategy** is set to **Set Null**, the connector still loads each oversized value into memory before it can replace it with `NULL`. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
+When **Oversized Value Strategy** is set to **Set Null** or **Prune Row**, the connector still loads each oversized value into memory before it can replace it with `NULL` or prune it. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
 
 During both snapshot and incremental replication, the queue in front of the **Upload Rows via Snowpipe Streaming 2** processor can fill with FlowFiles and trigger back pressure, which consumes a large amount of runtime disk space. For larger tables, use a Large runtime to provide additional storage. For guidance on choosing a size, see [Runtime sizing](/user-guide/data-integration/openflow/connectors/oracle/setup-connector#label-oracle-runtime-sizing).
 
@@ -151,13 +157,13 @@ During both snapshot and incremental replication, the queue in front of the **Up
 
 Large LOB values can substantially increase snapshot runtime memory and disk use, because **Fetch Rows by ROWID Range** reads full row payloads (including LOBs) into the runtime before emitting FlowFiles.
 
-The **Split Table into Chunks** processor sizes ROWID ranges from table heap blocks. Because LOBs are stored in separate segments, their size is not included in that calculation. When non-LOB column data is small compared with LOB payloads, a single chunk can still require **Fetch Rows by ROWID Range** to read multi-gigabytes of data. Output FlowFiles for that chunk are not passed downstream until the JDBC fetch for the entire ROWID range completes, so later processors may not receive data for a long time.
+The **Split Table into Chunks** processor sizes ROWID ranges from table heap blocks. Because LOBs are stored in separate segments, their size is not included in that calculation. When non-LOB column data is small compared with LOB payloads, a single chunk can still require **Fetch Rows by ROWID Range** to read multiple gigabytes of data. Output FlowFiles for that chunk are not passed downstream until the JDBC fetch for the entire ROWID range completes, so later processors may not receive data for a long time.
 
 #### Incremental replication
 
 When the source produces frequent changes to rows that contain large values, you might need a Large warehouse. High-frequency merges of many moderately large rows (for example, many 8 MB values) can require a large single merge operation, and smaller warehouses can run out of memory. By contrast, fewer very large rows (for example, 128 MB values) are streamed file by file through the **Upload Rows via Snowpipe Streaming 2** processor, and each file is merged incrementally, which typically completes without warehouse errors even on smaller warehouses.
 
-During incremental CDC, **Read Oracle CDC Stream** materializes each changed row in memory before it is processed. This applies even when **Oversized Value Strategy** is set to **Set Null**: the connector must load the full row, including all LOB columns, before it can replace oversized values with `NULL`. If a single row contains multiple multi-gigabyte LOB columns, the total in-memory size can exceed the runtime heap and cause an out-of-memory error. Exclude such columns from replication before you rely on incremental CDC.
+During incremental CDC, **Read Oracle CDC Stream** materializes each changed row in memory before it is processed. This applies even when **Oversized Value Strategy** is set to **Set Null** or **Prune Row**: the connector must load the full row, including all LOB columns, before it can replace oversized values with `NULL` or prune them. If a single row contains multiple multi-gigabyte LOB columns, the total in-memory size can exceed the runtime heap and cause an out-of-memory error. Exclude such columns from replication before you rely on incremental CDC.
 
 ## Enable error logging on an existing schema
 

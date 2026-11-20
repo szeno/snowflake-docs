@@ -134,7 +134,7 @@ The connector replicates tables in the following stages:
    [Snapshot of partitioned tables](#label-sql-server-partitioned-snapshot).
 3. Incremental load: The connector tracks changes in the source table and applies those changes to the
    destination table. This process continues until the table is removed from replication. Failure at this
-   stage permanently stops replication of the source table, until the issue is resolved.
+   stage permanently stops replication of the source table until the issue is resolved.
 
 For information on bypassing snapshot load and using the incremental load process, see [Incremental replication](/user-guide/data-integration/openflow/connectors/sql-server/incremental-replication).
 
@@ -175,9 +175,17 @@ The same soft-delete mechanism applies when you change a table’s Column Filter
 
 ### Oversized values
 
-By default, the connector replicates individual values up to **16 MB**. When the connector encounters a larger value, it marks the associated table as permanently failed and stops replicating it. To change how the connector handles oversized values (for example, to replace them with `NULL` instead), modify the **Oversized Value Strategy** destination parameter.
+By default, the connector replicates individual values up to **16 MB**. The **Oversized Value Strategy** destination parameter determines how the connector handles larger values:
 
-You can raise the per-value limit from 16 MB to **128 MB**. For instructions, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-increase-oversized-value-limit).
+- **Fail Table**: The connector marks the table as permanently failed and stops replicating it. This is the default for gen 1 connectors.
+- **Set Null**: The connector replaces the oversized value with `NULL` and continues replicating the rest of the row. This is the default in the gen 2 **Destination details** step.
+- **Prune Row**: The connector follows the Snowpipe Streaming limits for data types and rows instead of its own per-value limit. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned. Requires Runtime Extensions version `2026.11.17.2` or later.
+
+If you want to replicate large values, select **Prune Row**. If you raised the per-value limit and use **Set Null** so that large values keep replicating, switch to **Prune Row** instead.
+
+For details about how values are pruned, see the **Oversized Value Strategy** parameter in [SQLServer Destination Parameters](/user-guide/data-integration/openflow/connectors/sql-server/setup#label-of-sqlserver-destination-parameters).
+
+With **Fail Table** and **Set Null**, you can raise the per-value limit from 16 MB to **128 MB**. For instructions, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/sql-server/maintenance#label-of-sql-server-increase-oversized-value-limit).
 
 ### Always On Availability Groups and source failover
 

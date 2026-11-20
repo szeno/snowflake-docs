@@ -65,7 +65,7 @@ If your certificates and keys are in PEM format (`.pem`, `.crt`, `.key`) rather 
 
 | Property | Value |
 | --- | --- |
-| Certificate | Path to your PEM-encoded certificate file (`.pem`, `.crt`), or Asset reference (see [Ops parameters and assets](/user-guide/data-integration/openflow/ops-parameters-assets)) |
+| Certificate | Path to your PEM-encoded certificate file (`.pem`, `.crt`), or Asset reference |
 | Private Key | Path to your PEM-encoded private key file (`.key`), or Asset reference |
 | CA Certificate | Path to the CA certificate file, or Asset reference. Required only if the broker certificate is not signed by a trusted CA. |
 

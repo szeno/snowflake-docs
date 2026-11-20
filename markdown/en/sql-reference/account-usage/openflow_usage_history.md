@@ -3,7 +3,7 @@ Schemas:
 
 # OPENFLOW\_USAGE\_HISTORY view
 
-This Account Usage view returns the hourly runtime credit usage for an account within the last 365 days (1 year).
+This Account Usage view returns the hourly [Openflow](/user-guide/data-integration/openflow/about) runtime credit usage for an account within the last 365 days (1 year).
 
 Note
 

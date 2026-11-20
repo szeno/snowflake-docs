@@ -67,6 +67,78 @@ and `snowflake.metadata.createtime` are enabled in your v3 connector (they’re 
 ensures that `RECORD_METADATA` contains the topic, partition, and offset fields needed for
 deduplication if any issues arise.
 
+### Keep the v3 connector name
+
+Give the v4 connector the same name as the v3 connector. The name determines the Kafka consumer group
+(`connect-<connector_name>` by default) that holds the committed offsets. Kafka Connect allows only one
+connector per name, even a stopped one, so creating a second connector with that name returns
+`409 Conflict`. Replace the v3 connector instead:
+
+1. Save your v3 configuration so that you can roll back:
+
+   Copy code
+
+   ```
+   curl http://localhost:8083/connectors/<connector_name>/config > v3-config.json
+   ```
+2. Stop or remove the v3 connector:
+
+   - Distributed mode, Apache Kafka 3.5 or later: stop the connector.
+
+     Copy code
+
+     ```
+     curl -X PUT http://localhost:8083/connectors/<connector_name>/stop
+     ```
+   - Distributed mode, earlier Kafka versions: delete the connector. Deleting a connector doesn’t
+     delete its consumer group offsets.
+
+     Copy code
+
+     ```
+     curl -X DELETE http://localhost:8083/connectors/<connector_name>
+     ```
+   - Standalone mode: stop the worker.
+3. Wait for the v3 connector to finish. Kafka Connect returns from stop and delete before the v3 tasks
+   finish writing. Run the following command until `STATE` is `Empty`:
+
+   Copy code
+
+   ```
+   kafka-consumer-groups --bootstrap-server <broker> --describe --group connect-<connector_name> --state
+   ```
+
+   If the worker log shows `consumer poll timeout has expired` for this connector, v3 was still writing
+   when the group became empty, and you might see duplicate records. If you’re migrating from Snowpipe
+   mode, also wait for all staged data to be ingested.
+4. Start the v4 connector with the same name:
+
+   - Distributed mode, Apache Kafka 3.5 or later: replace the configuration, then resume the connector.
+     The request body is the complete v4 configuration as a flat JSON object, without the `name` and
+     `config` wrapper that `POST /connectors` uses. It replaces the whole configuration.
+
+     Copy code
+
+     ```
+     curl -X PUT -H "Content-Type: application/json" --data @v4-config.json http://localhost:8083/connectors/<connector_name>/config
+     curl -X PUT http://localhost:8083/connectors/<connector_name>/resume
+     ```
+   - Distributed mode, earlier Kafka versions: create the connector with `POST /connectors` and the
+     same `name`.
+   - Standalone mode: start the worker with the v4 properties file and the same `name`.
+5. After new records arrive, check that the connector and its tasks are `RUNNING`:
+
+   Copy code
+
+   ```
+   curl http://localhost:8083/connectors/<connector_name>/status
+   ```
+
+   v4 checks its migration settings when it starts, not when you submit the configuration. A missing
+   or incorrect setting shows up here as `FAILED`.
+
+To roll back, repeat these steps with `v3-config.json`.
+
 ### Migrating from v3 Snowpipe mode
 
 If your v3 connector was using classic Snowpipe (the default `snowflake.ingestion.method=SNOWPIPE`),
@@ -74,15 +146,18 @@ v4 migrates seamlessly using Kafka consumer group offsets.
 
 Warning
 
-Make sure that the v3 connector exits gracefully during the migration, e.g. by increasing
-`task.shutdown.graceful.timeout.ms` on the outgoing connector to a large value. A forceful termination
-can prevent the offsets from being advanced in Kafka and lead to duplicates.
+Make sure that the v3 connector stops gracefully. Kafka Connect waits up to
+`task.shutdown.graceful.timeout.ms` (a worker setting, 5 seconds by default) for a task to stop. If the
+task takes longer, Kafka Connect abandons it and skips its final offset commit, and v4 loads those
+records again. Before you migrate, raise `task.shutdown.graceful.timeout.ms` in the worker
+configuration and restart the workers. Setting it in the connector configuration has no effect.
 
 1. Stop the v3 connector.
 2. **Wait for all staged data to be ingested into Snowflake.** Classic Snowpipe stages files before
    loading them, and any files still in the queue when you stop the connector will be loaded
    asynchronously. Starting the v4 connector before this completes may cause data to land out of order.
 3. Deploy the new v4 configuration using the **same connector name** as v3 (same Kafka consumer group).
+   For more information, see [Keep the v3 connector name](#label-kafkahp-keep-connector-name).
    Set the offset migration config to skip SSv1 migration:
 
    Copy code
@@ -104,8 +179,8 @@ If your v3 connector was using Snowpipe Streaming
 offsets from the v3 Snowpipe Streaming (SSv1) channels. This prevents duplicates or gaps.
 
 1. Stop the v3 connector.
-2. Deploy the new v4 configuration using the **same connector name** as v3. Configure the offset
-   migration settings:
+2. Deploy the new v4 configuration using the **same connector name** as v3. For more information,
+   see [Keep the v3 connector name](#label-kafkahp-keep-connector-name). Configure the offset migration settings:
 
    Copy code
 
@@ -131,31 +206,23 @@ duplicate records are expected after a downgrade because v3 and v4 track offsets
 To downgrade:
 
 1. Stop the v4 connector.
-2. Deploy your v3 configuration using the **same connector name**.
+2. Deploy your v3 configuration using the **same connector name**. For more information, see
+   [Keep the v3 connector name](#label-kafkahp-keep-connector-name).
 3. Start the v3 connector.
-4. After the downgrade, deduplicate your data using the `RECORD_METADATA` column.
-   The following query removes duplicate records using a window function over topic, partition,
-   and offset:
+4. After the downgrade, deduplicate your data using the `RECORD_METADATA` column. The following query
+   keeps one copy of each record and leaves rows without `RECORD_METADATA` unchanged. `INSERT OVERWRITE`
+   rewrites the whole table, so stop the connector while the query runs:
 
    Copy code
 
    ```
-   DELETE FROM my_table
-   WHERE RECORD_METADATA IS NOT NULL
-     AND (RECORD_METADATA:topic, RECORD_METADATA:partition, RECORD_METADATA:offset)
-      IN (
-        SELECT RECORD_METADATA:topic, RECORD_METADATA:partition, RECORD_METADATA:offset
-        FROM (
-          SELECT RECORD_METADATA,
-                 ROW_NUMBER() OVER (
-                   PARTITION BY RECORD_METADATA:topic, RECORD_METADATA:partition, RECORD_METADATA:offset
-                   ORDER BY RECORD_METADATA:offset
-                 ) AS rn
-          FROM my_table
-          WHERE RECORD_METADATA IS NOT NULL
-        )
-        WHERE rn > 1
-      );
+   INSERT OVERWRITE INTO my_table
+   SELECT * FROM my_table
+   QUALIFY RECORD_METADATA IS NULL
+     OR ROW_NUMBER() OVER (
+          PARTITION BY RECORD_METADATA:topic, RECORD_METADATA:partition, RECORD_METADATA:offset
+          ORDER BY RECORD_METADATA:offset
+        ) = 1;
    ```
 
 Important

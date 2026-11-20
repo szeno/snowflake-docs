@@ -61,7 +61,7 @@ CREATE OR REPLACE AGENT CORTEX_CODE.CONFIG.DEFAULT
   $$;
 ```
 
-This creates a settings agent using `auto`, the recommended model setting. With `auto`, Snowflake selects a default model automatically. Currently this maps to a fixed default model; dynamic model selection is under active development.
+This creates a settings agent using `auto`, the recommended model setting. With `auto`, Snowflake uses a high-quality default model. To use cost-efficient dynamic model routing, use `auto-efficient` instead.
 
 To pin a specific model instead, replace `auto` with a model identifier:
 
@@ -119,13 +119,13 @@ Settings are applied at session startup. Exact behavior may vary across surfaces
 
 ## Available models
 
-Set `orchestration` to a supported Cortex model identifier. Use `auto` (recommended) to let Snowflake select an appropriate model automatically.
+Set `orchestration` to a supported Cortex model identifier. Use `auto` (recommended) for a high-quality default model.
 
 Auto options depend on your account configuration. If one of the following options appears in your account’s model picker, you can set `orchestration` to its corresponding value:
 
 - `auto-intelligent` (**Auto Intelligent**): Favors the most capable models.
 - `auto-efficient` (**Auto Efficient**): Routes each step of a task to a model based on how complex
-  it is, and adds a routing fee. See
+  it is to balance cost and quality. A routing fee applies. See
   [Auto Efficient billing](/user-guide/cortex-code/cortex-code#label-cortex-code-auto-efficient-billing).
 
 For available model identifiers, context windows, and per-region availability, see [Cross-region inference](/user-guide/snowflake-cortex/cross-region-inference).

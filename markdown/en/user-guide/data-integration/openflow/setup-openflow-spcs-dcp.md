@@ -7,7 +7,7 @@ Openflow Snowflake Deployments are available to all accounts in AWS, Azure, and 
 Data Connectivity Proxy (DCP) lets connectors on an Openflow - Snowflake Deployment reach private
 data sources in your VPC or on-premises network. You deploy a lightweight agent
 in your network which establishes an encrypted tunnel to Snowflake over port
-443. As a result, Snowflake never needs inbound access into your network.
+443. As a result, Snowflake never needs inbound access to your network.
 
 While the agent enables network connectivity to data sources, all data
 processing still happens in Openflow runtimes hosted by Snowflake. Connector
@@ -25,7 +25,7 @@ Snowflake can already reach the source:
 | --- | --- | --- |
 | [Allowed domains](/user-guide/data-integration/openflow/setup-openflow-spcs-sf-allow-list) | The source is reachable from Snowflake on the public internet (or another path Snowflake already allows), and you only need to allowlist the source host and port. | Private hostnames that Snowflake can’t resolve or reach.  Use [outbound private connectivity](/user-guide/private-connectivity-outbound) or DCP for those. |
 | [Outbound private connectivity](/user-guide/private-connectivity-outbound) | The source is a cloud service that offers a private endpoint, such as Amazon S3 or Azure Storage. You provision a private endpoint in Snowflake and create the network rule with `TYPE = PRIVATE_HOST_PORT`, so traffic uses the cloud provider’s private connectivity instead of the public internet. | Hosts in your own network with no cloud private endpoint service in front of them, such as an on-premises database. Snowflake accounts that aren’t on Business Critical Edition.  Use DCP for those. |
-| [Data Connectivity Proxy](/user-guide/data-connectivity-proxy) | You want to keep an Openflow - Snowflake Deployment and still ingest from databases, Kafka brokers, or APIs that only your network can reach. | Moving the runtime and data processing itself into your VPC.  If that is a need, use [Openflow - BYOC](/user-guide/data-integration/openflow/about-byoc). |
+| [Data Connectivity Proxy](/user-guide/data-connectivity-proxy) | You want to keep an Openflow - Snowflake Deployment and still ingest from databases, Kafka brokers, or APIs that only your network can reach. | Moving the runtime and data processing itself into your VPC.  If you need that, use [Openflow - BYOC](/user-guide/data-integration/openflow/about-byoc). |
 
 Expand
 
@@ -195,8 +195,9 @@ Start your connector and validate that data is being ingested successfully.
 ## Considerations
 
 - The agent must be able to resolve the hostname you use in the network rule and
-  in the connector. If you don’t have DNS for the target, add a host entry on the
-  **agent** host (not in Snowflake), as described in
+  in the connector. If you don’t have DNS for the target, add a host entry that’s
+  visible inside the agent container (for example, with `docker run --add-host`). The container doesn’t read the
+  host’s `/etc/hosts`. For details, see
   [Create a network rule for the private destination](/user-guide/data-connectivity-proxy-setup#label-dcp-setup-network-rule).
 - Enable the Data Connectivity Proxy object before you expect connector traffic.
   If the object exists but is disabled, the agent can appear to connect and then

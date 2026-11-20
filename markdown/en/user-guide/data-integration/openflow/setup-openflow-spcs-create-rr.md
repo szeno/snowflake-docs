@@ -72,20 +72,20 @@ Snowflake’s security model provides secure access to specific endpoints and sy
 external to Snowflake using [network policies](/user-guide/network-policies).
 
 Two key aspects of network policies are [Network rules](/user-guide/network-rules) and
-[External Access Integrations (EAI)](/developer-guide/external-network-access/external-network-access-overview).
-Each of which is used to provide secure access to external resources required by the runtime.
+[External Access Integrations (EAI)](/developer-guide/external-network-access/external-network-access-overview),
+each of which is used to provide secure access to external resources required by the runtime.
 
 There are three steps that are required to create network rules and external access integrations:
 
 1. Create the network rule, grouping the network identifiers into logical areas.
 2. Create the external access integration (EAI), specifying the list of network rules and ensuring the execute-as role has USAGE on the EAI.
-3. Associate the EAI with the Runtime in the Openflow UI when creating Runtimes.
+3. Associate the EAI with the runtime in the Openflow UI when creating runtimes.
 
 To create the required network rule and EAI, perform the following steps:
 
 Note
 
-These examples use RUNTIME\_NAME as a placeholder for the name of the Runtime being created.
+These examples use `<RUNTIME_NAME>` as a placeholder for the name of the runtime being created.
 
 Do not use CREATE OR REPLACE on network rules or EAIs
 

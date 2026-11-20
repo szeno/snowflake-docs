@@ -186,6 +186,23 @@ For examples, see [CREATE OR ALTER PIPE](#label-create-pipe-examples).
   - `LOAD_UNCERTAIN_FILES = TRUE | FALSE`
   - `RETURN_FAILED_ONLY = TRUE | FALSE`
   - `VALIDATION_MODE = RETURN_n_ROWS | RETURN_ERRORS | RETURN_ALL_ERRORS`
+- If error logging is turned on for the target table, the pipe’s `ON_ERROR` value determines which errors from CSV,
+  JSON, and Parquet files are recorded in the table’s error table:
+
+  - With `ON_ERROR = SKIP_FILE` (the default), only one error is recorded for each skipped file.
+  - With `ON_ERROR = CONTINUE`, every rejected row is recorded.
+  - With `ON_ERROR = SKIP_FILE_<num>` or `ON_ERROR = 'SKIP_FILE_<num>%'`, error logging isn’t supported, and the error
+    table might contain no errors or only some errors from the pipe.
+
+  With `ON_ERROR = CONTINUE`, the pipe loads the valid rows from each file, and it doesn’t send error notifications or
+  record `FAILED` events for files that it loads partially. To choose a value, see
+  [Choose an ON\_ERROR value for a pipe](/user-guide/data-load-error-tables#label-data-load-error-tables-pipe-on-error). To change the `ON_ERROR` value
+  later, you must [recreate the pipe](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-existing-pipes).
+- Add CHECK constraints to the target table before you create the pipe. After you create a pipe that loads files from a
+  stage, you can’t add a CHECK constraint to the target table, or drop or change a CHECK constraint on it, even if you
+  pause the pipe. To change the constraints, follow the steps in
+  [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check), which drop the pipe and create it
+  again without skipping files or loading them twice.
 - If a pipe uses the [INFER\_NESTED\_TYPES](/sql-reference/sql/copy-into-table#label-copy-option-infer-nested-types) copy option,
   the role that owns the pipe needs the `EVOLVE SCHEMA` or `OWNERSHIP` privilege on the target table. `CREATE PIPE` fails if the
   `copy_statement` combines the option with a `SELECT` transform. To add the option to an existing pipe, see

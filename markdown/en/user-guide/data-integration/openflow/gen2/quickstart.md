@@ -49,7 +49,7 @@ GRANT CREATE COMPUTE POOL ON ACCOUNT TO ROLE openflow_admin;
 
 ### Create database and schema (Openflow administrator)
 
-Create a database and schema to **house gen 2 Openflow objects**—runtimes and connectors are
+Create a database and schema to **house gen 2 Openflow objects**: runtimes and connectors are
 schema-level objects stored here. This is your Openflow **control schema**, not the database where
 connectors load data. Grant the execute-as role access to destination databases separately (see
 [Create an execute-as role](#label-openflow-gen2-quickstart-execute-as-role)).
@@ -74,7 +74,7 @@ apply, including in wait functions.
 ## Create a gen 2 deployment
 
 Create a gen 2 deployment object with SQL or the Openflow UI. Gen 2 uses
-`CREATE OPENFLOW DEPLOYMENT`—not the gen 1 `CREATE OPENFLOW DATA PLANE INTEGRATION`. For SQL
+`CREATE OPENFLOW DEPLOYMENT`, not the gen 1 `CREATE OPENFLOW DATA PLANE INTEGRATION`. For SQL
 parameters (`DEPLOYMENT_TYPE`, `VPC_TYPE`, `USE_PRIVATE_LINK`, `EVENT_TABLE`, and so on), see
 [CREATE OPENFLOW DEPLOYMENT](/sql-reference/sql/create-openflow-deployment).
 
@@ -145,7 +145,7 @@ Create a runtime inside your gen 2 deployment. Use the database and schema you c
 ### Create an execute-as role
 
 `EXECUTE_AS_ROLE` is the Snowflake role that connectors use when reading from and writing to
-Snowflake during connector execution. Snowflake access follows that role’s grants—not your session
+Snowflake during connector execution. Snowflake access follows that role’s grants, not your session
 role and not privileges on the runtime’s home schema. Grant the control schema and other
 connector-specific objects before you create the runtime (destination database grants are in
 [Before you install a connector](#label-openflow-gen2-quickstart-connector-prereqs)).
@@ -267,7 +267,7 @@ Available to all accounts.
 Tip
 
 Gen 2 runtimes also run gen 1 connectors. If a gen 2 catalog entry isn’t available for your source
-yet, or if you prefer the gen 1 connector, install it from the connector catalog — it runs on the
+yet, or if you prefer the gen 1 connector, install it from the connector catalog. It runs on the
 same runtime and follows that connector’s public setup documentation.
 
 ### Before you install a connector
@@ -313,10 +313,10 @@ For your first connector, using the setup wizard is recommended:
 
 - [Configure a connector with the setup wizard](/user-guide/data-integration/openflow/gen2/setup-connector-wizard) — Install a **gen 2** catalog entry with
   step-by-step validation. The wizard manages configuration and versioning; you do not need
-  [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) for day-to-day UI setup.
+  [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) for day-to-day UI setup.
 
 To create another connector from an already validated configuration—for example, when promoting
-the same settings to another runtime—see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
+the same settings to another runtime—see [Create from a known configuration](/user-guide/data-integration/openflow/gen2/connector-versioning#label-openflow-fbe-git-create) in [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning).
 
 ### Create a connector with SQL (optional)
 
@@ -339,7 +339,7 @@ CREATE OPENFLOW CONNECTOR my_postgres_connector
 ```
 
 The connector will be in a **STOPPED** state and is a **Draft** until you commit a configuration
-version. See [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) (and [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) if you use SQL or
+version. See [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) (and [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) if you use SQL or
 automation).
 
 ## Start the connector (Public Preview)
@@ -364,5 +364,5 @@ See [Manage the gen 2 Openflow connector lifecycle](/user-guide/data-integration
 
 - [Configure a gen 2 connector with SQL](/user-guide/data-integration/openflow/gen2/configure-connector-sql) — Full SQL workflow to configure and commit connector settings.
 - [Second generation Openflow SQL command reference](/sql-reference/commands-openflow-gen2) — Full SQL command reference for gen 2 objects.
-- [gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) — Versioning model for SQL and Git (optional if you use the UI only).
+- [Gen 2 connector configuration and versioning](/user-guide/data-integration/openflow/gen2/connector-versioning) — Versioning model for SQL and Git (optional if you use the UI only).
 - [Openflow gen 1 and gen 2](/user-guide/data-integration/openflow/gen2/openflow-generations) — gen 1 vs gen 2 comparison, key differences, and documentation map.

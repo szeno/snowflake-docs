@@ -97,7 +97,7 @@ The tables are replicated in the following stages:
 
 1. Schema introspection: The connector discovers the columns in the source table, their names, and types,
    and then validates them against Snowflake’s and the connector’s limitations. Validation failures cause
-   this stage to fail, and the cycle completes. After successful completion of Schema Introspection, the connector creates an empty destination table.
+   this stage to fail, and the cycle completes. After successful completion of Schema introspection, the connector creates an empty destination table.
 2. Snapshot load: The connector copies all data available in the
    source table into the destination table. Failure of this stage finishes the cycle, and
    no more data is replicated. After successful completion, the whole set of data from the source table is available in the destination table.
@@ -153,7 +153,7 @@ The same soft-delete mechanism applies when you change a table’s Column Filter
 ### Replicate tables from a PostgreSQL replica server
 
 The connector can ingest data from a primary server, a [hot standby replica](https://www.postgresql.org/docs/current/hot-standby.html),
-or subscriber server using [logical replication](https://www.postgresql.org/docs/current/logical-replication.html).
+or a subscriber server using [logical replication](https://www.postgresql.org/docs/current/logical-replication.html).
 Before configuring the connector to connect to a PostgreSQL replica, ensure that replication between primary and replica
 nodes works correctly. When investigating issues with missing data in the connector, first ensure that missing rows are
 present in the replica server used by the connector.
@@ -298,11 +298,17 @@ auto-detected unique index, or a user-declared logical key.
 
 ### Oversized values
 
-By default, the connector replicates individual values up to **16 MB**. When the connector encounters a larger value, it marks the associated table as permanently failed and stops replicating it. To change how the connector handles oversized values (for example, to replace them with `NULL` instead), modify the **Oversized Value Strategy** destination parameter.
+By default, the connector replicates individual values up to **16 MB**. The **Oversized Value Strategy** destination parameter determines how the connector handles larger values:
 
-If your Snowflake account has the `ENABLE_OPENFLOW_CDC_POSTGRES_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
+- **Fail Table**: The connector marks the table as permanently failed and stops replicating it. This is the default for gen 1 connectors.
+- **Set Null**: The connector replaces the oversized value with `NULL` and continues replicating the rest of the row. This is the default in the gen 2 **Destination details** step.
+- **Prune Row**: The connector follows the Snowpipe Streaming limits for data types and rows instead of its own per-value limit. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned. Requires Runtime Extensions version `2026.11.17.2` or later.
 
-For details and instructions on enabling the 128 MB per-value limit, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/postgres/maintenance#label-of-postgres-increase-oversized-value-limit).
+If you want to replicate large values, select **Prune Row**. If you raised the per-value limit and use **Set Null** so that large values keep replicating, switch to **Prune Row** instead.
+
+For details about how values are pruned, see the **Oversized Value Strategy** parameter in [PostgreSQL Destination Parameters](/user-guide/data-integration/openflow/connectors/postgres/setup#label-of-postgres-destination-parameters).
+
+With **Fail Table** and **Set Null**, if your Snowflake account has the `ENABLE_OPENFLOW_CDC_POSTGRES_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**. For details, see [Increase the oversized value limit](/user-guide/data-integration/openflow/connectors/postgres/maintenance#label-of-postgres-increase-oversized-value-limit).
 
 ### Error handling for invalid rows
 

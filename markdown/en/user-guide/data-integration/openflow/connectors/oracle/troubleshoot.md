@@ -308,22 +308,33 @@ that close the connection cleanly surface an error and the connector recovers on
 
 **Solution**
 
-Configure read timeouts on both connection URLs in `Oracle Source Parameters`. The
-following examples use a 5-minute timeout:
+On the **Read Oracle CDC Stream** processor, use the `Read Timeout` property. It bounds
+both:
 
-- `Oracle Connection URL` (thin driver): add the `oracle.jdbc.ReadTimeout` property
-  (in milliseconds) to the URL query string. You can use either URL form:
-  - Easy Connect: `jdbc:oracle:thin:@//<host>:<port>/DB?oracle.jdbc.ReadTimeout=300000`
-  - TNS connect descriptor: `jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS=...)(CONNECT_DATA=...))?oracle.jdbc.ReadTimeout=300000`
-- `XStream Out Server URL` (OCI driver): add the `RECV_TIMEOUT` parameter (in seconds)
-  inside the TNS connect descriptor. The OCI driver honors `RECV_TIMEOUT` only in the
-  TNS connect descriptor form, not in the short Easy Connect form:
-  - TNS connect descriptor: `jdbc:oracle:oci:@(DESCRIPTION=(RECV_TIMEOUT=300)(ADDRESS=...)(CONNECT_DATA=...))`
+- `Oracle Connection URL` (thin driver)
+- `XStream Out Server URL` (OCI driver)
 
-With these timeouts set, a dropped connection surfaces an error instead of hanging, and
-the connector reconnects automatically. The error depends on which connection times out:
-`ORA-12609: TNS: Receive timeout occurred` for the `XStream Out Server URL` (OCI driver),
-or `ORA-18730: Socket read timed out` for the `Oracle Connection URL` (thin driver).
+The default is `5 min`. Most deployments can leave the URLs unchanged. Set `Read Timeout`
+to `0 sec` only if you want to turn the timeout off.
+
+If `XStream Out Server URL` is Easy Connect (`host:port/service`), the connector rewrites
+it to a TNS descriptor and adds `RECV_TIMEOUT` for you. Edit the XStream URL yourself only
+when it is a TNS alias, the `host:port:SID` form, or an LDAP URL. In those cases, add
+`RECV_TIMEOUT` (in seconds) inside the TNS descriptor, or set `SQLNET.RECV_TIMEOUT` in
+`sqlnet.ora`. For example:
+
+- TNS connect descriptor:
+  `jdbc:oracle:oci:@(DESCRIPTION=(RECV_TIMEOUT=300)(ADDRESS=...)(CONNECT_DATA=...))`
+- `sqlnet.ora`: `SQLNET.RECV_TIMEOUT=300`
+
+If a `DESCRIPTION` already has `RECV_TIMEOUT`, the connector keeps that value. If
+`RECV_TIMEOUT` is set on a `DESCRIPTION_LIST` instead, the connector copies it into
+each `DESCRIPTION` in the list.
+
+When a timeout fires, a dropped connection surfaces an error instead of hanging, and the
+connector reconnects automatically. For the `Oracle Connection URL` (thin driver), the
+error depends on the phase: `ORA-17002: I/O error: Socket read timed out` during connect,
+and `ORA-18730: Socket read timed out` mid-session during read.
 
 ## Capture Status not ENABLED
 

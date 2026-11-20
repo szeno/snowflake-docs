@@ -80,6 +80,12 @@ If the failure was caused by an issue in the source table such as a missing prim
 
 By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. You can raise the per-value limit from 16 MB to **128 MB**.
 
+Tip
+
+To replicate large values, set **Oversized Value Strategy** to **Prune Row** instead of raising the per-value limit. **Prune Row** follows the Snowpipe Streaming limits for data types and rows and doesn’t use the per-value limit. If you raised the per-value limit and use **Set Null**, switch to **Prune Row**. For details, see [Oversized values](/user-guide/data-integration/openflow/connectors/sql-server/about#label-sql-server-oversized-values).
+
+The rest of this section applies to the **Fail Table** and **Set Null** strategies.
+
 Important
 
 The 128 MB limit applies in two ways: it’s both the maximum size of a single value and the maximum total size of a row. The connector adds metadata columns to every replicated row (`_SNOWFLAKE_UPDATED_AT`, `_SNOWFLAKE_INSERTED_AT`, `_SNOWFLAKE_DELETED`) that count toward the per-row limit, along with all other columns in the row. As a result, a single value can’t reach the full 128 MB in practice when the row includes other data.
@@ -133,7 +139,7 @@ To migrate a table:
 
 Raising the per-value limit increases the amount of data that the connector loads into memory and moves through the flow, which raises the load on both the runtime and the warehouse. Size the runtime and warehouse accordingly.
 
-When **Oversized Value Strategy** is set to **Set Null**, the connector still loads each oversized value into memory before it can replace it with `NULL`. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
+When **Oversized Value Strategy** is set to **Set Null** or **Prune Row**, the connector still loads each oversized value into memory before it can replace it with `NULL` or prune it. If your tables contain multi-gigabyte LOB columns, exclude those columns from replication.
 
 During both snapshot and incremental replication, the queue in front of the **Upload Rows via Snowpipe Streaming 2** processor can fill with FlowFiles and trigger back pressure, which consumes a large amount of runtime disk space. For larger tables, use a Large runtime to provide additional storage. For guidance on choosing a size, see [Runtime sizing](/user-guide/data-integration/openflow/connectors/sql-server/setup#label-sql-server-runtime-sizing).
 
@@ -285,7 +291,7 @@ If the new instance is located in a different runtime, you must re-enter all par
    1. Sign in to [Snowsight](/user-guide/ui-snowsight-gs#label-snowsight-getting-started-sign-in).
    2. In the navigation menu, select **Ingestion** » **Openflow**.
    3. Select **Launch Openflow**.
-   4. In the **Openflow** pane select the **Runtimes** tab.
+   4. In the **Openflow** pane, select the **Runtimes** tab.
    5. Select the runtime containing the connector.
    6. Select the connector.
    7. Stop the topmost processor **Set Tables for Replication** in the **Snapshot Load** group.
@@ -320,7 +326,7 @@ If the new instance is located in a different runtime, you must re-enter all par
 
    Note
 
-   If you imported the flow definition with **Export with Components State** selected, the connector retains its previous change tracking positions. In this case, leave `Starting Change Tracking Position` set to `Latest` to continue replication from where it stopped.
+   If you imported the flow definition with **Export with Components State** selected, the connector retains its previous change tracking positions. In this case, set `Starting Change Tracking Position` to `Latest` to continue replication from where it stopped.
 6. Start the new connector.
 
 ### Usage notes
@@ -345,7 +351,7 @@ The following parameters are available in the `Ingestion Parameters` context:
 
 | Parameter | Description |
 | --- | --- |
-| Starting Change Tracking Position | - `Latest` (default): change tracking table reading starts at the latest available position and continues from there. - `Earliest`: Switches the incremental load to start, or restart reading from the earliest available   change tracking table positions. |
+| Starting Change Tracking Position | - `Latest` (default): change tracking table reading starts at the latest available position and continues from there. - `Earliest`: Switches the incremental load to start or restart reading from the earliest available   change tracking table positions. |
 | Re-read Tables in State | - `New` (default):   Only new tables, added after the starting position was switched to `Earliest`, will have their change   tracking tables read from the earliest available positions. Tables that started replication before the   configuration change will continue reading from their last positions. - `Any active`: Re-read and re-process changes from any table currently in replication. |
 
 Expand
@@ -357,7 +363,7 @@ To determine whether the connector finished re-reading the change tracking table
 1. Navigate to the Openflow canvas.
 2. Open the **Incremental Load** process group.
 3. Right-click the topmost processor named **Read SQLServer Change Tracking tables**, then select **View state**.
-4. Check the state entries for every table with keys starting with `position.`. If a value is `0/0` then the connector has not yet finished re-reading the changes for this table.
+4. Check the state entries for every table with keys starting with `position.`. If a value is `0/0`, then the connector has not yet finished re-reading the changes for this table.
 
 ### Usage notes
 

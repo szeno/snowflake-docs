@@ -15,7 +15,7 @@ audiences.
 If the project still has `snowflake.yml`, complete
 [Migrate from snowflake.yml to app.yml](/developer-guide/snowflake-app-runtime/migrate-to-app-yml) first.
 
-## Development, stage, and production
+## Development, staging, and production targets
 
 Set shared values at the top level. Each target lists only what differs.
 Don’t put a fully qualified database name in app SQL: a `USER$` target and a
@@ -73,7 +73,32 @@ Show lessSee more
 it deploys to the baseline database and warehouse. `prod` overrides
 `name`, `query_warehouse`, and the instance counts. For what
 `min_instances` and `max_instances` do, see
-[Scale and suspend Snowflake App Runtime apps](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+[Start, stop, and scale a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/scale-and-suspend).
+
+A target can also choose a different
+[compute option](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-compare). You
+can’t convert an existing service to serverless compute (Public Preview), so give a
+serverless target its own `name`. This `dev` target runs on managed compute,
+and the `serverless` target creates a separate service:
+
+Copy code
+
+```
+default_target: dev
+
+targets:
+  dev:
+    name: WAREHOUSE_MONITOR_DEV
+  serverless:
+    name: WAREHOUSE_MONITOR_SERVERLESS
+    compute_resource: SERVERLESS
+    url_prefix: warehouse-monitor
+```
+
+Deploy it with `snow app deploy --target serverless`. For the fields involved,
+see [`compute_resource`](/developer-guide/snowflake-app-runtime/app-yml#label-snowflake-app-runtime-app-yml-serverless).
+To move an existing app, see
+[Move an existing app to serverless compute](/developer-guide/snowflake-app-runtime/serverless#label-snowflake-app-runtime-serverless-switch).
 
 Two targets that resolve to the same fully qualified name operate on the
 same service.
@@ -149,3 +174,7 @@ this order:
    (`USER$<current_user>`).
 7. **Require** `name`, `database`, `schema`, and `query_warehouse` on the
    merged result.
+
+## Next steps
+
+- Deploy to a target: [Deploy an app to Snowflake App Runtime](/developer-guide/snowflake-app-runtime/deploy).

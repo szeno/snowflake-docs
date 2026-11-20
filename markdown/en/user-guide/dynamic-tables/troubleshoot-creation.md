@@ -80,7 +80,7 @@ With `INITIALIZE = ON_SCHEDULE`, the table is empty until the initial refresh. Q
 ## Refresh mode resolves to FULL when you expected INCREMENTAL
 
 When you create a dynamic table with `REFRESH_MODE = AUTO` (the default), Snowflake evaluates the
-definition at creation time and chooses INCREMENTAL or FULL. This decision is permanent and can’t
+definition at creation time and chooses ADAPTIVE or FULL. This decision is permanent and can’t
 be changed with ALTER. If the definition contains constructs that do not support incremental refresh,
 AUTO resolves to FULL without a warning.
 

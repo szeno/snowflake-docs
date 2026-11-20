@@ -21,7 +21,7 @@ period and the expected decommission date.
 | --- | --- | --- |
 | 3.8 | 14 Oct 2024 | 30 Apr 2025 |
 | 3.9 | 05 Oct 2025 | 30 Apr 2026 |
-| 3.10 | 04 Oct 2026 | TBD |
+| 3.10 | 04 Oct 2026 | 30 Apr 2027 |
 | 3.11 | 24 Oct 2027 | TBD |
 | 3.12 | 02 Oct 2028 | TBD |
 | 3.13 | 07 Oct 2029 | TBD |

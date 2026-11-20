@@ -208,7 +208,13 @@ WHERE error_metadata:service = 'snowpipe_streaming'
   AND timestamp >= DATEADD(hour, -24, CURRENT_TIMESTAMP());
 ```
 
-After successfully reprocessing errors, you can truncate the error table:
+After you reprocess the errors, you can clear the error table. `TRUNCATE` removes every error in the error table,
+including errors that your `INSERT` statement didn’t select, errors that were recorded after it ran, and errors from
+other sources that write to the same error table, such as `COPY INTO` statements, Snowpipe, and DML statements. You
+can’t recover the errors afterward. Before you truncate, copy any errors that you want to keep to another table. For
+more information, see [Query and truncate an error table](/user-guide/data-engineering/error-tables#label-error-logging-query-truncate).
+
+To clear the error table, run the following statement:
 
 Copy code
 

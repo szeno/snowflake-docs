@@ -31,6 +31,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [ALTER BACKUP POLICY](/sql-reference/sql/alter-backup-policy) | Modifies the properties of a [backup](/user-guide/backups) policy. |
 | [ALTER BACKUP SET](/sql-reference/sql/alter-backup-set) | Modifies the properties for a [backup](/user-guide/backups) set. |
 | [ALTER CATALOG INTEGRATION](/sql-reference/sql/alter-catalog-integration) | Modifies the properties of an existing [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def). |
+| [ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle) | Adds a version to a Code Bundle, or sets or unsets its comment. |
 | [ALTER COMPUTE POOL](/sql-reference/sql/alter-compute-pool) | Modifies the properties of an existing [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool). |
 | [ALTER CONNECTION](/sql-reference/sql/alter-connection) | Modifies the properties for an existing [connection](/user-guide/client-redirect). |
 | [ALTER CONTACT](/sql-reference/sql/alter-contact) | Modifies the properties of an existing [contact](/user-guide/contacts-using). |
@@ -348,6 +349,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DESCRIBE BACKUP POLICY](/sql-reference/sql/desc-backup-policy) | Describes a specific [backup policy](/user-guide/backups). |
 | [DESCRIBE BACKUP SET](/sql-reference/sql/desc-backup-set) | Describes a specific [backup set](/user-guide/backups). |
 | [DESCRIBE CATALOG INTEGRATION](/sql-reference/sql/desc-catalog-integration) | Describes the properties of a [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def). |
+| [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle) | Describes the properties and versions of a Code Bundle. |
 | [DESCRIBE COMMITTED TASK](/sql-reference/sql/desc-committed-task) | Describes the committed definition of a task in a task graph. |
 | [DESCRIBE COMPUTE POOL](/sql-reference/sql/desc-compute-pool) | Describes the properties of a [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool). |
 | [DESCRIBE CONFIGURATION](/sql-reference/sql/desc-configuration) | Describes the properties of a [configuration](/developer-guide/native-apps/inter-app-communication). |
@@ -440,6 +442,7 @@ This topic provides a list of all DDL and DML commands, as well as the SELECT co
 | [DROP BACKUP POLICY](/sql-reference/sql/drop-backup-policy) | Deletes a [backup](/user-guide/backups) policy. |
 | [DROP BACKUP SET](/sql-reference/sql/drop-backup-set) | Deletes a [backup](/user-guide/backups) set. |
 | [DROP CATALOG INTEGRATION](/sql-reference/sql/drop-catalog-integration) | Removes a [catalog integration](/user-guide/tables-iceberg#label-tables-iceberg-catalog-integration-def) from the account. |
+| [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle) | Removes a Code Bundle from the current or specified schema. |
 | [DROP COMPUTE POOL](/sql-reference/sql/drop-compute-pool) | Removes the specified [compute pool](/developer-guide/snowpark-container-services/working-with-compute-pool) from the account. |
 | [DROP CONNECTION](/sql-reference/sql/drop-connection) | Removes a connection from the account. |
 | [DROP CONTACT](/sql-reference/sql/drop-contact) | Removes the specified [contact](/user-guide/contacts-using) from the current schema. |

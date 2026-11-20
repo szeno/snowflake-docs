@@ -53,7 +53,7 @@ dashboards directly. For full details, see
 
 ## 2. Set REFRESH\_MODE explicitly
 
-AUTO uses a heuristic to choose between INCREMENTAL and FULL at creation time. For details, see
+AUTO uses a heuristic to choose between ADAPTIVE and FULL at creation time. For details, see
 [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes). Setting REFRESH\_MODE explicitly
 ensures the same refresh mode on every recreation and returns an error at creation time if the
 query does not support the specified mode.

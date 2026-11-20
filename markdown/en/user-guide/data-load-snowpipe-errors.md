@@ -2,6 +2,15 @@
 
 Snowpipe can send a message to your cloud messaging service when a file fails to load, so you find out about failed loads without polling the copy history. Each message identifies the pipe, the target table, and the stage location, and lists the files that failed, with the first error in each file. You can subscribe any consumer to the topic that receives the messages: for example, a function that moves failed files aside, or a service that forwards the message to email, chat, or a ticketing system.
 
+Error notifications report only the first error in each file. To keep a record of the rows that a pipe rejects, with the
+error and the source data, turn on [error logging](/user-guide/data-load-error-tables) for the target table. With the
+default `ON_ERROR = SKIP_FILE` setting, the error table records only one error for each file that the pipe skips. To
+record every rejected row, set `ON_ERROR = CONTINUE` in the pipe’s `COPY INTO` statement. The pipe then sends
+notifications only for files from which no rows load, so create an
+[alert on the error table](/user-guide/data-load-error-tables-query#label-data-load-error-tables-alert) instead. To
+compare the two settings, or to change the setting of an existing pipe, see
+[Choose an ON\_ERROR value for a pipe](/user-guide/data-load-error-tables#label-data-load-error-tables-pipe-on-error).
+
 To send error notifications, a pipe needs an *error integration*: a notification integration that points to a topic in the messaging service of the cloud platform that hosts your Snowflake account. One integration can serve many pipes.
 
 ## Supported messaging services
@@ -30,7 +39,7 @@ Snowpipe sends an error notification when a file fails to load, such as when the
 
 Error notifications don’t report the following problems:
 
-- **Files that load partially.** If a pipe uses `ON_ERROR = CONTINUE`, Snowpipe loads the valid rows of a file that contains errors and sends a notification only if no rows from the file load. With `ON_ERROR` set to `SKIP_FILE_<num>` or `SKIP_FILE_<num>%`, Snowpipe sends a notification only for files that reach the error limit. To get a notification for every file that contains an error, use the default setting, `ON_ERROR = SKIP_FILE`.
+- **Files that load partially.** If a pipe uses `ON_ERROR = CONTINUE`, Snowpipe loads the valid rows of a file that contains errors and sends a notification only if no rows from the file load. With `ON_ERROR` set to `SKIP_FILE_<num>` or `'SKIP_FILE_<num>%'`, Snowpipe sends a notification only for files that reach the error limit. To get a notification for every file that contains an error, use the default setting, `ON_ERROR = SKIP_FILE`.
 - **Files that fail because of repeated internal errors.** In rare cases, Snowpipe marks a file as `Load failed` after repeated internal failures and doesn’t send a notification for it. To find these files, check the copy history.
 - **Problems with the pipe itself.** Error notifications don’t tell you when a pipe stops or stalls, or when Snowflake can’t read the pipe’s notification channel. For those problems, record [Snowpipe events](/user-guide/data-load-snowpipe-monitor-events#label-snowpipe-events-enable) in an event table and create an [alert](/user-guide/data-load-snowpipe-monitor-events#label-snowpipe-events-alerts-errors) on them.
 - **Files that never reach Snowpipe.** If your cloud storage service stops sending event notifications, or your application stops calling the REST API, no file fails, so Snowpipe sends no error notification. To catch this problem, create a [scheduled alert](/user-guide/data-load-snowpipe-monitor-events#label-snowpipe-events-alerts-idle) that calls [SYSTEM$PIPE\_STATUS](/sql-reference/functions/system_pipe_status) and checks how long ago the pipe last loaded a file.

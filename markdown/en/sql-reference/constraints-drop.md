@@ -37,6 +37,9 @@ foreign keys together with the unique or primary key.
 If the RESTRICT drop option is specified, when dropping a primary or unique key, an error is returned if there exist foreign keys that
 reference the keys being dropped.
 
+You can’t drop a CHECK constraint on a table that a Snowpipe pipe loads, even if the pipe is paused. For more
+information, see [Change the CHECK constraints on a table that a pipe loads](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-add-check).
+
 ## Dropping columns
 
 Dropping columns using ALTER TABLE … DROP COLUMN behaves similarly to dropping constraints:

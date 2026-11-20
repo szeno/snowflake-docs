@@ -1,11 +1,5 @@
 # Run ML Jobs with Code Bundles
 
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-For the availability of other Code Bundles features, see [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles).
-
 Set `type: ml` in your `code_bundle.yml` to run a Code Bundle as a Snowflake ML Job on a compute pool. Snowflake starts
 the job on the compute pool you name in the specification, injects a Snowpark session, and mounts your bundle’s files and
 the result stage into the container.
@@ -31,7 +25,7 @@ When you run `EXECUTE CODE BUNDLE` on a bundle whose specification sets `type: m
 `/mnt/job_stage` is a read-only mount of one committed bundle version, and `EXECUTE CODE BUNDLE` picks that version when
 you submit the statement. So your payload can’t change underneath a running job, and adding a new version with
 `ALTER CODE BUNDLE ... ADD VERSION` affects only later executions. See
-[ALTER CODE BUNDLE](/developer-guide/code-bundles/code-bundles#alter-code-bundle).
+[ALTER CODE BUNDLE](/sql-reference/sql/alter-code-bundle).
 
 Note
 
@@ -73,7 +67,7 @@ you want to submit from Python, pass Python objects, or read a return value back
 ### Access control
 
 The role that runs the bundle needs everything listed under
-[EXECUTE CODE BUNDLE](/developer-guide/code-bundles/code-bundles#execute-code-bundle). For a compute pool bundle, that means:
+[EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle). For a compute pool bundle, that means:
 
 - `OWNERSHIP` or `USAGE` on the Code Bundle.
 - `USAGE` or `OWNERSHIP` on the compute pool, and on the database and schema holding the bundle.
@@ -376,4 +370,4 @@ the way you would any ML Job: see [Ray Dashboard in ML Jobs](/developer-guide/sn
 submit without blocking your client, run the statement asynchronously, as shown in
 [Async execution](/developer-guide/code-bundles/code-bundles#async-execution). To cancel a run, cancel the query that
 submitted it. For a history of bundle runs, use the
-[CODE\_BUNDLE\_HISTORY](/developer-guide/code-bundles/code-bundles#code_bundle_history) table function.
+[CODE\_BUNDLE\_HISTORY](/sql-reference/functions/code_bundle_history) table function.

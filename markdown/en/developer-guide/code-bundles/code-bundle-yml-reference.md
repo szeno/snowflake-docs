@@ -2,9 +2,9 @@
 
 The `code_bundle.yml` file defines how your Code Bundle runs, including the bundle type, compute type, runtime version, dependencies, secrets, environment variables, and other settings. Place the file in the root of your project directory.
 
-Availability
-
-Scheduling notebooks on compute pools (Snowpark Container Services), the capability previously delivered as Notebook Projects, is generally available. Running on warehouses, submitting Spark jobs (`type: spark`), and running ML Jobs (`type: ml`) are in Public Preview. For the full availability breakdown and background on the rename, see [Snowflake Code Bundles](/developer-guide/code-bundles/code-bundles).
+When you run a Code Bundle by name with `WITH SPECIFICATION`, the inline specification is merged over this file. An anonymous run
+(`EXECUTE CODE BUNDLE FROM`) doesn’t read this file; its inline specification is the whole configuration. For details, see
+[EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle#label-execute-code-bundle-spec-merge).
 
 The following table summarizes the most common fields and where they apply. Differences between bundle types are also called out in each field’s section below.
 
@@ -15,12 +15,12 @@ For Spark bundle properties (`type: spark`), see [Submit Spark jobs on Snowflake
 | Field | Warehouse (`type: custom`) | Compute pool (`type: custom`) | Compute pool (`type: ml`) |
 | --- | --- | --- | --- |
 | `compute_type` | `warehouse` | `compute_pool` | `compute_pool` (required) |
-| `compute_options.runtime_version` | Python version (for example, 3.11) | Container image version (for example, V2.9-CPU-PY3.12) | Container Runtime version (for example, 2.9.0) |
+| `compute_options.runtime_version` | Python version (for example, 3.11) | Required. Container image version (for example, V2.9-CPU-PY3.12) | Container Runtime version (for example, 2.9.0) |
 | `compute_options.language_version` | N/A | N/A | Optional (Python version, for example, 3.10) |
 | `compute_options.compute_pool` | N/A | Required | Required |
-| `compute_options.query_warehouse` | N/A | Optional (for SQL queries inside your script) | Recommended (for SQL queries inside your script) |
-| `compute_options.target_instances` | N/A | Optional (multi-node execution) | Optional (multi-node execution) |
-| `compute_options.min_instances` | N/A | Optional (multi-node execution) | Optional (multi-node execution) |
+| `compute_options.query_warehouse` | N/A | Required (for SQL queries inside your script) | Recommended (for SQL queries inside your script) |
+| `compute_options.target_instances` | N/A | N/A | Optional (multi-node execution) |
+| `compute_options.min_instances` | N/A | N/A | Optional (multi-node execution) |
 | `properties.requirements_file` | Optional | Optional | N/A (include a `requirements.txt` in your payload instead) |
 | `properties.result_stage` | N/A | N/A | Required |
 | `properties.enable_metrics` | N/A | N/A | Optional |
@@ -36,14 +36,14 @@ Show lessSee more
 
 ## bundle.type
 
-The `type` property instructs Snowflake how to execute the bundle. The currently supported values are `custom`, `spark`, and `ml`.
+The `type` property instructs Snowflake how to execute the bundle. The supported values are `custom`, `spark`, and `ml`.
 
 - `spark`: See [Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle).
 - `ml`: See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles).
 
 ## bundle.compute\_type
 
-The `compute_type` property designates where the Code Bundle runs. The currently supported values are `warehouse` and `compute_pool`.
+The `compute_type` property designates where the Code Bundle runs. The supported values are `warehouse` and `compute_pool`.
 
 Bundles with `type: ml` must use `compute_pool`. They run on Snowflake Container Runtime, not on a warehouse.
 
@@ -51,9 +51,9 @@ Bundles with `type: ml` must use `compute_pool`. They run on Snowflake Container
 
 The `language` property specifies the runtime language for the Code Bundle.
 
-For `custom` Code Bundles running on the warehouse, the currently supported option is `python`. For `custom` Code Bundles running on compute pools, the currently supported option is `python`.
+For `custom` Code Bundles running on a warehouse, the supported values are `python`, `java`, and `scala`. For `custom` Code Bundles running on compute pools, the supported value is `python`. For Java and Scala, see [Run Java or Scala code on a warehouse](/developer-guide/code-bundles/code-bundles#java-scala-warehouse).
 
-For `ml` Code Bundles, which run on compute pools in the Snowflake Container Runtime, the currently supported option is `python`. See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles#label-ml-code-bundles-specification-reference).
+For `ml` Code Bundles, which run on compute pools in the Snowflake Container Runtime, the supported value is `python`. See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles#label-ml-code-bundles-specification-reference).
 
 To run Spark workloads in Python, Scala, or Java using the `spark` bundle type, see [Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle#supported-languages-and-runtimes).
 
@@ -67,8 +67,10 @@ If your Code Bundle is configured to run on the warehouse (with `bundle.compute_
 
 The `runtime_version` property specifies the version of the runtime `language` to use. Always quote the value. In YAML, an unquoted version like `3.10` is parsed as the number `3.1`, which can select the wrong runtime.
 
-- The currently supported versions of Python on the warehouse are: `'3.10'`, `'3.11'`, `'3.12'`, `'3.13'`
-- The currently supported versions of Python on compute pools follow the pattern `<runtime-version>-<accelerator>-PY<python-version>`. The supported versions are documented in [Snowflake Container Runtime releases](/developer-guide/snowflake-ml/container-runtime/releases). For example: `V2.9-CPU-PY3.12`.
+- The supported versions of Python on the warehouse are: `'3.10'`, `'3.11'`, `'3.12'`, `'3.13'`
+- For Java on the warehouse (`language: java`), set the JDK version: `'11'` or `'17'`.
+- For Scala on the warehouse (`language: scala`), set the Scala version: `'2.12'`.
+- The supported versions of Python on compute pools follow the pattern `<runtime-version>-<accelerator>-PY<python-version>`. The supported versions are documented in [Snowflake Container Runtime releases](/developer-guide/snowflake-ml/container-runtime/releases). For example: `V2.9-CPU-PY3.12`.
 
 Use the latest available container runtime version for new Code Bundles. Older versions receive fewer updates, so check [Snowflake Container Runtime releases](/developer-guide/snowflake-ml/container-runtime/releases) for the current version rather than copying a version from an example.
 
@@ -86,13 +88,15 @@ The `compute_pool` property specifies the compute pool to execute the Code Bundl
 
 (Only applicable to Code Bundles with `compute_type: compute_pool`)
 
-The `query_warehouse` property specifies the Snowflake virtual warehouse used for executing SQL and Snowpark queries from the Code Bundle. For example: `MY_WAREHOUSE`.
+The `query_warehouse` property specifies the Snowflake virtual warehouse used for executing SQL and Snowpark queries from the Code Bundle. For example: `MY_WAREHOUSE`. It’s required for `type: custom` Code Bundles on a compute pool.
 
 ### bundle.compute\_options.language\_version
 
 For `type: ml`, set `language_version` to a Python version, for example `'3.10'`. Always quote the value.
 
 ### bundle.compute\_options.target\_instances
+
+(Only applicable to `type: ml`. For `type: custom` on a compute pool, the only allowed `compute_options` are `compute_pool`, `query_warehouse`, and `runtime_version`.)
 
 For `type: ml`, Snowflake starts a Ray cluster across the instances and runs your entrypoint on the head instance. See [Run ML Jobs with Code Bundles](/developer-guide/code-bundles/ml-code-bundles#label-ml-code-bundles-multi-node-jobs).
 
@@ -103,6 +107,8 @@ For `type: ml`, set `min_instances` with `target_instances` to control how many 
 ## bundle.properties
 
 The `properties` object specifies type-specific properties for the Code Bundle. For example, specifying your `requirements.txt` or `pyproject.toml` file for Snowflake.
+
+For `custom` Java and Scala Code Bundles, the only supported property is [`java_dependencies`](#bundle-properties-java-dependencies-jars).
 
 For Spark bundle properties (`spark_conf`, `java_dependencies`, `python_files`, and `python_dependencies`), see [Submit Spark jobs on Snowflake](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle-specification).
 
@@ -133,6 +139,31 @@ bundle:
 
   properties:
     requirements_file: pyproject.toml
+```
+
+### bundle.properties.java\_dependencies.jars
+
+(Only applicable to `custom` Code Bundles with `language: java` or `language: scala`)
+
+The `jars` list specifies JAR files to add to the classpath, in addition to the JAR files in the Code Bundle. Each entry must be a stage path
+to a `.jar` file. The file names must be unique and must differ from the name of the main JAR file. Dependencies aren’t resolved from
+external repositories.
+
+Copy code
+
+```
+bundle:
+  type: custom
+  compute_type: warehouse
+  language: scala
+
+  compute_options:
+    runtime_version: '2.12'
+
+  properties:
+    java_dependencies:
+      jars:
+        - '@my_db.my_schema.libs/utils-1.0.jar'
 ```
 
 ### bundle.properties.result\_stage
@@ -186,7 +217,8 @@ bundle:
 
 The `artifact_repositories` list specifies the artifact repository or repositories to use to install Python packages from.
 
-On the warehouse (`compute_type: warehouse`), only one artifact repository can be specified (a list of one entry).
+On the warehouse (`compute_type: warehouse`), only one artifact repository can be specified (a list of one entry). Java and Scala Code
+Bundles don’t support artifact repositories.
 
 On compute pools (`compute_type: compute_pool`), the Anaconda repository (`snowflake.snowpark.anaconda_shared_repository`) can’t be used. This also applies to `type: ml`, which always runs on a compute pool.
 
@@ -285,6 +317,8 @@ Mounted stages behave differently depending on the compute type:
 
 - On compute pools (`compute_type: compute_pool`), mounted stages are readable and writable.
 - On warehouses (`compute_type: warehouse`), mounted stages are read-only.
+- For Java and Scala Code Bundles on warehouses, each `mount_path` must be under `/tmp`, and must not equal, contain, or be nested under
+  another entry’s `mount_path`.
 
 For example:
 

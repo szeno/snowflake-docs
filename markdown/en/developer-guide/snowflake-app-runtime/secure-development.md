@@ -1,13 +1,10 @@
-# Developing secure Snowflake App Runtime applications
+# Build secure apps
 
-The architectural choices you make as a developer determine how much risk your
-application introduces to the account. Administrators can apply governance controls
-after the fact, but the most effective security comes from the design itself: choosing
-the right execution context, handling data carefully, managing credentials properly,
-and keeping dependencies clean.
-
-This page walks through the key practices that minimize risk at the source. For the
-administrator perspective (the controls available to govern deployed applications), see
+Your design choices decide how much risk your app adds to the account.
+Administrators can add controls later, but the strongest protection comes from the
+design: the execution context you choose, how you handle data, how you store
+credentials, and which dependencies you ship. This topic covers those practices. For
+the controls administrators use to govern deployed apps, see
 [Securing Snowflake App Runtime applications](/developer-guide/snowflake-app-runtime/security).
 
 ## Data access design
@@ -36,7 +33,7 @@ and enforce application-level checks where needed (see
 [Enforce application-level access control](#label-snowflake-app-runtime-secure-development-app-acl)).
 
 With `snowflake` and `asCaller()` from `lib/snowflake.ts` (see
-[Query Snowflake](/developer-guide/snowflake-app-runtime/query-snowflake)), you choose the mode
+[Query Snowflake from a Snowflake App Runtime app](/developer-guide/snowflake-app-runtime/query-snowflake)), you choose the mode
 for each query:
 
 Copy code
@@ -406,3 +403,7 @@ promptly rather than discovering a vulnerable dependency months later during a
 manual audit. With an automated update tool in place, still review each proposed
 update before merging it, since a compromised dependency can enter your application
 the same way a legitimate update does.
+
+## Next steps
+
+- Share your app with other roles and set its execution role: [Share an app](/developer-guide/snowflake-app-runtime/access-control).

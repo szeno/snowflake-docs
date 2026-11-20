@@ -4,9 +4,10 @@ Snowflake handles metadata for Apache Iceberg™ tables according to the type of
 
 Note
 
-Specifying the default minimum number of snapshots with the `history.expire.min-snapshots-to-keep`
-[table property](https://iceberg.apache.org/docs/1.2.1/configuration/#table-behavior-properties) is not supported
-for any type of Iceberg table.
+Snowflake doesn’t use the `history.expire.min-snapshots-to-keep`
+[table property](https://iceberg.apache.org/docs/1.2.1/configuration/#table-behavior-properties)
+when it expires snapshots. You can still store the property. See
+[Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 ## Tables that use Snowflake as the catalog
 
@@ -118,6 +119,14 @@ ALTER ICEBERG TABLE my_iceberg_table SET DATA_RETENTION_TIME_IN_DAYS = 10;
 When you set the parameter at the table level, in either statement, Snowflake writes the value to the
 `history.expire.max-snapshot-age-ms` table property in the Iceberg metadata. A value set only on the parent schema
 or database is not written to that property.
+
+To set `history.expire.max-snapshot-age-ms` from Snowflake, use
+[Iceberg table properties](/user-guide/tables-iceberg-table-properties). Snowflake rounds a value you set that way up to a
+whole number of days. Account and edition retention limits can still change the stored value.
+
+You can also update `history.expire.max-snapshot-age-ms` in the metadata file and then
+[refresh the table](/user-guide/tables-iceberg-manage#label-tables-iceberg-refresh-metadata). Refresh converts that value to days by
+rounding up, as described above.
 
 You can use the following table functions to retrieve information about the files registered to an externally managed Iceberg table or
 the most recent snapshot refresh history:

@@ -52,34 +52,17 @@ https://{host}/api/v2/databases/{database}/schemas/{schema}/cortex-training
 
 ### from\_pat
 
-Authenticate with a Programmatic Access Token (PAT).
-
-Sends `Authorization: Bearer <pat>` plus the
-`X-Snowflake-Authorization-Token-Type: PROGRAMMATIC_ACCESS_TOKEN` header
-on every request. No login round-trip.
+Deprecated: use `from_configs`. Same arguments as before (`host`, `pat`, …).
 
 Copy code
 
 ```
-CortexTrainingClient.from_pat(
-    host,
-    pat,
-    database,
-    schema,
-    endpoint='cortex-training',
-    verify_ssl=True,
-    **kwargs,
-)
+CortexTrainingClient.from_pat(*args, **kwargs)
 ```
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
-| `host` | `str` | required |  |
-| `pat` | `str` | required |  |
-| `database` | `str` | required |  |
-| `schema` | `str` | required |  |
-| `endpoint` | `str` | `'cortex-training'` |  |
-| `verify_ssl` | `bool` | `True` |  |
+| `*args` | `Any` | `()` |  |
 | `**kwargs` | `Any` | `{}` |  |
 
 Expand
@@ -104,6 +87,7 @@ CortexTrainingClient(
     poll_max_interval=6.0,
     pool_maxsize=1024,
     max_retries=10,
+    request_timeout=_DEFAULT_REQUEST_TIMEOUT,
 )
 ```
 
@@ -119,6 +103,7 @@ CortexTrainingClient(
 | `poll_max_interval` | `float` | `6.0` |  |
 | `pool_maxsize` | `int` | `1024` |  |
 | `max_retries` | `int` | `10` |  |
+| `request_timeout` | `float | tuple[float, float]` | `_DEFAULT_REQUEST_TIMEOUT` |  |
 
 Expand
 
@@ -131,14 +116,39 @@ Show lessSee more
 Create a job from a list of sub-jobs and return its server job\_id.
 
 Each `SubJobConfig` is validated client-side before the request
-is sent (see `SubJobConfig.validate`). `job_id` is optional;
+is sent (see `SubJobConfig.validate`). A job supports zero or one
+`training` sub-job and any number of `sampling` sub-jobs;
+`log_probability` sub-jobs are rejected here. `job_id` is optional;
 when omitted the server generates one. `experiment_name` is optional;
 when omitted the server auto-creates an experiment for the job.
+`hardware` is optional (`Hardware`.H200 / .B200 / .B300); when
+set, all sub-jobs in the job run on that GPU type. Omitted defaults to
+H200.
+`idle_timeout_seconds` bounds how long the job may sit idle before the
+server reclaims it: `0` disables reclamation, any other value must be
+between 300 and 604,800. `pending_timeout_seconds` bounds how long the
+job may wait for capacity before failing with `pending_timeout`: between
+300 and 604,800, with no disable value. Omit either to use the server
+default, currently 30 minutes for idle and 24 hours for pending.
+
+The calling role needs `USE CORTEX TRAINING` on the account, plus
+`CREATE EXPERIMENT` on the schema when `experiment_name` is omitted
+or `MODIFY` on that experiment when it is given. Without
+`USE CORTEX TRAINING` the service answers 403 and this raises
+`requests.HTTPError`; an `ACCOUNTADMIN` can grant it with
+`GRANT USE CORTEX TRAINING ON ACCOUNT TO ROLE <role>`.
 
 Copy code
 
 ```
-client.create_job(sub_jobs, job_id=None, experiment_name=None)
+client.create_job(
+    sub_jobs,
+    job_id=None,
+    experiment_name=None,
+    hardware=None,
+    idle_timeout_seconds=None,
+    pending_timeout_seconds=None,
+)
 ```
 
 | Parameter | Type | Default | Description |
@@ -146,6 +156,9 @@ client.create_job(sub_jobs, job_id=None, experiment_name=None)
 | `sub_jobs` | `list[SubJobConfig]` | required |  |
 | `job_id` | `str | None` | `None` |  |
 | `experiment_name` | `str | None` | `None` |  |
+| `hardware` | `Hardware | str | None` | `None` |  |
+| `idle_timeout_seconds` | `int | None` | `None` |  |
+| `pending_timeout_seconds` | `int | None` | `None` |  |
 
 Expand
 
@@ -157,6 +170,15 @@ Create a job from a raw REST CreateJob request body.
 
 This is useful for tooling that already has the REST JSON payload,
 while `create_job` remains the typed path for Python callers.
+
+A job supports zero or one `training` sub-job and any number of
+`sampling` sub-jobs; a second training sub-job or any
+`log_probability` sub-job raises `ValueError` before the
+request is sent.
+
+Every `peft_config` present in the body is canonicalized in place and
+an invalid one raises `ValueError` before the request is sent.
+The rest of the body, including `optimizer`, is forwarded as given.
 
 Copy code
 
@@ -195,12 +217,13 @@ Show lessSee more
 Copy code
 
 ```
-client.get_job(job_id)
+client.get_job(job_id, retry_on=_is_transient)
 ```
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `job_id` | `str` | required |  |
+| `retry_on` | — | `_is_transient` |  |
 
 Expand
 
@@ -240,38 +263,59 @@ Show lessSee more
 
 ### get\_capacity
 
-Return the calling account’s reserved GPU capacity and current usage.
-
-This method works only for reserved GPUs. For accounts that use
-on-demand GPUs, `has_reservation` is `False` and the response doesn’t
-reflect on-demand capacity.
+Return the calling account’s GPU ceiling and current usage.
 
 Backed by the account-scoped endpoint `/cortex-training/capacity`
 (not under `/{job_id}`). The account is resolved server-side from the
 caller’s session — never from a request field — so a caller can only
-ever read its own account’s capacity.
+ever read its own account’s capacity. Optional `hardware`
+(`Hardware`.H200 / .B200 / .B300) is sent as a query parameter and
+scopes the numbers to that GPU type; omitted defaults to H200.
 
-The returned dict includes these fields:
+The returned dict always carries all six fields. The server emits
+proto3 JSON, which omits zero/false fields (an account holding nothing
+under a zero ceiling is literally `{}`), so we fill in the documented
+defaults:
 
-- `has_reservation` (bool): whether the account has a configured GPU
-  reservation.
-- `max_total_gpus` (int): the account’s GPU limit. `-1` means no limit.
-- `reserved_gpus` (int): total GPUs reserved for the account.
-  Deprecated: use `max_total_gpus` with `has_reservation` instead.
-- `in_use_gpus` (int): GPUs held by the account’s jobs that are placing,
-  initializing, or running.
+- `has_reservation` (bool): whether `max_total_gpus` is a
+  *guaranteed* commitment rather than a best-effort per-account cap.
+  When `False` the account draws on the shared pool, so
+  `available_gpus` is an upper bound.
+- `max_total_gpus` (int): the account’s ceiling — its commitment when
+  `has_reservation`, else its per-account cap. `-1` means no
+  ceiling, `0` a real quota of zero, `> 0` the limit. This is the
+  canonical ceiling; prefer it over `reserved_gpus`.
+- `reserved_gpus` (int, **deprecated**): mirrors `max_total_gpus`
+  when `has_reservation` is `True`, else 0.
+- `in_use_gpus` (int): GPUs the account holds — jobs in `placing`,
+  `initializing`, or `running`. Queued work is *not* counted here;
+  it is in `pending_gpus`.
 - `pending_gpus` (int): GPUs requested by jobs still waiting for
-  capacity. These count against the limit and reduce `available_gpus`.
-- `available_gpus` (int): GPUs a new job could start with now. A value
-  of 0 doesn’t block submission: a job within the limit is queued.
+  capacity (`pending`). It claims quota, so it reduces
+  `available_gpus`.
+- `available_gpus` (int): what a new job could start with right now,
+  `max_total_gpus - in_use_gpus - pending_gpus`, never below `0`.
+  When `has_reservation` is `True`, it is also capped at what the
+  hardware can currently schedule, so a shortfall in your reserved
+  capacity shows here.
+
+See `docs/reference/rest-api.md` section 5.5 for the authoritative
+field list, and `get_capacity_breakdown` to split `in_use_gpus`
+and `pending_gpus` by sub-job type or by submitting user.
 
 Copy code
 
 ```
-client.get_capacity()
+client.get_capacity(hardware=None)
 ```
 
-*No parameters.*
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `hardware` | `Hardware | str | None` | `None` |  |
+
+Expand
+
+Show lessSee more
 
 ### get\_experiment\_run
 
@@ -484,7 +528,10 @@ Show lessSee more
 
 ### generate
 
-Submit a generate request to a sampling sub-job. Returns request\_id.
+Submit a generate request to a sampling sub-job.
+
+Returns a `GenerateHandle` when `wait_seconds` is not
+`None`; with `None` (the default) it returns the request\_id.
 
 The typed fields are serialized as a DSSST1 safetensors frame and sent
 as `application/octet-stream`. Oversized frames are byte-chunked
@@ -493,14 +540,41 @@ Poll with `poll_request`.
 
 Prompt-length validation is asymmetric by input type:
 
-- **Pre-tokenized prompts** (`list[int]`) are checked client-side
-  against the sampling sub-job’s `max_seq_len` and fail fast with a
+- **Pre-tokenized prompts** are checked client-side against the
+  sampling sub-job’s `max_seq_len` and fail fast with a
   `ValueError` when `len(prompt) >= max_seq_len` — the token count
-  is exact, so this never rejects a prompt vLLM would accept.
+  is exact, so this never rejects a prompt vLLM would accept. A flat
+  `list[int]`, and a bare 1-D tensor, each count as one prompt.
 - **String prompts** are *not* validated here. Counting their tokens
   would require replicating the server tokenizer (including special
   tokens), so an over-long string instead fails server-side in vLLM
   with a `maximum model length` error rather than client-side.
+
+`wait_seconds` asks the server to hold the call for up to that many
+whole seconds and reply with the result if the generation ends in
+time. The server caps the wait, and holds the call only if it has
+waiting enabled; if not, it answers right away with just the request
+id, and the retry rule below still applies. A finished result in the
+reply makes the handle’s `result` what `poll_request` would
+return; it is `None` when the generation was still running, the
+server did not wait, or the reply could not be read whole, and the
+caller polls `request_id` as usual. A chunked result counts as not
+whole: the chunks that came with the reply are dropped, and
+`poll_request` fetches them all again starting with the first.
+A generation that failed or was cancelled
+within the wait raises the error `poll_request` raises. `0`
+sends no wait and returns a handle with no result. Use a `result`
+that is set rather than polling again: like a second poll of any
+generate, a re-poll leaves the tensors under `results` as tensors,
+and the server may have dropped the result by then.
+
+A waiting submit is retried only on failures that come before any
+generation starts: a connection that could not be opened (refused or
+connect timeout; a TLS failure does not count), and HTTP 429, 404, 409,
+307 or 308. A job-not-found 404 is still retried only within 120 seconds
+of this client creating the job, and a chunk-group 409 is not retried. A
+5xx, a read timeout, or a reset after send is raised, because the
+generation may already be running and a retry would run it twice.
 
 Copy code
 
@@ -511,6 +585,8 @@ client.generate(
     sampling_params=None,
     routing_key=None,
     strict=None,
+    sub_job_id=None,
+    wait_seconds=None,
 )
 ```
 
@@ -521,6 +597,8 @@ client.generate(
 | `sampling_params` | `dict | list[dict | None] | None` | `None` |  |
 | `routing_key` | `str | list[str | None] | None` | `None` |  |
 | `strict` | `bool | None` | `None` |  |
+| `sub_job_id` | `str | None` | `None` | Optional. Which sampling sub-job runs the request, e.g. `"{job_id}:sampling:1"`; discover the ids from `get_job`’s `sub_jobs`. Sent as a query parameter, since the body is an opaque frame. If omitted, no `sub_job_id` is sent and the server chooses the sub-job; currently that is the job’s only sampling sub-job, and a job with several rejects the request and lists the valid ids. |
+| `wait_seconds` | `int | None` | `None` |  |
 
 Expand
 
@@ -543,6 +621,7 @@ client.weight_sync(
     source_sub_job_id,
     target_sub_job_ids,
     weight_format=None,
+    bucket_size=None,
     sub_job_id=None,
     sub_job_type=None,
 )
@@ -554,6 +633,7 @@ client.weight_sync(
 | `source_sub_job_id` | `str` | required | Training sub-job to read weights from, e.g. `f"{job_id}:training:0"`. |
 | `target_sub_job_ids` | `list[str]` | required | Sampling sub-jobs to update, e.g. `[f"{job_id}:sampling:0"]`. |
 | `weight_format` | `str | None` | `None` | `"vllm"` (server default) or `"hf"` for full weights, or `"lora"` to broadcast only the adapter tensors. |
+| `bucket_size` | `int | None` | `None` | Optional transfer-bucket size in bytes. Increase this when one model tensor exceeds the server default bucket. |
 | `sub_job_id` | `str | None` | `None` |  |
 | `sub_job_type` | `str | None` | `None` |  |
 
@@ -802,23 +882,31 @@ Show lessSee more
 
 Download every log file under the job’s experiment run stage.
 
-Returns a list of `{"sub_job_id", "filename", "s3_uri", "content"}`
+Returns a list of
+`{"sub_job_id", "filename", "artifact_uri", "content"}`
 entries, one per object found under a `_logs/<sub_job_id>/` subtree
 in the run’s stage. Filenames such as `execution.jsonl` and
 `server.log` are both included; bodies are decoded as UTF-8.
 
-Steps: `experiment-run` → `SYSTEM$GET_VSTAGE_WRITE_CREDS` →
-`ListObjectsV2` (scoped by stage prefix) → `GetObject` per match.
+`sub_job_id` and `filename`, when given, download only the files
+of that sub-job and with that name (for example one sub-job’s
+`execution.jsonl`); the rest are listed but not fetched.
+
+`artifact_uri` is the logical `snow://` URI. Files are retrieved
+through Snowflake’s supported experiment artifact `LIST`/`GET`
+interface; no object-store credentials are exposed to the caller.
 
 Copy code
 
 ```
-client.fetch_execution_logs(job_id)
+client.fetch_execution_logs(job_id, sub_job_id=None, filename=None)
 ```
 
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `job_id` | `str` | required |  |
+| `sub_job_id` | `str | None` | `None` |  |
+| `filename` | `str | None` | `None` |  |
 
 Expand
 
@@ -830,7 +918,13 @@ Yield a sub-job’s log entries, polling with backoff.
 
 Drains the log then, with `follow=True` (the default), keeps polling
 for new entries until the caller stops iterating — suitable for a live
-tail. With `follow=False` it stops once the log reports `eof`.
+tail. With `follow=False` it stops at the first empty page, once it
+has caught up with the log (whether or not the server reports `eof`).
+
+The stream also ends, without an error, once the log can grow no more:
+at an empty page that reports `eof`, or when the job ends after the
+stream has read from it. A job that had already ended before the first
+read raises, as `tail_logs` does.
 
 Copy code
 
@@ -914,7 +1008,10 @@ Show lessSee more
 
 ### sampling\_job
 
-Build a sampling/log-probability `SubJobConfig`.
+Build a sampling `SubJobConfig`.
+
+`job_type` remains for source compatibility, but only `SAMPLING` is
+currently accepted.
 
 Copy code
 

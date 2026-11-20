@@ -334,8 +334,21 @@ The following rules are specific to hybrid tables:
   must re-create the table.
 - ALTER TABLE … ALTER CONSTRAINT isn’t supported for a CHECK constraint on a hybrid table, so you can’t change the
   constraint to VALIDATE or NOVALIDATE after you create the table.
-- You can’t use [COPY INTO <table>](/sql-reference/sql/copy-into-table) to load a hybrid table that has a CHECK constraint. The
-  operation fails. Load the table with [INSERT](/sql-reference/sql/insert) or CREATE HYBRID TABLE … AS SELECT instead.
+- When you load a hybrid table with [COPY INTO <table>](/sql-reference/sql/copy-into-table), a row that violates a CHECK constraint
+  causes the load to fail, because `COPY INTO` supports only `ON_ERROR = ABORT_STATEMENT` for hybrid tables. Hybrid
+  tables don’t support error logging.
+
+  To load the valid rows and keep the rejected rows, use a standard table as an intermediate step:
+
+  1. Create a standard table that has the same columns and CHECK constraints, with error logging turned on.
+  2. Load the files into the standard table with `ON_ERROR = CONTINUE`. The rejected rows are recorded in the
+     standard table’s error table.
+  3. Insert the rows from the standard table into the hybrid table with INSERT INTO … SELECT. Standard tables don’t
+     enforce PRIMARY KEY, UNIQUE, or FOREIGN KEY constraints, so this statement can still fail on rows that violate
+     them.
+
+  For more information, see
+  [COPY limitations for hybrid tables](/user-guide/tables-hybrid-limitations#label-hybrid-tables-limitations-copy).
 
 As with standard tables, an inline CHECK constraint can reference only the column it’s defined on. Define the
 constraint out of line to enforce a condition that spans multiple columns.

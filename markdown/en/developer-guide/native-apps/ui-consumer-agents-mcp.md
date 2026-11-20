@@ -66,7 +66,7 @@ CREATE FEATURE POLICY no_app_agents
 ALTER ACCOUNT SET FEATURE POLICY no_app_agents FOR ALL APPLICATIONS;
 
 -- Or apply the policy to a specific app.
-ALTER ACCOUNT SET FEATURE POLICY no_app_agents FOR APPLICATION my_app;
+ALTER APPLICATION my_app SET FEATURE POLICY no_app_agents;
 ```
 
 A consumer can also attach a feature policy when installing the application:
@@ -74,7 +74,7 @@ A consumer can also attach a feature policy when installing the application:
 Copy code
 
 ```
-CREATE APPLICATION my_app ... WITH FEATURE POLICY no_app_agents;
+CREATE APPLICATION my_app ... WITH FEATURE POLICY = no_app_agents;
 ```
 
 Block selectively by listing only the object types that you want to block. For

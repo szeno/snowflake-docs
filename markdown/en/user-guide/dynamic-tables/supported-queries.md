@@ -358,7 +358,7 @@ CREATE OR REPLACE DYNAMIC TABLE dt_review_sentiment
 
 ## What causes fallback to full refresh
 
-The following conditions cause Snowflake to use full refresh instead of incremental refresh. When `REFRESH_MODE = INCREMENTAL`, creation fails if any condition applies. When `REFRESH_MODE = AUTO`, creation succeeds but resolves to FULL at creation time. For details on how AUTO chooses between incremental and full refresh, see [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).
+The following conditions cause Snowflake to use full refresh instead of incremental refresh. When `REFRESH_MODE = INCREMENTAL`, creation fails if any condition applies. When `REFRESH_MODE = AUTO`, creation succeeds but resolves to FULL at creation time. For details on how AUTO chooses between ADAPTIVE and FULL, see [Dynamic table refresh modes](/user-guide/dynamic-tables/refresh-modes).
 
 | Condition | Category |
 | --- | --- |

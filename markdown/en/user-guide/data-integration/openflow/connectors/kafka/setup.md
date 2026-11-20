@@ -113,7 +113,7 @@ To install the connector, do the following:
    Some common customizations have dedicated guides, such as custom transformations, Avro and Protobuf data type ingestion, and dead-letter-queue handling. You can also apply customizations using the Openflow skill in Snowflake CoCo. See [Configuring custom transformations](/user-guide/data-integration/openflow/connectors/streaming/configuring-custom-transformations) for more details.
 2. Populate the process group parameters
 
-   1. Right click on the imported process group and select Parameters.
+   1. Right-click on the imported process group and select Parameters.
    2. Fill out the required parameter values
 
 #### Parameters
@@ -122,8 +122,8 @@ The following table describes the parameters for the Openflow Connector for Kafk
 
 | Parameter | Description | Required |
 | --- | --- | --- |
-| Kafka Auto Offset Reset | Automatic offset configuration applied when no previous consumer offset is found corresponding to Kafka `auto.offset.reset` property.  Possible values: **earliest**: automatically reset the offset to the earlier offset, **latest**: automatically reset the offset to the latest offset, **none**: throw exception to the consumer if no previous offset found for the consumer group.  Default: latest | Yes |
-| Kafka Bootstrap Servers | A comma-separated list of Kafka bootstrap servers, should contain a port, for example `kafka-broker:9092`. | Yes |
+| Kafka Auto Offset Reset | Automatic offset configuration applied when no previous consumer offset is found corresponding to the Kafka `auto.offset.reset` property.  Possible values: **earliest**: automatically reset the offset to the earliest offset, **latest**: automatically reset the offset to the latest offset, **none**: throw an exception to the consumer if no previous offset is found for the consumer group.  Default: latest | Yes |
+| Kafka Bootstrap Servers | A comma-separated list of Kafka bootstrap servers that should contain a port, for example `kafka-broker:9092`. | Yes |
 | Kafka Consumer Group ID | The ID of a consumer group used by the connector. Can be arbitrary but must be unique. | Yes |
 | Kafka SASL Password | Password provided with configured password when using SASL512 SCRAM Mechanism |  |
 | Kafka SASL Username | Username provided with configured password when using SASL512 SCRAM Mechanism |  |
@@ -139,8 +139,8 @@ Show lessSee more
 
 ### Start the connector
 
-1. Right-click on the plane and select **Enable all Controller Services**.
-2. Right-click on the plane and select **Start**. The connector starts data ingestion.
+1. Right-click on the canvas and select **Enable all Controller Services**.
+2. Right-click on the canvas and select **Start**. The connector starts data ingestion.
 
 ## Understanding KAFKAMETADATA column
 

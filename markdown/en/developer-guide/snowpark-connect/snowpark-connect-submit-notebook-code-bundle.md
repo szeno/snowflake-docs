@@ -11,11 +11,6 @@ management, secrets, scheduling, parameters, and observability. This page links 
 on the parts that are specific to Spark notebooks and to the programmatic API. For the general model, see
 [Run and schedule Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-schedule).
 
-Note
-
-Running notebooks as Code Bundles on a compute pool (Snowpark Container Services) is generally available. The inline
-`WITH SPECIFICATION` override used in the SQL and REST paths below is in Public Preview.
-
 ## Prerequisites
 
 Before you submit a notebook, make sure you have:

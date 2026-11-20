@@ -250,9 +250,9 @@ to create the service user.
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
-   on the number of tables being replicated, and the amount of data transferred. Large table
+   on the number of tables being replicated and the amount of data transferred. Large table
    numbers typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster) rather than the warehouse size.
 
    Copy code
 
@@ -271,7 +271,7 @@ to create the service user.
    The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
    the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
    [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
-   What is specific to this connector is getting its source host into a rule that EAI references.
+   What is specific to this connector is getting its source host into a rule that the EAI references.
 
    The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
    That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the
@@ -411,11 +411,11 @@ table gives the parameter name and its purpose so you can prepare before enterin
 | Snowflake Warehouse | Destination details | The warehouse used for merge operations. Start with `XSMALL`; for many tables, a multi-cluster warehouse scales better than a larger size. |
 | Destination Schema Strategy | Destination details | How destination schemas are named, to avoid collisions when consolidating more than one source database into a single Snowflake database. Includes presets using the source schema and database names. Fixed after first apply. |
 | Object Identifier Resolution | Destination details | Whether source object names are stored case-sensitively (default) or uppercased (recommended). Fixed after first apply. |
-| Oversized Value Strategy | Destination details | How values exceeding the 16 MB limit are handled. Defaults to **Set Null**. |
+| Oversized Value Strategy | Destination details | How oversized values are handled: **Fail Table**, **Set Null**, or **Prune Row**. Defaults to **Set Null**. To replicate large values up to the Snowpipe Streaming limits for data types and rows, select **Prune Row**. |
 | Error Handling Strategy | Destination details | How invalid rows are handled. Defaults to **Log Errors and Continue**. |
-| Table Storage Format | Destination details | Standard Snowflake tables or Iceberg tables. Fixed after first apply. |
+| Table Storage Format | Destination details | Standard Snowflake tables or Iceberg tables. Applies to both destination and journal tables. Fixed after first apply. |
 | Iceberg Version | Destination details | When using Iceberg, the table version (2 or 3, default 3). |
-| Merge Task Schedule CRON | Tuning | CRON expression controlling when journal data is merged into destination tables, which is when warehouse cost accrues. |
+| Merge Task Schedule CRON | Tuning | CRON expression controlling when journal data is merged into destination tables, which is when warehouse cost accrues. The schedule uses UTC. |
 | Concurrent Snapshot Queries | Tuning | How many tables to snapshot concurrently (default 2). Each holds a source database connection. |
 | Merge Strategy | Tuning | SQL strategy used to merge journal rows into destination tables. **Base merge** (default) works for all tables. **Adaptive (preview)** runs more efficient merge queries, reducing compilation and execution time and therefore merge costs. Changing this value affects only merges that run after the change and does not rewrite data already merged. |
 | Ingestion Type | Migration | Whether new tables get a full snapshot before switching to CDC (default) or go straight to incremental. |
@@ -425,7 +425,7 @@ Expand
 
 Show lessSee more
 
-The gen 2 parameters are listed below, grouped by wizard step. The gen 1 parameter reference
+The gen 2 parameters are listed above, grouped by wizard step. The gen 1 parameter reference
 follows in the next section.
 
 *Using gen 2? [Skip to Run the flow.](#label-postgres-run-the-flow)*
@@ -448,7 +448,7 @@ Once this is done, you can enable the connector, and it should connect to both P
 However, it won’t replicate any data until tables are explicitly added to its configuration.
 
 To configure specific tables for replication, edit the PostgreSQL Ingestion Parameters context. Shortly after you apply the changes to the
-Replication Parameters context, the configuration will be picked up by the connector, and the replication lifecycle will start for every table.
+PostgreSQL Ingestion Parameters context, the configuration will be picked up by the connector, and the replication lifecycle will start for every table.
 
 To run multiple CDC connector instances on one runtime, see .
 
@@ -456,7 +456,7 @@ To run multiple CDC connector instances on one runtime, see .
 
 | Parameter | Description |
 | --- | --- |
-| PostgreSQL Connection URL | The full JDBC URL to the source database. Example: `jdbc:postgresql://example.com:5432/public` If you are connecting to PostgreSQL replica server, see . |
+| PostgreSQL Connection URL | The full JDBC URL to the source database. Example: `jdbc:postgresql://example.com:5432/public` If you are connecting to a PostgreSQL replica server, see . |
 | PostgreSQL JDBC Driver | The path to the [PostgreSQL JDBC driver jar](https://jdbc.postgresql.org/). Download the jar from its website, then select the **Reference asset** checkbox to upload and attach it. |
 | PostgreSQL Username | The username for the connector. |
 | PostgreSQL Password | The password for the connector. |
@@ -481,9 +481,9 @@ Show lessSee more
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake Private Key File. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |
 | Snowflake Username | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the username used to connect to the Snowflake instance. | Yes |
-| Oversized Value Strategy | Determines how the connector handles values that exceed its internal size limits (16 MB) during replication. Possible values are:  - **Fail Table** (default): The table is marked as permanently failed, and replication stops for that table. - **Set Null**: The value is replaced with `NULL` in the destination table.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. | No |
-| Error Handling Strategy | Determines how the connector handles invalid rows that Snowflake rejects during ingestion. Possible values are:  - **Fail Table** (default): The table is marked as failed on the first invalid row, and replication stops for that table. - **Log Errors and Continue** : The connector keeps replicating the valid rows and records each rejected row in the table’s error table. | No |
-| Table Storage Format | Standard Snowflake tables or Iceberg tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
+| Oversized Value Strategy | Determines how the connector handles values that are too large to replicate. Possible values are:  - **Fail Table** (default for gen 1 connectors): The table is marked as permanently failed, and replication stops for that table. No values are dropped or changed. - **Set Null** (default in the gen 2 **Destination details** step): A value that exceeds the connector’s per-value limit (16 MB by default) is replaced with `NULL` in the destination table. The other columns in the row replicate normally.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. - **Prune Row**: Aligns the connector with the Snowpipe Streaming limits for data types and rows. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned.   Use this if you want to replicate large values. If you raised the connector’s per-value limit and use **Set Null**, switch to **Prune Row** instead.   Requires Runtime Extensions version `2026.11.17.2` or later.  When **Prune Row** is selected, the connector first prunes any non-key value that exceeds the Snowflake limit for its type. Text, semi-structured, and binary values each have their own limit. If the row still exceeds the 128 MB Snowpipe Streaming row limit, the connector prunes other large non-key values, and then any remaining non-key values, until the row fits. If the replication keys and the metadata that the connector must keep still exceed the row limit, the table is marked as permanently failed.  How a pruned row is reported depends on the load phase:   - **Incremental load**: The change is written to the journal table with `snowflake_row_pruned` set to `true` in its `SF_METADATA` column. Journal tables are in the same schema as the destination table and are named `<source_table_name>_JOURNAL_<timestamp>_<schema_generation>`. For example, the journal table for a source table named `ORDERS` might be `ORDERS_JOURNAL_1763478000_1`. - **Initial snapshot load**: The row isn’t marked. Instead, the connector logs an error that names the table and the pruned columns.   To find incremental changes that lost a value, query the journal table. For example:  Copy code  ``` SELECT *   FROM ORDERS_JOURNAL_1763478000_1   WHERE SF_METADATA:snowflake_row_pruned::BOOLEAN = TRUE; ``` | No |
+| Error Handling Strategy | Determines how the connector handles invalid rows that Snowflake rejects during ingestion. Possible values are:  - **Fail Table** (default): The table is marked as failed on the first invalid row, and replication stops for that table. - **Log Errors and Continue**: The connector keeps replicating the valid rows and records each rejected row in the table’s error table. | No |
+| Table Storage Format | Standard Snowflake tables or Iceberg tables. Applies to both destination and journal tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
 | Iceberg Version | The Iceberg table version, 2 or 3 (default 3). Ignored unless Table Storage Format is **ICEBERG**. Don’t change this value after ingestion begins. | No |
 | Snowflake Warehouse | Snowflake warehouse used to run merge queries. Start with `XSMALL`; for many tables, a multi-cluster warehouse scales better than a larger size. | Yes |
 
@@ -496,7 +496,7 @@ Show lessSee more
 | Parameter | Description |
 | --- | --- |
 | Included Table Names | A comma-separated list of table paths, including their schemas. Example: `public.my_table, other_schema.other_table`.  Select tables either by name or by Regex. If you use both, all matching tables from either option will be included.  Sub-partition tables are always excluded from ingestion. See [Replicate a partitioned table](#label-postgres-connector-replicate-partitioned-table) for more information. |
-| Included Table Regex | A regular expression to match against table paths. Every path matching the expression will be replicated, and new tables matching the pattern that get created later will also be included automatically. Example: `public\.auto_.*`  Select tables either by name or by Regex. If you use both, all matching tables from either option will be included.  Sub-partition tables are always excluded from ingestion. See [Replicate a partitioned table](#label-postgres-connector-replicate-partitioned-table) for more information. |
+| Included Table Regex | A regular expression to match against table paths. Every path matching the expression will be replicated, and new tables matching the pattern that get created later will also be included automatically. Example: `public\.auto_.*`  The expression uses Java regular expression syntax and must match the entire `schema.table` name. Matching is case-sensitive; to ignore case, start the expression with `(?i)`. Escape the dot between the schema and table names as `\.`.   - `(schema1|schema2|schema3)\..*` replicates all tables in `schema1`, `schema2`, and `schema3`. - `.*\..*` replicates all tables in all schemas.   Select tables either by name or by Regex. If you use both, all matching tables from either option will be included.  Sub-partition tables are always excluded from ingestion. See [Replicate a partitioned table](#label-postgres-connector-replicate-partitioned-table) for more information. |
 | Column Filter JSON | Optional. A JSON array of filter objects specifying which columns to include or exclude per table. For syntax details and examples, see [Replicate a subset of columns in a table](#label-postgres-connector-replication-subset-of-columns). |
 | Table Key Configuration Service | Optional. A `JsonTableKeyConfigService` controller service that supplies a user-declared logical key for one or more tables. The service exposes a **Table Key Configuration JSON** property where you define the key mappings. When configured, the logical key takes the highest priority and overrides any primary key or unique index that the connector would otherwise auto-detect.  For more information, see [Specify a logical key for a table](#label-postgres-logical-key). |
 | Merge Task Schedule CRON | A CRON expression defining when the connector merges journal data into destination tables, which is when warehouse cost accrues. The **Merge Journal to Destination** processor performs the merge on this schedule. With no new changes waiting, no merge runs and the warehouse is free to auto-suspend. Set it to `* * * * * ?` for continuous merges (lowest latency, highest cost), or schedule merges to limit warehouse run time. The connector evaluates the schedule in the UTC time zone.  For example:  - The string `* 0 * * * ?` indicates that you want to schedule merges at the full hour for one minute. - The string `* 20 14 ? * MON-FRI` indicates that you want to schedule merges at 2:20 PM every   Monday through Friday.  For additional information and examples, see the cron triggers tutorial in the [Quartz Documentation](https://www.quartz-scheduler.org/documentation/quartz-2.5.x/tutorials/crontrigger.html). |

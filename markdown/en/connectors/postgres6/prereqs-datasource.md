@@ -37,7 +37,7 @@ Depending on where the PostgreSQL server is hosted, it can be done in different 
 |  |  |
 | --- | --- |
 | On premise | Execute the following query with a superuser or a user with `ALTER SYSTEM` privilege:  Copy code  ``` ALTER SYSTEM SET wal_level = logical; ``` |
-| RDS | User used by the agent needs to have the `rds_superuser` or `rds_replication` roles assigned.  You also need to set:  - `rds.logical_replication` static parameter to 1. - `max_replication_slots`, `max_connections` and `max_wal_senders` parameters according to your database and replication setup. |
+| RDS | The user used by the agent needs to have the `rds_superuser` or `rds_replication` roles assigned.  You also need to set:  - `rds.logical_replication` static parameter to 1. - `max_replication_slots`, `max_connections` and `max_wal_senders` parameters according to your database and replication setup. |
 | AWS Aurora | Set the `rds.logical_replication` static parameter to 1. |
 | GCP | Set the following flags:  - `cloudsql.logical_decoding=on`. - `cloudsql.enable_pglogical=on`.   For more information, see [Google Cloud documentation](https://cloud.google.com/sql/docs/postgres/replication/configure-logical-replication#set-up-logical-replication-with-pglogical). |
 | Azure | Set the replication support to `Logical`. For more information, see [Azure documentation](https://learn.microsoft.com/en-us/azure/postgresql/single-server/concepts-logical#set-up-your-server). |
@@ -97,7 +97,7 @@ If the connector is not used anymore, Replication Slot must be removed to avoid 
 
 ## Create required user
 
-Create user for Snowflake Connector for PostgreSQL with the `REPLICATION` attribute. For more information on replication security, see [PostgreSQL documentation](https://www.postgresql.org/docs/current/logical-replication-security.html).
+Create a user for Snowflake Connector for PostgreSQL with the `REPLICATION` attribute. For more information on replication security, see [PostgreSQL documentation](https://www.postgresql.org/docs/current/logical-replication-security.html).
 
 ## Next steps
 

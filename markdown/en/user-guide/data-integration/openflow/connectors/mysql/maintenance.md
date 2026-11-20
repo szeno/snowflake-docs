@@ -85,6 +85,12 @@ If the failure was caused by an issue in the source table such as a missing prim
 
 By default, the connector replicates individual values up to 16 MB and marks any table that contains a larger value as permanently failed. If your Snowflake account has the `ENABLE_OPENFLOW_CDC_MYSQL_SSV2` parameter set to `true`, the per-value limit can be raised from 16 MB to **128 MB**.
 
+Tip
+
+To replicate large values, set **Oversized Value Strategy** to **Prune Row** instead of raising the per-value limit. **Prune Row** follows the Snowpipe Streaming limits for data types and rows and doesn’t use the per-value limit. If you raised the per-value limit and use **Set Null**, switch to **Prune Row**. For details, see [Oversized values](/user-guide/data-integration/openflow/connectors/mysql/about#label-mysql-oversized-values).
+
+The rest of this section applies to the **Fail Table** and **Set Null** strategies.
+
 Important
 
 The 128 MB limit applies in two ways: it’s both the maximum size of a single value and the maximum total size of a row. The connector adds metadata columns to every replicated row (`_SNOWFLAKE_UPDATED_AT`, `_SNOWFLAKE_INSERTED_AT`, `_SNOWFLAKE_DELETED`) that count toward the per-row limit, along with all other columns in the row. As a result, a single value can’t reach the full 128 MB in practice when the row includes other data.
@@ -151,7 +157,7 @@ During snapshot replication, the product of `fetchSize * rowSize * concurrentQue
 - `rowSize` is the size of a single row being fetched.
 - `concurrentQueries` is the Concurrent Snapshot Queries parameter (default: 2): how many tables snapshot at once. Raising it does not run multiple snapshot queries against the same table. See [Set up the Openflow Connector for MySQL](/user-guide/data-integration/openflow/connectors/mysql/setup).
 
-This memory requirement applies even when **Oversized Value Strategy** is set to **Set Null**, because the connector must load each oversized value into memory before it can replace the value with `NULL`.
+This memory requirement applies even when **Oversized Value Strategy** is set to **Set Null** or **Prune Row**, because the connector must load each oversized value into memory before it can replace the value with `NULL` or prune it.
 
 If the source database contains many densely packed oversized values, consider excluding the affected column from replication before you start the snapshot. For example, if a column contains 1 GB values, loading even nine rows (~9 GB) can exhaust the heap and cause an out-of-memory error on a Medium runtime.
 

@@ -30,17 +30,22 @@ You can execute the `dbt deps` command in one of the following ways:
   ```
   EXECUTE DBT PROJECT mydb.my_dbt_projects_schema.my_dbt_project
     ARGS = 'deps'
+    EXTERNAL_ACCESS_INTEGRATIONS = (my_dbt_ext_access)
     WRITEBACK = TRUE;
   ```
 
-  External packages require an external access integration. For more information, see
+  External packages require an external access integration. Specify it on the `EXECUTE DBT PROJECT` command that runs `deps`. The
+  dbt project object’s integration doesn’t grant network access to a `deps` execution. Use this method when you deploy with automatic
+  compilation disabled (`AUTO_COMPILE = FALSE` or `--no-auto-compile`), because deployment then doesn’t run `dbt deps`. For more
+  information, see
   [Create an external access integration in Snowflake for dbt dependencies](#label-dbt-key-concepts-external-access-config) and [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
 
 If you’re using the dbt Fusion engine, note that Fusion automatically runs `dbt deps` when `packages.yml` lists dependencies
 but no `dbt_packages` folder is present. This happens implicitly during commands like `dbt compile` and `dbt run`. If no
 external access integration is configured, this implicit run will fail with a network access error. To resolve this: if
 you’re working in a workspace, run `dbt deps` manually first to populate `dbt_packages`. If you’re deploying a project,
-set an external access integration on the project object so that `dbt deps` runs automatically during compilation.
+set an external access integration on the project object and leave automatic compilation enabled (the default) so that
+`dbt deps` runs automatically during deployment.
 For more information, see [Create an external access integration in Snowflake for dbt dependencies](#label-dbt-key-concepts-external-access-config).
 
 ## Cross dbt project dependencies
@@ -111,8 +116,13 @@ To reference `metrics_project` inside `core_project`, complete the following ste
 ## Run dbt deps automatically during deployment
 
 When you deploy or update a dbt project object and give it an external access integration, Snowflake automatically runs `dbt deps`
-during deployment (before `dbt compile`) so that dependencies are installed as part of that step. This means you no longer need to include `/dbt_packages`
-when deploying projects with external dependencies.
+during deployment (before `dbt compile`) so that dependencies are installed as part of that step, and you don’t need to include
+`/dbt_packages` when deploying projects with external dependencies. This happens only when automatic compilation is enabled, which is
+the default.
+
+When automatic compilation is disabled (`AUTO_COMPILE = FALSE` or `--no-auto-compile`), deployment skips both `dbt deps` and `dbt compile`, even if
+the dbt project object has an external access integration. To install packages in that case, execute `deps` against the deployed object
+and specify the integration on that execution. For an example, see [About executing the dbt deps command](#label-dbt-key-concepts-execute-deps).
 
 SnowsightSQLSnowflake CLI
 
@@ -200,7 +210,7 @@ ALTER DBT PROJECT mydb.my_dbt_projects_schema.my_dbt_project
   SET EXTERNAL_ACCESS_INTEGRATIONS = (my_dbt_ext_access);
 
 -- Deploy the updated Git repository files to the live version
--- After an external access integration is set, deployment runs dbt deps, then dbt compile
+-- With AUTO_COMPILE = TRUE (the default), deployment runs dbt deps, then dbt compile
 ALTER DBT PROJECT mydb.my_dbt_projects_schema.my_dbt_project
   DEPLOY FROM '@mydb.dev_schema.my_dbt_git_stage/branches/main/sales_dbt_project';
 ```
@@ -211,8 +221,8 @@ command with either the `--external-access-integration` or `--install-local-deps
 By default, Snowflake runs `dbt compile` during deployment. If an external access integration is configured, Snowflake first runs `dbt deps`,
 then `dbt compile`. Pass `--no-auto-compile` to skip both commands.
 
-The `--install-local-deps` flag creates an object that has an empty external access integration. During deployment, it runs
-`dbt deps` and replaces the previous state of the `dbt_packages` folder.
+The `--install-local-deps` flag creates an object that has an empty external access integration. During deployment, unless you pass
+`--no-auto-compile`, it runs `dbt deps` and replaces the previous state of the `dbt_packages` folder.
 
 The `--external-access-integration` flag adds an external access integration, which takes precedence over the
 `--install-local-deps` flag.
@@ -279,5 +289,5 @@ The following requirements, considerations, and limitations apply to dbt depende
 - **dbt Fusion and implicit `dbt deps`:** When using the dbt Fusion engine, if `packages.yml` lists dependencies but no `dbt_packages` folder exists, Fusion automatically runs `dbt deps`
   during commands like `dbt compile` or `dbt run`. This is why Snowflake surfaces an external access integration option for
   every dbt command. If you receive an unexpected network access error: in a workspace, run `dbt deps` manually first to
-  pre-populate `dbt_packages`. When deploying, set an external access integration on the project object so that
-  `dbt deps` runs automatically during compilation.
+  pre-populate `dbt_packages`. When deploying, set an external access integration on the project object and leave automatic
+  compilation enabled (the default) so that `dbt deps` runs automatically during deployment.

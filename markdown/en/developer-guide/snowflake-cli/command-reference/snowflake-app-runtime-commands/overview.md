@@ -1,4 +1,4 @@
-# Snowflake Apps CLI commands
+# Snowflake App Runtime CLI commands
 
 The Snowflake CLI provides `snow app` subcommands for creating, deploying, and
 managing Snowflake App Runtime projects. When you build with

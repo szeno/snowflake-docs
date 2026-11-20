@@ -14,7 +14,7 @@ and object name (see Output in this topic for descriptions of the output columns
 to note if you want to filter the results.
 
 See also:
-:   [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle), [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [SHOW NOTEBOOKS](/sql-reference/sql/show-notebooks), [DESCRIBE NOTEBOOK](/sql-reference/sql/desc-notebook)
+:   [CREATE CODE BUNDLE](/sql-reference/sql/create-code-bundle), [EXECUTE CODE BUNDLE](/sql-reference/sql/execute-code-bundle), [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle), [DROP CODE BUNDLE](/sql-reference/sql/drop-code-bundle)
 
 ## Syntax
 
@@ -105,7 +105,7 @@ For general information about roles and privilege grants for performing SQL acti
   To view results for which more than ten thousand records exist, query the corresponding view (if one exists) in the [Snowflake Information Schema](/sql-reference/info-schema).
 
 - Returns all Code Bundles visible to the current role.
-- Use `DESCRIBE CODE BUNDLE <name>` to inspect a Code Bundle.
+- Use [DESCRIBE CODE BUNDLE](/sql-reference/sql/desc-code-bundle) to inspect a Code Bundle and its versions.
 - Identifiers containing special characters must be double-quoted.
 
 ## Examples

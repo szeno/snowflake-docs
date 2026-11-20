@@ -50,9 +50,9 @@ DROP ROLE [ IF EXISTS ] <name>
   OWNERSHIP privilege on the shared database first, and then drop the role.
 - Do not drop a role that owns an installed Native App (APPLICATION object). Although ownership
   transfers to the role executing the DROP ROLE command, the app becomes non-functional and cannot
-  be recovered. You must drop the broken app and reinstall it. To safely remove a role that owns an
-  app, first transfer ownership of the app using
-  [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership), then drop the role.
+  be recovered. You must drop the broken app and reinstall it.
+  You can’t use [GRANT OWNERSHIP](/sql-reference/sql/grant-ownership) on an installed application.
+  To change the owning role, uninstall and reinstall the app using the intended role.
 - Ownership of any objects owned by the dropped role is transferred to the role that executes the DROP ROLE command. To transfer
   ownership of each of these objects to a different role, use
   [GRANT OWNERSHIP … COPY CURRENT GRANTS](/sql-reference/sql/grant-ownership).

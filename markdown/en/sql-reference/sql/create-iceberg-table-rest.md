@@ -41,6 +41,7 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ WITH CONTACT ( <purpose> = <contact_name> [ , <purpose> = <contact_name> ... ] ) ]
 ```
@@ -88,6 +89,7 @@ CREATE [ OR REPLACE ] ICEBERG TABLE [ IF NOT EXISTS ] <table_name>
   [ ICEBERG_VERSION = <integer> ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ [ WITH ] TAG ( <tag_name> = '<tag_value>' [ , <tag_name> = '<tag_value>' , ... ] ) ]
   [ BASE_LOCATION = '<path_to_directory_for_table_files>' ]
   [ STORAGE_SERIALIZATION_POLICY = { COMPATIBLE | OPTIMIZED } ]
@@ -115,6 +117,7 @@ partitionExpression ::=
 > ```
 > CREATE [ OR REPLACE ] ICEBERG TABLE <table_name> [ ( <col_name> [ <col_type> ] , <col_name> [ <col_type> ] , ... ) ]
 >   [ ... ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ PURGE ]
 >   AS SELECT <query>
 > ```
@@ -126,6 +129,7 @@ You can apply a masking policy to a column in a CTAS statement. Specify the mask
 > ```
 > CREATE [ OR REPLACE ] ICEBERG TABLE <table_name> ( <col1> <data_type> [ WITH ] MASKING POLICY <policy_name> [ , ... ] )
 >   [ ... ]
+>   [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
 >   [ PURGE ]
 >   AS SELECT <query>
 > ```
@@ -280,7 +284,18 @@ You can apply a masking policy to a column in a CTAS statement. Specify the mask
 
     For more information, see [Set a target file size](/user-guide/tables-iceberg-manage#label-tables-iceberg-target-file-size).
 
+    This value corresponds to the Iceberg property `write.target-file-size-bytes`. For how Snowflake
+    converts between the two, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
     Default: AUTO
+
+`TABLE_PROPERTIES = ( 'key' = 'value' [ , 'key' = 'value' , ... ] )`
+:   Specifies [Iceberg table properties](https://iceberg.apache.org/docs/latest/configuration/#table-properties)
+    as case-sensitive `'key' = 'value'` pairs. Some keys map to Snowflake parameters, and Snowflake stores
+    other keys as Iceberg properties.
+
+    For the mapping, the keys Snowflake rejects, and examples, see
+    [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 `MAX_DATA_EXTENSION_TIME_IN_DAYS = integer`
 :   Object parameter that specifies the maximum number of days for which Snowflake can extend the data retention period for the table to
@@ -527,6 +542,9 @@ For general information about roles and privilege grants for performing SQL acti
 
 ## Usage notes
 
+- `TABLE_PROPERTIES` is supported when Snowflake can write the table. A catalog-linked database
+  rejects the clause when property updates aren’t an allowed write operation. See
+  [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 - If you created your external volume or catalog integration using a double-quoted identifier,
   you must specify the identifier exactly as created (including the double quotes) in your CREATE ICEBERG TABLE statement.
   Failure to include the quotes might result in an `Object does not exist` error or
@@ -548,7 +566,7 @@ For general information about roles and privilege grants for performing SQL acti
   - Creating a table in a nested namespace is supported only when the catalog-linked database uses a catalog integration for
     a catalog that supports nested namespaces. The parent namespace must already exist before you create a table in a nested namespace. For more
     information, see [Use CREATE SCHEMA to create namespaces in your external catalog](/user-guide/tables-iceberg-externally-managed-writes#label-tables-iceberg-externally-managed-writes-create-schema).
-- The TARGET\_FILE\_SIZE property is only supported for tables with [write support (preview)](/user-guide/tables-iceberg-externally-managed-writes).
+- The TARGET\_FILE\_SIZE property is only supported for tables with [write support](/user-guide/tables-iceberg-externally-managed-writes).
 - Considerations for creating tables:
 
   > - A schema cannot contain tables and/or views with the same name. When creating a table:

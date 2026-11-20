@@ -7,7 +7,9 @@ This table function can be used to validate data files processed by [Snowpipe](/
 
 Note
 
-This function returns pipe activity within the last 14 days.
+This function returns errors only for files in the pipe’s load history, which covers the last 14 days. For a time range
+before the last 14 days, the function returns no results. Recreating a pipe removes its load history, so the function
+also returns no results for files that the pipe processed before you recreated it.
 
 ## Syntax
 
@@ -52,8 +54,9 @@ VALIDATE_PIPE_LOAD(
 - When calling an Information Schema table function, the session must have an INFORMATION\_SCHEMA schema in use or the function name must be fully-qualified. For more details, see
   [Snowflake Information Schema](/sql-reference/info-schema).
 - If Snowpipe encountered no errors while processing data files within the specified time range, the function returns no results.
-- If the COPY statement in the pipe description includes a query to further transform the data during the load (i.e. a COPY transformation), then the function currently returns a user error.
-- If the specified date range falls outside the last 15 days, an error is returned.
+- If the COPY statement in the pipe definition transforms semi-structured data, such as JSON or Parquet data, during the load (that is, a COPY transformation), or if it uses `MATCH_BY_COLUMN_NAME`, the function returns a user error. The function supports pipes that transform CSV data.
+- The function doesn’t return rows that violate CHECK constraints.
+- To record every row that a pipe rejects, including rows from pipes that transform data and rows that violate CHECK constraints, turn on error logging for the pipe’s target table and use `ON_ERROR = CONTINUE` in the pipe. To change the `ON_ERROR` value of an existing pipe, [recreate the pipe](/user-guide/data-load-error-tables-pipes#label-data-load-error-tables-existing-pipes). Error logging supports CSV, JSON, and Parquet files. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
 ## Output
 
@@ -61,7 +64,7 @@ The function returns the following columns:
 
 | Column Name | Data Type | Description |
 | --- | --- | --- |
-| ERROR | TEXT | First error in the source file. |
+| ERROR | TEXT | Error in the source file. The function returns a row for each error in the file. |
 | FILE | TEXT | Name of the source file where the error was encountered. |
 | LINE | NUMBER | Number of the line in the source file where the error was encountered. |
 | CHARACTER | NUMBER | Position of the character where the error was encountered. |

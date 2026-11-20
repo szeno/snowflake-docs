@@ -23,7 +23,7 @@ board mappings).
 
 The core flow and agile flow can write to the same Snowflake destination schema, since they
 create tables with different names. The legacy connector and the new connector can run side by
-side during migration — including on the same Openflow runtime — as long as they write to
+side during migration, including on the same Openflow runtime, as long as they write to
 **separate** destination schemas, so you can validate the new output before decommissioning
 the legacy connector.
 

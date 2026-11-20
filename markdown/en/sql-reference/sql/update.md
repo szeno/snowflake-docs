@@ -54,6 +54,10 @@ UPDATE <target_table>
   ```
   ALTER SESSION SET ERROR_ON_NONDETERMINISTIC_UPDATE=TRUE;
   ```
+- If error logging is turned on for the target table, a supported error, such as a NOT NULL or CHECK constraint
+  violation, doesn’t cause the statement to fail. Instead, the statement records the error in the table’s error table,
+  leaves the row that caused the error unchanged, and updates the other rows. For more information, see
+  [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
 
 ## Examples
 

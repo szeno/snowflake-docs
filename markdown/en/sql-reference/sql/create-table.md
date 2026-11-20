@@ -747,17 +747,30 @@ For more information about backups, see [Backups for disaster recovery and immut
     You can also copy grants with the [`COPY = ( GRANTS )`](/sql-reference/sql/create-table#label-create-table-copy-property) parameter.
 
 `ERROR_LOGGING = { TRUE | FALSE }`
-:   Specifies whether to turn on DML error logging for the table.
+:   Specifies whether to turn on error logging for the table. When error logging is turned on, DML statements and supported
+    data loading methods record errors in the table’s error table.
 
-    - `TRUE` turns on DML error logging for the table.
-    - `FALSE` turns off DML error logging for the table.
+    - `TRUE` turns on error logging for the table. An `INSERT`, `UPDATE`, or `MERGE` statement on the table that
+      encounters a supported error no longer fails. Instead, it writes the other rows and records the error. For
+      `COPY INTO` and Snowpipe, the `ON_ERROR` copy option still determines how a load handles errors and which errors are
+      recorded. To set this property for an existing table, use a role that owns the table.
+    - `FALSE` turns off error logging for the table. If the table has an error table, turning off error logging drops the
+      error table and the errors in it.
 
-    For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+    The error table stores the source data of each error. Before you turn on error logging for a table that stores
+    sensitive data, review which roles can query the error table, as described in
+    [Access control requirements for error tables](/user-guide/data-engineering/error-tables#label-dml-error-logging-access-control-error-tables).
+
+    For more information, see [Introduction to error logging](/user-guide/data-engineering/error-logging). For DML statements, see
+    [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml). For the errors that error logging records when you load files
+    with `COPY INTO` or Snowpipe, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
     Note
 
-    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session,
-    DML error logging isn’t turned on, regardless of whether it is turned on for specific tables.
+    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session, DML statements,
+    `CREATE TABLE ... AS SELECT` statements, and `COPY INTO` statements in the session don’t record errors, regardless of
+    whether error logging is turned on for specific tables. For Snowpipe, only the value that’s set for the account
+    applies. For more information, see [Prevent or limit error logging](/user-guide/data-engineering/error-logging#label-error-logging-prevent).
 
 `COPY TAGS`
 :   Applies [tags](/user-guide/object-tagging/introduction) when you use any of these CREATE TABLE forms:
@@ -1007,6 +1020,10 @@ For general information about roles and privilege grants for performing SQL acti
       ```
 
       Alternatively, you can create a table with rows in sorted order by using an ORDER BY clause in the CTAS query.
+  - If the statement sets `ERROR_LOGGING = TRUE`, a supported error in a row, such as a conversion error or a CHECK
+    constraint violation, doesn’t cause the statement to fail. Instead, the statement creates the table with the other
+    rows and records the error in the new table’s error table. For more information, see
+    [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml).
 
 - CREATE OR REPLACE … COPY TAGS
   - You don’t need privileges on the tags to use COPY TAGS.
@@ -1082,6 +1099,9 @@ For general information about roles and privilege grants for performing SQL acti
   - Unsetting an explicit [parameter](/sql-reference/parameters) value results in setting it to the default parameter value.
     If the parameter is set on the schema or database that contain the table, the table inherits the parameter value set on
     the schema or database.
+  - A CREATE OR ALTER TABLE statement doesn’t change the `ERROR_LOGGING` property of an existing table, whether or not
+    the statement sets it. To turn error logging on or off for an existing table, use
+    [ALTER TABLE](/sql-reference/sql/alter-table).
 - **Data governance**
 
   - Setting or unsetting a tag or policy on a table or column using a CREATE OR ALTER TABLE statement is not supported.

@@ -122,7 +122,7 @@ You must perform these tasks as a database administrator.
 
    > *Length of LOB data (N) to be replicated exceeds configured maximum 65536. Use the stored procedure sp\_configure to increase the configured maximum value for max text repl size option.*
 
-   Set the value based on the largest LOB sizes in your source data. It must be at least as large as the biggest value SQL Server CDC needs to replicate, including when **Oversized Value Strategy** is set to **Set Null** (the connector still reads the full value before replacing it with `NULL`).
+   Set the value based on the largest LOB sizes in your source data. It must be at least as large as the biggest value SQL Server CDC needs to replicate, including when **Oversized Value Strategy** is set to **Set Null** or **Prune Row** (the connector still reads the full value before replacing it with `NULL` or pruning it).
 
    Warning
 
@@ -224,7 +224,7 @@ You must perform these tasks as a database administrator.
 
    Note
 
-   **Azure SQL Database (single database) only — database owner before deploying wrapper scripts.** The wrapper procedures use `EXECUTE AS OWNER`. If the database owner is a Microsoft Entra ID principal (common after importing a database from a `.bacpac` file) and the connector authenticates with SQL Server authentication, calls to `dbo.sf_openflow_cdc_enable_table` and `dbo.sf_openflow_cdc_disable_table` fail with an error such as `Only active directory users can impersonate other active directory users` (error 33171). The connector does not receive extra privileges from this step; it only changes who owns the database.
+   **Azure SQL Database (single database) only: database owner before deploying wrapper scripts.** The wrapper procedures use `EXECUTE AS OWNER`. If the database owner is a Microsoft Entra ID principal (common after importing a database from a `.bacpac` file) and the connector authenticates with SQL Server authentication, calls to `dbo.sf_openflow_cdc_enable_table` and `dbo.sf_openflow_cdc_disable_table` fail with an error such as `Only active directory users can impersonate other active directory users` (error 33171). The connector does not receive extra privileges from this step; it only changes who owns the database.
 
    Before deploying the Openflow CDC wrapper scripts in step 5, connect to each replicated database as the server administrator and run:
 
@@ -236,7 +236,7 @@ You must perform these tasks as a database administrator.
 
    Use the SQL Server authentication login that administers the logical server (for example, the login you specified when you created the server), not the connector login.
 5. Deploy the Openflow CDC wrapper procedures so the connector can rotate capture instances when supported schema changes occur. For deployment instructions, see [Deploy the Openflow CDC wrapper procedures](#label-sql-server-cdc-wrapper-procedures). If permissions or internal policy blocks deployment, see [When the wrapper procedures aren’t deployed](/user-guide/data-integration/openflow/connectors/sql-server-cdc/about#label-sql-server-cdc-wrapper-procedures-missing).
-6. (Optional) Grant the VIEW DEFINITION privilege on the User Defined Data Types (UDDT).
+6. (Optional) Grant the VIEW DEFINITION permission on the User Defined Data Types (UDDT).
 
    If your tables contain columns that use User Defined Data Types (UDDT), and the UDDT is owned by
    a different user than the connector user, you must grant the VIEW DEFINITION permission
@@ -549,9 +549,9 @@ to create the service user.
    ```
 2. Designate a warehouse for the connector to use, and grant the execute-as role **USAGE** and
    **OPERATE** on it. Start with the `XSMALL` warehouse size, then experiment with size depending
-   on the number of tables being replicated, and the amount of data transferred. Large table
+   on the number of tables being replicated and the amount of data transferred. Large table
    numbers typically scale better with
-   [multi-cluster warehouses](/user-guide/warehouses-multicluster), rather than the warehouse size.
+   [multi-cluster warehouses](/user-guide/warehouses-multicluster) rather than the warehouse size.
 
    Copy code
 
@@ -570,7 +570,7 @@ to create the service user.
    The EAI itself belongs to the runtime, not to this connector. You create it once, attach it to
    the runtime, and grant the execute-as role `USAGE` on it. For those steps, see
    [Creating network rules and external access integrations](/user-guide/data-integration/openflow/setup-openflow-spcs-create-rr#label-create-network-rules-and-external-access-integrations).
-   What is specific to this connector is getting its source host into a rule that EAI references.
+   What is specific to this connector is getting its source host into a rule that the EAI references.
 
    The rule takes the source’s host and port as a single value, such as `db.example.com:<port>`.
    That’s the host and port from the connector’s connection URL, without the `jdbc:` scheme, the
@@ -756,8 +756,8 @@ For failover behavior, see [Always On Availability Groups and source failover](/
 | Snowflake Private Key Password | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the password associated with the Snowflake Private Key File. | No |
 | Snowflake Role | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Use the runtime’s execute-as role (or a child role granted to it).   You can find your execute-as role in the Openflow UI by navigating to **View Details** for your runtime. - **KEY\_PAIR**: Use a valid role configured for your service user. | Yes |
 | Snowflake Username | When using:   - **SNOWFLAKE\_MANAGED** Authentication Strategy: Must be blank. - **KEY\_PAIR**: Provide the user name used to connect to the Snowflake instance. | Yes |
-| Oversized Value Strategy | Determines how the connector handles values that exceed its internal size limits (16 MB) during replication. Possible values are:  - **Fail Table** (default): The table is marked as permanently failed, and replication stops for that table. - **Set Null**: The value is replaced with `NULL` in the destination table.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. | No |
-| Table Storage Format | Standard Snowflake tables or Iceberg tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
+| Oversized Value Strategy | Determines how the connector handles values that are too large to replicate. Possible values are:  - **Fail Table** (default for gen 1 connectors): The table is marked as permanently failed, and replication stops for that table. No values are dropped or changed. - **Set Null** (default in the gen 2 **Destination details** step): A value that exceeds the connector’s per-value limit (16 MB by default) is replaced with `NULL` in the destination table. The other columns in the row replicate normally.   Use this to prevent table failures when it is acceptable to lose data in tables beyond the oversized value. - **Prune Row**: Aligns the connector with the Snowpipe Streaming limits for data types and rows. A non-key value that Snowpipe Streaming would reject is pruned, and the rest of the row is replicated. Replication keys are never pruned.   Use this if you want to replicate large values. If you raised the connector’s per-value limit and use **Set Null**, switch to **Prune Row** instead.   Requires Runtime Extensions version `2026.11.17.2` or later.  When **Prune Row** is selected, the connector first prunes any non-key value that exceeds the Snowflake limit for its type. Text, semi-structured, and binary values each have their own limit. If the row still exceeds the 128 MB Snowpipe Streaming row limit, the connector prunes other large non-key values, and then any remaining non-key values, until the row fits. If the replication keys and the metadata that the connector must keep still exceed the row limit, the table is marked as permanently failed.  How a pruned row is reported depends on the load phase:   - **Incremental load**: The change is written to the journal table with `snowflake_row_pruned` set to `true` in its `SF_METADATA` column. Journal tables are in the same schema as the destination table and are named `<source_table_name>_JOURNAL_<timestamp>_<schema_generation>`. For example, the journal table for a source table named `ORDERS` might be `ORDERS_JOURNAL_1763478000_1`. - **Initial snapshot load**: The row isn’t marked. Instead, the connector logs an error that names the table and the pruned columns.   To find incremental changes that lost a value, query the journal table. For example:  Copy code  ``` SELECT *   FROM ORDERS_JOURNAL_1763478000_1   WHERE SF_METADATA:snowflake_row_pruned::BOOLEAN = TRUE; ``` | No |
+| Table Storage Format | Standard Snowflake tables or Iceberg tables. Applies to both destination and journal tables. Defaults to **STANDARD**. Don’t change after the connector starts. | Yes |
 | Iceberg Version | The Iceberg table version, 2 or 3 (default 3). Ignored unless Table Storage Format is **ICEBERG**. Don’t change this value after ingestion begins. | No |
 | Snowflake Warehouse | Snowflake warehouse used to run queries. | Yes |
 

@@ -118,9 +118,9 @@ CREATE [ OR REPLACE ] DBT PROJECT [ IF NOT EXISTS ] <name>
     For more information, see [Use SQL environment variables and private Git packages](/user-guide/data-engineering/dbt-projects-on-snowflake-environment-variables).
 
 `EXTERNAL_ACCESS_INTEGRATIONS = ( integration_name [ , ... ] )`
-:   Specifies the external access integration used to grant permissions to pull remote dependencies from dbt package hub or GitHub. When declared on an object, `dbt deps` runs automatically during deployment.
+:   Specifies the external access integration used to grant permissions to pull remote dependencies from dbt package hub or GitHub. When you set this parameter and `AUTO_COMPILE = TRUE` (the default), deployment runs `dbt deps` before `dbt compile`. When `AUTO_COMPILE = FALSE`, deployment doesn’t run `dbt deps` or `dbt compile`, even if this parameter is set.
 
-    This setting is used when you deploy (create) the dbt project object. If a command needs external access during execution, you can also specify `EXTERNAL_ACCESS_INTEGRATIONS` on the [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project) command.
+    If a dbt command that you run during execution needs network access (for example, `deps`), specify `EXTERNAL_ACCESS_INTEGRATIONS` on [EXECUTE DBT PROJECT](/sql-reference/sql/execute-dbt-project).
 
     For more information, see [Understand dependencies for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dependencies).
 

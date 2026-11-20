@@ -111,6 +111,86 @@ Cortex Training supports a curated set of open models. See
 including which models support fine-tuning versus inference and the maximum context length for
 LoRA (low-rank adaptation) and full-parameter training.
 
+## Access control
+
+Each request runs as the role of the credential that signs it. The role needs a privilege on the
+database and schema in the request, such as USAGE. Some operations also need the privileges in the
+following table:
+
+| Operation | Required privileges |
+| --- | --- |
+| Create a job, including a model deployment | USE CORTEX TRAINING on the account, and a privilege on an experiment (see below). |
+| Create a job that imports weights from an external stage | The privileges to create a job, plus READ on the stage. |
+| Create a model deployment from another job’s checkpoint | The privileges to create a job. The role must also be the source job’s owner role and have USAGE on the source job’s database and schema. |
+| Get or cancel a job, run training or generation calls, list, export, or delete its checkpoints, and check a request’s status | The job’s owner role. |
+| Stream chat completions from a model deployment | The deployment’s owner role, plus USAGE on the deployment’s database and schema. |
+
+Expand
+
+Show lessSee more
+
+All other operations, such as listing jobs, checking GPU capacity, and listing models, need no
+additional privileges. A list of jobs includes only the jobs that the role owns.
+
+Cortex Training uses Snowflake ML Experiments to track each job’s runs and store its checkpoints.
+Because every job records its run in an experiment, creating a job needs a privilege on one:
+
+- **To have Cortex Training create the experiment for you** (you don’t pass `experiment_name`):
+  CREATE EXPERIMENT on the schema.
+- **To use an existing experiment** (you pass `experiment_name`): MODIFY on that experiment.
+
+A job’s owner role is the role that created it. The owner role applies when it’s the primary role,
+an active secondary role, or a role that either one inherits. Jobs and model deployments have no
+privileges of their own that you can grant. To let another role use a job or a deployment, grant the
+owner role to that role, or run related work under the same role.
+
+The ACCOUNTADMIN role has the USE CORTEX TRAINING privilege. To let another role create jobs, an
+account administrator grants the privilege to it:
+
+Copy code
+
+```
+GRANT USE CORTEX TRAINING ON ACCOUNT TO ROLE my_training_role;
+```
+
+The grant takes effect immediately. If a role can already create jobs without the USE CORTEX
+TRAINING privilege, grant the privilege to it anyway, so that the role keeps working when the
+requirement applies to your account.
+
+Grant the privilege to the roles that need to create jobs. If your account doesn’t need to limit
+which roles can start GPU training, you can grant it to the PUBLIC role instead, which gives it to
+every role in the account:
+
+Copy code
+
+```
+GRANT USE CORTEX TRAINING ON ACCOUNT TO ROLE PUBLIC;
+```
+
+A request that lacks a required privilege fails with one of the following responses. When the object
+might also not exist, the response is the same in both cases, so it doesn’t reveal whether the
+object exists.
+
+| Cause | HTTP status and error code |
+| --- | --- |
+| The role doesn’t have the USE CORTEX TRAINING privilege when it creates a job | 403, `003001` |
+| The role can’t access the database or schema | 400, `517602` |
+| The role doesn’t have the CREATE EXPERIMENT privilege on the schema, or can’t access or modify the named experiment | 400, `517602` |
+| The role can’t access the external stage | 400, `517602` |
+| The role isn’t the job’s owner role, or the job doesn’t exist | 404, `517601` |
+| The role can’t access the source checkpoint for a model deployment | 404, `517601` |
+| A chat completion request can’t access the database, schema, or model deployment | 404 |
+
+Expand
+
+Show lessSee more
+
+Every 400 response in this table uses error code `517602`, which also applies to other invalid
+requests. Use the error message to tell them apart.
+
+Chat completion requests report a database or schema that the role can’t access as 404 instead of
+400, so that an inference request can’t tell whether the database or schema exists.
+
 ## Billing
 
 Cortex Training On Demand bills for on-demand GPU usage, in [AI Credits](/user-guide/snowflake-cortex/pricing).
@@ -131,7 +211,7 @@ For Cortex Training On Demand, billing works as follows:
   to it.
 - **Billing starts** when Snowflake assigns GPU capacity to the job. This includes the
   initialization stage that follows, while the system loads the model onto the GPUs.
-- **Billing ends** when Snowflake releases the job’s GPU capacity. This happens when the job
+- **Billing ends** when the job reaches the terminal status. This happens when the job
   completes, fails, or is canceled, or when you drop a model deployment.
 
 To stop charges for a job that you’re no longer using, cancel it. For more information, see

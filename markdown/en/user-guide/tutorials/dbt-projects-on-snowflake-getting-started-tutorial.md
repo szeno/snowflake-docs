@@ -134,7 +134,7 @@ CREATE OR REPLACE API INTEGRATION tb_dbt_git_api_integration
 
 When you run dbt commands in a workspace, dbt might need to access remote URLs to download dependencies. For example, dbt might need to download packages from the dbt Package hub or from GitHub.
 
-Most dbt projects specify dependencies in their `packages.yml` file. You must install these dependencies in the dbt project workspace. You can’t update a deployed dbt project object with dependencies.
+Most dbt projects specify dependencies in their `packages.yml` file. In this tutorial, you install these dependencies in the dbt project workspace before you deploy. For other ways to install dependencies, including during deployment, see [Understand dependencies for dbt Projects on Snowflake](/user-guide/data-engineering/dbt-projects-on-snowflake-dependencies).
 
 To get dependency files from remote URLs, Snowflake needs an external access integration that relies on a network rule. Creating the network rule and external access integration is a **one-time admin operation**. After that, an admin grants `USAGE` on the integration to the role that runs dbt (for example, a data engineering role), and engineers select the integration when they run `dbt deps` without ever recreating it.
 

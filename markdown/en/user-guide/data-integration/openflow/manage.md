@@ -369,7 +369,7 @@ Only the owner of a deployment can perform an upgrade.
 ## Upgrade a connector
 
 Connector updates are made available by Snowflake when functionality is added,
-processing logic is improved, or new processor versions are used–for example, to add support for a new source API version.
+processing logic is improved, or new processor versions are used, for example, to add support for a new source API version.
 
 Note
 

@@ -144,6 +144,10 @@ SELECT list in a COPY INTO *<table>* statement. The function parses the files re
 and returns any parsing errors. This behavior can be surprising if you expect the function to
 evaluate the files in the context of the COPY INTO *<table>* expressions.
 
+Unlike the `VALIDATE` function, error logging supports loads that transform data. To record the rows that a load with a
+transformation rejects, turn on error logging for the target table and use `ON_ERROR = CONTINUE`. Error logging
+supports CSV, JSON, and Parquet files. For more information, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
+
 Note that COPY transformations do not support the [FLATTEN](/sql-reference/functions/flatten) function, or [JOIN](/sql-reference/constructs/join) or [GROUP BY](/sql-reference/constructs/group-by) (aggregate) syntax.
 
 The list of supported functions might expand over time.

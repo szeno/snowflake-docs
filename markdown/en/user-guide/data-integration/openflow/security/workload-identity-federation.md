@@ -20,7 +20,7 @@ static secret.
 Note
 
 This topic describes how to configure Openflow to consume Workload Identity Federation. For the Snowflake concepts
-behind the feature — the secret object, the trust relationship, and token issuance — see
+behind the feature (the secret object, the trust relationship, and token issuance), see
 [Workload identity federation for Snowflake workloads that access external services](/user-guide/workload-identity-federation-outbound).
 
 ## How it works
@@ -293,7 +293,7 @@ next step:
 3. Go to **Certificates & secrets** » **Federated credentials** and select **Add credential**.
 4. For the scenario, select **Other issuer**.
 5. For **Issuer**, enter the `workload_identity_federation_issuer` value. For **Value** (the subject identifier), enter
-   the `workload_identity_federation_subject` value. Give the credential a name, and note the **Audience** — you set this
+   the `workload_identity_federation_subject` value. Give the credential a name, and note the **Audience**. You set this
    same value as the **Audience** on the Snowflake Workload Identity Token Provider controller service.
 
 ### Configure the external access integration

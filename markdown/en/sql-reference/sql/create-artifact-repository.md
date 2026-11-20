@@ -138,7 +138,7 @@ For general information about roles and privilege grants for performing SQL acti
 - An `APPLICATION` repository holds one or more packages. Each package has
   one or more versions. New versions are produced by builds that target the
   repository. For more information, see
-  [Getting started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started).
+  [Get started with Snowflake App Runtime](/developer-guide/snowflake-app-runtime/getting-started).
 - A repository’s type can’t be changed after it’s created. To switch types,
   drop the repository and create a new one.
 - `CREATE OR REPLACE` drops and recreates the repository atomically. All

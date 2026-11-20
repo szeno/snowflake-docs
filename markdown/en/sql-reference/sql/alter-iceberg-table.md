@@ -46,6 +46,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> SET
   [ ENABLE_DATA_COMPACTION = { TRUE | FALSE } ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR = { 'AUTO' | 'ENABLED' | 'DISABLED' } ]
   [ ENABLE_ICEBERG_MERGE_ON_READ = { TRUE | FALSE } ]
+  [ TABLE_PROPERTIES = ( '<key>' = '<value>' [ , '<key>' = '<value>' , ... ] ) ]
   [ ENABLE_SCHEMA_EVOLUTION = { TRUE | FALSE } ]
   [ MATCH_BY_COLUMN_NAME = { CASE_INSENSITIVE | CASE_SENSITIVE } ]
   [ ALLOW_V3_EXPRESSION_DEFAULTS = { TRUE | FALSE } ]
@@ -59,6 +60,7 @@ ALTER ICEBERG TABLE [ IF EXISTS ] <table_name> UNSET
   [ ENABLE_DATA_COMPACTION ]
   [ ICEBERG_MERGE_ON_READ_BEHAVIOR ]
   [ ENABLE_ICEBERG_MERGE_ON_READ ]
+  [ TABLE_PROPERTIES ( '<key>' [ , '<key>' , ... ] ) ]
   [ ENABLE_SCHEMA_EVOLUTION ]
   [ ALLOW_V3_EXPRESSION_DEFAULTS ]
 
@@ -288,6 +290,9 @@ Where:
 
         For more information, see [Set a target file size](/user-guide/tables-iceberg-manage#label-tables-iceberg-target-file-size).
 
+        This value corresponds to the Iceberg property `write.target-file-size-bytes`. For how Snowflake
+        converts between the two, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
         Default: AUTO
 
     `PATH_LAYOUT = { FLAT | HIERARCHICAL }`
@@ -325,17 +330,30 @@ Where:
         For more information, see [Monitor automated refresh events](/user-guide/tables-iceberg-auto-refresh#label-tables-iceberg-auto-refresh-events).
 
 `ERROR_LOGGING = { TRUE | FALSE }`
-:   Specifies whether to turn on DML error logging for the table.
+:   Specifies whether to turn on error logging for the table. When error logging is turned on, DML statements and supported
+    data loading methods record errors in the table’s error table.
 
-    - `TRUE` turns on DML error logging for the table.
-    - `FALSE` turns off DML error logging for the table.
+    - `TRUE` turns on error logging for the table. An `INSERT`, `UPDATE`, or `MERGE` statement on the table that
+      encounters a supported error no longer fails. Instead, it writes the other rows and records the error. For
+      `COPY INTO` and Snowpipe, the `ON_ERROR` copy option still determines how a load handles errors and which errors are
+      recorded. To set this property for an existing table, use a role that owns the table.
+    - `FALSE` turns off error logging for the table. If the table has an error table, turning off error logging drops the
+      error table and the errors in it.
 
-    For more information, see [DML error logging](/user-guide/data-load-overview#label-data-load-overview-dml-error-logging).
+    The error table stores the source data of each error. Before you turn on error logging for a table that stores
+    sensitive data, review which roles can query the error table, as described in
+    [Access control requirements for error tables](/user-guide/data-engineering/error-tables#label-dml-error-logging-access-control-error-tables).
+
+    For more information, see [Introduction to error logging](/user-guide/data-engineering/error-logging). For DML statements, see
+    [Error logging for DML statements](/user-guide/data-engineering/error-logging-dml). For the errors that error logging records when you load files
+    with `COPY INTO` or Snowpipe, see [Error logging for COPY INTO and Snowpipe](/user-guide/data-load-error-tables).
 
     Note
 
-    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session,
-    DML error logging isn’t turned on, regardless of whether it is turned on for specific tables.
+    If the [OPT\_OUT\_ERROR\_LOGGING](/sql-reference/parameters#label-opt-out-error-logging) parameter is set to `TRUE` for a session, DML statements,
+    `CREATE TABLE ... AS SELECT` statements, and `COPY INTO` statements in the session don’t record errors, regardless of
+    whether error logging is turned on for specific tables. For Snowpipe, only the value that’s set for the account
+    applies. For more information, see [Prevent or limit error logging](/user-guide/data-engineering/error-logging#label-error-logging-prevent).
 
 `ENABLE_DATA_COMPACTION = { TRUE | FALSE }`
 :   Specifies whether Snowflake should enable data compaction on the table. You can only set this parameter for Snowflake-managed tables.
@@ -403,6 +421,15 @@ Where:
 
         For a detailed description of this parameter, see [Deprecated: ENABLE\_ICEBERG\_MERGE\_ON\_READ](/user-guide/tables-iceberg-manage#label-enable-iceberg-merge-on-read).
 
+`TABLE_PROPERTIES = ( 'key' = 'value' [ , 'key' = 'value' , ... ] )`
+:   Sets Iceberg table properties. Some keys map to Snowflake parameters. Snowflake stores other keys
+    as Iceberg properties. Property names are case-sensitive.
+
+    You can’t set or unset `format-version` with this clause. To change the format version of an
+    existing table, use `UPGRADE TO ICEBERG VERSION`.
+
+    For the mapping, rejected keys, and examples, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
+
 `TIME_TRAVEL_TIMESTAMP_SOURCE = { 'SNOWFLAKE_METADATA' | 'ICEBERG_METADATA' }`
 :   [![Snowflake logo in black (no text)](/static/images/logo-snowflake-black.png)](/static/images/logo-snowflake-black.png) [Preview Feature](/release-notes/preview-features) — Open
 
@@ -469,6 +496,11 @@ Where:
     > - `ENABLE_ICEBERG_MERGE_ON_READ`
     > - `ENABLE_SCHEMA_EVOLUTION`
     > - `ALLOW_V3_EXPRESSION_DEFAULTS`
+    > - `TABLE_PROPERTIES`
+
+    `UNSET TABLE_PROPERTIES` takes a list of property names and must name at least one. Unsetting a
+    property that maps to a Snowflake setting also unsets that setting. For the mapping and the keys
+    you can’t unset, see [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 
 `UPGRADE TO ICEBERG VERSION 3`
 :   Upgrades the table in place from Iceberg version 2 (v2) to version 3 (v3). The table keeps its name, privileges, and downstream
@@ -834,6 +866,9 @@ For general information about roles and privilege grants for performing SQL acti
 - Only the table owner (that is, the role with the OWNERSHIP privilege on the table) or higher can execute this command.
 - Clustering is only supported for tables that use Snowflake as the Iceberg catalog. To add clustering to an Iceberg table,
   you must also have the USAGE or OWNERSHIP privileges on the schema and database that contain the table.
+- `TABLE_PROPERTIES` is supported on Snowflake-managed tables and on externally managed tables that
+  Snowflake can write. A catalog-linked database rejects the clause when property updates aren’t an
+  allowed write operation. See [Iceberg table properties](/user-guide/tables-iceberg-table-properties).
 - For tables in a [catalog-linked database](/user-guide/tables-iceberg-catalog-linked-database), the following features aren’t supported:
 
   - Setting the NOT NULL, COMMENT, and DATA TYPE properties for an existing column.
@@ -904,6 +939,18 @@ Copy code
 
 ```
 ALTER ICEBERG TABLE my_iceberg_table SET TAG my_tag = 'customer';
+```
+
+The following example sets an Iceberg table property, and then removes it:
+
+Copy code
+
+```
+ALTER ICEBERG TABLE my_iceberg_table SET
+  TABLE_PROPERTIES = ('commit.retry.num-retries' = '10');
+
+ALTER ICEBERG TABLE my_iceberg_table UNSET
+  TABLE_PROPERTIES ('commit.retry.num-retries');
 ```
 
 The following example enables [automated refresh](/user-guide/tables-iceberg-auto-refresh) for an existing externally managed table:

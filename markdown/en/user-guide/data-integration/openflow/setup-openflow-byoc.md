@@ -61,7 +61,7 @@ First, grant the required privileges to the Openflow admin at the account level.
    ```
 
    These privileges are assigned to the ACCOUNTADMIN role as part of the default set of privileges, and that role can grant the privileges to a role of their choosing for the Openflow admin, denoted as `openflow_admin` in the code.
-2. Next, set `default_secondary_roles` to `ALL` for all Openflow users:
+2. Next, optionally set `DEFAULT_SECONDARY_ROLES` to `ALL` for Openflow users. Snowflake recommends this setting, but it isn’t required:
 
    1. Sign in to Snowflake and switch to a role that your account admin has set up for using Openflow, for example `openflow_admin`.
 
@@ -70,7 +70,7 @@ First, grant the required privileges to the Openflow admin at the account level.
       If you see a blank screen or the error “message: Invalid consent request” when logging into Openflow, change your role to a role that is not one of these listed roles.
 
       For more information, see [Prerequisites](#prerequisites).
-   2. Run the following code, replacing `<openflow_user>` for each Openflow user:
+   2. Run the following code, replacing `<openflow_user>` with each Openflow user:
 
    Copy code
 
@@ -79,7 +79,7 @@ First, grant the required privileges to the Openflow admin at the account level.
    ALTER USER <openflow_user> SET DEFAULT_SECONDARY_ROLES = ('ALL');
    ```
 
-   This setting is required because Openflow actions are authorized by using any of the authenticated user’s roles, and not just the default role.
+   With secondary roles, Openflow authorizes actions against all of the user’s granted roles. Without them, users must choose a role that has the required Openflow privileges in the role picker. In gen 2, deployments are visible only through the selected role.
 
 #### Deployment privileges
 
@@ -222,7 +222,7 @@ To set up Openflow with these roles, follow these steps:
 Ensure the following on your AWS account:
 
 - You have an AWS account with permissions required to create a CloudFormation stack.
-- An AWS administrator in your organization can execute CloudFormation script to set up Amazon Elastic Kubernetes Service (EKS) inside a new VPC (created by
+- An AWS administrator in your organization can execute a CloudFormation script to set up Amazon Elastic Kubernetes Service (EKS) inside a new VPC (created by
   CloudFormation) or an existing VPC. See [Prerequisites for BYO-VPC (existing VPC)](#prerequisites-for-byo-vpc-existing-vpc).
 
 Note
@@ -295,7 +295,7 @@ For more information, see [Prerequisites](#prerequisites).
    - **Managed VPC**: Choose this option if you want your VPC to be managed by Snowflake.
    - **Bring your own VPC**: Choose this option if you want to use an existing VPC.
 
-1. In the **PrivateLink** step, you can select if you want to establish communication with Snowflake over the private link.
+8. In the **PrivateLink** step, you can select if you want to establish communication with Snowflake over the private link.
    Enabling this option requires additional setup in your AWS account. For more information, see [AWS PrivateLink and Snowflake](/user-guide/admin-security-privatelink).
 
    - If the **PrivateLink** option is enabled, the **End user authentication over PrivateLink** step displays.
@@ -303,16 +303,16 @@ For more information, see [Prerequisites](#prerequisites).
      - If enabled, browser-based authentication redirects use PrivateLink endpoints.
      - If disabled, end-user authentication uses public Snowflake URLs.
 
-     Regardless of this setting, Deployment communications to Snowflake will use PrivateLink.
+     Regardless of this setting, deployment communications to Snowflake will use PrivateLink.
 
      If you access Snowsight through a PrivateLink URL, ensure it is enabled.
      If you access Snowsight through a non-PrivateLink URL, leave it disabled.
-2. In the **Custom Ingress** step, you can choose to manage your own ingress configuration for the Openflow deployment, such as specifying custom security groups, load balancer settings, or other network controls.
+9. In the **Custom Ingress** step, you can choose to manage your own ingress configuration for the Openflow deployment, such as specifying custom security groups, load balancer settings, or other network controls.
 
    Enabling this option requires additional setup in your AWS account. For more information, see [Openflow BYOC - Set up custom ingress](/user-guide/data-integration/openflow/setup-openflow-byoc-custom-ingress).
-3. Select **Create Deployment**.
-4. Once your deployment is configured, a dialog box appears that lets you download the CloudFormation template to complete the setup process in your AWS account. Download this template. Note that Openflow doesn’t support modifying the CloudFormation template. Don’t modify any values after downloading the template, other than choosing drop-down options.
-5. (Optional) To encrypt EBS volumes for your Openflow BYOC deployment, see [Openflow BYOC - Set up encrypted EBS volumes](/user-guide/data-integration/openflow/setup-openflow-byoc-encrypted-volumes).
+10. Select **Create Deployment**.
+11. Once your deployment is configured, a dialog box appears that lets you download the CloudFormation template to complete the setup process in your AWS account. Download this template. Note that Openflow doesn’t support modifying the CloudFormation template. Don’t modify any values after downloading the template, other than choosing drop-down options.
+12. (Optional) To encrypt EBS volumes for your Openflow BYOC deployment, see [Openflow BYOC - Set up encrypted EBS volumes](/user-guide/data-integration/openflow/setup-openflow-byoc-encrypted-volumes).
 
 ### Apply the CloudFormation template in your AWS account
 
@@ -401,7 +401,7 @@ Use one of the following options:
 
 ### Verify the deployment
 
-1. In the navigation menu, select **Ingestion** » **Openflow**. Creating a deployment takes about 45 minutes on AWS. Once it’s created, you can view your deployment in the Deployments tab of Openflow UI with its state marked as **Active**.
+1. In the navigation menu, select **Ingestion** » **Openflow**. Creating a deployment takes about 45 minutes on AWS. Once it’s created, you can view your deployment in the Deployments tab of the Openflow UI with its state marked as **Active**.
 
 ## Create an Openflow runtime
 
@@ -431,7 +431,7 @@ For BYOC deployments, take note of the following considerations:
 For BYO-VPC deployments, take note of the following considerations:
 
 - Openflow requires you to enter the two private subnets that will run Openflow and two public subnets for the AWS Load Balancer.
-- You have to provide your own egress routing to the Internet from those private subnets, which can be the central NAT Gateway.
+- You have to provide your own egress routing to the internet from those private subnets, which can be the central NAT Gateway.
 - No Internet Gateway is created by Openflow. You have to provide appropriate public internet egress routing.
 
 The network connectivity generally is as follows:
@@ -451,7 +451,7 @@ security group, with the EKS cluster security group as the source for the inboun
    4. Select **View details**. The value in the field **Key** is your deployment key.
 2. After finding the deployment key, you can use it to filter your AWS resources by the key value.
 3. Create a new security group that allows access from the Openflow EKS cluster using the relevant database
-   port. For PostgreSQL the default port is 5432.
+   port. For PostgreSQL, the default port is 5432.
 4. Attach it in RDS as a new security group.
 
 If you need to troubleshoot, the [Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/getting-started.html) can be useful.
@@ -668,7 +668,7 @@ over time (solved by the Openflow Agent).
 
 The deployment Agent facilitates the creation of the Openflow deployment infrastructure and
 installation of the deployment software components including the deployment service. The deployment agent authenticates
-with Snowflake System Image Registry to obtain Openflow container images.
+with the Snowflake System Image Registry to obtain Openflow container images.
 
 The steps are as follows:
 
@@ -765,7 +765,7 @@ can view logs on the Openflow agent to verify whether the BYOC deployment is rea
    in place.
 4. Click **Connect**. A new browser tab or window will appear with a
    command-line interface.
-5. Run the following command to tail the installation logs of the docker image that is configuring your deployment:
+5. Run the following command to tail the installation logs of the Docker image that is configuring your deployment:
 
    Copy code
 
