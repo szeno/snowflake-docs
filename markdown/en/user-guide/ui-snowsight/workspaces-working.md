@@ -243,7 +243,8 @@ unaffected.
 ## Limitations
 
 - Column statistics may take longer to generate as the number of columns increases.
-- Snowflake Copilot is not available in Workspaces.
+- Snowflake Copilot (legacy) is not available in Workspaces. For AI-assisted coding in Workspaces, use
+  [Cortex Code](/user-guide/cortex-code/cortex-code-snowsight).
 - [Query filters](/user-guide/ui-snowsight-filters) are not supported. Any queries containing filters will fail.
 - Opening and editing the same worksheet in the new Workspaces UI and old Worksheets UI simultaneously can result in lost changes.
 - For worksheets, execution context settings (role, warehouse, and namespace) are not synchronized across the new Workspaces UI and the old Worksheets UI.

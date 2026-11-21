@@ -416,6 +416,15 @@ journals. To reclaim storage, you can:
 - Drop the journal tables related to source tables that were removed from replication.
 - Drop all but the latest generation journal tables for actively replicated tables.
 
+When you drop a journal table, also drop its stream. The stream has the same name as the journal
+table, followed by `_STREAM`. For example:
+
+Copy code
+
+```
+DROP STREAM IF EXISTS <destination_database>.<destination_schema>.<journal_table_name>_STREAM;
+```
+
 For example, if your connector is set to actively replicate source table `orders`, and you have
 earlier removed table `customers` from replication, you may have the following journal tables. In
 this case you can drop all of them *except* `orders_5678_2`.

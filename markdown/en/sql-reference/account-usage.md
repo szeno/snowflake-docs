@@ -165,6 +165,8 @@ The ACCOUNT\_USAGE schema contains the following views. The **Type** column iden
 | [EVENT\_ROUTING\_TABLES](/sql-reference/account-usage/event_routing_tables) | Object | 2 hours |  |  |
 | [EVENT\_USAGE\_HISTORY](/sql-reference/account-usage/event_usage_history) | Historical | 3 hours |  | Data retained for 1 year. |
 | [EXTERNAL\_ACCESS\_HISTORY](/sql-reference/account-usage/external_access_history) | Historical | 2 hours |  | Data retained for 1 year. |
+| [EXTERNAL\_BI\_OBJECTS](/sql-reference/account-usage/external_bi_objects) | Object | 24 hours |  |  |
+| [EXTERNAL\_DWH\_OBJECTS](/sql-reference/account-usage/external_dwh_objects) | Object | 24 hours |  |  |
 | [FIELDS](/sql-reference/account-usage/fields) | Object | 90 minutes |  |  |
 | [FILE\_FORMATS](/sql-reference/account-usage/file_formats) | Object | 2 hours |  |  |
 | [FUNCTIONS](/sql-reference/account-usage/functions) | Object | 2 hours |  |  |
@@ -442,6 +444,8 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [ELEMENT\_TYPES view](/sql-reference/account-usage/element_types) | OBJECT\_VIEWER |
 | [EVENT\_USAGE\_HISTORY view](/sql-reference/account-usage/event_usage_history) | USAGE\_VIEWER |
 | [EXTERNAL\_ACCESS\_HISTORY view](/sql-reference/account-usage/external_access_history) | USAGE\_VIEWER |
+| [EXTERNAL\_BI\_OBJECTS view](/sql-reference/account-usage/external_bi_objects) | OBJECT\_VIEWER |
+| [EXTERNAL\_DWH\_OBJECTS view](/sql-reference/account-usage/external_dwh_objects) | OBJECT\_VIEWER |
 | [FIELDS view](/sql-reference/account-usage/fields) | OBJECT\_VIEWER |
 | [FILE\_FORMATS view](/sql-reference/account-usage/file_formats) | OBJECT\_VIEWER |
 | [FUNCTIONS view](/sql-reference/account-usage/functions) | OBJECT\_VIEWER |

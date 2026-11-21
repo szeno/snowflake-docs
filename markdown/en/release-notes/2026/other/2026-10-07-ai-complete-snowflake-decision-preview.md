@@ -21,4 +21,4 @@ For example, a support-ticket workflow can select the responsible department, sc
 urgency in one call.
 
 For more information, see
-[Snowflake Decision with AI\_COMPLETE](/LIMITEDACCESS/snowflake-cortex/ai-complete-snowflake-decision).
+[Cortex AI Functions: Snowflake Decision](/user-guide/snowflake-cortex/snowflake-decision).

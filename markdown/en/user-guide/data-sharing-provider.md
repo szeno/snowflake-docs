@@ -44,8 +44,9 @@ Note the following important usage details for creating and maintaining shares:
   if you drop and then recreate an object, it is still considered a new object, even if the name is the same.
   To make a new object available to consumers, you must use the [GRANT <privilege> … TO SHARE](/sql-reference/sql/grant-privilege-share) command to
   explicitly add the object to the share.
-- For data security and privacy reasons, only [secure views](/user-guide/views-secure) are supported in shares at this time.
-  If a standard view is added to a share, Snowflake returns an error.
+- By default, for data security and privacy reasons, only [secure views](/user-guide/views-secure) are supported in shares.
+  If you add a standard view to a share created with the default settings, Snowflake returns an error. To share standard
+  (non-secure) views, create the share with `SECURE_OBJECTS_ONLY = FALSE`. For more information, see [Share data in non-secured views](/user-guide/data-sharing-views).
 - Creating secure views on streams in your database and then sharing those views with consumers is not recommended.
   This scenario requires the ability to modify a stream in another account, which is not a supported operation and is therefore
   an anti-pattern. Instead, allow consumers to create their own streams on the tables and secure views that you share.
@@ -95,7 +96,7 @@ Before creating a share, Snowflake recommends identifying the Snowflake objects 
   - Secure materialized views
   - Semantic views
 - Cortex Search services
-- User-defined functions (UDFs) (secure and non-secure)
+- User-defined functions (UDFs) (secure and non-secure). Whether a UDF is sharable depends on its handler language. For more information, see [Supported languages and tools](/developer-guide/udf/udf-overview#label-udf-supported-languages).
 - Models of type USER\_MODEL, CORTEX\_FINETUNED, or DOC\_AI
 
 This might require some additional planning and administrative tasks, particularly if you decide to share only a subset of data in
@@ -108,17 +109,23 @@ If you plan to share a database, little or no preparation is required.
 If you plan to share entire tables, no preparation is required.
 
 However, if you decide to filter the data in a table (or set of tables), either based on certain conditions, or by consumer account,
-you must create one or more secure views on the table(s).
+you must create one or more views on the table(s). Snowflake recommends secure views for this purpose, but you can also use
+standard (non-secure) views if you need the query optimization benefits they provide. For more information, see
+[Use secure objects to control data access](/user-guide/data-sharing-secure-views) and [Share data in non-secured views](/user-guide/data-sharing-views).
 
 ### Secure objects (views, materialized views and UDFs)
 
-To provide strict control of access to data in a shared database, you must
-use [secure views](/user-guide/views-secure), [secure materialized views](/user-guide/views-materialized)
+To provide strict control of access to data in a shared database, Snowflake recommends that you
+use [secure views](/user-guide/views-secure), [secure materialized views](/user-guide/views-materialized),
 and/or [secure UDFs](/developer-guide/secure-udf-procedure). For example,
 you can choose to filter data by date or some other condition, or you can decide to use a single share
 to partition shared data for different consumer accounts. Secure objects enable you to dictate
 the level of granularity you wish to apply to your data while ensuring that the base tables and
 business logic are protected from exposure.
+
+If you need the query optimization benefits of a standard view instead, you can share non-secure views and UDFs
+by creating (or altering) the share with `SECURE_OBJECTS_ONLY = FALSE`. For more information, see
+[Share data in non-secured views](/user-guide/data-sharing-views).
 
 Secure objects are defined similarly to standard objects, using either the corresponding [CREATE <object>](/sql-reference/sql/create)
 or [ALTER <object>](/sql-reference/sql/alter) commands. However, note the following important

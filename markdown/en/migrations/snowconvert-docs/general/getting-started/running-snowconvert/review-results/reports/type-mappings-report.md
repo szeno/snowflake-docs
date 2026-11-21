@@ -67,5 +67,5 @@ In SnowConvert AI’s graphical interface, the TypeMappings report is integrated
 ## Related Documentation
 
 - [Data Type Customization](/migrations/snowconvert-docs/translation-references/oracle/basic-elements-of-oracle-sql/data-types/README#data-type-customization): Learn how to configure data type transformation rules.
-- [Oracle CLI Arguments](/migrations/snowconvert-docs/general/user-guide/snowconvert/command-line-interface/oracle): Details on the `--dataTypeCustomizationFile` argument.
+- [Oracle CLI Arguments](/migrations/aim-for-datawarehouses/manual-migration/oracle#--dataTypeCustomizationFile): Details on the `--dataTypeCustomizationFile` argument.
 - [DB2 DECFLOAT](/migrations/snowconvert-docs/translation-references/db2/db2-data-types#decfloat-data-type): Information about DECFLOAT transformation in DB2.

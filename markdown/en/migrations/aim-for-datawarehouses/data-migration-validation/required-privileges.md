@@ -832,3 +832,4 @@ Repeat the `GRANT` for each table or view in the workflow. To cover a schema, gr
 - [Data migration](./data-migration)
 - [Data validation](./data-validation)
 - [L3 extraction](../manual-migration/data-validation-configuration-reference#l3-extraction)
+- [How AIM DMV handles your data with AI](./ai-and-data-handling)

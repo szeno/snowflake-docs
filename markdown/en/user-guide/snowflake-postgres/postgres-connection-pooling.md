@@ -94,6 +94,9 @@ Tip
 The terms “user” and “role” in Postgres are largely synonymous. One minor difference is that CREATE USER (versus CREATE ROLE) implies
 LOGIN attribute, e.g. `CREATE ROLE myuser LOGIN;`.
 
+For short-lived token refresh and revocation guidance, see
+[Short-lived tokens and client connections](/user-guide/snowflake-postgres/connecting-to-snowflakepg#label-sfpg-client-tokens).
+
 ### Pooling modes
 
 PgBouncer supports three different pooling modes: transaction, session, and statement. Each is detailed briefly below and further in the

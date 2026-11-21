@@ -126,18 +126,27 @@ Important
 Before you run the command to enable auto-fulfillment, check to see if it’s already enabled and note the current settings.
 If it’s already turned on, you don’t need to run the command.
 
+Only an organization administrator can run `SHOW ORGANIZATION ACCOUNTS`, `SYSTEM$IS_GLOBAL_DATA_SHARING_ENABLED_FOR_ACCOUNT`, and
+`SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT`. For more information, see [Managing organization administrators](/user-guide/organization-administrators).
+Snowflake recommends using the GLOBALORGADMIN role in the organization account; the ORGADMIN role is also supported but is being phased out
+for multi-account organizations.
+
 Copy code
 
 ```
 USE ROLE ACCOUNTADMIN;
 GRANT MANAGE LISTING AUTO FULFILLMENT ON ACCOUNT TO ROLE ORG_LISTING_PROVIDER;
 
-USE ROLE ORG_LISTING_PROVIDER;
+USE ROLE GLOBALORGADMIN;
 SHOW ORGANIZATION ACCOUNTS;
-SELECT SYSTEM$IS_GLOBAL_DATA_SHARING_ENABLED_FOR_ACCOUNT('<ORGACCOUNT>');
+SELECT SYSTEM$IS_GLOBAL_DATA_SHARING_ENABLED_FOR_ACCOUNT('<account_name>');
 
-CALL SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('<ORGACCOUNT>');
+CALL SYSTEM$ENABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('<account_name>');
 ```
+
+Replace `<account_name>` with the name of the account whose marketplace administrators you want to empower to create and host listings that
+can be auto-fulfilled across the organization, as returned by [CURRENT\_ACCOUNT\_NAME](/sql-reference/functions/current_account_name) when run
+in that account. Run this command once for each account you want to enable.
 
 ## Clean up after the tutorial
 
@@ -155,6 +164,6 @@ Copy code
 DROP LISTING <organizational_listing_name>;
 DROP SHARE org_listing1_share1;
 DROP DATABASE org_listing_db1;
---CALL SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('ORGACCOUNT');
+--CALL SYSTEM$DISABLE_GLOBAL_DATA_SHARING_FOR_ACCOUNT('<account_name>');
 DROP ROLE ORG_LISTING_PROVIDER;
 ```

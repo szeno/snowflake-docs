@@ -8,4 +8,4 @@ Snowflake ML Jobs is a framework which lets you leverage the Container Runtime f
 - Leverage GPU and high-memory CPU instances for resource-intensive tasks
 - Use your preferred development environment (VS Code, external notebooks, etc.)
 
-For more information, see: - [Snowflake Multi-Node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs)
+For more information, see: - [Snowflake multi-node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs)

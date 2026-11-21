@@ -112,6 +112,8 @@ views in the shared SNOWFLAKE database. Use the following table to determine whi
 | [ELEMENT\_TYPES view](/sql-reference/account-usage/element_types) | OBJECT\_VIEWER |
 | [EVENT\_USAGE\_HISTORY view](/sql-reference/account-usage/event_usage_history) | USAGE\_VIEWER |
 | [EXTERNAL\_ACCESS\_HISTORY view](/sql-reference/account-usage/external_access_history) | USAGE\_VIEWER |
+| [EXTERNAL\_BI\_OBJECTS view](/sql-reference/account-usage/external_bi_objects) | OBJECT\_VIEWER |
+| [EXTERNAL\_DWH\_OBJECTS view](/sql-reference/account-usage/external_dwh_objects) | OBJECT\_VIEWER |
 | [FIELDS view](/sql-reference/account-usage/fields) | OBJECT\_VIEWER |
 | [FILE\_FORMATS view](/sql-reference/account-usage/file_formats) | OBJECT\_VIEWER |
 | [FUNCTIONS view](/sql-reference/account-usage/functions) | OBJECT\_VIEWER |

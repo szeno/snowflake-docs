@@ -66,6 +66,7 @@ Workflow and validation metadata is stored in the `SNOWCONVERT_AI` database. Fil
 - [Data migration](./data-migration)
 - [Data validation](./data-validation)
 - [Required privileges](./required-privileges)
+- [How AIM DMV handles your data with AI](./ai-and-data-handling)
 - [The SNOWCONVERT\_AI database](./snowconvert-ai-database)
 - [Deploying workers](./deploy-workers)
 - [Data migration advanced configuration](./data-migration-advanced-configuration)

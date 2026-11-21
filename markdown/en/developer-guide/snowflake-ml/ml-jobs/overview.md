@@ -1,6 +1,6 @@
 # Snowflake ML Jobs
 
-Use Snowflake ML Jobs to run machine learning (ML) workflows inside Snowflake ML container runtimes.
+Use Snowflake ML Jobs to run machine learning (ML) workflows inside Snowflake ML Container Runtime.
 You can run them from any development environment. You don’t need to run the code in a Snowflake worksheet or notebook. Use jobs to leverage Snowflake’s infrastructure to run resource-intensive tasks within your development workflow. For information about setting up Snowflake ML locally, see [Using Snowflake ML Locally](/developer-guide/snowflake-ml/snowpark-ml#label-snowpark-ml-get-started).
 
 Important
@@ -33,7 +33,7 @@ You can use these capabilities to do the following:
    ```
    pip install snowflake-ml-python>=1.26.0
    ```
-2. The default compute pool size uses the CPU\_X64\_S instance family. The minimum number of nodes is 1 and the maximum is 25. You can use the following SQL command to create a custom compute pool:
+2. The default compute pool size uses the `CPU_X64_S` instance family. The minimum number of nodes is 1 and the maximum is 25. You can use the following SQL command to create a custom compute pool:
 
    Copy code
 
@@ -98,7 +98,7 @@ Note
 
 Submitting a job requires an existing Snowpark `Session`; See [Prerequisites](#label-snowflake-ml-jobs-prerequisites) for details.
 
-Invoking a `@remote` decorated function returns a Snowflake `MLJob` object that can be used to manage and monitor the job execution. For more information, see [Ray Dashboard in ML Jobs](#label-snowflake-ml-job-management).
+Invoking a `@remote` decorated function returns a Snowflake `MLJob` object that can be used to manage and monitor the job execution. For more information, see [Managing ML Jobs](#label-snowflake-ml-job-management).
 
 ### Run a Python file as a Snowflake ML Job
 
@@ -184,7 +184,7 @@ job4 = submit_from_stage(
 )
 ```
 
-Submitting a file or directory returns a Snowflake `MLJob` object that can be used to manage and monitor the job execution. For more information, see [Ray Dashboard in ML Jobs](#label-snowflake-ml-job-management).
+Submitting a file or directory returns a Snowflake `MLJob` object that can be used to manage and monitor the job execution. For more information, see [Managing ML Jobs](#label-snowflake-ml-job-management).
 
 ### Run a Snowflake ML Job on a specific container runtime
 
@@ -213,7 +213,7 @@ To use a custom image, reference it with the `runtime_environment="cre@<name>"` 
 
 For more information, see [Custom runtime images](/developer-guide/snowflake-ml/custom-runtime-images).
 
-### Supporting Additional Payloads in Submissions
+### Supporting additional payloads in submissions
 
 When submitting a file, directory, or from a stage, additional payloads are supported for use during job execution.
 The import path can be specified explicitly; otherwise, it will be inferred from the location of the additional payload.
@@ -351,6 +351,8 @@ model1 = job1.result()
 model2 = job2.result()
 ```
 
+To run a job across multiple instances, choose a multi-node execution mode. Head/worker jobs use `result()`. Jobs submitted with `parallel=True` use `MLJob.distributed_result()` instead. For more information, see [Snowflake multi-node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs) and [Retrieve distributed results](/developer-guide/snowflake-ml/ml-jobs/direct-per-instance-execution#label-snowflake-ml-jobs-retrieve-distributed-results).
+
 ### Run an ML job from a Code Bundle
 
 [Preview Feature](/release-notes/preview-features) — Open
@@ -472,33 +474,11 @@ Copy code
 from snowflake.ml.jobs import remote
 
 compute_pool = "MY_COMPUTE_POOL"
-@remote(COMPUTE_POOL, stage_name="payload_stage")
+@remote(compute_pool, stage_name="payload_stage")
 def train_model(input_data: DataSource) -> Optional[str]:
     ...
 
 train_model_task = DAGTask("TRAIN_MODEL", definition=train_model) # train_model is a job definition created by the @remote decorator
-```
-
-## Ray Dashboard in ML Jobs
-
-ML Job now supports the ray dashboard for the running jobs in *snowflake-ml-python* version 1.30 and later.
-
-Note
-
-The Ray Dashboard is not supported on the `CPU_X64_XS` compute pool instance family. The dashboard is only available while the job is running.
-
-Copy code
-
-```
-from snowflake.ml.jobs import remote
-
-@remote("MY_COMPUTE_POOL", stage_name="payload_stage", session=session)
-def train_model(data_table: str):
-  # Provide your ML code here, including imports and function calls
-  ...
-
-job = train_model("my_training_data")
-ray_dashboard_url = job.get_ray_dashboard_url() # copy and paste this url in browser to log in then to see the ray dashboard
 ```
 
 ## Managing ML Jobs
@@ -529,6 +509,28 @@ print(job.get_logs())
 
 # Clean up the job
 delete_job(job)
+```
+
+### Access the Ray Dashboard
+
+ML Jobs support the Ray Dashboard for running jobs in `snowflake-ml-python` version 1.30 and later.
+
+Note
+
+The Ray Dashboard isn’t supported on the `CPU_X64_XS` compute pool instance family. The dashboard is only available while the job is running.
+
+Copy code
+
+```
+from snowflake.ml.jobs import remote
+
+@remote("MY_COMPUTE_POOL", stage_name="payload_stage", session=session)
+def train_model(data_table: str):
+  # Provide your ML code here, including imports and function calls
+  ...
+
+job = train_model("my_training_data")
+ray_dashboard_url = job.get_ray_dashboard_url()
 ```
 
 ## Managing dependencies

@@ -128,6 +128,13 @@ These privileges control the **visibility** of the metadata and lineage that the
 collects. They don’t expose the connector’s stored credentials, and they don’t grant any access to
 the external system itself.
 
+Note
+
+These privileges don’t restrict the [EXTERNAL\_DWH\_OBJECTS](/sql-reference/account-usage/external_dwh_objects) and
+[EXTERNAL\_BI\_OBJECTS](/sql-reference/account-usage/external_bi_objects) Account Usage views. Any role with the OBJECT\_VIEWER
+database role can query those views and see the objects from every connector in the account. To limit who can see connector
+metadata, also control which roles are granted OBJECT\_VIEWER, or IMPORTED PRIVILEGES on the SNOWFLAKE database.
+
 To grant visibility into a single connector:
 
 Copy code

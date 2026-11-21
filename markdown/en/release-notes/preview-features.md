@@ -48,6 +48,7 @@ The following features are currently available for preview, listed roughly in th
 
 | Feature | Availability | Introduced | Additional reading | Notes |
 | --- | --- | --- | --- | --- |
+| Snowflake Decision with AI\_COMPLETE | Open | November 2026 | [Cortex AI Functions: Snowflake Decision](/user-guide/snowflake-cortex/snowflake-decision) | Use the `snowflake-decision` model with AI\_COMPLETE to classify, score, and assess content against typed questions, with probabilities and confidence values for each answer. Requires cross-region inference set to `AWS_US`, `AWS_GLOBAL`, or `ANY_REGION`. |
 | AI\_EXTRACT citations | Open | November 2026 | [Extract information with citations](/user-guide/snowflake-cortex/document-extraction#label-ai-extract-extract-with-citations), [Citations](/sql-reference/functions/ai_extract#label-ai-extract-citations) | Request source citations for values extracted by AI\_EXTRACT. Document citations return page numbers and bounding boxes. Text citations return start and end offsets in the input text. |
 | Snowflake App Runtime on serverless compute | Open | November 2026 | [Serverless compute for Snowflake App Runtime](/developer-guide/snowflake-app-runtime/serverless) | Opt in per app. Managed compute remains the default. |
 | Develop Snowflake App Runtime apps in Workspaces | Open | November 2026 | [Develop Snowflake App Runtime apps in Snowsight Workspaces](/developer-guide/snowflake-app-runtime/workspaces) | Preview a running app inside Snowsight Workspaces. |
@@ -129,7 +130,6 @@ The following features are currently available for preview, listed roughly in th
 | Supported Java and Scala APIs for Snowpark Connect | Open | March 2026 | [DataFrame support for Snowpark Connect for Spark](/developer-guide/snowpark-connect/snowpark-connect-dataframe-support) |  |
 | Exporting a semantic view to a Tableau Data Source (TDS) file | Open | March 2026 | [Exporting a semantic view to a Tableau Data Source (TDS) file](/user-guide/views-semantic/sql#label-semantic-views-export-tableau) |  |
 | pg\_lake extension for Snowflake Postgres | Open | March 2026 | [pg\_lake](/user-guide/snowflake-postgres/postgres-pg_lake) |  |
-| Access roles for Snowflake Postgres token authentication | Open | November 2026 | [Grant access with access roles](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-access-roles) |  |
 | Custom runtime images for Notebooks | Open | May 2026 | [Use custom runtime images in Notebooks](/developer-guide/snowflake-ml/custom-runtime-images#label-custom-runtime-images-notebooks) |  |
 | Share Cortex Agents | Open | April 2026 | [Share Cortex agents](/user-guide/snowflake-cortex/cortex-agents-sharing) |  |
 | Using the Snowpark Python JDBC | Open | January 2026 | [Using the Snowpark Python JDBC](/developer-guide/snowpark/python/snowpark-jdbc#label-snowpark-jdbc) |  |

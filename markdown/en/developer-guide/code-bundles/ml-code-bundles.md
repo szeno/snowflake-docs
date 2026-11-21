@@ -312,7 +312,7 @@ Use the session to read tables, write results back to Snowflake, and log models 
 Set `target_instances` to run the job on more than one instance, and `min_instances` to set how many instances have to be
 ready before your payload starts. Snowflake starts a Ray cluster across the instances and runs your entrypoint on the head
 instance, so you distribute work from there the same way you would in any ML Job. See
-[Snowflake Multi-Node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs).
+[Snowflake multi-node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs).
 
 ## Installing packages
 
@@ -364,7 +364,7 @@ An external access integration also governs any network calls your payload makes
 ## Monitor a job
 
 Code Bundles only change how you submit the job. Once it’s running, it’s an ML Job like any other, so monitor and debug it
-the way you would any ML Job: see [Ray Dashboard in ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview#label-snowflake-ml-job-management).
+the way you would any ML Job: see [Managing ML Jobs](/developer-guide/snowflake-ml/ml-jobs/overview#label-snowflake-ml-job-management).
 
 `EXECUTE CODE BUNDLE` is synchronous, and a payload that raises an exception or exits non-zero surfaces as a SQL error. To
 submit without blocking your client, run the statement asynchronously, as shown in

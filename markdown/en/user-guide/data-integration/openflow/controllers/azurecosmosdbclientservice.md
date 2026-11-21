@@ -10,6 +10,9 @@ Openflow BYOC deployments are available to all accounts in AWS [Commercial regio
 
 Provides a controller service that configures a connection to Cosmos DB (Core SQL API) and provides access to that connection to other Cosmos DB-related components.
 
+For example, the [PutAzureCosmosDBRecord 2025.10.9.21](/user-guide/data-integration/openflow/processors/putazurecosmosdbrecord) processor uses this controller service
+through its Cosmos DB Connection Service property. For an introduction to Openflow, see [About Openflow](/user-guide/data-integration/openflow/about).
+
 ## Tags
 
 azure, cosmos, document, service

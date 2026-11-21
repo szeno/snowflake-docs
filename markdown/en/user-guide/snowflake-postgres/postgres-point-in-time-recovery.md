@@ -32,11 +32,19 @@ origin instance:
 - The Postgres version. The version is copied for binary compatibility.
 - The high availability setting (enabled or disabled).
 - Credentials for accessing the instance.
+- The authentication authority.
 
 You can customize some properties for the new instance during creation, such as
 the **storage** and **instance size (plan)**. Pricing for the fork is based on
 the configuration of the fork (plan, storage, and high availability), just like any
 other instance.
+
+Separate Postgres access roles are created automatically for the fork’s enrolled Postgres users.
+Grants on the source instance’s access roles aren’t copied. Inspect the access roles on the fork,
+grant them using the fork’s qualified role names, and generate tokens for the fork’s instance name
+and hostname.
+Later Postgres role changes on the source don’t propagate to the fork. See
+[Access roles on replicas and forks](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-replicas-forks).
 
 ### Creating a Fork
 

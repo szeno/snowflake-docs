@@ -77,6 +77,8 @@ To recover an earlier definition state, use `FROM DEPLOYMENT <identifier>`, whic
 They already reflect that deployment’s effective templating configuration, including runtime variable overrides. Run a full `PLAN`
 against the current account state, review the resulting changeset, and then redeploy those definitions:
 
+SQLSnowflake CLI
+
 Copy code
 
 ```
@@ -89,15 +91,45 @@ EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
   FROM DEPLOYMENT DEPLOYMENT$3;
 ```
 
+Copy code
+
+```
+snow dcm plan --deployment 'DEPLOYMENT$3'
+
+snow dcm deploy --deployment 'DEPLOYMENT$3'
+```
+
 This process applies the earlier defined state through a new reconciliation. It doesn’t undo DML, restore historical table contents, or
 guarantee the exact prior physical or internal state. Use a separate data-recovery mechanism, such as
 [Time Travel](/user-guide/data-time-travel), to recover historical data, subject to that mechanism’s retention and other constraints.
 
 Using a deployment created by `PURGE` as the source isn’t supported. This restriction prevents accidental purges.
 
+To recover the source files of an earlier deployment and reuse them for further changes, copy the files from the DCM project into a
+workspace with the [COPY FILES](/sql-reference/sql/copy-files) command, or into a local directory with Snowflake CLI. Copying deployment files
+requires the MONITOR privilege on the DCM project. The following examples copy the source files of `DEPLOYMENT$1` into a `restored` folder:
+
+SQLSnowflake CLI
+
+Copy code
+
+```
+COPY FILES
+  INTO 'snow://workspace/USER$.PUBLIC.DEFAULT$/versions/live/restored/DEPLOYMENT_1/'
+  FROM 'snow://project/DCM_DEMO.PROJECTS.DCM_PROJECT_DEV/deployments/DEPLOYMENT$1/sources/';
+```
+
+Copy code
+
+```
+snow stage copy 'snow://project/DCM_DEMO.PROJECTS.DCM_PROJECT_DEV/deployments/DEPLOYMENT$1/sources/' ./restored/DEPLOYMENT_1/ --recursive
+```
+
 ### Check for drift only
 
 To isolate changes made outside DCM Projects, run a full `PLAN FROM DEPLOYMENT LAST`, which reuses the rendered definitions from the last deployment:
+
+SQLSnowflake CLI
 
 Copy code
 
@@ -105,6 +137,12 @@ Copy code
 EXECUTE DCM PROJECT DCM_DEMO.PROJECTS.DCM_PROJECT_DEV
   PLAN
   FROM DEPLOYMENT LAST;
+```
+
+Copy code
+
+```
+snow dcm plan --deployment last
 ```
 
 Don’t use a feature branch for a drift-only check because its intended source changes are combined with account drift. `PLAN DELTA` also

@@ -68,7 +68,8 @@ Copy code
 {
    "compactMode": true,
    "autoUpdate": true,
-   "theme": "dark"
+   "theme": "dark",
+   "cortexAgentConnectionName": "my_connection"
 }
 ```
 
@@ -77,6 +78,18 @@ The following settings are available:
 - `compactMode`: Enables compact output formatting.
 - `autoUpdate`: Enables automatic updates.
 - `theme`: Sets the CLI theme (`light` or `dark`).
+- `cortexAgentConnectionName`: Name of the Snowflake connection that CoCo CLI uses for AI inference (LLM calls).
+  Token credits are billed to the account for this connection, not to the active SQL working connection that
+  you set with `cortex connections set`. If the setting is absent, CoCo CLI uses the active connection.
+  For the `-c` option and ACP usage, see [CoCo CLI Agent Client Protocol (ACP) support](/user-guide/cortex-code/cortex-code-acp). For connection setup,
+  see [CoCo CLI](/user-guide/cortex-code/cortex-code-cli).
+
+Warning
+
+The inference connection and the SQL working connection are independent. If
+`cortexAgentConnectionName` points to a different account than your active connection, that account
+is billed for token credits. If you use multiple accounts, verify that this setting matches your billing
+expectations.
 
 ### `permissions.json`
 

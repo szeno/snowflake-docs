@@ -8,7 +8,10 @@ establish a connection, you configure your client with:
   access.
 - The **Postgres database** that you want to connect to. This parameter is required to create Postgres connections. The default
   database is named `postgres`.
-- A **password** for your user.
+- A **password** or a short-lived **Snowflake access token** for your Postgres user. For token types
+  and authorization, see [GENERATE\_POSTGRES\_ACCESS\_TOKEN\_FOR\_USER](/sql-reference/functions/generate_postgres_access_token_for_user).
+  For a complete client example using access roles, see
+  [Grant access with access roles](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-access-roles).
 
 Here is an example of these connections details used with the `psql` command line client:
 
@@ -47,7 +50,7 @@ The connection string as a database URL contains the following parameters:
 
 - protocol: `postgres://`
 - username: See [Snowflake Postgres Roles](/user-guide/snowflake-postgres/postgres-roles) for more details
-- password
+- password: The Postgres password or a valid Snowflake access token
 - hostname
 - port: 5432
 - database\_name: Defaults to `postgres`
@@ -95,3 +98,14 @@ do not otherwise provide configuration options for needed connection parameters.
 > For applications that use non-`libpq`-based database drivers, consult the documentation for those other drivers for their
 > client configuration parameter options and specification format. For example, [PostgreSQL’s JDBC driver](https://jdbc.postgresql.org/documentation/use/) provides many parameters equivalent to those provided by `libpq`, but their
 > specification in URIs is slightly different.
+
+## Short-lived tokens and client connections
+
+Attention
+
+Snowflake access tokens expire 15 minutes after they are issued. Configure your client to obtain
+a fresh token for the target instance when it needs to establish a new connection after expiry.
+Token expiry doesn’t close established connections.
+
+For revocation behavior, including tokens that were already issued, see
+[When revoked access takes effect](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-revocation).

@@ -63,6 +63,13 @@ Small models are fast and cost-efficient, and suit high-volume tasks like classi
 - **OpenAI GPT mini and nano** (`openai-gpt-5.4-mini`, `openai-gpt-5.4-nano`): small, fast GPT models, each with a
   400,000-token context window and up to 128,000 output tokens.
 
+### Decision models
+
+- **Snowflake Decision** (`snowflake-decision`, Public Preview): a purpose-built model for high-throughput
+  classification, scoring, and true-or-false assessment. Instead of free-form text, it returns structured answers to
+  typed questions, with probabilities and confidence values that your SQL or application logic can use for routing and
+  review. See [Cortex AI Functions: Snowflake Decision](/user-guide/snowflake-cortex/snowflake-decision).
+
 Many of these models are available only through
 [cross-region inference](/user-guide/snowflake-cortex/cross-region-inference#label-use-cross-region-inference). Check
 [Model availability](/user-guide/snowflake-cortex/model-availability#label-cortex-model-availability-by-region) for your

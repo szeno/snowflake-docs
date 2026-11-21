@@ -437,7 +437,7 @@ For BYO-VPC deployments, take note of the following considerations:
 The network connectivity generally is as follows:
 **An Openflow EC2 Instance** (Agent or EKS) runs in a **private subnet** that requires **Route Table entries** to send egress traffic to a **Transit Gateway**, a **PrivateLink VPC Endpoint**, or a **NAT Gateway** connected to an **Internet Gateway**.
 
-### Example: BYOC deployment with a new VPC to communicate with RDS in a different VPC of the same account
+### Example: Connect a BYOC deployment to RDS in the same AWS account
 
 To enable communication between the Openflow EKS cluster and the RDS instance, you need to create a new
 security group, with the EKS cluster security group as the source for the inbound rule for RDS connectivity, and attach the group in RDS.
@@ -457,7 +457,8 @@ security group, with the EKS cluster security group as the source for the inboun
 If you need to troubleshoot, the [Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/getting-started.html) can be useful.
 It will give you detailed information about what may be blocking connectivity by using tracing capabilities within the AWS platform.
 
-See the following AWS docs for accessing DB instances using VPC peering and the associated security group configuration:
+If the RDS instance is in a different VPC, you must also connect the VPCs, for example with VPC peering,
+and adjust your security group configuration to match. For details, see the following AWS docs:
 
 - [Scenarios for accessing a DB instance in a VPC - Amazon Relational Database Service](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_VPC.Scenarios.html#USER_VPC.Scenario3)
 - [Update your security groups to reference peer security groups - Amazon Virtual Private Cloud](https://docs.aws.amazon.com/vpc/latest/peering/vpc-peering-security-groups.html)

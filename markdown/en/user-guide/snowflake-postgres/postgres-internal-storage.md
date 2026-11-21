@@ -612,8 +612,9 @@ Where:
 - `STORAGE_ALLOWED_LOCATIONS` specifies your container and path prefix using the `azure://`
   scheme. Replace `myaccount`, `mycontainer`, and `mypath` with your actual values. Use the
   `blob.core.windows.net` endpoint for all Azure Blob Storage account types, including Azure
-  Data Lake Storage Gen2. Note that only one location is allowed for Postgres storage
-  integrations.
+  Data Lake Storage Gen2. pg\_lake file operations and Iceberg table locations must use this
+  same `azure://` form. Snowflake cannot read Iceberg tables whose metadata records `az://`
+  paths. Note that only one location is allowed for Postgres storage integrations.
 
 #### Grant Snowflake access to Azure storage
 
@@ -635,27 +636,33 @@ In the output, locate and record:
 - `AZURE_CONSENT_URL`: The URL an Azure admin must visit to grant Snowflake access to your
   tenant.
 - `AZURE_MULTI_TENANT_APP_NAME`: The name of the Snowflake service principal registered in
-  your tenant after consent is granted. You’ll use the portion of the name **before** the
-  underscore when searching for it in the Azure portal.
+  your tenant after consent is granted. For `POSTGRES_EXTERNAL_STORAGE` integrations, the name
+  has the form `<deployment>-postgres-sp`. Use the full name when you search for it in the
+  Azure portal.
 
 **Step 2: Grant consent**
 
-1. Open `AZURE_CONSENT_URL` in a browser while signed in as an Azure Active Directory admin for
-   your tenant.
+1. Open `AZURE_CONSENT_URL` in a browser while signed in as a user who can grant consent to
+   applications in your tenant. Depending on your tenant’s consent settings, this may require a
+   Microsoft Entra ID administrator.
 2. Review the permissions that Snowflake requests and select **Accept**. This registers the
    Snowflake service principal in your tenant.
 
 **Step 3: Assign the Storage Blob Data Contributor role**
 
-Grant the Snowflake service principal read and write access to your container:
+Grant the Snowflake service principal read and write access to your storage account. Assign
+the role on the storage account, not on an individual container. Snowflake Postgres requests a
+user delegation key from Azure, and Azure only allows that when the role is assigned at the
+storage account level or higher. With a container-level assignment, pg\_lake cannot access the
+container.
 
 1. Sign in to the Azure portal and navigate to your storage account.
 2. Select **Access Control (IAM)**, then **Add role assignment**.
 3. Select the **Storage Blob Data Contributor** role and select **Next**.
 4. Under **Assign access to**, select **User, group, or service principal**, then **Select
    members**.
-5. Search for the Snowflake service principal using the name from `AZURE_MULTI_TENANT_APP_NAME`
-   (the portion before the underscore).
+5. Search for the Snowflake service principal using the full `AZURE_MULTI_TENANT_APP_NAME`
+   value.
 6. Select the principal and complete the role assignment.
 
 ### Attach the storage integration to your Postgres instance
@@ -694,8 +701,12 @@ ALTER POSTGRES INSTANCE my_postgres_instance
 
 After attaching the Postgres-side integration, create a second storage integration of type
 `EXTERNAL_STAGE` so that Snowflake SQL can read the files and Iceberg tables that pg\_lake writes
-to your storage. Both integrations can share the same IAM role (S3) or container permissions
-(Azure), but each integration has its own service principal that must be granted access.
+to your storage. Both integrations can share the same IAM role (S3) or storage account
+permissions (Azure), but each one must be granted access separately. For S3, the
+`POSTGRES_EXTERNAL_STORAGE` integration uses the Snowflake Postgres IAM user, while the
+`EXTERNAL_STAGE` integration (and any external volume) uses your Snowflake account’s IAM user,
+each with its own external ID. For Azure, each integration type uses a different Snowflake
+application, each with its own service principal.
 
 #### For Amazon S3
 
@@ -749,6 +760,12 @@ Copy code
 }
 ```
 
+If you also create an [external volume](/user-guide/tables-iceberg-configure-external-volume)
+on the same location so that Snowflake can read Iceberg tables, run `DESCRIBE EXTERNAL VOLUME`
+and add a third statement for its `STORAGE_AWS_IAM_USER_ARN` and `STORAGE_AWS_EXTERNAL_ID`. The
+external volume has its own external ID, even when it uses the same IAM user as the
+`EXTERNAL_STAGE` integration.
+
 Then create an external stage in Snowflake pointing at the same location:
 
 Copy code
@@ -784,10 +801,22 @@ DESCRIBE STORAGE INTEGRATION my_snowflake_stage_integration;
 
 Record the values for `AZURE_CONSENT_URL` and `AZURE_MULTI_TENANT_APP_NAME`, then:
 
-1. Open `AZURE_CONSENT_URL` in a browser and grant consent for the new service principal.
-2. In the Azure portal, assign the **Storage Blob Data Contributor** role on your container to
-   the service principal named in `AZURE_MULTI_TENANT_APP_NAME`. This is in addition to the
-   role assignment already created for the `POSTGRES_EXTERNAL_STORAGE` integration.
+1. Open `AZURE_CONSENT_URL` in a browser and grant consent. The `EXTERNAL_STAGE` integration
+   registers a different service principal from the `POSTGRES_EXTERNAL_STORAGE` integration,
+   so you must grant consent for this application as well.
+2. In the Azure portal, assign the **Storage Blob Data Contributor** role on your storage
+   account to this service principal. `EXTERNAL_STAGE` names typically include an underscore;
+   search for the portion of `AZURE_MULTI_TENANT_APP_NAME` before the underscore.
+
+   This role assignment is in addition to the one for the `POSTGRES_EXTERNAL_STORAGE`
+   integration. If you also create an
+   [external volume](/user-guide/tables-iceberg-configure-external-volume) on the same
+   container so that Snowflake can read Iceberg tables, the volume uses the same service
+   principal as this `EXTERNAL_STAGE` integration, so one consent covers both. Reading
+   Iceberg tables through the external volume requires a user delegation key, which Azure
+   only allows when the role is assigned at the storage account level or higher. A
+   container-level assignment is enough for the stage, but Iceberg reads then fail with
+   `AuthorizationPermissionMismatch`.
 
 Then create an external stage in Snowflake pointing at the same container:
 
@@ -800,7 +829,10 @@ CREATE STAGE my_pg_lake_stage
 ```
 
 You can now query files that pg\_lake writes to your storage directly from Snowflake SQL using
-this stage.
+this stage. To query Iceberg tables from Snowflake, configure an external volume and a
+[catalog integration for files in object storage](/user-guide/tables-iceberg-configure-catalog-integration-object-storage)
+that point at the same container. Iceberg metadata written by pg\_lake must use `azure://`
+paths; Snowflake rejects Iceberg tables whose metadata records `az://` file paths.
 
 ### Configure and use pg\_lake
 
@@ -814,55 +846,17 @@ For a list of available extensions, see [Snowflake Postgres Extensions](/user-gu
    ```
    CREATE EXTENSION pg_lake CASCADE;
    ```
-2. Set the default storage location for Iceberg tables. This should match the location specified
-   in your storage integration.
+2. Create Iceberg tables in your customer-managed storage by specifying a location on each
+   table.
 
-   The SET command only applies to the current session. For S3:
+   Without a location, `CREATE TABLE ... USING iceberg` writes to Snowflake-managed storage and
+   does not use your S3 bucket or Azure container, even when a storage integration is attached.
+   This is the case whether `pg_lake_iceberg.default_catalog` is `object_store` (the Snowflake
+   Postgres default) or `postgres`. You cannot change `pg_lake_iceberg.default_location_prefix`
+   with `SET` or `ALTER DATABASE`.
 
-   Copy code
-
-   ```
-   SET pg_lake_iceberg.default_location_prefix = 's3://my-bucket/my-prefix';
-   ```
-
-   For Azure Blob Storage:
-
-   Copy code
-
-   ```
-   SET pg_lake_iceberg.default_location_prefix = 'azure://myaccount.blob.core.windows.net/mycontainer/mypath';
-   ```
-
-   To set the value for all current and future sessions, use the ALTER DATABASE command instead.
-   If you use multiple Postgres databases, make sure to set the storage location for each database:
-
-   Copy code
-
-   ```
-   -- Substitute the name of your database and storage URL
-   ALTER DATABASE my_database SET pg_lake_iceberg.default_location_prefix = '<storage_url>';
-   ```
-3. Verify that the storage integration is configured correctly by listing the contents of your
-   storage location. For S3:
-
-   Copy code
-
-   ```
-   SELECT * FROM lake_file.list('s3://my-bucket/my-prefix/*');
-   ```
-
-   For Azure Blob Storage:
-
-   Copy code
-
-   ```
-   SELECT * FROM lake_file.list('azure://myaccount.blob.core.windows.net/mycontainer/mypath/*');
-   ```
-
-   If the configuration is correct, this query returns a list of files at that location. If the
-   storage location is empty, the query returns an empty result set without an error.
-4. Verify the end-to-end configuration by creating an Iceberg table, inserting data, and
-   querying it back. If this succeeds, pg\_lake can read from and write to your storage location:
+   Use a path under your storage integration’s `STORAGE_ALLOWED_LOCATIONS`, and give each table
+   its own path. The location must be empty when you create the table. For S3:
 
    Copy code
 
@@ -870,11 +864,68 @@ For a list of available extensions, see [Snowflake Postgres Extensions](/user-gu
    CREATE TABLE my_table (
      id INT,
      data TEXT
-   ) USING iceberg;
+   ) USING iceberg
+   WITH (location = 's3://my-bucket/my-prefix/my_table');
+   ```
 
-   INSERT INTO my_table VALUES (1, 'hello iceberg');
+   For Azure Blob Storage, use the `azure://` scheme and the `blob.core.windows.net` endpoint.
+   Do not use the `az://` short form; Snowflake cannot read Iceberg tables whose metadata
+   records `az://` paths:
 
-   SELECT * FROM my_table;
+   Copy code
+
+   ```
+   CREATE TABLE my_table (
+     id INT,
+     data TEXT
+   ) USING iceberg
+   WITH (location = 'azure://myaccount.blob.core.windows.net/mycontainer/mypath/my_table');
+   ```
+3. Verify that the storage integration is configured correctly by listing the contents of your
+   storage location. Use `**` to include files in subdirectories. A single `*` matches only
+   files in that directory, not nested Iceberg table files. For S3:
+
+   Copy code
+
+   ```
+   SELECT * FROM lake_file.list('s3://my-bucket/my-prefix/**');
+   ```
+
+   For Azure Blob Storage:
+
+   Copy code
+
+   ```
+   SELECT * FROM lake_file.list('azure://myaccount.blob.core.windows.net/mycontainer/mypath/**');
+   ```
+
+   If the configuration is correct, this query returns a list of files at that location. If the
+   storage location is empty, the query returns an empty result set without an error.
+4. Verify the end-to-end configuration by creating an Iceberg table in customer-managed
+   storage, inserting data, and querying it back. For S3, use an `s3://` location as in step 2.
+   For Azure Blob Storage:
+
+   Copy code
+
+   ```
+   CREATE TABLE my_test_table (
+     id INT,
+     data TEXT
+   ) USING iceberg
+   WITH (location = 'azure://myaccount.blob.core.windows.net/mycontainer/mypath/my_test_table');
+
+   INSERT INTO my_test_table VALUES (1, 'hello iceberg');
+
+   SELECT * FROM my_test_table;
+   ```
+
+   If this succeeds, pg\_lake can read from and write to your storage location. To confirm, list
+   the table’s location and check that the new files are there:
+
+   Copy code
+
+   ```
+   SELECT * FROM lake_file.list('azure://myaccount.blob.core.windows.net/mycontainer/mypath/my_test_table/**');
    ```
 
 For a complete walkthrough using customer-managed S3 with pg\_lake, see the guide
@@ -902,15 +953,25 @@ For a complete walkthrough using customer-managed S3 with pg\_lake, see the guid
 
 #### Azure Blob Storage
 
-- **Use RBAC roles**: Snowflake Postgres uses service principal role assignments rather than
-  static credentials, providing better security through Azure managed identity.
-- **Limit role scope**: Assign the Storage Blob Data Contributor role at the container or path
-  level rather than the storage account level to restrict access to only the data pg\_lake needs.
+- **Use RBAC roles**: Snowflake Postgres doesn’t use storage account keys. It authenticates to
+  your tenant as a Snowflake multi-tenant application, using the role assigned to its service
+  principal, and gives your instance a short-lived shared access signature (SAS) for the
+  container. The SAS expires within 7 days and is renewed automatically.
+- **Limit role scope**: The `POSTGRES_EXTERNAL_STORAGE` service principal needs the Storage
+  Blob Data Contributor role on the storage account, because Snowflake Postgres requests a user
+  delegation key. The `EXTERNAL_STAGE` service principal needs the same storage account
+  assignment if Snowflake reads Iceberg tables through an external volume; for stage access
+  alone, a container-level assignment is enough. To limit what these principals can reach, keep
+  the data pg\_lake uses in a dedicated storage account.
 - **One tenant per integration**: A `POSTGRES_EXTERNAL_STORAGE` integration can authenticate to
   only one Azure tenant. All paths in `STORAGE_ALLOWED_LOCATIONS` must belong to storage accounts
   in the same tenant.
 - **Review storage integration changes**: Any updates to the integration’s `AZURE_TENANT_ID` or
   `STORAGE_ALLOWED_LOCATIONS` are automatically synchronized to the Postgres instance.
+- **Use `azure://` paths**: In pg\_lake, list, copy, and Iceberg locations must use the
+  `azure://<account>.blob.core.windows.net/<container>/` form from
+  `STORAGE_ALLOWED_LOCATIONS`. Iceberg metadata that records `az://` paths is not readable
+  from Snowflake.
 - **Regional alignment**: Ensure your Azure Blob Storage container is in the same Azure region
   as your Snowflake account for optimal performance and to meet data residency requirements.
 

@@ -101,6 +101,7 @@ ALTER SHARE [ IF EXISTS ] <name> UNSET COMMENT
   CREATE SHARE doesn’t include the ability to add or remove accounts. For more information, see
   [MANAGE SHARE TARGET privilege](/user-guide/security-access-privileges-shares#label-manage-share-target-privilege).
 - Keywords `ACCOUNT` and `ACCOUNTS` are both supported and can be used interchangeably.
+- You can specify the consumer account name in the format `<orgname>.<account_name>` or as an `<account_locator>`.
 - Regarding metadata:
 
   Attention
@@ -115,6 +116,20 @@ Add accounts `org1.consumer1` and `org1.consumer2` to the existing share named `
 >
 > ```
 > ALTER SHARE sales_s ADD ACCOUNTS = org1.consumer1, org1.consumer2;
+>
+> +----------------------------------+
+> | status                           |
+> |----------------------------------|
+> | Statement executed successfully. |
+> +----------------------------------+
+> ```
+
+Add an account to `sales_s` by specifying its account locator:
+
+> Copy code
+>
+> ```
+> ALTER SHARE sales_s ADD ACCOUNT = <account_locator>;
 >
 > +----------------------------------+
 > | status                           |

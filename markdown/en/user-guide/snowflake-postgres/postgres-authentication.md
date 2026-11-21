@@ -52,8 +52,12 @@ ALTER POSTGRES INSTANCE <instance_name>
 Set `AUTHENTICATION_PROPERTIES` to `NULL` when you leave External OAuth. That removes the stored
 issuer and accepted tokens. On any other authority, `NULL` changes nothing.
 
-After you set Snowflake token authentication, map Postgres users to Snowflake users and generate
-tokens. See [Map a Postgres user to a Snowflake user](#label-sfpg-token-auth-user-mappings).
+After you set Snowflake token authentication, choose how to authorize the Postgres user:
+
+- For shared access through Snowflake roles, use [access roles](#label-sfpg-token-auth-access-roles).
+- For a one-to-one Snowflake user mapping, use [individual user mappings](#label-sfpg-token-auth-user-mappings).
+
+Then [generate a token](#label-sfpg-token-auth-generate-token) and use it as the client password.
 
 For External OAuth, set `AUTHENTICATION_AUTHORITY` to `EXTERNAL_OAUTH` and provide
 `AUTHENTICATION_PROPERTIES`, then set `oauth_identifier` on each role that will sign in. See
@@ -67,28 +71,193 @@ A Snowflake token authenticates to the Postgres instance.
 
 Important
 
-Changing the authentication authority away from Snowflake token authentication stops new tokens from
-being created. Tokens already issued can still open connections until they expire, up to 15 minutes
-after they were issued. Open connections stay open.
-
-Mapped users can’t use Postgres authentication until their mappings are removed.
+Changing the authentication authority away from Snowflake token authentication stops new tokens
+from being created. An issued token can still authenticate until expiry if its target Postgres
+user remains eligible for that token type.
 
 ### Token types
 
-[GENERATE\_POSTGRES\_ACCESS\_TOKEN\_FOR\_USER](/sql-reference/functions/generate_postgres_access_token_for_user) checks the following in order
-and returns the first token that applies:
+[GENERATE\_POSTGRES\_ACCESS\_TOKEN\_FOR\_USER](/sql-reference/functions/generate_postgres_access_token_for_user) evaluates permissions from your
+primary role and active secondary roles, including their inherited roles. It checks the following
+in order and returns the first token that applies:
 
 | Token | Who gets it | Signs in as |
 | --- | --- | --- |
-| Owner token (*Preview*) | A role with the OWNERSHIP privilege on the instance, or the MANAGE GRANTS privilege on the account | Any Postgres user that can sign in with a password, or any Postgres user that has an access role |
-| Access role token (*Preview*) | A role that holds the [access role](#label-sfpg-token-auth-access-roles) for the requested Postgres user, directly or through the role hierarchy | The Postgres user whose access role is enabled |
-| User token | Any other role with the USAGE privilege on the instance | The Postgres user mapped to that Snowflake user |
+| Owner token | An active role hierarchy with the `OWNERSHIP` privilege on the instance | Any Postgres login role, except superusers, replication users, and protected system users |
+| Access role token | A role that holds the [access role](#label-sfpg-token-auth-access-roles) for the requested Postgres user, directly or through the role hierarchy | The Postgres user whose access role is enabled |
+| User token | An active role hierarchy with the `USAGE` privilege on the instance, when neither earlier token type applies | The Postgres user mapped to that Snowflake user |
 
 Expand
 
 Show lessSee more
 
-Every token expires 15 minutes after it is issued.
+Except for `snowflake_admin`, an owner-token target must have a usable password or be configured
+for Snowflake token authentication or External OAuth.
+
+Every token expires 15 minutes after it is issued. An access-role holder inherits `USAGE` on the
+instance through the access role; you don’t need a separate `USAGE` grant for that path.
+
+### Grant access with access roles
+
+A Postgres access role is a Snowflake role scoped to one Postgres instance.
+Grant it to authorize a Snowflake role, application role, or user to generate a token
+for the Postgres user. Privileges on databases and objects inside Postgres come from the
+[Postgres role](/user-guide/snowflake-postgres/postgres-roles).
+
+The following example uses the Postgres database `postgres`, a new Postgres login role `app_user`,
+and an existing Snowflake role `analyst` assigned to the user who will generate the token.
+For this example, `analyst` doesn’t hold `OWNERSHIP` on the instance.
+The instance must use `POSTGRES_OR_SNOWFLAKE`. Configure
+[network access](/user-guide/snowflake-postgres/postgres-network) for the client before connecting.
+
+1. Connect to the Postgres instance as `snowflake_admin` with its password or an owner token.
+   Create the Postgres user, grant its database privileges, and enable access-role authentication:
+
+   Copy code
+
+   ```
+   CREATE ROLE app_user LOGIN;
+   GRANT CONNECT ON DATABASE postgres TO app_user;
+   GRANT USAGE ON SCHEMA public TO app_user;
+   GRANT SELECT ON ALL TABLES IN SCHEMA public TO app_user;
+   ALTER USER app_user SET SNOWFLAKE_ACCESS_ROLE = true;
+   ```
+
+   The table grant applies to existing tables in `public`. Grant access to future tables separately
+   as needed. For an existing Postgres user, omit `CREATE ROLE` and grant the privileges it needs.
+
+   Snowflake creates an access role with the Postgres user’s name. The name can’t be set separately.
+   In Snowflake, list the access roles on the instance:
+
+   Copy code
+
+   ```
+   SHOW ACCESS ROLES IN POSTGRES INSTANCE my_instance;
+   ```
+2. In Snowflake, grant the access role to `analyst`. Name it `<instance>!<access_role>`.
+   The grant requires `OWNERSHIP` on the instance or `MANAGE GRANTS` on the account:
+
+   Copy code
+
+   ```
+   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO ROLE analyst;
+   ```
+
+   You can also grant the access role to an application role or directly to a user:
+
+   Copy code
+
+   ```
+   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO APPLICATION ROLE my_app.app_role;
+   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO USER casey;
+   ```
+3. As the user assigned `analyst`, activate the role and generate a token for `app_user`:
+
+   Copy code
+
+   ```
+   USE ROLE analyst;
+   SELECT GENERATE_POSTGRES_ACCESS_TOKEN_FOR_USER('my_instance', 'app_user');
+   ```
+4. Use the hostname shown for `my_instance` to connect to Postgres as `app_user`:
+
+   Copy code
+
+   ```
+   psql "host=<hostname> port=5432 dbname=postgres user=app_user sslmode=require" --password
+   ```
+
+   At the password prompt, paste the token. Don’t use the Snowflake role name as the Postgres
+   username. For server certificate verification, see
+   [Snowflake Postgres SSL certificates](/user-guide/snowflake-postgres/postgres-ssl-certs).
+   Obtain a new token before opening a connection after the current token expires.
+
+#### Access-role requirements and names
+
+- The Postgres role needs the `LOGIN` attribute to connect.
+- Postgres login roles created for use with access roles must follow Snowflake’s
+  [unquoted identifier rules](/sql-reference/identifiers-syntax#label-unquoted-identifier),
+  even for a quoted Postgres role name.
+- Two enrolled Postgres roles on the same instance can’t have names that differ only in case.
+- A Postgres user can use an individual Snowflake user mapping, an access role, or an External
+  OAuth mapping. These methods can’t coexist on the same user. Remove `snowflake_user` or
+  `oauth_identifier` before enabling `SNOWFLAKE_ACCESS_ROLE`. Disable the access role before
+  adding either mapping.
+- You can’t enable an access role for `snowflake_admin` or another privileged Postgres role.
+  An enrolled role that becomes privileged can no longer authenticate with an access-role token.
+- An enrolled user authenticates with tokens and can’t change its Postgres password until access-role
+  authentication is disabled.
+
+If you turn Snowflake token authentication back on, Snowflake discovers access roles created
+in Postgres while token authentication was off. Discovery is asynchronous and normally takes
+5 to 10 minutes.
+
+#### Inspect access-role grants
+
+As the instance owner, inspect the access roles and their grantees before changing access:
+
+Copy code
+
+```
+SHOW ACCESS ROLES IN POSTGRES INSTANCE my_instance;
+SHOW GRANTS OF POSTGRES ACCESS ROLE my_instance!app_user;
+SHOW GRANTS TO ROLE analyst;
+```
+
+`SHOW GRANTS OF POSTGRES ACCESS ROLE` lists the grantees of that access role.
+`SHOW GRANTS TO ROLE` includes access-role grants received by the specified Snowflake role.
+Postgres access roles are instance-scoped and aren’t listed in the `SNOWFLAKE.ACCOUNT_USAGE.ROLES`
+view. Use the qualified name with the access-role commands.
+
+#### Rename or remove an access role
+
+Rename the Postgres user to change the corresponding Postgres access-role name.
+The existing Snowflake grants remain attached to the renamed access role. Update references to
+the old name and generate new tokens for the new Postgres username.
+
+To remove one Snowflake role’s grant, first [inspect the grants](#label-sfpg-token-auth-inspect-grants),
+then revoke that grant:
+
+Copy code
+
+```
+REVOKE POSTGRES ACCESS ROLE my_instance!app_user FROM ROLE analyst;
+```
+
+To disable access-role authentication for the Postgres user, [inspect the grants](#label-sfpg-token-auth-inspect-grants)
+to identify affected users and roles, then reset the setting in Postgres:
+
+Copy code
+
+```
+ALTER USER app_user RESET SNOWFLAKE_ACCESS_ROLE;
+```
+
+Setting `SNOWFLAKE_ACCESS_ROLE` to `false` has the same effect. Either action drops the Postgres
+access role and its grants in Snowflake while keeping the Postgres user and its database privileges.
+Dropping the Postgres user also removes its access role. Re-enabling access-role authentication
+creates a new access role; grant access to it again.
+
+#### When revoked access takes effect
+
+Revoking a Snowflake grant prevents that grant from authorizing new access-role tokens.
+It doesn’t invalidate issued tokens or affect other grants.
+
+- An issued access-role token can open a connection until it expires only while the
+  target Postgres user still exists, remains enrolled, and is eligible for access-role authentication.
+- Resetting `SNOWFLAKE_ACCESS_ROLE` or dropping the Postgres user prevents new connections with
+  that user’s access-role tokens, including tokens issued before the change.
+- A name change beyond letter case prevents new connections with previous access-role tokens.
+  A case-only rename preserves the token’s role binding. Dropping and recreating a user with the same name
+  doesn’t make its old access-role tokens valid for the new user.
+- Changing the authentication authority, token expiry, Snowflake grant revocation, and disabling
+  access-role authentication don’t close established connections. Manage existing sessions
+  separately if you need to end their access.
+
+Owner tokens use the instance owner’s authorization and aren’t revoked by removing an access-role
+grant or disabling access-role authentication for a user. The target must still be an eligible
+Postgres login role. For client token refresh guidance, see
+[Short-lived tokens and client connections](/user-guide/snowflake-postgres/connecting-to-snowflakepg#label-sfpg-client-tokens).
 
 ### Map a Postgres user to a Snowflake user
 
@@ -100,8 +269,9 @@ Copy code
 ALTER USER <postgres_user> SET snowflake_user = '<snowflake_user>';
 ```
 
-The identifiers are case-insensitive unless you place them in double quotes. For example, to map a
-Postgres user named Casey to a Snowflake user of the same name:
+Postgres folds unquoted role names to lowercase, and Snowflake folds unquoted user names to
+uppercase. Preserve the spelling of names created with double quotes. For example, to map a
+Postgres user named `Casey` to a Snowflake user of the same name:
 
 Copy code
 
@@ -118,112 +288,9 @@ ALTER USER <postgres_user> RESET snowflake_user;
 ```
 
 A mapped Postgres user can sign in only with a token and can’t change their Postgres password.
-
-### Grant access with access roles
-
-[Preview Feature](/release-notes/preview-features) — Open
-
-Available to all accounts.
-
-An access role lets Snowflake roles sign in as a Postgres user. Use it when a team, a service, or an
-app needs access, instead of mapping one Snowflake user at a time. The access role controls who can
-connect as that user. Privileges on databases and other objects inside Postgres are managed
-separately by [Postgres roles](/user-guide/snowflake-postgres/postgres-roles).
-
-1. Sign in to the Postgres instance as `snowflake_admin` with its password, and enable the Postgres
-   user’s access role:
-
-   Copy code
-
-   ```
-   ALTER USER app_user SET SNOWFLAKE_ACCESS_ROLE = true;
-   ```
-
-   Anyone who can sign in as `snowflake_admin` with a password can create the access role. Generating
-   an owner token that signs in as `snowflake_admin` requires the OWNERSHIP privilege on the
-   instance, or the MANAGE GRANTS privilege on the account.
-
-   Snowflake creates an access role with the Postgres user’s name. The name can’t be set separately.
-   To list the access roles on an instance:
-
-   Copy code
-
-   ```
-   SHOW ACCESS ROLES IN POSTGRES INSTANCE my_instance;
-   ```
-2. Grant the access role to a Snowflake role, application role, or user. Name it
-   `<instance>!<access_role>`. A role with the OWNERSHIP privilege on the instance, a role with the
-   MANAGE GRANTS privilege on the account, or the SYSADMIN role can grant it.
-
-   Copy code
-
-   ```
-   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO ROLE analyst;
-   ```
-
-   To grant it to an application role or a user:
-
-   Copy code
-
-   ```
-   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO APPLICATION ROLE my_app.app_role;
-   GRANT POSTGRES ACCESS ROLE my_instance!app_user TO USER casey;
-   ```
-3. A user whose active role hierarchy includes `analyst` generates a token for `app_user`:
-
-   Copy code
-
-   ```
-   SELECT GENERATE_POSTGRES_ACCESS_TOKEN_FOR_USER('my_instance', 'app_user');
-   ```
-
-To remove access, revoke the access role:
-
-Copy code
-
-```
-REVOKE POSTGRES ACCESS ROLE my_instance!app_user FROM ROLE analyst;
-```
-
-To disable access-role authentication for the Postgres user, reset the setting in Postgres. Setting
-it to `false` has the same effect. Either action also drops the access role:
-
-Copy code
-
-```
-ALTER USER app_user RESET SNOWFLAKE_ACCESS_ROLE;
-```
-
-A Postgres user can have a Snowflake user mapping or an access role, but not both. Remove the
-mapping before you enable the access role, and disable the access role before you add a mapping. If
-a mapping exists, setting `SNOWFLAKE_ACCESS_ROLE` fails with
-`role "<postgres_user>" already uses snowflake authentication`. If an access role exists, setting
-`snowflake_user` fails with
-`role "<postgres_user>" already uses role-based snowflake authentication`.
-
-The instance owner doesn’t need an access role to generate an owner token. An owner token can sign
-in as any Postgres user that uses a password, or any Postgres user that has an access role.
-
-If you turn Snowflake token authentication back on, Snowflake picks up access roles that you created
-in Postgres while token authentication was off. That can take 1 to 2 hours.
-
-#### When revoked access takes effect
-
-Revoking an access role stops new tokens immediately. It doesn’t invalidate a token that was already
-issued:
-
-- A token issued before the revoke can open new connections until it expires, up to 15 minutes later.
-- An open connection stays open. Access is checked only when a connection opens.
-
-A connection succeeds only if both Postgres and Snowflake allow it. When you reset
-`SNOWFLAKE_ACCESS_ROLE` in Postgres, new sign-ins as that Postgres user stop, even before Snowflake
-drops the access role. Tokens already issued still work until they expire, up to 15 minutes after
-they were issued.
+For shared access, see [Grant access with access roles](#label-sfpg-token-auth-access-roles).
 
 ### Generate a token
-
-Who can generate a token, and which Postgres user it signs in as, depends on the
-[token type](#label-sfpg-token-auth-token-types).
 
 SnowsightSQL
 
@@ -231,9 +298,45 @@ SnowsightSQL
 2. Select your instance.
 3. In the **Manage** menu, select **Regenerate token**.
 4. Enter a Postgres user that this token can sign in as, then select **Acknowledge & continue**.
-5. Copy the token or Postgres URI. The token is valid for 15 minutes.
+5. Copy the token or Postgres URI.
 
 Use the [GENERATE\_POSTGRES\_ACCESS\_TOKEN\_FOR\_USER](/sql-reference/functions/generate_postgres_access_token_for_user) function.
+
+### Access roles on replicas and forks
+
+A new replica or fork inherits the source instance’s authentication authority. Postgres users and
+their access-role settings are copied, but each target instance has its own Postgres access roles.
+Snowflake grants on the source instance’s access roles aren’t copied. Grant access separately using
+the target instance’s qualified name:
+
+Copy code
+
+```
+GRANT POSTGRES ACCESS ROLE my_replica!app_user TO ROLE analyst;
+GRANT POSTGRES ACCESS ROLE my_fork!app_user TO ROLE analyst;
+```
+
+A user assigned `analyst` generates a token for the instance it will connect to:
+
+Copy code
+
+```
+USE ROLE analyst;
+SELECT GENERATE_POSTGRES_ACCESS_TOKEN_FOR_USER('my_replica', 'app_user');
+SELECT GENERATE_POSTGRES_ACCESS_TOKEN_FOR_USER('my_fork', 'app_user');
+```
+
+Use the target instance’s hostname. A token generated for the source instance can’t authenticate
+to a replica or fork.
+
+For read replicas, enable, rename, disable, or drop the Postgres user on the leader. These Postgres
+changes and the corresponding access-role lifecycle propagate to its replicas. Manage Snowflake
+grants separately on each instance. A fork is independent after creation: later Postgres role
+changes on the source don’t propagate to the fork.
+
+For the creation procedures and other limitations, see
+[Snowflake Postgres Read Replicas](/user-guide/snowflake-postgres/postgres-create-replica) and
+[Snowflake Postgres point-in-time recovery](/user-guide/snowflake-postgres/postgres-point-in-time-recovery).
 
 ### SNOWFLAKE\_AUTH.IDENTITY\_MAPPING
 

@@ -42,7 +42,10 @@ For earlier server releases, see [Server releases earlier in 2026](/release-note
 
 ## Recent feature updates
 
+- [Nov 20, 2026: AI\_COMPLETE adds support for Snowflake Decision (Preview)](/release-notes/2026/other/2026-11-20-ai-complete-snowflake-decision-public-preview)
+- [Nov 20, 2026: AI\_EXTRACT accuracy improvements (Preview)](/release-notes/2026/other/2026-11-20-ai-extract-accuracy)
 - [Nov 20, 2026: AUTO refresh mode for dynamic tables resolves to ADAPTIVE](/release-notes/2026/other/2026-11-20-dynamic-tables-auto-resolves-to-adaptive)
+- [Nov 20, 2026: Postgres access roles for token authentication (General availability)](/release-notes/2026/other/2026-11-20-postgres-token-access-roles-ga)
 - [Nov 19, 2026: AI Governance (Preview)](/release-notes/2026/other/2026-11-19-ai-governance-preview)
 - [Nov 19, 2026: Code Bundles (General availability)](/release-notes/2026/other/2026-11-19-code-bundles-ga)
 - [Nov 19, 2026: Error logging and CHECK constraint enforcement for COPY INTO and Snowpipe (General availability)](/release-notes/2026/other/2026-11-19-copy-snowpipe-error-logging-check-constraints-ga)

@@ -5,6 +5,25 @@ Snowflake uses semantic versioning for Snowpark Connect for Spark updates.
 For documentation, see [Snowpark Connect for Apache Spark](/developer-guide/snowpark-connect/snowpark-connect-apache-spark) and
 [Orchestrating Snowpark Connect for Spark workloads](/developer-guide/snowpark-connect/snowpark-connect-orchestration).
 
+## 1.51.0 (November 19, 2026)
+
+### Snowpark Connect for Spark
+
+#### Behavior changes
+
+- Starting with this version, a next-generation file reader and writer handle CSV and JSON reads and writes, and XML reads. See  for behavior changes
+
+#### Bug fixes
+
+- Fix slow compilation and failures for deeply nested string-to-integer casts
+- Ignore write options that the target format does not use, matching Spark behavior
+- Fix glob read paths such as `*.csv` returning zero rows on some deployments
+
+#### New features
+
+- Release the next-generation file reader and writer for CSV and JSON reads and writes, and XML reads
+- Support nested struct fields in Iceberg `mergeSchema` and record schema evolution, including conditional overwrites and `overwritePartitions`
+
 ## 1.50.0 (November 13, 2026)
 
 ### Snowpark Connect for Spark

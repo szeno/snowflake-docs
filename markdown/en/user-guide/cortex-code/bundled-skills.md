@@ -38,7 +38,7 @@ For `CREATE FUNCTION` or `CREATE PROCEDURE` with `LANGUAGE PYTHON`, CoCo also lo
 
 ## Development and applications
 
-### `developing-with-streamlit`
+### `developing-with-streamlit-in-snowflake`
 
 Create, edit, debug, and style Streamlit in Snowflake apps: including custom CSS theming, custom components, and packaged component development.
 

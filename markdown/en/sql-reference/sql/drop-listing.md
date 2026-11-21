@@ -34,13 +34,18 @@ DROP LISTING <name>
 - Dropped listings cannot be recovered; they must be recreated.
 - Dropping a listing automatically invokes the retirement process for all public and monetized listings.
   Additionally, for other listing types the listing is dropped immediately, and all consumer access automatically revoked.
-- Provider account Listing Auto-Fulfillment (LAF) replication groups don’t get dropped when you drop a private listing. To resolve this issue after you drop a private listing, revoke the existing grants on the replication group and then drop the replication group. For example:
+- When Snowflake detects that a Listing Auto-Fulfillment (LAF) replication group is no longer in use (the replication group has no
+  share objects), Snowflake automatically cleans it up. This can happen when you drop a listing, remove regions, or remove all
+  consumers in a region. The cleanup process can take several days.
+
+  To remove the replication group immediately, transfer ownership of the replication group to a role you control, and then run
+  [DROP REPLICATION GROUP](drop-replication-group). For example:
 
   Copy code
 
   ```
   GRANT OWNERSHIP ON REPLICATION GROUP myrg TO ROLE accountadmin
-  REVOKE CURRENT GRANTS;
+    REVOKE CURRENT GRANTS;
   DROP REPLICATION GROUP myrg;
   ```
 

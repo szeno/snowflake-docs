@@ -14,7 +14,11 @@ Replicas are provisioned in the same network as their leader instance and, as a 
 inherit all ingress and egress network rules from their leader instance.
 
 Postgres credentials, along with all other data on replicas, are copied and kept
-synchronized with the leader instance.
+synchronized with the leader instance. The replica inherits the leader’s authentication authority
+when created. Separate Postgres access roles are created automatically for the replica; grants on the leader’s
+access roles aren’t copied. Grant access using the replica’s qualified role name and generate tokens
+for the replica’s instance name. See
+[Access roles on replicas and forks](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-replicas-forks).
 
 ## Creating a Read Replica
 
@@ -68,3 +72,6 @@ pass through as it builds.
 - Only **10 replicas** can stream changes from a leader instance by default. To allow additional replicas to stream, increase the Postgres `max_wal_senders` setting (see [Snowflake Postgres Server Settings](/user-guide/snowflake-postgres/postgres-server-settings)).
 - Leader Postgres instances **cannot be dropped while they have replicas**. All replicas must be removed before the leader can be dropped.
 - Postgres server settings applied to a leader instance are copied to all replicas.
+- Enable, rename, disable, or drop Postgres access-role users on the leader. These changes
+  propagate to replicas, which are read-only. Manage Snowflake grants separately for each
+  replica’s access roles.

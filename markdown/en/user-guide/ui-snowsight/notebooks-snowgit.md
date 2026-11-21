@@ -49,6 +49,11 @@ To learn how to connect to your Git repository, see [Setting up Snowflake to use
    Git repository branch, and all the files and folders in that location are synced back to your notebook. You can select the branch
    name and open the repository details in Snowflake or on Git.
 
+Note
+
+You can’t disconnect a notebook from a Git repository after connecting it. There’s no way to return the notebook to the state it was in
+before the Git connection.
+
 ## Push changes to a branch in a Git repository
 
 If a Snowflake Notebook is connected to a branch in a Git repository, after you make changes to the notebook you can push

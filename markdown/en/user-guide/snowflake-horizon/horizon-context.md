@@ -53,7 +53,10 @@ sources:
 [Metadata connectors](/user-guide/snowflake-horizon/connectors) (Preview)
 :   Depending on the connector and its configuration, out-of-the-box connectors collect schemas, query logs, dashboard definitions, and
     popularity data from external databases, BI tools, and data pipeline systems, including PostgreSQL, SQL Server, Tableau, Power BI, and
-    dbt.
+    dbt. You can query the collected objects with the
+    [EXTERNAL\_DWH\_OBJECTS](/sql-reference/account-usage/external_dwh_objects) and
+    [EXTERNAL\_BI\_OBJECTS](/sql-reference/account-usage/external_bi_objects) Account Usage views. See
+    [Query collected metadata with Account Usage views](/user-guide/snowflake-horizon/connectors#label-horizoncatalog-connectors-query-metadata).
 
 [External lineage](/user-guide/external-lineage)
 :   Any OpenLineage producer, such as Apache Airflow, can post lineage events to a Snowflake REST endpoint. Snowflake folds those events

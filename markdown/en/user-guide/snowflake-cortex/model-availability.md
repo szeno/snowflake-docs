@@ -176,7 +176,7 @@ Show lessSee more
 
 | Model | AI Functions | Cortex Inference | Cortex Agents / CoWork | Agent Evaluations | CoCo | Cortex Search |
 | --- | --- | --- | --- | --- | --- | --- |
-| `snowflake-decision` | \*\* |  |  |  |  |  |
+| `snowflake-decision` | \* |  |  |  |  |  |
 | `snowflake-decision-fast` | \*\* | \*\* |  |  |  |  |
 | `snowflake-arctic-embed-l-v2.0-8k` | ✔ |  |  |  |  | ✔ |
 | `snowflake-arctic-embed-l-v2.0` | ✔ |  |  |  |  | ✔ |
@@ -540,7 +540,7 @@ Cross-regionNorth AmericaSouth AmericaEuropeAsia-Pacific
 
 | Model | Cross Cloud (Any Region) | AWS Global (Cross-Region) | AWS US (Cross-Region) | AWS US Commercial Gov (Cross-Region) | AWS US FedRAMP High Plus (Cross-Region) | AWS US DoD (Cross-Region) | AWS EU (Cross-Region) | AWS APJ (Cross-Region) | AWS JP (Cross-Region) | AWS AU (Cross-Region) | Azure Global (Cross-Region) | Azure US (Cross-Region) | Azure US FedRAMP High Plus (Cross-Region)† | Azure EU (Cross-Region) | Google Cloud US (Cross-Region) |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `snowflake-decision` | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |  |  |
+| `snowflake-decision` | \* | \* | \* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `snowflake-decision-fast` | \*\* | \*\* | \*\* |  |  |  |  |  |  |  |  |  |  |  |  |
 | `snowflake-arctic-embed-l-v2.0-8k` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ | ✔ |
 | `snowflake-arctic-embed-l-v2.0` | ✔ | ✔ | ✔ | ✔ |  |  | ✔ | ✔ | ✔ | ✔ | ✔ | ✔ |  | ✔ | ✔ |

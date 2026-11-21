@@ -189,7 +189,7 @@ Druid PARSE\_LONG returns NULL for non-integer text; Snowflake TRY\_TO\_NUMBER m
 
 #### Description
 
-`PARSE_LONG` with no radix, or with an explicit radix of 10, is translated to Snowflake [TRY\_TO\_NUMBER](/sql-reference/functions/try_to_number). Druid returns `NULL` for any text that is not a plain integer, whereas `TRY_TO_NUMBER` is more permissive: it can round decimal values, tolerate surrounding whitespace, and parse scientific notation.
+`PARSE_LONG` with no radix, or with an explicit radix of 10, is translated to Snowflake [TRY\_TO\_NUMBER](/sql-reference/functions/try_to_decimal). Druid returns `NULL` for any text that is not a plain integer, whereas `TRY_TO_NUMBER` is more permissive: it can round decimal values, tolerate surrounding whitespace, and parse scientific notation.
 
 The radix-16 path uses a hexadecimal format model and does not exhibit this leniency, so it carries no marker.
 

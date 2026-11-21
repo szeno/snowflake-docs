@@ -223,6 +223,7 @@ Snowflake provides the following system-defined (i.e. built-in) table functions:
 |  | [<service\_name>!SPCS\_GET\_EVENTS](/sql-reference/functions/spcs_get_events) |  |
 |  | [<service\_name>!SPCS\_GET\_LOGS](/sql-reference/functions/spcs_get_logs) |  |
 |  | [<service\_name>!SPCS\_GET\_METRICS](/sql-reference/functions/spcs_get_metrics) |  |
+| Snowpark Connect for Spark | [GET\_SPARK\_APPLICATION\_HISTORY](/sql-reference/functions/get_spark_application_history) | For more information, see [Spark Monitoring UI](/developer-guide/snowpark-connect/spark-monitoring-ui). |
 | Snowflake Native Apps | [APPLICATION\_CALLBACK\_HISTORY](/sql-reference/functions/application_callback_history) | For more information, see [Callbacks](/developer-guide/native-apps/callbacks). |
 |  | [APPLICATION\_SPECIFICATION\_STATUS\_HISTORY](/sql-reference/functions/application_specification_status_history) | For more information, see [Use app specifications to request controlled access](/developer-guide/native-apps/requesting-app-specs). |
 |  | [APPLICATION\_CONFIGURATION\_VALUE\_HISTORY](/sql-reference/functions/application_configuration_value_history) | For more information, see [Application configuration](/developer-guide/native-apps/app-configuration). |

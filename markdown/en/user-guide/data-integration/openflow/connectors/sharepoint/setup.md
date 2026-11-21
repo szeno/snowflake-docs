@@ -40,7 +40,7 @@ As an Azure or Office 365 account administrator, perform the following actions:
 
 1. Grant the `fullcontrol` role to the application in the selected sites.
 
-   This role handles folder access changes during CDC ingestion. Grant it using the [Grant-PnPAzureADAppSitePermission](https://github.com/pnp/powershell/blob/dev/documentation/Grant-PnPAzureADAppSitePermission.md) cmdlet, or by calling the [GraphAPI permission endpoint](https://learn.microsoft.com/en-us/graph/api/site-post-permissions), e.g. using `curl`.
+   This role handles folder access changes during CDC ingestion. Grant it using the [Grant-PnPEntraIDAppSitePermission](https://pnp.github.io/powershell/cmdlets/Grant-PnPEntraIDAppSitePermission.html) cmdlet, or by calling the [GraphAPI permission endpoint](https://learn.microsoft.com/en-us/graph/api/site-post-permissions), e.g. using `curl`.
 
    For more information, see [Roles](https://learn.microsoft.com/en-us/graph/permissions-selected-overview?tabs=http#roles).
 

@@ -131,7 +131,7 @@ job.wait()  # Wait for job to complete
 
 **Cluster Scaling**
 
-The `scale_cluster()` API only works inside Notebooks and will not work inside ML Jobs. Instead, specify the desired cluster size at job submission time. See [Snowflake Multi-Node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs) for more information.
+The `scale_cluster()` API only works inside Notebooks and will not work inside ML Jobs. Instead, specify the desired cluster size at job submission time. See [Snowflake multi-node ML Jobs](/developer-guide/snowflake-ml/ml-jobs/distributed-ml-jobs) for more information.
 
 Copy code
 

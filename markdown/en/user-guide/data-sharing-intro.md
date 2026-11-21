@@ -16,7 +16,7 @@ following Snowflake objects:
   - Secure materialized views
   - Semantic views
 - Cortex Search services
-- User-defined functions (UDFs) (secure and non-secure)
+- User-defined functions (UDFs) (secure and non-secure). Whether a UDF is sharable depends on its handler language. For more information, see [Supported languages and tools](/developer-guide/udf/udf-overview#label-udf-supported-languages).
 - Models of type USER\_MODEL, CORTEX\_FINETUNED, or DOC\_AI
 
 Snowflake enables the sharing of databases through *shares*, which are created by data providers and “imported” by data consumers.

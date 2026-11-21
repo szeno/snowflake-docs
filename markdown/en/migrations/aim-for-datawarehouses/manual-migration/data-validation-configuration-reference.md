@@ -57,7 +57,7 @@ Show lessSee more
 | `periodHandling` | `String` (`"period"`, `"varchar"`) |  | Teradata only. How `PERIOD` columns are compared. Defaults to `"period"`. See [PERIOD data type handling](#period-data-type-handling). |
 | `validationCustomNormalizationRules` | `Array` |  | Preferred, granular normalization overrides by data type, column, or column pattern. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `validationCustomNormalizations` | `Object` |  | Legacy, workflow-wide overrides for L2/L3 normalization SQL templates, keyed only by data type. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
-| `validationCustomMetrics` | `Object` |  | Workflow-wide overrides for L2 metric definitions, by data type or by individual source column. See [Custom metrics](#custom-metrics-validationcustommetrics). |
+| `validationCustomMetrics` | `Object` |  | Workflow-wide overrides for L2 metric definitions, by data type, by individual source column, or for every source column that matches a rule. See [Custom metrics](#custom-metrics-validationcustommetrics). |
 | `validationCustomTypes` | `Object` |  | Workflow-wide overrides for L1 source data type name mapping. See [Customizing normalization and metrics](#customizing-normalization-and-metrics). |
 | `validationCustomTypeRules` | `Array` |  | Per-column L1 type overrides, for columns deliberately migrated to a different type. See [Per-column L1 type overrides](#per-column-l1-type-overrides). |
 | `defaultTableConfiguration` | `Object` |  | Shared defaults inherited by every table, view, and object entry. Per-entry properties override them, and a nested `synchronization` block is merged field by field. See [Incremental validation](#incremental-validation). |
@@ -911,25 +911,26 @@ validationCustomNormalizations:
 
 ### Custom metrics (`validationCustomMetrics`)
 
-L2 metrics are chosen by column data type. A `DEFAULT` set applies to types without a specific entry. You can also override or remove metrics for one source column without dropping that column from schema (L1) or row (L3) validation.
+L2 metrics are chosen by column data type. A `DEFAULT` set applies to types without a specific entry. You can also override or remove metrics for one source column, or for every source column that matches a rule, without dropping those columns from schema (L1) or row (L3) validation.
 
 | Property | Type | Description |
 | --- | --- | --- |
-| `source` | `Array` | Metric overrides on the source platform side. Accepts datatype-scoped and column-scoped entries. |
-| `target` | `Array` | Metric overrides on the Snowflake target side. Datatype-scoped entries only; column-scoped entries aren’t allowed here. |
+| `source` | `Array` | Metric overrides on the source platform side. Accepts datatype-scoped, column-scoped and match-scoped entries. |
+| `target` | `Array` | Metric overrides on the Snowflake target side. Datatype-scoped entries only; column-scoped and match-scoped entries aren’t allowed here. |
 
 Expand
 
 Show lessSee more
 
-Each array entry must set **exactly one** of `datatype` or `column`:
+Each array entry must set **exactly one** of `datatype`, `column`, or `match`:
 
 | Field | Type | Description |
 | --- | --- | --- |
 | `datatype` | `String` | Source or target data type (uppercased). Datatype-scoped entry. |
 | `column` | `String` | Source-qualified column: `{table.fullyQualifiedName}.{columnName}`. Column-scoped entry; allowed only under `source`. |
+| `match` | `Object` | Rule that selects every source column it matches, in every table of the workflow. Match-scoped entry; allowed only under `source`. See [Match-scoped custom metrics](#match-scoped-custom-metrics). |
 | `metrics` | `Array` | Metric definitions for that type or column. |
-| `replaceAll` | `Boolean` | Datatype-scoped only. When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). Not valid on column-scoped entries. |
+| `replaceAll` | `Boolean` | Datatype-scoped only. When `true`, removes all built-in metrics for the type before applying the listed metrics (default `false`). Not valid on column-scoped or match-scoped entries. |
 
 Expand
 
@@ -939,7 +940,7 @@ Each metric definition:
 
 | Field | Type | Description |
 | --- | --- | --- |
-| `name` | `String` | Metric name (for example `count`, `sum`, `min`, `max`, `avg`, `stddev`). |
+| `name` | `String` | Metric name (for example `count`, `sum`, `min`, `max`, `avg`, `stddev`). On column-scoped and match-scoped entries, `"*"` removes every L2 metric for the selected columns; it can’t have a `metricQuery`. |
 | `metricQuery` | `String` | SQL aggregate using `"{{ col_name }}"`. Omit the field, or leave it null or empty, to **remove** that metric from the built-in set. |
 | `metricReturnDatatype` | `String` | Data type used to normalize the metric result. |
 | `metricColumnModifier` | `String` | Optional overflow guard override for this metric. |
@@ -1010,6 +1011,64 @@ tables:
     indexColumnList: [order_id]
     targetIndexColumnList: [ORDER_ID]
 ```
+
+#### Match-scoped custom metrics
+
+Use a `match` selector under `validationCustomMetrics.source` to apply one override to a set of columns without listing each column. The rule is checked against every table in the workflow, using source column names and source data types. Like column-scoped entries, the override also applies to the mapped target column, and matched columns stay in L1 and L3. Columns the rule doesn’t match keep their L2 metrics.
+
+| Field | Type | Description |
+| --- | --- | --- |
+| `role` | `String` | `index` matches the table’s index columns: those in `indexColumnList`, or the keys AIM DMV infers when you omit it (see [Automatic partition and index key selection](#automatic-partition-and-index-key-selection)). Index keys are inferred only when row validation (L3) is on, so when you turn L3 off, set `indexColumnList` explicitly or `role: index` matches nothing. Omit `role` to match columns regardless of role. |
+| `dataTypeFamily` | `Array` | Matches columns whose source data type belongs to one of the listed families. |
+| `notDataTypeFamily` | `Array` | Matches columns whose source data type belongs to none of the listed families. |
+
+Expand
+
+Show lessSee more
+
+Set at least one field. When you set more than one, a column must satisfy all of them. A list can’t be empty, and the same family can’t appear in both `dataTypeFamily` and `notDataTypeFamily`. A rule that matches no columns isn’t an error.
+
+Data type families group source types so that one rule works across source platforms. Values are lowercase:
+
+| Family | Includes, for example |
+| --- | --- |
+| `numeric` | `INTEGER`, `BIGINT`, `SMALLINT`, `TINYINT`, `DECIMAL`, `NUMBER`, `NUMERIC`, `FLOAT`, `DOUBLE`, `REAL`, `MONEY` |
+| `text` | `CHAR`, `VARCHAR`, `NVARCHAR`, `VARCHAR2`, `STRING`, `TEXT`, `CLOB` |
+| `binary` | `BINARY`, `VARBINARY`, `BLOB`, `BYTEA`, `RAW`, `VARBYTE`, `IMAGE` |
+| `temporal` | `DATE`, `TIME`, `TIMESTAMP` and its variants, `DATETIME`, `DATETIME2`, `DATETIMEOFFSET`, `INTERVAL` |
+| `boolean` | `BOOLEAN`, `BOOL`, `BIT` |
+| `other` | Any other type, for example `XML`, `JSON`, `VARIANT`, `UUID`, `UNIQUEIDENTIFIER`, `GEOGRAPHY` |
+
+Expand
+
+Show lessSee more
+
+When more than one entry applies to the same column, the most specific one wins: a `column` entry replaces any `match` entries for that column, and `column` and `match` entries both take precedence over `datatype` entries. When several `match` entries apply to one column, their metrics combine; for a metric named in more than one, the later entry wins.
+
+The validation log records, for each table, which columns a `match` entry removed metrics from.
+
+Example: skip L2 on every primary-key column that isn’t numeric, while numeric keys keep their L2 metrics and all keys stay in L1 and L3:
+
+Copy code
+
+```
+validationConfiguration:
+  metricsValidation: true
+  schemaValidation: true
+  rowValidation: true
+validationCustomMetrics:
+  source:
+    - match:
+        role: index
+        notDataTypeFamily: [numeric]
+      metrics:
+        - name: "*"
+  target: []
+```
+
+Note
+
+Match-scoped entries need an Orchestrator and Workers that support them. An older version rejects the entry with “Exactly one of ‘datatype’ or ‘column’ is required”. Update them with `scai data orchestrator update` and `scai data worker update`, or use column-scoped entries instead.
 
 ### L1 type mapping overrides (`validationCustomTypes`)
 

@@ -61,3 +61,47 @@ Horizon Catalog refreshes the metadata from each connected source every 24 hours
 ## Data pipeline tools
 
 - [dbt](/user-guide/snowflake-horizon/connectors/dbt)
+
+## Query collected metadata with Account Usage views
+
+The objects that connectors collect from external systems are available as rows in views in the ACCOUNT\_USAGE schema of the
+shared SNOWFLAKE database. Use these views to inventory your external objects, track changes, and find objects that were removed
+from the source system.
+
+- The [EXTERNAL\_DWH\_OBJECTS view](/sql-reference/account-usage/external_dwh_objects) contains objects collected from databases, data warehouses, and data
+  pipeline tools, including databases, schemas, tables, views, and dbt models, seeds, and sources.
+- The [EXTERNAL\_BI\_OBJECTS view](/sql-reference/account-usage/external_bi_objects) contains objects collected from BI tools, including folders, projects,
+  datasets, dashboards, and charts.
+
+Each row is one collected object. Both leaf objects and the containers that hold them are rows, and the `OBJECT_TYPE` column tells
+them apart. The `PARENT_REFERENCE_ID` column points to the `REFERENCE_ID` of an object’s parent in the same view, so you can walk the
+hierarchy without relying on names. The `CONNECTOR` and `CONNECTOR_TYPE` columns identify which connector collected each object.
+
+For example, to list the current tables and views that a connector collected, largest first:
+
+Copy code
+
+```
+SELECT name, object_type, database_name, schema_name, row_count, bytes, last_altered
+  FROM snowflake.account_usage.external_dwh_objects
+  WHERE connector_type = 'BIGQUERY'
+    AND object_type IN ('TABLE', 'VIEW')
+    AND deleted IS NULL
+  ORDER BY bytes DESC;
+```
+
+To list the dashboards that changed in the last 7 days, together with their parent folders:
+
+Copy code
+
+```
+SELECT d.name, d.folder_path, d.url, d.last_altered, f.name AS folder_name
+  FROM snowflake.account_usage.external_bi_objects d
+  LEFT JOIN snowflake.account_usage.external_bi_objects f
+    ON f.reference_id = d.parent_reference_id
+  WHERE d.object_type = 'DASHBOARD'
+    AND d.last_altered > DATEADD('day', -7, CURRENT_TIMESTAMP())
+    AND d.deleted IS NULL;
+```
+
+For the full list of columns, see the reference pages for each view.

@@ -6,7 +6,7 @@ You can run Python files (`.py`) interactively in Workspaces using the same note
 [Snowflake Notebooks in Workspaces](/user-guide/ui-snowsight/notebooks-in-workspaces/notebooks-in-workspaces-overview). Open a `.py` file in your
 workspace, connect to a notebook service, and use **Run** to execute the file. Output appears in the **Output** tab in the Tools panel.
 
-Use Python files when you want a script-style workflow in the same governed Workspaces environment as notebooks—for example, utilities, training
+Use Python files when you want a script-style workflow in the same governed Workspaces environment as notebooks, for example, utilities, training
 scripts, or ETL jobs you also deploy to production.
 
 ## Open and run a Python file
@@ -20,7 +20,7 @@ scripts, or ETL jobs you also deploy to production.
 5. Select **Run** to execute the file. The **Output** tab opens automatically and shows results, including the interactive datagrid when applicable.
 
 **Run** executes the entire file in one pass, the same way as in other Python development environments (for example, your IDE or running a script from
-the terminal)—not individual sections or cells. There is no per-cell **Run all** control.
+the terminal), not individual sections or cells. There is no per-cell **Run all** control.
 
 ## Connect to compute
 

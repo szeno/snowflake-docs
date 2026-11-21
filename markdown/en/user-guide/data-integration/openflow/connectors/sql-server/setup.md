@@ -402,8 +402,8 @@ Show lessSee more
 | Column Filter JSON | Optional. A JSON array of filter objects specifying which columns to include or exclude per table. For syntax details and examples, see [Replicate a subset of columns in a table](#replicate-a-subset-of-columns-in-a-table). |
 | Concurrent Select Queries For Incremental | Maximum number of concurrent SELECT queries to run against the source database during incremental replication. Default: `1`, maximum: `8`. Increasing this can speed up replication when many tables are active, but will also increase the load on the source database. |
 | Concurrent Select Queries For Snapshot | Maximum number of concurrent queries to the source database to run in the Snapshot flow. Increasing this can speed up snapshotting large numbers of tables, but will also increase the load on the source database. |
-| Included Table Names | A comma-separated list of source table paths, including their databases and schemas, for example:  `database_1.public.table_1, database_2.schema_2.table_2` |
-| Included Table Regex | A regular expression to match against table paths, including database and schema names. Every path matching the expression is replicated, and new tables matching the pattern that are created later are also included automatically, for example:  `database_name\.public\.auto_.*` |
+| Included Table Names | A comma-separated list of source table paths, including their databases and schemas, for example:  `database_1.public.table_1, database_2.schema_2.table_2`  You must set at least one of **Included Table Names** or **Included Table Regex**. If you set both, the connector replicates every table that matches either one. |
+| Included Table Regex | A regular expression to match against table paths, including database and schema names. Every path matching the expression is replicated, and new tables matching the pattern that are created later are also included automatically, for example:  `database_name\.public\.auto_.*`  You must set at least one of **Included Table Names** or **Included Table Regex**. If you set both, the connector replicates every table that matches either one. |
 | Ingestion Type | Controls whether newly added tables go through a full initial snapshot before switching to incremental replication, or skip straight to incremental replication. Set to `full` (default) for snapshot followed by incremental replication. Set to `incremental` to skip the snapshot for newly added tables and replicate only subsequent changes. Changing this value does not affect tables that have already begun replicating. For usage notes, see [Set up incremental replication without snapshots](/user-guide/data-integration/openflow/connectors/sql-server/incremental-replication). |
 | Max Batch Size | The maximum number of rows to fetch in a single batch. Default: `100000`. |
 | Merge Task Schedule CRON | CRON expression defining periods when merge operations from Journal to Destination Table will be triggered. Set it to `* * * * * ?` if you want continuous merges, or configure a time schedule to limit warehouse run time. The connector evaluates the schedule in the UTC time zone.  For example:  - The string `* 0 * * * ?` indicates that you want to schedule merges at the top of the hour for one minute. - The string `* 20 14 ? * MON-FRI` indicates that you want to schedule merges at 2:20 PM every   Monday through Friday.  For additional information and examples, see the cron triggers tutorial in the [Quartz Documentation](https://www.quartz-scheduler.org/documentation/quartz-2.5.x/tutorials/crontrigger.html). |
@@ -651,6 +651,15 @@ To reclaim the storage, you can:
 - Truncate all journal tables at any time.
 - Drop the journal tables related to source tables that were removed from replication.
 - Drop all but the latest generation journal tables for actively replicated tables.
+
+When you drop a journal table, also drop its stream. The stream has the same name as the journal
+table, followed by `_STREAM`. For example:
+
+Copy code
+
+```
+DROP STREAM IF EXISTS <destination_database>.<destination_schema>.<journal_table_name>_STREAM;
+```
 
 For example, if your connector is set to actively replicate source table `orders`,
 and you have earlier removed table `customers` from replication, you may have

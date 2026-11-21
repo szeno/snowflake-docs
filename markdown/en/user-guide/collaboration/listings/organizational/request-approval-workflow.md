@@ -40,8 +40,8 @@ The request approval workflow cannot be used to grant access to roles and users.
    > Show lessSee more
 8. Select **Set up request approval flow** and then select one of the following options in the **How should the request approval happen** list:
 
-   - **Manage requests in Snowflake**: Consumers submit, review, and manage organizational listing access in Snowsight. Go to step 10.
-   - **Manage requests outside of Snowflake**: Consumers request organizational listing access using the email address or URL you provide. Go to step 11.
+   - **Manage requests in Snowflake**: Consumers submit, review, and manage organizational listing access in Snowsight. Go to step 9.
+   - **Manage requests outside of Snowflake**: Consumers request organizational listing access using the email address or URL you provide. Go to step 10.
 9. If you selected **Manage requests in Snowflake**:
 
    1. In the **Approver email for notifications** field, enter the email address for organizational listing access submissions.
@@ -68,8 +68,8 @@ If you exit without publishing, the listing is saved as a draft.
 4. Select **Edit** in the **Approver Contact** area.
 5. Select one of the following options in the **How should the request approval happen** list:
 
-   - **Manage requests in Snowflake**: Consumers submit, review, and manage organizational listing access in Snowsight. Go to step 7.
-   - **Manage requests outside of Snowflake**: Consumers request organizational listing access using the email address or URL you provide. Go to step 8.
+   - **Manage requests in Snowflake**: Consumers submit, review, and manage organizational listing access in Snowsight. Go to step 6.
+   - **Manage requests outside of Snowflake**: Consumers request organizational listing access using the email address or URL you provide. Go to step 7.
 6. If you selected **Manage requests in Snowflake**:
 
    1. In the **Approver email for notifications** field, enter the email address for organizational listing access submissions.

@@ -233,7 +233,8 @@ scales down to 0 nodes and no longer incurs charges.
 ### Choose the smallest runtime type that meets your workload
 
 Each runtime type maps to a different compute pool instance family with different per-hour credit rates.
-A Small runtime uses a CPU\_X64\_S instance, a Medium runtime uses CPU\_X64\_SL, and a Large runtime uses CPU\_X64\_L.
+A Small runtime (S1, S2, or S3) uses a CPU\_X64\_S instance, a Medium runtime (M4 or M6) uses CPU\_X64\_SL, and a Large runtime (L8) uses CPU\_X64\_L.
+Size tiers also change how many runtime pods fit on one node. See [How runtime pods are packed onto compute pool workers](#label-openflow-spcs-runtime-packing).
 Selecting the smallest runtime type that satisfies your workload’s CPU and memory requirements avoids paying for
 unused capacity. See [the runtime-to-compute-pool mapping](#label-openflow-spcs-scaling-overview) for details.
 
@@ -271,13 +272,16 @@ How you choose to configure and scale runtimes is important for managing costs e
 
 The runtime type you choose determines the runtime pods that are scheduled on the associated compute pool. Using a larger runtime type will result in a larger compute pool being used, which will incur higher costs.
 
-The runtime sizes and their scaling behavior are described in the following table:
+Each runtime type has size tiers that set the vCPUs and memory of the runtime pod. The runtime sizes and their scaling behavior are described in the following table:
 
-| Runtime type | vCPUs | Available memory (GB) | Snowflake Compute Pool instance family | Snowflake Compute Pool | Instance Family - vCPUs | Instance Family - memory (GB) |
-| --- | --- | --- | --- | --- | --- | --- |
-| Small | 1 | 2 | CPU\_X64\_S | INTERNAL\_OPENFLOW\_0\_SMALL | 4 | 16 |
-| Medium | 4 | 10 | CPU\_X64\_SL | INTERNAL\_OPENFLOW\_0\_MEDIUM | 16 | 64 |
-| Large | 8 | 20 | CPU\_X64\_L | INTERNAL\_OPENFLOW\_0\_LARGE | 32 | 128 |
+| Runtime type | Size tier | vCPUs | Heap memory (GB) | Snowflake Compute Pool instance family | Snowflake Compute Pool | Instance Family - vCPUs | Instance Family - memory (GB) |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Small | S1 | 1 | 4 | CPU\_X64\_S | INTERNAL\_OPENFLOW\_0\_SMALL | 4 | 16 |
+| Small | S2 | 2 | 8 | CPU\_X64\_S | INTERNAL\_OPENFLOW\_0\_SMALL | 4 | 16 |
+| Small | S3 | 3 | 12 | CPU\_X64\_S | INTERNAL\_OPENFLOW\_0\_SMALL | 4 | 16 |
+| Medium | M4 | 4 | 16 | CPU\_X64\_SL | INTERNAL\_OPENFLOW\_0\_MEDIUM | 16 | 64 |
+| Medium | M6 | 6 | 24 | CPU\_X64\_SL | INTERNAL\_OPENFLOW\_0\_MEDIUM | 16 | 64 |
+| Large | L8 | 8 | 33 | CPU\_X64\_L | INTERNAL\_OPENFLOW\_0\_LARGE | 32 | 128 |
 
 Expand
 
@@ -285,6 +289,47 @@ Show lessSee more
 
 The `INTERNAL_OPENFLOW_0_*` names shown here are the default; some deployments have a different, unique compute
 pool name instead. See [Compute pool naming and per-deployment attribution](#label-openflow-spcs-compute-pool-naming) for the full naming pattern.
+
+### How runtime pods are packed onto compute pool workers
+
+Runtime pods are bin-packed onto the nodes (workers) of the compute pool. Because you pay for each
+running compute pool node, not for each runtime, the number of runtimes that fit on one node affects cost.
+Packing depends on the size tier:
+
+- **M6:** Each M6 runtime pod occupies a full CPU\_X64\_SL worker (1:1). N M6 runtimes use N CPU\_X64\_SL nodes.
+- **L8:** Up to three L8 runtime pods can share a CPU\_X64\_L worker under optimal packing. N L8 runtimes use as few as ceil(N/3) CPU\_X64\_L nodes.
+- **S1:** Up to three S1 runtime pods can share a CPU\_X64\_S worker.
+- **S2:** One S2 runtime pod per CPU\_X64\_S worker. An S2 pod and an S1 pod can share one worker.
+- **S3:** One S3 runtime pod per CPU\_X64\_S worker.
+- **M4:** Up to three M4 runtime pods can share a CPU\_X64\_SL worker.
+
+Packing isn’t guaranteed. The scheduler might place pods on separate workers, so treat the
+per-worker counts as the best case when you estimate cost.
+
+On Azure, Small runtimes (S1, S2, and S3) pack one pod per CPU\_X64\_S worker. Each runtime pod needs four
+disk volumes, and the Azure instance type used for CPU\_X64\_S supports seven.
+
+#### Example: M6 compared with L8
+
+The following example compares the best-case compute pool node counts for the same number of runtimes.
+Multiply the node count by the hourly rate for the instance family in Table 1(d) of the
+[Snowflake Service Consumption Table](https://www.snowflake.com/legal-files/CreditConsumptionTable.pdf).
+
+| Runtimes | M6: CPU\_X64\_SL nodes | L8: CPU\_X64\_L nodes (best case) |
+| --- | --- | --- |
+| 1 | 1 | 1 |
+| 2 | 2 | 1 |
+| 3 | 3 | 1 |
+| 6 | 6 | 2 |
+| 7 | 7 | 3 |
+
+Expand
+
+Show lessSee more
+
+The CPU\_X64\_L rate is higher than the CPU\_X64\_SL rate, so one L8 runtime costs more than one M6 runtime.
+Because L8 runtimes share workers, the cost crosses over when you run enough runtimes. At 3 or more runtimes,
+the L8 nodes can cost less than the same number of M6 nodes.
 
 Openflow scales the underlying Snowflake Compute Pools when additional compute pool
 nodes need to be scheduled, based on CPU consumption, up to the maximum node count specified during runtime creation.

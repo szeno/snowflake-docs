@@ -2,7 +2,7 @@
 
 The Spark Monitoring UI provides a view of Snowpark Connect for Spark usage and history across your Snowflake account. This UI consolidates the relevant information from each Snowpark Connect for Spark job or interactive session to aid in monitoring and troubleshooting.
 
-Batch jobs from `snowpark-submit` and `EXECUTE CODE BUNDLE` appear under the **Batch Jobs** tab. That includes Spark jobs whose specification sets `type: spark`, and scheduled notebooks that initialize a Snowpark Connect session. Each run shows status, duration, name, and owner. Any Snowpark Connect session connection is tracked under the **Spark Sessions** tab with its queries and owner.
+Batch jobs from `EXECUTE CODE BUNDLE` and `snowpark-submit` appear under the **Batch Jobs** tab. That includes Spark jobs whose specification sets `type: spark`, and scheduled notebooks that initialize a Snowpark Connect session. Each run shows status, duration, name, and owner. Any Snowpark Connect session connection is tracked under the **Spark Sessions** tab with its queries and owner.
 
 ![Spark Monitoring UI showing batch jobs in the account.](/static/images/snowpark-connect/spark-home-page.png)
 
@@ -21,7 +21,7 @@ The **Batch Jobs** tab lists three kinds of batch-style Snowpark Connect for Spa
 
 - [`snowpark-submit`](/developer-guide/snowpark-connect/snowpark-connect-using-submit) runs
 - [`EXECUTE CODE BUNDLE`](/developer-guide/snowpark-connect/snowpark-connect-submit-code-bundle) runs whose specification sets `type: spark`
-- [`EXECUTE CODE BUNDLE`](/developer-guide/snowpark-connect/snowpark-connect-submit-notebook-code-bundle) runs for scheduled notebooks that initialize a Snowpark Connect session
+- [`EXECUTE CODE BUNDLE`](/developer-guide/snowpark-connect/snowpark-connect-submit-notebook-code-bundle) runs for scheduled notebooks (`type: custom`) that initialize a Snowpark Connect session
 
 For each run you can see duration, who submitted the job, and status.
 
@@ -85,6 +85,14 @@ init_spark_session(app_name="my_app_name")
 In this example, `my_app_name` is shown as the session name.
 
 If you do not pass `app_name`, Snowpark Connect uses the file name where the session was created as the `app_name` (for example `main.py`). For how the Python API derives the default application name, see the `app_name` parameter on [init\_spark\_session](/developer-guide/snowpark-connect/snowpark-connect-reference#label-spconnect-ref-init-spark-session).
+
+## Query the data behind the UI
+
+The Spark Monitoring UI is built on the
+[GET\_SPARK\_APPLICATION\_HISTORY](/sql-reference/functions/get_spark_application_history) table function, which returns
+one row for each batch job and Spark session shown in the UI. Call the function directly to build your own reports or
+to trace an application back to its queries and event table records. For examples, see
+[Query Spark application history with SQL](/developer-guide/snowpark-connect/snowpark-connect-monitoring#label-spconnect-application-history).
 
 ## Limitations
 

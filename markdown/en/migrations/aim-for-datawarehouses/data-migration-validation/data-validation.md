@@ -213,7 +213,7 @@ The Orchestrator and Worker set Snowflake [`QUERY_TAG`](/sql-reference/parameter
 
 ### Normalization and metrics customization
 
-Built-in normalization and L2 metric templates apply per platform and data type. Override them at the workflow root with `validationCustomNormalizations` and `validationCustomMetrics`. Metric overrides can be datatype-scoped or column-scoped (for example, remove length-based `avg` on one VARCHAR key without dropping that column from L1 or L3). See [Customizing normalization and metrics](../manual-migration/data-validation-configuration-reference#customizing-normalization-and-metrics) and [Column-scoped custom metrics](../manual-migration/data-validation-configuration-reference#column-scoped-custom-metrics) in the configuration reference.
+Built-in normalization and L2 metric templates apply per platform and data type. Override them at the workflow root with `validationCustomNormalizations` and `validationCustomMetrics`. Metric overrides can be datatype-scoped, column-scoped (for example, remove length-based `avg` on one VARCHAR key without dropping that column from L1 or L3), or match-scoped (for example, skip L2 on every key column that isn’t numeric). See [Customizing normalization and metrics](../manual-migration/data-validation-configuration-reference#customizing-normalization-and-metrics), [Column-scoped custom metrics](../manual-migration/data-validation-configuration-reference#column-scoped-custom-metrics), and [Match-scoped custom metrics](../manual-migration/data-validation-configuration-reference#match-scoped-custom-metrics) in the configuration reference.
 
 ### Accepted transformations
 

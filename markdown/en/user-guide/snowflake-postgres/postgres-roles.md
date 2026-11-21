@@ -15,9 +15,21 @@ Note
 Here and in many other places you will see the terms “role” and “user” used interchangeably in the context of Postgres user
 management. This is because a Postgres user is simply a role that has the Postgres role LOGIN attribute.
 
+## Postgres roles and Postgres access roles
+
+Postgres roles determine privileges on databases, schemas, tables, and other objects inside the
+instance.
+
+A **Postgres access role** is a separate Snowflake role scoped to one Postgres instance. It determines
+which Snowflake roles, application roles, or users can generate an access-role token for a particular
+Postgres user. It doesn’t grant privileges on Postgres databases or objects.
+
+For enrollment, Snowflake grants, token generation, and a client connection example, see
+[Grant access with access roles](/user-guide/snowflake-postgres/postgres-authentication#label-sfpg-token-auth-access-roles).
+
 ## Snowflake Postgres managed roles
 
-Snowflake Postgres automatically creates two managed roles at the same time that it creates your instance.
+Snowflake Postgres automatically creates two managed Postgres roles when it creates your instance.
 
 ### The `snowflake_admin` role
 

@@ -361,6 +361,8 @@ The agent sets `validationCustomMetrics` and `validationCustomTypes` respectivel
 
 To skip one L2 aggregate on a single column (for example length-based `avg` on a VARCHAR primary key) without excluding that column from L1 or L3, ask the agent to use a column-scoped `validationCustomMetrics` entry. See [Column-scoped custom metrics](../manual-migration/data-validation-configuration-reference#column-scoped-custom-metrics).
 
+To apply the same change to many columns at once, describe the columns instead of naming them, for example “skip L2 metrics on every primary key that isn’t numeric”. The agent sets one match-scoped `validationCustomMetrics` entry instead of an entry per column. See [Match-scoped custom metrics](../manual-migration/data-validation-configuration-reference#match-scoped-custom-metrics).
+
 When only one column needs a different expected type, for example because you deliberately migrated a `GEOGRAPHY` column to `VARIANT`, ask for a per-column rule instead and the agent sets `validationCustomTypeRules`. See [Per-column L1 type overrides](../manual-migration/data-validation-configuration-reference#per-column-l1-type-overrides).
 
 Note

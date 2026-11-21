@@ -12,7 +12,7 @@ Medium
 
 #### Description
 
-Druid’s `PARSE_LONG` accepts an optional radix argument that selects the numeric base used to interpret the input string. Snowflake’s [TRY\_TO\_NUMBER](/sql-reference/functions/try_to_number) covers only the decimal and hexadecimal cases through a format model, so there is no general base-N equivalent.
+Druid’s `PARSE_LONG` accepts an optional radix argument that selects the numeric base used to interpret the input string. Snowflake’s [TRY\_TO\_NUMBER](/sql-reference/functions/try_to_decimal) covers only the decimal and hexadecimal cases through a format model, so there is no general base-N equivalent.
 
 When the radix is a literal other than 10 or 16, or is a non-literal expression whose value cannot be resolved at conversion time, the call is left unchanged and this EWI is added to flag the need for manual conversion.
 
